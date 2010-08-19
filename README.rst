@@ -2,6 +2,7 @@ lucene++
 ==========
 
 Welcome to lucene++!
+
 Lucene++ is an up to date C++ port of the popular Lucene, a high-performance, full-featured text search engine library.
 
 
