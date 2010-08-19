@@ -1,0 +1,304 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "CustomScoreQuery.h"
+#include "ValueSourceQuery.h"
+#include "ComplexExplanation.h"
+
+namespace Lucene
+{
+    CustomScoreQuery::CustomScoreQuery(QueryPtr subQuery)
+    {
+        ConstructQuery(subQuery, Collection<ValueSourceQueryPtr>::newInstance());
+    }
+    
+    CustomScoreQuery::CustomScoreQuery(QueryPtr subQuery, ValueSourceQueryPtr valSrcQuery)
+    {
+        Collection<ValueSourceQueryPtr> valSrcQueries(Collection<ValueSourceQueryPtr>::newInstance());
+        if (valSrcQuery)
+            valSrcQueries.add(valSrcQuery);
+        ConstructQuery(subQuery, valSrcQueries);
+    }
+    
+    CustomScoreQuery::CustomScoreQuery(QueryPtr subQuery, Collection<ValueSourceQueryPtr> valSrcQueries)
+    {
+        ConstructQuery(subQuery, valSrcQueries);
+    }
+    
+    CustomScoreQuery::~CustomScoreQuery()
+    {
+    }
+    
+    void CustomScoreQuery::ConstructQuery(QueryPtr subQuery, Collection<ValueSourceQueryPtr> valSrcQueries)
+    {
+        this->strict = false;
+        this->subQuery = subQuery;
+        this->valSrcQueries = valSrcQueries ? valSrcQueries : Collection<ValueSourceQueryPtr>::newInstance();
+        if (!subQuery)
+            boost::throw_exception(IllegalArgumentException(L"<subquery> must not be null!"));
+    }
+    
+    QueryPtr CustomScoreQuery::rewrite(IndexReaderPtr reader)
+    {
+        subQuery = subQuery->rewrite(reader);
+        for (int32_t i = 0; i < valSrcQueries.size(); ++i)
+            valSrcQueries[i] = boost::dynamic_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->rewrite(reader));
+        return shared_from_this();
+    }
+    
+    void CustomScoreQuery::extractTerms(SetTerm terms)
+    {
+        subQuery->extractTerms(terms);
+        for (Collection<ValueSourceQueryPtr>::iterator srcQuery = valSrcQueries.begin(); srcQuery != valSrcQueries.end(); ++srcQuery)
+            (*srcQuery)->extractTerms(terms);
+    }
+    
+    LuceneObjectPtr CustomScoreQuery::clone(LuceneObjectPtr other)
+    {
+        LuceneObjectPtr clone = Query::clone(other ? other : newLucene<CustomScoreQuery>(subQuery));
+        CustomScoreQueryPtr cloneQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(clone));
+        cloneQuery->strict = strict;
+        cloneQuery->subQuery = boost::dynamic_pointer_cast<Query>(subQuery->clone());
+        cloneQuery->valSrcQueries = Collection<ValueSourceQueryPtr>::newInstance(valSrcQueries.size());
+        for (int32_t i = 0; i < valSrcQueries.size(); ++i)
+            cloneQuery->valSrcQueries[i] = boost::dynamic_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->clone());
+        return cloneQuery;
+    }
+    
+    String CustomScoreQuery::toString(const String& field)
+    {
+        StringStream buffer;
+        buffer << name() << L"(" << subQuery->toString(field);
+        for (Collection<ValueSourceQueryPtr>::iterator srcQuery = valSrcQueries.begin(); srcQuery != valSrcQueries.end(); ++srcQuery)
+            buffer << L", " << (*srcQuery)->toString(field);
+        buffer << L")" << (strict ? L" STRICT" : L"") << boostString();
+        return buffer.str();
+    }
+    
+    bool CustomScoreQuery::equals(LuceneObjectPtr other)
+    {
+        CustomScoreQueryPtr otherQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(other));
+        if (!otherQuery)
+            return false;
+        if (getBoost() != otherQuery->getBoost() || !subQuery->equals(otherQuery->subQuery))
+            return false;
+        return valSrcQueries.equals(otherQuery->valSrcQueries, luceneEquals<ValueSourceQueryPtr>());
+    }
+    
+    int32_t CustomScoreQuery::hashCode()
+    {
+        return (StringUtils::hashCode(CustomScoreQuery::_getClassName()) + StringUtils::hashCode(Query::_getClassName()) +
+               MiscUtils::hashCode(valSrcQueries.begin(), valSrcQueries.end(), MiscUtils::hashLucene<ValueSourceQueryPtr>)) ^
+               MiscUtils::doubleToIntBits(getBoost());
+    }
+    
+    double CustomScoreQuery::customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
+    {
+        if (valSrcScores.size() == 1)
+            return customScore(doc, subQueryScore, valSrcScores[0]);
+        if (valSrcScores.empty())
+            return customScore(doc, subQueryScore, 1);
+        double score = subQueryScore;
+        for (Collection<double>::iterator srcScore = valSrcScores.begin(); srcScore != valSrcScores.end(); ++srcScore)
+            score *= *srcScore;
+        return score;
+    }
+    
+    double CustomScoreQuery::customScore(int32_t doc, double subQueryScore, double valSrcScore)
+    {
+        return subQueryScore * valSrcScore;
+    }
+    
+    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
+    {
+        if (valSrcExpls.size() == 1)
+            return customExplain(doc, subQueryExpl, valSrcExpls[0]);
+        if (valSrcExpls.empty())
+            return subQueryExpl;
+        double valSrcScore = 1;
+        for (Collection<ExplanationPtr>::iterator srcExpl = valSrcExpls.begin(); srcExpl != valSrcExpls.end(); ++srcExpl)
+            valSrcScore *= (*srcExpl)->getValue();
+        ExplanationPtr exp(newLucene<Explanation>(valSrcScore * subQueryExpl->getValue(), L"custom score: product of:"));
+        exp->addDetail(subQueryExpl);
+        for (Collection<ExplanationPtr>::iterator srcExpl = valSrcExpls.begin(); srcExpl != valSrcExpls.end(); ++srcExpl)
+            exp->addDetail(*srcExpl);
+        return exp;
+    }
+    
+    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
+    {
+        double valSrcScore = 1;
+        if (valSrcExpl)
+            valSrcScore *= valSrcExpl->getValue();
+        ExplanationPtr exp(newLucene<Explanation>(valSrcScore * subQueryExpl->getValue(), L"custom score: product of:"));
+        exp->addDetail(subQueryExpl);
+        exp->addDetail(valSrcExpl);
+        return exp;
+    }
+    
+    WeightPtr CustomScoreQuery::createWeight(SearcherPtr searcher)
+    {
+        return newLucene<CustomWeight>(shared_from_this(), searcher);
+    }
+    
+    bool CustomScoreQuery::isStrict()
+    {
+        return strict;
+    }
+    
+    void CustomScoreQuery::setStrict(bool strict)
+    {
+        this->strict = strict;
+    }
+    
+    String CustomScoreQuery::name()
+    {
+        return L"custom";
+    }
+    
+    CustomWeight::CustomWeight(CustomScoreQueryPtr query, SearcherPtr searcher)
+    {
+        this->query = query;
+        this->similarity = query->getSimilarity(searcher);
+        this->subQueryWeight = query->subQuery->weight(searcher);
+        this->valSrcWeights = Collection<WeightPtr>::newInstance(query->valSrcQueries.size());
+        for (int32_t i = 0; i < query->valSrcQueries.size(); ++i)
+            this->valSrcWeights[i] = query->valSrcQueries[i]->createWeight(searcher);
+        this->qStrict = query->strict;
+    }
+    
+    CustomWeight::~CustomWeight()
+    {
+    }
+    
+    QueryPtr CustomWeight::getQuery()
+    {
+        return query;
+    }
+    
+    double CustomWeight::getValue()
+    {
+        return query->getBoost();
+    }
+    
+    double CustomWeight::sumOfSquaredWeights()
+    {
+        double sum = subQueryWeight->sumOfSquaredWeights();
+        for (int32_t i = 0; i < valSrcWeights.size(); ++i)
+        {
+            if (qStrict)
+                valSrcWeights[i]->sumOfSquaredWeights(); // do not include ValueSource part in the query normalization
+            else
+                sum += valSrcWeights[i]->sumOfSquaredWeights();
+        }
+        sum *= query->getBoost() * query->getBoost(); // boost each sub-weight
+        return sum;
+    }
+    
+    void CustomWeight::normalize(double norm)
+    {
+        norm *= query->getBoost(); // incorporate boost
+        subQueryWeight->normalize(norm);
+        for (int32_t i = 0; i < valSrcWeights.size(); ++i)
+        {
+            if (qStrict)
+                valSrcWeights[i]->normalize(1.0); // do not normalize the ValueSource part
+            else
+                valSrcWeights[i]->normalize(norm);
+        }
+    }
+    
+    ScorerPtr CustomWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    {
+        // Pass true for "scoresDocsInOrder", because we require in-order scoring, even if caller does not,
+        // since we call advance on the valSrcScorers.  Pass false for "topScorer" because we will not invoke
+        // score(Collector) on these scorers
+        ScorerPtr subQueryScorer(subQueryWeight->scorer(reader, true, false));
+        if (!subQueryScorer)
+            return ScorerPtr();
+        Collection<ScorerPtr> valSrcScorers(Collection<ScorerPtr>::newInstance(valSrcWeights.size()));
+        for (int32_t i = 0; i < valSrcScorers.size(); ++i)
+            valSrcScorers[i] = valSrcWeights[i]->scorer(reader, true, topScorer);
+        return newLucene<CustomScorer>(similarity, reader, shared_from_this(), subQueryScorer, valSrcScorers);
+    }
+    
+    ExplanationPtr CustomWeight::explain(IndexReaderPtr reader, int32_t doc)
+    {
+        ExplanationPtr explain(doExplain(reader, doc));
+        return explain ? explain : newLucene<Explanation>(0.0, L"no matching docs");
+    }
+    
+    ExplanationPtr CustomWeight::doExplain(IndexReaderPtr reader, int32_t doc)
+    {
+        ExplanationPtr subQueryExpl(subQueryWeight->explain(reader, doc));
+        if (!subQueryExpl->isMatch())
+            return subQueryExpl;
+        // match
+        Collection<ExplanationPtr> valSrcExpls(Collection<ExplanationPtr>::newInstance(valSrcWeights.size()));
+        for (int32_t i = 0; i < valSrcWeights.size(); ++i)
+            valSrcExpls[i] = valSrcWeights[i]->explain(reader, doc);
+        ExplanationPtr customExp(query->customExplain(doc, subQueryExpl, valSrcExpls));
+        double sc = getValue() * customExp->getValue();
+        ExplanationPtr res(newLucene<ComplexExplanation>(true, sc, query->toString() + L", product of:"));
+        res->addDetail(customExp);
+        res->addDetail(newLucene<Explanation>(getValue(), L"queryBoost")); // actually using the q boost as q weight (== weight value)
+        return res;
+    }
+    
+    bool CustomWeight::scoresDocsOutOfOrder()
+    {
+        return false;
+    }
+    
+    CustomScorer::CustomScorer(SimilarityPtr similarity, IndexReaderPtr reader, CustomWeightPtr weight, ScorerPtr subQueryScorer, Collection<ScorerPtr> valSrcScorers) : Scorer(similarity)
+    {
+        this->weight = weight;
+        this->qWeight = weight->getValue();
+        this->subQueryScorer = subQueryScorer;
+        this->valSrcScorers = valSrcScorers;
+        this->reader = reader;
+        this->vScores = Collection<double>::newInstance(valSrcScorers.size());
+    }
+    
+    CustomScorer::~CustomScorer()
+    {
+    }
+    
+    int32_t CustomScorer::nextDoc()
+    {
+        int32_t doc = subQueryScorer->nextDoc();
+        if (doc != NO_MORE_DOCS)
+        {
+            for (int32_t i = 0; i < valSrcScorers.size(); ++i)
+                valSrcScorers[i]->advance(doc);
+        }
+        return doc;
+    }
+    
+    int32_t CustomScorer::docID()
+    {
+        return subQueryScorer->docID();
+    }
+    
+    double CustomScorer::score()
+    {
+        for (int32_t i = 0; i < valSrcScorers.size(); ++i)
+            vScores[i] = valSrcScorers[i]->score();
+        return qWeight * weight->query->customScore(subQueryScorer->docID(), subQueryScorer->score(), vScores);
+    }
+    
+    int32_t CustomScorer::advance(int32_t target)
+    {
+        int32_t doc = subQueryScorer->advance(target);
+        if (doc != NO_MORE_DOCS)
+        {
+            for (int32_t i = 0; i < valSrcScorers.size(); ++i)
+                valSrcScorers[i]->advance(doc);
+        }
+        return doc;
+    }
+}

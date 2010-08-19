@@ -1,0 +1,263 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "AttributeSource.h"
+#include "FlagsAttribute.h"
+#include "OffsetAttribute.h"
+#include "PayloadAttribute.h"
+#include "PositionIncrementAttribute.h"
+#include "TermAttribute.h"
+#include "TypeAttribute.h"
+
+namespace Lucene
+{
+    AttributeFactory::~AttributeFactory()
+    {
+    }
+    
+    AttributePtr AttributeFactory::createAttributeInstance(const String& className)
+    {
+        return AttributePtr(); // override
+    }
+    
+    AttributeFactoryPtr AttributeFactory::DEFAULT_ATTRIBUTE_FACTORY()
+    {
+        static AttributeFactoryPtr _DEFAULT_ATTRIBUTE_FACTORY;
+        if (!_DEFAULT_ATTRIBUTE_FACTORY)
+        {
+            _DEFAULT_ATTRIBUTE_FACTORY = newLucene<DefaultAttributeFactory>();
+            CycleCheck::addStatic(_DEFAULT_ATTRIBUTE_FACTORY);
+        }
+        return _DEFAULT_ATTRIBUTE_FACTORY;
+    }
+    
+    AttributeSource::AttributeSource()
+    {
+        this->attributes = MapStringAttribute::newInstance();
+        this->factory = AttributeFactory::DEFAULT_ATTRIBUTE_FACTORY();
+    }
+    
+    AttributeSource::AttributeSource(AttributeSourcePtr input)
+    {
+        if (!input)
+            boost::throw_exception(IllegalArgumentException(L"input AttributeSource must not be null"));
+        this->attributes = input->attributes;
+        this->factory = input->factory;
+    }
+    
+    AttributeSource::AttributeSource(AttributeFactoryPtr factory)
+    {
+        this->attributes = MapStringAttribute::newInstance();
+        this->factory = factory;
+    }
+    
+    AttributeSource::~AttributeSource()
+    {
+    }
+    
+    AttributeFactoryPtr AttributeSource::getAttributeFactory()
+    {
+        return this->factory;
+    }
+    
+    void AttributeSource::addAttribute(const String& className, AttributePtr attrImpl)
+    {
+        attributes.put(className, attrImpl);
+    }
+    
+    bool AttributeSource::hasAttributes()
+    {
+        return !attributes.empty();
+    }
+    
+    AttributePtr AttributeSource::getAttribute(const String& className)
+    {
+        return attributes.get(className);
+    }
+    
+    void AttributeSource::computeCurrentState()
+    {
+        currentState = newLucene<AttributeSourceState>();
+        AttributeSourceStatePtr c(currentState);
+        MapStringAttribute::iterator attrImpl = attributes.begin();
+        c->attribute = attrImpl->second;
+        ++attrImpl;
+        while (attrImpl != attributes.end())
+        {
+            c->next = newLucene<AttributeSourceState>();
+            c = c->next;
+            c->attribute = attrImpl->second;
+            ++attrImpl;
+        }
+    }
+    
+    void AttributeSource::clearAttributes()
+    {
+        for (MapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
+            attrImpl->second->clear();
+    }
+    
+    AttributeSourceStatePtr AttributeSource::captureState()
+    {
+        if (!hasAttributes())
+            return AttributeSourceStatePtr();
+        
+        if (!currentState)
+            computeCurrentState();
+        
+        return boost::dynamic_pointer_cast<AttributeSourceState>(currentState->clone());
+    }
+    
+    void AttributeSource::restoreState(AttributeSourceStatePtr state)
+    {
+        if (!state)
+            return;
+        
+        do
+        {
+            MapStringAttribute::iterator attrImpl = attributes.find(state->attribute->getClassName());
+            if (attrImpl == attributes.end())
+                boost::throw_exception(IllegalArgumentException(L"State contains an AttributeImpl that is not in this AttributeSource"));
+            state->attribute->copyTo(attrImpl->second);
+            state = state->next;
+        }
+        while (state);
+    }
+    
+    int32_t AttributeSource::hashCode()
+    {
+        int32_t code = 0;
+        for (MapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
+            code = code * 31 + attrImpl->second->hashCode();
+        return code;
+    }
+    
+    bool AttributeSource::equals(LuceneObjectPtr other)
+    {
+        if (LuceneObject::equals(other))
+            return true;
+        
+        AttributeSourcePtr otherAttributeSource = boost::dynamic_pointer_cast<AttributeSource>(other);
+        if (otherAttributeSource)
+        {
+            if (hasAttributes())
+            {
+                if (!otherAttributeSource->hasAttributes())
+                    return false;
+                
+                if (attributes.size() != otherAttributeSource->attributes.size())
+                    return false;
+                
+                // it is only equal if all attribute impls are the same in the same order
+                if (!currentState)
+                    computeCurrentState();
+                
+                AttributeSourceStatePtr thisState(currentState);
+                if (!otherAttributeSource->currentState)
+                    otherAttributeSource->computeCurrentState();
+                
+                AttributeSourceStatePtr otherState(otherAttributeSource->currentState);
+                while (thisState && otherState)
+                {
+                    if (otherState->attribute->getClassName() != thisState->attribute->getClassName() || !otherState->attribute->equals(thisState->attribute))
+                        return false;
+                    thisState = thisState->next;
+                    otherState = otherState->next;
+                }
+                return true;
+            }
+            else
+                return !otherAttributeSource->hasAttributes();
+        }
+        else
+            return false;
+    }
+    
+    String AttributeSource::toString()
+    {
+        StringStream buf;
+        buf << L"(";
+        if (hasAttributes())
+        {
+            if (!currentState)
+                computeCurrentState();
+            for (AttributeSourceStatePtr state(currentState); state; state = state->next)
+            {
+                if (state != currentState)
+                    buf << L",";
+                buf << state->attribute->toString();
+            }
+        }
+        buf << ")";
+        return buf.str();
+    }
+    
+    AttributeSourcePtr AttributeSource::cloneAttributes()
+    {
+        AttributeSourcePtr clone(newLucene<AttributeSource>(this->factory));
+        
+        if (hasAttributes())
+        {
+            if (!currentState)
+                computeCurrentState();
+            for (AttributeSourceStatePtr state(currentState); state; state = state->next)
+                clone->attributes.put(state->attribute->getClassName(), boost::dynamic_pointer_cast<Attribute>(state->attribute->clone()));
+        }
+        
+        return clone;
+    }
+    
+    Collection<AttributePtr> AttributeSource::getAttributes()
+    {
+        Collection<AttributePtr> attrImpls(Collection<AttributePtr>::newInstance());
+        if (hasAttributes())
+        {
+            if (!currentState)
+                computeCurrentState();
+            for (AttributeSourceStatePtr state(currentState); state; state = state->next)
+                attrImpls.add(state->attribute);
+        }
+        return attrImpls;
+    }
+    
+    DefaultAttributeFactory::~DefaultAttributeFactory()
+    {
+    }
+    
+    AttributePtr DefaultAttributeFactory::createAttributeInstance(const String& className)
+    {
+        if (className == FlagsAttribute::_getClassName())
+            return newLucene<FlagsAttribute>();
+        else if (className == OffsetAttribute::_getClassName())
+            return newLucene<OffsetAttribute>();
+        else if (className == PayloadAttribute::_getClassName())
+            return newLucene<PayloadAttribute>();
+        else if (className == PositionIncrementAttribute::_getClassName())
+            return newLucene<PositionIncrementAttribute>();
+        else if (className == TermAttribute::_getClassName())
+            return newLucene<TermAttribute>();
+        else if (className == TypeAttribute::_getClassName())
+            return newLucene<TypeAttribute>();
+        boost::throw_exception(IllegalArgumentException(L"attribute class name not recognized"));
+        return AttributePtr();
+    }	
+    
+    AttributeSourceState::~AttributeSourceState()
+    {
+    }
+    
+    LuceneObjectPtr AttributeSourceState::clone(LuceneObjectPtr other)
+    {
+        AttributeSourceStatePtr clone(newLucene<AttributeSourceState>());
+        clone->attribute = boost::dynamic_pointer_cast<Attribute>(attribute->clone());
+        
+        if (next)
+            clone->next = boost::dynamic_pointer_cast<AttributeSourceState>(next->clone());
+        
+        return clone;
+    }
+}

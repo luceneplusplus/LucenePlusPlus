@@ -1,0 +1,28 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "LuceneGlobalFixture.h"
+#include "TestUtils.h"
+#include "TestPoint.h"
+
+namespace Lucene
+{
+    LuceneGlobalFixture::LuceneGlobalFixture()
+    {
+        FileUtils::removeDirectory(getTempDir());
+        FileUtils::createDirectory(getTempDir());
+        TestPoint::enableTestPoints();
+    }
+    
+    LuceneGlobalFixture::~LuceneGlobalFixture()
+    {
+        FileUtils::removeDirectory(getTempDir());
+        Lucene::CycleCheck::dumpRefs();
+    }
+    
+    BOOST_GLOBAL_FIXTURE(LuceneGlobalFixture);
+}

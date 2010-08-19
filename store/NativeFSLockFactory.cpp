@@ -1,0 +1,224 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "NativeFSLockFactory.h"
+#include "Random.h"
+
+namespace Lucene
+{
+    NativeFSLockFactory::NativeFSLockFactory(const String& lockDirName)
+    {
+        setLockDir(lockDirName);
+        tested = false;
+    }
+    
+    NativeFSLockFactory::~NativeFSLockFactory()
+    {
+    }
+    
+    void NativeFSLockFactory::acquireTestLock()
+    {
+        SyncLock syncLock(this);
+        
+        if (tested)
+            return;
+        tested = true;
+    
+        // ensure that lockdir exists and is a directory
+        if (!FileUtils::fileExists(lockDir))
+        {
+            if (!FileUtils::createDirectory(lockDir))
+                boost::throw_exception(RuntimeException(L"Cannot create directory: " + lockDir));
+        }
+        else if (!FileUtils::isDirectory(lockDir))
+            boost::throw_exception(RuntimeException(L"Found regular file where directory expected: " + lockDir));
+
+        String randomLockName(L"lucene-" + StringUtils::toString(newLucene<Random>()->nextInt(), StringUtils::CHARACTER_MAX_RADIX) + L"-test.lock");
+        
+        LockPtr l(makeLock(randomLockName));
+        
+        try
+        {
+            l->obtain();
+            l->release();
+        }
+        catch (LuceneException&)
+        {
+            boost::throw_exception(IOException(L"Failed to acquire random test lock; please verify filesystem for lock directory '" + lockDir + L"' supports locking"));
+        }    
+    }
+    
+    LockPtr NativeFSLockFactory::makeLock(const String& lockName)
+    {
+        SyncLock syncLock(this);
+        acquireTestLock();
+        return newLucene<NativeFSLock>(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName);
+    }
+    
+    void NativeFSLockFactory::clearLock(const String& lockName)
+    {
+        // note that this isn't strictly required anymore because the existence of these files does not mean
+        // they are locked, but still do this in case people really want to see the files go away
+        
+        if (FileUtils::isDirectory(lockDir))
+        {
+            String lockPath(FileUtils::joinPath(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName));
+            if (FileUtils::fileExists(lockPath) && !FileUtils::removeFile(lockPath))
+                boost::throw_exception(IOException(L"Failed to delete: " + lockPath));
+        }		
+    }
+    
+    NativeFSLock::NativeFSLock(const String& lockDir, const String& lockFileName)
+    {
+        this->lockDir = lockDir;
+        path = FileUtils::joinPath(lockDir, lockFileName);
+    }
+    
+    NativeFSLock::~NativeFSLock()
+    {
+        release();
+    }
+    
+    SynchronizePtr NativeFSLock::LOCK_HELD_LOCK()
+    {
+        static SynchronizePtr _LOCK_HELD_LOCK;
+        if (!_LOCK_HELD_LOCK)
+            _LOCK_HELD_LOCK = newInstance<Synchronize>();
+        return _LOCK_HELD_LOCK;
+    }
+    
+    HashSet<String> NativeFSLock::LOCK_HELD()
+    {
+        static HashSet<String> _LOCK_HELD;
+        if (!_LOCK_HELD)
+            _LOCK_HELD = HashSet<String>::newInstance();
+        return _LOCK_HELD;
+    }
+    
+    bool NativeFSLock::lockExists()
+    {
+        SyncLock syncLock(this);
+        return lock;
+    }
+    
+    bool NativeFSLock::obtain()
+    {
+        SyncLock syncLock(this);
+        
+        if (lockExists())
+            // our instance is already locked
+            return false;
+        
+        // ensure that lockdir exists and is a directory
+        if (!FileUtils::fileExists(lockDir))
+        {
+            if (!FileUtils::createDirectory(lockDir))
+                boost::throw_exception(IOException(L"Cannot create directory: " + lockDir));
+        }
+        else if (!FileUtils::isDirectory(lockDir))
+            boost::throw_exception(IOException(L"Found regular file where directory expected: " + lockDir));
+        
+        bool markedHeld = false;
+        
+        // make sure nobody else in-process has this lock held already and mark it held if not
+        {
+            SyncLock heldLock(LOCK_HELD_LOCK());
+            if (LOCK_HELD().contains(path))
+                // someone else already has the lock
+                return false;
+            else
+            {
+                // this "reserves" the fact that we are the one thread trying to obtain this lock, so we own the 
+                // only instance of a channel against this file
+                LOCK_HELD().add(path);
+                markedHeld = true;
+            }
+        }
+        
+        try
+        {
+            // we can get intermittent "access denied" here, so we treat this as failure to acquire the lock
+            std::ofstream f(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::out);
+            
+            if (f.is_open())
+            {
+                lock = newInstance<boost::interprocess::file_lock>(StringUtils::toUTF8(path).c_str());
+                lock->lock();
+            }
+        }
+        catch (...)
+        {
+            lock.reset();
+        }
+            
+        if (markedHeld && !lockExists())
+        {
+            SyncLock heldLock(LOCK_HELD_LOCK());
+            LOCK_HELD().remove(path);
+        }
+            
+        return lockExists();
+    }
+    
+    void NativeFSLock::release()
+    {
+        SyncLock syncLock(this);
+        
+        if (lockExists())
+        {
+            try
+            {
+                lock->unlock();
+                lock.reset();				
+            }
+            catch (...)
+            {
+            }
+            
+            {
+                SyncLock heldLock(LOCK_HELD_LOCK());
+                LOCK_HELD().remove(path);
+            }
+                
+            if (!FileUtils::removeFile(path))
+                boost::throw_exception(LockReleaseFailedException(L"Failed to delete: " + path));
+        }
+    }
+    
+    bool NativeFSLock::isLocked()
+    {
+        SyncLock syncLock(this);
+        
+        // the test for is islocked is not directly possible with native file locks
+        
+        // first a shortcut, if a lock reference in this instance is available
+        if (lockExists())
+            return true;
+        
+        // look if lock file is present; if not, there can definitely be no lock!
+        if (!FileUtils::fileExists(path))
+            return false;
+        
+        // try to obtain and release (if was locked) the lock
+        try
+        {
+            bool obtained = obtain();
+            if (obtained)
+                release();
+            return !obtained;
+        }
+        catch (LuceneException&)
+        {
+            return false;
+        }
+    }
+    
+    String NativeFSLock::toString()
+    {
+        return getClassName() + L"@" + path;
+    }
+}

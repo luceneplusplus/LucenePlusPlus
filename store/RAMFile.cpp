@@ -1,0 +1,98 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "RAMFile.h"
+#include "RAMDirectory.h"
+
+namespace Lucene
+{
+    RAMFile::RAMFile()
+    {
+        this->buffers = Collection<ByteArray>::newInstance();
+        this->length = 0;
+        this->sizeInBytes = 0;
+        this->lastModified = MiscUtils::currentTimeMillis();
+    }
+    
+    RAMFile::RAMFile(RAMDirectoryPtr directory)
+    {
+        this->buffers = Collection<ByteArray>::newInstance();
+        this->length = 0;
+        this->sizeInBytes = 0;
+        this->_directory = directory;
+        this->lastModified = MiscUtils::currentTimeMillis();
+    }
+    
+    RAMFile::~RAMFile()
+    {
+    }
+    
+    int64_t RAMFile::getLength()
+    {
+        SyncLock syncLock(this);
+        return length;
+    }
+    
+    void RAMFile::setLength(int64_t length)
+    {
+        SyncLock syncLock(this);
+        this->length = length;
+    }
+    
+    int64_t RAMFile::getLastModified()
+    {
+        SyncLock syncLock(this);
+        return lastModified;
+    }
+    
+    void RAMFile::setLastModified(int64_t lastModified)
+    {
+        SyncLock syncLock(this);
+        this->lastModified = lastModified;
+    }
+    
+    ByteArray RAMFile::addBuffer(int32_t size)
+    {
+        SyncLock syncLock(this);
+        ByteArray buffer(newBuffer(size));
+        RAMDirectoryPtr directory(_directory.lock());
+        if (directory)
+        {
+            SyncLock dirLock(directory);
+            buffers.add(buffer);
+            directory->_sizeInBytes += size;
+            sizeInBytes += size;
+        }
+        else
+            buffers.add(buffer);
+        return buffer;
+    }
+    
+    ByteArray RAMFile::getBuffer(int32_t index)
+    {
+        SyncLock syncLock(this);
+        return buffers[index];
+    }
+    
+    int32_t RAMFile::numBuffers()
+    {
+        SyncLock syncLock(this);
+        return buffers.size();
+    }
+    
+    ByteArray RAMFile::newBuffer(int32_t size)
+    {
+        return ByteArray::newInstance(size);
+    }
+    
+    int64_t RAMFile::getSizeInBytes()
+    {
+        RAMDirectoryPtr directory(_directory.lock());
+        SyncLock dirLock(directory);
+        return sizeInBytes;
+    }
+}

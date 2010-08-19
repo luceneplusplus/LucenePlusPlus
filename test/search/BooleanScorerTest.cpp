@@ -1,0 +1,112 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "LuceneTestFixture.h"
+#include "RAMDirectory.h"
+#include "IndexWriter.h"
+#include "WhitespaceAnalyzer.h"
+#include "Document.h"
+#include "Field.h"
+#include "BooleanQuery.h"
+#include "TermQuery.h"
+#include "Term.h"
+#include "IndexSearcher.h"
+#include "ScoreDoc.h"
+#include "TopDocs.h"
+#include "Similarity.h"
+#include "BooleanScorer.h"
+
+using namespace Lucene;
+
+BOOST_FIXTURE_TEST_SUITE(BooleanScorerTest, LuceneTestFixture)
+
+BOOST_AUTO_TEST_CASE(testMethod)
+{
+    static const String FIELD = L"category";
+    
+    RAMDirectoryPtr directory = newLucene<RAMDirectory>();
+    Collection<String> values = newCollection<String>(L"1", L"2", L"3", L"4");
+    
+    IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
+    for (int32_t i = 0; i < values.size(); ++i)
+    {
+        DocumentPtr doc = newLucene<Document>();
+        doc->add(newLucene<Field>(FIELD, values[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+        writer->addDocument(doc);
+    }
+    writer->close();
+                                           
+    BooleanQueryPtr booleanQuery1 = newLucene<BooleanQuery>();
+    booleanQuery1->add(newLucene<TermQuery>(newLucene<Term>(FIELD, L"1")), BooleanClause::SHOULD);
+    booleanQuery1->add(newLucene<TermQuery>(newLucene<Term>(FIELD, L"2")), BooleanClause::SHOULD);
+
+    BooleanQueryPtr query = newLucene<BooleanQuery>();
+    query->add(booleanQuery1, BooleanClause::MUST);
+    query->add(newLucene<TermQuery>(newLucene<Term>(FIELD, L"9")), BooleanClause::MUST_NOT);
+
+    IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
+    Collection<ScoreDocPtr> hits = indexSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
+    BOOST_CHECK_EQUAL(2, hits.size());
+}
+
+namespace TestEmptyBucketWithMoreDocs
+{
+    class EmptyScorer : public Scorer
+    {
+    public:
+        EmptyScorer(SimilarityPtr similarity) : Scorer(similarity)
+        {
+            doc = -1;
+        }
+        
+        virtual ~EmptyScorer()
+        {
+        }
+    
+    protected:
+        int32_t doc;
+        
+    public:
+        virtual double score()
+        {
+            return 0.0;
+        }
+        
+        virtual int32_t docID()
+        {
+            return doc;
+        }
+        
+        virtual int32_t nextDoc()
+        {
+            doc = doc == -1 ? 3000 : NO_MORE_DOCS;
+            return doc;
+        }
+        
+        virtual int32_t advance(int32_t target)
+        {
+            doc = target <= 3000 ? 3000 : NO_MORE_DOCS;
+            return doc;
+        }
+    };
+}
+
+BOOST_AUTO_TEST_CASE(testEmptyBucketWithMoreDocs)
+{
+    // This test checks the logic of nextDoc() when all sub scorers have docs beyond the first bucket 
+    // (for example). Currently, the code relies on the 'more' variable to work properly, and this 
+    // test ensures that if the logic changes, we have a test to back it up.
+    SimilarityPtr sim = Similarity::getDefault();
+    Collection<ScorerPtr> scorers = newCollection<ScorerPtr>(newLucene<TestEmptyBucketWithMoreDocs::EmptyScorer>(sim));
+    
+    BooleanScorerPtr bs = newLucene<BooleanScorer>(sim, 1, scorers, Collection<ScorerPtr>());
+
+    BOOST_CHECK_EQUAL(3000, bs->nextDoc());
+    BOOST_CHECK_EQUAL(DocIdSetIterator::NO_MORE_DOCS, bs->nextDoc());
+}
+
+BOOST_AUTO_TEST_SUITE_END()

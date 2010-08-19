@@ -1,0 +1,43 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "Attribute.h"
+
+namespace Lucene
+{
+	/// A Token's lexical type. The Default value is "word".
+	class LPPAPI TypeAttribute : public Attribute
+	{
+	public:
+		TypeAttribute();
+		TypeAttribute(const String& type);
+		virtual ~TypeAttribute();
+		
+		LUCENE_CLASS(TypeAttribute);
+	
+	protected:
+		String _type;
+		static String& DEFAULT_TYPE();
+		
+	public:
+		virtual String toString();
+		
+		/// Returns this Token's lexical type.  Defaults to "word".
+		String type();
+		
+		/// Set the lexical type.
+		/// @see #type()
+		void setType(const String& type);
+		
+		virtual void clear();
+		virtual bool equals(LuceneObjectPtr other);
+		virtual int32_t hashCode();
+		virtual void copyTo(AttributePtr target);
+		virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+	};
+}

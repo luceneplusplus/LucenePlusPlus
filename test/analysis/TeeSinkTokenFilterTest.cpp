@@ -1,0 +1,301 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#include "stdafx.h"
+#include "BaseTokenStreamFixture.h"
+#include "TestUtils.h"
+#include "TeeSinkTokenFilter.h"
+#include "WhitespaceTokenizer.h"
+#include "TokenStream.h"
+#include "TermAttribute.h"
+#include "StringReader.h"
+#include "CachingTokenFilter.h"
+#include "LowerCaseFilter.h"
+#include "StandardFilter.h"
+#include "StandardTokenizer.h"
+#include "PositionIncrementAttribute.h"
+
+using namespace Lucene;
+
+class TheSinkFilter : public SinkFilter
+{
+public:
+    virtual ~TheSinkFilter()
+    {
+    }
+
+public:
+    virtual bool accept(AttributeSourcePtr source)
+    {
+        TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
+        return boost::iequals(termAtt->term(), L"The");
+    }
+};
+
+class DogSinkFilter : public SinkFilter
+{
+public:
+    virtual ~DogSinkFilter()
+    {
+    }
+
+public:
+    virtual bool accept(AttributeSourcePtr source)
+    {
+        TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
+        return boost::iequals(termAtt->term(), L"Dogs");
+    }
+};
+
+class TeeSinkTokenFilterTestFixture : public BaseTokenStreamFixture
+{
+public:
+    TeeSinkTokenFilterTestFixture()
+    {
+        tokens1 = newCollection<String>(L"The", L"quick", L"Burgundy", L"Fox", L"jumped", L"over", L"the", L"lazy", L"Red", L"Dogs");
+        tokens2 = newCollection<String>(L"The", L"Lazy", L"Dogs", L"should", L"stay", L"on", L"the", L"porch");
+        
+        for (int32_t i = 0; i < tokens1.size(); ++i)
+            buffer1 << tokens1[i] << L" ";
+        for (int32_t i = 0; i < tokens2.size(); ++i)
+            buffer2 << tokens2[i] << L" ";
+        
+        theFilter = newLucene<TheSinkFilter>();
+        dogFilter = newLucene<DogSinkFilter>();
+    }
+    
+    virtual ~TeeSinkTokenFilterTestFixture()
+    {
+    }
+
+protected:
+    StringStream buffer1;
+    StringStream buffer2;
+    Collection<String> tokens1;
+    Collection<String> tokens2;
+    
+    SinkFilterPtr theFilter;
+    SinkFilterPtr dogFilter;
+};
+
+BOOST_FIXTURE_TEST_SUITE(TeeSinkTokenFilterTest, TeeSinkTokenFilterTestFixture)
+
+BOOST_AUTO_TEST_CASE(testGeneral)
+{
+    TeeSinkTokenFilterPtr source = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer1.str())));
+    TokenStreamPtr sink1 = source->newSinkTokenStream();
+    TokenStreamPtr sink2 = source->newSinkTokenStream(theFilter);
+    int32_t i = 0;
+    TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
+    while (source->incrementToken())
+    {
+        BOOST_CHECK_EQUAL(tokens1[i], termAtt->term());
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(tokens1.size(), i);
+
+    i = 0;
+    termAtt = sink1->getAttribute<TermAttribute>();
+    while (sink1->incrementToken())
+    {
+        BOOST_CHECK_EQUAL(tokens1[i], termAtt->term());
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(tokens1.size(), i);
+    
+    i = 0;
+    termAtt = sink2->getAttribute<TermAttribute>();
+    while (sink2->incrementToken())
+    {
+        BOOST_CHECK(boost::iequals(termAtt->term(), L"The"));
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(2, i);
+}
+
+BOOST_AUTO_TEST_CASE(testMultipleSources)
+{
+    TeeSinkTokenFilterPtr tee1 = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer1.str())));
+    SinkTokenStreamPtr dogDetector = tee1->newSinkTokenStream(dogFilter);
+    SinkTokenStreamPtr theDetector = tee1->newSinkTokenStream(theFilter);
+    TokenStreamPtr source1 = newLucene<CachingTokenFilter>(tee1);
+
+    TeeSinkTokenFilterPtr tee2 = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer2.str())));
+    tee2->addSinkTokenStream(dogDetector);
+    tee2->addSinkTokenStream(theDetector);
+    TokenStreamPtr source2 = tee2;
+    
+    int32_t i = 0;
+    TermAttributePtr termAtt = source1->getAttribute<TermAttribute>();
+    while (source1->incrementToken())
+    {
+        BOOST_CHECK_EQUAL(tokens1[i], termAtt->term());
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(tokens1.size(), i);
+
+    i = 0;
+    termAtt = source2->getAttribute<TermAttribute>();
+    while (source2->incrementToken())
+    {
+        BOOST_CHECK_EQUAL(tokens2[i], termAtt->term());
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(tokens2.size(), i);
+    
+    i = 0;
+    termAtt = theDetector->getAttribute<TermAttribute>();
+    while (theDetector->incrementToken())
+    {
+        BOOST_CHECK(boost::iequals(termAtt->term(), L"The"));
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(4, i);
+    
+    i = 0;
+    termAtt = dogDetector->getAttribute<TermAttribute>();
+    while (dogDetector->incrementToken())
+    {
+        BOOST_CHECK(boost::iequals(termAtt->term(), L"Dogs"));
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(2, i);
+
+    source1->reset();
+    TokenStreamPtr lowerCasing = newLucene<LowerCaseFilter>(source1);
+    i = 0;
+    termAtt = lowerCasing->getAttribute<TermAttribute>();
+    while (lowerCasing->incrementToken())
+    {
+        BOOST_CHECK_EQUAL(StringUtils::toLower((const String&)tokens1[i]), termAtt->term());
+        ++i;
+    }
+    BOOST_CHECK_EQUAL(i, tokens1.size());
+}
+
+namespace TestPerformance
+{
+    class ModuloTokenFilter : public TokenFilter
+    {
+    public:
+        ModuloTokenFilter(TokenStreamPtr input, int32_t mc) : TokenFilter(input)
+        {
+            modCount = mc;
+            count = 0;
+        }
+        
+        virtual ~ModuloTokenFilter()
+        {
+        }
+    
+    public:
+        int32_t modCount;
+        int32_t count;
+    
+    public:
+        // return every 100 tokens
+        virtual bool incrementToken()
+        {
+            bool hasNext = false;
+            for (hasNext = input->incrementToken(); hasNext && count % modCount != 0; hasNext = input->incrementToken())
+                ++count;
+            ++count;
+            return hasNext;
+        }
+    };
+    
+    class ModuloSinkFilter : public SinkFilter
+    {
+    public:
+        ModuloSinkFilter(int32_t mc)
+        {
+            modCount = mc;
+            count = 0;
+        }
+        
+        virtual ~ModuloSinkFilter()
+        {
+        }
+    
+    public:
+        int32_t modCount;
+        int32_t count;
+    
+    public:
+        virtual bool accept(AttributeSourcePtr source)
+        {
+            bool b = (source && count % modCount == 0);
+            ++count;
+            return b;
+        }
+    };
+}
+
+/// Not an explicit test, just useful to print out some info on performance
+BOOST_AUTO_TEST_CASE(testPerformance)
+{
+    Collection<int32_t> tokCount = newCollection<int32_t>(100, 500, 1000, 2000, 5000, 10000);
+    Collection<int32_t> modCounts = newCollection<int32_t>(1, 2, 5, 10, 20, 50, 100, 200, 500);
+    for (int32_t k = 0; k < tokCount.size(); ++k)
+    {
+        StringStream buffer;
+        BOOST_TEST_MESSAGE("-----Tokens: " << tokCount[k] << "-----");
+        for (int32_t i = 0; i < tokCount[k]; ++i)
+            buffer << StringUtils::toUpper(intToEnglish(i)) << L" ";
+        // make sure we produce the same tokens
+        TeeSinkTokenFilterPtr teeStream = newLucene<TeeSinkTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))));
+        TokenStreamPtr sink = teeStream->newSinkTokenStream(newLucene<TestPerformance::ModuloSinkFilter>(100));
+        teeStream->consumeAllTokens();
+        TokenStreamPtr stream = newLucene<TestPerformance::ModuloTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))), 100);
+        TermAttributePtr tfTok = stream->addAttribute<TermAttribute>();
+        TermAttributePtr sinkTok = sink->addAttribute<TermAttribute>();
+        for (int32_t i = 0; stream->incrementToken(); ++i)
+        {
+            BOOST_CHECK(sink->incrementToken());
+            BOOST_CHECK(tfTok->equals(sinkTok));
+        }
+        
+        // simulate two fields, each being analyzed once, for 20 documents
+        for (int32_t j = 0; j < modCounts.size(); ++j)
+        {
+            int32_t tfPos = 0;
+            int64_t start = MiscUtils::currentTimeMillis();
+            for (int32_t i = 0; i < 20; ++i)
+            {
+                stream = newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str())));
+                PositionIncrementAttributePtr posIncrAtt = stream->getAttribute<PositionIncrementAttribute>();
+                while (stream->incrementToken())
+                    tfPos += posIncrAtt->getPositionIncrement();
+                stream = newLucene<TestPerformance::ModuloTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))), modCounts[j]);
+                posIncrAtt = stream->getAttribute<PositionIncrementAttribute>();
+                while (stream->incrementToken())
+                    tfPos += posIncrAtt->getPositionIncrement();
+            }
+            int64_t finish = MiscUtils::currentTimeMillis();
+            BOOST_TEST_MESSAGE("ModCount: " << modCounts[j] << " Two fields took " << (finish - start) << " ms");
+            int32_t sinkPos = 0;
+            // simulate one field with one sink
+            start = MiscUtils::currentTimeMillis();
+            for (int32_t i = 0; i < 20; ++i)
+            {
+                teeStream = newLucene<TeeSinkTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))));
+                sink = teeStream->newSinkTokenStream(newLucene<TestPerformance::ModuloSinkFilter>(modCounts[j]));
+                PositionIncrementAttributePtr posIncrAtt = teeStream->getAttribute<PositionIncrementAttribute>();
+                while (teeStream->incrementToken())
+                    sinkPos += posIncrAtt->getPositionIncrement();
+                posIncrAtt = sink->getAttribute<PositionIncrementAttribute>();
+                while (sink->incrementToken())
+                    sinkPos += posIncrAtt->getPositionIncrement();
+            }
+            finish = MiscUtils::currentTimeMillis();
+            BOOST_TEST_MESSAGE("ModCount: " << modCounts[j] << " Tee fields took " << (finish - start) << " ms");
+            BOOST_CHECK_EQUAL(sinkPos, tfPos);
+        }
+        BOOST_TEST_MESSAGE("- End Tokens: " << tokCount[k] << "-----");
+    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()

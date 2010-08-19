@@ -1,0 +1,31 @@
+*~
+*.o
+*.aps
+*.tar.gz
+*.rar
+*.suo
+*.ncb
+*.idb 
+*.obj 
+*/*.obj
+*.opt 
+*.pch 
+*.pyc
+*.log
+*.exe
+*.exp
+*.lib
+*.idb
+*.pdb
+*.manifest
+*.user
+*.txt
+
+bin/*
+msvc/Debug
+msvc/Debug DLL
+msvc/Release
+msvc/Release DLL
+
+test/msvc/Debug
+test/msvc/Release
