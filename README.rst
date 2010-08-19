@@ -2,6 +2,7 @@ lucene++
 ==========
 
 Welcome to lucene++!
+Lucene++ is an up to date C++ port of the popular Lucene, a high-performance, full-featured text search engine library.
 
 
 Components
@@ -39,6 +40,7 @@ Additionally static builds of the following libraries are required for a success
 - boost::filesystem
 - boost::regex
 - boost::date_time
+- boost::unit_test_framework
 
 The libraries and headers should be made available at a standard prefix (/usr/local for example).
 
@@ -53,7 +55,7 @@ Acknowledgements
 ----------------
 
 - Ben van Klinken and contributors to the CLucene project for inspiring this project.
-- Jamie Kirkpatrick for cross-platform build support.
+- Jamie Kirkpatrick for cross-platform/waf build support.
 
 - `Zlib <http://www.zlib.net>`_ Copyright (C) 1995-2010 Jean-loup Gailly and Mark Adler
 - `UTF8-CPP <http://utfcpp.sourceforge.net/>`_ Copyright 2006 Nemanja Trifunovic
