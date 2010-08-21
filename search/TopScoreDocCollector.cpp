@@ -75,6 +75,11 @@ namespace Lucene
     void InOrderTopScoreDocCollector::collect(int32_t doc)
     {
         double score = ScorerPtr(_scorer)->score();
+        
+        // This collector cannot handle these scores
+        BOOST_ASSERT(score != -std::numeric_limits<double>::infinity());
+        BOOST_ASSERT(!MiscUtils::isNaN(score));
+
         ++totalHits;
         if (score <= pqTop->score)
         {
@@ -104,6 +109,10 @@ namespace Lucene
     void OutOfOrderTopScoreDocCollector::collect(int32_t doc)
     {
         double score = ScorerPtr(_scorer)->score();
+        
+        // This collector cannot handle NaN
+        BOOST_ASSERT(!MiscUtils::isNaN(score));
+        
         ++totalHits;
         doc += docBase;
         if (score < pqTop->score || (score == pqTop->score && doc > pqTop->doc))

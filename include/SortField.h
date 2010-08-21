@@ -119,6 +119,9 @@ namespace Lucene
 		/// @return True if natural order should be reversed.
 		bool getReverse();
 		
+		/// Returns the {@link FieldComparatorSource} used for custom sorting
+		FieldComparatorSourcePtr getComparatorSource();
+		
 		virtual String toString();
 		
 		/// Returns true if other is equal to this.  If a {@link FieldComparatorSource} or {@link Parser} was provided, 

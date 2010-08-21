@@ -21,8 +21,8 @@ namespace Lucene
     String Constants::OS_NAME = L"BSD";
     #endif
     
-    String Constants::LUCENE_MAIN_VERSION = L"3.0";
-    String Constants::LUCENE_VERSION = L"3.0.0";
+    String Constants::LUCENE_MAIN_VERSION = L"3.0.1";
+    String Constants::LUCENE_VERSION = L"3.0.1";
     
     Constants::Constants()
     {

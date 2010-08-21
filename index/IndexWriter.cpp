@@ -164,6 +164,7 @@ namespace Lucene
         mergeScheduler = newLucene<ConcurrentMergeScheduler>();
         similarity = Similarity::getDefault();
         termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
+        commitLock  = newInstance<Synchronize>();
 
         if (!indexingChain)
             indexingChain = DocumentsWriter::getDefaultIndexingChain();
@@ -280,12 +281,13 @@ namespace Lucene
         // this method is called
         poolReaders = true;
         
-        flush(true, true, true);
+        flush(true, true, false);
         
         // Prevent segmentInfos from changing while opening the reader; in theory we could do similar retry logic,
         // just like we do when loading segments_N
         {
             SyncLock syncLock(this);
+            applyDeletes();
             return newLucene<ReadOnlyDirectoryReader>(shared_from_this(), segmentInfos, termInfosIndexDivisor);
         }
     }
@@ -2057,6 +2059,7 @@ namespace Lucene
     
     void IndexWriter::commit(int64_t sizeInBytes)
     {
+        SyncLock messageLock(commitLock);
         startCommit(sizeInBytes, MapStringString());
         finishCommit();
     }
@@ -2072,15 +2075,21 @@ namespace Lucene
         
         message(L"commit: start");
         
-        if (!pendingCommit)
         {
-            message(L"commit: now prepare");
-            prepareCommit(commitUserData);
+            SyncLock messageLock(commitLock);
+            
+            message(L"commit: enter lock");
+            
+            if (!pendingCommit)
+            {
+                message(L"commit: now prepare");
+                prepareCommit(commitUserData);
+            }
+            else 
+                message(L"commit: already prepared");
+            
+            finishCommit();
         }
-        else 
-            message(L"commit: already prepared");
-        
-        finishCommit();
     }
     
     void IndexWriter::finishCommit()
@@ -2290,10 +2299,7 @@ namespace Lucene
             }
             
             if (flushDeletes)
-            {
-                ++flushDeletesCount;
                 applyDeletes();
-            }
             
             if (flushDocs)
                 checkpoint();
@@ -3052,6 +3058,7 @@ namespace Lucene
         TestScope testScope(L"IndexWriter", L"applyDeletes");
         SyncLock syncLock(this);
         BOOST_ASSERT(testPoint(L"startApplyDeletes"));
+        ++flushDeletesCount;
         SegmentInfosPtr rollback(boost::dynamic_pointer_cast<SegmentInfos>(segmentInfos->clone()));
         bool success = false;
         bool changed = false;

@@ -241,6 +241,7 @@ namespace Lucene
                                        StringUtils::toString(DocumentsWriter::MAX_TERM_LENGTH) << L"), all of which were skipped.  " <<
                                        L"Please correct the analyzer to not produce such terms.  The prefix of the first immense " <<
                                        L"term is: '" << StringUtils::toString(docState->maxTermPrefix) << L"...'\n";
+            docState->maxTermPrefix.clear();
         }
         
         DocWriterPtr one(fieldsWriter->finishDocument());

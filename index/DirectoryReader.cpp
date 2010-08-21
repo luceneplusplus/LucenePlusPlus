@@ -831,20 +831,20 @@ namespace Lucene
         ioe.throwException();
     }
     
-    HashSet<String> DirectoryReader::getFieldNames(FieldOption fldOption)
+    HashSet<String> DirectoryReader::getFieldNames(FieldOption fieldOption)
     {
         ensureOpen();
-        return getFieldNames(fldOption, Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()));
+        return getFieldNames(fieldOption, Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()));
     }
     
-    HashSet<String> DirectoryReader::getFieldNames(FieldOption fldOption, Collection<IndexReaderPtr> subReaders)
+    HashSet<String> DirectoryReader::getFieldNames(FieldOption fieldOption, Collection<IndexReaderPtr> subReaders)
     {
         // maintain a unique set of field names
         HashSet<String> fieldSet(HashSet<String>::newInstance());
         
         for (Collection<IndexReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
         {
-            HashSet<String> names((*reader)->getFieldNames(fldOption));
+            HashSet<String> names((*reader)->getFieldNames(fieldOption));
             fieldSet.addAll(names.begin(), names.end());
         }
         return fieldSet;

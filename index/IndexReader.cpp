@@ -431,7 +431,13 @@ namespace Lucene
     
     int64_t IndexReader::getUniqueTermCount()
     {
-        boost::throw_exception(UnsupportedOperationException(L"this reader does not implement getUniqueTermCount()"));
+        boost::throw_exception(UnsupportedOperationException(L"This reader does not implement getUniqueTermCount()"));
+        return 0;
+    }
+    
+    int32_t IndexReader::getTermInfosIndexDivisor()
+    {
+        boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return 0;
     }
     

@@ -632,6 +632,14 @@
 			Name="index"
 			>
 			<File
+				RelativePath="..\index\AbstractAllTermDocs.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\AbstractAllTermDocs.h"
+				>
+			</File>
+			<File
 				RelativePath="..\index\AllTermDocs.cpp"
 				>
 			</File>
@@ -3192,6 +3200,14 @@
 				</File>
 				<File
 					RelativePath="..\include\ByteFieldSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\search\function\CustomScoreProvider.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\include\CustomScoreProvider.h"
 					>
 				</File>
 				<File

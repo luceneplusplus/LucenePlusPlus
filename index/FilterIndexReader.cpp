@@ -156,10 +156,10 @@ namespace Lucene
         in->close();
     }
     
-    HashSet<String> FilterIndexReader::getFieldNames(FieldOption fldOption)
+    HashSet<String> FilterIndexReader::getFieldNames(FieldOption fieldOption)
     {
         ensureOpen();
-        return in->getFieldNames(fldOption);
+        return in->getFieldNames(fieldOption);
     }
     
     int64_t FilterIndexReader::getVersion()

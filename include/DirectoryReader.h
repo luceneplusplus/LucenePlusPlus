@@ -145,9 +145,9 @@ namespace Lucene
 		
 		/// Get a list of unique field names that exist in this index and have the specified field 
 		/// option information.
-		virtual HashSet<String> getFieldNames(FieldOption fldOption);
+		virtual HashSet<String> getFieldNames(FieldOption fieldOption);
 		
-		static HashSet<String> getFieldNames(FieldOption fldOption, Collection<IndexReaderPtr> subReaders);
+		static HashSet<String> getFieldNames(FieldOption fieldOption, Collection<IndexReaderPtr> subReaders);
 		
 		/// Returns the sequential sub readers that this reader is logically composed of.
 		virtual Collection<IndexReaderPtr> getSequentialSubReaders();
@@ -155,7 +155,7 @@ namespace Lucene
 		/// Returns the directory this index resides in.
 		virtual DirectoryPtr directory();
 		
-		int32_t getTermInfosIndexDivisor();
+		virtual int32_t getTermInfosIndexDivisor();
 		
 		/// Return the IndexCommit that this reader has opened.
 		virtual IndexCommitPtr getIndexCommit();

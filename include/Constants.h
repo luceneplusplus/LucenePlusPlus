@@ -58,17 +58,25 @@ namespace Lucene
 			/// Match settings and bugs in Lucene's 2.9 release.
 			LUCENE_29,
 			
-			/// Match settings and bugs in Lucene's 3.0 release.
+			/// Match settings and bugs in Lucene's 3.0 release. 
+            ///
+            /// Use this to get the latest &amp; greatest settings, bug fixes, etc, for Lucene.
 			LUCENE_30,
 			
-			// Add new constants for later versions **here** to respect order!
-			
-			/// Use this to get the latest and greatest settings, bug fixes, etc, for Lucene.
-			///
-			/// WARNING: if you use this setting, and then upgrade to a newer release of Lucene, sizable changes
-			/// may happen.  If precise back compatibility is important then you should instead explicitly specify 
-			/// an actual version.
-			LUCENE_CURRENT
+            /// Add new constants for later versions **here** to respect order!
+
+            /// Warning: If you use this setting, and then upgrade to a newer release of Lucene, 
+            /// sizable changes may happen.  If backwards compatibility is important then you 
+            /// should instead explicitly specify an actual version.
+            ///
+            /// If you use this constant then you  may need to re-index all of your documents 
+            /// when upgrading Lucene, as the way text is indexed may have changed.  Additionally, 
+            /// you may need to re-test your entire application to ensure it behaves as 
+            /// expected, as some defaults may have changed and may break functionality in your 
+            /// application. 
+            ///
+            /// Deprecated: Use an actual version instead. 
+            LUCENE_CURRENT
 		};
 	
 	public:

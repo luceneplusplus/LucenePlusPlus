@@ -16,7 +16,10 @@ namespace Lucene
     double MaxPayloadFunction::currentScore(int32_t docId, const String& field, int32_t start, int32_t end,
                                                 int32_t numPayloadsSeen, double currentScore, double currentPayloadScore)
     {
-        return std::max(currentPayloadScore, currentScore);
+        if (numPayloadsSeen == 0)
+            return currentPayloadScore;
+        else
+            return std::max(currentPayloadScore, currentScore);
     }
     
     double MaxPayloadFunction::docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore)

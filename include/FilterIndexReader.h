@@ -54,7 +54,7 @@ namespace Lucene
 		virtual TermDocsPtr termDocs();
 		virtual TermDocsPtr termDocs(TermPtr term);
 		virtual TermPositionsPtr termPositions();
-		virtual HashSet<String> getFieldNames(FieldOption fldOption);
+		virtual HashSet<String> getFieldNames(FieldOption fieldOption);
 		virtual int64_t getVersion();
 		virtual bool isCurrent();
 		virtual bool isOptimized();

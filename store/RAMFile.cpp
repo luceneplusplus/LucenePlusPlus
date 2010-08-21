@@ -57,18 +57,19 @@ namespace Lucene
     
     ByteArray RAMFile::addBuffer(int32_t size)
     {
-        SyncLock syncLock(this);
         ByteArray buffer(newBuffer(size));
+        {
+            SyncLock syncLock(this);
+            buffers.add(buffer);
+            sizeInBytes += size;
+        }
+        
         RAMDirectoryPtr directory(_directory.lock());
         if (directory)
         {
             SyncLock dirLock(directory);
-            buffers.add(buffer);
             directory->_sizeInBytes += size;
-            sizeInBytes += size;
         }
-        else
-            buffers.add(buffer);
         return buffer;
     }
     
@@ -91,6 +92,7 @@ namespace Lucene
     
     int64_t RAMFile::getSizeInBytes()
     {
+        SyncLock syncLock(this);
         RAMDirectoryPtr directory(_directory.lock());
         SyncLock dirLock(directory);
         return sizeInBytes;

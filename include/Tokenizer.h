@@ -16,8 +16,6 @@ namespace Lucene
 	///
 	/// Note: Subclasses overriding {@link #incrementToken()} must call {@link AttributeSource#clearAttributes()} 
 	/// before setting attributes.
-	///
-	/// Subclasses overriding {@link #incrementToken()} must call {@link Token#clear()} before setting Token attributes.
 	class LPPAPI Tokenizer : public TokenStream
 	{
 	public:

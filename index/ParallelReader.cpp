@@ -412,13 +412,13 @@ namespace Lucene
         }
     }
     
-    HashSet<String> ParallelReader::getFieldNames(FieldOption fldOption)
+    HashSet<String> ParallelReader::getFieldNames(FieldOption fieldOption)
     {
         ensureOpen();
         HashSet<String> fieldSet(HashSet<String>::newInstance());
         for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
         {
-            HashSet<String> names((*reader)->getFieldNames(fldOption));
+            HashSet<String> names((*reader)->getFieldNames(fieldOption));
             fieldSet.addAll(names.begin(), names.end());
         }
         return fieldSet;

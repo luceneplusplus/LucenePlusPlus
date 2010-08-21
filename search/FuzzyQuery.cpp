@@ -95,29 +95,22 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            ScoreTermPtr bottomSt;
+            ScoreTermPtr st = newLucene<ScoreTerm>();
             do
             {
                 TermPtr t(enumerator->term());
                 if (!t)
                     break;
-                ScoreTermPtr st(newLucene<ScoreTerm>(t, enumerator->difference()));
-                if (stQueue->size() < maxSize)
-                {
-                    // record the current bottom item
-                    if (!bottomSt || st->compareTo(bottomSt) > 0)
-                        bottomSt = st;
-                    // add to PQ, as it is not yet filled up
-                    stQueue->add(st);
-                }
-                else
-                {
-                    BOOST_ASSERT(bottomSt);
-                    // only add to PQ, if the ScoreTerm is greater than the current bottom, as all entries 
-                    // will be enqueued after the current bottom and will never be visible
-                    if (st->compareTo(bottomSt) < 0)
-                        stQueue->add(st);
-                }
+                double score = enumerator->difference();
+                // ignore uncompetitive hits
+                if (stQueue->size() >= maxSize && score <= stQueue->top()->score)
+                    continue;
+                // add new entry in PQ
+                st->term = t;
+                st->score = score;
+                stQueue->add(st);
+                // possibly drop entries from queue
+                st = (stQueue->size() > maxSize) ? stQueue->pop() : newLucene<ScoreTerm>();
             }
             while (enumerator->next());
         }
@@ -129,7 +122,7 @@ namespace Lucene
         finally.throwException();
         
         BooleanQueryPtr query(newLucene<BooleanQuery>(true));
-        int32_t size = std::min(stQueue->size(), maxSize);
+        int32_t size = stQueue->size();
         for (int32_t i = 0; i < size; ++i)
         {
             ScoreTermPtr st(stQueue->pop());
@@ -196,12 +189,6 @@ namespace Lucene
         return true;
     }
     
-    ScoreTerm::ScoreTerm(TermPtr term, double score)
-    {
-        this->term = term;
-        this->score = score;
-    }
-    
     ScoreTerm::~ScoreTerm()
     {
     }
@@ -209,12 +196,9 @@ namespace Lucene
     int32_t ScoreTerm::compareTo(ScoreTermPtr other)
     {
         if (this->score == other->score)
-            return this->term->compareTo(other->term);
+            return other->term->compareTo(this->term);
         else
-        {
-            // inverse ordering
-            return other->score < this->score ? -1 : (other->score > this->score ? 1 : 0);
-        }
+            return this->score < other->score ? -1 : (this->score > other->score ? 1 : 0);
     }
     
     ScoreTermQueue::ScoreTermQueue(int32_t size) : PriorityQueue<ScoreTermPtr>(size)

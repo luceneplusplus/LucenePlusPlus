@@ -49,9 +49,6 @@ namespace Lucene
 		/// Returns the TermInfo for a Term in the set, or null.
 		TermInfoPtr get(TermPtr term);
 		
-		/// Returns the nth term in the set.
-		TermPtr get(int32_t position);
-		
 		/// Returns the position of a Term in the set or -1.
 		int64_t getPosition(TermPtr term);
 		
@@ -71,8 +68,6 @@ namespace Lucene
 		
 		/// Returns the TermInfo for a Term in the set, or null.
 		TermInfoPtr get(TermPtr term, bool useCache);
-		
-		TermPtr scanEnum(SegmentTermEnumPtr enumerator, int32_t position);
 		
 		void ensureIndexIsRead();
 	};

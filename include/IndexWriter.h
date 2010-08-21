@@ -189,6 +189,9 @@ namespace Lucene
 		
 		IndexReaderWarmerPtr mergedSegmentWarmer;
 		
+		/// Used only by commit; lock order is commitLock -> IW
+		SynchronizePtr commitLock;
+		
 	public:
 		/// Default value for the write lock timeout (1,000).
 		/// @see #setDefaultWriteLockTimeout
@@ -244,6 +247,8 @@ namespace Lucene
 		/// Note that this is functionally equivalent to calling {#commit} and then using {@link 
 		/// IndexReader#open} to open a new reader.  But the turnaround time of this method should be 
 		/// faster since it avoids the potentially costly {@link #commit}.
+		///
+		/// You must close the {@link IndexReader} returned by this method once you are done using it.
 		///
 		/// It's near real-time because there is no hard guarantee on how quickly you can get a new 
 		/// reader after making changes with IndexWriter.  You'll have to experiment in your situation 

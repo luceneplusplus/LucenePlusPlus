@@ -106,7 +106,7 @@ namespace Lucene
 		virtual int32_t maxDoc();
 		
 		/// Get a list of unique field names that exist in this index and have the specified field option information.
-		virtual HashSet<String> getFieldNames(FieldOption fldOption);
+		virtual HashSet<String> getFieldNames(FieldOption fieldOption);
 		
 		/// Returns true if there are norms stored for this field.
 		virtual bool hasNorms(const String& field);
@@ -172,7 +172,7 @@ namespace Lucene
 		static SegmentReaderPtr getOnlySegmentReader(DirectoryPtr dir);
 		static SegmentReaderPtr getOnlySegmentReader(IndexReaderPtr reader);
 		
-		int32_t getTermInfosIndexDivisor();
+		virtual int32_t getTermInfosIndexDivisor();
 			
 	protected:
 		void loadDeletedDocs();

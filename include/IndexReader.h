@@ -469,9 +469,9 @@ namespace Lucene
 		void close();
 		
 		/// Get a list of unique field names that exist in this index and have the specified field option information.
-		/// @param fldOption specifies which field option should be available for the returned fields
+		/// @param fieldOption specifies which field option should be available for the returned fields
 		/// @return Collection of Strings indicating the names of the fields.
-		virtual HashSet<String> getFieldNames(FieldOption fldOption) = 0;
+		virtual HashSet<String> getFieldNames(FieldOption fieldOption) = 0;
 		
 		/// Return the IndexCommit that this reader has opened.  This method is only implemented by those
 		/// readers that correspond to a Directory with its own segments_N file.
@@ -511,6 +511,10 @@ namespace Lucene
 		/// This method returns int64_t, even though internally Lucene cannot handle more than 2^31 unique 
 		/// terms, for a possible future when this limitation is removed.
 		virtual int64_t getUniqueTermCount();
+		
+		/// For IndexReader implementations that use TermInfosReader to read terms, this returns the current 
+		/// indexDivisor as specified when the reader was opened.
+		virtual int32_t getTermInfosIndexDivisor();
 	
 	protected:
 		void ensureOpen();

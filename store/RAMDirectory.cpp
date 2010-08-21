@@ -120,7 +120,7 @@ namespace Lucene
         MapStringRAMFile::iterator ramFile = fileMap.find(name);
         if (ramFile == fileMap.end())
             boost::throw_exception(FileNotFoundException(name));
-        _sizeInBytes -= ramFile->second->sizeInBytes; // updates to RAMFile::sizeInBytes synchronized on directory
+        _sizeInBytes -= ramFile->second->sizeInBytes;
         fileMap.remove(name);        
     }
     

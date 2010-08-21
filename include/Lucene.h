@@ -156,6 +156,7 @@ namespace Lucene
 	DECLARE_SHARED_PTR(SetBasedFieldSelector)
 
 	// index
+	DECLARE_SHARED_PTR(AbstractAllTermDocs)
 	DECLARE_SHARED_PTR(AllTermDocs)
 	DECLARE_SHARED_PTR(BufferedDeletes)
 	DECLARE_SHARED_PTR(ByteBlockAllocator)
@@ -379,10 +380,12 @@ namespace Lucene
 	DECLARE_SHARED_PTR(CountingConjunctionSumScorer)
 	DECLARE_SHARED_PTR(CountingDisjunctionSumScorer)
 	DECLARE_SHARED_PTR(CreationPlaceholder)
+	DECLARE_SHARED_PTR(CustomScoreProvider)
 	DECLARE_SHARED_PTR(CustomScoreQuery)
 	DECLARE_SHARED_PTR(CustomWeight)
 	DECLARE_SHARED_PTR(CustomScorer)
 	DECLARE_SHARED_PTR(DefaultByteParser)
+	DECLARE_SHARED_PTR(DefaultCustomScoreProvider)
 	DECLARE_SHARED_PTR(DefaultDoubleParser)
 	DECLARE_SHARED_PTR(DefaultIntParser)
 	DECLARE_SHARED_PTR(DefaultLongParser)
@@ -730,11 +733,8 @@ namespace Lucene
 	typedef HashSet< TermPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > SetTerm;
 	typedef HashSet< BooleanClausePtr, luceneHash<BooleanClausePtr>, luceneEquals<BooleanClausePtr> > SetBooleanClause;
 	typedef HashSet< ReaderFieldPtr, luceneHash<ReaderFieldPtr>, luceneEquals<ReaderFieldPtr> > SetReaderField;
-	
 	typedef HashSet<ByteArray> SetByteArray;
-	typedef Map<ThreadId, DocumentsWriterThreadStatePtr> MapThreadDocumentsWriterThreadState;
-	typedef Map<String, IndexReaderPtr> MapStringIndexReader;
-	
+		
 	typedef HashMap< String, String > MapStringString;
 	typedef HashMap< wchar_t, NormalizeCharMapPtr > MapCharNormalizeCharMap;
 	typedef HashMap< String, AnalyzerPtr > MapStringAnalyzer;
@@ -765,7 +765,6 @@ namespace Lucene
 	typedef HashMap< TermsHashConsumerPerThreadPtr, Collection<TermsHashConsumerPerFieldPtr>, luceneHash<TermsHashConsumerPerThreadPtr>, luceneEquals<TermsHashConsumerPerThreadPtr> > MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField;
 	typedef HashMap< FieldInfoPtr, Collection<NormsWriterPerFieldPtr>, luceneHash<FieldInfoPtr>, luceneEquals<FieldInfoPtr> > MapFieldInfoCollectionNormsWriterPerField;
 	typedef HashMap< IndexReaderPtr, HashSet<String>, luceneHash<IndexReaderPtr>, luceneEquals<IndexReaderPtr> > MapIndexReaderSetString;
-	typedef HashMap< TermPtr, NumPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > MapTermNum;
 	typedef HashMap< TermPtr, int32_t, luceneHash<TermPtr>, luceneEquals<TermPtr> > MapTermInt;
 	typedef HashMap< QueryPtr, int32_t, luceneHash<QueryPtr>, luceneEquals<QueryPtr> > MapQueryInt;
 	typedef HashMap< EntryPtr, LuceneObjectPtr, luceneHash<EntryPtr>, luceneEquals<EntryPtr> > MapEntryLuceneObject;
@@ -775,6 +774,10 @@ namespace Lucene
 	typedef WeakHashMap< IndexReaderWeakPtr, SpanFilterResultPtr, luceneWeakHash<IndexReaderWeakPtr>, luceneWeakEquals<IndexReaderWeakPtr> > WeakMapIndexReaderSpanFilterResult;
 	typedef WeakHashMap< IndexReaderWeakPtr, DocIdSetPtr, luceneWeakHash<IndexReaderWeakPtr>, luceneWeakEquals<IndexReaderWeakPtr> > WeakMapIndexReaderDocIdSet;
 	typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryLuceneObject, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryLuceneObject;
+	
+	typedef Map<ThreadId, DocumentsWriterThreadStatePtr> MapThreadDocumentsWriterThreadState;
+	typedef Map<String, IndexReaderPtr> MapStringIndexReader;
+	typedef Map<TermPtr, NumPtr, luceneCompare<TermPtr>> MapTermNum;
 	
 	typedef boost::function<bool (const TermVectorEntryPtr&, const TermVectorEntryPtr&)> TermVectorEntryComparator;
 	

@@ -85,7 +85,6 @@ namespace Lucene
     
     double FuzzyTermEnum::similarity(const String& target)
     {
-        SyncLock syncLock(this);
         int32_t m = target.length();
         int32_t n = text.length();
         if (n == 0)

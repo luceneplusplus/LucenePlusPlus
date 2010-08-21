@@ -68,7 +68,7 @@ namespace Lucene
 		/// Similarity returns a number that is 1.0f or less (including negative numbers) based on how similar the 
 		/// Term is compared to a target term.  It returns exactly 0.0 when
 		/// <pre>
-		/// editDistance < maximumEditDistance
+		/// editDistance > maximumEditDistance
 		/// </pre>
 		///
 		/// Otherwise it returns:

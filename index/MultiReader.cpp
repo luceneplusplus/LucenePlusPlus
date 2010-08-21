@@ -333,10 +333,10 @@ namespace Lucene
         }
     }
     
-    HashSet<String> MultiReader::getFieldNames(FieldOption fldOption)
+    HashSet<String> MultiReader::getFieldNames(FieldOption fieldOption)
     {
         ensureOpen();
-        return DirectoryReader::getFieldNames(fldOption, this->subReaders);
+        return DirectoryReader::getFieldNames(fieldOption, this->subReaders);
     }
     
     bool MultiReader::isCurrent()

@@ -18,7 +18,7 @@ namespace Lucene
 	class LPPAPI BufferedDeletes : public LuceneObject
 	{
 	public:
-		BufferedDeletes();
+		BufferedDeletes(bool doTermSort);
 		virtual ~BufferedDeletes();
 		
 		LUCENE_CLASS(BufferedDeletes);

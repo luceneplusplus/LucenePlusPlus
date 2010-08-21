@@ -10,8 +10,7 @@
 
 namespace Lucene
 {
-	/// Abstract base class providing a mechanism to use a subset of an index for restriction or permission of 
-	/// index search results.
+	/// Abstract base class for restricting which documents may be returned during searching.
 	class LPPAPI Filter : public LuceneObject
 	{
 	public:
@@ -19,8 +18,19 @@ namespace Lucene
 		LUCENE_CLASS(Filter);
 	
 	public:
-		/// @return a DocIdSet that provides the documents which should be permitted or prohibited in search results.
-		/// NOTE: null can be returned if no documents will be accepted by this Filter.
+		/// Creates a {@link DocIdSet} enumerating the documents that should be permitted in search results. 
+		///
+		/// Note: null can be returned if no documents are accepted by this Filter.
+		///
+		/// Note: This method will be called once per segment in the index during searching.  The returned 
+		/// {@link DocIdSet} must refer to document IDs for that segment, not for the top-level reader.
+		///
+		/// @param reader a {@link IndexReader} instance opened on the index currently searched on. Note, 
+		/// it is likely that the provided reader does not represent the whole underlying index ie. if the 
+		/// index has more than one segment the given reader only represents a single segment.
+		/// @return a DocIdSet that provides the documents which should be permitted or prohibited in search 
+		/// results. NOTE: null can be returned if no documents will be accepted by this Filter.
+		///
 		/// @see DocIdBitSet
 		virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader) = 0;
 	};

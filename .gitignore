@@ -7,7 +7,6 @@
 *.ncb
 *.idb 
 *.obj 
-*/*.obj
 *.opt 
 *.pch 
 *.pyc
@@ -20,12 +19,10 @@
 *.manifest
 *.user
 *.txt
-
 bin/*
 msvc/Debug
 msvc/Debug DLL
 msvc/Release
 msvc/Release DLL
-
 test/msvc/Debug
 test/msvc/Release

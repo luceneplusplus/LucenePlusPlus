@@ -10,8 +10,8 @@
 
 namespace Lucene
 {
-	/// Returned by low-level search implementations.
-	/// @see Searcher#search(QueryPtr, FilterPtr, int32_t)
+	/// Represents hits returned by {@link Searcher#search(QueryPtr, FilterPtr, int32_t)} and {@link
+	/// Searcher#search(QueryPtr, int32_t)}.
 	class LPPAPI TopDocs : public LuceneObject
 	{
 	public:

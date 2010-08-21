@@ -202,12 +202,16 @@ namespace Lucene
         BooleanQueryPtr otherQuery(boost::dynamic_pointer_cast<BooleanQuery>(other));
         if (!otherQuery)
             return false;
-        return (getBoost() == otherQuery->getBoost() && clauses.equals(otherQuery->clauses, luceneEquals<BooleanClausePtr>()) && getMinimumNumberShouldMatch() == otherQuery->getMinimumNumberShouldMatch());
+        return (getBoost() == otherQuery->getBoost() && 
+                clauses.equals(otherQuery->clauses, luceneEquals<BooleanClausePtr>()) && 
+                getMinimumNumberShouldMatch() == otherQuery->getMinimumNumberShouldMatch() &&
+                disableCoord == otherQuery->disableCoord);
     }
     
     int32_t BooleanQuery::hashCode()
     {
-        return MiscUtils::doubleToIntBits(getBoost()) ^ MiscUtils::hashCode(clauses.begin(), clauses.end(), MiscUtils::hashLucene<BooleanClausePtr>) + getMinimumNumberShouldMatch();
+        return MiscUtils::doubleToIntBits(getBoost()) ^ MiscUtils::hashCode(clauses.begin(), clauses.end(), MiscUtils::hashLucene<BooleanClausePtr>) + 
+               getMinimumNumberShouldMatch() + (disableCoord ? 17 : 0);
     }
     
     BooleanWeight::BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher)

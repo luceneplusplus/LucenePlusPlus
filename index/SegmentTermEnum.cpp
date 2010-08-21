@@ -135,7 +135,7 @@ namespace Lucene
         return cloneEnum;
     }
     
-    void SegmentTermEnum::seek(int64_t pointer, int32_t p, TermPtr t, TermInfoPtr ti)
+    void SegmentTermEnum::seek(int64_t pointer, int64_t p, TermPtr t, TermInfoPtr ti)
     {
         input->seek(pointer);
         position = p;

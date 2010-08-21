@@ -154,7 +154,7 @@ namespace Lucene
 		
 		/// Get a list of unique field names that exist in this index and have the specified field option 
 		/// information.
-		virtual HashSet<String> getFieldNames(FieldOption fldOption);
+		virtual HashSet<String> getFieldNames(FieldOption fieldOption);
 		
 	protected:
 		IndexReaderPtr doReopen(bool doClone);

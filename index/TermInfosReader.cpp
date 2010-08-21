@@ -133,7 +133,7 @@ namespace Lucene
     
     void TermInfosReader::seekEnum(SegmentTermEnumPtr enumerator, int32_t indexOffset)
     {
-        enumerator->seek(indexPointers[indexOffset], (indexOffset * totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
+        enumerator->seek(indexPointers[indexOffset], ((int64_t)indexOffset * (int64_t)totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
     }
     
     TermInfoPtr TermInfosReader::get(TermPtr term)
@@ -202,29 +202,6 @@ namespace Lucene
         else
             ti.reset();
         return ti;
-    }
-    
-    TermPtr TermInfosReader::get(int32_t position)
-    {
-        if (_size == 0)
-            return TermPtr();
-        
-        SegmentTermEnumPtr enumerator(getThreadResources()->termEnum);
-        if (enumerator->term() && position >= enumerator->position && position < (enumerator->position + totalIndexInterval))
-            return scanEnum(enumerator, position); // can avoid seek
-        
-        seekEnum(enumerator, position / totalIndexInterval); // must seek
-        return scanEnum(enumerator, position);
-    }
-    
-    TermPtr TermInfosReader::scanEnum(SegmentTermEnumPtr enumerator, int32_t position)
-    {
-        while (enumerator->position < position)
-        {
-            if (!enumerator->next())
-                return TermPtr();
-        }
-        return enumerator->term();
     }
     
     void TermInfosReader::ensureIndexIsRead()

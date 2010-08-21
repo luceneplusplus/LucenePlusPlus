@@ -174,6 +174,9 @@ namespace Lucene
 		int64_t numBytesAlloc;
 		int64_t numBytesUsed;
 		
+		// used only by assert
+        TermPtr lastDeleteTerm;
+		
 	public:
 		virtual void initialize();
 	
@@ -320,6 +323,9 @@ namespace Lucene
 		void waitReady(DocumentsWriterThreadStatePtr state);
 		
 		bool timeToFlushDeletes();
+		
+		// used only by assert
+        bool checkDeleteTerm(TermPtr term);
 		
 		bool applyDeletes(IndexReaderPtr reader, int32_t docIDStart);
 		void addDeleteTerm(TermPtr term, int32_t docCount);

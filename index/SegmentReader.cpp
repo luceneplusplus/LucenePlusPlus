@@ -451,34 +451,34 @@ namespace Lucene
         return si->docCount;
     }
     
-    HashSet<String> SegmentReader::getFieldNames(FieldOption fldOption)
+    HashSet<String> SegmentReader::getFieldNames(FieldOption fieldOption)
     {
         ensureOpen();
         HashSet<String> fieldSet(HashSet<String>::newInstance());
         for (int32_t i = 0; i < core->fieldInfos->size(); ++i)
         {
             FieldInfoPtr fi(core->fieldInfos->fieldInfo(i));
-            if (fldOption == FIELD_OPTION_ALL)
+            if (fieldOption == FIELD_OPTION_ALL)
                 fieldSet.add(fi->name);
-            else if (!fi->isIndexed && fldOption == FIELD_OPTION_UNINDEXED)
+            else if (!fi->isIndexed && fieldOption == FIELD_OPTION_UNINDEXED)
                 fieldSet.add(fi->name);
-            else if (fi->omitTermFreqAndPositions && fldOption == FIELD_OPTION_OMIT_TERM_FREQ_AND_POSITIONS)
+            else if (fi->omitTermFreqAndPositions && fieldOption == FIELD_OPTION_OMIT_TERM_FREQ_AND_POSITIONS)
                 fieldSet.add(fi->name);
-            else if (fi->storePayloads && fldOption == FIELD_OPTION_STORES_PAYLOADS)
+            else if (fi->storePayloads && fieldOption == FIELD_OPTION_STORES_PAYLOADS)
                 fieldSet.add(fi->name);
-            else if (fi->isIndexed && fldOption == FIELD_OPTION_INDEXED)
+            else if (fi->isIndexed && fieldOption == FIELD_OPTION_INDEXED)
                 fieldSet.add(fi->name);
-            else if (fi->isIndexed && !fi->storeTermVector && fldOption == FIELD_OPTION_INDEXED_NO_TERMVECTOR)
+            else if (fi->isIndexed && !fi->storeTermVector && fieldOption == FIELD_OPTION_INDEXED_NO_TERMVECTOR)
                 fieldSet.add(fi->name);
-            else if (fi->storeTermVector && !fi->storePositionWithTermVector && !fi->storeOffsetWithTermVector && fldOption == FIELD_OPTION_TERMVECTOR)
+            else if (fi->storeTermVector && !fi->storePositionWithTermVector && !fi->storeOffsetWithTermVector && fieldOption == FIELD_OPTION_TERMVECTOR)
                 fieldSet.add(fi->name);
-            else if (fi->isIndexed && fi->storeTermVector && fldOption == FIELD_OPTION_INDEXED_WITH_TERMVECTOR)
+            else if (fi->isIndexed && fi->storeTermVector && fieldOption == FIELD_OPTION_INDEXED_WITH_TERMVECTOR)
                 fieldSet.add(fi->name);
-            else if (fi->storePositionWithTermVector && !fi->storeOffsetWithTermVector && fldOption == FIELD_OPTION_TERMVECTOR_WITH_POSITION)
+            else if (fi->storePositionWithTermVector && !fi->storeOffsetWithTermVector && fieldOption == FIELD_OPTION_TERMVECTOR_WITH_POSITION)
                 fieldSet.add(fi->name);
-            else if (fi->storeOffsetWithTermVector && !fi->storePositionWithTermVector && fldOption == FIELD_OPTION_TERMVECTOR_WITH_OFFSET)
+            else if (fi->storeOffsetWithTermVector && !fi->storePositionWithTermVector && fieldOption == FIELD_OPTION_TERMVECTOR_WITH_OFFSET)
                 fieldSet.add(fi->name);
-            else if (fi->storeOffsetWithTermVector && fi->storePositionWithTermVector && fldOption == FIELD_OPTION_TERMVECTOR_WITH_POSITION_OFFSET)
+            else if (fi->storeOffsetWithTermVector && fi->storePositionWithTermVector && fieldOption == FIELD_OPTION_TERMVECTOR_WITH_POSITION_OFFSET)
                 fieldSet.add(fi->name);
         }
         return fieldSet;

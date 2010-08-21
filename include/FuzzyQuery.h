@@ -77,9 +77,7 @@ namespace Lucene
 	class LPPAPI ScoreTerm : public LuceneObject
 	{
 	public:
-		ScoreTerm(TermPtr term, double score);
 		virtual ~ScoreTerm();
-	
 		LUCENE_CLASS(ScoreTerm);
 	
 	public:

@@ -125,8 +125,8 @@ namespace Lucene
         bufferIsFull = false;
         aborting = false;		
         maxFieldLength = IndexWriter::DEFAULT_MAX_FIELD_LENGTH;
-        deletesInRAM = newLucene<BufferedDeletes>();
-        deletesFlushed = newLucene<BufferedDeletes>();
+        deletesInRAM = newLucene<BufferedDeletes>(false);
+        deletesFlushed = newLucene<BufferedDeletes>(true);
         maxBufferedDeleteTerms = IndexWriter::DEFAULT_MAX_BUFFERED_DELETE_TERMS;
         ramBufferSize = (int64_t)(IndexWriter::DEFAULT_RAM_BUFFER_SIZE_MB * 1024 * 1024);
         waitQueuePauseBytes = (int64_t)((double)ramBufferSize * 0.1);
@@ -872,6 +872,14 @@ namespace Lucene
         return ((bufferIsFull || deletesFull()) && setFlushPending());
     }
     
+    bool DocumentsWriter::checkDeleteTerm(TermPtr term)
+    {
+        if (term)
+            BOOST_ASSERT(!lastDeleteTerm || term->compareTo(lastDeleteTerm) > 0);
+        lastDeleteTerm = term;
+        return true;
+    }
+    
     void DocumentsWriter::setMaxBufferedDeleteTerms(int32_t maxBufferedDeleteTerms)
     {
         this->maxBufferedDeleteTerms = maxBufferedDeleteTerms;
@@ -940,6 +948,8 @@ namespace Lucene
         int32_t docEnd = docIDStart + reader->maxDoc();
         bool any = false;
         
+        BOOST_ASSERT(checkDeleteTerm(TermPtr()));
+        
         // Delete by term
         TermDocsPtr docs(reader->termDocs());
         LuceneException finally;
@@ -947,6 +957,8 @@ namespace Lucene
         {
             for (MapTermNum::iterator entry = deletesFlushed->terms.begin(); entry != deletesFlushed->terms.end(); ++entry)
             {
+                // we should be iterating a Map here, so terms better be in order
+                BOOST_ASSERT(checkDeleteTerm(entry->first));
                 docs->seek(entry->first);
                 int32_t limit = entry->second->getNum();
                 while (docs->next())

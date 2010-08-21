@@ -142,6 +142,11 @@ namespace Lucene
         return reverse;
     }
     
+    FieldComparatorSourcePtr SortField::getComparatorSource()
+    {
+        return comparatorSource;
+    }
+    
     String SortField::toString()
     {
         StringStream buffer;

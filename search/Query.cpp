@@ -55,6 +55,8 @@ namespace Lucene
         WeightPtr weight(query->createWeight(searcher));
         double sum = weight->sumOfSquaredWeights();
         double norm = getSimilarity(searcher)->queryNorm(sum);
+        if (MiscUtils::isInfinite(norm) || MiscUtils::isNaN(norm))
+            norm = 1.0;
         weight->normalize(norm);
         return weight;
     }

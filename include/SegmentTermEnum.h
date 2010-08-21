@@ -44,7 +44,7 @@ namespace Lucene
 	public:
 		virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
 	
-		void seek(int64_t pointer, int32_t p, TermPtr t, TermInfoPtr ti);
+		void seek(int64_t pointer, int64_t p, TermPtr t, TermInfoPtr ti);
 		
 		/// Increments the enumeration to the next element.  True if one exists.
 		virtual bool next();

@@ -9,6 +9,7 @@
 #include "Query.h"
 #include "Weight.h"
 #include "Scorer.h"
+#include "CustomScoreProvider.h"
 
 namespace Lucene
 {
@@ -18,7 +19,7 @@ namespace Lucene
 	/// <li>(optional) the score of its ValueSourceQuery (or queries).  For most simple/convenient use cases 
 	/// this query is likely to be a {@link FieldScoreQuery}
 	/// </ol>
-	/// Subclasses can modify the computation by overriding {@link #customScore(int32_t, double, double)}.
+	/// Subclasses can modify the computation by overriding {@link #getCustomScoreProvider}.
 	class LPPAPI CustomScoreQuery : public Query
 	{
 	public:
@@ -61,56 +62,42 @@ namespace Lucene
 		
 		/// Compute a custom score by the subQuery score and a number of ValueSourceQuery scores.
 		///
-		/// Subclasses can override this method to modify the custom score.
+		/// Deprecated: Will be removed in Lucene 3.1.
 		///
-		/// If your custom scoring is different than the default herein you should override at least one of the 
-		/// two customScore() methods.  If the number of ValueSourceQueries is always < 2 it is sufficient to 
-		/// override the other {@link #customScore(int32_t, double, double) customScore()} method, which is simpler. 
-		///
-		/// The default computation herein is a multiplication of given scores:
-		/// <pre>
-		/// ModifiedScore = valSrcScore * valSrcScores[0] * valSrcScores[1] * ...
-		/// </pre>
-		///
-		/// @param doc id of scored doc. 
-		/// @param subQueryScore score of that doc by the subQuery.
-		/// @param valSrcScores scores of that doc by the ValueSourceQuery.
-		/// @return custom score.
+		/// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
+		/// search (since Lucene 2.9).
+		/// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
+		/// for the given {@link IndexReader}.
 		virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
 		
 		/// Compute a custom score by the subQuery score and the ValueSourceQuery score.
 		///
-		/// Subclasses can override this method to modify the custom score.
+		/// Deprecated: Will be removed in Lucene 3.1.
 		///
-		/// If your custom scoring is different than the default herein you should override at least one of the 
-		/// two customScore() methods.  If the number of ValueSourceQueries is always < 2 it is sufficient to 
-		/// override this customScore() method, which is simpler. 
-		///
-		/// The default computation herein is a multiplication of the two scores:
-		/// <pre>
-		/// ModifiedScore = subQueryScore * valSrcScore
-		/// </pre>
-		///
-		/// @param doc id of scored doc. 
-		/// @param subQueryScore score of that doc by the subQuery.
-		/// @param valSrcScore score of that doc by the ValueSourceQuery.
-		/// @return custom score.
+		/// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
+		/// search (since Lucene 2.9).  
+		/// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
+		/// for the given {@link IndexReader}.
 		virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore);
 		
-		/// Explain the custom score.  Whenever overriding {@link #customScore(int32_t, double, Collection<double>)}, 
-		/// this method should also be overridden to provide the correct explanation for the part of the custom scoring.
-		/// @param doc doc being explained.
-		/// @param subQueryExpl explanation for the sub-query part.
-		/// @param valSrcExpls explanation for the value source part.
-		/// @return an explanation for the custom score
+		/// Explain the custom score.
+		///
+		/// Deprecated: Will be removed in Lucene 3.1.
+		///
+		/// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
+		/// search (since Lucene 2.9).
+		/// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
+		/// for the given {@link IndexReader}.
 		virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
 		
-		/// Explain the custom score.  Whenever overriding {@link #customScore(int32_t, double, double)}, 
-		/// this method should also be overridden to provide the correct explanation for the part of the custom scoring.
-		/// @param doc doc being explained.
-		/// @param subQueryExpl explanation for the sub-query part.
-		/// @param valSrcExpl explanation for the value source part.
-		/// @return an explanation for the custom score
+		/// Explain the custom score.
+		///
+		/// Deprecated Will be removed in Lucene 3.1.
+		///
+		/// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
+		/// search (since Lucene 2.9).
+		/// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
+		/// for the given {@link IndexReader}.
 		virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl);
 		
 		virtual WeightPtr createWeight(SearcherPtr searcher);
@@ -134,7 +121,32 @@ namespace Lucene
 	protected:
 		void ConstructQuery(QueryPtr subQuery, Collection<ValueSourceQueryPtr> valSrcQueries);
 		
+		/// Returns a {@link CustomScoreProvider} that calculates the custom scores for the given {@link 
+		/// IndexReader}.  The default implementation returns a default implementation as specified in 
+		/// the docs of {@link CustomScoreProvider}.
+		CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader);
+		
 		friend class CustomWeight;
+		friend class CustomScorer;
+	};
+	
+	// when deprecated methods are removed, do not extend class here, just return new default CustomScoreProvider
+	class LPPAPI DefaultCustomScoreProvider : public CustomScoreProvider
+	{
+	public:
+	    DefaultCustomScoreProvider(CustomScoreQueryPtr customQuery, IndexReaderPtr reader);
+		virtual ~DefaultCustomScoreProvider();
+	
+		LUCENE_CLASS(DefaultCustomScoreProvider);
+	
+	protected:
+	    CustomScoreQueryWeakPtr _customQuery;
+	
+	public:
+	    virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
+	    virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore);
+	    virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
+	    virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl);
 	};
 	
 	class LPPAPI CustomWeight : public Weight
@@ -174,12 +186,12 @@ namespace Lucene
 	
 		LUCENE_CLASS(CustomScorer);
 	
-	public:
-		CustomWeightPtr weight;
+	protected:
 		double qWeight;
 		ScorerPtr subQueryScorer;
 		Collection<ScorerPtr> valSrcScorers;
 		IndexReaderPtr reader;
+		CustomScoreProviderPtr provider;
 		Collection<double> vScores; // reused in score() to avoid allocating this array for each doc 
 		
 	public:

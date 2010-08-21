@@ -10,8 +10,9 @@
 
 namespace Lucene
 {
-    BufferedDeletes::BufferedDeletes()
+    BufferedDeletes::BufferedDeletes(bool doTermSort)
     {
+        // doTermSort not used: always use sorted term map
         terms = MapTermNum::newInstance();
         queries = MapQueryInt::newInstance();
         docIDs = Collection<int32_t>::newInstance();

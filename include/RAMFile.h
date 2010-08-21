@@ -23,7 +23,7 @@ namespace Lucene
 	public:
 		int64_t length;
 		RAMDirectoryWeakPtr _directory;
-		int64_t sizeInBytes; // Only maintained if in a directory; updates synchronized on directory
+		int64_t sizeInBytes;
 	
 	protected:
 		Collection<ByteArray> buffers;
@@ -44,7 +44,6 @@ namespace Lucene
 		ByteArray getBuffer(int32_t index);
 		int32_t numBuffers();
 		
-		/// Only valid if in a directory
 		int64_t getSizeInBytes();
 	
 	protected:
