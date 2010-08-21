@@ -22,7 +22,15 @@
 bin/*
 msvc/Debug
 msvc/Debug DLL
+msvc/Debug Static Lib
 msvc/Release
 msvc/Release DLL
+msvc/Release Static Lib
 test/msvc/Debug
 test/msvc/Release
+demo/deletefiles/msvc/Release
+demo/deletefiles/msvc/Debug
+demo/indexfiles/msvc/Release
+demo/indexfiles/msvc/Debug
+demo/searchfiles/msvc/Release
+demo/searchfiles/msvc/Debug
