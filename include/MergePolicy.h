@@ -92,6 +92,7 @@ namespace Lucene
 		int32_t maxNumSegmentsOptimize; // used by IndexWriter
 		Collection<SegmentReaderPtr> readers; // used by IndexWriter
 		Collection<SegmentReaderPtr> readersClone; // used by IndexWriter
+		HashSet<String> mergeFiles; // used by IndexWriter
 		
 		SegmentInfosPtr segments;
 		bool useCompoundFile;

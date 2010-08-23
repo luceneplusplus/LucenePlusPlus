@@ -76,10 +76,7 @@ namespace Lucene
         if (preUTF8Strings)
             return readModifiedUTF8String();
         int32_t length = readVInt();
-        if (!bytes)
-            bytes = ByteArray::newInstance((int32_t)((double)length * 1.25));
-        if (length > bytes.length())
-            bytes.resize((int32_t)((double)length * 1.25));
+        ByteArray bytes(ByteArray::newInstance(length));
         readBytes(bytes.get(), 0, length);
         return StringUtils::toUnicode(bytes.get(), length);
     }
@@ -87,10 +84,7 @@ namespace Lucene
     String IndexInput::readModifiedUTF8String()
     {
         int32_t length = readVInt();
-        if (!chars)
-            chars = CharArray::newInstance(length);
-        if (length > chars.length())
-            chars.resize(length);
+        CharArray chars(CharArray::newInstance(length));
         readChars(chars.get(), 0, length);
         return String(chars.get(), length);
     }
@@ -151,8 +145,6 @@ namespace Lucene
     {
         IndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<IndexInput>(LuceneObject::clone(other)));
         cloneIndexInput->preUTF8Strings = preUTF8Strings;
-        cloneIndexInput->bytes.reset();
-        cloneIndexInput->chars.reset();
         return cloneIndexInput;
     }
 }

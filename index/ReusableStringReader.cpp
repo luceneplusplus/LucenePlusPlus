@@ -36,7 +36,10 @@ namespace Lucene
             return length;
         }
         else if (left == 0)
+        {
+            s.clear();
             return -1;
+        }
         else
         {
             MiscUtils::arrayCopy(s.begin(), upto, buffer, offset, left);

@@ -27,6 +27,7 @@ namespace Lucene
 	public:
 		virtual void initialize();
 		virtual void purgeAllCaches();
+		virtual void purge(IndexReaderPtr r);
 		virtual Collection<FieldCacheEntryPtr> getCacheEntries();
 		
 		virtual Collection<uint8_t> getBytes(IndexReaderPtr reader, const String& field);
@@ -86,6 +87,9 @@ namespace Lucene
 		virtual LuceneObjectPtr createValue(IndexReaderPtr reader, EntryPtr key) = 0;
 	
 	public:
+	    /// Remove this reader from the cache, if present.
+	    virtual void purge(IndexReaderPtr r);
+	    
 		virtual LuceneObjectPtr get(IndexReaderPtr reader, EntryPtr key);
 		virtual void printNewInsanity(InfoStreamPtr infoStream, LuceneObjectPtr value);
 	};

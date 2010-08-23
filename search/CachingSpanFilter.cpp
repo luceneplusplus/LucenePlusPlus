@@ -11,10 +11,14 @@
 
 namespace Lucene
 {
-    CachingSpanFilter::CachingSpanFilter(SpanFilterPtr filter)
+    CachingSpanFilter::CachingSpanFilter(SpanFilterPtr filter, CachingWrapperFilter::DeletesMode deletesMode)
     {
         this->filter = filter;
-        this->lock = newInstance<Synchronize>();
+        if (deletesMode == CachingWrapperFilter::DELETES_DYNAMIC)
+            boost::throw_exception(IllegalArgumentException(L"DeletesMode::DYNAMIC is not supported"));
+        this->cache = newLucene<FilterCacheSpanFilterResult>(deletesMode);
+        this->hitCount = 0;
+        this->missCount = 0;
     }
     
     CachingSpanFilter::~CachingSpanFilter()
@@ -29,20 +33,20 @@ namespace Lucene
     
     SpanFilterResultPtr CachingSpanFilter::getCachedResult(IndexReaderPtr reader)
     {
+        LuceneObjectPtr coreKey = reader->getFieldCacheKey();
+        LuceneObjectPtr delCoreKey = reader->hasDeletions() ? reader->getDeletesCacheKey() : coreKey;
+        
+        SpanFilterResultPtr result(boost::dynamic_pointer_cast<SpanFilterResult>(cache->get(reader, coreKey, delCoreKey)));
+        if (result)
         {
-            SyncLock syncLock(lock);
-            if (!cache)
-                cache = WeakMapIndexReaderSpanFilterResult::newInstance();
-            SpanFilterResultPtr cached(cache.get(reader));
-            if (cached)
-                return cached;
+            ++hitCount;
+            return result;
         }
         
-        SpanFilterResultPtr result(filter->bitSpans(reader));
-        {
-            SyncLock syncLock(lock);
-            cache.put(reader, result);
-        }
+        ++missCount;
+        result = filter->bitSpans(reader);
+        
+        cache->put(coreKey, delCoreKey, result);
         
         return result;
     }
@@ -72,5 +76,19 @@ namespace Lucene
     int32_t CachingSpanFilter::hashCode()
     {
         return filter->hashCode() ^ 0x1117bf25;
+    }
+    
+    FilterCacheSpanFilterResult::FilterCacheSpanFilterResult(CachingWrapperFilter::DeletesMode deletesMode) : FilterCache(deletesMode)
+    {
+    }
+    
+    FilterCacheSpanFilterResult::~FilterCacheSpanFilterResult()
+    {
+    }
+    
+    LuceneObjectPtr FilterCacheSpanFilterResult::mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value)
+    {
+        boost::throw_exception(IllegalStateException(L"DeletesMode::DYNAMIC is not supported"));
+        return LuceneObjectPtr();
     }
 }

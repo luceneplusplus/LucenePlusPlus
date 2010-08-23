@@ -86,5 +86,7 @@ namespace Lucene
 		
 		/// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
 		virtual MapStringString getUserData();
+		
+		virtual bool isOptimized();
 	};
 }

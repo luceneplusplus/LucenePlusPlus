@@ -93,8 +93,6 @@ namespace Lucene
     int64_t RAMFile::getSizeInBytes()
     {
         SyncLock syncLock(this);
-        RAMDirectoryPtr directory(_directory.lock());
-        SyncLock dirLock(directory);
         return sizeInBytes;
     }
 }

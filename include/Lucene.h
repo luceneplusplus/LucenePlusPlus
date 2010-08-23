@@ -270,6 +270,7 @@ namespace Lucene
 	DECLARE_SHARED_PTR(ParallelTermDocs)
 	DECLARE_SHARED_PTR(ParallelTermPositions)
 	DECLARE_SHARED_PTR(Payload)
+	DECLARE_SHARED_PTR(PerDocBuffer)
 	DECLARE_SHARED_PTR(PositionBasedTermVectorMapper)
 	DECLARE_SHARED_PTR(RawPostingList)
 	DECLARE_SHARED_PTR(ReaderCommit)
@@ -432,6 +433,7 @@ namespace Lucene
 	DECLARE_SHARED_PTR(FieldValueHitQueue)
 	DECLARE_SHARED_PTR(FieldValueHitQueueEntry)
 	DECLARE_SHARED_PTR(Filter)
+	DECLARE_SHARED_PTR(FilterCache)
 	DECLARE_SHARED_PTR(FilterCleaner)
 	DECLARE_SHARED_PTR(FilteredDocIdSet)
 	DECLARE_SHARED_PTR(FilteredDocIdSetIterator)
@@ -771,8 +773,7 @@ namespace Lucene
 	typedef HashMap< PhrasePositionsPtr, LuceneObjectPtr, luceneHash<PhrasePositionsPtr>, luceneEquals<PhrasePositionsPtr> > MapPhrasePositionsLuceneObject;
 	typedef HashMap< ReaderFieldPtr, SetReaderField, luceneHash<ReaderFieldPtr>, luceneEquals<ReaderFieldPtr> > MapReaderFieldSetReaderField;
 	
-	typedef WeakHashMap< IndexReaderWeakPtr, SpanFilterResultPtr, luceneWeakHash<IndexReaderWeakPtr>, luceneWeakEquals<IndexReaderWeakPtr> > WeakMapIndexReaderSpanFilterResult;
-	typedef WeakHashMap< IndexReaderWeakPtr, DocIdSetPtr, luceneWeakHash<IndexReaderWeakPtr>, luceneWeakEquals<IndexReaderWeakPtr> > WeakMapIndexReaderDocIdSet;
+	typedef WeakHashMap< LuceneObjectWeakPtr, LuceneObjectPtr, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapObjectObject;
 	typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryLuceneObject, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryLuceneObject;
 	
 	typedef Map< ThreadId, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;

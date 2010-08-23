@@ -204,8 +204,7 @@ namespace Lucene
                 tvd->writeVLong(pos - lastPos);
                 lastPos = pos;
             }
-            perDoc->tvf->writeTo(tvf);
-            perDoc->tvf->reset();
+            perDoc->perDocTvf->writeTo(tvf);
             perDoc->numVectorFields = 0;		
         }
         
@@ -213,6 +212,7 @@ namespace Lucene
         
         ++lastDocID;
         
+        perDoc->reset();
         free(perDoc);
         BOOST_ASSERT(IndexWriterPtr(docWriter->_writer)->testPoint(L"TermVectorsTermsWriter.finishDocument end"));
     }
@@ -276,7 +276,8 @@ namespace Lucene
     TermVectorsTermsWriterPerDoc::TermVectorsTermsWriterPerDoc(TermVectorsTermsWriterPtr termsWriter)
     {
         this->_termsWriter = termsWriter;
-        tvf = newLucene<RAMOutputStream>();
+        buffer = DocumentsWriterPtr(termsWriter->_docWriter)->newPerDocBuffer();
+        perDocTvf = newLucene<RAMOutputStream>(buffer);
         numVectorFields = 0;
         fieldNumbers = Collection<int32_t>::newInstance(1);
         fieldPointers = Collection<int64_t>::newInstance(1);
@@ -288,7 +289,8 @@ namespace Lucene
     
     void TermVectorsTermsWriterPerDoc::reset()
     {
-        tvf->reset();
+        perDocTvf->reset();
+        buffer->recycle();
         numVectorFields = 0;
     }
     
@@ -306,13 +308,13 @@ namespace Lucene
             fieldPointers.resize(MiscUtils::getNextSize(fieldPointers.size()));
         }
         fieldNumbers[numVectorFields] = fieldNumber;
-        fieldPointers[numVectorFields] = tvf->getFilePointer();
+        fieldPointers[numVectorFields] = perDocTvf->getFilePointer();
         ++numVectorFields;
     }
     
     int64_t TermVectorsTermsWriterPerDoc::sizeInBytes()
     {
-        return tvf->sizeInBytes();
+        return buffer->getSizeInBytes();
     }
     
     void TermVectorsTermsWriterPerDoc::finish()

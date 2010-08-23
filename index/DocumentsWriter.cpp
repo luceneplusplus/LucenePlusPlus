@@ -95,6 +95,8 @@ namespace Lucene
 	const int32_t DocumentsWriter::INT_BLOCK_SHIFT = 13;
 	const int32_t DocumentsWriter::INT_BLOCK_SIZE = 1 << DocumentsWriter::INT_BLOCK_SHIFT;
 	const int32_t DocumentsWriter::INT_BLOCK_MASK = DocumentsWriter::INT_BLOCK_SIZE - 1;
+	
+	const int32_t DocumentsWriter::PER_DOC_BLOCK_SIZE = 1024;
     
     DocumentsWriter::DocumentsWriter(DirectoryPtr directory, IndexWriterPtr writer, IndexingChainPtr indexingChain)
     {
@@ -140,7 +142,8 @@ namespace Lucene
         skipDocWriter = newLucene<SkipDocWriter>();
         numBytesAlloc = 0;
         numBytesUsed = 0;
-        byteBlockAllocator = newLucene<ByteBlockAllocator>(shared_from_this());
+        byteBlockAllocator = newLucene<ByteBlockAllocator>(shared_from_this(), BYTE_BLOCK_SIZE);
+        perDocAllocator = newLucene<ByteBlockAllocator>(shared_from_this(), PER_DOC_BLOCK_SIZE);
         
         IndexWriterPtr writer(_writer);
         this->similarity = writer->getSimilarity();
@@ -148,6 +151,11 @@ namespace Lucene
         
         consumer = indexingChain->getChain(shared_from_this());
         docFieldProcessor = boost::dynamic_pointer_cast<DocFieldProcessor>(consumer);
+    }
+    
+    PerDocBufferPtr DocumentsWriter::newPerDocBuffer()
+    {
+        return newLucene<PerDocBuffer>(shared_from_this());
     }
     
     IndexingChainPtr DocumentsWriter::getDefaultIndexingChain()
@@ -713,10 +721,21 @@ namespace Lucene
         try
         {
             // This call is not synchronized and does all the work
-            DocWriterPtr perDoc(state->consumer->processDocument());
+            DocWriterPtr perDoc;
+            try
+            {
+                perDoc = state->consumer->processDocument();
+            }
+            catch (LuceneException& e)
+            {
+                finally = e;
+            }
+            docState->clear();
+            finally.throwException();
             
             // This call is synchronized but fast
             finishDocument(state, perDoc);
+            
             success = true;
         }
         catch (LuceneException& e)
@@ -1142,7 +1161,6 @@ namespace Lucene
     {
         SyncLock syncLock(this);
         numBytesAlloc += numBytes;
-        BOOST_ASSERT(numBytesUsed <= numBytesAlloc);
     }
     
     void DocumentsWriter::bytesUsed(int64_t numBytes)
@@ -1156,7 +1174,10 @@ namespace Lucene
     {
         SyncLock syncLock(this);
         for (int32_t i = start; i < end; ++i)
+        {
             freeIntBlocks.add(blocks[i]);
+            blocks[i].reset();
+        }
     }
     
     CharArray DocumentsWriter::getCharBlock()
@@ -1182,7 +1203,10 @@ namespace Lucene
     {
         SyncLock syncLock(this);
         for (int32_t i = 0; i < numBlocks; ++i)
+        {
             freeCharBlocks.add(blocks[i]);
+            blocks[i].reset();
+        }
     }
     
     String DocumentsWriter::toMB(int64_t v)
@@ -1207,6 +1231,7 @@ namespace Lucene
                         L" deletesMB=" + toMB(deletesRAMUsed) +
                         L" vs trigger=" + toMB(freeTrigger) +
                         L" byteBlockFree=" + toMB(byteBlockAllocator->freeByteBlocks.size() * BYTE_BLOCK_SIZE) +
+                        L" perDocFree=" + toMB(perDocAllocator->freeByteBlocks.size() * PER_DOC_BLOCK_SIZE) +
                         L" charBlockFree=" + toMB(freeCharBlocks.size() * CHAR_BLOCK_SIZE * CHAR_NUM_BYTE));
             }
             
@@ -1222,11 +1247,12 @@ namespace Lucene
             {
                 {
                     SyncLock syncLock(this);
-                    if (byteBlockAllocator->freeByteBlocks.empty() && freeCharBlocks.empty() && freeIntBlocks.empty() && !any)
+                    if (perDocAllocator->freeByteBlocks.empty() && byteBlockAllocator->freeByteBlocks.empty() && 
+                        freeCharBlocks.empty() && freeIntBlocks.empty() && !any)
                     {
                         // Nothing else to free -- must flush now.
                         bufferIsFull = (numBytesUsed + deletesRAMUsed > flushTrigger);
-                        if (numBytesUsed > flushTrigger)
+                        if (bufferIsFull)
                             message(L"    nothing to free; now set bufferIsFull");
                         else
                             message(L"    nothing to free");
@@ -1234,26 +1260,38 @@ namespace Lucene
                         break;
                     }
                     
-                    if ((iter % 4) == 0 && !byteBlockAllocator->freeByteBlocks.empty())
+                    if ((iter % 5) == 0 && !byteBlockAllocator->freeByteBlocks.empty())
                     {
                         byteBlockAllocator->freeByteBlocks.removeLast();
                         numBytesAlloc -= BYTE_BLOCK_SIZE;
                     }
                     
-                    if ((iter % 4) == 1 && !freeCharBlocks.empty())
+                    if ((iter % 5) == 1 && !freeCharBlocks.empty())
                     {
                         freeCharBlocks.removeLast();
                         numBytesAlloc -= CHAR_BLOCK_SIZE * CHAR_NUM_BYTE;
                     }
                     
-                    if ((iter % 4) == 2 && !freeIntBlocks.empty())
+                    if ((iter % 5) == 2 && !freeIntBlocks.empty())
                     {
                         freeIntBlocks.removeLast();
                         numBytesAlloc -= INT_BLOCK_SIZE * INT_NUM_BYTE;
                     }
+                    
+                    if ((iter % 5) == 3 && !perDocAllocator->freeByteBlocks.empty())
+                    {
+                        // Remove upwards of 32 blocks (each block is 1K)
+                        for (int32_t i = 0; i < 32; ++i)
+                        {
+                            perDocAllocator->freeByteBlocks.removeLast();
+                            numBytesAlloc -= PER_DOC_BLOCK_SIZE;
+                            if (perDocAllocator->freeByteBlocks.empty())
+                                break;
+                        }
+                    }
                 }
                 
-                if ((iter % 4) == 3 && any)
+                if ((iter % 5) == 4 && any)
                 {
                     // Ask consumer to free any recycled state
                     any = consumer->freeRAM();
@@ -1295,6 +1333,44 @@ namespace Lucene
     bool DocState::testPoint(const String& name)
     {
         return IndexWriterPtr(DocumentsWriterPtr(_docWriter)->_writer)->testPoint(name);
+    }
+    
+    void DocState::clear()
+    {
+        // don't hold onto doc nor analyzer, in case it is large
+        doc.reset();
+        analyzer.reset();
+    }
+    
+    PerDocBuffer::PerDocBuffer(DocumentsWriterPtr docWriter)
+    {
+        _docWriter = docWriter;
+    }
+    
+    PerDocBuffer::~PerDocBuffer()
+    {
+    }
+    
+    ByteArray PerDocBuffer::newBuffer(int32_t size)
+    {
+        BOOST_ASSERT(size == DocumentsWriter::PER_DOC_BLOCK_SIZE);
+        return DocumentsWriterPtr(_docWriter)->perDocAllocator->getByteBlock(false);
+    }
+    
+    void PerDocBuffer::recycle()
+    {
+        SyncLock syncLock(this);
+        if (!buffers.empty())
+        {
+            setLength(0);
+
+            // Recycle the blocks
+            DocumentsWriterPtr(_docWriter)->perDocAllocator->recycleByteBlocks(buffers);
+            buffers.clear();
+            sizeInBytes = 0;
+
+            BOOST_ASSERT(numBuffers() == 0);
+        }
     }
     
     DocWriter::DocWriter()
@@ -1484,8 +1560,9 @@ namespace Lucene
         return doPause();
     }
     
-    ByteBlockAllocator::ByteBlockAllocator(DocumentsWriterPtr docWriter)
+    ByteBlockAllocator::ByteBlockAllocator(DocumentsWriterPtr docWriter, int32_t blockSize)
     {
+        this->blockSize = blockSize;
         this->freeByteBlocks = Collection<ByteArray>::newInstance();
         this->_docWriter = docWriter;
     }
@@ -1504,14 +1581,14 @@ namespace Lucene
         {
             // Always record a block allocated, even if trackAllocations is false.  This is necessary because this block will 
             // be shared between things that don't track allocations (term vectors) and things that do (freq/prox postings).
-            docWriter->numBytesAlloc += DocumentsWriter::BYTE_BLOCK_SIZE;
-            b = ByteArray::newInstance(DocumentsWriter::BYTE_BLOCK_SIZE);
+            docWriter->numBytesAlloc += blockSize;
+            b = ByteArray::newInstance(blockSize);
             MiscUtils::arrayFill(b.get(), 0, b.length(), 0);
         }
         else
             b = freeByteBlocks.removeLast();
         if (trackAllocations)
-            docWriter->numBytesUsed += DocumentsWriter::BYTE_BLOCK_SIZE;
+            docWriter->numBytesUsed += blockSize;
         BOOST_ASSERT(docWriter->numBytesUsed <= docWriter->numBytesAlloc);
         return b;
     }
@@ -1521,6 +1598,18 @@ namespace Lucene
         DocumentsWriterPtr docWriter(_docWriter);
         SyncLock syncLock(docWriter);
         for (int32_t i = start; i < end; ++i)
+        {
+            freeByteBlocks.add(blocks[i]);
+            blocks[i].reset();
+        }
+    }
+    
+    void ByteBlockAllocator::recycleByteBlocks(Collection<ByteArray> blocks)
+    {
+        DocumentsWriterPtr docWriter(_docWriter);
+        SyncLock syncLock(docWriter);
+        int32_t size = blocks.size();
+        for (int32_t i = 0; i < size; ++i)
             freeByteBlocks.add(blocks[i]);
     }
 }

@@ -8,6 +8,7 @@
 #include "MultiReader.h"
 #include "DirectoryReader.h"
 #include "DefaultSimilarity.h"
+#include "FieldCache.h"
 
 namespace Lucene
 {
@@ -165,8 +166,9 @@ namespace Lucene
     
     int32_t MultiReader::numDocs()
     {
-        SyncLock syncLock(this);
         // Don't call ensureOpen() here (it could affect performance)
+        
+        // NOTE: multiple threads may wind up init'ing numDocs... but that's harmless
         if (_numDocs == -1)
         {
             // check cache
@@ -331,6 +333,10 @@ namespace Lucene
             else
                 subReaders[i]->close();
         }
+        
+        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
+        // generally not a good idea)
+        FieldCache::DEFAULT()->purge(shared_from_this());
     }
     
     HashSet<String> MultiReader::getFieldNames(FieldOption fieldOption)

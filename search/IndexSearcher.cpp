@@ -103,7 +103,7 @@ namespace Lucene
     {
         if (n <= 0)
             boost::throw_exception(IllegalArgumentException(L"n must be > 0"));
-        TopScoreDocCollectorPtr collector(TopScoreDocCollector::create(n, !weight->scoresDocsOutOfOrder()));
+        TopScoreDocCollectorPtr collector(TopScoreDocCollector::create(std::min(n, reader->maxDoc()), !weight->scoresDocsOutOfOrder()));
         search(weight, filter, collector);
         return collector->topDocs();
     }
@@ -115,7 +115,7 @@ namespace Lucene
     
     TopFieldDocsPtr IndexSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort, bool fillFields)
     {
-        TopFieldCollectorPtr collector(TopFieldCollector::create(sort, n, fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight->scoresDocsOutOfOrder()));
+        TopFieldCollectorPtr collector(TopFieldCollector::create(sort, std::min(n, reader->maxDoc()), fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight->scoresDocsOutOfOrder()));
         search(weight, filter, collector);
         return boost::dynamic_pointer_cast<TopFieldDocs>(collector->topDocs());
     }

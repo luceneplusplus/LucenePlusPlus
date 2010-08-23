@@ -506,6 +506,9 @@ namespace Lucene
 		
 		virtual LuceneObjectPtr getFieldCacheKey();
 		
+		/// This returns null if the reader has no deletions.
+		virtual LuceneObjectPtr getDeletesCacheKey();
+		
 		/// Returns the number of unique terms (across all fields) in this reader.
 		///
 		/// This method returns int64_t, even though internally Lucene cannot handle more than 2^31 unique 
@@ -540,7 +543,7 @@ namespace Lucene
 		/// the index (transactional semantics).
 		void commit();
 		
-		/// Implements commit.  NOTE: subclasses should override this.
+		/// Implements commit.
 		virtual void doCommit(MapStringString commitUserData) = 0;
 		
 		/// Implements close.

@@ -35,6 +35,8 @@ namespace Lucene
     IndexCommitPtr SnapshotDeletionPolicy::snapshot()
     {
         SyncLock syncLock(this);
+        if (!lastCommit)
+            boost::throw_exception(IllegalStateException(L"no index commits to snapshot"));
         if (_snapshot.empty())
             _snapshot = lastCommit->getSegmentsFileName();
         else
@@ -111,5 +113,10 @@ namespace Lucene
     MapStringString MyCommitPoint::getUserData()
     {
         return cp->getUserData();
+    }
+    
+    bool MyCommitPoint::isOptimized()
+    {
+        return cp->isOptimized();
     }
 }

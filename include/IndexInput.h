@@ -23,8 +23,6 @@ namespace Lucene
 		
 	protected:
 		bool preUTF8Strings; // true if we are reading old (modified UTF8) string format
-		ByteArray bytes; // used by readString()
-		CharArray chars; // used by readModifiedUTF8String()
 		
 	public:
 		/// Reads and returns a single byte.

@@ -59,7 +59,15 @@ namespace Lucene
 		virtual bool isCurrent();
 		virtual bool isOptimized();
 		virtual Collection<IndexReaderPtr> getSequentialSubReaders();
-	
+		
+		/// If the subclass of FilteredIndexReader modifies the contents of the FieldCache, you must 
+		/// override this method to provide a different key
+	    virtual LuceneObjectPtr getFieldCacheKey();
+	    
+	    /// If the subclass of FilteredIndexReader modifies the deleted docs, you must override this 
+	    /// method to provide a different key
+	    virtual LuceneObjectPtr getDeletesCacheKey();
+	    
 	protected:
 		virtual void doUndeleteAll();
 		virtual void doSetNorm(int32_t doc, const String& field, uint8_t value);

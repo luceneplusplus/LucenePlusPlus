@@ -39,6 +39,12 @@ namespace Lucene
         initialize();
     }
     
+    void FieldCacheImpl::purge(IndexReaderPtr r)
+    {
+        for (MapStringCache::iterator cache = caches.begin(); cache != caches.end(); ++cache)
+            cache->second->purge(r);
+    }
+    
     Collection<FieldCacheEntryPtr> FieldCacheImpl::getCacheEntries()
     {
         Collection<FieldCacheEntryPtr> result(Collection<FieldCacheEntryPtr>::newInstance());
@@ -164,6 +170,13 @@ namespace Lucene
     
     Cache::~Cache()
     {
+    }
+    
+    void Cache::purge(IndexReaderPtr r)
+    {
+        LuceneObjectPtr readerKey(r->getFieldCacheKey());
+        SyncLock cacheLock(&readerCache);
+        readerCache.remove(readerKey);
     }
     
     LuceneObjectPtr Cache::get(IndexReaderPtr reader, EntryPtr key)
@@ -538,12 +551,6 @@ namespace Lucene
                     break;
                 
                 // store term text
-                // we expect that there is at most one term per document
-                if (t >= mterms.size())
-                {
-                    boost::throw_exception(RuntimeException(L"There are more terms than documents in field\"" +
-                                                            field + L"\", but it's impossible to sort on tokenized fields"));
-                }
                 mterms[t] = term->text();
                 
                 termDocs->seek(termEnum);

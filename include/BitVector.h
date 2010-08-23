@@ -59,6 +59,9 @@ namespace Lucene
 		/// is done for repeated calls.
 		int32_t count();
 		
+		/// For testing
+		int32_t getRecomputedCount();
+		
 		/// Writes this vector to the file name in Directory d, in a format that can 
 		/// be read by the constructor {@link #BitVector(DirectoryPtr, const String&)}.
 		void write(DirectoryPtr d, const String& name);

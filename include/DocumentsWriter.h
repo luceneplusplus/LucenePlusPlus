@@ -7,6 +7,7 @@
 #pragma once
 
 #include "ByteBlockPool.h"
+#include "RAMFile.h"
 
 namespace Lucene
 {
@@ -147,6 +148,8 @@ namespace Lucene
 		static const int32_t INT_BLOCK_SHIFT;
 		static const int32_t INT_BLOCK_SIZE;
 		static const int32_t INT_BLOCK_MASK;
+		
+		static const int32_t PER_DOC_BLOCK_SIZE;
 
   		IndexWriterWeakPtr _writer;
 		DirectoryPtr directory;
@@ -169,7 +172,9 @@ namespace Lucene
 		
 		WaitQueuePtr waitQueue;
 		SkipDocWriterPtr skipDocWriter;
+		
 		ByteBlockAllocatorPtr byteBlockAllocator;
+		ByteBlockAllocatorPtr perDocAllocator;
 		
 		int64_t numBytesAlloc;
 		int64_t numBytesUsed;
@@ -179,6 +184,9 @@ namespace Lucene
 		
 	public:
 		virtual void initialize();
+	
+	    /// Create and return a new DocWriterBuffer.
+	    PerDocBufferPtr newPerDocBuffer();
 	
 		static IndexingChainPtr getDefaultIndexingChain();
 		
@@ -306,9 +314,11 @@ namespace Lucene
 		
 		String toMB(int64_t v);
 		
-		/// We have three pools of RAM: Postings, byte blocks (holds freq/prox posting data) and char blocks 
-		/// (holds characters in the term).  Different docs require varying amount of storage from these three 
-		/// classes.  For example, docs with many unique single-occurrence short terms will use up the Postings
+		/// We have four pools of RAM: Postings, byte blocks (holds freq/prox posting data), char blocks (holds
+		/// characters in the term) and per-doc buffers (stored fields/term vectors).  Different docs require 
+		/// varying amount of storage from these four classes.
+		///
+		/// For example, docs with many unique single-occurrence short terms will use up the Postings
 		/// RAM and hardly any of the other two.  Whereas docs with very large terms will use alot of char blocks 
 		/// RAM and relatively less of the other two.  This method just frees allocations from the pools once we 
 		/// are over-budget, which balances the pools to match the current docs.
@@ -361,6 +371,29 @@ namespace Lucene
 	public:
 		/// Only called by asserts
 		virtual bool testPoint(const String& name);
+		
+		void clear();
+	};
+	
+	/// RAMFile buffer for DocWriters.
+	class LPPAPI PerDocBuffer : public RAMFile
+	{
+	public:
+	    PerDocBuffer(DocumentsWriterPtr docWriter);
+		virtual ~PerDocBuffer();
+		
+		LUCENE_CLASS(PerDocBuffer);
+    
+    protected:
+		DocumentsWriterWeakPtr _docWriter;
+	
+	public:
+	    /// Recycle the bytes used.
+	    void recycle();
+	
+	protected:
+		/// Allocate bytes used from shared pool.
+		virtual ByteArray newBuffer(int32_t size);
 	};
 	
 	/// Consumer returns this on each doc.  This holds any state that must be flushed synchronized 
@@ -468,7 +501,7 @@ namespace Lucene
 	class LPPAPI ByteBlockAllocator : public ByteBlockPoolAllocatorBase
 	{
 	public:
-		ByteBlockAllocator(DocumentsWriterPtr docWriter);
+		ByteBlockAllocator(DocumentsWriterPtr docWriter, int32_t blockSize);
 		virtual ~ByteBlockAllocator();
 		
 		LUCENE_CLASS(ByteBlockAllocator);
@@ -477,6 +510,7 @@ namespace Lucene
 		DocumentsWriterWeakPtr _docWriter;
 	
 	public:
+	    int32_t blockSize;
 		Collection<ByteArray> freeByteBlocks;
 	
 	public:
@@ -485,5 +519,6 @@ namespace Lucene
 		
 		/// Return byte[]'s to the pool
 		virtual void recycleByteBlocks(Collection<ByteArray> blocks, int32_t start, int32_t end);
+		virtual void recycleByteBlocks(Collection<ByteArray> blocks);
 	};
 }

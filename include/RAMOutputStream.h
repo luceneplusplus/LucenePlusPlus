@@ -36,7 +36,7 @@ namespace Lucene
 		/// Copy the current contents of this buffer to the named output.
 		void writeTo(IndexOutputPtr out);
 		
-		/// Resets this to an empty buffer.
+		/// Resets this to an empty file.
 		void reset();
 		
 		/// Closes this stream to further operations.

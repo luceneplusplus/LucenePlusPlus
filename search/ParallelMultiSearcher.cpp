@@ -26,7 +26,7 @@ namespace Lucene
     {
         ThreadPoolPtr threadPool(ThreadPool::getInstance());
         Collection<FuturePtr> searchThreads(Collection<FuturePtr>::newInstance(searchables.size()));
-        for (int32_t i = 0; i < searchables.size(); ++i) // search each searchable
+        for (int32_t i = 0; i < searchables.size(); ++i)
             searchThreads[i] = threadPool->scheduleTask(boost::protect(boost::bind<int32_t>(boost::mem_fn(&Searchable::docFreq), searchables[i], term)));
         int32_t docFreq = 0;
         for (int32_t i = 0; i < searchThreads.size(); ++i)

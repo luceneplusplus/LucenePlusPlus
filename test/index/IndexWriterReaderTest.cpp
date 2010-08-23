@@ -408,6 +408,7 @@ BOOST_AUTO_TEST_CASE(testDeleteFromIndexWriter)
 
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     TestableIndexWriterPtr writer = newLucene<TestableIndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
+    writer->setReaderTermsIndexDivisor(2);
 
     // create the index
     createIndexNoClose(!optimize, L"index1", writer);
@@ -589,7 +590,7 @@ BOOST_AUTO_TEST_CASE(testMergeWarmer)
     writer->setMergeFactor(2);
     writer->setMaxBufferedDocs(2);
     
-    for (int32_t i = 0; i < 10; ++i)
+    for (int32_t i = 0; i < 100; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
     
     boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
@@ -911,6 +912,47 @@ BOOST_AUTO_TEST_CASE(testDeletesNumDocs)
     BOOST_CHECK_EQUAL(0, r->numDocs());
     r->close();
 
+    w->close();
+    dir->close();
+}
+
+namespace TestSegmentWarmer
+{
+    DECLARE_SHARED_PTR(SegmentWarmer)
+    
+    class SegmentWarmer : public IndexReaderWarmer
+    {
+    public:
+        virtual ~SegmentWarmer()
+        {
+        }
+        
+        LUCENE_CLASS(SegmentWarmer);
+    
+    public:
+        virtual void warm(IndexReaderPtr reader)
+        {
+            IndexSearcherPtr s = newLucene<IndexSearcher>(reader);
+            TopDocsPtr hits = s->search(newLucene<TermQuery>(newLucene<Term>(L"foo", L"bar")), 10);
+            BOOST_CHECK_EQUAL(20, hits->totalHits);
+        }
+    };
+}
+
+BOOST_AUTO_TEST_CASE(testSegmentWarmer)
+{
+    DirectoryPtr dir = newLucene<MockRAMDirectory>();
+    IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
+    w->setMaxBufferedDocs(2);
+    w->getReader()->close();
+    
+    w->setMergedSegmentWarmer(newLucene<TestSegmentWarmer::SegmentWarmer>());
+    
+    DocumentPtr doc = newLucene<Document>();
+    doc->add(newLucene<Field>(L"foo", L"bar", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    for (int32_t i = 0; i < 20; ++i)
+        w->addDocument(doc);
+    w->waitForMerges();
     w->close();
     dir->close();
 }

@@ -47,7 +47,7 @@ public:
         {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-            while ((int64_t)MiscUtils::currentTimeMillis() < stopTime)
+            do
             {
                 for (int32_t i = 0; i < 27; ++i)
                 {
@@ -57,6 +57,7 @@ public:
                 }
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1));
             }
+            while ((int64_t)MiscUtils::currentTimeMillis() < stopTime);
         }
         catch (LuceneException& e)
         {
@@ -84,8 +85,8 @@ public:
 public:
     void runTest(DirectoryPtr dir)
     {
-        // Run for ~7 seconds
-        int64_t stopTime = MiscUtils::currentTimeMillis() + 7000;
+        // Run for ~1 seconds
+        int64_t stopTime = MiscUtils::currentTimeMillis() + 1000;
 
         SnapshotDeletionPolicyPtr dp = newLucene<SnapshotDeletionPolicy>(newLucene<KeepOnlyLastCommitDeletionPolicy>());
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), (IndexDeletionPolicyPtr)dp, IndexWriter::MaxFieldLengthUNLIMITED);
@@ -97,13 +98,14 @@ public:
         thread->start();
         
         // While the above indexing thread is running, take many backups
-        while ((int64_t)MiscUtils::currentTimeMillis() < stopTime) 
+        do
         {
             backupIndex(dir, dp);
             boost::this_thread::sleep(boost::posix_time::milliseconds(20));
             if (!thread->isAlive())
                 break;
         }
+        while ((int64_t)MiscUtils::currentTimeMillis() < stopTime);
         
         thread->join();
 
@@ -224,6 +226,14 @@ BOOST_AUTO_TEST_CASE(testSnapshotDeletionPolicy)
     MockRAMDirectoryPtr dir2 = newLucene<MockRAMDirectory>();
     runTest(dir2);
     dir2->close();
+}
+
+BOOST_AUTO_TEST_CASE(testNoCommits)
+{
+    // Tests that if there were no commits when snapshot() is called, then 
+    // IllegalStateException is thrown rather than NPE.
+    SnapshotDeletionPolicyPtr sdp = newLucene<SnapshotDeletionPolicy>(newLucene<KeepOnlyLastCommitDeletionPolicy>());
+    BOOST_CHECK_EXCEPTION(sdp->snapshot(), IllegalStateException, check_exception(LuceneException::IllegalState));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

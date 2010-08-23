@@ -76,8 +76,8 @@ namespace Lucene
                 perThread->doc = TermVectorsTermsWriterPtr(_termsWriter)->getPerDoc();
                 perThread->doc->docID = docState->docID;
                 BOOST_ASSERT(perThread->doc->numVectorFields == 0);
-                BOOST_ASSERT(perThread->doc->tvf->length() == 0);
-                BOOST_ASSERT(perThread->doc->tvf->getFilePointer() == 0);
+                BOOST_ASSERT(perThread->doc->perDocTvf->length() == 0);
+                BOOST_ASSERT(perThread->doc->perDocTvf->getFilePointer() == 0);
             }
             else
             {
@@ -117,7 +117,7 @@ namespace Lucene
             maxNumPostings = numPostings;
         
         TermVectorsTermsWriterPerThreadPtr perThread(_perThread);
-        IndexOutputPtr tvf(perThread->doc->tvf);
+        IndexOutputPtr tvf(perThread->doc->perDocTvf);
         
         // This is called once, after inverting all occurrences of a given field in the doc.  At this point we flush
         // our hash into the DocWriter.

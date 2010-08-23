@@ -58,14 +58,11 @@ namespace Lucene
     
     void RAMOutputStream::reset()
     {
-        try
-        {
-            seek(0);
-        }
-        catch (LuceneException& e) // should never happen
-        {
-            boost::throw_exception(RuntimeException(e.getError()));
-        }
+        currentBuffer.reset();
+        currentBufferIndex = -1;
+        bufferPosition = 0;
+        bufferStart = 0;
+        bufferLength = 0;
         file->setLength(0);
     }
     

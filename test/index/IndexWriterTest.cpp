@@ -3437,7 +3437,7 @@ BOOST_AUTO_TEST_CASE(testExceptionOnMergeInit)
     dir->close();
 }
 
-namespace TestDoAfterFlush
+namespace TestDoBeforeAfterFlush
 {
     DECLARE_SHARED_PTR(MockIndexWriter)
     
@@ -3446,7 +3446,8 @@ namespace TestDoAfterFlush
     public:
         MockIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
-            wasCalled = false;
+            afterWasCalled = false;
+            beforeWasCalled = false;
         }
         
         virtual ~MockIndexWriter()
@@ -3456,29 +3457,38 @@ namespace TestDoAfterFlush
         LUCENE_CLASS(MockIndexWriter);
     
     public:
-        bool wasCalled;
+        bool afterWasCalled;
+        bool beforeWasCalled;
     
-    public:
+    protected:
         virtual void doAfterFlush()
         {
-            wasCalled = true;
+            afterWasCalled = true;
+        }
+    
+        virtual void doBeforeFlush()
+        {
+            beforeWasCalled = true;
         }
     };
 }
 
-BOOST_AUTO_TEST_CASE(testDoAfterFlush)
+BOOST_AUTO_TEST_CASE(testDoBeforeAfterFlush)
 {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
-    TestDoAfterFlush::MockIndexWriterPtr writer = newLucene<TestDoAfterFlush::MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
+    TestDoBeforeAfterFlush::MockIndexWriterPtr writer = newLucene<TestDoBeforeAfterFlush::MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", L"a field", Field::STORE_YES, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
     writer->commit();
-    BOOST_CHECK(writer->wasCalled);
-    writer->wasCalled = true;
+    BOOST_CHECK(writer->beforeWasCalled);
+    BOOST_CHECK(writer->afterWasCalled);
+    writer->beforeWasCalled = false;
+    writer->afterWasCalled = false;
     writer->deleteDocuments(newLucene<Term>(L"field", L"field"));
     writer->commit();
-    BOOST_CHECK(writer->wasCalled);
+    BOOST_CHECK(writer->beforeWasCalled);
+    BOOST_CHECK(writer->afterWasCalled);
     writer->close();
 
     IndexReaderPtr ir = IndexReader::open(dir, true);

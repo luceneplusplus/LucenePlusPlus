@@ -143,6 +143,11 @@ namespace Lucene
 		/// relied on for "Cache maintenance" in general application code.
 		virtual void purgeAllCaches() = 0;
 		
+		/// Drops all cache entries associated with this reader.  NOTE: this reader must precisely match the reader 
+		/// that the cache entry is keyed on. If you pass a top-level reader, it usually will have no effect as
+		/// Lucene now caches at the segment reader level.
+		virtual void purge(IndexReaderPtr r) = 0;
+		
 		/// If non-null, FieldCacheImpl will warn whenever entries are created that are not sane according to 
 		/// {@link FieldCacheSanityChecker}.
 		virtual void setInfoStream(InfoStreamPtr stream);

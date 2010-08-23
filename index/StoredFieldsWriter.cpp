@@ -189,7 +189,8 @@ namespace Lucene
     StoredFieldsWriterPerDoc::StoredFieldsWriterPerDoc(StoredFieldsWriterPtr fieldsWriter)
     {
         this->_fieldsWriter = fieldsWriter;
-        fdt = newLucene<RAMOutputStream>();
+        buffer = DocumentsWriterPtr(fieldsWriter->_docWriter)->newPerDocBuffer();
+        fdt = newLucene<RAMOutputStream>(buffer);
         numStoredFields = 0;
     }
     
@@ -200,6 +201,7 @@ namespace Lucene
     void StoredFieldsWriterPerDoc::reset()
     {
         fdt->reset();
+        buffer->recycle();
         numStoredFields = 0;
     }
     
@@ -211,7 +213,7 @@ namespace Lucene
     
     int64_t StoredFieldsWriterPerDoc::sizeInBytes()
     {
-        return fdt->sizeInBytes();
+        return buffer->getSizeInBytes();
     }
     
     void StoredFieldsWriterPerDoc::finish()

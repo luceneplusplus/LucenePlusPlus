@@ -207,6 +207,9 @@ namespace Lucene
                     fieldState->offset += docState->analyzer->getOffsetGap(field);
                 fieldState->boost *= field->getBoost();
             }
+            
+            // don't hang onto the field
+            fields[i].reset();
         }
         
         consumer->finish();

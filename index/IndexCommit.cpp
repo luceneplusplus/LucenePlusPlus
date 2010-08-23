@@ -14,23 +14,6 @@ namespace Lucene
     {
     }
     
-    void IndexCommit::deleteCommit()
-    {
-        boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support this method."));
-    }
-    
-    bool IndexCommit::isDeleted()
-    {
-        boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support this method."));
-        return false;
-    }
-    
-    bool IndexCommit::isOptimized()
-    {
-        boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support this method."));
-        return false;
-    }
-    
     bool IndexCommit::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -43,29 +26,11 @@ namespace Lucene
     
     int32_t IndexCommit::hashCode()
     {
-        return getDirectory()->hashCode() + StringUtils::hashCode(getSegmentsFileName());
-    }
-    
-    int64_t IndexCommit::getVersion()
-    {
-        boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support this method."));
-        return 0;
-    }
-    
-    int64_t IndexCommit::getGeneration()
-    {
-        boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support this method."));
-        return 0;
+        return (getDirectory()->hashCode() + (int32_t)getVersion());
     }
     
     int64_t IndexCommit::getTimestamp()
     {
         return getDirectory()->fileModified(getSegmentsFileName());
-    }
-    
-    MapStringString IndexCommit::getUserData()
-    {
-        boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support this method."));
-        return MapStringString();
     }
 }

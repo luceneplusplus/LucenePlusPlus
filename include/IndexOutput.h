@@ -17,7 +17,6 @@ namespace Lucene
 	class LPPAPI IndexOutput : public LuceneObject
 	{
 	public:
-		IndexOutput();
 		virtual ~IndexOutput();
 		
 		LUCENE_CLASS(IndexOutput);
@@ -25,7 +24,6 @@ namespace Lucene
 	protected:
 		static const int32_t COPY_BUFFER_SIZE;
 		ByteArray copyBuffer;
-		UTF8ResultPtr utf8Result;
 		
 	public:
 		/// Writes a single byte.

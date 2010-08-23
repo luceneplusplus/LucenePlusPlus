@@ -11,10 +11,12 @@
 
 namespace Lucene
 {
-    CachingWrapperFilter::CachingWrapperFilter(FilterPtr filter)
+    CachingWrapperFilter::CachingWrapperFilter(FilterPtr filter, DeletesMode deletesMode)
     {
         this->filter = filter;
-        this->lock = newInstance<Synchronize>();
+        this->cache = newLucene<FilterCacheDocIdSet>(deletesMode);
+        this->hitCount = 0;
+        this->missCount = 0;
     }
     
     CachingWrapperFilter::~CachingWrapperFilter()
@@ -23,7 +25,12 @@ namespace Lucene
     
     DocIdSetPtr CachingWrapperFilter::docIdSetToCache(DocIdSetPtr docIdSet, IndexReaderPtr reader)
     {
-        if (docIdSet->isCacheable())
+        if (!docIdSet)
+        {
+            // this is better than returning null, as the nonnull result can be cached
+            return DocIdSet::EMPTY_DOCIDSET();
+        }
+        else if (docIdSet->isCacheable())
             return docIdSet;
         else
         {
@@ -36,21 +43,23 @@ namespace Lucene
     
     DocIdSetPtr CachingWrapperFilter::getDocIdSet(IndexReaderPtr reader)
     {
-        {
-            SyncLock syncLock(lock);
-            if (!cache)
-                cache = WeakMapIndexReaderDocIdSet::newInstance();
-            DocIdSetPtr cached(cache.get(reader));
-            if (cached)
-                return cached;
-        }
+        LuceneObjectPtr coreKey = reader->getFieldCacheKey();
+        LuceneObjectPtr delCoreKey = reader->hasDeletions() ? reader->getDeletesCacheKey() : coreKey;
         
-        DocIdSetPtr docIdSet(docIdSetToCache(filter->getDocIdSet(reader), reader));
+        DocIdSetPtr docIdSet(boost::dynamic_pointer_cast<DocIdSet>(cache->get(reader, coreKey, delCoreKey)));
         if (docIdSet)
         {
-            SyncLock syncLock(lock);
-            cache.put(reader, docIdSet);
+            ++hitCount;
+            return docIdSet;
         }
+        
+        ++missCount;
+        
+        // cache miss
+        docIdSet = docIdSetToCache(filter->getDocIdSet(reader), reader);
+        
+        if (docIdSet)
+            cache->put(coreKey, delCoreKey, docIdSet);
         
         return docIdSet;
     }
@@ -75,5 +84,93 @@ namespace Lucene
     int32_t CachingWrapperFilter::hashCode()
     {
         return filter->hashCode() ^ 0x1117bf25;
+    }
+    
+    FilterCache::FilterCache(CachingWrapperFilter::DeletesMode deletesMode)
+    {
+        this->deletesMode = deletesMode;
+    }
+    
+    FilterCache::~FilterCache()
+    {
+    }
+    
+    LuceneObjectPtr FilterCache::get(IndexReaderPtr reader, LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey)
+    {
+        SyncLock syncLock(this);
+        
+        if (!cache)
+            cache = WeakMapObjectObject::newInstance();
+        
+        LuceneObjectPtr value;
+        if (deletesMode == CachingWrapperFilter::DELETES_IGNORE)
+        {
+            // key on core
+            value = cache.get(coreKey);
+        }
+        else if (deletesMode == CachingWrapperFilter::DELETES_RECACHE)
+        {
+            // key on deletes, if any, else core
+            value = cache.get(delCoreKey);
+        }
+        else
+        {
+            BOOST_ASSERT(deletesMode == CachingWrapperFilter::DELETES_DYNAMIC);
+
+            // first try for exact match
+            value = cache.get(delCoreKey);
+            
+            if (!value)
+            {
+                // now for core match, but dynamically AND NOT deletions
+                value = cache.get(coreKey);
+                if (value && reader->hasDeletions())
+                    value = mergeDeletes(reader, value);
+            }
+        }
+        
+        return value;
+    }
+    
+    void FilterCache::put(LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey, LuceneObjectPtr value)
+    {
+        SyncLock syncLock(this);
+        
+        if (deletesMode == CachingWrapperFilter::DELETES_IGNORE)
+            cache.put(coreKey, value);
+        else if (deletesMode == CachingWrapperFilter::DELETES_RECACHE)
+            cache.put(delCoreKey, value);
+        else
+        {
+            cache.put(coreKey, value);
+            cache.put(delCoreKey, value);
+        }
+    }
+    
+    FilterCacheDocIdSet::FilterCacheDocIdSet(CachingWrapperFilter::DeletesMode deletesMode) : FilterCache(deletesMode)
+    {    
+    }
+    
+    FilterCacheDocIdSet::~FilterCacheDocIdSet()
+    {
+    }
+    
+    LuceneObjectPtr FilterCacheDocIdSet::mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value)
+    {
+        return newLucene<FilteredCacheDocIdSet>(reader, boost::dynamic_pointer_cast<DocIdSet>(value));
+    }
+    
+    FilteredCacheDocIdSet::FilteredCacheDocIdSet(IndexReaderPtr reader, DocIdSetPtr innerSet) : FilteredDocIdSet(innerSet)
+    {
+        this->reader = reader;
+    }
+    
+    FilteredCacheDocIdSet::~FilteredCacheDocIdSet()
+    {
+    }
+    
+    bool FilteredCacheDocIdSet::match(int32_t docid)
+    {
+        return !reader->isDeleted(docid);
     }
 }

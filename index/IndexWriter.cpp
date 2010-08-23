@@ -150,6 +150,7 @@ namespace Lucene
         readCount = 0;
         writeThread = LuceneThread::nullId();
         upgradeCount = 0;
+        readerTermsIndexDivisor = IndexReader::DEFAULT_TERMS_INDEX_DIVISOR;
         readerPool = newLucene<ReaderPool>(shared_from_this());
         closed = false;
         closing = false;
@@ -173,9 +174,13 @@ namespace Lucene
             directory->clearLock(WRITE_LOCK_NAME); // clear the write lock in case it's leftover
         
         LockPtr writeLock(directory->makeLock(WRITE_LOCK_NAME));
+        
         if (!writeLock->obtain((int32_t)writeLockTimeout)) // obtain write lock
             boost::throw_exception(LockObtainFailedException(L"Index locked for write: " + writeLock->toString()));
         this->writeLock = writeLock;
+        
+        bool success = false;
+        LuceneException finally;
         
         try
         {
@@ -251,13 +256,29 @@ namespace Lucene
             
             message(L"init: create=" + StringUtils::toString(create));
             messageState();
+            
+            success = true;
         }
         catch (LuceneException& e)
         {
-            this->writeLock->release();
-            this->writeLock.reset();
-            e.throwException();
+            finally = e;
         }
+        
+        if (!success)
+        {
+            message(L"init: hit exception on init; releasing write lock");
+            try
+            {
+                this->writeLock->release();
+            }
+            catch (...)
+            {
+                // don't mask the original exception
+            }
+            this->writeLock.reset();
+        }
+        
+        finally.throwException();
     }
     
     int32_t IndexWriter::MAX_TERM_LENGTH()
@@ -270,11 +291,13 @@ namespace Lucene
     
     IndexReaderPtr IndexWriter::getReader()
     {
-        return getReader(IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
+        return getReader(readerTermsIndexDivisor);
     }
     
     IndexReaderPtr IndexWriter::getReader(int32_t termInfosIndexDivisor)
     {
+        ensureOpen();
+        
         message(L"flush at getReader");
         
         // Do this up front before flushing so that the readers obtained during this flush are pooled, the first time
@@ -515,6 +538,21 @@ namespace Lucene
     {
         ensureOpen();
         return maxFieldLength;
+    }
+    
+    void IndexWriter::setReaderTermsIndexDivisor(int32_t divisor)
+    {
+        ensureOpen();
+        if (divisor <= 0)
+            boost::throw_exception(IllegalArgumentException(L"divisor must be >= 1 (got " + StringUtils::toString(divisor) + L")"));
+        readerTermsIndexDivisor = divisor;
+        message(L"setReaderTermsIndexDivisor " + StringUtils::toString(readerTermsIndexDivisor));
+    }
+    
+    int32_t IndexWriter::getReaderTermsIndexDivisor()
+    {
+        ensureOpen();
+        return readerTermsIndexDivisor;
     }
     
     void IndexWriter::setMaxBufferedDocs(int32_t maxBufferedDocs)
@@ -2036,6 +2074,11 @@ namespace Lucene
         // override	
     }
     
+    void IndexWriter::doBeforeFlush()
+    {
+        // override
+    }
+    
     void IndexWriter::prepareCommit()
     {
         ensureOpen();
@@ -2141,7 +2184,17 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            success = doFlushInternal(flushDocStores, flushDeletes);
+            try
+            {
+                success = doFlushInternal(flushDocStores, flushDeletes);
+            }
+            catch (LuceneException& e)
+            {
+                finally = e;
+            }
+            if (docWriter->doBalanceRAM())
+                docWriter->balanceRAM();
+            finally.throwException();
         }
         catch (LuceneException& e)
         {
@@ -2162,6 +2215,8 @@ namespace Lucene
         
         BOOST_ASSERT(testPoint(L"startDoFlush"));
         
+        doBeforeFlush();
+        
         ++flushCount;
         
         // If we are flushing because too many deletes accumulated, then we should apply the deletes to free RAM
@@ -2170,6 +2225,7 @@ namespace Lucene
         
         // Make sure no threads are actively adding a document. Returns true if docWriter is currently aborting, in 
         // which case we skip flushing this segment
+        message(L"flush: now pause all indexing threads");        
         if (docWriter->pauseAllThreads())
         {
             docWriter->resumeAllThreads();
@@ -2457,23 +2513,7 @@ namespace Lucene
         commitMergedDeletes(merge, mergedReader);
         docWriter->remapDeletes(segmentInfos, merger->getDocMaps(), merger->getDelCounts(), merge, mergedDocCount);
         
-        // Simple optimization: if the doc store we are using has been closed and is in now compound 
-        // format (but wasn't when we started), then we will switch to the compound format as well
-        String mergeDocStoreSegment(merge->info->getDocStoreSegment());
-        if (!mergeDocStoreSegment.empty() && !merge->info->getDocStoreIsCompoundFile())
-        {
-            int32_t size = segmentInfos->size();
-            for (int32_t i = 0; i < size; ++i)
-            {
-                SegmentInfoPtr info(segmentInfos->info(i));
-                String docStoreSegment(info->getDocStoreSegment());
-                if (!docStoreSegment.empty() && docStoreSegment == mergeDocStoreSegment && info->getDocStoreIsCompoundFile())
-                {
-                    merge->info->setDocStoreIsCompoundFile(true);
-                    break;
-                }
-            }
-        }
+        setMergeDocStoreIsCompoundFile(merge);
         
         merge->info->setHasProx(merger->hasProx());
         
@@ -2792,6 +2832,12 @@ namespace Lucene
         
         if (merge->increfDone)
             decrefMergeSegments(merge);
+        
+        if (merge->mergeFiles)
+        {
+            deleter->decRef(merge->mergeFiles);
+            merge->mergeFiles.reset();
+        }
 
         // It's possible we are called twice, eg if there was an exception inside mergeInit
         if (merge->registerDone)
@@ -2806,6 +2852,27 @@ namespace Lucene
         }
 
         runningMerges.remove(merge);
+    }
+    
+    void IndexWriter::setMergeDocStoreIsCompoundFile(OneMergePtr merge)
+    {
+        SyncLock syncLock(this);
+        
+        String mergeDocStoreSegment(merge->info->getDocStoreSegment());
+        if (!mergeDocStoreSegment.empty() && !merge->info->getDocStoreIsCompoundFile())
+        {
+            int32_t size = segmentInfos->size();
+            for (int32_t i = 0; i < size; ++i)
+            {
+                SegmentInfoPtr info(segmentInfos->info(i));
+                String docStoreSegment(info->getDocStoreSegment());
+                if (!docStoreSegment.empty() && docStoreSegment == mergeDocStoreSegment && info->getDocStoreIsCompoundFile())
+                {
+                    merge->info->setDocStoreIsCompoundFile(true);
+                    break;
+                }
+            }
+        }
     }
     
     int32_t IndexWriter::mergeMiddle(OneMergePtr merge)
@@ -2891,7 +2958,32 @@ namespace Lucene
             
             BOOST_ASSERT(mergedDocCount == totDocCount);
             
-            SegmentReaderPtr mergedReader(readerPool->get(merge->info, false, BufferedIndexInput::BUFFER_SIZE, -1));
+            int32_t termsIndexDivisor = -1;
+            bool loadDocStores = false;
+
+            {
+                SyncLock syncLock(this);
+                // If the doc store we are using has been closed and is in now compound format (but wasn't 
+                // when we started), then we will switch to the compound format as well
+                setMergeDocStoreIsCompoundFile(merge);
+                BOOST_ASSERT(!merge->mergeFiles);
+                merge->mergeFiles = merge->info->files();
+                deleter->incRef(merge->mergeFiles);
+            }
+
+            if (poolReaders && mergedSegmentWarmer)
+            {
+                // Load terms index and doc stores so the segment warmer can run searches, load documents/term vectors
+                termsIndexDivisor = readerTermsIndexDivisor;
+                loadDocStores = true;
+            }
+            else
+            {
+                termsIndexDivisor = -1;
+                loadDocStores = false;
+            }
+
+            SegmentReaderPtr mergedReader(readerPool->get(merge->info, loadDocStores, BufferedIndexInput::BUFFER_SIZE, termsIndexDivisor));
             
             try
             {
@@ -3503,7 +3595,7 @@ namespace Lucene
         
         BOOST_ASSERT(!pooled || readerMap.get(sr->getSegmentInfo()) == sr);
         
-        // Drop caller's ref
+        // Drop caller's ref; for an external reader (not pooled), this decRef will close it
         sr->decRef();
         
         if (pooled && (drop || (!indexWriter->poolReaders && sr->getRefCount() == 1)))
@@ -3617,13 +3709,14 @@ namespace Lucene
     
     SegmentReaderPtr ReaderPool::get(SegmentInfoPtr info, bool doOpenStores)
     {
-        return get(info, doOpenStores, BufferedIndexInput::BUFFER_SIZE, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
+        return get(info, doOpenStores, BufferedIndexInput::BUFFER_SIZE, IndexWriterPtr(_indexWriter)->readerTermsIndexDivisor);
     }
     
     SegmentReaderPtr ReaderPool::get(SegmentInfoPtr info, bool doOpenStores, int32_t readBufferSize, int32_t termsIndexDivisor)
     {
         SyncLock syncLock(this);
-        if (IndexWriterPtr(_indexWriter)->poolReaders)
+        IndexWriterPtr indexWriter(_indexWriter);
+        if (indexWriter->poolReaders)
             readBufferSize = BufferedIndexInput::BUFFER_SIZE;
         
         SegmentReaderPtr sr(readerMap.get(info));
@@ -3631,7 +3724,11 @@ namespace Lucene
         {
             // Returns a ref, which we xfer to readerMap
             sr = SegmentReader::get(false, info->dir, info, readBufferSize, doOpenStores, termsIndexDivisor);
-            readerMap.put(info, sr);
+            if (info->dir == indexWriter->directory)
+            {
+                // Only pool if reader is not external
+                readerMap.put(info, sr);
+            }
         }
         else
         {
@@ -3647,7 +3744,11 @@ namespace Lucene
         }
         
         // Return a ref to our caller
-        sr->incRef();      
+        if (info->dir == indexWriter->directory)
+        {
+            // Only incRef if we pooled (reader is not external)
+            sr->incRef();
+        }
         return sr;
     }
     

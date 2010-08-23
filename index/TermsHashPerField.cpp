@@ -66,11 +66,7 @@ namespace Lucene
     {
         BOOST_ASSERT(postingsCompacted || numPostings == 0);
         
-        // Cannot use ArrayUtil.shrink because we require power of 2
-        int32_t newSize = postingsHash.size();
-        while (newSize >= 8 && newSize / 4 > targetSize)
-            newSize /= 2;
-        
+        int32_t newSize = 4;
         if (newSize != postingsHash.size())
         {
             postingsHash.resize(newSize);
@@ -78,6 +74,7 @@ namespace Lucene
             postingsHashHalfSize = newSize / 2;
             postingsHashMask = newSize - 1;
         }
+        MiscUtils::arrayFill(postingsHash.begin(), 0, postingsHash.size(), RawPostingListPtr());
     }
     
     void TermsHashPerField::reset()

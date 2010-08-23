@@ -23,10 +23,11 @@ namespace Lucene
 	public:
 		int64_t length;
 		RAMDirectoryWeakPtr _directory;
-		int64_t sizeInBytes;
 	
 	protected:
 		Collection<ByteArray> buffers;
+		
+		int64_t sizeInBytes;
 		
 		/// This is publicly modifiable via Directory.touchFile(), so direct access not supported
 		int64_t lastModified;
@@ -40,12 +41,12 @@ namespace Lucene
 		int64_t getLastModified();
 		void setLastModified(int64_t lastModified);
 		
-		ByteArray addBuffer(int32_t size);
-		ByteArray getBuffer(int32_t index);
-		int32_t numBuffers();
-		
 		int64_t getSizeInBytes();
 	
+	    ByteArray addBuffer(int32_t size);
+	    ByteArray getBuffer(int32_t index);
+	    int32_t numBuffers();
+	    
 	protected:
 		/// Allocate a new buffer.  Subclasses can allocate differently. 
 		virtual ByteArray newBuffer(int32_t size);

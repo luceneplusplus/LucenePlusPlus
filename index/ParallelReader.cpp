@@ -10,6 +10,7 @@
 #include "FieldSelector.h"
 #include "Term.h"
 #include "TermPositions.h"
+#include "FieldCache.h"
 
 namespace Lucene
 {
@@ -410,6 +411,8 @@ namespace Lucene
             else
                 readers[i]->close();
         }
+        
+        FieldCache::DEFAULT()->purge(shared_from_this());
     }
     
     HashSet<String> ParallelReader::getFieldNames(FieldOption fieldOption)

@@ -54,7 +54,16 @@ public:
     
     virtual void recycleByteBlocks(Collection<ByteArray> blocks, int32_t start, int32_t end)
     {
+        SyncLock syncLock(this);
         for (int32_t i = start; i < end; ++i)
+            freeByteBlocks.add(blocks[i]);
+    }
+    
+    virtual void recycleByteBlocks(Collection<ByteArray> blocks)
+    {
+        SyncLock syncLock(this);
+        int32_t size = blocks.size();
+        for (int32_t i = 0; i < size; ++i)
             freeByteBlocks.add(blocks[i]);
     }
 };

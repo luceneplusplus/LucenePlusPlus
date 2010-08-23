@@ -43,12 +43,12 @@ namespace Lucene
 		/// Decision that a commit-point should be deleted is taken by the {@link IndexDeletionPolicy} in effect
 		/// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
 		/// {@link IndexDeletionPolicy#onCommit onCommit()} methods.
-		virtual void deleteCommit();
+		virtual void deleteCommit() = 0;
 		
-		virtual bool isDeleted();
+		virtual bool isDeleted() = 0;
 		
 		/// Returns true if this commit is an optimized index.
-		virtual bool isOptimized();
+		virtual bool isOptimized() = 0;
 		
 		/// Two IndexCommits are equal if both their Directory and versions are equal.
 		virtual bool equals(LuceneObjectPtr other);
@@ -57,10 +57,10 @@ namespace Lucene
 		
 		/// Returns the version for this IndexCommit.  This is the same value that {@link IndexReader#getVersion} 
 		/// would return if it were opened on this commit.
-		virtual int64_t getVersion();
+		virtual int64_t getVersion() = 0;
 		
 		/// Returns the generation (the _N in segments_N) for this IndexCommit.
-		virtual int64_t getGeneration();
+		virtual int64_t getGeneration() = 0;
 		
 		/// Convenience method that returns the last modified time of the segments_N file corresponding to this 
 		/// index commit, equivalent to getDirectory()->fileModified(getSegmentsFileName()).
@@ -68,6 +68,6 @@ namespace Lucene
 		
 		/// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.  Map is
 		/// String -> String.
-		virtual MapStringString getUserData();
+		virtual MapStringString getUserData() = 0;
 	};
 }

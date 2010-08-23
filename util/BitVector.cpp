@@ -26,17 +26,17 @@ namespace Lucene
     
     BitVector::BitVector(int32_t n)
     {
-        _count = -1;
         _size = n;
         bits = ByteArray::newInstance((_size >> 3) + 1);
         MiscUtils::arrayFill(bits.get(), 0, bits.length(), 0);
+        _count = 0;
     }
     
     BitVector::BitVector(ByteArray bits, int32_t size)
     {
-        this->_count = -1;
         this->bits = bits;
         this->_size = size;
+        this->_count = -1;
     }
     
     BitVector::BitVector(DirectoryPtr d, const String& name)
@@ -67,7 +67,9 @@ namespace Lucene
     {
         ByteArray copyBits(ByteArray::newInstance(bits.length()));
         MiscUtils::arrayCopy(bits.get(), 0, copyBits.get(), 0, bits.length());
-        return newLucene<BitVector>(copyBits, _size);
+        BitVectorPtr clone = newLucene<BitVector>(copyBits, _size);
+        clone->_count = _count;
+        return clone;
     }
     
     void BitVector::set(int32_t bit)
@@ -127,6 +129,15 @@ namespace Lucene
             _count = c;
         }
         return _count;
+    }
+    
+    int32_t BitVector::getRecomputedCount()
+    {
+        int32_t c = 0;
+        int32_t end = bits.length();
+        for (int32_t i = 0; i < end; ++i)
+            c += BYTE_COUNTS[bits[i] & 0xff]; // sum bits per byte
+        return c;
     }
     
     void BitVector::write(DirectoryPtr d, const String& name)

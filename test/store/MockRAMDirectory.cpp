@@ -198,7 +198,7 @@ namespace Lucene
         {
             if (existing)
             {
-                _sizeInBytes -= existing->sizeInBytes;
+                _sizeInBytes -= existing->getSizeInBytes();
                 existing->_directory.reset();
             }
             fileMap.put(name, file);

@@ -67,9 +67,18 @@ namespace Lucene
     {
         BOOST_ASSERT(postingsFreeCount == postingsAllocCount);
         
-        int32_t newSize = MiscUtils::getShrinkSize(postingsFreeList.size(), postingsAllocCount);
+        int32_t newSize = 1;
         if (newSize != postingsFreeList.size())
+        {
+            if (postingsFreeCount > newSize)
+            {
+                if (trackAllocations)
+                    DocumentsWriterPtr(_docWriter)->bytesAllocated(-(postingsFreeCount - newSize) * bytesPerPosting);
+                postingsFreeCount = newSize;
+                postingsAllocCount = newSize;
+            }
             postingsFreeList.resize(newSize);
+        }
     }
     
     void TermsHash::closeDocStore(SegmentWriteStatePtr state)

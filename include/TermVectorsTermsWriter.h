@@ -63,7 +63,8 @@ namespace Lucene
 		TermVectorsTermsWriterWeakPtr _termsWriter;
 	
 	public:
-		RAMOutputStreamPtr tvf;
+	    PerDocBufferPtr buffer;
+		RAMOutputStreamPtr perDocTvf;
 		int32_t numVectorFields;
 		
 		Collection<int32_t> fieldNumbers;

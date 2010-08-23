@@ -59,6 +59,7 @@ namespace Lucene
 		StoredFieldsWriterWeakPtr _fieldsWriter;
 	
 	public:
+	    PerDocBufferPtr buffer;
 		RAMOutputStreamPtr fdt;
 		int32_t numStoredFields;
 	

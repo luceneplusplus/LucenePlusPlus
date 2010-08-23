@@ -7,6 +7,7 @@
 #pragma once
 
 #include "SpanFilter.h"
+#include "CachingWrapperFilter.h"
 
 namespace Lucene
 {
@@ -15,17 +16,19 @@ namespace Lucene
 	class LPPAPI CachingSpanFilter : public SpanFilter
 	{
 	public:
-		CachingSpanFilter(SpanFilterPtr filter);
+	    /// New deletions always result in a cache miss, by default ({@link CachingWrapperFilter#RECACHE}.
+		CachingSpanFilter(SpanFilterPtr filter, CachingWrapperFilter::DeletesMode deletesMode = CachingWrapperFilter::DELETES_RECACHE);
 		virtual ~CachingSpanFilter();
 	
 		LUCENE_CLASS(CachingSpanFilter);
 	
 	protected:
-		SpanFilterPtr filter;
+		SpanFilterPtr filter;		
+		FilterCachePtr cache;
 		
-		/// A Filter cache
-		WeakMapIndexReaderSpanFilterResult cache;
-		SynchronizePtr lock;
+		// for testing
+		int32_t hitCount;
+		int32_t missCount;
 	
 	public:
 		virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
@@ -37,5 +40,17 @@ namespace Lucene
 	
 	protected:
 		SpanFilterResultPtr getCachedResult(IndexReaderPtr reader);
+	};
+	
+	class LPPAPI FilterCacheSpanFilterResult : public FilterCache
+	{
+	public:
+	    FilterCacheSpanFilterResult(CachingWrapperFilter::DeletesMode deletesMode);
+	    virtual ~FilterCacheSpanFilterResult();
+	    
+	    LUCENE_CLASS(FilterCacheSpanFilterResult);
+
+    protected:
+        virtual LuceneObjectPtr mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value);
 	};
 }

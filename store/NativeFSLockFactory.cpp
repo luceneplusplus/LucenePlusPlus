@@ -184,8 +184,31 @@ namespace Lucene
                 LOCK_HELD().remove(path);
             }
                 
-            if (!FileUtils::removeFile(path))
-                boost::throw_exception(LockReleaseFailedException(L"Failed to delete: " + path));
+            // we don't care anymore if the file cannot be deleted because it's held up by another process 
+            // (eg. AntiVirus). NativeFSLock does not depend on the existence/absence of the lock file
+            FileUtils::removeFile(path);
+        }
+        else
+        {
+            // if we don't hold the lock, and somebody still called release(), for example as a result of 
+            // calling IndexWriter.unlock(), we should attempt to obtain the lock and release it.  If the 
+            // obtain fails, it means the lock cannot be released, and we should throw a proper exception 
+            // rather than silently failing/not doing anything.
+            bool obtained = false;
+            LuceneException finally;
+            try
+            {
+                obtained = obtain();
+                if (!obtained)
+                    boost::throw_exception(LockReleaseFailedException(L"Cannot forcefully unlock a NativeFSLock which is held by another indexer component: " + path));
+            }
+            catch (LuceneException& e)
+            {
+                finally = e;
+            }
+            if (obtained)
+                release();
+            finally.throwException();
         }
     }
     

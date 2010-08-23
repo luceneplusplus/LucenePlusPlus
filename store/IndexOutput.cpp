@@ -13,11 +13,6 @@ namespace Lucene
 {
     const int32_t IndexOutput::COPY_BUFFER_SIZE = 16384;
     
-    IndexOutput::IndexOutput()
-    {
-        utf8Result = newLucene<UTF8Result>();
-    }
-    
     IndexOutput::~IndexOutput()
     {
     }
@@ -63,6 +58,7 @@ namespace Lucene
     
     void IndexOutput::writeString(const String& s)
     {
+        UTF8ResultPtr utf8Result(newLucene<UTF8Result>());
         StringUtils::toUTF8((uint8_t*)s.c_str(), s.length(), utf8Result);
         writeVInt(utf8Result->length);
         writeBytes(utf8Result->result.get(), utf8Result->length);	

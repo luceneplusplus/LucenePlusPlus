@@ -40,9 +40,29 @@ namespace Lucene
 		{
 			bool empty = heap.empty();
 			
-			// We allocate 1 extra to avoid if statement in top()
 			if (empty)
-				this->heap.resize(_maxSize == 0 ? 2 : _maxSize + 1); 
+			{
+				int32_t heapSize = 0;
+				if (_maxSize == 0)
+				{
+				    // We allocate 1 extra to avoid if statement in top()
+                    heapSize = 2;
+                }
+                else if (_maxSize == INT_MAX)
+                {
+                    // Don't wrap heapSize to -1, in this case, which causes a confusing NegativeArraySizeException.
+                    // Note that very likely this will simply then hit an OOME, but at least that's more indicative 
+                    // to caller that this values is too big.  We don't +1 in this case, but it's very unlikely in 
+                    // practice one will actually insert this many objects into the PQ
+                    heapSize = INT_MAX;
+                }
+                else
+                {
+                    // NOTE: we add +1 because all access to heap is 1-based not 0-based.  heap[0] is unused.
+                    heapSize = _maxSize + 1;
+                }
+                this->heap.resize(heapSize);
+			}
 			
 			// If sentinel objects are supported, populate the queue with them
 			TYPE sentinel = getSentinelObject();

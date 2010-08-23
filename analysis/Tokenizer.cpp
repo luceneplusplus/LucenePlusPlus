@@ -47,7 +47,10 @@ namespace Lucene
     void Tokenizer::close()
     {
         if (input)
+        {
             input->close();
+            input.reset(); // don't hold onto Reader after close
+        }
     }
     
     int32_t Tokenizer::correctOffset(int32_t currentOff)

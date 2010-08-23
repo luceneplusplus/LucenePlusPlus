@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "FilterIndexReader.h"
+#include "FieldCache.h"
 
 namespace Lucene
 {
@@ -154,6 +155,10 @@ namespace Lucene
     void FilterIndexReader::doClose()
     {
         in->close();
+        
+        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
+        // generally not a good idea)
+        FieldCache::DEFAULT()->purge(shared_from_this());
     }
     
     HashSet<String> FilterIndexReader::getFieldNames(FieldOption fieldOption)
@@ -183,6 +188,16 @@ namespace Lucene
     Collection<IndexReaderPtr> FilterIndexReader::getSequentialSubReaders()
     {
         return in->getSequentialSubReaders();
+    }
+    
+    LuceneObjectPtr FilterIndexReader::getFieldCacheKey()
+    {
+        return in->getFieldCacheKey();
+    }
+    
+    LuceneObjectPtr FilterIndexReader::getDeletesCacheKey()
+    {
+        return in->getDeletesCacheKey();
     }
     
     FilterTermDocs::FilterTermDocs(TermDocsPtr in)

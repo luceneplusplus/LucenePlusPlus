@@ -429,6 +429,11 @@ namespace Lucene
         return shared_from_this();
     }
     
+    LuceneObjectPtr IndexReader::getDeletesCacheKey()
+    {
+        return shared_from_this();
+    }
+    
     int64_t IndexReader::getUniqueTermCount()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not implement getUniqueTermCount()"));

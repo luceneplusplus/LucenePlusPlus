@@ -25,6 +25,7 @@
 #include "ScoreDoc.h"
 #include "TopDocs.h"
 #include "CompoundFileReader.h"
+#include "NumericField.h"
 
 using namespace Lucene;
 
@@ -55,6 +56,11 @@ static void addDoc(IndexWriterPtr writer, int32_t id)
     doc->add(newLucene<Field>(L"utf8", utf16Field, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     doc->add(newLucene<Field>(L"content2", L"here is more content with aaa aaa aaa", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     doc->add(newLucene<Field>(L"fie\u2C77ld", L"field with non-ascii name", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
+    
+    // add numeric fields, to test if flex preserves encoding
+    doc->add(newLucene<NumericField>(L"trieInt", 4)->setIntValue(id));
+    doc->add(newLucene<NumericField>(L"trieLong", 4)->setLongValue(id));
+
     writer->addDocument(doc);
 }
 

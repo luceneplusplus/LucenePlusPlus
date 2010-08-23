@@ -162,6 +162,8 @@ namespace Lucene
 		ThreadId writeThread; // non-null if any thread holds write lock
 		int32_t upgradeCount;
 		
+		int32_t readerTermsIndexDivisor;
+		
 		// This is a "write once" variable (like the organic dye  on a DVD-R that may or may not 
 		// be heated by a laser and then cooled to permanently record the event): it's false, 
 		// until getReader() is called for the first time, at which point it's switched to true 
@@ -405,6 +407,14 @@ namespace Lucene
 		/// Returns the maximum number of terms that will be indexed for a single field in a document.
 		/// @see #setMaxFieldLength
 		virtual int32_t getMaxFieldLength();
+		
+		/// Sets the termsIndexDivisor passed to any readers that IndexWriter opens, for example when 
+		/// applying deletes or creating a near-real-time reader in {@link IndexWriter#getReader}.  
+		/// Default value is {@link IndexReader#DEFAULT_TERMS_INDEX_DIVISOR}.
+		virtual void setReaderTermsIndexDivisor(int32_t divisor);
+		
+		/// @see #setReaderTermsIndexDivisor()
+		virtual int32_t getReaderTermsIndexDivisor();
 		
 		/// Determines the minimal number of documents required before the buffered in-memory documents 
 		/// are flushed as a new Segment.  Large values generally gives faster indexing.
@@ -817,10 +827,6 @@ namespace Lucene
 		/// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
 		virtual void addIndexes(Collection<IndexReaderPtr> readers);
 		
-		/// This is called after pending added and deleted documents have been flushed to the Directory 
-		/// but before the change is committed (new segments_N file written).
-		virtual void doAfterFlush();
-		
 		/// Prepare for commit.
 		///
 		/// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
@@ -1015,6 +1021,14 @@ namespace Lucene
 		/// Currently this is only used by addIndexesNoOptimize().
 		virtual void resolveExternalSegments();
 		
+		/// A hook for extending classes to execute operations after pending added and deleted documents have 
+		/// been flushed to the Directory but before the change is committed (new segments_N file written).
+		virtual void doAfterFlush();
+		
+		/// A hook for extending classes to execute operations before pending added and deleted documents are 
+		/// flushed to the Directory.
+		virtual void doBeforeFlush();
+		
 		virtual void commit(int64_t sizeInBytes);
 		virtual void finishCommit();
 		
@@ -1043,6 +1057,8 @@ namespace Lucene
 		
 		virtual void setDiagnostics(SegmentInfoPtr info, const String& source);
 		virtual void setDiagnostics(SegmentInfoPtr info, const String& source, MapStringString details);
+		
+		virtual void setMergeDocStoreIsCompoundFile(OneMergePtr merge);
 		
 		/// Does the actual (time-consuming) work of the merge, but without holding synchronized lock on 
 		/// IndexWriter instance.

@@ -21,6 +21,7 @@
 #include "ReadOnlySegmentReader.h"
 #include "SegmentMergeInfo.h"
 #include "Lock.h"
+#include "FieldCache.h"
 
 namespace Lucene
 {
@@ -122,7 +123,7 @@ namespace Lucene
             LuceneException finally;
             try
             {
-                SegmentInfoPtr info(infos->info(upto));
+                SegmentInfoPtr info(infos->info(i));
                 if (info->dir == dir)
                     readers[upto++] = boost::dynamic_pointer_cast<SegmentReader>(writer->readerPool->getReadOnlyClone(info, true, termInfosIndexDivisor));
                 success = true;				
@@ -375,26 +376,35 @@ namespace Lucene
     
     IndexReaderPtr DirectoryReader::reopen()
     {
-        SyncLock syncLock(this);
         // Preserve current readOnly
         return doReopen(readOnly, IndexCommitPtr());
     }
     
     IndexReaderPtr DirectoryReader::reopen(bool openReadOnly)
     {
-        SyncLock syncLock(this);
         return doReopen(openReadOnly, IndexCommitPtr());
     }
     
     IndexReaderPtr DirectoryReader::reopen(IndexCommitPtr commit)
     {
-        SyncLock syncLock(this);
         return doReopen(true, commit);
+    }
+    
+    IndexReaderPtr DirectoryReader::doReopenFromWriter(bool openReadOnly, IndexCommitPtr commit)
+    {
+        BOOST_ASSERT(readOnly);
+        
+        if (!openReadOnly)
+            boost::throw_exception(IllegalArgumentException(L"a reader obtained from IndexWriter.getReader() can only be reopened with openReadOnly=true (got false)"));
+        
+        if (commit)
+            boost::throw_exception(IllegalArgumentException(L"a reader obtained from IndexWriter.getReader() cannot currently accept a commit"));
+        
+        return IndexWriterPtr(_writer)->getReader();
     }
     
     IndexReaderPtr DirectoryReader::doReopen(bool openReadOnly, IndexCommitPtr commit)
     {
-        SyncLock syncLock(this);
         ensureOpen();
         
         BOOST_ASSERT(!commit || openReadOnly);
@@ -403,21 +413,14 @@ namespace Lucene
         
         // If we were obtained by writer.getReader(), re-ask the writer to get a new reader.
         if (writer)
-        {
-            BOOST_ASSERT(readOnly);
-            
-            if (!openReadOnly)
-                boost::throw_exception(IllegalArgumentException(L"a reader obtained from IndexWriter.getReader() can only be reopened with openReadOnly=true (got false)"));
-            
-            if (commit)
-                boost::throw_exception(IllegalArgumentException(L"a reader obtained from IndexWriter.getReader() cannot currently accept a commit"));
-            
-            if (!writer->isOpen(true))
-                boost::throw_exception(AlreadyClosedException(L"cannot reopen: the IndexWriter this reader was obtained from is now closed"));
-            
-            return writer->getReader();
-        }
-        
+            return doReopenFromWriter(openReadOnly, commit);
+        else
+            return doReopenNoWriter(openReadOnly, commit);
+    }
+    
+    IndexReaderPtr DirectoryReader::doReopenNoWriter(bool openReadOnly, IndexCommitPtr commit)
+    {
+        SyncLock syncLock(this);
         if (!commit)
         {
             if (_hasChanges)
@@ -515,8 +518,9 @@ namespace Lucene
     
     int32_t DirectoryReader::numDocs()
     {
-        SyncLock syncLock(this);
         // Don't call ensureOpen() here (it could affect performance)
+        
+        // NOTE: multiple threads may wind up init'ing numDocs... but that's harmless
         if (_numDocs == -1) // check cache
         {
             int32_t n = 0; // cache miss - recompute
@@ -827,6 +831,11 @@ namespace Lucene
                     ioe = e;
             }
         }
+        
+        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
+        // generally not a good idea):
+        FieldCache::DEFAULT()->purge(shared_from_this());
+        
         // throw the first exception
         ioe.throwException();
     }
@@ -1287,5 +1296,10 @@ namespace Lucene
     MapStringString ReaderCommit::getUserData()
     {
         return userData;	
+    }
+    
+    void ReaderCommit::deleteCommit()
+    {
+        boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support deletions."));
     }
 }

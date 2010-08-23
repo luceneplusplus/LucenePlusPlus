@@ -26,6 +26,7 @@
 #include "SegmentMerger.h"
 #include "AllTermDocs.h"
 #include "DefaultSimilarity.h"
+#include "FieldCache.h"
 
 namespace Lucene
 {
@@ -69,7 +70,7 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            instance->core = newLucene<CoreReaders>(dir, si, readBufferSize, termInfosIndexDivisor);
+            instance->core = newLucene<CoreReaders>(instance, dir, si, readBufferSize, termInfosIndexDivisor);
             if (doOpenStores)
                 instance->core->openDocStores(si);
             instance->loadDeletedDocs();
@@ -94,6 +95,20 @@ namespace Lucene
         core->openDocStores(si);
     }
     
+    bool SegmentReader::checkDeletedCounts()
+    {
+        int32_t recomputedCount = deletedDocs->getRecomputedCount();
+
+        BOOST_ASSERT(deletedDocs->count() == recomputedCount);
+
+        BOOST_ASSERT(si->getDelCount() == recomputedCount);
+
+        // Verify # deletes does not exceed maxDoc for this segment
+        BOOST_ASSERT(si->getDelCount() <= maxDoc());
+        
+        return true;
+    }
+    
     void SegmentReader::loadDeletedDocs()
     {
         // NOTE: the bitvector is stored using the regular directory, not cfs
@@ -101,12 +116,7 @@ namespace Lucene
         {
             deletedDocs = newLucene<BitVector>(directory(), si->getDelFileName());
             deletedDocsRef = newLucene<SegmentReaderRef>();
-            
-            BOOST_ASSERT(si->getDelCount() == deletedDocs->count()); // delete count mismatch?
-            
-            // Verify # deletes does not exceed maxDoc for this segment
-            BOOST_ASSERT(si->getDelCount() <= maxDoc());
-            
+            BOOST_ASSERT(checkDeletedCounts());
         }
         else
             BOOST_ASSERT(si->getDelCount() == 0);
@@ -738,6 +748,11 @@ namespace Lucene
         return core->freqStream;
     }
     
+    LuceneObjectPtr SegmentReader::getDeletesCacheKey()
+    {
+        return deletedDocs;
+    }
+    
     int64_t SegmentReader::getUniqueTermCount()
     {
         return core->getTermsReader()->size();
@@ -773,7 +788,7 @@ namespace Lucene
         return core->termsIndexDivisor;
     }
         
-    CoreReaders::CoreReaders(DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, int32_t termsIndexDivisor)
+    CoreReaders::CoreReaders(SegmentReaderPtr origInstance, DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, int32_t termsIndexDivisor)
     {
         ref = newLucene<SegmentReaderRef>();
         
@@ -818,6 +833,10 @@ namespace Lucene
         if (!success)
             decRef();
         finally.throwException();
+        
+        // Must assign this at the end -- if we hit an exception above core, we don't want to attempt to
+        // purge the FieldCache (will hit NPE because core is not assigned yet).
+        this->origInstance = origInstance;
     }
     
     CoreReaders::~CoreReaders()
@@ -907,6 +926,10 @@ namespace Lucene
                 cfsReader->close();
             if (storeCFSReader)
                 storeCFSReader->close();
+            
+            // Force FieldCache to evict our entries at this point
+            if (origInstance)
+                FieldCache::DEFAULT()->purge(origInstance);
         }
     }
     

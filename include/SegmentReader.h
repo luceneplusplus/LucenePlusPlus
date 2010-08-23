@@ -165,6 +165,7 @@ namespace Lucene
 		/// This is necessary so that cloned SegmentReaders (which share the underlying postings data) 
 		/// will map to the same entry in the FieldCache.
 		virtual LuceneObjectPtr getFieldCacheKey();
+		virtual LuceneObjectPtr getDeletesCacheKey();
 		
 		/// Returns the number of unique terms (across all fields) in this reader.
 		virtual int64_t getUniqueTermCount();
@@ -175,6 +176,7 @@ namespace Lucene
 		virtual int32_t getTermInfosIndexDivisor();
 			
 	protected:
+	    bool checkDeletedCounts();
 		void loadDeletedDocs();
 		
 		/// Clones the norm bytes.  May be overridden by subclasses.
@@ -217,7 +219,7 @@ namespace Lucene
 	class LPPAPI CoreReaders : public LuceneObject
 	{
 	public:
-		CoreReaders(DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, int32_t termsIndexDivisor);
+		CoreReaders(SegmentReaderPtr origInstance, DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, int32_t termsIndexDivisor);
 		virtual ~CoreReaders();
 		
 		LUCENE_CLASS(CoreReaders);
@@ -227,6 +229,8 @@ namespace Lucene
 		/// when coreRef drops to 0, these core objects may be closed.  A given instance of SegmentReader may be
 		/// closed, even those it shares core objects with other SegmentReaders
 		SegmentReaderRefPtr ref;
+		
+		SegmentReaderPtr origInstance;
 	
 	public:
 		String segment;

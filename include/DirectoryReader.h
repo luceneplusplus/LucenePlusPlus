@@ -164,7 +164,9 @@ namespace Lucene
 		static Collection<IndexCommitPtr> listCommits(DirectoryPtr dir);
 		
 	protected:
+	    IndexReaderPtr doReopenFromWriter(bool openReadOnly, IndexCommitPtr commit);
 		IndexReaderPtr doReopen(bool openReadOnly, IndexCommitPtr commit);
+		IndexReaderPtr doReopenNoWriter(bool openReadOnly, IndexCommitPtr commit);
 		DirectoryReaderPtr doReopen(SegmentInfosPtr infos, bool doClone, bool openReadOnly);
 		
 		/// Implements deletion of the document numbered docNum.
@@ -372,5 +374,7 @@ namespace Lucene
 		
 		/// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
 		virtual MapStringString getUserData();
+		
+		virtual void deleteCommit();
 	};
 }

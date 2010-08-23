@@ -60,6 +60,7 @@ namespace Lucene
 	
 	public:
 		virtual void recycleByteBlocks(Collection<ByteArray> blocks, int32_t start, int32_t end) = 0;
+		virtual void recycleByteBlocks(Collection<ByteArray> blocks) = 0;
 		virtual ByteArray getByteBlock(bool trackAllocations) = 0;
 	};
 }
