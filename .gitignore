@@ -19,6 +19,7 @@
 *.manifest
 *.user
 *.txt
+*.bak
 bin/*
 msvc/Debug
 msvc/Debug DLL

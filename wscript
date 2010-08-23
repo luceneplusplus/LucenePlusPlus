@@ -36,6 +36,8 @@ lucene_source_dirs = [
     'util/zlib'
 ]
 
+nedmalloc_source_file = 'util/nedmalloc/nedmalloc.c'
+
 lucene_include_dirs = [
     'include',
     'util/md5',
@@ -99,7 +101,7 @@ def configure(conf):
 def build(bld):
     
     target_type = 'cstaticlib' if Options.options.static else 'cshlib'
-    compile_flags = ['-O0', '-g'] if Options.options.debug else ['-O3']
+    compile_flags = ['-O0', '-g'] if Options.options.debug else ['-O2']
     debug_define = '_DEBUG' if Options.options.debug else 'NDEBUG'
     
     lucene_sources = []
@@ -107,6 +109,7 @@ def build(bld):
         for source_file in bld.path.ant_glob(source_dir + '/*.c*').split():
             source_path = bld.path.find_resource(source_file)
             lucene_sources.append(source_path)
+    lucene_sources.append(bld.path.find_resource(nedmalloc_source_file))     
     
     bld(
         name = 'lucene++',

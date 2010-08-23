@@ -8,7 +8,10 @@
 #include "Allocator.h"
 
 #ifdef LPP_USE_NEDMALLOC
+extern "C"
+{
 #include "nedmalloc.h"
+}
 #endif
 
 namespace Lucene
