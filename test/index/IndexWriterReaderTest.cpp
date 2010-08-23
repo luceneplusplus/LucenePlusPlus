@@ -885,4 +885,34 @@ BOOST_AUTO_TEST_CASE(testExpungeDeletes)
     dir->close();
 }
 
+BOOST_AUTO_TEST_CASE(testDeletesNumDocs)
+{
+    DirectoryPtr dir = newLucene<MockRAMDirectory>();
+    IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
+    DocumentPtr doc = newLucene<Document>();
+    doc->add(newLucene<Field>(L"field", L"a b c", Field::STORE_NO, Field::INDEX_ANALYZED));
+    FieldPtr id = newLucene<Field>(L"id", L"", Field::STORE_NO, Field::INDEX_NOT_ANALYZED);
+    doc->add(id);
+    id->setValue(L"0");
+    w->addDocument(doc);
+    id->setValue(L"1");
+    w->addDocument(doc);
+    IndexReaderPtr r = w->getReader();
+    BOOST_CHECK_EQUAL(2, r->numDocs());
+    r->close();
+
+    w->deleteDocuments(newLucene<Term>(L"id", L"0"));
+    r = w->getReader();
+    BOOST_CHECK_EQUAL(1, r->numDocs());
+    r->close();
+
+    w->deleteDocuments(newLucene<Term>(L"id", L"1"));
+    r = w->getReader();
+    BOOST_CHECK_EQUAL(0, r->numDocs());
+    r->close();
+
+    w->close();
+    dir->close();
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -201,13 +201,14 @@ namespace Lucene
         class SkipCollector : public Collector
         {
         public:
-            SkipCollector(QueryPtr q, IndexSearcherPtr s, Collection<int32_t> lastDoc, Collection<int32_t> order, Collection<int32_t> opidx)
+            SkipCollector(QueryPtr q, IndexSearcherPtr s, Collection<int32_t> lastDoc, Collection<int32_t> order, Collection<int32_t> opidx, Collection<IndexReaderPtr> lastReader)
             {
                 this->q = q;
                 this->s = s;
                 this->lastDoc = lastDoc;
                 this->order = order;
                 this->opidx = opidx;
+                this->lastReader = lastReader;
             }
             
             virtual ~SkipCollector()
@@ -224,6 +225,7 @@ namespace Lucene
             ScorerPtr sc;
             IndexReaderPtr reader;
             ScorerPtr scorer;
+            Collection<IndexReaderPtr> lastReader;
         
         public:
             virtual void setScorer(ScorerPtr scorer)
@@ -244,7 +246,7 @@ namespace Lucene
                 int32_t skip_op = 0;
                 int32_t next_op = 1;
                 double maxDiff = 1e-5;
-        
+                
                 int32_t op = order[(opidx[0]++) % order.size()];
                 bool more = op == skip_op ? 
                     (scorer->advance(scorer->docID() + 1) != DocIdSetIterator::NO_MORE_DOCS) : 
@@ -280,6 +282,18 @@ namespace Lucene
             
             virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
             {
+                // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
+                if (lastReader[0])
+                {
+                    IndexReaderPtr previousReader = lastReader[0];
+                    WeightPtr w = q->weight(newLucene<IndexSearcher>(previousReader));
+                    ScorerPtr scorer = w->scorer(previousReader, true, false);
+                    if (scorer)
+                    {
+                        bool more = (scorer->advance(lastDoc[0] + 1) != DocIdSetIterator::NO_MORE_DOCS);
+                        BOOST_CHECK(!more);
+                    }
+                }
                 this->reader = reader;
                 this->scorer.reset();
                 lastDoc[0] = -1;
@@ -308,27 +322,27 @@ namespace Lucene
             newCollection<int32_t>(next_op, next_op, skip_op, skip_op),
             newCollection<int32_t>(skip_op, skip_op, skip_op, next_op, next_op)
         );
+        
+        Collection<IndexReaderPtr> lastReader = Collection<IndexReaderPtr>::newInstance(1);
+        
         for (int32_t k = 0; k < orders.size(); ++k)
         {
             Collection<int32_t> order = orders[k];
             Collection<int32_t> opidx = newCollection<int32_t>(0);
             Collection<int32_t> lastDoc = newCollection<int32_t>(-1);
             
-            s->search(q, newLucene<CheckSkipTo::SkipCollector>(q, s, lastDoc, order, opidx));
+            s->search(q, newLucene<CheckSkipTo::SkipCollector>(q, s, lastDoc, order, opidx, lastReader));
             
-            Collection<IndexReaderPtr> readers = Collection<IndexReaderPtr>::newInstance();
-            ReaderUtil::gatherSubReaders(readers, s->getIndexReader());
-            for (int32_t i = 0; i < readers.size(); ++i)
+            if (lastReader[0])
             {
-                IndexReaderPtr reader = readers[i];
-                WeightPtr w = q->weight(s);
-                ScorerPtr scorer = w->scorer(reader, true, false);
+                // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
+                IndexReaderPtr previousReader = lastReader[0];
+                WeightPtr w = q->weight(newLucene<IndexSearcher>(previousReader));
+                ScorerPtr scorer = w->scorer(previousReader, true, false);
                 if (scorer)
                 {
                     bool more = (scorer->advance(lastDoc[0] + 1) != DocIdSetIterator::NO_MORE_DOCS);
-
-                    if (more && lastDoc[0] != -1)
-                        BOOST_FAIL("query's last doc was " << lastDoc[0] << " but skipTo(" << (lastDoc[0] + 1) << ") got to " << scorer->docID());
+                    BOOST_CHECK(!more);
                 }
             }
         }
@@ -339,11 +353,12 @@ namespace Lucene
         class SkipCollector : public Collector
         {
         public:
-            SkipCollector(QueryPtr q, IndexSearcherPtr s, Collection<int32_t> lastDoc)
+            SkipCollector(QueryPtr q, IndexSearcherPtr s, Collection<int32_t> lastDoc, Collection<IndexReaderPtr> lastReader)
             {
                 this->q = q;
                 this->s = s;
                 this->lastDoc = lastDoc;
+                this->lastReader = lastReader;
             }
             
             virtual ~SkipCollector()
@@ -354,6 +369,7 @@ namespace Lucene
             QueryPtr q;
             IndexSearcherPtr s;
             Collection<int32_t> lastDoc;
+            Collection<IndexReaderPtr> lastReader;
             
             ScorerPtr scorer;
             IndexReaderPtr reader;			
@@ -383,6 +399,20 @@ namespace Lucene
             
             virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
             {
+                // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
+                if (lastReader[0])
+                {
+                    IndexReaderPtr previousReader = lastReader[0];
+                    WeightPtr w = q->weight(newLucene<IndexSearcher>(previousReader));
+                    ScorerPtr scorer = w->scorer(previousReader, true, false);
+                    if (scorer)
+                    {
+                        bool more = (scorer->advance(lastDoc[0] + 1) != DocIdSetIterator::NO_MORE_DOCS);
+                        BOOST_CHECK(!more);
+                    }
+                }
+
+                lastReader[0] = reader;
                 this->reader = reader;
                 lastDoc[0] = -1;
             }
@@ -397,21 +427,20 @@ namespace Lucene
     void QueryUtils::checkFirstSkipTo(QueryPtr q, IndexSearcherPtr s)
     {
         Collection<int32_t> lastDoc = newCollection<int32_t>(-1);
-        s->search(q, newLucene<CheckFirstSkipTo::SkipCollector>(q, s, lastDoc));
+        Collection<IndexReaderPtr> lastReader = Collection<IndexReaderPtr>::newInstance(1);
         
-        Collection<IndexReaderPtr> readers = Collection<IndexReaderPtr>::newInstance();
-        ReaderUtil::gatherSubReaders(readers, s->getIndexReader());
-        for (int32_t i = 0; i < readers.size(); ++i)
+        s->search(q, newLucene<CheckFirstSkipTo::SkipCollector>(q, s, lastDoc, lastReader));
+        
+        if (lastReader[0])
         {
-            IndexReaderPtr reader = readers[i];
-            WeightPtr w = q->weight(s);
-            ScorerPtr scorer = w->scorer(reader, true, false);
+            // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
+            IndexReaderPtr previousReader = lastReader[0];
+            WeightPtr w = q->weight(newLucene<IndexSearcher>(previousReader));
+            ScorerPtr scorer = w->scorer(previousReader, true, false);
             if (scorer)
             {
                 bool more = (scorer->advance(lastDoc[0] + 1) != DocIdSetIterator::NO_MORE_DOCS);
-
-                if (more && lastDoc[0] != -1) 
-                    BOOST_FAIL("query's last doc was " << lastDoc[0] << " but skipTo(" << (lastDoc[0] + 1) << ") got to " << scorer->docID());
+                BOOST_CHECK(!more);
             }
         }
     }

@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(testEmptyTerm)
     MultiTermQueryPtr wq = newLucene<WildcardQuery>(newLucene<Term>(L"field", L""));
     wq->setRewriteMethod(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE());
     checkMatches(searcher, wq, 0);
-    BooleanQueryPtr expected = newLucene<BooleanQuery>();
+    BooleanQueryPtr expected = newLucene<BooleanQuery>(true);
     BOOST_CHECK(searcher->rewrite(expected)->equals(searcher->rewrite(wq)));
 }
 

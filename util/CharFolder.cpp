@@ -9,8 +9,8 @@
 
 namespace Lucene
 {
-    bool CharFolder::lowerCache = false;
-    bool CharFolder::upperCache = false;
+    bool CharFolder::lowerCache = CharFolder::fillLower();
+    bool CharFolder::upperCache = CharFolder::fillUpper();
     wchar_t CharFolder::lowerChars[CHAR_MAX - CHAR_MIN + 1];
     wchar_t CharFolder::upperChars[CHAR_MAX - CHAR_MIN + 1];
 
@@ -28,23 +28,17 @@ namespace Lucene
         return (ch > CHAR_MIN && ch < CHAR_MAX) ? upperChars[ch - CHAR_MIN] : std::toupper<wchar_t>(ch, std::locale());
     }
     
-    void CharFolder::fillLower()
+    bool CharFolder::fillLower()
     {
-        if (!lowerCache)
-        {
-            for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
-                lowerChars[index - CHAR_MIN] = std::tolower<wchar_t>((wchar_t)index, std::locale());
-            lowerCache = true;
-        }
+        for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
+            lowerChars[index - CHAR_MIN] = std::tolower<wchar_t>((wchar_t)index, std::locale());
+        return true;
     }
     
-    void CharFolder::fillUpper()
+    bool CharFolder::fillUpper()
     {
-        if (!upperCache)
-        {
-            for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
-                upperChars[index - CHAR_MIN] = std::toupper<wchar_t>((wchar_t)index, std::locale());
-            upperCache = true;
-        }
+        for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
+            upperChars[index - CHAR_MIN] = std::toupper<wchar_t>((wchar_t)index, std::locale());
+        return true;
     }
 }

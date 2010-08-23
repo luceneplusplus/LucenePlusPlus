@@ -24,8 +24,10 @@ namespace Lucene
     const String FunctionFixture::INT_FIELD = L"iii";
     const String FunctionFixture::DOUBLE_FIELD = L"fff";
     
-    FunctionFixture::FunctionFixture()
+    FunctionFixture::FunctionFixture(bool doMultiSegment)
     {
+        this->doMultiSegment = doMultiSegment;
+        
         // prepare a small index with just a few documents.  
         dir = newLucene<RAMDirectory>();
         anlzr = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
@@ -41,6 +43,8 @@ namespace Lucene
             addDoc(iw, i);
             done[i] = true;
             i = (i + 4) % N_DOCS;
+            if (doMultiSegment && remaining % 3 == 0)
+                iw->commit();
             --remaining;
         }
         iw->close();

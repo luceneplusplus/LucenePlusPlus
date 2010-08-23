@@ -124,7 +124,7 @@ namespace Lucene
 		/// Returns a {@link CustomScoreProvider} that calculates the custom scores for the given {@link 
 		/// IndexReader}.  The default implementation returns a default implementation as specified in 
 		/// the docs of {@link CustomScoreProvider}.
-		CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader);
+		virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader);
 		
 		friend class CustomWeight;
 		friend class CustomScorer;

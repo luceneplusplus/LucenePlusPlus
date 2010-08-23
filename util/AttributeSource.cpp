@@ -6,12 +6,7 @@
 
 #include "stdafx.h"
 #include "AttributeSource.h"
-#include "FlagsAttribute.h"
-#include "OffsetAttribute.h"
-#include "PayloadAttribute.h"
-#include "PositionIncrementAttribute.h"
-#include "TermAttribute.h"
-#include "TypeAttribute.h"
+#include "Attribute.h"
 
 namespace Lucene
 {
@@ -66,6 +61,8 @@ namespace Lucene
     
     void AttributeSource::addAttribute(const String& className, AttributePtr attrImpl)
     {
+        // invalidate state to force recomputation in captureState()
+        currentState.reset();
         attributes.put(className, attrImpl);
     }
     
@@ -77,6 +74,11 @@ namespace Lucene
     AttributePtr AttributeSource::getAttribute(const String& className)
     {
         return attributes.get(className);
+    }
+    
+    bool AttributeSource::hasAttribute(const String& className)
+    {
+        return attributes.contains(className);
     }
     
     void AttributeSource::computeCurrentState()
@@ -97,8 +99,13 @@ namespace Lucene
     
     void AttributeSource::clearAttributes()
     {
-        for (MapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
-            attrImpl->second->clear();
+        if (hasAttributes())
+        {
+            if (!currentState)
+                computeCurrentState();
+            for (MapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
+                attrImpl->second->clear();
+        }
     }
     
     AttributeSourceStatePtr AttributeSource::captureState()
@@ -230,19 +237,6 @@ namespace Lucene
     
     AttributePtr DefaultAttributeFactory::createAttributeInstance(const String& className)
     {
-        if (className == FlagsAttribute::_getClassName())
-            return newLucene<FlagsAttribute>();
-        else if (className == OffsetAttribute::_getClassName())
-            return newLucene<OffsetAttribute>();
-        else if (className == PayloadAttribute::_getClassName())
-            return newLucene<PayloadAttribute>();
-        else if (className == PositionIncrementAttribute::_getClassName())
-            return newLucene<PositionIncrementAttribute>();
-        else if (className == TermAttribute::_getClassName())
-            return newLucene<TermAttribute>();
-        else if (className == TypeAttribute::_getClassName())
-            return newLucene<TypeAttribute>();
-        boost::throw_exception(IllegalArgumentException(L"attribute class name not recognized"));
         return AttributePtr();
     }	
     

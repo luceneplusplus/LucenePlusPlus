@@ -68,6 +68,7 @@ namespace TestCaching
                 return false;
             else
             {
+                clearAttributes();
                 termAtt->setTermBuffer(tokens[index++]);
                 offsetAtt->setOffset(0, 0);
                 return true;

@@ -94,17 +94,11 @@ public:
             {
                 boost::throw_exception(RuntimeException(e.getError()));
             }
-            {
-                MockRAMDirectoryPtr ramDir(boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory()));
-                SyncLock dirLock(ramDir);
-                if (ramDir->sizeInBytes() != ramDir->getRecomputedSizeInBytes())
-                    BOOST_FAIL("size mismatch");
-            }
         }
     }
 };
 
-const int32_t TestRAMDirectoryThread::numThreads = 20;
+const int32_t TestRAMDirectoryThread::numThreads = 10;
 const int32_t TestRAMDirectoryThread::docsPerThread = 40;
 
 typedef boost::shared_ptr<TestRAMDirectoryThread> TestRAMDirectoryThreadPtr;

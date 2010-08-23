@@ -49,6 +49,7 @@ public:
             return false;
         else
         {
+            clearAttributes();
             done = true;
             if (count == 1)
             {

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "LuceneObject.h"
 #include "TermDocs.h"
 
 namespace Lucene
@@ -35,6 +36,6 @@ namespace Lucene
 		virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
 		virtual bool skipTo(int32_t target);
 		virtual void close();
-		virtual public bool isDeleted(int32_t doc) = 0;
+		virtual bool isDeleted(int32_t doc) = 0;
 	};
 }

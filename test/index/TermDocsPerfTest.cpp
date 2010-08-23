@@ -53,6 +53,7 @@ public:
         --num;
         if (num >= 0)
         {
+            clearAttributes();
             termAtt->setTermBuffer(value);
             return true;
         }

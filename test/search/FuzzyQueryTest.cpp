@@ -70,23 +70,32 @@ BOOST_AUTO_TEST_CASE(testFuzziness)
     query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaa"), FuzzyQuery::defaultMinSimilarity(), 6);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
+    
+    // test scoring
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"bbbbb"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
+    BOOST_CHECK_EQUAL(3, hits.size());
+    Collection<String> order = newCollection<String>(L"bbbbb", L"abbbb", L"aabbb");
+    for (int32_t i = 0; i < hits.size(); ++i)
+    {
+        String term = searcher->doc(hits[i]->doc)->get(L"field");
+        BOOST_CHECK_EQUAL(order[i], term);
+    }
 
     // test BooleanQuery.maxClauseCount
     int32_t savedClauseCount = BooleanQuery::getMaxClauseCount();
     
     BooleanQuery::setMaxClauseCount(2);
-    // This query would normally return 3 documents, because 3 terms match
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaab"), FuzzyQuery::defaultMinSimilarity(), 3);
+    // This query would normally return 3 documents, because 3 terms match (see above)
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"bbbbb"), FuzzyQuery::defaultMinSimilarity(), 0);   
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(2, hits.size());
-    HashSet<String> possibleTerms = HashSet<String>::newInstance();
-    possibleTerms.add(L"aaaaa");
-    possibleTerms.add(L"aaaab");
+    order = newCollection<String>(L"bbbbb", L"abbbb");
     
     for (int32_t i = 0; i < hits.size(); ++i)
     {
         String term = searcher->doc(hits[i]->doc)->get(L"field");
-        BOOST_CHECK(possibleTerms.contains(term));
+        BOOST_CHECK_EQUAL(order[i], term);
     }
     
     BooleanQuery::setMaxClauseCount(savedClauseCount);

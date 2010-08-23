@@ -101,6 +101,7 @@ public:
         else
         {
             TestTokenPtr testToken = tokens[tokenUpto++];
+            clearAttributes();
             termAtt->setTermBuffer(testToken->text);
             offsetAtt->setOffset(testToken->startOffset, testToken->endOffset);
             if (tokenUpto > 1)

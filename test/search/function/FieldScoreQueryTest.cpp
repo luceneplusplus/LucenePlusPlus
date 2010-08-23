@@ -28,6 +28,10 @@ using namespace Lucene;
 class FieldScoreQueryFixture : public FunctionFixture
 {
 public:
+    FieldScoreQueryFixture() : FunctionFixture(true)
+    {
+    }
+    
     virtual ~FieldScoreQueryFixture()
     {
     }
@@ -79,7 +83,8 @@ public:
         expectedArrayTypes.put(FieldScoreQuery::DOUBLE, Collection<double>::newInstance());
 
         IndexSearcherPtr s = newLucene<IndexSearcher>(dir, true);
-        CollectionValue innerArray = Blank();
+        Collection<CollectionValue> innerArray = Collection<CollectionValue>::newInstance(s->getIndexReader()->getSequentialSubReaders().size());
+        
         bool warned = false; // print warning once.
         for (int32_t i = 0; i < 10; ++i)
         {
@@ -94,11 +99,11 @@ public:
                 {
                     if (i == 0)
                     {
-                        innerArray = q->valSrc->getValues(reader)->getInnerArray();
-                        BOOST_CHECK(VariantUtils::equalsType(innerArray, expectedArrayTypes.get(tp)));
+                        innerArray[j] = q->valSrc->getValues(reader)->getInnerArray();
+                        BOOST_CHECK(VariantUtils::equalsType(innerArray[j], expectedArrayTypes.get(tp)));
                     }
                     else
-                        BOOST_CHECK(VariantUtils::equals(innerArray, q->valSrc->getValues(reader)->getInnerArray()));
+                        BOOST_CHECK(VariantUtils::equals(innerArray[j], q->valSrc->getValues(reader)->getInnerArray()));
                 }
                 catch (UnsupportedOperationException&)
                 {
@@ -122,7 +127,7 @@ public:
             IndexReaderPtr reader = readers[j];
             try
             {
-                BOOST_CHECK(!equalCollectionValues(innerArray, q->valSrc->getValues(reader)->getInnerArray()));
+                BOOST_CHECK(!equalCollectionValues(innerArray[j], q->valSrc->getValues(reader)->getInnerArray()));
             }
             catch (UnsupportedOperationException&)
             {

@@ -21,6 +21,13 @@ namespace Lucene
 		/// returns an {@link Attribute}.
 		virtual AttributePtr createAttributeInstance(const String& className);
 		
+		template <class ATTR>
+        AttributePtr createInstance(const String& className)
+        {
+            AttributePtr attrImpl = createAttributeInstance(className);
+            return attrImpl ? attrImpl : newLucene<ATTR>();
+        }
+		
 		/// This is the default factory that creates {@link Attribute}s using the class name of the supplied 
 		/// {@link Attribute} interface class by appending Impl to it.
 		static AttributeFactoryPtr DEFAULT_ATTRIBUTE_FACTORY();		
@@ -62,12 +69,13 @@ namespace Lucene
 		template <class ATTR>
 		boost::shared_ptr<ATTR> addAttribute()
 		{
-			String className(ATTR::_getClassName());
-			
+			String className(ATTR::_getClassName());			
 			boost::shared_ptr<ATTR> attrImpl(boost::dynamic_pointer_cast<ATTR>(getAttribute(className)));
 			if (!attrImpl)
 			{
-				attrImpl = boost::dynamic_pointer_cast<ATTR>(factory->createAttributeInstance(className));
+				attrImpl = boost::dynamic_pointer_cast<ATTR>(factory->createInstance<ATTR>(className));
+				if (!attrImpl)
+				    boost::throw_exception(IllegalArgumentException(L"Could not instantiate implementing class for " + className));
 				addAttribute(className, attrImpl);
 			}
 			return attrImpl;
@@ -137,6 +145,9 @@ namespace Lucene
 		/// The caller must pass in a className value.
 		/// This method checks if an instance of that class is already in this AttributeSource and returns it. 
 		AttributePtr getAttribute(const String& className);
+		
+		/// Returns true, if this AttributeSource contains the passed-in Attribute.
+		bool hasAttribute(const String& className);
 		
 		void computeCurrentState();
 	};

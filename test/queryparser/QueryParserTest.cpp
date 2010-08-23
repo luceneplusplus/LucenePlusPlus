@@ -79,6 +79,7 @@ public:
         if (inPhrase)
         {
             inPhrase = false;
+            clearAttributes();
             termAtt->setTermBuffer(L"phrase2");
             offsetAtt->setOffset(savedStart, savedEnd);
             return true;

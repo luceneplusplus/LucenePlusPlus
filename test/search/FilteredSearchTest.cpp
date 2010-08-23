@@ -22,14 +22,16 @@
 
 using namespace Lucene;
 
+DECLARE_SHARED_PTR(SimpleDocIdSetFilter)
+
 class SimpleDocIdSetFilter : public Filter
 {
 public:
     SimpleDocIdSetFilter(Collection<int32_t> docs)
     {
-        bits = newLucene<OpenBitSet>();
-        for (int32_t i = 0; i < docs.size(); ++i)
-            bits->set(docs[i]);
+        this->docs = docs;
+        this->docBase = 0;
+        this->index = 0;
     }
     
     virtual ~SimpleDocIdSetFilter()
@@ -37,32 +39,46 @@ public:
     }
 
 protected:
-    OpenBitSetPtr bits;
+    int32_t docBase;
+    Collection<int32_t> docs;
+    int32_t index;
 
 public:
     virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
     {
-        return bits;
+        OpenBitSetPtr set = newLucene<OpenBitSet>();
+        int32_t limit = docBase + reader->maxDoc();
+        for (; index < docs.size(); ++index)
+        {
+            int32_t docId = docs[index];
+            if (docId > limit)
+                break;
+            set->set(docId - docBase);
+        }
+        docBase = limit;
+        return set->isEmpty() ? DocIdSetPtr() : set;
+    }
+    
+    void reset()
+    {
+        index = 0;
+        docBase = 0;
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(FilteredSearchTest, LuceneTestFixture)
+static const String FIELD = L"category";
 
-BOOST_AUTO_TEST_CASE(testFilteredSearch)
+static void searchFiltered(IndexWriterPtr writer, DirectoryPtr directory, FilterPtr filter, bool optimize)
 {
-    String FIELD = L"category";
-    
-    RAMDirectoryPtr directory = newLucene<RAMDirectory>();
-    Collection<int32_t> filterBits = newCollection<int32_t>(1, 36);
-    FilterPtr filter = newLucene<SimpleDocIdSetFilter>(filterBits);
-
-    IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     for (int32_t i = 0; i < 60; ++i)
     {
+        // Simple docs
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(FIELD, StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);
     }
+    if (optimize)
+        writer->optimize();
     writer->close();
 
     BooleanQueryPtr booleanQuery = newLucene<BooleanQuery>();
@@ -71,6 +87,26 @@ BOOST_AUTO_TEST_CASE(testFilteredSearch)
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     Collection<ScoreDocPtr> hits = indexSearcher->search(booleanQuery, filter, 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
+}
+
+BOOST_FIXTURE_TEST_SUITE(FilteredSearchTest, LuceneTestFixture)
+
+BOOST_AUTO_TEST_CASE(testFilteredSearch)
+{
+    bool enforceSingleSegment = true;
+    RAMDirectoryPtr directory = newLucene<RAMDirectory>();
+    Collection<int32_t> filterBits = newCollection<int32_t>(1, 36);
+    SimpleDocIdSetFilterPtr filter = newLucene<SimpleDocIdSetFilter>(filterBits);
+    IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
+    searchFiltered(writer, directory, filter, enforceSingleSegment);
+    // run the test on more than one segment
+    enforceSingleSegment = false;
+    // reset - it is stateful
+    filter->reset();
+    writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
+    // we index 60 docs - this will create 6 segments
+    writer->setMaxBufferedDocs(10);
+    searchFiltered(writer, directory, filter, enforceSingleSegment);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

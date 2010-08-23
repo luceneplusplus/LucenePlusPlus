@@ -30,6 +30,10 @@ using namespace Lucene;
 class OrdValuesFixture : public FunctionFixture
 {
 public:
+    OrdValuesFixture() : FunctionFixture(false)
+    {
+    }
+    
     virtual ~OrdValuesFixture()
     {
     }

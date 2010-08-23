@@ -4569,5 +4569,83 @@ BOOST_AUTO_TEST_CASE(testNoDocsIndex)
     dir->close();
 }
 
+namespace TestCommitThreadSafety
+{
+    class CommitThread : public LuceneThread
+    {
+    public:
+        CommitThread(int32_t finalI, IndexWriterPtr writer, DirectoryPtr dir, int64_t endTime)
+        {
+            this->finalI = finalI;
+            this->writer = writer;
+            this->dir = dir;
+            this->endTime = endTime;
+        }
+        
+        virtual ~CommitThread()
+        {
+        }
+        
+        LUCENE_CLASS(CommitThread);
+    
+    protected:
+        int32_t finalI;
+        IndexWriterPtr writer;
+        DirectoryPtr dir;
+        int64_t endTime;
+    
+    public:
+        virtual void run()
+        {
+            try
+            {
+                DocumentPtr doc = newLucene<Document>();
+                IndexReaderPtr reader = IndexReader::open(dir);
+                FieldPtr field = newLucene<Field>(L"f", L"", Field::STORE_NO, Field::INDEX_NOT_ANALYZED);
+                doc->add(field);
+                int32_t count = 0;
+                while ((int64_t)MiscUtils::currentTimeMillis() < endTime)
+                {
+                    for (int32_t j = 0; j < 10; ++j)
+                    {
+                        String s = StringUtils::toString(finalI) + L"_" + StringUtils::toString(count++);
+                        field->setValue(s);
+                        writer->addDocument(doc);
+                        writer->commit();
+                        IndexReaderPtr reader2 = reader->reopen();
+                        BOOST_CHECK_NE(reader2, reader);
+                        reader->close();
+                        reader = reader2;
+                        BOOST_CHECK_EQUAL(1, reader->docFreq(newLucene<Term>(L"f", s)));
+                    }
+                }
+                reader->close();
+            }
+            catch (...)
+            {
+                BOOST_FAIL("Unexpected exception");
+            }
+        }
+    };
+}
+
+/// make sure with multiple threads commit doesn't return until all changes are in fact in the index
+BOOST_AUTO_TEST_CASE(testCommitThreadSafety)
+{
+    static const int32_t NUM_THREADS = 5;
+    double RUN_SEC = 0.5;
+    DirectoryPtr dir = newLucene<MockRAMDirectory>();
+    IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
+    writer->commit();
+    Collection<LuceneThreadPtr> threads = Collection<LuceneThreadPtr>::newInstance(NUM_THREADS);
+    int64_t endTime = (int64_t)MiscUtils::currentTimeMillis() + (int64_t)(RUN_SEC * 1000.0);
+    for (int32_t i = 0; i < NUM_THREADS; ++i)
+        threads[i] = newLucene<TestCommitThreadSafety::CommitThread>(i, writer, dir, endTime);
+    for (int32_t i = 0; i < NUM_THREADS; ++i)
+        threads[i]->join();
+    writer->close();
+    dir->close();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 

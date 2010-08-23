@@ -527,6 +527,7 @@ namespace TestThreadSafety
             if (!first)
                 return false;
             first = false;
+            clearAttributes();
             termAtt->setTermBuffer(term);
             payloadAtt->setPayload(newLucene<Payload>(payload));
             return true;

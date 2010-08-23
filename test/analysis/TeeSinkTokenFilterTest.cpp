@@ -88,32 +88,14 @@ BOOST_AUTO_TEST_CASE(testGeneral)
     TeeSinkTokenFilterPtr source = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer1.str())));
     TokenStreamPtr sink1 = source->newSinkTokenStream();
     TokenStreamPtr sink2 = source->newSinkTokenStream(theFilter);
-    int32_t i = 0;
-    TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
-    while (source->incrementToken())
-    {
-        BOOST_CHECK_EQUAL(tokens1[i], termAtt->term());
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(tokens1.size(), i);
-
-    i = 0;
-    termAtt = sink1->getAttribute<TermAttribute>();
-    while (sink1->incrementToken())
-    {
-        BOOST_CHECK_EQUAL(tokens1[i], termAtt->term());
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(tokens1.size(), i);
     
-    i = 0;
-    termAtt = sink2->getAttribute<TermAttribute>();
-    while (sink2->incrementToken())
-    {
-        BOOST_CHECK(boost::iequals(termAtt->term(), L"The"));
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(2, i);
+    source->addAttribute<CheckClearAttributesAttribute>();
+    sink1->addAttribute<CheckClearAttributesAttribute>();
+    sink2->addAttribute<CheckClearAttributesAttribute>();
+
+    checkTokenStreamContents(source, tokens1);
+    checkTokenStreamContents(sink1, tokens1);
+    checkTokenStreamContents(sink2, newCollection<String>(L"The", L"the"));
 }
 
 BOOST_AUTO_TEST_CASE(testMultipleSources)
@@ -122,58 +104,28 @@ BOOST_AUTO_TEST_CASE(testMultipleSources)
     SinkTokenStreamPtr dogDetector = tee1->newSinkTokenStream(dogFilter);
     SinkTokenStreamPtr theDetector = tee1->newSinkTokenStream(theFilter);
     TokenStreamPtr source1 = newLucene<CachingTokenFilter>(tee1);
+    
+    tee1->addAttribute<CheckClearAttributesAttribute>();
+    dogDetector->addAttribute<CheckClearAttributesAttribute>();
+    theDetector->addAttribute<CheckClearAttributesAttribute>();
 
     TeeSinkTokenFilterPtr tee2 = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer2.str())));
     tee2->addSinkTokenStream(dogDetector);
     tee2->addSinkTokenStream(theDetector);
     TokenStreamPtr source2 = tee2;
     
-    int32_t i = 0;
-    TermAttributePtr termAtt = source1->getAttribute<TermAttribute>();
-    while (source1->incrementToken())
-    {
-        BOOST_CHECK_EQUAL(tokens1[i], termAtt->term());
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(tokens1.size(), i);
+    checkTokenStreamContents(source1, tokens1);
+    checkTokenStreamContents(source2, tokens2);
 
-    i = 0;
-    termAtt = source2->getAttribute<TermAttribute>();
-    while (source2->incrementToken())
-    {
-        BOOST_CHECK_EQUAL(tokens2[i], termAtt->term());
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(tokens2.size(), i);
-    
-    i = 0;
-    termAtt = theDetector->getAttribute<TermAttribute>();
-    while (theDetector->incrementToken())
-    {
-        BOOST_CHECK(boost::iequals(termAtt->term(), L"The"));
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(4, i);
-    
-    i = 0;
-    termAtt = dogDetector->getAttribute<TermAttribute>();
-    while (dogDetector->incrementToken())
-    {
-        BOOST_CHECK(boost::iequals(termAtt->term(), L"Dogs"));
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(2, i);
+    checkTokenStreamContents(theDetector, newCollection<String>(L"The", L"the", L"The", L"the"));
+    checkTokenStreamContents(dogDetector, newCollection<String>(L"Dogs", L"Dogs"));
 
     source1->reset();
     TokenStreamPtr lowerCasing = newLucene<LowerCaseFilter>(source1);
-    i = 0;
-    termAtt = lowerCasing->getAttribute<TermAttribute>();
-    while (lowerCasing->incrementToken())
-    {
-        BOOST_CHECK_EQUAL(StringUtils::toLower((const String&)tokens1[i]), termAtt->term());
-        ++i;
-    }
-    BOOST_CHECK_EQUAL(i, tokens1.size());
+    Collection<String> lowerCaseTokens = Collection<String>::newInstance(tokens1.size());
+    for (int32_t i = 0; i < tokens1.size(); ++i)
+        lowerCaseTokens[i] = StringUtils::toLower((const String&)tokens1[i]);
+    checkTokenStreamContents(lowerCasing, lowerCaseTokens);
 }
 
 namespace TestPerformance

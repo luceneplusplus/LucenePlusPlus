@@ -75,6 +75,7 @@ namespace TestSetPosition
         {
             if (i == TOKENS.size())
                 return false;
+            clearAttributes();
             termAtt->setTermBuffer(TOKENS[i]);
             offsetAtt->setOffset(i, i);
             posIncrAtt->setPositionIncrement(INCREMENTS[i]);

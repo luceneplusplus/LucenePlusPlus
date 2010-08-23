@@ -775,9 +775,9 @@ namespace Lucene
 	typedef WeakHashMap< IndexReaderWeakPtr, DocIdSetPtr, luceneWeakHash<IndexReaderWeakPtr>, luceneWeakEquals<IndexReaderWeakPtr> > WeakMapIndexReaderDocIdSet;
 	typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryLuceneObject, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryLuceneObject;
 	
-	typedef Map<ThreadId, DocumentsWriterThreadStatePtr> MapThreadDocumentsWriterThreadState;
-	typedef Map<String, IndexReaderPtr> MapStringIndexReader;
-	typedef Map<TermPtr, NumPtr, luceneCompare<TermPtr>> MapTermNum;
+	typedef Map< ThreadId, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
+	typedef Map< String, IndexReaderPtr > MapStringIndexReader;
+	typedef Map< TermPtr, NumPtr, luceneCompare<TermPtr> > MapTermNum;
 	
 	typedef boost::function<bool (const TermVectorEntryPtr&, const TermVectorEntryPtr&)> TermVectorEntryComparator;
 	

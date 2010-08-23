@@ -13,13 +13,13 @@ namespace Lucene
 	class FunctionFixture : public LuceneTestFixture
 	{
 	public:
-		FunctionFixture();
+		FunctionFixture(bool doMultiSegment);
 		virtual ~FunctionFixture();
 	
 	public:
 		static const double TEST_SCORE_TOLERANCE_DELTA;
 	
-	protected:
+	public:
 		static const int32_t N_DOCS;
 	
 		static const String ID_FIELD;
@@ -27,6 +27,7 @@ namespace Lucene
 		static const String INT_FIELD;
 		static const String DOUBLE_FIELD;
 		
+		bool doMultiSegment;
 		DirectoryPtr dir;
 		AnalyzerPtr anlzr;
 	

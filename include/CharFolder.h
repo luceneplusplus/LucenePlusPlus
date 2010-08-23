@@ -44,7 +44,7 @@ namespace Lucene
 		}
 	
 	protected:
-		static void fillLower();
-		static void fillUpper();
+		static bool fillLower();
+		static bool fillUpper();
 	};
 }

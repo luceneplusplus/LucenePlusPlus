@@ -11,14 +11,44 @@
 #include "QueryParser.h"
 #include "Query.h"
 #include "CustomScoreQuery.h"
+#include "CustomScoreProvider.h"
 #include "TopDocs.h"
 #include "ScoreDoc.h"
 #include "ValueSourceQuery.h"
 #include "Explanation.h"
 #include "IndexReader.h"
 #include "Document.h"
+#include "FieldCache.h"
 
 using namespace Lucene;
+
+class CustomAddScoreProvider : public CustomScoreProvider
+{
+public:
+    CustomAddScoreProvider(IndexReaderPtr reader) : CustomScoreProvider(reader)
+    {
+    }
+    
+    virtual ~CustomAddScoreProvider()
+    {
+    }
+
+public:
+    virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore)
+    {
+        return subQueryScore + valSrcScore;
+    }
+    
+    virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
+    {
+        double valSrcScore = valSrcExpl ? valSrcExpl->getValue() : 0.0;
+        ExplanationPtr exp = newLucene<Explanation>(valSrcScore + subQueryExpl->getValue(), L"custom score: sum of:");
+        exp->addDetail(subQueryExpl);
+        if (valSrcExpl)
+            exp->addDetail(valSrcExpl);
+        return exp;
+    }
+};
 
 class CustomAddQuery : public CustomScoreQuery
 {
@@ -36,46 +66,33 @@ public:
     {
         return L"customAdd";
     }
-    
-    virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore)
+
+protected:
+    virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader)
     {
-        return subQueryScore + valSrcScore;
-    }
-    
-    virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
-    {
-        double valSrcScore = valSrcExpl ? valSrcExpl->getValue() : 0.0;
-        ExplanationPtr exp = newLucene<Explanation>(valSrcScore + subQueryExpl->getValue(), L"custom score: sum of:");
-        exp->addDetail(subQueryExpl);
-        if (valSrcExpl)
-            exp->addDetail(valSrcExpl);
-        return exp;
+        return newLucene<CustomAddScoreProvider>(reader);
     }
 };
 
-class CustomMulAddQuery : public CustomScoreQuery
+class CustomMulAddScoreProvider : public CustomScoreProvider
 {
 public:
-    CustomMulAddQuery(QueryPtr q, ValueSourceQueryPtr qValSrc1, ValueSourceQueryPtr qValSrc2) : CustomScoreQuery(q, newCollection<ValueSourceQueryPtr>(qValSrc1, qValSrc2))
+    CustomMulAddScoreProvider(IndexReaderPtr reader) : CustomScoreProvider(reader)
     {
     }
     
-    virtual ~CustomMulAddQuery()
+    virtual ~CustomMulAddScoreProvider()
     {
     }
 
 public:
-    virtual String name()
-    {
-        return L"customMulAdd";
-    }
-    
     virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
     {
         if (valSrcScores.empty())
             return subQueryScore;
         if (valSrcScores.size() == 1)
             return subQueryScore + valSrcScores[0];
+        // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
         return (subQueryScore + valSrcScores[0]) * valSrcScores[1]; // we know there are two
     }
     
@@ -98,9 +115,79 @@ public:
     }
 };
 
+class CustomMulAddQuery : public CustomScoreQuery
+{
+public:
+    CustomMulAddQuery(QueryPtr q, ValueSourceQueryPtr qValSrc1, ValueSourceQueryPtr qValSrc2) : CustomScoreQuery(q, newCollection<ValueSourceQueryPtr>(qValSrc1, qValSrc2))
+    {
+    }
+    
+    virtual ~CustomMulAddQuery()
+    {
+    }
+
+public:
+    virtual String name()
+    {
+        return L"customMulAdd";
+    }
+
+protected:
+    virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader)
+    {
+        return newLucene<CustomMulAddScoreProvider>(reader);
+    }
+};
+
+class CustomExternalScoreProvider : public CustomScoreProvider
+{
+public:
+    CustomExternalScoreProvider(IndexReaderPtr reader, Collection<int32_t> values) : CustomScoreProvider(reader)
+    {
+        this->values = values;
+    }
+    
+    virtual ~CustomExternalScoreProvider()
+    {
+    }
+
+protected:
+    Collection<int32_t> values;
+
+public:
+    virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore)
+    {
+        BOOST_CHECK(doc <= reader->maxDoc());
+        return (double)values[doc];
+    }
+};
+
+class CustomExternalQuery : public CustomScoreQuery
+{
+public:
+    CustomExternalQuery(QueryPtr q) : CustomScoreQuery(q)
+    {
+    }
+    
+    virtual ~CustomExternalQuery()
+    {
+    }
+
+protected:
+    virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader)
+    {
+        Collection<int32_t> values = FieldCache::DEFAULT()->getInts(reader, FunctionFixture::INT_FIELD);
+        return newLucene<CustomExternalScoreProvider>(reader, values);
+    }
+};
+
 class CustomScoreQueryFixture : public FunctionFixture
 {
 public:
+    CustomScoreQueryFixture() : FunctionFixture(true)
+    {
+    }
+    
     virtual ~CustomScoreQueryFixture()
     {
     }
@@ -198,6 +285,26 @@ public:
 
 BOOST_FIXTURE_TEST_SUITE(CustomScoreQueryTest, CustomScoreQueryFixture)
 
+BOOST_AUTO_TEST_CASE(testCustomExternalQuery)
+{
+    QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, TEXT_FIELD, anlzr); 
+    String qtxt = L"first aid text"; // from the doc texts in FunctionFixture.
+    QueryPtr q1 = qp->parse(qtxt); 
+
+    QueryPtr q = newLucene<CustomExternalQuery>(q1);
+    
+    IndexSearcherPtr s = newLucene<IndexSearcher>(dir);
+    TopDocsPtr hits = s->search(q, 1000);
+    BOOST_CHECK_EQUAL(N_DOCS, hits->totalHits);
+    for (int32_t i = 0; i < N_DOCS; ++i)
+    {
+        int32_t doc = hits->scoreDocs[i]->doc;
+        double score = hits->scoreDocs[i]->score;
+        BOOST_CHECK_CLOSE_FRACTION((double)(1 + (4 * doc) % N_DOCS), score, 0.0001);
+    }
+    s->close();
+}
+
 /// Test that CustomScoreQuery of Type.BYTE returns the expected scores.
 BOOST_AUTO_TEST_CASE(testCustomScoreByte)
 {
@@ -209,7 +316,7 @@ BOOST_AUTO_TEST_CASE(testCustomScoreByte)
 /// Test that CustomScoreQuery of Type.INT returns the expected scores.
 BOOST_AUTO_TEST_CASE(testCustomScoreInt)
 {
-    // INT field values are small enough to be parsed as byte
+    // INT field values are small enough to be parsed as int
     doTestCustomScore(INT_FIELD, FieldScoreQuery::INT, 1.0);
     doTestCustomScore(INT_FIELD, FieldScoreQuery::INT, 2.0);
 }
