@@ -1,7 +1,7 @@
 Lucene++
 ==========
 
-Welcome to lucene++ **version 3.0.1**.
+Welcome to lucene++ v**3.0.1**.
 
 Lucene++ is an up to date C++ port of the popular Lucene, a high-performance, full-featured text search engine library.
 
@@ -62,5 +62,4 @@ Acknowledgements
 - `UTF8-CPP <http://utfcpp.sourceforge.net/>`_ Copyright 2006 Nemanja Trifunovic
 - `nedmalloc <http://sourceforge.net/projects/nedmalloc/>`_ Copyright 2005-2006 Niall Douglas
 - md5 Copyright (C) 1999, 2000, 2002 Aladdin Enterprises
-
 
