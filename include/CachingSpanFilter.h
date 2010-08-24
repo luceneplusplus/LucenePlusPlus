@@ -25,7 +25,8 @@ namespace Lucene
 	protected:
 		SpanFilterPtr filter;		
 		FilterCachePtr cache;
-		
+	
+	public:
 		// for testing
 		int32_t hitCount;
 		int32_t missCount;

@@ -60,7 +60,7 @@ namespace Lucene
 		LUCENE_CLASS(DefaultFilteredDocIdSetIterator);
 	
 	protected:
-		FilteredDocIdSetWeakPtr _filtered;
+		FilteredDocIdSetPtr filtered;
 	
 	protected:
 		virtual bool match(int32_t docid);

@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     docs = searcher->search(constantScore, 1);
     BOOST_CHECK_EQUAL(1, docs->totalHits);
 
-    // force cache to regenerate:
+    // force cache to regenerate
     filter = newLucene<CachingWrapperFilter>(startFilter, CachingWrapperFilter::DELETES_RECACHE);
 
     writer->addDocument(doc);

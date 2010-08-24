@@ -836,7 +836,7 @@ namespace Lucene
         
         // Must assign this at the end -- if we hit an exception above core, we don't want to attempt to
         // purge the FieldCache (will hit NPE because core is not assigned yet).
-        this->origInstance = origInstance;
+        _origInstance = origInstance;
     }
     
     CoreReaders::~CoreReaders()
@@ -928,6 +928,7 @@ namespace Lucene
                 storeCFSReader->close();
             
             // Force FieldCache to evict our entries at this point
+            SegmentReaderPtr origInstance(_origInstance.lock());
             if (origInstance)
                 FieldCache::DEFAULT()->purge(origInstance);
         }

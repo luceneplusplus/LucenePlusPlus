@@ -80,7 +80,13 @@ namespace Lucene
     
     NativeFSLock::~NativeFSLock()
     {
-        release();
+        try
+        {
+            release();
+        }
+        catch (...)
+        {
+        }
     }
     
     SynchronizePtr NativeFSLock::LOCK_HELD_LOCK()

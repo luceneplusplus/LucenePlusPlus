@@ -230,7 +230,7 @@ namespace Lucene
 		/// closed, even those it shares core objects with other SegmentReaders
 		SegmentReaderRefPtr ref;
 		
-		SegmentReaderPtr origInstance;
+		SegmentReaderWeakPtr _origInstance;
 	
 	public:
 		String segment;

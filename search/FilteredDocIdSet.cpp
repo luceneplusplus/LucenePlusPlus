@@ -30,7 +30,7 @@ namespace Lucene
     
     DefaultFilteredDocIdSetIterator::DefaultFilteredDocIdSetIterator(FilteredDocIdSetPtr filtered, DocIdSetIteratorPtr innerIter) : FilteredDocIdSetIterator(innerIter)
     {
-        _filtered = filtered;
+        this->filtered = filtered;
     }
     
     DefaultFilteredDocIdSetIterator::~DefaultFilteredDocIdSetIterator()
@@ -39,6 +39,6 @@ namespace Lucene
     
     bool DefaultFilteredDocIdSetIterator::match(int32_t docid)
     {
-        return FilteredDocIdSetPtr(_filtered)->match(docid);
+        return filtered->match(docid);
     }
 }

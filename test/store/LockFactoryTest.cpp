@@ -36,8 +36,7 @@ static void addDoc(IndexWriterPtr writer)
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
-/*
-todo
+
 // Verify: we can provide our own LockFactory implementation, the right
 // methods are called at the right time, locks are created, etc.
 BOOST_AUTO_TEST_CASE(testCustomLockFactory)
@@ -114,7 +113,7 @@ BOOST_AUTO_TEST_CASE(testSimpleFSLockFactory)
 {
     BOOST_CHECK_NO_THROW(newLucene<SimpleFSLockFactory>(L"test"));
 }
-*/
+
 namespace LockFactoryTest
 {
     DECLARE_SHARED_PTR(WriterThread)
@@ -299,8 +298,7 @@ BOOST_AUTO_TEST_CASE(testStressLocks)
 {
     _testStressLocks(LockFactoryPtr(), getTempDir(L"index.TestLockFactory6"));
 }
-/*
-todo
+
 // Verify: do stress test, by opening IndexReaders and IndexWriters over and over in 2 threads and making sure
 // no unexpected exceptions are raised, but use NativeFSLockFactory
 BOOST_AUTO_TEST_CASE(testStressLocksNativeFSLockFactory)
@@ -399,5 +397,5 @@ BOOST_AUTO_TEST_CASE(testDefaultFSLockFactoryPrefix)
 
     FileUtils::removeDirectory(dirName);
 }
-*/
+
 BOOST_AUTO_TEST_SUITE_END()

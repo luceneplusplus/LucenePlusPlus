@@ -428,6 +428,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\index\IndexCommitTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\index\IndexFileDeleterTest.cpp"
 				>
 			</File>
@@ -799,6 +803,10 @@
 			</File>
 			<File
 				RelativePath="..\search\BooleanScorerTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\search\CachingSpanFilterTest.cpp"
 				>
 			</File>
 			<File
