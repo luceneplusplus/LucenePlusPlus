@@ -10,6 +10,7 @@ Components
 ----------------
 
 - liblucene++ library
+- liblucene_contrib library
 - lucene_tester
 - deletefiles
 - indexfiles

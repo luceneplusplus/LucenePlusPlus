@@ -6,6 +6,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene_tester", "..\test\msvc\lucene_tester.vcproj", "{6D684870-1124-49E1-8F96-7DE7B6114BEA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
+		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{E9344A66-4CC8-4E5B-83BC-8061E8962B46}"
@@ -21,6 +22,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deletefiles", "..\demo\dele
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "searchfiles", "..\demo\searchfiles\msvc\searchfiles.vcproj", "{688A6720-739F-4EA3-AC5B-AA67A0965104}"
+	ProjectSection(ProjectDependencies) = postProject
+		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene_contrib", "..\contrib\msvc\lucene_contrib.vcproj", "{46A95AFD-95FD-4280-B22E-1B56F273144B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
 	EndProjectSection
@@ -95,6 +101,18 @@ Global
 		{688A6720-739F-4EA3-AC5B-AA67A0965104}.Release Static Lib|Win32.Build.0 = Release|Win32
 		{688A6720-739F-4EA3-AC5B-AA67A0965104}.Release|Win32.ActiveCfg = Release|Win32
 		{688A6720-739F-4EA3-AC5B-AA67A0965104}.Release|Win32.Build.0 = Release|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Debug DLL|Win32.ActiveCfg = Debug DLL|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Debug DLL|Win32.Build.0 = Debug DLL|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Debug Static Lib|Win32.ActiveCfg = Debug Static Lib|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Debug Static Lib|Win32.Build.0 = Debug Static Lib|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Debug|Win32.Build.0 = Debug|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Release DLL|Win32.ActiveCfg = Release DLL|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Release DLL|Win32.Build.0 = Release DLL|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Release Static Lib|Win32.ActiveCfg = Release Static Lib|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Release Static Lib|Win32.Build.0 = Release Static Lib|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Release|Win32.ActiveCfg = Release|Win32
+		{46A95AFD-95FD-4280-B22E-1B56F273144B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

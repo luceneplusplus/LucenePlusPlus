@@ -27,6 +27,12 @@ msvc/Debug Static Lib
 msvc/Release
 msvc/Release DLL
 msvc/Release Static Lib
+contrib/msvc/Debug
+contrib/msvc/Debug DLL
+contrib/msvc/Debug Static Lib
+contrib/msvc/Release
+contrib/msvc/Release DLL
+contrib/msvc/Release Static Lib
 test/msvc/Debug
 test/msvc/Release
 demo/deletefiles/msvc/Release

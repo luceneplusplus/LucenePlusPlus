@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lucene++.lib"
+				AdditionalDependencies="lucene++.lib lucene_contrib.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\lib&quot;;..\..\lib"
 				GenerateDebugInformation="true"
@@ -146,7 +146,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lucene++.lib"
+				AdditionalDependencies="lucene++.lib lucene_contrib.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\lib&quot;;..\..\lib"
 				GenerateDebugInformation="true"
@@ -189,6 +189,10 @@
 			>
 			<File
 				RelativePath="..\..\include\Lucene.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\LuceneContrib.h"
 				>
 			</File>
 			<File
@@ -1148,6 +1152,26 @@
 					RelativePath="..\search\spans\SpansTest.cpp"
 					>
 				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="contrib"
+			>
+			<Filter
+				Name="analyzers"
+				>
+				<Filter
+					Name="common"
+					>
+					<Filter
+						Name="analysis"
+						>
+						<File
+							RelativePath="..\contrib\analyzers\common\analysis\ReverseStringFilterTest.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
 			</Filter>
 		</Filter>
 	</Files>

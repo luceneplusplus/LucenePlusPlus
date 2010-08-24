@@ -38,6 +38,10 @@ lucene_source_dirs = [
 
 nedmalloc_source_file = 'util/nedmalloc/nedmalloc.c'
 
+lucene_contrib_source_dirs = [
+    'contrib/analyzers/common/analysis/reverse'
+]
+
 lucene_include_dirs = [
     'include',
     'util/md5',
@@ -51,6 +55,7 @@ tester_source_dirs = [
     'test/analysis',
     'test/analysis/standard',
     'test/analysis/tokenattributes',
+    'test/contrib/analyzers/common/analysis',
     'test/document',
     'test/index',
     'test/queryparser',
@@ -124,6 +129,26 @@ def build(bld):
         lib = 'pthread'
         )
     
+    lucene_contrib_sources = []
+    for source_dir in lucene_contrib_source_dirs:
+        for source_file in bld.path.ant_glob(source_dir + '/*.c*').split():
+            source_path = bld.path.find_resource(source_file)
+            lucene_contrib_sources.append(source_path)
+    
+    bld(
+        name = 'lucene_contrib',
+        features = ['cxx', 'cc'] + [target_type],
+        source = [source.relpath_gen(bld.path) for source in lucene_contrib_sources],
+        target = 'lucene_contrib',
+        includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
+        ccflags = compile_flags,
+        cxxflags = compile_flags,
+        defines = ['LPP_BUILDING_LIB', 'LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
+        uselib_local = 'lucene++',
+        lib = 'pthread'
+        )
+    
     tester_sources = []
     for source_dir in tester_source_dirs:
         for source_file in bld.path.ant_glob(source_dir + '/*.c*').split():
@@ -140,7 +165,7 @@ def build(bld):
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
         uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS BOOST_UNIT_TEST_FRAMEWORK',
-        uselib_local = 'lucene++',
+        uselib_local = 'lucene++ lucene_contrib',
         lib = 'pthread'
         )
     

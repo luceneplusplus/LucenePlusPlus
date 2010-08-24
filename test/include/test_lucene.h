@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Lucene.h"
+#include "LuceneContrib.h"
 #include <boost/test/unit_test.hpp>
 
 namespace std
