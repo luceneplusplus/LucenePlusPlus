@@ -71,7 +71,7 @@ tester_include_dirs = [
 def set_options(opt):
     opt.tool_options("boost")
     opt.tool_options('compiler_cxx')
-    
+    opt.tool_options('clang', tooldir = 'build')
     opt.add_option(
         '--debug', 
         default = False,
@@ -92,6 +92,7 @@ def configure(conf):
     conf.check_tool('gcc')
     conf.check_cc(lib = 'pthread', mandatory = True)
     conf.check_tool('boost')
+    conf.check_tool('clang', 'build')
     conf.check_boost(
         static = 'onlystatic',
         lib = ['filesystem', 'thread', 'regex', 'system', 'date_time', 'iostreams', 'unit_test_framework']
@@ -99,11 +100,13 @@ def configure(conf):
 
             
 def build(bld):
-    
     target_type = 'cstaticlib' if Options.options.static else 'cshlib'
-    compile_flags = ['-O0', '-g'] if Options.options.debug else ['-O2']
-    debug_define = '_DEBUG' if Options.options.debug else 'NDEBUG'
-    
+    link_flags = ['-m32']
+    if Options.options.debug:
+         compile_flags = ['-O0', '-g', '-m32'] 
+    else:
+         compile_flags = ['-O2', '-m32']
+    debug_define = '_DEBUG' if Options.options.debug else 'NDEBUG' 
     lucene_sources = []
     for source_dir in lucene_source_dirs:
         for source_file in bld.path.ant_glob(source_dir + '/*.c*').split():
@@ -119,9 +122,10 @@ def build(bld):
         includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
+        linkflags = link_flags,
         defines = ['LPP_BUILDING_LIB', 'LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
-        lib = 'pthread'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAM PTHREAD',
+        
         )
     
     tester_sources = []
@@ -138,10 +142,10 @@ def build(bld):
         includes = tester_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
+        linkflags = link_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS BOOST_UNIT_TEST_FRAMEWORK',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS BOOST_UNIT_TEST_FRAMEWORK PTHREAD',
         uselib_local = 'lucene++',
-        lib = 'pthread'
         )
     
     bld(
@@ -153,9 +157,8 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
         uselib_local = 'lucene++',
-        lib = 'pthread'
         )
 
     bld(
@@ -166,10 +169,10 @@ def build(bld):
         includes = ['include'] + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
+        linkflags = link_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
         uselib_local = 'lucene++',
-        lib = 'pthread'
         )
 
     bld(
@@ -180,9 +183,9 @@ def build(bld):
         includes = ['include'] + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
+        linkflags = link_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
-        uselib_local = 'lucene++',
-        lib = 'pthread'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib_local = 'lucene++'
         )
 
