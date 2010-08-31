@@ -18,5 +18,9 @@ namespace Lucene
 	DECLARE_SHARED_PTR(ArabicNormalizer)
 	DECLARE_SHARED_PTR(ArabicStemFilter)
 	DECLARE_SHARED_PTR(ArabicStemmer)
+	DECLARE_SHARED_PTR(BrazilianAnalyzer)
+	DECLARE_SHARED_PTR(BrazilianAnalyzerSavedStreams)
+	DECLARE_SHARED_PTR(BrazilianStemFilter)
+	DECLARE_SHARED_PTR(BrazilianStemmer)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
 }

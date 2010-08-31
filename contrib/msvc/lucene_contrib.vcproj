@@ -701,6 +701,34 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="br"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\br\BrazilianAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\BrazilianAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\br\BrazilianStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\BrazilianStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\br\BrazilianStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\BrazilianStemmer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

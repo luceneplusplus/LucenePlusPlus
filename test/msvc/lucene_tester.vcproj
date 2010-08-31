@@ -1190,6 +1190,14 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="br"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\br\BrazilianStemmerTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>
