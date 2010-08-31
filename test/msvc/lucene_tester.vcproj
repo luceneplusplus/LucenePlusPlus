@@ -1166,10 +1166,30 @@
 					<Filter
 						Name="analysis"
 						>
-						<File
-							RelativePath="..\contrib\analyzers\common\analysis\ReverseStringFilterTest.cpp"
+						<Filter
+							Name="reverse"
 							>
-						</File>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\reverse\ReverseStringFilterTest.cpp"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="ar"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\ar\ArabicAnalyzerTest.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\ar\ArabicNormalizationFilterTest.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\ar\ArabicStemFilterTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

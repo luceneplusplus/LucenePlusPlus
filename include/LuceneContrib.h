@@ -10,6 +10,13 @@
 
 namespace Lucene
 {
-	// common analysis
+	// analyzers
+	DECLARE_SHARED_PTR(ArabicAnalyzer)
+	DECLARE_SHARED_PTR(ArabicAnalyzerSavedStreams)
+	DECLARE_SHARED_PTR(ArabicLetterTokenizer)
+	DECLARE_SHARED_PTR(ArabicNormalizationFilter)
+	DECLARE_SHARED_PTR(ArabicNormalizer)
+	DECLARE_SHARED_PTR(ArabicStemFilter)
+	DECLARE_SHARED_PTR(ArabicStemmer)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
 }

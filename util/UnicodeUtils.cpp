@@ -7,6 +7,11 @@
 #include "stdafx.h"
 #include "UnicodeUtils.h"
 
+extern "C"
+{
+#include "wcwidth.h"
+}
+
 namespace Lucene
 {
     const int32_t UnicodeUtil::UNI_SUR_HIGH_START = 0xd800;
@@ -18,6 +23,11 @@ namespace Lucene
 	
     UnicodeUtil::~UnicodeUtil()
     {
+    }
+    
+    bool UnicodeUtil::isNonSpacing(wchar_t c)
+    {
+        return (wcwidth_ucs(c) == 0);
     }
     
     UTF8Result::~UTF8Result()

@@ -29,6 +29,10 @@ namespace Lucene
 		static const int64_t HALF_MASK;
 		
 		static const wchar_t UNICODE_TERMINATOR;
+
+    public:
+        /// Return true if supplied character is non-spacing (as defined by IEEE Std 1002.1-2001)
+        static bool isNonSpacing(wchar_t c);
 	};
 	
 	/// Utility class that contains utf8 and unicode translations.

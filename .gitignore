@@ -3,6 +3,7 @@
 *.aps
 *.tar.gz
 *.rar
+*.cmd
 *.suo
 *.ncb
 *.idb 

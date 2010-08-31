@@ -637,14 +637,70 @@
 				<Filter
 					Name="analysis"
 					>
-					<File
-						RelativePath="..\analyzers\common\analysis\reverse\ReverseStringFilter.cpp"
+					<Filter
+						Name="reverse"
 						>
-					</File>
-					<File
-						RelativePath="..\..\include\ReverseStringFilter.h"
+						<File
+							RelativePath="..\analyzers\common\analysis\reverse\ReverseStringFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ReverseStringFilter.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="ar"
 						>
-					</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ar\ArabicAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ArabicAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ar\ArabicLetterTokenizer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ArabicLetterTokenizer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ar\ArabicNormalizationFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ArabicNormalizationFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ar\ArabicNormalizer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ArabicNormalizer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ar\ArabicStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ArabicStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ar\ArabicStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ArabicStemmer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

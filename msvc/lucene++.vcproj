@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm120"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -125,7 +125,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -204,7 +204,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm120"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB;"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -287,7 +287,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -366,7 +366,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm120"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LPP_BUILDING_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -439,7 +439,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;LPP_BUILDING_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -4668,6 +4668,66 @@
 				</File>
 				<File
 					RelativePath="..\util\nedmalloc\nedmalloc.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="ucs"
+				>
+				<File
+					RelativePath="..\util\ucs\wcwidth.c"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Static Lib|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Static Lib|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\util\ucs\wcwidth.h"
 					>
 				</File>
 			</Filter>
