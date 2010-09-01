@@ -73,6 +73,7 @@ BOOST_FIXTURE_TEST_SUITE(CJKTokenizerTest, CJKTokenizerFixture)
 
 BOOST_AUTO_TEST_CASE(testJa1)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     String str = L"\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341";
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
@@ -87,10 +88,12 @@ BOOST_AUTO_TEST_CASE(testJa1)
         TestToken(L"\u4e5d\u5341", 8,10, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(str, out_tokens);
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testJa2)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     String str = L"\u4e00 \u4e8c\u4e09\u56db \u4e94\u516d\u4e03\u516b\u4e5d \u5341";
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
@@ -104,10 +107,12 @@ BOOST_AUTO_TEST_CASE(testJa2)
         TestToken(L"\u5341", 12,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(str, out_tokens);
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testC)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     String str = L"abc defgh ijklmn opqrstu vwxy z";
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
@@ -119,10 +124,12 @@ BOOST_AUTO_TEST_CASE(testC)
         TestToken(L"z", 30, 31, CJKTokenizer::SINGLE_TOKEN_TYPE)
     );
     checkCJKToken(str, out_tokens);
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testMix)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     String str = L"\u3042\u3044\u3046\u3048\u304aabc\u304b\u304d\u304f\u3051\u3053";
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
@@ -137,10 +144,12 @@ BOOST_AUTO_TEST_CASE(testMix)
         TestToken(L"\u3051\u3053", 11,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(str, out_tokens);
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testMix2)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     String str = L"\u3042\u3044\u3046\u3048\u304aab\u3093c\u304b\u304d\u304f\u3051";
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
@@ -156,21 +165,25 @@ BOOST_AUTO_TEST_CASE(testMix2)
         TestToken(L"\u304f\u3051", 11,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(str, out_tokens);
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testSingleChar)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     String str = L"\u4e00";
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
         TestToken(L"\u4e00", 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(str, out_tokens);
+    #endif
 }
 
 /// Full-width text is normalized to half-width 
 BOOST_AUTO_TEST_CASE(testFullWidth)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     const uint8_t str[] = {0xef, 0xbc, 0xb4, 0xef, 0xbd, 0x85, 0xef, 0xbd, 0x93, 0xef, 0xbd, 0x94,
                            0x20, 0xef, 0xbc, 0x91, 0xef, 0xbc, 0x92, 0xef, 0xbc, 0x93, 0xef, 0xbc, 0x94};
 
@@ -179,11 +192,13 @@ BOOST_AUTO_TEST_CASE(testFullWidth)
         TestToken(L"1234", 5, 9, CJKTokenizer::SINGLE_TOKEN_TYPE)
     );
     checkCJKToken(StringUtils::toUnicode(str, sizeof(str) / sizeof(str[0])), out_tokens);
+    #endif
 }
 
 /// Non-english text (not just CJK) is treated the same as CJK: C1C2 C2C3 
 BOOST_AUTO_TEST_CASE(testNonIdeographic)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     const uint8_t str[] = {0xe4, 0xb8, 0x80, 0x20, 0xd8, 0xb1, 0xd9, 0x88, 0xd8, 0xa8, 0xd8, 0xb1,
                            0xd8, 0xaa, 0x20, 0xd9, 0x85, 0xd9, 0x88, 0xd9, 0x8a, 0xd8, 0xb1};
     
@@ -206,12 +221,14 @@ BOOST_AUTO_TEST_CASE(testNonIdeographic)
         TestToken(StringUtils::toUnicode(token7, sizeof(token7) / sizeof(token7[0])), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(StringUtils::toUnicode(str, sizeof(str) / sizeof(str[0])), out_tokens);
+    #endif
 }
 
 /// Non-english text with non-letters (non-spacing marks,etc) is treated as C1C2 C2C3, 
 /// except for words are split around non-letters.
 BOOST_AUTO_TEST_CASE(testNonIdeographicNonLetter)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     const uint8_t str[] = {0xe4, 0xb8, 0x80, 0x20, 0xd8, 0xb1, 0xd9, 0x8f, 0xd9, 0x88, 0xd8, 0xa8,
                            0xd8, 0xb1, 0xd8, 0xaa, 0x20, 0xd9, 0x85, 0xd9, 0x88, 0xd9, 0x8a, 0xd8, 0xb1};
     
@@ -234,16 +251,20 @@ BOOST_AUTO_TEST_CASE(testNonIdeographicNonLetter)
         TestToken(StringUtils::toUnicode(token7, sizeof(token7) / sizeof(token7[0])), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(StringUtils::toUnicode(str, sizeof(str) / sizeof(str[0])), out_tokens);
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testTokenStream)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     AnalyzerPtr analyzer = newLucene<CJKAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(analyzer, L"\u4e00\u4e01\u4e02", newCollection<String>(L"\u4e00\u4e01", L"\u4e01\u4e02"));
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     AnalyzerPtr analyzer = newLucene<CJKAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     String str = L"\u3042\u3044\u3046\u3048\u304aabc\u304b\u304d\u304f\u3051\u3053";
 
@@ -275,10 +296,12 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
         TestToken(L"\u304f\u3051", 11,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKTokenReusable(analyzer, str, out_tokens2);
+    #endif
 }
 
 BOOST_AUTO_TEST_CASE(testFinalOffset)
 {
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     const uint8_t token1[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84};
     checkCJKToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 
                   newCollection<TestToken>(TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
@@ -297,6 +320,7 @@ BOOST_AUTO_TEST_CASE(testFinalOffset)
                   newCollection<TestToken>(
                   TestToken(L"test", 0, 4, CJKTokenizer::SINGLE_TOKEN_TYPE),
                   TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
+    #endif
 }
 
 BOOST_AUTO_TEST_SUITE_END()
