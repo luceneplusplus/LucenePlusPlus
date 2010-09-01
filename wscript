@@ -18,28 +18,23 @@ VERSION='3.0.2'
 srcdir = '.'
 blddir = 'bin'
 
+source_patterns = [
+    '*.c',
+    '*.cpp'
+]
+
 lucene_source_dirs = [
     'analysis',
-    'analysis/standard',
-    'analysis/tokenattributes',
     'document',
     'index',
     'queryparser',
     'search',
-    'search/function',
-    'search/payloads',
-    'search/spans',
     'store',
-    'util',
-    'util/md5',
-    'util/utf8',
-    'util/zlib'
+    'util'
 ]
 
-nedmalloc_source_file = 'util/nedmalloc/nedmalloc.c'
-
 lucene_contrib_source_dirs = [
-    'contrib/analyzers/common/analysis/reverse'
+    'contrib'
 ]
 
 lucene_include_dirs = [
@@ -47,24 +42,12 @@ lucene_include_dirs = [
     'util/md5',
     'util/nedmalloc',
     'util/utf8',
-    'util/zlib'
+    'util/zlib',
+    'util/ucs'
 ]
 
 tester_source_dirs = [
-    'test',
-    'test/analysis',
-    'test/analysis/standard',
-    'test/analysis/tokenattributes',
-    'test/contrib/analyzers/common/analysis',
-    'test/document',
-    'test/index',
-    'test/queryparser',
-    'test/search',
-    'test/search/function',
-    'test/search/payloads',
-    'test/search/spans',
-    'test/store',
-    'test/util'
+    'test'
 ]
 
 tester_include_dirs = [
@@ -106,15 +89,13 @@ def configure(conf):
 def build(bld):
     
     target_type = 'cstaticlib' if Options.options.static else 'cshlib'
-    compile_flags = ['-O0', '-g'] if Options.options.debug else ['-O2']
+    compile_flags = ['-O0', '-g', '-m32'] if Options.options.debug else ['-O2', '-m32']
     debug_define = '_DEBUG' if Options.options.debug else 'NDEBUG'
     
     lucene_sources = []
     for source_dir in lucene_source_dirs:
-        for source_file in bld.path.ant_glob(source_dir + '/*.c*').split():
-            source_path = bld.path.find_resource(source_file)
-            lucene_sources.append(source_path)
-    lucene_sources.append(bld.path.find_resource(nedmalloc_source_file))     
+        source_dir = bld.path.find_dir(source_dir)
+        lucene_sources.extend(source_dir.find_iter(source_patterns))
     
     bld(
         name = 'lucene++',
@@ -125,15 +106,13 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_BUILDING_LIB', 'LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
-        lib = 'pthread'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD'
         )
     
     lucene_contrib_sources = []
     for source_dir in lucene_contrib_source_dirs:
-        for source_file in bld.path.ant_glob(source_dir + '/*.c*').split():
-            source_path = bld.path.find_resource(source_file)
-            lucene_contrib_sources.append(source_path)
+        source_dir = bld.path.find_dir(source_dir)
+        lucene_contrib_sources.extend(source_dir.find_iter(source_patterns))
     
     bld(
         name = 'lucene_contrib',
@@ -144,16 +123,14 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_BUILDING_LIB', 'LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
-        uselib_local = 'lucene++',
-        lib = 'pthread'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib_local = 'lucene++'
         )
     
     tester_sources = []
     for source_dir in tester_source_dirs:
-        for source_file in bld.path.ant_glob(source_dir + '/*.c*').split():
-            source_path = bld.path.find_resource(source_file)
-            tester_sources.append(source_path)
+        source_dir = bld.path.find_dir(source_dir)
+        tester_sources.extend(source_dir.find_iter(source_patterns))
     
     bld(
         name = 'lucene_tester',
@@ -164,9 +141,8 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS BOOST_UNIT_TEST_FRAMEWORK',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS BOOST_UNIT_TEST_FRAMEWORK PTHREAD',
         uselib_local = 'lucene++ lucene_contrib',
-        lib = 'pthread'
         )
     
     bld(
@@ -178,9 +154,8 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
-        uselib_local = 'lucene++',
-        lib = 'pthread'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib_local = 'lucene++'
         )
 
     bld(
@@ -192,9 +167,8 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
-        uselib_local = 'lucene++',
-        lib = 'pthread'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib_local = 'lucene++'
         )
 
     bld(
@@ -206,8 +180,7 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS',
-        uselib_local = 'lucene++',
-        lib = 'pthread'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib_local = 'lucene++'
         )
 
