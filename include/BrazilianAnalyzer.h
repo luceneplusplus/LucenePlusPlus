@@ -51,7 +51,7 @@ namespace Lucene
 	    
 	    /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
 	    ///
-	    /// @return  A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
+	    /// @return A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
 	    /// {@link LowerCaseFilter}, {@link StandardFilter}, {@link StopFilter}, and {@link BrazilianStemFilter}.
 	    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
 	    

@@ -1198,6 +1198,14 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="cjk"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\cjk\CJKTokenizerTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

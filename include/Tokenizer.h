@@ -57,6 +57,8 @@ namespace Lucene
 		/// @see CharStream#correctOffset
 		virtual int32_t correctOffset(int32_t currentOff);
 		
+		using TokenStream::reset;
+		
 		/// Reset the tokenizer to a new reader.  Typically, an analyzer (in its reusableTokenStream method) will 
 		/// use this to re-use a previously created tokenizer.
 		virtual void reset(ReaderPtr input);

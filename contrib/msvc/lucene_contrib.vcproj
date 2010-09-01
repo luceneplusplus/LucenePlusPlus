@@ -729,6 +729,26 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="cjk"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\cjk\CJKAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\CJKAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\cjk\CJKTokenizer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\CJKTokenizer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

@@ -22,5 +22,8 @@ namespace Lucene
 	DECLARE_SHARED_PTR(BrazilianAnalyzerSavedStreams)
 	DECLARE_SHARED_PTR(BrazilianStemFilter)
 	DECLARE_SHARED_PTR(BrazilianStemmer)
+	DECLARE_SHARED_PTR(CJKAnalyzer)
+	DECLARE_SHARED_PTR(CJKAnalyzerSavedStreams)
+	DECLARE_SHARED_PTR(CJKTokenizer)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
 }
