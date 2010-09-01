@@ -145,39 +145,40 @@ namespace Lucene
 
         String lowerValue(StringUtils::toLower(value));
         String r;
-        for (int32_t j = 0; j < (int32_t)value.length(); ++j)
+        
+		for (int32_t j = 0; j < (int32_t)value.length(); ++j)
         {
-            if (value[j] == L'á' || value[j] == L'â' || value[j] == L'ã')
+            if (value[j] == 0x00e1 || value[j] == 0x00e2 || value[j] == 0x00e3)
             {
                 r += L"a";
                 continue;
             }
-            if (value[j] == L'é' || value[j] == L'ê')
+            if (value[j] == 0x00e9 || value[j] == 0x00ea)
             {
                 r += L"e";
                 continue;
             }
-            if (value[j] == L'í')
+            if (value[j] == 0x00ed)
             {
                 r += L"i";
                 continue;
             }
-            if (value[j] == L'ó' || value[j] == L'ô' || value[j] == L'õ')
+            if (value[j] == 0x00f3 || value[j] == 0x00f4 || value[j] == 0x00f5)
             {
                 r += L"o";
                 continue;
             }
-            if (value[j] == L'ú' || value[j] == L'ü')
+            if (value[j] == 0x00fa || value[j] == 0x00fc)
             {
                 r += L"u";
                 continue;
             }
-            if (value[j] == L'ç')
+            if (value[j] == 0x00e7)
             {
                 r += L"c";
                 continue;
             }
-            if (value[j] == L'ñ')
+            if (value[j] == 0x00f1)
             {
                 r += L"n";
                 continue;
