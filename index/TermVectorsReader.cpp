@@ -472,7 +472,7 @@ namespace Lucene
                 // Term stored as "java chars"
                 if (charBuffer.length() < totalLength)
                     charBuffer.resize((int32_t)(1.5 * (double)totalLength));
-                tvf->readChars(charBuffer.get(), start, deltaLength);
+                totalLength = start + tvf->readChars(charBuffer.get(), start, deltaLength);
                 term.append(charBuffer.get(), totalLength);					
             }
             else

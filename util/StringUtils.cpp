@@ -8,7 +8,6 @@
 #include "StringUtils.h"
 #include "UnicodeUtils.h"
 #include "CharFolder.h"
-#include "utf8.h"
 
 namespace Lucene
 {
@@ -23,18 +22,7 @@ namespace Lucene
     
     int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, wchar_t* unicode)
     {
-        try
-        {
-            #ifdef LPP_UNICODE_CHAR_SIZE_2
-            return (utf8::utf8to16(utf8, utf8 + length, (uint16_t*)unicode) - (uint16_t*)unicode);
-            #else
-            return (utf8::utf8to16(utf8, utf8 + length, (uint32_t*)unicode) - (uint32_t*)unicode);
-            #endif
-        }
-        catch (...)
-        {
-            return 0;
-        }
+        return UnicodeUtil::toUnicode(utf8, length, unicode);
     }
     
     int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, CharArray unicode)
@@ -65,46 +53,9 @@ namespace Lucene
         return toUnicode((uint8_t*)s.c_str(), s.length());
     }
     
-    template <typename u16bit_iterator, typename octet_iterator>
-    octet_iterator utf16to8(u16bit_iterator start, u16bit_iterator end, octet_iterator result)
-    {       
-        while (start != end && *start != UnicodeUtil::UNICODE_TERMINATOR)
-        {
-            uint32_t cp = utf8::internal::mask16(*start++);
-            if (utf8::internal::is_lead_surrogate(cp))
-            {
-                if (start != end)
-                {
-                    uint32_t trail_surrogate = utf8::internal::mask16(*start++);
-                    if (utf8::internal::is_trail_surrogate(trail_surrogate))
-                        cp = (cp << 10) + trail_surrogate + utf8::internal::SURROGATE_OFFSET;
-                    else
-                        throw utf8::invalid_utf16(static_cast<uint16_t>(trail_surrogate));
-                }
-                else
-                    throw utf8::invalid_utf16(static_cast<uint16_t>(cp));
-            }
-            else if (utf8::internal::is_trail_surrogate(cp))
-                throw utf8::invalid_utf16(static_cast<uint16_t>(cp));
-            result = utf8::append(cp, result);
-        }
-        return result;         
-    }
-    
     int32_t StringUtils::toUTF8(const uint8_t* unicode, int32_t length, uint8_t* utf8)
     {
-        try
-        {
-            #ifdef LPP_UNICODE_CHAR_SIZE_2
-            return (utf16to8((uint16_t*)unicode, (uint16_t*)unicode + length, utf8) - utf8);
-            #else
-            return (utf16to8((uint32_t*)unicode, (uint32_t*)unicode + length, utf8) - utf8);
-            #endif
-        }
-        catch (...)
-        {
-            return 0;
-        }
+        return UnicodeUtil::toUTF8(unicode, length, utf8);
     }
     
     int32_t StringUtils::toUTF8(const uint8_t* unicode, int32_t length, ByteArray utf8)

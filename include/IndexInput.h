@@ -80,7 +80,7 @@ namespace Lucene
 		/// @param start the offset in the array to start storing characters.
 		/// @param length the number of characters to read.
 		/// @see IndexOutput#writeChars(const String& s, int32_t, int32_t)
-		virtual void readChars(wchar_t* buffer, int32_t start, int32_t length);
+		virtual int32_t readChars(wchar_t* buffer, int32_t start, int32_t length);
 		
 		/// Similar to {@link #readChars(wchar_t*, int32_t, int32_t)} but does not 
 		/// do any conversion operations on the bytes it is reading in.  It still

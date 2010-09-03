@@ -58,10 +58,7 @@ namespace Lucene
         int32_t length = input->readVInt();
         int32_t totalLength = start + length;
         if (preUTF8Strings)
-        {
-            text->setLength(totalLength);
-            input->readChars(text->result.get(), start, length);
-        }
+            text->setLength(start + input->readChars(text->result.get(), start, length));
         else
         {
             StringUtils::toUTF8((uint8_t*)text->result.get(), text->length, bytes);

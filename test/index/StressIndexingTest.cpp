@@ -142,11 +142,15 @@ public:
             int32_t t = nextInt(5);
             if (t == 0 && i < end - 1)
             {
+                #ifdef LPP_UNICODE_CHAR_SIZE_2
                 // Make a surrogate pair
                 // High surrogate
                 buffer[i++] = (wchar_t)nextInt(0xd800, 0xdc00);
                 // Low surrogate
                 buffer[i] = (wchar_t)nextInt(0xdc00, 0xe000);
+                #else
+                buffer[i] = (wchar_t)nextInt(0x10dc00, 0x10e000);
+                #endif
             }
             else if (t <= 1)
                 buffer[i] = (wchar_t)nextInt(0x01, 0x80);

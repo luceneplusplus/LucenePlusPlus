@@ -292,18 +292,20 @@ namespace Lucene
         while (downto > 0)
         {
             wchar_t ch = tokenText[--downto];
-            if (ch >= UnicodeUtil::UNI_SUR_LOW_START && ch <= UnicodeUtil::UNI_SUR_LOW_END)
+            
+            #ifdef LPP_UNICODE_CHAR_SIZE_2
+            if (ch >= UnicodeUtil::UNICODE_SUR_LOW_START && ch <= UnicodeUtil::UNICODE_SUR_LOW_END)
             {
                 if (downto == 0)
                 {
                     // Unpaired
-                    ch = UnicodeUtil::UNI_REPLACEMENT_CHAR;
+                    ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
                     tokenText[downto] = ch;
                 }
                 else
                 {
                     wchar_t ch2 = tokenText[downto - 1];
-                    if (ch2 >= UnicodeUtil::UNI_SUR_HIGH_START && ch2 <= UnicodeUtil::UNI_SUR_HIGH_END)
+                    if (ch2 >= UnicodeUtil::UNICODE_SUR_HIGH_START && ch2 <= UnicodeUtil::UNICODE_SUR_HIGH_END)
                     {
                         // OK: high followed by low.  This is a valid surrogate pair.
                         code = ((code * 31) + ch) * 31 + ch2;
@@ -313,17 +315,25 @@ namespace Lucene
                     else
                     {
                         // Unpaired
-                        ch = UnicodeUtil::UNI_REPLACEMENT_CHAR;
+                        ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
                         tokenText[downto] = ch;
                     }
                 }
             }
-            else if (ch >= UnicodeUtil::UNI_SUR_HIGH_START && (ch <= UnicodeUtil::UNI_SUR_HIGH_END || ch == UnicodeUtil::UNICODE_TERMINATOR))
+            else if (ch >= UnicodeUtil::UNICODE_SUR_HIGH_START && (ch <= UnicodeUtil::UNICODE_SUR_HIGH_END || ch == UnicodeUtil::UNICODE_TERMINATOR))
             {
                 // Unpaired or UnicodeUtil::UNICODE_TERMINATOR
-                ch = UnicodeUtil::UNI_REPLACEMENT_CHAR;
+                ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
                 tokenText[downto] = ch;
             }
+            #else
+            if (ch == UnicodeUtil::UNICODE_TERMINATOR)
+            {
+                // Unpaired or UnicodeUtil::UNICODE_TERMINATOR
+                ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
+                tokenText[downto] = ch;
+            }
+            #endif
             
             code = (code * 31) + ch;
         }

@@ -63,8 +63,8 @@ namespace Lucene
 		UTF8ResultPtr utf8Result;
 		
 		// Currently used only by assert statements
-		UnicodeResultPtr utf16Result1;
-		UnicodeResultPtr utf16Result2;
+		UnicodeResultPtr unicodeResult1;
+		UnicodeResultPtr unicodeResult2;
 	
 	public:
 		virtual void initialize();
@@ -82,7 +82,7 @@ namespace Lucene
 		void initialize(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval, bool isi);
 		
 		/// Currently used only by assert statements
-		bool initUTF16Results();
+		bool initUnicodeResults();
 		
 		/// Currently used only by assert statement
 		int32_t compareToLastTerm(int32_t fieldNumber, ByteArray termBytes, int32_t termBytesLength);

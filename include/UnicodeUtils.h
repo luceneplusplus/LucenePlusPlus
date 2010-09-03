@@ -16,21 +16,26 @@ namespace Lucene
 		virtual ~UnicodeUtil();
 	
 	public:
-		static const int32_t UNI_SUR_HIGH_START;
-		static const int32_t UNI_SUR_HIGH_END;
-		static const int32_t UNI_SUR_LOW_START;
-		static const int32_t UNI_SUR_LOW_END;
-		static const wchar_t UNI_REPLACEMENT_CHAR;
-		
-		static const int64_t UNI_MAX_BMP;
-		
-		static const int32_t HALF_BASE;
-		static const int64_t HALF_SHIFT;
-		static const int64_t HALF_MASK;
-		
-		static const wchar_t UNICODE_TERMINATOR;
+        #ifdef LPP_UNICODE_CHAR_SIZE_2
+        static const int32_t UNICODE_SUR_HIGH_START;
+        static const int32_t UNICODE_SUR_HIGH_END;
+        static const int32_t UNICODE_SUR_LOW_START;
+        static const int32_t UNICODE_SUR_LOW_END;
+        #endif
 
+        static const wchar_t UNICODE_REPLACEMENT_CHAR;
+        static const wchar_t UNICODE_TERMINATOR;
+		
     public:
+        /// Convert uft8 buffer into unicode.
+        static int32_t toUnicode(const uint8_t* utf8, int32_t length, wchar_t* unicode);
+
+        /// Convert uft16 buffer into unicode.
+        static int32_t utf16ToUnicode(const uint8_t* utf16, int32_t length, wchar_t* unicode);
+
+        /// Convert unicode buffer into uft8.
+        static int32_t toUTF8(const uint8_t* unicode, int32_t length, uint8_t* utf8);
+
         /// Return true if supplied character is non-spacing (as defined by IEEE Std 1002.1-2001)
         static bool isNonSpacing(wchar_t c);
 	};

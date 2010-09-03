@@ -69,7 +69,7 @@ namespace Lucene
         output->writeInt(indexInterval); // write indexInterval
         output->writeInt(skipInterval); // write skipInterval
         output->writeInt(maxSkipLevels); // write maxSkipLevels
-        BOOST_ASSERT(initUTF16Results());
+        BOOST_ASSERT(initUnicodeResults());
     }
     
     void TermInfosWriter::add(TermPtr term, TermInfoPtr ti)
@@ -78,10 +78,10 @@ namespace Lucene
         add(fieldInfos->fieldNumber(term->_field), utf8Result->result, utf8Result->length, ti);
     }
     
-    bool TermInfosWriter::initUTF16Results()
+    bool TermInfosWriter::initUnicodeResults()
     {
-        utf16Result1 = newLucene<UnicodeResult>();
-        utf16Result2 = newLucene<UnicodeResult>();
+        unicodeResult1 = newLucene<UnicodeResult>();
+        unicodeResult2 = newLucene<UnicodeResult>();
         return true;
     }
     
@@ -96,18 +96,18 @@ namespace Lucene
                 return cmp;
         }
         
-        StringUtils::toUnicode(lastTermBytes.get(), lastTermBytesLength, utf16Result1);
-        StringUtils::toUnicode(termBytes.get(), termBytesLength, utf16Result2);
-        int32_t len = std::min(utf16Result1->length, utf16Result2->length);
+        StringUtils::toUnicode(lastTermBytes.get(), lastTermBytesLength, unicodeResult1);
+        StringUtils::toUnicode(termBytes.get(), termBytesLength, unicodeResult2);
+        int32_t len = std::min(unicodeResult1->length, unicodeResult2->length);
         
         for (int32_t i = 0; i < len; ++i)
         {
-            wchar_t ch1 = utf16Result1->result[i];
-            wchar_t ch2 = utf16Result2->result[i];
+            wchar_t ch1 = unicodeResult1->result[i];
+            wchar_t ch2 = unicodeResult2->result[i];
             if (ch1 != ch2)
                 return (ch1 - ch2);
         }
-        return (utf16Result1->length - utf16Result2->length);
+        return (unicodeResult1->length - unicodeResult2->length);
     }
     
     void TermInfosWriter::add(int32_t fieldNumber, ByteArray termBytes, int32_t termBytesLength, TermInfoPtr ti)

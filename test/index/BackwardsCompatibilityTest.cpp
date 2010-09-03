@@ -49,13 +49,15 @@ static void addDoc(IndexWriterPtr writer, int32_t id)
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
     doc->add(newLucene<Field>(L"id", StringUtils::toString(id), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     
-    const wchar_t _utf16Field[] = {'L', 'u', 0xd834, 0xdd1e, 'c', 'e', 0xd834, 0xdd60, 'n', 'e', ' ', 0x0000, ' ', 0x2620, ' ', 'a', 'b', 0xd917, 0xdc17, 'c', 'd'};
-    String utf16Field(_utf16Field, sizeof(_utf16Field) / sizeof(_utf16Field[0]));
+    const uint8_t utf8Field[] = {0x4c, 0x75, 0xf0, 0x9d, 0x84, 0x9e, 0x63, 0x65, 0xf0, 0x9d, 0x85, 0xa0, 0x6e, 0x65,
+                                 0x20, 0x00, 0x20, 0xe2, 0x98, 0xa0, 0x20, 0x61, 0x62, 0xf1, 0x95, 0xb0, 0x97, 0x63, 0x64};
     
-    doc->add(newLucene<Field>(L"autf8", utf16Field, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-    doc->add(newLucene<Field>(L"utf8", utf16Field, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
+    const uint8_t utf8Field2[] = {0x66, 0x69, 0x65, 0xe2, 0xb1, 0xb7, 0x6c, 0x64};
+    
+    doc->add(newLucene<Field>(L"autf8", StringUtils::toUnicode(utf8Field, sizeof(utf8Field) / sizeof(utf8Field[0])), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
+    doc->add(newLucene<Field>(L"utf8", StringUtils::toUnicode(utf8Field, sizeof(utf8Field) / sizeof(utf8Field[0])), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     doc->add(newLucene<Field>(L"content2", L"here is more content with aaa aaa aaa", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-    doc->add(newLucene<Field>(L"fie\u2C77ld", L"field with non-ascii name", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
+    doc->add(newLucene<Field>(StringUtils::toUnicode(utf8Field2, sizeof(utf8Field2) / sizeof(utf8Field2[0])), L"field with non-ascii name", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     
     // add numeric fields, to test if flex preserves encoding
     doc->add(newLucene<NumericField>(L"trieInt", 4)->setIntValue(id));
@@ -255,15 +257,15 @@ static void searchIndex(const String& dirName, const String& oldName)
 
     checkIndex(dir);
     
-    const wchar_t _utf16Field[] = {'L', 'u', 0xd834, 0xdd1e, 'c', 'e', 0xd834, 0xdd60, 'n', 'e', ' ', 0x0000, ' ', 0x2620, ' ', 'a', 'b', 0xd917, 0xdc17, 'c', 'd'};
-    String utf16Field(_utf16Field, sizeof(_utf16Field) / sizeof(_utf16Field[0]));
+    const uint8_t utf8Field[] = {0x4c, 0x75, 0xf0, 0x9d, 0x84, 0x9e, 0x63, 0x65, 0xf0, 0x9d, 0x85, 0xa0, 0x6e, 0x65,
+                                 0x20, 0x00, 0x20, 0xe2, 0x98, 0xa0, 0x20, 0x61, 0x62, 0xf1, 0x95, 0xb0, 0x97, 0x63, 0x64};
+                                 
+    const uint8_t utf8Field2[] = {0x66, 0x69, 0x65, 0xe2, 0xb1, 0xb7, 0x6c, 0x64};
     
-    const wchar_t _utf16Lucene[] = {'L', 'u', 0xd834, 0xdd1e, 'c', 'e', 0xd834, 0xdd60, 'n', 'e'};
-    String utf16Lucene(_utf16Lucene, sizeof(_utf16Lucene) / sizeof(_utf16Lucene[0]));
+    const uint8_t utf8Lucene[] = {0x4c, 0x75, 0xf0, 0x9d, 0x84, 0x9e, 0x63, 0x65, 0xf0, 0x9d, 0x85, 0xa0, 0x6e, 0x65};
     
-    const wchar_t _utf16Abcd[] = {'a', 'b', 0xd917, 0xdc17, 'c', 'd'};
-    String utf16Abcd(_utf16Abcd, sizeof(_utf16Abcd) / sizeof(_utf16Abcd[0]));
-    
+    const uint8_t utf8Abcd[] = {0x61, 0x62, 0xf1, 0x95, 0xb0, 0x97, 0x63, 0x64};
+
     const wchar_t _zeroField[] = {0x0000};
     String zeroField(_zeroField, sizeof(_zeroField) / sizeof(_zeroField[0]));
     
@@ -285,15 +287,15 @@ static void searchIndex(const String& dirName, const String& oldName)
                     BOOST_CHECK_EQUAL(StringUtils::toString(i), f->stringValue());
                     
                     f = boost::dynamic_pointer_cast<Field>(d->getField(L"utf8"));
-                    BOOST_CHECK_EQUAL(utf16Field, f->stringValue());
+                    BOOST_CHECK_EQUAL(StringUtils::toUnicode(utf8Field, sizeof(utf8Field) / sizeof(utf8Field[0])), f->stringValue());
                     
                     f = boost::dynamic_pointer_cast<Field>(d->getField(L"autf8"));
-                    BOOST_CHECK_EQUAL(utf16Field, f->stringValue());
+                    BOOST_CHECK_EQUAL(StringUtils::toUnicode(utf8Field, sizeof(utf8Field) / sizeof(utf8Field[0])), f->stringValue());
                     
                     f = boost::dynamic_pointer_cast<Field>(d->getField(L"content2"));
                     BOOST_CHECK_EQUAL(L"here is more content with aaa aaa aaa", f->stringValue());
                     
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(L"fie\u2C77ld"));
+                    f = boost::dynamic_pointer_cast<Field>(d->getField(StringUtils::toUnicode(utf8Field2, sizeof(utf8Field2) / sizeof(utf8Field2[0]))));
                     BOOST_CHECK_EQUAL(L"field with non-ascii name", f->stringValue());
                 }
             }
@@ -319,9 +321,9 @@ static void searchIndex(const String& dirName, const String& oldName)
         // Test on indices >= 2.3
         hits = searcher->search(newLucene<TermQuery>(newLucene<Term>(L"utf8", zeroField)), FilterPtr(), 1000)->scoreDocs;
         BOOST_CHECK_EQUAL(34, hits.size());
-        hits = searcher->search(newLucene<TermQuery>(newLucene<Term>(L"utf8", utf16Lucene)), FilterPtr(), 1000)->scoreDocs;
+        hits = searcher->search(newLucene<TermQuery>(newLucene<Term>(L"utf8", StringUtils::toUnicode(utf8Lucene, sizeof(utf8Lucene) / sizeof(utf8Lucene[0])))), FilterPtr(), 1000)->scoreDocs;
         BOOST_CHECK_EQUAL(34, hits.size());
-        hits = searcher->search(newLucene<TermQuery>(newLucene<Term>(L"utf8", utf16Abcd)), FilterPtr(), 1000)->scoreDocs;
+        hits = searcher->search(newLucene<TermQuery>(newLucene<Term>(L"utf8", StringUtils::toUnicode(utf8Abcd, sizeof(utf8Abcd) / sizeof(utf8Abcd[0])))), FilterPtr(), 1000)->scoreDocs;
         BOOST_CHECK_EQUAL(34, hits.size());
     }
 

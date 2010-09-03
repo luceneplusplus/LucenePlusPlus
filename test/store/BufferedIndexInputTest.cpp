@@ -210,16 +210,28 @@ BOOST_AUTO_TEST_CASE(testReadCollection)
     BOOST_CHECK_EQUAL(indexInput.readString(), L"Lu\u2620ce\u2620ne");
     
     String readString(indexInput.readString());
+    
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     BOOST_CHECK_EQUAL(readString[0], 55348);
     BOOST_CHECK_EQUAL(readString[1], 56606);
+    #else
+    BOOST_CHECK_EQUAL(readString[0], 119070);
+    #endif
     
     readString = indexInput.readString();	
+    
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     BOOST_CHECK_EQUAL(readString[0], 55348);
     BOOST_CHECK_EQUAL(readString[1], 56606);
     BOOST_CHECK_EQUAL(readString[2], 55348);
     BOOST_CHECK_EQUAL(readString[3], 56672);
+    #else
+    BOOST_CHECK_EQUAL(readString[0], 119070);
+    BOOST_CHECK_EQUAL(readString[1], 119136);
+    #endif
     
     readString = indexInput.readString();
+    #ifdef LPP_UNICODE_CHAR_SIZE_2
     BOOST_CHECK_EQUAL(readString[0], L'L');
     BOOST_CHECK_EQUAL(readString[1], L'u');
     BOOST_CHECK_EQUAL(readString[2], 55348);
@@ -230,6 +242,16 @@ BOOST_AUTO_TEST_CASE(testReadCollection)
     BOOST_CHECK_EQUAL(readString[7], 56672);
     BOOST_CHECK_EQUAL(readString[8], L'n');
     BOOST_CHECK_EQUAL(readString[9], L'e');
+    #else
+    BOOST_CHECK_EQUAL(readString[0], L'L');
+    BOOST_CHECK_EQUAL(readString[1], L'u');
+    BOOST_CHECK_EQUAL(readString[2], 119070);
+    BOOST_CHECK_EQUAL(readString[3], L'c');
+    BOOST_CHECK_EQUAL(readString[4], L'e');
+    BOOST_CHECK_EQUAL(readString[5], 119136);
+    BOOST_CHECK_EQUAL(readString[6], L'n');
+    BOOST_CHECK_EQUAL(readString[7], L'e');
+    #endif
     
     readString = indexInput.readString();
     BOOST_CHECK_EQUAL(readString[0], 0);

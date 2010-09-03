@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "IndexInput.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -85,28 +86,28 @@ namespace Lucene
     {
         int32_t length = readVInt();
         CharArray chars(CharArray::newInstance(length));
-        readChars(chars.get(), 0, length);
-        return String(chars.get(), length);
+        return String(chars.get(), readChars(chars.get(), 0, length));
     }
     
-    void IndexInput::readChars(wchar_t* buffer, int32_t start, int32_t length)
+    int32_t IndexInput::readChars(wchar_t* buffer, int32_t start, int32_t length)
     {
-        int32_t end = start + length;
-        for (int32_t i = start; i < end; ++i)
+        Array<uint16_t> chars(Array<uint16_t>::newInstance(length));
+        for (int32_t i = 0; i < length; ++i)
         {
             uint8_t b = readByte();
             if ((b & 0x80) == 0)
-                buffer[i] = (wchar_t)(b & 0x7f);
+                chars[i] = (uint16_t)(b & 0x7f);
             else if ((b & 0xe0) != 0xe0)
-                buffer[i] = (wchar_t)(((b & 0x1f) << 6) | (readByte() & 0x3f));
+                chars[i] = (uint16_t)(((b & 0x1f) << 6) | (readByte() & 0x3f));
             else
             {
                 uint32_t ch = ((b & 0x0f) << 12);
                 ch |= (readByte() & 0x3f) << 6;
                 ch |= (readByte() & 0x3f);
-                buffer[i] = (wchar_t)ch;
+                chars[i] = (uint16_t)ch;
             }
         }
+        return UnicodeUtil::utf16ToUnicode((const uint8_t*)chars.get(), length, buffer + start);
     }
     
     void IndexInput::skipChars(int32_t length)
