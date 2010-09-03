@@ -17,168 +17,6 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm120"
-				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				DisableLanguageExtensions="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-				DisableSpecificWarnings="4996"
-				ShowIncludes="false"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\lib"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/Zm120"
-				Optimization="2"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
-				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\utf8;..\util\zlib;..\util\ucs;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
-				ExceptionHandling="2"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="true"
-				UsePrecompiledHeader="2"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-				DisableSpecificWarnings="4996"
-				ShowIncludes="false"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\lib"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug DLL|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
@@ -341,7 +179,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug Static Lib|Win32"
+			Name="Debug Static|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
@@ -409,7 +247,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release Static Lib|Win32"
+			Name="Release Static|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
@@ -493,24 +331,6 @@
 				RelativePath=".\dllmain.cpp"
 				>
 				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug DLL|Win32"
 					>
 					<Tool
@@ -529,7 +349,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug Static Lib|Win32"
+					Name="Debug Static|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -538,7 +358,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release Static Lib|Win32"
+					Name="Release Static|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -551,22 +371,6 @@
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug DLL|Win32"
 					>
 					<Tool
@@ -583,7 +387,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug Static Lib|Win32"
+					Name="Debug Static|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -591,7 +395,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release Static Lib|Win32"
+					Name="Release Static|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -3694,22 +3498,6 @@
 					RelativePath="..\util\zlib\adler32.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -3726,7 +3514,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3734,7 +3522,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3746,22 +3534,6 @@
 					RelativePath="..\util\zlib\compress.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -3778,7 +3550,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3786,7 +3558,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3798,22 +3570,6 @@
 					RelativePath="..\util\zlib\crc32.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -3830,7 +3586,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3838,7 +3594,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3854,22 +3610,6 @@
 					RelativePath="..\util\zlib\deflate.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -3886,7 +3626,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3894,7 +3634,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3910,22 +3650,6 @@
 					RelativePath="..\util\zlib\gzclose.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -3942,7 +3666,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3950,7 +3674,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -3966,22 +3690,6 @@
 					RelativePath="..\util\zlib\gzlib.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -3998,7 +3706,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4006,7 +3714,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4018,22 +3726,6 @@
 					RelativePath="..\util\zlib\gzread.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4050,7 +3742,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4058,7 +3750,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4070,22 +3762,6 @@
 					RelativePath="..\util\zlib\gzwrite.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4102,7 +3778,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4110,7 +3786,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4122,22 +3798,6 @@
 					RelativePath="..\util\zlib\infback.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4154,7 +3814,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4162,7 +3822,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4174,22 +3834,6 @@
 					RelativePath="..\util\zlib\inffast.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4206,7 +3850,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4214,7 +3858,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4234,22 +3878,6 @@
 					RelativePath="..\util\zlib\inflate.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4266,7 +3894,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4274,7 +3902,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4290,22 +3918,6 @@
 					RelativePath="..\util\zlib\inftrees.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4322,7 +3934,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4330,7 +3942,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4346,22 +3958,6 @@
 					RelativePath="..\util\zlib\trees.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4378,7 +3974,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4386,7 +3982,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4402,22 +3998,6 @@
 					RelativePath="..\util\zlib\uncompr.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4434,7 +4014,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4442,7 +4022,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4462,22 +4042,6 @@
 					RelativePath="..\util\zlib\zutil.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4494,7 +4058,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4502,7 +4066,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4522,22 +4086,6 @@
 					RelativePath="..\util\md5\md5.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4554,7 +4102,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4562,7 +4110,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4606,26 +4154,6 @@
 					RelativePath="..\util\nedmalloc\nedmalloc.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-							CompileAs="2"
-							ForcedIncludeFiles="Config.h"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-							CompileAs="2"
-							ForcedIncludeFiles="Config.h"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4646,7 +4174,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4656,7 +4184,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4678,22 +4206,6 @@
 					RelativePath="..\util\ucs\wcwidth.c"
 					>
 					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug DLL|Win32"
 						>
 						<Tool
@@ -4710,7 +4222,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug Static Lib|Win32"
+						Name="Debug Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -4718,7 +4230,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release Static Lib|Win32"
+						Name="Release Static|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
