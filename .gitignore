@@ -22,23 +22,27 @@
 *.txt
 *.bak
 bin/*
-msvc/Debug
 msvc/Debug DLL
-msvc/Debug Static Lib
-msvc/Release
+msvc/Debug Static
 msvc/Release DLL
-msvc/Release Static Lib
-contrib/msvc/Debug
+msvc/Release Static
 contrib/msvc/Debug DLL
-contrib/msvc/Debug Static Lib
-contrib/msvc/Release
+contrib/msvc/Debug Static
 contrib/msvc/Release DLL
-contrib/msvc/Release Static Lib
-test/msvc/Debug
-test/msvc/Release
-demo/deletefiles/msvc/Release
-demo/deletefiles/msvc/Debug
-demo/indexfiles/msvc/Release
-demo/indexfiles/msvc/Debug
-demo/searchfiles/msvc/Release
-demo/searchfiles/msvc/Debug
+contrib/msvc/Release Static
+test/msvc/Debug DLL
+test/msvc/Debug Static
+test/msvc/Release DLL
+test/msvc/Release Static
+demo/deletefiles/msvc/Release DLL
+demo/deletefiles/msvc/Release Static
+demo/deletefiles/msvc/Debug DLL
+demo/deletefiles/msvc/Debug Static
+demo/indexfiles/msvc/Release DLL
+demo/indexfiles/msvc/Release Static
+demo/indexfiles/msvc/Debug DLL
+demo/indexfiles/msvc/Debug Static
+demo/searchfiles/msvc/Release DLL
+demo/searchfiles/msvc/Release Static
+demo/searchfiles/msvc/Debug DLL
+demo/searchfiles/msvc/Debug Static
