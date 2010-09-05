@@ -62,7 +62,7 @@ lucene_tester is built using the `Boost Unit Test Framework <http://www.boost.or
 
     $ bin/default/lucene_tester --test_dir=./test/testfiles --show_progress=yes
 
-Other `command options <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide/runtime-config/reference.html`_ can be supplied.
+Other `command options <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide/runtime-config/reference.html>`_ can be supplied.
 
 
 Acknowledgements
