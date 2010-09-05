@@ -50,7 +50,9 @@ The libraries and headers should be made available at a standard prefix (/usr/lo
 Build Instructions for Windows systems
 --------------------------------------
 
-Open solution lucene++.sln located in the msvc folder into Visual Studio 2008 and build.
+Open solution lucene++.sln located in the *msvc* folder into Visual Studio 2008 and build.
+
+**Note: "BOOST_ROOT" environment variable must be defined to point to the boost library directory (eg. C:\boost_1_41_0)**
 
 
 To run unit test suite
