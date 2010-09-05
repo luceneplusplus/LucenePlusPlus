@@ -36,7 +36,16 @@ namespace Lucene
         /// Convert unicode buffer into uft8.
         static int32_t toUTF8(const uint8_t* unicode, int32_t length, uint8_t* utf8);
 
-        /// Return true if supplied character is non-spacing (as defined by IEEE Std 1002.1-2001)
+        /// Return true if supplied character is alpha-numeric.
+        static bool isAlnum(wchar_t c);
+        
+        /// Return true if supplied character is alphabetic.
+        static bool isAlpha(wchar_t c);
+        
+        /// Return true if supplied character is numeric.
+        static bool isDigit(wchar_t c);
+        
+        /// Return true if supplied character is non-spacing.
         static bool isNonSpacing(wchar_t c);
 	};
 	

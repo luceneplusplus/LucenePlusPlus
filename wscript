@@ -43,7 +43,7 @@ lucene_include_dirs = [
     'util/nedmalloc',
     'util/utf8',
     'util/zlib',
-    'util/ucs'
+    'util/unicode'
 ]
 
 tester_source_dirs = [

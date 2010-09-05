@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "Base64.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -121,6 +122,6 @@ namespace Lucene
     
     bool Base64::isBase64(wchar_t ch)
     {
-        return (std::isalnum<wchar_t>(ch, std::locale()) || (ch == L'+') || (ch == L'/'));
+        return (UnicodeUtil::isAlnum(ch) || ch == L'+' || ch == L'/');
     }
 }

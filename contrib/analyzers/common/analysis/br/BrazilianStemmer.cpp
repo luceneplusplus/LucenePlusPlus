@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "BrazilianStemmer.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -47,7 +48,7 @@ namespace Lucene
         for (int32_t c = 0; c < (int32_t)term.length(); ++c)
         {
             // Discard terms that contain non-letter characters.
-            if (!std::isalpha<wchar_t>(term[c], std::locale()))
+            if (!UnicodeUtil::isAlpha(term[c]))
                 return false;
         }
         return true;

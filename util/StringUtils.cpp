@@ -126,9 +126,9 @@ namespace Lucene
     {
         if (value.empty())
             boost::throw_exception(NumberFormatException());
-        if (value.length() > 1 && value[0] == L'-' && !std::isdigit<wchar_t>(value[1], std::locale()))
+        if (value.length() > 1 && value[0] == L'-' && !UnicodeUtil::isDigit(value[1]))
             boost::throw_exception(NumberFormatException());
-        if (value[0] != L'-' && !std::isdigit<wchar_t>(value[0], std::locale()))
+        if (value[0] != L'-' && !UnicodeUtil::isDigit(value[0]))
             boost::throw_exception(NumberFormatException());
         return (int32_t)std::wcstol(value.c_str(), NULL, 10);
     }
@@ -137,9 +137,9 @@ namespace Lucene
     {
         if (value.empty())
             boost::throw_exception(NumberFormatException());
-        if (value.length() > 1 && value[0] == L'-' && !std::isdigit<wchar_t>(value[1], std::locale()))
+        if (value.length() > 1 && value[0] == L'-' && !UnicodeUtil::isDigit(value[1]))
             boost::throw_exception(NumberFormatException());
-        if (value[0] != L'-' && !std::isdigit<wchar_t>(value[0], std::locale()))
+        if (value[0] != L'-' && !UnicodeUtil::isDigit(value[0]))
             boost::throw_exception(NumberFormatException());
         #ifdef _WIN32
         return _wcstoi64(value.c_str(), 0, 10);
@@ -152,7 +152,7 @@ namespace Lucene
     {
         int64_t longValue = 0;
         for (String::const_iterator ptr = value.begin(); ptr != value.end(); ++ptr)
-            longValue = std::isdigit<wchar_t>(*ptr, std::locale()) ? (base * longValue) + (*ptr - L'0') : (base * longValue) + (*ptr - L'a' + 10);
+            longValue = UnicodeUtil::isDigit(*ptr) ? (base * longValue) + (*ptr - L'0') : (base * longValue) + (*ptr - L'a' + 10);
         return longValue;
     }
     
@@ -160,9 +160,9 @@ namespace Lucene
     {
         if (value.empty())
             boost::throw_exception(NumberFormatException());
-        if (value.length() > 1 && (value[0] == L'-' || value[0] == L'.') && !std::isdigit<wchar_t>(value[1], std::locale()))
+        if (value.length() > 1 && (value[0] == L'-' || value[0] == L'.') && !UnicodeUtil::isDigit(value[1]))
             boost::throw_exception(NumberFormatException());
-        if (value[0] != L'-' && value[0] != L'.' && !std::isdigit<wchar_t>(value[0], std::locale()))
+        if (value[0] != L'-' && value[0] != L'.' && !UnicodeUtil::isDigit(value[0]))
             boost::throw_exception(NumberFormatException());
         return std::wcstod(value.c_str(), NULL);
     }

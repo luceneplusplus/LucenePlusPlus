@@ -13,6 +13,7 @@
 #include "IndexFileNames.h"
 #include "IndexFileNameFilter.h"
 #include "BitVector.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -304,7 +305,7 @@ namespace Lucene
                 int32_t patternLength = pattern.length();
                 for (HashSet<String>::iterator fileName = result.begin(); fileName != result.end(); ++fileName)
                 {
-                    if (IndexFileNameFilter::accept(L"", *fileName) && boost::starts_with(*fileName, pattern) && std::isdigit<wchar_t>((*fileName)[patternLength], std::locale()))
+                    if (IndexFileNameFilter::accept(L"", *fileName) && boost::starts_with(*fileName, pattern) && UnicodeUtil::isDigit((*fileName)[patternLength]))
                         return true;
                 }
                 return false;
@@ -559,7 +560,7 @@ namespace Lucene
             for (HashSet<String>::iterator fileName = allFiles.begin(); fileName != allFiles.end(); ++fileName)
             {
                 if (IndexFileNameFilter::accept(L"", *fileName) && (int32_t)fileName->length() > prefixLength && 
-                    std::isdigit<wchar_t>((*fileName)[prefixLength], std::locale()) && boost::starts_with(*fileName, prefix))
+                    UnicodeUtil::isDigit((*fileName)[prefixLength]) && boost::starts_with(*fileName, prefix))
                     _files.add(*fileName);
             }
         }

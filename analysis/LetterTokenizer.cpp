@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "LetterTokenizer.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -27,6 +28,6 @@ namespace Lucene
     
     bool LetterTokenizer::isTokenChar(wchar_t c)
     {
-        return std::isalpha<wchar_t>(c, std::locale());
+        return UnicodeUtil::isAlpha(c);
     }
 }

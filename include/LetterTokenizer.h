@@ -11,7 +11,7 @@
 namespace Lucene
 {
 	/// A LetterTokenizer is a tokenizer that divides text at non-letters.  That's to say, it defines tokens as maximal 
-	/// strings of adjacent letters, as defined std::isalpha<wchar_t>(c) predicate.
+	/// strings of adjacent letters, as defined UnicodeUtil::isAlpha(c) predicate.
 	///
 	/// Note: this does a decent job for most European languages, but does a terrible job for some Asian languages, where 
 	/// words are not separated by spaces.
@@ -32,7 +32,7 @@ namespace Lucene
 		LUCENE_CLASS(LetterTokenizer);
 	
 	public:
-		/// Collects only characters which satisfy std::isalpha<wchar_t>(c).
+		/// Collects only characters which satisfy UnicodeUtil::isAlpha(c).
 		virtual bool isTokenChar(wchar_t c);
 	};
 }

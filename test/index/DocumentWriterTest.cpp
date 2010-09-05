@@ -29,6 +29,7 @@
 #include "PositionIncrementAttribute.h"
 #include "Payload.h"
 #include "TermFreqVector.h"
+#include "UnicodeUtils.h"
 
 using namespace Lucene;
 
@@ -189,7 +190,7 @@ namespace TestTokenReuse
             bool hasNext = input->incrementToken();
             if (!hasNext)
                 return false;
-            if (std::isdigit<wchar_t>(termAtt->termBufferArray()[0], std::locale()))
+            if (UnicodeUtil::isDigit(termAtt->termBufferArray()[0]))
                 posIncrAtt->setPositionIncrement(termAtt->termBufferArray()[0] - L'0');
             if (first)
             {

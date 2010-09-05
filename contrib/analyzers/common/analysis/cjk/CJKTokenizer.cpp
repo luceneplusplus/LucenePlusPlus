@@ -11,6 +11,7 @@
 #include "TypeAttribute.h"
 #include "Reader.h"
 #include "CharFolder.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -138,7 +139,7 @@ namespace Lucene
                     }
 
                     // if the current character is a letter or "_" "+" "#"
-                    if (std::isalnum<wchar_t>(c, std::locale()) || c == L'_' || c == L'+' || c == L'#')
+                    if (UnicodeUtil::isAlnum(c) || c == L'_' || c == L'+' || c == L'#')
                     {
                         if (length == 0)
                         {
@@ -188,7 +189,7 @@ namespace Lucene
                 else
                 {
                     // non-ASCII letter, e.g."C1C2C3C4"
-                    if (std::isalpha<wchar_t>(c, std::locale()))
+                    if (UnicodeUtil::isAlpha(c))
                     {
                         if (length == 0)
                         {

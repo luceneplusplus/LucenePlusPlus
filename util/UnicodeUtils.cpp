@@ -7,11 +7,8 @@
 #include "stdafx.h"
 #include "UnicodeUtils.h"
 #include "utf8.h"
-
-extern "C"
-{
-#include "wcwidth.h"
-}
+#include "guniprop.h"
+#include "gunichartables.h"
 
 namespace Lucene
 {
@@ -139,9 +136,24 @@ namespace Lucene
         }
     }
     
+    bool UnicodeUtil::isAlnum(wchar_t c)
+    {
+        return (ISALDIGIT(TYPE(c)) != 0);
+    }
+    
+    bool UnicodeUtil::isAlpha(wchar_t c)
+    {
+        return (ISALPHA(TYPE(c)) != 0);
+    }
+    
+    bool UnicodeUtil::isDigit(wchar_t c)
+    {
+        return (TYPE(c) == G_UNICODE_DECIMAL_NUMBER);
+    }
+    
     bool UnicodeUtil::isNonSpacing(wchar_t c)
     {
-        return (wcwidth_ucs(c) == 0);
+        return (TYPE(c) == G_UNICODE_NON_SPACING_MARK);
     }
     
     UTF8Result::~UTF8Result()

@@ -3,7 +3,7 @@ Lucene++
 
 Welcome to lucene++ version **3.0.2**.
 
-Lucene++ is an up to date C++ port of the popular Lucene, a high-performance, full-featured text search engine library.
+Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine.
 
 
 Components
@@ -53,14 +53,24 @@ Build Instructions for Windows systems
 Open solution lucene++.sln located in the msvc folder into Visual Studio 2008 and build.
 
 
+To run unit test suite
+----------------------
+
+lucene_tester is built using the `Boost Unit Test Framework <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/index.html>`_ and is launched by the following command::
+
+    $ bin/default/lucene_tester --test_dir=./test/testfiles --show_progress=yes
+
+Other `command options <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide/runtime-config/reference.html`_ can be supplied.
+
+
 Acknowledgements
 ----------------
 
 - Ben van Klinken and contributors to the CLucene project for inspiring this project.
-- Jamie Kirkpatrick for cross-platform/waf build support.
+- Jamie Kirkpatrick for cross-platform and waf build support.
 
 - `Zlib <http://www.zlib.net>`_ Copyright (C) 1995-2010 Jean-loup Gailly and Mark Adler
 - `UTF8-CPP <http://utfcpp.sourceforge.net/>`_ Copyright 2006 Nemanja Trifunovic
 - `nedmalloc <http://sourceforge.net/projects/nedmalloc/>`_ Copyright 2005-2006 Niall Douglas
 - md5 Copyright (C) 1999, 2000, 2002 Aladdin Enterprises
-
+- `Unicode character properties (guniprop) <http://library.gnome.org/devel/glib/>`_ Copyright (C) 1999 Tom Tromey, Copyright (C) 2000 Red Hat, Inc.
