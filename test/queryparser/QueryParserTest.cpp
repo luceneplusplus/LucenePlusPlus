@@ -274,8 +274,14 @@ BOOST_FIXTURE_TEST_SUITE(QueryParserTest, QueryParserTestFixture)
 BOOST_AUTO_TEST_CASE(testSimple)
 {
     checkQueryEquals(L"term term term", AnalyzerPtr(), L"term term term");
-    checkQueryEquals(L"türm term term", newLucene<WhitespaceAnalyzer>(), L"türm term term");
-    checkQueryEquals(L"ümlaut", newLucene<WhitespaceAnalyzer>(), L"ümlaut");
+    
+    const uint8_t term[] = {0x74, 0xc3, 0xbc, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d};
+    String termText = StringUtils::toUnicode(term, sizeof(term) / sizeof(term[0]));
+    checkQueryEquals(termText, newLucene<WhitespaceAnalyzer>(), termText);
+    
+    const uint8_t umlaut[] = {0xc3, 0xbc, 0x6d, 0x6c, 0x61, 0x75, 0x74};
+    String umlautText = StringUtils::toUnicode(umlaut, sizeof(umlaut) / sizeof(umlaut[0]));
+    checkQueryEquals(umlautText, newLucene<WhitespaceAnalyzer>(), umlautText);
 
     checkQueryEquals(L"\"\"", newLucene<KeywordAnalyzer>(), L"");
     checkQueryEquals(L"foo:\"\"", newLucene<KeywordAnalyzer>(), L"foo:");
