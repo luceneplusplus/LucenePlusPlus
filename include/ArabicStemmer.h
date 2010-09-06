@@ -24,6 +24,8 @@ namespace Lucene
 	{
 	public:
 	    virtual ~ArabicStemmer();
+	    
+	    LUCENE_CLASS(ArabicStemmer);
     
     public:
         static const wchar_t ALEF;

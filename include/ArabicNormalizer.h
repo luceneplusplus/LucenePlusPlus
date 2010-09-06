@@ -27,6 +27,8 @@ namespace Lucene
 	{
 	public:
 	    virtual ~ArabicNormalizer();
+	    
+	    LUCENE_CLASS(ArabicNormalizer);
     
     public:
         static const wchar_t ALEF;

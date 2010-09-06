@@ -25,5 +25,9 @@ namespace Lucene
 	DECLARE_SHARED_PTR(CJKAnalyzer)
 	DECLARE_SHARED_PTR(CJKAnalyzerSavedStreams)
 	DECLARE_SHARED_PTR(CJKTokenizer)
+	DECLARE_SHARED_PTR(ChineseAnalyzer)
+	DECLARE_SHARED_PTR(ChineseAnalyzerSavedStreams)
+	DECLARE_SHARED_PTR(ChineseFilter)
+	DECLARE_SHARED_PTR(ChineseTokenizer)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
 }

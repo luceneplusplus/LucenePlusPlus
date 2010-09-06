@@ -22,6 +22,8 @@ namespace Lucene
 	    CJKAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords);
 	    
 	    virtual ~CJKAnalyzer();
+	    
+	    LUCENE_CLASS(CJKAnalyzer);
 	
     protected:
         /// Contains the stopwords used with the {@link StopFilter}.
@@ -52,6 +54,8 @@ namespace Lucene
 	{
 	public:
 	    virtual ~CJKAnalyzerSavedStreams();
+	    
+	    LUCENE_CLASS(CJKAnalyzerSavedStreams);
 
     public:
         TokenizerPtr source;

@@ -34,6 +34,8 @@ namespace Lucene
 	    ArabicAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords);
 	    
 	    virtual ~ArabicAnalyzer();
+	    
+	    LUCENE_CLASS(ArabicAnalyzer);
 	
 	public:
 	    /// Default Arabic stopwords in UTF-8 format.
@@ -72,6 +74,8 @@ namespace Lucene
 	{
 	public:
 	    virtual ~ArabicAnalyzerSavedStreams();
+	    
+	    LUCENE_CLASS(ArabicAnalyzerSavedStreams);
 
     public:
         TokenizerPtr source;

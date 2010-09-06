@@ -48,6 +48,15 @@ namespace Lucene
         /// Return true if supplied character is a space.
         static bool isSpace(wchar_t c);
         
+        /// Return true if supplied character is uppercase.
+        static bool isUpper(wchar_t c);
+        
+        /// Return true if supplied character is lowercase.
+        static bool isLower(wchar_t c);
+        
+        /// Return true if supplied character is other type of letter.
+        static bool isOther(wchar_t c);
+        
         /// Return true if supplied character is non-spacing.
         static bool isNonSpacing(wchar_t c);
         

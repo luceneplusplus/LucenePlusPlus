@@ -155,6 +155,21 @@ namespace Lucene
         return g_unichar_isspace(c);
     }
     
+    bool UnicodeUtil::isUpper(wchar_t c)
+    {
+        return g_unichar_isupper(c);
+    }
+    
+    bool UnicodeUtil::isLower(wchar_t c)
+    {
+        return g_unichar_islower(c);
+    }
+    
+    bool UnicodeUtil::isOther(wchar_t c)
+    {
+        return (g_unichar_type(c) == G_UNICODE_OTHER_LETTER);
+    }
+    
     bool UnicodeUtil::isNonSpacing(wchar_t c)
     {
         return (g_unichar_type(c) == G_UNICODE_NON_SPACING_MARK);

@@ -553,6 +553,34 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="cn"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\cn\ChineseAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ChineseAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\cn\ChineseFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ChineseFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\cn\ChineseTokenizer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ChineseTokenizer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

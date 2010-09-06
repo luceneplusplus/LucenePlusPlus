@@ -1,0 +1,46 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "LuceneContrib.h"
+#include "Analyzer.h"
+
+namespace Lucene
+{
+	/// An {@link Analyzer} that tokenizes text with {@link ChineseTokenizer} and filters with {@link ChineseFilter}
+	class LPPAPI ChineseAnalyzer : public Analyzer
+	{
+	public:
+	    virtual ~ChineseAnalyzer();
+	    
+	    LUCENE_CLASS(ChineseAnalyzer);
+	
+    public:
+	    /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
+	    ///
+	    /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
+	    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
+	    
+	    /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the 
+	    /// provided {@link Reader}.
+	    ///
+	    /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
+	    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+	};
+	
+	class LPPAPI ChineseAnalyzerSavedStreams : public LuceneObject
+	{
+	public:
+	    virtual ~ChineseAnalyzerSavedStreams();
+	    
+	    LUCENE_CLASS(ChineseAnalyzerSavedStreams);
+
+    public:
+        TokenizerPtr source;
+        TokenStreamPtr result;
+	};
+}

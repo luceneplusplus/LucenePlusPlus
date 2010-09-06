@@ -16,6 +16,8 @@ namespace Lucene
 	{
 	public:
 	    virtual ~BrazilianStemmer();
+	    
+	    LUCENE_CLASS(BrazilianStemmer);
     
     protected:
         String TERM;

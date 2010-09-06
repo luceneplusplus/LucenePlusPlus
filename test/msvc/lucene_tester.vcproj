@@ -1384,6 +1384,14 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="cn"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\cn\ChineseTokenizerTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

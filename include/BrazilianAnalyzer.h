@@ -30,6 +30,8 @@ namespace Lucene
 	    BrazilianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> exclusions);
 	    
 	    virtual ~BrazilianAnalyzer();
+	    
+	    LUCENE_CLASS(BrazilianAnalyzer);
 	
     protected:
         /// Contains the stopwords used with the {@link StopFilter}.
@@ -68,6 +70,8 @@ namespace Lucene
 	{
 	public:
 	    virtual ~BrazilianAnalyzerSavedStreams();
+	    
+	    LUCENE_CLASS(BrazilianAnalyzerSavedStreams);
 
     public:
         TokenizerPtr source;

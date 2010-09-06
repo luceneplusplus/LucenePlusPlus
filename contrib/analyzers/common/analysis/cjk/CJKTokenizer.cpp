@@ -27,7 +27,6 @@ namespace Lucene
     /// Names for token types
     const wchar_t* CJKTokenizer::TOKEN_TYPE_NAMES[] = {L"word", L"single", L"double"};
     
-    /// Max word length
     const int32_t CJKTokenizer::MAX_WORD_LEN = 255;
 
     const int32_t CJKTokenizer::IO_BUFFER_SIZE = 256;
