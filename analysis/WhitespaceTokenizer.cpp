@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "WhitespaceTokenizer.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -27,6 +28,6 @@ namespace Lucene
     
     bool WhitespaceTokenizer::isTokenChar(wchar_t c)
     {
-        return !std::isspace<wchar_t>(c, std::locale());
+        return !UnicodeUtil::isSpace(c);
     }
 }

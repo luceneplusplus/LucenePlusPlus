@@ -26,10 +26,20 @@
  */
  
 #include "Lucene.h"
- 
+
 typedef uint32_t gunichar;
 typedef uint16_t gunichar2;
+typedef uint32_t guint;
+typedef uint8_t guchar;
+typedef int32_t gint;
+typedef char gchar;
+typedef bool gboolean;
+typedef size_t gsize;
+typedef size_t gssize;
 
+/* These are the possible character classifications.
+ * See http://www.unicode.org/Public/UNIDATA/UCD.html#General_Category_Values
+ */
 typedef enum
 {
   G_UNICODE_CONTROL,
@@ -64,56 +74,161 @@ typedef enum
   G_UNICODE_SPACE_SEPARATOR
 } GUnicodeType;
 
-#define ATTR_TABLE(Page) (((Page) <= G_UNICODE_LAST_PAGE_PART1) \
-                          ? attr_table_part1[Page] \
-                          : attr_table_part2[(Page) - 0xe00])
+/* These are the possible line break classifications.
+ * Note that new types may be added in the future.
+ * Implementations may regard unknown values like G_UNICODE_BREAK_UNKNOWN
+ * See http://www.unicode.org/unicode/reports/tr14/
+ */
+typedef enum
+{
+  G_UNICODE_BREAK_MANDATORY,
+  G_UNICODE_BREAK_CARRIAGE_RETURN,
+  G_UNICODE_BREAK_LINE_FEED,
+  G_UNICODE_BREAK_COMBINING_MARK,
+  G_UNICODE_BREAK_SURROGATE,
+  G_UNICODE_BREAK_ZERO_WIDTH_SPACE,
+  G_UNICODE_BREAK_INSEPARABLE,
+  G_UNICODE_BREAK_NON_BREAKING_GLUE,
+  G_UNICODE_BREAK_CONTINGENT,
+  G_UNICODE_BREAK_SPACE,
+  G_UNICODE_BREAK_AFTER,
+  G_UNICODE_BREAK_BEFORE,
+  G_UNICODE_BREAK_BEFORE_AND_AFTER,
+  G_UNICODE_BREAK_HYPHEN,
+  G_UNICODE_BREAK_NON_STARTER,
+  G_UNICODE_BREAK_OPEN_PUNCTUATION,
+  G_UNICODE_BREAK_CLOSE_PUNCTUATION,
+  G_UNICODE_BREAK_QUOTATION,
+  G_UNICODE_BREAK_EXCLAMATION,
+  G_UNICODE_BREAK_IDEOGRAPHIC,
+  G_UNICODE_BREAK_NUMERIC,
+  G_UNICODE_BREAK_INFIX_SEPARATOR,
+  G_UNICODE_BREAK_SYMBOL,
+  G_UNICODE_BREAK_ALPHABETIC,
+  G_UNICODE_BREAK_PREFIX,
+  G_UNICODE_BREAK_POSTFIX,
+  G_UNICODE_BREAK_COMPLEX_CONTEXT,
+  G_UNICODE_BREAK_AMBIGUOUS,
+  G_UNICODE_BREAK_UNKNOWN,
+  G_UNICODE_BREAK_NEXT_LINE,
+  G_UNICODE_BREAK_WORD_JOINER,
+  G_UNICODE_BREAK_HANGUL_L_JAMO,
+  G_UNICODE_BREAK_HANGUL_V_JAMO,
+  G_UNICODE_BREAK_HANGUL_T_JAMO,
+  G_UNICODE_BREAK_HANGUL_LV_SYLLABLE,
+  G_UNICODE_BREAK_HANGUL_LVT_SYLLABLE
+} GUnicodeBreakType;
 
-#define ATTTABLE(Page, Char) \
-  ((ATTR_TABLE(Page) == G_UNICODE_MAX_TABLE_INDEX) ? 0 : (attr_data[ATTR_TABLE(Page)][Char]))
+typedef enum 
+{                         /* ISO 15924 code */
+  G_UNICODE_SCRIPT_INVALID_CODE = -1,
+  G_UNICODE_SCRIPT_COMMON       = 0,   /* Zyyy */
+  G_UNICODE_SCRIPT_INHERITED,          /* Qaai */
+  G_UNICODE_SCRIPT_ARABIC,             /* Arab */
+  G_UNICODE_SCRIPT_ARMENIAN,           /* Armn */
+  G_UNICODE_SCRIPT_BENGALI,            /* Beng */
+  G_UNICODE_SCRIPT_BOPOMOFO,           /* Bopo */
+  G_UNICODE_SCRIPT_CHEROKEE,           /* Cher */
+  G_UNICODE_SCRIPT_COPTIC,             /* Qaac */
+  G_UNICODE_SCRIPT_CYRILLIC,           /* Cyrl (Cyrs) */
+  G_UNICODE_SCRIPT_DESERET,            /* Dsrt */
+  G_UNICODE_SCRIPT_DEVANAGARI,         /* Deva */
+  G_UNICODE_SCRIPT_ETHIOPIC,           /* Ethi */
+  G_UNICODE_SCRIPT_GEORGIAN,           /* Geor (Geon, Geoa) */
+  G_UNICODE_SCRIPT_GOTHIC,             /* Goth */
+  G_UNICODE_SCRIPT_GREEK,              /* Grek */
+  G_UNICODE_SCRIPT_GUJARATI,           /* Gujr */
+  G_UNICODE_SCRIPT_GURMUKHI,           /* Guru */
+  G_UNICODE_SCRIPT_HAN,                /* Hani */
+  G_UNICODE_SCRIPT_HANGUL,             /* Hang */
+  G_UNICODE_SCRIPT_HEBREW,             /* Hebr */
+  G_UNICODE_SCRIPT_HIRAGANA,           /* Hira */
+  G_UNICODE_SCRIPT_KANNADA,            /* Knda */
+  G_UNICODE_SCRIPT_KATAKANA,           /* Kana */
+  G_UNICODE_SCRIPT_KHMER,              /* Khmr */
+  G_UNICODE_SCRIPT_LAO,                /* Laoo */
+  G_UNICODE_SCRIPT_LATIN,              /* Latn (Latf, Latg) */
+  G_UNICODE_SCRIPT_MALAYALAM,          /* Mlym */
+  G_UNICODE_SCRIPT_MONGOLIAN,          /* Mong */
+  G_UNICODE_SCRIPT_MYANMAR,            /* Mymr */
+  G_UNICODE_SCRIPT_OGHAM,              /* Ogam */
+  G_UNICODE_SCRIPT_OLD_ITALIC,         /* Ital */
+  G_UNICODE_SCRIPT_ORIYA,              /* Orya */
+  G_UNICODE_SCRIPT_RUNIC,              /* Runr */
+  G_UNICODE_SCRIPT_SINHALA,            /* Sinh */
+  G_UNICODE_SCRIPT_SYRIAC,             /* Syrc (Syrj, Syrn, Syre) */
+  G_UNICODE_SCRIPT_TAMIL,              /* Taml */
+  G_UNICODE_SCRIPT_TELUGU,             /* Telu */
+  G_UNICODE_SCRIPT_THAANA,             /* Thaa */
+  G_UNICODE_SCRIPT_THAI,               /* Thai */
+  G_UNICODE_SCRIPT_TIBETAN,            /* Tibt */
+  G_UNICODE_SCRIPT_CANADIAN_ABORIGINAL, /* Cans */
+  G_UNICODE_SCRIPT_YI,                 /* Yiii */
+  G_UNICODE_SCRIPT_TAGALOG,            /* Tglg */
+  G_UNICODE_SCRIPT_HANUNOO,            /* Hano */
+  G_UNICODE_SCRIPT_BUHID,              /* Buhd */
+  G_UNICODE_SCRIPT_TAGBANWA,           /* Tagb */
 
-#define TTYPE_PART1(Page, Char) \
-  ((type_table_part1[Page] >= G_UNICODE_MAX_TABLE_INDEX) \
-   ? (type_table_part1[Page] - G_UNICODE_MAX_TABLE_INDEX) \
-   : (type_data[type_table_part1[Page]][Char]))
+  /* Unicode-4.0 additions */
+  G_UNICODE_SCRIPT_BRAILLE,            /* Brai */
+  G_UNICODE_SCRIPT_CYPRIOT,            /* Cprt */
+  G_UNICODE_SCRIPT_LIMBU,              /* Limb */
+  G_UNICODE_SCRIPT_OSMANYA,            /* Osma */
+  G_UNICODE_SCRIPT_SHAVIAN,            /* Shaw */
+  G_UNICODE_SCRIPT_LINEAR_B,           /* Linb */
+  G_UNICODE_SCRIPT_TAI_LE,             /* Tale */
+  G_UNICODE_SCRIPT_UGARITIC,           /* Ugar */
+      
+  /* Unicode-4.1 additions */
+  G_UNICODE_SCRIPT_NEW_TAI_LUE,        /* Talu */
+  G_UNICODE_SCRIPT_BUGINESE,           /* Bugi */
+  G_UNICODE_SCRIPT_GLAGOLITIC,         /* Glag */
+  G_UNICODE_SCRIPT_TIFINAGH,           /* Tfng */
+  G_UNICODE_SCRIPT_SYLOTI_NAGRI,       /* Sylo */
+  G_UNICODE_SCRIPT_OLD_PERSIAN,        /* Xpeo */
+  G_UNICODE_SCRIPT_KHAROSHTHI,         /* Khar */
 
-#define TTYPE_PART2(Page, Char) \
-  ((type_table_part2[Page] >= G_UNICODE_MAX_TABLE_INDEX) \
-   ? (type_table_part2[Page] - G_UNICODE_MAX_TABLE_INDEX) \
-   : (type_data[type_table_part2[Page]][Char]))
+  /* Unicode-5.0 additions */
+  G_UNICODE_SCRIPT_UNKNOWN,            /* Zzzz */
+  G_UNICODE_SCRIPT_BALINESE,           /* Bali */
+  G_UNICODE_SCRIPT_CUNEIFORM,          /* Xsux */
+  G_UNICODE_SCRIPT_PHOENICIAN,         /* Phnx */
+  G_UNICODE_SCRIPT_PHAGS_PA,           /* Phag */
+  G_UNICODE_SCRIPT_NKO,                /* Nkoo */
 
-#define TYPE(Char) \
-  (((Char) <= G_UNICODE_LAST_CHAR_PART1) \
-   ? TTYPE_PART1 ((Char) >> 8, (Char) & 0xff) \
-   : (((Char) >= 0xe0000 && (Char) <= G_UNICODE_LAST_CHAR) \
-      ? TTYPE_PART2 (((Char) - 0xe0000) >> 8, (Char) & 0xff) \
-      : G_UNICODE_UNASSIGNED))
+  /* Unicode-5.1 additions */
+  G_UNICODE_SCRIPT_KAYAH_LI,           /* Kali */
+  G_UNICODE_SCRIPT_LEPCHA,             /* Lepc */
+  G_UNICODE_SCRIPT_REJANG,             /* Rjng */
+  G_UNICODE_SCRIPT_SUNDANESE,          /* Sund */
+  G_UNICODE_SCRIPT_SAURASHTRA,         /* Saur */
+  G_UNICODE_SCRIPT_CHAM,               /* Cham */
+  G_UNICODE_SCRIPT_OL_CHIKI,           /* Olck */
+  G_UNICODE_SCRIPT_VAI,                /* Vaii */
+  G_UNICODE_SCRIPT_CARIAN,             /* Cari */
+  G_UNICODE_SCRIPT_LYCIAN,             /* Lyci */
+  G_UNICODE_SCRIPT_LYDIAN              /* Lydi */
+} GUnicodeScript;
 
-#define IS(Type, Class)	(((uint32_t)1 << (Type)) & (Class))
-#define OR(Type, Rest)	(((uint32_t)1 << (Type)) | (Rest))
+#include "gunichartables.h"
 
-#define ISALPHA(Type)	IS ((Type),				\
-			    OR (G_UNICODE_LOWERCASE_LETTER,	\
-			    OR (G_UNICODE_UPPERCASE_LETTER,	\
-			    OR (G_UNICODE_TITLECASE_LETTER,	\
-			    OR (G_UNICODE_MODIFIER_LETTER,	\
-			    OR (G_UNICODE_OTHER_LETTER,		0))))))
-
-#define ISALDIGIT(Type)	IS ((Type),				\
-			    OR (G_UNICODE_DECIMAL_NUMBER,	\
-			    OR (G_UNICODE_LETTER_NUMBER,	\
-			    OR (G_UNICODE_OTHER_NUMBER,		\
-			    OR (G_UNICODE_LOWERCASE_LETTER,	\
-			    OR (G_UNICODE_UPPERCASE_LETTER,	\
-			    OR (G_UNICODE_TITLECASE_LETTER,	\
-			    OR (G_UNICODE_MODIFIER_LETTER,	\
-			    OR (G_UNICODE_OTHER_LETTER,		0)))))))))
-
-#define ISMARK(Type)	IS ((Type),				\
-			    OR (G_UNICODE_NON_SPACING_MARK,	\
-			    OR (G_UNICODE_COMBINING_MARK,	\
-			    OR (G_UNICODE_ENCLOSING_MARK,	0))))
-
-#define ISZEROWIDTHTYPE(Type)	IS ((Type),			\
-			    OR (G_UNICODE_NON_SPACING_MARK,	\
-			    OR (G_UNICODE_ENCLOSING_MARK,	\
-			    OR (G_UNICODE_FORMAT,		0))))
+gboolean g_unichar_isalnum (gunichar c);
+gboolean g_unichar_isalpha (gunichar c);
+gboolean g_unichar_iscntrl (gunichar c);
+gboolean g_unichar_isdigit (gunichar c);
+gboolean g_unichar_isgraph (gunichar c);
+gboolean g_unichar_islower (gunichar c);
+gboolean g_unichar_isprint (gunichar c);
+gboolean g_unichar_ispunct (gunichar c);
+gboolean g_unichar_isspace (gunichar c);
+gboolean g_unichar_ismark (gunichar c);
+gboolean g_unichar_isupper (gunichar c);
+gboolean g_unichar_istitle (gunichar c);
+gboolean g_unichar_isxdigit (gunichar c);
+gboolean g_unichar_isdefined (gunichar c);
+gunichar g_unichar_toupper (gunichar c);
+gunichar g_unichar_tolower (gunichar c);
+gunichar g_unichar_totitle (gunichar c);
+int g_unichar_digit_value (gunichar c);
+int g_unichar_xdigit_value (gunichar c);
+GUnicodeType g_unichar_type (gunichar c);

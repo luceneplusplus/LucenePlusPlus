@@ -6,6 +6,7 @@
 
 #include "stdafx.h"
 #include "CharFolder.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {
@@ -20,25 +21,25 @@ namespace Lucene
     
     wchar_t CharFolder::toLower(wchar_t ch)
     {
-        return (ch > CHAR_MIN && ch < CHAR_MAX) ? lowerChars[ch - CHAR_MIN] : std::tolower<wchar_t>(ch, std::locale());
+        return (ch > CHAR_MIN && ch < CHAR_MAX) ? lowerChars[ch - CHAR_MIN] : UnicodeUtil::toLower(ch);
     }
     
     wchar_t CharFolder::toUpper(wchar_t ch)
     {
-        return (ch > CHAR_MIN && ch < CHAR_MAX) ? upperChars[ch - CHAR_MIN] : std::toupper<wchar_t>(ch, std::locale());
+        return (ch > CHAR_MIN && ch < CHAR_MAX) ? upperChars[ch - CHAR_MIN] : UnicodeUtil::toUpper(ch);
     }
     
     bool CharFolder::fillLower()
     {
         for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
-            lowerChars[index - CHAR_MIN] = std::tolower<wchar_t>((wchar_t)index, std::locale());
+            lowerChars[index - CHAR_MIN] = UnicodeUtil::toLower((wchar_t)index);
         return true;
     }
     
     bool CharFolder::fillUpper()
     {
         for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
-            upperChars[index - CHAR_MIN] = std::toupper<wchar_t>((wchar_t)index, std::locale());
+            upperChars[index - CHAR_MIN] = UnicodeUtil::toUpper((wchar_t)index);
         return true;
     }
 }

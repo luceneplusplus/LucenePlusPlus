@@ -45,8 +45,17 @@ namespace Lucene
         /// Return true if supplied character is numeric.
         static bool isDigit(wchar_t c);
         
+        /// Return true if supplied character is a space.
+        static bool isSpace(wchar_t c);
+        
         /// Return true if supplied character is non-spacing.
         static bool isNonSpacing(wchar_t c);
+        
+        /// Return uppercase representation of a given character.
+        static wchar_t toUpper(wchar_t c);
+        
+        /// Return lowercase representation of a given character.
+        static wchar_t toLower(wchar_t c);
 	};
 	
 	/// Utility class that contains utf8 and unicode translations.

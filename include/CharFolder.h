@@ -30,7 +30,6 @@ namespace Lucene
 		template <class ITER>
 		static void toLower(ITER first, ITER last)
 		{
-			fillLower();
 			for (; first != last; ++first)
 				*first = toLower(*first);
 		}
@@ -38,7 +37,6 @@ namespace Lucene
 		template <class ITER>
 		static void toUpper(ITER first, ITER last)
 		{
-			fillUpper();
 			for (; first != last; ++first)
 				*first = toUpper(*first);
 		}

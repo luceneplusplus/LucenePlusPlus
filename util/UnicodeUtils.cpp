@@ -8,7 +8,6 @@
 #include "UnicodeUtils.h"
 #include "utf8.h"
 #include "guniprop.h"
-#include "gunichartables.h"
 
 namespace Lucene
 {
@@ -138,22 +137,37 @@ namespace Lucene
     
     bool UnicodeUtil::isAlnum(wchar_t c)
     {
-        return (ISALDIGIT(TYPE(c)) != 0);
+        return g_unichar_isalnum(c);
     }
     
     bool UnicodeUtil::isAlpha(wchar_t c)
     {
-        return (ISALPHA(TYPE(c)) != 0);
+        return g_unichar_isalpha(c);
     }
     
     bool UnicodeUtil::isDigit(wchar_t c)
     {
-        return (TYPE(c) == G_UNICODE_DECIMAL_NUMBER);
+        return g_unichar_isdigit(c);
+    }
+    
+    bool UnicodeUtil::isSpace(wchar_t c)
+    {
+        return g_unichar_isspace(c);
     }
     
     bool UnicodeUtil::isNonSpacing(wchar_t c)
     {
-        return (TYPE(c) == G_UNICODE_NON_SPACING_MARK);
+        return (g_unichar_type(c) == G_UNICODE_NON_SPACING_MARK);
+    }
+    
+    wchar_t UnicodeUtil::toUpper(wchar_t c)
+    {
+        return (wchar_t)g_unichar_toupper(c);
+    }
+    
+    wchar_t UnicodeUtil::toLower(wchar_t c)
+    {
+        return (wchar_t)g_unichar_tolower(c);
     }
     
     UTF8Result::~UTF8Result()

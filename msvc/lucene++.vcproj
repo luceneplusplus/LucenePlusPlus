@@ -4207,6 +4207,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\util\unicode\guniprop.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\util\unicode\guniprop.h"
 					>
 				</File>
