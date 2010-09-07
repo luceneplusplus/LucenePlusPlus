@@ -1392,6 +1392,14 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="cz"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\cz\CzechAnalyzerTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

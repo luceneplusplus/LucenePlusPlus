@@ -29,5 +29,7 @@ namespace Lucene
 	DECLARE_SHARED_PTR(ChineseAnalyzerSavedStreams)
 	DECLARE_SHARED_PTR(ChineseFilter)
 	DECLARE_SHARED_PTR(ChineseTokenizer)
+	DECLARE_SHARED_PTR(CzechAnalyzer)
+	DECLARE_SHARED_PTR(CzechAnalyzerSavedStreams)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
 }

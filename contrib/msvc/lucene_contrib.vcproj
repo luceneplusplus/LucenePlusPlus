@@ -581,6 +581,18 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="cz"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\cz\CzechAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\CzechAnalyzer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
