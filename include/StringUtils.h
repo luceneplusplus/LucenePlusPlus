@@ -99,4 +99,6 @@ namespace Lucene
 			return os.str();
 		}
 	};
+	
+	#define UTF8_TO_STRING(utf8) StringUtils::toUnicode(utf8, SIZEOF_ARRAY(utf8))
 }

@@ -22,7 +22,7 @@ namespace Lucene
     
     ChineseFilter::ChineseFilter(TokenStreamPtr input) : TokenFilter(input)
     {
-        stopTable = HashSet<String>::newInstance(STOP_WORDS, STOP_WORDS + (sizeof(STOP_WORDS) / sizeof(STOP_WORDS[0])));
+        stopTable = HashSet<String>::newInstance(STOP_WORDS, STOP_WORDS + SIZEOF_ARRAY(STOP_WORDS));
         termAtt = addAttribute<TermAttribute>();
     }
     

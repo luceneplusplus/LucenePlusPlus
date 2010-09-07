@@ -276,11 +276,11 @@ BOOST_AUTO_TEST_CASE(testSimple)
     checkQueryEquals(L"term term term", AnalyzerPtr(), L"term term term");
     
     const uint8_t term[] = {0x74, 0xc3, 0xbc, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d};
-    String termText = StringUtils::toUnicode(term, sizeof(term) / sizeof(term[0]));
+    String termText = UTF8_TO_STRING(term);
     checkQueryEquals(termText, newLucene<WhitespaceAnalyzer>(), termText);
     
     const uint8_t umlaut[] = {0xc3, 0xbc, 0x6d, 0x6c, 0x61, 0x75, 0x74};
-    String umlautText = StringUtils::toUnicode(umlaut, sizeof(umlaut) / sizeof(umlaut[0]));
+    String umlautText = UTF8_TO_STRING(umlaut);
     checkQueryEquals(umlautText, newLucene<WhitespaceAnalyzer>(), umlautText);
 
     checkQueryEquals(L"\"\"", newLucene<KeywordAnalyzer>(), L"");

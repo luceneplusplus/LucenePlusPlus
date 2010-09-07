@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(testDgaps)
 
 static BitVectorPtr createSubsetTestVector()
 {
-    int32_t length = sizeof(subsetPattern) / sizeof(subsetPattern[0]);
+    int32_t length = SIZEOF_ARRAY(subsetPattern);
     BitVectorPtr bv = newLucene<BitVector>(length);
     for (int32_t i = 0; i < length; ++i)
     {

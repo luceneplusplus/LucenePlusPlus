@@ -42,7 +42,7 @@ namespace Lucene
     {
         static HashSet<String> stopSet;
         if (!stopSet)
-            stopSet = HashSet<String>::newInstance(_STOP_WORDS, _STOP_WORDS + (sizeof(_STOP_WORDS) / sizeof(_STOP_WORDS[0])));
+            stopSet = HashSet<String>::newInstance(_STOP_WORDS, _STOP_WORDS + SIZEOF_ARRAY(_STOP_WORDS));
         return stopSet;
     }
     

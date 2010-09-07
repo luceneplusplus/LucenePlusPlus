@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(testLongSpecialValues)
     static const int64_t vals[] = {LLONG_MIN, LLONG_MIN + 1, LLONG_MIN + 2, -5003400000000LL, -4000LL, -3000LL, 
                                    -2000LL, -1000LL, -1LL, 0LL, 1LL, 10LL, 300LL, 50006789999999999LL, 
                                    LLONG_MAX - 2, LLONG_MAX - 1, LLONG_MAX};
-    int32_t length = sizeof(vals) / sizeof(vals[0]);
+    int32_t length = SIZEOF_ARRAY(vals);
     Collection<String> prefixVals = Collection<String>::newInstance(length);
     for (int32_t i = 0; i < length; ++i)
     {
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(testIntSpecialValues)
 {
     static const int32_t vals[] = {INT_MIN, INT_MIN + 1, INT_MIN + 2, -64765767, -4000, -3000, -2000,
                                    -1000, -1, 0, 1, 10, 300, 765878989, INT_MAX - 2, INT_MAX- 1, INT_MAX};
-    int32_t length = sizeof(vals) / sizeof(vals[0]);
+    int32_t length = SIZEOF_ARRAY(vals);
     Collection<String> prefixVals = Collection<String>::newInstance(length);
     for (int32_t i = 0; i < length; ++i)
     {
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(testDoubles)
     static const double vals[] = {-std::numeric_limits<double>::infinity(), -2.3E25, -1.0E15, -1.0, 
                                   -1.0E-1, -1.0E-2, -0.0, +0.0, 1.0E-2, 1.0E-1, 1.0, 1.0E15, 2.3E25, 
                                   std::numeric_limits<double>::infinity()};
-    int32_t length = sizeof(vals) / sizeof(vals[0]);
+    int32_t length = SIZEOF_ARRAY(vals);
     Collection<int64_t> longVals = Collection<int64_t>::newInstance(length);
     
     // check forward and back conversion

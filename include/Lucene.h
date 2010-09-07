@@ -641,6 +641,8 @@ namespace Lucene
 	typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > StringStream;
 }
 
+#define SIZEOF_ARRAY(arr) (sizeof(arr) / sizeof((arr)[0]))
+
 #include "Array.h"
 #include "Collection.h"
 #include "Map.h"

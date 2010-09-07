@@ -52,7 +52,7 @@ BOOST_FIXTURE_TEST_SUITE(ChineseTokenizerTest, BaseTokenStreamFixture)
 BOOST_AUTO_TEST_CASE(testOtherLetterOffset)
 {
     const uint8_t token[] = {0x61, 0xe5, 0xa4, 0xa9, 0x62};
-    ChineseTokenizerPtr tokenizer = newLucene<ChineseTokenizer>(newLucene<StringReader>(StringUtils::toUnicode(token, sizeof(token) / sizeof(token[0]))));
+    ChineseTokenizerPtr tokenizer = newLucene<ChineseTokenizer>(newLucene<StringReader>(UTF8_TO_STRING(token)));
 
     int32_t correctStartOffset = 0;
     int32_t correctEndOffset = 1;
@@ -81,15 +81,15 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
     const uint8_t token6[] = {0xe5, 0x92, 0x8c};
     const uint8_t token7[] = {0xe5, 0x9b, 0xbd};
     
-    checkAnalyzesToReuse(a, StringUtils::toUnicode(input, sizeof(input) / sizeof(input[0])),
+    checkAnalyzesToReuse(a, UTF8_TO_STRING(input),
                             newCollection<String>(
-                                StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])),
-                                StringUtils::toUnicode(token2, sizeof(token2) / sizeof(token2[0])),
-                                StringUtils::toUnicode(token3, sizeof(token3) / sizeof(token3[0])),
-                                StringUtils::toUnicode(token4, sizeof(token4) / sizeof(token4[0])),
-                                StringUtils::toUnicode(token5, sizeof(token5) / sizeof(token5[0])),
-                                StringUtils::toUnicode(token6, sizeof(token6) / sizeof(token6[0])),
-                                StringUtils::toUnicode(token7, sizeof(token7) / sizeof(token7[0]))
+                                UTF8_TO_STRING(token1),
+                                UTF8_TO_STRING(token2),
+                                UTF8_TO_STRING(token3),
+                                UTF8_TO_STRING(token4),
+                                UTF8_TO_STRING(token5),
+                                UTF8_TO_STRING(token6),
+                                UTF8_TO_STRING(token7)
                             ),
                             newCollection<int32_t>(0, 1, 2, 3, 4, 5, 6),
                             newCollection<int32_t>(1, 2, 3, 4, 5, 6, 7));
@@ -105,11 +105,11 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream2)
     const uint8_t token2[] = {0xe4, 0xba, 0xac};
     const uint8_t token3[] = {0xe5, 0xb8, 0x82};
     
-    checkAnalyzesToReuse(a, StringUtils::toUnicode(input, sizeof(input) / sizeof(input[0])),
+    checkAnalyzesToReuse(a, UTF8_TO_STRING(input),
                             newCollection<String>(
-                                StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])),
-                                StringUtils::toUnicode(token2, sizeof(token2) / sizeof(token2[0])),
-                                StringUtils::toUnicode(token3, sizeof(token3) / sizeof(token3[0]))
+                                UTF8_TO_STRING(token1),
+                                UTF8_TO_STRING(token2),
+                                UTF8_TO_STRING(token3)
                             ),
                             newCollection<int32_t>(0, 1, 2),
                             newCollection<int32_t>(1, 2, 3));
@@ -123,12 +123,11 @@ BOOST_AUTO_TEST_CASE(testNumerics)
     const uint8_t input[] = {0xe4, 0xb8, 0xad, 0x31, 0x32, 0x33, 0x34};
     const uint8_t token1[] = {0xe4, 0xb8, 0xad};
     
-    checkAnalyzesTo(justTokenizer, StringUtils::toUnicode(input, sizeof(input) / sizeof(input[0])),
-                    newCollection<String>(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), L"1234"));
+    checkAnalyzesTo(justTokenizer, UTF8_TO_STRING(input), newCollection<String>(UTF8_TO_STRING(token1), L"1234"));
 
     // in this case the ChineseAnalyzer (which applies ChineseFilter) will remove the numeric token.
     AnalyzerPtr a = newLucene<ChineseAnalyzer>();
-    checkAnalyzesTo(a, StringUtils::toUnicode(input, sizeof(input) / sizeof(input[0])), newCollection<String>(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0]))));
+    checkAnalyzesTo(a, UTF8_TO_STRING(input), newCollection<String>(UTF8_TO_STRING(token1)));
 }
 
 /// ChineseTokenizer tokenizes english similar to SimpleAnalyzer.

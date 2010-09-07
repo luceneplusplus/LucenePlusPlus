@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(testTerm)
         772, 773, 774, 775, 776, 777, 778, 779, 870, 871, 872, 873, 874, 875,
         876, 877, 878, 879, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979
     };	
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testTerm2)
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(testPhrase)
     query->add(newLucene<Term>(L"field", L"seven"));
     
     static const int32_t results[] = {77, 177, 277, 377, 477, 577, 677, 777, 877, 977};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testPhrase2)
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(testBoolean)
     {
         77, 777, 177, 277, 377, 477, 577, 677, 770, 771, 772, 773, 774, 775, 776, 778, 779, 877, 977
     };	
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testBoolean2)
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(testSpanNearExact)
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 0, true);
     
     static const int32_t results[] = {77, 177, 277, 377, 477, 577, 677, 777, 877, 977};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
     
     BOOST_CHECK(searcher->explain(query, 77)->getValue() > 0.0);
     BOOST_CHECK(searcher->explain(query, 977)->getValue() > 0.0);
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(testSpanNearUnordered)
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, false);
 
     static const int32_t results[] = {609, 629, 639, 649, 659, 669, 679, 689, 699, 906, 926, 936, 946, 956, 966, 976, 986, 996};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testSpanNearOrdered)
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE(testSpanNearOrdered)
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, true);
 
     static const int32_t results[] = {906, 926, 936, 946, 956, 966, 976, 986, 996};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testSpanNot)
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(testSpanNot)
     SpanNotQueryPtr query = newLucene<SpanNotQuery>(near1, term3);
 
     static const int32_t results[] = {801, 821, 831, 851, 861, 871, 881, 891};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 801)->getValue() > 0.0);
     BOOST_CHECK(searcher->explain(query, 891)->getValue() > 0.0);
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(testSpanWithMultipleNotSingle)
     SpanNotQueryPtr query = newLucene<SpanNotQuery>(near1, or1);
 
     static const int32_t results[] = {801, 821, 831, 851, 861, 871, 881, 891};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 801)->getValue() > 0.0);
     BOOST_CHECK(searcher->explain(query, 891)->getValue() > 0.0);
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(testSpanWithMultipleNotMany)
     SpanNotQueryPtr query = newLucene<SpanNotQuery>(near1, or1);
 
     static const int32_t results[] = {801, 821, 831, 851, 871, 891};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 801)->getValue() > 0.0);
     BOOST_CHECK(searcher->explain(query, 891)->getValue() > 0.0);
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(testNpeInSpanNearWithSpanNot)
     SpanNotQueryPtr query = newLucene<SpanNotQuery>(near1, exclude1);
 
     static const int32_t results[] = {801, 821, 831, 851, 861, 871, 881, 891};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 801)->getValue() > 0.0);
     BOOST_CHECK(searcher->explain(query, 891)->getValue() > 0.0);
@@ -264,7 +264,7 @@ BOOST_AUTO_TEST_CASE(testNpeInSpanNearInSpanFirstInSpanNot)
     SpanNotQueryPtr query = newLucene<SpanNotQuery>(include, exclude);
 
     static const int32_t results[] = {40, 41, 42, 43, 44, 45, 46, 47, 48, 49};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testSpanFirst)
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(testSpanFirst)
         584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597,
         598, 599
     };	
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 5)->getValue() > 0.0);
     BOOST_CHECK(searcher->explain(query, 599)->getValue() > 0.0);
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(testSpanOr)
     {
         33, 47, 133, 147, 233, 247, 333, 347, 433, 447, 533, 547, 633, 647, 733, 747, 833, 847, 933, 947
     };
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 33)->getValue() > 0.0);
     BOOST_CHECK(searcher->explain(query, 947)->getValue() > 0.0);
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(testSpanExactNested)
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(near1, near2), 0, true);
 
     static const int32_t results[] = {333};
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 333)->getValue() > 0.0);
 }
@@ -347,7 +347,7 @@ BOOST_AUTO_TEST_CASE(testSpanNearOr)
         706, 707, 726, 727, 736, 737, 746, 747, 756, 
         757, 766, 767, 776, 777, 786, 787, 796, 797
     };
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testSpanComplex1)
@@ -375,7 +375,7 @@ BOOST_AUTO_TEST_CASE(testSpanComplex1)
         706, 707, 726, 727, 736, 737, 746, 747, 756, 
         757, 766, 767, 776, 777, 786, 787, 796, 797
     };
-    checkHits(query, Collection<int32_t>::newInstance(results, results + sizeof(results) / sizeof(results[0])));
+    checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
 BOOST_AUTO_TEST_CASE(testSpansSkipTo)

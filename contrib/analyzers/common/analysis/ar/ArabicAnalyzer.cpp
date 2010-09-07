@@ -95,7 +95,7 @@ namespace Lucene
         static HashSet<String> stopSet;
         if (!stopSet)
         {
-            String stopWords(StringUtils::toUnicode(DEFAULT_STOPWORD_FILE, sizeof(DEFAULT_STOPWORD_FILE) / sizeof(DEFAULT_STOPWORD_FILE[0])));
+            String stopWords(UTF8_TO_STRING(DEFAULT_STOPWORD_FILE));
             Collection<String> words(StringUtils::split(stopWords, L"\n"));
             stopSet = HashSet<String>::newInstance(words.begin(), words.end());
         }

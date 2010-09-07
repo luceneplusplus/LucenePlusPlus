@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(testFullWidth)
         TestToken(L"test", 0, 4, CJKTokenizer::SINGLE_TOKEN_TYPE), 
         TestToken(L"1234", 5, 9, CJKTokenizer::SINGLE_TOKEN_TYPE)
     );
-    checkCJKToken(StringUtils::toUnicode(str, sizeof(str) / sizeof(str[0])), out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 /// Non-english text (not just CJK) is treated the same as CJK: C1C2 C2C3 
@@ -197,15 +197,15 @@ BOOST_AUTO_TEST_CASE(testNonIdeographic)
     
     Collection<TestToken> out_tokens = newCollection<TestToken>(
         TestToken(L"\u4e00", 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token2, sizeof(token2) / sizeof(token2[0])), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token3, sizeof(token3) / sizeof(token3[0])), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token4, sizeof(token4) / sizeof(token4[0])), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token5, sizeof(token5) / sizeof(token5[0])), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token6, sizeof(token6) / sizeof(token6[0])), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token7, sizeof(token7) / sizeof(token7[0])), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token1), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token2), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token3), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token4), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token5), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token6), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token7), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKToken(StringUtils::toUnicode(str, sizeof(str) / sizeof(str[0])), out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 /// Non-english text with non-letters (non-spacing marks,etc) is treated as C1C2 C2C3, 
@@ -225,15 +225,15 @@ BOOST_AUTO_TEST_CASE(testNonIdeographicNonLetter)
     
     Collection<TestToken> out_tokens = newCollection<TestToken>(
         TestToken(L"\u4e00", 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 2, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token2, sizeof(token2) / sizeof(token2[0])), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token3, sizeof(token3) / sizeof(token3[0])), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token4, sizeof(token4) / sizeof(token4[0])), 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token5, sizeof(token5) / sizeof(token5[0])), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token6, sizeof(token6) / sizeof(token6[0])), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(StringUtils::toUnicode(token7, sizeof(token7) / sizeof(token7[0])), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token1), 2, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token2), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token3), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token4), 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token5), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token6), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token7), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKToken(StringUtils::toUnicode(str, sizeof(str) / sizeof(str[0])), out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 BOOST_AUTO_TEST_CASE(testTokenStream)
@@ -280,23 +280,23 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 BOOST_AUTO_TEST_CASE(testFinalOffset)
 {
     const uint8_t token1[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84};
-    checkCJKToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 
-                  newCollection<TestToken>(TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
+    checkCJKToken(UTF8_TO_STRING(token1), 
+                  newCollection<TestToken>(TestToken(UTF8_TO_STRING(token1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
     const uint8_t token2[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84, 0x20, 0x20, 0x20};
-    checkCJKToken(StringUtils::toUnicode(token2, sizeof(token2) / sizeof(token2[0])), 
-                  newCollection<TestToken>(TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
+    checkCJKToken(UTF8_TO_STRING(token2), 
+                  newCollection<TestToken>(TestToken(UTF8_TO_STRING(token1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
     checkCJKToken(L"test", newCollection<TestToken>(TestToken(L"test", 0, 4, CJKTokenizer::SINGLE_TOKEN_TYPE)));
     checkCJKToken(L"test   ", newCollection<TestToken>(TestToken(L"test", 0, 4, CJKTokenizer::SINGLE_TOKEN_TYPE)));
     const uint8_t token3[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84, 0x74, 0x65, 0x73, 0x74};
-    checkCJKToken(StringUtils::toUnicode(token3, sizeof(token3) / sizeof(token3[0])), 
+    checkCJKToken(UTF8_TO_STRING(token3), 
                   newCollection<TestToken>(
-                  TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+                  TestToken(UTF8_TO_STRING(token1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE),
                   TestToken(L"test", 2, 6, CJKTokenizer::SINGLE_TOKEN_TYPE)));
     const uint8_t token4[] = {0x74, 0x65, 0x73, 0x74, 0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84, 0x20, 0x20, 0x20, 0x20};
-    checkCJKToken(StringUtils::toUnicode(token4, sizeof(token4) / sizeof(token4[0])), 
+    checkCJKToken(UTF8_TO_STRING(token4), 
                   newCollection<TestToken>(
                   TestToken(L"test", 0, 4, CJKTokenizer::SINGLE_TOKEN_TYPE),
-                  TestToken(StringUtils::toUnicode(token1, sizeof(token1) / sizeof(token1[0])), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
+                  TestToken(UTF8_TO_STRING(token1), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE)));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

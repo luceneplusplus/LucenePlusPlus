@@ -683,7 +683,7 @@ namespace Lucene
                     if (!output)
                     {
                         output = directory->createOutput(segment + L"." + IndexFileNames::NORMS_EXTENSION());
-                        output->writeBytes(NORMS_HEADER, sizeof(NORMS_HEADER) / sizeof(NORMS_HEADER[0]));
+                        output->writeBytes(NORMS_HEADER, SIZEOF_ARRAY(NORMS_HEADER));
                     }
                     for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
                     {

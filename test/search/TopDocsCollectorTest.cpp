@@ -93,7 +93,7 @@ public:
             7.888485, 8.723962, 3.1796896, 0.39971232, 1.3077754, 6.8489285, 
             9.17561, 5.060466, 7.9793315, 8.601509, 4.1858315, 0.28146625
         };
-        scores = Collection<double>::newInstance(_scores, _scores + sizeof(_scores) / sizeof(_scores[0]));
+        scores = Collection<double>::newInstance(_scores, _scores + SIZEOF_ARRAY(_scores));
         
         dir = newLucene<RAMDirectory>();
         

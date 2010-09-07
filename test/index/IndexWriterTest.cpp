@@ -4554,7 +4554,7 @@ BOOST_AUTO_TEST_CASE(testEmbeddedFFFF)
     DocumentPtr doc = newLucene<Document>();
     
     const wchar_t _field[] = {L'a', L' ', L'a', UnicodeUtil::UNICODE_TERMINATOR, L'b'};
-    String field(_field, sizeof(_field) / sizeof(_field[0]));
+    String field(_field, SIZEOF_ARRAY(_field));
     
     doc->add(newLucene<Field>(L"field", field, Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
