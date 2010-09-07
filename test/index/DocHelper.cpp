@@ -53,10 +53,17 @@ namespace Lucene
     const wchar_t* DocHelper::LARGE_LAZY_FIELD_KEY = L"largeLazyField";
     String DocHelper::LARGE_LAZY_FIELD_TEXT;
     
-    const wchar_t* DocHelper::FIELD_UTF1_TEXT = L"field one \u4e00text";
+    const uint8_t DocHelper::_FIELD_UTF1_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x6f, 0x6e,
+                                                   0x65, 0x20, 0xe4, 0xb8, 0x80, 0x74, 0x65, 0x78, 0x74};
+    const String DocHelper::FIELD_UTF1_TEXT = UTF8_TO_STRING(_FIELD_UTF1_TEXT);
     const wchar_t* DocHelper::TEXT_FIELD_UTF1_KEY = L"textField1Utf8";
     
-    const wchar_t* DocHelper::FIELD_UTF2_TEXT = L"field field field \u4e00two text";
+    const uint8_t DocHelper::_FIELD_UTF2_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x66, 0x69, 0x65, 
+                                                   0x6c, 0x64, 0x20, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 
+                                                   0xe4, 0xb8, 0x80, 0x74, 0x77, 0x6f, 0x20, 0x74, 0x65,
+                                                   0x78, 0x74};
+    const String DocHelper::FIELD_UTF2_TEXT = UTF8_TO_STRING(_FIELD_UTF2_TEXT);
+    
     // Fields will be lexicographically sorted.  So, the order is: field, text, two
     const int32_t DocHelper::FIELD_UTF2_FREQS[] = {3, 1, 1};
     const wchar_t* DocHelper::TEXT_FIELD_UTF2_KEY = L"textField2Utf8";

@@ -73,37 +73,60 @@ BOOST_FIXTURE_TEST_SUITE(CJKTokenizerTest, CJKTokenizerFixture)
 
 BOOST_AUTO_TEST_CASE(testJa1)
 {
-    String str = L"\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341";
-
+    const uint8_t str[] = {0xe4, 0xb8, 0x80, 0xe4, 0xba, 0x8c, 0xe4, 0xb8, 0x89, 0xe5, 0x9b, 0x9b,
+                           0xe4, 0xba, 0x94, 0xe5, 0x85, 0xad, 0xe4, 0xb8, 0x83, 0xe5, 0x85, 0xab,
+                           0xe4, 0xb9, 0x9d, 0xe5, 0x8d, 0x81};
+    
+    const uint8_t token1[] = {0xe4, 0xb8, 0x80, 0xe4, 0xba, 0x8c};
+    const uint8_t token2[] = {0xe4, 0xba, 0x8c, 0xe4, 0xb8, 0x89};
+    const uint8_t token3[] = {0xe4, 0xb8, 0x89, 0xe5, 0x9b, 0x9b};
+    const uint8_t token4[] = {0xe5, 0x9b, 0x9b, 0xe4, 0xba, 0x94};
+    const uint8_t token5[] = {0xe4, 0xba, 0x94, 0xe5, 0x85, 0xad};
+    const uint8_t token6[] = {0xe5, 0x85, 0xad, 0xe4, 0xb8, 0x83};
+    const uint8_t token7[] = {0xe4, 0xb8, 0x83, 0xe5, 0x85, 0xab};
+    const uint8_t token8[] = {0xe5, 0x85, 0xab, 0xe4, 0xb9, 0x9d};
+    const uint8_t token9[] = {0xe4, 0xb9, 0x9d, 0xe5, 0x8d, 0x81};
+    
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u4e00\u4e8c", 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u4e8c\u4e09", 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u4e09\u56db", 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u56db\u4e94", 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u4e94\u516d", 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u516d\u4e03", 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u4e03\u516b", 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u516b\u4e5d", 7, 9, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u4e5d\u5341", 8,10, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token2), 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token3), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token4), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token5), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token6), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token7), 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token8), 7, 9, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token9), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKToken(str, out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 BOOST_AUTO_TEST_CASE(testJa2)
 {
-    String str = L"\u4e00 \u4e8c\u4e09\u56db \u4e94\u516d\u4e03\u516b\u4e5d \u5341";
+    const uint8_t str[] = {0xe4, 0xb8, 0x80, 0x20, 0xe4, 0xba, 0x8c, 0xe4, 0xb8, 0x89, 0xe5,
+                           0x9b, 0x9b, 0x20, 0xe4, 0xba, 0x94, 0xe5, 0x85, 0xad, 0xe4, 0xb8,
+                           0x83, 0xe5, 0x85, 0xab, 0xe4, 0xb9, 0x9d, 0x20, 0xe5, 0x8d, 0x81};
+
+    const uint8_t token1[] = {0xe4, 0xb8, 0x80};
+    const uint8_t token2[] = {0xe4, 0xba, 0x8c, 0xe4, 0xb8, 0x89};
+    const uint8_t token3[] = {0xe4, 0xb8, 0x89, 0xe5, 0x9b, 0x9b};
+    const uint8_t token4[] = {0xe4, 0xba, 0x94, 0xe5, 0x85, 0xad};
+    const uint8_t token5[] = {0xe5, 0x85, 0xad, 0xe4, 0xb8, 0x83};
+    const uint8_t token6[] = {0xe4, 0xb8, 0x83, 0xe5, 0x85, 0xab};
+    const uint8_t token7[] = {0xe5, 0x85, 0xab, 0xe4, 0xb9, 0x9d};
+    const uint8_t token8[] = {0xe5, 0x8d, 0x81};
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u4e00", 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u4e8c\u4e09", 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u4e09\u56db", 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u4e94\u516d", 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u516d\u4e03", 7, 9, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u4e03\u516b", 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u516b\u4e5d", 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u5341", 12,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token1), 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token2), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token3), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token4), 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token5), 7, 9, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token6), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token7), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token8), 12, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKToken(str, out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 BOOST_AUTO_TEST_CASE(testC)
@@ -123,49 +146,71 @@ BOOST_AUTO_TEST_CASE(testC)
 
 BOOST_AUTO_TEST_CASE(testMix)
 {
-    String str = L"\u3042\u3044\u3046\u3048\u304aabc\u304b\u304d\u304f\u3051\u3053";
+    const uint8_t str[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86, 0xe3, 0x81,
+                           0x88, 0xe3, 0x81, 0x8a, 0x61, 0x62, 0x63, 0xe3, 0x81, 0x8b, 0xe3,
+                           0x81, 0x8d, 0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91, 0xe3, 0x81, 0x93};
 
+    const uint8_t token1[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84};
+    const uint8_t token2[] = {0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86};
+    const uint8_t token3[] = {0xe3, 0x81, 0x86, 0xe3, 0x81, 0x88};
+    const uint8_t token4[] = {0xe3, 0x81, 0x88, 0xe3, 0x81, 0x8a};
+    const uint8_t token6[] = {0xe3, 0x81, 0x8b, 0xe3, 0x81, 0x8d};
+    const uint8_t token7[] = {0xe3, 0x81, 0x8d, 0xe3, 0x81, 0x8f};
+    const uint8_t token8[] = {0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91};
+    const uint8_t token9[] = {0xe3, 0x81, 0x91, 0xe3, 0x81, 0x93};
+    
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u3042\u3044", 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u3044\u3046", 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3046\u3048", 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3048\u304a", 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token2), 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token3), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token4), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
         TestToken(L"abc", 5, 8, CJKTokenizer::SINGLE_TOKEN_TYPE), 
-        TestToken(L"\u304b\u304d", 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304d\u304f", 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304f\u3051", 10,12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3051\u3053", 11,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token6), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token7), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token8), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token9), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKToken(str, out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 BOOST_AUTO_TEST_CASE(testMix2)
 {
-    String str = L"\u3042\u3044\u3046\u3048\u304aab\u3093c\u304b\u304d\u304f\u3051";
+    const uint8_t str[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86, 0xe3, 0x81,
+                           0x88, 0xe3, 0x81, 0x8a, 0x61, 0x62, 0xe3, 0x82, 0x93, 0x63, 0xe3,
+                           0x81, 0x8b, 0xe3, 0x81, 0x8d, 0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91};
 
+    const uint8_t token1[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84};
+    const uint8_t token2[] = {0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86};
+    const uint8_t token3[] = {0xe3, 0x81, 0x86, 0xe3, 0x81, 0x88};
+    const uint8_t token4[] = {0xe3, 0x81, 0x88, 0xe3, 0x81, 0x8a};
+    const uint8_t token6[] = {0xe3, 0x82, 0x93};
+    const uint8_t token8[] = {0xe3, 0x81, 0x8b, 0xe3, 0x81, 0x8d};
+    const uint8_t token9[] = {0xe3, 0x81, 0x8d, 0xe3, 0x81, 0x8f};
+    const uint8_t token10[] = {0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91};
+    
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u3042\u3044", 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u3044\u3046", 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3046\u3048", 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3048\u304a", 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token2), 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token3), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token4), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
         TestToken(L"ab", 5, 7, CJKTokenizer::SINGLE_TOKEN_TYPE), 
-        TestToken(L"\u3093", 7, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token6), 7, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
         TestToken(L"c", 8, 9, CJKTokenizer::SINGLE_TOKEN_TYPE), 
-        TestToken(L"\u304b\u304d", 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304d\u304f", 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304f\u3051", 11,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token8), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token9), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token10), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKToken(str, out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 BOOST_AUTO_TEST_CASE(testSingleChar)
 {
-    String str = L"\u4e00";
+    const uint8_t str[] = {0xe4, 0xb8, 0x80};
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u4e00", 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(str), 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKToken(str, out_tokens);
+    checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
 
 /// Full-width text is normalized to half-width 
@@ -187,23 +232,24 @@ BOOST_AUTO_TEST_CASE(testNonIdeographic)
     const uint8_t str[] = {0xe4, 0xb8, 0x80, 0x20, 0xd8, 0xb1, 0xd9, 0x88, 0xd8, 0xa8, 0xd8, 0xb1,
                            0xd8, 0xaa, 0x20, 0xd9, 0x85, 0xd9, 0x88, 0xd9, 0x8a, 0xd8, 0xb1};
     
-    const uint8_t token1[] = {0xd8, 0xb1, 0xd9, 0x88};
-    const uint8_t token2[] = {0xd9, 0x88, 0xd8, 0xa8};
-    const uint8_t token3[] = {0xd8, 0xa8, 0xd8, 0xb1};
-    const uint8_t token4[] = {0xd8, 0xb1, 0xd8, 0xaa};
-    const uint8_t token5[] = {0xd9, 0x85, 0xd9, 0x88};
-    const uint8_t token6[] = {0xd9, 0x88, 0xd9, 0x8a};
-    const uint8_t token7[] = {0xd9, 0x8a, 0xd8, 0xb1};
+    const uint8_t token1[] = {0xe4, 0xb8, 0x80};
+    const uint8_t token2[] = {0xd8, 0xb1, 0xd9, 0x88};
+    const uint8_t token3[] = {0xd9, 0x88, 0xd8, 0xa8};
+    const uint8_t token4[] = {0xd8, 0xa8, 0xd8, 0xb1};
+    const uint8_t token5[] = {0xd8, 0xb1, 0xd8, 0xaa};
+    const uint8_t token6[] = {0xd9, 0x85, 0xd9, 0x88};
+    const uint8_t token7[] = {0xd9, 0x88, 0xd9, 0x8a};
+    const uint8_t token8[] = {0xd9, 0x8a, 0xd8, 0xb1};
     
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u4e00", 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(UTF8_TO_STRING(token1), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token2), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token3), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token4), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token5), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token6), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token7), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token1), 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token2), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token3), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token4), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token5), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token6), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token7), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token8), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
@@ -215,23 +261,24 @@ BOOST_AUTO_TEST_CASE(testNonIdeographicNonLetter)
     const uint8_t str[] = {0xe4, 0xb8, 0x80, 0x20, 0xd8, 0xb1, 0xd9, 0x8f, 0xd9, 0x88, 0xd8, 0xa8,
                            0xd8, 0xb1, 0xd8, 0xaa, 0x20, 0xd9, 0x85, 0xd9, 0x88, 0xd9, 0x8a, 0xd8, 0xb1};
     
-    const uint8_t token1[] = {0xd8, 0xb1};
-    const uint8_t token2[] = {0xd9, 0x88, 0xd8, 0xa8};
-    const uint8_t token3[] = {0xd8, 0xa8, 0xd8, 0xb1};
-    const uint8_t token4[] = {0xd8, 0xb1, 0xd8, 0xaa};
-    const uint8_t token5[] = {0xd9, 0x85, 0xd9, 0x88};
-    const uint8_t token6[] = {0xd9, 0x88, 0xd9, 0x8a};
-    const uint8_t token7[] = {0xd9, 0x8a, 0xd8, 0xb1};
+    const uint8_t token1[] = {0xe4, 0xb8, 0x80};
+    const uint8_t token2[] = {0xd8, 0xb1};
+    const uint8_t token3[] = {0xd9, 0x88, 0xd8, 0xa8};
+    const uint8_t token4[] = {0xd8, 0xa8, 0xd8, 0xb1};
+    const uint8_t token5[] = {0xd8, 0xb1, 0xd8, 0xaa};
+    const uint8_t token6[] = {0xd9, 0x85, 0xd9, 0x88};
+    const uint8_t token7[] = {0xd9, 0x88, 0xd9, 0x8a};
+    const uint8_t token8[] = {0xd9, 0x8a, 0xd8, 0xb1};
     
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u4e00", 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(UTF8_TO_STRING(token1), 2, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token2), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token3), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token4), 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token5), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token6), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(UTF8_TO_STRING(token7), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(token1), 0, 1, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(token2), 2, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token3), 4, 6, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token4), 5, 7, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token5), 6, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token6), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token7), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(token8), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
     checkCJKToken(UTF8_TO_STRING(str), out_tokens);
 }
@@ -239,42 +286,70 @@ BOOST_AUTO_TEST_CASE(testNonIdeographicNonLetter)
 BOOST_AUTO_TEST_CASE(testTokenStream)
 {
     AnalyzerPtr analyzer = newLucene<CJKAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    checkAnalyzesTo(analyzer, L"\u4e00\u4e01\u4e02", newCollection<String>(L"\u4e00\u4e01", L"\u4e01\u4e02"));
+    
+    const uint8_t token1[] = {0xe4, 0xb8, 0x80, 0xe4, 0xb8, 0x81, 0xe4, 0xb8, 0x82};
+    const uint8_t token2[] = {0xe4, 0xb8, 0x80, 0xe4, 0xb8, 0x81};
+    const uint8_t token3[] = {0xe4, 0xb8, 0x81, 0xe4, 0xb8, 0x82};
+    
+    checkAnalyzesTo(analyzer, UTF8_TO_STRING(token1), newCollection<String>(UTF8_TO_STRING(token2), UTF8_TO_STRING(token3)));
 }
 
 BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 {
     AnalyzerPtr analyzer = newLucene<CJKAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    String str = L"\u3042\u3044\u3046\u3048\u304aabc\u304b\u304d\u304f\u3051\u3053";
+    
+    const uint8_t first[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86, 0xe3, 0x81, 0x88,
+                             0xe3, 0x81, 0x8a, 0x61, 0x62, 0x63, 0xe3, 0x81, 0x8b, 0xe3, 0x81, 0x8d,
+                             0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91, 0xe3, 0x81, 0x93};
+
+    const uint8_t firstToken1[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84};
+    const uint8_t firstToken2[] = {0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86};
+    const uint8_t firstToken3[] = {0xe3, 0x81, 0x86, 0xe3, 0x81, 0x88};
+    const uint8_t firstToken4[] = {0xe3, 0x81, 0x88, 0xe3, 0x81, 0x8a};
+    const uint8_t firstToken6[] = {0xe3, 0x81, 0x8b, 0xe3, 0x81, 0x8d};
+    const uint8_t firstToken7[] = {0xe3, 0x81, 0x8d, 0xe3, 0x81, 0x8f};
+    const uint8_t firstToken8[] = {0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91};
+    const uint8_t firstToken9[] = {0xe3, 0x81, 0x91, 0xe3, 0x81, 0x93};
 
     Collection<TestToken> out_tokens = newCollection<TestToken>(
-        TestToken(L"\u3042\u3044", 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u3044\u3046", 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3046\u3048", 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3048\u304a", 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(firstToken1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(firstToken2), 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(firstToken3), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(firstToken4), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
         TestToken(L"abc", 5, 8, CJKTokenizer::SINGLE_TOKEN_TYPE), 
-        TestToken(L"\u304b\u304d", 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304d\u304f", 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304f\u3051", 10,12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3051\u3053", 11,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(firstToken6), 8, 10, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(firstToken7), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(firstToken8), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(firstToken9), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKTokenReusable(analyzer, str, out_tokens);
+    checkCJKTokenReusable(analyzer, UTF8_TO_STRING(first), out_tokens);
     
-    str = L"\u3042\u3044\u3046\u3048\u304aab\u3093c\u304b\u304d\u304f\u3051";
+    const uint8_t second[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86, 0xe3, 0x81, 0x88,
+                              0xe3, 0x81, 0x8a, 0x61, 0x62, 0xe3, 0x82, 0x93, 0x63, 0xe3, 0x81, 0x8b,
+                              0xe3, 0x81, 0x8d, 0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91};
 
+    const uint8_t secondToken1[] = {0xe3, 0x81, 0x82, 0xe3, 0x81, 0x84};
+    const uint8_t secondToken2[] = {0xe3, 0x81, 0x84, 0xe3, 0x81, 0x86};
+    const uint8_t secondToken3[] = {0xe3, 0x81, 0x86, 0xe3, 0x81, 0x88};
+    const uint8_t secondToken4[] = {0xe3, 0x81, 0x88, 0xe3, 0x81, 0x8a};
+    const uint8_t secondToken6[] = {0xe3, 0x82, 0x93};
+    const uint8_t secondToken8[] = {0xe3, 0x81, 0x8b, 0xe3, 0x81, 0x8d};
+    const uint8_t secondToken9[] = {0xe3, 0x81, 0x8d, 0xe3, 0x81, 0x8f};
+    const uint8_t secondToken10[] = {0xe3, 0x81, 0x8f, 0xe3, 0x81, 0x91};
+                                  
     Collection<TestToken> out_tokens2 = newCollection<TestToken>(
-        TestToken(L"\u3042\u3044", 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
-        TestToken(L"\u3044\u3046", 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3046\u3048", 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u3048\u304a", 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(secondToken1), 0, 2, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(secondToken2), 1, 3, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(secondToken3), 2, 4, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(secondToken4), 3, 5, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
         TestToken(L"ab", 5, 7, CJKTokenizer::SINGLE_TOKEN_TYPE), 
-        TestToken(L"\u3093", 7, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
+        TestToken(UTF8_TO_STRING(secondToken6), 7, 8, CJKTokenizer::DOUBLE_TOKEN_TYPE), 
         TestToken(L"c", 8, 9, CJKTokenizer::SINGLE_TOKEN_TYPE), 
-        TestToken(L"\u304b\u304d", 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304d\u304f", 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
-        TestToken(L"\u304f\u3051", 11,13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
+        TestToken(UTF8_TO_STRING(secondToken8), 9, 11, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(secondToken9), 10, 12, CJKTokenizer::DOUBLE_TOKEN_TYPE),
+        TestToken(UTF8_TO_STRING(secondToken10), 11, 13, CJKTokenizer::DOUBLE_TOKEN_TYPE)
     );
-    checkCJKTokenReusable(analyzer, str, out_tokens2);
+    checkCJKTokenReusable(analyzer, UTF8_TO_STRING(second), out_tokens2);
 }
 
 BOOST_AUTO_TEST_CASE(testFinalOffset)

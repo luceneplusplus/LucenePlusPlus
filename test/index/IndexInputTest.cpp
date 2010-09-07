@@ -126,23 +126,23 @@ BOOST_AUTO_TEST_CASE(testRead)
 {
     ByteArray inputBytes(ByteArray::newInstance(100));
     
-    uint8_t input[88] = { 0x80, 0x01, 0xFF, 0x7F, 0x80, 0x80, 0x01, 0x81, 0x80, 0x01, 0x06,
+    uint8_t input[88] = {0x80, 0x01, 0xff, 0x7f, 0x80, 0x80, 0x01, 0x81, 0x80, 0x01, 0x06,
                           'L', 'u', 'c', 'e', 'n', 'e',
-                          
-                          // 2-byte UTF-8 (U+00BF "INVERTED QUESTION MARK") 
-                          0x02, 0xC2, 0xBF, 0x0A, 'L', 'u', 0xC2, 0xBF, 'c', 'e', 0xC2, 0xBF, 'n', 'e',
-                          
-                          // 3-byte UTF-8 (U+2620 "SKULL AND CROSSBONES") 
-                          0x03, 0xE2, 0x98, 0xA0, 0x0C, 'L', 'u', 0xE2, 0x98, 0xA0, 'c', 'e', 0xE2, 0x98, 0xA0, 'n', 'e',
-                          
-                          // surrogate pairs
-                          // (U+1D11E "MUSICAL SYMBOL G CLEF")
-                          // (U+1D160 "MUSICAL SYMBOL EIGHTH NOTE")
-                          0x04, 0xF0, 0x9D, 0x84, 0x9E, 0x08, 0xF0, 0x9D, 0x84, 0x9E, 0xF0, 0x9D, 0x85, 0xA0, 0x0E,
-                          'L', 'u', 0xF0, 0x9D, 0x84, 0x9E, 'c', 'e', 0xF0, 0x9D, 0x85, 0xA0, 'n', 'e',
-                          
-                          // null bytes
-                          0x01, 0x00, 0x08, 'L', 'u', 0x00, 'c', 'e', 0x00, 'n', 'e' };
+                         
+                         // 2-byte UTF-8 (U+00BF "INVERTED QUESTION MARK") 
+                         0x02, 0xc2, 0xbf, 0x0a, 'L', 'u', 0xc2, 0xbf, 'c', 'e', 0xc2, 0xbf, 'n', 'e',
+                         
+                         // 3-byte UTF-8 (U+2620 "SKULL AND CROSSBONES") 
+                         0x03, 0xe2, 0x98, 0xa0, 0x0c, 'L', 'u', 0xe2, 0x98, 0xa0, 'c', 'e', 0xe2, 0x98, 0xa0, 'n', 'e',
+                         
+                         // surrogate pairs
+                         // (U+1D11E "MUSICAL SYMBOL G CLEF")
+                         // (U+1D160 "MUSICAL SYMBOL EIGHTH NOTE")
+                         0x04, 0xf0, 0x9d, 0x84, 0x9e, 0x08, 0xf0, 0x9d, 0x84, 0x9e, 0xf0, 0x9d, 0x85, 0xa0, 0x0e,
+                         'L', 'u', 0xf0, 0x9d, 0x84, 0x9e, 'c', 'e', 0xf0, 0x9d, 0x85, 0xa0, 'n', 'e',
+                         
+                         // null bytes
+                         0x01, 0x00, 0x08, 'L', 'u', 0x00, 'c', 'e', 0x00, 'n', 'e'};
     std::memcpy(inputBytes.get(), input, 88);
     
     IndexInputPtr is = newLucene<MockIndexInput>(inputBytes);
@@ -152,10 +152,15 @@ BOOST_AUTO_TEST_CASE(testRead)
     BOOST_CHECK_EQUAL(is->readVInt(), 16384);
     BOOST_CHECK_EQUAL(is->readVInt(), 16385);
     BOOST_CHECK_EQUAL(is->readString(), L"Lucene");
-    BOOST_CHECK_EQUAL(is->readString(), L"\u00BF");
-    BOOST_CHECK_EQUAL(is->readString(), L"Lu\u00BFce\u00BFne");
-    BOOST_CHECK_EQUAL(is->readString(), L"\u2620");
-    BOOST_CHECK_EQUAL(is->readString(), L"Lu\u2620ce\u2620ne");
+    
+    const uint8_t question[] = {0xc2, 0xbf};
+    BOOST_CHECK_EQUAL(is->readString(), UTF8_TO_STRING(question));
+    const uint8_t skull[] = {0x4c, 0x75, 0xc2, 0xbf, 0x63, 0x65, 0xc2, 0xbf, 0x6e, 0x65};
+    BOOST_CHECK_EQUAL(is->readString(), UTF8_TO_STRING(skull));
+    const uint8_t gclef[] = {0xe2, 0x98, 0xa0};
+    BOOST_CHECK_EQUAL(is->readString(), UTF8_TO_STRING(gclef));
+    const uint8_t eighthnote[] = {0x4c, 0x75, 0xe2, 0x98, 0xa0, 0x63, 0x65, 0xe2, 0x98, 0xa0, 0x6e, 0x65};
+    BOOST_CHECK_EQUAL(is->readString(), UTF8_TO_STRING(eighthnote));
     
     String readString(is->readString());
     #ifdef LPP_UNICODE_CHAR_SIZE_2
@@ -216,8 +221,7 @@ BOOST_AUTO_TEST_CASE(testRead)
 BOOST_AUTO_TEST_CASE(testSkipChars)
 {
     ByteArray inputBytes(ByteArray::newInstance(100));
-    uint8_t input[17] = { 0x80, 0x01, 0xFF, 0x7F, 0x80, 0x80, 0x01, 0x81, 0x80, 0x01, 0x06,
-                          'L', 'u', 'c', 'e', 'n', 'e' };
+    uint8_t input[17] = {0x80, 0x01, 0xff, 0x7f, 0x80, 0x80, 0x01, 0x81, 0x80, 0x01, 0x06, 'L', 'u', 'c', 'e', 'n', 'e'};
     std::memcpy(inputBytes.get(), input, 17);
     
     IndexInputPtr is = newLucene<MockIndexInput>(inputBytes);
