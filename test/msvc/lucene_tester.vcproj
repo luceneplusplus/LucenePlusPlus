@@ -1400,6 +1400,14 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="de"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\de\GermanStemFilterTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

@@ -27,7 +27,7 @@ namespace Lucene
         String RV;
     
     public:
-        /// Stems the given term to an unique discriminator.
+        /// Stems the given term to a unique discriminator.
         ///
         /// @param term The term that should be stemmed.
         /// @return Discriminator for term.
@@ -35,7 +35,7 @@ namespace Lucene
 
     protected:
         /// Checks a term if it can be processed correctly.
-        /// @return  true if, and only if, the given term consists in letters.
+        /// @return true if, and only if, the given term consists in letters.
         bool isStemmable(const String& term);
         
         /// Checks a term if it can be processed indexed.

@@ -593,6 +593,34 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="de"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\de\GermanAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\GermanAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\de\GermanStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\GermanStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\de\GermanStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\GermanStemmer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
