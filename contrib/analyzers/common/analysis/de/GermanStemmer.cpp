@@ -109,14 +109,14 @@ namespace Lucene
             if (c > 0 && buffer[c] == buffer[c - 1])
                 buffer[c] = L'*';
             // Substitute Umlauts.
-            else if (buffer[c] == L'ä')
+            else if (buffer[c] == L'\u00e4')
                 buffer[c] = L'a';
-            else if (buffer[c] == L'ö')
+            else if (buffer[c] == L'\u00f6')
                 buffer[c] = L'o';
-            else if (buffer[c] == L'ü')
+            else if (buffer[c] == L'\u00fc')
                 buffer[c] = L'u';
             // Fix bug so that 'ß' at the end of a word is replaced.
-            else if (buffer[c] == L'ß')
+            else if (buffer[c] == L'\u00df')
             {
                 buffer[c] = L's';
                 buffer.insert(c + 1, 1, L's');
@@ -134,7 +134,7 @@ namespace Lucene
                 }
                 else if (buffer[c] == L'c' && buffer[c + 1] == L'h')
                 {
-                    buffer[c] = L'§';
+                    buffer[c] = L'\u00a7';
                     buffer.erase(c + 1, 1);
                     ++substCount;
                 }
@@ -177,7 +177,7 @@ namespace Lucene
                 buffer[c] = L's';
                 buffer.insert(c + 1, L"ch");
             }
-            else if (buffer[c] == L'§')
+            else if (buffer[c] == L'\u00a7')
             {
                 buffer[c] = L'c';
                 buffer.insert(c + 1, 1, L'h');
