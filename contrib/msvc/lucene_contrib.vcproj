@@ -621,6 +621,26 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="el"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\el\GreekAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\GreekAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\el\GreekLowerCaseFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\GreekLowerCaseFilter.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

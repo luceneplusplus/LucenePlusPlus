@@ -35,5 +35,8 @@ namespace Lucene
 	DECLARE_SHARED_PTR(GermanAnalyzerSavedStreams)
 	DECLARE_SHARED_PTR(GermanStemFilter)
 	DECLARE_SHARED_PTR(GermanStemmer)
+	DECLARE_SHARED_PTR(GreekLowerCaseFilter)
+	DECLARE_SHARED_PTR(GreekAnalyzer)
+	DECLARE_SHARED_PTR(GreekAnalyzerSavedStreams)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
 }
