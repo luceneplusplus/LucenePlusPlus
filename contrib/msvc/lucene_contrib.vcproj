@@ -641,6 +641,34 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="fa"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\fa\PersianAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\PersianAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fa\PersianNormalizationFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\PersianNormalizationFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fa\PersianNormalizer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\PersianNormalizer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

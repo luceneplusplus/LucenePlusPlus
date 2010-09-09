@@ -38,5 +38,9 @@ namespace Lucene
 	DECLARE_SHARED_PTR(GreekLowerCaseFilter)
 	DECLARE_SHARED_PTR(GreekAnalyzer)
 	DECLARE_SHARED_PTR(GreekAnalyzerSavedStreams)
+	DECLARE_SHARED_PTR(PersianAnalyzer)
+	DECLARE_SHARED_PTR(PersianAnalyzerSavedStreams)
+	DECLARE_SHARED_PTR(PersianNormalizationFilter)
+	DECLARE_SHARED_PTR(PersianNormalizer)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
 }

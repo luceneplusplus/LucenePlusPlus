@@ -1416,6 +1416,18 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="fa"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\fa\PersianAnalyzerTest.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\fa\PersianNormalizationFilterTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>
