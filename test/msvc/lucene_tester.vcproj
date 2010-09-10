@@ -1428,6 +1428,18 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="fr"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\fr\ElisionTest.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\fr\FrenchAnalyzerTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

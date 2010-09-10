@@ -107,7 +107,6 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
     checkReuse(a, L"Tischen", L"tisch");
 }
 
-
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
 BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
 {

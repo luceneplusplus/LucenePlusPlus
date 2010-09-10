@@ -669,6 +669,42 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="fr"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\ElisionFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\ElisionFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\FrenchAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\FrenchAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\FrenchStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\FrenchStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\FrenchStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\FrenchStemmer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

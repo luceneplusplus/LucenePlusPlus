@@ -82,7 +82,7 @@ namespace Lucene
         TermAttributePtr termAtt = ts->getAttribute<TermAttribute>();
         
         OffsetAttributePtr offsetAtt;
-        if (startOffsets || endOffsets || finalOffset)
+        if (startOffsets || endOffsets || finalOffset != -1)
         {
             BOOST_CHECK(ts->hasAttribute<OffsetAttribute>());
             offsetAtt = ts->getAttribute<OffsetAttribute>();

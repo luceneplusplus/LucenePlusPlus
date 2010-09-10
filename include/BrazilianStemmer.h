@@ -105,7 +105,7 @@ namespace Lucene
         /// If the word ends with one of the suffixes (os a i o á í ó) in RV, delete it.
         void step4();
         
-        /// If the word ends with one of ( e é ê) in RV,delete it, and if preceded by 'gu' (or 'ci') with 
+        /// If the word ends with one of (e é ê) in RV,delete it, and if preceded by 'gu' (or 'ci') with 
         /// the 'u' (or 'i') in RV, delete the 'u' (or 'i')
         ///
         /// Or if the word ends ç remove the cedilha.
