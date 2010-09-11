@@ -705,6 +705,34 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="nl"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\nl\DutchAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\DutchAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\nl\DutchStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\DutchStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\nl\DutchStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\DutchStemmer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
