@@ -9,14 +9,14 @@
 
 namespace Lucene
 {
-    const int32_t BufferedReader::READER_BUFFER = 1024;
+    const int32_t BufferedReader::READER_BUFFER = 8192;
     
-    BufferedReader::BufferedReader(ReaderPtr reader)
+    BufferedReader::BufferedReader(ReaderPtr reader, int32_t size)
     {
         this->reader = reader;
-        bufferStart = 0;
-        bufferLength = 0;
-        bufferPosition = 0;
+        this->bufferSize = size;
+        this->bufferLength = 0;
+        this->bufferPosition = 0;
     }
     
     BufferedReader::~BufferedReader()
@@ -26,72 +26,86 @@ namespace Lucene
     int32_t BufferedReader::read()
     {
         if (bufferPosition >= bufferLength)
-            refill();
+        {
+            if (refill() == READER_EOF)
+                return READER_EOF;
+        }
         return buffer[bufferPosition++];
     }
     
     int32_t BufferedReader::peek()
     {
         if (bufferPosition >= bufferLength)
-            refill();
+        {
+            if (refill() == READER_EOF)
+                return READER_EOF;
+        }
         return buffer[bufferPosition];
     }
     
     int32_t BufferedReader::read(wchar_t* b, int32_t offset, int32_t length)
     {
-        int32_t readChars = 0;
-        try
+        if (length == 0)
+            return 0;
+
+        int32_t remaining = length;
+        
+        while (remaining > 0)
         {
-            for (; readChars < length; ++readChars)
-                b[readChars + offset] = (wchar_t)read();
-        }
-        catch (IOException&)
-        {
-        }
-        return readChars;
-    }
-    
-    String BufferedReader::readLine()
-    {
-        String line;
-        try
-        {
-            wchar_t ch = (wchar_t)read();
-            while (ch != L'\r' && ch != L'\n')
+            int32_t available = bufferLength - bufferPosition;			
+        
+            if (remaining <= available)
             {
-                line += ch;
-                ch = (wchar_t)read();
+                // the buffer contains enough data to satisfy this request
+                MiscUtils::arrayCopy(buffer.get(), bufferPosition, b, offset, remaining);
+                bufferPosition += remaining;
+                remaining = 0;
             }
-            if (ch == '\r' && (wchar_t)peek() == L'\n')
-                read();
+            else if (available > 0)
+            {
+                // the buffer does not have enough data, first serve all we've got
+                MiscUtils::arrayCopy(buffer.get(), bufferPosition, b, offset, available);
+                bufferPosition += available;
+                offset += available;
+                remaining -= available;
+            }
+            else if (refill() == READER_EOF)
+            {
+                length -= remaining;
+                break;
+            }
         }
-        catch (...)
-        {
-        }
-        return line;
+        
+        return length == 0 ? READER_EOF : length;
     }
     
-    void BufferedReader::refill()
+    bool BufferedReader::readLine(String& line)
     {
-        int32_t start = bufferStart + bufferPosition;
-        int32_t end = start + READER_BUFFER;
-        if (end > reader->length()) // don't read past EOF
-            end = (int32_t)reader->length();
-        int32_t newLength = (int32_t)(end - start);
-        if (newLength <= 0)
-            boost::throw_exception(IOException(L"Read past EOF"));
+        line.clear();
+        wchar_t ch = (wchar_t)read();
+        while (ch != (wchar_t)READER_EOF && ch != L'\r' && ch != L'\n')
+        {
+            line += ch;
+            ch = (wchar_t)read();
+        }
+        if (ch == '\r' && (wchar_t)peek() == L'\n')
+            read();
+        return (!line.empty() || ch != (wchar_t)READER_EOF);
+    }
+    
+    int32_t BufferedReader::refill()
+    {
         if (!buffer)
-            buffer = CharArray::newInstance(READER_BUFFER); // allocate buffer lazily
-        reader->read(buffer.get(), 0, newLength);
-        bufferLength = newLength;
-        bufferStart = start;
+            buffer = CharArray::newInstance(bufferSize); // allocate buffer lazily
+        int32_t readLength = reader->read(buffer.get(), 0, bufferSize);
+        bufferLength = readLength == READER_EOF ? 0 : readLength;
         bufferPosition = 0;
+        return readLength;
     }
 
     void BufferedReader::close()
     {
         reader->close();
-        bufferStart = 0;
         bufferLength = 0;
         bufferPosition = 0;
     }
@@ -104,7 +118,6 @@ namespace Lucene
     void BufferedReader::reset()
     {
         reader->reset();
-        bufferStart = 0;
         bufferLength = 0;
         bufferPosition = 0;
     }

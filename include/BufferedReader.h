@@ -16,14 +16,14 @@ namespace Lucene
 	{
 	public:
 		/// Create a buffering character-input stream.
-		BufferedReader(ReaderPtr reader);
+		BufferedReader(ReaderPtr reader, int32_t size = READER_BUFFER);
 		virtual ~BufferedReader();
 		
 		LUCENE_CLASS(BufferedReader);
 	
 	protected:
 		ReaderPtr reader;
-		int32_t bufferStart; // position in file of buffer
+		int32_t bufferSize;
 		int32_t bufferLength; // end of valid bytes
 		int32_t bufferPosition; // next byte to read
 		CharArray buffer;
@@ -32,8 +32,6 @@ namespace Lucene
 		static const int32_t READER_BUFFER;
 	
 	public:
-		using Reader::read;
-		
 		/// Read a single character.
 		virtual int32_t read();
 		
@@ -41,7 +39,7 @@ namespace Lucene
 		virtual int32_t read(wchar_t* b, int32_t offset, int32_t length);
 		
 		/// Read a line of text.
-		virtual String readLine();
+		virtual bool readLine(String& line);
 
 		/// Close the stream.
 		virtual void close();
@@ -54,7 +52,7 @@ namespace Lucene
 	
 	protected:
 		/// Refill buffer in preparation for reading.
-		void refill();
+		int32_t refill();
 		
 		/// Read a single character without moving position.
 		int32_t peek();

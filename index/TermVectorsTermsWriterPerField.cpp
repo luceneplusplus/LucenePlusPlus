@@ -154,7 +154,7 @@ namespace Lucene
             // We swap between two encoders to save copying last Term's byte array
             UTF8ResultPtr utf8Result(perThread->utf8Results[encoderUpto]);
             
-            StringUtils::toUTF8((uint8_t*)(text2.get() + start2), text2.length(), utf8Result);
+            StringUtils::toUTF8(text2.get() + start2, text2.length(), utf8Result);
             int32_t termBytesCount = utf8Result->length;
             
             // Compute common prefix between last term and this term

@@ -22,7 +22,7 @@
 #include "ByteSliceReader.h"
 #include "RawPostingList.h"
 #include "DocumentsWriter.h"
-#include "UnicodeUtils.h"
+#include "UTF8Stream.h"
 #include "TestPoint.h"
 
 namespace Lucene
@@ -51,14 +51,14 @@ namespace Lucene
             wchar_t c2 = text2[pos2++];
             if (c1 != c2)
             {
-                if (c2 == UnicodeUtil::UNICODE_TERMINATOR)
+                if (c2 == UTF8Stream::UNICODE_TERMINATOR)
                     return 1;
-                else if (c1 == UnicodeUtil::UNICODE_TERMINATOR)
+                else if (c1 == UTF8Stream::UNICODE_TERMINATOR)
                     return -1;
                 else
                     return (c1 - c2);
             }
-            else if (c1 == UnicodeUtil::UNICODE_TERMINATOR)
+            else if (c1 == UTF8Stream::UNICODE_TERMINATOR)
                 return 0;
         }
     }

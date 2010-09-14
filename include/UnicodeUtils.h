@@ -16,26 +16,6 @@ namespace Lucene
 		virtual ~UnicodeUtil();
 	
 	public:
-        #ifdef LPP_UNICODE_CHAR_SIZE_2
-        static const int32_t UNICODE_SUR_HIGH_START;
-        static const int32_t UNICODE_SUR_HIGH_END;
-        static const int32_t UNICODE_SUR_LOW_START;
-        static const int32_t UNICODE_SUR_LOW_END;
-        #endif
-
-        static const wchar_t UNICODE_REPLACEMENT_CHAR;
-        static const wchar_t UNICODE_TERMINATOR;
-		
-    public:
-        /// Convert uft8 buffer into unicode.
-        static int32_t toUnicode(const uint8_t* utf8, int32_t length, wchar_t* unicode);
-
-        /// Convert uft16 buffer into unicode.
-        static int32_t utf16ToUnicode(const uint8_t* utf16, int32_t length, wchar_t* unicode);
-
-        /// Convert unicode buffer into uft8.
-        static int32_t toUTF8(const uint8_t* unicode, int32_t length, uint8_t* utf8);
-
         /// Return true if supplied character is alpha-numeric.
         static bool isAlnum(wchar_t c);
         

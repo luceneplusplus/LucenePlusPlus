@@ -71,7 +71,6 @@ namespace Lucene
 		
 	typedef boost::shared_ptr<std::ofstream> ofstreamPtr;
 	typedef boost::shared_ptr<std::ifstream> ifstreamPtr;
-	typedef boost::shared_ptr<std::wifstream> wifstreamPtr;
 	typedef boost::shared_ptr<std::locale> localePtr;
 }
 
@@ -605,6 +604,8 @@ namespace Lucene
 	DECLARE_SHARED_PTR(BitSet)
 	DECLARE_SHARED_PTR(BitVector)
 	DECLARE_SHARED_PTR(BufferedReader)
+	DECLARE_SHARED_PTR(ByteArrayReader)
+	DECLARE_SHARED_PTR(CharArrayReader)
 	DECLARE_SHARED_PTR(Collator)
 	DECLARE_SHARED_PTR(DefaultAttributeFactory)
 	DECLARE_SHARED_PTR(DocIdBitSet)
@@ -615,6 +616,7 @@ namespace Lucene
 	DECLARE_SHARED_PTR(InfoStream)
 	DECLARE_SHARED_PTR(InfoStreamFile)
 	DECLARE_SHARED_PTR(InfoStreamOut)
+	DECLARE_SHARED_PTR(InputStreamReader)
 	DECLARE_SHARED_PTR(Insanity)
 	DECLARE_SHARED_PTR(IntRangeBuilder)
 	DECLARE_SHARED_PTR(LongRangeBuilder)
@@ -634,7 +636,11 @@ namespace Lucene
 	DECLARE_SHARED_PTR(Synchronize)
 	DECLARE_SHARED_PTR(ThreadPool)
 	DECLARE_SHARED_PTR(UnicodeResult)
+	DECLARE_SHARED_PTR(UTF8Decoder)
+	DECLARE_SHARED_PTR(UTF8Encoder)
 	DECLARE_SHARED_PTR(UTF8Result)
+	DECLARE_SHARED_PTR(UTF8Stream)
+	DECLARE_SHARED_PTR(UTF16Decoder)
 	
 	typedef std::basic_string< char, std::char_traits<char>, Allocator<char> > SingleString;
 	typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > String;

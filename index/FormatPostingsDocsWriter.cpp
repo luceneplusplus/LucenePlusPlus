@@ -97,7 +97,7 @@ namespace Lucene
         FormatPostingsTermsWriterPtr parent(_parent);
         termInfo->set(df, parent->freqStart, parent->proxStart, (int32_t)(skipPointer - parent->freqStart));
         
-        StringUtils::toUTF8((uint8_t*)(parent->currentTerm.get() + parent->currentTermStart), parent->currentTerm.length(), utf8);
+        StringUtils::toUTF8(parent->currentTerm.get() + parent->currentTermStart, parent->currentTerm.length(), utf8);
         
         if (df > 0)
             parent->termsOut->add(fieldInfo->number, utf8->result, utf8->length, termInfo);

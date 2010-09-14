@@ -44,15 +44,14 @@ namespace Lucene
         {
             if (!bufferedReader)
                 bufferedReader = newLucene<BufferedReader>(reader);
-            String word(bufferedReader->readLine());
-            while (!word.empty())
+            String word;
+            while (bufferedReader->readLine(word))
             {
                 if (comment.empty() || !boost::starts_with(word, comment))
                 {
                     boost::trim(word);
                     result.add(word);
                 }
-                word = bufferedReader->readLine();
             }
         }
         catch (LuceneException& e)
@@ -75,13 +74,12 @@ namespace Lucene
         {
             reader = newLucene<FileReader>(wordstemfile);
             bufferedReader = newLucene<BufferedReader>(reader);
-            String line(bufferedReader->readLine());
-            while (!line.empty())
+            String line;
+            while (bufferedReader->readLine(line))
             {
                 String::size_type sep = line.find(L'\t');
                 if (sep != String::npos)
                     result.put(line.substr(0, sep), line.substr(sep + 1));
-                line = bufferedReader->readLine();
             }
         }
         catch (LuceneException& e)

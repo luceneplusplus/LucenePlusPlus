@@ -13,25 +13,18 @@ namespace Lucene
 	class LPPAPI StringUtils
 	{
 	public:
+	    /// Maximum length of UTF encoding.
+		static const int32_t MAX_ENCODING_UTF8_SIZE;
+		
 		/// Default character radix.
 		static const int32_t CHARACTER_MAX_RADIX;
 	
-	protected:
-		/// Maximum length of unicode encoding.
-		static const int32_t MAX_ENCODING_UNICODE_SIZE;
-		
-		/// Maximum length of UTF encoding.
-		static const int32_t MAX_ENCODING_UTF8_SIZE;
-	
 	public:	
-		/// Convert uft8 buffer into unicode.
-		static int32_t toUnicode(const uint8_t* utf8, int32_t length, wchar_t* unicode);
-		
 		/// Convert uft8 buffer into unicode.
 		static int32_t toUnicode(const uint8_t* utf8, int32_t length, CharArray unicode);
 		
 		/// Convert uft8 buffer into unicode.
-		static void toUnicode(const uint8_t* utf8, int32_t length, UnicodeResultPtr unicodeResult);
+		static int32_t toUnicode(const uint8_t* utf8, int32_t length, UnicodeResultPtr unicodeResult);
 		
 		/// Convert uft8 buffer into unicode.
 		static String toUnicode(const uint8_t* utf8, int32_t length);
@@ -40,16 +33,13 @@ namespace Lucene
 		static String toUnicode(const SingleString& s);
 		
 		/// Convert unicode buffer into uft8.
-		static int32_t toUTF8(const uint8_t* unicode, int32_t length, uint8_t* utf8);
+		static int32_t toUTF8(const wchar_t* unicode, int32_t length, ByteArray utf8);
 		
 		/// Convert unicode buffer into uft8.
-		static int32_t toUTF8(const uint8_t* unicode, int32_t length, ByteArray utf8);
+		static int32_t toUTF8(const wchar_t* unicode, int32_t length, UTF8ResultPtr utf8Result);
 		
 		/// Convert unicode buffer into uft8.
-		static void toUTF8(const uint8_t* unicode, int32_t length, UTF8ResultPtr utf8Result);
-		
-		/// Convert unicode buffer into uft8.
-		static SingleString toUTF8(const uint8_t* unicode, int32_t length);
+		static SingleString toUTF8(const wchar_t* unicode, int32_t length);
 		
 		/// Convert unicode string into uft8.
 		static SingleString toUTF8(const String& s);

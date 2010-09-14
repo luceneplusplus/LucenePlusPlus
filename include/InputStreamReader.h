@@ -10,31 +10,26 @@
 
 namespace Lucene
 {
-	/// Convenience class for reading character files.
-	class LPPAPI FileReader : public Reader
+	/// An InputStreamReader is a bridge from byte streams to character streams.
+	class LPPAPI InputStreamReader : public Reader
 	{
 	public:
-		/// Creates a new FileReader, given the file name to read from.
-		FileReader(const String& fileName);
-		virtual ~FileReader();
+		/// Create an InputStreamReader that uses the utf8 charset.
+		InputStreamReader(ReaderPtr reader);
+		virtual ~InputStreamReader();
 		
-		LUCENE_CLASS(FileReader);
+		LUCENE_CLASS(InputStreamReader);
 	
 	protected:
-		ifstreamPtr file;
-		int64_t _length;
-		ByteArray fileBuffer;
-	
-	public:
-		static const int32_t FILE_EOF;
-		static const int32_t FILE_ERROR;
-	
+	    ReaderPtr reader;
+		UTF8DecoderPtr decoder;
+    
 	public:
 		/// Read a single character.
 		virtual int32_t read();
-
+		
 		/// Read characters into a portion of an array.
-		virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+		virtual int32_t read(wchar_t* b, int32_t offset, int32_t length);
 		
 		/// Close the stream.
 		virtual void close();
@@ -44,8 +39,5 @@ namespace Lucene
 		
 		/// Reset the stream.
 		virtual void reset();
-		
-		/// The number of bytes in the file.
-		virtual int64_t length();
 	};
 }

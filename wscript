@@ -41,7 +41,6 @@ lucene_include_dirs = [
     'include',
     'util/md5',
     'util/nedmalloc',
-    'util/utf8',
     'util/zlib',
     'util/unicode'
 ]

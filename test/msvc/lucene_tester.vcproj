@@ -470,6 +470,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\util\BufferedReaderTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\util\CloseableThreadLocalTest.cpp"
 				>
 			</File>
@@ -487,6 +491,10 @@
 			</File>
 			<File
 				RelativePath="..\util\FileUtilsTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\util\InputStreamReaderTest.cpp"
 				>
 			</File>
 			<File

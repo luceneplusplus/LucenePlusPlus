@@ -7,43 +7,40 @@
 #include "stdafx.h"
 #include "StringUtils.h"
 #include "UnicodeUtils.h"
+#include "UTF8Stream.h"
+#include "ArrayReader.h"
 #include "CharFolder.h"
 
 namespace Lucene
 {
+    /// Maximum length of UTF encoding.
+    const int32_t StringUtils::MAX_ENCODING_UTF8_SIZE = 4;
+    
     /// Default character radix.
     const int32_t StringUtils::CHARACTER_MAX_RADIX = 36;
     
-    /// Maximum length of unicode encoding.
-    const int32_t StringUtils::MAX_ENCODING_UNICODE_SIZE = 2;
-    
-    /// Maximum length of UTF encoding.
-    const int32_t StringUtils::MAX_ENCODING_UTF8_SIZE = 6;
-    
-    int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, wchar_t* unicode)
-    {
-        return UnicodeUtil::toUnicode(utf8, length, unicode);
-    }
-    
     int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, CharArray unicode)
     {
-        return length == 0 ? 0 : toUnicode(utf8, length, unicode.get());
+        UTF8DecoderPtr utf8Decoder(newLucene<UTF8Decoder>(newLucene<ByteArrayReader>(utf8, length)));
+        int32_t decodeLength = utf8Decoder->decode(unicode.get(), unicode.length());
+        return decodeLength == Reader::READER_EOF ? 0 : decodeLength;
     }
     
-    void StringUtils::toUnicode(const uint8_t* utf8, int32_t length, UnicodeResultPtr unicodeResult)
+    int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, UnicodeResultPtr unicodeResult)
     {
         if (length == 0)
             unicodeResult->length = 0;
         else
         {
-            unicodeResult->result.resize(length * MAX_ENCODING_UNICODE_SIZE);
+            unicodeResult->result.resize(length);
             unicodeResult->length = toUnicode(utf8, length, unicodeResult->result);
         }
+        return unicodeResult->length;
     }
     
     String StringUtils::toUnicode(const uint8_t* utf8, int32_t length)
     {
-        CharArray unicode(CharArray::newInstance(length * MAX_ENCODING_UNICODE_SIZE));
+        CharArray unicode(CharArray::newInstance(length));
         int32_t result = toUnicode(utf8, length, unicode);
         return String(unicode.get(), result);
     }
@@ -53,17 +50,14 @@ namespace Lucene
         return toUnicode((uint8_t*)s.c_str(), s.length());
     }
     
-    int32_t StringUtils::toUTF8(const uint8_t* unicode, int32_t length, uint8_t* utf8)
+    int32_t StringUtils::toUTF8(const wchar_t* unicode, int32_t length, ByteArray utf8)
     {
-        return UnicodeUtil::toUTF8(unicode, length, utf8);
+        UTF8EncoderPtr utf8Encoder(newLucene<UTF8Encoder>(newLucene<CharArrayReader>(unicode, length)));
+        int32_t encodeLength = utf8Encoder->encode(utf8.get(), utf8.length());
+        return encodeLength == Reader::READER_EOF ? 0 : encodeLength;
     }
     
-    int32_t StringUtils::toUTF8(const uint8_t* unicode, int32_t length, ByteArray utf8)
-    {
-        return length == 0 ? 0 : toUTF8(unicode, length, utf8.get());
-    }
-    
-    void StringUtils::toUTF8(const uint8_t* unicode, int32_t length, UTF8ResultPtr utf8Result)
+    int32_t StringUtils::toUTF8(const wchar_t* unicode, int32_t length, UTF8ResultPtr utf8Result)
     {
         if (length == 0)
             utf8Result->length = 0;
@@ -72,9 +66,10 @@ namespace Lucene
             utf8Result->result.resize(length * MAX_ENCODING_UTF8_SIZE);
             utf8Result->length = toUTF8(unicode, length, utf8Result->result);
         }
+        return utf8Result->length;
     }
     
-    SingleString StringUtils::toUTF8(const uint8_t* unicode, int32_t length)
+    SingleString StringUtils::toUTF8(const wchar_t* unicode, int32_t length)
     {
         ByteArray utf8(ByteArray::newInstance(length * MAX_ENCODING_UTF8_SIZE));
         int32_t result = toUTF8(unicode, length, utf8);
@@ -83,7 +78,7 @@ namespace Lucene
     
     SingleString StringUtils::toUTF8(const String& s)
     {
-        return toUTF8((uint8_t*)s.c_str(), s.length());
+        return toUTF8(s.c_str(), s.length());
     }
     
     void StringUtils::toLower(String& str)

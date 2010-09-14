@@ -69,7 +69,7 @@ namespace Lucene
     ByteArray CompressionTools::compressString(const String& value, int32_t compressionLevel)
     {
         UTF8ResultPtr utf8Result(newLucene<UTF8Result>());
-        StringUtils::toUTF8((uint8_t*)value.c_str(), value.length(), utf8Result);
+        StringUtils::toUTF8(value.c_str(), value.length(), utf8Result);
         return compress(utf8Result->result.get(), 0, utf8Result->length, compressionLevel);
     }
     

@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include "LuceneTestFixture.h"
 #include "UnicodeUtils.h"
+#include "UTF8Stream.h"
 
 using namespace Lucene;
 
@@ -24,7 +25,7 @@ BOOST_AUTO_TEST_CASE(testToUtf8CharArray)
     CharArray testArray(CharArray::newInstance(testString.length()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     ByteArray expectedUft8(ByteArray::newInstance(30));
-    BOOST_CHECK_EQUAL(StringUtils::toUTF8((uint8_t*)testArray.get(), testArray.length(), expectedUft8), 22);
+    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.length(), expectedUft8), 22);
     BOOST_CHECK_EQUAL(SingleString((char*)expectedUft8.get(), 22), "this is a ascii string");
 }
 
@@ -35,7 +36,7 @@ BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithOffset)
     std::copy(testString.begin(), testString.end(), testArray.get());
     ByteArray expectedUft8(ByteArray::newInstance(30));
     int32_t offset = 10; // "ascii string"
-    BOOST_CHECK_EQUAL(StringUtils::toUTF8((uint8_t*)(testArray.get() + offset), testArray.length() - offset, expectedUft8), 12);
+    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get() + offset, testArray.length() - offset, expectedUft8), 12);
     BOOST_CHECK_EQUAL(SingleString((char*)expectedUft8.get(), 12), "ascii string");
 }
 
@@ -45,7 +46,7 @@ BOOST_AUTO_TEST_CASE(testToUtf8Result)
     CharArray testArray(CharArray::newInstance(testString.length()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     UTF8ResultPtr utf8Result(newLucene<UTF8Result>());
-    StringUtils::toUTF8((uint8_t*)testArray.get(), testArray.length(), utf8Result);
+    StringUtils::toUTF8(testArray.get(), testArray.length(), utf8Result);
     BOOST_CHECK_EQUAL(utf8Result->length, 22);
     BOOST_CHECK_EQUAL(SingleString((char*)utf8Result->result.get(), 22), "this is a ascii string");
 }
@@ -55,9 +56,9 @@ BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithTerminator)
     String testString(L"this is a ascii string");
     CharArray testArray(CharArray::newInstance(50));
     std::copy(testString.begin(), testString.end(), testArray.get());
-    testArray[testString.length()] = UnicodeUtil::UNICODE_TERMINATOR; // terminator
+    testArray[testString.length()] = UTF8Stream::UNICODE_TERMINATOR; // terminator
     ByteArray expectedUft8(ByteArray::newInstance(30));
-    BOOST_CHECK_EQUAL(StringUtils::toUTF8((uint8_t*)testArray.get(), testArray.length(), expectedUft8), 22);
+    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.length(), expectedUft8), 22);
     BOOST_CHECK_EQUAL(SingleString((char*)expectedUft8.get(), 22), "this is a ascii string");
 }
 

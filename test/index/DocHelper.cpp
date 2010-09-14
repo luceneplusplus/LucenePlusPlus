@@ -84,7 +84,7 @@ namespace Lucene
         
         String binary(L"These are some binary field bytes");
         UTF8ResultPtr utf8 = newInstance<UTF8Result>();
-        StringUtils::toUTF8((uint8_t*)binary.c_str(), binary.length(), utf8);
+        StringUtils::toUTF8(binary.c_str(), binary.length(), utf8);
         LAZY_FIELD_BINARY_BYTES = ByteArray::newInstance(utf8->length);
         MiscUtils::arrayCopy(utf8->result.get(), 0, LAZY_FIELD_BINARY_BYTES.get(), 0, utf8->length);
         

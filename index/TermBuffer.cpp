@@ -61,7 +61,7 @@ namespace Lucene
             text->setLength(start + input->readChars(text->result.get(), start, length));
         else
         {
-            StringUtils::toUTF8((uint8_t*)text->result.get(), text->length, bytes);
+            StringUtils::toUTF8(text->result.get(), text->length, bytes);
             bytes->setLength(totalLength);
             input->readBytes(bytes->result.get(), start, length);
             StringUtils::toUnicode(bytes->result.get(), totalLength, text);

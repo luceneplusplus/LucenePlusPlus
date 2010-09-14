@@ -6,7 +6,8 @@
 
 #include "stdafx.h"
 #include "IndexInput.h"
-#include "UnicodeUtils.h"
+#include "UTF8Stream.h"
+#include "ArrayReader.h"
 
 namespace Lucene
 {
@@ -91,7 +92,7 @@ namespace Lucene
     
     int32_t IndexInput::readChars(wchar_t* buffer, int32_t start, int32_t length)
     {
-        Array<uint16_t> chars(Array<uint16_t>::newInstance(length));
+        CharArray chars(CharArray::newInstance(length));
         for (int32_t i = 0; i < length; ++i)
         {
             uint8_t b = readByte();
@@ -107,7 +108,9 @@ namespace Lucene
                 chars[i] = (uint16_t)ch;
             }
         }
-        return UnicodeUtil::utf16ToUnicode((const uint8_t*)chars.get(), length, buffer + start);
+        UTF16DecoderPtr utf16Decoder(newLucene<UTF16Decoder>(newLucene<CharArrayReader>(chars)));
+        int32_t decodeLength = utf16Decoder->decode(buffer + start, length);
+        return decodeLength == Reader::READER_EOF ? 0 : decodeLength;
     }
     
     void IndexInput::skipChars(int32_t length)

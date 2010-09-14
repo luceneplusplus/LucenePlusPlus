@@ -91,7 +91,7 @@ namespace Lucene
                 
                 for (int32_t j = 0; j < numTerms; ++j)
                 {
-                    StringUtils::toUTF8((uint8_t*)terms[j].c_str(), terms[j].length(), utf8Results[utf8Upto]);
+                    StringUtils::toUTF8(terms[j].c_str(), terms[j].length(), utf8Results[utf8Upto]);
                     
                     int32_t start = MiscUtils::bytesDifference(utf8Results[1 - utf8Upto]->result.get(), utf8Results[1 - utf8Upto]->length,
                                                                utf8Results[utf8Upto]->result.get(), utf8Results[utf8Upto]->length);

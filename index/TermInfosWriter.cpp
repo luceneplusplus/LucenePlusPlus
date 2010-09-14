@@ -74,7 +74,7 @@ namespace Lucene
     
     void TermInfosWriter::add(TermPtr term, TermInfoPtr ti)
     {
-        StringUtils::toUTF8((uint8_t*)(term->_text.c_str()), term->_text.length(), utf8Result);
+        StringUtils::toUTF8(term->_text.c_str(), term->_text.length(), utf8Result);
         add(fieldInfos->fieldNumber(term->_field), utf8Result->result, utf8Result->length, ti);
     }
     

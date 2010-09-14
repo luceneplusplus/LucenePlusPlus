@@ -20,7 +20,7 @@
 #include "ByteSliceReader.h"
 #include "RawPostingList.h"
 #include "FieldInvertState.h"
-#include "UnicodeUtils.h"
+#include "UTF8Stream.h"
 
 namespace Lucene
 {
@@ -155,9 +155,9 @@ namespace Lucene
             wchar_t c2 = text2[pos2++];
             if (c1 != c2)
             {
-                if (c2 == UnicodeUtil::UNICODE_TERMINATOR)
+                if (c2 == UTF8Stream::UNICODE_TERMINATOR)
                     return false;
-                else if (c1 == UnicodeUtil::UNICODE_TERMINATOR)
+                else if (c1 == UTF8Stream::UNICODE_TERMINATOR)
                     return true;
                 else
                     return (c1 < c2);
@@ -165,7 +165,7 @@ namespace Lucene
             else
             {
                 // This method should never compare equal postings unless p1==p2
-                BOOST_ASSERT(c1 != UnicodeUtil::UNICODE_TERMINATOR);
+                BOOST_ASSERT(c1 != UTF8Stream::UNICODE_TERMINATOR);
             }
         }
     }
@@ -181,7 +181,7 @@ namespace Lucene
             if (tokenText[tokenPos] != text[pos])
                 return false;
         }
-        return (text[pos] == UnicodeUtil::UNICODE_TERMINATOR);
+        return (text[pos] == UTF8Stream::UNICODE_TERMINATOR);
     }
     
     void TermsHashPerField::start(FieldablePtr field)
@@ -294,18 +294,18 @@ namespace Lucene
             wchar_t ch = tokenText[--downto];
             
             #ifdef LPP_UNICODE_CHAR_SIZE_2
-            if (ch >= UnicodeUtil::UNICODE_SUR_LOW_START && ch <= UnicodeUtil::UNICODE_SUR_LOW_END)
+            if (ch >= UTF8Stream::TRAIL_SURROGATE_MIN && ch <= UTF8Stream::TRAIL_SURROGATE_MAX)
             {
                 if (downto == 0)
                 {
                     // Unpaired
-                    ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
+                    ch = UTF8Stream::UNICODE_REPLACEMENT_CHAR;
                     tokenText[downto] = ch;
                 }
                 else
                 {
                     wchar_t ch2 = tokenText[downto - 1];
-                    if (ch2 >= UnicodeUtil::UNICODE_SUR_HIGH_START && ch2 <= UnicodeUtil::UNICODE_SUR_HIGH_END)
+                    if (ch2 >= UTF8Stream::LEAD_SURROGATE_MIN && ch2 <= UTF8Stream::LEAD_SURROGATE_MAX)
                     {
                         // OK: high followed by low.  This is a valid surrogate pair.
                         code = ((code * 31) + ch) * 31 + ch2;
@@ -315,22 +315,22 @@ namespace Lucene
                     else
                     {
                         // Unpaired
-                        ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
+                        ch = UTF8Stream::UNICODE_REPLACEMENT_CHAR;
                         tokenText[downto] = ch;
                     }
                 }
             }
-            else if (ch >= UnicodeUtil::UNICODE_SUR_HIGH_START && (ch <= UnicodeUtil::UNICODE_SUR_HIGH_END || ch == UnicodeUtil::UNICODE_TERMINATOR))
+            else if (ch >= UTF8Stream::LEAD_SURROGATE_MIN && (ch <= UTF8Stream::LEAD_SURROGATE_MAX || ch == UTF8Stream::UNICODE_TERMINATOR))
             {
-                // Unpaired or UnicodeUtil::UNICODE_TERMINATOR
-                ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
+                // Unpaired or UTF8Stream::UNICODE_TERMINATOR
+                ch = UTF8Stream::UNICODE_REPLACEMENT_CHAR;
                 tokenText[downto] = ch;
             }
             #else
-            if (ch == UnicodeUtil::UNICODE_TERMINATOR)
+            if (ch == UTF8Stream::UNICODE_TERMINATOR)
             {
-                // Unpaired or UnicodeUtil::UNICODE_TERMINATOR
-                ch = UnicodeUtil::UNICODE_REPLACEMENT_CHAR;
+                // Unpaired or UTF8Stream::UNICODE_TERMINATOR
+                ch = UTF8Stream::UNICODE_REPLACEMENT_CHAR;
                 tokenText[downto] = ch;
             }
             #endif
@@ -394,7 +394,7 @@ namespace Lucene
             charPool->charUpto += textLen1;
             
             MiscUtils::arrayCopy(tokenText, 0, text, textUpto, tokenTextLen);
-            text[textUpto + tokenTextLen] = UnicodeUtil::UNICODE_TERMINATOR;
+            text[textUpto + tokenTextLen] = UTF8Stream::UNICODE_TERMINATOR;
             
             BOOST_ASSERT(!postingsHash[hashPos]);
             postingsHash[hashPos] = p;
@@ -496,7 +496,7 @@ namespace Lucene
                     int32_t start = (p0->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
                     CharArray text = charPool->buffers[p0->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
                     int32_t pos = start;
-                    while (text[pos] != UnicodeUtil::UNICODE_TERMINATOR)
+                    while (text[pos] != UTF8Stream::UNICODE_TERMINATOR)
                         ++pos;
                     code = 0;
                     while (pos > start)
