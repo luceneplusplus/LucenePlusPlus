@@ -19,7 +19,6 @@
 *.pdb
 *.manifest
 *.user
-*.txt
 *.bak
 bin/*
 msvc/Debug DLL
