@@ -52,4 +52,10 @@ namespace Lucene
 	DECLARE_SHARED_PTR(PersianNormalizationFilter)
 	DECLARE_SHARED_PTR(PersianNormalizer)
 	DECLARE_SHARED_PTR(ReverseStringFilter)
+	DECLARE_SHARED_PTR(RussianAnalyzer)
+	DECLARE_SHARED_PTR(RussianAnalyzerSavedStreams)
+	DECLARE_SHARED_PTR(RussianLetterTokenizer)
+	DECLARE_SHARED_PTR(RussianLowerCaseFilter)
+	DECLARE_SHARED_PTR(RussianStemFilter)
+	DECLARE_SHARED_PTR(RussianStemmer)
 }

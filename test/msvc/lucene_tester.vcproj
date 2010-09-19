@@ -1456,6 +1456,18 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="ru"
+							>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\ru\RussianAnalyzerTest.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\contrib\analyzers\common\analysis\ru\RussianStemTest.cpp"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

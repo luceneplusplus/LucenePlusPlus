@@ -32,7 +32,7 @@ namespace Lucene
             for (int32_t i = 0; i < length; ++i)
             {
                 wchar_t c = buffer[i];
-                if (c >= 0x00C0 && c <= 0xFB06)
+                if (c >= 0x00c0 && c <= 0xfb06)
                 {
                     removeAccents(buffer, length);
                     termAtt->setTermBuffer(output.get(), 0, outputPos);

@@ -733,6 +733,50 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="ru"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\ru\RussianAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\RussianAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ru\RussianLetterTokenizer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\RussianLetterTokenizer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ru\RussianLowerCaseFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\RussianLowerCaseFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ru\RussianStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\RussianStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\ru\RussianStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\include\RussianStemmer.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

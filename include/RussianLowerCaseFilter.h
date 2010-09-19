@@ -1,0 +1,30 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2010 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "LuceneContrib.h"
+#include "TokenFilter.h"
+
+namespace Lucene
+{
+	/// Normalizes token text to lower case.
+	class LPPAPI RussianLowerCaseFilter : public TokenFilter
+	{
+	public:
+		RussianLowerCaseFilter(TokenStreamPtr input);
+		
+		virtual ~RussianLowerCaseFilter();
+		
+		LUCENE_CLASS(RussianLowerCaseFilter);
+    
+    protected:
+        TermAttributePtr termAtt;
+    
+    public:
+        virtual bool incrementToken();
+	};
+}
