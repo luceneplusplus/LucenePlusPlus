@@ -420,7 +420,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\LuceneContrib.h"
+				RelativePath="..\include\LuceneContrib.h"
 				>
 			</File>
 			<File
@@ -449,7 +449,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ReverseStringFilter.h"
+							RelativePath="..\include\ReverseStringFilter.h"
 							>
 						</File>
 					</Filter>
@@ -461,7 +461,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ArabicAnalyzer.h"
+							RelativePath="..\include\ArabicAnalyzer.h"
 							>
 						</File>
 						<File
@@ -469,7 +469,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ArabicLetterTokenizer.h"
+							RelativePath="..\include\ArabicLetterTokenizer.h"
 							>
 						</File>
 						<File
@@ -477,7 +477,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ArabicNormalizationFilter.h"
+							RelativePath="..\include\ArabicNormalizationFilter.h"
 							>
 						</File>
 						<File
@@ -485,7 +485,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ArabicNormalizer.h"
+							RelativePath="..\include\ArabicNormalizer.h"
 							>
 						</File>
 						<File
@@ -493,7 +493,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ArabicStemFilter.h"
+							RelativePath="..\include\ArabicStemFilter.h"
 							>
 						</File>
 						<File
@@ -501,7 +501,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ArabicStemmer.h"
+							RelativePath="..\include\ArabicStemmer.h"
 							>
 						</File>
 					</Filter>
@@ -513,7 +513,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\BrazilianAnalyzer.h"
+							RelativePath="..\include\BrazilianAnalyzer.h"
 							>
 						</File>
 						<File
@@ -521,7 +521,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\BrazilianStemFilter.h"
+							RelativePath="..\include\BrazilianStemFilter.h"
 							>
 						</File>
 						<File
@@ -529,7 +529,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\BrazilianStemmer.h"
+							RelativePath="..\include\BrazilianStemmer.h"
 							>
 						</File>
 					</Filter>
@@ -541,7 +541,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\CJKAnalyzer.h"
+							RelativePath="..\include\CJKAnalyzer.h"
 							>
 						</File>
 						<File
@@ -549,7 +549,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\CJKTokenizer.h"
+							RelativePath="..\include\CJKTokenizer.h"
 							>
 						</File>
 					</Filter>
@@ -561,7 +561,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ChineseAnalyzer.h"
+							RelativePath="..\include\ChineseAnalyzer.h"
 							>
 						</File>
 						<File
@@ -569,7 +569,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ChineseFilter.h"
+							RelativePath="..\include\ChineseFilter.h"
 							>
 						</File>
 						<File
@@ -577,7 +577,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ChineseTokenizer.h"
+							RelativePath="..\include\ChineseTokenizer.h"
 							>
 						</File>
 					</Filter>
@@ -589,7 +589,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\CzechAnalyzer.h"
+							RelativePath="..\include\CzechAnalyzer.h"
 							>
 						</File>
 					</Filter>
@@ -601,7 +601,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\GermanAnalyzer.h"
+							RelativePath="..\include\GermanAnalyzer.h"
 							>
 						</File>
 						<File
@@ -609,7 +609,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\GermanStemFilter.h"
+							RelativePath="..\include\GermanStemFilter.h"
 							>
 						</File>
 						<File
@@ -617,7 +617,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\GermanStemmer.h"
+							RelativePath="..\include\GermanStemmer.h"
 							>
 						</File>
 					</Filter>
@@ -629,7 +629,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\GreekAnalyzer.h"
+							RelativePath="..\include\GreekAnalyzer.h"
 							>
 						</File>
 						<File
@@ -637,7 +637,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\GreekLowerCaseFilter.h"
+							RelativePath="..\include\GreekLowerCaseFilter.h"
 							>
 						</File>
 					</Filter>
@@ -649,7 +649,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\PersianAnalyzer.h"
+							RelativePath="..\include\PersianAnalyzer.h"
 							>
 						</File>
 						<File
@@ -657,7 +657,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\PersianNormalizationFilter.h"
+							RelativePath="..\include\PersianNormalizationFilter.h"
 							>
 						</File>
 						<File
@@ -665,7 +665,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\PersianNormalizer.h"
+							RelativePath="..\include\PersianNormalizer.h"
 							>
 						</File>
 					</Filter>
@@ -677,7 +677,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\ElisionFilter.h"
+							RelativePath="..\include\ElisionFilter.h"
 							>
 						</File>
 						<File
@@ -685,7 +685,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\FrenchAnalyzer.h"
+							RelativePath="..\include\FrenchAnalyzer.h"
 							>
 						</File>
 						<File
@@ -693,7 +693,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\FrenchStemFilter.h"
+							RelativePath="..\include\FrenchStemFilter.h"
 							>
 						</File>
 						<File
@@ -701,7 +701,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\FrenchStemmer.h"
+							RelativePath="..\include\FrenchStemmer.h"
 							>
 						</File>
 					</Filter>
@@ -713,7 +713,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\DutchAnalyzer.h"
+							RelativePath="..\include\DutchAnalyzer.h"
 							>
 						</File>
 						<File
@@ -721,7 +721,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\DutchStemFilter.h"
+							RelativePath="..\include\DutchStemFilter.h"
 							>
 						</File>
 						<File
@@ -729,7 +729,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\DutchStemmer.h"
+							RelativePath="..\include\DutchStemmer.h"
 							>
 						</File>
 					</Filter>
@@ -741,7 +741,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\RussianAnalyzer.h"
+							RelativePath="..\include\RussianAnalyzer.h"
 							>
 						</File>
 						<File
@@ -749,7 +749,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\RussianLetterTokenizer.h"
+							RelativePath="..\include\RussianLetterTokenizer.h"
 							>
 						</File>
 						<File
@@ -757,7 +757,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\RussianLowerCaseFilter.h"
+							RelativePath="..\include\RussianLowerCaseFilter.h"
 							>
 						</File>
 						<File
@@ -765,7 +765,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\RussianStemFilter.h"
+							RelativePath="..\include\RussianStemFilter.h"
 							>
 						</File>
 						<File
@@ -773,7 +773,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\include\RussianStemmer.h"
+							RelativePath="..\include\RussianStemmer.h"
 							>
 						</File>
 					</Filter>

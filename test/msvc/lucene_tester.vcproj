@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm180"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\include;$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="..\include;..\..\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;LPP_HAVE_DLL"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -125,7 +125,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\include;$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="..\include;..\..\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -204,7 +204,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm180"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\include;$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="..\include;..\..\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -287,7 +287,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\include;$(BOOST_ROOT)"
+				AdditionalIncludeDirectories="..\include;..\..\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;LPP_HAVE_DLL"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -354,7 +354,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\LuceneContrib.h"
+				RelativePath="..\..\contrib\include\LuceneContrib.h"
 				>
 			</File>
 			<File

@@ -39,6 +39,7 @@ lucene_contrib_source_dirs = [
 
 lucene_include_dirs = [
     'include',
+    'contrib/include',
     'util/md5',
     'util/nedmalloc',
     'util/zlib',
@@ -51,6 +52,7 @@ tester_source_dirs = [
 
 tester_include_dirs = [
     'include',
+    'contrib/include',
     'test/include'
 ]
 
