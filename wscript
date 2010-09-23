@@ -40,6 +40,7 @@ lucene_contrib_source_dirs = [
 lucene_include_dirs = [
     'include',
     'contrib/include',
+    'contrib/snowball/libstemmer_c/include',
     'util/md5',
     'util/nedmalloc',
     'util/zlib',
