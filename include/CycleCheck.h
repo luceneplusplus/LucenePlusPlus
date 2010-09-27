@@ -23,16 +23,13 @@ namespace Lucene
 	
 	protected:
 		void addRef(const String& className, int32_t ref);
-	
+	    static void addStatic(LuceneObjectPtr* staticRef);
+	    
 	public:
 		template <class TYPE>
 		static void addStatic(TYPE& staticRef)
 		{
-			#ifdef _DEBUG
-			if (!staticRefs)
-				staticRefs = Set<LuceneObjectPtr*>::newInstance();
-			staticRefs.add(reinterpret_cast<LuceneObjectPtr*>(&staticRef));
-			#endif
+		    addStatic(reinterpret_cast<LuceneObjectPtr*>(&staticRef));
 		}
 		
 		static void dumpRefs();
