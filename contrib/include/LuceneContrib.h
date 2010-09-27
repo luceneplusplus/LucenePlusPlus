@@ -61,4 +61,42 @@ namespace Lucene
 	DECLARE_SHARED_PTR(SnowballFilter)
 	DECLARE_SHARED_PTR(SnowballAnalyzer)
 	DECLARE_SHARED_PTR(SnowballAnalyzerSavedStreams)
+	
+	// highlighter
+	DECLARE_SHARED_PTR(DefaultEncoder)
+	DECLARE_SHARED_PTR(Encoder)
+	DECLARE_SHARED_PTR(FakeReader)
+	DECLARE_SHARED_PTR(Formatter)
+	DECLARE_SHARED_PTR(Fragmenter)
+	DECLARE_SHARED_PTR(FragmentQueue)
+	DECLARE_SHARED_PTR(GradientFormatter)
+	DECLARE_SHARED_PTR(Highlighter)
+	DECLARE_SHARED_PTR(HighlighterScorer)
+	DECLARE_SHARED_PTR(MapWeightedSpanTerm)
+	DECLARE_SHARED_PTR(NullFragmenter)
+	DECLARE_SHARED_PTR(PositionCheckingMap)
+	DECLARE_SHARED_PTR(PositionSpan)
+	DECLARE_SHARED_PTR(QueryScorer)
+	DECLARE_SHARED_PTR(QueryTermExtractor)
+	DECLARE_SHARED_PTR(QueryTermScorer)
+	DECLARE_SHARED_PTR(SimpleFragmenter)
+	DECLARE_SHARED_PTR(SimpleHTMLEncoder)
+	DECLARE_SHARED_PTR(SimpleHTMLFormatter)
+	DECLARE_SHARED_PTR(SimpleSpanFragmenter)
+	DECLARE_SHARED_PTR(SpanGradientFormatter)
+	DECLARE_SHARED_PTR(TextFragment)
+	DECLARE_SHARED_PTR(TokenGroup)
+	DECLARE_SHARED_PTR(TokenSources)
+	DECLARE_SHARED_PTR(WeightedSpanTerm)
+	DECLARE_SHARED_PTR(WeightedSpanTermExtractor)
+	DECLARE_SHARED_PTR(WeightedTerm)
+
+    // memory
+    DECLARE_SHARED_PTR(MemoryIndex)
+
+	typedef HashMap< String, WeightedSpanTermPtr > MapStringWeightedSpanTerm;
+	typedef HashMap< String, WeightedTermPtr > MapStringWeightedTerm;
+	typedef HashMap< String, SpanQueryPtr > MapStringSpanQuery;
+	
+	typedef HashSet< WeightedTermPtr, luceneHash<WeightedTermPtr>, luceneEquals<WeightedTermPtr> > SetWeightedTerm;
 }
