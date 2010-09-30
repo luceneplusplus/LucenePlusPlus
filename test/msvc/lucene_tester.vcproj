@@ -1483,6 +1483,14 @@
 				Name="highlighter"
 				>
 			</Filter>
+			<Filter
+				Name="memory"
+				>
+				<File
+					RelativePath="..\contrib\memory\MemoryIndexTest.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

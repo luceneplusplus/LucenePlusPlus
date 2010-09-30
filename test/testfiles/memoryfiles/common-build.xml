@@ -1,0 +1,619 @@
+<?xml version="1.0"?>
+
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+ 
+        http://www.apache.org/licenses/LICENSE-2.0
+ 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ -->
+	
+<project name="common" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+  <description>
+    This file is designed for importing into a main build file, and not intended
+    for standalone use.
+  </description>
+
+  <dirname file="${ant.file.common}" property="common.dir"/>
+
+  <!-- Give user a chance to override without editing this file
+      (and without typing -D each time it compiles it -->
+  <property file="${user.home}/lucene.build.properties"/>
+  <property file="${user.home}/build.properties"/>
+  <property file="${basedir}/build.properties"/>
+  <property file="${common.dir}/build.properties"/>
+
+  <tstamp>
+    <format property="current.year" pattern="yyyy"/>
+    <format property="DSTAMP" pattern="yyyy-MM-dd"/>
+    <format property="TSTAMP" pattern="HH:mm:ss"/>
+  </tstamp>
+
+  <property name="name" value="${ant.project.name}"/>
+  <property name="Name" value="Lucene"/>
+  <property name="dev.version" value="3.0.2-dev"/>
+  <property name="version" value="${dev.version}"/>
+  <property name="compatibility.tag" value="lucene_2_9_back_compat_tests_20091115"/>
+  <property name="spec.version" value="${version}"/>	
+  <property name="year" value="2000-${current.year}"/>
+  <property name="final.name" value="lucene-${name}-${version}"/>
+
+  <property name="junit.jar" value="junit-3.8.2.jar"/>
+  <property name="junit-location.jar" value="${common.dir}/lib/${junit.jar}"/>
+  <path id="junit-path">
+    <pathelement location="${junit-location.jar}"/>
+  </path>
+
+  <!-- default arguments to pass to JVM executing tests -->
+  <property name="args" value=""/>
+
+  <property name="javac.deprecation" value="off"/>
+  <property name="javac.debug" value="on"/>
+  <property name="javac.source" value="1.5"/>
+  <property name="javac.target" value="1.5"/>
+  <property name="javac.source.tag" value="1.4"/>
+  <property name="javac.target.tag" value="1.4"/>
+
+  <property name="javadoc.link" value="http://java.sun.com/j2se/1.5/docs/api/"/>
+  <property name="javadoc.access" value="protected"/>
+  <property name="javadoc.charset" value="utf-8"/>
+  <property name="javadoc.dir" value="${common.dir}/build/docs/api"/>
+  <!-- Javadoc classpath -->
+  <path id="javadoc.classpath">
+    <path refid="classpath"/>
+    <pathelement location="${ant.home}/lib/ant.jar"/>
+    <fileset dir=".">
+      <include name="**/lib/*.jar"/>
+    </fileset>
+  </path>
+	
+  <property name="changes.src.dir" value="${common.dir}/src/site/changes"/>
+  <property name="changes.target.dir" value="${common.dir}/build/docs/changes"/>
+
+  <property name="project.name" value="site"/> <!-- todo: is this used by anakia or something else? -->
+  <property name="build.encoding" value="utf-8"/>
+
+  <property name="src.dir" location="src/java"/>
+  <property name="build.dir" location="build"/>
+  <property name="tags.dir" location="tags"/>
+  <property name="dist.dir" location="dist"/>
+  <property name="maven.dist.dir" location="dist/maven"/>
+  <property name="m2.repository.url" value="file://${maven.dist.dir}"/>
+  <property name="m2.repository.private.key" value="${user.home}/.ssh/id_dsa"/>
+
+  <property name="javacc.home" location="${common.dir}"/>
+  <property name="jflex.home" location="${common.dir}"/>
+
+  <property name="junit.output.dir" location="${build.dir}/test"/>
+  <property name="junit.reports" location="${build.dir}/test/reports"/>
+  <property name="junit.includes" value="**/Test*.java,**/*Test.java"/>
+  <property name="junit.excludes" value=""/>
+
+  <property name="manifest.file" location="${common.dir}/build/MANIFEST.MF"/>
+
+  <!-- 
+    we attempt to exec svnversion to get details build information
+    for jar manifests.  this property can be set at runtime to an
+    explicit path as needed, or ant will just try to find it in the
+    default PATH. (this is useful for Hudson)
+  -->
+  <property name="svnversion.exe" value="svnversion" />
+  <property name="svn.exe" value="svn" />
+  
+  <property name="clover.db.dir" location="${common.dir}/build/test/clover/db"/>
+  <property name="clover.report.dir" location="${common.dir}/build/test/clover/reports"/>
+
+    <available
+            property="clover.present"
+            classname="com.cenqua.clover.tasks.CloverReportTask"
+            />
+   <condition property="clover.enabled">
+       <and>
+           <isset property="run.clover"/>
+           <isset property="clover.present"/>
+       </and>
+   </condition>
+
+
+  <available
+    property="javacc.present"
+    classname="org.javacc.parser.Main"
+    classpath="${javacc.home}/bin/lib/javacc.jar"
+    />
+
+   <available
+    property="jflex.present"
+    classname="JFlex.anttask.JFlexTask"
+    classpath="${jflex.home}/lib/JFlex.jar"
+    />
+
+  <available
+    property="maven.ant.tasks.present"
+    classname="org.apache.maven.artifact.ant.Pom"
+  />
+	
+  <target name="clean"
+    description="Removes contents of build and dist directories">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+    <delete file="velocity.log"/>
+  </target>
+
+  <!-- TODO: maybe make JavaCC checking specific to only the projects
+             that use it (Lucene core and contrib/misc
+  -->
+  <target name="javacc-uptodate-check">
+    <uptodate property="javacc.files.uptodate">
+      <srcfiles dir="src" includes="**/*.jj" />
+      <mapper type="glob" from="*.jj" to="*.java"/>
+    </uptodate>
+  </target>
+
+  <target name="javacc-notice" unless="javacc.files.uptodate">
+    <echo>
+      One or more of the JavaCC .jj files is newer than its corresponding
+      .java file.  Run the "javacc" target to regenerate the artifacts.
+    </echo>
+  </target>
+
+  <target name="init" depends="javacc-uptodate-check, javacc-notice, jflex-uptodate-check, jflex-notice">
+  </target>
+
+  <target name="jflex-uptodate-check">
+    <uptodate property="jflex.files.uptodate">
+      <srcfiles dir="src" includes="**/*.jflex" />
+      <mapper type="glob" from="*.jflex" to="*.java"/>
+    </uptodate>
+  </target>
+ 
+  <target name="jflex-notice" unless="jflex.files.uptodate">
+    <echo>
+      One or more of the JFlex .jflex files is newer than its corresponding
+      .java file.  Run the "jflex" target to regenerate the artifacts.
+    </echo>
+  </target>
+
+  <target name="javacc-check">
+    <fail unless="javacc.present">
+      ##################################################################
+      JavaCC not found.
+      JavaCC Home: ${javacc.home}
+      JavaCC JAR: ${javacc.jar}
+
+      Please download and install JavaCC from:
+
+      &lt;http://javacc.dev.java.net&gt;
+
+      Then, create a build.properties file either in your home
+      directory, or within the Lucene directory and set the javacc.home
+      property to the path where JavaCC is installed. For example,
+      if you installed JavaCC in /usr/local/java/javacc-4.1, then set the
+      javacc.home property to:
+
+      javacc.home=/usr/local/java/javacc-4.1
+
+      If you get an error like the one below, then you have not installed
+      things correctly. Please check all your paths and try again.
+
+      java.lang.NoClassDefFoundError: org.javacc.parser.Main
+      ##################################################################
+    </fail>
+
+  </target>
+	
+  <target name="jflex-check">
+    <fail unless="jflex.present">
+      ##################################################################
+      JFlex not found.
+      JFlex Home: ${jflex.home}
+
+      Please download and install JFlex from:
+
+      &lt;http://jflex.de/download.html&gt;
+
+      Then, create a build.properties file either in your home
+      directory, or within the Lucene directory and set the jflex.home
+      property to the path where JFlex is installed. For example,
+      if you installed JFlex in /usr/local/java/jflex-1.4.1, then set the
+      jflex.home property to:
+
+      jflex.home=/usr/local/java/jflex-1.4.1
+
+      ##################################################################
+    </fail>
+  </target>
+
+  <target name="compile-core" depends="init, clover"
+          description="Compiles core classes">
+    <compile
+      srcdir="src/java"
+      destdir="${build.dir}/classes/java">
+      <classpath refid="classpath"/>
+    </compile>
+
+    <!-- Copy the resources folder (if existent) -->
+    <copy todir="${build.dir}/classes/java" includeEmptyDirs="false">
+      <globmapper from="resources/*" to="*" handledirsep="yes"/>
+      <fileset dir="src" includes="resources/**"/>
+    </copy>
+  </target>
+
+  <target name="compile" depends="compile-core">
+    <!-- convenience target to compile core -->
+  </target>
+
+  <target name="jar-core" depends="compile-core"
+    description="Packages the JAR file">
+    <jarify/>
+  </target>
+
+  <target name="maven.ant.tasks-check">
+	<fail unless="maven.ant.tasks.present">
+	  ##################################################################
+      Maven ant tasks not found.
+      Please make sure the maven-ant-tasks jar is in ANT_HOME/lib, or made 
+      available to Ant using other mechanisms like -lib or CLASSPATH.
+      ##################################################################
+  	</fail>
+  </target>
+
+  <property name="pom.xml" value="pom.xml.template"/>
+
+  <macrodef name="m2-deploy" description="Builds a Maven artifact">
+  	<element name="artifact-attachments" optional="yes"/>
+    <attribute name="pom.xml" default="${pom.xml}"/>
+    <sequential>
+      <copy file="@{pom.xml}" tofile="${build.dir}/@{pom.xml}">
+        <filterset begintoken="@" endtoken="@"> 
+          <filter token="version" value="${version}"/>
+        </filterset>
+      </copy>
+	  <artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
+    	
+      <artifact:pom id="maven.project" file="${build.dir}/@{pom.xml}" />
+      <artifact:deploy file="${build.dir}/${maven.project.build.finalName}.jar">
+        <artifact-attachments/>
+      	<remoteRepository url="${m2.repository.url}">
+          <authentication username="${m2.repository.username}" privateKey="${m2.repository.private.key}"/>
+		</remoteRepository>
+        <pom refid="maven.project"/>
+      </artifact:deploy>
+    </sequential>
+  </macrodef>  	
+	
+	
+	
+  <macrodef name="build-manifest" description="Builds a manifest file">
+  	<attribute name="title" default="Lucene Search Engine: ${ant.project.name}" />
+  	<sequential>
+      <manifest file="${manifest.file}">
+        <attribute name="Specification-Title" value="@{title}"/>
+		<!-- spec version must match "digit+{.digit+}*" -->
+		<attribute name="Specification-Version" value="${spec.version}"/>
+		<attribute name="Specification-Vendor"
+		           value="The Apache Software Foundation"/>
+		<attribute name="Implementation-Title" value="org.apache.lucene"/>
+		<!-- impl version can be any string -->
+		<attribute name="Implementation-Version"
+		           value="${version} ${svnversion} - ${DSTAMP} ${TSTAMP}"/>
+		<attribute name="Implementation-Vendor"
+		           value="The Apache Software Foundation"/>
+		<attribute name="X-Compile-Source-JDK" 
+		           value="${javac.source}"/>
+		<attribute name="X-Compile-Target-JDK" 
+		           value="${javac.target}"/>
+	  </manifest>
+  	</sequential>
+  </macrodef>
+	
+  <macrodef name="jarify" description="Builds a JAR file">
+  	<attribute name="basedir" default="${build.dir}/classes/java"/>
+  	<attribute name="destfile" default="${build.dir}/${final.name}.jar"/>
+    <element name="manifest-attributes" optional="yes"/>
+  	<element name="metainf-includes" optional="yes"/>
+    <sequential>
+      <!-- If possible, include the svnversion -->
+      <exec dir="." executable="${svnversion.exe}"
+            outputproperty="svnversion" failifexecutionfails="false">
+        <arg line="."/>
+      </exec>
+      
+      <build-manifest/>
+    	
+      <jar
+        destfile="@{destfile}"
+        basedir="@{basedir}"
+      	manifest="${manifest.file}">
+        <manifest>
+        	<manifest-attributes/>
+        </manifest>
+        <metainf dir="${common.dir}">
+          <include name="LICENSE.txt"/>
+          <include name="NOTICE.txt"/>
+        </metainf>
+        <metainf-includes/>
+      </jar>
+    </sequential>
+  </macrodef>
+
+  <target name="compile-test" depends="compile-core">
+  	<compile-test-macro srcdir="src/test" destdir="${build.dir}/classes/test"
+  						test.classpath="test.classpath"/>
+  </target>
+
+  <property name="tests.verbose" value="false"/>
+	
+  <macrodef name="compile-test-macro" description="Compiles junit tests.">
+  	<attribute name="srcdir"/>
+  	<attribute name="destdir"/>
+  	<attribute name="test.classpath"/>
+    <attribute name="javac.source" default="${javac.source}"/>
+    <attribute name="javac.target" default="${javac.target}"/>
+   	<sequential>
+      <compile
+        srcdir="@{srcdir}" 
+        destdir="@{destdir}"
+        javac.source="@{javac.source}"
+        javac.target="@{javac.source}">
+        <classpath refid="@{test.classpath}"/>
+      </compile>
+
+      <!-- Copy any data files present to the classpath -->
+      <copy todir="@{destdir}">
+        <fileset dir="@{srcdir}" excludes="**/*.java"/>
+      </copy>
+  	</sequential>
+  </macrodef>
+	
+  <macrodef name="test-macro" description="Executes junit tests.">
+  	<attribute name="junit.output.dir" default="${junit.output.dir}"/>
+  	<attribute name="junit.classpath" default="junit.classpath"/>
+  	<attribute name="dataDir"/>
+  	<attribute name="tempDir"/>
+  	<element name="contrib-settings" optional="yes"/>
+
+    <sequential>
+	    <condition property="runall">
+	      <not><or>
+	        <isset property="testcase" />
+	      	<isset property="testpackage" />
+	      	<isset property="testpackageroot" />
+	      </or></not>
+	    </condition>
+	  	<mkdir dir="@{junit.output.dir}"/>
+	    <junit printsummary="off" haltonfailure="no" maxmemory="512M"
+	      errorProperty="tests.failed" failureProperty="tests.failed">
+	      <classpath refid="@{junit.classpath}"/>
+	      <assertions>
+	        <enable package="org.apache.lucene"/>
+	      </assertions>
+	      
+	      <jvmarg line="${args}"/>
+	
+	      <!-- allow tests to control debug prints -->
+	      <sysproperty key="tests.verbose" value="${tests.verbose}"/>
+	
+	      <!-- TODO: create propertyset for test properties, so each project can have its own set -->
+	      <sysproperty key="dataDir" file="@{dataDir}"/>
+	      <sysproperty key="tempDir" file="@{tempDir}"/>
+	      <sysproperty key="java.io.tmpdir" file="@{tempDir}"/>
+	      <sysproperty key="lucene.version" value="${dev.version}"/>
+	
+		  <contrib-settings />
+	    	
+	      <formatter type="xml"/>
+	      <formatter type="brief" usefile="false"/>
+	      <batchtest fork="yes" todir="@{junit.output.dir}" if="runall">
+	        <fileset dir="@{dataDir}" includes="${junit.includes}" excludes="${junit.excludes}"/>
+	      </batchtest>
+	      <batchtest fork="yes" todir="@{junit.output.dir}" if="testpackage">
+	        <fileset dir="@{dataDir}" includes="**/${testpackage}/**/Test*.java,**/${testpackage}/**/*Test.java" excludes="${junit.excludes}"/>
+	      </batchtest>
+	      <batchtest fork="yes" todir="@{junit.output.dir}" if="testpackageroot">
+	        <fileset dir="@{dataDir}" includes="**/${testpackageroot}/Test*.java,**/${testpackageroot}/*Test.java" excludes="${junit.excludes}"/>
+	      </batchtest>
+	      <batchtest fork="yes" todir="@{junit.output.dir}" if="testcase">
+	        <fileset dir="@{dataDir}" includes="**/${testcase}.java"/>
+	      </batchtest>
+	    </junit>
+	    <!-- create this file, then if we don't fail, delete it -->
+	    <!-- this meme makes it easy to tell if contribs have failed later -->
+	    <echo file="@{junit.output.dir}/junitfailed.flag">MAYBE</echo>
+	    <fail if="tests.failed">Tests failed!</fail>
+	    <!-- life would be easier if echo had an 'if' attribute like fail -->
+	    <delete file="@{junit.output.dir}/junitfailed.flag" />
+  	</sequential>
+  </macrodef>
+	
+  <target name="test" depends="compile-test" description="Runs unit tests">
+    <test-macro dataDir="src/test" tempDir="${build.dir}/test">
+    	<contrib-settings>
+	      <!-- set as a system property so contrib tests can have a fixed root
+	           to reference file paths from, and "ant test" can work from
+	           anywhere.
+	       -->
+	      <sysproperty key="lucene.common.dir" file="${common.dir}" />
+	      
+	      <!-- contrib/ant IndexTaskTest needs these two system properties -->
+	      <sysproperty key="docs.dir" file="src/test"/>
+	      <sysproperty key="index.dir" file="${build.dir}/test/index"/>
+	
+	      <!-- contrib/benchmark uses this system property to locate docs data and defined tasks -->
+	      <sysproperty key="tasks.dir" file="${build.dir}/classes/java/org/apache/lucene/benchmark/byTask/tasks"/>
+	      <sysproperty key="benchmark.work.dir" file="${common.dir}/contrib/benchmark/work"/>
+	  </contrib-settings>
+    </test-macro>
+  </target>
+
+    <!--
+     If you want clover test code coverage, run this before the tests.  You need clover.jar and the license in your ANT classspath and you need to specify -Drun.clover=true on the command line.
+
+     See http://issues.apache.org/jira/browse/LUCENE-721
+     -->
+  <target name="clover" depends="clover.setup, clover.info" description="Instrument the Unit tests using Clover.  Requires a Clover 1.3.2 license and clover.jar in the ANT classpath.  To use, specify -Drun.clover=true on the command line."/>
+
+  <target name="clover.setup" if="clover.enabled">
+    <taskdef resource="clovertasks"/>
+    <mkdir dir="${clover.db.dir}"/>
+    <clover-setup initString="${clover.db.dir}/lucene_coverage.db">
+      <fileset dir="src/java">
+        <!-- see https://svn.apache.org/repos/private/committers/donated-licenses/clover/1.3.2/README.txt -->
+        <include name="org/apache/**" />
+        <include name="javax/**" />
+        <include name="org/xml/**" />
+        <include name="org/w3c/**" />
+        <include name="com/example/**" />
+      	<exclude name="org/apache/lucene/analysis/ASCIIFoldingFilter.java" /> <!-- Class too large for clover -->
+      </fileset>
+    </clover-setup>
+  </target>
+
+  <target name="clover.info" unless="clover.present">
+  	<echo>
+      Clover not found. Code coverage reports disabled.
+  	</echo>
+  </target>
+
+  <target name="clover.check">
+	<fail unless="clover.present">
+	  ##################################################################
+      Clover not found.
+      Please make sure clover.jar is in ANT_HOME/lib, or made available
+      to Ant using other mechanisms like -lib or CLASSPATH.
+      ##################################################################
+  	</fail>
+  </target>
+    <!--
+     Run after Junit tests.
+     -->
+  <target name="generate-clover-reports" depends="clover.check, clover">
+    <mkdir dir="${clover.report.dir}"/>
+    <clover-report>
+       <current outfile="${clover.report.dir}" title="${final.name}">
+          <format type="html"/>
+       </current>
+       <current outfile="${clover.report.dir}/clover.xml" title="${final.name}">
+          <format type="xml"/>
+       </current>
+    </clover-report>
+  </target>
+
+  <target name="generate-test-reports" description="Generates test reports">
+    <mkdir dir="${junit.reports}"/>
+    <junitreport todir="${junit.output.dir}">
+      <!-- this fileset let's the task work for individual contribs,
+           as well as the project as a whole
+       -->
+      <fileset dir="${build.dir}">
+        <include name="**/test/TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${junit.reports}"/>
+    </junitreport>
+  </target>
+
+  <target name="jar" depends="jar-core">
+    <!-- convenience target to package core JAR -->
+  </target>
+
+  <target name="jar-src" depends="init">
+  	<jarify basedir="${src.dir}" destfile="${build.dir}/${final.name}-src.jar"/>
+  </target>
+
+  <target name="default" depends="jar-core"/>
+
+  <!--+
+      | M A C R O S
+      +-->
+  <macrodef name="compile">
+    <attribute name="srcdir"/>
+    <attribute name="destdir"/>
+    <attribute name="javac.source" default="${javac.source}"/>
+    <attribute name="javac.target" default="${javac.target}"/>
+    <element name="nested" implicit="yes" optional="yes"/>
+
+    <sequential>
+      <mkdir dir="@{destdir}"/>
+      <javac
+        encoding="${build.encoding}"
+        srcdir="@{srcdir}"
+        destdir="@{destdir}"
+        deprecation="${javac.deprecation}"
+        debug="${javac.debug}"
+        source="@{javac.source}"
+        target="@{javac.target}">
+        <nested/>
+        <compilerarg line="-Xmaxwarns 10000000"/>
+        <compilerarg line="-Xmaxerrs 10000000"/>
+        <!-- for generics in Java 1.5: -->
+        <!--<compilerarg line="-Xlint:unchecked"/>-->
+      </javac>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="invoke-javacc">
+    <attribute name="target"/>
+    <attribute name="outputDir"/>
+    <sequential>
+      <mkdir dir="@{outputDir}"/>
+      <javacc
+          target="@{target}"
+          outputDirectory="@{outputDir}"
+          debugTokenManager="${javacc.debug.tokenmgr}"
+          debugParser="${javacc.debug.parser}"
+          debuglookahead="${javacc.debug.lookahead}"
+          javacchome="${javacc.home}"
+          jdkversion="${javac.source}"
+      />
+      <fixcrlf srcdir="@{outputDir}" includes="*.java">
+        <containsregexp expression="Generated.*By.*JavaCC"/>
+      </fixcrlf>
+    </sequential>
+  </macrodef>
+	
+  <macrodef name="invoke-javadoc">
+    <element name="sources" optional="yes"/>
+    <attribute name="destdir"/>
+  	<attribute name="title" default="${Name} ${version} API"/>
+    <sequential>
+      <javadoc
+          overview="src/java/overview.html"
+          packagenames="org.apache.lucene.*"
+          destdir="@{destdir}"
+          access="${javadoc.access}"
+          encoding="${build.encoding}"
+          charset="${javadoc.charset}"
+          docencoding="${javadoc.charset}"
+          author="true"
+          version="true"
+          use="true"
+          source="${ant.java.version}"
+          link="${javadoc.link}"
+          windowtitle="${Name} ${version} API"
+          doctitle="@{title}"
+          bottom="Copyright &amp;copy; ${year} Apache Software Foundation.  All Rights Reserved.">
+        <tag name="todo" description="To Do:"/>
+        <tag name="uml.property" description="UML Property:"/>
+        <tag name="lucene.experimental" 
+      	description="WARNING: This API is experimental and might change in incompatible ways in the next release."/>
+        <tag name="lucene.internal"
+        description="NOTE: This API is for Lucene internal purposes only and might change in incompatible ways in the next release."/>
+      	<link offline="true" packagelistLoc="${javadoc.dir}"/>
+      	
+      	<sources />
+      	      	
+        <classpath refid="javadoc.classpath"/>
+      </javadoc>
+   </sequential>
+  </macrodef>
+
+
+</project>

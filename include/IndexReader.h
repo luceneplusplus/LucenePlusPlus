@@ -335,7 +335,7 @@ namespace Lucene
 		/// therefore asking for a deleted document may yield unspecified results. Usually this is not required, 
 		/// however you can call {@link #isDeleted(int)} with the requested document ID to verify the document 
 		/// is not deleted.
-		DocumentPtr document(int32_t n);
+		virtual DocumentPtr document(int32_t n);
 		
 		/// Get the {@link Document} at the n'th position. The {@link FieldSelector} may be used to determine
 		/// what {@link Field}s to load and how they should be loaded. 
