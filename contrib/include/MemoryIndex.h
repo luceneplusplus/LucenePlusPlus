@@ -219,7 +219,7 @@ namespace Lucene
         static TermPtr MATCH_ALL_TERM();
         
     protected:
-        MemoryIndexWeakPtr _memoryIndex;
+        MemoryIndexPtr memoryIndex;
         SearcherWeakPtr _searcher; // needed to find searcher.getSimilarity() 
         
         /// cache norms to avoid repeated expensive calculations

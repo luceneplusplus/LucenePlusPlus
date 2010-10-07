@@ -84,6 +84,7 @@ namespace Lucene
 	DECLARE_SHARED_PTR(SimpleHTMLFormatter)
 	DECLARE_SHARED_PTR(SimpleSpanFragmenter)
 	DECLARE_SHARED_PTR(SpanGradientFormatter)
+	DECLARE_SHARED_PTR(StringBuffer)
 	DECLARE_SHARED_PTR(TextFragment)
 	DECLARE_SHARED_PTR(TokenGroup)
 	DECLARE_SHARED_PTR(TokenSources)

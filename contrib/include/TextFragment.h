@@ -15,13 +15,13 @@ namespace Lucene
 	class LPPAPI TextFragment : public LuceneObject
 	{
 	public:
-	    TextFragment(const String& markedUpText, int32_t textStartPos, int32_t fragNum);
+	    TextFragment(StringBufferPtr markedUpText, int32_t textStartPos, int32_t fragNum);
 		virtual ~TextFragment();
 		
 		LUCENE_CLASS(TextFragment);
 	
 	public:
-        String markedUpText;
+        StringBufferPtr markedUpText;
         int32_t fragNum;
         int32_t textStartPos;
         int32_t textEndPos;
@@ -42,5 +42,22 @@ namespace Lucene
         
         /// Returns the marked-up text for this text fragment
         virtual String toString();
+	};
+	
+	/// Utility class to store a string buffer that contains text fragment
+	class LPPAPI StringBuffer : public LuceneObject
+	{
+	public:
+	    virtual ~StringBuffer();
+	    LUCENE_CLASS(StringBuffer);
+    
+    protected:
+        StringStream buffer;
+    
+    public:
+        virtual String toString();
+        virtual int32_t length();
+        virtual void append(const String& str);
+        virtual void clear();
 	};
 }

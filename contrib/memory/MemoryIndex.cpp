@@ -231,7 +231,7 @@ namespace Lucene
     
     MemoryIndexReader::MemoryIndexReader(MemoryIndexPtr memoryIndex)
     {
-        _memoryIndex = memoryIndex;
+        this->memoryIndex = memoryIndex;
     }
     
     MemoryIndexReader::~MemoryIndexReader()
@@ -251,12 +251,12 @@ namespace Lucene
     
     MemoryIndexInfoPtr MemoryIndexReader::getInfo(const String& fieldName)
     {
-        return MemoryIndexPtr(_memoryIndex)->fields.get(fieldName);
+        return memoryIndex->fields.get(fieldName);
     }
     
     MemoryIndexInfoPtr MemoryIndexReader::getInfo(int32_t pos)
     {
-        return MemoryIndexPtr(_memoryIndex)->sortedFields[pos].second;
+        return memoryIndex->sortedFields[pos].second;
     }
     
     int32_t MemoryIndexReader::docFreq(TermPtr t)
@@ -275,8 +275,6 @@ namespace Lucene
     
     TermEnumPtr MemoryIndexReader::terms(TermPtr t)
     {
-        MemoryIndexPtr memoryIndex(_memoryIndex);
-        
         int32_t i = 0; // index into info.sortedTerms
         int32_t j = 0; // index into sortedFields
         
@@ -332,7 +330,6 @@ namespace Lucene
     
     Collection<TermFreqVectorPtr> MemoryIndexReader::getTermFreqVectors(int32_t docNumber)
     {
-        MemoryIndexPtr memoryIndex(_memoryIndex);
         Collection<TermFreqVectorPtr> vectors(Collection<TermFreqVectorPtr>::newInstance());
         for (MapStringMemoryIndexInfo::iterator fieldName = memoryIndex->fields.begin(); fieldName != memoryIndex->fields.end(); ++fieldName)
             vectors.add(getTermFreqVector(docNumber, fieldName->first));
@@ -341,14 +338,12 @@ namespace Lucene
     
     void MemoryIndexReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
     {
-        MemoryIndexPtr memoryIndex(_memoryIndex);
         for (MapStringMemoryIndexInfo::iterator fieldName = memoryIndex->fields.begin(); fieldName != memoryIndex->fields.end(); ++fieldName)
             getTermFreqVector(docNumber, fieldName->first, mapper);
     }
     
     void MemoryIndexReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
     {
-        MemoryIndexPtr memoryIndex(_memoryIndex);
         MemoryIndexInfoPtr info(getInfo(field));
         if (!info)
             return;
@@ -371,7 +366,6 @@ namespace Lucene
     
     TermFreqVectorPtr MemoryIndexReader::getTermFreqVector(int32_t docNumber, const String& field)
     {
-        MemoryIndexPtr memoryIndex(_memoryIndex);
         MemoryIndexInfoPtr info(getInfo(field));
         if (!info)
             return TermFreqVectorPtr();
@@ -429,7 +423,6 @@ namespace Lucene
     
     int32_t MemoryIndexReader::numDocs()
     {
-        MemoryIndexPtr memoryIndex(_memoryIndex);
         return memoryIndex->fields.empty() ? 0 : 1;
     }
     
@@ -481,7 +474,6 @@ namespace Lucene
         static HashSet<String> emptySet;
         if (!emptySet)
             emptySet = HashSet<String>::newInstance();
-        MemoryIndexPtr memoryIndex(_memoryIndex);
         if (fieldOption == FIELD_OPTION_UNINDEXED)
             return emptySet;
         if (fieldOption == FIELD_OPTION_INDEXED_NO_TERMVECTOR)
@@ -510,8 +502,7 @@ namespace Lucene
     bool MemoryIndexTermEnum::next()
     {
         MemoryIndexReaderPtr reader(_reader);
-        MemoryIndexPtr memoryIndex(reader->_memoryIndex);
-        if (j >= memoryIndex->sortedFields.size())
+        if (j >= reader->memoryIndex->sortedFields.size())
             return false;
         MemoryIndexInfoPtr info(reader->getInfo(j));
         if (++i < info->sortedTerms.size())
@@ -520,7 +511,7 @@ namespace Lucene
         // move to successor
         ++j;
         i = 0;
-        if (j >= memoryIndex->sortedFields.size())
+        if (j >= reader->memoryIndex->sortedFields.size())
             return false;
         reader->getInfo(j)->sortTerms();
         return true;
@@ -529,8 +520,7 @@ namespace Lucene
     TermPtr MemoryIndexTermEnum::term()
     {
         MemoryIndexReaderPtr reader(_reader);
-        MemoryIndexPtr memoryIndex(reader->_memoryIndex);
-        if (j >= memoryIndex->sortedFields.size())
+        if (j >= reader->memoryIndex->sortedFields.size())
             return TermPtr();
         MemoryIndexInfoPtr info(reader->getInfo(j));
         if (i >= info->sortedTerms.size())
@@ -541,13 +531,12 @@ namespace Lucene
     int32_t MemoryIndexTermEnum::docFreq()
     {
         MemoryIndexReaderPtr reader(_reader);
-        MemoryIndexPtr memoryIndex(reader->_memoryIndex);
-        if (j >= memoryIndex->sortedFields.size())
+        if (j >= reader->memoryIndex->sortedFields.size())
             return 0;
         MemoryIndexInfoPtr info(reader->getInfo(j));
         if (i >= info->sortedTerms.size())
             return 0;
-        return memoryIndex->numPositions(info->getPositions(i));
+        return reader->memoryIndex->numPositions(info->getPositions(i));
     }
     
     void MemoryIndexTermEnum::close()
@@ -560,8 +549,7 @@ namespace Lucene
         if (!_template) // not yet cached?
         {
             MemoryIndexReaderPtr reader(_reader);
-            MemoryIndexPtr memoryIndex(reader->_memoryIndex);
-            String fieldName(memoryIndex->sortedFields[pos].first);
+            String fieldName(reader->memoryIndex->sortedFields[pos].first);
             _template = newLucene<Term>(fieldName);
             info->_template = _template;
         }
@@ -635,8 +623,7 @@ namespace Lucene
     int32_t MemoryIndexTermPositions::freq()
     {
         MemoryIndexReaderPtr reader(_reader);
-        MemoryIndexPtr memoryIndex(reader->_memoryIndex);
-        int32_t freq = current ? memoryIndex->numPositions(current) : (term ? 0 : 1);
+        int32_t freq = current ? reader->memoryIndex->numPositions(current) : (term ? 0 : 1);
         return freq;
     }
     
@@ -670,9 +657,8 @@ namespace Lucene
     {
         // implements TermPositions
         MemoryIndexReaderPtr reader(_reader);
-        MemoryIndexPtr memoryIndex(reader->_memoryIndex);
         int32_t pos = current[cursor];
-        cursor += memoryIndex->stride;
+        cursor += reader->memoryIndex->stride;
         return pos;
     }
     
@@ -724,10 +710,9 @@ namespace Lucene
     Collection<int32_t> MemoryIndexTermPositionVector::getTermFrequencies()
     {
         MemoryIndexReaderPtr reader(_reader);
-        MemoryIndexPtr memoryIndex(reader->_memoryIndex);
         Collection<int32_t> freqs(Collection<int32_t>::newInstance(sortedTerms.size()));
         for (int32_t i = sortedTerms.size(); --i >= 0;)
-            freqs[i] = memoryIndex->numPositions(sortedTerms[i].second);
+            freqs[i] = reader->memoryIndex->numPositions(sortedTerms[i].second);
         return freqs;
     }
     
@@ -753,14 +738,13 @@ namespace Lucene
     Collection<TermVectorOffsetInfoPtr> MemoryIndexTermPositionVector::getOffsets(int32_t index)
     {
         MemoryIndexReaderPtr reader(_reader);
-        MemoryIndexPtr memoryIndex(reader->_memoryIndex);
-        if (memoryIndex->stride == 1)
+        if (reader->memoryIndex->stride == 1)
             return Collection<TermVectorOffsetInfoPtr>(); // no offsets stored
         
         Collection<int32_t> positions(sortedTerms[index].second);
         int32_t size = positions.size();
-        Collection<TermVectorOffsetInfoPtr> offsets(Collection<TermVectorOffsetInfoPtr>::newInstance(size / memoryIndex->stride));
-        for (int32_t i = 0, j = 1; j < size; ++i, j += memoryIndex->stride)
+        Collection<TermVectorOffsetInfoPtr> offsets(Collection<TermVectorOffsetInfoPtr>::newInstance(size / reader->memoryIndex->stride));
+        for (int32_t i = 0, j = 1; j < size; ++i, j += reader->memoryIndex->stride)
         {
             int32_t start = positions[j];
             int32_t end = positions[j + 1];

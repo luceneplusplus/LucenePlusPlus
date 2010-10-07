@@ -12,6 +12,7 @@ namespace Lucene
     WeightedSpanTerm::WeightedSpanTerm(double weight, const String& term, bool positionSensitive) : WeightedTerm(weight, term)
     {
         this->positionSensitive = positionSensitive;
+        this->positionSpans = Collection<PositionSpanPtr>::newInstance();
     }
     
     WeightedSpanTerm::~WeightedSpanTerm()

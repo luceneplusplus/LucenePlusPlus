@@ -11,10 +11,13 @@
 
 namespace Lucene
 {
+	/// Utility class that encapsulates a StringWeightedSpanTerm map that can be overridden.
 	class LPPAPI MapWeightedSpanTerm : public LuceneObject
 	{
 	public:
+	    MapWeightedSpanTerm();
 	    virtual ~MapWeightedSpanTerm();
+	    
 		LUCENE_CLASS(MapWeightedSpanTerm);
 	
 	protected:

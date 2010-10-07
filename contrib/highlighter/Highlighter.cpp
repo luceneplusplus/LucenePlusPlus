@@ -92,14 +92,14 @@ namespace Lucene
     Collection<TextFragmentPtr> Highlighter::getBestTextFragments(TokenStreamPtr tokenStream, const String& text, bool merge, int32_t maxNumFragments)
     {
         Collection<TextFragmentPtr> docFrags(Collection<TextFragmentPtr>::newInstance());
-        StringStream newText;
+        StringBufferPtr newText(newLucene<StringBuffer>());
 
         TermAttributePtr termAtt(tokenStream->addAttribute<TermAttribute>());
         OffsetAttributePtr offsetAtt(tokenStream->addAttribute<OffsetAttribute>());
         tokenStream->addAttribute<PositionIncrementAttribute>();
         tokenStream->reset();
 
-        TextFragmentPtr currentFrag(newLucene<TextFragment>(newText.str(), newText.str().length(), docFrags.size()));
+        TextFragmentPtr currentFrag(newLucene<TextFragment>(newText, newText->length(), docFrags.size()));
         TokenStreamPtr newStream(fragmentScorer->init(tokenStream));
         if (newStream)
             tokenStream = newStream;
@@ -133,8 +133,8 @@ namespace Lucene
                     String markedUpText(formatter->highlightTerm(encoder->encodeText(tokenText), tokenGroup));
                     // store any whitespace etc from between this and last group
                     if (startOffset > lastEndOffset)
-                        newText << encoder->encodeText(text.substr(lastEndOffset, startOffset - lastEndOffset));
-                    newText << markedUpText;
+                        newText->append(encoder->encodeText(text.substr(lastEndOffset, startOffset - lastEndOffset)));
+                    newText->append(markedUpText);
                     lastEndOffset = std::max(endOffset, lastEndOffset);
                     tokenGroup->clear();
                     
@@ -143,8 +143,8 @@ namespace Lucene
 					{
                         currentFrag->setScore(fragmentScorer->getFragmentScore());
                         // record stats for a new fragment
-                        currentFrag->textEndPos = newText.str().length();
-                        currentFrag = newLucene<TextFragment>(newText.str(), newText.str().length(), docFrags.size());
+                        currentFrag->textEndPos = newText->length();
+                        currentFrag = newLucene<TextFragment>(newText, newText->length(), docFrags.size());
                         fragmentScorer->startFragment(currentFrag);
                         docFrags.add(currentFrag);
 					}
@@ -160,12 +160,12 @@ namespace Lucene
                 // flush the accumulated text (same code as in above loop)
                 startOffset = tokenGroup->matchStartOffset;
                 endOffset = tokenGroup->matchEndOffset;
-                tokenText = text.substr(startOffset, endOffset);
+                tokenText = text.substr(startOffset, endOffset - startOffset);
                 String markedUpText(formatter->highlightTerm(encoder->encodeText(tokenText), tokenGroup));
                 // store any whitespace etc from between this and last group
                 if (startOffset > lastEndOffset)
-                    newText << encoder->encodeText(text.substr(lastEndOffset, startOffset - lastEndOffset));
-                newText << markedUpText;
+                    newText->append(encoder->encodeText(text.substr(lastEndOffset, startOffset - lastEndOffset)));
+                newText->append(markedUpText);
                 lastEndOffset = std::max(lastEndOffset, endOffset);
             }
             
@@ -173,10 +173,10 @@ namespace Lucene
             if (lastEndOffset < (int32_t)text.length() && (int32_t)text.length() <= maxDocCharsToAnalyze)
             {
                 // append it to the last fragment
-                newText << encoder->encodeText(text.substr(lastEndOffset));
+                newText->append(encoder->encodeText(text.substr(lastEndOffset)));
             }
             
-            currentFrag->textEndPos = newText.str().length();
+            currentFrag->textEndPos = newText->length();
             
             // sort the most relevant sections of the text
             for (Collection<TextFragmentPtr>::iterator i = docFrags.begin(); i != docFrags.end(); ++i)

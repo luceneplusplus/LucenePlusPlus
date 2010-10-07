@@ -239,7 +239,7 @@ namespace Lucene
     
     SpansCell::SpansCell(NearSpansUnorderedPtr unordered, SpansPtr spans, int32_t index)
     {
-        this->unordered = unordered;
+        this->_unordered = unordered;
         this->spans = spans;
         this->index = index;
         this->length = -1;
@@ -261,6 +261,7 @@ namespace Lucene
     
     bool SpansCell::adjust(bool condition)
     {
+        NearSpansUnorderedPtr unordered(_unordered);
         if (length != -1)
             unordered->totalLength -= length; // subtract old length
         if (condition)

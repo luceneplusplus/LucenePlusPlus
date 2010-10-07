@@ -9,6 +9,11 @@
 
 namespace Lucene
 {
+    MapWeightedSpanTerm::MapWeightedSpanTerm()
+    {
+        map = MapStringWeightedSpanTerm::newInstance();
+    }
+    
     MapWeightedSpanTerm::~MapWeightedSpanTerm()
     {
     }

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    TextFragment::TextFragment(const String& markedUpText, int32_t textStartPos, int32_t fragNum)
+    TextFragment::TextFragment(StringBufferPtr markedUpText, int32_t textStartPos, int32_t fragNum)
     {
         this->markedUpText = markedUpText;
         this->textStartPos = textStartPos;
@@ -50,6 +50,30 @@ namespace Lucene
     
     String TextFragment::toString()
     {
-        return markedUpText.substr(textStartPos, textEndPos - textStartPos);
+        return markedUpText->toString().substr(textStartPos, textEndPos - textStartPos);
+    }
+    
+    StringBuffer::~StringBuffer()
+    {
+    }
+    
+    int32_t StringBuffer::length()
+    {
+        return buffer.str().length();
+    }
+    
+    String StringBuffer::toString()
+    {
+        return buffer.str();
+    }
+    
+    void StringBuffer::append(const String& str)
+    {
+        buffer << str;
+    }
+    
+    void StringBuffer::clear()
+    {
+        buffer.str(L"");
     }
 }
