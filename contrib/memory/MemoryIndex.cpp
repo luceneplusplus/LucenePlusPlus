@@ -381,6 +381,7 @@ namespace Lucene
     
     SimilarityPtr MemoryIndexReader::getSimilarity()
     {
+        SearcherPtr searcher(_searcher.lock());
         if (searcher)
             return searcher->getSimilarity();
         return Similarity::getDefault();
@@ -388,7 +389,7 @@ namespace Lucene
     
     void MemoryIndexReader::setSearcher(SearcherPtr searcher)
     {
-        this->searcher = searcher;
+        _searcher = searcher;
     }
     
     ByteArray MemoryIndexReader::norms(const String& field)

@@ -220,7 +220,7 @@ namespace Lucene
         
     protected:
         MemoryIndexWeakPtr _memoryIndex;
-        SearcherPtr searcher; // needed to find searcher.getSimilarity() 
+        SearcherWeakPtr _searcher; // needed to find searcher.getSimilarity() 
         
         /// cache norms to avoid repeated expensive calculations
         ByteArray cachedNorms;
