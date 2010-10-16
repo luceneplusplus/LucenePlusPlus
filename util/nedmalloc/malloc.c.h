@@ -3701,7 +3701,7 @@ static mchunkptr mmap_resize(mstate m, mchunkptr oldp, size_t nb) {
     size_t offset = oldp->prev_foot & ~IS_MMAPPED_BIT;
     size_t oldmmsize = oldsize + offset + MMAP_FOOT_PAD;
     size_t newmmsize = mmap_align(nb + SIX_SIZE_T_SIZES + CHUNK_ALIGN_MASK);
-    char* cp = (char*)CALL_MREMAP((char*)oldp - offset,
+    char* cp = (char*)(intptr_t)CALL_MREMAP((char*)oldp - offset,
                                   oldmmsize, newmmsize, 1);
     if (cp != CMFAIL) {
       mchunkptr newp = (mchunkptr)(cp + offset);
@@ -4134,7 +4134,7 @@ static int sys_trim(mstate m, size_t pad) {
               !has_segment_link(m, sp)) { /* can't shrink if pinned */
             size_t newsize = sp->size - extra;
             /* Prefer mremap, fall back to munmap */
-            if (((void*)CALL_MREMAP(sp->base, sp->size, newsize, 0) != (void*)MFAIL) ||
+            if (((void*)(intptr_t)CALL_MREMAP(sp->base, sp->size, newsize, 0) != (void*)MFAIL) ||
                 (CALL_MUNMAP(sp->base + newsize, extra) == 0)) {
               released = extra;
             }

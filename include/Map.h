@@ -78,7 +78,7 @@ namespace Lucene
 		
 		virtual int32_t hashCode()
 		{
-			return (int32_t)mapContainer.get();
+			return (int32_t)(int64_t)mapContainer.get();
 		}
 		
 		operator bool() const

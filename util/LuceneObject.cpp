@@ -31,7 +31,7 @@ namespace Lucene
     
     int32_t LuceneObject::hashCode()
     {
-        return (int32_t)this;
+        return (int32_t)(int64_t)this;
     }
     
     bool LuceneObject::equals(LuceneObjectPtr other)

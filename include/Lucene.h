@@ -758,7 +758,6 @@ namespace Lucene
 	typedef HashMap< String, NormPtr > MapStringNorm;
 	typedef HashMap< String, TermVectorEntryPtr > MapStringTermVectorEntry;
 	typedef HashMap< String, RAMFilePtr > MapStringRAMFile;
-	typedef HashMap< String, AttributePtr > MapStringAttribute;
 	typedef HashMap< int32_t, ByteArray > MapIntByteArray;
 	typedef HashMap< int32_t, FilterItemPtr > MapIntFilterItem;
 	typedef HashMap< int32_t, double > MapIntDouble;
@@ -784,6 +783,7 @@ namespace Lucene
 	typedef WeakHashMap< LuceneObjectWeakPtr, LuceneObjectPtr, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapObjectObject;
 	typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryLuceneObject, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryLuceneObject;
 	
+	typedef Map< String, AttributePtr > MapStringAttribute;
 	typedef Map< ThreadId, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
 	typedef Map< String, IndexReaderPtr > MapStringIndexReader;
 	typedef Map< TermPtr, NumPtr, luceneCompare<TermPtr> > MapTermNum;

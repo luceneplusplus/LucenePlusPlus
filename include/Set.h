@@ -125,7 +125,7 @@ namespace Lucene
 		
 		virtual int32_t hashCode()
 		{
-			return (int32_t)setContainer.get();
+			return (int32_t)(int64_t)setContainer.get();
 		}
 		
 		void swap(this_type& other)

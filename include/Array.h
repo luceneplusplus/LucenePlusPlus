@@ -98,7 +98,7 @@ namespace Lucene
 		
 		int32_t hashCode() const
 		{
-			return (int32_t)container.get();
+			return (int32_t)(int64_t)container.get();
 		}
 		
 		TYPE& operator[] (int32_t i) const
