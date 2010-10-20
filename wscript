@@ -62,6 +62,7 @@ def set_options(opt):
     opt.tool_options("boost")
     opt.tool_options('compiler_cxx')
     opt.tool_options('clang', tooldir = 'build')
+    opt.tool_options('gch', tooldir = 'build')
     opt.add_option(
         '--debug', 
         default = False,
@@ -83,6 +84,7 @@ def configure(conf):
     conf.check_cc(lib = 'pthread', mandatory = True)
     conf.check_tool('boost')
     conf.check_tool('clang', 'build')
+    conf.check_tool('gch', 'build')
     conf.check_boost(
         static = 'onlystatic',
         lib = ['filesystem', 'thread', 'regex', 'system', 'date_time', 'iostreams', 'unit_test_framework']
@@ -106,6 +108,7 @@ def build(bld):
         features = ['cxx', 'cc'] + [target_type],
         source = [source.relpath_gen(bld.path) for source in lucene_sources],
         target = 'lucene++',
+        pch = 'include/Lucene.h',
         includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -123,6 +126,7 @@ def build(bld):
         features = ['cxx', 'cc'] + [target_type],
         source = [source.relpath_gen(bld.path) for source in lucene_contrib_sources],
         target = 'lucene_contrib',
+        pch = 'contrib/include/LuceneContrib.h',
         includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -141,6 +145,7 @@ def build(bld):
         features = ['cxx', 'cc', 'cprogram'],
         source = [source.relpath_gen(bld.path) for source in tester_sources],
         target = 'lucene_tester',
+        pch = 'test/include/test_lucene.h',
         includes = tester_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -187,3 +192,4 @@ def build(bld):
         uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
         uselib_local = 'lucene++'
         )
+

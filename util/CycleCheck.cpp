@@ -34,7 +34,7 @@ namespace Lucene
     
     void CycleCheck::addStatic(LuceneObjectPtr* staticRef)
     {
-        #ifdef _DEBUG
+        #ifdef LPP_USE_CYCLIC_CHECK
         if (!staticRefs)
             staticRefs = Set<LuceneObjectPtr*>::newInstance();
         staticRefs.add(staticRef);
