@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "Directory.h"
 #include "LockFactory.h"
 #include "BufferedIndexOutput.h"

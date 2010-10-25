@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "IndexReader.h"
 #include "DirectoryReader.h"
 #include "IndexDeletionPolicy.h"

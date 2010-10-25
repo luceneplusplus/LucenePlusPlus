@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "ContribInc.h"
 #include "Highlighter.h"
 #include "HighlighterScorer.h"
 #include "SimpleHTMLFormatter.h"

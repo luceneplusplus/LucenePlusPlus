@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "TestInc.h"
 #include "FunctionFixture.h"
 #include "IndexSearcher.h"
 #include "FieldScoreQuery.h"

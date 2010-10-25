@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "TermVectorsTermsWriterPerField.h"
 #include "TermVectorsTermsWriterPerThread.h"
 #include "TermVectorsTermsWriter.h"

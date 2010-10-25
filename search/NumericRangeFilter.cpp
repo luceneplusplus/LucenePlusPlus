@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "NumericRangeFilter.h"
 #include "NumericRangeQuery.h"
 

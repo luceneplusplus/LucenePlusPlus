@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "TestInc.h"
 #include "ExplanationsFixture.h"
 #include "DefaultSimilarity.h"
 #include "BooleanQuery.h"

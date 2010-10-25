@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "TestInc.h"
 #include "BaseTestRangeFilterFixture.h"
 #include "IndexReader.h"
 #include "IndexSearcher.h"

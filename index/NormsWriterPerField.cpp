@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "NormsWriterPerField.h"
 #include "NormsWriterPerThread.h"
 #include "Similarity.h"

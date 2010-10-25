@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "SpanNearQuery.h"
 #include "SpanQuery.h"
 #include "SpanOrQuery.h"

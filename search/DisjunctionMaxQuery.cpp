@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "DisjunctionMaxQuery.h"
 #include "BooleanQuery.h"
 #include "DocIdSetIterator.h"

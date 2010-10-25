@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "DocFieldConsumers.h"
 #include "DocFieldConsumersPerField.h"
 #include "DocFieldConsumersPerThread.h"

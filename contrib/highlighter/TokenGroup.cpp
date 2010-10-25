@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "ContribInc.h"
 #include "TokenGroup.h"
 #include "OffsetAttribute.h"
 #include "TermAttribute.h"

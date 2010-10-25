@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "TestInc.h"
 #include "MockFSDirectory.h"
 #include "NoLockFactory.h"
 #include "SimpleFSDirectory.h"

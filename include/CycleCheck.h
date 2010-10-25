@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Lucene.h"
-#include "Synchronize.h"
 
 namespace Lucene
 {

@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "ContribInc.h"
 #include "DutchStemFilter.h"
 #include "DutchStemmer.h"
 #include "TermAttribute.h"

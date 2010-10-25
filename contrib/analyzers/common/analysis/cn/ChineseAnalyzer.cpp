@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "ContribInc.h"
 #include "ChineseAnalyzer.h"
 #include "ChineseTokenizer.h"
 #include "ChineseFilter.h"

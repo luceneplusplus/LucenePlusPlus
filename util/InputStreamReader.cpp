@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "InputStreamReader.h"
 #include "BufferedReader.h"
 #include "UTF8Stream.h"

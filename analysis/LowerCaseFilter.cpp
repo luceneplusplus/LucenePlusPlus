@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "LowerCaseFilter.h"
 #include "TermAttribute.h"
 #include "CharFolder.h"

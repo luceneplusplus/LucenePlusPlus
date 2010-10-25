@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "FieldDoc.h"
 
 namespace Lucene

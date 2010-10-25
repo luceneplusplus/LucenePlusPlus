@@ -50,6 +50,7 @@
 				RuntimeLibrary="3"
 				DisableLanguageExtensions="false"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="TestInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -132,6 +133,7 @@
 				EnableFunctionLevelLinking="true"
 				DisableLanguageExtensions="false"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="TestInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -212,6 +214,7 @@
 				RuntimeLibrary="3"
 				DisableLanguageExtensions="false"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="TestInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -294,6 +297,7 @@
 				EnableFunctionLevelLinking="true"
 				DisableLanguageExtensions="false"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="TestInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -358,15 +362,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\stdafx.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\targetver.h"
 				>
 			</File>
 			<File
 				RelativePath="..\include\test_lucene.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\TestInc.h"
 				>
 			</File>
 		</Filter>
@@ -894,9 +898,45 @@
 			<File
 				RelativePath="..\main.cpp"
 				>
+				<FileConfiguration
+					Name="Debug DLL|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						PrecompiledHeaderThrough=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Static|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						PrecompiledHeaderThrough=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Static|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						PrecompiledHeaderThrough=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release DLL|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						PrecompiledHeaderThrough=""
+					/>
+				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath=".\TestInc.cpp"
 				>
 				<FileConfiguration
 					Name="Debug DLL|Win32"

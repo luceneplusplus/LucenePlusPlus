@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "FieldScoreQuery.h"
 #include "ByteFieldSource.h"
 #include "IntFieldSource.h"

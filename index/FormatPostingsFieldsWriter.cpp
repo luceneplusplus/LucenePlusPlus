@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "FormatPostingsFieldsWriter.h"
 #include "FormatPostingsTermsWriter.h"
 #include "SegmentWriteState.h"

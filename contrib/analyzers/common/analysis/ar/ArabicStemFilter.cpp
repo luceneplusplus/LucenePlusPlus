@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "ContribInc.h"
 #include "ArabicStemFilter.h"
 #include "ArabicStemmer.h"
 #include "TermAttribute.h"

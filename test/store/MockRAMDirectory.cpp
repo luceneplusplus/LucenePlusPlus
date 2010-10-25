@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "TestInc.h"
 #include "MockRAMDirectory.h"
 #include "RAMFile.h"
 #include "MockRAMOutputStream.h"

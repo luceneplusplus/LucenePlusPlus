@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "IndexInput.h"
 #include "UTF8Stream.h"
 #include "ArrayReader.h"

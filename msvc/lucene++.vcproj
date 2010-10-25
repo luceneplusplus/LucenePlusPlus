@@ -49,6 +49,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="LuceneInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 				DisableSpecificWarnings="4996"
@@ -131,6 +132,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="LuceneInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4996"
@@ -210,6 +212,7 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="LuceneInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 				DisableSpecificWarnings="4996"
@@ -282,6 +285,7 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="LuceneInc.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 				DisableSpecificWarnings="4996"
@@ -368,7 +372,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\stdafx.cpp"
+				RelativePath=".\LuceneInc.cpp"
 				>
 				<FileConfiguration
 					Name="Debug DLL|Win32"
@@ -418,7 +422,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\stdafx.h"
+				RelativePath="..\include\LuceneHeaders.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LuceneInc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LuceneTypes.h"
 				>
 			</File>
 			<File
@@ -3397,10 +3409,6 @@
 			</File>
 			<File
 				RelativePath="..\include\LuceneFactory.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\LuceneHeaders.h"
 				>
 			</File>
 			<File

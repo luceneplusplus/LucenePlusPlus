@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "ContribInc.h"
 #include "ElisionFilter.h"
 #include "CharArraySet.h"
 #include "TermAttribute.h"

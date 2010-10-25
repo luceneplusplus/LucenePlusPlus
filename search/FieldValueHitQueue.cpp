@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "FieldValueHitQueue.h"
 #include "FieldComparator.h"
 #include "FieldDoc.h"

@@ -4,7 +4,9 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#define NOMINMAX
+
+#include "targetver.h"
 #include "LuceneHeaders.h"
 #include "FilterIndexReader.h"
 

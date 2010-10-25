@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "TermsHashPerField.h"
 #include "TermsHashPerThread.h"
 #include "TermsHashConsumerPerThread.h"

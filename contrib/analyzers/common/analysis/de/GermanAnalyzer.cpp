@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "ContribInc.h"
 #include "GermanAnalyzer.h"
 #include "StandardTokenizer.h"
 #include "StandardFilter.h"

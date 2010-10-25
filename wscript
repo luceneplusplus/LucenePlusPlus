@@ -67,7 +67,7 @@ def set_options(opt):
         '--debug', 
         default = False,
         action = "store_true",
-        help ='debug build no optimization, etc...', 
+        help ='debug build no optimization, etc.', 
         dest = 'debug')
     
     opt.add_option(
@@ -108,7 +108,7 @@ def build(bld):
         features = ['cxx', 'cc'] + [target_type],
         source = [source.relpath_gen(bld.path) for source in lucene_sources],
         target = 'lucene++',
-        pch = 'include/Lucene.h',
+        pch = 'include/LuceneInc.h',
         includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -126,7 +126,7 @@ def build(bld):
         features = ['cxx', 'cc'] + [target_type],
         source = [source.relpath_gen(bld.path) for source in lucene_contrib_sources],
         target = 'lucene_contrib',
-        pch = 'contrib/include/LuceneContrib.h',
+        pch = 'contrib/include/ContribInc.h',
         includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -145,7 +145,7 @@ def build(bld):
         features = ['cxx', 'cc', 'cprogram'],
         source = [source.relpath_gen(bld.path) for source in tester_sources],
         target = 'lucene_tester',
-        pch = 'test/include/test_lucene.h',
+        pch = 'test/include/TestInc.h',
         includes = tester_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,

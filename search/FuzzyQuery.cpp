@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "FuzzyQuery.h"
 #include "FuzzyTermEnum.h"
 #include "Term.h"

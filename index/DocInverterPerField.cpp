@@ -4,7 +4,7 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "LuceneInc.h"
 #include "DocInverterPerField.h"
 #include "DocInverterPerThread.h"
 #include "InvertedDocConsumerPerThread.h"
