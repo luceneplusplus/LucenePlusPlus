@@ -7,6 +7,8 @@
 #pragma once
 
 #include "Lucene.h"
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
 
 namespace Lucene
 {
@@ -23,6 +25,9 @@ namespace Lucene
 		SynchronizePtr objectLock;
 	
 	public:
+	    /// create a new LuceneSignal instance atomically.
+	    static void createSignal(LuceneSignalPtr& signal, SynchronizePtr objectLock);
+	    
 		/// Wait for signal using an optional timeout.
 		void wait(int32_t timeout = 0);
 		

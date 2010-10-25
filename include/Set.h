@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "LuceneObject.h"
+#include "LuceneSync.h"
+#include <set>
 
 namespace Lucene
 {
     /// Utility template class to handle set based collections that can be safely copied and shared
     template < class TYPE, class LESS = std::less<TYPE> >
-	class Set : public LuceneObject
+	class Set : public LuceneSync
 	{
 	public:
 		typedef Set<TYPE, LESS> this_type;
@@ -121,11 +122,6 @@ namespace Lucene
 			if (setContainer->size() != other.setContainer->size())
 				return false;
 			return std::equal(setContainer->begin(), setContainer->end(), other.setContainer->begin(), comp);
-		}
-		
-		virtual int32_t hashCode()
-		{
-			return (int32_t)(int64_t)setContainer.get();
 		}
 		
 		void swap(this_type& other)

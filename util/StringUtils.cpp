@@ -10,6 +10,7 @@
 #include "UTF8Stream.h"
 #include "ArrayReader.h"
 #include "CharFolder.h"
+#include <vector>
 
 namespace Lucene
 {

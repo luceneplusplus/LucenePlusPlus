@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LuceneObject.h"
+#include <vector>
 
 namespace Lucene
 {

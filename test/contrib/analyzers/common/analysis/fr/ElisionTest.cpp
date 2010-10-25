@@ -9,6 +9,7 @@
 #include "StandardTokenizer.h"
 #include "StringReader.h"
 #include "ElisionFilter.h"
+#include "TermAttribute.h"
 
 using namespace Lucene;
 

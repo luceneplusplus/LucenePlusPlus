@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "LuceneObject.h"
+#include "LuceneSync.h"
+#include <map>
 
 namespace Lucene
 {
 	/// Utility template class to handle maps that can be safely copied and shared
 	template < class KEY, class VALUE, class LESS = std::less<KEY> >
-	class Map : public LuceneObject
+	class Map : public LuceneSync
 	{
 	public:
 		typedef Map<KEY, VALUE, LESS> this_type;
@@ -74,11 +75,6 @@ namespace Lucene
 		const_iterator end() const
 		{
 			return mapContainer->end();
-		}
-		
-		virtual int32_t hashCode()
-		{
-			return (int32_t)(int64_t)mapContainer.get();
 		}
 		
 		operator bool() const

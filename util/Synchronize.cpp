@@ -20,6 +20,14 @@ namespace Lucene
     {
     }
     
+    void Synchronize::createSync(SynchronizePtr& sync)
+    {
+        static boost::mutex lockMutex;
+        boost::mutex::scoped_lock syncLock(lockMutex);
+        if (!sync)
+            sync = newInstance<Synchronize>();
+    }
+    
     void Synchronize::lock(int32_t timeout)
     {
         if (timeout > 0)
@@ -58,13 +66,13 @@ namespace Lucene
 
     SyncLock::~SyncLock()
     {
-        if (this->sync)
-            this->sync->unlock();
+        if (sync)
+            sync->unlock();
     }
     
     void SyncLock::lock(int32_t timeout)
     {
-        if (this->sync)
-            this->sync->lock(timeout);
+        if (sync)
+            sync->lock(timeout);
     }
 }

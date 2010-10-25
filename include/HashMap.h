@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "LuceneObject.h"
+#include "LuceneSync.h"
+#include <boost/unordered_map.hpp>
 
 namespace Lucene
 {
     /// Utility template class to handle hash maps that can be safely copied and shared
 	template < class KEY, class VALUE, class HASH = boost::hash<KEY>, class EQUAL = std::equal_to<KEY> >
-	class HashMap : public LuceneObject
+	class HashMap : public LuceneSync
 	{
 	public:
 		typedef HashMap<KEY, VALUE, HASH, EQUAL> this_type;
@@ -74,11 +75,6 @@ namespace Lucene
 		const_iterator end() const
 		{
 			return mapContainer->end();
-		}
-		
-		virtual int32_t hashCode()
-		{
-			return (int32_t)(int64_t)mapContainer.get();
 		}
 		
 		operator bool() const

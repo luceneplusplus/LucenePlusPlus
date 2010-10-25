@@ -15,9 +15,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
-#include <set>
-#include <map>
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
@@ -27,21 +24,9 @@
 #include <boost/variant.hpp>
 #include <boost/any.hpp>
 #include <boost/blank.hpp>
-#include <boost/dynamic_bitset.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/identity.hpp>
-#include <boost/multi_index/member.hpp> 
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/regex.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -805,153 +790,3 @@ namespace Lucene
 #include "StringUtils.h"
 #include "CycleCheck.h"
 #include "VariantUtils.h"
-
-#ifndef LPP_BUILDING_LIB
-
-// Include most common files: analysis
-#include "StandardAnalyzer.h"
-#include "StandardFilter.h"
-#include "StandardTokenizer.h"
-#include "FlagsAttribute.h"
-#include "OffsetAttribute.h"
-#include "PayloadAttribute.h"
-#include "PositionIncrementAttribute.h"
-#include "TermAttribute.h"
-#include "TypeAttribute.h"
-#include "KeywordAnalyzer.h"
-#include "KeywordTokenizer.h"
-#include "LowerCaseFilter.h"
-#include "LowerCaseTokenizer.h"
-#include "PerFieldAnalyzerWrapper.h"
-#include "PorterStemFilter.h"
-#include "PorterStemmer.h"
-#include "SimpleAnalyzer.h"
-#include "StopAnalyzer.h"
-#include "StopFilter.h"
-#include "Token.h"
-#include "TokenFilter.h"
-#include "WhitespaceAnalyzer.h"
-#include "WhitespaceTokenizer.h"
-
-// Include most common files: document
-#include "DateField.h"
-#include "DateTools.h"
-#include "Document.h"
-#include "Field.h"
-#include "NumberTools.h"
-#include "NumericField.h"
-
-// Include most common files: index
-#include "DirectoryReader.h"
-#include "IndexCommit.h"
-#include "IndexDeletionPolicy.h"
-#include "IndexReader.h"
-#include "IndexWriter.h"
-#include "KeepOnlyLastCommitDeletionPolicy.h"
-#include "LogByteSizeMergePolicy.h"
-#include "LogDocMergePolicy.h"
-#include "LogMergePolicy.h"
-#include "MergeScheduler.h"
-#include "MultiReader.h"
-#include "ParallelReader.h"
-#include "Payload.h"
-#include "SegmentInfo.h"
-#include "SegmentInfos.h"
-#include "SegmentReader.h"
-#include "Term.h"
-#include "TermDocs.h"
-#include "TermEnum.h"
-
-// Include most common files: queryparser
-#include "FastCharStream.h"
-#include "MultiFieldQueryParser.h"
-#include "QueryParseError.h"
-#include "QueryParser.h"
-#include "QueryParserCharStream.h"
-#include "QueryParserConstants.h"
-#include "QueryParserToken.h"
-#include "QueryParserTokenManager.h"
-
-// Include most common files: search
-#include "BooleanClause.h"
-#include "BooleanQuery.h"
-#include "CachingWrapperFilter.h"
-#include "ComplexExplanation.h"
-#include "ConstantScoreQuery.h"
-#include "DefaultSimilarity.h"
-#include "DisjunctionMaxQuery.h"
-#include "DocIdSet.h"
-#include "DocIdSetIterator.h"
-#include "Explanation.h"
-#include "FieldDoc.h"
-#include "FilteredDocIdSet.h"
-#include "FilteredDocIdSetIterator.h"
-#include "FilteredQuery.h"
-#include "FilteredTermEnum.h"
-#include "HitQueue.h"
-#include "IndexSearcher.h"
-#include "MatchAllDocsQuery.h"
-#include "MultiPhraseQuery.h"
-#include "MultiSearcher.h"
-#include "MultiTermQuery.h"
-#include "NumericRangeFilter.h"
-#include "NumericRangeQuery.h"
-#include "ParallelMultiSearcher.h"
-#include "PhraseQuery.h"
-#include "PrefixFilter.h"
-#include "PrefixQuery.h"
-#include "ScoreDoc.h"
-#include "Scorer.h"
-#include "Searcher.h"
-#include "Sort.h"
-#include "SortField.h"
-#include "SpanFilter.h"
-#include "SpanFilterResult.h"
-#include "TermQuery.h"
-#include "TermRangeFilter.h"
-#include "TermRangeQuery.h"
-#include "TopDocs.h"
-#include "TopDocsCollector.h"
-#include "TopFieldCollector.h"
-#include "TopScoreDocCollector.h"
-#include "Weight.h"
-#include "WildcardQuery.h"
-#include "CustomScoreQuery.h"
-#include "PayloadNearQuery.h"
-#include "PayloadSpanUtil.h"
-#include "PayloadTermQuery.h"
-#include "SpanFirstQuery.h"
-#include "SpanNearQuery.h"
-#include "SpanNotQuery.h"
-#include "SpanOrQuery.h"
-#include "SpanQuery.h"
-#include "Spans.h"
-
-// Include most common files: store
-#include "BufferedIndexInput.h"
-#include "BufferedIndexOutput.h"
-#include "FileSwitchDirectory.h"
-#include "FSDirectory.h"
-#include "MMapDirectory.h"
-#include "RAMDirectory.h"
-#include "RAMFile.h"
-#include "RAMInputStream.h"
-#include "RAMOutputStream.h"
-#include "SimpleFSDirectory.h"
-
-// Include most common files: util
-#include "BitSet.h"
-#include "BitUtil.h"
-#include "BufferedReader.h"
-#include "DocIdBitSet.h"
-#include "FieldCacheSanityChecker.h"
-#include "FileReader.h"
-#include "InfoStream.h"
-#include "LuceneThread.h"
-#include "OpenBitSet.h"
-#include "OpenBitSetDISI.h"
-#include "OpenBitSetIterator.h"
-#include "StringReader.h"
-#include "ThreadPool.h"
-
-#endif

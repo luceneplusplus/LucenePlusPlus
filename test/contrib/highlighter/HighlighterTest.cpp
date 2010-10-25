@@ -28,8 +28,10 @@
 #include "WhitespaceAnalyzer.h"
 #include "TokenGroup.h"
 #include "NumericRangeQuery.h"
+#include "PhraseQuery.h"
 #include "MultiPhraseQuery.h"
 #include "SpanNearQuery.h"
+#include "SpanNotQuery.h"
 #include "SpanTermQuery.h"
 #include "QueryTermScorer.h"
 #include "WeightedSpanTerm.h"
@@ -45,6 +47,11 @@
 #include "TextFragment.h"
 #include "SimpleHTMLEncoder.h"
 #include "MultiSearcher.h"
+#include "ScoreDoc.h"
+#include "Term.h"
+#include "FilteredQuery.h"
+#include "Token.h"
+#include "TermQuery.h"
 
 using namespace Lucene;
 class HighlighterTestFixture;

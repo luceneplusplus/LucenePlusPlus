@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "LuceneObject.h"
 #include "MapOfSets.h"
 
 namespace Lucene

@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include "IndexFileNameFilter.h"
 #include "IndexFileNames.h"
+#include <boost/regex.hpp>
 
 namespace Lucene
 {

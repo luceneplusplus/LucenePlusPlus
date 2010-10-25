@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LuceneObject.h"
+#include <boost/dynamic_bitset.hpp>
 
 namespace Lucene
 {

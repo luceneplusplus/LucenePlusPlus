@@ -19,6 +19,14 @@ namespace Lucene
     {
     }
     
+    void LuceneSignal::createSignal(LuceneSignalPtr& signal, SynchronizePtr objectLock)
+    {
+        static boost::mutex lockMutex;
+        boost::mutex::scoped_lock syncLock(lockMutex);
+        if (!signal)
+            signal = newInstance<LuceneSignal>(objectLock);
+    }
+    
     void LuceneSignal::wait(int32_t timeout)
     {
         int32_t relockCount = objectLock ? objectLock->unlockAll() : 0;

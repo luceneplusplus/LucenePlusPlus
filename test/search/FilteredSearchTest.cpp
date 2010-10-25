@@ -10,6 +10,7 @@
 #include "Filter.h"
 #include "OpenBitSet.h"
 #include "IndexWriter.h"
+#include "IndexReader.h"
 #include "WhitespaceAnalyzer.h"
 #include "Document.h"
 #include "Field.h"

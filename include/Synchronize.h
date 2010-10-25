@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Lucene.h"
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace Lucene
 {
@@ -23,6 +24,9 @@ namespace Lucene
 		int32_t recursionCount;
 	
 	public:
+	    /// create a new Synchronize instance atomically.
+	    static void createSync(SynchronizePtr& sync);
+	    
 		/// Lock mutex using an optional timeout.
 		void lock(int32_t timeout = 0);
 		

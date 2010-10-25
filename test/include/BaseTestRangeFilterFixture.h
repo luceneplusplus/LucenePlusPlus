@@ -7,6 +7,7 @@
 #pragma once
 
 #include "LuceneTestFixture.h"
+#include "LuceneObject.h"
 
 namespace Lucene
 {

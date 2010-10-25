@@ -6,13 +6,14 @@
 
 #pragma once
 
-#include "LuceneObject.h"
+#include "LuceneSync.h"
+#include <vector>
 
 namespace Lucene
 {
 	/// Utility template class to handle collections that can be safely copied and shared
 	template <class TYPE>
-	class Collection : public LuceneObject
+	class Collection : public LuceneSync
 	{
 	public:
 		typedef Collection<TYPE> this_type;
@@ -186,7 +187,7 @@ namespace Lucene
 			return std::equal(container->begin(), container->end(), other.container->begin(), comp);
 		}
 		
-		virtual int32_t hashCode()
+		int32_t hashCode()
 		{
 			return (int32_t)(int64_t)container.get();
 		}

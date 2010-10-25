@@ -3400,6 +3400,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\LuceneHeaders.h"
+				>
+			</File>
+			<File
 				RelativePath="..\util\LuceneObject.cpp"
 				>
 			</File>
@@ -3413,6 +3417,14 @@
 			</File>
 			<File
 				RelativePath="..\include\LuceneSignal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\util\LuceneSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LuceneSync.h"
 				>
 			</File>
 			<File
