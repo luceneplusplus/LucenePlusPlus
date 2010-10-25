@@ -4,7 +4,8 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef MEMORYINDEX_H
+#define MEMORYINDEX_H
 
 #include "LuceneContrib.h"
 #include "IndexReader.h"
@@ -363,3 +364,5 @@ namespace Lucene
         virtual Collection<TermVectorOffsetInfoPtr> getOffsets(int32_t index);
     };
 }
+
+#endif

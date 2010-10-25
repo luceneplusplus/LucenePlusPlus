@@ -4,21 +4,22 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef PERSIANNORMALIZATIONFILTER_H
+#define PERSIANNORMALIZATIONFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// A {@link TokenFilter} that applies {@link PersianNormalizer} to normalize the orthography.
-	class LPPAPI PersianNormalizationFilter : public TokenFilter
-	{
-	public:
-		PersianNormalizationFilter(TokenStreamPtr input);
-		virtual ~PersianNormalizationFilter();
-		
-		LUCENE_CLASS(PersianNormalizationFilter);
+    /// A {@link TokenFilter} that applies {@link PersianNormalizer} to normalize the orthography.
+    class LPPAPI PersianNormalizationFilter : public TokenFilter
+    {
+    public:
+        PersianNormalizationFilter(TokenStreamPtr input);
+        virtual ~PersianNormalizationFilter();
+        
+        LUCENE_CLASS(PersianNormalizationFilter);
     
     protected:
         PersianNormalizerPtr normalizer;
@@ -26,5 +27,7 @@ namespace Lucene
     
     public:
         virtual bool incrementToken();
-	};
+    };
 }
+
+#endif

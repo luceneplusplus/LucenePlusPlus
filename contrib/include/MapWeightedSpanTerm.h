@@ -4,30 +4,33 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef MAPWEIGHTEDSPANTERM_H
+#define MAPWEIGHTEDSPANTERM_H
 
 #include "LuceneContrib.h"
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Utility class that encapsulates a StringWeightedSpanTerm map that can be overridden.
-	class LPPAPI MapWeightedSpanTerm : public LuceneObject
-	{
-	public:
-	    MapWeightedSpanTerm();
-	    virtual ~MapWeightedSpanTerm();
-	    
-		LUCENE_CLASS(MapWeightedSpanTerm);
-	
-	protected:
-	    MapStringWeightedSpanTerm map;
-	
-	public:
-	    virtual MapStringWeightedSpanTerm::iterator begin();
-	    virtual MapStringWeightedSpanTerm::iterator end();
-	    virtual void put(const String& key, WeightedSpanTermPtr val);
-	    virtual WeightedSpanTermPtr get(const String& key) const;
-	    virtual void clear();
-	};
+    /// Utility class that encapsulates a StringWeightedSpanTerm map that can be overridden.
+    class LPPAPI MapWeightedSpanTerm : public LuceneObject
+    {
+    public:
+        MapWeightedSpanTerm();
+        virtual ~MapWeightedSpanTerm();
+        
+        LUCENE_CLASS(MapWeightedSpanTerm);
+    
+    protected:
+        MapStringWeightedSpanTerm map;
+    
+    public:
+        virtual MapStringWeightedSpanTerm::iterator begin();
+        virtual MapStringWeightedSpanTerm::iterator end();
+        virtual void put(const String& key, WeightedSpanTermPtr val);
+        virtual WeightedSpanTermPtr get(const String& key) const;
+        virtual void clear();
+    };
 }
+
+#endif

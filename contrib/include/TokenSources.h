@@ -4,20 +4,21 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TOKENSOURCES_H
+#define TOKENSOURCES_H
 
 #include "LuceneContrib.h"
 #include "TokenStream.h"
 
 namespace Lucene
 {
-	/// Hides implementation issues associated with obtaining a TokenStream for use with the highlighter - can obtain 
-	/// from TermFreqVectors with offsets and (optionally) positions or from Analyzer class re-parsing the stored content.
-	class LPPAPI TokenSources : public LuceneObject
-	{
-	public:
-		virtual ~TokenSources();
-		LUCENE_CLASS(TokenSources);
+    /// Hides implementation issues associated with obtaining a TokenStream for use with the highlighter - can obtain 
+    /// from TermFreqVectors with offsets and (optionally) positions or from Analyzer class re-parsing the stored content.
+    class LPPAPI TokenSources : public LuceneObject
+    {
+    public:
+        virtual ~TokenSources();
+        LUCENE_CLASS(TokenSources);
     
     public:
         /// A convenience method that tries to first get a TermPositionVector for the specified docId, then, falls back to
@@ -66,24 +67,26 @@ namespace Lucene
         static TokenStreamPtr getTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, AnalyzerPtr analyzer);
         static TokenStreamPtr getTokenStream(DocumentPtr doc, const String& field, AnalyzerPtr analyzer);
         static TokenStreamPtr getTokenStream(const String& field, const String& contents, AnalyzerPtr analyzer);
-	};
-	
-	/// an object used to iterate across an array of tokens
-	class LPPAPI StoredTokenStream : public TokenStream
-	{
-	public:
-	    StoredTokenStream(Collection<TokenPtr> tokens);
-	    virtual ~StoredTokenStream();
-	
-	    LUCENE_CLASS(StoredTokenStream);
-	    
-	public:
+    };
+    
+    /// an object used to iterate across an array of tokens
+    class LPPAPI StoredTokenStream : public TokenStream
+    {
+    public:
+        StoredTokenStream(Collection<TokenPtr> tokens);
+        virtual ~StoredTokenStream();
+    
+        LUCENE_CLASS(StoredTokenStream);
+        
+    public:
         Collection<TokenPtr> tokens;
         int32_t currentToken;
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
         
-	public:
-	    virtual bool incrementToken();
-	};
+    public:
+        virtual bool incrementToken();
+    };
 }
+
+#endif

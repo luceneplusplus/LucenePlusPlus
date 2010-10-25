@@ -4,56 +4,59 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef DOCIDSET_H
+#define DOCIDSET_H
 
 #include "DocIdSetIterator.h"
 
 namespace Lucene
 {
-	/// A DocIdSet contains a set of doc ids. Implementing classes must only implement {@link #iterator} to 
-	/// provide access to the set. 
-	class LPPAPI DocIdSet : public LuceneObject
-	{
-	public:
-		virtual ~DocIdSet();
-		LUCENE_CLASS(DocIdSet);
-	
-	public:
-		/// Provides a {@link DocIdSetIterator} to access the set.  This implementation can return null or
-		/// {@link #EmptyDocIdSet}.iterator() if there are no docs that match.
-		virtual DocIdSetIteratorPtr iterator() = 0;
-		
-		/// This method is a hint for {@link CachingWrapperFilter}, if this DocIdSet should be cached without 
-		/// copying it into a BitSet.  The default is to return false.  If you have an own DocIdSet implementation
-		/// that does its iteration very effective and fast without doing disk I/O, override this method and 
-		/// return true.
-		virtual bool isCacheable();
-		
-		/// An empty {@code DocIdSet} instance for easy use, eg. in Filters that hit no documents.
-		static DocIdSetPtr EMPTY_DOCIDSET();
-	};
-	
-	class LPPAPI EmptyDocIdSetIterator : public DocIdSetIterator
-	{
-	public:
-		virtual ~EmptyDocIdSetIterator();
-		LUCENE_CLASS(EmptyDocIdSetIterator);
-	
-	public:
-		virtual int32_t advance(int32_t target);
-		virtual int32_t docID();
-		virtual int32_t nextDoc();
-	};
-	
-	/// An empty {@code DocIdSet} instance for easy use, eg. in Filters that hit no documents.
-	class LPPAPI EmptyDocIdSet : public DocIdSet
-	{
-	public:
-		virtual ~EmptyDocIdSet();
-		LUCENE_CLASS(EmptyDocIdSet);
-	
-	public:
-		virtual DocIdSetIteratorPtr iterator();
-		virtual bool isCacheable();
-	};
+    /// A DocIdSet contains a set of doc ids. Implementing classes must only implement {@link #iterator} to 
+    /// provide access to the set. 
+    class LPPAPI DocIdSet : public LuceneObject
+    {
+    public:
+        virtual ~DocIdSet();
+        LUCENE_CLASS(DocIdSet);
+    
+    public:
+        /// Provides a {@link DocIdSetIterator} to access the set.  This implementation can return null or
+        /// {@link #EmptyDocIdSet}.iterator() if there are no docs that match.
+        virtual DocIdSetIteratorPtr iterator() = 0;
+        
+        /// This method is a hint for {@link CachingWrapperFilter}, if this DocIdSet should be cached without 
+        /// copying it into a BitSet.  The default is to return false.  If you have an own DocIdSet implementation
+        /// that does its iteration very effective and fast without doing disk I/O, override this method and 
+        /// return true.
+        virtual bool isCacheable();
+        
+        /// An empty {@code DocIdSet} instance for easy use, eg. in Filters that hit no documents.
+        static DocIdSetPtr EMPTY_DOCIDSET();
+    };
+    
+    class LPPAPI EmptyDocIdSetIterator : public DocIdSetIterator
+    {
+    public:
+        virtual ~EmptyDocIdSetIterator();
+        LUCENE_CLASS(EmptyDocIdSetIterator);
+    
+    public:
+        virtual int32_t advance(int32_t target);
+        virtual int32_t docID();
+        virtual int32_t nextDoc();
+    };
+    
+    /// An empty {@code DocIdSet} instance for easy use, eg. in Filters that hit no documents.
+    class LPPAPI EmptyDocIdSet : public DocIdSet
+    {
+    public:
+        virtual ~EmptyDocIdSet();
+        LUCENE_CLASS(EmptyDocIdSet);
+    
+    public:
+        virtual DocIdSetIteratorPtr iterator();
+        virtual bool isCacheable();
+    };
 }
+
+#endif

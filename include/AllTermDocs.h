@@ -4,24 +4,27 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef ALLTERMDOCS_H
+#define ALLTERMDOCS_H
 
 #include "AbstractAllTermDocs.h"
 
 namespace Lucene
 {
-	class LPPAPI AllTermDocs : public AbstractAllTermDocs
-	{
-	public:
-		AllTermDocs(SegmentReaderPtr parent);
-		virtual ~AllTermDocs();
-		
-		LUCENE_CLASS(AllTermDocs);
-	
-	protected:
-		BitVectorWeakPtr _deletedDocs;
-		
-	public:
-	    virtual bool isDeleted(int32_t doc);
-	};
+    class LPPAPI AllTermDocs : public AbstractAllTermDocs
+    {
+    public:
+        AllTermDocs(SegmentReaderPtr parent);
+        virtual ~AllTermDocs();
+        
+        LUCENE_CLASS(AllTermDocs);
+    
+    protected:
+        BitVectorWeakPtr _deletedDocs;
+        
+    public:
+        virtual bool isDeleted(int32_t doc);
+    };
 }
+
+#endif

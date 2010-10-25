@@ -4,28 +4,31 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef HITQUEUE_H
+#define HITQUEUE_H
 
 #include "HitQueueBase.h"
 
 namespace Lucene
 {
-	class LPPAPI HitQueue : public HitQueueBase
-	{
-	public:
-		/// Creates a new instance with size elements.
-		HitQueue(int32_t size, bool prePopulate);
-		virtual ~HitQueue();
-	
-		LUCENE_CLASS(HitQueue);
-	
-	protected:
-		bool prePopulate;
-	
-	protected:
-		virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
-		
-		/// Returns null if prePopulate is false.
-		virtual ScoreDocPtr getSentinelObject();
-	};
+    class LPPAPI HitQueue : public HitQueueBase
+    {
+    public:
+        /// Creates a new instance with size elements.
+        HitQueue(int32_t size, bool prePopulate);
+        virtual ~HitQueue();
+    
+        LUCENE_CLASS(HitQueue);
+    
+    protected:
+        bool prePopulate;
+    
+    protected:
+        virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
+        
+        /// Returns null if prePopulate is false.
+        virtual ScoreDocPtr getSentinelObject();
+    };
 }
+
+#endif

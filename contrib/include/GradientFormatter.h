@@ -4,45 +4,46 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef GRADIENTFORMATTER_H
+#define GRADIENTFORMATTER_H
 
 #include "Formatter.h"
 
 namespace Lucene
 {
-	/// Formats text with different color intensity depending on the score of the term.
-	class LPPAPI GradientFormatter : public Formatter, public LuceneObject
-	{
-	public:
-	    GradientFormatter(double maxScore, const String& minForegroundColor, const String& maxForegroundColor, const String& minBackgroundColor, const String& maxBackgroundColor);
-		virtual ~GradientFormatter();
-		
-		LUCENE_CLASS(GradientFormatter);
-	
-	protected:
-	    double maxScore;
-	    bool highlightForeground;
-	    bool highlightBackground;
-	
-	public:
-	    int32_t fgRMin;
-	    int32_t fgGMin;
-	    int32_t fgBMin;
-	    
-	    int32_t fgRMax;
-	    int32_t fgGMax;
-	    int32_t fgBMax;
-	    
-	    int32_t bgRMin;
-	    int32_t bgGMin;
-	    int32_t bgBMin;
-	    
-	    int32_t bgRMax;
-	    int32_t bgGMax;
-	    int32_t bgBMax;
-	
-	public:
-		virtual String highlightTerm(const String& originalText, TokenGroupPtr tokenGroup);
+    /// Formats text with different color intensity depending on the score of the term.
+    class LPPAPI GradientFormatter : public Formatter, public LuceneObject
+    {
+    public:
+        GradientFormatter(double maxScore, const String& minForegroundColor, const String& maxForegroundColor, const String& minBackgroundColor, const String& maxBackgroundColor);
+        virtual ~GradientFormatter();
+        
+        LUCENE_CLASS(GradientFormatter);
+    
+    protected:
+        double maxScore;
+        bool highlightForeground;
+        bool highlightBackground;
+    
+    public:
+        int32_t fgRMin;
+        int32_t fgGMin;
+        int32_t fgBMin;
+        
+        int32_t fgRMax;
+        int32_t fgGMax;
+        int32_t fgBMax;
+        
+        int32_t bgRMin;
+        int32_t bgGMin;
+        int32_t bgBMin;
+        
+        int32_t bgRMax;
+        int32_t bgGMax;
+        int32_t bgBMax;
+    
+    public:
+        virtual String highlightTerm(const String& originalText, TokenGroupPtr tokenGroup);
     
     protected:
         String getForegroundColorString(double score);
@@ -53,5 +54,7 @@ namespace Lucene
         
         /// Converts a hex string into an int.
         static int32_t hexToInt(const String& hex);
-	};
+    };
 }
+
+#endif

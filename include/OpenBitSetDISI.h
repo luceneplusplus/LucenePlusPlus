@@ -4,44 +4,47 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef OPENBITSETDISI_H
+#define OPENBITSETDISI_H
 
 #include "OpenBitSet.h"
 
 namespace Lucene
 {
-	class LPPAPI OpenBitSetDISI : public OpenBitSet
-	{
-	public:
-		/// Construct an OpenBitSetDISI with its bits set from the doc ids of the given DocIdSetIterator.
-		/// Also give a maximum size one larger than the largest doc id for which a bit may ever be set on 
-		/// this OpenBitSetDISI.
-		OpenBitSetDISI(DocIdSetIteratorPtr disi, int32_t maxSize);
-		
-		/// Construct an OpenBitSetDISI with no bits set, and a given maximum size one larger than the largest 
-		/// doc id for which a bit may ever be set on this OpenBitSetDISI.
-		OpenBitSetDISI(int32_t maxSize);
-		
-		virtual ~OpenBitSetDISI();
-	
-		LUCENE_CLASS(OpenBitSetDISI);
-	
-	public:
-		/// Perform an in-place OR with the doc ids from a given DocIdSetIterator, setting the bit for each 
-		/// such doc id.  These doc ids should be smaller than the maximum size passed to the constructor.
-		void inPlaceOr(DocIdSetIteratorPtr disi);
-		
-		/// Perform an in-place AND with the doc ids from a given DocIdSetIterator, leaving only the bits set 
-		/// for which the doc ids are in common.  These doc ids should be smaller than the maximum size passed 
-		/// to the constructor.
-		void inPlaceAnd(DocIdSetIteratorPtr disi);
-		
-		/// Perform an in-place NOT with the doc ids from a given DocIdSetIterator, clearing all the bits for 
-		/// each such doc id.  These doc ids should be smaller than the maximum size passed to the constructor.
-		void inPlaceNot(DocIdSetIteratorPtr disi);
-		
-		/// Perform an inplace XOR with the doc ids from a given DocIdSetIterator, flipping all the bits for 
-		/// each such doc id.  These doc ids should be smaller than the maximum size passed to the constructor.
-		void inPlaceXor(DocIdSetIteratorPtr disi);
-	};
+    class LPPAPI OpenBitSetDISI : public OpenBitSet
+    {
+    public:
+        /// Construct an OpenBitSetDISI with its bits set from the doc ids of the given DocIdSetIterator.
+        /// Also give a maximum size one larger than the largest doc id for which a bit may ever be set on 
+        /// this OpenBitSetDISI.
+        OpenBitSetDISI(DocIdSetIteratorPtr disi, int32_t maxSize);
+        
+        /// Construct an OpenBitSetDISI with no bits set, and a given maximum size one larger than the largest 
+        /// doc id for which a bit may ever be set on this OpenBitSetDISI.
+        OpenBitSetDISI(int32_t maxSize);
+        
+        virtual ~OpenBitSetDISI();
+    
+        LUCENE_CLASS(OpenBitSetDISI);
+    
+    public:
+        /// Perform an in-place OR with the doc ids from a given DocIdSetIterator, setting the bit for each 
+        /// such doc id.  These doc ids should be smaller than the maximum size passed to the constructor.
+        void inPlaceOr(DocIdSetIteratorPtr disi);
+        
+        /// Perform an in-place AND with the doc ids from a given DocIdSetIterator, leaving only the bits set 
+        /// for which the doc ids are in common.  These doc ids should be smaller than the maximum size passed 
+        /// to the constructor.
+        void inPlaceAnd(DocIdSetIteratorPtr disi);
+        
+        /// Perform an in-place NOT with the doc ids from a given DocIdSetIterator, clearing all the bits for 
+        /// each such doc id.  These doc ids should be smaller than the maximum size passed to the constructor.
+        void inPlaceNot(DocIdSetIteratorPtr disi);
+        
+        /// Perform an inplace XOR with the doc ids from a given DocIdSetIterator, flipping all the bits for 
+        /// each such doc id.  These doc ids should be smaller than the maximum size passed to the constructor.
+        void inPlaceXor(DocIdSetIteratorPtr disi);
+    };
 }
+
+#endif

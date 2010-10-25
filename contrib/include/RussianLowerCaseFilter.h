@@ -4,27 +4,30 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef RUSSIANLOWERCASEFILTER_H
+#define RUSSIANLOWERCASEFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// Normalizes token text to lower case.
-	class LPPAPI RussianLowerCaseFilter : public TokenFilter
-	{
-	public:
-		RussianLowerCaseFilter(TokenStreamPtr input);
-		
-		virtual ~RussianLowerCaseFilter();
-		
-		LUCENE_CLASS(RussianLowerCaseFilter);
+    /// Normalizes token text to lower case.
+    class LPPAPI RussianLowerCaseFilter : public TokenFilter
+    {
+    public:
+        RussianLowerCaseFilter(TokenStreamPtr input);
+        
+        virtual ~RussianLowerCaseFilter();
+        
+        LUCENE_CLASS(RussianLowerCaseFilter);
     
     protected:
         TermAttributePtr termAtt;
     
     public:
         virtual bool incrementToken();
-	};
+    };
 }
+
+#endif

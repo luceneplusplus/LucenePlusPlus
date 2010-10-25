@@ -4,25 +4,26 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef DUTCHSTEMMER_H
+#define DUTCHSTEMMER_H
 
 #include "LuceneContrib.h"
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// A stemmer for Dutch words.
-	///
-	/// The algorithm is an implementation of the 
-	/// <a href="http://snowball.tartarus.org/algorithms/dutch/stemmer.html">dutch stemming</a>
-	/// algorithm in Martin Porter's snowball project.
-	class LPPAPI DutchStemmer : public LuceneObject
-	{
-	public:
-	    DutchStemmer();
-	    virtual ~DutchStemmer();
-	    
-	    LUCENE_CLASS(DutchStemmer);
+    /// A stemmer for Dutch words.
+    ///
+    /// The algorithm is an implementation of the 
+    /// <a href="http://snowball.tartarus.org/algorithms/dutch/stemmer.html">dutch stemming</a>
+    /// algorithm in Martin Porter's snowball project.
+    class LPPAPI DutchStemmer : public LuceneObject
+    {
+    public:
+        DutchStemmer();
+        virtual ~DutchStemmer();
+        
+        LUCENE_CLASS(DutchStemmer);
     
     protected:
         /// Buffer for the terms while stemming them.
@@ -86,5 +87,7 @@ namespace Lucene
         void reStoreYandI();
         
         bool isVowel(wchar_t c);
-	};
+    };
 }
+
+#endif

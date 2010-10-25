@@ -4,28 +4,29 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef ARABICSTEMMER_H
+#define ARABICSTEMMER_H
 
 #include "LuceneContrib.h"
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Stemmer for Arabic.
-	///
-	/// Stemming  is done in-place for efficiency, operating on a termbuffer.
-	///
-	/// Stemming is defined as:
-	/// <ul>
-	/// <li> Removal of attached definite article, conjunction, and prepositions.
-	/// <li> Stemming of common suffixes.
-	/// </ul>
-	class LPPAPI ArabicStemmer : public LuceneObject
-	{
-	public:
-	    virtual ~ArabicStemmer();
-	    
-	    LUCENE_CLASS(ArabicStemmer);
+    /// Stemmer for Arabic.
+    ///
+    /// Stemming  is done in-place for efficiency, operating on a termbuffer.
+    ///
+    /// Stemming is defined as:
+    /// <ul>
+    /// <li> Removal of attached definite article, conjunction, and prepositions.
+    /// <li> Stemming of common suffixes.
+    /// </ul>
+    class LPPAPI ArabicStemmer : public LuceneObject
+    {
+    public:
+        virtual ~ArabicStemmer();
+        
+        LUCENE_CLASS(ArabicStemmer);
     
     public:
         static const wchar_t ALEF;
@@ -91,5 +92,7 @@ namespace Lucene
         /// @param len length of input buffer
         /// @return length of input buffer after deletion
         int32_t deleteChar(wchar_t* s, int32_t pos, int32_t len);
-	};
+    };
 }
+
+#endif

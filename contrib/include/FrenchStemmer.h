@@ -4,24 +4,25 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef FRENCHSTEMMER_H
+#define FRENCHSTEMMER_H
 
 #include "LuceneContrib.h"
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// A stemmer for French words.
-	///
-	/// The algorithm is based on the work of Dr Martin Porter on his snowball project refer to 
-	/// http://snowball.sourceforge.net/french/stemmer.html (French stemming algorithm) for details.
-	class LPPAPI FrenchStemmer : public LuceneObject
-	{
-	public:
-	    FrenchStemmer();
-	    virtual ~FrenchStemmer();
-	    
-	    LUCENE_CLASS(FrenchStemmer);
+    /// A stemmer for French words.
+    ///
+    /// The algorithm is based on the work of Dr Martin Porter on his snowball project refer to 
+    /// http://snowball.sourceforge.net/french/stemmer.html (French stemming algorithm) for details.
+    class LPPAPI FrenchStemmer : public LuceneObject
+    {
+    public:
+        FrenchStemmer();
+        virtual ~FrenchStemmer();
+        
+        LUCENE_CLASS(FrenchStemmer);
     
     protected:
         /// Buffer for the terms while stemming them.
@@ -172,5 +173,7 @@ namespace Lucene
         /// Checks a term if it can be processed correctly.
         /// @return boolean - true if, and only if, the given term consists in letters.
         bool isStemmable(const String& term);
-	};
+    };
 }
+
+#endif

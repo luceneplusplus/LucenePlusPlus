@@ -4,19 +4,22 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef OPENBITSETITERATOR_H
+#define OPENBITSETITERATOR_H
 
 #include "DocIdBitSet.h"
 
 namespace Lucene
 {
-	/// An iterator to iterate over set bits in an OpenBitSet.
-	class LPPAPI OpenBitSetIterator : public DocIdBitSetIterator
-	{
-	public:
-		OpenBitSetIterator(OpenBitSetPtr bitSet);
-		virtual ~OpenBitSetIterator();
-		
-		LUCENE_CLASS(OpenBitSetIterator);
-	};
+    /// An iterator to iterate over set bits in an OpenBitSet.
+    class LPPAPI OpenBitSetIterator : public DocIdBitSetIterator
+    {
+    public:
+        OpenBitSetIterator(OpenBitSetPtr bitSet);
+        virtual ~OpenBitSetIterator();
+        
+        LUCENE_CLASS(OpenBitSetIterator);
+    };
 }
+
+#endif

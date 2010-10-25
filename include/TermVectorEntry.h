@@ -4,45 +4,48 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TERMVECTORENTRY_H
+#define TERMVECTORENTRY_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Convenience class for holding TermVector information.
-	class LPPAPI TermVectorEntry : public LuceneObject
-	{
-	public:
-		TermVectorEntry(const String& field = L"", const String& term = L"", int32_t frequency = 0, 
-						Collection<TermVectorOffsetInfoPtr> offsets = Collection<TermVectorOffsetInfoPtr>(),
-						Collection<int32_t> positions = Collection<int32_t>());
-		virtual ~TermVectorEntry();
-		
-		LUCENE_CLASS(TermVectorEntry);
-			
-	protected:
-		String field;
-		String term;
-		int32_t frequency;
-		Collection<TermVectorOffsetInfoPtr> offsets;
-	
-	public:
-		Collection<int32_t> positions;
-	
-	public:
-		String getField();
-		int32_t getFrequency();
-		Collection<TermVectorOffsetInfoPtr> getOffsets();
-		Collection<int32_t> getPositions();
-		String getTerm();
-		
-		void setFrequency(int32_t frequency);
-		void setOffsets(Collection<TermVectorOffsetInfoPtr> offsets);
-		void setPositions(Collection<int32_t> positions);
-		
-		virtual bool equals(LuceneObjectPtr other);
-		virtual int32_t hashCode();
-		virtual String toString();
-	};
+    /// Convenience class for holding TermVector information.
+    class LPPAPI TermVectorEntry : public LuceneObject
+    {
+    public:
+        TermVectorEntry(const String& field = L"", const String& term = L"", int32_t frequency = 0, 
+                        Collection<TermVectorOffsetInfoPtr> offsets = Collection<TermVectorOffsetInfoPtr>(),
+                        Collection<int32_t> positions = Collection<int32_t>());
+        virtual ~TermVectorEntry();
+        
+        LUCENE_CLASS(TermVectorEntry);
+            
+    protected:
+        String field;
+        String term;
+        int32_t frequency;
+        Collection<TermVectorOffsetInfoPtr> offsets;
+    
+    public:
+        Collection<int32_t> positions;
+    
+    public:
+        String getField();
+        int32_t getFrequency();
+        Collection<TermVectorOffsetInfoPtr> getOffsets();
+        Collection<int32_t> getPositions();
+        String getTerm();
+        
+        void setFrequency(int32_t frequency);
+        void setOffsets(Collection<TermVectorOffsetInfoPtr> offsets);
+        void setPositions(Collection<int32_t> positions);
+        
+        virtual bool equals(LuceneObjectPtr other);
+        virtual int32_t hashCode();
+        virtual String toString();
+    };
 }
+
+#endif

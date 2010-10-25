@@ -4,26 +4,29 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef AVERAGEPAYLOADFUNCTION_H
+#define AVERAGEPAYLOADFUNCTION_H
 
 #include "PayloadFunction.h"
 
 namespace Lucene
 {
-	/// Calculate the final score as the average score of all payloads seen.
-	///
-	/// Is thread safe and completely reusable. 
-	class LPPAPI AveragePayloadFunction : public PayloadFunction
-	{
-	public:
-		virtual ~AveragePayloadFunction();
-		LUCENE_CLASS(AveragePayloadFunction);
-	
-	public:
-		virtual double currentScore(int32_t docId, const String& field, int32_t start, int32_t end, int32_t numPayloadsSeen, 
-									double currentScore, double currentPayloadScore);
-		virtual double docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore);
-		virtual int32_t hashCode();
-		virtual bool equals(LuceneObjectPtr other);
-	};
+    /// Calculate the final score as the average score of all payloads seen.
+    ///
+    /// Is thread safe and completely reusable. 
+    class LPPAPI AveragePayloadFunction : public PayloadFunction
+    {
+    public:
+        virtual ~AveragePayloadFunction();
+        LUCENE_CLASS(AveragePayloadFunction);
+    
+    public:
+        virtual double currentScore(int32_t docId, const String& field, int32_t start, int32_t end, int32_t numPayloadsSeen, 
+                                    double currentScore, double currentPayloadScore);
+        virtual double docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore);
+        virtual int32_t hashCode();
+        virtual bool equals(LuceneObjectPtr other);
+    };
 }
+
+#endif

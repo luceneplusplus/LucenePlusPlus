@@ -4,33 +4,36 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef SINGLETERMENUM_H
+#define SINGLETERMENUM_H
 
 #include "FilteredTermEnum.h"
 
 namespace Lucene
 {
-	/// Subclass of FilteredTermEnum for enumerating a single term.
-	///
-	/// This can be used by {@link MultiTermQuery}s that need only visit one term, but want to preserve 
-	/// MultiTermQuery semantics such as {@link MultiTermQuery#rewriteMethod}.
-	class LPPAPI SingleTermEnum : public FilteredTermEnum
-	{
-	public:
-		SingleTermEnum(IndexReaderPtr reader, TermPtr singleTerm);
-		virtual ~SingleTermEnum();
-	
-		LUCENE_CLASS(SingleTermEnum);
-	
-	protected:
-		TermPtr singleTerm;
-		bool _endEnum;
-	
-	public:
-		virtual double difference();
-	
-	protected:
-		virtual bool endEnum();
-		virtual bool termCompare(TermPtr term);
-	};
+    /// Subclass of FilteredTermEnum for enumerating a single term.
+    ///
+    /// This can be used by {@link MultiTermQuery}s that need only visit one term, but want to preserve 
+    /// MultiTermQuery semantics such as {@link MultiTermQuery#rewriteMethod}.
+    class LPPAPI SingleTermEnum : public FilteredTermEnum
+    {
+    public:
+        SingleTermEnum(IndexReaderPtr reader, TermPtr singleTerm);
+        virtual ~SingleTermEnum();
+    
+        LUCENE_CLASS(SingleTermEnum);
+    
+    protected:
+        TermPtr singleTerm;
+        bool _endEnum;
+    
+    public:
+        virtual double difference();
+    
+    protected:
+        virtual bool endEnum();
+        virtual bool termCompare(TermPtr term);
+    };
 }
+
+#endif

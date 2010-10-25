@@ -4,22 +4,23 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef GREEKLOWERCASEFILTER_H
+#define GREEKLOWERCASEFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// Normalizes token text to lower case, removes some Greek diacritics, and standardizes 
-	/// final sigma to sigma. 
-	class LPPAPI GreekLowerCaseFilter : public TokenFilter
-	{
-	public:
-		GreekLowerCaseFilter(TokenStreamPtr input);
-		virtual ~GreekLowerCaseFilter();
-		
-		LUCENE_CLASS(GreekLowerCaseFilter);
+    /// Normalizes token text to lower case, removes some Greek diacritics, and standardizes 
+    /// final sigma to sigma. 
+    class LPPAPI GreekLowerCaseFilter : public TokenFilter
+    {
+    public:
+        GreekLowerCaseFilter(TokenStreamPtr input);
+        virtual ~GreekLowerCaseFilter();
+        
+        LUCENE_CLASS(GreekLowerCaseFilter);
     
     protected:
         TermAttributePtr termAtt;
@@ -29,5 +30,7 @@ namespace Lucene
     
     protected:
         wchar_t lowerCase(wchar_t codepoint);
-	};
+    };
 }
+
+#endif

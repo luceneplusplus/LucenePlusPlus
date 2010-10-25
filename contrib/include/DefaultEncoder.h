@@ -4,20 +4,23 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef DEFAULTENCODER_H
+#define DEFAULTENCODER_H
 
 #include "Encoder.h"
 
 namespace Lucene
 {
-	/// Simple {@link Encoder} implementation that does not modify the output.
-	class LPPAPI DefaultEncoder : public Encoder, public LuceneObject
-	{
-	public:
-		virtual ~DefaultEncoder();
-		LUCENE_CLASS(DefaultEncoder);
-	
-	public:
-		virtual String encodeText(const String& originalText);
-	};
+    /// Simple {@link Encoder} implementation that does not modify the output.
+    class LPPAPI DefaultEncoder : public Encoder, public LuceneObject
+    {
+    public:
+        virtual ~DefaultEncoder();
+        LUCENE_CLASS(DefaultEncoder);
+    
+    public:
+        virtual String encodeText(const String& originalText);
+    };
 }
+
+#endif

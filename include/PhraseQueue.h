@@ -4,21 +4,24 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef PHRASEQUEUE_H
+#define PHRASEQUEUE_H
 
 #include "PriorityQueue.h"
 
 namespace Lucene
 {
-	class LPPAPI PhraseQueue : public PriorityQueue<PhrasePositionsPtr>
-	{
-	public:
-		PhraseQueue(int32_t size);
-		virtual ~PhraseQueue();
-	
-		LUCENE_CLASS(PhraseQueue);
-	
-	protected:
-		virtual bool lessThan(const PhrasePositionsPtr& first, const PhrasePositionsPtr& second);
-	};
+    class LPPAPI PhraseQueue : public PriorityQueue<PhrasePositionsPtr>
+    {
+    public:
+        PhraseQueue(int32_t size);
+        virtual ~PhraseQueue();
+    
+        LUCENE_CLASS(PhraseQueue);
+    
+    protected:
+        virtual bool lessThan(const PhrasePositionsPtr& first, const PhrasePositionsPtr& second);
+    };
 }
+
+#endif

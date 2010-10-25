@@ -4,18 +4,19 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef UNICODEUTILS_H
+#define UNICODEUTILS_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	class LPPAPI UnicodeUtil
-	{
-	public:
-		virtual ~UnicodeUtil();
-	
-	public:
+    class LPPAPI UnicodeUtil
+    {
+    public:
+        virtual ~UnicodeUtil();
+    
+    public:
         /// Return true if supplied character is alpha-numeric.
         static bool isAlnum(wchar_t c);
         
@@ -45,54 +46,56 @@ namespace Lucene
         
         /// Return lowercase representation of a given character.
         static wchar_t toLower(wchar_t c);
-	};
-	
-	/// Utility class that contains utf8 and unicode translations.
-	template <typename TYPE> 
-	class TranslationResult : public LuceneObject
-	{
-	public:
-		TranslationResult()
-		{
-			result = Array<TYPE>::newInstance(10);
-			length = 0;
-		}
-		
-	public:
-		Array<TYPE> result;
-		int32_t length;
-	
-	public:
-		void setLength(int32_t length)
-		{
-			if (!result)
-				result = Array<TYPE>::newInstance((int32_t)(1.5 * (double)length));
-			if (result.length() < length)
-				result.resize((int32_t)(1.5 * (double)length));
-			this->length = length;
-		}
-		
-		void copyText(const TranslationResult& other)
-		{
-			setLength(other.length);
-			MiscUtils::arrayCopy(other.result.get(), 0, result.get(), 0, other.length);
-		}
-		
-		void copyText(boost::shared_ptr< TranslationResult<TYPE> > other)
-		{
-			copyText(*other);
-		}
-	};
+    };
+    
+    /// Utility class that contains utf8 and unicode translations.
+    template <typename TYPE> 
+    class TranslationResult : public LuceneObject
+    {
+    public:
+        TranslationResult()
+        {
+            result = Array<TYPE>::newInstance(10);
+            length = 0;
+        }
+        
+    public:
+        Array<TYPE> result;
+        int32_t length;
+    
+    public:
+        void setLength(int32_t length)
+        {
+            if (!result)
+                result = Array<TYPE>::newInstance((int32_t)(1.5 * (double)length));
+            if (result.length() < length)
+                result.resize((int32_t)(1.5 * (double)length));
+            this->length = length;
+        }
+        
+        void copyText(const TranslationResult& other)
+        {
+            setLength(other.length);
+            MiscUtils::arrayCopy(other.result.get(), 0, result.get(), 0, other.length);
+        }
+        
+        void copyText(boost::shared_ptr< TranslationResult<TYPE> > other)
+        {
+            copyText(*other);
+        }
+    };
 
-	class LPPAPI UTF8Result : public TranslationResult<uint8_t>
-	{
-	public:
-		virtual ~UTF8Result();
-	};
-	
-	class LPPAPI UnicodeResult : public TranslationResult<wchar_t>
-	{
-	public:
-		virtual ~UnicodeResult();
-	};	
+    class LPPAPI UTF8Result : public TranslationResult<uint8_t>
+    {
+    public:
+        virtual ~UTF8Result();
+    };
+    
+    class LPPAPI UnicodeResult : public TranslationResult<wchar_t>
+    {
+    public:
+        virtual ~UnicodeResult();
+    };    
 }
+
+#endif

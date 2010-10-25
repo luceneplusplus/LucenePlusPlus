@@ -4,29 +4,32 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef PAYLOADHELPER_H
+#define PAYLOADHELPER_H
 
 #include "test_lucene.h"
 
 namespace Lucene
 {
-	class PayloadHelper
-	{
-	public:
-		virtual ~PayloadHelper();
-	
-	public:
-		static const String NO_PAYLOAD_FIELD;
-		static const String MULTI_FIELD;
-		static const String FIELD;
+    class PayloadHelper
+    {
+    public:
+        virtual ~PayloadHelper();
+    
+    public:
+        static const String NO_PAYLOAD_FIELD;
+        static const String MULTI_FIELD;
+        static const String FIELD;
 
-	public:
-		static ByteArray payloadField();
-		static ByteArray payloadMultiField1();
-		static ByteArray payloadMultiField2();
-		
-		/// Sets up a RAMDirectory, and adds documents (using intToEnglish()) with two fields: field and multiField
-		/// and analyzes them using the PayloadHelperAnalyzer
-		static IndexSearcherPtr setUp(SimilarityPtr similarity, int32_t numDocs);
-	};
+    public:
+        static ByteArray payloadField();
+        static ByteArray payloadMultiField1();
+        static ByteArray payloadMultiField2();
+        
+        /// Sets up a RAMDirectory, and adds documents (using intToEnglish()) with two fields: field and multiField
+        /// and analyzes them using the PayloadHelperAnalyzer
+        static IndexSearcherPtr setUp(SimilarityPtr similarity, int32_t numDocs);
+    };
 }
+
+#endif

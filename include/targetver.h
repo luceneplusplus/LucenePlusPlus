@@ -4,7 +4,8 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TARGETVER_H
+#define TARGETVER_H
 
 #ifdef _WIN32
 
@@ -16,4 +17,5 @@
 #define _WIN32_WINNT 0x0501     // Change this to the appropriate value to target other versions of Windows.
 #endif
 
+#endif
 #endif

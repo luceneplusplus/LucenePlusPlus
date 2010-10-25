@@ -4,7 +4,8 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #ifdef _WIN32
 #pragma warning(disable:4251)
@@ -83,3 +84,5 @@
 
 // Make internal bitset storage public
 #define BOOST_DYNAMIC_BITSET_DONT_USE_FRIENDS
+
+#endif

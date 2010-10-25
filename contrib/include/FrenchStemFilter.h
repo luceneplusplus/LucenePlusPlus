@@ -4,29 +4,30 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef FRENCHSTEMFILTER_H
+#define FRENCHSTEMFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// A {@link TokenFilter} that stems French words. 
-	///
-	/// It supports a table of words that should not be stemmed at all.  The stemmer used can 
-	/// be changed at runtime after the filter object is created (as long as it is a 
-	/// {@link FrenchStemmer}).
-	class LPPAPI FrenchStemFilter : public TokenFilter
-	{
-	public:
-		FrenchStemFilter(TokenStreamPtr input);
-		
-		/// Builds a FrenchStemFilter that uses an exclusion table.
-		FrenchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable);
-		
-		virtual ~FrenchStemFilter();
-		
-		LUCENE_CLASS(FrenchStemFilter);
+    /// A {@link TokenFilter} that stems French words. 
+    ///
+    /// It supports a table of words that should not be stemmed at all.  The stemmer used can 
+    /// be changed at runtime after the filter object is created (as long as it is a 
+    /// {@link FrenchStemmer}).
+    class LPPAPI FrenchStemFilter : public TokenFilter
+    {
+    public:
+        FrenchStemFilter(TokenStreamPtr input);
+        
+        /// Builds a FrenchStemFilter that uses an exclusion table.
+        FrenchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable);
+        
+        virtual ~FrenchStemFilter();
+        
+        LUCENE_CLASS(FrenchStemFilter);
     
     protected:
         /// {@link FrenchStemmer} in use by this filter.
@@ -43,5 +44,7 @@ namespace Lucene
         
         /// Set an alternative exclusion list for this filter.
         void setExclusionSet(HashSet<String> exclusiontable);
-	};
+    };
 }
+
+#endif

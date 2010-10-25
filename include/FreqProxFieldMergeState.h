@@ -4,42 +4,45 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef FREQPROXFIELDMERGESTATE_H
+#define FREQPROXFIELDMERGESTATE_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Used by DocumentsWriter to merge the postings from multiple ThreadStates when creating a segment
-	class LPPAPI FreqProxFieldMergeState : public LuceneObject
-	{
-	public:
-		FreqProxFieldMergeState(FreqProxTermsWriterPerFieldPtr field);
-		virtual ~FreqProxFieldMergeState();
-		
-		LUCENE_CLASS(FreqProxFieldMergeState);
-			
-	public:
-		FreqProxTermsWriterPerFieldPtr field;
-		int32_t numPostings;
-		CharBlockPoolPtr charPool;
-		Collection<RawPostingListPtr> postings;
-		
-		FreqProxTermsWriterPostingListPtr p;
-		CharArray text;
-		int32_t textOffset;
-		
-		ByteSliceReaderPtr freq;
-		ByteSliceReaderPtr prox;
-		
-		int32_t docID;
-		int32_t termFreq;
-	
-	protected:
-		int32_t postingUpto;
-		
-	public:
-		bool nextTerm();
-		bool nextDoc();  
-	};
+    /// Used by DocumentsWriter to merge the postings from multiple ThreadStates when creating a segment
+    class LPPAPI FreqProxFieldMergeState : public LuceneObject
+    {
+    public:
+        FreqProxFieldMergeState(FreqProxTermsWriterPerFieldPtr field);
+        virtual ~FreqProxFieldMergeState();
+        
+        LUCENE_CLASS(FreqProxFieldMergeState);
+            
+    public:
+        FreqProxTermsWriterPerFieldPtr field;
+        int32_t numPostings;
+        CharBlockPoolPtr charPool;
+        Collection<RawPostingListPtr> postings;
+        
+        FreqProxTermsWriterPostingListPtr p;
+        CharArray text;
+        int32_t textOffset;
+        
+        ByteSliceReaderPtr freq;
+        ByteSliceReaderPtr prox;
+        
+        int32_t docID;
+        int32_t termFreq;
+    
+    protected:
+        int32_t postingUpto;
+        
+    public:
+        bool nextTerm();
+        bool nextDoc();  
+    };
 }
+
+#endif

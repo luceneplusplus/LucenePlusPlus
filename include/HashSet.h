@@ -4,126 +4,128 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef HASHSET_H
+#define HASHSET_H
 
 #include "LuceneSync.h"
-#include <boost/unordered_set.hpp>
 
 namespace Lucene
 {
     /// Utility template class to handle hash set collections that can be safely copied and shared
-	template < class TYPE, class HASH = boost::hash<TYPE>, class EQUAL = std::equal_to<TYPE> >
-	class HashSet : public LuceneSync
-	{
-	public:
-		typedef HashSet<TYPE, HASH, EQUAL> this_type;
-		typedef boost::unordered_set< TYPE, HASH, EQUAL, Allocator<TYPE> > set_type;
-		typedef typename set_type::iterator iterator;
-		typedef typename set_type::const_iterator const_iterator;
-	
-		virtual ~HashSet()
-		{
-		}
-	
-	protected:
-		boost::shared_ptr<set_type> setContainer;
-		
-	public:
-		static this_type newInstance()
-		{
-			this_type instance;
-			instance.setContainer = Lucene::newInstance<set_type>();
-			return instance;
-		}
-		
-		template <class ITER>
-		static this_type newInstance(ITER first, ITER last)
-		{
-			this_type instance;
-			instance.setContainer = Lucene::newInstance<set_type>(first, last);
-			return instance;
-		}
-		
-		void reset()
-		{
-			setContainer.reset();
-		}
-		
-		int32_t size() const
-		{
-			return setContainer->size();
-		}
-		
-		bool empty() const
-		{
-			return setContainer->empty();
-		}
-		
-		void clear()
-		{
-			setContainer->clear();
-		}
-		
-		iterator begin()
-		{
-			return setContainer->begin();
-		}
-		
-		iterator end()
-		{
-			return setContainer->end();
-		}
-		
-		const_iterator begin() const
-		{
-			return setContainer->begin();
-		}
-		
-		const_iterator end() const
-		{
-			return setContainer->end();
-		}
-		
-		operator bool() const
-		{
-			return setContainer;
-		}
-		
-		bool operator! () const
-		{
-			return !setContainer;
-		}
-		
-		set_type& operator= (const set_type& other)
-		{
-			setContainer = other.setContainer;
-			return *this;
-		}
-		
-		bool add(const TYPE& type)
-		{
-			return setContainer->insert(type).second;
-		}
-		
-		template <class ITER>
-		void addAll(ITER first, ITER last)
-		{
-			setContainer->insert(first, last);
-		}
-		
-		bool remove(const TYPE& type)
-		{
-			return (setContainer->erase(type) > 0);
-		}
-		
-		iterator find(const TYPE& type)
-		{
-			return setContainer->find(type);
-		}
-		
-		bool contains(const TYPE& type) const
-		{
-			return (setContainer->find(type) != setContainer->end());
-		}
+    template < class TYPE, class HASH = boost::hash<TYPE>, class EQUAL = std::equal_to<TYPE> >
+    class HashSet : public LuceneSync
+    {
+    public:
+        typedef HashSet<TYPE, HASH, EQUAL> this_type;
+        typedef boost::unordered_set< TYPE, HASH, EQUAL, Allocator<TYPE> > set_type;
+        typedef typename set_type::iterator iterator;
+        typedef typename set_type::const_iterator const_iterator;
+    
+        virtual ~HashSet()
+        {
+        }
+    
+    protected:
+        boost::shared_ptr<set_type> setContainer;
+        
+    public:
+        static this_type newInstance()
+        {
+            this_type instance;
+            instance.setContainer = Lucene::newInstance<set_type>();
+            return instance;
+        }
+        
+        template <class ITER>
+        static this_type newInstance(ITER first, ITER last)
+        {
+            this_type instance;
+            instance.setContainer = Lucene::newInstance<set_type>(first, last);
+            return instance;
+        }
+        
+        void reset()
+        {
+            setContainer.reset();
+        }
+        
+        int32_t size() const
+        {
+            return setContainer->size();
+        }
+        
+        bool empty() const
+        {
+            return setContainer->empty();
+        }
+        
+        void clear()
+        {
+            setContainer->clear();
+        }
+        
+        iterator begin()
+        {
+            return setContainer->begin();
+        }
+        
+        iterator end()
+        {
+            return setContainer->end();
+        }
+        
+        const_iterator begin() const
+        {
+            return setContainer->begin();
+        }
+        
+        const_iterator end() const
+        {
+            return setContainer->end();
+        }
+        
+        operator bool() const
+        {
+            return setContainer;
+        }
+        
+        bool operator! () const
+        {
+            return !setContainer;
+        }
+        
+        set_type& operator= (const set_type& other)
+        {
+            setContainer = other.setContainer;
+            return *this;
+        }
+        
+        bool add(const TYPE& type)
+        {
+            return setContainer->insert(type).second;
+        }
+        
+        template <class ITER>
+        void addAll(ITER first, ITER last)
+        {
+            setContainer->insert(first, last);
+        }
+        
+        bool remove(const TYPE& type)
+        {
+            return (setContainer->erase(type) > 0);
+        }
+        
+        iterator find(const TYPE& type)
+        {
+            return setContainer->find(type);
+        }
+        
+        bool contains(const TYPE& type) const
+        {
+            return (setContainer->find(type) != setContainer->end());
+        }
     };
 }
+
+#endif

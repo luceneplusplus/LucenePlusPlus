@@ -4,7 +4,8 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef LUCENEHEADERS_H
+#define LUCENEHEADERS_H
 
 #include "Lucene.h"
 
@@ -153,3 +154,5 @@
 #include "OpenBitSetIterator.h"
 #include "StringReader.h"
 #include "ThreadPool.h"
+
+#endif

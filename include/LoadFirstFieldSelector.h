@@ -4,22 +4,25 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef LOADFIRSTFIELDSELECTOR_H
+#define LOADFIRSTFIELDSELECTOR_H
 
 #include "FieldSelector.h"
 
 namespace Lucene
 {
-	/// Load the First field and break.
-	/// See {@link FieldSelectorResult#LOAD_AND_BREAK}
-	class LPPAPI LoadFirstFieldSelector : public FieldSelector
-	{
-	public:
-		virtual ~LoadFirstFieldSelector();
-		
-		LUCENE_CLASS(LoadFirstFieldSelector);
-	
-	public:
-		virtual FieldSelectorResult accept(const String& fieldName);
-	};
+    /// Load the First field and break.
+    /// See {@link FieldSelectorResult#LOAD_AND_BREAK}
+    class LPPAPI LoadFirstFieldSelector : public FieldSelector
+    {
+    public:
+        virtual ~LoadFirstFieldSelector();
+        
+        LUCENE_CLASS(LoadFirstFieldSelector);
+    
+    public:
+        virtual FieldSelectorResult accept(const String& fieldName);
+    };
 }
+
+#endif

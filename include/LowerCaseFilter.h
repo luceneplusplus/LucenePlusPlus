@@ -4,25 +4,28 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef LOWERCASEFILTER_H
+#define LOWERCASEFILTER_H
 
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// Normalizes token text to lower case.
-	class LPPAPI LowerCaseFilter : public TokenFilter
-	{
-	public:
-		LowerCaseFilter(TokenStreamPtr input);
-		virtual ~LowerCaseFilter();
-		
-		LUCENE_CLASS(LowerCaseFilter);
-	
-	protected:
-		TermAttributePtr termAtt;
-	
-	public:
-		virtual bool incrementToken();
-	};
+    /// Normalizes token text to lower case.
+    class LPPAPI LowerCaseFilter : public TokenFilter
+    {
+    public:
+        LowerCaseFilter(TokenStreamPtr input);
+        virtual ~LowerCaseFilter();
+        
+        LUCENE_CLASS(LowerCaseFilter);
+    
+    protected:
+        TermAttributePtr termAtt;
+    
+    public:
+        virtual bool incrementToken();
+    };
 }
+
+#endif

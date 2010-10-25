@@ -4,21 +4,24 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef EXACTPHRASESCORER_H
+#define EXACTPHRASESCORER_H
 
 #include "PhraseScorer.h"
 
 namespace Lucene
 {
-	class LPPAPI ExactPhraseScorer : public PhraseScorer
-	{
-	public:
-		ExactPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms);
-		virtual ~ExactPhraseScorer();
-	
-		LUCENE_CLASS(ExactPhraseScorer);
-	
-	protected:
-		virtual double phraseFreq();
-	};
+    class LPPAPI ExactPhraseScorer : public PhraseScorer
+    {
+    public:
+        ExactPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms);
+        virtual ~ExactPhraseScorer();
+    
+        LUCENE_CLASS(ExactPhraseScorer);
+    
+    protected:
+        virtual double phraseFreq();
+    };
 }
+
+#endif

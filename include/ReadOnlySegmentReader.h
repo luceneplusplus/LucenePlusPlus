@@ -4,23 +4,26 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef READONLYSEGMENTREADER_H
+#define READONLYSEGMENTREADER_H
 
 #include "SegmentReader.h"
 
 namespace Lucene
 {
-	class LPPAPI ReadOnlySegmentReader : public SegmentReader
-	{
-	public:
-		virtual ~ReadOnlySegmentReader();
-		
-		LUCENE_CLASS(ReadOnlySegmentReader);
-			
-	public:
-		static void noWrite();
-		
-		virtual void acquireWriteLock();
-		virtual bool isDeleted(int32_t n);
-	};
+    class LPPAPI ReadOnlySegmentReader : public SegmentReader
+    {
+    public:
+        virtual ~ReadOnlySegmentReader();
+        
+        LUCENE_CLASS(ReadOnlySegmentReader);
+            
+    public:
+        static void noWrite();
+        
+        virtual void acquireWriteLock();
+        virtual bool isDeleted(int32_t n);
+    };
 }
+
+#endif

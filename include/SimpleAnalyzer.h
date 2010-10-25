@@ -4,22 +4,25 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef SIMPLEANALYZER_H
+#define SIMPLEANALYZER_H
 
 #include "Analyzer.h"
 
 namespace Lucene
 {
-	/// An {@link Analyzer} that filters {@link LetterTokenizer} with {@link LowerCaseFilter}
-	class LPPAPI SimpleAnalyzer : public Analyzer
-	{
-	public:
-		virtual ~SimpleAnalyzer();
-		
-		LUCENE_CLASS(SimpleAnalyzer);
-	
-	public:
-		virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-		virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
-	};
+    /// An {@link Analyzer} that filters {@link LetterTokenizer} with {@link LowerCaseFilter}
+    class LPPAPI SimpleAnalyzer : public Analyzer
+    {
+    public:
+        virtual ~SimpleAnalyzer();
+        
+        LUCENE_CLASS(SimpleAnalyzer);
+    
+    public:
+        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+    };
 }
+
+#endif

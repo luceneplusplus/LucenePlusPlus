@@ -4,31 +4,34 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TERMINFO_H
+#define TERMINFO_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// A TermInfo is the record of information stored for a term.
-	class LPPAPI TermInfo : public LuceneObject
-	{
-	public:
-		TermInfo(TermInfoPtr ti);
-		TermInfo(int32_t df = 0, int64_t fp = 0, int64_t pp = 0);
-		virtual ~TermInfo();
-		
-		LUCENE_CLASS(TermInfo);
-			
-	public:
-		/// The number of documents which contain the term.
-		int32_t docFreq;
-		int64_t freqPointer;
-		int64_t proxPointer;
-		int32_t skipOffset;
-	
-	public:
-		void set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset);
-		void set(TermInfoPtr ti);
-	};
+    /// A TermInfo is the record of information stored for a term.
+    class LPPAPI TermInfo : public LuceneObject
+    {
+    public:
+        TermInfo(TermInfoPtr ti);
+        TermInfo(int32_t df = 0, int64_t fp = 0, int64_t pp = 0);
+        virtual ~TermInfo();
+        
+        LUCENE_CLASS(TermInfo);
+            
+    public:
+        /// The number of documents which contain the term.
+        int32_t docFreq;
+        int64_t freqPointer;
+        int64_t proxPointer;
+        int32_t skipOffset;
+    
+    public:
+        void set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset);
+        void set(TermInfoPtr ti);
+    };
 }
+
+#endif

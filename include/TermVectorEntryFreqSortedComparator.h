@@ -4,21 +4,24 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TERMVECTORENTRYFREQSORTEDCOMPARATOR_H
+#define TERMVECTORENTRYFREQSORTEDCOMPARATOR_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Compares {@link TermVectorEntry}s first by frequency and then by the term (case-sensitive)
-	class LPPAPI TermVectorEntryFreqSortedComparator : public LuceneObject
-	{
-	public:
-		virtual ~TermVectorEntryFreqSortedComparator();
-		
-		LUCENE_CLASS(TermVectorEntryFreqSortedComparator);
-			
-	public:
-		static bool compare(const TermVectorEntryPtr& first, const TermVectorEntryPtr& second);
-	};
+    /// Compares {@link TermVectorEntry}s first by frequency and then by the term (case-sensitive)
+    class LPPAPI TermVectorEntryFreqSortedComparator : public LuceneObject
+    {
+    public:
+        virtual ~TermVectorEntryFreqSortedComparator();
+        
+        LUCENE_CLASS(TermVectorEntryFreqSortedComparator);
+            
+    public:
+        static bool compare(const TermVectorEntryPtr& first, const TermVectorEntryPtr& second);
+    };
 }
+
+#endif

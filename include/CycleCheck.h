@@ -4,48 +4,51 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef CYCLECHECK_H
+#define CYCLECHECK_H
 
 #include "Lucene.h"
 
 namespace Lucene
 {
-	/// Debug utility to track shared_ptr utilization.
-	class LPPAPI CycleCheck
-	{
-	public:
-		virtual ~CycleCheck();
-	
-	protected:
-		static MapStringInt cycleMap;
-		static Set<LuceneObjectPtr*> staticRefs;
-	
-	protected:
-		void addRef(const String& className, int32_t ref);
-	    static void addStatic(LuceneObjectPtr* staticRef);
-	    
-	public:
-		template <class TYPE>
-		static void addStatic(TYPE& staticRef)
-		{
-		    addStatic(reinterpret_cast<LuceneObjectPtr*>(&staticRef));
-		}
-		
-		static void dumpRefs();
-	};
-	
-	template <class TYPE>
-	class CycleCheckT : public CycleCheck
-	{
-	public:
-		CycleCheckT()
-		{
-			addRef(TYPE::_getClassName(), 1);
-		}
-		
-		virtual ~CycleCheckT()
-		{
-			addRef(TYPE::_getClassName(), -1);
-		}
-	};
+    /// Debug utility to track shared_ptr utilization.
+    class LPPAPI CycleCheck
+    {
+    public:
+        virtual ~CycleCheck();
+    
+    protected:
+        static MapStringInt cycleMap;
+        static Set<LuceneObjectPtr*> staticRefs;
+    
+    protected:
+        void addRef(const String& className, int32_t ref);
+        static void addStatic(LuceneObjectPtr* staticRef);
+        
+    public:
+        template <class TYPE>
+        static void addStatic(TYPE& staticRef)
+        {
+            addStatic(reinterpret_cast<LuceneObjectPtr*>(&staticRef));
+        }
+        
+        static void dumpRefs();
+    };
+    
+    template <class TYPE>
+    class CycleCheckT : public CycleCheck
+    {
+    public:
+        CycleCheckT()
+        {
+            addRef(TYPE::_getClassName(), 1);
+        }
+        
+        virtual ~CycleCheckT()
+        {
+            addRef(TYPE::_getClassName(), -1);
+        }
+    };
 }
+
+#endif

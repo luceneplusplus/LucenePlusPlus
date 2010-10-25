@@ -4,63 +4,66 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
 
 #include "TokenStream.h"
 
 namespace Lucene
 {
-	/// A Tokenizer is a TokenStream whose input is a Reader.
-	///
-	/// This is an abstract class; subclasses must override {@link #incrementToken()}
-	///
-	/// Note: Subclasses overriding {@link #incrementToken()} must call {@link AttributeSource#clearAttributes()} 
-	/// before setting attributes.
-	class LPPAPI Tokenizer : public TokenStream
-	{
-	public:
-		/// Construct a tokenizer with null input.
-		Tokenizer();
-		
-		/// Construct a token stream processing the given input.
-		Tokenizer(ReaderPtr input);
-		
-		/// Construct a tokenizer with null input using the given AttributeFactory.
-		Tokenizer(AttributeFactoryPtr factory);
-		
-		/// Construct a token stream processing the given input using the given AttributeFactory.
-		Tokenizer(AttributeFactoryPtr factory, ReaderPtr input);
-		
-		/// Construct a token stream processing the given input using the given AttributeSource.
-		Tokenizer(AttributeSourcePtr source);
-		
-		/// Construct a token stream processing the given input using the given AttributeSource.
-		Tokenizer(AttributeSourcePtr source, ReaderPtr input);
-		
-		virtual ~Tokenizer();
-		
-		LUCENE_CLASS(Tokenizer);
-	
-	protected:
-		/// The text source for this Tokenizer.
-		ReaderPtr input;
-		CharStreamPtr charStream;
-	
-	public:
-		/// By default, closes the input Reader.
-		virtual void close();
-		
-		/// Return the corrected offset. If {@link #input} is a {@link CharStream} subclass this method calls 
-		/// {@link CharStream#correctOffset}, else returns currentOff.   
-		/// @param currentOff offset as seen in the output
-		/// @return corrected offset based on the input
-		/// @see CharStream#correctOffset
-		virtual int32_t correctOffset(int32_t currentOff);
-		
-		using TokenStream::reset;
-		
-		/// Reset the tokenizer to a new reader.  Typically, an analyzer (in its reusableTokenStream method) will 
-		/// use this to re-use a previously created tokenizer.
-		virtual void reset(ReaderPtr input);
-	};
+    /// A Tokenizer is a TokenStream whose input is a Reader.
+    ///
+    /// This is an abstract class; subclasses must override {@link #incrementToken()}
+    ///
+    /// Note: Subclasses overriding {@link #incrementToken()} must call {@link AttributeSource#clearAttributes()} 
+    /// before setting attributes.
+    class LPPAPI Tokenizer : public TokenStream
+    {
+    public:
+        /// Construct a tokenizer with null input.
+        Tokenizer();
+        
+        /// Construct a token stream processing the given input.
+        Tokenizer(ReaderPtr input);
+        
+        /// Construct a tokenizer with null input using the given AttributeFactory.
+        Tokenizer(AttributeFactoryPtr factory);
+        
+        /// Construct a token stream processing the given input using the given AttributeFactory.
+        Tokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        
+        /// Construct a token stream processing the given input using the given AttributeSource.
+        Tokenizer(AttributeSourcePtr source);
+        
+        /// Construct a token stream processing the given input using the given AttributeSource.
+        Tokenizer(AttributeSourcePtr source, ReaderPtr input);
+        
+        virtual ~Tokenizer();
+        
+        LUCENE_CLASS(Tokenizer);
+    
+    protected:
+        /// The text source for this Tokenizer.
+        ReaderPtr input;
+        CharStreamPtr charStream;
+    
+    public:
+        /// By default, closes the input Reader.
+        virtual void close();
+        
+        /// Return the corrected offset. If {@link #input} is a {@link CharStream} subclass this method calls 
+        /// {@link CharStream#correctOffset}, else returns currentOff.   
+        /// @param currentOff offset as seen in the output
+        /// @return corrected offset based on the input
+        /// @see CharStream#correctOffset
+        virtual int32_t correctOffset(int32_t currentOff);
+        
+        using TokenStream::reset;
+        
+        /// Reset the tokenizer to a new reader.  Typically, an analyzer (in its reusableTokenStream method) will 
+        /// use this to re-use a previously created tokenizer.
+        virtual void reset(ReaderPtr input);
+    };
 }
+
+#endif

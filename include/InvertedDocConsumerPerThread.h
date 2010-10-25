@@ -4,23 +4,26 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef INVERTEDDOCCONSUMERPERTHREAD_H
+#define INVERTEDDOCCONSUMERPERTHREAD_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	class LPPAPI InvertedDocConsumerPerThread : public LuceneObject
-	{
-	public:
-		virtual ~InvertedDocConsumerPerThread();
-		
-		LUCENE_CLASS(InvertedDocConsumerPerThread);
-	
-	public:
-		virtual void startDocument() = 0;
-		virtual InvertedDocConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo) = 0;
-		virtual DocWriterPtr finishDocument() = 0;
-		virtual void abort() = 0;
-	};
+    class LPPAPI InvertedDocConsumerPerThread : public LuceneObject
+    {
+    public:
+        virtual ~InvertedDocConsumerPerThread();
+        
+        LUCENE_CLASS(InvertedDocConsumerPerThread);
+    
+    public:
+        virtual void startDocument() = 0;
+        virtual InvertedDocConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo) = 0;
+        virtual DocWriterPtr finishDocument() = 0;
+        virtual void abort() = 0;
+    };
 }
+
+#endif

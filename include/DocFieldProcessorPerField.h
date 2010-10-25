@@ -4,32 +4,35 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef DOCFIELDPROCESSORPERFIELD_H
+#define DOCFIELDPROCESSORPERFIELD_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Holds all per thread, per field state.
-	class LPPAPI DocFieldProcessorPerField : public LuceneObject
-	{
-	public:
-		DocFieldProcessorPerField(DocFieldProcessorPerThreadPtr perThread, FieldInfoPtr fieldInfo);
-		virtual ~DocFieldProcessorPerField();
-		
-		LUCENE_CLASS(DocFieldProcessorPerField);
-				
-	public:
-		DocFieldConsumerPerFieldPtr consumer;
-		FieldInfoPtr fieldInfo;
-		
-		DocFieldProcessorPerFieldPtr next;
-		int32_t lastGen;
-		
-		int32_t fieldCount;
-		Collection<FieldablePtr> fields;
-	
-	public:
-		virtual void abort();
-	};
+    /// Holds all per thread, per field state.
+    class LPPAPI DocFieldProcessorPerField : public LuceneObject
+    {
+    public:
+        DocFieldProcessorPerField(DocFieldProcessorPerThreadPtr perThread, FieldInfoPtr fieldInfo);
+        virtual ~DocFieldProcessorPerField();
+        
+        LUCENE_CLASS(DocFieldProcessorPerField);
+                
+    public:
+        DocFieldConsumerPerFieldPtr consumer;
+        FieldInfoPtr fieldInfo;
+        
+        DocFieldProcessorPerFieldPtr next;
+        int32_t lastGen;
+        
+        int32_t fieldCount;
+        Collection<FieldablePtr> fields;
+    
+    public:
+        virtual void abort();
+    };
 }
+
+#endif

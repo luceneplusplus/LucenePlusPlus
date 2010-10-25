@@ -4,35 +4,38 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef PREFIXTERMENUM_H
+#define PREFIXTERMENUM_H
 
 #include "FilteredTermEnum.h"
 
 namespace Lucene
 {
-	/// Subclass of FilteredTermEnum for enumerating all terms that match the specified prefix filter term.
-	///
-	/// Term enumerations are always ordered by Term.compareTo().  Each term in the enumeration is greater than 
-	/// all that precede it.
-	class LPPAPI PrefixTermEnum : public FilteredTermEnum
-	{
-	public:
-		PrefixTermEnum(IndexReaderPtr reader, TermPtr prefix);
-		virtual ~PrefixTermEnum();
-	
-		LUCENE_CLASS(PrefixTermEnum);
-	
-	protected:
-		TermPtr prefix;
-		bool _endEnum;
-	
-	public:
-		virtual double difference();
-	
-	protected:
-		virtual bool endEnum();
-		virtual bool termCompare(TermPtr term);
-		
-		TermPtr getPrefixTerm();
-	};
+    /// Subclass of FilteredTermEnum for enumerating all terms that match the specified prefix filter term.
+    ///
+    /// Term enumerations are always ordered by Term.compareTo().  Each term in the enumeration is greater than 
+    /// all that precede it.
+    class LPPAPI PrefixTermEnum : public FilteredTermEnum
+    {
+    public:
+        PrefixTermEnum(IndexReaderPtr reader, TermPtr prefix);
+        virtual ~PrefixTermEnum();
+    
+        LUCENE_CLASS(PrefixTermEnum);
+    
+    protected:
+        TermPtr prefix;
+        bool _endEnum;
+    
+    public:
+        virtual double difference();
+    
+    protected:
+        virtual bool endEnum();
+        virtual bool termCompare(TermPtr term);
+        
+        TermPtr getPrefixTerm();
+    };
 }
+
+#endif

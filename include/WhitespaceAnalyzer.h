@@ -4,22 +4,25 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef WHITESPACEANALYZER_H
+#define WHITESPACEANALYZER_H
 
 #include "Analyzer.h"
 
 namespace Lucene
 {
-	/// An Analyzer that uses {@link WhitespaceTokenizer}.
-	class LPPAPI WhitespaceAnalyzer : public Analyzer
-	{
-	public:
-		virtual ~WhitespaceAnalyzer();
-		
-		LUCENE_CLASS(WhitespaceAnalyzer);
-	
-	public:
-		virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-		virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
-	};
+    /// An Analyzer that uses {@link WhitespaceTokenizer}.
+    class LPPAPI WhitespaceAnalyzer : public Analyzer
+    {
+    public:
+        virtual ~WhitespaceAnalyzer();
+        
+        LUCENE_CLASS(WhitespaceAnalyzer);
+    
+    public:
+        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+    };
 }
+
+#endif

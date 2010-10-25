@@ -4,28 +4,31 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TERMSHASHCONSUMERPERFIELD_H
+#define TERMSHASHCONSUMERPERFIELD_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Implement this class to plug into the TermsHash processor, which inverts & stores Tokens into a hash
-	/// table and provides an API for writing bytes into multiple streams for each unique Token.
-	class LPPAPI TermsHashConsumerPerField : public LuceneObject
-	{
-	public:
-		virtual ~TermsHashConsumerPerField();
-		
-		LUCENE_CLASS(TermsHashConsumerPerField);
-	
-	public:
-		virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
-		virtual void finish() = 0;
-		virtual void skippingLongTerm() = 0;
-		virtual void start(FieldablePtr field) = 0;
-		virtual void newTerm(RawPostingListPtr p) = 0;
-		virtual void addTerm(RawPostingListPtr p) = 0;
-		virtual int32_t getStreamCount() = 0;
-	};
+    /// Implement this class to plug into the TermsHash processor, which inverts & stores Tokens into a hash
+    /// table and provides an API for writing bytes into multiple streams for each unique Token.
+    class LPPAPI TermsHashConsumerPerField : public LuceneObject
+    {
+    public:
+        virtual ~TermsHashConsumerPerField();
+        
+        LUCENE_CLASS(TermsHashConsumerPerField);
+    
+    public:
+        virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
+        virtual void finish() = 0;
+        virtual void skippingLongTerm() = 0;
+        virtual void start(FieldablePtr field) = 0;
+        virtual void newTerm(RawPostingListPtr p) = 0;
+        virtual void addTerm(RawPostingListPtr p) = 0;
+        virtual int32_t getStreamCount() = 0;
+    };
 }
+
+#endif

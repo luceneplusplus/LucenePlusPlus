@@ -4,39 +4,42 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef CHARFILTER_H
+#define CHARFILTER_H
 
 #include "CharStream.h"
 
 namespace Lucene
 {
-	/// Subclasses of CharFilter can be chained to filter CharStream.  They can be used as {@link Reader} with 
-	/// additional offset correction. {@link Tokenizer}s will automatically use {@link #correctOffset} if a 
-	/// CharFilter/CharStream subclass is used.
-	class LPPAPI CharFilter : public CharStream
-	{
-	public:
-		CharFilter(CharStreamPtr in);
-		virtual ~CharFilter();
-		
-		LUCENE_CLASS(CharFilter);
-	
-	protected:
-		CharStreamPtr input;
-	
-	protected:
-		/// Subclass may want to override to correct the current offset.
-		/// @param currentOff current offset
-		/// @return corrected offset
-		virtual int32_t correct(int32_t currentOff);
-		
-		/// Chains the corrected offset through the input CharFilter.
-		virtual int32_t correctOffset(int32_t currentOff);
-		
-		virtual void close();
-		virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
-		virtual bool markSupported();
-		virtual void mark(int32_t readAheadLimit);
-		virtual void reset();
-	};
+    /// Subclasses of CharFilter can be chained to filter CharStream.  They can be used as {@link Reader} with 
+    /// additional offset correction. {@link Tokenizer}s will automatically use {@link #correctOffset} if a 
+    /// CharFilter/CharStream subclass is used.
+    class LPPAPI CharFilter : public CharStream
+    {
+    public:
+        CharFilter(CharStreamPtr in);
+        virtual ~CharFilter();
+        
+        LUCENE_CLASS(CharFilter);
+    
+    protected:
+        CharStreamPtr input;
+    
+    protected:
+        /// Subclass may want to override to correct the current offset.
+        /// @param currentOff current offset
+        /// @return corrected offset
+        virtual int32_t correct(int32_t currentOff);
+        
+        /// Chains the corrected offset through the input CharFilter.
+        virtual int32_t correctOffset(int32_t currentOff);
+        
+        virtual void close();
+        virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+        virtual bool markSupported();
+        virtual void mark(int32_t readAheadLimit);
+        virtual void reset();
+    };
 }
+
+#endif

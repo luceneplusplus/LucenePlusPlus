@@ -4,31 +4,34 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef SCOREDOC_H
+#define SCOREDOC_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	/// Expert: Returned by low-level search implementations.
-	/// @see TopDocs
-	class LPPAPI ScoreDoc : public LuceneObject
-	{
-	public:
-		ScoreDoc(int32_t doc, double score);
-		virtual ~ScoreDoc();
-	
-		LUCENE_CLASS(ScoreDoc);
-	
-	public:
-		/// The score of this document for the query.
-		double score;
-		
-		/// A hit document's number.
-		/// @see Searcher#doc(int32_t)
-		int32_t doc;
-	
-	public:
-		virtual String toString();
-	};
+    /// Expert: Returned by low-level search implementations.
+    /// @see TopDocs
+    class LPPAPI ScoreDoc : public LuceneObject
+    {
+    public:
+        ScoreDoc(int32_t doc, double score);
+        virtual ~ScoreDoc();
+    
+        LUCENE_CLASS(ScoreDoc);
+    
+    public:
+        /// The score of this document for the query.
+        double score;
+        
+        /// A hit document's number.
+        /// @see Searcher#doc(int32_t)
+        int32_t doc;
+    
+    public:
+        virtual String toString();
+    };
 }
+
+#endif

@@ -4,28 +4,31 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef MOCKFILTER_H
+#define MOCKFILTER_H
 
 #include "test_lucene.h"
 #include "Filter.h"
 
 namespace Lucene
 {
-	class MockFilter : public Filter
-	{
-	public:
-		MockFilter();
-		virtual ~MockFilter();
-		
-		LUCENE_CLASS(MockFilter);
-	
-	protected:
-		bool _wasCalled;
-	
-	public:
-		virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
-		
-		void clear();
-		bool wasCalled();
-	};
+    class MockFilter : public Filter
+    {
+    public:
+        MockFilter();
+        virtual ~MockFilter();
+        
+        LUCENE_CLASS(MockFilter);
+    
+    protected:
+        bool _wasCalled;
+    
+    public:
+        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
+        
+        void clear();
+        bool wasCalled();
+    };
 }
+
+#endif

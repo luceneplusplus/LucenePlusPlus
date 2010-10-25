@@ -4,26 +4,29 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef KEEPONLYLASTCOMMITDELETIONPOLICY_H
+#define KEEPONLYLASTCOMMITDELETIONPOLICY_H
 
 #include "IndexDeletionPolicy.h"
 
 namespace Lucene
 {
-	/// This {@link IndexDeletionPolicy} implementation that keeps only the most recent commit and immediately 
-	/// removes all prior commits after a new commit is done.  This is the default deletion policy.
-	class LPPAPI KeepOnlyLastCommitDeletionPolicy : public IndexDeletionPolicy
-	{
-	public:
-		virtual ~KeepOnlyLastCommitDeletionPolicy();
-		
-		LUCENE_CLASS(KeepOnlyLastCommitDeletionPolicy);
-				
-	public:
-		/// Deletes all commits except the most recent one.
-		virtual void onInit(Collection<IndexCommitPtr> commits);
-		
-		/// Deletes all commits except the most recent one.
-		virtual void onCommit(Collection<IndexCommitPtr> commits);
-	};
+    /// This {@link IndexDeletionPolicy} implementation that keeps only the most recent commit and immediately 
+    /// removes all prior commits after a new commit is done.  This is the default deletion policy.
+    class LPPAPI KeepOnlyLastCommitDeletionPolicy : public IndexDeletionPolicy
+    {
+    public:
+        virtual ~KeepOnlyLastCommitDeletionPolicy();
+        
+        LUCENE_CLASS(KeepOnlyLastCommitDeletionPolicy);
+                
+    public:
+        /// Deletes all commits except the most recent one.
+        virtual void onInit(Collection<IndexCommitPtr> commits);
+        
+        /// Deletes all commits except the most recent one.
+        virtual void onCommit(Collection<IndexCommitPtr> commits);
+    };
 }
+
+#endif

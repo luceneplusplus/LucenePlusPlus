@@ -4,34 +4,37 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef CHARBLOCKPOOL_H
+#define CHARBLOCKPOOL_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	class LPPAPI CharBlockPool : public LuceneObject
-	{
-	public:
-		CharBlockPool(DocumentsWriterPtr docWriter);
-		virtual ~CharBlockPool();
-		
-		LUCENE_CLASS(CharBlockPool);
-	
-	public:
-		Collection<CharArray> buffers;
-		int32_t numBuffer;
-		int32_t bufferUpto; // Which buffer we are up to
-		int32_t charUpto; // Where we are in head buffer
-		
-		CharArray buffer; // Current head buffer
-		int32_t charOffset; // Current head offset
-	
-	protected:
-		DocumentsWriterWeakPtr _docWriter;
-	
-	public:
-		void reset();
-		void nextBuffer();
-	};
+    class LPPAPI CharBlockPool : public LuceneObject
+    {
+    public:
+        CharBlockPool(DocumentsWriterPtr docWriter);
+        virtual ~CharBlockPool();
+        
+        LUCENE_CLASS(CharBlockPool);
+    
+    public:
+        Collection<CharArray> buffers;
+        int32_t numBuffer;
+        int32_t bufferUpto; // Which buffer we are up to
+        int32_t charUpto; // Where we are in head buffer
+        
+        CharArray buffer; // Current head buffer
+        int32_t charOffset; // Current head offset
+    
+    protected:
+        DocumentsWriterWeakPtr _docWriter;
+    
+    public:
+        void reset();
+        void nextBuffer();
+    };
 }
+
+#endif

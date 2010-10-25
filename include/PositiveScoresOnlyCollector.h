@@ -4,30 +4,33 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef POSITIVESCORESONLYCOLLECTOR_H
+#define POSITIVESCORESONLYCOLLECTOR_H
 
 #include "Collector.h"
 
 namespace Lucene
 {
-	/// A {@link Collector} implementation which wraps another {@link Collector} and makes sure only 
-	/// documents with scores > 0 are collected.
-	class LPPAPI PositiveScoresOnlyCollector : public Collector
-	{
-	public:
-		PositiveScoresOnlyCollector(CollectorPtr c);
-		virtual ~PositiveScoresOnlyCollector();
-	
-		LUCENE_CLASS(PositiveScoresOnlyCollector);
-	
-	protected:
-		CollectorPtr collector;
-		ScorerPtr scorer;
-	
-	public:
-		virtual void collect(int32_t doc);
-		virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-		virtual void setScorer(ScorerPtr scorer);
-		virtual bool acceptsDocsOutOfOrder();
-	};
+    /// A {@link Collector} implementation which wraps another {@link Collector} and makes sure only 
+    /// documents with scores > 0 are collected.
+    class LPPAPI PositiveScoresOnlyCollector : public Collector
+    {
+    public:
+        PositiveScoresOnlyCollector(CollectorPtr c);
+        virtual ~PositiveScoresOnlyCollector();
+    
+        LUCENE_CLASS(PositiveScoresOnlyCollector);
+    
+    protected:
+        CollectorPtr collector;
+        ScorerPtr scorer;
+    
+    public:
+        virtual void collect(int32_t doc);
+        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setScorer(ScorerPtr scorer);
+        virtual bool acceptsDocsOutOfOrder();
+    };
 }
+
+#endif

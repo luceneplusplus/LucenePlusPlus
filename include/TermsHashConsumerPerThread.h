@@ -4,23 +4,26 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef TERMSHASHCONSUMERPERTHREAD_H
+#define TERMSHASHCONSUMERPERTHREAD_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	class LPPAPI TermsHashConsumerPerThread : public LuceneObject
-	{
-	public:
-		virtual ~TermsHashConsumerPerThread();
-		
-		LUCENE_CLASS(TermsHashConsumerPerThread);
-	
-	public:
-		virtual void startDocument() = 0;
-		virtual DocWriterPtr finishDocument() = 0;
-		virtual TermsHashConsumerPerFieldPtr addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo) = 0;
-		virtual void abort() = 0;
-	};
+    class LPPAPI TermsHashConsumerPerThread : public LuceneObject
+    {
+    public:
+        virtual ~TermsHashConsumerPerThread();
+        
+        LUCENE_CLASS(TermsHashConsumerPerThread);
+    
+    public:
+        virtual void startDocument() = 0;
+        virtual DocWriterPtr finishDocument() = 0;
+        virtual TermsHashConsumerPerFieldPtr addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo) = 0;
+        virtual void abort() = 0;
+    };
 }
+
+#endif

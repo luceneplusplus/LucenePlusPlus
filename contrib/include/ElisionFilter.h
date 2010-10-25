@@ -4,30 +4,31 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef ELISIONFILTER_H
+#define ELISIONFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// Removes elisions from a {@link TokenStream}. For example, "l'avion" (the plane) will be
-	/// tokenized as "avion" (plane).
-	///
-	/// Note that {@link StandardTokenizer} sees " ' " as a space, and cuts it out.
-	/// @see <a href="http://fr.wikipedia.org/wiki/%C3%89lision">Elision in Wikipedia</a>
-	class LPPAPI ElisionFilter : public TokenFilter
-	{
-	public:
-	    /// Constructs an elision filter with standard stop words.
-		ElisionFilter(TokenStreamPtr input);
-		
-		/// Constructs an elision filter with a Set of stop words
-		ElisionFilter(TokenStreamPtr input, HashSet<String> articles);
-		
-		virtual ~ElisionFilter();
-		
-		LUCENE_CLASS(ElisionFilter);
+    /// Removes elisions from a {@link TokenStream}. For example, "l'avion" (the plane) will be
+    /// tokenized as "avion" (plane).
+    ///
+    /// Note that {@link StandardTokenizer} sees " ' " as a space, and cuts it out.
+    /// @see <a href="http://fr.wikipedia.org/wiki/%C3%89lision">Elision in Wikipedia</a>
+    class LPPAPI ElisionFilter : public TokenFilter
+    {
+    public:
+        /// Constructs an elision filter with standard stop words.
+        ElisionFilter(TokenStreamPtr input);
+        
+        /// Constructs an elision filter with a Set of stop words
+        ElisionFilter(TokenStreamPtr input, HashSet<String> articles);
+        
+        virtual ~ElisionFilter();
+        
+        LUCENE_CLASS(ElisionFilter);
     
     protected:
         static const wchar_t apostrophes[];
@@ -39,5 +40,7 @@ namespace Lucene
         void setArticles(HashSet<String> articles);
         
         virtual bool incrementToken();
-	};
+    };
 }
+
+#endif

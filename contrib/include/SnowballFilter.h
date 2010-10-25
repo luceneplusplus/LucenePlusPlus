@@ -4,7 +4,8 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef SNOWBALLFILTER_H
+#define SNOWBALLFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
@@ -13,14 +14,14 @@ struct sb_stemmer;
 
 namespace Lucene
 {
-	/// A filter that stems words using a Snowball-generated stemmer.
-	class LPPAPI SnowballFilter : public TokenFilter
-	{
-	public:
-		SnowballFilter(TokenStreamPtr input, const String& name);
-		virtual ~SnowballFilter();
-		
-		LUCENE_CLASS(SnowballFilter);
+    /// A filter that stems words using a Snowball-generated stemmer.
+    class LPPAPI SnowballFilter : public TokenFilter
+    {
+    public:
+        SnowballFilter(TokenStreamPtr input, const String& name);
+        virtual ~SnowballFilter();
+        
+        LUCENE_CLASS(SnowballFilter);
     
     protected:
         struct sb_stemmer* stemmer;
@@ -29,5 +30,7 @@ namespace Lucene
     
     public:
         virtual bool incrementToken();
-	};
+    };
 }
+
+#endif

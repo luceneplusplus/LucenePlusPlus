@@ -4,21 +4,22 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef ARABICNORMALIZATIONFILTER_H
+#define ARABICNORMALIZATIONFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// A {@link TokenFilter} that applies {@link ArabicNormalizer} to normalize the orthography.
-	class LPPAPI ArabicNormalizationFilter : public TokenFilter
-	{
-	public:
-		ArabicNormalizationFilter(TokenStreamPtr input);
-		virtual ~ArabicNormalizationFilter();
-		
-		LUCENE_CLASS(ArabicNormalizationFilter);
+    /// A {@link TokenFilter} that applies {@link ArabicNormalizer} to normalize the orthography.
+    class LPPAPI ArabicNormalizationFilter : public TokenFilter
+    {
+    public:
+        ArabicNormalizationFilter(TokenStreamPtr input);
+        virtual ~ArabicNormalizationFilter();
+        
+        LUCENE_CLASS(ArabicNormalizationFilter);
     
     protected:
         ArabicNormalizerPtr normalizer;
@@ -26,5 +27,7 @@ namespace Lucene
     
     public:
         virtual bool incrementToken();
-	};
+    };
 }
+
+#endif

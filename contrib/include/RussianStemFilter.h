@@ -4,27 +4,28 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef RUSSIANSTEMFILTER_H
+#define RUSSIANSTEMFILTER_H
 
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
 namespace Lucene
 {
-	/// A {@link TokenFilter} that stems Russian words. 
-	///
-	/// The implementation was inspired by GermanStemFilter.
-	///
-	/// The input should be filtered by {@link LowerCaseFilter} before passing it to RussianStemFilter,
-	/// because RussianStemFilter only works with lowercase characters.
-	class LPPAPI RussianStemFilter : public TokenFilter
-	{
-	public:
-		RussianStemFilter(TokenStreamPtr input);
-		
-		virtual ~RussianStemFilter();
-		
-		LUCENE_CLASS(RussianStemFilter);
+    /// A {@link TokenFilter} that stems Russian words. 
+    ///
+    /// The implementation was inspired by GermanStemFilter.
+    ///
+    /// The input should be filtered by {@link LowerCaseFilter} before passing it to RussianStemFilter,
+    /// because RussianStemFilter only works with lowercase characters.
+    class LPPAPI RussianStemFilter : public TokenFilter
+    {
+    public:
+        RussianStemFilter(TokenStreamPtr input);
+        
+        virtual ~RussianStemFilter();
+        
+        LUCENE_CLASS(RussianStemFilter);
     
     protected:
         /// {@link RussianStemmer} in use by this filter.
@@ -37,5 +38,7 @@ namespace Lucene
         
         /// Set a alternative/custom {@link RussianStemmer} for this filter.
         void setStemmer(RussianStemmerPtr stemmer);
-	};
+    };
 }
+
+#endif

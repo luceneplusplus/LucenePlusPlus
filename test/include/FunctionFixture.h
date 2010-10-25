@@ -4,43 +4,46 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef FUNCTIONFIXTURE_H
+#define FUNCTIONFIXTURE_H
 
 #include "LuceneTestFixture.h"
 
 namespace Lucene
 {
-	class FunctionFixture : public LuceneTestFixture
-	{
-	public:
-		FunctionFixture(bool doMultiSegment);
-		virtual ~FunctionFixture();
-	
-	public:
-		static const double TEST_SCORE_TOLERANCE_DELTA;
-	
-	public:
-		static const int32_t N_DOCS;
-	
-		static const String ID_FIELD;
-		static const String TEXT_FIELD;
-		static const String INT_FIELD;
-		static const String DOUBLE_FIELD;
-		
-		bool doMultiSegment;
-		DirectoryPtr dir;
-		AnalyzerPtr anlzr;
-	
-	protected:
-		static Collection<String> DOC_TEXT_LINES();
-		
-		void addDoc(IndexWriterPtr iw, int32_t i);
-		String id2String(int32_t scoreAndID);
-		String textLine(int32_t docNum);
-		
-		double expectedFieldScore(const String& docIDFieldVal);
-		
-		bool equalCollectionValues(CollectionValue first, CollectionValue second);
-	};
+    class FunctionFixture : public LuceneTestFixture
+    {
+    public:
+        FunctionFixture(bool doMultiSegment);
+        virtual ~FunctionFixture();
+    
+    public:
+        static const double TEST_SCORE_TOLERANCE_DELTA;
+    
+    public:
+        static const int32_t N_DOCS;
+    
+        static const String ID_FIELD;
+        static const String TEXT_FIELD;
+        static const String INT_FIELD;
+        static const String DOUBLE_FIELD;
+        
+        bool doMultiSegment;
+        DirectoryPtr dir;
+        AnalyzerPtr anlzr;
+    
+    protected:
+        static Collection<String> DOC_TEXT_LINES();
+        
+        void addDoc(IndexWriterPtr iw, int32_t i);
+        String id2String(int32_t scoreAndID);
+        String textLine(int32_t docNum);
+        
+        double expectedFieldScore(const String& docIDFieldVal);
+        
+        bool equalCollectionValues(CollectionValue first, CollectionValue second);
+    };
 }
 
+
+#endif

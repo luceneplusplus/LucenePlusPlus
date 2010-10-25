@@ -4,23 +4,26 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef DOCFIELDCONSUMERPERTHREAD_H
+#define DOCFIELDCONSUMERPERTHREAD_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	class LPPAPI DocFieldConsumerPerThread : public LuceneObject
-	{
-	public:
-		virtual ~DocFieldConsumerPerThread();
-		
-		LUCENE_CLASS(DocFieldConsumerPerThread);
-	
-	public:
-		virtual void startDocument() = 0;
-		virtual DocWriterPtr finishDocument() = 0;
-		virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi) = 0;
-		virtual void abort() = 0;
-	};
+    class LPPAPI DocFieldConsumerPerThread : public LuceneObject
+    {
+    public:
+        virtual ~DocFieldConsumerPerThread();
+        
+        LUCENE_CLASS(DocFieldConsumerPerThread);
+    
+    public:
+        virtual void startDocument() = 0;
+        virtual DocWriterPtr finishDocument() = 0;
+        virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi) = 0;
+        virtual void abort() = 0;
+    };
 }
+
+#endif

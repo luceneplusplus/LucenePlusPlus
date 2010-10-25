@@ -4,19 +4,20 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef UTF8STREAM_H
+#define UTF8STREAM_H
 
 #include "LuceneObject.h"
 
 namespace Lucene
 {
-	class LPPAPI UTF8Stream : public LuceneObject
-	{
-	public:
-	    UTF8Stream(ReaderPtr reader);
-		virtual ~UTF8Stream();
-		
-		LUCENE_CLASS(UTF8Stream);
+    class LPPAPI UTF8Stream : public LuceneObject
+    {
+    public:
+        UTF8Stream(ReaderPtr reader);
+        virtual ~UTF8Stream();
+        
+        LUCENE_CLASS(UTF8Stream);
     
     protected:
         ReaderPtr reader;
@@ -43,15 +44,15 @@ namespace Lucene
         inline bool isTrailSurrogate(uint32_t cp);
         inline bool isValidCodePoint(uint32_t cp);
         inline bool isOverlongSequence(uint32_t cp, int32_t length);
-	};
-	
-	class LPPAPI UTF8Encoder : public UTF8Stream
-	{
-	public:
-	    UTF8Encoder(ReaderPtr reader);
-		virtual ~UTF8Encoder();
-		
-		LUCENE_CLASS(UTF8Encoder);
+    };
+    
+    class LPPAPI UTF8Encoder : public UTF8Stream
+    {
+    public:
+        UTF8Encoder(ReaderPtr reader);
+        virtual ~UTF8Encoder();
+        
+        LUCENE_CLASS(UTF8Encoder);
     
     public:
         int32_t encode(uint8_t* utf8, int32_t length);
@@ -61,15 +62,15 @@ namespace Lucene
         
     protected:
         uint8_t* appendChar(uint8_t* utf8, uint32_t cp);
-	};
-	
-	class LPPAPI UTF8Decoder : public UTF8Stream
-	{
-	public:
-	    UTF8Decoder(ReaderPtr reader);
-		virtual ~UTF8Decoder();
-		
-		LUCENE_CLASS(UTF8Decoder);
+    };
+    
+    class LPPAPI UTF8Decoder : public UTF8Stream
+    {
+    public:
+        UTF8Decoder(ReaderPtr reader);
+        virtual ~UTF8Decoder();
+        
+        LUCENE_CLASS(UTF8Decoder);
     
     public:
         int32_t decode(wchar_t* unicode, int32_t length);
@@ -81,20 +82,22 @@ namespace Lucene
         int32_t sequenceLength(uint32_t cp);
         bool getSequence(uint32_t& cp, int32_t length);
         bool isValidNext(uint32_t& cp);
-	};
-	
-	class LPPAPI UTF16Decoder : public UTF8Stream
-	{
-	public:
-	    UTF16Decoder(ReaderPtr reader);
-		virtual ~UTF16Decoder();
-		
-		LUCENE_CLASS(UTF16Decoder);
+    };
+    
+    class LPPAPI UTF16Decoder : public UTF8Stream
+    {
+    public:
+        UTF16Decoder(ReaderPtr reader);
+        virtual ~UTF16Decoder();
+        
+        LUCENE_CLASS(UTF16Decoder);
     
     public:
         int32_t decode(wchar_t* unicode, int32_t length);
         
         int32_t utf16to16(wchar_t* unicode, int32_t length);
         int32_t utf16to32(wchar_t* unicode, int32_t length);
-	};
+    };
 }
+
+#endif

@@ -4,24 +4,27 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef SEGMENTMERGEQUEUE_H
+#define SEGMENTMERGEQUEUE_H
 
 #include "PriorityQueue.h"
 
 namespace Lucene
 {
-	class LPPAPI SegmentMergeQueue : public PriorityQueue<SegmentMergeInfoPtr>
-	{
-	public:
-		SegmentMergeQueue(int32_t size);
-		virtual ~SegmentMergeQueue();
-		
-		LUCENE_CLASS(SegmentMergeQueue);
-			
-	public:
-		void close();
-	
-	protected:
-		virtual bool lessThan(const SegmentMergeInfoPtr& first, const SegmentMergeInfoPtr& second);
-	};
+    class LPPAPI SegmentMergeQueue : public PriorityQueue<SegmentMergeInfoPtr>
+    {
+    public:
+        SegmentMergeQueue(int32_t size);
+        virtual ~SegmentMergeQueue();
+        
+        LUCENE_CLASS(SegmentMergeQueue);
+            
+    public:
+        void close();
+    
+    protected:
+        virtual bool lessThan(const SegmentMergeInfoPtr& first, const SegmentMergeInfoPtr& second);
+    };
 }
+
+#endif

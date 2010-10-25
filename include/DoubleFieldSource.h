@@ -4,57 +4,60 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef DOUBLEFIELDSOURCE_H
+#define DOUBLEFIELDSOURCE_H
 
 #include "FieldCacheSource.h"
 #include "DocValues.h"
 
 namespace Lucene
 {
-	/// Obtains double field values from the {@link FieldCache} using getDoubles() and makes those values available 
-	/// as other numeric types, casting as needed.
-	///
-	/// @see FieldCacheSource for requirements on the field.
-	///
-	/// NOTE: with the switch in 2.9 to segment-based searching, if {@link #getValues} is invoked with a composite 
-	/// (multi-segment) reader, this can easily cause double RAM usage for the values in the FieldCache.  It's
-	/// best to switch your application to pass only atomic (single segment) readers to this API.  Alternatively, 
-	/// for a short-term fix, you could wrap your ValueSource using {@link MultiValueSource}, which costs more CPU 
-	/// per lookup but will not consume double the FieldCache RAM.
-	class LPPAPI DoubleFieldSource : public FieldCacheSource
-	{
-	public:
-		/// Create a cached double field source with a specific string-to-double parser.
-		DoubleFieldSource(const String& field, DoubleParserPtr parser = DoubleParserPtr());
-		virtual ~DoubleFieldSource();
-	
-		LUCENE_CLASS(DoubleFieldSource);
-	
-	protected:
-		DoubleParserPtr parser;
-	
-	public:
-		virtual String description();
-		virtual DocValuesPtr getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader);
-		virtual bool cachedFieldSourceEquals(FieldCacheSourcePtr other);
-		virtual int32_t cachedFieldSourceHashCode();
-	};
-	
-	class LPPAPI DoubleDocValues : public DocValues
-	{
-	public:
-		DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr);
-		virtual ~DoubleDocValues();
-	
-		LUCENE_CLASS(DoubleDocValues);
-	
-	protected:
-		DoubleFieldSourceWeakPtr _source;
-		Collection<double> arr;
-	
-	public:
-		virtual double doubleVal(int32_t doc);
-		virtual String toString(int32_t doc);
-		virtual CollectionValue getInnerArray();
-	};
+    /// Obtains double field values from the {@link FieldCache} using getDoubles() and makes those values available 
+    /// as other numeric types, casting as needed.
+    ///
+    /// @see FieldCacheSource for requirements on the field.
+    ///
+    /// NOTE: with the switch in 2.9 to segment-based searching, if {@link #getValues} is invoked with a composite 
+    /// (multi-segment) reader, this can easily cause double RAM usage for the values in the FieldCache.  It's
+    /// best to switch your application to pass only atomic (single segment) readers to this API.  Alternatively, 
+    /// for a short-term fix, you could wrap your ValueSource using {@link MultiValueSource}, which costs more CPU 
+    /// per lookup but will not consume double the FieldCache RAM.
+    class LPPAPI DoubleFieldSource : public FieldCacheSource
+    {
+    public:
+        /// Create a cached double field source with a specific string-to-double parser.
+        DoubleFieldSource(const String& field, DoubleParserPtr parser = DoubleParserPtr());
+        virtual ~DoubleFieldSource();
+    
+        LUCENE_CLASS(DoubleFieldSource);
+    
+    protected:
+        DoubleParserPtr parser;
+    
+    public:
+        virtual String description();
+        virtual DocValuesPtr getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader);
+        virtual bool cachedFieldSourceEquals(FieldCacheSourcePtr other);
+        virtual int32_t cachedFieldSourceHashCode();
+    };
+    
+    class LPPAPI DoubleDocValues : public DocValues
+    {
+    public:
+        DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr);
+        virtual ~DoubleDocValues();
+    
+        LUCENE_CLASS(DoubleDocValues);
+    
+    protected:
+        DoubleFieldSourceWeakPtr _source;
+        Collection<double> arr;
+    
+    public:
+        virtual double doubleVal(int32_t doc);
+        virtual String toString(int32_t doc);
+        virtual CollectionValue getInnerArray();
+    };
 }
+
+#endif

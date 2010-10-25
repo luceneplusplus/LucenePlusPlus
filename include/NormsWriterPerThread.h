@@ -4,30 +4,33 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef NORMSWRITERPERTHREAD_H
+#define NORMSWRITERPERTHREAD_H
 
 #include "InvertedDocEndConsumerPerThread.h"
 
 namespace Lucene
 {
-	class LPPAPI NormsWriterPerThread : public InvertedDocEndConsumerPerThread
-	{
-	public:
-		NormsWriterPerThread(DocInverterPerThreadPtr docInverterPerThread, NormsWriterPtr normsWriter);
-		virtual ~NormsWriterPerThread();
-		
-		LUCENE_CLASS(NormsWriterPerThread);
-			
-	public:
-		NormsWriterWeakPtr _normsWriter;
-		DocStatePtr docState;
-	
-	public:
-		virtual InvertedDocEndConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo);
-		virtual void abort();
-		virtual void startDocument();
-		virtual void finishDocument();
-		
-		bool freeRAM();
-	};
+    class LPPAPI NormsWriterPerThread : public InvertedDocEndConsumerPerThread
+    {
+    public:
+        NormsWriterPerThread(DocInverterPerThreadPtr docInverterPerThread, NormsWriterPtr normsWriter);
+        virtual ~NormsWriterPerThread();
+        
+        LUCENE_CLASS(NormsWriterPerThread);
+            
+    public:
+        NormsWriterWeakPtr _normsWriter;
+        DocStatePtr docState;
+    
+    public:
+        virtual InvertedDocEndConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo);
+        virtual void abort();
+        virtual void startDocument();
+        virtual void finishDocument();
+        
+        bool freeRAM();
+    };
 }
+
+#endif

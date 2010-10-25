@@ -4,52 +4,55 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef SPANNEARQUERY_H
+#define SPANNEARQUERY_H
 
 #include "SpanQuery.h"
 
 namespace Lucene
 {
-	/// Matches spans which are near one another.  One can specify slop, the maximum number of intervening 
-	/// unmatched positions, as well as whether matches are required to be in-order.
-	class LPPAPI SpanNearQuery : public SpanQuery
-	{
-	public:
-		/// Construct a SpanNearQuery.  Matches spans matching a span from each clause, with up to slop total 
-		/// unmatched positions between them.  * When inOrder is true, the spans from each clause must be 
-		/// ordered as in clauses.
-		SpanNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, bool collectPayloads = true);
-		virtual ~SpanNearQuery();
-		
-		LUCENE_CLASS(SpanNearQuery);
-	
-	protected:
-		Collection<SpanQueryPtr> clauses;
-		int32_t slop;
-		bool inOrder;
-		
-		String field;
-		bool collectPayloads;
-	
-	public:
-		using SpanQuery::toString;
-		
-		/// Return the clauses whose spans are matched.
-		Collection<SpanQueryPtr> getClauses();
-		
-		/// Return the maximum number of intervening unmatched positions permitted.
-		int32_t getSlop();
-		
-		/// Return true if matches are required to be in-order.
-		bool isInOrder();
-		
-		virtual String getField();
-		virtual void extractTerms(SetTerm terms);
-		virtual String toString(const String& field);
-		virtual SpansPtr getSpans(IndexReaderPtr reader);
-		virtual QueryPtr rewrite(IndexReaderPtr reader);
-		virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-		virtual bool equals(LuceneObjectPtr other);
-		virtual int32_t hashCode();
-	};
+    /// Matches spans which are near one another.  One can specify slop, the maximum number of intervening 
+    /// unmatched positions, as well as whether matches are required to be in-order.
+    class LPPAPI SpanNearQuery : public SpanQuery
+    {
+    public:
+        /// Construct a SpanNearQuery.  Matches spans matching a span from each clause, with up to slop total 
+        /// unmatched positions between them.  * When inOrder is true, the spans from each clause must be 
+        /// ordered as in clauses.
+        SpanNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, bool collectPayloads = true);
+        virtual ~SpanNearQuery();
+        
+        LUCENE_CLASS(SpanNearQuery);
+    
+    protected:
+        Collection<SpanQueryPtr> clauses;
+        int32_t slop;
+        bool inOrder;
+        
+        String field;
+        bool collectPayloads;
+    
+    public:
+        using SpanQuery::toString;
+        
+        /// Return the clauses whose spans are matched.
+        Collection<SpanQueryPtr> getClauses();
+        
+        /// Return the maximum number of intervening unmatched positions permitted.
+        int32_t getSlop();
+        
+        /// Return true if matches are required to be in-order.
+        bool isInOrder();
+        
+        virtual String getField();
+        virtual void extractTerms(SetTerm terms);
+        virtual String toString(const String& field);
+        virtual SpansPtr getSpans(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual bool equals(LuceneObjectPtr other);
+        virtual int32_t hashCode();
+    };
 }
+
+#endif
