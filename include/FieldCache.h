@@ -159,13 +159,11 @@ namespace Lucene
 	class LPPAPI CreationPlaceholder : public LuceneObject
 	{
 	public:
-		CreationPlaceholder();
-		virtual ~CreationPlaceholder();
-	
+	    virtual ~CreationPlaceholder();
 		LUCENE_CLASS(CreationPlaceholder);
 	
 	public:
-		LuceneObjectPtr value;
+		boost::any value;
 	};
 	
 	/// Stores term text values and document ordering data.
@@ -344,8 +342,8 @@ namespace Lucene
 		virtual LuceneObjectPtr getReaderKey() = 0;
 		virtual String getFieldName() = 0;
 		virtual String getCacheType() = 0;
-		virtual LuceneObjectPtr getCustom() = 0;
-		virtual LuceneObjectPtr getValue() = 0;
+		virtual boost::any getCustom() = 0;
+		virtual boost::any getValue() = 0;
 		
 		virtual String toString();
 	};

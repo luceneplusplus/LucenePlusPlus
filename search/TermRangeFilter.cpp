@@ -23,12 +23,12 @@ namespace Lucene
     
     TermRangeFilterPtr TermRangeFilter::Less(const String& fieldName, StringValue upperTerm)
     {
-        return newLucene<TermRangeFilter>(fieldName, Blank(), upperTerm, false, true);
+        return newLucene<TermRangeFilter>(fieldName, VariantUtils::null(), upperTerm, false, true);
     }
     
     TermRangeFilterPtr TermRangeFilter::More(const String& fieldName, StringValue lowerTerm)
     {
-        return newLucene<TermRangeFilter>(fieldName, lowerTerm, Blank(), true, false);
+        return newLucene<TermRangeFilter>(fieldName, lowerTerm, VariantUtils::null(), true, false);
     }
     
     String TermRangeFilter::getField()

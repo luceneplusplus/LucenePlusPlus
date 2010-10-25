@@ -24,10 +24,10 @@ namespace Lucene
         this->field = field;
         
         // do a little bit of normalization: open ended range queries should always be inclusive.
-        if (VariantUtils::isBlank(this->lowerTermText))
+        if (VariantUtils::isNull(this->lowerTermText))
             this->includeLower = true;
         
-        if (VariantUtils::isBlank(this->upperTermText))
+        if (VariantUtils::isNull(this->upperTermText))
             this->includeUpper = true;
         
         String startTermText(collator ? L"" : VariantUtils::get<String>(this->lowerTermText));
@@ -58,10 +58,10 @@ namespace Lucene
                 checkLower = true;
             if (term && term->field() == field)
             {
-                if (!checkLower || VariantUtils::isBlank(lowerTermText) || term->text().compare(VariantUtils::get<String>(lowerTermText)) > 0)
+                if (!checkLower || VariantUtils::isNull(lowerTermText) || term->text().compare(VariantUtils::get<String>(lowerTermText)) > 0)
                 {
                     checkLower = false;
-                    if (!VariantUtils::isBlank(upperTermText))
+                    if (!VariantUtils::isNull(upperTermText))
                     {
                         int32_t compare = VariantUtils::get<String>(upperTermText).compare(term->text());
                         // if beyond the upper term, or is exclusive and this is equal to the upper term, break out
@@ -86,10 +86,10 @@ namespace Lucene
         {
             if (term && term->field() == field)
             {
-                if ((VariantUtils::isBlank(lowerTermText) || 
+                if ((VariantUtils::isNull(lowerTermText) || 
                     (includeLower ? collator->compare(term->text(), VariantUtils::get<String>(lowerTermText)) >= 0 : 
                     collator->compare(term->text(), VariantUtils::get<String>(lowerTermText)) > 0)) && 
-                    (VariantUtils::isBlank(upperTermText) ||
+                    (VariantUtils::isNull(upperTermText) ||
                     (includeUpper ? collator->compare(term->text(), VariantUtils::get<String>(upperTermText)) <= 0 : 
                     collator->compare(term->text(), VariantUtils::get<String>(upperTermText)) < 0)))
                     return true;

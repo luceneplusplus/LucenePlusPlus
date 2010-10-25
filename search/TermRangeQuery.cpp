@@ -80,12 +80,12 @@ namespace Lucene
         if (getField() != field)
             buffer << getField() << L":";
         buffer << (includeLower ? L"[" : L"{");
-        if (VariantUtils::isBlank(lowerTerm))
+        if (VariantUtils::isNull(lowerTerm))
             buffer << L"*";
         else
             buffer << lowerTerm;
         buffer << L" TO ";
-        if (VariantUtils::isBlank(upperTerm))
+        if (VariantUtils::isNull(upperTerm))
             buffer << L"*";
         else
             buffer << upperTerm;
@@ -118,16 +118,16 @@ namespace Lucene
             return false;
         if (includeUpper != otherQuery->includeUpper)
             return false;
-        if (VariantUtils::isBlank(lowerTerm))
+        if (VariantUtils::isNull(lowerTerm))
         {
-            if (!VariantUtils::isBlank(otherQuery->lowerTerm))
+            if (!VariantUtils::isNull(otherQuery->lowerTerm))
                 return false;
         }
         else if (!VariantUtils::equals(lowerTerm, otherQuery->lowerTerm))
             return false;
-        if (VariantUtils::isBlank(upperTerm))
+        if (VariantUtils::isNull(upperTerm))
         {
-            if (!VariantUtils::isBlank(otherQuery->upperTerm))
+            if (!VariantUtils::isNull(otherQuery->upperTerm))
                 return false;
         }
         else if (!VariantUtils::equals(upperTerm, otherQuery->upperTerm))
@@ -143,8 +143,8 @@ namespace Lucene
         result = prime * result + (field.empty() ? 0 : StringUtils::hashCode(field));
         result = prime * result + (includeLower ? 1231 : 1237);
         result = prime * result + (includeUpper ? 1231 : 1237);
-        result = prime * result + (VariantUtils::isBlank(lowerTerm) ? 0 : StringUtils::hashCode(VariantUtils::get<String>(lowerTerm)));
-        result = prime * result + (VariantUtils::isBlank(upperTerm) ? 0 : StringUtils::hashCode(VariantUtils::get<String>(upperTerm)));
+        result = prime * result + (VariantUtils::isNull(lowerTerm) ? 0 : StringUtils::hashCode(VariantUtils::get<String>(lowerTerm)));
+        result = prime * result + (VariantUtils::isNull(upperTerm) ? 0 : StringUtils::hashCode(VariantUtils::get<String>(upperTerm)));
         return result;
     }
 }

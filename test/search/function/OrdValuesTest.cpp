@@ -93,7 +93,7 @@ public:
     void doTestCaching(const String& field, bool inOrder)
     {
         IndexSearcherPtr s = newLucene<IndexSearcher>(dir, true);
-        CollectionValue innerArray = Blank();
+        CollectionValue innerArray = VariantUtils::null();
         bool warned = false; // print warning once.
         for (int32_t i = 0; i < 10; ++i)
         {

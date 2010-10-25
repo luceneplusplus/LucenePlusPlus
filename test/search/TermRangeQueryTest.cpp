@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(testInclusiveCollating)
 BOOST_AUTO_TEST_CASE(testExclusiveLowerNull)
 {
     AnalyzerPtr analyzer = newLucene<SingleCharAnalyzer>();
-    QueryPtr query = newLucene<TermRangeQuery>(L"content", Blank(), L"C", false, false);
+    QueryPtr query = newLucene<TermRangeQuery>(L"content", VariantUtils::null(), L"C", false, false);
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"C", L"D"), analyzer);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     int32_t numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(testExclusiveLowerNull)
 BOOST_AUTO_TEST_CASE(testInclusiveLowerNull)
 {
     AnalyzerPtr analyzer = newLucene<SingleCharAnalyzer>();
-    QueryPtr query = newLucene<TermRangeQuery>(L"content", Blank(), L"C", true, true);
+    QueryPtr query = newLucene<TermRangeQuery>(L"content", VariantUtils::null(), L"C", true, true);
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"C", L"D"), analyzer);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     int32_t numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;

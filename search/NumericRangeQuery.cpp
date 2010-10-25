@@ -41,7 +41,7 @@ namespace Lucene
         }
         
         // shortcut if upper bound == lower bound
-        if (!VariantUtils::isBlank(min) && min == max)
+        if (!VariantUtils::isNull(min) && min == max)
             setRewriteMethod(CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE());
     }
     
@@ -142,12 +142,12 @@ namespace Lucene
         if (this->field != field)
             buffer << this->field << L":";
         buffer << (minInclusive ? L"[" : L"{");
-        if (VariantUtils::isBlank(min))
+        if (VariantUtils::isNull(min))
             buffer << L"*";
         else
             buffer << min;
         buffer << L" TO ";
-        if (VariantUtils::isBlank(max))
+        if (VariantUtils::isNull(max))
             buffer << L"*";
         else
             buffer << max;
@@ -179,9 +179,9 @@ namespace Lucene
     {
         int32_t hash = MultiTermQuery::hashCode();
         hash += StringUtils::hashCode(field) ^ 0x4565fd66 + precisionStep ^ 0x64365465;
-        if (!VariantUtils::isBlank(min))
+        if (!VariantUtils::isNull(min))
             hash += VariantUtils::hashCode(min) ^ 0x14fa55fb;
-        if (!VariantUtils::isBlank(max))
+        if (!VariantUtils::isNull(max))
             hash += VariantUtils::hashCode(max) ^ 0x733fa5fe;
         return hash + (MiscUtils::hashCode(minInclusive) ^ 0x14fa55fb) + (MiscUtils::hashCode(maxInclusive) ^ 0x733fa5fe);
     }
@@ -203,7 +203,7 @@ namespace Lucene
                     minBound = VariantUtils::get<int64_t>(query->min);
                 else if (VariantUtils::typeOf<double>(query->min))
                     minBound = NumericUtils::doubleToSortableLong(VariantUtils::get<double>(query->min));
-                if (!query->minInclusive && !VariantUtils::isBlank(query->min))
+                if (!query->minInclusive && !VariantUtils::isNull(query->min))
                 {
                     if (minBound == LLONG_MAX)
                         break;
@@ -216,7 +216,7 @@ namespace Lucene
                     maxBound = VariantUtils::get<int64_t>(query->max);
                 else if (VariantUtils::typeOf<double>(query->max))
                     maxBound = NumericUtils::doubleToSortableLong(VariantUtils::get<double>(query->max));
-                if (!query->maxInclusive && !VariantUtils::isBlank(query->max))
+                if (!query->maxInclusive && !VariantUtils::isNull(query->max))
                 {
                     if (maxBound == LLONG_MIN)
                         break;
@@ -234,7 +234,7 @@ namespace Lucene
                 int32_t minBound = INT_MIN;
                 if (VariantUtils::typeOf<int32_t>(query->min))
                     minBound = VariantUtils::get<int32_t>(query->min);
-                if (!query->minInclusive && !VariantUtils::isBlank(query->min))
+                if (!query->minInclusive && !VariantUtils::isNull(query->min))
                 {
                     if (minBound == INT_MAX)
                         break;
@@ -245,7 +245,7 @@ namespace Lucene
                 int32_t maxBound = INT_MAX;
                 if (VariantUtils::typeOf<int32_t>(query->max))
                     maxBound = VariantUtils::get<int32_t>(query->max);
-                if (!query->maxInclusive && !VariantUtils::isBlank(query->max))
+                if (!query->maxInclusive && !VariantUtils::isNull(query->max))
                 {
                     if (maxBound == INT_MIN)
                         break;

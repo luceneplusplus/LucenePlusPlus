@@ -736,6 +736,13 @@ namespace Lucene
 		}
 	};
 	
+	typedef boost::blank VariantNull;
+	typedef boost::variant<String, int32_t, int64_t, double, ReaderPtr, ByteArray, VariantNull> FieldsData;
+	typedef boost::variant<String, uint8_t, int32_t, int64_t, double, VariantNull> ComparableValue;
+	typedef boost::variant<int32_t, int64_t, double, VariantNull> NumericValue;
+	typedef boost::variant<String, VariantNull> StringValue;
+	typedef boost::variant<Collection<uint8_t>, Collection<int32_t>, Collection<double>, VariantNull> CollectionValue;
+	
 	typedef HashSet< SegmentInfoPtr, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > SetSegmentInfo;
 	typedef HashSet< MergeThreadPtr, luceneHash<MergeThreadPtr>, luceneEquals<MergeThreadPtr> > SetMergeThread;
 	typedef HashSet< OneMergePtr, luceneHash<OneMergePtr>, luceneEquals<OneMergePtr> > SetOneMerge;
@@ -776,12 +783,12 @@ namespace Lucene
 	typedef HashMap< IndexReaderPtr, HashSet<String>, luceneHash<IndexReaderPtr>, luceneEquals<IndexReaderPtr> > MapIndexReaderSetString;
 	typedef HashMap< TermPtr, int32_t, luceneHash<TermPtr>, luceneEquals<TermPtr> > MapTermInt;
 	typedef HashMap< QueryPtr, int32_t, luceneHash<QueryPtr>, luceneEquals<QueryPtr> > MapQueryInt;
-	typedef HashMap< EntryPtr, LuceneObjectPtr, luceneHash<EntryPtr>, luceneEquals<EntryPtr> > MapEntryLuceneObject;
+	typedef HashMap< EntryPtr, boost::any, luceneHash<EntryPtr>, luceneEquals<EntryPtr> > MapEntryAny;
 	typedef HashMap< PhrasePositionsPtr, LuceneObjectPtr, luceneHash<PhrasePositionsPtr>, luceneEquals<PhrasePositionsPtr> > MapPhrasePositionsLuceneObject;
 	typedef HashMap< ReaderFieldPtr, SetReaderField, luceneHash<ReaderFieldPtr>, luceneEquals<ReaderFieldPtr> > MapReaderFieldSetReaderField;
 	
 	typedef WeakHashMap< LuceneObjectWeakPtr, LuceneObjectPtr, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapObjectObject;
-	typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryLuceneObject, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryLuceneObject;
+	typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryAny, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryAny;
 	
 	typedef Map< String, AttributePtr > MapStringAttribute;
 	typedef Map< ThreadId, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
@@ -793,13 +800,6 @@ namespace Lucene
 	template <typename KEY, typename VALUE> class SimpleLRUCache;
 	typedef SimpleLRUCache<TermPtr, TermInfoPtr> TermInfoCache;
 	typedef boost::shared_ptr<TermInfoCache> TermInfoCachePtr;
-	
-	typedef boost::blank Blank;
-	typedef boost::variant<String, int32_t, int64_t, double, ReaderPtr, ByteArray, Blank> FieldsData;
-	typedef boost::variant<String, uint8_t, int32_t, int64_t, double, Blank> ComparableValue;
-	typedef boost::variant<int32_t, int64_t, double, Blank> NumericValue;
-	typedef boost::variant<String, Blank> StringValue;
-	typedef boost::variant<Collection<uint8_t>, Collection<int32_t>, Collection<double>, Blank> CollectionValue;
 }
 
 #include "StringUtils.h"

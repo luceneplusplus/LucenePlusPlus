@@ -2197,10 +2197,6 @@ namespace TestFieldSpecificHighlighting
 BOOST_AUTO_TEST_CASE(testFieldSpecificHighlighting)
 {
     TestHighlightRunnerPtr helper = newLucene<TestFieldSpecificHighlighting::HelperHighlightRunner>(this);
-    
-    // todo: Collection<String>(), Collection<String>() should be defaults
-    // todo: might only need one collection (expected)
-    
     helper->start();
 }
 

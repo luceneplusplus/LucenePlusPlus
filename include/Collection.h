@@ -17,7 +17,6 @@ namespace Lucene
 	public:
 		typedef Collection<TYPE> this_type;
 		typedef boost::shared_ptr<this_type> shared_ptr;
-		typedef boost::weak_ptr<this_type> weak_ptr;
 		typedef std::vector< TYPE, Allocator<TYPE> > collection_type;
 		typedef typename collection_type::iterator iterator;
 		typedef typename collection_type::const_iterator const_iterator;		
@@ -28,7 +27,6 @@ namespace Lucene
 	
 	protected:
 		boost::shared_ptr<collection_type> container;
-		weak_ptr weakPtr;
 		
 	public:
 		static this_type newInstance(int32_t size = 0)
@@ -44,20 +42,6 @@ namespace Lucene
 			this_type instance;
 			instance.container = Lucene::newInstance<collection_type>(first, last);
 			return instance;
-		}
-		
-		shared_ptr ptr()
-		{
-			shared_ptr sharedPtr;
-			if (!weakPtr.expired())
-				sharedPtr = weakPtr.lock();
-			else
-			{
-				sharedPtr = Lucene::newInstance<this_type>();
-				sharedPtr->container = container;
-				sharedPtr->weakPtr = sharedPtr;
-			}
-			return sharedPtr;
 		}
 		
 		void reset()

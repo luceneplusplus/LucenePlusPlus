@@ -45,7 +45,7 @@ namespace Lucene
     CollectionValue DocValues::getInnerArray()
     {
         boost::throw_exception(UnsupportedOperationException(L"This optional method is for test purposes only"));
-        return Blank();
+        return VariantUtils::null();
     }
     
     void DocValues::compute()

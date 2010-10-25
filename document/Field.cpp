@@ -87,7 +87,7 @@ namespace Lucene
     void Field::ConstructField(const String& name, TokenStreamPtr tokenStream, TermVector termVector)
     {
         this->_name = name;
-        this->fieldsData = Blank();
+        this->fieldsData = VariantUtils::null();
         this->tokenStream = tokenStream;
         this->_isStored = false;
         this->_isIndexed = true;

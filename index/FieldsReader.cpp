@@ -438,7 +438,7 @@ namespace Lucene
             return L"";
         else
         {
-            if (VariantUtils::isBlank(fieldsData))
+            if (VariantUtils::isNull(fieldsData))
             {
                 IndexInputPtr localFieldsStream(getFieldStream());
                 try
@@ -507,7 +507,7 @@ namespace Lucene
         
         if (_isBinary)
         {
-            if (VariantUtils::isBlank(fieldsData))
+            if (VariantUtils::isNull(fieldsData))
             {
                 ByteArray b;
                 

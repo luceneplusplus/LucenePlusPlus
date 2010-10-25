@@ -48,13 +48,13 @@ namespace Lucene
         for (int32_t i = 0; i < cacheEntries.size(); ++i)
         {
             FieldCacheEntryPtr item(cacheEntries[i]);
-            LuceneObjectPtr val(item->getValue());
+            boost::any val(item->getValue());
             
-            if (MiscUtils::typeOf<CreationPlaceholder>(val))
+            if (VariantUtils::typeOf<CreationPlaceholderPtr>(val))
                 continue;
             
             ReaderFieldPtr rf(newLucene<ReaderField>(item->getReaderKey(), item->getFieldName()));
-            int32_t valId = (int32_t)(int64_t)val.get();
+            int32_t valId = VariantUtils::hashCode(val);
             
             // indirect mapping, so the MapOfSet will dedup identical valIds for us
             valIdToItems.put(valId, item);

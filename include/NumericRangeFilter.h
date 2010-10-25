@@ -46,14 +46,14 @@ namespace Lucene
     
 		/// Factory that creates a NumericRangeFilter, that filters a int, long or double range using the given 
 		/// precisionStep.  You can have half-open ranges (which are in fact <= or >= queries) by setting the min 
-		/// or max value to Lucene::Blank(). By setting inclusive to false it will match all documents 
+		/// or max value to VariantUtils::null(). By setting inclusive to false it will match all documents 
 		/// excluding the bounds, with inclusive on the boundaries are hits, too.
 		static NumericRangeFilterPtr newNumericRange(const String& field, int32_t precisionStep, NumericValue min, NumericValue max, bool minInclusive, bool maxInclusive);
 		
 		/// Factory that creates a NumericRangeFilter, that filters a int, long or double range range using the default 
 		/// precisionStep {@link NumericUtils#PRECISION_STEP_DEFAULT} (4).  You can have half-open ranges (which are in 
-		/// fact <= or >= queries) by setting the min or max value to Lucene::Blank(). By setting inclusive to false it 
-		/// will match all documents excluding the bounds, with inclusive on the boundaries are hits, too.
+		/// fact <= or >= queries) by setting the min or max value to VariantUtils::null(). By setting inclusive to false 
+		/// it will match all documents excluding the bounds, with inclusive on the boundaries are hits, too.
 		static NumericRangeFilterPtr newNumericRange(const String& field, NumericValue min, NumericValue max, bool minInclusive, bool maxInclusive);
 		
 		/// Returns the field name for this filter

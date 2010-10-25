@@ -13,6 +13,12 @@ namespace Lucene
 	class LPPAPI VariantUtils
 	{
 	public:
+	    template <typename TYPE>
+		static TYPE get(boost::any var)
+		{
+			return var.type() == typeid(TYPE) ? boost::any_cast<TYPE>(var) : TYPE();
+		}
+		
 		template <typename TYPE, typename VAR>
 		static TYPE get(VAR var)
 		{
@@ -25,26 +31,48 @@ namespace Lucene
 			return (var.type() == typeid(TYPE));
 		}
 		
-		template <typename VAR>
-		static bool isBlank(VAR var)
+		static VariantNull null()
 		{
-			return typeOf<Blank>(var);
+		    return VariantNull();
+		}
+		
+		static bool isNull(boost::any var)
+		{
+			return var.empty();
+		}
+		
+		template <typename VAR>
+		static bool isNull(VAR var)
+		{
+			return typeOf<VariantNull>(var);
 		}
 		
 		template <typename VAR>
 		static int32_t hashCode(VAR var)
 		{
 			if (typeOf<String>(var))
-				return StringUtils::hashCode(boost::get<String>(var));
+				return StringUtils::hashCode(get<String>(var));
 			if (typeOf<int32_t>(var))
-				return boost::get<int32_t>(var);
+				return get<int32_t>(var);
 			if (typeOf<int64_t>(var))
-				return (int32_t)boost::get<int64_t>(var);
+				return (int32_t)get<int64_t>(var);
 			if (typeOf<double>(var))
 			{
-				int64_t longBits = MiscUtils::doubleToLongBits(boost::get<double>(var));
+				int64_t longBits = MiscUtils::doubleToLongBits(get<double>(var));
 				return (int32_t)(longBits ^ (longBits >> 32));
 			}
+			if (typeOf< Collection<uint8_t> >(var))
+			    return get< Collection<uint8_t> >(var).hashCode();
+			if (typeOf< Collection<int32_t> >(var))
+			    return get< Collection<int32_t> >(var).hashCode();
+			if (typeOf< Collection<int64_t> >(var))
+			    return get< Collection<int64_t> >(var).hashCode();
+			if (typeOf< Collection<double> >(var))
+			    return get< Collection<double> >(var).hashCode();
+            if (typeOf< Collection<String> >(var))
+			    return get< Collection<String> >(var).hashCode();
+			if (typeOf<LuceneObjectPtr>(var))
+			    return get<LuceneObjectPtr>(var)->hashCode();
 			return 0;
 		}
 		
