@@ -100,8 +100,7 @@ namespace Lucene
     void FreqProxTermsWriterPerField::newTerm(RawPostingListPtr p)
     {
         // First time we're seeing this term since the last flush
-        bool testPoint = docState->testPoint(L"FreqProxTermsWriterPerField.newTerm start");
-        BOOST_ASSERT(testPoint);
+        BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.newTerm start"));
         FreqProxTermsWriterPostingListPtr newPostingList(boost::static_pointer_cast<FreqProxTermsWriterPostingList>(p));
         newPostingList->lastDocID = docState->docID;
         if (omitTermFreqAndPositions)
@@ -116,8 +115,7 @@ namespace Lucene
     
     void FreqProxTermsWriterPerField::addTerm(RawPostingListPtr p)
     {
-        bool testPoint = docState->testPoint(L"FreqProxTermsWriterPerField.addTerm start");
-        BOOST_ASSERT(testPoint);
+        BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.addTerm start"));
         
         FreqProxTermsWriterPostingListPtr addPostingList(boost::static_pointer_cast<FreqProxTermsWriterPostingList>(p));
         
