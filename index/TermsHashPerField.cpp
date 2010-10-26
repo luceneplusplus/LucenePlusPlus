@@ -130,22 +130,23 @@ namespace Lucene
         postingsCompacted = true;
     }
     
-    Collection<RawPostingListPtr> TermsHashPerField::sortPostings()
+    struct comparePostings
     {
-        compactPostings();
-        std::sort(postingsHash.begin(), postingsHash.begin() + numPostings, boost::bind(&TermsHashPerField::comparePostings, this, _1, _2));
-        return postingsHash;
+        comparePostings(Collection<CharArray> buffers)
+    {
+            this->buffers = buffers;
     }
     
-    bool TermsHashPerField::comparePostings(const RawPostingListPtr& p1, const RawPostingListPtr& p2)
+        /// Compares term text for two Posting instance
+        inline bool operator()(const RawPostingListPtr& first, const RawPostingListPtr& second) const
     {
-        if (p1 == p2)
+            if (first == second)
             return false;
         
-        wchar_t* text1 = charPool->buffers[p1->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
-        int32_t pos1 = (p1->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-        wchar_t* text2 = charPool->buffers[p2->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
-        int32_t pos2 = (p2->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
+            wchar_t* text1 = buffers[first->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
+            int32_t pos1 = (first->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
+            wchar_t* text2 = buffers[second->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
+            int32_t pos2 = (second->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
         
         BOOST_ASSERT(text1 != text2 || pos1 != pos2);
         
@@ -164,10 +165,20 @@ namespace Lucene
             }
             else
             {
-                // This method should never compare equal postings unless p1==p2
+                    // This method should never compare equal postings unless first == second
                 BOOST_ASSERT(c1 != UTF8Stream::UNICODE_TERMINATOR);
             }
         }
+        }
+        
+        Collection<CharArray> buffers;
+    };
+    
+    Collection<RawPostingListPtr> TermsHashPerField::sortPostings()
+    {
+        compactPostings();
+        std::sort(postingsHash.begin(), postingsHash.begin() + numPostings, comparePostings(charPool->buffers));
+        return postingsHash;
     }
     
     bool TermsHashPerField::postingEquals(const wchar_t* tokenText, int32_t tokenTextLen)

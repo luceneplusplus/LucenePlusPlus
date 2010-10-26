@@ -67,9 +67,6 @@ namespace Lucene
         /// Collapse the hash table and sort in-place.
         Collection<RawPostingListPtr> sortPostings();
         
-        /// Compares term text for two Posting instance
-        inline bool comparePostings(const RawPostingListPtr& p1, const RawPostingListPtr& p2);
-        
         /// Called before a field instance is being processed
         virtual void start(FieldablePtr field);
         
