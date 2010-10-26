@@ -36,14 +36,61 @@ namespace Lucene
     
     protected:
         inline uint32_t readNext();
-        inline uint8_t mask8(uint32_t b);
-        inline uint16_t mask16(uint32_t c);
-        inline bool isTrail(uint32_t b);
-        inline bool isSurrogate(uint32_t cp);
-        inline bool isLeadSurrogate(uint32_t cp);
-        inline bool isTrailSurrogate(uint32_t cp);
-        inline bool isValidCodePoint(uint32_t cp);
-        inline bool isOverlongSequence(uint32_t cp, int32_t length);
+        
+        inline uint8_t mask8(uint32_t b)
+        {
+            return static_cast<uint8_t>(0xff & b);
+        }
+
+        inline uint16_t mask16(uint32_t c)
+        {
+            return static_cast<uint16_t>(0xffff & c);
+        }
+
+        inline bool isTrail(uint32_t b)
+        {
+            return ((mask8(b) >> 6) == 0x2);
+        }
+        
+        inline bool isSurrogate(uint32_t cp)
+        {
+            return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
+        }
+
+        inline bool isLeadSurrogate(uint32_t cp)
+        {
+            return (cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX);
+        }
+
+        inline bool isTrailSurrogate(uint32_t cp)
+        {
+            return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
+        }
+        
+        inline bool isValidCodePoint(uint32_t cp)
+        {
+            return (cp <= CODE_POINT_MAX && !isSurrogate(cp) && cp != 0xfffe && cp != 0xffff);
+        }
+        
+        inline bool isOverlongSequence(uint32_t cp, int32_t length)
+        {
+            if (cp < 0x80)
+            {
+                if (length != 1) 
+                    return true;
+            }
+            else if (cp < 0x800)
+            {
+                if (length != 2) 
+                    return true;
+            }
+            else if (cp < 0x10000)
+            {
+                if (length != 3) 
+                    return true;
+            }
+            return false;
+        }
     };
     
     class LPPAPI UTF8Encoder : public UTF8Stream

@@ -43,61 +43,6 @@ namespace Lucene
         return next == Reader::READER_EOF ? UNICODE_TERMINATOR : (uint32_t)next;
     }
     
-    uint8_t UTF8Stream::mask8(uint32_t b)
-    {
-        return static_cast<uint8_t>(0xff & b);
-    }
-    
-    uint16_t UTF8Stream::mask16(uint32_t c)
-    {
-        return static_cast<uint16_t>(0xffff & c);
-    }
-    
-    bool UTF8Stream::isTrail(uint32_t b)
-    {
-        return ((mask8(b) >> 6) == 0x2);
-    }
-    
-    bool UTF8Stream::isSurrogate(uint32_t cp)
-    {
-        return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
-    }
-    
-    bool UTF8Stream::isLeadSurrogate(uint32_t cp)
-    {
-        return (cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX);
-    }
-    
-    bool UTF8Stream::isTrailSurrogate(uint32_t cp)
-    {
-        return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
-    }
-    
-    bool UTF8Stream::isValidCodePoint(uint32_t cp)
-    {
-        return (cp <= CODE_POINT_MAX && !isSurrogate(cp) && cp != 0xfffe && cp != 0xffff);
-    }
-    
-    bool UTF8Stream::isOverlongSequence(uint32_t cp, int32_t length)
-    {
-        if (cp < 0x80)
-        {
-            if (length != 1) 
-                return true;
-        }
-        else if (cp < 0x800)
-        {
-            if (length != 2) 
-                return true;
-        }
-        else if (cp < 0x10000)
-        {
-            if (length != 3) 
-                return true;
-        }
-        return false;
-    }
-    
     UTF8Encoder::UTF8Encoder(ReaderPtr reader) : UTF8Stream(reader)
     {
     }
@@ -379,3 +324,4 @@ namespace Lucene
         #endif
     }
 }
+
