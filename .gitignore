@@ -33,6 +33,7 @@ test/msvc/Debug DLL
 test/msvc/Debug Static
 test/msvc/Release DLL
 test/msvc/Release Static
+test/testfiles/temp
 demo/deletefiles/msvc/Release DLL
 demo/deletefiles/msvc/Release Static
 demo/deletefiles/msvc/Debug DLL
