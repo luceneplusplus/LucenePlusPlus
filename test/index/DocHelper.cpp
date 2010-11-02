@@ -18,57 +18,99 @@ namespace Lucene
 {
     const wchar_t* DocHelper::FIELD_1_TEXT = L"field one text";
     const wchar_t* DocHelper::TEXT_FIELD_1_KEY = L"textField1";
+    FieldPtr DocHelper::textField1;
 
     const wchar_t* DocHelper::FIELD_2_TEXT = L"field field field two text";
     // Fields will be lexicographically sorted.  So, the order is: field, text, two
     const int32_t DocHelper::FIELD_2_FREQS[] = {3, 1, 1};
     const wchar_t* DocHelper::TEXT_FIELD_2_KEY = L"textField2";
+    FieldPtr DocHelper::textField2;
 
     const wchar_t* DocHelper::FIELD_3_TEXT = L"aaaNoNorms aaaNoNorms bbbNoNorms";
     const wchar_t* DocHelper::TEXT_FIELD_3_KEY = L"textField3";
+    FieldPtr DocHelper::textField3;
     
     const wchar_t* DocHelper::KEYWORD_TEXT = L"Keyword";
     const wchar_t* DocHelper::KEYWORD_FIELD_KEY = L"keyField";
+    FieldPtr DocHelper::keyField;
     
     const wchar_t* DocHelper::NO_NORMS_TEXT = L"omitNormsText";
     const wchar_t* DocHelper::NO_NORMS_KEY = L"omitNorms";
+    FieldPtr DocHelper::noNormsField;
     
     const wchar_t* DocHelper::NO_TF_TEXT = L"analyzed with no tf and positions";
     const wchar_t* DocHelper::NO_TF_KEY = L"omitTermFreqAndPositions";
+    FieldPtr DocHelper::noTFField;
     
     const wchar_t* DocHelper::UNINDEXED_FIELD_TEXT = L"unindexed field text";
     const wchar_t* DocHelper::UNINDEXED_FIELD_KEY = L"unIndField";
+    FieldPtr DocHelper::unIndField;
     
     const wchar_t* DocHelper::UNSTORED_1_FIELD_TEXT = L"unstored field text";
     const wchar_t* DocHelper::UNSTORED_FIELD_1_KEY = L"unStoredField1";
+    FieldPtr DocHelper::unStoredField1;
     
     const wchar_t* DocHelper::UNSTORED_2_FIELD_TEXT = L"unstored field text";
     const wchar_t* DocHelper::UNSTORED_FIELD_2_KEY = L"unStoredField2";
+    FieldPtr DocHelper::unStoredField2;
     
     const wchar_t* DocHelper::LAZY_FIELD_BINARY_KEY = L"lazyFieldBinary";
+    ByteArray DocHelper::LAZY_FIELD_BINARY_BYTES;
+    FieldPtr DocHelper::lazyFieldBinary;
     
     const wchar_t* DocHelper::LAZY_FIELD_KEY = L"lazyField";
     const wchar_t* DocHelper::LAZY_FIELD_TEXT = L"These are some field bytes";
+    FieldPtr DocHelper::lazyField;
     
     const wchar_t* DocHelper::LARGE_LAZY_FIELD_KEY = L"largeLazyField";
     String DocHelper::LARGE_LAZY_FIELD_TEXT;
+    FieldPtr DocHelper::largeLazyField;
     
     const uint8_t DocHelper::_FIELD_UTF1_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x6f, 0x6e,
                                                    0x65, 0x20, 0xe4, 0xb8, 0x80, 0x74, 0x65, 0x78, 0x74};
     const String DocHelper::FIELD_UTF1_TEXT = UTF8_TO_STRING(_FIELD_UTF1_TEXT);
     const wchar_t* DocHelper::TEXT_FIELD_UTF1_KEY = L"textField1Utf8";
+    FieldPtr DocHelper::textUtfField1;
     
     const uint8_t DocHelper::_FIELD_UTF2_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x66, 0x69, 0x65, 
                                                    0x6c, 0x64, 0x20, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 
                                                    0xe4, 0xb8, 0x80, 0x74, 0x77, 0x6f, 0x20, 0x74, 0x65,
                                                    0x78, 0x74};
     const String DocHelper::FIELD_UTF2_TEXT = UTF8_TO_STRING(_FIELD_UTF2_TEXT);
+    FieldPtr DocHelper::textUtfField2;
     
     // Fields will be lexicographically sorted.  So, the order is: field, text, two
     const int32_t DocHelper::FIELD_UTF2_FREQS[] = {3, 1, 1};
     const wchar_t* DocHelper::TEXT_FIELD_UTF2_KEY = L"textField2Utf8";
 
+    MapStringString DocHelper::nameValues;
+    Collection<FieldPtr> DocHelper::fields;
+    MapStringField DocHelper::all;
+    MapStringField DocHelper::indexed;
+    MapStringField DocHelper::stored;
+    MapStringField DocHelper::unstored;
+    MapStringField DocHelper::unindexed;
+    MapStringField DocHelper::termvector;
+    MapStringField DocHelper::notermvector;
+    MapStringField DocHelper::lazy;
+    MapStringField DocHelper::noNorms;
+    MapStringField DocHelper::noTf;
+
     DocHelper::DocHelper()
+    {
+        static bool setupRequired = true;
+        if (setupRequired)
+        {
+            setup();
+            setupRequired = false;
+        }
+    }
+    
+    DocHelper::~DocHelper()
+    {
+    }
+    
+    void DocHelper::setup()
     {
         textField1 = newLucene<Field>(TEXT_FIELD_1_KEY, FIELD_1_TEXT, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO);
         textField2 = newLucene<Field>(TEXT_FIELD_2_KEY, FIELD_2_TEXT, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS);
@@ -167,10 +209,6 @@ namespace Lucene
             if ((*field)->getOmitTermFreqAndPositions())
                 noTf.put((*field)->name(), *field);
         }
-    }
-    
-    DocHelper::~DocHelper()
-    {
     }
     
     void DocHelper::setupDoc(DocumentPtr doc)

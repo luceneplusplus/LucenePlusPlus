@@ -37,6 +37,35 @@ class NumericRangeQuery64Fixture : public LuceneTestFixture
 public:
     NumericRangeQuery64Fixture()
     {
+        static bool setupRequired = true;
+        if (setupRequired)
+        {
+            setup();
+            setupRequired = false;
+        }
+    }
+    
+    virtual ~NumericRangeQuery64Fixture()
+    {
+    }
+
+protected:
+    // distance of entries
+    static const int64_t distance;
+    
+    // shift the starting of the values to the left, to also have negative values
+    static const int64_t startOffset;
+    
+    // number of docs to generate for testing
+    static const int32_t noDocs;
+    
+    static RAMDirectoryPtr directory;
+    static IndexSearcherPtr searcher;
+
+protected:
+    /// One-time setup to initialise static members
+    void setup()
+    {
         // set the theoretical maximum term count for 8bit (see docs for the number)
         BooleanQuery::setMaxClauseCount(7 * 255 * 2 + 255);
 
@@ -91,23 +120,6 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
     }
     
-    virtual ~NumericRangeQuery64Fixture()
-    {
-    }
-
-protected:
-    // distance of entries
-    static const int64_t distance;
-    
-    // shift the starting of the values to the left, to also have negative values
-    static const int64_t startOffset;
-    
-    // number of docs to generate for testing
-    static const int32_t noDocs;
-    
-    RAMDirectoryPtr directory;
-    IndexSearcherPtr searcher;
-
 public:
     /// test for both constant score and boolean query, the other tests only use the constant score mode
     void testRange(int32_t precisionStep)
@@ -326,6 +338,9 @@ const int64_t NumericRangeQuery64Fixture::startOffset = (int64_t)-1 << 31;
 
 // number of docs to generate for testing
 const int32_t NumericRangeQuery64Fixture::noDocs = 10000;
+
+RAMDirectoryPtr NumericRangeQuery64Fixture::directory;
+IndexSearcherPtr NumericRangeQuery64Fixture::searcher;
 
 BOOST_FIXTURE_TEST_SUITE(NumericRangeQuery64Test, NumericRangeQuery64Fixture)
 

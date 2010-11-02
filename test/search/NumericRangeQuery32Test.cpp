@@ -37,6 +37,35 @@ class NumericRangeQuery32Fixture : public LuceneTestFixture
 public:
     NumericRangeQuery32Fixture()
     {
+        static bool setupRequired = true;
+        if (setupRequired)
+        {
+            setup();
+            setupRequired = false;
+        }
+    }
+    
+    virtual ~NumericRangeQuery32Fixture()
+    {
+    }
+
+protected:
+    // distance of entries
+    static const int32_t distance;
+    
+    // shift the starting of the values to the left, to also have negative values
+    static const int32_t startOffset;
+    
+    // number of docs to generate for testing
+    static const int32_t noDocs;
+    
+    static RAMDirectoryPtr directory;
+    static IndexSearcherPtr searcher;
+
+protected:
+    /// One-time setup to initialise static members
+    void setup()
+    {
         // set the theoretical maximum term count for 8bit (see docs for the number)
         BooleanQuery::setMaxClauseCount(3 * 255 * 2 + 255);
 
@@ -84,24 +113,7 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
-    virtual ~NumericRangeQuery32Fixture()
-    {
-    }
-
-protected:
-    // distance of entries
-    static const int32_t distance;
-    
-    // shift the starting of the values to the left, to also have negative values
-    static const int32_t startOffset;
-    
-    // number of docs to generate for testing
-    static const int32_t noDocs;
-    
-    RAMDirectoryPtr directory;
-    IndexSearcherPtr searcher;
-
+        
 public:
     /// test for both constant score and boolean query, the other tests only use the constant score mode
     void testRange(int32_t precisionStep)
@@ -324,6 +336,9 @@ const int32_t NumericRangeQuery32Fixture::startOffset = -1 << 15;
 
 // number of docs to generate for testing
 const int32_t NumericRangeQuery32Fixture::noDocs = 10000;
+
+RAMDirectoryPtr NumericRangeQuery32Fixture::directory;
+IndexSearcherPtr NumericRangeQuery32Fixture::searcher;
 
 BOOST_FIXTURE_TEST_SUITE(NumericRangeQuery32Test, NumericRangeQuery32Fixture)
 
