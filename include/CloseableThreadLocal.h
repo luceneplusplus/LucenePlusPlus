@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         typedef boost::shared_ptr<TYPE> localDataPtr;
-        typedef Map<ThreadId, localDataPtr> MapLocalData;
+        typedef Map<int64_t, localDataPtr> MapLocalData;
         
         CloseableThreadLocal()
         {

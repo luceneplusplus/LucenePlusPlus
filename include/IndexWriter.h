@@ -160,7 +160,7 @@ namespace Lucene
         
         /// Used to only allow one addIndexes to proceed at once
         int32_t readCount; // count of how many threads are holding read lock
-        ThreadId writeThread; // non-null if any thread holds write lock
+        int64_t writeThread; // non-null if any thread holds write lock
         int32_t upgradeCount;
         
         int32_t readerTermsIndexDivisor;

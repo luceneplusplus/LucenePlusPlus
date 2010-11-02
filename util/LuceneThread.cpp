@@ -102,21 +102,12 @@ namespace Lucene
         return true;
     }
     
-    ThreadId LuceneThread::nullId()
+    int64_t LuceneThread::currentId()
     {
         #ifdef _WIN32
-        return 0;
+        return GetCurrentThreadId();
         #else
-        return ThreadId();
-        #endif
-    }
-    
-    ThreadId LuceneThread::currentId()
-    {
-        #ifdef _WIN32
-        return ::GetCurrentThreadId();
-        #else
-        return boost::this_thread::get_id();
+        return pthread_self();
         #endif
     }
 }

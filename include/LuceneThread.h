@@ -19,8 +19,7 @@ namespace Lucene
     ///
     /// This problem is most visible when running the AtomicUpdateTest test suite.
     ///
-    /// Therefore, I now uniquely identify threads by their native id in Windows, and 
-    /// boost::thread::id for other platforms.
+    /// Therefore, I now uniquely identify threads by their native id.
     class LPPAPI LuceneThread : public LuceneObject
     {
     public:
@@ -63,11 +62,8 @@ namespace Lucene
         /// override to provide the body of the thread.
         virtual void run() = 0;
         
-        /// Return null representation of thread identifier.
-        static ThreadId nullId();
-        
         /// Return representation of current execution thread.
-        static ThreadId currentId();
+        static int64_t currentId();
     
     protected:
         /// set thread running state.

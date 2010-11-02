@@ -103,12 +103,6 @@ namespace Lucene
 
 namespace Lucene
 {
-    #ifdef _WIN32
-    typedef int64_t ThreadId;
-    #else
-    typedef boost::thread::id ThreadId;
-    #endif
-    
     typedef Array<uint8_t> ByteArray;
     typedef Array<int32_t> IntArray;
     typedef Array<int64_t> LongArray;
@@ -232,7 +226,7 @@ namespace Lucene
     typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryAny, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryAny;
     
     typedef Map< String, AttributePtr > MapStringAttribute;
-    typedef Map< ThreadId, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
+    typedef Map< int64_t, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
     typedef Map< String, IndexReaderPtr > MapStringIndexReader;
     typedef Map< TermPtr, NumPtr, luceneCompare<TermPtr> > MapTermNum;
     
