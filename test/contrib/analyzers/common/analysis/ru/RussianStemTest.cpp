@@ -38,9 +38,9 @@ public:
         inStems->close();
     }
     
-	virtual ~RussianStemmerFixture()
-	{
-	}
+    virtual ~RussianStemmerFixture()
+    {
+    }
 
 protected:
     Collection<String> words;

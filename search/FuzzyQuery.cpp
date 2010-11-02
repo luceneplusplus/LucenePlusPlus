@@ -18,17 +18,17 @@ namespace Lucene
     
     FuzzyQuery::FuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength)
     {
-        ConstructQuery(term, minimumSimilarity, prefixLength);		
+        ConstructQuery(term, minimumSimilarity, prefixLength);
     }
     
     FuzzyQuery::FuzzyQuery(TermPtr term, double minimumSimilarity)
     {
-        ConstructQuery(term, minimumSimilarity, defaultPrefixLength);		
+        ConstructQuery(term, minimumSimilarity, defaultPrefixLength);
     }
     
     FuzzyQuery::FuzzyQuery(TermPtr term)
     {
-        ConstructQuery(term, defaultMinSimilarity(), defaultPrefixLength);		
+        ConstructQuery(term, defaultMinSimilarity(), defaultPrefixLength);
     }
     
     FuzzyQuery::~FuzzyQuery()

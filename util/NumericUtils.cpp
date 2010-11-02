@@ -10,24 +10,24 @@
 namespace Lucene
 {
     /// The default precision step used by {@link NumericField}, {@link NumericTokenStream}, {@link NumericRangeQuery}, 
-	/// and {@link NumericRangeFilter} as default.
-	const int32_t NumericUtils::PRECISION_STEP_DEFAULT = 4;
-	
-	/// Longs are stored at lower precision by shifting off lower bits. The shift count is stored as SHIFT_START_LONG + 
-	/// shift in the first character.
-	const wchar_t NumericUtils::SHIFT_START_LONG = (wchar_t)0x20;
-	
-	/// The maximum term length (used for char[] buffer size) for encoding long values.
-	/// @see #longToPrefixCoded(long,int,char[])
-	const int32_t NumericUtils::BUF_SIZE_LONG = 63 / 7 + 2;
-	
-	/// Integers are stored at lower precision by shifting off lower bits. The shift count is stored as SHIFT_START_INT +
-	/// shift in the first character.
-	const wchar_t NumericUtils::SHIFT_START_INT = (wchar_t)0x60;
-	
-	/// The maximum term length (used for char[] buffer size) for encoding int values.
-	/// @see #intToPrefixCoded(int,int,char[])
-	const int32_t NumericUtils::BUF_SIZE_INT = 31 / 7 + 2;
+    /// and {@link NumericRangeFilter} as default.
+    const int32_t NumericUtils::PRECISION_STEP_DEFAULT = 4;
+
+    /// Longs are stored at lower precision by shifting off lower bits. The shift count is stored as SHIFT_START_LONG + 
+    /// shift in the first character.
+    const wchar_t NumericUtils::SHIFT_START_LONG = (wchar_t)0x20;
+
+    /// The maximum term length (used for char[] buffer size) for encoding long values.
+    /// @see #longToPrefixCoded(long,int,char[])
+    const int32_t NumericUtils::BUF_SIZE_LONG = 63 / 7 + 2;
+
+    /// Integers are stored at lower precision by shifting off lower bits. The shift count is stored as SHIFT_START_INT +
+    /// shift in the first character.
+    const wchar_t NumericUtils::SHIFT_START_INT = (wchar_t)0x60;
+
+    /// The maximum term length (used for char[] buffer size) for encoding int values.
+    /// @see #intToPrefixCoded(int,int,char[])
+    const int32_t NumericUtils::BUF_SIZE_INT = 31 / 7 + 2;
     
     NumericUtils::~NumericUtils()
     {

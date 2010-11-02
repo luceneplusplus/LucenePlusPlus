@@ -72,7 +72,7 @@ namespace Lucene
         for (Collection<QueryPtr>::iterator query = queries.begin(); query != queries.end(); ++query)
         {
             Collection<BooleanClausePtr> clauses;
-            BooleanQueryPtr bq(boost::dynamic_pointer_cast<BooleanQuery>(*query));			
+            BooleanQueryPtr bq(boost::dynamic_pointer_cast<BooleanQuery>(*query));
             // check if we can split the query into clauses
             bool splittable = bq;
             if (splittable)

@@ -238,7 +238,7 @@ namespace Lucene
     AttributePtr DefaultAttributeFactory::createAttributeInstance(const String& className)
     {
         return AttributePtr();
-    }	
+    }
     
     AttributeSourceState::~AttributeSourceState()
     {

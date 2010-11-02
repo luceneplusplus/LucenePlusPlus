@@ -10,15 +10,15 @@
 namespace Lucene
 {
     #ifdef _WIN32
-	const int32_t LuceneThread::MAX_PRIORITY = THREAD_PRIORITY_HIGHEST;
-	const int32_t LuceneThread::NORM_PRIORITY = THREAD_PRIORITY_NORMAL;
-	const int32_t LuceneThread::MIN_PRIORITY = THREAD_PRIORITY_LOWEST;
-	#else
-	const int32_t LuceneThread::MAX_PRIORITY = 2;
-	const int32_t LuceneThread::NORM_PRIORITY = 0;
-	const int32_t LuceneThread::MIN_PRIORITY = -2;
-	#endif
-	
+    const int32_t LuceneThread::MAX_PRIORITY = THREAD_PRIORITY_HIGHEST;
+    const int32_t LuceneThread::NORM_PRIORITY = THREAD_PRIORITY_NORMAL;
+    const int32_t LuceneThread::MIN_PRIORITY = THREAD_PRIORITY_LOWEST;
+    #else
+    const int32_t LuceneThread::MAX_PRIORITY = 2;
+    const int32_t LuceneThread::NORM_PRIORITY = 0;
+    const int32_t LuceneThread::MIN_PRIORITY = -2;
+    #endif
+
     LuceneThread::LuceneThread()
     {
         running = false;

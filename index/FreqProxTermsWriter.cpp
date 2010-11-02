@@ -98,10 +98,10 @@ namespace Lucene
         // -> IMPL: FormatPostingsFieldsWriter
         //  -> FormatPostingsTermsConsumer
         //   -> IMPL: FormatPostingsTermsWriter
-        //	   -> FormatPostingsDocConsumer
-        //		-> IMPL: FormatPostingsDocWriter
-        //		  -> FormatPostingsPositionsConsumer
-        //			-> IMPL: FormatPostingsPositionsWriter
+        //       -> FormatPostingsDocConsumer
+        //        -> IMPL: FormatPostingsDocWriter
+        //          -> FormatPostingsPositionsConsumer
+        //            -> IMPL: FormatPostingsPositionsWriter
     
         int32_t start = 0;
         while (start < numAllFields)
@@ -146,7 +146,7 @@ namespace Lucene
     
     void FreqProxTermsWriter::appendPostings(Collection<FreqProxTermsWriterPerFieldPtr> fields, FormatPostingsFieldsConsumerPtr consumer)
     {
-        TestScope testScope(L"FreqProxTermsWriter", L"appendPostings");		
+        TestScope testScope(L"FreqProxTermsWriter", L"appendPostings");
         int32_t numFields = fields.size();
         
         Collection<FreqProxFieldMergeStatePtr> mergeStates(Collection<FreqProxFieldMergeStatePtr>::newInstance(numFields));

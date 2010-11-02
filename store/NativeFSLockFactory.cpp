@@ -69,7 +69,7 @@ namespace Lucene
             String lockPath(FileUtils::joinPath(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName));
             if (FileUtils::fileExists(lockPath) && !FileUtils::removeFile(lockPath))
                 boost::throw_exception(IOException(L"Failed to delete: " + lockPath));
-        }		
+        }
     }
     
     NativeFSLock::NativeFSLock(const String& lockDir, const String& lockFileName)
@@ -179,7 +179,7 @@ namespace Lucene
             try
             {
                 lock->unlock();
-                lock.reset();				
+                lock.reset();
             }
             catch (...)
             {

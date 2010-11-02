@@ -300,7 +300,7 @@ namespace Lucene
             {
                 HashSet<String> result(dir->listAll());
                 if (!result)
-                    boost::throw_exception(IOException(L"Cannot read directory " + dir->toString() + L": listAll() returned null"));				
+                    boost::throw_exception(IOException(L"Cannot read directory " + dir->toString() + L": listAll() returned null"));
                 String pattern(name + L".s");
                 int32_t patternLength = pattern.length();
                 for (HashSet<String>::iterator fileName = result.begin(); fileName != result.end(); ++fileName)

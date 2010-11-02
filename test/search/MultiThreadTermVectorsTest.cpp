@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(testMultiThreadTermVectors)
     {
         reader = IndexReader::open(directory, true);
         for (int32_t i = 1; i <= numThreads; ++i)
-            testTermPositionVectors(reader, i);	
+            testTermPositionVectors(reader, i);
     }
     catch (LuceneException& e)
     {

@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(testFileReaderReset)
     BOOST_CHECK_EQUAL(String(buffer, 9), L"test file");
     reader->reset();
     BOOST_CHECK_EQUAL(reader->read(buffer, 0, 9), 9);
-    BOOST_CHECK_EQUAL(String(buffer, 9), L"test file");	
+    BOOST_CHECK_EQUAL(String(buffer, 9), L"test file");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

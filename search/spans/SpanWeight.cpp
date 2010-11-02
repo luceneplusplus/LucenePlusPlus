@@ -86,7 +86,7 @@ namespace Lucene
         
         // explain field weight
         ComplexExplanationPtr fieldExpl(newLucene<ComplexExplanation>());
-        fieldExpl->setDescription(L"fieldWeight(" +	field + L":" + query->toString(field) + L" in " + StringUtils::toString(doc) + L"), product of:");
+        fieldExpl->setDescription(L"fieldWeight(" +    field + L":" + query->toString(field) + L" in " + StringUtils::toString(doc) + L"), product of:");
         
         ExplanationPtr tfExpl(boost::dynamic_pointer_cast<SpanScorer>(scorer(reader, true, false))->explain(doc));
         fieldExpl->addDetail(tfExpl);

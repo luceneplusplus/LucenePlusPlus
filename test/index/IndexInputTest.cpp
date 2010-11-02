@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(testRead)
     BOOST_CHECK_EQUAL(readString[0], 119070);
     #endif
     
-    readString = is->readString();	
+    readString = is->readString();
     #ifdef LPP_UNICODE_CHAR_SIZE_2
     BOOST_CHECK_EQUAL(readString[0], 55348);
     BOOST_CHECK_EQUAL(readString[1], 56606);

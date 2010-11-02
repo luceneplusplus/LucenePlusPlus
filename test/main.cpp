@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
                 boost::replace_all(testDir, L"\"", L"");
                 boost::trim(testDir);
                 break;
-            }			
+            }
         }
     }
     

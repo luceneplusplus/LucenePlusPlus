@@ -115,7 +115,7 @@ namespace Lucene
             offset += bytesToCopy;
             length -= bytesToCopy;
             bufferPosition += bytesToCopy;
-        }		
+        }
     }
     
     void RAMOutputStream::switchCurrentBuffer()

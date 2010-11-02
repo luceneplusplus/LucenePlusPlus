@@ -241,7 +241,7 @@ namespace Lucene
             int32_t cmp = ords[slot1] - ords[slot2];
             if (cmp != 0)
                 return cmp;
-        }		
+        }
         return values[slot1].compare(values[slot2]);
     }
 

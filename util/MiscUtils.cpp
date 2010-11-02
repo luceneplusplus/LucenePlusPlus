@@ -11,14 +11,14 @@
 namespace Lucene
 {
     const uint32_t MiscUtils::SINGLE_EXPONENT_MASK = 0x7f800000;
-	const uint32_t MiscUtils::SINGLE_MANTISSA_MASK = 0x007fffff;
-	const uint32_t MiscUtils::SINGLE_NAN_BITS = (MiscUtils::SINGLE_EXPONENT_MASK | 0x00400000);
+    const uint32_t MiscUtils::SINGLE_MANTISSA_MASK = 0x007fffff;
+    const uint32_t MiscUtils::SINGLE_NAN_BITS = (MiscUtils::SINGLE_EXPONENT_MASK | 0x00400000);
 
-	const uint64_t MiscUtils::DOUBLE_SIGN_MASK = 0x8000000000000000LL;
-	const uint64_t MiscUtils::DOUBLE_EXPONENT_MASK = 0x7ff0000000000000LL;
-	const uint64_t MiscUtils::DOUBLE_MANTISSA_MASK = 0x000fffffffffffffLL;
-	const uint64_t MiscUtils::DOUBLE_NAN_BITS = DOUBLE_EXPONENT_MASK | 0x0008000000000000LL;
-	
+    const uint64_t MiscUtils::DOUBLE_SIGN_MASK = 0x8000000000000000LL;
+    const uint64_t MiscUtils::DOUBLE_EXPONENT_MASK = 0x7ff0000000000000LL;
+    const uint64_t MiscUtils::DOUBLE_MANTISSA_MASK = 0x000fffffffffffffLL;
+    const uint64_t MiscUtils::DOUBLE_NAN_BITS = DOUBLE_EXPONENT_MASK | 0x0008000000000000LL;
+
     uint64_t MiscUtils::getTimeMillis(boost::posix_time::ptime time)
     {
         return boost::posix_time::time_duration(time - boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1))).total_milliseconds();

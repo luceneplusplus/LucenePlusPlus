@@ -650,7 +650,7 @@ BOOST_AUTO_TEST_CASE(testUpdatesOnDiskFull)
 /// This test tests that buffered deletes are cleared when an Exception is hit during flush.
 BOOST_AUTO_TEST_CASE(testErrorAfterApplyDeletes)
 {
-    Collection<String> keywords = newCollection<String>(L"1", L"2");	
+    Collection<String> keywords = newCollection<String>(L"1", L"2");
     Collection<String> unindexed = newCollection<String>(L"Netherlands", L"Italy");
     Collection<String> unstored = newCollection<String>(L"Amsterdam has lots of bridges", L"Venice has lots of canals");
     Collection<String> text = newCollection<String>(L"Amsterdam", L"Venice");
@@ -715,7 +715,7 @@ BOOST_AUTO_TEST_CASE(testErrorAfterApplyDeletes)
 /// cleaned up if there's an i/o error
 BOOST_AUTO_TEST_CASE(testErrorInDocsWriterAdd)
 {
-    Collection<String> keywords = newCollection<String>(L"1", L"2");	
+    Collection<String> keywords = newCollection<String>(L"1", L"2");
     Collection<String> unindexed = newCollection<String>(L"Netherlands", L"Italy");
     Collection<String> unstored = newCollection<String>(L"Amsterdam has lots of bridges", L"Venice has lots of canals");
     Collection<String> text = newCollection<String>(L"Amsterdam", L"Venice");

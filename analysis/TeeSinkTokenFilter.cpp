@@ -118,7 +118,7 @@ namespace Lucene
     }
     
     SinkTokenStream::~SinkTokenStream()
-    {	
+    {
     }
     
     bool SinkTokenStream::accept(AttributeSourcePtr source)

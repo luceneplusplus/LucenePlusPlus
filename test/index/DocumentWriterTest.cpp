@@ -263,7 +263,7 @@ namespace TestPreAnalyzedField
         {
             tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
             index = 0;
-            termAtt = addAttribute<TermAttribute>();			
+            termAtt = addAttribute<TermAttribute>();
         }
         
         virtual ~TestableTokenStream()

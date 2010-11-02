@@ -73,7 +73,7 @@ namespace Lucene
         openFiles = MapStringInt::newInstance();
         HashSet<String> crashFiles(unSyncedFiles);
         unSyncedFiles.clear();
-        int32_t count = 0;		
+        int32_t count = 0;
         for (HashSet<String>::iterator it = crashFiles.begin(); it != crashFiles.end(); ++it)
         {
             RAMFilePtr file(fileMap.get(*it));

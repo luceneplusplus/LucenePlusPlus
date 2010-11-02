@@ -252,7 +252,7 @@ namespace Lucene
         
         // explain field weight
         ExplanationPtr fieldExpl(newLucene<Explanation>());
-        fieldExpl->setDescription(L"fieldWeight(" +	query->field + L":" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
+        fieldExpl->setDescription(L"fieldWeight(" +    query->field + L":" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
         
         PhraseScorerPtr phraseScorer(boost::dynamic_pointer_cast<PhraseScorer>(scorer(reader, true, false)));
         if (!phraseScorer)

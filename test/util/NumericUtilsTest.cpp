@@ -62,7 +62,7 @@ static void checkLongRangeSplit(int64_t lower, int64_t upper, int32_t precisionS
         // after flipping all bits in the range, the cardinality should be zero
         bits->flip(0, (int32_t)(upper - lower + 1));
         BOOST_CHECK(bits->isEmpty());
-    }	
+    }
 }
 
 class CheckIntRangeBuilder : public IntRangeBuilder
@@ -114,7 +114,7 @@ static void checkIntRangeSplit(int32_t lower, int32_t upper, int32_t precisionSt
         // after flipping all bits in the range, the cardinality should be zero
         bits->flip(0, (int32_t)(upper - lower + 1));
         BOOST_CHECK(bits->isEmpty());
-    }	
+    }
 }
     
 BOOST_AUTO_TEST_CASE(testLongConversionAndOrdering)

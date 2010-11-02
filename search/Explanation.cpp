@@ -91,7 +91,7 @@ namespace Lucene
                 buffer += details[i]->toHtml();
         }
         buffer += L"</li>\n</ul>\n";
-        return buffer;		
+        return buffer;
     }
     
     IDFExplanation::~IDFExplanation()

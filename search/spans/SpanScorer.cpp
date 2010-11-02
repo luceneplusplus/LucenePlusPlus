@@ -82,7 +82,7 @@ namespace Lucene
     {
         double raw = getSimilarity()->tf(freq) * value; // raw score
         return norms ? raw * Similarity::decodeNorm(norms[doc]) : raw; // normalize
-    }	
+    }
     
     ExplanationPtr SpanScorer::explain(int32_t doc)
     {

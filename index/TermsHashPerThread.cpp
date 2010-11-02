@@ -44,7 +44,7 @@ namespace Lucene
         {
             // We are primary
             charPool = newLucene<CharBlockPool>(DocumentsWriterPtr(termsHash->_docWriter));
-            primary = true;		
+            primary = true;
         }
         else
         {

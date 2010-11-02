@@ -137,7 +137,7 @@ namespace Lucene
             else
                 first = pp;
             last = pp;
-            pp->_next.reset();			
+            pp->_next.reset();
         }
     }
     

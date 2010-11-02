@@ -28,6 +28,6 @@ namespace Lucene
     {
         StringStream buffer;
         buffer << L"PrefixFilter(" << getPrefix()->toString() << L")";
-        return buffer.str();	
+        return buffer.str();
     }
 }

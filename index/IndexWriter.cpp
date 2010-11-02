@@ -35,8 +35,8 @@
 namespace Lucene
 {
     /// The normal read buffer size defaults to 1024, but increasing this during merging seems to 
-	/// yield performance gains.  However we don't want to increase it too much because there are 
-	/// quite a few BufferedIndexInputs created during merging.
+    /// yield performance gains.  However we don't want to increase it too much because there are 
+    /// quite a few BufferedIndexInputs created during merging.
     const int32_t IndexWriter::MERGE_READ_BUFFER_SIZE = 4096;
     
     int32_t IndexWriter::MESSAGE_ID = 0;
@@ -101,7 +101,7 @@ namespace Lucene
         this->directory = d;
         this->analyzer = a;
         this->create = create;
-        this->deletionPolicy = deletionPolicy;		
+        this->deletionPolicy = deletionPolicy;
         this->maxFieldLength = mfl;
     }
     
@@ -110,7 +110,7 @@ namespace Lucene
         this->directory = d;
         this->analyzer = a;
         this->create = create;
-        this->deletionPolicy = deletionPolicy;		
+        this->deletionPolicy = deletionPolicy;
         this->maxFieldLength = mfl;
         this->indexingChain = indexingChain;
         this->indexCommit = commit;
@@ -121,7 +121,7 @@ namespace Lucene
         this->directory = d;
         this->analyzer = a;
         this->create = false;
-        this->deletionPolicy = deletionPolicy;		
+        this->deletionPolicy = deletionPolicy;
         this->maxFieldLength = mfl;
         this->indexCommit = commit;
     }
@@ -685,7 +685,7 @@ namespace Lucene
     
     void IndexWriter::setDefaultWriteLockTimeout(int64_t writeLockTimeout)
     {
-        IndexWriter::WRITE_LOCK_TIMEOUT = writeLockTimeout;	
+        IndexWriter::WRITE_LOCK_TIMEOUT = writeLockTimeout;
     }
     
     int64_t IndexWriter::getDefaultWriteLockTimeout()
@@ -732,7 +732,7 @@ namespace Lucene
                 }
             }
             else
-                return false;	
+                return false;
         }
     }
     
@@ -794,7 +794,7 @@ namespace Lucene
         catch (LuceneException& e)
         {
             finally = e;
-        }		
+        }
         {
             SyncLock syncLock(this);
             closing = false;
@@ -898,7 +898,7 @@ namespace Lucene
     int32_t IndexWriter::maxDoc()
     {
         SyncLock syncLock(this);
-        int32_t count = docWriter ? docWriter->getNumDocsInRAM() : 0;		
+        int32_t count = docWriter ? docWriter->getNumDocsInRAM() : 0;
         for (int32_t i = 0; i < segmentInfos->size(); ++i)
             count += segmentInfos->info(i)->docCount;
         return count;
@@ -1062,7 +1062,7 @@ namespace Lucene
             }
             finally.throwException();
             if (doFlush)
-                flush(true, false, false);			
+                flush(true, false, false);
         }
         catch (std::bad_alloc& oom)
         {
@@ -1338,7 +1338,7 @@ namespace Lucene
         {
             // Advance the merge from pending to running
             OneMergePtr merge(pendingMerges.removeFirst());
-            runningMerges.add(merge);			
+            runningMerges.add(merge);
             return merge;
         }
     }
@@ -1360,7 +1360,7 @@ namespace Lucene
                     pendingMerges.remove(merge);
                     return running;
                 }
-            }	
+            }
         }
         
         // All existing merges do not involve external segments
@@ -1415,7 +1415,7 @@ namespace Lucene
             // We must "protect" our files at this point from deletion in case we need to rollback
             deleter->incRef(segmentInfos, false);
             
-            success = true;		
+            success = true;
         }
         catch (LuceneException& e)
         {
@@ -1551,7 +1551,7 @@ namespace Lucene
         catch (LuceneException& e)
         {
             finally = e;
-        }		
+        }
         {
             SyncLock syncLock(this);
             
@@ -1562,7 +1562,7 @@ namespace Lucene
                 notifyAll();
                 message(L"hit exception during rollback");
             }
-        }		
+        }
         finally.throwException();
         
         closeInternal(false);
@@ -2054,7 +2054,7 @@ namespace Lucene
                     else
                         commitTransaction();
                 }
-            }			
+            }
         }
         catch (std::bad_alloc& oom)
         {
@@ -2071,7 +2071,7 @@ namespace Lucene
     
     void IndexWriter::doAfterFlush()
     {
-        // override	
+        // override
     }
     
     void IndexWriter::doBeforeFlush()
@@ -2082,7 +2082,7 @@ namespace Lucene
     void IndexWriter::prepareCommit()
     {
         ensureOpen();
-        prepareCommit(MapStringString());			
+        prepareCommit(MapStringString());
     }
     
     void IndexWriter::prepareCommit(MapStringString commitUserData)
@@ -2821,7 +2821,7 @@ namespace Lucene
         diagnostics.put(L"os", Constants::OS_NAME);
         if (details)
             diagnostics.putAll(details.begin(), details.end());
-        info->setDiagnostics(diagnostics);		
+        info->setDiagnostics(diagnostics);
     }
     
     void IndexWriter::mergeFinish(OneMergePtr merge)
@@ -3002,7 +3002,7 @@ namespace Lucene
                 readerPool->release(mergedReader);
             }
             
-            if (finally.isNull() && !aborted)	
+            if (finally.isNull() && !aborted)
                 success = true;
         }
         catch (LuceneException& e)
@@ -3417,11 +3417,11 @@ namespace Lucene
                             if (segmentInfos->getGeneration() > toSync->getGeneration())
                                 toSync->updateGeneration(segmentInfos);
                             
-                            bool success = false;							
+                            bool success = false;
                             try
                             {
                                 // Exception here means nothing is prepared (this method unwinds 
-                                // everything it did on an exception)								
+                                // everything it did on an exception)
                                 try
                                 {
                                     toSync->prepareCommit(directory);
@@ -3472,7 +3472,7 @@ namespace Lucene
                 SyncLock syncLock(this);
                 if (!setPending)
                     deleter->decRef(toSync);
-            }					
+            }
             finally.throwException();
         }
         catch (std::bad_alloc& oom)

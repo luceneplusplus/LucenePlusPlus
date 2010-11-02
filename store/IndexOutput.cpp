@@ -61,7 +61,7 @@ namespace Lucene
         UTF8ResultPtr utf8Result(newLucene<UTF8Result>());
         StringUtils::toUTF8(s.c_str(), s.length(), utf8Result);
         writeVInt(utf8Result->length);
-        writeBytes(utf8Result->result.get(), utf8Result->length);	
+        writeBytes(utf8Result->result.get(), utf8Result->length);
     }
     
     void IndexOutput::writeChars(const String& s, int32_t start, int32_t length)

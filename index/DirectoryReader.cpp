@@ -59,7 +59,7 @@ namespace Lucene
             try
             {
                 readers[i] = SegmentReader::get(readOnly, sis->info(i), termInfosIndexDivisor);
-                success = true;				
+                success = true;
             }
             catch (LuceneException& e)
             {
@@ -126,7 +126,7 @@ namespace Lucene
                 SegmentInfoPtr info(infos->info(i));
                 if (info->dir == dir)
                     readers[upto++] = boost::dynamic_pointer_cast<SegmentReader>(writer->readerPool->getReadOnlyClone(info, true, termInfosIndexDivisor));
-                success = true;				
+                success = true;
             }
             catch (LuceneException& e)
             {
@@ -704,7 +704,7 @@ namespace Lucene
                     boost::throw_exception(StaleReaderException(L"IndexReader out of date and no longer valid for delete, undelete, or setNorm operations"));
                 }
             }
-        }	
+        }
     }
     
     void DirectoryReader::doCommit(MapStringString commitUserData)
@@ -756,7 +756,7 @@ namespace Lucene
                 // Recompute deletable files & remove them (so partially written .del files, etc, 
                 // are removed)
                 deleter->refresh();
-            }			
+            }
             finally.throwException();
             
             // Have the deleter remove any now unreferenced files due to this commit
@@ -878,7 +878,7 @@ namespace Lucene
     
     IndexCommitPtr DirectoryReader::getIndexCommit()
     {
-        return newLucene<ReaderCommit>(segmentInfos, _directory);	
+        return newLucene<ReaderCommit>(segmentInfos, _directory);
     }
     
     Collection<IndexCommitPtr> DirectoryReader::listCommits(DirectoryPtr dir)
@@ -977,7 +977,7 @@ namespace Lucene
             if (t ? termEnum->term() : smi->next())
                 queue->add(smi); // initialize queue
             else
-                smi->close();				
+                smi->close();
         }
         
         if (t && !queue->empty())
@@ -1295,7 +1295,7 @@ namespace Lucene
     
     MapStringString ReaderCommit::getUserData()
     {
-        return userData;	
+        return userData;
     }
     
     void ReaderCommit::deleteCommit()

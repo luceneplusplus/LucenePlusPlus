@@ -15,11 +15,11 @@ namespace Lucene
 {
     /// Default read chunk size.  This is a conditional default based on operating system.
     #ifdef LPP_BUILD_64
-	const int32_t FSDirectory::DEFAULT_READ_CHUNK_SIZE = INT_MAX;
-	#else
-	const int32_t FSDirectory::DEFAULT_READ_CHUNK_SIZE = 100 * 1024 * 1024; // 100mb
-	#endif
-	
+    const int32_t FSDirectory::DEFAULT_READ_CHUNK_SIZE = INT_MAX;
+    #else
+    const int32_t FSDirectory::DEFAULT_READ_CHUNK_SIZE = 100 * 1024 * 1024; // 100mb
+    #endif
+
     FSDirectory::FSDirectory(const String& path, LockFactoryPtr lockFactory)
     {
         checked = false;
@@ -196,7 +196,7 @@ namespace Lucene
         
         static const wchar_t* hexDigits = L"0123456789abcdef";
         
-        String lockID(L"lucene-");		
+        String lockID(L"lucene-");
         for (int32_t i = 0; i < 16; ++i)
         {
             lockID += hexDigits[(digest[i] >> 4) & 0x0f];

@@ -135,7 +135,7 @@ namespace Lucene
         {
             int32_t start = starts[i];
             CollectorPtr hc = newLucene<MultiSearcherCollector>(results, start);
-            searchables[i]->search(weight, filter, hc);			
+            searchables[i]->search(weight, filter, hc);
         }
     }
     

@@ -105,7 +105,7 @@ namespace Lucene
                     else
                         lastPerField->next = current->next;
                     
-                    DocumentsWriterPtr docWriter(state->_docWriter);					
+                    DocumentsWriterPtr docWriter(state->_docWriter);
                     if (docWriter->infoStream)
                         *(docWriter->infoStream) << L"  purge field=" << current->fieldInfo->name << L"\n";
                     

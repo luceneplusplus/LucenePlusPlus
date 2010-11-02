@@ -52,7 +52,7 @@ namespace Lucene
         
         while (remaining > 0)
         {
-            int32_t available = bufferLength - bufferPosition;			
+            int32_t available = bufferLength - bufferPosition;
         
             if (remaining <= available)
             {

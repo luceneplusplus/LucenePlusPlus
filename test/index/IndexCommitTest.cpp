@@ -23,62 +23,62 @@ namespace TestEqualsHashCode
             this->dir = dir;
         }
         
-		virtual ~TestIndexCommit1()
-		{
-		}
-	
-	protected:
-	    DirectoryPtr dir;
-	
-	public:
-	    virtual String getSegmentsFileName()
-	    {
-	        return L"a";
-	    }
-	    
-	    virtual int64_t getVersion()
-	    {
-	        return 12;
-	    }
-	    
-	    virtual DirectoryPtr getDirectory()
-	    {
-	        return dir;
-	    }
-	    
-	    virtual HashSet<String> getFileNames()
-	    {
-	        return HashSet<String>();
-	    }
-	    
-	    virtual void deleteCommit()
-	    {
-	    }
-	    
-	    virtual int64_t getGeneration()
-	    {
-	        return 0;
-	    }
-	    
-	    virtual int64_t getTimestamp()
-	    {
-	        return -1;
-	    }
-	    
-	    virtual MapStringString getUserData()
-	    {
-	        return MapStringString();
-	    }
-	    
-	    virtual bool isDeleted()
-	    {
-	        return false;
-	    }
-	    
-	    virtual bool isOptimized()
-	    {
-	        return false;
-	    }
+        virtual ~TestIndexCommit1()
+        {
+        }
+
+    protected:
+        DirectoryPtr dir;
+
+    public:
+        virtual String getSegmentsFileName()
+        {
+            return L"a";
+        }
+        
+        virtual int64_t getVersion()
+        {
+            return 12;
+        }
+        
+        virtual DirectoryPtr getDirectory()
+        {
+            return dir;
+        }
+        
+        virtual HashSet<String> getFileNames()
+        {
+            return HashSet<String>();
+        }
+        
+        virtual void deleteCommit()
+        {
+        }
+        
+        virtual int64_t getGeneration()
+        {
+            return 0;
+        }
+        
+        virtual int64_t getTimestamp()
+        {
+            return -1;
+        }
+        
+        virtual MapStringString getUserData()
+        {
+            return MapStringString();
+        }
+        
+        virtual bool isDeleted()
+        {
+            return false;
+        }
+        
+        virtual bool isOptimized()
+        {
+            return false;
+        }
     };
     
     class TestIndexCommit2 : public TestIndexCommit1
@@ -88,15 +88,15 @@ namespace TestEqualsHashCode
         {
         }
         
-		virtual ~TestIndexCommit2()
-		{
-		}
+        virtual ~TestIndexCommit2()
+        {
+        }
     
     public:
-	    virtual String getSegmentsFileName()
-	    {
-	        return L"b";
-	    }
+        virtual String getSegmentsFileName()
+        {
+            return L"b";
+        }
     };
 }
 

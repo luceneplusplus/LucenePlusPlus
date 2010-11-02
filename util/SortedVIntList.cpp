@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// When a BitSet has fewer than 1 in BITS2VINTLIST_SIZE bits set, a SortedVIntList representing the 
-	/// index numbers of the set bits will be smaller than that BitSet.
+    /// index numbers of the set bits will be smaller than that BitSet.
     const int32_t SortedVIntList::BITS2VINTLIST_SIZE = 8;
     
     const int32_t SortedVIntList::VB1 = 0x7f;

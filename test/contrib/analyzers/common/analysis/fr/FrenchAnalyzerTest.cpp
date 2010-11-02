@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(testAnalyzer)
 
     checkAnalyzesTo(fa, L"mot \"entreguillemet\"", newCollection<String>(L"mot", L"entreguillemet"));
 
-    // let's do some French specific tests now	
+    // let's do some French specific tests now
 
     /// I would expect this to stay one term as in French the minus sign is often used for composing words
     checkAnalyzesTo(fa, L"Jean-Fran\u00e7ois", newCollection<String>(L"jean", L"fran\u00e7ois"));

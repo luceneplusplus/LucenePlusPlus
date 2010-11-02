@@ -14,26 +14,26 @@ using namespace Lucene;
 class CJKTokenizerFixture : public BaseTokenStreamFixture
 {
 public:
-	virtual ~CJKTokenizerFixture()
-	{
-	}
+    virtual ~CJKTokenizerFixture()
+    {
+    }
 
 public:
     struct TestToken
-	{
-		TestToken(const String& termText = L"", int32_t start = 0, int32_t end = 0, int32_t type = 0)
-		{
-			this->termText = termText;
-			this->start = start;
-			this->end = end;
-			this->type = CJKTokenizer::TOKEN_TYPE_NAMES[type];
-		}
-		
+    {
+        TestToken(const String& termText = L"", int32_t start = 0, int32_t end = 0, int32_t type = 0)
+        {
+            this->termText = termText;
+            this->start = start;
+            this->end = end;
+            this->type = CJKTokenizer::TOKEN_TYPE_NAMES[type];
+        }
+
         String termText;
         int32_t start;
         int32_t end;
         String type;
-	};
+    };
     
     void checkCJKToken(const String& str, Collection<TestToken> out_tokens)
     {

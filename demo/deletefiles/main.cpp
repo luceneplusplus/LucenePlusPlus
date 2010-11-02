@@ -14,33 +14,33 @@ using namespace Lucene;
 /// Deletes documents from an index that do not contain a term.
 int main(int argc, char* argv[])
 {
-	if (argc == 1)
-	{
-		std::wcout << L"Usage: deletefiles.exe <lucene index dir> <unique_term>\n";
-		return 1;
-	}
-	
-	try
-	{
-		DirectoryPtr directory = FSDirectory::open(StringUtils::toUnicode(argv[1]));
-		
-		// we don't want read-only because we are about to delete
-		IndexReaderPtr reader = IndexReader::open(directory, false);
+    if (argc == 1)
+    {
+        std::wcout << L"Usage: deletefiles.exe <lucene index dir> <unique_term>\n";
+        return 1;
+    }
 
-		TermPtr term = newLucene<Term>(L"path", StringUtils::toUnicode(argv[2]));
-		int32_t deleted = reader->deleteDocuments(term);
+    try
+    {
+        DirectoryPtr directory = FSDirectory::open(StringUtils::toUnicode(argv[1]));
 
-		std::wcout << L"Deleted " << deleted << L" documents containing " << term->toString() << L"\n";
+        // we don't want read-only because we are about to delete
+        IndexReaderPtr reader = IndexReader::open(directory, false);
 
-		reader->close();
-		directory->close();
-	}
-	catch (LuceneException& e)
-	{
-		std::wcout << L"Exception: " << e.getError() << L"\n";
-		return 1;
-	}
-	
-	return 0;
+        TermPtr term = newLucene<Term>(L"path", StringUtils::toUnicode(argv[2]));
+        int32_t deleted = reader->deleteDocuments(term);
+
+        std::wcout << L"Deleted " << deleted << L" documents containing " << term->toString() << L"\n";
+
+        reader->close();
+        directory->close();
+    }
+    catch (LuceneException& e)
+    {
+        std::wcout << L"Exception: " << e.getError() << L"\n";
+        return 1;
+    }
+
+    return 0;
 }
 

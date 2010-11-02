@@ -147,7 +147,7 @@ namespace Lucene
         String lowerValue(StringUtils::toLower(value));
         String r;
         
-		for (int32_t j = 0; j < (int32_t)value.length(); ++j)
+        for (int32_t j = 0; j < (int32_t)value.length(); ++j)
         {
             if (value[j] == 0x00e1 || value[j] == 0x00e2 || value[j] == 0x00e3)
             {

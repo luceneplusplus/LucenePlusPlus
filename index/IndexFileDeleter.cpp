@@ -120,7 +120,7 @@ namespace Lucene
         
         startingCommitDeleted = currentCommitPoint->isDeleted();
         
-        deleteCommits();		
+        deleteCommits();
     }
     
     IndexFileDeleter::~IndexFileDeleter()
@@ -419,7 +419,7 @@ namespace Lucene
     bool CommitPoint::isOptimized()
     {
         return _isOptimized;
-    }	
+    }
     
     String CommitPoint::getSegmentsFileName()
     {

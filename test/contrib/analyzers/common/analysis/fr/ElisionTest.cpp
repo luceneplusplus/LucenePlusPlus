@@ -16,9 +16,9 @@ using namespace Lucene;
 class ElisionFixture : public BaseTokenStreamFixture
 {
 public:
-	virtual ~ElisionFixture()
-	{
-	}
+    virtual ~ElisionFixture()
+    {
+    }
 
 public:
     Collection<String> addTerms(TokenFilterPtr filter)

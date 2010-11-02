@@ -30,7 +30,7 @@ namespace Lucene
     void ConcurrentMergeScheduler::initialize()
     {
         // Only for testing
-        if (allInstances)			
+        if (allInstances)
             addMyself();
     }
     
@@ -131,7 +131,7 @@ namespace Lucene
         // involving segments already pending to be merged) to the queue.  If we are way behind on merging, 
         // many of these newly proposed merges will likely already be registered.
         message(L"now merge");
-        message(L"  index: " + writer->segString());		
+        message(L"  index: " + writer->segString());
         
         // Iterate, pulling from the IndexWriter's queue of pending merges, until it's empty
         while (true)
@@ -168,7 +168,7 @@ namespace Lucene
                 message(L"    launch new thread");
                 
                 merger->start();
-                success = true;				
+                success = true;
             }
             catch (LuceneException& e)
             {

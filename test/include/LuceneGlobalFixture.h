@@ -8,14 +8,14 @@
 
 namespace Lucene
 {
-	class LuceneGlobalFixture
-	{
-	public:
-		/// setup
-		LuceneGlobalFixture();
-		
-		/// teardown
-		virtual ~LuceneGlobalFixture();
-	};
+    class LuceneGlobalFixture
+    {
+    public:
+        /// setup
+        LuceneGlobalFixture();
+
+        /// teardown
+        virtual ~LuceneGlobalFixture();
+    };
 }
 

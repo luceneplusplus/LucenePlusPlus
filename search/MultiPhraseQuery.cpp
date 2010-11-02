@@ -325,6 +325,6 @@ namespace Lucene
         if (queryExpl->getValue() == 1.0)
             return fieldExpl;
         
-        return result;		
+        return result;
     }
 }

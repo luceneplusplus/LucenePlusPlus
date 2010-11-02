@@ -29,7 +29,7 @@ String randomToken()
     StringStream sb;
     for (int32_t cx = 0; cx < tl; ++cx)
         sb << alphabet[rndToken->nextInt(25)];
-    return sb.str();	
+    return sb.str();
 }
 
 String randomField()
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(testMmapIndex)
     {
         String f(randomField());
         DocumentPtr doc = newLucene<Document>();
-        doc->add(newLucene<Field>(L"data", f, Field::STORE_YES, Field::INDEX_ANALYZED));	
+        doc->add(newLucene<Field>(L"data", f, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
     }
     

@@ -63,7 +63,7 @@ namespace Lucene
             retval << L"Was expecting:\n    ";
         else
             retval << L"Was expecting one of:\n    ";
-        retval << expected.str();		
+        retval << expected.str();
         return retval.str();
     }
     

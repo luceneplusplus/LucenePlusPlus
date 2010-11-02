@@ -43,7 +43,7 @@ namespace TestSimilarity
         virtual String explain()
         {
             return L"Inexplicable";
-        }	
+        }
     };
     
     class SimpleSimilarity : public Similarity

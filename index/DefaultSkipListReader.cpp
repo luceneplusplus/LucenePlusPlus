@@ -92,5 +92,5 @@ namespace Lucene
         proxPointer[level] += skipStream->readVInt();
         
         return delta;
-    }	
+    }
 }

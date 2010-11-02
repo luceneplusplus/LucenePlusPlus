@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(test1)
     q->add(snear(st(L"w2"), sor(L"w5", L"zz"), 4, true), BooleanClause::SHOULD);
     q->add(snear(sf(L"w3", 2), st(L"w2"), st(L"w3"), 5, true), BooleanClause::SHOULD);
 
-    QueryPtr t = newLucene<FilteredQuery>(qp->parse(L"xx"),	newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3)));
+    QueryPtr t = newLucene<FilteredQuery>(qp->parse(L"xx"),    newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3)));
     t->setBoost(1000);
     q->add(t, BooleanClause::SHOULD);
 
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(test2)
     q->add(snear(st(L"w2"), sor(L"w5", L"zz"), 4, true), BooleanClause::SHOULD);
     q->add(snear(sf(L"w3", 2), st(L"w2"), st(L"w3"), 5, true), BooleanClause::SHOULD);
 
-    QueryPtr t = newLucene<FilteredQuery>(qp->parse(L"xx"),	newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3)));
+    QueryPtr t = newLucene<FilteredQuery>(qp->parse(L"xx"),    newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3)));
     t->setBoost(1000);
     q->add(t, BooleanClause::SHOULD);
 
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(testST3)
 {
     SpanQueryPtr q = st(L"w1");
     q->setBoost(0);
-    bqtest(q, newCollection<int32_t>(0, 1, 2, 3));	
+    bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
 BOOST_AUTO_TEST_CASE(testST6)

@@ -73,7 +73,7 @@ namespace Lucene
     }
     
     PayloadTermWeight::PayloadTermWeight(PayloadTermQueryPtr query, SearcherPtr searcher) : SpanWeight(query, searcher)
-    {	
+    {
     }
     
     PayloadTermWeight::~PayloadTermWeight()

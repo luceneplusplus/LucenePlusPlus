@@ -86,7 +86,7 @@ public:
                 {
                     failure = ioe;
                     break;
-                }				
+                }
             }
             catch (LuceneException& e)
             {

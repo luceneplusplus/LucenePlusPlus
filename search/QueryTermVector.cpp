@@ -34,7 +34,7 @@ namespace Lucene
                 {
                     bool hasMoreTokens = false;
                     
-                    stream->reset();					
+                    stream->reset();
                     TermAttributePtr termAtt(stream->addAttribute<TermAttribute>());
                     
                     hasMoreTokens = stream->incrementToken();

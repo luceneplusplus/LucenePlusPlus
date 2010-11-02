@@ -210,7 +210,7 @@ namespace Lucene
             fieldInfos = boost::dynamic_pointer_cast<FieldInfos>(boost::dynamic_pointer_cast<SegmentReader>(readers[readers.size() - 1])->core->fieldInfos->clone());
         }
         else
-            fieldInfos = newLucene<FieldInfos>();		  // merge field names
+            fieldInfos = newLucene<FieldInfos>();          // merge field names
         
         for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
         {
@@ -238,7 +238,7 @@ namespace Lucene
                 addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_INDEXED), false, false, false, false, false);
                 fieldInfos->add((*reader)->getFieldNames(IndexReader::FIELD_OPTION_UNINDEXED), false);
             }
-        }		
+        }
         fieldInfos->write(directory, segment + L".fnm");
         
         int32_t docCount = 0;
@@ -274,7 +274,7 @@ namespace Lucene
             {
                 finally = e;
             }
-            fieldsWriter->close();			
+            fieldsWriter->close();
             finally.throwException();
             
             String fileName(segment + L"." + IndexFileNames::FIELDS_INDEX_EXTENSION());
@@ -428,7 +428,7 @@ namespace Lucene
                                                     StringUtils::toString(tvxSize) + L" file=" + fileName + 
                                                     L" file exists?=" + StringUtils::toString(directory->fileExists(fileName)) + 
                                                     L"; now aborting this merge to prevent index corruption"));
-        }															
+        }
     }
     
     void SegmentMerger::copyVectorsWithDeletions(TermVectorsWriterPtr termVectorsWriter, TermVectorsReaderPtr matchingVectorsReader, IndexReaderPtr reader)
@@ -517,7 +517,7 @@ namespace Lucene
         
         FormatPostingsFieldsConsumerPtr consumer(newLucene<FormatPostingsFieldsWriter>(state, fieldInfos));
 
-        LuceneException finally;		
+        LuceneException finally;
         try
         {
             queue = newLucene<SegmentMergeQueue>(readers.size());

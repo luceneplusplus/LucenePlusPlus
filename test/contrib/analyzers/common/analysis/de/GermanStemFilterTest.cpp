@@ -14,12 +14,12 @@ using namespace Lucene;
 class GermanStemmerFixture : public BaseTokenStreamFixture
 {
 public:
-	virtual ~GermanStemmerFixture()
-	{
-	}
+    virtual ~GermanStemmerFixture()
+    {
+    }
 
 public:
-	void check(const String& input, const String& expected)
+    void check(const String& input, const String& expected)
     {
         checkOneTerm(newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }

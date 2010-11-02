@@ -52,13 +52,13 @@ public:
         Collection<String> files = Collection<String>::newInstance();
         HashSet<String> dirList = HashSet<String>::newInstance();
         
-	    if (!FileUtils::listDirectory(fileDir, true, dirList))
-		    return Collection<String>();
-    	
-	    for (HashSet<String>::iterator dirFile = dirList.begin(); dirFile != dirList.end(); ++dirFile)
-	        files.add(FileUtils::joinPath(fileDir, *dirFile));
-	   
-	   return files;
+        if (!FileUtils::listDirectory(fileDir, true, dirList))
+            return Collection<String>();
+    
+        for (HashSet<String>::iterator dirFile = dirList.begin(); dirFile != dirList.end(); ++dirFile)
+            files.add(FileUtils::joinPath(fileDir, *dirFile));
+       
+       return files;
     }
     
     /// returns file line by line, ignoring empty lines and comments

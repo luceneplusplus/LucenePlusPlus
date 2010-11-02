@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE(testMergeDocCount0)
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
     writer->setMaxBufferedDocs(10);
-    writer->setMergeFactor(100);	
+    writer->setMergeFactor(100);
     
     for (int32_t i = 0; i < 250; ++i)
     {

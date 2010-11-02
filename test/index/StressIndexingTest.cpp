@@ -405,7 +405,7 @@ static void indexSerial(HashMap<String, DocumentPtr> docs, DirectoryPtr dir)
         d1->setBoost(d->getBoost());
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
             d1->add(*field);
-        w->addDocument(d1);	
+        w->addDocument(d1);
     }
     w->close();
 }

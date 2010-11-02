@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(testTerm)
         578, 579, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 770, 771,
         772, 773, 774, 775, 776, 777, 778, 779, 870, 871, 872, 873, 874, 875,
         876, 877, 878, 879, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979
-    };	
+    };
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(testBoolean)
     static const int32_t results[] =
     {
         77, 777, 177, 277, 377, 477, 577, 677, 770, 771, 772, 773, 774, 775, 776, 778, 779, 877, 977
-    };	
+    };
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(testSpanFirst)
         570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 583,
         584, 585, 586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597,
         598, 599
-    };	
+    };
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 
     BOOST_CHECK(searcher->explain(query, 5)->getValue() > 0.0);

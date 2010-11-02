@@ -99,7 +99,7 @@ protected:
     int32_t mulFactor;
     Collection<String> docFields;
   
-public:	
+public:
     static const int32_t NUM_EXTRA_DOCS;
     static const String field;
 

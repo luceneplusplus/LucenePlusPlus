@@ -1261,7 +1261,7 @@ namespace Lucene
         // Only the origNorm will actually readBytes from in
         cloneNorm->in.reset();
         
-        return cloneNorm;		
+        return cloneNorm;
     }
     
     void Norm::reWrite(SegmentInfoPtr si)

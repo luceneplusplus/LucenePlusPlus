@@ -38,7 +38,7 @@ static String pad(int32_t n)
     for (int32_t i = s.length(); i <= intLength; ++i)
         buf << L"0";
     buf << s;
-    return buf.str(); 		
+    return buf.str(); 
 }
 
 BOOST_AUTO_TEST_CASE(testMultiValuedNRQ)

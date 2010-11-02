@@ -114,7 +114,7 @@ namespace Lucene
         // With lock-less commits, it's entirely possible (and fine) to hit a FileNotFound exception above. 
         // In this case, we want to explicitly close any subset of things that were opened
         if (!success)
-            close();		
+            close();
         finally.throwException();
     }
     
@@ -374,7 +374,7 @@ namespace Lucene
             boost::throw_exception(CorruptIndexException(L"field data are in wrong format [" + e.getError() + L"]"));
         }
         return L"";
-    }	
+    }
     
     LazyField::LazyField(FieldsReaderPtr reader, const String& name, Field::Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) : 
         AbstractField(name, store, Field::INDEX_NO, Field::TERM_VECTOR_NO)
@@ -537,10 +537,10 @@ namespace Lucene
                 
                 binaryOffset = 0;
                 binaryLength = toRead;
-            }			
+            }
             return VariantUtils::get<ByteArray>(fieldsData);
         }
-        else		
+        else
             return ByteArray();
     }
 }

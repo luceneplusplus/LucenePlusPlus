@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(testNormsRefCounting)
     reader3C->close();
     reader2C->close();
     reader1->close();
-    dir1->close();	
+    dir1->close();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

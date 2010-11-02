@@ -28,5 +28,5 @@ namespace Lucene
     
     void SerialMergeScheduler::close()
     {
-    }	
+    }
 }

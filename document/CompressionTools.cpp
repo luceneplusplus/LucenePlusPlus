@@ -115,7 +115,7 @@ namespace Lucene
                 break;
             }
             
-            position = stream.total_out;			
+            position = stream.total_out;
             allocSize <<= 1;
         }
         

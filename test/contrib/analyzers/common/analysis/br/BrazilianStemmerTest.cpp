@@ -13,12 +13,12 @@ using namespace Lucene;
 class BrazilianStemmerFixture : public BaseTokenStreamFixture
 {
 public:
-	virtual ~BrazilianStemmerFixture()
-	{
-	}
+    virtual ~BrazilianStemmerFixture()
+    {
+    }
 
 public:
-	void check(const String& input, const String& expected)
+    void check(const String& input, const String& expected)
     {
         checkOneTerm(newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }

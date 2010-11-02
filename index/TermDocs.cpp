@@ -59,5 +59,5 @@ namespace Lucene
     {
         BOOST_ASSERT(false);
         // override
-    }	
+    }
 }

@@ -43,60 +43,60 @@ namespace Lucene
     const int32_t DocumentsWriter::MAX_THREAD_STATE = 5;
     
     /// Coarse estimates used to measure RAM usage of buffered deletes
-	const int32_t DocumentsWriter::OBJECT_HEADER_BYTES = 8;
-	#ifdef LPP_BUILD_64
-	const int32_t DocumentsWriter::POINTER_NUM_BYTE = 8;
-	#else
-	const int32_t DocumentsWriter::POINTER_NUM_BYTE = 4;
-	#endif
-	const int32_t DocumentsWriter::INT_NUM_BYTE = 4;
-	#ifdef LPP_UNICODE_CHAR_SIZE_4
-	const int32_t DocumentsWriter::CHAR_NUM_BYTE = 4;
-	#else
-	const int32_t DocumentsWriter::CHAR_NUM_BYTE = 2;
-	#endif
-	
-	/// Rough logic: HashMap has an array[Entry] with varying load factor (say 2 * POINTER).  Entry is object 
-	/// with Term key, BufferedDeletes.Num val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).  Term is 
-	/// object with String field and String text (OBJ_HEADER + 2*POINTER).  We don't count Term's field since 
-	/// it's interned.  Term's text is String (OBJ_HEADER + 4*INT + POINTER + OBJ_HEADER + string.length*CHAR).  
-	/// BufferedDeletes.num is OBJ_HEADER + INT.
-	const int32_t DocumentsWriter::BYTES_PER_DEL_TERM = 8 * DocumentsWriter::POINTER_NUM_BYTE + 5 * 
+    const int32_t DocumentsWriter::OBJECT_HEADER_BYTES = 8;
+    #ifdef LPP_BUILD_64
+    const int32_t DocumentsWriter::POINTER_NUM_BYTE = 8;
+    #else
+    const int32_t DocumentsWriter::POINTER_NUM_BYTE = 4;
+    #endif
+    const int32_t DocumentsWriter::INT_NUM_BYTE = 4;
+    #ifdef LPP_UNICODE_CHAR_SIZE_4
+    const int32_t DocumentsWriter::CHAR_NUM_BYTE = 4;
+    #else
+    const int32_t DocumentsWriter::CHAR_NUM_BYTE = 2;
+    #endif
+
+    /// Rough logic: HashMap has an array[Entry] with varying load factor (say 2 * POINTER).  Entry is object 
+    /// with Term key, BufferedDeletes.Num val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).  Term is 
+    /// object with String field and String text (OBJ_HEADER + 2*POINTER).  We don't count Term's field since 
+    /// it's interned.  Term's text is String (OBJ_HEADER + 4*INT + POINTER + OBJ_HEADER + string.length*CHAR).  
+    /// BufferedDeletes.num is OBJ_HEADER + INT.
+    const int32_t DocumentsWriter::BYTES_PER_DEL_TERM = 8 * DocumentsWriter::POINTER_NUM_BYTE + 5 * 
                                                         DocumentsWriter::OBJECT_HEADER_BYTES + 6 * 
                                                         DocumentsWriter::INT_NUM_BYTE;
-	
-	/// Rough logic: del docIDs are List<Integer>.  Say list allocates ~2X size (2*POINTER).  Integer is 
-	/// OBJ_HEADER + int
-	const int32_t DocumentsWriter::BYTES_PER_DEL_DOCID = 2 * DocumentsWriter::POINTER_NUM_BYTE + 
-	                                                     DocumentsWriter::OBJECT_HEADER_BYTES + 
-	                                                     DocumentsWriter::INT_NUM_BYTE;
-	
-	/// Rough logic: HashMap has an array[Entry] with varying load factor (say 2 * POINTER).  Entry is object 
-	/// with Query key, Integer val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).  Query we often undercount 
-	/// (say 24 bytes).  Integer is OBJ_HEADER + INT.
-	const int32_t DocumentsWriter::BYTES_PER_DEL_QUERY = 5 * DocumentsWriter::POINTER_NUM_BYTE + 2 * 
-	                                                     DocumentsWriter::OBJECT_HEADER_BYTES + 2 * 
-	                                                     DocumentsWriter::INT_NUM_BYTE + 24;
-	
-	/// Initial chunks size of the shared byte[] blocks used to store postings data
-	const int32_t DocumentsWriter::BYTE_BLOCK_SHIFT = 15;
-	const int32_t DocumentsWriter::BYTE_BLOCK_SIZE = 1 << DocumentsWriter::BYTE_BLOCK_SHIFT;
-	const int32_t DocumentsWriter::BYTE_BLOCK_MASK = DocumentsWriter::BYTE_BLOCK_SIZE - 1;
-	const int32_t DocumentsWriter::BYTE_BLOCK_NOT_MASK = ~DocumentsWriter::BYTE_BLOCK_MASK;
-	
-	/// Initial chunk size of the shared char[] blocks used to store term text
-	const int32_t DocumentsWriter::CHAR_BLOCK_SHIFT = 14;
-	const int32_t DocumentsWriter::CHAR_BLOCK_SIZE = 1 << DocumentsWriter::CHAR_BLOCK_SHIFT;
-	const int32_t DocumentsWriter::CHAR_BLOCK_MASK = DocumentsWriter::CHAR_BLOCK_SIZE - 1;
-	
-	const int32_t DocumentsWriter::MAX_TERM_LENGTH = DocumentsWriter::CHAR_BLOCK_SIZE - 1;
-	
-	/// Initial chunks size of the shared int[] blocks used to store postings data
-	const int32_t DocumentsWriter::INT_BLOCK_SHIFT = 13;
-	const int32_t DocumentsWriter::INT_BLOCK_SIZE = 1 << DocumentsWriter::INT_BLOCK_SHIFT;
-	const int32_t DocumentsWriter::INT_BLOCK_MASK = DocumentsWriter::INT_BLOCK_SIZE - 1;
-	
-	const int32_t DocumentsWriter::PER_DOC_BLOCK_SIZE = 1024;
+
+    /// Rough logic: del docIDs are List<Integer>.  Say list allocates ~2X size (2*POINTER).  Integer is 
+    /// OBJ_HEADER + int
+    const int32_t DocumentsWriter::BYTES_PER_DEL_DOCID = 2 * DocumentsWriter::POINTER_NUM_BYTE + 
+                                                         DocumentsWriter::OBJECT_HEADER_BYTES + 
+                                                         DocumentsWriter::INT_NUM_BYTE;
+
+    /// Rough logic: HashMap has an array[Entry] with varying load factor (say 2 * POINTER).  Entry is object 
+    /// with Query key, Integer val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).  Query we often undercount 
+    /// (say 24 bytes).  Integer is OBJ_HEADER + INT.
+    const int32_t DocumentsWriter::BYTES_PER_DEL_QUERY = 5 * DocumentsWriter::POINTER_NUM_BYTE + 2 * 
+                                                         DocumentsWriter::OBJECT_HEADER_BYTES + 2 * 
+                                                         DocumentsWriter::INT_NUM_BYTE + 24;
+
+    /// Initial chunks size of the shared byte[] blocks used to store postings data
+    const int32_t DocumentsWriter::BYTE_BLOCK_SHIFT = 15;
+    const int32_t DocumentsWriter::BYTE_BLOCK_SIZE = 1 << DocumentsWriter::BYTE_BLOCK_SHIFT;
+    const int32_t DocumentsWriter::BYTE_BLOCK_MASK = DocumentsWriter::BYTE_BLOCK_SIZE - 1;
+    const int32_t DocumentsWriter::BYTE_BLOCK_NOT_MASK = ~DocumentsWriter::BYTE_BLOCK_MASK;
+
+    /// Initial chunk size of the shared char[] blocks used to store term text
+    const int32_t DocumentsWriter::CHAR_BLOCK_SHIFT = 14;
+    const int32_t DocumentsWriter::CHAR_BLOCK_SIZE = 1 << DocumentsWriter::CHAR_BLOCK_SHIFT;
+    const int32_t DocumentsWriter::CHAR_BLOCK_MASK = DocumentsWriter::CHAR_BLOCK_SIZE - 1;
+
+    const int32_t DocumentsWriter::MAX_TERM_LENGTH = DocumentsWriter::CHAR_BLOCK_SIZE - 1;
+
+    /// Initial chunks size of the shared int[] blocks used to store postings data
+    const int32_t DocumentsWriter::INT_BLOCK_SHIFT = 13;
+    const int32_t DocumentsWriter::INT_BLOCK_SIZE = 1 << DocumentsWriter::INT_BLOCK_SHIFT;
+    const int32_t DocumentsWriter::INT_BLOCK_MASK = DocumentsWriter::INT_BLOCK_SIZE - 1;
+
+    const int32_t DocumentsWriter::PER_DOC_BLOCK_SIZE = 1024;
     
     DocumentsWriter::DocumentsWriter(DirectoryPtr directory, IndexWriterPtr writer, IndexingChainPtr indexingChain)
     {
@@ -125,7 +125,7 @@ namespace Lucene
         pauseThreads = 0;
         flushPending = false;
         bufferIsFull = false;
-        aborting = false;		
+        aborting = false;
         maxFieldLength = IndexWriter::DEFAULT_MAX_FIELD_LENGTH;
         deletesInRAM = newLucene<BufferedDeletes>(false);
         deletesFlushed = newLucene<BufferedDeletes>(true);
@@ -306,7 +306,7 @@ namespace Lucene
             finally = e;
         }
         if (!success)
-            abort();		
+            abort();
         finally.throwException();
         return s;
     }
@@ -368,7 +368,7 @@ namespace Lucene
             waitQueue->abort();
             
             // Wait for all other threads to finish with DocumentsWriter
-            pauseAllThreads();			
+            pauseAllThreads();
             
             try
             {
@@ -395,7 +395,7 @@ namespace Lucene
                         (*threadState)->consumer->abort();
                     }
                     catch (...)
-                    {					
+                    {
                     }
                 }
                 
@@ -1117,7 +1117,7 @@ namespace Lucene
             }
             
             perThread->isIdle = true;
-            notifyAll();			
+            notifyAll();
         }
     }
     
@@ -1147,7 +1147,7 @@ namespace Lucene
             // this block will be shared between things that don't track allocations (term vectors) and things 
             // that do (freq/prox postings).
             numBytesAlloc += INT_BLOCK_SIZE * INT_NUM_BYTE;
-            b = IntArray::newInstance(INT_BLOCK_SIZE);		
+            b = IntArray::newInstance(INT_BLOCK_SIZE);
         }
         else
             b = freeIntBlocks.removeLast();

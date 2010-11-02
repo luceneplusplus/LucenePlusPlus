@@ -44,7 +44,7 @@ namespace Lucene
             for (int32_t i = 0; i < 256; ++i)
                 _NORM_TABLE[i] = SmallDouble::byteToDouble((uint8_t)i);
         }
-        return _NORM_TABLE;		
+        return _NORM_TABLE;
     }
     
     double Similarity::decodeNorm(uint8_t b)

@@ -73,7 +73,7 @@ namespace Lucene
             }
             
             TermVectorsTermsWriterPerThreadPtr perThread(boost::static_pointer_cast<TermVectorsTermsWriterPerThread>(entry->first));
-            TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(true);			
+            TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(true);
         }
     }
     
@@ -205,7 +205,7 @@ namespace Lucene
                 lastPos = pos;
             }
             perDoc->perDocTvf->writeTo(tvf);
-            perDoc->numVectorFields = 0;		
+            perDoc->numVectorFields = 0;
         }
         
         BOOST_ASSERT(lastDocID == perDoc->docID + docWriter->getDocStoreOffset());

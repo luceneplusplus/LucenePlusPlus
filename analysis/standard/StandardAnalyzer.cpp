@@ -81,7 +81,7 @@ namespace Lucene
             streams->tokenStream = newLucene<StandardTokenizer>(matchVersion, reader);
             streams->filteredTokenStream = newLucene<StandardFilter>(streams->tokenStream);
             streams->filteredTokenStream = newLucene<LowerCaseFilter>(streams->filteredTokenStream);
-            streams->filteredTokenStream = newLucene<StopFilter>(enableStopPositionIncrements, streams->filteredTokenStream, stopSet);		
+            streams->filteredTokenStream = newLucene<StopFilter>(enableStopPositionIncrements, streams->filteredTokenStream, stopSet);
         }
         else
             streams->tokenStream->reset(reader);

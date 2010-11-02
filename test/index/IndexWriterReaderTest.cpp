@@ -425,7 +425,7 @@ BOOST_AUTO_TEST_CASE(testDeleteFromIndexWriter)
     BOOST_CHECK_EQUAL(1, count(newLucene<Term>(L"id", id10), r1));
     BOOST_CHECK_EQUAL(0, count(newLucene<Term>(L"id", id10), r2));
 
-    String id50 = r1->document(50)->getField(L"id")->stringValue();	
+    String id50 = r1->document(50)->getField(L"id")->stringValue();
     BOOST_CHECK_EQUAL(1, count(newLucene<Term>(L"id", id50), r1));
 
     writer->deleteDocuments(newLucene<Term>(L"id", id50));

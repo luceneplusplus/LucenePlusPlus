@@ -174,7 +174,7 @@ namespace Lucene
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         if (set->bitSet.size() > bitSet.size())
-            resize(set->bitSet.size());		
+            resize(set->bitSet.size());
         for (bitset_type::size_type i = 0; i < minBlocks; ++i)
             bitSet.m_bits[i] |= set->bitSet.m_bits[i];
         if (bitSet.num_blocks() > minBlocks)
@@ -185,7 +185,7 @@ namespace Lucene
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         if (set->bitSet.size() > bitSet.size())
-            resize(set->bitSet.size());		
+            resize(set->bitSet.size());
         for (bitset_type::size_type i = 0; i < minBlocks; ++i)
             bitSet.m_bits[i] ^= set->bitSet.m_bits[i];
         if (bitSet.num_blocks() > minBlocks)

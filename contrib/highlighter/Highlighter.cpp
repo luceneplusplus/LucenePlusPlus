@@ -116,9 +116,9 @@ namespace Lucene
             TokenGroupPtr tokenGroup(newLucene<TokenGroup>(tokenStream));
             String tokenText;
             int32_t startOffset = 0;
-			int32_t endOffset = 0;
-			int32_t lastEndOffset = 0;
-			
+            int32_t endOffset = 0;
+            int32_t lastEndOffset = 0;
+
             for (bool next = tokenStream->incrementToken(); next && offsetAtt->startOffset() < maxDocCharsToAnalyze; next = tokenStream->incrementToken())
             {
                 if (offsetAtt->endOffset() > (int32_t)text.length() || offsetAtt->startOffset() > (int32_t)text.length())
@@ -139,15 +139,15 @@ namespace Lucene
                     tokenGroup->clear();
                     
                     // check if current token marks the start of a new fragment
-					if (textFragmenter->isNewFragment())
-					{
+                    if (textFragmenter->isNewFragment())
+                    {
                         currentFrag->setScore(fragmentScorer->getFragmentScore());
                         // record stats for a new fragment
                         currentFrag->textEndPos = newText->length();
                         currentFrag = newLucene<TextFragment>(newText, newText->length(), docFrags.size());
                         fragmentScorer->startFragment(currentFrag);
                         docFrags.add(currentFrag);
-					}
+                    }
                 }
                 
                 tokenGroup->addToken(fragmentScorer->getTokenScore());

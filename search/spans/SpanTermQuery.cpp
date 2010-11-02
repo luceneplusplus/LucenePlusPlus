@@ -43,7 +43,7 @@ namespace Lucene
             buffer << term->text();
         else
             buffer << term->toString();
-        buffer << boostString();		
+        buffer << boostString();
         return buffer.str();
     }
     

@@ -166,8 +166,8 @@ BOOST_AUTO_TEST_CASE(testDocument)
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
 
-    Collection<String> fields1 = newCollection<String>(L"f1");	
-    Collection<String> fields2 = newCollection<String>(L"f4");	
+    Collection<String> fields1 = newCollection<String>(L"f1");
+    Collection<String> fields2 = newCollection<String>(L"f4");
     Collection<String> fields3 = newCollection<String>(L"f2", L"f3");
 
     DocumentPtr doc11 = pr->document(0, newLucene<MapFieldSelector>(fields1));

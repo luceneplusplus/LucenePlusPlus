@@ -156,7 +156,7 @@ public:
                     BOOST_FAIL("Unexpected exception: " << e.getError());
                 }
             }
-        }		
+        }
         reader->close();
     }
 };

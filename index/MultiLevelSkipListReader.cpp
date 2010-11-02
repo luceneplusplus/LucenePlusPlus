@@ -127,7 +127,7 @@ namespace Lucene
         {
             if (*skip)
                 (*skip)->close();
-        }		
+        }
     }
     
     void MultiLevelSkipListReader::init(int64_t skipPointer, int32_t df)

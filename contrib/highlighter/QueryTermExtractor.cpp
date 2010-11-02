@@ -27,11 +27,11 @@ namespace Lucene
     Collection<WeightedTermPtr> QueryTermExtractor::getIdfWeightedTerms(QueryPtr query, IndexReaderPtr reader, const String& fieldName)
     {
         Collection<WeightedTermPtr> terms(getTerms(query, false, fieldName));
-	    int32_t totalNumDocs = reader->numDocs();
-	    for (int32_t i = 0; i < terms.size(); ++i)
-	    {
-	        try
-	        {
+        int32_t totalNumDocs = reader->numDocs();
+        for (int32_t i = 0; i < terms.size(); ++i)
+        {
+            try
+            {
                 int32_t docFreq = reader->docFreq(newLucene<Term>(fieldName, terms[i]->term));
                 // docFreq counts deletes
                 if (totalNumDocs < docFreq)
@@ -39,13 +39,13 @@ namespace Lucene
                 // IDF algorithm taken from DefaultSimilarity class
                 double idf = (double)(std::log((double)totalNumDocs / (double)(docFreq + 1)) + 1.0);
                 terms[i]->weight *= idf;
-	        }
-	        catch (...)
-	        {
-	            // ignore
-	        }
-	    }
-	    return terms;
+            }
+            catch (...)
+            {
+                // ignore
+            }
+        }
+        return terms;
     }
     
     Collection<WeightedTermPtr> QueryTermExtractor::getTerms(QueryPtr query, bool prohibited, const String& fieldName)

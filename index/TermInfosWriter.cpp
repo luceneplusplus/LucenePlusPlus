@@ -116,7 +116,7 @@ namespace Lucene
         BOOST_ASSERT(compareToLastTerm(fieldNumber, termBytes, termBytesLength) < 0 || (isIndex && termBytesLength == 0 && lastTermBytesLength == 0));
         
         BOOST_ASSERT(ti->freqPointer >= lastTi->freqPointer); // freqPointer out of order?
-        BOOST_ASSERT(ti->proxPointer >= lastTi->proxPointer); // proxPointer out of order?	
+        BOOST_ASSERT(ti->proxPointer >= lastTi->proxPointer); // proxPointer out of order?
         
         TermInfosWriterPtr other(_other);
         

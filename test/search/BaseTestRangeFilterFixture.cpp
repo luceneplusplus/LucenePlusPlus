@@ -77,6 +77,6 @@ namespace Lucene
         for (int32_t i = s.length(); i <= intLength; ++i)
             buf << L"0";
         buf << s;
-        return buf.str(); 		
+        return buf.str(); 
     }
 }

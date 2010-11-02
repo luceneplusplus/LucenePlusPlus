@@ -14,12 +14,12 @@ using namespace Lucene;
 class DutchStemmerFixture : public BaseTokenStreamFixture
 {
 public:
-	virtual ~DutchStemmerFixture()
-	{
-	}
+    virtual ~DutchStemmerFixture()
+    {
+    }
 
 public:
-	void check(const String& input, const String& expected)
+    void check(const String& input, const String& expected)
     {
         checkOneTerm(newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }

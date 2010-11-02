@@ -8,14 +8,14 @@
 
 namespace Lucene
 {
-	class LuceneTestFixture
-	{
-	public:
-		/// setup
-		LuceneTestFixture();
-		
-		/// teardown
-		virtual ~LuceneTestFixture();
-	};
+    class LuceneTestFixture
+    {
+    public:
+        /// setup
+        LuceneTestFixture();
+
+        /// teardown
+        virtual ~LuceneTestFixture();
+    };
 }
 

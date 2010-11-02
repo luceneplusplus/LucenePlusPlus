@@ -149,7 +149,7 @@ namespace Lucene
         // explain field weight
         String field(query->term->field());
         ComplexExplanationPtr fieldExpl(newLucene<ComplexExplanation>());
-        fieldExpl->setDescription(L"fieldWeight(" +	query->term->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
+        fieldExpl->setDescription(L"fieldWeight(" +    query->term->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
         
         ExplanationPtr tfExplanation(newLucene<Explanation>());
         int32_t tf = 0;
@@ -199,6 +199,6 @@ namespace Lucene
         if (queryExpl->getValue() == 1.0)
             return fieldExpl;
         
-        return result;		
+        return result;
     }
 }

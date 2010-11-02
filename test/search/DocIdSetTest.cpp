@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(testFilteredDocIdSet)
     }
     
     Collection<int32_t> answer = newCollection<int32_t>(4, 6, 8);
-    BOOST_CHECK(docs.equals(answer));	
+    BOOST_CHECK(docs.equals(answer));
 }
 
 namespace TestNullDocIdSet
@@ -127,7 +127,7 @@ namespace TestNullDocIdSet
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
         {
             return DocIdSetPtr();
-        }	
+        }
     };
 }
 

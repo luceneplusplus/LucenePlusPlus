@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(testRandomFiles)
     CompoundFileWriterPtr csw = newLucene<CompoundFileWriter>(dir, L"test.cfs");
     
     Collection<String> data(Collection<String>::newInstance());
-    data.add(L".zero");	data.add(L".one"); data.add(L".ten");
+    data.add(L".zero");    data.add(L".one"); data.add(L".ten");
     data.add(L".hundred"); data.add(L".big1"); data.add(L".big2");
     data.add(L".big3"); data.add(L".big4"); data.add(L".big5");
     data.add(L".big6"); data.add(L".big7");
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(testRandomFiles)
         test->close();
         check->close();
     }
-    csr->close();	
+    csr->close();
 }
 
 BOOST_AUTO_TEST_CASE(testReadAfterClose)

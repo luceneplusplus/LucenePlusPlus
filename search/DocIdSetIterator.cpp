@@ -10,7 +10,7 @@
 namespace Lucene
 {
     /// When returned by {@link #nextDoc()}, {@link #advance(int)} and {@link #docID()} it means there
-	/// docs in the iterator.
+    /// docs in the iterator.
     const int32_t DocIdSetIterator::NO_MORE_DOCS = INT_MAX;
     
     DocIdSetIterator::~DocIdSetIterator()

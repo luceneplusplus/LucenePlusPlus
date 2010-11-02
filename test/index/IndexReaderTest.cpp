@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(testBasicDelete)
     checkTermDocsCount(reader, searchTerm, 0);
     reader->close();
     reader2->close();
-    dir->close();	
+    dir->close();
 }
 
 BOOST_AUTO_TEST_CASE(testBinaryFields)
@@ -457,7 +457,7 @@ BOOST_AUTO_TEST_CASE(testLockObtainFailed)
     BOOST_CHECK_EXCEPTION(reader->undeleteAll(), LockObtainFailedException, check_exception(LuceneException::LockObtainFailed));
 
     writer->close();
-    reader->close();	
+    reader->close();
 }
 
 BOOST_AUTO_TEST_CASE(testWritingNorms)
@@ -1059,7 +1059,7 @@ BOOST_AUTO_TEST_CASE(testDocsOutOfOrder)
     
     BOOST_CHECK_NO_THROW(writer->optimize());
     writer->close();
-    dir->close();	
+    dir->close();
 }
 
 BOOST_AUTO_TEST_CASE(testExceptionReleaseWriteLock)
@@ -1085,7 +1085,7 @@ BOOST_AUTO_TEST_CASE(testExceptionReleaseWriteLock)
     
     BOOST_CHECK(!IndexWriter::isLocked(dir));
     
-    dir->close();	
+    dir->close();
 }
 
 BOOST_AUTO_TEST_CASE(testOpenReaderAfterDelete)
@@ -1141,7 +1141,7 @@ BOOST_AUTO_TEST_CASE(testGetIndexCommit)
 
     r->close();
     r2->close();
-    d->close();	
+    d->close();
 }
 
 BOOST_AUTO_TEST_CASE(testReadOnly)
@@ -1417,7 +1417,7 @@ BOOST_AUTO_TEST_CASE(testNoTermsIndex)
         BOOST_CHECK(!subReader->termsIndexLoaded());
     }
     r2->close();
-    dir->close();	
+    dir->close();
 }
 
 BOOST_AUTO_TEST_CASE(testPrepareCommitIsCurrent)

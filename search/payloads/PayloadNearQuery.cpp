@@ -71,10 +71,10 @@ namespace Lucene
         if (!SpanNearQuery::equals(other))
             return false;
         if (!MiscUtils::equalTypes(shared_from_this(), other))
-            return false;		
+            return false;
         PayloadNearQueryPtr otherQuery(boost::dynamic_pointer_cast<PayloadNearQuery>(other));
         if (!otherQuery)
-            return false;		
+            return false;
         if (fieldName != otherQuery->fieldName)
             return false;
         if (!function)

@@ -16,20 +16,20 @@
 namespace Lucene
 {
     // Used internally (ie not written to *.fnm files) for pre-2.9 files
-	const int32_t FieldInfos::FORMAT_PRE = -1;
-	
-	// First used in 2.9; prior to 2.9 there was no format header
-	const int32_t FieldInfos::FORMAT_START = -2;
+    const int32_t FieldInfos::FORMAT_PRE = -1;
 
-	const int32_t FieldInfos::CURRENT_FORMAT = FieldInfos::FORMAT_START;
+    // First used in 2.9; prior to 2.9 there was no format header
+    const int32_t FieldInfos::FORMAT_START = -2;
 
-	const uint8_t FieldInfos::IS_INDEXED = 0x1;
-	const uint8_t FieldInfos::STORE_TERMVECTOR = 0x2;
-	const uint8_t FieldInfos::STORE_POSITIONS_WITH_TERMVECTOR = 0x4;
-	const uint8_t FieldInfos::STORE_OFFSET_WITH_TERMVECTOR = 0x8;
-	const uint8_t FieldInfos::OMIT_NORMS = 0x10;
-	const uint8_t FieldInfos::STORE_PAYLOADS = 0x20;
-	const uint8_t FieldInfos::OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
+    const int32_t FieldInfos::CURRENT_FORMAT = FieldInfos::FORMAT_START;
+
+    const uint8_t FieldInfos::IS_INDEXED = 0x1;
+    const uint8_t FieldInfos::STORE_TERMVECTOR = 0x2;
+    const uint8_t FieldInfos::STORE_POSITIONS_WITH_TERMVECTOR = 0x4;
+    const uint8_t FieldInfos::STORE_OFFSET_WITH_TERMVECTOR = 0x8;
+    const uint8_t FieldInfos::OMIT_NORMS = 0x10;
+    const uint8_t FieldInfos::STORE_PAYLOADS = 0x20;
+    const uint8_t FieldInfos::OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
     
     FieldInfos::FieldInfos()
     {
@@ -94,7 +94,7 @@ namespace Lucene
             FieldInfoPtr fi(boost::dynamic_pointer_cast<FieldInfo>((*field)->clone()));
             fis->byNumber.add(fi);
             fis->byName.put(fi->name, fi);
-        }		
+        }
         return fis;
     }
     
@@ -149,7 +149,7 @@ namespace Lucene
         add(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, false);
     }
     
-    void FieldInfos::add(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector,	
+    void FieldInfos::add(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector,
                          bool storeOffsetWithTermVector, bool omitNorms)
     {
         add(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, false, false);

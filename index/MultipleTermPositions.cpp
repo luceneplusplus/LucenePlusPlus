@@ -160,7 +160,7 @@ namespace Lucene
     void IntQueue::add(int32_t i)
     {
         if (lastIndex == arraySize)
-            growArray();		
+            growArray();
         array[lastIndex++] = i;
     }
     

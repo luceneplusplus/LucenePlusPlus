@@ -118,7 +118,7 @@ public:
 public:
     static const int64_t MAX_VALUE;
 
-protected:	
+protected:
     int64_t capacity;
     MapIntByteArray singleBuffers;
 
@@ -138,7 +138,7 @@ protected:
             return buf;
         }
         return RAMFile::newBuffer(size);
-    }	
+    }
 };
 
 const int64_t DenseRAMFile::MAX_VALUE = 2 * (int64_t)INT_MAX;

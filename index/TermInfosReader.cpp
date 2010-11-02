@@ -62,14 +62,14 @@ namespace Lucene
                 catch (LuceneException& e)
                 {
                     finally = e;
-                }			
+                }
                 indexEnum->close();
             }
             else
             {
                 // Do not load terms index
                 totalIndexInterval = -1;
-            }			
+            }
             success = true;
         }
         catch (LuceneException& e)
@@ -79,7 +79,7 @@ namespace Lucene
         // With lock-less commits, it's entirely possible (and fine) to hit a FileNotFound exception above. 
         // In this case, we want to explicitly close any subset of things that were opened.
         if (!success)
-            close();		
+            close();
         finally.throwException();
     }
     
@@ -89,12 +89,12 @@ namespace Lucene
     
     int32_t TermInfosReader::getMaxSkipLevels()
     {
-        return origEnum->maxSkipLevels;	
+        return origEnum->maxSkipLevels;
     }
     
     int32_t TermInfosReader::getSkipInterval()
     {
-        return origEnum->skipInterval;	
+        return origEnum->skipInterval;
     }
     
     void TermInfosReader::close()
@@ -104,7 +104,7 @@ namespace Lucene
         threadResources.close();
     }
     
-    int64_t TermInfosReader::size()	
+    int64_t TermInfosReader::size()
     {
         return _size;
     }
@@ -171,7 +171,7 @@ namespace Lucene
             if (indexTerms.size() == enumOffset || // but before end of block
                 term->compareTo(indexTerms[enumOffset]) < 0)
             {
-                // no need to seek				
+                // no need to seek
                 int32_t numScans = enumerator->scanTo(term);
                 if (enumerator->term() && term->compareTo(enumerator->term()) == 0)
                 {

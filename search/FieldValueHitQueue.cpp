@@ -17,7 +17,7 @@ namespace Lucene
         // When we get here, fields.size() is guaranteed to be > 0, therefore no need to check it again.
         
         // All these are required by this class's API - need to return arrays.  Therefore even in the case 
-        // of a single comparator, create an array anyway.		
+        // of a single comparator, create an array anyway.
         this->fields = fields;
         int32_t numComparators = fields.size();
         comparators = Collection<FieldComparatorPtr>::newInstance(numComparators);

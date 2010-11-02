@@ -19,17 +19,17 @@
 namespace Lucene
 {
     const uint8_t FieldsWriter::FIELD_IS_TOKENIZED = 0x1;
-	const uint8_t FieldsWriter::FIELD_IS_BINARY = 0x2;
-	const uint8_t FieldsWriter::FIELD_IS_COMPRESSED = 0x4;
-	
-	const int32_t FieldsWriter::FORMAT = 0; // Original format
-	const int32_t FieldsWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = 1; // Changed strings to UTF8
-	const int32_t FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS = 2; // Lucene 3.0: Removal of compressed fields
-	
-	// NOTE: if you introduce a new format, make it 1 higher than the current one, and always change this if you 
-	// switch to a new format!
-	const int32_t FieldsWriter::FORMAT_CURRENT = FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
-	
+    const uint8_t FieldsWriter::FIELD_IS_BINARY = 0x2;
+    const uint8_t FieldsWriter::FIELD_IS_COMPRESSED = 0x4;
+
+    const int32_t FieldsWriter::FORMAT = 0; // Original format
+    const int32_t FieldsWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = 1; // Changed strings to UTF8
+    const int32_t FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS = 2; // Lucene 3.0: Removal of compressed fields
+
+    // NOTE: if you introduce a new format, make it 1 higher than the current one, and always change this if you 
+    // switch to a new format!
+    const int32_t FieldsWriter::FORMAT_CURRENT = FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
+
     FieldsWriter::FieldsWriter(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
     {
         fieldInfos = fn;

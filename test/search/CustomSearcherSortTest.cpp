@@ -72,7 +72,7 @@ public:
     {
         random = newLucene<Random>();
         index = getIndex();
-        query = newLucene<TermQuery>(newLucene<Term>(L"content", L"test"));		
+        query = newLucene<TermQuery>(newLucene<Term>(L"content", L"test"));
     }
     
     virtual ~CustomSearcherSortFixture()

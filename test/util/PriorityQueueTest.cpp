@@ -19,7 +19,7 @@ class IntegerQueue : public PriorityQueue<int32_t>
 {
 public:
     IntegerQueue(int32_t maxSize) : PriorityQueue<int32_t>(maxSize)
-    {	
+    {
     }
     
     virtual ~IntegerQueue()
@@ -34,7 +34,7 @@ class IntegerPtrQueue : public PriorityQueue<IntPtr>
 {
 public:
     IntegerPtrQueue(int32_t maxSize) : PriorityQueue<IntPtr>(maxSize)
-    {	
+    {
     }
     
     virtual ~IntegerPtrQueue()

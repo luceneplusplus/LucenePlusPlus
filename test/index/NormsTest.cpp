@@ -167,7 +167,7 @@ public:
         iw->setSimilarity(similarityOne);
         iw->setUseCompoundFile(true);
         iw->close();
-    }	
+    }
 };
 
 const int32_t NormTestFixture::NUM_FIELDS = 10;

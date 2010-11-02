@@ -21,8 +21,8 @@ namespace Lucene
     const int32_t SegmentInfos::FORMAT = -1;
     
     /// This format adds details used for lockless commits.  It differs slightly from the previous format in that file names
-	/// are never re-used (write once).  Instead, each file is written to the next generation.  For example, segments_1, 
-	/// segments_2, etc.  This allows us to not use a commit lock.  
+    /// are never re-used (write once).  Instead, each file is written to the next generation.  For example, segments_1, 
+    /// segments_2, etc.  This allows us to not use a commit lock.  
     const int32_t SegmentInfos::FORMAT_LOCKLESS = -2;
     
     /// This format adds a "hasSingleNormFile" flag into each segment info.
@@ -38,7 +38,7 @@ namespace Lucene
     const int32_t SegmentInfos::FORMAT_DEL_COUNT = -6;
     
     /// This format adds the boolean hasProx to record if any fields in the segment store prox information (ie, have
-	/// omitTermFreqAndPositions == false)
+    /// omitTermFreqAndPositions == false)
     const int32_t SegmentInfos::FORMAT_HAS_PROX = -7;
     
     /// This format adds optional commit userData storage.
@@ -603,7 +603,7 @@ namespace Lucene
                 pendingSegnOutput->close();
             }
             catch (...)
-            {			
+            {
             }
             
             // must carefully compute filename from "generation" since lastgeneration isn't incremented
@@ -614,7 +614,7 @@ namespace Lucene
             }
             catch (...)
             {
-            }			
+            }
             pendingSegnOutput.reset();
         }
     }
@@ -709,7 +709,7 @@ namespace Lucene
         }
         catch (...)
         {
-        }		
+        }
     }
     
     void SegmentInfos::commit(DirectoryPtr dir)

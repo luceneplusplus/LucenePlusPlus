@@ -12,7 +12,7 @@ namespace Lucene
     LuceneException::LuceneException(const String& error, ExceptionType type) throw()
     {
         this->error = error;
-        this->type = type;		
+        this->type = type;
     }
     
     LuceneException::~LuceneException() throw()

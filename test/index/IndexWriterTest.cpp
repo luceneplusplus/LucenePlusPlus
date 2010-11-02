@@ -381,7 +381,7 @@ public:
                 if (noErrors)
                     BOOST_FAIL("Unexpected exception");
                 break;
-            }			
+            }
         }
     }
 };
@@ -1994,7 +1994,7 @@ namespace TestMaxThreadPriority
         {
         }
         
-        LUCENE_CLASS(MyMergeScheduler);	
+        LUCENE_CLASS(MyMergeScheduler);
     
     public:
         virtual void merge(IndexWriterPtr writer)

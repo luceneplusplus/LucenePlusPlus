@@ -28,7 +28,7 @@ namespace Lucene
         if (doc == NO_MORE_DOCS)
         {
             reqScorer.reset(); // exhausted, nothing left
-            return doc;		
+            return doc;
         }
         if (!exclDisi)
             return doc;

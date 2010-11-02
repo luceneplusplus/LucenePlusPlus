@@ -40,9 +40,9 @@ public:
 protected:
     const uint8_t* inputBytes;
     int32_t inputLength;
-    int32_t nextByte;	
+    int32_t nextByte;
 
-public:	
+public:
     virtual void readInternal(uint8_t* b, int32_t offset, int32_t length)
     {
         std::copy(inputBytes + nextByte + offset, inputBytes + nextByte + offset + length, b + offset);
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(testReadCollection)
     BOOST_CHECK_EQUAL(readString[0], 119070);
     #endif
     
-    readString = indexInput.readString();	
+    readString = indexInput.readString();
     
     #ifdef LPP_UNICODE_CHAR_SIZE_2
     BOOST_CHECK_EQUAL(readString[0], 55348);

@@ -88,7 +88,7 @@ public:
         DocumentPtr doc = reader->document(rand->nextInt(reader->maxDoc()), newLucene<TestFieldSelector>(rand));
         Collection<FieldablePtr> fields = doc->getFields();
         for (int32_t i = 0; i < fields.size(); ++i)
-            validateField(fields[i]);		
+            validateField(fields[i]);
     }
     
     void validateField(FieldablePtr f)

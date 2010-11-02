@@ -23,7 +23,7 @@ namespace Lucene
     void FieldDocSortedHitQueue::setFields(Collection<SortFieldPtr> fields)
     {
         this->fields = fields;
-        this->collators = hasCollators(fields);	
+        this->collators = hasCollators(fields);
     }
     
     Collection<SortFieldPtr> FieldDocSortedHitQueue::getFields()
@@ -41,7 +41,7 @@ namespace Lucene
             localePtr locale(fields[i]->getLocale());
             if (locale)
                 ret[i] = newInstance<Collator>(*locale);
-        }		
+        }
         return ret;
     }
     

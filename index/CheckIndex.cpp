@@ -330,7 +330,7 @@ namespace Lucene
             for (Collection<String>::iterator fieldName = fieldNames.begin(); fieldName != fieldNames.end(); ++fieldName)
             {
                 reader->norms(*fieldName, b, 0);
-                ++status->totFields;			
+                ++status->totFields;
             }
             
             msg(L"OK [" + StringUtils::toString(status->totFields) + L" fields]");

@@ -58,7 +58,7 @@ public:
         }
                 
         writer->optimize();
-        writer->close();		
+        writer->close();
     }
     
     virtual ~MultiTermConstantScoreFixture()

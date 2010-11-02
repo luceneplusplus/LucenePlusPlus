@@ -55,7 +55,7 @@ namespace Lucene
     bool ByteSliceReader::eof()
     {
         BOOST_ASSERT(upto + bufferOffset <= endIndex);
-        return (upto + bufferOffset == endIndex);	
+        return (upto + bufferOffset == endIndex);
     }
     
     uint8_t ByteSliceReader::readByte()

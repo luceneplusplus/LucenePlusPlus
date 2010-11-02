@@ -27,7 +27,7 @@ namespace Lucene
         static String _APOSTROPHE_TYPE;
         if (_APOSTROPHE_TYPE.empty())
             _APOSTROPHE_TYPE = StandardTokenizer::TOKEN_TYPES()[StandardTokenizer::APOSTROPHE];
-        return _APOSTROPHE_TYPE;		
+        return _APOSTROPHE_TYPE;
     }
     
     String& StandardFilter::ACRONYM_TYPE()
@@ -35,7 +35,7 @@ namespace Lucene
         static String _ACRONYM_TYPE;
         if (_ACRONYM_TYPE.empty())
             _ACRONYM_TYPE = StandardTokenizer::TOKEN_TYPES()[StandardTokenizer::ACRONYM];
-        return _ACRONYM_TYPE;		
+        return _ACRONYM_TYPE;
     }
     
     bool StandardFilter::incrementToken()

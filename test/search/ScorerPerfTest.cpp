@@ -121,7 +121,7 @@ public:
     virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
     {
         return newLucene<DocIdBitSet>(rnd);
-    }	
+    }
 };
 
 class ScorerPerfFixture : public LuceneTestFixture

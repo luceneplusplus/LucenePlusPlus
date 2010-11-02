@@ -15,12 +15,12 @@ using namespace Lucene;
 class ArabicNormalizationFilterFixture : public BaseTokenStreamFixture
 {
 public:
-	virtual ~ArabicNormalizationFilterFixture()
-	{
-	}
+    virtual ~ArabicNormalizationFilterFixture()
+    {
+    }
 
 public:
-	void check(const String& input, const String& expected)
+    void check(const String& input, const String& expected)
     {
         ArabicLetterTokenizerPtr tokenStream  = newLucene<ArabicLetterTokenizer>(newLucene<StringReader>(input));
         ArabicNormalizationFilterPtr filter = newLucene<ArabicNormalizationFilter>(tokenStream);

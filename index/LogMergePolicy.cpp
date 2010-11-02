@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Defines the allowed range of log(size) for each level.  A level is computed by taking the max segment
-	/// log size, minus LEVEL_LOG_SPAN, and finding all segments falling within that range.
+    /// log size, minus LEVEL_LOG_SPAN, and finding all segments falling within that range.
     const double LogMergePolicy::LEVEL_LOG_SPAN = 0.75;
     
     /// Default merge factor, which is how many segments are merged at a time.

@@ -67,7 +67,7 @@ namespace Lucene
         ++nextCharCounter;
         if (buffer && !buffer.empty())
             return buffer.removeFirst();
-        return input->read();		
+        return input->read();
     }
     
     void MappingCharFilter::pushChar(int32_t c)
