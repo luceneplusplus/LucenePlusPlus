@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithTerminator)
     String testString(L"this is a ascii string");
     CharArray testArray(CharArray::newInstance(50));
     std::copy(testString.begin(), testString.end(), testArray.get());
-    testArray[testString.length()] = UTF8Stream::UNICODE_TERMINATOR; // terminator
+    testArray[testString.length()] = UTF8Base::UNICODE_TERMINATOR; // terminator
     ByteArray expectedUft8(ByteArray::newInstance(30));
     BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.length(), expectedUft8), 22);
     BOOST_CHECK_EQUAL(SingleString((char*)expectedUft8.get(), 22), "this is a ascii string");
@@ -125,6 +125,70 @@ BOOST_AUTO_TEST_CASE(testToHash)
 {
     BOOST_CHECK_EQUAL(StringUtils::hashCode(L"test"), 3556498);
     BOOST_CHECK_EQUAL(StringUtils::hashCode(L"string"), -891985903);
+}
+
+BOOST_AUTO_TEST_CASE(testUTF8Performance)
+{
+    uint64_t startTime = MiscUtils::currentTimeMillis();
+    static const int32_t maxIter = 1000000;
+    
+    String unicode = L"this is a unicode string";
+    
+    for (int32_t i = 0; i < maxIter; ++i)
+        StringUtils::toUTF8(unicode);
+    
+    BOOST_TEST_MESSAGE("Encode utf8 (string): " << (MiscUtils::currentTimeMillis() - startTime) << "ms");
+    
+    const wchar_t* unicodeChar = unicode.c_str();
+    int32_t unicodeLength = (int32_t)unicode.length();
+    
+    startTime = MiscUtils::currentTimeMillis();
+    
+    for (int32_t i = 0; i < maxIter; ++i)
+        StringUtils::toUTF8(unicodeChar, unicodeLength);
+    
+    BOOST_TEST_MESSAGE("Encode utf8 (pointer): " << (MiscUtils::currentTimeMillis() - startTime) << "ms");
+    
+    ByteArray utf8 = ByteArray::newInstance(unicodeLength * StringUtils::MAX_ENCODING_UTF8_SIZE);
+    
+    startTime = MiscUtils::currentTimeMillis();
+    
+    for (int32_t i = 0; i < maxIter; ++i)
+        StringUtils::toUTF8(unicodeChar, unicodeLength, utf8);
+    
+    BOOST_TEST_MESSAGE("Encode utf8 (buffer): " << (MiscUtils::currentTimeMillis() - startTime) << "ms");
+}
+
+BOOST_AUTO_TEST_CASE(testUnicodePerformance)
+{
+    uint64_t startTime = MiscUtils::currentTimeMillis();
+    static const int32_t maxIter = 1000000;
+    
+    SingleString utf8 = "this is a utf8 string";
+    
+    for (int32_t i = 0; i < maxIter; ++i)
+        StringUtils::toUnicode(utf8);
+    
+    BOOST_TEST_MESSAGE("Decode utf8 (string): " << (MiscUtils::currentTimeMillis() - startTime) << "ms");
+    
+    const uint8_t* utf8Char = (const uint8_t*)utf8.c_str();
+    int32_t utf8Length = (int32_t)utf8.length();
+    
+    startTime = MiscUtils::currentTimeMillis();
+    
+    for (int32_t i = 0; i < maxIter; ++i)
+        StringUtils::toUnicode(utf8Char, utf8Length);
+    
+    BOOST_TEST_MESSAGE("Decode utf8 (pointer): " << (MiscUtils::currentTimeMillis() - startTime) << "ms");
+    
+    CharArray unicode = CharArray::newInstance(utf8Length);
+    
+    startTime = MiscUtils::currentTimeMillis();
+    
+    for (int32_t i = 0; i < maxIter; ++i)
+        StringUtils::toUnicode(utf8Char, utf8Length, unicode);
+    
+    BOOST_TEST_MESSAGE("Decode utf8 (buffer): " << (MiscUtils::currentTimeMillis() - startTime) << "ms");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -3300,14 +3300,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\util\ArrayReader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\include\ArrayReader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\util\Base64.cpp"
 				>
 			</File>

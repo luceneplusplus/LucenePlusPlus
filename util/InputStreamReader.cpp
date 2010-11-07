@@ -14,7 +14,7 @@ namespace Lucene
     InputStreamReader::InputStreamReader(ReaderPtr reader)
     {
         this->reader = reader;
-        this->decoder = newLucene<UTF8Decoder>(newLucene<BufferedReader>(reader, 1024));
+        this->decoder = newLucene<UTF8DecoderStream>(newLucene<BufferedReader>(reader, 1024));
     }
     
     InputStreamReader::~InputStreamReader()

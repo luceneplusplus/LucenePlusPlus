@@ -22,7 +22,7 @@ namespace Lucene
         if (termBuffer.length() < len + 1)
             termBuffer.resize(MiscUtils::getNextSize(len + 1));
         MiscUtils::arrayCopy(text.begin(), 0, termBuffer.get(), 0, len);
-        termBuffer[len] = UTF8Stream::UNICODE_TERMINATOR;
+        termBuffer[len] = UTF8Base::UNICODE_TERMINATOR;
         return addTerm(termBuffer, 0);
     }
 }

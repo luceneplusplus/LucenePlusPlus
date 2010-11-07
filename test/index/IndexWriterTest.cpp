@@ -4553,7 +4553,7 @@ BOOST_AUTO_TEST_CASE(testEmbeddedFFFF)
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();
     
-    const wchar_t _field[] = {L'a', L' ', L'a', UTF8Stream::UNICODE_TERMINATOR, L'b'};
+    const wchar_t _field[] = {L'a', L' ', L'a', UTF8Base::UNICODE_TERMINATOR, L'b'};
     String field(_field, SIZEOF_ARRAY(_field));
     
     doc->add(newLucene<Field>(L"field", field, Field::STORE_NO, Field::INDEX_ANALYZED));

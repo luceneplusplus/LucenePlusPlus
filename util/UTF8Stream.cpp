@@ -10,45 +10,41 @@
 
 namespace Lucene
 {
-    const uint16_t UTF8Stream::LEAD_SURROGATE_MIN = 0xd800u;
-    const uint16_t UTF8Stream::LEAD_SURROGATE_MAX = 0xdbffu;
-    const uint16_t UTF8Stream::TRAIL_SURROGATE_MIN = 0xdc00u;
-    const uint16_t UTF8Stream::TRAIL_SURROGATE_MAX = 0xdfffu;
-    const uint16_t UTF8Stream::LEAD_OFFSET = LEAD_SURROGATE_MIN - (0x10000 >> 10);
-    const uint32_t UTF8Stream::SURROGATE_OFFSET = 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
+    const uint16_t UTF8Base::LEAD_SURROGATE_MIN = 0xd800u;
+    const uint16_t UTF8Base::LEAD_SURROGATE_MAX = 0xdbffu;
+    const uint16_t UTF8Base::TRAIL_SURROGATE_MIN = 0xdc00u;
+    const uint16_t UTF8Base::TRAIL_SURROGATE_MAX = 0xdfffu;
+    const uint16_t UTF8Base::LEAD_OFFSET = LEAD_SURROGATE_MIN - (0x10000 >> 10);
+    const uint32_t UTF8Base::SURROGATE_OFFSET = 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
     
     // Maximum valid value for a Unicode code point
-    const uint32_t UTF8Stream::CODE_POINT_MAX = 0x0010ffffu;
+    const uint32_t UTF8Base::CODE_POINT_MAX = 0x0010ffffu;
     
     #ifdef LPP_UNICODE_CHAR_SIZE_2
-    const wchar_t UTF8Stream::UNICODE_REPLACEMENT_CHAR = (wchar_t)0xfffd;
-    const wchar_t UTF8Stream::UNICODE_TERMINATOR = (wchar_t)0xffff;
+    const wchar_t UTF8Base::UNICODE_REPLACEMENT_CHAR = (wchar_t)0xfffd;
+    const wchar_t UTF8Base::UNICODE_TERMINATOR = (wchar_t)0xffff;
     #else
-    const wchar_t UTF8Stream::UNICODE_REPLACEMENT_CHAR = (wchar_t)0x0001fffd;
-    const wchar_t UTF8Stream::UNICODE_TERMINATOR = (wchar_t)0x0001ffff;
+    const wchar_t UTF8Base::UNICODE_REPLACEMENT_CHAR = (wchar_t)0x0001fffd;
+    const wchar_t UTF8Base::UNICODE_TERMINATOR = (wchar_t)0x0001ffff;
     #endif
     
-    UTF8Stream::UTF8Stream(ReaderPtr reader)
-    {
-        this->reader = reader;
-    }
-    
-    UTF8Stream::~UTF8Stream()
+    UTF8Base::~UTF8Base()
     {
     }
     
-    uint32_t UTF8Stream::readNext()
+    UTF8Encoder::UTF8Encoder(const wchar_t* unicodeBegin, const wchar_t* unicodeEnd)
     {
-        int32_t next = reader->read();
-        return next == Reader::READER_EOF ? UNICODE_TERMINATOR : (uint32_t)next;
-    }
-    
-    UTF8Encoder::UTF8Encoder(ReaderPtr reader) : UTF8Stream(reader)
-    {
+        this->unicodeBegin = unicodeBegin;
+        this->unicodeEnd = unicodeEnd;
     }
     
     UTF8Encoder::~UTF8Encoder()
     {
+    }
+    
+    uint32_t UTF8Encoder::readNext()
+    {
+        return unicodeBegin == unicodeEnd ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*unicodeBegin++;
     }
     
     uint8_t* UTF8Encoder::appendChar(uint8_t* utf8, uint32_t cp)
@@ -134,12 +130,34 @@ namespace Lucene
         #endif
     }
     
-    UTF8Decoder::UTF8Decoder(ReaderPtr reader) : UTF8Stream(reader)
+    UTF8EncoderStream::UTF8EncoderStream(ReaderPtr reader) : UTF8Encoder(NULL, NULL)
     {
+        this->reader = reader;
+    }
+    
+    UTF8EncoderStream::~UTF8EncoderStream()
+    {
+    }
+    
+    uint32_t UTF8EncoderStream::readNext()
+    {
+        int32_t next = reader->read();
+        return next == Reader::READER_EOF ? UNICODE_TERMINATOR : (uint32_t)next;
+    }
+    
+    UTF8Decoder::UTF8Decoder(const uint8_t* utf8Begin, const uint8_t* utf8End)
+    {
+        this->utf8Begin = utf8Begin;
+        this->utf8End = utf8End;
     }
     
     UTF8Decoder::~UTF8Decoder()
     {
+    }
+    
+    uint32_t UTF8Decoder::readNext()
+    {
+        return utf8Begin == utf8End ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*utf8Begin++;
     }
     
     int32_t UTF8Decoder::sequenceLength(uint32_t cp)
@@ -261,12 +279,34 @@ namespace Lucene
         #endif
     }
     
-    UTF16Decoder::UTF16Decoder(ReaderPtr reader) : UTF8Stream(reader)
+    UTF8DecoderStream::UTF8DecoderStream(ReaderPtr reader)  : UTF8Decoder(NULL, NULL)
     {
+        this->reader = reader;
+    }
+    
+    UTF8DecoderStream::~UTF8DecoderStream()
+    {
+    }
+    
+    uint32_t UTF8DecoderStream::readNext()
+    {
+        int32_t next = reader->read();
+        return next == Reader::READER_EOF ? UNICODE_TERMINATOR : (uint32_t)next;
+    }
+    
+    UTF16Decoder::UTF16Decoder(const uint16_t* utf16Begin, const uint16_t* utf16End)
+    {
+        this->utf16Begin = utf16Begin;
+        this->utf16End = utf16End;
     }
     
     UTF16Decoder::~UTF16Decoder()
     {
+    }
+    
+    uint32_t UTF16Decoder::readNext()
+    {
+        return utf16Begin == utf16End ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*utf16Begin++;
     }
     
     int32_t UTF16Decoder::utf16to32(wchar_t* unicode, int32_t length)

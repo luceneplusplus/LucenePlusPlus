@@ -23,7 +23,7 @@ namespace Lucene
     
     protected:
         ReaderPtr reader;
-        UTF8DecoderPtr decoder;
+        UTF8DecoderStreamPtr decoder;
     
     public:
         /// Read a single character.

@@ -11,16 +11,11 @@
 
 namespace Lucene
 {
-    class LPPAPI UTF8Stream : public LuceneObject
+    class LPPAPI UTF8Base : public LuceneObject
     {
     public:
-        UTF8Stream(ReaderPtr reader);
-        virtual ~UTF8Stream();
-        
-        LUCENE_CLASS(UTF8Stream);
-    
-    protected:
-        ReaderPtr reader;
+        virtual ~UTF8Base();
+        LUCENE_CLASS(UTF8Base);
     
     public:
         static const uint16_t LEAD_SURROGATE_MIN;
@@ -35,7 +30,7 @@ namespace Lucene
         static const wchar_t UNICODE_TERMINATOR;
     
     protected:
-        inline uint32_t readNext();
+        virtual uint32_t readNext() = 0;
         
         inline uint8_t mask8(uint32_t b)
         {
@@ -93,13 +88,17 @@ namespace Lucene
         }
     };
     
-    class LPPAPI UTF8Encoder : public UTF8Stream
+    class LPPAPI UTF8Encoder : public UTF8Base
     {
     public:
-        UTF8Encoder(ReaderPtr reader);
+        UTF8Encoder(const wchar_t* unicodeBegin, const wchar_t* unicodeEnd);
         virtual ~UTF8Encoder();
         
         LUCENE_CLASS(UTF8Encoder);
+    
+    protected:
+        const wchar_t* unicodeBegin;
+        const wchar_t* unicodeEnd;
     
     public:
         int32_t encode(uint8_t* utf8, int32_t length);
@@ -108,16 +107,36 @@ namespace Lucene
         int32_t utf32to8(uint8_t* utf8, int32_t length);
         
     protected:
+        virtual uint32_t readNext();
         uint8_t* appendChar(uint8_t* utf8, uint32_t cp);
     };
     
-    class LPPAPI UTF8Decoder : public UTF8Stream
+    class LPPAPI UTF8EncoderStream : public UTF8Encoder
     {
     public:
-        UTF8Decoder(ReaderPtr reader);
+        UTF8EncoderStream(ReaderPtr reader);
+        virtual ~UTF8EncoderStream();
+        
+        LUCENE_CLASS(UTF8EncoderStream);
+    
+    protected:
+        ReaderPtr reader;
+    
+    protected:
+        virtual uint32_t readNext();
+    };
+    
+    class LPPAPI UTF8Decoder : public UTF8Base
+    {
+    public:
+        UTF8Decoder(const uint8_t* utf8Begin, const uint8_t* utf8End);
         virtual ~UTF8Decoder();
         
         LUCENE_CLASS(UTF8Decoder);
+    
+    protected:
+        const uint8_t* utf8Begin;
+        const uint8_t* utf8End;
     
     public:
         int32_t decode(wchar_t* unicode, int32_t length);
@@ -126,24 +145,47 @@ namespace Lucene
         int32_t utf8to32(wchar_t* unicode, int32_t length);
     
     protected:
+        virtual uint32_t readNext();
         int32_t sequenceLength(uint32_t cp);
         bool getSequence(uint32_t& cp, int32_t length);
         bool isValidNext(uint32_t& cp);
     };
     
-    class LPPAPI UTF16Decoder : public UTF8Stream
+    class LPPAPI UTF8DecoderStream : public UTF8Decoder
     {
     public:
-        UTF16Decoder(ReaderPtr reader);
+        UTF8DecoderStream(ReaderPtr reader);
+        virtual ~UTF8DecoderStream();
+        
+        LUCENE_CLASS(UTF8DecoderStream);
+    
+    protected:
+        ReaderPtr reader;
+    
+    protected:
+        virtual uint32_t readNext();
+    };
+    
+    class LPPAPI UTF16Decoder : public UTF8Base
+    {
+    public:
+        UTF16Decoder(const uint16_t* utf16Begin, const uint16_t* utf16End);
         virtual ~UTF16Decoder();
         
         LUCENE_CLASS(UTF16Decoder);
+    
+    protected:
+        const uint16_t* utf16Begin;
+        const uint16_t* utf16End;
     
     public:
         int32_t decode(wchar_t* unicode, int32_t length);
         
         int32_t utf16to16(wchar_t* unicode, int32_t length);
         int32_t utf16to32(wchar_t* unicode, int32_t length);
+    
+    protected:
+        virtual uint32_t readNext();
     };
 }
 
