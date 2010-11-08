@@ -71,12 +71,8 @@
 #define LPP_UNICODE_CHAR_SIZE_4
 #endif
 
-// Define to disable cyclic checking in debug builds
-// #define LPP_NO_CYCLIC_CHECK
-
-#if defined(_DEBUG) && !defined(LPP_NO_CYCLIC_CHECK)
-#define LPP_USE_CYCLIC_CHECK
-#endif
+// Define to enable cyclic checking in debug builds
+// #define LPP_USE_CYCLIC_CHECK
 
 // Define to use nedmalloc memory allocator
 // #define LPP_USE_NEDMALLOC
