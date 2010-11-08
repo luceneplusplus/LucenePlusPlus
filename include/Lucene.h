@@ -23,6 +23,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <list>
 #include <boost/cstdint.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/variant.hpp>
@@ -232,8 +233,8 @@ namespace Lucene
     
     typedef boost::function<bool (const TermVectorEntryPtr&, const TermVectorEntryPtr&)> TermVectorEntryComparator;
     
-    template <typename KEY, typename VALUE> class SimpleLRUCache;
-    typedef SimpleLRUCache<TermPtr, TermInfoPtr> TermInfoCache;
+    template < class KEY, class VALUE, class HASH = boost::hash<KEY>, class EQUAL = std::equal_to<KEY> > class SimpleLRUCache;
+    typedef SimpleLRUCache< TermPtr, TermInfoPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > TermInfoCache;
     typedef boost::shared_ptr<TermInfoCache> TermInfoCachePtr;
 }
 

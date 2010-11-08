@@ -7,26 +7,22 @@
 #ifndef SIMPLELRUCACHE_H
 #define SIMPLELRUCACHE_H
 
-#include "Lucene.h"
+#include "LuceneObject.h"
 
 namespace Lucene
 {
     /// General purpose LRU cache map.
-    /// Accessing an entry will keep the entry cached.  {@link #get(const KEY&, VALUE&)} and
+    /// Accessing an entry will keep the entry cached.  {@link #get(const KEY&)} and
     /// {@link #put(const KEY&, const VALUE&)} results in an access to the corresponding entry.
-    template <typename KEY, typename VALUE>
-    class SimpleLRUCache
+    template <class KEY, class VALUE, class HASH, class EQUAL>
+    class SimpleLRUCache : public LuceneObject
     {
     public:
-        typedef std::pair<KEY, VALUE> cache_item;
-        typedef boost::multi_index::multi_index_container< cache_item, boost::multi_index::indexed_by<
-                boost::multi_index::hashed_unique< boost::multi_index::member<cache_item, KEY, &cache_item::first> >,
-                boost::multi_index::sequenced<> >, Allocator<cache_item> > cache_items;
-        typedef typename cache_items::iterator iterator;
-        typedef typename cache_items::template nth_index<0>::type hash_index;
-        typedef typename hash_index::iterator hash_index_iterator;
-        typedef typename cache_items::template nth_index<1>::type sequenced_index;
-        typedef typename sequenced_index::iterator sequenced_index_iterator;
+        typedef std::pair<KEY, VALUE> key_value;
+        typedef std::list< key_value > key_list;
+        typedef typename key_list::const_iterator const_iterator;
+        typedef boost::unordered_map< KEY, typename key_list::iterator, HASH, EQUAL, Allocator< std::pair<KEY, typename key_list::iterator> > > map_type;
+        typedef typename map_type::const_iterator map_iterator;
         
         SimpleLRUCache(int32_t cacheSize)
         {
@@ -36,60 +32,59 @@ namespace Lucene
         virtual ~SimpleLRUCache()
         {
         }
-    
-    protected:
-        cache_items cacheItems;
-        int32_t cacheSize;
-    
-    public:
-        int32_t size()
-        {
-            return cacheItems.size();
-        }
         
-        bool get(const KEY& key, VALUE& value)
-        {
-            hash_index& hashIndex = cacheItems.template get<0>();
-            hash_index_iterator it1 = hashIndex.find(key);
-            
-            if (it1 == hashIndex.end())
-                return false;
-            value = it1->second;
+    protected:
+        int32_t cacheSize;
+        key_list cacheList;
+        map_type cacheMap;
 
-            sequenced_index& sequencedIndex = cacheItems.template get<1>();
-            sequencedIndex.relocate(sequencedIndex.end(), cacheItems.template project<1>(it1));
-
-            return true;
-        }
-
+    public:
         void put(const KEY& key, const VALUE& value)
         {
-            if (cacheSize > 0 && (int32_t)cacheItems.size() >= cacheSize)
+            cacheList.push_front(std::make_pair(key, value));
+            cacheMap[key] = cacheList.begin();
+            
+            if ((int32_t)cacheList.size() > cacheSize)
             {
-                sequenced_index& sequencedIndex = cacheItems.template get<1>();
-                sequencedIndex.erase(sequencedIndex.begin());
+                cacheMap.erase(cacheList.back().first);
+                cacheList.pop_back();
             }
-
-            hash_index& hashIndex = cacheItems.template get<0>();
-            hash_index_iterator it = hashIndex.find(key);
-
-            if (it == hashIndex.end())
-                cacheItems.insert(std::make_pair(key, value));
-            else
-                hashIndex.replace(it, std::make_pair(key, value));
-        }
-
-        iterator begin()
-        {
-            return cacheItems.begin();
         }
         
-        iterator end()
+        VALUE get(const KEY& key)
         {
-            return cacheItems.end();
+            map_iterator find = cacheMap.find(key);
+            if (find == cacheMap.end())
+                return VALUE();
+            
+            VALUE value(find->second->second);
+            cacheList.erase(find->second);
+            cacheList.push_front(std::make_pair(key, value));
+            cacheMap[key] = cacheList.begin();
+            
+            return value;
+        }
+        
+        bool contains(const KEY& key) const
+        {
+            return (cacheMap.find(key) != cacheMap.end());
+        }
+        
+        int32_t size() const
+        {
+            return cacheList.size();
+        }
+        
+        const_iterator begin() const
+        {
+            return cacheList.begin();
+        }
+
+        const_iterator end() const
+        {
+            return cacheList.end();
         }
     };
 };
-
 
 #endif

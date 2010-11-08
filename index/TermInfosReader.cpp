@@ -156,7 +156,8 @@ namespace Lucene
         {
             cache = resources->termInfoCache;
             // check the cache first if the term was recently looked up
-            if (cache->get(term, ti))
+            ti = cache->get(term);
+            if (ti)
                 return ti;
         }
         
