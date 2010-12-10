@@ -26,12 +26,12 @@ namespace Lucene
     void FieldCacheImpl::initialize()
     {
         caches = MapStringCache::newInstance();
-        caches.put(L"Byte", newLucene<ByteCache>(shared_from_this()));
-        caches.put(L"Integer", newLucene<IntCache>(shared_from_this()));
-        caches.put(L"Long", newLucene<LongCache>(shared_from_this()));
-        caches.put(L"Double", newLucene<DoubleCache>(shared_from_this()));
-        caches.put(L"String", newLucene<StringCache>(shared_from_this()));
-        caches.put(StringIndex::_getClassName(), newLucene<StringIndexCache>(shared_from_this()));
+        caches.put(CACHE_BYTE, newLucene<ByteCache>(shared_from_this()));
+        caches.put(CACHE_INT, newLucene<IntCache>(shared_from_this()));
+        caches.put(CACHE_LONG, newLucene<LongCache>(shared_from_this()));
+        caches.put(CACHE_DOUBLE, newLucene<DoubleCache>(shared_from_this()));
+        caches.put(CACHE_STRING, newLucene<StringCache>(shared_from_this()));
+        caches.put(CACHE_STRING_INDEX, newLucene<StringIndexCache>(shared_from_this()));
     }
     
     void FieldCacheImpl::purgeAllCaches()
@@ -72,7 +72,7 @@ namespace Lucene
     
     Collection<uint8_t> FieldCacheImpl::getBytes(IndexReaderPtr reader, const String& field, ByteParserPtr parser)
     {
-        return VariantUtils::get< Collection<uint8_t> >(caches.get(L"Byte")->get(reader, newLucene<Entry>(field, parser)));
+        return VariantUtils::get< Collection<uint8_t> >(caches.get(CACHE_BYTE)->get(reader, newLucene<Entry>(field, parser)));
     }
     
     Collection<int32_t> FieldCacheImpl::getInts(IndexReaderPtr reader, const String& field)
@@ -82,7 +82,7 @@ namespace Lucene
     
     Collection<int32_t> FieldCacheImpl::getInts(IndexReaderPtr reader, const String& field, IntParserPtr parser)
     {
-        return VariantUtils::get< Collection<int32_t> >(caches.get(L"Integer")->get(reader, newLucene<Entry>(field, parser)));
+        return VariantUtils::get< Collection<int32_t> >(caches.get(CACHE_INT)->get(reader, newLucene<Entry>(field, parser)));
     }
     
     Collection<int64_t> FieldCacheImpl::getLongs(IndexReaderPtr reader, const String& field)
@@ -92,7 +92,7 @@ namespace Lucene
     
     Collection<int64_t> FieldCacheImpl::getLongs(IndexReaderPtr reader, const String& field, LongParserPtr parser)
     {
-        return VariantUtils::get< Collection<int64_t> >(caches.get(L"Long")->get(reader, newLucene<Entry>(field, parser)));
+        return VariantUtils::get< Collection<int64_t> >(caches.get(CACHE_LONG)->get(reader, newLucene<Entry>(field, parser)));
     }
     
     Collection<double> FieldCacheImpl::getDoubles(IndexReaderPtr reader, const String& field)
@@ -102,17 +102,17 @@ namespace Lucene
     
     Collection<double> FieldCacheImpl::getDoubles(IndexReaderPtr reader, const String& field, DoubleParserPtr parser)
     {
-        return VariantUtils::get< Collection<double> >(caches.get(L"Double")->get(reader, newLucene<Entry>(field, parser)));
+        return VariantUtils::get< Collection<double> >(caches.get(CACHE_DOUBLE)->get(reader, newLucene<Entry>(field, parser)));
     }
     
     Collection<String> FieldCacheImpl::getStrings(IndexReaderPtr reader, const String& field)
     {
-        return VariantUtils::get< Collection<String> >(caches.get(L"String")->get(reader, newLucene<Entry>(field, ParserPtr())));
+        return VariantUtils::get< Collection<String> >(caches.get(CACHE_STRING)->get(reader, newLucene<Entry>(field, ParserPtr())));
     }
     
     StringIndexPtr FieldCacheImpl::getStringIndex(IndexReaderPtr reader, const String& field)
     {
-        return VariantUtils::get< StringIndexPtr >(caches.get(StringIndex::_getClassName())->get(reader, newLucene<Entry>(field, ParserPtr())));
+        return VariantUtils::get< StringIndexPtr >(caches.get(CACHE_STRING_INDEX)->get(reader, newLucene<Entry>(field, ParserPtr())));
     }
     
     void FieldCacheImpl::setInfoStream(InfoStreamPtr stream)
@@ -575,7 +575,7 @@ namespace Lucene
         return newLucene<StringIndex>(retArray, mterms);
     }
     
-    FieldCacheEntryImpl::FieldCacheEntryImpl(LuceneObjectPtr readerKey, const String& fieldName, const String& cacheType, boost::any custom, boost::any value)
+    FieldCacheEntryImpl::FieldCacheEntryImpl(LuceneObjectPtr readerKey, const String& fieldName, int32_t cacheType, boost::any custom, boost::any value)
     {
         this->readerKey = readerKey;
         this->fieldName = fieldName;
@@ -598,7 +598,7 @@ namespace Lucene
         return fieldName;
     }
     
-    String FieldCacheEntryImpl::getCacheType()
+    int32_t FieldCacheEntryImpl::getCacheType()
     {
         return cacheType;
     }

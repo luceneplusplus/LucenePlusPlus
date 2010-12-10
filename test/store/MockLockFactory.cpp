@@ -12,7 +12,7 @@ namespace Lucene
 {
     MockLockFactory::MockLockFactory()
     {
-        locksCreated = MapStringLockPtr::newInstance();
+        locksCreated = MapStringLock::newInstance();
         lockPrefixSet = false;
         makeLockCount = 0;
     }

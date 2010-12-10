@@ -20,6 +20,17 @@ namespace Lucene
         LUCENE_INTERFACE(FieldCache);
     
     public:
+        /// Specifies whether and how a field should be stored.
+        enum CacheType
+        {
+            CACHE_BYTE = 1,
+            CACHE_INT,
+            CACHE_LONG,
+            CACHE_DOUBLE,
+            CACHE_STRING,
+            CACHE_STRING_INDEX
+        };
+        
         /// Indicator for StringIndex values in the cache.
         /// NOTE: the value assigned to this constant must not be the same as any of those in SortField
         static const int32_t STRING_INDEX;
@@ -342,7 +353,7 @@ namespace Lucene
     public:
         virtual LuceneObjectPtr getReaderKey() = 0;
         virtual String getFieldName() = 0;
-        virtual String getCacheType() = 0;
+        virtual int32_t getCacheType() = 0;
         virtual boost::any getCustom() = 0;
         virtual boost::any getValue() = 0;
         

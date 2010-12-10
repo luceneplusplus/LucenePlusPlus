@@ -206,8 +206,8 @@ namespace Lucene
     typedef HashMap< int32_t, double > MapIntDouble;
     typedef HashMap< int64_t, int32_t > MapLongInt;
     typedef HashMap< String, double > MapStringDouble;
-    typedef HashMap< String, CachePtr > MapStringCache;
-    typedef HashMap< String, LockPtr > MapStringLockPtr;
+    typedef HashMap< int32_t, CachePtr > MapStringCache;
+    typedef HashMap< String, LockPtr > MapStringLock;
     
     typedef HashMap< SegmentInfoPtr, SegmentReaderPtr, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > MapSegmentInfoSegmentReader;
     typedef HashMap< SegmentInfoPtr, int32_t, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > MapSegmentInfoInt;

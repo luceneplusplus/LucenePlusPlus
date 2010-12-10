@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(testCustomLockFactory)
     BOOST_CHECK_EQUAL(lf->locksCreated.size(), 1); // # of unique locks created (after instantiating IndexWriter)
     BOOST_CHECK(lf->makeLockCount >= 1); // # calls to makeLock is 0 (after instantiating IndexWriter)
     
-    for (MapStringLockPtr::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName)
+    for (MapStringLock::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName)
     {
         MockLockPtr lock(boost::dynamic_pointer_cast<MockLock>(lockName->second));
         BOOST_CHECK(lock->lockAttempts > 0); // # calls to Lock.obtain is 0 (after instantiating IndexWriter)

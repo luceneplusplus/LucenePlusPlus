@@ -23,7 +23,7 @@ namespace Lucene
     public:
         bool lockPrefixSet;
         int32_t makeLockCount;
-        MapStringLockPtr locksCreated;
+        MapStringLock locksCreated;
     
     public:
         virtual void setLockPrefix(const String& lockPrefix);

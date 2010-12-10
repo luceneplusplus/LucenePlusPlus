@@ -170,7 +170,7 @@ namespace Lucene
     class LPPAPI FieldCacheEntryImpl : public FieldCacheEntry
     {
     public:
-        FieldCacheEntryImpl(LuceneObjectPtr readerKey, const String& fieldName, const String& cacheType, boost::any custom, boost::any value);
+        FieldCacheEntryImpl(LuceneObjectPtr readerKey, const String& fieldName, int32_t cacheType, boost::any custom, boost::any value);
         virtual ~FieldCacheEntryImpl();
         
         LUCENE_CLASS(FieldCacheEntryImpl);
@@ -178,14 +178,14 @@ namespace Lucene
     protected:
         LuceneObjectPtr readerKey;
         String fieldName;
-        String cacheType;
+        int32_t cacheType;
         boost::any custom;
         boost::any value;
     
     public:
         virtual LuceneObjectPtr getReaderKey();
         virtual String getFieldName();
-        virtual String getCacheType();
+        virtual int32_t getCacheType();
         virtual boost::any getCustom();
         virtual boost::any getValue();
     };
