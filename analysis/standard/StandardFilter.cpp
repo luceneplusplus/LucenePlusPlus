@@ -22,7 +22,7 @@ namespace Lucene
     {
     }
     
-    String& StandardFilter::APOSTROPHE_TYPE()
+    const String& StandardFilter::APOSTROPHE_TYPE()
     {
         static String _APOSTROPHE_TYPE;
         if (_APOSTROPHE_TYPE.empty())
@@ -30,7 +30,7 @@ namespace Lucene
         return _APOSTROPHE_TYPE;
     }
     
-    String& StandardFilter::ACRONYM_TYPE()
+    const String& StandardFilter::ACRONYM_TYPE()
     {
         static String _ACRONYM_TYPE;
         if (_ACRONYM_TYPE.empty())

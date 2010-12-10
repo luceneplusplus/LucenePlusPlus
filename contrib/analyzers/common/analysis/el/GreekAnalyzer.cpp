@@ -74,7 +74,7 @@ namespace Lucene
     {
     }
     
-    HashSet<String> GreekAnalyzer::getDefaultStopSet()
+    const HashSet<String> GreekAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)

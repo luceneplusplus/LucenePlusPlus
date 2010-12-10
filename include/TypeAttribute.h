@@ -23,7 +23,7 @@ namespace Lucene
     
     protected:
         String _type;
-        static String& DEFAULT_TYPE();
+        static const String& DEFAULT_TYPE();
         
     public:
         virtual String toString();

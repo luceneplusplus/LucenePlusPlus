@@ -53,7 +53,7 @@ namespace Lucene
         virtual void initialize();
         
         /// Returns an unmodifiable instance of the default stop-words set.
-        static HashSet<String> getDefaultStopSet();
+        static const HashSet<String> getDefaultStopSet();
         
         void setStemExclusionTable(HashSet<String> exclusions);
         

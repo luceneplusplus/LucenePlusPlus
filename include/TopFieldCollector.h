@@ -60,7 +60,7 @@ namespace Lucene
         virtual bool acceptsDocsOutOfOrder();
     
     protected:
-        static Collection<ScoreDocPtr> EMPTY_SCOREDOCS();
+        static const Collection<ScoreDocPtr> EMPTY_SCOREDOCS();
         
         /// Only the following callback methods need to be overridden since topDocs(int32_t, int32_t) calls them to 
         /// return the results.

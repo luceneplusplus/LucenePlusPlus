@@ -28,7 +28,7 @@ namespace Lucene
     
     public:
         /// Convenience declaration when creating a {@link TermPositionVector} that stores only position information.
-        static Collection<TermVectorOffsetInfoPtr> EMPTY_OFFSET_INFO();
+        static const Collection<TermVectorOffsetInfoPtr> EMPTY_OFFSET_INFO();
         
         /// The accessor for the ending offset for the term
         int32_t getEndOffset();

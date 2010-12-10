@@ -39,8 +39,8 @@ namespace Lucene
         static int32_t DATE_LEN();
     
     public:
-        static String& MIN_DATE_STRING();
-        static String& MAX_DATE_STRING();
+        static const String& MIN_DATE_STRING();
+        static const String& MAX_DATE_STRING();
         
         /// Converts a Date to a string suitable for indexing.
         static String dateToString(boost::posix_time::ptime date);

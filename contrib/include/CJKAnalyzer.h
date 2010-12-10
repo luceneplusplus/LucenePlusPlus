@@ -37,7 +37,7 @@ namespace Lucene
     
     public:
         /// Returns an unmodifiable instance of the default stop-words set.
-        static HashSet<String> getDefaultStopSet();
+        static const HashSet<String> getDefaultStopSet();
         
         /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
         ///

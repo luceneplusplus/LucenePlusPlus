@@ -14,127 +14,127 @@ namespace Lucene
     {
     }
     
-    String& IndexFileNames::SEGMENTS()
+    const String& IndexFileNames::SEGMENTS()
     {
         static String _SEGMENTS(L"segments");
         return _SEGMENTS;
     }
     
-    String& IndexFileNames::SEGMENTS_GEN()
+    const String& IndexFileNames::SEGMENTS_GEN()
     {
         static String _SEGMENTS_GEN(L"segments.gen");
         return _SEGMENTS_GEN;
     }
     
-    String& IndexFileNames::DELETABLE()
+    const String& IndexFileNames::DELETABLE()
     {
         static String _DELETABLE(L"deletable");
         return _DELETABLE;
     }
     
-    String& IndexFileNames::NORMS_EXTENSION()
+    const String& IndexFileNames::NORMS_EXTENSION()
     {
         static String _NORMS_EXTENSION(L"nrm");
         return _NORMS_EXTENSION;
     }
     
-    String& IndexFileNames::FREQ_EXTENSION()
+    const String& IndexFileNames::FREQ_EXTENSION()
     {
         static String _FREQ_EXTENSION(L"frq");
         return _FREQ_EXTENSION;
     }
     
-    String& IndexFileNames::PROX_EXTENSION()
+    const String& IndexFileNames::PROX_EXTENSION()
     {
         static String _PROX_EXTENSION(L"prx");
         return _PROX_EXTENSION;
     }
     
-    String& IndexFileNames::TERMS_EXTENSION()
+    const String& IndexFileNames::TERMS_EXTENSION()
     {
         static String _TERMS_EXTENSION(L"tis");
         return _TERMS_EXTENSION;
     }
     
-    String& IndexFileNames::TERMS_INDEX_EXTENSION()
+    const String& IndexFileNames::TERMS_INDEX_EXTENSION()
     {
         static String _TERMS_INDEX_EXTENSION(L"tii");
         return _TERMS_INDEX_EXTENSION;
     }
     
-    String& IndexFileNames::FIELDS_INDEX_EXTENSION()
+    const String& IndexFileNames::FIELDS_INDEX_EXTENSION()
     {
         static String _FIELDS_INDEX_EXTENSION(L"fdx");
         return _FIELDS_INDEX_EXTENSION;
     }
     
-    String& IndexFileNames::FIELDS_EXTENSION()
+    const String& IndexFileNames::FIELDS_EXTENSION()
     {
         static String _FIELDS_EXTENSION(L"fdt");
         return _FIELDS_EXTENSION;
     }
     
-    String& IndexFileNames::VECTORS_FIELDS_EXTENSION()
+    const String& IndexFileNames::VECTORS_FIELDS_EXTENSION()
     {
         static String _VECTORS_FIELDS_EXTENSION(L"tvf");
         return _VECTORS_FIELDS_EXTENSION;
     }
     
-    String& IndexFileNames::VECTORS_DOCUMENTS_EXTENSION()
+    const String& IndexFileNames::VECTORS_DOCUMENTS_EXTENSION()
     {
         static String _VECTORS_DOCUMENTS_EXTENSION(L"tvd");
         return _VECTORS_DOCUMENTS_EXTENSION;
     }
     
-    String& IndexFileNames::VECTORS_INDEX_EXTENSION()
+    const String& IndexFileNames::VECTORS_INDEX_EXTENSION()
     {
         static String _VECTORS_INDEX_EXTENSION(L"tvx");
         return _VECTORS_INDEX_EXTENSION;
     }
     
-    String& IndexFileNames::COMPOUND_FILE_EXTENSION()
+    const String& IndexFileNames::COMPOUND_FILE_EXTENSION()
     {
         static String _COMPOUND_FILE_EXTENSION(L"cfs");
         return _COMPOUND_FILE_EXTENSION;
     }
     
-    String& IndexFileNames::COMPOUND_FILE_STORE_EXTENSION()
+    const String& IndexFileNames::COMPOUND_FILE_STORE_EXTENSION()
     {
         static String _COMPOUND_FILE_STORE_EXTENSION(L"cfx");
         return _COMPOUND_FILE_STORE_EXTENSION;
     }
     
-    String& IndexFileNames::DELETES_EXTENSION()
+    const String& IndexFileNames::DELETES_EXTENSION()
     {
         static String _DELETES_EXTENSION(L"del");
         return _DELETES_EXTENSION;
     }
     
-    String& IndexFileNames::FIELD_INFOS_EXTENSION()
+    const String& IndexFileNames::FIELD_INFOS_EXTENSION()
     {
         static String _FIELD_INFOS_EXTENSION(L"fnm");
         return _FIELD_INFOS_EXTENSION;
     }
     
-    String& IndexFileNames::PLAIN_NORMS_EXTENSION()
+    const String& IndexFileNames::PLAIN_NORMS_EXTENSION()
     {
         static String _PLAIN_NORMS_EXTENSION(L"f");
         return _PLAIN_NORMS_EXTENSION;
     }
     
-    String& IndexFileNames::SEPARATE_NORMS_EXTENSION()
+    const String& IndexFileNames::SEPARATE_NORMS_EXTENSION()
     {
         static String _SEPARATE_NORMS_EXTENSION(L"s");
         return _SEPARATE_NORMS_EXTENSION;
     }
     
-    String& IndexFileNames::GEN_EXTENSION()
+    const String& IndexFileNames::GEN_EXTENSION()
     {
         static String _GEN_EXTENSION(L"gen");
         return _GEN_EXTENSION;
     }
     
-    HashSet<String> IndexFileNames::INDEX_EXTENSIONS()
+    const HashSet<String> IndexFileNames::INDEX_EXTENSIONS()
     {
         static HashSet<String> _INDEX_EXTENSIONS;
         if (!_INDEX_EXTENSIONS)
@@ -159,7 +159,7 @@ namespace Lucene
         return _INDEX_EXTENSIONS;
     };
     
-    HashSet<String> IndexFileNames::INDEX_EXTENSIONS_IN_COMPOUND_FILE()
+    const HashSet<String> IndexFileNames::INDEX_EXTENSIONS_IN_COMPOUND_FILE()
     {
         static HashSet<String> _INDEX_EXTENSIONS_IN_COMPOUND_FILE;
         if (!_INDEX_EXTENSIONS_IN_COMPOUND_FILE)
@@ -180,7 +180,7 @@ namespace Lucene
         return _INDEX_EXTENSIONS_IN_COMPOUND_FILE;
     };
     
-    HashSet<String> IndexFileNames::STORE_INDEX_EXTENSIONS()
+    const HashSet<String> IndexFileNames::STORE_INDEX_EXTENSIONS()
     {
         static HashSet<String> _STORE_INDEX_EXTENSIONS;
         if (!_STORE_INDEX_EXTENSIONS)
@@ -195,7 +195,7 @@ namespace Lucene
         return _STORE_INDEX_EXTENSIONS;
     };
     
-    HashSet<String> IndexFileNames::NON_STORE_INDEX_EXTENSIONS()
+    const HashSet<String> IndexFileNames::NON_STORE_INDEX_EXTENSIONS()
     {
         static HashSet<String> _NON_STORE_INDEX_EXTENSIONS;
         if (!_NON_STORE_INDEX_EXTENSIONS)
@@ -211,7 +211,7 @@ namespace Lucene
         return _NON_STORE_INDEX_EXTENSIONS;
     };
     
-    HashSet<String> IndexFileNames::COMPOUND_EXTENSIONS()
+    const HashSet<String> IndexFileNames::COMPOUND_EXTENSIONS()
     {
         static HashSet<String> _COMPOUND_EXTENSIONS;
         if (!_COMPOUND_EXTENSIONS)
@@ -228,7 +228,7 @@ namespace Lucene
         return _COMPOUND_EXTENSIONS;
     };
     
-    HashSet<String> IndexFileNames::VECTOR_EXTENSIONS()
+    const HashSet<String> IndexFileNames::VECTOR_EXTENSIONS()
     {
         static HashSet<String> _VECTOR_EXTENSIONS;
         if (!_VECTOR_EXTENSIONS)

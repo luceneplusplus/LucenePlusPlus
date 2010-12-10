@@ -32,7 +32,7 @@ namespace Lucene
         static const int32_t ZZ_CMAP_PACKED_LENGTH;
         
         /// Translates characters to character classes
-        static wchar_t* ZZ_CMAP();
+        static const wchar_t* ZZ_CMAP();
         
         /// Translates DFA states to action switch labels.
         static const wchar_t ZZ_ACTION_PACKED_0[];
@@ -40,7 +40,7 @@ namespace Lucene
         static const int32_t ZZ_ACTION_PACKED_LENGTH;
         
         /// Translates DFA states to action switch labels.
-        static int32_t* ZZ_ACTION();
+        static const int32_t* ZZ_ACTION();
         
         /// Translates a state to a row index in the transition table
         static const wchar_t ZZ_ROWMAP_PACKED_0[];
@@ -48,7 +48,7 @@ namespace Lucene
         static const int32_t ZZ_ROWMAP_PACKED_LENGTH;
         
         /// Translates a state to a row index in the transition table
-        static int32_t* ZZ_ROWMAP();
+        static const int32_t* ZZ_ROWMAP();
         
         /// The transition table of the DFA
         static const wchar_t ZZ_TRANS_PACKED_0[];
@@ -56,7 +56,7 @@ namespace Lucene
         static const int32_t ZZ_TRANS_PACKED_LENGTH;
         
         /// The transition table of the DFA
-        static int32_t* ZZ_TRANS();
+        static const int32_t* ZZ_TRANS();
         
         // error codes
         static const int32_t ZZ_UNKNOWN_ERROR;
@@ -71,7 +71,7 @@ namespace Lucene
         static const int32_t ZZ_ATTRIBUTE_PACKED_LENGTH;
         
         /// ZZ_ATTRIBUTE[aState] contains the attributes of state aState
-        static int32_t* ZZ_ATTRIBUTE();
+        static const int32_t* ZZ_ATTRIBUTE();
         
         /// The input device
         ReaderPtr zzReader;

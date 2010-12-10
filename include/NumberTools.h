@@ -40,10 +40,10 @@ namespace Lucene
         
     public:
         /// Equivalent to longToString(LLONG_MIN)
-        static String& MIN_STRING_VALUE();
+        static const String& MIN_STRING_VALUE();
         
         /// Equivalent to longToString(LLONG_MAX)
-        static String& MAX_STRING_VALUE();
+        static const String& MAX_STRING_VALUE();
         
         /// The length of (all) strings returned by {@link #longToString}
         static int32_t STR_SIZE();

@@ -202,7 +202,7 @@ namespace Lucene
     {
     }
     
-    wchar_t* StandardTokenizerImpl::ZZ_CMAP()
+    const wchar_t* StandardTokenizerImpl::ZZ_CMAP()
     {
         static CharArray _ZZ_CMAP;
         if (!_ZZ_CMAP)
@@ -224,7 +224,7 @@ namespace Lucene
         return _ZZ_CMAP.get();
     }
     
-    int32_t* StandardTokenizerImpl::ZZ_ACTION()
+    const int32_t* StandardTokenizerImpl::ZZ_ACTION()
     {
         static IntArray _ZZ_ACTION;
         if (!_ZZ_ACTION)
@@ -246,7 +246,7 @@ namespace Lucene
         return _ZZ_ACTION.get();
     }
     
-    int32_t* StandardTokenizerImpl::ZZ_ROWMAP()
+    const  int32_t* StandardTokenizerImpl::ZZ_ROWMAP()
     {
         static IntArray _ZZ_ROWMAP;
         if (!_ZZ_ROWMAP)
@@ -265,7 +265,7 @@ namespace Lucene
         return _ZZ_ROWMAP.get();
     }
     
-    int32_t* StandardTokenizerImpl::ZZ_TRANS()
+    const int32_t* StandardTokenizerImpl::ZZ_TRANS()
     {
         static IntArray _ZZ_TRANS;
         if (!_ZZ_TRANS)
@@ -288,7 +288,7 @@ namespace Lucene
         return _ZZ_TRANS.get();
     }
     
-    int32_t* StandardTokenizerImpl::ZZ_ATTRIBUTE()
+    const int32_t* StandardTokenizerImpl::ZZ_ATTRIBUTE()
     {
         static IntArray _ZZ_ATTRIBUTE;
         if (!_ZZ_ATTRIBUTE)
@@ -428,12 +428,12 @@ namespace Lucene
         int32_t zzMarkedPosL;
         int32_t zzEndReadL = zzEndRead;
         wchar_t* zzBufferL = zzBuffer.get();
-        wchar_t* zzCMapL = ZZ_CMAP();
+        const wchar_t* zzCMapL = ZZ_CMAP();
         
-        int32_t* zzTransL = ZZ_TRANS();
-        int32_t* zzRowMapL = ZZ_ROWMAP();
-        int32_t* zzAttrL = ZZ_ATTRIBUTE();
-        int32_t* zzActionL = ZZ_ACTION();
+        const int32_t* zzTransL = ZZ_TRANS();
+        const int32_t* zzRowMapL = ZZ_ROWMAP();
+        const int32_t* zzAttrL = ZZ_ATTRIBUTE();
+        const int32_t* zzActionL = ZZ_ACTION();
         
         while (true)
         {

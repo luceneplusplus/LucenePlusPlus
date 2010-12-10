@@ -30,7 +30,7 @@ namespace Lucene
     {
     }
     
-    Collection<ScoreDocPtr> TopFieldCollector::EMPTY_SCOREDOCS()
+    const Collection<ScoreDocPtr> TopFieldCollector::EMPTY_SCOREDOCS()
     {
         static Collection<ScoreDocPtr> _EMPTY_SCOREDOCS;
         if (!_EMPTY_SCOREDOCS)

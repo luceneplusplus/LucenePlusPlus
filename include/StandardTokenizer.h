@@ -75,7 +75,7 @@ namespace Lucene
         static const int32_t ACRONYM_DEP;
   
         /// String token types that correspond to token type int constants
-        static Collection<String> TOKEN_TYPES();
+        static const Collection<String> TOKEN_TYPES();
     
     protected:
         void init(ReaderPtr input, LuceneVersion::Version matchVersion);

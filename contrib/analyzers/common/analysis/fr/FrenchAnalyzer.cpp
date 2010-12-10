@@ -64,7 +64,7 @@ namespace Lucene
     {
     }
     
-    HashSet<String> FrenchAnalyzer::getDefaultStopSet()
+    const HashSet<String> FrenchAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stoptable;
         if (!stoptable)

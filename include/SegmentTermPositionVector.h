@@ -26,7 +26,7 @@ namespace Lucene
         Collection< Collection<TermVectorOffsetInfoPtr> > offsets;
         
     protected:
-        static Collection<int32_t> EMPTY_TERM_POS();
+        static const Collection<int32_t> EMPTY_TERM_POS();
     
     public:
         /// Returns an array of TermVectorOffsetInfo in which the term is found.

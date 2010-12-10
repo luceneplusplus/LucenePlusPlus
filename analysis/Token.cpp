@@ -76,7 +76,7 @@ namespace Lucene
         this->positionIncrement = 1;
     }
     
-    String& Token::DEFAULT_TYPE()
+    const String& Token::DEFAULT_TYPE()
     {
         static String _DEFAULT_TYPE(L"word");
         return _DEFAULT_TYPE;

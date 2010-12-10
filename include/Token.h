@@ -127,7 +127,7 @@ namespace Lucene
         LUCENE_CLASS(Token);
     
     public:
-        static String& DEFAULT_TYPE();
+        static const String& DEFAULT_TYPE();
         
     protected:
         static const int32_t MIN_BUFFER_SIZE;

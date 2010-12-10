@@ -48,7 +48,7 @@ namespace Lucene
     {
     }
     
-    HashSet<String> GermanAnalyzer::getDefaultStopSet()
+    const HashSet<String> GermanAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)

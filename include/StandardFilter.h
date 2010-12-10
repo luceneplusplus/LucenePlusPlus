@@ -26,8 +26,8 @@ namespace Lucene
         TermAttributePtr termAtt;
     
     protected:
-        static String& APOSTROPHE_TYPE();
-        static String& ACRONYM_TYPE();
+        static const String& APOSTROPHE_TYPE();
+        static const String& ACRONYM_TYPE();
     
     public:
         /// Returns the next token in the stream, or null at EOS.

@@ -42,8 +42,8 @@ namespace Lucene
         static const wchar_t YEH;
     
     public:
-        static Collection<String> prefixes();
-        static Collection<String> suffixes();
+        static const Collection<String> prefixes();
+        static const Collection<String> suffixes();
         
         /// Stem an input buffer of Arabic text.
         /// @param s input buffer

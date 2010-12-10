@@ -206,7 +206,7 @@ namespace Lucene
     {
     }
     
-    HashSet<String> PersianAnalyzer::getDefaultStopSet()
+    const HashSet<String> PersianAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)

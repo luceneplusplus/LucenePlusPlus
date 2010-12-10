@@ -62,7 +62,7 @@ namespace Lucene
     {
     }
     
-    HashSet<String> BrazilianAnalyzer::getDefaultStopSet()
+    const HashSet<String> BrazilianAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)

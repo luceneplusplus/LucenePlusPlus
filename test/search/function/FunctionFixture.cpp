@@ -54,7 +54,7 @@ namespace Lucene
     {
     }
     
-    Collection<String> FunctionFixture::DOC_TEXT_LINES()
+    const Collection<String> FunctionFixture::DOC_TEXT_LINES()
     {
         static Collection<String> _DOC_TEXT_LINES;
         if (!_DOC_TEXT_LINES)

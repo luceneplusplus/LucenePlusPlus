@@ -20,83 +20,83 @@ namespace Lucene
         
     public:
         /// Name of the index segment file.
-        static String& SEGMENTS();
+        static const String& SEGMENTS();
         
         /// Name of the generation reference file name.
-        static String& SEGMENTS_GEN();
+        static const String& SEGMENTS_GEN();
         
         /// Name of the index deletable file (only used in pre-lockless indices).
-        static String& DELETABLE();
+        static const String& DELETABLE();
         
         /// Extension of norms file.
-        static String& NORMS_EXTENSION();
+        static const String& NORMS_EXTENSION();
         
         /// Extension of freq postings file.
-        static String& FREQ_EXTENSION();
+        static const String& FREQ_EXTENSION();
         
         /// Extension of prox postings file.
-        static String& PROX_EXTENSION();
+        static const String& PROX_EXTENSION();
         
         /// Extension of terms file.
-        static String& TERMS_EXTENSION();
+        static const String& TERMS_EXTENSION();
         
         /// Extension of terms index file.
-        static String& TERMS_INDEX_EXTENSION();
+        static const String& TERMS_INDEX_EXTENSION();
         
         /// Extension of stored fields index file.
-        static String& FIELDS_INDEX_EXTENSION();
+        static const String& FIELDS_INDEX_EXTENSION();
         
         /// Extension of stored fields file.
-        static String& FIELDS_EXTENSION();
+        static const String& FIELDS_EXTENSION();
         
         /// Extension of vectors fields file.
-        static String& VECTORS_FIELDS_EXTENSION();
+        static const String& VECTORS_FIELDS_EXTENSION();
         
         /// Extension of vectors documents file.
-        static String& VECTORS_DOCUMENTS_EXTENSION();
+        static const String& VECTORS_DOCUMENTS_EXTENSION();
         
         /// Extension of vectors index file.
-        static String& VECTORS_INDEX_EXTENSION();
+        static const String& VECTORS_INDEX_EXTENSION();
         
         /// Extension of compound file.
-        static String& COMPOUND_FILE_EXTENSION();
+        static const String& COMPOUND_FILE_EXTENSION();
         
         /// Extension of compound file for doc store files.
-        static String& COMPOUND_FILE_STORE_EXTENSION();
+        static const String& COMPOUND_FILE_STORE_EXTENSION();
         
         /// Extension of deletes.
-        static String& DELETES_EXTENSION();
+        static const String& DELETES_EXTENSION();
         
         /// Extension of field infos.
-        static String& FIELD_INFOS_EXTENSION();
+        static const String& FIELD_INFOS_EXTENSION();
         
         /// Extension of plain norms.
-        static String& PLAIN_NORMS_EXTENSION();
+        static const String& PLAIN_NORMS_EXTENSION();
         
         /// Extension of separate norms.
-        static String& SEPARATE_NORMS_EXTENSION();
+        static const String& SEPARATE_NORMS_EXTENSION();
         
         /// Extension of gen file.
-        static String& GEN_EXTENSION();
+        static const String& GEN_EXTENSION();
         
         /// This array contains all filename extensions used by Lucene's index 
         /// files, with two exceptions, namely the extension made up from 
         /// ".f" + number and from ".s" + number.  Also note that Lucene's
         /// "segments_N" files do not have any filename extension.
-        static HashSet<String> INDEX_EXTENSIONS();
+        static const HashSet<String> INDEX_EXTENSIONS();
         
         /// File extensions that are added to a compound file (same as 
         /// {@link #INDEX_EXTENSIONS}, minus "del", "gen", "cfs").
-        static HashSet<String> INDEX_EXTENSIONS_IN_COMPOUND_FILE();
+        static const HashSet<String> INDEX_EXTENSIONS_IN_COMPOUND_FILE();
         
-        static HashSet<String> STORE_INDEX_EXTENSIONS();
-        static HashSet<String> NON_STORE_INDEX_EXTENSIONS();
+        static const HashSet<String> STORE_INDEX_EXTENSIONS();
+        static const HashSet<String> NON_STORE_INDEX_EXTENSIONS();
         
         /// File extensions of old-style index files.
-        static HashSet<String> COMPOUND_EXTENSIONS();
+        static const HashSet<String> COMPOUND_EXTENSIONS();
         
         /// File extensions for term vector support.
-        static HashSet<String> VECTOR_EXTENSIONS();
+        static const HashSet<String> VECTOR_EXTENSIONS();
         
         /// Computes the full file name from base, extension and generation.  
         /// If the generation is {@link SegmentInfo#NO}, the file name is null.

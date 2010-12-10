@@ -90,7 +90,7 @@ namespace Lucene
     {
     }
     
-    ByteArray PayloadHelper::payloadField()
+    const ByteArray PayloadHelper::payloadField()
     {
         static ByteArray _payloadField;
         if (!_payloadField)
@@ -101,7 +101,7 @@ namespace Lucene
         return _payloadField;
     }
     
-    ByteArray PayloadHelper::payloadMultiField1()
+    const ByteArray PayloadHelper::payloadMultiField1()
     {
         static ByteArray _payloadMultiField1;
         if (!_payloadMultiField1)
@@ -112,7 +112,7 @@ namespace Lucene
         return _payloadMultiField1;
     }
     
-    ByteArray PayloadHelper::payloadMultiField2()
+    const ByteArray PayloadHelper::payloadMultiField2()
     {
         static ByteArray _payloadMultiField2;
         if (!_payloadMultiField2)

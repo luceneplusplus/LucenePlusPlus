@@ -19,7 +19,7 @@ namespace Lucene
     {
     }
     
-    Collection<TermVectorOffsetInfoPtr> TermVectorOffsetInfo::EMPTY_OFFSET_INFO()
+    const Collection<TermVectorOffsetInfoPtr> TermVectorOffsetInfo::EMPTY_OFFSET_INFO()
     {
         static Collection<TermVectorOffsetInfoPtr> _EMPTY_OFFSET_INFO;
         if (!_EMPTY_OFFSET_INFO)

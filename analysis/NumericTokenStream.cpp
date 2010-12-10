@@ -64,13 +64,13 @@ namespace Lucene
     {
     }
     
-    String& NumericTokenStream::TOKEN_TYPE_FULL_PREC()
+    const String& NumericTokenStream::TOKEN_TYPE_FULL_PREC()
     {
         static String _TOKEN_TYPE_FULL_PREC(L"fullPrecNumeric");
         return _TOKEN_TYPE_FULL_PREC;
     }
     
-    String& NumericTokenStream::TOKEN_TYPE_LOWER_PREC()
+    const String& NumericTokenStream::TOKEN_TYPE_LOWER_PREC()
     {
         static String _TOKEN_TYPE_LOWER_PREC(L"lowerPrecNumeric");
         return _TOKEN_TYPE_LOWER_PREC;

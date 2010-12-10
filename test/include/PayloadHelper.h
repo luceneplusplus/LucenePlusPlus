@@ -22,9 +22,9 @@ namespace Lucene
         static const String FIELD;
 
     public:
-        static ByteArray payloadField();
-        static ByteArray payloadMultiField1();
-        static ByteArray payloadMultiField2();
+        static const ByteArray payloadField();
+        static const ByteArray payloadMultiField1();
+        static const ByteArray payloadMultiField2();
         
         /// Sets up a RAMDirectory, and adds documents (using intToEnglish()) with two fields: field and multiField
         /// and analyzes them using the PayloadHelperAnalyzer

@@ -37,9 +37,6 @@ namespace Lucene
         LuceneVersion::Version matchVersion;
     
     public:
-        /// Returns an unmodifiable instance of the default stop-words set.
-        static HashSet<String> getDefaultStopSet();
-        
         /// Constructs a {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link LowerCaseFilter}, 
         /// a {@link StopFilter} and a {@link SnowballFilter}.
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);

@@ -61,7 +61,7 @@ namespace Lucene
         stemdict.put(L"kind", L"kinder");
     }
     
-    HashSet<String> DutchAnalyzer::getDefaultStopSet()
+    const HashSet<String> DutchAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stoptable;
         if (!stoptable)

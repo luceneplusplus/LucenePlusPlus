@@ -23,7 +23,7 @@ namespace Lucene
     {
     }
     
-    Collection<int32_t> SegmentTermPositionVector::EMPTY_TERM_POS()
+    const Collection<int32_t> SegmentTermPositionVector::EMPTY_TERM_POS()
     {
         static Collection<int32_t> _EMPTY_TERM_POS;
         if (!_EMPTY_TERM_POS)

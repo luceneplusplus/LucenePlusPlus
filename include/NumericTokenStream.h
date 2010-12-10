@@ -88,10 +88,10 @@ namespace Lucene
     
     public:
         /// The full precision token gets this token type assigned.
-        static String& TOKEN_TYPE_FULL_PREC();
+        static const String& TOKEN_TYPE_FULL_PREC();
         
         /// The lower precision tokens gets this token type assigned.
-        static String& TOKEN_TYPE_LOWER_PREC();
+        static const String& TOKEN_TYPE_LOWER_PREC();
     
         /// Initializes the token stream with the supplied long value.
         /// @param value the value, for which this TokenStream should enumerate tokens.

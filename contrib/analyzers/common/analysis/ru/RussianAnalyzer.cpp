@@ -78,7 +78,7 @@ namespace Lucene
     {
     }
     
-    HashSet<String> RussianAnalyzer::getDefaultStopSet()
+    const HashSet<String> RussianAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)

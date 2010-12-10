@@ -49,7 +49,7 @@ namespace Lucene
     {
     }
     
-    Collection<String> StandardTokenizer::TOKEN_TYPES()
+    const Collection<String> StandardTokenizer::TOKEN_TYPES()
     {
         static Collection<String> _TOKEN_TYPES;
         if (!_TOKEN_TYPES)

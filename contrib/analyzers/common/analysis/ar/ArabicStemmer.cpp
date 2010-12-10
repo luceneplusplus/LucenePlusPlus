@@ -25,7 +25,7 @@ namespace Lucene
     {
     }
     
-    Collection<String> ArabicStemmer::prefixes()
+    const Collection<String> ArabicStemmer::prefixes()
     {
         static Collection<String> _prefixes;
         if (!_prefixes)
@@ -42,7 +42,7 @@ namespace Lucene
         return _prefixes;
     }
     
-    Collection<String> ArabicStemmer::suffixes()
+    const Collection<String> ArabicStemmer::suffixes()
     {
         static Collection<String> _suffixes;
         if (!_suffixes)

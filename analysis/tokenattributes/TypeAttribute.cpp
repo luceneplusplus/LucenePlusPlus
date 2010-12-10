@@ -23,7 +23,7 @@ namespace Lucene
     {
     }
     
-    String& TypeAttribute::DEFAULT_TYPE()
+    const String& TypeAttribute::DEFAULT_TYPE()
     {
         static String _DEFAULT_TYPE(L"word");
         return _DEFAULT_TYPE;

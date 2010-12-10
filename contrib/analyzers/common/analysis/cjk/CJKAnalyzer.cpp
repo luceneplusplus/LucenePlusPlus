@@ -38,7 +38,7 @@ namespace Lucene
     {
     }
     
-    HashSet<String> CJKAnalyzer::getDefaultStopSet()
+    const HashSet<String> CJKAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)
