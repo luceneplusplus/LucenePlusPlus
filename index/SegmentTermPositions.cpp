@@ -68,7 +68,7 @@ namespace Lucene
             // if the LSB is set, then we have to read the current payload length
             if ((delta & 1) != 0)
                 payloadLength = proxStream->readVInt();
-            delta = delta >> 1;
+            delta = MiscUtils::unsignedShift(delta, 1);
             needToLoadPayload = true;
         }
         return delta;

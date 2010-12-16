@@ -25,46 +25,46 @@ namespace Lucene
     {
     }
     
-    uint32_t BitUtil::pop(uint64_t x)
+    int32_t BitUtil::pop(int64_t x)
     {
-        x = x - ((x >> 1) & 0x5555555555555555LL);
-        x = (x & 0x3333333333333333LL) + ((x >> 2) & 0x3333333333333333LL);
-        x = (x + (x >> 4)) & 0x0f0f0f0f0f0f0f0fLL;
-        x = x + (x >> 8);
-        x = x + (x >> 16);
-        x = x + (x >> 32);
-        return (uint32_t)x & 0x7f;
+        x = x - (MiscUtils::unsignedShift(x, (int64_t)1) & 0x5555555555555555LL);
+        x = (x & 0x3333333333333333LL) + (MiscUtils::unsignedShift(x, (int64_t)2) & 0x3333333333333333LL);
+        x = (x + MiscUtils::unsignedShift(x, (int64_t)4)) & 0x0f0f0f0f0f0f0f0fLL;
+        x = x + MiscUtils::unsignedShift(x, (int64_t)8);
+        x = x + MiscUtils::unsignedShift(x, (int64_t)16);
+        x = x + MiscUtils::unsignedShift(x, (int64_t)32);
+        return (int32_t)x & 0x7f;
     }
     
-    uint64_t BitUtil::pop_array(const uint64_t* A, int32_t wordOffset, int32_t numWords)
+    int64_t BitUtil::pop_array(const int64_t* A, int32_t wordOffset, int32_t numWords)
     {
         int32_t n = wordOffset + numWords;
-        uint64_t tot = 0;
-        uint64_t tot8 = 0;
-        uint64_t ones = 0;
-        uint64_t twos = 0;
-        uint64_t fours = 0;
+        int64_t tot = 0;
+        int64_t tot8 = 0;
+        int64_t ones = 0;
+        int64_t twos = 0;
+        int64_t fours = 0;
         
         int32_t i = wordOffset;
         for (; i <= n - 8; i += 8)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, A[i], A[i + 1]);
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, A[i + 2], A[i + 3]);
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
             CSA(twosA, ones, ones, A[i + 4], A[i + 5]);
             
             CSA(twosB, ones, ones, A[i + 6], A[i + 7]);
             
-            uint64_t foursB;
+            int64_t foursB;
             CSA(foursB, twos, twos, twosA, twosB);
             
-            uint64_t eights;
+            int64_t eights;
             CSA(eights, fours, fours, foursA, foursB);
             
             tot8 += pop(eights);
@@ -75,16 +75,16 @@ namespace Lucene
         
         if (i <= n - 4)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, A[i], A[i + 1]);
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, A[i + 2], A[i + 3]);
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -93,13 +93,13 @@ namespace Lucene
         
         if (i <= n - 2)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, A[i], A[i + 1]);
             
-            uint64_t foursA = twos & twosA;
+            int64_t foursA = twos & twosA;
             twos = twos ^ twosA;
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -114,35 +114,35 @@ namespace Lucene
         return tot;
     }
     
-    uint64_t BitUtil::pop_intersect(const uint64_t* A, const uint64_t* B, int32_t wordOffset, int32_t numWords)
+    int64_t BitUtil::pop_intersect(const int64_t* A, const int64_t* B, int32_t wordOffset, int32_t numWords)
     {
         int32_t n = wordOffset + numWords;
-        uint64_t tot = 0;
-        uint64_t tot8 = 0;
-        uint64_t ones = 0;
-        uint64_t twos = 0;
-        uint64_t fours = 0;
+        int64_t tot = 0;
+        int64_t tot8 = 0;
+        int64_t ones = 0;
+        int64_t twos = 0;
+        int64_t fours = 0;
         
         int32_t i = wordOffset;
         for (; i <= n - 8; i += 8)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] & B[i]), (A[i + 1] & B[i + 1]));
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] & B[i + 2]), (A[i + 3] & B[i + 3]));
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
             CSA(twosA, ones, ones, (A[i + 4] & B[i + 4]), (A[i + 5] & B[i + 5]));
             
             CSA(twosB, ones, ones, (A[i + 6] & B[i + 6]), (A[i + 7] & B[i + 7]));
             
-            uint64_t foursB;
+            int64_t foursB;
             CSA(foursB, twos, twos, twosA, twosB);
             
-            uint64_t eights;
+            int64_t eights;
             CSA(eights, fours, fours, foursA, foursB);
             
             tot8 += pop(eights);
@@ -150,16 +150,16 @@ namespace Lucene
         
         if (i <= n - 4)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] & B[i]), (A[i + 1] & B[i + 1]));
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] & B[i + 2]), (A[i + 3] & B[i + 3]));
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -168,13 +168,13 @@ namespace Lucene
         
         if (i <= n - 2)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] & B[i]), (A[i + 1] & B[i + 1]));
             
-            uint64_t foursA = twos & twosA;
+            int64_t foursA = twos & twosA;
             twos = twos ^ twosA;
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -189,35 +189,35 @@ namespace Lucene
         return tot;
     }
     
-    uint64_t BitUtil::pop_union(const uint64_t* A, const uint64_t* B, int32_t wordOffset, int32_t numWords)
+    int64_t BitUtil::pop_union(const int64_t* A, const int64_t* B, int32_t wordOffset, int32_t numWords)
     {
         int32_t n = wordOffset + numWords;
-        uint64_t tot = 0;
-        uint64_t tot8 = 0;
-        uint64_t ones = 0;
-        uint64_t twos = 0;
-        uint64_t fours = 0;
+        int64_t tot = 0;
+        int64_t tot8 = 0;
+        int64_t ones = 0;
+        int64_t twos = 0;
+        int64_t fours = 0;
         
         int32_t i = wordOffset;
         for (; i <= n - 8; i += 8)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] | B[i]), (A[i + 1] | B[i + 1]));
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] | B[i + 2]), (A[i + 3] | B[i + 3]));
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
             CSA(twosA, ones, ones, (A[i + 4] | B[i + 4]), (A[i + 5] | B[i + 5]));
             
             CSA(twosB, ones, ones, (A[i + 6] | B[i + 6]), (A[i + 7] | B[i + 7]));
             
-            uint64_t foursB;
+            int64_t foursB;
             CSA(foursB, twos, twos, twosA, twosB);
             
-            uint64_t eights;
+            int64_t eights;
             CSA(eights, fours, fours, foursA, foursB);
             
             tot8 += pop(eights);
@@ -225,16 +225,16 @@ namespace Lucene
         
         if (i <= n - 4)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] | B[i]), (A[i + 1] | B[i + 1]));
          
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] | B[i + 2]), (A[i + 3] | B[i + 3]));
          
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -243,13 +243,13 @@ namespace Lucene
         
         if (i <= n - 2)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] | B[i]), (A[i + 1] | B[i + 1]));
             
-            uint64_t foursA = twos & twosA;
+            int64_t foursA = twos & twosA;
             twos = twos ^ twosA;
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -264,35 +264,35 @@ namespace Lucene
         return tot;
     }
     
-    uint64_t BitUtil::pop_andnot(const uint64_t* A, const uint64_t* B, int32_t wordOffset, int32_t numWords)
+    int64_t BitUtil::pop_andnot(const int64_t* A, const int64_t* B, int32_t wordOffset, int32_t numWords)
     {
         int32_t n = wordOffset + numWords;
-        uint64_t tot = 0;
-        uint64_t tot8 = 0;
-        uint64_t ones = 0;
-        uint64_t twos = 0;
-        uint64_t fours = 0;
+        int64_t tot = 0;
+        int64_t tot8 = 0;
+        int64_t ones = 0;
+        int64_t twos = 0;
+        int64_t fours = 0;
         
         int32_t i = wordOffset;
         for (; i <= n - 8; i += 8)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] & ~B[i]), (A[i + 1] & ~B[i + 1]));
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] & ~B[i + 2]), (A[i + 3] & ~B[i + 3]));
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
             CSA(twosA, ones, ones, (A[i + 4] & ~B[i + 4]), (A[i + 5] & ~B[i + 5]));
             
             CSA(twosB, ones, ones, (A[i + 6] & ~B[i + 6]), (A[i + 7] & ~B[i + 7]));
             
-            uint64_t foursB;
+            int64_t foursB;
             CSA(foursB, twos, twos, twosA, twosB);
             
-            uint64_t eights;
+            int64_t eights;
             CSA(eights, fours, fours, foursA, foursB);
             
             tot8 += pop(eights);
@@ -300,16 +300,16 @@ namespace Lucene
         
         if (i <= n - 4)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] & ~B[i]), (A[i + 1] & ~B[i + 1]));
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] & ~B[i + 2]), (A[i + 3] & ~B[i + 3]));
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -318,13 +318,13 @@ namespace Lucene
         
         if (i <= n - 2)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] & ~B[i]), (A[i + 1] & ~B[i + 1]));
             
-            uint64_t foursA = twos & twosA;
+            int64_t foursA = twos & twosA;
             twos = twos ^ twosA;
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -339,35 +339,35 @@ namespace Lucene
         return tot;
     }
     
-    uint64_t BitUtil::pop_xor(const uint64_t* A, const uint64_t* B, int32_t wordOffset, int32_t numWords)
+    int64_t BitUtil::pop_xor(const int64_t* A, const int64_t* B, int32_t wordOffset, int32_t numWords)
     {
         int32_t n = wordOffset + numWords;
-        uint64_t tot = 0;
-        uint64_t tot8 = 0;
-        uint64_t ones = 0;
-        uint64_t twos = 0;
-        uint64_t fours = 0;
+        int64_t tot = 0;
+        int64_t tot8 = 0;
+        int64_t ones = 0;
+        int64_t twos = 0;
+        int64_t fours = 0;
         
         int32_t i = wordOffset;
         for (; i <= n - 8; i += 8)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] ^ B[i]), (A[i + 1] ^ B[i + 1]));
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] ^ B[i + 2]), (A[i + 3] ^ B[i + 3]));
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
             CSA(twosA, ones, ones, (A[i + 4] ^ B[i + 4]), (A[i + 5] ^ B[i + 5]));
             
             CSA(twosB, ones, ones, (A[i + 6] ^ B[i + 6]), (A[i + 7] ^ B[i + 7]));
             
-            uint64_t foursB;
+            int64_t foursB;
             CSA(foursB, twos, twos, twosA, twosB);
             
-            uint64_t eights;
+            int64_t eights;
             CSA(eights, fours, fours, foursA, foursB);
             
             tot8 += pop(eights);
@@ -375,16 +375,16 @@ namespace Lucene
         
         if (i <= n - 4)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] ^ B[i]), (A[i + 1] ^ B[i + 1]));
             
-            uint64_t twosB;
+            int64_t twosB;
             CSA(twosB, ones, ones, (A[i + 2] ^ B[i + 2]), (A[i + 3] ^ B[i + 3]));
             
-            uint64_t foursA;
+            int64_t foursA;
             CSA(foursA, twos, twos, twosA, twosB);
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -393,13 +393,13 @@ namespace Lucene
         
         if (i <= n - 2)
         {
-            uint64_t twosA;
+            int64_t twosA;
             CSA(twosA, ones, ones, (A[i] ^ B[i]), (A[i + 1] ^ B[i + 1]));
             
-            uint64_t foursA = twos & twosA;
+            int64_t foursA = twos & twosA;
             twos = twos ^ twosA;
             
-            uint64_t eights = fours & foursA;
+            int64_t eights = fours & foursA;
             fours = fours ^ foursA;
             
             tot8 += pop(eights);
@@ -414,14 +414,14 @@ namespace Lucene
         return tot;
     }
 
-    void BitUtil::CSA(uint64_t& h, uint64_t& l, uint64_t a, uint64_t b, uint64_t c)
+    void BitUtil::CSA(int64_t& h, int64_t& l, int64_t a, int64_t b, int64_t c)
     {
-        uint64_t u = a ^ b;
+        int64_t u = a ^ b;
         h = (a & b) | (u & c);
         l = u ^ c;
     }
     
-    uint32_t BitUtil::ntz(uint64_t val)
+    int32_t BitUtil::ntz(int64_t val)
     {
         // A full binary search to determine the low byte was slower than a linear search for nextSetBit().  
         // This is most likely because the implementation of nextSetBit() shifts bits to the right, increasing
@@ -431,128 +431,128 @@ namespace Lucene
         // can be done on ints instead of longs to remain friendly to 32 bit architectures.  In addition, the 
         // case of a non-zero first byte is checked for first because it is the most common in dense bit arrays.
         
-        uint32_t lower = (uint32_t)val;
-        uint32_t lowByte = lower & 0xff;
+        int32_t lower = (int32_t)val;
+        int32_t lowByte = lower & 0xff;
         if (lowByte != 0)
             return ntzTable[lowByte];
         
         if (lower != 0)
         {
-            lowByte = (lower >> 8) & 0xff;
+            lowByte = MiscUtils::unsignedShift(lower, 8) & 0xff;
             if (lowByte != 0)
                 return ntzTable[lowByte] + 8;
-            lowByte = (lower >> 16) & 0xff;
+            lowByte = MiscUtils::unsignedShift(lower, 16) & 0xff;
             if (lowByte != 0)
                 return ntzTable[lowByte] + 16;
             // no need to mask off low byte for the last byte in the 32 bit word
             // no need to check for zero on the last byte either.
-            return ntzTable[lower >> 24] + 24;
+            return ntzTable[MiscUtils::unsignedShift(lower, 24)] + 24;
         }
         else
         {
             // grab upper 32 bits
-            uint32_t upper = (uint32_t)(val >> 32);
+            int32_t upper = (int32_t)(val >> 32);
             lowByte = upper & 0xff;
             if (lowByte != 0)
                 return ntzTable[lowByte] + 32;
-            lowByte = (upper >> 8) & 0xff;
+            lowByte = MiscUtils::unsignedShift(upper, 8) & 0xff;
             if (lowByte != 0)
                 return ntzTable[lowByte] + 40;
-            lowByte = (upper >> 16) & 0xff;
+            lowByte = MiscUtils::unsignedShift(upper, 16) & 0xff;
             if (lowByte != 0)
                 return ntzTable[lowByte] + 48;
             // no need to mask off low byte for the last byte in the 32 bit word
             // no need to check for zero on the last byte either.
-            return ntzTable[upper >> 24] + 56;
+            return ntzTable[MiscUtils::unsignedShift(upper, 24)] + 56;
         }
     }
     
-    uint32_t BitUtil::ntz(uint32_t val)
+    int32_t BitUtil::ntz(int32_t val)
     {
         // This implementation does a single binary search at the top level only.  In addition, the case 
         // of a non-zero first byte is checked for first because it is the most common in dense bit arrays.
         
-        uint32_t lowByte = val & 0xff;
+        int32_t lowByte = val & 0xff;
         if (lowByte != 0)
             return ntzTable[lowByte];
-        lowByte = (val >> 8) & 0xff;
+        lowByte = MiscUtils::unsignedShift(val, 8) & 0xff;
         if (lowByte != 0)
             return ntzTable[lowByte] + 8;
-        lowByte = (val >> 16) & 0xff;
+        lowByte = MiscUtils::unsignedShift(val, 16) & 0xff;
         if (lowByte != 0)
             return ntzTable[lowByte] + 16;
         // no need to mask off low byte for the last byte.
         // no need to check for zero on the last byte either.
-        return ntzTable[val >> 24] + 24;
+        return ntzTable[MiscUtils::unsignedShift(val, 24)] + 24;
     }
     
-    uint32_t BitUtil::ntz2(uint64_t x)
+    int32_t BitUtil::ntz2(int64_t x)
     {
-        uint32_t n = 0;
-        uint32_t y = (uint32_t)x;
+        int32_t n = 0;
+        int32_t y = (int32_t)x;
         if (y == 0) // the only 64 bit shift necessary
         {
             n += 32;
-            y = (uint32_t)(x >> 32);
+            y = (int32_t)MiscUtils::unsignedShift(x, (int64_t)32);
         }
         if ((y & 0x0000ffff) == 0)
         {
             n += 16;
-            y >>= 16;
+            y = MiscUtils::unsignedShift(y, 16);
         }
         if ((y & 0x000000ff) == 0)
         {
             n += 8;
-            y >>= 8;
+            y = MiscUtils::unsignedShift(y, 8);
         }
         return (ntzTable[y & 0xff]) + n;
     }
     
-    uint32_t BitUtil::ntz3(uint64_t x)
+    int32_t BitUtil::ntz3(int64_t x)
     {
-        uint32_t n = 1;
+        int32_t n = 1;
         
         // do the first step as a long, all others as ints.
-        uint32_t y = (uint32_t)x;
+        int32_t y = (int32_t)x;
         if (y == 0)
         {
             n += 32;
-            y = (uint32_t)(x >> 32);
+            y = (int32_t)MiscUtils::unsignedShift(x, (int64_t)32);
         }
         if ((y & 0x0000ffff) == 0)
         {
             n += 16;
-            y >>= 16;
+            y = MiscUtils::unsignedShift(y, 16);
         }
         if ((y & 0x000000ff) == 0)
         {
             n += 8;
-            y >>= 8;
+            y = MiscUtils::unsignedShift(y, 8);
         }
         if ((y & 0x0000000f) == 0)
         {
             n += 4;
-            y >>= 4;
+            y = MiscUtils::unsignedShift(y, 4);
         }
         if ((y & 0x00000003) == 0)
         {
             n += 2;
-            y >>= 2;
+            y = MiscUtils::unsignedShift(y, 2);
         }
         return n - (y & 1);
     }
     
-    bool BitUtil::isPowerOfTwo(uint32_t v)
+    bool BitUtil::isPowerOfTwo(int32_t v)
     {
         return ((v & (v - 1)) == 0);
     }
     
-    bool BitUtil::isPowerOfTwo(uint64_t v)
+    bool BitUtil::isPowerOfTwo(int64_t v)
     {
         return ((v & (v - 1)) == 0);
     }
     
-    uint32_t BitUtil::nextHighestPowerOfTwo(uint32_t v)
+    int32_t BitUtil::nextHighestPowerOfTwo(int32_t v)
     {
         --v;
         v |= v >> 1;
@@ -563,7 +563,7 @@ namespace Lucene
         return ++v;
     }
     
-    uint64_t BitUtil::nextHighestPowerOfTwo(uint64_t v)
+    int64_t BitUtil::nextHighestPowerOfTwo(int64_t v)
     {
         --v;
         v |= v >> 1;

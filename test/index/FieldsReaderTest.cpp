@@ -180,9 +180,9 @@ public:
 
 static void checkSizeEquals(int32_t size, const uint8_t* sizebytes)
 {
-    BOOST_CHECK_EQUAL((uint8_t)(size >> 24), sizebytes[0]);
-    BOOST_CHECK_EQUAL((uint8_t)(size >> 16), sizebytes[1]);
-    BOOST_CHECK_EQUAL((uint8_t)(size >> 8), sizebytes[2]);
+    BOOST_CHECK_EQUAL((uint8_t)MiscUtils::unsignedShift(size, 24), sizebytes[0]);
+    BOOST_CHECK_EQUAL((uint8_t)MiscUtils::unsignedShift(size, 16), sizebytes[1]);
+    BOOST_CHECK_EQUAL((uint8_t)MiscUtils::unsignedShift(size, 8), sizebytes[2]);
     BOOST_CHECK_EQUAL((uint8_t)size, sizebytes[3]);
 }
 

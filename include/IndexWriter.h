@@ -138,6 +138,7 @@ namespace Lucene
         IndexFileDeleterPtr deleter;
         
         SetSegmentInfo segmentsToOptimize; // used by optimize to note those needing optimization
+        int32_t optimizeMaxNumSegments;
         
         LockPtr writeLock;
         
@@ -674,8 +675,9 @@ namespace Lucene
         /// It is recommended that this method be called upon completion of indexing.  In environments with 
         /// frequent updates, optimize is best done during low volume times, if at all. 
         ///
-        /// Note that optimize requires 2X the index size free space in your Directory.  For example, if your 
-        /// index size is 10 MB then you need 20 MB free for optimize to complete.
+        /// Note that optimize requires 2X the index size free space in your Directory (3X if you're using 
+        /// compound file format).  For example, if your index size is 10 MB then you need 20 MB free for 
+        /// optimize to complete (30 MB if you're using compound file format).
         ///
         /// If some but not all readers re-open while an optimize is underway, this will cause > 2X temporary
         /// space to be consumed as those new readers will then hold open the partially optimized segments at 
@@ -1051,7 +1053,6 @@ namespace Lucene
         virtual void commitMergedDeletes(OneMergePtr merge, SegmentReaderPtr mergeReader);
         virtual bool commitMerge(OneMergePtr merge, SegmentMergerPtr merger, int32_t mergedDocCount, SegmentReaderPtr mergedReader);
         
-        virtual void decrefMergeSegments(OneMergePtr merge);
         virtual LuceneException handleMergeException(const LuceneException& exc, OneMergePtr merge);
         
         virtual void _mergeInit(OneMergePtr merge);
@@ -1060,6 +1061,7 @@ namespace Lucene
         virtual void setDiagnostics(SegmentInfoPtr info, const String& source, MapStringString details);
         
         virtual void setMergeDocStoreIsCompoundFile(OneMergePtr merge);
+        virtual void closeMergeReaders(OneMergePtr merge, bool suppressExceptions);
         
         /// Does the actual (time-consuming) work of the merge, but without holding synchronized lock on 
         /// IndexWriter instance.

@@ -130,6 +130,12 @@ namespace Lucene
         
         /// Return whether given Lucene objects are of equal type.
         static bool equalTypes(LuceneObjectPtr first, LuceneObjectPtr second);
+        
+        /// Perform unsigned right-shift (left bits are zero filled)
+        static int64_t unsignedShift(int64_t num, int64_t shift);
+        
+        /// Perform unsigned right-shift (left bits are zero filled)
+        static int32_t unsignedShift(int32_t num, int32_t shift);
     };
 }
 

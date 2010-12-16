@@ -32,7 +32,7 @@ namespace Lucene
     
     void OpenBitSetDISI::inPlaceAnd(DocIdSetIteratorPtr disi)
     {
-        int32_t bitSetDoc = nextSetBit(0);
+        int32_t bitSetDoc = nextSetBit((int32_t)0);
         int32_t disiDoc;
         while (bitSetDoc != -1 && (disiDoc = disi->advance(bitSetDoc)) != DocIdSetIterator::NO_MORE_DOCS)
         {
@@ -40,7 +40,7 @@ namespace Lucene
             bitSetDoc = nextSetBit(disiDoc + 1);
         }
         if (bitSetDoc != -1)
-            clear(bitSetDoc, size());
+            clear((int64_t)bitSetDoc, size());
     }
     
     void OpenBitSetDISI::inPlaceNot(DocIdSetIteratorPtr disi)

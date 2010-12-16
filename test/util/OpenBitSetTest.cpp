@@ -17,7 +17,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(OpenBitSetTest, LuceneTestFixture)
 
-static RandomPtr randBitSet = newLucene<Random>();
+static RandomPtr randBitSet = newLucene<Random>(123);
 
 static void doGet(BitSetPtr a, OpenBitSetPtr b)
 {
@@ -118,7 +118,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
 
         // test that the various ways of accessing the bits are equivalent
         doGet(a, b);
-
+        
         // test ranges, including possible extension
         int32_t fromIndex = randBitSet->nextInt(sz + 80);
         int32_t toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
@@ -126,7 +126,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
         aa->flip(fromIndex, toIndex);
         OpenBitSetPtr bb = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
         bb->flip(fromIndex, toIndex);
-
+        
         doIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
         fromIndex = randBitSet->nextInt(sz + 80);
@@ -153,23 +153,23 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
             BOOST_CHECK_EQUAL(a->cardinality(), b->cardinality());
 
             BitSetPtr a_and = boost::dynamic_pointer_cast<BitSet>(a->clone());
-            a_and->andBitSet(a0);
+            a_and->_and(a0);
             BitSetPtr a_or = boost::dynamic_pointer_cast<BitSet>(a->clone());
-            a_or->orBitSet(a0);
+            a_or->_or(a0);
             BitSetPtr a_xor = boost::dynamic_pointer_cast<BitSet>(a->clone());
-            a_xor->xorBitSet(a0);
+            a_xor->_xor(a0);
             BitSetPtr a_andn = boost::dynamic_pointer_cast<BitSet>(a->clone());
-            a_andn->andNotBitSet(a0);
+            a_andn->andNot(a0);
 
             OpenBitSetPtr b_and = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
             BOOST_CHECK(b->equals(b_and));
-            b_and->andBitSet(b0);
+            b_and->_and(b0);
             OpenBitSetPtr b_or = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
-            b_or->orBitSet(b0);
+            b_or->_or(b0);
             OpenBitSetPtr b_xor = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
-            b_xor->xorBitSet(b0);
+            b_xor->_xor(b0);
             OpenBitSetPtr b_andn = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
-            b_andn->andNotBitSet(b0);
+            b_andn->andNot(b0);
 
             doIterate(a_and, b_and, mode);
             doIterate(a_or, b_or, mode);
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE(testEquals)
 BOOST_AUTO_TEST_CASE(testBitUtils)
 {
     randBitSet->setSeed(17);
-    uint64_t num = 100000;
+    int64_t num = 100000;
     BOOST_CHECK_EQUAL(5, BitUtil::ntz(num));
     BOOST_CHECK_EQUAL(5, BitUtil::ntz2(num));
     BOOST_CHECK_EQUAL(5, BitUtil::ntz3(num));
@@ -245,11 +245,21 @@ BOOST_AUTO_TEST_CASE(testBitUtils)
     
     for (int32_t i = 0; i < 64; ++i)
     {
-        num = (uint64_t)1 << i;
+        num = (int64_t)1 << i;
         BOOST_CHECK_EQUAL(i, BitUtil::ntz(num));
         BOOST_CHECK_EQUAL(i, BitUtil::ntz2(num));
         BOOST_CHECK_EQUAL(i, BitUtil::ntz3(num));
     }
+}
+
+BOOST_AUTO_TEST_CASE(testHashCodeEquals)
+{
+    OpenBitSetPtr bs1 = newLucene<OpenBitSet>(200);
+    OpenBitSetPtr bs2 = newLucene<OpenBitSet>(64);
+    bs1->set(3);
+    bs2->set(3);       
+    BOOST_CHECK(bs1->equals(bs2));
+    BOOST_CHECK_EQUAL(bs1->hashCode(), bs2->hashCode());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -256,6 +256,8 @@ namespace Lucene
         /// Flush all pending docs to a new segment
         int32_t flush(bool _closeDocStore);
         
+        HashSet<String> getFlushedFiles();
+        
         /// Build compound file for the segment we just flushed
         void createCompoundFile(const String& segment);
         

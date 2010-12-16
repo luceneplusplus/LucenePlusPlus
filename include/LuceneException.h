@@ -41,6 +41,7 @@ namespace Lucene
             Runtime,
             StaleReader,
             StopFillCache,
+            Temporary,
             TimeExceeded,
             TooManyClauses,
             UnsupportedOperation
@@ -71,6 +72,7 @@ namespace Lucene
     
     typedef ExceptionTemplate<LuceneException, LuceneException::Runtime> RuntimeException;
     typedef ExceptionTemplate<LuceneException, LuceneException::OutOfMemory> OutOfMemoryError;
+    typedef ExceptionTemplate<LuceneException, LuceneException::Temporary> TemporaryException;
     typedef ExceptionTemplate<RuntimeException, LuceneException::IllegalState> IllegalStateException;
     typedef ExceptionTemplate<RuntimeException, LuceneException::IllegalArgument> IllegalArgumentException;
     typedef ExceptionTemplate<RuntimeException, LuceneException::IndexOutOfBounds> IndexOutOfBoundsException;

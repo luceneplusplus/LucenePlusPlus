@@ -315,6 +315,14 @@ namespace Lucene
         return _yychar;
     }
     
+    void StandardTokenizerImpl::reset(ReaderPtr r)
+    {
+        // reset to default buffer size, if buffer has grown
+        if (zzBuffer.length() > ZZ_BUFFERSIZE)
+            zzBuffer.resize(ZZ_BUFFERSIZE);
+        yyreset(r);
+    }
+    
     void StandardTokenizerImpl::getText(TokenPtr t)
     {
         t->setTermBuffer(zzBuffer.get(), zzStartRead, zzMarkedPos - zzStartRead);

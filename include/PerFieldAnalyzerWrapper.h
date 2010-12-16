@@ -59,6 +59,9 @@ namespace Lucene
         /// Return the positionIncrementGap from the analyzer assigned to fieldName.
         virtual int32_t getPositionIncrementGap(const String& fieldName);
         
+        /// Return the offsetGap from the analyzer assigned to field
+        virtual int32_t getOffsetGap(FieldablePtr field);
+        
         virtual String toString();
     };
 }

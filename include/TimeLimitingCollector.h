@@ -43,6 +43,8 @@ namespace Lucene
         int64_t t0;
         int64_t timeout;
         CollectorPtr collector;
+        
+        int32_t docBase;
     
     public:
         /// Return the timer resolution.

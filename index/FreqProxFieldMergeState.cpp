@@ -89,7 +89,7 @@ namespace Lucene
             docID += code;
         else
         {
-            docID += (uint32_t)code >> 1;
+            docID += MiscUtils::unsignedShift(code, 1);
             if ((code & 1) != 0)
                 termFreq = 1;
             else

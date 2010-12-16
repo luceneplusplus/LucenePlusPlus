@@ -21,7 +21,34 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(IndexWriterExceptionsTest, LuceneTestFixture)
+class IndexWriterExceptionsTestFixture : public LuceneTestFixture
+{
+public:
+    IndexWriterExceptionsTestFixture()
+    {
+        random = newLucene<Random>();
+        tvSettings = newCollection<Field::TermVector>(
+            Field::TERM_VECTOR_NO, Field::TERM_VECTOR_YES, Field::TERM_VECTOR_WITH_OFFSETS, 
+            Field::TERM_VECTOR_WITH_POSITIONS, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS 
+        );
+    }
+    
+    virtual ~IndexWriterExceptionsTestFixture()
+    {
+    }
+
+protected:
+    RandomPtr random;
+    Collection<Field::TermVector> tvSettings;
+
+public:
+    Field::TermVector randomTVSetting()
+    {
+        return tvSettings[random->nextInt(tvSettings.size())];
+    }
+};
+
+BOOST_FIXTURE_TEST_SUITE(IndexWriterExceptionsTest, IndexWriterExceptionsTestFixture)
 
 static CloseableThreadLocal<LuceneThread> doFail;
 
@@ -30,9 +57,10 @@ DECLARE_SHARED_PTR(IndexerThread)
 class IndexerThread : public LuceneThread
 {
 public:
-    IndexerThread(IndexWriterPtr writer)
+    IndexerThread(IndexWriterPtr writer, IndexWriterExceptionsTestFixture* fixture)
     {
         this->writer = writer;
+        this->fixture = fixture;
         this->r = newLucene<Random>(47);
     }
     
@@ -44,6 +72,7 @@ public:
     
 public:
     IndexWriterPtr writer;
+    IndexWriterExceptionsTestFixture* fixture;
     LuceneException failure;
     RandomPtr r;
 
@@ -51,17 +80,17 @@ public:
     virtual void run()
     {
         DocumentPtr doc = newLucene<Document>();
-        doc->add(newLucene<Field>(L"content1", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_ANALYZED));
-        doc->add(newLucene<Field>(L"content6", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-        doc->add(newLucene<Field>(L"content2", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+        doc->add(newLucene<Field>(L"content1", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_ANALYZED, fixture->randomTVSetting()));
+        doc->add(newLucene<Field>(L"content6", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_ANALYZED, fixture->randomTVSetting()));
+        doc->add(newLucene<Field>(L"content2", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting()));
         doc->add(newLucene<Field>(L"content3", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_NO));
         
-        doc->add(newLucene<Field>(L"content4", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_ANALYZED));
-        doc->add(newLucene<Field>(L"content5", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+        doc->add(newLucene<Field>(L"content4", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_ANALYZED, fixture->randomTVSetting()));
+        doc->add(newLucene<Field>(L"content5", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting()));
         
-        doc->add(newLucene<Field>(L"content7", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_NOT_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
+        doc->add(newLucene<Field>(L"content7", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting()));
         
-        FieldPtr idField = newLucene<Field>(L"id", L"", Field::STORE_YES, Field::INDEX_NOT_ANALYZED);
+        FieldPtr idField = newLucene<Field>(L"id", L"", Field::STORE_YES, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting());
         doc->add(idField);
         
         int64_t stopTime = MiscUtils::currentTimeMillis() + 3000;
@@ -143,7 +172,7 @@ BOOST_AUTO_TEST_CASE(testRandomExceptions)
         
     writer->setRAMBufferSizeMB(0.1);
     
-    IndexerThreadPtr thread = newLucene<IndexerThread>(writer);
+    IndexerThreadPtr thread = newLucene<IndexerThread>(writer, this);
     thread->run();
     
     if (!thread->failure.isNull())
@@ -183,7 +212,7 @@ BOOST_AUTO_TEST_CASE(testRandomExceptionsThreads)
     Collection<IndexerThreadPtr> threads = Collection<IndexerThreadPtr>::newInstance(NUM_THREADS);
     for (int32_t i = 0; i < NUM_THREADS; ++i)
     {
-        threads[i] = newLucene<IndexerThread>(writer);
+        threads[i] = newLucene<IndexerThread>(writer, this);
         threads[i]->start();
     }
     

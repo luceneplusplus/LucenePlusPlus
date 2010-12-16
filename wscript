@@ -13,7 +13,7 @@ from TaskGen import feature, after
 import Task, ccroot
 
 APPNAME='Lucene++'
-VERSION='3.0.2'
+VERSION='3.0.3'
 
 srcdir = '.'
 blddir = 'bin'

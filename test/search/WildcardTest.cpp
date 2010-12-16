@@ -190,6 +190,22 @@ BOOST_AUTO_TEST_CASE(testAsterisk)
     checkMatches(searcher, newLucene<WildcardQuery>(newLucene<Term>(L"body", L"*tal*")), 2);
 }
 
+BOOST_AUTO_TEST_CASE(testLotsOfAsterisks)
+{
+    RAMDirectoryPtr indexStore = getIndexStore(L"body", newCollection<String>(L"metal", L"metals"));
+    IndexSearcherPtr searcher = newLucene<IndexSearcher>(indexStore, true);
+    StringStream term;
+    term << L"m";
+    for (int32_t i = 0; i < 512; ++i)
+        term << L"*";
+    term << L"tal";
+    QueryPtr query3 = newLucene<WildcardQuery>(newLucene<Term>(L"body", term.str()));
+
+    checkMatches(searcher, query3, 1);
+    searcher->close();
+    indexStore->close();
+}
+
 BOOST_AUTO_TEST_CASE(testQuestionmark)
 {
     RAMDirectoryPtr indexStore = getIndexStore(L"body", newCollection<String>(L"metal", L"metals", L"mXtals", L"mXtXls"));

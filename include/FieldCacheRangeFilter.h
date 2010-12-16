@@ -253,7 +253,7 @@ namespace Lucene
         {
             int32_t code = StringUtils::hashCode(field);
             code ^= lowerVal == 0 ? 550356204 : (int32_t)lowerVal;
-            code = (code << 1) | (code >> 31); // rotate to distinguish lower from upper
+            code = (code << 1) | MiscUtils::unsignedShift(code, 31); // rotate to distinguish lower from upper
             code ^= upperVal == 0 ? -1674416163 : (int32_t)upperVal;
             code ^= parser ? parser->hashCode() : -1572457324;
             code ^= (includeLower ? 1549299360 : -365038026) ^ (includeUpper ? 1721088258 : 1948649653);

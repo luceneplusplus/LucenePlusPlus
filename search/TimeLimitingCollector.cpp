@@ -16,11 +16,12 @@ namespace Lucene
     
     TimeLimitingCollector::TimeLimitingCollector(CollectorPtr collector, int64_t timeAllowed)
     {
-        DEFAULT_GREEDY = false;
-        greedy = DEFAULT_GREEDY;
+        this->DEFAULT_GREEDY = false;
+        this->greedy = DEFAULT_GREEDY;
         this->collector = collector;
-        t0 = TIMER_THREAD()->getMilliseconds();
+        this->t0 = TIMER_THREAD()->getMilliseconds();
         this->timeout = t0 + timeAllowed;
+        this->docBase = 0;
     }
     
     TimeLimitingCollector::~TimeLimitingCollector()
@@ -78,7 +79,7 @@ namespace Lucene
                 collector->collect(doc);
             boost::throw_exception(TimeExceededException(L"Elapsed time:" + StringUtils::toString(timeout - t0) + L" ms. " +
                                                          L"Exceeded allowed search time:" + StringUtils::toString(time - t0) + L" ms. " +
-                                                         L"Last doc:" + StringUtils::toString(doc)));
+                                                         L"Last doc:" + StringUtils::toString(docBase + doc)));
         }
         collector->collect(doc);
     }
@@ -86,6 +87,7 @@ namespace Lucene
     void TimeLimitingCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
         collector->setNextReader(reader, docBase);
+        this->docBase = docBase;
     }
     
     void TimeLimitingCollector::setScorer(ScorerPtr scorer)

@@ -111,7 +111,7 @@ namespace Lucene
     int32_t SpanOrQuery::hashCode()
     {
         int32_t result = MiscUtils::hashCode(clauses.begin(), clauses.end(), MiscUtils::hashLucene<SpanQueryPtr>);
-        result ^= (result << 10) | (result >> 23);
+        result ^= (result << 10) | MiscUtils::unsignedShift(result, 23);
         result ^= MiscUtils::doubleToRawIntBits(getBoost());
         return result;
     }

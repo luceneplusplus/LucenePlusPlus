@@ -136,7 +136,7 @@ static void checkNoUnreferencedFiles(DirectoryPtr dir)
     HashSet<String> _startFiles = dir->listAll();
     SegmentInfosPtr infos = newLucene<SegmentInfos>();
     infos->read(dir);
-    IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr());
+    IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr(), HashSet<String>());
     HashSet<String> _endFiles = dir->listAll();
     
     Collection<String> startFiles = Collection<String>::newInstance(_startFiles.begin(), _startFiles.end());
@@ -583,7 +583,10 @@ static void testOperationsOnDiskFull(bool updates)
             
             // If the close() succeeded, make sure there are no unreferenced files.
             if (success)
+            {
+                checkIndex(dir);
                 checkNoUnreferencedFiles(dir);
+            }
 
             // Finally, verify index is not corrupt, and, if we succeeded, we see all docs changed, and if
             // we failed, we see either all docs or no docs changed (transactional semantics):

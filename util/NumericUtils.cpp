@@ -41,13 +41,13 @@ namespace Lucene
         int32_t len = nChars + 1;
         buffer[0] = (wchar_t)(SHIFT_START_LONG + shift);
         int64_t sortableBits = val ^ 0x8000000000000000LL;
-        sortableBits >>= shift;
+        sortableBits = MiscUtils::unsignedShift(sortableBits, (int64_t)shift);
         while (nChars >= 1)
         {
             // Store 7 bits per character for good efficiency when UTF-8 encoding.  The whole number is 
             // right-justified so that lucene can prefix-encode the terms more efficiently.
             buffer[nChars--] = (wchar_t)(sortableBits & 0x7f);
-            sortableBits >>= 7;
+            sortableBits = MiscUtils::unsignedShift(sortableBits, (int64_t)7);
         }
         return len;
     }
@@ -72,13 +72,13 @@ namespace Lucene
         int32_t len = nChars + 1;
         buffer[0] = (wchar_t)(SHIFT_START_INT + shift);
         int32_t sortableBits = val ^ 0x80000000;
-        sortableBits >>= shift;
+        sortableBits = MiscUtils::unsignedShift(sortableBits, shift);
         while (nChars >= 1)
         {
             // Store 7 bits per character for good efficiency when UTF-8 encoding.  The whole number is 
             // right-justified so that lucene can prefix-encode the terms more efficiently.
             buffer[nChars--] = (wchar_t)(sortableBits & 0x7f);
-            sortableBits >>= 7;
+            sortableBits = MiscUtils::unsignedShift(sortableBits, 7);
         }
         return len;
     }
@@ -185,8 +185,10 @@ namespace Lucene
             bool hasUpper = ((maxBound & mask) != mask);
             int64_t nextMinBound = ((hasLower ? (minBound + diff) : minBound) & ~mask);
             int64_t nextMaxBound = ((hasUpper ? (maxBound - diff) : maxBound) & ~mask);
+            bool lowerWrapped = nextMinBound < minBound;
+            bool upperWrapped = nextMaxBound > maxBound;
             
-            if (shift + precisionStep >= valSize || nextMinBound > nextMaxBound)
+            if (shift + precisionStep >= valSize || nextMinBound>nextMaxBound || lowerWrapped || upperWrapped)
             {
                 // We are in the lowest precision or the next precision is not available.
                 addRange(builder, valSize, minBound, maxBound, shift);

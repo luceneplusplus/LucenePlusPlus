@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "PerFieldAnalyzerWrapper.h"
+#include "Fieldable.h"
 
 namespace Lucene
 {
@@ -54,6 +55,14 @@ namespace Lucene
         if (!analyzer)
             analyzer = defaultAnalyzer;
         return analyzer->getPositionIncrementGap(fieldName);
+    }
+    
+    int32_t PerFieldAnalyzerWrapper::getOffsetGap(FieldablePtr field)
+    {
+        AnalyzerPtr analyzer(analyzerMap.get(field->name()));
+        if (!analyzer)
+            analyzer = defaultAnalyzer;
+        return analyzer->getOffsetGap(field);
     }
     
     String PerFieldAnalyzerWrapper::toString()

@@ -20,16 +20,52 @@
 #include "RAMDirectory.h"
 #include "IndexWriter.h"
 #include "QueryParser.h"
+#include "TopDocs.h"
+#include "Random.h"
 
 using namespace Lucene;
 
+/// Verifies that Lucene MemoryIndex and RAMDirectory have the same behaviour,
+/// returning the same results for queries on some randomish indexes.
 class MemoryIndexTestFixture : public BaseTokenStreamFixture
 {
 public:
     MemoryIndexTestFixture()
     {
-        fileDir = FileUtils::joinPath(getTestDir(), L"memoryfiles");
-        queriesDir = FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"memory"), L"testqueries.txt");
+        fileDir = FileUtils::joinPath(getTestDir(), L"memory");
+        queries = HashSet<String>::newInstance();
+        HashSet<String> test1 = readQueries(L"testqueries.txt");
+        queries.addAll(test1.begin(), test1.end());
+        HashSet<String> test2 = readQueries(L"testqueries2.txt");
+        queries.addAll(test2.begin(), test2.end());
+        random = newLucene<Random>(123);
+        buffer = CharArray::newInstance(20);
+        
+        /// Some terms to be indexed, in addition to random words. 
+        /// These terms are commonly used in the queries. 
+        TEST_TERMS = Collection<String>::newInstance();
+        TEST_TERMS.add(L"term");
+        TEST_TERMS.add(L"tErm");
+        TEST_TERMS.add(L"TERM");
+        TEST_TERMS.add(L"telm");
+        TEST_TERMS.add(L"stop");
+        TEST_TERMS.add(L"drop");
+        TEST_TERMS.add(L"roll");
+        TEST_TERMS.add(L"phrase");
+        TEST_TERMS.add(L"a");
+        TEST_TERMS.add(L"c");
+        TEST_TERMS.add(L"bar");
+        TEST_TERMS.add(L"blar");
+        TEST_TERMS.add(L"gack");
+        TEST_TERMS.add(L"weltbank");
+        TEST_TERMS.add(L"worlbank");
+        TEST_TERMS.add(L"hello");
+        TEST_TERMS.add(L"on");
+        TEST_TERMS.add(L"the");
+        TEST_TERMS.add(L"apache");
+        TEST_TERMS.add(L"Apache");
+        TEST_TERMS.add(L"copyright");
+        TEST_TERMS.add(L"Copyright");
     }
     
     virtual ~MemoryIndexTestFixture()
@@ -37,242 +73,157 @@ public:
     }
 
 protected:
-    AnalyzerPtr analyzer;
-    bool fastMode;
-    bool verbose;
     String fileDir;
-    String queriesDir;
+    HashSet<String> queries;
+    RandomPtr random;
+    CharArray buffer;
     
-    static const String FIELD_NAME;
+    static const int32_t ITERATIONS;
+    Collection<String> TEST_TERMS;
     
 public:
-    /// returns all files for indexing
-    Collection<String> listFiles()
+    /// read a set of queries from a resource file
+    HashSet<String> readQueries(const String& resource)
     {
-        Collection<String> files = Collection<String>::newInstance();
-        HashSet<String> dirList = HashSet<String>::newInstance();
-        
-        if (!FileUtils::listDirectory(fileDir, true, dirList))
-            return Collection<String>();
-    
-        for (HashSet<String>::iterator dirFile = dirList.begin(); dirFile != dirList.end(); ++dirFile)
-            files.add(FileUtils::joinPath(fileDir, *dirFile));
-       
-       return files;
-    }
-    
-    /// returns file line by line, ignoring empty lines and comments
-    Collection<String> readLines()
-    {
-        Collection<String> lines = Collection<String>::newInstance();
-        
-        BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(queriesDir));
+        HashSet<String> queries = HashSet<String>::newInstance();
+        BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(fileDir, resource)));
         String line;
         while (reader->readLine(line))
         {
             boost::trim(line);
             if (!line.empty() && !boost::starts_with(line, L"#") && !boost::starts_with(line, L"//"))
-                lines.add(line);
+                queries.add(line);
         }
         reader->close();
         
-        return lines;
+        return queries;
     }
     
-    String readFile(const String& file)
+    /// Build a randomish document for both RAMDirectory and MemoryIndex, and run all the queries against it.
+    void checkAgainstRAMDirectory()
     {
-        FileReaderPtr reader = newLucene<FileReader>(file);
-        int32_t numChars = (int32_t)reader->length();
-        CharArray buffer = CharArray::newInstance(numChars);
-        numChars = reader->read(buffer.get(), 0, numChars);
-        reader->close();
-        return String(buffer.get(), numChars);
-    }
-    
-    DocumentPtr createDocument(const String& content)
-    {
+        StringStream fooField;
+        StringStream termField;
+        
+        // add up to 250 terms to field "foo"
+        int32_t fieldCount = random->nextInt(250) + 1;
+        for (int32_t i = 0; i < fieldCount; ++i)
+            fooField << L" " << randomTerm();
+        
+        // add up to 250 terms to field "foo"
+        int32_t termCount = random->nextInt(250) + 1;
+        for (int32_t i = 0; i < termCount; ++i)
+            termField << L" " << randomTerm();
+        
+        RAMDirectoryPtr ramdir = newLucene<RAMDirectory>();
+        AnalyzerPtr analyzer = randomAnalyzer();
+        IndexWriterPtr writer = newLucene<IndexWriter>(ramdir, analyzer, IndexWriter::MaxFieldLengthUNLIMITED);
         DocumentPtr doc = newLucene<Document>();
-        doc->add(newLucene<Field>(FIELD_NAME, content, Field::STORE_NO, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS));
-        return doc;
+        FieldPtr field1 = newLucene<Field>(L"foo", fooField.str(), Field::STORE_NO, Field::INDEX_ANALYZED);
+        FieldPtr field2 = newLucene<Field>(L"term", termField.str(), Field::STORE_NO, Field::INDEX_ANALYZED);
+        doc->add(field1);
+        doc->add(field2);
+        writer->addDocument(doc);
+        writer->close();
+
+        MemoryIndexPtr memory = newLucene<MemoryIndex>();
+        memory->addField(L"foo", fooField.str(), analyzer);
+        memory->addField(L"term", termField.str(), analyzer);
+        checkAllQueries(memory, ramdir, analyzer);  
     }
     
-    MemoryIndexPtr createMemoryIndex(DocumentPtr doc)
+    void checkAllQueries(MemoryIndexPtr memory, RAMDirectoryPtr ramdir, AnalyzerPtr analyzer)
     {
-        MemoryIndexPtr index = newLucene<MemoryIndex>();
-        Collection<FieldablePtr> fields = doc->getFields();
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-            index->addField((*field)->name(), (*field)->stringValue(), analyzer);
-        return index;
+        IndexSearcherPtr ram = newLucene<IndexSearcher>(ramdir);
+        IndexSearcherPtr mem = memory->createSearcher();
+        QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"foo", analyzer);
+        for (HashSet<String>::iterator query = queries.begin(); query != queries.end(); ++query)
+        {
+            TopDocsPtr ramDocs = ram->search(qp->parse(*query), 1);
+            TopDocsPtr memDocs = mem->search(qp->parse(*query), 1);
+            BOOST_CHECK_EQUAL(ramDocs->totalHits, memDocs->totalHits);
+        }
     }
     
-    RAMDirectoryPtr createRAMIndex(DocumentPtr doc)
+    AnalyzerPtr randomAnalyzer()
     {
-        RAMDirectoryPtr dir = newLucene<RAMDirectory>();
-        IndexWriterPtr writer;
-        LuceneException finally;
-        try
+        switch (random->nextInt(3))
         {
-            writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
-            writer->addDocument(doc);
-            writer->optimize();
+            case 0:
+                return newLucene<SimpleAnalyzer>();
+            case 1:
+                return newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
+            default:
+                return newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
         }
-        catch (IOException& e)
-        {
-            // can never happen
-            boost::throw_exception(RuntimeException(e.getError()));
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        try
-        {
-            if (writer)
-                writer->close();
-        }
-        catch (IOException& e)
-        {
-            boost::throw_exception(RuntimeException(e.getError()));
-        }
-        finally.throwException();
-        return dir;
     }
     
-    double query(LuceneObjectPtr index, QueryPtr query)
+    /// half of the time, returns a random term from TEST_TERMS.
+    /// the other half of the time, returns a random unicode string.
+    String randomTerm()
     {
-        SearcherPtr searcher;
-        double score = 0;
-        LuceneException finally;
-        try
+        if (random->nextInt() % 2 == 1)
         {
-            if (MiscUtils::typeOf<Directory>(index))
-                searcher = newLucene<IndexSearcher>(boost::dynamic_pointer_cast<Directory>(index), true);
-            else
-                searcher = boost::dynamic_pointer_cast<MemoryIndex>(index)->createSearcher();
-            
-            Collection<double> scores = Collection<double>::newInstance(1);
-            scores[0] = 0.0;
-            
-            searcher->search(query, newLucene<MemoryIndexCollector>(scores));
-            score = scores[0];
+            // return a random TEST_TERM
+            return TEST_TERMS[random->nextInt(TEST_TERMS.size())];
         }
-        catch (LuceneException& e)
+        else
         {
-            finally = e;
+            // return a random unicode term
+            return randomString();
         }
-        try
-        {
-            if (searcher)
-                searcher->close();
-        }
-        catch (IOException& e)
-        {
-            boost::throw_exception(RuntimeException(e.getError()));
-        }
-        finally.throwException();
-        return score;
     }
     
-    QueryPtr parseQuery(const String& expression)
+    /// Return a random unicode term, like StressIndexingTest.
+    String randomString()
     {
-        QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, FIELD_NAME, analyzer);
-        return parser->parse(expression);
+        int32_t end = random->nextInt(20);
+        if (buffer.length() < 1 + end)
+            buffer.resize((int32_t)((double)(1 + end) * 1.25));
+        
+        for (int32_t i = 0; i < end; ++i)
+        {
+            int32_t t = random->nextInt(5);
+            if (t == 0 && i < end - 1)
+            {
+                #ifdef LPP_UNICODE_CHAR_SIZE_2
+                // Make a surrogate pair
+                // High surrogate
+                buffer[i++] = (wchar_t)nextInt(0xd800, 0xdc00);
+                // Low surrogate
+                buffer[i] = (wchar_t)nextInt(0xdc00, 0xe000);
+                #else
+                buffer[i] = (wchar_t)nextInt(0xdc00, 0xe000);
+                #endif
+            }
+            else if (t <= 1)
+                buffer[i] = (wchar_t)nextInt(0x01, 0x80);
+            else if (t == 2)
+                buffer[i] = (wchar_t)nextInt(0x80, 0x800);
+            else if (t == 3)
+                buffer[i] = (wchar_t)nextInt(0x800, 0xd800);
+            else if (t == 4)
+                buffer[i] = (wchar_t)nextInt(0xe000, 0xfff0);
+        }
+        return String(buffer.get(), end);
+    }
+    
+    /// start is inclusive and end is exclusive
+    int32_t nextInt(int32_t start, int32_t end)
+    {
+        return start + random->nextInt(end - start);
     }
 };
 
-const String MemoryIndexTestFixture::FIELD_NAME = L"content";
+const int32_t MemoryIndexTestFixture::ITERATIONS = 100;
 
 BOOST_FIXTURE_TEST_SUITE(MemoryIndexTest, MemoryIndexTestFixture)
 
-BOOST_AUTO_TEST_CASE(testMany)
+/// runs random tests, up to ITERATIONS times.
+BOOST_AUTO_TEST_CASE(testRandomQueries)
 {
-    int32_t iters = 1;
-    int32_t runs = 1;
-    bool useMemIndex = true;
-    bool useRAMIndex = true;
-    
-    Collection<String> files = listFiles();
-    Collection<String> queries = readLines();
-    HashSet<String> stopWords = StopAnalyzer::ENGLISH_STOP_WORDS_SET();
-    
-    Collection<AnalyzerPtr> analyzers = newCollection<AnalyzerPtr>(
-        newLucene<SimpleAnalyzer>(), 
-        newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT), 
-        newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT)
-    );
-    
-    bool first = true;
-    for (int32_t iter = 0; iter < iters; ++iter)
-    {
-        int64_t start = MiscUtils::currentTimeMillis();   
-        int64_t bytes = 0;
-
-        for (int32_t anal = 0; anal < analyzers.size(); ++anal)
-        {
-            this->analyzer = analyzers[anal];
-            
-            for (int32_t i = 0; i < files.size(); ++i)
-            {
-                String file = files[i];
-                if (!FileUtils::fileExists(file) || FileUtils::isDirectory(file))
-                    continue; // ignore
-                bytes += FileUtils::fileLength(file);
-                String text = readFile(file);
-                DocumentPtr doc = createDocument(text);
-                
-                for (int32_t q = 0; q < queries.size(); ++q)
-                {
-                    QueryPtr query = parseQuery(queries[q]);
-
-                    bool measureIndexing = false; // toggle this to measure query performance
-                    MemoryIndexPtr memind;
-                    if (useMemIndex && !measureIndexing)
-                        memind = createMemoryIndex(doc);
-                    
-                    if (first)
-                    {
-                        IndexSearcherPtr s = memind->createSearcher();
-                        TermDocsPtr td = s->getIndexReader()->termDocs(TermPtr());
-                        BOOST_CHECK(td->next());
-                        BOOST_CHECK_EQUAL(0, td->doc());
-                        BOOST_CHECK_EQUAL(1, td->freq());
-                        td->close();
-                        s->close();
-                        first = false;
-                    }
-                    
-                    RAMDirectoryPtr ramind;
-                    if (useRAMIndex && !measureIndexing)
-                        ramind = createRAMIndex(doc);
-                    
-                    for (int32_t run = 0; run < runs; ++run)
-                    {
-                        double score1 = 0.0;
-                        double score2 = 0.0;
-                        if (useMemIndex && measureIndexing)
-                            memind = createMemoryIndex(doc);
-                        if (useMemIndex)
-                            score1 = this->query(memind, query); 
-                        if (useRAMIndex && measureIndexing)
-                            ramind = createRAMIndex(doc);
-                        if (useRAMIndex)
-                            score2 = this->query(ramind, query);
-                        if (useMemIndex && useRAMIndex)
-                        {
-                            BOOST_CHECK_EQUAL(score1, score2);
-                            BOOST_CHECK(score1 >= 0.0 && score1 <= 1.0);
-                            BOOST_CHECK(score2 >= 0.0 && score2 <= 1.0);
-                        }
-                    }
-                }
-            }
-        }
-        int64_t end = MiscUtils::currentTimeMillis();
-        BOOST_TEST_MESSAGE("secs = " << ((double)(end - start) / 1000.0));
-        BOOST_TEST_MESSAGE("queries/sec= " << (1.0 * (double)runs * (double)queries.size() * (double)analyzers.size() * (double)files.size() / ((double)(end - start) / 1000.0)));
-        double mb = (1.0 * (double)bytes * (double)queries.size() * (double)runs) / (1024.0 * 1024.0);
-        BOOST_TEST_MESSAGE("MB/sec = " << (mb / ((double)(end - start) / 1000.0)));
-    }
+    for (int32_t i = 0; i < ITERATIONS; ++i)
+        checkAgainstRAMDirectory();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

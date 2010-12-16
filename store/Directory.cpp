@@ -62,7 +62,12 @@ namespace Lucene
     
     String Directory::getLockID()
     {
-        return LuceneObject::toString();
+        return toString();
+    }
+    
+    String Directory::toString()
+    {
+        return LuceneObject::toString() + L" lockFactory=" + getLockFactory()->toString();
     }
     
     void Directory::copy(DirectoryPtr src, DirectoryPtr dest, bool closeDirSrc)

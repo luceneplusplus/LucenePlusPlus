@@ -124,12 +124,12 @@ namespace Lucene
     {
         int32_t i = _size;
         HeapedScorerDocPtr node(heap[i]); // save bottom node
-        int32_t j = i >> 1;
+        int32_t j = MiscUtils::unsignedShift(i, 1);
         while ((j > 0) && (node->doc < heap[j]->doc))
         {
             heap[i] = heap[j]; // shift parents down
             i = j;
-            j = j >> 1;
+            j = MiscUtils::unsignedShift(j, 1);
         }
         heap[i] = node; // install saved node
         topHSD = heap[1];

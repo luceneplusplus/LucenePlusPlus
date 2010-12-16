@@ -106,9 +106,9 @@ namespace Lucene
         buffer[newUpto + 2] = slice[upto - 1];
         
         // Write forwarding address at end of last slice
-        slice[upto - 3] = (uint8_t)(offset >> 24);
-        slice[upto - 2] = (uint8_t)(offset >> 16);
-        slice[upto - 1] = (uint8_t)(offset >> 8);
+        slice[upto - 3] = (uint8_t)MiscUtils::unsignedShift(offset, 24);
+        slice[upto - 2] = (uint8_t)MiscUtils::unsignedShift(offset, 16);
+        slice[upto - 1] = (uint8_t)MiscUtils::unsignedShift(offset, 8);
         slice[upto] = (uint8_t)offset;
         
         // Write new level

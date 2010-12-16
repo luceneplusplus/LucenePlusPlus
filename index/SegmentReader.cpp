@@ -270,36 +270,79 @@ namespace Lucene
     {
         if (_hasChanges)
         {
-            if (deletedDocsDirty) // re-write deleted
+            startCommit();
+            bool success = false;
+            LuceneException finally;
+            try
             {
-                si->advanceDelGen();
-                
-                // We can write directly to the actual name (vs to a .tmp & renaming it) because the file 
-                // is not live until segments file is written
-                deletedDocs->write(directory(), si->getDelFileName());
-                
-                si->setDelCount(si->getDelCount() + pendingDeleteCount);
-                pendingDeleteCount = 0;
-                BOOST_ASSERT(deletedDocs->count() == si->getDelCount()); // delete count mismatch during commit?
+                commitChanges(commitUserData);
+                success = true;
             }
-            else
+            catch (LuceneException& e)
             {
-                BOOST_ASSERT(pendingDeleteCount == 0);
+                finally = e;
             }
+            if (!success)
+                rollbackCommit();
+            finally.throwException();
+        }
+    }
+    
+    void SegmentReader::commitChanges(MapStringString commitUserData)
+    {
+        if (deletedDocsDirty) // re-write deleted
+        {
+            si->advanceDelGen();
             
-            if (normsDirty) // re-write norms
+            // We can write directly to the actual name (vs to a .tmp & renaming it) because the file 
+            // is not live until segments file is written
+            String delFileName(si->getDelFileName());
+            
+            bool success = false;
+            LuceneException finally;
+            try
             {
-                si->setNumFields(core->fieldInfos->size());
-                for (MapStringNorm::iterator norm = _norms.begin(); norm != _norms.end(); ++norm)
+                deletedDocs->write(directory(), delFileName);
+                success = true;
+            }
+            catch (LuceneException& e)
+            {
+                finally = e;
+            }
+            if (!success)
+            {
+                try
                 {
-                    if (norm->second->dirty)
-                        norm->second->reWrite(si);
+                    directory()->deleteFile(delFileName);
+                }
+                catch (...)
+                {
+                    // suppress this so we keep throwing the original exception
                 }
             }
-            deletedDocsDirty = false;
-            normsDirty = false;
-            _hasChanges = false;
+            finally.throwException();
+            
+            si->setDelCount(si->getDelCount() + pendingDeleteCount);
+            pendingDeleteCount = 0;
+            BOOST_ASSERT(deletedDocs->count() == si->getDelCount()); // delete count mismatch during commit?
         }
+        else
+        {
+            BOOST_ASSERT(pendingDeleteCount == 0);
+        }
+        
+        if (normsDirty) // re-write norms
+        {
+            si->setNumFields(core->fieldInfos->size());
+            for (MapStringNorm::iterator norm = _norms.begin(); norm != _norms.end(); ++norm)
+            {
+                if (norm->second->dirty)
+                    norm->second->reWrite(si);
+            }
+        }
+        deletedDocsDirty = false;
+        normsDirty = false;
+        _hasChanges = false;
     }
     
     FieldsReaderPtr SegmentReader::getFieldsReader()
@@ -718,6 +761,7 @@ namespace Lucene
     
     void SegmentReader::startCommit()
     {
+        rollbackSegmentInfo = boost::dynamic_pointer_cast<SegmentInfo>(si->clone());
         rollbackHasChanges = _hasChanges;
         rollbackDeletedDocsDirty = deletedDocsDirty;
         rollbackNormsDirty = normsDirty;
@@ -728,6 +772,7 @@ namespace Lucene
     
     void SegmentReader::rollbackCommit()
     {
+        si->reset(rollbackSegmentInfo);
         _hasChanges = rollbackHasChanges;
         deletedDocsDirty = rollbackDeletedDocsDirty;
         normsDirty = rollbackNormsDirty;
@@ -1270,18 +1315,40 @@ namespace Lucene
         
         // NOTE: norms are re-written in regular directory, not cfs
         si->advanceNormGen(this->number);
+        String normFileName(si->getNormFileName(this->number));
         SegmentReaderPtr reader(_reader);
-        IndexOutputPtr out(reader->directory()->createOutput(si->getNormFileName(this->number)));
+        IndexOutputPtr out(reader->directory()->createOutput(normFileName));
+        bool success = false;
         LuceneException finally;
         try
         {
-            out->writeBytes(_bytes.get(), reader->maxDoc());
+            try
+            {
+                out->writeBytes(_bytes.get(), reader->maxDoc());
+            }
+            catch (LuceneException& e)
+            {
+                finally = e;
+            }
+            out->close();
+            finally.throwException();
+            success = true;
         }
         catch (LuceneException& e)
         {
             finally = e;
         }
-        out->close();
+        if (!success)
+        {
+            try
+            {
+                reader->directory()->deleteFile(normFileName);
+            }
+            catch (...)
+            {
+                // suppress this so we keep throwing the original exception
+            }
+        }
         finally.throwException();
         this->dirty = false;
     }

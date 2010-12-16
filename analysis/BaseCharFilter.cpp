@@ -11,6 +11,7 @@ namespace Lucene
 {
     BaseCharFilter::BaseCharFilter(CharStreamPtr in) : CharFilter(in)
     {
+        size = 0;
     }
     
     BaseCharFilter::~BaseCharFilter()
@@ -19,42 +20,52 @@ namespace Lucene
     
     int32_t BaseCharFilter::correct(int32_t currentOff)
     {
-        if (!pcmList || pcmList.empty())
+        if (!offsets || currentOff < offsets[0])
             return currentOff;
-        for (int32_t i = pcmList.size() - 1; i >= 0; --i)
+        
+        int32_t hi = size - 1;
+        if (currentOff >= offsets[hi])
+            return currentOff + diffs[hi];
+        
+        int32_t lo = 0;
+        int32_t mid = -1;
+        
+        while (hi >= lo)
         {
-            if (currentOff >=  pcmList[i]->off)
-                return currentOff + pcmList[i]->cumulativeDiff;
+            mid = MiscUtils::unsignedShift(lo + hi, 1);
+            if (currentOff < offsets[mid])
+                hi = mid - 1;
+            else if (currentOff > offsets[mid])
+                lo = mid + 1;
+            else
+                return currentOff + diffs[mid];
         }
-        return currentOff;
+        
+        if (currentOff < offsets[mid])
+            return mid == 0 ? currentOff : currentOff + diffs[mid - 1];
+        else
+            return currentOff + diffs[mid];
     }
     
     int32_t BaseCharFilter::getLastCumulativeDiff()
     {
-        return (!pcmList || pcmList.empty()) ? 0 : pcmList[pcmList.size() - 1]->cumulativeDiff;
+        return !offsets ? 0 : diffs[size - 1];
     }
     
     void BaseCharFilter::addOffCorrectMap(int32_t off, int32_t cumulativeDiff)
     {
-        if (!pcmList)
-            pcmList = Collection<OffCorrectMapPtr>::newInstance();
-        pcmList.add(newLucene<OffCorrectMap>(off, cumulativeDiff));
-    }
-    
-    OffCorrectMap::OffCorrectMap(int32_t off, int32_t cumulativeDiff)
-    {
-        this->off = off;
-        this->cumulativeDiff = cumulativeDiff;
-    }
-    
-    OffCorrectMap::~OffCorrectMap()
-    {
-    }
-    
-    String OffCorrectMap::toString()
-    {
-        StringStream buffer;
-        buffer << L"(" << off << L"," << cumulativeDiff << L")";
-        return buffer.str();
+        if (!offsets)
+        {
+            offsets = IntArray::newInstance(64);
+            diffs = IntArray::newInstance(64);
+        }
+        else if (size == offsets.length())
+        {
+            offsets.resize(MiscUtils::getNextSize(offsets.length()));
+            diffs.resize(MiscUtils::getNextSize(diffs.length()));
+        }
+
+        offsets[size] = off;
+        diffs[size++] = cumulativeDiff; 
     }
 }

@@ -1002,4 +1002,23 @@ BOOST_AUTO_TEST_CASE(testSortWithScoreAndMaxScoreTrackingNoResults)
     }
 }
 
+BOOST_AUTO_TEST_CASE(testSortWithStringNoException)
+{
+    RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
+    IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
+    for (int32_t i = 0; i < 5; ++i)
+    {
+        DocumentPtr doc = newLucene<Document>();
+        doc->add(newLucene<Field>(L"string", L"a" + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+        doc->add(newLucene<Field>(L"string", L"b" + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+        writer->addDocument (doc);
+    }
+    writer->optimize(); // enforce one segment to have a higher unique term count in all cases
+    writer->close();
+    sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", SortField::STRING), SortField::FIELD_DOC()));
+    // this should not throw
+    IndexSearcherPtr is = newLucene<IndexSearcher>(indexStore, true);
+    is->search(newLucene<MatchAllDocsQuery>(), FilterPtr(), 500, sort);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

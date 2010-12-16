@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexes)
     BOOST_CHECK(r1->isCurrent());
 
     writer->commit();
-    BOOST_CHECK(r1->isCurrent());
+    BOOST_CHECK(!r1->isCurrent());
 
     BOOST_CHECK_EQUAL(200, r1->maxDoc());
 
@@ -709,7 +709,7 @@ namespace TestDuringAddIndexes
 /// Stress test reopen during addIndexes
 BOOST_AUTO_TEST_CASE(testDuringAddIndexes)
 {
-    DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
+    MockRAMDirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergeFactor(2);
     
@@ -754,9 +754,10 @@ BOOST_AUTO_TEST_CASE(testDuringAddIndexes)
         threads[i]->join();
 
     writer->close();
+    r->close();
+    BOOST_CHECK_EQUAL(0, dir1->getOpenDeletedFiles().size());
 
     checkIndex(dir1);
-    r->close();
     dir1->close();
 }
 
@@ -791,11 +792,11 @@ namespace TestDuringAddDelete
             {
                 try
                 {
-                    for (int32_t i = 0; i < 10; ++i)
-                        writer->addDocument(createDocument(10 * count + i, L"test", 4));
+                    for (int32_t docUpto = 0; docUpto < 10; ++docUpto)
+                        writer->addDocument(createDocument(10 * count + docUpto, L"test", 4));
                     ++count;
                     int32_t limit = count * 10;
-                    for (int32_t i = 0; i < 5; ++i)
+                    for (int32_t delUpto = 0; delUpto < 5;++delUpto)
                     {
                         int32_t x = random->nextInt(limit);
                         writer->deleteDocuments(newLucene<Term>(L"field3", L"b" + StringUtils::toString(x)));

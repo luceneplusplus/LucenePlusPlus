@@ -140,16 +140,10 @@ namespace Lucene
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
     
-    void StandardTokenizer::reset()
-    {
-        TokenStream::reset();
-        scanner->yyreset(input);
-    }
-    
     void StandardTokenizer::reset(ReaderPtr input)
     {
         Tokenizer::reset(input);
-        reset();
+        scanner->reset(input);
     }
     
     bool StandardTokenizer::isReplaceInvalidAcronym()

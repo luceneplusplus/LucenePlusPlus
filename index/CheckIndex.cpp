@@ -329,8 +329,11 @@ namespace Lucene
             ByteArray b(ByteArray::newInstance(reader->maxDoc()));
             for (Collection<String>::iterator fieldName = fieldNames.begin(); fieldName != fieldNames.end(); ++fieldName)
             {
-                reader->norms(*fieldName, b, 0);
-                ++status->totFields;
+                if (reader->hasNorms(*fieldName))
+                {
+                    reader->norms(*fieldName, b, 0);
+                    ++status->totFields;
+                }
             }
             
             msg(L"OK [" + StringUtils::toString(status->totFields) + L" fields]");

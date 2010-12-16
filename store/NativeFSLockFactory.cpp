@@ -13,49 +13,15 @@ namespace Lucene
     NativeFSLockFactory::NativeFSLockFactory(const String& lockDirName)
     {
         setLockDir(lockDirName);
-        tested = false;
     }
     
     NativeFSLockFactory::~NativeFSLockFactory()
     {
     }
     
-    void NativeFSLockFactory::acquireTestLock()
-    {
-        SyncLock syncLock(this);
-        
-        if (tested)
-            return;
-        tested = true;
-    
-        // ensure that lockdir exists and is a directory
-        if (!FileUtils::fileExists(lockDir))
-        {
-            if (!FileUtils::createDirectory(lockDir))
-                boost::throw_exception(RuntimeException(L"Cannot create directory: " + lockDir));
-        }
-        else if (!FileUtils::isDirectory(lockDir))
-            boost::throw_exception(RuntimeException(L"Found regular file where directory expected: " + lockDir));
-
-        String randomLockName(L"lucene-" + StringUtils::toString(newLucene<Random>()->nextInt(), StringUtils::CHARACTER_MAX_RADIX) + L"-test.lock");
-        
-        LockPtr l(makeLock(randomLockName));
-        
-        try
-        {
-            l->obtain();
-            l->release();
-        }
-        catch (LuceneException&)
-        {
-            boost::throw_exception(IOException(L"Failed to acquire random test lock; please verify filesystem for lock directory '" + lockDir + L"' supports locking"));
-        }    
-    }
-    
     LockPtr NativeFSLockFactory::makeLock(const String& lockName)
     {
         SyncLock syncLock(this);
-        acquireTestLock();
         return newLucene<NativeFSLock>(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName);
     }
     

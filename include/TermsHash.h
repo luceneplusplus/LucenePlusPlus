@@ -44,6 +44,8 @@ namespace Lucene
         virtual void setFieldInfos(FieldInfosPtr fieldInfos);
         
         /// Abort (called after hitting AbortException)
+        /// NOTE: do not make this sync'd; it's not necessary (DW ensures all other threads are idle), and it 
+        /// leads to deadlock
         virtual void abort();
         
         void shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state);

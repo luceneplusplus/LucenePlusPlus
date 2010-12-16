@@ -8,6 +8,7 @@
 #include "LuceneTestFixture.h"
 #include "NumericUtils.h"
 #include "OpenBitSet.h"
+#include "Random.h"
 
 using namespace Lucene;
 
@@ -16,12 +17,19 @@ BOOST_FIXTURE_TEST_SUITE(NumericUtilsTest, LuceneTestFixture)
 class CheckLongRangeBuilder : public LongRangeBuilder
 {
 public:
-    CheckLongRangeBuilder(int64_t lower, int64_t upper, OpenBitSetPtr bits, Collection<int64_t>::iterator neededBounds)
+    CheckLongRangeBuilder(int64_t lower, int64_t upper, OpenBitSetPtr bits, 
+                          Collection<int64_t>::iterator neededBoundsFirst,
+                          Collection<int64_t>::iterator neededBoundsLast,
+                          Collection<int32_t>::iterator neededShiftsFirst,
+                          Collection<int32_t>::iterator neededShiftsLast)
     {
         this->lower = lower;
         this->upper = upper;
         this->bits = bits;
-        this->neededBounds = neededBounds;
+        this->neededBoundsFirst = neededBoundsFirst;
+        this->neededBoundsLast = neededBoundsLast;
+        this->neededShiftsFirst = neededShiftsFirst;
+        this->neededShiftsLast = neededShiftsLast;
     }
     
     virtual ~CheckLongRangeBuilder()
@@ -32,7 +40,10 @@ protected:
     int64_t lower;
     int64_t upper;
     OpenBitSetPtr bits;
-    Collection<int64_t>::iterator neededBounds;
+    Collection<int64_t>::iterator neededBoundsFirst;
+    Collection<int64_t>::iterator neededBoundsLast;
+    Collection<int32_t>::iterator neededShiftsFirst;
+    Collection<int32_t>::iterator neededShiftsLast;
 
 public:
     virtual void addRange(int64_t min, int64_t max, int32_t shift)
@@ -41,21 +52,31 @@ public:
         if (bits)
         {
             for (int64_t l = min; l <= max; ++l)
+            {
                 BOOST_CHECK(!bits->getAndSet((int32_t)(l - lower)));
+                // extra exit condition to prevent overflow on MAX_VALUE
+                if (l == max)
+                    break;
+            }
         }
+        
+        if (neededBoundsFirst == neededBoundsLast || neededShiftsFirst == neededShiftsLast)
+            return;
+        
         // make unsigned longs for easier display and understanding
         min ^= 0x8000000000000000LL;
         max ^= 0x8000000000000000LL;
         
-        BOOST_CHECK_EQUAL(*neededBounds++, (uint64_t)min >> shift); // inner min bound
-        BOOST_CHECK_EQUAL(*neededBounds++, (uint64_t)max >> shift); // inner max bound
+        BOOST_CHECK_EQUAL(*neededShiftsFirst++, shift);
+        BOOST_CHECK_EQUAL(*neededBoundsFirst++, MiscUtils::unsignedShift(min, (int64_t)shift)); // inner min bound
+        BOOST_CHECK_EQUAL(*neededBoundsFirst++, MiscUtils::unsignedShift(max, (int64_t)shift)); // inner max bound
     }
 };
 
-static void checkLongRangeSplit(int64_t lower, int64_t upper, int32_t precisionStep, bool useBitSet, Collection<int64_t> neededBounds)
+static void checkLongRangeSplit(int64_t lower, int64_t upper, int32_t precisionStep, bool useBitSet, Collection<int64_t> neededBounds, Collection<int32_t> neededShifts)
 {
     OpenBitSetPtr bits = useBitSet ? newLucene<OpenBitSet>((int32_t)(upper - lower + 1)) : OpenBitSetPtr();
-    NumericUtils::splitLongRange(newLucene<CheckLongRangeBuilder>(lower, upper, bits, neededBounds.begin()), precisionStep, lower, upper);
+    NumericUtils::splitLongRange(newLucene<CheckLongRangeBuilder>(lower, upper, bits, neededBounds.begin(), neededBounds.end(), neededShifts.begin(), neededShifts.end()), precisionStep, lower, upper);
     
     if (useBitSet)
     {
@@ -68,12 +89,19 @@ static void checkLongRangeSplit(int64_t lower, int64_t upper, int32_t precisionS
 class CheckIntRangeBuilder : public IntRangeBuilder
 {
 public:
-    CheckIntRangeBuilder(int32_t lower, int32_t upper, OpenBitSetPtr bits, Collection<int32_t>::iterator neededBounds)
+    CheckIntRangeBuilder(int32_t lower, int32_t upper, OpenBitSetPtr bits, 
+                         Collection<int32_t>::iterator neededBoundsFirst,
+                         Collection<int32_t>::iterator neededBoundsLast,
+                         Collection<int32_t>::iterator neededShiftsFirst,
+                         Collection<int32_t>::iterator neededShiftsLast)
     {
         this->lower = lower;
         this->upper = upper;
         this->bits = bits;
-        this->neededBounds = neededBounds;
+        this->neededBoundsFirst = neededBoundsFirst;
+        this->neededBoundsLast = neededBoundsLast;
+        this->neededShiftsFirst = neededShiftsFirst;
+        this->neededShiftsLast = neededShiftsLast;
     }
     
     virtual ~CheckIntRangeBuilder()
@@ -84,7 +112,10 @@ protected:
     int32_t lower;
     int32_t upper;
     OpenBitSetPtr bits;
-    Collection<int32_t>::iterator neededBounds;
+    Collection<int32_t>::iterator neededBoundsFirst;
+    Collection<int32_t>::iterator neededBoundsLast;
+    Collection<int32_t>::iterator neededShiftsFirst;
+    Collection<int32_t>::iterator neededShiftsLast;
 
 public:
     virtual void addRange(int32_t min, int32_t max, int32_t shift)
@@ -93,21 +124,31 @@ public:
         if (bits)
         {
             for (int32_t l = min; l <= max; ++l)
+            {
                 BOOST_CHECK(!bits->getAndSet((int32_t)(l - lower)));
+                // extra exit condition to prevent overflow on MAX_VALUE
+                if (l == max)
+                    break;
+            }
         }
+        
+        if (neededBoundsFirst == neededBoundsLast || neededShiftsFirst == neededShiftsLast)
+            return;
+
         // make unsigned longs for easier display and understanding
         min ^= 0x80000000;
         max ^= 0x80000000;
         
-        BOOST_CHECK_EQUAL(*neededBounds++, (uint32_t)min >> shift); // inner min bound
-        BOOST_CHECK_EQUAL(*neededBounds++, (uint32_t)max >> shift); // inner max bound
+        BOOST_CHECK_EQUAL(*neededShiftsFirst++, shift);
+        BOOST_CHECK_EQUAL(*neededBoundsFirst++, MiscUtils::unsignedShift(min, shift)); // inner min bound
+        BOOST_CHECK_EQUAL(*neededBoundsFirst++, MiscUtils::unsignedShift(max, shift)); // inner max bound
     }
 };
 
-static void checkIntRangeSplit(int32_t lower, int32_t upper, int32_t precisionStep, bool useBitSet, Collection<int32_t> neededBounds)
+static void checkIntRangeSplit(int32_t lower, int32_t upper, int32_t precisionStep, bool useBitSet, Collection<int32_t> neededBounds, Collection<int32_t> neededShifts)
 {
     OpenBitSetPtr bits = useBitSet ? newLucene<OpenBitSet>((int32_t)(upper - lower + 1)) : OpenBitSetPtr();
-    NumericUtils::splitIntRange(newLucene<CheckIntRangeBuilder>(lower, upper, bits, neededBounds.begin()), precisionStep, lower, upper);
+    NumericUtils::splitIntRange(newLucene<CheckIntRangeBuilder>(lower, upper, bits, neededBounds.begin(), neededBounds.end(), neededShifts.begin(), neededShifts.end()), precisionStep, lower, upper);
     
     if (useBitSet)
     {
@@ -244,6 +285,128 @@ BOOST_AUTO_TEST_CASE(testDoubles)
         BOOST_CHECK(longVals[i - 1] < longVals[i]);
 }
 
+/// NumericRangeQuery errors with endpoints near long min and max values
+BOOST_AUTO_TEST_CASE(testLongExtremeValues)
+{
+    // upper end extremes
+    checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 1, true, 
+        newCollection<int64_t>(0xffffffffffffffffLL, 0xffffffffffffffffLL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 2, true, 
+        newCollection<int64_t>(0xffffffffffffffffLL, 0xffffffffffffffffLL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 4, true, 
+        newCollection<int64_t>(0xffffffffffffffffLL, 0xffffffffffffffffLL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 6, true, 
+        newCollection<int64_t>(0xffffffffffffffffLL, 0xffffffffffffffffLL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 8, true, 
+        newCollection<int64_t>(0xffffffffffffffffL ,0xffffffffffffffffLL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 64, true, 
+        newCollection<int64_t>(0xffffffffffffffffLL, 0xffffffffffffffffLL),
+        newCollection<int32_t>(0)
+    );
+
+    checkLongRangeSplit(LLONG_MAX - 0xfLL, LLONG_MAX, 4, true, 
+        newCollection<int64_t>(0xfffffffffffffffLL, 0xfffffffffffffffLL),
+        newCollection<int32_t>(4)
+    );
+    checkLongRangeSplit(LLONG_MAX - 0x10LL, LLONG_MAX, 4, true, 
+        newCollection<int64_t>(0xffffffffffffffefLL, 0xffffffffffffffefLL, 0xfffffffffffffffLL, 0xfffffffffffffffLL),
+        newCollection<int32_t>(0, 4)
+    );
+
+    // lower end extremes
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN, 1, true, 
+        newCollection<int64_t>(0x0000000000000000LL,0x0000000000000000LL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN, 2, true,
+        newCollection<int64_t>(0x0000000000000000LL, 0x0000000000000000LL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN, 4, true, 
+        newCollection<int64_t>(0x0000000000000000LL, 0x0000000000000000LL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN, 6, true,
+        newCollection<int64_t>(0x0000000000000000LL, 0x0000000000000000LL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN, 8, true, 
+        newCollection<int64_t>(0x0000000000000000LL, 0x0000000000000000LL),
+        newCollection<int32_t>(0)
+    );
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN, 64, true, 
+        newCollection<int64_t>(0x0000000000000000LL, 0x0000000000000000LL),
+        newCollection<int32_t>(0)
+    );
+
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN + 0xfLL, 4, true,
+        newCollection<int64_t>(0x000000000000000LL, 0x000000000000000LL),
+        newCollection<int32_t>(4)
+    );
+    checkLongRangeSplit(LLONG_MIN, LLONG_MIN + 0x10LL, 4, true, 
+        newCollection<int64_t>(0x0000000000000010LL, 0x0000000000000010LL, 0x000000000000000LL, 0x000000000000000LL),
+        newCollection<int32_t>(0, 4)
+    );
+}
+
+static int64_t randomLong(RandomPtr random)
+{
+    int64_t val;
+    switch (random->nextInt(4))
+    {
+        case 0:
+            val = 1LL << (int64_t)random->nextInt(63); //  patterns like 0x000000100000 (-1 yields patterns like 0x0000fff)
+            break;
+        case 1:
+            val = -1LL << (int64_t)random->nextInt(63); // patterns like 0xfffff00000
+            break;
+        default:
+            val = (int64_t)random->nextInt();
+    }
+    
+    val += random->nextInt(5) - 2;
+    
+    if (random->nextInt() % 2 == 1)
+    {
+        if (random->nextInt() % 2 == 1)
+            val += random->nextInt(100) - 50;
+        if (random->nextInt() % 2 == 1)
+            val = ~val;
+        if (random->nextInt() % 2 == 1)
+            val = val << 1;
+        if (random->nextInt() % 2 == 1)
+            val = MiscUtils::unsignedShift(val, (int64_t)1);
+    }
+    
+    return val;
+}
+
+static void executeOneRandomSplit(RandomPtr random)
+{
+    int64_t lower = randomLong(random);
+    int64_t len = (int64_t)random->nextInt(16384 * 1024); // not too large bitsets, else OOME!
+    while (lower + len < lower) // overflow
+        lower >>= 1;
+    checkLongRangeSplit(lower, lower + len, random->nextInt(64) + 1, true, Collection<int64_t>::newInstance(), Collection<int32_t>::newInstance());
+}
+
+BOOST_AUTO_TEST_CASE(testRandomSplit)
+{
+    RandomPtr random = newLucene<Random>(123);
+    for (int32_t i = 0; i < 100; ++i)
+        executeOneRandomSplit(random);
+}
+
 BOOST_AUTO_TEST_CASE(testSplitLongRange)
 {
     Collection<int64_t> neededBounds = Collection<int64_t>::newInstance(14);
@@ -263,34 +426,54 @@ BOOST_AUTO_TEST_CASE(testSplitLongRange)
     neededBounds[13] = 0x8000000000001LL;
         
     // a hard-coded "standard" range
-    checkLongRangeSplit(-5000, 9500, 4, true, neededBounds);
+    checkLongRangeSplit(-5000, 9500, 4, true, neededBounds, newCollection<int32_t>(0, 0, 4, 4, 8, 8, 12));
 
     // the same with no range splitting
-    checkLongRangeSplit(-5000, 9500, 64, true, newCollection<int64_t>(0x7fffffffffffec78LL, 0x800000000000251cLL));
+    checkLongRangeSplit(-5000, 9500, 64, true,
+        newCollection<int64_t>(0x7fffffffffffec78LL, 0x800000000000251cLL),
+        newCollection<int32_t>(0)
+    );
     
     // this tests optimized range splitting, if one of the inner bounds
     // is also the bound of the next lower precision, it should be used completely
-    checkLongRangeSplit(0, 1024 + 63, 4, true, newCollection<int64_t>(0x800000000000040LL, 0x800000000000043LL,
-                        0x80000000000000LL, 0x80000000000003LL));
+    checkLongRangeSplit(0, 1024 + 63, 4, true, 
+        newCollection<int64_t>(0x800000000000040LL, 0x800000000000043LL, 0x80000000000000LL, 0x80000000000003LL),
+        newCollection<int32_t>(4, 8)
+    );
     
     // the full long range should only consist of a lowest precision range; 
     // no bitset testing here, as too much memory needed
-    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 8, false, newCollection<int64_t>(0x00LL, 0xffLL));
+    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 8, false, 
+        newCollection<int64_t>(0x00LL, 0xffLL),
+        newCollection<int32_t>(56)
+    );
     
     // the same with precisionStep=4
-    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 4, false, newCollection<int64_t>(0x00LL, 0xfLL));
+    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 4, false, 
+        newCollection<int64_t>(0x00LL, 0xfLL),
+        newCollection<int32_t>(60)
+    );
     
     // the same with precisionStep=2
-    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 2, false, newCollection<int64_t>(0x00LL, 0x3LL));
+    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 2, false,
+        newCollection<int64_t>(0x00LL, 0x3LL),
+        newCollection<int32_t>(62)
+    );
     
     // the same with precisionStep=1
-    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 1, false, newCollection<int64_t>(0x00LL, 0x1LL));
+    checkLongRangeSplit(LLONG_MIN, LLONG_MAX, 1, false, 
+        newCollection<int64_t>(0x00LL, 0x1LL),
+        newCollection<int32_t>(63)
+    );
     
     // a inverse range should produce no sub-ranges
-    checkLongRangeSplit(9500, -5000, 4, false,  Collection<int64_t>::newInstance());
+    checkLongRangeSplit(9500, -5000, 4, false,  Collection<int64_t>::newInstance(), Collection<int32_t>::newInstance());
     
     // a 0-length range should reproduce the range itself
-    checkLongRangeSplit(9500, 9500, 4, false, newCollection<int64_t>(0x800000000000251cLL, 0x800000000000251cLL));
+    checkLongRangeSplit(9500, 9500, 4, false, 
+        newCollection<int64_t>(0x800000000000251cLL, 0x800000000000251cLL),
+        newCollection<int32_t>(0)
+    );
 }
 
 BOOST_AUTO_TEST_CASE(testSplitIntRange)
@@ -312,34 +495,54 @@ BOOST_AUTO_TEST_CASE(testSplitIntRange)
     neededBounds[13] = 0x80001;
         
     // a hard-coded "standard" range
-    checkIntRangeSplit(-5000, 9500, 4, true, neededBounds);
+    checkIntRangeSplit(-5000, 9500, 4, true, neededBounds, newCollection<int32_t>(0, 0, 4, 4, 8, 8, 12));
 
     // the same with no range splitting
-    checkIntRangeSplit(-5000, 9500, 32, true, newCollection<int32_t>(0x7fffec78, 0x8000251c));
+    checkIntRangeSplit(-5000, 9500, 32, true, 
+        newCollection<int32_t>(0x7fffec78, 0x8000251c),
+        newCollection<int32_t>(0)
+    );
     
     // this tests optimized range splitting, if one of the inner bounds
     // is also the bound of the next lower precision, it should be used completely
-    checkIntRangeSplit(0, 1024 + 63, 4, true, newCollection<int32_t>(0x8000040, 0x8000043,
-                        0x800000, 0x800003));
+    checkIntRangeSplit(0, 1024 + 63, 4, true, 
+        newCollection<int32_t>(0x8000040, 0x8000043, 0x800000, 0x800003),
+        newCollection<int32_t>(4, 8)
+    );
     
-    // the full long range should only consist of a lowest precision range; 
+    // the full int range should only consist of a lowest precision range; 
     // no bitset testing here, as too much memory needed
-    checkIntRangeSplit(INT_MIN, INT_MAX, 8, false, newCollection<int32_t>(0x00, 0xff));
+    checkIntRangeSplit(INT_MIN, INT_MAX, 8, false, 
+        newCollection<int32_t>(0x00, 0xff),
+        newCollection<int32_t>(24)
+    );
     
     // the same with precisionStep=4
-    checkIntRangeSplit(INT_MIN, INT_MAX, 4, false, newCollection<int32_t>(0x00, 0xf));
+    checkIntRangeSplit(INT_MIN, INT_MAX, 4, false, 
+        newCollection<int32_t>(0x00, 0xf),
+        newCollection<int32_t>(28)
+    );
     
     // the same with precisionStep=2
-    checkIntRangeSplit(INT_MIN, INT_MAX, 2, false, newCollection<int32_t>(0x00, 0x3));
+    checkIntRangeSplit(INT_MIN, INT_MAX, 2, false,
+        newCollection<int32_t>(0x00, 0x3),
+        newCollection<int32_t>(30)
+    );
     
     // the same with precisionStep=1
-    checkIntRangeSplit(INT_MIN, INT_MAX, 1, false, newCollection<int32_t>(0x00, 0x1));
+    checkIntRangeSplit(INT_MIN, INT_MAX, 1, false, 
+        newCollection<int32_t>(0x00, 0x1),
+        newCollection<int32_t>(31)
+    );
     
     // a inverse range should produce no sub-ranges
-    checkIntRangeSplit(9500, -5000, 4, false,  Collection<int32_t>::newInstance());
+    checkIntRangeSplit(9500, -5000, 4, false, Collection<int32_t>::newInstance(), Collection<int32_t>::newInstance());
     
     // a 0-length range should reproduce the range itself
-    checkIntRangeSplit(9500, 9500, 4, false, newCollection<int32_t>(0x8000251c, 0x8000251c));
+    checkIntRangeSplit(9500, 9500, 4, false, 
+        newCollection<int32_t>(0x8000251c, 0x8000251c),
+        newCollection<int32_t>(0)
+    );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

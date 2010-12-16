@@ -144,7 +144,7 @@ namespace Lucene
         int32_t result = MiscUtils::hashCode(clauses.begin(), clauses.end(), MiscUtils::hashLucene<SpanQueryPtr>);
         // Mix bits before folding in things like boost, since it could cancel the last element of clauses.  
         // This particular mix also serves to differentiate SpanNearQuery hashcodes from others.
-        result ^= (result << 14) | (result >> 19); // reversible
+        result ^= (result << 14) | MiscUtils::unsignedShift(result, 19); // reversible
         result += MiscUtils::doubleToRawIntBits(getBoost());
         result += slop;
         result ^= (inOrder ? 0x99afd3bd : 0);

@@ -125,6 +125,9 @@ namespace Lucene
     public:
         int32_t yychar();
         
+        /// Resets the Tokenizer to a new Reader.
+        void reset(ReaderPtr r);
+        
         /// Fills Lucene token with the current token text.
         void getText(TokenPtr t);
         

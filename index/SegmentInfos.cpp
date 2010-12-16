@@ -419,7 +419,7 @@ namespace Lucene
                 
                 segmentInfos->message(L"directory listing genA=" + genA);
                 
-                // Method 2: open segments.gen and read its contents.  Then we take the larger of the two gen's.  This way, 
+                // Method 2: open segments.gen and read its contents.  Then we take the larger of the two gens.  This way, 
                 // if either approach is hitting a stale cache (NFS) we have a better chance of getting the right generation.
                 int64_t genB = -1;
                 for (int32_t i = 0; i < SegmentInfos::defaultGenFileRetryCount; ++i)
@@ -526,8 +526,7 @@ namespace Lucene
             try
             {
                 runBody(segmentFileName);
-                if (!exc.isNull())
-                    segmentInfos->message(L"success on " + segmentFileName);
+                segmentInfos->message(L"success on " + segmentFileName);
                 return;
             }
             catch (LuceneException& err)

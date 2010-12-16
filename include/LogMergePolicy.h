@@ -32,6 +32,8 @@ namespace Lucene
     protected:
         int32_t mergeFactor;
         
+        double noCFSRatio;
+        
         bool calibrateSizeByDeletes;
         bool _useCompoundFile;
         bool _useCompoundDocStore;
@@ -48,11 +50,22 @@ namespace Lucene
         /// @see setMaxMergeDocs
         static const int32_t DEFAULT_MAX_MERGE_DOCS;
         
+        /// Default noCFSRatio.  If a merge's size is >= 10% of the index, then we disable compound file for it.
+        /// @see #setNoCFSRatio
+        static const double DEFAULT_NO_CFS_RATIO;
+        
         int64_t minMergeSize;
         int64_t maxMergeSize;
         int32_t maxMergeDocs;
-    
+        
     public:
+        /// @see #setNoCFSRatio
+        double getNoCFSRatio();
+        
+        /// If a merged segment will be more than this percentage of the total size of the index, leave the segment as
+        /// non-compound file even if compound file is enabled.  Set to 1.0 to always use CFS regardless of merge size.
+        void setNoCFSRatio(double noCFSRatio);
+        
         /// Returns the number of segments that are merged at once and also controls the total number of segments
         /// allowed to accumulate in the index.
         int32_t getMergeFactor();
@@ -140,6 +153,8 @@ namespace Lucene
         /// Returns true if this single info is optimized (has no pending norms or deletes, is in the same dir as the
         /// writer, and matches the current compound file setting
         bool isOptimized(SegmentInfoPtr info);
+        
+        OneMergePtr makeOneMerge(SegmentInfosPtr infos, SegmentInfosPtr infosToMerge);
     };
 }
 

@@ -91,6 +91,8 @@ namespace Lucene
         /// This is how locking "scopes" to the right index.
         virtual String getLockID();
         
+        virtual String toString();
+        
         /// Copy contents of a directory src to a directory dest. If a file in src already exists in dest then the one 
         /// in dest will be blindly overwritten.  NOTE: the source directory cannot change while this method is running.
         /// Otherwise the results are undefined.

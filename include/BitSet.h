@@ -48,10 +48,10 @@ namespace Lucene
         bool get(uint32_t bitIndex) const;
         bool fastGet(uint32_t bitIndex) const;
         int32_t nextSetBit(uint32_t fromIndex) const;
-        void andBitSet(BitSetPtr set);
-        void orBitSet(BitSetPtr set);
-        void xorBitSet(BitSetPtr set);
-        void andNotBitSet(BitSetPtr set);
+        void _and(BitSetPtr set);
+        void _or(BitSetPtr set);
+        void _xor(BitSetPtr set);
+        void andNot(BitSetPtr set);
         bool intersectsBitSet(BitSetPtr set) const;
         uint32_t cardinality();
         void resize(uint32_t size);

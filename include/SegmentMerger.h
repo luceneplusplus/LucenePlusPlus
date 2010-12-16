@@ -82,6 +82,7 @@ namespace Lucene
         /// close all IndexReaders that have been added. Should not be called before merge().
         void closeReaders();
         
+        HashSet<String> getMergedFiles();
         HashSet<String> createCompoundFile(const String& fileName);
         
         /// @return The number of documents in all of the readers

@@ -477,7 +477,7 @@ namespace Lucene
         while ((i & ~0x7f) != 0)
         {
             writeByte(stream, (uint8_t)((i & 0x7f) | 0x80));
-            i = (uint32_t)i >> 7;
+            i = MiscUtils::unsignedShift(i, 7);
         }
         writeByte(stream, (uint8_t)i);
     }

@@ -131,7 +131,7 @@ namespace Lucene
             }
             else
             {
-                _doc += docCode >> 1; // shift off low bit
+                _doc += MiscUtils::unsignedShift(docCode, 1); // shift off low bit
                 if ((docCode & 1) != 0) // if low bit is set
                     _freq = 1; // freq is one
                 else
@@ -159,7 +159,7 @@ namespace Lucene
             {
                 // manually inlined call to next() for speed
                 int32_t docCode = _freqStream->readVInt();
-                _doc += docCode >> 1; // shift off low bit
+                _doc += MiscUtils::unsignedShift(docCode, 1); // shift off low bit
                 if ((docCode & 1) != 0) // if low bit is set
                     _freq = 1; // freq is one
                 else

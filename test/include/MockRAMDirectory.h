@@ -34,6 +34,11 @@ namespace Lucene
         bool crashed;
         
         MapStringInt openFiles;
+        
+        // Only tracked if noDeleteOpenFile is true: if an attempt is made to delete an 
+        // open file, we enroll it here.
+        HashSet<String> openFilesDeleted;
+        
         Collection<MockDirectoryFailurePtr> failures;
     
     protected:
@@ -69,6 +74,8 @@ namespace Lucene
         void maybeThrowIOException();
         
         virtual void deleteFile(const String& name);
+        
+        virtual HashSet<String> getOpenDeletedFiles();
         
         virtual IndexOutputPtr createOutput(const String& name);
         virtual IndexInputPtr openInput(const String& name);

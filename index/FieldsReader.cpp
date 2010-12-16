@@ -342,9 +342,9 @@ namespace Lucene
         int32_t size = fieldsStream->readVInt();
         int32_t bytesize = (binary || compressed) ? size : 2 * size;
         ByteArray sizebytes(ByteArray::newInstance(4));
-        sizebytes[0] = (uint8_t)(bytesize >> 24);
-        sizebytes[1] = (uint8_t)(bytesize >> 16);
-        sizebytes[2] = (uint8_t)(bytesize >> 8);
+        sizebytes[0] = (uint8_t)MiscUtils::unsignedShift(bytesize, 24);
+        sizebytes[1] = (uint8_t)MiscUtils::unsignedShift(bytesize, 16);
+        sizebytes[2] = (uint8_t)MiscUtils::unsignedShift(bytesize, 8);
         sizebytes[3] = (uint8_t)(bytesize);
         doc->add(newLucene<Field>(fi->name, sizebytes, Field::STORE_YES));
         return size;

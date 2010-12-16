@@ -67,6 +67,11 @@ namespace Lucene
         return segmentInfos.contains_if(luceneEqualTo<SegmentInfoPtr>(info));
     }
     
+    void SegmentInfoCollection::remove(int32_t pos)
+    {
+        segmentInfos.remove(segmentInfos.begin() + pos);
+    }
+    
     void SegmentInfoCollection::remove(int32_t start, int32_t end)
     {
         segmentInfos.remove(segmentInfos.begin() + start, segmentInfos.begin() + end);

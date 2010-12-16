@@ -68,7 +68,7 @@ namespace Lucene
         ///
         /// NOTE: after the iterator has exhausted you should not call this method, as it may result in unpredicted 
         /// behaviour.
-           virtual int32_t advance(int32_t target) = 0;
+        virtual int32_t advance(int32_t target) = 0;
     };
 }
 

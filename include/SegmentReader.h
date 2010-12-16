@@ -32,6 +32,7 @@ namespace Lucene
         bool rollbackHasChanges;
         bool rollbackDeletedDocsDirty;
         bool rollbackNormsDirty;
+        SegmentInfoPtr rollbackSegmentInfo;
         int32_t rollbackPendingDeleteCount;
         
         // optionally used for the .nrm file shared by multiple norms
@@ -192,6 +193,8 @@ namespace Lucene
         
         /// Implements commit.
         virtual void doCommit(MapStringString commitUserData);
+        
+        virtual void commitChanges(MapStringString commitUserData);
         
         /// Implements close.
         virtual void doClose();

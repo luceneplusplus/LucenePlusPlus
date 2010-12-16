@@ -37,7 +37,6 @@ namespace Lucene
     DECLARE_SHARED_PTR(MappingCharFilter)
     DECLARE_SHARED_PTR(NormalizeCharMap)
     DECLARE_SHARED_PTR(NumericTokenStream)
-    DECLARE_SHARED_PTR(OffCorrectMap)
     DECLARE_SHARED_PTR(OffsetAttribute)
     DECLARE_SHARED_PTR(PayloadAttribute)
     DECLARE_SHARED_PTR(PerFieldAnalyzerWrapper)

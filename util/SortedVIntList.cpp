@@ -55,7 +55,7 @@ namespace Lucene
     {
         lastInt = 0;
         initBytes();
-        int32_t nextInt = bits->nextSetBit(0);
+        int32_t nextInt = bits->nextSetBit((int32_t)0);
         while (nextInt != -1)
         {
             addInt(nextInt);
@@ -101,7 +101,7 @@ namespace Lucene
         while ((diff & ~VB1) != 0) // The high bit of the next byte needs to be set.
         {
             bytes[lastBytePos++] = (uint8_t)((diff & VB1) | ~VB1);
-            diff >>= BIT_SHIFT;
+            diff = MiscUtils::unsignedShift(diff, BIT_SHIFT);
         }
         bytes[lastBytePos++] = (uint8_t)diff; // Last byte, high bit not set.
         ++_size;

@@ -30,7 +30,7 @@ static void addDoc(IndexWriterPtr writer)
 
 static void checkInvariants(IndexWriterPtr writer)
 {
-    syncConcurrentMerges(writer);
+    writer->waitForMerges();
     int32_t maxBufferedDocs = writer->getMaxBufferedDocs();
     int32_t mergeFactor = writer->getMergeFactor();
     int32_t maxMergeDocs = writer->getMaxMergeDocs();
@@ -66,15 +66,6 @@ static void checkInvariants(IndexWriterPtr writer)
     }
     if (upperBound * mergeFactor <= maxMergeDocs)
         BOOST_CHECK(numSegments < mergeFactor);
-    
-    HashSet<String> files = writer->getDirectory()->listAll();
-    int32_t segmentCfsCount = 0;
-    for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
-    {
-        if (boost::ends_with(*file, L".cfs"))
-            ++segmentCfsCount;
-    }
-    BOOST_CHECK_EQUAL(segmentCount, segmentCfsCount);
 }
 
 BOOST_AUTO_TEST_CASE(testNormalCase)

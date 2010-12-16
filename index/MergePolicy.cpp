@@ -24,7 +24,6 @@ namespace Lucene
     {
         mergeDocStores = false;
         optimize = false;
-        increfDone = false;
         registerDone = false;
         mergeGen = 0;
         isExternal = false;

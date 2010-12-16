@@ -83,7 +83,7 @@ namespace Lucene
             delta = skipStream->readVInt();
             if ((delta & 1) != 0)
                 payloadLength[level] = skipStream->readVInt();
-            delta = delta >> 1;
+            delta = MiscUtils::unsignedShift(delta, 1);
         }
         else
             delta = skipStream->readVInt();

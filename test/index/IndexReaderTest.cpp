@@ -985,7 +985,7 @@ BOOST_AUTO_TEST_CASE(testDiskFull)
             HashSet<String> _startFiles = dir->listAll();
             SegmentInfosPtr infos = newLucene<SegmentInfos>();
             infos->read(dir);
-            IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr());
+            IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr(), HashSet<String>());
             HashSet<String> _endFiles = dir->listAll();
 
             Collection<String> startFiles = Collection<String>::newInstance(_startFiles.begin(), _startFiles.end());

@@ -65,6 +65,8 @@ namespace Lucene
         IndexCommitPtr cp;
     
     public:
+        virtual String toString();
+        
         /// Get the segments file (segments_N) associated with this commit point.
         virtual String getSegmentsFileName();
         

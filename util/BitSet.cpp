@@ -161,7 +161,7 @@ namespace Lucene
         return next == bitset_type::npos ? -1 : next;
     }
     
-    void BitSet::andBitSet(BitSetPtr set)
+    void BitSet::_and(BitSetPtr set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         for (bitset_type::size_type i = 0; i < minBlocks; ++i)
@@ -170,7 +170,7 @@ namespace Lucene
             std::fill(bitSet.m_bits.begin() + minBlocks, bitSet.m_bits.end(), bitset_type::block_type(0));
     }
     
-    void BitSet::orBitSet(BitSetPtr set)
+    void BitSet::_or(BitSetPtr set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         if (set->bitSet.size() > bitSet.size())
@@ -181,7 +181,7 @@ namespace Lucene
             std::copy(set->bitSet.m_bits.begin() + minBlocks, set->bitSet.m_bits.end(), bitSet.m_bits.begin() + minBlocks);
     }
     
-    void BitSet::xorBitSet(BitSetPtr set)
+    void BitSet::_xor(BitSetPtr set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         if (set->bitSet.size() > bitSet.size())
@@ -192,7 +192,7 @@ namespace Lucene
             std::copy(set->bitSet.m_bits.begin() + minBlocks, set->bitSet.m_bits.end(), bitSet.m_bits.begin() + minBlocks);
     }
     
-    void BitSet::andNotBitSet(BitSetPtr set)
+    void BitSet::andNot(BitSetPtr set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         for (bitset_type::size_type i = 0; i < minBlocks; ++i)
@@ -206,7 +206,7 @@ namespace Lucene
     
     uint32_t BitSet::cardinality()
     {
-        return bitSet.num_blocks() == 0 ? 0 : (uint32_t)BitUtil::pop_array(getBits(), 0, bitSet.num_blocks());
+        return bitSet.num_blocks() == 0 ? 0 : (uint32_t)BitUtil::pop_array((int64_t*)getBits(), 0, bitSet.num_blocks());
     }
     
     void BitSet::resize(uint32_t size)
@@ -247,7 +247,9 @@ namespace Lucene
     
     int32_t BitSet::hashCode()
     {
-        int64_t hash = 0x98761234;
+        // Start with a zero hash and use a mix that results in zero if the input is zero.
+        // This effectively truncates trailing zeros without an explicit check.
+        int64_t hash = 0;
         uint32_t maxSize = bitSet.num_blocks();
         const uint64_t* bits = getBits();
         for (uint32_t bit = 0; bit < maxSize; ++bit)
@@ -255,7 +257,9 @@ namespace Lucene
             hash ^= bits[bit];
             hash = (hash << 1) | (hash >> 63); // rotate left
         }
-        return (int32_t)((hash >> 32) ^ hash); // fold leftmost bits into right
+        // Fold leftmost bits into right and add a constant to prevent empty sets from 
+        // returning 0, which is too common.
+        return (int32_t)((hash >> 32) ^ hash) + 0x98761234;
     }
     
     LuceneObjectPtr BitSet::clone(LuceneObjectPtr other)

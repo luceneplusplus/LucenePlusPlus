@@ -33,6 +33,7 @@ namespace Lucene
         bool equals(SegmentInfoCollectionPtr other);
         int32_t find(SegmentInfoPtr info);
         bool contains(SegmentInfoPtr info);
+        void remove(int32_t pos);
         void remove(int32_t start, int32_t end);
                 
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());

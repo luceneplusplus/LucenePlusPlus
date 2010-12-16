@@ -9,6 +9,7 @@
 #include "Directory.h"
 #include "IndexInput.h"
 #include "IndexOutput.h"
+#include "TestPoint.h"
 
 namespace Lucene
 {
@@ -142,6 +143,7 @@ namespace Lucene
     
     void BitVector::write(DirectoryPtr d, const String& name)
     {
+        TestScope testScope(L"BitVector", L"write");
         IndexOutputPtr output(d->createOutput(name));
         LuceneException finally;
         try
@@ -238,13 +240,13 @@ namespace Lucene
         // Special case -- return empty vector is start == end
         if (end == start)
             return newLucene<BitVector>(0);
-        ByteArray bits(ByteArray::newInstance(((end - start - 1) >> 3) + 1));
-        int32_t s = (start >> 3);
+        ByteArray bits(ByteArray::newInstance(MiscUtils::unsignedShift(end - start - 1, 3) + 1));
+        int32_t s = MiscUtils::unsignedShift(start, 3);
         for (int32_t i = 0; i < bits.length(); ++i)
         {
             int32_t cur = 0xff & this->bits[i + s];
             int32_t next = i + s + 1 >= this->bits.length() ? 0 : 0xff & this->bits[i + s + 1];
-            bits[i] = (uint8_t)((cur >> (start & 7)) | ((next << (8 - (start & 7)))));
+            bits[i] = (uint8_t)(MiscUtils::unsignedShift(cur, (start & 7)) | ((next << (8 - (start & 7)))));
         }
         int32_t bitsToClear = (bits.length() * 8 - (end - start)) % 8;
         bits[bits.length() - 1] &= ~(0xff << (8 - bitsToClear));

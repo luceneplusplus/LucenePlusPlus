@@ -86,14 +86,12 @@ namespace Lucene
         SegmentInfoPtr info; // used by IndexWriter
         bool mergeDocStores; // used by IndexWriter
         bool optimize; // used by IndexWriter
-        bool increfDone; // used by IndexWriter
         bool registerDone; // used by IndexWriter
         int64_t mergeGen; // used by IndexWriter
         bool isExternal; // used by IndexWriter
         int32_t maxNumSegmentsOptimize; // used by IndexWriter
         Collection<SegmentReaderPtr> readers; // used by IndexWriter
         Collection<SegmentReaderPtr> readersClone; // used by IndexWriter
-        HashSet<String> mergeFiles; // used by IndexWriter
         
         SegmentInfosPtr segments;
         bool useCompoundFile;

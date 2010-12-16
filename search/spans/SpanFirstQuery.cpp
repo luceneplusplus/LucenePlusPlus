@@ -93,7 +93,7 @@ namespace Lucene
     int32_t SpanFirstQuery::hashCode()
     {
         int32_t result = match->hashCode();
-        result ^= (result << 8) | (result >> 25); // reversible
+        result ^= (result << 8) | MiscUtils::unsignedShift(result, 25); // reversible
         result ^= MiscUtils::doubleToRawIntBits(getBoost()) ^ end;
         return result;
     }

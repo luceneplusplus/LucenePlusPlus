@@ -76,7 +76,7 @@ namespace Lucene
         
     protected:
         bool closed;
-          bool _hasChanges;
+        bool _hasChanges;
         int32_t refCount;
     
     public:

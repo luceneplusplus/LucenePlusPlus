@@ -79,18 +79,17 @@ namespace Lucene
                 BOOST_ASSERT(perThread->doc->perDocTvf->length() == 0);
                 BOOST_ASSERT(perThread->doc->perDocTvf->getFilePointer() == 0);
             }
-            else
+
+            BOOST_ASSERT(perThread->doc->docID == docState->docID);
+            
+            TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
+            
+            if (termsHashPerField->numPostings != 0)
             {
-                BOOST_ASSERT(perThread->doc->docID == docState->docID);
-                
-                TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
-                
-                if (termsHashPerField->numPostings != 0)
-                {
-                    // Only necessary if previous doc hit a non-aborting exception while writing vectors 
-                    // in this field
-                    termsHashPerField->reset();
-                }
+                // Only necessary if previous doc hit a non-aborting exception while writing vectors 
+                // in this field
+                termsHashPerField->reset();
+                TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(false);
             }
         }
         
@@ -193,6 +192,10 @@ namespace Lucene
         }
         
         termsHashPerField->reset();
+        
+        // NOTE: we clear per-field at the thread level, because term vectors fully write themselves on each
+        // field; this saves RAM (eg if large doc has two large fields with term vectors on) because we 
+        // recycle/reuse all RAM after each field
         TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(false);
     }
     

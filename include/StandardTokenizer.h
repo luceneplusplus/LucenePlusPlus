@@ -92,8 +92,6 @@ namespace Lucene
         
         virtual void end();
         
-        /// @see TokenStream#reset()
-        virtual void reset();
         virtual void reset(ReaderPtr input);
         
         /// @return true if StandardTokenizer now returns these tokens as Hosts, otherwise false

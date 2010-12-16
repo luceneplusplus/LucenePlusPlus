@@ -36,7 +36,7 @@ namespace Lucene
     public:
         /// Initialize the deleter: find all previous commits in the Directory, incref the files they reference, call
         /// the policy to let it delete commits.  This will remove any files not referenced by any of the commits.
-        IndexFileDeleter(DirectoryPtr directory, IndexDeletionPolicyPtr policy, SegmentInfosPtr segmentInfos, InfoStreamPtr infoStream, DocumentsWriterPtr docWriter);
+        IndexFileDeleter(DirectoryPtr directory, IndexDeletionPolicyPtr policy, SegmentInfosPtr segmentInfos, InfoStreamPtr infoStream, DocumentsWriterPtr docWriter, HashSet<String> synced);
         virtual ~IndexFileDeleter();
         
         LUCENE_CLASS(IndexFileDeleter);
@@ -65,6 +65,9 @@ namespace Lucene
         IndexDeletionPolicyPtr policy;
         DocumentsWriterPtr docWriter;
         
+        SegmentInfosPtr lastSegmentInfos;
+        HashSet<String> synced;
+        
         /// Change to true to see details of reference counts when infoStream != null
         static bool VERBOSE_REF_COUNTS;
         
@@ -83,6 +86,8 @@ namespace Lucene
         
     public:
         void setInfoStream(InfoStreamPtr infoStream);
+        
+        SegmentInfosPtr getLastSegmentInfos();
         
         /// Writer calls this when it has hit an error and had to roll back, to tell us that there may now be
         /// unreferenced files in the filesystem.  So we re-list the filesystem and delete such files.  If 
@@ -111,6 +116,8 @@ namespace Lucene
         void decRef(HashSet<String> files);
         void decRef(const String& fileName);
         void decRef(SegmentInfosPtr segmentInfos);
+        
+        bool exists(const String& fileName);
         
         void deleteFiles(HashSet<String> files);
         
@@ -162,6 +169,8 @@ namespace Lucene
         MapStringString userData;
     
     public:
+        virtual String toString();
+        
         /// Returns true if this commit is an optimized index.
         virtual bool isOptimized();
         

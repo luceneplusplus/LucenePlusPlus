@@ -38,7 +38,10 @@ namespace Lucene
             if (openFile != dir->openFiles.end())
             {
                 if (openFile->second == 1)
+                {
                     dir->openFiles.remove(name);
+                    dir->openFilesDeleted.remove(name);
+                }
                 else
                     --openFile->second;
             }

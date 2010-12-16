@@ -84,6 +84,8 @@ namespace Lucene
                 boost::throw_exception(StaleReaderException(error, type));
             case LuceneException::StopFillCache:
                 boost::throw_exception(StopFillCacheException(error, type));
+            case LuceneException::Temporary:
+                boost::throw_exception(TemporaryException(error, type));
             case LuceneException::TimeExceeded:
                 boost::throw_exception(TimeExceededException(error, type));
             case LuceneException::TooManyClauses:

@@ -25,9 +25,6 @@ namespace Lucene
         
         LUCENE_CLASS(NativeFSLockFactory);
                 
-    protected:
-        bool tested;
-    
     public:
         /// Return a new Lock instance identified by lockName.
         /// @param lockName name of the lock to be created.

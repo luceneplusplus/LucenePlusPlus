@@ -710,7 +710,7 @@ namespace Lucene
             if (codePointMultiplier > 0)
             {
                 codePoint += hexToInt(curChar) * codePointMultiplier;
-                codePointMultiplier >>= 4;
+                codePointMultiplier = MiscUtils::unsignedShift(codePointMultiplier, 4);
                 if (codePointMultiplier == 0)
                 {
                     output[length++] = (wchar_t)codePoint;
