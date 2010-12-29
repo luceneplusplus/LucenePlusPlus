@@ -44,7 +44,7 @@ namespace Lucene
             for (int32_t i = 0; i < bufferUpto; ++i)
             {
                 // Fully zero fill buffers that we fully used
-                MiscUtils::arrayFill(buffers[i].get(), 0, buffers[i].length(), 0);
+                MiscUtils::arrayFill(buffers[i].get(), 0, buffers[i].size(), 0);
             }
             
             // Partial zero fill the final buffer

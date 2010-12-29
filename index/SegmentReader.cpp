@@ -124,8 +124,8 @@ namespace Lucene
     
     ByteArray SegmentReader::cloneNormBytes(ByteArray bytes)
     {
-        ByteArray cloneBytes(ByteArray::newInstance(bytes.length()));
-        MiscUtils::arrayCopy(bytes.get(), 0, cloneBytes.get(), 0, bytes.length());
+        ByteArray cloneBytes(ByteArray::newInstance(bytes.size()));
+        MiscUtils::arrayCopy(bytes.get(), 0, cloneBytes.get(), 0, bytes.size());
         return cloneBytes;
     }
     
@@ -566,7 +566,7 @@ namespace Lucene
         
         normsDirty = true;
         ByteArray bytes(norm->copyOnWrite());
-        if (doc < 0 || doc >= bytes.length())
+        if (doc < 0 || doc >= bytes.size())
             boost::throw_exception(IndexOutOfBoundsException());
         bytes[doc] = value; // set the value
     }
@@ -578,7 +578,7 @@ namespace Lucene
         NormPtr norm(_norms.get(field));
         if (!norm)
         {
-            MiscUtils::arrayFill(norms.get(), offset, norms.length(), DefaultSimilarity::encodeNorm(1.0));
+            MiscUtils::arrayFill(norms.get(), offset, norms.size(), DefaultSimilarity::encodeNorm(1.0));
             return;
         }
         

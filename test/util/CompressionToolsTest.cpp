@@ -15,7 +15,7 @@ BOOST_FIXTURE_TEST_SUITE(CompressionToolsTest, LuceneTestFixture)
 BOOST_AUTO_TEST_CASE(testCompressDecompress)
 {
     ByteArray compress(CompressionTools::compressString(L"test compressed string"));
-    BOOST_CHECK(compress.length() > 0);
+    BOOST_CHECK(compress.size() > 0);
     
     String decompress(CompressionTools::decompressString(compress));
     BOOST_CHECK_EQUAL(decompress, L"test compressed string");

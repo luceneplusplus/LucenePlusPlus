@@ -18,7 +18,7 @@ namespace Lucene
     
     String Base64::encode(ByteArray bytes)
     {
-        return encode(bytes.get(), bytes.length());
+        return encode(bytes.get(), bytes.size());
     }
     
     String Base64::encode(const uint8_t* bytes, int32_t length)
@@ -88,8 +88,8 @@ namespace Lucene
 
                 for (i = 0; i < 3; ++i)
                 {
-                    if (resultIndex >= result.length())
-                        result.resize((int32_t)((double)result.length() * 1.5));
+                    if (resultIndex >= result.size())
+                        result.resize((int32_t)((double)result.size() * 1.5));
                     result[resultIndex++] = byteArray3[i];
                 }
                 
@@ -109,8 +109,8 @@ namespace Lucene
 
             for (int32_t j = 0; j < i - 1; ++j)
             {
-                if (resultIndex >= result.length())
-                    result.resize((int32_t)((double)result.length() * 1.5));
+                if (resultIndex >= result.size())
+                    result.resize((int32_t)((double)result.size() * 1.5));
                 result[resultIndex++] = byteArray3[j];
             }
         }

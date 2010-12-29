@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(testBinaryField)
     BOOST_CHECK(!binaryFld->isTokenized());
 
     ByteArray bytesTest = doc->getBinaryValue(L"binary");
-    String binaryTest((wchar_t*)bytesTest.get(), bytesTest.length() / sizeof(wchar_t));
+    String binaryTest((wchar_t*)bytesTest.get(), bytesTest.size() / sizeof(wchar_t));
     BOOST_CHECK_EQUAL(binaryTest, binaryVal);
 
     String stringTest = doc->get(L"string");
@@ -105,10 +105,10 @@ BOOST_AUTO_TEST_CASE(testBinaryField)
     BOOST_CHECK_EQUAL(2, binaryTests.size());
 
     bytesTest = binaryTests[0];
-    binaryTest = String((wchar_t*)bytesTest.get(), bytesTest.length() / sizeof(wchar_t));
+    binaryTest = String((wchar_t*)bytesTest.get(), bytesTest.size() / sizeof(wchar_t));
     
     ByteArray bytesTest2 = binaryTests[1];
-    String binaryTest2((wchar_t*)bytesTest2.get(), bytesTest2.length() / sizeof(wchar_t));
+    String binaryTest2((wchar_t*)bytesTest2.get(), bytesTest2.size() / sizeof(wchar_t));
     
     BOOST_CHECK_NE(binaryTest, binaryTest2);
 

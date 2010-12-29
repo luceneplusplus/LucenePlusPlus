@@ -226,24 +226,24 @@ BOOST_AUTO_TEST_CASE(testHugeFile)
     ByteArray b1(ByteArray::newInstance(RAMOutputStream::BUFFER_SIZE));
     ByteArray b2(ByteArray::newInstance(RAMOutputStream::BUFFER_SIZE / 3));
     
-    for (int32_t i = 0; i < b1.length(); ++i)
+    for (int32_t i = 0; i < b1.size(); ++i)
         b1[i] = (uint8_t)(i & 0x0007f);
-    for (int32_t i = 0; i < b2.length(); ++i)
+    for (int32_t i = 0; i < b2.size(); ++i)
         b2[i] = (uint8_t)(i & 0x0003f);
     int64_t n = 0;
     BOOST_CHECK_EQUAL(n, out->length()); // output length must match
-    while (n <= DenseRAMFile::MAX_VALUE - b1.length())
+    while (n <= DenseRAMFile::MAX_VALUE - b1.size())
     {
-        out->writeBytes(b1.get(), 0, b1.length());
+        out->writeBytes(b1.get(), 0, b1.size());
         out->flush();
-        n += b1.length();
+        n += b1.size();
         BOOST_CHECK_EQUAL(n, out->length()); // output length must match
     }
-    int32_t m = b2.length();
+    int32_t m = b2.size();
     int64_t l = 12;
     for (int32_t j = 0; j < l; ++j)
     {
-        for (int32_t i = 0; i < b2.length(); ++i)
+        for (int32_t i = 0; i < b2.size(); ++i)
             b2[i]++;
         
         out->writeBytes(b2.get(), 0, m);

@@ -12,7 +12,7 @@ namespace Lucene
     MockIndexInput::MockIndexInput(ByteArray bytes)
     {
         buffer = bytes;
-        _length = bytes.length();
+        _length = bytes.size();
         pointer = 0;
     }
     
@@ -26,8 +26,8 @@ namespace Lucene
         int32_t start = pointer;
         while (remainder != 0)
         {
-            int32_t bufferOffset = start % buffer.length();
-            int32_t bytesInBuffer = buffer.length() - bufferOffset;
+            int32_t bufferOffset = start % buffer.size();
+            int32_t bytesInBuffer = buffer.size() - bufferOffset;
             int32_t bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
             MiscUtils::arrayCopy(buffer.get(), bufferOffset, b, offset, bytesToCopy);
             offset += bytesToCopy;

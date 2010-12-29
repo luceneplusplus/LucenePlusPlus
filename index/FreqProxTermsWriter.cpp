@@ -227,7 +227,7 @@ namespace Lucene
                             
                             if (!payloadBuffer)
                                 payloadBuffer = ByteArray::newInstance(payloadLength);
-                            if (payloadBuffer.length() < payloadLength)
+                            if (payloadBuffer.size() < payloadLength)
                                 payloadBuffer.resize(payloadLength);
                             
                             prox->readBytes(payloadBuffer.get(), 0, payloadLength);

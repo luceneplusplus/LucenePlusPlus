@@ -14,8 +14,8 @@ namespace Lucene
     OpenBitSet::OpenBitSet(int64_t numBits)
     {
         bits = LongArray::newInstance(bits2words(numBits));
-        MiscUtils::arrayFill(bits.get(), 0, bits.length(), 0LL);
-        wlen = bits.length();
+        MiscUtils::arrayFill(bits.get(), 0, bits.size(), 0LL);
+        wlen = bits.size();
     }
     
     OpenBitSet::OpenBitSet(LongArray bits, int32_t numWords)
@@ -40,7 +40,7 @@ namespace Lucene
     
     int64_t OpenBitSet::capacity()
     {
-        return bits.length() << 6;
+        return bits.size() << 6;
     }
     
     int64_t OpenBitSet::size()
@@ -78,7 +78,7 @@ namespace Lucene
         int32_t i = index >> 6; // div 64
         // signed shift will keep a negative index and force an array-index-out-of-bounds-exception, 
         // removing the need for an explicit check.
-        if (i >= bits.length())
+        if (i >= bits.size())
             return false;
         int32_t bit = (index & 0x3f); // mod 64
         int64_t bitmask = 1LL << bit;
@@ -98,7 +98,7 @@ namespace Lucene
     bool OpenBitSet::get(int64_t index)
     {
         int32_t i = (int32_t)(index >> 6); // div 64
-        if (i >= bits.length())
+        if (i >= bits.size())
             return false;
         int32_t bit = ((int32_t)index & 0x3f); // mod 64
         int64_t bitmask = 1LL << bit;
@@ -443,8 +443,8 @@ namespace Lucene
         LuceneObjectPtr clone = other ? other : newLucene<OpenBitSet>();
         OpenBitSetPtr cloneSet(boost::dynamic_pointer_cast<OpenBitSet>(LuceneObject::clone(clone)));
         cloneSet->wlen = wlen;
-        cloneSet->bits = LongArray::newInstance(bits.length());
-        MiscUtils::arrayCopy(bits.get(), 0, cloneSet->bits.get(), 0, bits.length());
+        cloneSet->bits = LongArray::newInstance(bits.size());
+        MiscUtils::arrayCopy(bits.get(), 0, cloneSet->bits.get(), 0, bits.size());
         return cloneSet;
     }
     
@@ -534,11 +534,11 @@ namespace Lucene
     
     void OpenBitSet::ensureCapacityWords(int32_t numWords)
     {
-        int32_t length = bits.length();
+        int32_t length = bits.size();
         if (length < numWords)
         {
             bits.resize(MiscUtils::getNextSize(numWords));
-            MiscUtils::arrayFill(bits.get(), length, bits.length(), 0LL);
+            MiscUtils::arrayFill(bits.get(), length, bits.size(), 0LL);
         }
     }
 
@@ -599,7 +599,7 @@ namespace Lucene
         // Start with a zero hash and use a mix that results in zero if the input is zero.
         // This effectively truncates trailing zeros without an explicit check.
         int64_t hash = 0;
-        for (int32_t i = bits.length(); --i >= 0;)
+        for (int32_t i = bits.size(); --i >= 0;)
         {
             hash ^= bits[i];
             hash = (hash << 1) | MiscUtils::unsignedShift(hash, (int64_t)63); // rotate left

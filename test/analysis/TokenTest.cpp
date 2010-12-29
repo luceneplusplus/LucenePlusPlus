@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(testResize)
     for (int32_t i = 0; i < 2000; ++i)
     {
         t->resizeTermBuffer(i);
-        BOOST_CHECK(i <= t->termBuffer().length());
+        BOOST_CHECK(i <= t->termBuffer().size());
         BOOST_CHECK_EQUAL(L"hello", t->term());
     }
 }
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(testGrow)
         buf << content;
     }
     BOOST_CHECK_EQUAL(1048576, t->termLength());
-    BOOST_CHECK_EQUAL(1179654, t->termBuffer().length());
+    BOOST_CHECK_EQUAL(1179654, t->termBuffer().size());
     
     // Test for slow growth to a long term
     t = newLucene<Token>();
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(testGrow)
         buf << L"a";
     }
     BOOST_CHECK_EQUAL(20000, t->termLength());
-    BOOST_CHECK_EQUAL(20167, t->termBuffer().length());
+    BOOST_CHECK_EQUAL(20167, t->termBuffer().size());
 }
 
 BOOST_AUTO_TEST_CASE(testToString)

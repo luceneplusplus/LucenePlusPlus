@@ -68,7 +68,7 @@ namespace Lucene
             if (bufferIndex >= dataLen)
             {
                 offset += dataLen;
-                dataLen = input->read(ioBuffer.get(), 0, ioBuffer.length());
+                dataLen = input->read(ioBuffer.get(), 0, ioBuffer.size());
                 if (dataLen == -1)
                 {
                     dataLen = 0; // so next offset += dataLen won't decrement offset
@@ -86,7 +86,7 @@ namespace Lucene
             {
                 if (length == 0)
                     start = offset + bufferIndex - 1;
-                else if (length == buffer.length())
+                else if (length == buffer.size())
                     buffer = termAtt->resizeTermBuffer(1 + length);
                 
                 buffer[length++] = normalize(c); // buffer it, normalized

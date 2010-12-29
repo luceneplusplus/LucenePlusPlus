@@ -74,7 +74,7 @@ namespace Lucene
     
     void TermInfosWriter::add(TermPtr term, TermInfoPtr ti)
     {
-        StringUtils::toUTF8(term->_text.c_str(), term->_text.length(), utf8Result);
+        StringUtils::toUTF8(term->_text.c_str(), term->_text.size(), utf8Result);
         add(fieldInfos->fieldNumber(term->_field), utf8Result->result, utf8Result->length, ti);
     }
     
@@ -160,7 +160,7 @@ namespace Lucene
         output->writeVInt(length); // write delta length
         output->writeBytes(termBytes.get(), start, length); // write delta bytes
         output->writeVInt(fieldNumber); // write field num
-        if (lastTermBytes.length() < termBytesLength)
+        if (lastTermBytes.size() < termBytesLength)
             lastTermBytes.resize((int32_t)((double)termBytesLength * 1.5));
         MiscUtils::arrayCopy(termBytes.get(), start, lastTermBytes.get(), start, length);
         lastTermBytesLength = termBytesLength;

@@ -213,7 +213,7 @@ namespace Lucene
     
     int64_t SkipBuffer::length()
     {
-        return data.length();
+        return data.size();
     }
     
     uint8_t SkipBuffer::readByte()

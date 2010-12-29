@@ -661,7 +661,7 @@ namespace Lucene
                         {
                             if (!payloadBuffer)
                                 payloadBuffer = ByteArray::newInstance(payloadLength);
-                            if (payloadBuffer.length() < payloadLength)
+                            if (payloadBuffer.size() < payloadLength)
                                 payloadBuffer.resize(payloadLength);
                             postings->getPayload(payloadBuffer, 0);
                         }
@@ -700,9 +700,9 @@ namespace Lucene
                         
                         if (!normBuffer)
                             normBuffer = ByteArray::newInstance(maxDoc);
-                        if (normBuffer.length() < maxDoc) // the buffer is too small for the current segment
+                        if (normBuffer.size() < maxDoc) // the buffer is too small for the current segment
                             normBuffer.resize(maxDoc);
-                        MiscUtils::arrayFill(normBuffer.get(), 0, normBuffer.length(), 0);
+                        MiscUtils::arrayFill(normBuffer.get(), 0, normBuffer.size(), 0);
                         (*reader)->norms(fi->name, normBuffer, 0);
                         if (!(*reader)->hasDeletions())
                         {

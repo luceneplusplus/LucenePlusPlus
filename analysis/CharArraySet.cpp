@@ -58,7 +58,7 @@ namespace Lucene
     
     bool CharArraySet::add(CharArray text)
     {
-        return add(String(text.get(), text.length()));
+        return add(String(text.get(), text.size()));
     }
     
     int32_t CharArraySet::size()

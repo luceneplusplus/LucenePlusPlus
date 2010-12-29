@@ -38,7 +38,7 @@ namespace Lucene
                 return FILE_EOF;
             if (!fileBuffer)
                 fileBuffer = ByteArray::newInstance(length);
-            if (length > fileBuffer.length())
+            if (length > fileBuffer.size())
                 fileBuffer.resize(length);
             file->read((char*)fileBuffer.get(), length);
             int32_t readLength = file->gcount();

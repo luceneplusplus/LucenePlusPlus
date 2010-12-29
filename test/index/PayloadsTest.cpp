@@ -93,7 +93,7 @@ public:
         bool hasNext = input->incrementToken();
         if (hasNext)
         {
-            if (offset + length <= data.length())
+            if (offset + length <= data.size())
             {
                 PayloadPtr p = newLucene<Payload>();
                 payloadAtt->setPayload(p);
@@ -153,7 +153,7 @@ public:
 
 static void generateRandomData(ByteArray data)
 {
-    std::generate(data.get(), data.get() + data.length(), rand);
+    std::generate(data.get(), data.get() + data.size(), rand);
 }
 
 static ByteArray generateRandomData(int32_t n)
@@ -187,16 +187,16 @@ BOOST_AUTO_TEST_CASE(testPayload)
     uint8_t input[15] = { 'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 't', 'e', 's', 't', '!' };
     std::memcpy(testData.get(), input, 15);
     PayloadPtr payload = newLucene<Payload>(testData);
-    BOOST_CHECK_EQUAL(testData.length(), payload->length());
+    BOOST_CHECK_EQUAL(testData.size(), payload->length());
     
     // test copyTo()
-    ByteArray target(ByteArray::newInstance(testData.length() - 1));
+    ByteArray target(ByteArray::newInstance(testData.size() - 1));
     BOOST_CHECK_EXCEPTION(payload->copyTo(target, 0), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
     
-    target.resize(testData.length() + 3);
+    target.resize(testData.size() + 3);
     payload->copyTo(target, 3);
     
-    for (int32_t i = 0; i < testData.length(); ++i)
+    for (int32_t i = 0; i < testData.size(); ++i)
         BOOST_CHECK_EQUAL(testData[i], target[i + 3]);
     
     // test toByteArray()
@@ -204,10 +204,10 @@ BOOST_AUTO_TEST_CASE(testPayload)
     BOOST_CHECK(testData.equals(target));
     
     // test byteAt()
-    for (int32_t i = 0; i < testData.length(); ++i)
+    for (int32_t i = 0; i < testData.size(); ++i)
         BOOST_CHECK_EQUAL(payload->byteAt(i), testData[i]);
     
-    BOOST_CHECK_EXCEPTION(payload->byteAt(testData.length() + 1), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
+    BOOST_CHECK_EXCEPTION(payload->byteAt(testData.size() + 1), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
     
     PayloadPtr clone = boost::dynamic_pointer_cast<Payload>(payload->clone());
     BOOST_CHECK_EQUAL(payload->length(), clone->length());

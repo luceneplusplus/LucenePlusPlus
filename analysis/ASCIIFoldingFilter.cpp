@@ -49,7 +49,7 @@ namespace Lucene
     {
         // Worst-case length required
         int32_t maxSizeNeeded = 4 * length;
-        if (output.length() < maxSizeNeeded)
+        if (output.size() < maxSizeNeeded)
             output.resize(MiscUtils::getNextSize(maxSizeNeeded));
         
         outputPos = 0;

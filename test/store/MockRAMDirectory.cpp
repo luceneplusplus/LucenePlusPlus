@@ -88,7 +88,7 @@ namespace Lucene
                 // Zero out file entirely
                 int32_t numBuffers = file->numBuffers();
                 for (int32_t i = 0; i < numBuffers; ++i)
-                    MiscUtils::arrayFill(file->getBuffer(i).get(), 0, file->getBuffer(i).length(), 0);
+                    MiscUtils::arrayFill(file->getBuffer(i).get(), 0, file->getBuffer(i).size(), 0);
             }
             else if (count % 3 == 2)
             {

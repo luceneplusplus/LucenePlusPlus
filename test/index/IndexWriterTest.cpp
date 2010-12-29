@@ -4040,7 +4040,7 @@ BOOST_AUTO_TEST_CASE(testBinaryFieldOffsetLength)
     FieldPtr f = newLucene<Field>(L"binary", b, 10, 17, Field::STORE_YES);
     ByteArray bx = f->getBinaryValue();
     BOOST_CHECK(bx);
-    BOOST_CHECK_EQUAL(50, bx.length());
+    BOOST_CHECK_EQUAL(50, bx.size());
     BOOST_CHECK_EQUAL(10, f->getBinaryOffset());
     BOOST_CHECK_EQUAL(17, f->getBinaryLength());
     doc->add(f);
@@ -4052,7 +4052,7 @@ BOOST_AUTO_TEST_CASE(testBinaryFieldOffsetLength)
     f = doc->getField(L"binary");
     b = f->getBinaryValue();
     BOOST_CHECK(b);
-    BOOST_CHECK_EQUAL(17, b.length());
+    BOOST_CHECK_EQUAL(17, b.size());
     BOOST_CHECK_EQUAL(87, b[0]);
     reader->close();
     dir->close();
@@ -4508,7 +4508,7 @@ BOOST_AUTO_TEST_CASE(testIndexStoreCombos)
     f = doc->getField(L"binary");
     b = f->getBinaryValue();
     BOOST_CHECK(b);
-    BOOST_CHECK_EQUAL(17, b.length());
+    BOOST_CHECK_EQUAL(17, b.size());
     BOOST_CHECK_EQUAL(87, b[0]);
 
     BOOST_CHECK(reader->document(0)->getFieldable(L"binary")->isBinary());

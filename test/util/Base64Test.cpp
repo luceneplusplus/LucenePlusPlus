@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(testDecodeSmall)
 {
     String testString = L"dGhpcyBpcyB0ZXN0IGJpbmFyeQ==";
     ByteArray decode = Base64::decode(testString);
-    SingleString decodeBinary((char*)decode.get(), decode.length());
+    SingleString decodeBinary((char*)decode.get(), decode.size());
     BOOST_CHECK_EQUAL(decodeBinary, "this is test binary");
 }
 
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(testDecodeLaarge)
                         L"ZXJ0IGludG8gYmFzZTY0IFRoaXMgaXMgYSBsYXJnZXIgdGVzdCBzdHJpbmcgdGhhdCBzaG91bGQg"
                         L"Y29udmVydCBpbnRvIGJhc2U2NA==";
     ByteArray decode = Base64::decode(testString);
-    SingleString decodeBinary((char*)decode.get(), decode.length());
+    SingleString decodeBinary((char*)decode.get(), decode.size());
     
     SingleString expected = "This is a larger test string that should convert into base64 "
                             "This is a larger test string that should convert into base64 "

@@ -381,8 +381,8 @@ BOOST_AUTO_TEST_CASE(testBinaryFields)
     FieldPtr b1 = fields[0];
     BOOST_CHECK(b1->isBinary());
     ByteArray data1 = b1->getBinaryValue();
-    BOOST_CHECK_EQUAL(bin.length(), b1->getBinaryLength());
-    BOOST_CHECK(std::memcmp(bin.get(), data1.get() + b1->getBinaryOffset(), bin.length()) == 0);
+    BOOST_CHECK_EQUAL(bin.size(), b1->getBinaryLength());
+    BOOST_CHECK(std::memcmp(bin.get(), data1.get() + b1->getBinaryOffset(), bin.size()) == 0);
     HashSet<String> lazyFields = HashSet<String>::newInstance();
     lazyFields.add(L"bin1");
     FieldSelectorPtr sel = newLucene<SetBasedFieldSelector>(HashSet<String>::newInstance(), lazyFields);
@@ -392,10 +392,10 @@ BOOST_AUTO_TEST_CASE(testBinaryFields)
     BOOST_CHECK_EQUAL(1, fieldables.size());
     FieldablePtr fb1 = fieldables[0];
     BOOST_CHECK(fb1->isBinary());
-    BOOST_CHECK_EQUAL(bin.length(), fb1->getBinaryLength());
+    BOOST_CHECK_EQUAL(bin.size(), fb1->getBinaryLength());
     data1 = fb1->getBinaryValue();
-    BOOST_CHECK_EQUAL(bin.length(), fb1->getBinaryLength());
-    BOOST_CHECK(std::memcmp(bin.get(), data1.get() + fb1->getBinaryOffset(), bin.length()) == 0);
+    BOOST_CHECK_EQUAL(bin.size(), fb1->getBinaryLength());
+    BOOST_CHECK(std::memcmp(bin.get(), data1.get() + fb1->getBinaryOffset(), bin.size()) == 0);
     reader->close();
     
     // force optimize
@@ -410,8 +410,8 @@ BOOST_AUTO_TEST_CASE(testBinaryFields)
     b1 = fields[0];
     BOOST_CHECK(b1->isBinary());
     data1 = b1->getBinaryValue();
-    BOOST_CHECK_EQUAL(bin.length(), b1->getBinaryLength());
-    BOOST_CHECK(std::memcmp(bin.get(), data1.get() + b1->getBinaryOffset(), bin.length()) == 0);
+    BOOST_CHECK_EQUAL(bin.size(), b1->getBinaryLength());
+    BOOST_CHECK(std::memcmp(bin.get(), data1.get() + b1->getBinaryOffset(), bin.size()) == 0);
     reader->close();
 }
 

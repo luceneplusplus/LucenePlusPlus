@@ -38,8 +38,8 @@ namespace Lucene
         {
             if (!buffer)
                 buffer = CharArray::newInstance(2048);
-            else if (bufferLength == buffer.length()) // grow buffer
-                buffer.resize(buffer.length() * 2);
+            else if (bufferLength == buffer.size()) // grow buffer
+                buffer.resize(buffer.size() * 2);
         }
         else // shift token to front
             MiscUtils::arrayCopy(buffer.get(), tokenStart, buffer.get(), 0, newPosition);
@@ -49,7 +49,7 @@ namespace Lucene
         bufferStart += tokenStart;
         tokenStart = 0;
         
-        int32_t charsRead = input->read(buffer.get(), newPosition, buffer.length() - newPosition); // fill space in buffer
+        int32_t charsRead = input->read(buffer.get(), newPosition, buffer.size() - newPosition); // fill space in buffer
         if (charsRead == -1)
             boost::throw_exception(IOException(L"read past eof"));
         else

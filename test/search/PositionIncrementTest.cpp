@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(testPayloadsPos0)
     count = pls.size();
     for (Collection<ByteArray>::iterator it = pls.begin(); it != pls.end(); ++it)
     {
-        String s = String((wchar_t*)it->get(), it->length() / sizeof(wchar_t));
+        String s = String((wchar_t*)it->get(), it->size() / sizeof(wchar_t));
         if (s == L"pos: 0")
             sawZero = true;
     }

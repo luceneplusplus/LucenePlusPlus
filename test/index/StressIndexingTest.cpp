@@ -134,7 +134,7 @@ public:
     int32_t addUTF8Token(int32_t start)
     {
         int32_t end = start + nextInt(20);
-        if (buffer.length() < 1 + end)
+        if (buffer.size() < 1 + end)
             buffer.resize((int32_t)((double)(1 + end) * 1.25));
         
         for (int32_t i = start; i < end; ++i)
@@ -180,13 +180,13 @@ public:
             arr[i * 2] = (wchar_t)(L'A' + r->nextInt(10));
             arr[i * 2 + 1] = L' ';
         }
-        return String(arr.get(), arr.length());
+        return String(arr.get(), arr.size());
     }
     
     String getUTF8String(int32_t tokens)
     {
         int32_t upto = 0;
-        MiscUtils::arrayFill(buffer.get(), 0, buffer.length(), (wchar_t)0);
+        MiscUtils::arrayFill(buffer.get(), 0, buffer.size(), (wchar_t)0);
         for (int32_t i = 0; i < tokens; ++i)
             upto = addUTF8Token(upto);
         return String(buffer.get(), upto);

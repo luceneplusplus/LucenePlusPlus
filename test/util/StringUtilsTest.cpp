@@ -25,28 +25,28 @@ BOOST_AUTO_TEST_CASE(testToUtf8CharArray)
     CharArray testArray(CharArray::newInstance(testString.length()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     ByteArray expectedUft8(ByteArray::newInstance(30));
-    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.length(), expectedUft8), 22);
+    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.size(), expectedUft8), 22);
     BOOST_CHECK_EQUAL(SingleString((char*)expectedUft8.get(), 22), "this is a ascii string");
 }
 
 BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithOffset)
 {
     String testString(L"this is a ascii string");
-    CharArray testArray(CharArray::newInstance(testString.length()));
+    CharArray testArray(CharArray::newInstance(testString.size()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     ByteArray expectedUft8(ByteArray::newInstance(30));
     int32_t offset = 10; // "ascii string"
-    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get() + offset, testArray.length() - offset, expectedUft8), 12);
+    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get() + offset, testArray.size() - offset, expectedUft8), 12);
     BOOST_CHECK_EQUAL(SingleString((char*)expectedUft8.get(), 12), "ascii string");
 }
 
 BOOST_AUTO_TEST_CASE(testToUtf8Result)
 {
     String testString(L"this is a ascii string");
-    CharArray testArray(CharArray::newInstance(testString.length()));
+    CharArray testArray(CharArray::newInstance(testString.size()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     UTF8ResultPtr utf8Result(newLucene<UTF8Result>());
-    StringUtils::toUTF8(testArray.get(), testArray.length(), utf8Result);
+    StringUtils::toUTF8(testArray.get(), testArray.size(), utf8Result);
     BOOST_CHECK_EQUAL(utf8Result->length, 22);
     BOOST_CHECK_EQUAL(SingleString((char*)utf8Result->result.get(), 22), "this is a ascii string");
 }
@@ -56,9 +56,9 @@ BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithTerminator)
     String testString(L"this is a ascii string");
     CharArray testArray(CharArray::newInstance(50));
     std::copy(testString.begin(), testString.end(), testArray.get());
-    testArray[testString.length()] = UTF8Base::UNICODE_TERMINATOR; // terminator
+    testArray[testString.size()] = UTF8Base::UNICODE_TERMINATOR; // terminator
     ByteArray expectedUft8(ByteArray::newInstance(30));
-    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.length(), expectedUft8), 22);
+    BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.size(), expectedUft8), 22);
     BOOST_CHECK_EQUAL(SingleString((char*)expectedUft8.get(), 22), "this is a ascii string");
 }
 
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(testToUnicodeResult)
     ByteArray testArray(ByteArray::newInstance(testString.length()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     UnicodeResultPtr unicodeResult(newLucene<UnicodeResult>());
-    StringUtils::toUnicode(testArray.get(), testArray.length(), unicodeResult);
+    StringUtils::toUnicode(testArray.get(), testArray.size(), unicodeResult);
     BOOST_CHECK_EQUAL(unicodeResult->length, 24);
     BOOST_CHECK_EQUAL(String(unicodeResult->result.get(), 24), L"this is a unicode string");
 }

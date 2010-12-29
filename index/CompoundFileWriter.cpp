@@ -149,7 +149,7 @@ namespace Lucene
             is = directory->openInput(source.file);
             int64_t length = is->length();
             int64_t remainder = length;
-            int32_t chunk = buffer.length();
+            int32_t chunk = buffer.size();
             
             while (remainder > 0)
             {

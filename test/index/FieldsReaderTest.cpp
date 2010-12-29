@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(testLazyFields)
 
     ByteArray bytes = field->getBinaryValue();
     BOOST_CHECK(bytes);
-    BOOST_CHECK_EQUAL(DocHelper::LAZY_FIELD_BINARY_BYTES.length(), bytes.length());
+    BOOST_CHECK_EQUAL(DocHelper::LAZY_FIELD_BINARY_BYTES.size(), bytes.size());
     BOOST_CHECK(bytes);
     BOOST_CHECK(bytes.equals(DocHelper::LAZY_FIELD_BINARY_BYTES));
 }
@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_CASE(testLoadSize)
     BOOST_CHECK(fb->isBinary());
     checkSizeEquals(2 * String(DocHelper::FIELD_1_TEXT).length(), f1->getBinaryValue().get());
     BOOST_CHECK_EQUAL(DocHelper::FIELD_3_TEXT, f3->stringValue());
-    checkSizeEquals(DocHelper::LAZY_FIELD_BINARY_BYTES.length(), fb->getBinaryValue().get());
+    checkSizeEquals(DocHelper::LAZY_FIELD_BINARY_BYTES.size(), fb->getBinaryValue().get());
 
     reader->close();
 }

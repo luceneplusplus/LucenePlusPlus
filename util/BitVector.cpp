@@ -29,7 +29,7 @@ namespace Lucene
     {
         _size = n;
         bits = ByteArray::newInstance((_size >> 3) + 1);
-        MiscUtils::arrayFill(bits.get(), 0, bits.length(), 0);
+        MiscUtils::arrayFill(bits.get(), 0, bits.size(), 0);
         _count = 0;
     }
     
@@ -66,8 +66,8 @@ namespace Lucene
     
     LuceneObjectPtr BitVector::clone(LuceneObjectPtr other)
     {
-        ByteArray copyBits(ByteArray::newInstance(bits.length()));
-        MiscUtils::arrayCopy(bits.get(), 0, copyBits.get(), 0, bits.length());
+        ByteArray copyBits(ByteArray::newInstance(bits.size()));
+        MiscUtils::arrayCopy(bits.get(), 0, copyBits.get(), 0, bits.size());
         BitVectorPtr clone = newLucene<BitVector>(copyBits, _size);
         clone->_count = _count;
         return clone;
@@ -124,7 +124,7 @@ namespace Lucene
         if (_count == -1)
         {
             int32_t c = 0;
-            int32_t end = bits.length();
+            int32_t end = bits.size();
             for (int32_t i = 0; i < end; ++i)
                 c += BYTE_COUNTS[bits[i] & 0xff]; // sum bits per byte
             _count = c;
@@ -135,7 +135,7 @@ namespace Lucene
     int32_t BitVector::getRecomputedCount()
     {
         int32_t c = 0;
-        int32_t end = bits.length();
+        int32_t end = bits.size();
         for (int32_t i = 0; i < end; ++i)
             c += BYTE_COUNTS[bits[i] & 0xff]; // sum bits per byte
         return c;
@@ -165,7 +165,7 @@ namespace Lucene
     {
         output->writeInt(size()); // write size
         output->writeInt(count()); // write count
-        output->writeBytes(bits.get(), bits.length());
+        output->writeBytes(bits.get(), bits.size());
     }
     
     void BitVector::writeDgaps(IndexOutputPtr output)
@@ -175,7 +175,7 @@ namespace Lucene
         output->writeInt(count()); // write count
         int32_t last = 0;
         int32_t n = count();
-        int32_t m = bits.length();
+        int32_t m = bits.size();
         for (int32_t i = 0; i < m && n > 0; ++i)
         {
             if (bits[i] != 0)
@@ -198,13 +198,13 @@ namespace Lucene
         //       - second part for writing the byte-number d-gap as vint. 
         // note: factor is for read/write of byte-arrays being faster than vints.
         int32_t factor = 10;
-        if (bits.length() < (1 << 7))
+        if (bits.size() < (1 << 7))
             return factor * (4 + (8 + 8) * count()) < size();
-        if (bits.length() < (1 << 14))
+        if (bits.size() < (1 << 14))
             return factor * (4 + (8 + 16) * count()) < size();
-        if (bits.length() < (1 << 21))
+        if (bits.size() < (1 << 21))
             return factor * (4 + (8 + 24) * count()) < size();
-        if (bits.length() < (1 << 28))
+        if (bits.size() < (1 << 28))
             return factor * (4 + (8 + 32) * count()) < size();
         return factor * (4 + (8 + 40) * count()) < size();
     }
@@ -213,8 +213,8 @@ namespace Lucene
     {
         _count = input->readInt(); // read count
         bits = ByteArray::newInstance((_size >> 3) + 1); // allocate bits
-        MiscUtils::arrayFill(bits.get(), 0, bits.length(), 0);
-        input->readBytes(bits.get(), 0, bits.length());
+        MiscUtils::arrayFill(bits.get(), 0, bits.size(), 0);
+        input->readBytes(bits.get(), 0, bits.size());
     }
     
     void BitVector::readDgaps(IndexInputPtr input)
@@ -222,7 +222,7 @@ namespace Lucene
         _size = input->readInt(); // (re)read size
         _count = input->readInt(); // read count
         bits = ByteArray::newInstance((_size >> 3) + 1); // allocate bits
-        MiscUtils::arrayFill(bits.get(), 0, bits.length(), 0);
+        MiscUtils::arrayFill(bits.get(), 0, bits.size(), 0);
         int32_t last = 0;
         int32_t n = count();
         while (n > 0)
@@ -242,14 +242,14 @@ namespace Lucene
             return newLucene<BitVector>(0);
         ByteArray bits(ByteArray::newInstance(MiscUtils::unsignedShift(end - start - 1, 3) + 1));
         int32_t s = MiscUtils::unsignedShift(start, 3);
-        for (int32_t i = 0; i < bits.length(); ++i)
+        for (int32_t i = 0; i < bits.size(); ++i)
         {
             int32_t cur = 0xff & this->bits[i + s];
-            int32_t next = i + s + 1 >= this->bits.length() ? 0 : 0xff & this->bits[i + s + 1];
+            int32_t next = i + s + 1 >= this->bits.size() ? 0 : 0xff & this->bits[i + s + 1];
             bits[i] = (uint8_t)(MiscUtils::unsignedShift(cur, (start & 7)) | ((next << (8 - (start & 7)))));
         }
-        int32_t bitsToClear = (bits.length() * 8 - (end - start)) % 8;
-        bits[bits.length() - 1] &= ~(0xff << (8 - bitsToClear));
+        int32_t bitsToClear = (bits.size() * 8 - (end - start)) % 8;
+        bits[bits.size() - 1] &= ~(0xff << (8 - bitsToClear));
         return newLucene<BitVector>(bits, end - start);
     }
 }

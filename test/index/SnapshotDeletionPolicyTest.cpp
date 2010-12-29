@@ -166,7 +166,7 @@ public:
             int64_t bytesLeft = size;
             while (bytesLeft > 0)
             {
-                int32_t numToRead = bytesLeft < buffer.length() ? (int32_t)bytesLeft : buffer.length();
+                int32_t numToRead = bytesLeft < buffer.size() ? (int32_t)bytesLeft : buffer.size();
                 input->readBytes(buffer.get(), 0, numToRead, false);
                 bytesLeft -= numToRead;
             }

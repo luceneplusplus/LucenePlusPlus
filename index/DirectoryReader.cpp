@@ -622,7 +622,7 @@ namespace Lucene
         ensureOpen();
         ByteArray bytes(normsCache.get(field));
         if (!bytes && !hasNorms(field))
-            MiscUtils::arrayFill(norms.get(), offset, norms.length(), DefaultSimilarity::encodeNorm(1.0));
+            MiscUtils::arrayFill(norms.get(), offset, norms.size(), DefaultSimilarity::encodeNorm(1.0));
         else if (bytes) // cache hit
             MiscUtils::arrayCopy(bytes.get(), 0, norms.get(), offset, maxDoc());
         else

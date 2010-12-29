@@ -80,7 +80,7 @@ namespace Lucene
         
             if (bufferIndex >= dataLen)
             {
-                dataLen = input->read(ioBuffer.get(), 0, ioBuffer.length());
+                dataLen = input->read(ioBuffer.get(), 0, ioBuffer.size());
                 bufferIndex = 0;
             }
             

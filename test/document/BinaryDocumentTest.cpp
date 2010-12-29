@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(testBinaryFieldInIndex)
 
     // fetch the binary stored field and compare it's content with the original one
     ByteArray storedTest = docFromReader->getBinaryValue(L"binaryStored");
-    String binaryFldStoredTest((wchar_t*)storedTest.get(), storedTest.length() / sizeof(wchar_t));
+    String binaryFldStoredTest((wchar_t*)storedTest.get(), storedTest.size() / sizeof(wchar_t));
     BOOST_CHECK_EQUAL(binaryFldStoredTest, binaryValStored);
 
     // fetch the string field and compare it's content with the original one
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(testCompressionTools)
 
     // fetch the binary compressed field and compare it's content with the original one
     ByteArray compressTest = CompressionTools::decompress(docFromReader->getBinaryValue(L"binaryCompressed"));
-    String binaryFldCompressedTest((wchar_t*)compressTest.get(), compressTest.length() / sizeof(wchar_t));
+    String binaryFldCompressedTest((wchar_t*)compressTest.get(), compressTest.size() / sizeof(wchar_t));
     BOOST_CHECK_EQUAL(binaryFldCompressedTest, binaryValCompressed);
     
     BOOST_CHECK_EQUAL(CompressionTools::decompressString(docFromReader->getBinaryValue(L"stringCompressed")), binaryValCompressed);

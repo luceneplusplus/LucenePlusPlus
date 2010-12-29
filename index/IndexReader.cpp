@@ -387,7 +387,7 @@ namespace Lucene
                     // read and write with a small buffer, which is more effective than reading byte by byte
                     ByteArray buffer(ByteArray::newInstance(1024));
                     
-                    int32_t chunk = buffer.length();
+                    int32_t chunk = buffer.size();
                     while (len > 0)
                     {
                         int32_t bufLen = std::min(chunk, (int32_t)len);

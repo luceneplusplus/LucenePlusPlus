@@ -68,7 +68,7 @@ namespace Lucene
         {
             if (!result)
                 result = Array<TYPE>::newInstance((int32_t)(1.5 * (double)length));
-            if (result.length() < length)
+            if (result.size() < length)
                 result.resize((int32_t)(1.5 * (double)length));
             this->length = length;
         }

@@ -45,7 +45,7 @@ public:
         if (size == 0)
         {
             b = ByteArray::newInstance(DocumentsWriter::BYTE_BLOCK_SIZE);
-            MiscUtils::arrayFill(b.get(), 0, b.length(), 0);
+            MiscUtils::arrayFill(b.get(), 0, b.size(), 0);
         }
         else
             b = freeByteBlocks.removeLast();

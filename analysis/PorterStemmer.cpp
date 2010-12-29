@@ -24,7 +24,7 @@ namespace Lucene
     
     bool PorterStemmer::stem(CharArray word)
     {
-        return stem(word.get(), word.length() - 1);
+        return stem(word.get(), word.size() - 1);
     }
     
     bool PorterStemmer::stem(wchar_t* b, int32_t k)

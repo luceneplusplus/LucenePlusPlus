@@ -69,12 +69,12 @@ public:
         BOOST_CHECK_EQUAL(expected->getFilePointer(), test->getFilePointer());
         
         ByteArray expectedBuffer(ByteArray::newInstance(512));
-        ByteArray testBuffer(ByteArray::newInstance(expectedBuffer.length()));
+        ByteArray testBuffer(ByteArray::newInstance(expectedBuffer.size()));
 
         int64_t remainder = expected->length() - expected->getFilePointer();
         while (remainder > 0)
         {
-            int32_t readLen = std::min((int32_t)remainder, expectedBuffer.length());
+            int32_t readLen = std::min((int32_t)remainder, expectedBuffer.size());
             expected->readBytes(expectedBuffer.get(), 0, readLen);
             test->readBytes(testBuffer.get(), 0, readLen);
             checkEqualArrays(expectedBuffer, testBuffer, 0, readLen);
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(testSingleFile)
     data[1] = 1;
     data[2] = 10;
     data[3] = 100;
-    for (int32_t i = 0; i < data.length(); ++i)
+    for (int32_t i = 0; i < data.size(); ++i)
     {
         String name = L"t" + StringUtils::toString(data[i]);
         createSequenceFile(dir, name, 0, data[i]);
@@ -546,13 +546,13 @@ BOOST_AUTO_TEST_CASE(testLargeWrites)
     RandomPtr r = newLucene<Random>();
     
     ByteArray largeBuf(ByteArray::newInstance(2048));
-    for (int32_t i = 0; i < largeBuf.length(); ++i)
+    for (int32_t i = 0; i < largeBuf.size(); ++i)
         largeBuf[i] = (uint8_t)r->nextInt(256);
     
     int64_t currentPos = os->getFilePointer();
-    os->writeBytes(largeBuf.get(), largeBuf.length());
+    os->writeBytes(largeBuf.get(), largeBuf.size());
     
-    BOOST_CHECK_EQUAL(currentPos + largeBuf.length(), os->getFilePointer());
+    BOOST_CHECK_EQUAL(currentPos + largeBuf.size(), os->getFilePointer());
     
     os->close();
 }

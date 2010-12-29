@@ -41,7 +41,7 @@ namespace Lucene
     
     Field::Field(const String& name, ByteArray value, Store store)
     {
-        ConstructField(name, value, 0, value.length(), store);
+        ConstructField(name, value, 0, value.size(), store);
     }
     
     Field::Field(const String& name, ByteArray value, int32_t offset, int32_t length, Store store)
@@ -156,7 +156,7 @@ namespace Lucene
         if (!_isBinary)
             boost::throw_exception(IllegalArgumentException(L"cannot set a byte[] value on a non-binary field"));
         fieldsData = value;
-        binaryLength = value.length();
+        binaryLength = value.size();
         binaryOffset = 0;
     }
     

@@ -153,7 +153,7 @@ public:
                 BOOST_CHECK_EQUAL(payload.size(), expectedNumPayloads);
                 for (Collection<ByteArray>::iterator thePayload = payload.begin(); thePayload != payload.end(); ++thePayload)
                 {
-                    BOOST_CHECK_EQUAL(thePayload->length(), expectedPayloadLength);
+                    BOOST_CHECK_EQUAL(thePayload->size(), expectedPayloadLength);
                     BOOST_CHECK_EQUAL((*thePayload)[0], expectedFirstByte);
                 }
             }
@@ -405,7 +405,7 @@ BOOST_AUTO_TEST_CASE(testShrinkToAfterShortestMatch)
         {
             Collection<ByteArray> payloads = spans->getPayload();
             for (Collection<ByteArray>::iterator it = payloads.begin(); it != payloads.end(); ++it)
-                payloadSet.add(String((wchar_t*)it->get(), it->length() / sizeof(wchar_t)));
+                payloadSet.add(String((wchar_t*)it->get(), it->size() / sizeof(wchar_t)));
         }
     }
     BOOST_CHECK_EQUAL(2, payloadSet.size());
@@ -438,7 +438,7 @@ BOOST_AUTO_TEST_CASE(testShrinkToAfterShortestMatch2)
         {
             Collection<ByteArray> payloads = spans->getPayload();
             for (Collection<ByteArray>::iterator it = payloads.begin(); it != payloads.end(); ++it)
-                payloadSet.add(String((wchar_t*)it->get(), it->length() / sizeof(wchar_t)));
+                payloadSet.add(String((wchar_t*)it->get(), it->size() / sizeof(wchar_t)));
         }
     }
     BOOST_CHECK_EQUAL(2, payloadSet.size());
@@ -471,7 +471,7 @@ BOOST_AUTO_TEST_CASE(testShrinkToAfterShortestMatch3)
         {
             Collection<ByteArray> payloads = spans->getPayload();
             for (Collection<ByteArray>::iterator it = payloads.begin(); it != payloads.end(); ++it)
-                payloadSet.add(String((wchar_t*)it->get(), it->length() / sizeof(wchar_t)));
+                payloadSet.add(String((wchar_t*)it->get(), it->size() / sizeof(wchar_t)));
         }
     }
     BOOST_CHECK_EQUAL(2, payloadSet.size());
@@ -497,7 +497,7 @@ BOOST_AUTO_TEST_CASE(testPayloadSpanUtil)
 
     Collection<ByteArray> payloads = psu->getPayloadsForQuery(newLucene<TermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"rr")));
     BOOST_CHECK_EQUAL(1, payloads.size());
-    BOOST_CHECK_EQUAL(String((wchar_t*)(payloads[0].get()), payloads[0].length() / sizeof(wchar_t)), L"rr:Noise:1");
+    BOOST_CHECK_EQUAL(String((wchar_t*)(payloads[0].get()), payloads[0].size() / sizeof(wchar_t)), L"rr:Noise:1");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

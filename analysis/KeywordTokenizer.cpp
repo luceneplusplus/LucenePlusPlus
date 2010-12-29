@@ -57,12 +57,12 @@ namespace Lucene
             CharArray buffer(termAtt->termBuffer());
             while (true)
             {
-                int32_t length = input->read(buffer.get(), upto, buffer.length() - upto);
+                int32_t length = input->read(buffer.get(), upto, buffer.size() - upto);
                 if (length == -1)
                     break;
                 upto += length;
-                if (upto == buffer.length())
-                    buffer = termAtt->resizeTermBuffer(buffer.length() + 1);
+                if (upto == buffer.size())
+                    buffer = termAtt->resizeTermBuffer(buffer.size() + 1);
             }
             termAtt->setTermLength(upto);
             finalOffset = correctOffset(upto);

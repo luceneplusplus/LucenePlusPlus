@@ -413,7 +413,7 @@ namespace Lucene
     void MemoryIndexReader::norms(const String& field, ByteArray norms, int32_t offset)
     {
         ByteArray _norms(this->norms(field));
-        MiscUtils::arrayCopy(_norms.get(), 0, norms.get(), offset, _norms.length());
+        MiscUtils::arrayCopy(_norms.get(), 0, norms.get(), offset, _norms.size());
     }
     
     void MemoryIndexReader::doSetNorm(int32_t doc, const String& field, uint8_t value)

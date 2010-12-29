@@ -164,7 +164,7 @@ namespace Lucene
         // read payloads lazily
         ByteArray retArray;
         int32_t retOffset = 0;
-        if (!data || data.length() - offset < payloadLength)
+        if (!data || data.size() - offset < payloadLength)
         {
             // the array is too small to store the payload data, so we allocate a new one
             retArray = ByteArray::newInstance(payloadLength);

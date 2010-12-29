@@ -41,7 +41,7 @@ static void copyFile(DirectoryPtr dir, const String& src, const String& dest)
     int64_t remainder = in->length();
     while (remainder > 0)
     {
-        int32_t len = std::min(b.length(), (int32_t)remainder);
+        int32_t len = std::min(b.size(), (int32_t)remainder);
         in->readBytes(b.get(), 0, len);
         out->writeBytes(b.get(), len);
         remainder -= len;

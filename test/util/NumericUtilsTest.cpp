@@ -53,7 +53,8 @@ public:
         {
             for (int64_t l = min; l <= max; ++l)
             {
-                BOOST_CHECK(!bits->getAndSet((int32_t)(l - lower)));
+                if (bits->getAndSet((int32_t)(l - lower)))
+                    BOOST_FAIL("getAndSet failure");
                 // extra exit condition to prevent overflow on MAX_VALUE
                 if (l == max)
                     break;
@@ -125,7 +126,8 @@ public:
         {
             for (int32_t l = min; l <= max; ++l)
             {
-                BOOST_CHECK(!bits->getAndSet((int32_t)(l - lower)));
+                if (bits->getAndSet((int32_t)(l - lower)))
+                    BOOST_FAIL("getAndSet failure");
                 // extra exit condition to prevent overflow on MAX_VALUE
                 if (l == max)
                     break;
@@ -168,7 +170,8 @@ BOOST_AUTO_TEST_CASE(testLongConversionAndOrdering)
         if (!last.empty())
         {
             // test if smaller
-            BOOST_CHECK(last.compare(act) < 0);
+            if (last.compare(act) >= 0)
+                BOOST_FAIL("compare failure");
         }
         // test is back and forward conversion works
         BOOST_CHECK_EQUAL(l, NumericUtils::prefixCodedToLong(act));
@@ -187,7 +190,8 @@ BOOST_AUTO_TEST_CASE(testIntConversionAndOrdering)
         if (!last.empty())
         {
             // test if smaller
-            BOOST_CHECK(last.compare(act) < 0);
+            if (last.compare(act) >= 0)
+                BOOST_FAIL("compare failure");
         }
         // test is back and forward conversion works
         BOOST_CHECK_EQUAL(l, NumericUtils::prefixCodedToInt(act));

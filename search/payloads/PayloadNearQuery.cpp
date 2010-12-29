@@ -151,7 +151,7 @@ namespace Lucene
         {
             payloadScore = nearQuery->function->currentScore(doc, nearQuery->fieldName, start, end, payloadsSeen, payloadScore,
                                                              similarity->scorePayload(doc, nearQuery->fieldName, spans->start(), 
-                                                             spans->end(), *payload, 0, payload->length()));
+                                                             spans->end(), *payload, 0, payload->size()));
             ++payloadsSeen;
         }
     }

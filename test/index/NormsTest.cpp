@@ -104,9 +104,9 @@ public:
         {
             String field = L"f" + StringUtils::toString(i);
             ByteArray b = ir->norms(field);
-            BOOST_CHECK_EQUAL(numDocNorms, b.length());
+            BOOST_CHECK_EQUAL(numDocNorms, b.size());
             Collection<double> storedNorms = (i == 1 ? modifiedNorms : norms);
-            for (int32_t j = 0; j < b.length(); ++j)
+            for (int32_t j = 0; j < b.size(); ++j)
             {
                 double norm = Similarity::decodeNorm(b[j]);
                 double norm1 = storedNorms[j];

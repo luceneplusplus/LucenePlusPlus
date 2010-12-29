@@ -127,7 +127,7 @@ namespace Lucene
         if (_isBinary)
             return binaryLength;
         ByteArray binary(VariantUtils::get<ByteArray>(fieldsData));
-        return binary ? binary.length() : 0;
+        return binary ? binary.size() : 0;
     }
     
     int32_t AbstractField::getBinaryOffset()
@@ -214,7 +214,7 @@ namespace Lucene
         else if (VariantUtils::typeOf<ReaderPtr>(fieldsData))
             result << L"Reader";
         else if (VariantUtils::typeOf<ByteArray>(fieldsData))
-            result << L"Binary [size=" << StringUtils::toString(VariantUtils::get<ByteArray>(fieldsData).length()) << L"]";
+            result << L"Binary [size=" << StringUtils::toString(VariantUtils::get<ByteArray>(fieldsData).size()) << L"]";
         
         result << L">";
         return result.str();

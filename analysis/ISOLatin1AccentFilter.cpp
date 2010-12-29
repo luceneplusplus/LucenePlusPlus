@@ -50,11 +50,11 @@ namespace Lucene
         // Worst-case length required
         int32_t maxSizeNeeded = 2 * length;
         
-        int32_t size = output.length();
+        int32_t size = output.size();
         while (size < maxSizeNeeded)
             size *= 2;
         
-        if (size != output.length())
+        if (size != output.size())
             output.resize(size);
         
         outputPos = 0;

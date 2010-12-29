@@ -19,12 +19,12 @@ namespace Lucene
     {
         this->data = data;
         this->offset = 0;
-        this->_length = data.length();
+        this->_length = data.size();
     }
     
     Payload::Payload(ByteArray data, int32_t offset, int32_t length)
     {
-        if (offset < 0 || offset + length > data.length())
+        if (offset < 0 || offset + length > data.size())
             boost::throw_exception(IllegalArgumentException());
         this->data = data;
         this->offset = offset;
@@ -37,7 +37,7 @@ namespace Lucene
     
     void Payload::setData(ByteArray data)
     {
-        setData(data, 0, data.length());
+        setData(data, 0, data.size());
     }
     
     void Payload::setData(ByteArray data, int32_t offset, int32_t length)
@@ -79,7 +79,7 @@ namespace Lucene
     
     void Payload::copyTo(ByteArray target, int32_t targetOffset)
     {
-        if (this->_length > target.length() + targetOffset)
+        if (this->_length > target.size() + targetOffset)
             boost::throw_exception(IndexOutOfBoundsException());
         MiscUtils::arrayCopy(this->data.get(), this->offset, target.get(), targetOffset, this->_length);
     }
@@ -93,11 +93,11 @@ namespace Lucene
         clonePayload->_length = _length;
         
         // Only copy the part of data that belongs to this Payload
-        if (offset == 0 && _length == data.length())
+        if (offset == 0 && _length == data.size())
         {
             // It is the whole thing, so just clone it.
-            clonePayload->data = ByteArray::newInstance(data.length());
-            MiscUtils::arrayCopy(data.get(), 0, clonePayload->data.get(), 0, data.length());
+            clonePayload->data = ByteArray::newInstance(data.size());
+            MiscUtils::arrayCopy(data.get(), 0, clonePayload->data.get(), 0, data.size());
         }
         else
         {

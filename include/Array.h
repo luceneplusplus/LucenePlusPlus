@@ -15,10 +15,10 @@ namespace Lucene
     class ArrayData
     {
     public:
-        ArrayData(int32_t n)
+        ArrayData(int32_t size)
         {
-            array = NULL;
-            resize(n);
+            data = NULL;
+            resize(size);
         }
         
         ~ArrayData()
@@ -27,22 +27,22 @@ namespace Lucene
         }
     
     public:
-        TYPE* array;
+        TYPE* data;
         int32_t size;
     
     public:
-        void resize(int32_t n)
+        void resize(int32_t size)
         {
-            if (n == 0)
+            if (size == 0)
             {
-                FreeMemory(array);
-                array = NULL;
+                FreeMemory(data);
+                data = NULL;
             }
-            else if (array == NULL)
-                array = (TYPE*)AllocMemory(n * sizeof(TYPE));
+            else if (data == NULL)
+                data = (TYPE*)AllocMemory(size * sizeof(TYPE));
             else
-                array = (TYPE*)ReallocMemory(array, n * sizeof(TYPE));
-            size = n;
+                data = (TYPE*)ReallocMemory(data, size * sizeof(TYPE));
+            this->size = size;
         }
     };
     
@@ -53,15 +53,22 @@ namespace Lucene
     public:
         typedef Array<TYPE> this_type;
         typedef ArrayData<TYPE> array_type;
+
+        Array()
+        {
+            array = NULL;
+        }
         
     protected:
         boost::shared_ptr<array_type> container;
+        array_type* array;
         
     public:
         static this_type newInstance(int32_t size)
         {
             this_type instance;
             instance.container = Lucene::newInstance<array_type>(size);
+            instance.array = instance.container.get();
             return instance;
         }
         
@@ -78,34 +85,35 @@ namespace Lucene
                 container = Lucene::newInstance<array_type>(size);
             else
                 container->resize(size);
+            array = container.get();
         }
                 
         TYPE* get() const
         {
-            return container->array;
+            return array->data;
         }
         
-        int32_t length() const
+        int32_t size() const
         {
-            return container->size;
+            return array->size;
         }
         
         bool equals(const this_type& other) const
         {
-            if (container->size != other.container->size)
+            if (array->size != other.array->size)
                 return false;
-            return (std::memcmp(container->array, other.container->array, container->size) == 0);
+            return (std::memcmp(array->data, other.array->data, array->size) == 0);
         }
         
         int32_t hashCode() const
         {
-            return (int32_t)(int64_t)container.get();
+            return (int32_t)(int64_t)array;
         }
         
         TYPE& operator[] (int32_t i) const
         {
-            BOOST_ASSERT(i >= 0 && i < container->size);
-            return container->array[i];
+            BOOST_ASSERT(i >= 0 && i < array->size);
+            return array->data[i];
         }
         
         operator bool () const

@@ -178,7 +178,7 @@ public:
     String randomString()
     {
         int32_t end = random->nextInt(20);
-        if (buffer.length() < 1 + end)
+        if (buffer.size() < 1 + end)
             buffer.resize((int32_t)((double)(1 + end) * 1.25));
         
         for (int32_t i = 0; i < end; ++i)

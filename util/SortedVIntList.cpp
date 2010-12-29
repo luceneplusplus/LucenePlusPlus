@@ -91,10 +91,10 @@ namespace Lucene
         if (diff < 0)
             boost::throw_exception(IllegalArgumentException(L"Input not sorted or first element negative."));
         
-        if (!bytes || (lastBytePos + MAX_BYTES_PER_INT) > bytes.length())
+        if (!bytes || (lastBytePos + MAX_BYTES_PER_INT) > bytes.size())
         {
             // biggest possible int does not fit
-            bytes.resize((bytes.length() * 2) + MAX_BYTES_PER_INT);
+            bytes.resize((bytes.size() * 2) + MAX_BYTES_PER_INT);
         }
         
         // See IndexOutput.writeVInt()
@@ -115,7 +115,7 @@ namespace Lucene
     
     int32_t SortedVIntList::getByteSize()
     {
-        return bytes ? bytes.length() : 0;
+        return bytes ? bytes.size() : 0;
     }
     
     bool SortedVIntList::isCacheable()

@@ -109,7 +109,7 @@ namespace Lucene
     
     void Token::setTermBuffer(const String& buffer)
     {
-        int32_t length = buffer.length();
+        int32_t length = buffer.size();
         growTermBuffer(length);
         MiscUtils::arrayCopy(buffer.begin(), 0, _termBuffer.get(), 0, length);
         _termLength = length;
@@ -147,7 +147,7 @@ namespace Lucene
         }
         else
         {
-            if (_termBuffer.length() < newSize)
+            if (_termBuffer.size() < newSize)
             {
                 // Not big enough; create a new array with slight over allocation and preserve content
                 _termBuffer.resize(MiscUtils::getNextSize(newSize));
@@ -180,11 +180,11 @@ namespace Lucene
     void Token::setTermLength(int32_t length)
     {
         initTermBuffer();
-        if (length > _termBuffer.length())
+        if (length > _termBuffer.size())
         {
             boost::throw_exception(IllegalArgumentException(L"length " + StringUtils::toString(length) + 
                                                             L" exceeds the size of the termBuffer (" + 
-                                                            StringUtils::toString(_termBuffer.length()) + L")"));
+                                                            StringUtils::toString(_termBuffer.size()) + L")"));
         }
         _termLength = length;
     }
@@ -288,8 +288,8 @@ namespace Lucene
         // Do a deep clone
         if (_termBuffer)
         {
-            cloneToken->_termBuffer = CharArray::newInstance(_termBuffer.length());
-            MiscUtils::arrayCopy(_termBuffer.get(), 0, cloneToken->_termBuffer.get(), 0, _termBuffer.length());
+            cloneToken->_termBuffer = CharArray::newInstance(_termBuffer.size());
+            MiscUtils::arrayCopy(_termBuffer.get(), 0, cloneToken->_termBuffer.get(), 0, _termBuffer.size());
         }
         if (payload)
             cloneToken->payload = boost::dynamic_pointer_cast<Payload>(payload->clone());

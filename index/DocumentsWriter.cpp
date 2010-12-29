@@ -1607,7 +1607,7 @@ namespace Lucene
             // be shared between things that don't track allocations (term vectors) and things that do (freq/prox postings).
             docWriter->numBytesAlloc += blockSize;
             b = ByteArray::newInstance(blockSize);
-            MiscUtils::arrayFill(b.get(), 0, b.length(), 0);
+            MiscUtils::arrayFill(b.get(), 0, b.size(), 0);
         }
         else
             b = freeByteBlocks.removeLast();

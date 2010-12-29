@@ -59,10 +59,10 @@ namespace Lucene
             offsets = IntArray::newInstance(64);
             diffs = IntArray::newInstance(64);
         }
-        else if (size == offsets.length())
+        else if (size == offsets.size())
         {
-            offsets.resize(MiscUtils::getNextSize(offsets.length()));
-            diffs.resize(MiscUtils::getNextSize(diffs.length()));
+            offsets.resize(MiscUtils::getNextSize(offsets.size()));
+            diffs.resize(MiscUtils::getNextSize(diffs.size()));
         }
 
         offsets[size] = off;
