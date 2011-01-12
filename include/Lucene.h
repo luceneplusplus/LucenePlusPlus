@@ -78,6 +78,7 @@ using boost::uint64_t;
 namespace Lucene
 {
     typedef std::basic_string< char, std::char_traits<char>, Allocator<char> > SingleString;
+    typedef std::basic_ostringstream< char, std::char_traits<char>, Allocator<char> > SingleStringStream;
     typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > String;
     typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > StringStream;
     

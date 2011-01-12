@@ -125,15 +125,25 @@ namespace Lucene
         if (dateOrder != DATEORDER_LOCALE)
             return dateOrder;
         
-        switch (std::use_facet< std::time_get<wchar_t> >(locale).date_order())
-        {
-            case std::time_get<wchar_t>::dmy:
-                return DATEORDER_DMY;
-            case std::time_get<wchar_t>::mdy:
-                return DATEORDER_MDY;
-        }
+        std::locale localeDate(std::locale(locale, new boost::gregorian::date_facet("%x")));
+        SingleStringStream controlStream;
         
-        return DATEORDER_YMD;
+        controlStream.imbue(localeDate);
+        controlStream << boost::gregorian::date(1974, 10, 20); // Oct 20th 1974
+        
+        SingleString controlDate(controlStream.str());
+        SingleString::size_type year = controlDate.find("74");
+        SingleString::size_type month = controlDate.find("10");
+        if (month == SingleString::npos)
+            month = controlDate.find("O"); // safety
+        SingleString::size_type day = controlDate.find("20");
+        
+        if (year < month)
+            return DATEORDER_YMD;
+        else if (month < day)
+            return DATEORDER_MDY;
+        else
+            return DATEORDER_DMY;
     }
     
     boost::posix_time::ptime DateTools::parseDate(const String& dateString, std::locale locale)
