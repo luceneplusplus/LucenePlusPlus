@@ -32,6 +32,61 @@ namespace Lucene
     {
     }
     
+    inline uint8_t UTF8Base::mask8(uint32_t b)
+    {
+        return static_cast<uint8_t>(0xff & b);
+    }
+
+    inline uint16_t UTF8Base::mask16(uint32_t c)
+    {
+        return static_cast<uint16_t>(0xffff & c);
+    }
+
+    inline bool UTF8Base::isTrail(uint32_t b)
+    {
+        return ((mask8(b) >> 6) == 0x2);
+    }
+    
+    inline bool UTF8Base::isSurrogate(uint32_t cp)
+    {
+        return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
+    }
+
+    inline bool UTF8Base::isLeadSurrogate(uint32_t cp)
+    {
+        return (cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX);
+    }
+
+    inline bool UTF8Base::isTrailSurrogate(uint32_t cp)
+    {
+        return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
+    }
+    
+    inline bool UTF8Base::isValidCodePoint(uint32_t cp)
+    {
+        return (cp <= CODE_POINT_MAX && !isSurrogate(cp) && cp != 0xfffe && cp != 0xffff);
+    }
+    
+    inline bool UTF8Base::isOverlongSequence(uint32_t cp, int32_t length)
+    {
+        if (cp < 0x80)
+        {
+            if (length != 1) 
+                return true;
+        }
+        else if (cp < 0x800)
+        {
+            if (length != 2) 
+                return true;
+        }
+        else if (cp < 0x10000)
+        {
+            if (length != 3) 
+                return true;
+        }
+        return false;
+    }
+    
     UTF8Encoder::UTF8Encoder(const wchar_t* unicodeBegin, const wchar_t* unicodeEnd)
     {
         this->unicodeBegin = unicodeBegin;
@@ -47,7 +102,7 @@ namespace Lucene
         return unicodeBegin == unicodeEnd ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*unicodeBegin++;
     }
     
-    uint8_t* UTF8Encoder::appendChar(uint8_t* utf8, uint32_t cp)
+    inline uint8_t* UTF8Encoder::appendChar(uint8_t* utf8, uint32_t cp)
     {
         if (cp < 0x80) // one octet
             *(utf8++) = static_cast<uint8_t>(cp);
@@ -160,7 +215,7 @@ namespace Lucene
         return utf8Begin == utf8End ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*utf8Begin++;
     }
     
-    int32_t UTF8Decoder::sequenceLength(uint32_t cp)
+    inline int32_t UTF8Decoder::sequenceLength(uint32_t cp)
     {
         uint8_t lead = mask8(cp);
         if (lead < 0x80)
@@ -174,7 +229,7 @@ namespace Lucene
         return 0;
     }
     
-    bool UTF8Decoder::getSequence(uint32_t& cp, int32_t length)
+    inline bool UTF8Decoder::getSequence(uint32_t& cp, int32_t length)
     {
         cp = mask8(cp);
         if (length == 1)
@@ -213,7 +268,7 @@ namespace Lucene
         return true;
     }
     
-    bool UTF8Decoder::isValidNext(uint32_t& cp)
+    inline bool UTF8Decoder::isValidNext(uint32_t& cp)
     {
         // Determine the sequence length based on the lead octet
         int32_t length = sequenceLength(cp);
