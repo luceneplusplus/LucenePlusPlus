@@ -21,6 +21,8 @@ namespace Lucene
         typedef std::map< KEY, VALUE, LESS, Allocator<key_value> > map_type;
         typedef typename map_type::iterator iterator;
         typedef typename map_type::const_iterator const_iterator;
+        typedef KEY key_type;
+        typedef VALUE value_type;
     
         virtual ~Map()
         {

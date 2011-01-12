@@ -8,6 +8,7 @@
 #include "Searcher.h"
 #include "Similarity.h"
 #include "Query.h"
+#include "Collector.h"
 
 namespace Lucene
 {

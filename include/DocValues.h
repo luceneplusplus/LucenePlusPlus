@@ -34,6 +34,8 @@ namespace Lucene
         bool computed;
     
     public:
+        using LuceneObject::toString;
+        
         /// Return doc value as a double. 
         /// Mandatory: every DocValues implementation must implement at least this method. 
         /// @param doc document whose double value is requested. 
