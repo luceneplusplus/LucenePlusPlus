@@ -25,47 +25,47 @@ namespace Lucene
     {
     }
     
-    FieldCacheRangeFilterStringPtr FieldCacheRangeFilter::newStringRange(const String& field, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newStringRange(const String& field, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterString>(field, ParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterBytePtr FieldCacheRangeFilter::newByteRange(const String& field, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newByteRange(const String& field, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
     {
         return newByteRange(field, ByteParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterBytePtr FieldCacheRangeFilter::newByteRange(const String& field, ByteParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newByteRange(const String& field, ByteParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterByte>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterIntPtr FieldCacheRangeFilter::newIntRange(const String& field, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newIntRange(const String& field, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
     {
         return newIntRange(field, IntParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterIntPtr FieldCacheRangeFilter::newIntRange(const String& field, IntParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newIntRange(const String& field, IntParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterInt>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterLongPtr FieldCacheRangeFilter::newLongRange(const String& field, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newLongRange(const String& field, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
     {
         return newLongRange(field, LongParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterLongPtr FieldCacheRangeFilter::newLongRange(const String& field, LongParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newLongRange(const String& field, LongParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterLong>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterDoublePtr FieldCacheRangeFilter::newDoubleRange(const String& field, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newDoubleRange(const String& field, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
     {
         return newDoubleRange(field, DoubleParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
     
-    FieldCacheRangeFilterDoublePtr FieldCacheRangeFilter::newDoubleRange(const String& field, DoubleParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newDoubleRange(const String& field, DoubleParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterDouble>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }

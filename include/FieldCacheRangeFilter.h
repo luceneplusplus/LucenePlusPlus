@@ -54,47 +54,47 @@ namespace Lucene
     public:
         /// Creates a string range filter using {@link FieldCache#getStringIndex}. This works with all fields containing 
         /// zero or one term in the field. The range can be half-open by setting one of the values to null.
-        static FieldCacheRangeFilterStringPtr newStringRange(const String& field, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newStringRange(const String& field, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getBytes(IndexReaderPtr, String)}. This works with all
         /// byte fields containing exactly one numeric term in the field. The range can be half-open by setting one of the 
         /// values to null.
-        static FieldCacheRangeFilterBytePtr newByteRange(const String& field, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newByteRange(const String& field, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getBytes(IndexReaderPtr, String, ByteParserPtr)}. This 
         /// works with all byte fields containing exactly one numeric term in the field.  The range can be half-open by 
         /// setting one of the values to null.
-        static FieldCacheRangeFilterBytePtr newByteRange(const String& field, ByteParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newByteRange(const String& field, ByteParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getInts(IndexReaderPtr, String)}. This works with all
         /// int fields containing exactly one numeric term in the field. The range can be half-open by setting one of the 
         /// values to null.
-        static FieldCacheRangeFilterIntPtr newIntRange(const String& field, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newIntRange(const String& field, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getInts(IndexReaderPtr, String, IntParserPtr)}. This 
         /// works with all int fields containing exactly one numeric term in the field.  The range can be half-open by 
         /// setting one of the values to null.
-        static FieldCacheRangeFilterIntPtr newIntRange(const String& field, IntParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newIntRange(const String& field, IntParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getLongs(IndexReaderPtr, String)}. This works with all
         /// long fields containing exactly one numeric term in the field. The range can be half-open by setting one of the 
         /// values to null.
-        static FieldCacheRangeFilterLongPtr newLongRange(const String& field, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newLongRange(const String& field, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getLongs(IndexReaderPtr, String, LongParserPtr)}. This 
         /// works with all long fields containing exactly one numeric term in the field.  The range can be half-open by 
         /// setting one of the values to null.
-        static FieldCacheRangeFilterLongPtr newLongRange(const String& field, LongParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newLongRange(const String& field, LongParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getDoubles(IndexReaderPtr, String)}. This works with all
         /// long fields containing exactly one numeric term in the field. The range can be half-open by setting one of the 
         /// values to null.
-        static FieldCacheRangeFilterDoublePtr newDoubleRange(const String& field, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newDoubleRange(const String& field, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
         
         /// Creates a numeric range filter using {@link FieldCache#getDoubles(IndexReaderPtr, String, DoubleParserPtr)}. This 
         /// works with all long fields containing exactly one numeric term in the field.  The range can be half-open by 
         /// setting one of the values to null.
-        static FieldCacheRangeFilterDoublePtr newDoubleRange(const String& field, DoubleParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newDoubleRange(const String& field, DoubleParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
         
         virtual String toString() = 0;
         virtual bool equals(LuceneObjectPtr other) = 0;
