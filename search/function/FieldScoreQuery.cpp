@@ -32,6 +32,7 @@ namespace Lucene
                 return newLucene<DoubleFieldSource>(field);
             default:
                 boost::throw_exception(IllegalArgumentException(L"not a known Field Score Query Type"));
+                return ValueSourcePtr();
         }
     }
 }

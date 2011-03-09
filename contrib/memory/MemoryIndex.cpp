@@ -161,6 +161,7 @@ namespace Lucene
             finally = e;
         }
         finally.throwException();
+        return 0;
     }
     
     int32_t MemoryIndex::numPositions(Collection<int32_t> positions)

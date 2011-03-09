@@ -756,7 +756,10 @@ namespace Lucene
         else if (L'A' <= c && c <= L'F')
             return c - L'A' + 10;
         else
+        {
             boost::throw_exception(QueryParserError(L"None-hex character in unicode escape sequence: " + StringUtils::toString(c)));
+            return 0;
+        }
     }
     
     String QueryParser::escape(const String& s)

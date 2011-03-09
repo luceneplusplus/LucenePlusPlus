@@ -253,11 +253,13 @@ namespace Lucene
     TopDocsPtr CachedDfSource::search(WeightPtr weight, FilterPtr filter, int32_t n)
     {
         boost::throw_exception(UnsupportedOperationException());
+        return TopDocsPtr();
     }
     
     TopFieldDocsPtr CachedDfSource::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
     {
         boost::throw_exception(UnsupportedOperationException());
+        return TopFieldDocsPtr();
     }
     
     MultiSearcherCallableNoSort::MultiSearcherCallableNoSort(SynchronizePtr lock, SearchablePtr searchable, WeightPtr weight, 
