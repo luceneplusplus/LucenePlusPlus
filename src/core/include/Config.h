@@ -84,4 +84,7 @@
 // Make internal bitset storage public
 #define BOOST_DYNAMIC_BITSET_DONT_USE_FRIENDS
 
+// Force boost file-system version 2 for later boost versions > 1.46
+#define BOOST_FILESYSTEM_VERSION 2
+
 #endif
