@@ -24,37 +24,37 @@ source_patterns = [
 ]
 
 lucene_source_dirs = [
-    'analysis',
-    'document',
-    'index',
-    'queryparser',
-    'search',
-    'store',
-    'util'
+    'src/core/analysis',
+    'src/core/document',
+    'src/core/index',
+    'src/core/queryparser',
+    'src/core/search',
+    'src/core/store',
+    'src/core/util'
 ]
 
 lucene_contrib_source_dirs = [
-    'contrib'
+    'src/contrib'
 ]
 
 lucene_include_dirs = [
-    'include',
-    'contrib/include',
-    'contrib/snowball/libstemmer_c/include',
-    'util/md5',
-    'util/nedmalloc',
-    'util/zlib',
-    'util/unicode'
+    'src/core/include',
+    'src/contrib/include',
+    'src/contrib/snowball/libstemmer_c/include',
+    'src/core/util/md5',
+    'src/core/util/nedmalloc',
+    'src/core/util/zlib',
+    'src/core/util/unicode'
 ]
 
 tester_source_dirs = [
-    'test'
+    'src/test'
 ]
 
 tester_include_dirs = [
-    'include',
-    'contrib/include',
-    'test/include'
+    'src/core/include',
+    'src/contrib/include',
+    'src/test/include'
 ]
 
 
@@ -108,7 +108,7 @@ def build(bld):
         features = ['cxx', 'cc'] + [target_type],
         source = [source.relpath_gen(bld.path) for source in lucene_sources],
         target = 'lucene++',
-        pch = 'include/LuceneInc.h',
+        pch = 'src/core/include/LuceneInc.h',
         includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -126,7 +126,7 @@ def build(bld):
         features = ['cxx', 'cc'] + [target_type],
         source = [source.relpath_gen(bld.path) for source in lucene_contrib_sources],
         target = 'lucene_contrib',
-        pch = 'contrib/include/ContribInc.h',
+        pch = 'src/contrib/include/ContribInc.h',
         includes = lucene_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -145,7 +145,7 @@ def build(bld):
         features = ['cxx', 'cc', 'cprogram'],
         source = [source.relpath_gen(bld.path) for source in tester_sources],
         target = 'lucene_tester',
-        pch = 'test/include/TestInc.h',
+        pch = 'src/test/include/TestInc.h',
         includes = tester_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
@@ -157,7 +157,7 @@ def build(bld):
     bld(
         name = 'deletefiles',
         features = ['cxx', 'cc', 'cprogram'],
-        source = bld.path.find_resource('demo/deletefiles/main.cpp').relpath_gen(bld.path),
+        source = bld.path.find_resource('src/demo/deletefiles/main.cpp').relpath_gen(bld.path),
         target = 'deletefiles',
         includes = ['include'] + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
@@ -170,7 +170,7 @@ def build(bld):
     bld(
         name = 'indexfiles',
         features = ['cxx', 'cc', 'cprogram'],
-        source = bld.path.find_resource('demo/indexfiles/main.cpp').relpath_gen(bld.path),
+        source = bld.path.find_resource('src/demo/indexfiles/main.cpp').relpath_gen(bld.path),
         target = 'indexfiles',
         includes = ['include'] + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
@@ -183,7 +183,7 @@ def build(bld):
     bld(
         name = 'searchfiles',
         features = ['cxx', 'cc', 'cprogram'],
-        source = bld.path.find_resource('demo/searchfiles/main.cpp').relpath_gen(bld.path),
+        source = bld.path.find_resource('src/demo/searchfiles/main.cpp').relpath_gen(bld.path),
         target = 'searchfiles',
         includes = ['include'] + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,

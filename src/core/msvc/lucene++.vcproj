@@ -92,7 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\lib\.&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;..\bin\.&quot;&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\..\..\lib\.&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;..\..\..\bin\.&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -177,7 +177,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\lib\.&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;..\bin\.&quot;&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\..\..\lib\.&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\$(ProjectName).dll&quot; &quot;..\..\..\bin\.&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -246,7 +246,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\lib\.&quot;&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\..\..\lib\.&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -319,7 +319,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\lib\.&quot;&#x0D;&#x0A;"
+				CommandLine="copy &quot;$(OutDir)\$(ProjectName).lib&quot; &quot;..\..\..\lib\.&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

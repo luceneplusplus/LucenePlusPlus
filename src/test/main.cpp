@@ -50,18 +50,18 @@ int main(int argc, char* argv[])
     
     if (testDir.empty())
     {  
-        testDir = L"../../test/testfiles";
+        testDir = L"../../src/test/testfiles";
         if (!FileUtils::isDirectory(testDir))
         {
-            testDir = L"../test/testfiles";
+            testDir = L"../src/test/testfiles";
             if (!FileUtils::isDirectory(testDir))
-                testDir = L"./test/testfiles";
+                testDir = L"./src/test/testfiles";
         }
     }
     
     if (!FileUtils::isDirectory(testDir))
     {
-        std::wcout << L"Test directory not found. (override default by using --test_dir=\"./test/testfiles\")\n";
+        std::wcout << L"Test directory not found. (override default by using --test_dir=\"./src/test/testfiles\")\n";
         return 1;
     }
     
