@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "StringUtils.h"
 #include "UnicodeUtils.h"
 #include "UTF8Stream.h"

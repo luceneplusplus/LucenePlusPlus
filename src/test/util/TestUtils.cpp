@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <boost/algorithm/string.hpp>
 #include "test_lucene.h"
 #include "TestUtils.h"
 #include "CheckIndex.h"

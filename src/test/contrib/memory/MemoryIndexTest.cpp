@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <boost/algorithm/string.hpp>
 #include "TestUtils.h"
 #include "BaseTokenStreamFixture.h"
 #include "BufferedReader.h"

@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "ContribInc.h"
+#include <boost/algorithm/string.hpp>
 #include "FrenchStemmer.h"
 #include "UnicodeUtils.h"
 

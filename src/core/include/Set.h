@@ -7,6 +7,7 @@
 #ifndef SET_H
 #define SET_H
 
+#include <set>
 #include "LuceneSync.h"
 
 namespace Lucene

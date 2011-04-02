@@ -7,6 +7,7 @@
 #ifndef LUCENESIGNAL_H
 #define LUCENESIGNAL_H
 
+#include <boost/thread/condition.hpp>
 #include "Lucene.h"
 
 namespace Lucene

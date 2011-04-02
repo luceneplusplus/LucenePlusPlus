@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "FuzzyTermEnum.h"
 #include "FuzzyQuery.h"
 #include "Term.h"

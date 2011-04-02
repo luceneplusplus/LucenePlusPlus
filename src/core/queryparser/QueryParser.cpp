@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "QueryParser.h"
 #include "QueryParserTokenManager.h"
 #include "QueryParserToken.h"

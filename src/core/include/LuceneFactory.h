@@ -7,6 +7,8 @@
 #ifndef LUCENEFACTORY_H
 #define LUCENEFACTORY_H
 
+#include <boost/make_shared.hpp>
+
 namespace Lucene
 {
     template <class T>

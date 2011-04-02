@@ -7,6 +7,7 @@
 #ifndef CHECKSUMINDEXOUTPUT_H
 #define CHECKSUMINDEXOUTPUT_H
 
+#include <boost/crc.hpp>
 #include "IndexOutput.h"
 
 namespace Lucene

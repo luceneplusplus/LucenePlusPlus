@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/thread/mutex.hpp>
 #include "Synchronize.h"
 #include "LuceneThread.h"
 

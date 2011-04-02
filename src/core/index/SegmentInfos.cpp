@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "SegmentInfos.h"
 #include "SegmentInfo.h"
 #include "IndexFileNames.h"

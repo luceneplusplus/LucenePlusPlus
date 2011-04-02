@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "WordlistLoader.h"
 #include "FileReader.h"
 #include "BufferedReader.h"

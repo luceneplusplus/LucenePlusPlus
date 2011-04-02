@@ -7,6 +7,7 @@
 #define NOMINMAX
 
 #include "targetver.h"
+#include <boost/algorithm/string.hpp>
 #include "LuceneHeaders.h"
 #include "FilterIndexReader.h"
 

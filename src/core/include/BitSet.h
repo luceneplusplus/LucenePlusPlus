@@ -7,6 +7,7 @@
 #ifndef BITSET_H
 #define BITSET_H
 
+#include <boost/dynamic_bitset.hpp>
 #include "LuceneObject.h"
 
 namespace Lucene

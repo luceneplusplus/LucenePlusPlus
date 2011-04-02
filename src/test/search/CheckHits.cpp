@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <boost/algorithm/string.hpp>
 #include "CheckHits.h"
 #include "Searcher.h"
 #include "Explanation.h"

@@ -7,6 +7,7 @@
 #ifndef LUCENEOBJECT_H
 #define LUCENEOBJECT_H
 
+#include <boost/enable_shared_from_this.hpp>
 #include "LuceneSync.h"
 
 #ifdef LPP_USE_CYCLIC_CHECK

@@ -416,7 +416,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\include\Config.h"
+				RelativePath="..\..\core\include\Config.h"
 				>
 			</File>
 			<File
@@ -424,7 +424,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Lucene.h"
+				RelativePath="..\..\core\include\Lucene.h"
 				>
 			</File>
 			<File
@@ -432,15 +432,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\LuceneHeaders.h"
+				RelativePath="..\..\core\include\LuceneHeaders.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\LuceneTypes.h"
+				RelativePath="..\..\core\include\LuceneTypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\targetver.h"
+				RelativePath="..\..\core\include\targetver.h"
 				>
 			</File>
 		</Filter>

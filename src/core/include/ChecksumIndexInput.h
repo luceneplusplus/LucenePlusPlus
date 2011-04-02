@@ -7,6 +7,7 @@
 #ifndef CHECKSUMINDEXINPUT_H
 #define CHECKSUMINDEXINPUT_H
 
+#include <boost/crc.hpp>
 #include "IndexInput.h"
 
 namespace Lucene

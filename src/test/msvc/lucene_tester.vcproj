@@ -354,7 +354,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\include\Lucene.h"
+				RelativePath="..\..\core\include\Lucene.h"
 				>
 			</File>
 			<File
@@ -362,7 +362,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\targetver.h"
+				RelativePath="..\..\core\include\targetver.h"
 				>
 			</File>
 			<File

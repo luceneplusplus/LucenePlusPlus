@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "PrefixTermEnum.h"
 #include "IndexReader.h"
 #include "Term.h"

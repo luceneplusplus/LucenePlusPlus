@@ -7,6 +7,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <map>
 #include "LuceneSync.h"
 
 namespace Lucene

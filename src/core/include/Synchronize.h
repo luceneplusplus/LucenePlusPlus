@@ -7,6 +7,7 @@
 #ifndef SYNCHRONIZE_H
 #define SYNCHRONIZE_H
 
+#include <boost/thread/recursive_mutex.hpp>
 #include "Lucene.h"
 
 namespace Lucene

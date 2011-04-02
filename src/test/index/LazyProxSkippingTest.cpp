@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <boost/algorithm/string.hpp>
 #include "LuceneTestFixture.h"
 #include "TestUtils.h"
 #include "ScoreDoc.h"

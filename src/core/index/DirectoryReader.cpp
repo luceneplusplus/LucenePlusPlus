@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "Directory.h"
 #include "DirectoryReader.h"
 #include "ReadOnlyDirectoryReader.h"

@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/algorithm/string.hpp>
 #include "IndexFileDeleter.h"
 #include "IndexFileNameFilter.h"
 #include "IndexFileNames.h"

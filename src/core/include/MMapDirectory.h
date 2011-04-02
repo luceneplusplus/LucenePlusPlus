@@ -7,6 +7,7 @@
 #ifndef MMAPDIRECTORY_H
 #define MMAPDIRECTORY_H
 
+#include <boost/iostreams/device/mapped_file.hpp>
 #include "FSDirectory.h"
 #include "IndexInput.h"
 

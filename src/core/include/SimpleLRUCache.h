@@ -7,6 +7,7 @@
 #ifndef SIMPLELRUCACHE_H
 #define SIMPLELRUCACHE_H
 
+#include <list>
 #include "LuceneObject.h"
 
 namespace Lucene

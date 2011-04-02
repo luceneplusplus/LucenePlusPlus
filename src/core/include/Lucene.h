@@ -8,6 +8,7 @@
 #define LUCENE_H
 
 #include "Config.h"
+
 #include <wctype.h>
 #include <wchar.h>
 #include <float.h>
@@ -20,46 +21,14 @@
 #include <limits>
 #include <stdexcept>
 #include <typeinfo>
-#include <vector>
-#include <map>
-#include <set>
-#include <list>
+
 #include <boost/cstdint.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/variant.hpp>
 #include <boost/any.hpp>
-#include <boost/blank.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/identity.hpp>
-#include <boost/multi_index/member.hpp> 
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/bind.hpp>
-#include <boost/mem_fn.hpp>
-#include <boost/bind/protect.hpp>
-#include <boost/function.hpp>
-#include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/archive/tmpdir.hpp>
-#include <boost/interprocess/sync/file_lock.hpp>
-#include <boost/iostreams/device/mapped_file.hpp>
-#include <boost/crc.hpp>
 #include <boost/asio.hpp>
-#include <boost/regex.hpp>
-#include <boost/dynamic_bitset.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/enable_shared_from_this.hpp>
 
 using boost::int8_t;
 using boost::uint8_t;
@@ -74,6 +43,15 @@ using boost::uint64_t;
 
 #include "LuceneTypes.h"
 #include "Allocator.h"
+
+namespace boost
+{
+    struct blank;
+    namespace interprocess
+    {
+        class file_lock;
+    }
+}
 
 namespace Lucene
 {
