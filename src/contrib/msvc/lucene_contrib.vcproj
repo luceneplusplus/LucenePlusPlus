@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm120"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB;"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -127,7 +127,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -208,7 +208,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm120"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LPP_BUILDING_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -282,7 +282,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;LPP_BUILDING_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -416,7 +416,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\core\include\Config.h"
+				RelativePath="..\..\..\include\Config.h"
 				>
 			</File>
 			<File
@@ -424,7 +424,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\core\include\Lucene.h"
+				RelativePath="..\..\..\include\Lucene.h"
 				>
 			</File>
 			<File
@@ -432,15 +432,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\core\include\LuceneHeaders.h"
+				RelativePath="..\..\..\include\LuceneHeaders.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\core\include\LuceneTypes.h"
+				RelativePath="..\..\..\include\LuceneTypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\core\include\targetver.h"
+				RelativePath="..\..\..\include\targetver.h"
 				>
 			</File>
 		</Filter>

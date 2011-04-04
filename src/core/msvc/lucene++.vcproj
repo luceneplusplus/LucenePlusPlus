@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB;"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -124,7 +124,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -203,7 +203,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LPP_BUILDING_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -276,7 +276,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\md5;..\util\zlib;..\util\unicode;..\util\nedmalloc;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;LPP_BUILDING_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -410,27 +410,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\Config.h"
+				RelativePath="..\..\..\include\Config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\Lucene.h"
+				RelativePath="..\..\..\include\Lucene.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneHeaders.h"
+				RelativePath="..\..\..\include\LuceneHeaders.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneInc.h"
+				RelativePath="..\..\..\include\LuceneInc.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneTypes.h"
+				RelativePath="..\..\..\include\LuceneTypes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\targetver.h"
+				RelativePath="..\..\..\include\targetver.h"
 				>
 			</File>
 		</Filter>
@@ -444,43 +444,43 @@
 			Name="index"
 			>
 			<File
-				RelativePath="..\include\_CheckIndex.h"
+				RelativePath="..\..\..\include\_CheckIndex.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_ConcurrentMergeScheduler.h"
+				RelativePath="..\..\..\include\_ConcurrentMergeScheduler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_DirectoryReader.h"
+				RelativePath="..\..\..\include\_DirectoryReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_IndexReader.h"
+				RelativePath="..\..\..\include\_IndexReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_IndexWriter.h"
+				RelativePath="..\..\..\include\_IndexWriter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_MultipleTermPositions.h"
+				RelativePath="..\..\..\include\_MultipleTermPositions.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_ParallelReader.h"
+				RelativePath="..\..\..\include\_ParallelReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_SegmentInfos.h"
+				RelativePath="..\..\..\include\_SegmentInfos.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_SegmentReader.h"
+				RelativePath="..\..\..\include\_SegmentReader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_SnapshotDeletionPolicy.h"
+				RelativePath="..\..\..\include\_SnapshotDeletionPolicy.h"
 				>
 			</File>
 			<File
@@ -488,7 +488,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\AbstractAllTermDocs.h"
+				RelativePath="..\..\..\include\AbstractAllTermDocs.h"
 				>
 			</File>
 			<File
@@ -496,7 +496,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\AllTermDocs.h"
+				RelativePath="..\..\..\include\AllTermDocs.h"
 				>
 			</File>
 			<File
@@ -504,7 +504,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BufferedDeletes.h"
+				RelativePath="..\..\..\include\BufferedDeletes.h"
 				>
 			</File>
 			<File
@@ -512,7 +512,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ByteBlockPool.h"
+				RelativePath="..\..\..\include\ByteBlockPool.h"
 				>
 			</File>
 			<File
@@ -520,7 +520,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ByteSliceReader.h"
+				RelativePath="..\..\..\include\ByteSliceReader.h"
 				>
 			</File>
 			<File
@@ -528,7 +528,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ByteSliceWriter.h"
+				RelativePath="..\..\..\include\ByteSliceWriter.h"
 				>
 			</File>
 			<File
@@ -536,7 +536,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CharBlockPool.h"
+				RelativePath="..\..\..\include\CharBlockPool.h"
 				>
 			</File>
 			<File
@@ -544,7 +544,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CheckIndex.h"
+				RelativePath="..\..\..\include\CheckIndex.h"
 				>
 			</File>
 			<File
@@ -552,7 +552,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CompoundFileReader.h"
+				RelativePath="..\..\..\include\CompoundFileReader.h"
 				>
 			</File>
 			<File
@@ -560,7 +560,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CompoundFileWriter.h"
+				RelativePath="..\..\..\include\CompoundFileWriter.h"
 				>
 			</File>
 			<File
@@ -568,7 +568,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ConcurrentMergeScheduler.h"
+				RelativePath="..\..\..\include\ConcurrentMergeScheduler.h"
 				>
 			</File>
 			<File
@@ -576,7 +576,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DefaultSkipListReader.h"
+				RelativePath="..\..\..\include\DefaultSkipListReader.h"
 				>
 			</File>
 			<File
@@ -584,7 +584,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DefaultSkipListWriter.h"
+				RelativePath="..\..\..\include\DefaultSkipListWriter.h"
 				>
 			</File>
 			<File
@@ -592,7 +592,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DirectoryReader.h"
+				RelativePath="..\..\..\include\DirectoryReader.h"
 				>
 			</File>
 			<File
@@ -600,7 +600,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocConsumer.h"
+				RelativePath="..\..\..\include\DocConsumer.h"
 				>
 			</File>
 			<File
@@ -608,7 +608,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocConsumerPerThread.h"
+				RelativePath="..\..\..\include\DocConsumerPerThread.h"
 				>
 			</File>
 			<File
@@ -616,7 +616,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldConsumer.h"
+				RelativePath="..\..\..\include\DocFieldConsumer.h"
 				>
 			</File>
 			<File
@@ -624,7 +624,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldConsumerPerField.h"
+				RelativePath="..\..\..\include\DocFieldConsumerPerField.h"
 				>
 			</File>
 			<File
@@ -632,7 +632,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldConsumerPerThread.h"
+				RelativePath="..\..\..\include\DocFieldConsumerPerThread.h"
 				>
 			</File>
 			<File
@@ -640,7 +640,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldConsumers.h"
+				RelativePath="..\..\..\include\DocFieldConsumers.h"
 				>
 			</File>
 			<File
@@ -648,7 +648,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldConsumersPerField.h"
+				RelativePath="..\..\..\include\DocFieldConsumersPerField.h"
 				>
 			</File>
 			<File
@@ -656,7 +656,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldConsumersPerThread.h"
+				RelativePath="..\..\..\include\DocFieldConsumersPerThread.h"
 				>
 			</File>
 			<File
@@ -664,7 +664,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldProcessor.h"
+				RelativePath="..\..\..\include\DocFieldProcessor.h"
 				>
 			</File>
 			<File
@@ -672,7 +672,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldProcessorPerField.h"
+				RelativePath="..\..\..\include\DocFieldProcessorPerField.h"
 				>
 			</File>
 			<File
@@ -680,7 +680,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocFieldProcessorPerThread.h"
+				RelativePath="..\..\..\include\DocFieldProcessorPerThread.h"
 				>
 			</File>
 			<File
@@ -688,7 +688,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocInverter.h"
+				RelativePath="..\..\..\include\DocInverter.h"
 				>
 			</File>
 			<File
@@ -696,7 +696,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocInverterPerField.h"
+				RelativePath="..\..\..\include\DocInverterPerField.h"
 				>
 			</File>
 			<File
@@ -704,7 +704,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocInverterPerThread.h"
+				RelativePath="..\..\..\include\DocInverterPerThread.h"
 				>
 			</File>
 			<File
@@ -712,7 +712,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocumentsWriter.h"
+				RelativePath="..\..\..\include\DocumentsWriter.h"
 				>
 			</File>
 			<File
@@ -720,7 +720,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocumentsWriterThreadState.h"
+				RelativePath="..\..\..\include\DocumentsWriterThreadState.h"
 				>
 			</File>
 			<File
@@ -728,7 +728,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldInfo.h"
+				RelativePath="..\..\..\include\FieldInfo.h"
 				>
 			</File>
 			<File
@@ -736,7 +736,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldInfos.h"
+				RelativePath="..\..\..\include\FieldInfos.h"
 				>
 			</File>
 			<File
@@ -744,7 +744,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldInvertState.h"
+				RelativePath="..\..\..\include\FieldInvertState.h"
 				>
 			</File>
 			<File
@@ -752,7 +752,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldSortedTermVectorMapper.h"
+				RelativePath="..\..\..\include\FieldSortedTermVectorMapper.h"
 				>
 			</File>
 			<File
@@ -760,7 +760,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldsReader.h"
+				RelativePath="..\..\..\include\FieldsReader.h"
 				>
 			</File>
 			<File
@@ -768,7 +768,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldsWriter.h"
+				RelativePath="..\..\..\include\FieldsWriter.h"
 				>
 			</File>
 			<File
@@ -776,7 +776,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FilterIndexReader.h"
+				RelativePath="..\..\..\include\FilterIndexReader.h"
 				>
 			</File>
 			<File
@@ -784,7 +784,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsDocsConsumer.h"
+				RelativePath="..\..\..\include\FormatPostingsDocsConsumer.h"
 				>
 			</File>
 			<File
@@ -792,7 +792,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsDocsWriter.h"
+				RelativePath="..\..\..\include\FormatPostingsDocsWriter.h"
 				>
 			</File>
 			<File
@@ -800,7 +800,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsFieldsConsumer.h"
+				RelativePath="..\..\..\include\FormatPostingsFieldsConsumer.h"
 				>
 			</File>
 			<File
@@ -808,7 +808,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsFieldsWriter.h"
+				RelativePath="..\..\..\include\FormatPostingsFieldsWriter.h"
 				>
 			</File>
 			<File
@@ -816,7 +816,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsPositionsConsumer.h"
+				RelativePath="..\..\..\include\FormatPostingsPositionsConsumer.h"
 				>
 			</File>
 			<File
@@ -824,7 +824,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsPositionsWriter.h"
+				RelativePath="..\..\..\include\FormatPostingsPositionsWriter.h"
 				>
 			</File>
 			<File
@@ -832,7 +832,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsTermsConsumer.h"
+				RelativePath="..\..\..\include\FormatPostingsTermsConsumer.h"
 				>
 			</File>
 			<File
@@ -840,7 +840,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FormatPostingsTermsWriter.h"
+				RelativePath="..\..\..\include\FormatPostingsTermsWriter.h"
 				>
 			</File>
 			<File
@@ -848,7 +848,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FreqProxFieldMergeState.h"
+				RelativePath="..\..\..\include\FreqProxFieldMergeState.h"
 				>
 			</File>
 			<File
@@ -856,7 +856,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FreqProxTermsWriter.h"
+				RelativePath="..\..\..\include\FreqProxTermsWriter.h"
 				>
 			</File>
 			<File
@@ -864,7 +864,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FreqProxTermsWriterPerField.h"
+				RelativePath="..\..\..\include\FreqProxTermsWriterPerField.h"
 				>
 			</File>
 			<File
@@ -872,7 +872,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FreqProxTermsWriterPerThread.h"
+				RelativePath="..\..\..\include\FreqProxTermsWriterPerThread.h"
 				>
 			</File>
 			<File
@@ -880,7 +880,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexCommit.h"
+				RelativePath="..\..\..\include\IndexCommit.h"
 				>
 			</File>
 			<File
@@ -888,7 +888,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexDeletionPolicy.h"
+				RelativePath="..\..\..\include\IndexDeletionPolicy.h"
 				>
 			</File>
 			<File
@@ -896,7 +896,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexFileDeleter.h"
+				RelativePath="..\..\..\include\IndexFileDeleter.h"
 				>
 			</File>
 			<File
@@ -904,7 +904,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexFileNameFilter.h"
+				RelativePath="..\..\..\include\IndexFileNameFilter.h"
 				>
 			</File>
 			<File
@@ -912,7 +912,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexFileNames.h"
+				RelativePath="..\..\..\include\IndexFileNames.h"
 				>
 			</File>
 			<File
@@ -920,7 +920,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexReader.h"
+				RelativePath="..\..\..\include\IndexReader.h"
 				>
 			</File>
 			<File
@@ -928,7 +928,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexWriter.h"
+				RelativePath="..\..\..\include\IndexWriter.h"
 				>
 			</File>
 			<File
@@ -936,7 +936,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IntBlockPool.h"
+				RelativePath="..\..\..\include\IntBlockPool.h"
 				>
 			</File>
 			<File
@@ -944,7 +944,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InvertedDocConsumer.h"
+				RelativePath="..\..\..\include\InvertedDocConsumer.h"
 				>
 			</File>
 			<File
@@ -952,7 +952,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InvertedDocConsumerPerField.h"
+				RelativePath="..\..\..\include\InvertedDocConsumerPerField.h"
 				>
 			</File>
 			<File
@@ -960,7 +960,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InvertedDocConsumerPerThread.h"
+				RelativePath="..\..\..\include\InvertedDocConsumerPerThread.h"
 				>
 			</File>
 			<File
@@ -968,7 +968,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InvertedDocEndConsumer.h"
+				RelativePath="..\..\..\include\InvertedDocEndConsumer.h"
 				>
 			</File>
 			<File
@@ -976,7 +976,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InvertedDocEndConsumerPerField.h"
+				RelativePath="..\..\..\include\InvertedDocEndConsumerPerField.h"
 				>
 			</File>
 			<File
@@ -984,7 +984,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InvertedDocEndConsumerPerThread.h"
+				RelativePath="..\..\..\include\InvertedDocEndConsumerPerThread.h"
 				>
 			</File>
 			<File
@@ -992,7 +992,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\KeepOnlyLastCommitDeletionPolicy.h"
+				RelativePath="..\..\..\include\KeepOnlyLastCommitDeletionPolicy.h"
 				>
 			</File>
 			<File
@@ -1000,7 +1000,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LogByteSizeMergePolicy.h"
+				RelativePath="..\..\..\include\LogByteSizeMergePolicy.h"
 				>
 			</File>
 			<File
@@ -1008,7 +1008,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LogDocMergePolicy.h"
+				RelativePath="..\..\..\include\LogDocMergePolicy.h"
 				>
 			</File>
 			<File
@@ -1016,7 +1016,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LogMergePolicy.h"
+				RelativePath="..\..\..\include\LogMergePolicy.h"
 				>
 			</File>
 			<File
@@ -1024,7 +1024,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MergeDocIDRemapper.h"
+				RelativePath="..\..\..\include\MergeDocIDRemapper.h"
 				>
 			</File>
 			<File
@@ -1032,7 +1032,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MergePolicy.h"
+				RelativePath="..\..\..\include\MergePolicy.h"
 				>
 			</File>
 			<File
@@ -1040,7 +1040,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MergeScheduler.h"
+				RelativePath="..\..\..\include\MergeScheduler.h"
 				>
 			</File>
 			<File
@@ -1048,7 +1048,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiLevelSkipListReader.h"
+				RelativePath="..\..\..\include\MultiLevelSkipListReader.h"
 				>
 			</File>
 			<File
@@ -1056,7 +1056,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiLevelSkipListWriter.h"
+				RelativePath="..\..\..\include\MultiLevelSkipListWriter.h"
 				>
 			</File>
 			<File
@@ -1064,7 +1064,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultipleTermPositions.h"
+				RelativePath="..\..\..\include\MultipleTermPositions.h"
 				>
 			</File>
 			<File
@@ -1072,7 +1072,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiReader.h"
+				RelativePath="..\..\..\include\MultiReader.h"
 				>
 			</File>
 			<File
@@ -1080,7 +1080,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NormsWriter.h"
+				RelativePath="..\..\..\include\NormsWriter.h"
 				>
 			</File>
 			<File
@@ -1088,7 +1088,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NormsWriterPerField.h"
+				RelativePath="..\..\..\include\NormsWriterPerField.h"
 				>
 			</File>
 			<File
@@ -1096,7 +1096,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NormsWriterPerThread.h"
+				RelativePath="..\..\..\include\NormsWriterPerThread.h"
 				>
 			</File>
 			<File
@@ -1104,7 +1104,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ParallelReader.h"
+				RelativePath="..\..\..\include\ParallelReader.h"
 				>
 			</File>
 			<File
@@ -1112,7 +1112,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Payload.h"
+				RelativePath="..\..\..\include\Payload.h"
 				>
 			</File>
 			<File
@@ -1120,7 +1120,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PositionBasedTermVectorMapper.h"
+				RelativePath="..\..\..\include\PositionBasedTermVectorMapper.h"
 				>
 			</File>
 			<File
@@ -1128,7 +1128,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\RawPostingList.h"
+				RelativePath="..\..\..\include\RawPostingList.h"
 				>
 			</File>
 			<File
@@ -1136,7 +1136,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ReadOnlyDirectoryReader.h"
+				RelativePath="..\..\..\include\ReadOnlyDirectoryReader.h"
 				>
 			</File>
 			<File
@@ -1144,7 +1144,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ReadOnlySegmentReader.h"
+				RelativePath="..\..\..\include\ReadOnlySegmentReader.h"
 				>
 			</File>
 			<File
@@ -1152,7 +1152,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ReusableStringReader.h"
+				RelativePath="..\..\..\include\ReusableStringReader.h"
 				>
 			</File>
 			<File
@@ -1160,7 +1160,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentInfo.h"
+				RelativePath="..\..\..\include\SegmentInfo.h"
 				>
 			</File>
 			<File
@@ -1168,7 +1168,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentInfoCollection.h"
+				RelativePath="..\..\..\include\SegmentInfoCollection.h"
 				>
 			</File>
 			<File
@@ -1176,7 +1176,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentInfos.h"
+				RelativePath="..\..\..\include\SegmentInfos.h"
 				>
 			</File>
 			<File
@@ -1184,7 +1184,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentMergeInfo.h"
+				RelativePath="..\..\..\include\SegmentMergeInfo.h"
 				>
 			</File>
 			<File
@@ -1192,7 +1192,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentMergeQueue.h"
+				RelativePath="..\..\..\include\SegmentMergeQueue.h"
 				>
 			</File>
 			<File
@@ -1200,7 +1200,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentMerger.h"
+				RelativePath="..\..\..\include\SegmentMerger.h"
 				>
 			</File>
 			<File
@@ -1208,7 +1208,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentReader.h"
+				RelativePath="..\..\..\include\SegmentReader.h"
 				>
 			</File>
 			<File
@@ -1216,7 +1216,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentTermDocs.h"
+				RelativePath="..\..\..\include\SegmentTermDocs.h"
 				>
 			</File>
 			<File
@@ -1224,7 +1224,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentTermEnum.h"
+				RelativePath="..\..\..\include\SegmentTermEnum.h"
 				>
 			</File>
 			<File
@@ -1232,7 +1232,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentTermPositions.h"
+				RelativePath="..\..\..\include\SegmentTermPositions.h"
 				>
 			</File>
 			<File
@@ -1240,7 +1240,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentTermPositionVector.h"
+				RelativePath="..\..\..\include\SegmentTermPositionVector.h"
 				>
 			</File>
 			<File
@@ -1248,7 +1248,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentTermVector.h"
+				RelativePath="..\..\..\include\SegmentTermVector.h"
 				>
 			</File>
 			<File
@@ -1256,7 +1256,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SegmentWriteState.h"
+				RelativePath="..\..\..\include\SegmentWriteState.h"
 				>
 			</File>
 			<File
@@ -1264,7 +1264,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SerialMergeScheduler.h"
+				RelativePath="..\..\..\include\SerialMergeScheduler.h"
 				>
 			</File>
 			<File
@@ -1272,7 +1272,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SnapshotDeletionPolicy.h"
+				RelativePath="..\..\..\include\SnapshotDeletionPolicy.h"
 				>
 			</File>
 			<File
@@ -1280,7 +1280,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SortedTermVectorMapper.h"
+				RelativePath="..\..\..\include\SortedTermVectorMapper.h"
 				>
 			</File>
 			<File
@@ -1288,7 +1288,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\StoredFieldsWriter.h"
+				RelativePath="..\..\..\include\StoredFieldsWriter.h"
 				>
 			</File>
 			<File
@@ -1296,7 +1296,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\StoredFieldsWriterPerThread.h"
+				RelativePath="..\..\..\include\StoredFieldsWriterPerThread.h"
 				>
 			</File>
 			<File
@@ -1304,7 +1304,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Term.h"
+				RelativePath="..\..\..\include\Term.h"
 				>
 			</File>
 			<File
@@ -1312,7 +1312,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermBuffer.h"
+				RelativePath="..\..\..\include\TermBuffer.h"
 				>
 			</File>
 			<File
@@ -1320,7 +1320,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermDocs.h"
+				RelativePath="..\..\..\include\TermDocs.h"
 				>
 			</File>
 			<File
@@ -1328,7 +1328,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermEnum.h"
+				RelativePath="..\..\..\include\TermEnum.h"
 				>
 			</File>
 			<File
@@ -1336,7 +1336,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermFreqVector.h"
+				RelativePath="..\..\..\include\TermFreqVector.h"
 				>
 			</File>
 			<File
@@ -1344,7 +1344,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermInfo.h"
+				RelativePath="..\..\..\include\TermInfo.h"
 				>
 			</File>
 			<File
@@ -1352,7 +1352,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermInfosReader.h"
+				RelativePath="..\..\..\include\TermInfosReader.h"
 				>
 			</File>
 			<File
@@ -1360,7 +1360,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermInfosWriter.h"
+				RelativePath="..\..\..\include\TermInfosWriter.h"
 				>
 			</File>
 			<File
@@ -1368,7 +1368,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermPositions.h"
+				RelativePath="..\..\..\include\TermPositions.h"
 				>
 			</File>
 			<File
@@ -1376,7 +1376,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermPositionVector.h"
+				RelativePath="..\..\..\include\TermPositionVector.h"
 				>
 			</File>
 			<File
@@ -1384,7 +1384,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermsHash.h"
+				RelativePath="..\..\..\include\TermsHash.h"
 				>
 			</File>
 			<File
@@ -1392,7 +1392,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermsHashConsumer.h"
+				RelativePath="..\..\..\include\TermsHashConsumer.h"
 				>
 			</File>
 			<File
@@ -1400,7 +1400,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermsHashConsumerPerField.h"
+				RelativePath="..\..\..\include\TermsHashConsumerPerField.h"
 				>
 			</File>
 			<File
@@ -1408,7 +1408,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermsHashConsumerPerThread.h"
+				RelativePath="..\..\..\include\TermsHashConsumerPerThread.h"
 				>
 			</File>
 			<File
@@ -1416,7 +1416,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermsHashPerField.h"
+				RelativePath="..\..\..\include\TermsHashPerField.h"
 				>
 			</File>
 			<File
@@ -1424,7 +1424,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermsHashPerThread.h"
+				RelativePath="..\..\..\include\TermsHashPerThread.h"
 				>
 			</File>
 			<File
@@ -1432,7 +1432,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorEntry.h"
+				RelativePath="..\..\..\include\TermVectorEntry.h"
 				>
 			</File>
 			<File
@@ -1440,7 +1440,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorEntryFreqSortedComparator.h"
+				RelativePath="..\..\..\include\TermVectorEntryFreqSortedComparator.h"
 				>
 			</File>
 			<File
@@ -1448,7 +1448,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorMapper.h"
+				RelativePath="..\..\..\include\TermVectorMapper.h"
 				>
 			</File>
 			<File
@@ -1456,7 +1456,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorOffsetInfo.h"
+				RelativePath="..\..\..\include\TermVectorOffsetInfo.h"
 				>
 			</File>
 			<File
@@ -1464,7 +1464,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorsReader.h"
+				RelativePath="..\..\..\include\TermVectorsReader.h"
 				>
 			</File>
 			<File
@@ -1472,7 +1472,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorsTermsWriter.h"
+				RelativePath="..\..\..\include\TermVectorsTermsWriter.h"
 				>
 			</File>
 			<File
@@ -1480,7 +1480,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorsTermsWriterPerField.h"
+				RelativePath="..\..\..\include\TermVectorsTermsWriterPerField.h"
 				>
 			</File>
 			<File
@@ -1488,7 +1488,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorsTermsWriterPerThread.h"
+				RelativePath="..\..\..\include\TermVectorsTermsWriterPerThread.h"
 				>
 			</File>
 			<File
@@ -1496,7 +1496,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermVectorsWriter.h"
+				RelativePath="..\..\..\include\TermVectorsWriter.h"
 				>
 			</File>
 		</Filter>
@@ -1504,27 +1504,27 @@
 			Name="store"
 			>
 			<File
-				RelativePath="..\include\_MMapDirectory.h"
+				RelativePath="..\..\..\include\_MMapDirectory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_NativeFSLockFactory.h"
+				RelativePath="..\..\..\include\_NativeFSLockFactory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_NoLockFactory.h"
+				RelativePath="..\..\..\include\_NoLockFactory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_SimpleFSDirectory.h"
+				RelativePath="..\..\..\include\_SimpleFSDirectory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_SimpleFSLockFactory.h"
+				RelativePath="..\..\..\include\_SimpleFSLockFactory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\_SingleInstanceLockFactory.h"
+				RelativePath="..\..\..\include\_SingleInstanceLockFactory.h"
 				>
 			</File>
 			<File
@@ -1532,7 +1532,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BufferedIndexInput.h"
+				RelativePath="..\..\..\include\BufferedIndexInput.h"
 				>
 			</File>
 			<File
@@ -1540,7 +1540,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BufferedIndexOutput.h"
+				RelativePath="..\..\..\include\BufferedIndexOutput.h"
 				>
 			</File>
 			<File
@@ -1548,7 +1548,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ChecksumIndexInput.h"
+				RelativePath="..\..\..\include\ChecksumIndexInput.h"
 				>
 			</File>
 			<File
@@ -1556,7 +1556,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ChecksumIndexOutput.h"
+				RelativePath="..\..\..\include\ChecksumIndexOutput.h"
 				>
 			</File>
 			<File
@@ -1564,7 +1564,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Directory.h"
+				RelativePath="..\..\..\include\Directory.h"
 				>
 			</File>
 			<File
@@ -1572,7 +1572,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FileSwitchDirectory.h"
+				RelativePath="..\..\..\include\FileSwitchDirectory.h"
 				>
 			</File>
 			<File
@@ -1580,7 +1580,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FSDirectory.h"
+				RelativePath="..\..\..\include\FSDirectory.h"
 				>
 			</File>
 			<File
@@ -1588,7 +1588,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FSLockFactory.h"
+				RelativePath="..\..\..\include\FSLockFactory.h"
 				>
 			</File>
 			<File
@@ -1596,7 +1596,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexInput.h"
+				RelativePath="..\..\..\include\IndexInput.h"
 				>
 			</File>
 			<File
@@ -1604,7 +1604,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexOutput.h"
+				RelativePath="..\..\..\include\IndexOutput.h"
 				>
 			</File>
 			<File
@@ -1612,7 +1612,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Lock.h"
+				RelativePath="..\..\..\include\Lock.h"
 				>
 			</File>
 			<File
@@ -1620,7 +1620,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LockFactory.h"
+				RelativePath="..\..\..\include\LockFactory.h"
 				>
 			</File>
 			<File
@@ -1628,7 +1628,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MMapDirectory.h"
+				RelativePath="..\..\..\include\MMapDirectory.h"
 				>
 			</File>
 			<File
@@ -1636,7 +1636,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NativeFSLockFactory.h"
+				RelativePath="..\..\..\include\NativeFSLockFactory.h"
 				>
 			</File>
 			<File
@@ -1644,7 +1644,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NoLockFactory.h"
+				RelativePath="..\..\..\include\NoLockFactory.h"
 				>
 			</File>
 			<File
@@ -1652,7 +1652,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\RAMDirectory.h"
+				RelativePath="..\..\..\include\RAMDirectory.h"
 				>
 			</File>
 			<File
@@ -1660,7 +1660,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\RAMFile.h"
+				RelativePath="..\..\..\include\RAMFile.h"
 				>
 			</File>
 			<File
@@ -1668,7 +1668,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\RAMInputStream.h"
+				RelativePath="..\..\..\include\RAMInputStream.h"
 				>
 			</File>
 			<File
@@ -1676,7 +1676,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\RAMOutputStream.h"
+				RelativePath="..\..\..\include\RAMOutputStream.h"
 				>
 			</File>
 			<File
@@ -1684,7 +1684,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SimpleFSDirectory.h"
+				RelativePath="..\..\..\include\SimpleFSDirectory.h"
 				>
 			</File>
 			<File
@@ -1692,7 +1692,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SimpleFSLockFactory.h"
+				RelativePath="..\..\..\include\SimpleFSLockFactory.h"
 				>
 			</File>
 			<File
@@ -1700,7 +1700,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SingleInstanceLockFactory.h"
+				RelativePath="..\..\..\include\SingleInstanceLockFactory.h"
 				>
 			</File>
 		</Filter>
@@ -1716,7 +1716,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Analyzer.h"
+				RelativePath="..\..\..\include\Analyzer.h"
 				>
 			</File>
 			<File
@@ -1724,7 +1724,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ASCIIFoldingFilter.h"
+				RelativePath="..\..\..\include\ASCIIFoldingFilter.h"
 				>
 			</File>
 			<File
@@ -1732,7 +1732,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BaseCharFilter.h"
+				RelativePath="..\..\..\include\BaseCharFilter.h"
 				>
 			</File>
 			<File
@@ -1740,7 +1740,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CachingTokenFilter.h"
+				RelativePath="..\..\..\include\CachingTokenFilter.h"
 				>
 			</File>
 			<File
@@ -1748,7 +1748,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CharArraySet.h"
+				RelativePath="..\..\..\include\CharArraySet.h"
 				>
 			</File>
 			<File
@@ -1756,7 +1756,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CharFilter.h"
+				RelativePath="..\..\..\include\CharFilter.h"
 				>
 			</File>
 			<File
@@ -1764,7 +1764,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CharReader.h"
+				RelativePath="..\..\..\include\CharReader.h"
 				>
 			</File>
 			<File
@@ -1772,7 +1772,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CharStream.h"
+				RelativePath="..\..\..\include\CharStream.h"
 				>
 			</File>
 			<File
@@ -1780,7 +1780,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CharTokenizer.h"
+				RelativePath="..\..\..\include\CharTokenizer.h"
 				>
 			</File>
 			<File
@@ -1788,7 +1788,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ISOLatin1AccentFilter.h"
+				RelativePath="..\..\..\include\ISOLatin1AccentFilter.h"
 				>
 			</File>
 			<File
@@ -1796,7 +1796,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\KeywordAnalyzer.h"
+				RelativePath="..\..\..\include\KeywordAnalyzer.h"
 				>
 			</File>
 			<File
@@ -1804,7 +1804,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\KeywordTokenizer.h"
+				RelativePath="..\..\..\include\KeywordTokenizer.h"
 				>
 			</File>
 			<File
@@ -1812,7 +1812,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LengthFilter.h"
+				RelativePath="..\..\..\include\LengthFilter.h"
 				>
 			</File>
 			<File
@@ -1820,7 +1820,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LetterTokenizer.h"
+				RelativePath="..\..\..\include\LetterTokenizer.h"
 				>
 			</File>
 			<File
@@ -1828,7 +1828,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LowerCaseFilter.h"
+				RelativePath="..\..\..\include\LowerCaseFilter.h"
 				>
 			</File>
 			<File
@@ -1836,7 +1836,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LowerCaseTokenizer.h"
+				RelativePath="..\..\..\include\LowerCaseTokenizer.h"
 				>
 			</File>
 			<File
@@ -1844,7 +1844,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MappingCharFilter.h"
+				RelativePath="..\..\..\include\MappingCharFilter.h"
 				>
 			</File>
 			<File
@@ -1852,7 +1852,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NormalizeCharMap.h"
+				RelativePath="..\..\..\include\NormalizeCharMap.h"
 				>
 			</File>
 			<File
@@ -1860,7 +1860,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NumericTokenStream.h"
+				RelativePath="..\..\..\include\NumericTokenStream.h"
 				>
 			</File>
 			<File
@@ -1868,7 +1868,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PerFieldAnalyzerWrapper.h"
+				RelativePath="..\..\..\include\PerFieldAnalyzerWrapper.h"
 				>
 			</File>
 			<File
@@ -1876,7 +1876,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PorterStemFilter.h"
+				RelativePath="..\..\..\include\PorterStemFilter.h"
 				>
 			</File>
 			<File
@@ -1884,7 +1884,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PorterStemmer.h"
+				RelativePath="..\..\..\include\PorterStemmer.h"
 				>
 			</File>
 			<File
@@ -1892,7 +1892,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SimpleAnalyzer.h"
+				RelativePath="..\..\..\include\SimpleAnalyzer.h"
 				>
 			</File>
 			<File
@@ -1900,7 +1900,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\StopAnalyzer.h"
+				RelativePath="..\..\..\include\StopAnalyzer.h"
 				>
 			</File>
 			<File
@@ -1908,7 +1908,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\StopFilter.h"
+				RelativePath="..\..\..\include\StopFilter.h"
 				>
 			</File>
 			<File
@@ -1916,7 +1916,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TeeSinkTokenFilter.h"
+				RelativePath="..\..\..\include\TeeSinkTokenFilter.h"
 				>
 			</File>
 			<File
@@ -1924,7 +1924,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Token.h"
+				RelativePath="..\..\..\include\Token.h"
 				>
 			</File>
 			<File
@@ -1932,7 +1932,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TokenFilter.h"
+				RelativePath="..\..\..\include\TokenFilter.h"
 				>
 			</File>
 			<File
@@ -1940,7 +1940,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Tokenizer.h"
+				RelativePath="..\..\..\include\Tokenizer.h"
 				>
 			</File>
 			<File
@@ -1948,7 +1948,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TokenStream.h"
+				RelativePath="..\..\..\include\TokenStream.h"
 				>
 			</File>
 			<File
@@ -1956,7 +1956,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\WhitespaceAnalyzer.h"
+				RelativePath="..\..\..\include\WhitespaceAnalyzer.h"
 				>
 			</File>
 			<File
@@ -1964,7 +1964,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\WhitespaceTokenizer.h"
+				RelativePath="..\..\..\include\WhitespaceTokenizer.h"
 				>
 			</File>
 			<File
@@ -1972,7 +1972,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\WordlistLoader.h"
+				RelativePath="..\..\..\include\WordlistLoader.h"
 				>
 			</File>
 			<Filter
@@ -1983,7 +1983,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\FlagsAttribute.h"
+					RelativePath="..\..\..\include\FlagsAttribute.h"
 					>
 				</File>
 				<File
@@ -1991,7 +1991,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\OffsetAttribute.h"
+					RelativePath="..\..\..\include\OffsetAttribute.h"
 					>
 				</File>
 				<File
@@ -1999,7 +1999,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\PayloadAttribute.h"
+					RelativePath="..\..\..\include\PayloadAttribute.h"
 					>
 				</File>
 				<File
@@ -2007,7 +2007,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\PositionIncrementAttribute.h"
+					RelativePath="..\..\..\include\PositionIncrementAttribute.h"
 					>
 				</File>
 				<File
@@ -2015,7 +2015,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\TermAttribute.h"
+					RelativePath="..\..\..\include\TermAttribute.h"
 					>
 				</File>
 				<File
@@ -2023,7 +2023,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\TypeAttribute.h"
+					RelativePath="..\..\..\include\TypeAttribute.h"
 					>
 				</File>
 			</Filter>
@@ -2039,7 +2039,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\StandardAnalyzer.h"
+					RelativePath="..\..\..\include\StandardAnalyzer.h"
 					>
 				</File>
 				<File
@@ -2047,7 +2047,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\StandardFilter.h"
+					RelativePath="..\..\..\include\StandardFilter.h"
 					>
 				</File>
 				<File
@@ -2055,7 +2055,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\StandardTokenizer.h"
+					RelativePath="..\..\..\include\StandardTokenizer.h"
 					>
 				</File>
 				<File
@@ -2063,7 +2063,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\StandardTokenizerImpl.h"
+					RelativePath="..\..\..\include\StandardTokenizerImpl.h"
 					>
 				</File>
 			</Filter>
@@ -2092,7 +2092,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Attribute.h"
+				RelativePath="..\..\..\include\Attribute.h"
 				>
 			</File>
 			<File
@@ -2100,7 +2100,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\AttributeSource.h"
+				RelativePath="..\..\..\include\AttributeSource.h"
 				>
 			</File>
 			<File
@@ -2108,7 +2108,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BitUtil.h"
+				RelativePath="..\..\..\include\BitUtil.h"
 				>
 			</File>
 			<File
@@ -2116,11 +2116,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BitVector.h"
+				RelativePath="..\..\..\include\BitVector.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\CloseableThreadLocal.h"
+				RelativePath="..\..\..\include\CloseableThreadLocal.h"
 				>
 			</File>
 			<File
@@ -2128,7 +2128,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Constants.h"
+				RelativePath="..\..\..\include\Constants.h"
 				>
 			</File>
 			<File
@@ -2136,7 +2136,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocIdBitSet.h"
+				RelativePath="..\..\..\include\DocIdBitSet.h"
 				>
 			</File>
 			<File
@@ -2144,11 +2144,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldCacheSanityChecker.h"
+				RelativePath="..\..\..\include\FieldCacheSanityChecker.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\MapOfSets.h"
+				RelativePath="..\..\..\include\MapOfSets.h"
 				>
 			</File>
 			<File
@@ -2156,7 +2156,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NumericUtils.h"
+				RelativePath="..\..\..\include\NumericUtils.h"
 				>
 			</File>
 			<File
@@ -2164,7 +2164,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\OpenBitSet.h"
+				RelativePath="..\..\..\include\OpenBitSet.h"
 				>
 			</File>
 			<File
@@ -2172,7 +2172,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\OpenBitSetDISI.h"
+				RelativePath="..\..\..\include\OpenBitSetDISI.h"
 				>
 			</File>
 			<File
@@ -2180,11 +2180,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\OpenBitSetIterator.h"
+				RelativePath="..\..\..\include\OpenBitSetIterator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\PriorityQueue.h"
+				RelativePath="..\..\..\include\PriorityQueue.h"
 				>
 			</File>
 			<File
@@ -2192,7 +2192,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ReaderUtil.h"
+				RelativePath="..\..\..\include\ReaderUtil.h"
 				>
 			</File>
 			<File
@@ -2200,11 +2200,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ScorerDocQueue.h"
+				RelativePath="..\..\..\include\ScorerDocQueue.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\SimpleLRUCache.h"
+				RelativePath="..\..\..\include\SimpleLRUCache.h"
 				>
 			</File>
 			<File
@@ -2212,7 +2212,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SmallDouble.h"
+				RelativePath="..\..\..\include\SmallDouble.h"
 				>
 			</File>
 			<File
@@ -2220,7 +2220,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SortedVIntList.h"
+				RelativePath="..\..\..\include\SortedVIntList.h"
 				>
 			</File>
 		</Filter>
@@ -2336,7 +2336,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BooleanClause.h"
+				RelativePath="..\..\..\include\BooleanClause.h"
 				>
 			</File>
 			<File
@@ -2344,7 +2344,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BooleanQuery.h"
+				RelativePath="..\..\..\include\BooleanQuery.h"
 				>
 			</File>
 			<File
@@ -2352,7 +2352,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BooleanScorer.h"
+				RelativePath="..\..\..\include\BooleanScorer.h"
 				>
 			</File>
 			<File
@@ -2360,7 +2360,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BooleanScorer2.h"
+				RelativePath="..\..\..\include\BooleanScorer2.h"
 				>
 			</File>
 			<File
@@ -2368,7 +2368,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CachingSpanFilter.h"
+				RelativePath="..\..\..\include\CachingSpanFilter.h"
 				>
 			</File>
 			<File
@@ -2376,7 +2376,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CachingWrapperFilter.h"
+				RelativePath="..\..\..\include\CachingWrapperFilter.h"
 				>
 			</File>
 			<File
@@ -2384,7 +2384,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Collector.h"
+				RelativePath="..\..\..\include\Collector.h"
 				>
 			</File>
 			<File
@@ -2392,7 +2392,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ComplexExplanation.h"
+				RelativePath="..\..\..\include\ComplexExplanation.h"
 				>
 			</File>
 			<File
@@ -2400,7 +2400,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ConjunctionScorer.h"
+				RelativePath="..\..\..\include\ConjunctionScorer.h"
 				>
 			</File>
 			<File
@@ -2408,7 +2408,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ConstantScoreQuery.h"
+				RelativePath="..\..\..\include\ConstantScoreQuery.h"
 				>
 			</File>
 			<File
@@ -2416,7 +2416,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DefaultSimilarity.h"
+				RelativePath="..\..\..\include\DefaultSimilarity.h"
 				>
 			</File>
 			<File
@@ -2424,7 +2424,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DisjunctionMaxQuery.h"
+				RelativePath="..\..\..\include\DisjunctionMaxQuery.h"
 				>
 			</File>
 			<File
@@ -2432,7 +2432,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DisjunctionMaxScorer.h"
+				RelativePath="..\..\..\include\DisjunctionMaxScorer.h"
 				>
 			</File>
 			<File
@@ -2440,7 +2440,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DisjunctionSumScorer.h"
+				RelativePath="..\..\..\include\DisjunctionSumScorer.h"
 				>
 			</File>
 			<File
@@ -2448,7 +2448,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocIdSet.h"
+				RelativePath="..\..\..\include\DocIdSet.h"
 				>
 			</File>
 			<File
@@ -2456,7 +2456,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DocIdSetIterator.h"
+				RelativePath="..\..\..\include\DocIdSetIterator.h"
 				>
 			</File>
 			<File
@@ -2464,7 +2464,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ExactPhraseScorer.h"
+				RelativePath="..\..\..\include\ExactPhraseScorer.h"
 				>
 			</File>
 			<File
@@ -2472,7 +2472,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Explanation.h"
+				RelativePath="..\..\..\include\Explanation.h"
 				>
 			</File>
 			<File
@@ -2480,7 +2480,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldCache.h"
+				RelativePath="..\..\..\include\FieldCache.h"
 				>
 			</File>
 			<File
@@ -2488,7 +2488,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldCacheImpl.h"
+				RelativePath="..\..\..\include\FieldCacheImpl.h"
 				>
 			</File>
 			<File
@@ -2496,7 +2496,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldCacheRangeFilter.h"
+				RelativePath="..\..\..\include\FieldCacheRangeFilter.h"
 				>
 			</File>
 			<File
@@ -2504,7 +2504,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldCacheTermsFilter.h"
+				RelativePath="..\..\..\include\FieldCacheTermsFilter.h"
 				>
 			</File>
 			<File
@@ -2512,7 +2512,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldComparator.h"
+				RelativePath="..\..\..\include\FieldComparator.h"
 				>
 			</File>
 			<File
@@ -2520,7 +2520,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldComparatorSource.h"
+				RelativePath="..\..\..\include\FieldComparatorSource.h"
 				>
 			</File>
 			<File
@@ -2528,7 +2528,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldDoc.h"
+				RelativePath="..\..\..\include\FieldDoc.h"
 				>
 			</File>
 			<File
@@ -2536,7 +2536,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldDocSortedHitQueue.h"
+				RelativePath="..\..\..\include\FieldDocSortedHitQueue.h"
 				>
 			</File>
 			<File
@@ -2544,7 +2544,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldValueHitQueue.h"
+				RelativePath="..\..\..\include\FieldValueHitQueue.h"
 				>
 			</File>
 			<File
@@ -2552,7 +2552,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Filter.h"
+				RelativePath="..\..\..\include\Filter.h"
 				>
 			</File>
 			<File
@@ -2560,7 +2560,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FilteredDocIdSet.h"
+				RelativePath="..\..\..\include\FilteredDocIdSet.h"
 				>
 			</File>
 			<File
@@ -2568,7 +2568,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FilteredDocIdSetIterator.h"
+				RelativePath="..\..\..\include\FilteredDocIdSetIterator.h"
 				>
 			</File>
 			<File
@@ -2576,7 +2576,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FilteredQuery.h"
+				RelativePath="..\..\..\include\FilteredQuery.h"
 				>
 			</File>
 			<File
@@ -2584,7 +2584,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FilteredTermEnum.h"
+				RelativePath="..\..\..\include\FilteredTermEnum.h"
 				>
 			</File>
 			<File
@@ -2592,7 +2592,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FilterManager.h"
+				RelativePath="..\..\..\include\FilterManager.h"
 				>
 			</File>
 			<File
@@ -2600,7 +2600,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FuzzyQuery.h"
+				RelativePath="..\..\..\include\FuzzyQuery.h"
 				>
 			</File>
 			<File
@@ -2608,7 +2608,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FuzzyTermEnum.h"
+				RelativePath="..\..\..\include\FuzzyTermEnum.h"
 				>
 			</File>
 			<File
@@ -2616,7 +2616,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\HitQueue.h"
+				RelativePath="..\..\..\include\HitQueue.h"
 				>
 			</File>
 			<File
@@ -2624,7 +2624,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\HitQueueBase.h"
+				RelativePath="..\..\..\include\HitQueueBase.h"
 				>
 			</File>
 			<File
@@ -2632,7 +2632,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\IndexSearcher.h"
+				RelativePath="..\..\..\include\IndexSearcher.h"
 				>
 			</File>
 			<File
@@ -2640,7 +2640,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MatchAllDocsQuery.h"
+				RelativePath="..\..\..\include\MatchAllDocsQuery.h"
 				>
 			</File>
 			<File
@@ -2648,7 +2648,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiPhraseQuery.h"
+				RelativePath="..\..\..\include\MultiPhraseQuery.h"
 				>
 			</File>
 			<File
@@ -2656,7 +2656,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiSearcher.h"
+				RelativePath="..\..\..\include\MultiSearcher.h"
 				>
 			</File>
 			<File
@@ -2664,7 +2664,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiTermQuery.h"
+				RelativePath="..\..\..\include\MultiTermQuery.h"
 				>
 			</File>
 			<File
@@ -2672,7 +2672,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiTermQueryWrapperFilter.h"
+				RelativePath="..\..\..\include\MultiTermQueryWrapperFilter.h"
 				>
 			</File>
 			<File
@@ -2680,7 +2680,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NumericRangeFilter.h"
+				RelativePath="..\..\..\include\NumericRangeFilter.h"
 				>
 			</File>
 			<File
@@ -2688,7 +2688,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NumericRangeQuery.h"
+				RelativePath="..\..\..\include\NumericRangeQuery.h"
 				>
 			</File>
 			<File
@@ -2696,7 +2696,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ParallelMultiSearcher.h"
+				RelativePath="..\..\..\include\ParallelMultiSearcher.h"
 				>
 			</File>
 			<File
@@ -2704,7 +2704,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PhrasePositions.h"
+				RelativePath="..\..\..\include\PhrasePositions.h"
 				>
 			</File>
 			<File
@@ -2712,7 +2712,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PhraseQuery.h"
+				RelativePath="..\..\..\include\PhraseQuery.h"
 				>
 			</File>
 			<File
@@ -2720,7 +2720,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PhraseQueue.h"
+				RelativePath="..\..\..\include\PhraseQueue.h"
 				>
 			</File>
 			<File
@@ -2728,7 +2728,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PhraseScorer.h"
+				RelativePath="..\..\..\include\PhraseScorer.h"
 				>
 			</File>
 			<File
@@ -2736,7 +2736,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PositiveScoresOnlyCollector.h"
+				RelativePath="..\..\..\include\PositiveScoresOnlyCollector.h"
 				>
 			</File>
 			<File
@@ -2744,7 +2744,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PrefixFilter.h"
+				RelativePath="..\..\..\include\PrefixFilter.h"
 				>
 			</File>
 			<File
@@ -2752,7 +2752,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PrefixQuery.h"
+				RelativePath="..\..\..\include\PrefixQuery.h"
 				>
 			</File>
 			<File
@@ -2760,7 +2760,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\PrefixTermEnum.h"
+				RelativePath="..\..\..\include\PrefixTermEnum.h"
 				>
 			</File>
 			<File
@@ -2768,7 +2768,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Query.h"
+				RelativePath="..\..\..\include\Query.h"
 				>
 			</File>
 			<File
@@ -2776,7 +2776,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryTermVector.h"
+				RelativePath="..\..\..\include\QueryTermVector.h"
 				>
 			</File>
 			<File
@@ -2784,7 +2784,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryWrapperFilter.h"
+				RelativePath="..\..\..\include\QueryWrapperFilter.h"
 				>
 			</File>
 			<File
@@ -2792,7 +2792,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ReqExclScorer.h"
+				RelativePath="..\..\..\include\ReqExclScorer.h"
 				>
 			</File>
 			<File
@@ -2800,7 +2800,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ReqOptSumScorer.h"
+				RelativePath="..\..\..\include\ReqOptSumScorer.h"
 				>
 			</File>
 			<File
@@ -2808,7 +2808,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ScoreCachingWrappingScorer.h"
+				RelativePath="..\..\..\include\ScoreCachingWrappingScorer.h"
 				>
 			</File>
 			<File
@@ -2816,7 +2816,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ScoreDoc.h"
+				RelativePath="..\..\..\include\ScoreDoc.h"
 				>
 			</File>
 			<File
@@ -2824,7 +2824,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Scorer.h"
+				RelativePath="..\..\..\include\Scorer.h"
 				>
 			</File>
 			<File
@@ -2832,7 +2832,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Searchable.h"
+				RelativePath="..\..\..\include\Searchable.h"
 				>
 			</File>
 			<File
@@ -2840,7 +2840,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Searcher.h"
+				RelativePath="..\..\..\include\Searcher.h"
 				>
 			</File>
 			<File
@@ -2848,7 +2848,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Similarity.h"
+				RelativePath="..\..\..\include\Similarity.h"
 				>
 			</File>
 			<File
@@ -2856,7 +2856,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SimilarityDelegator.h"
+				RelativePath="..\..\..\include\SimilarityDelegator.h"
 				>
 			</File>
 			<File
@@ -2864,7 +2864,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SingleTermEnum.h"
+				RelativePath="..\..\..\include\SingleTermEnum.h"
 				>
 			</File>
 			<File
@@ -2872,7 +2872,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SloppyPhraseScorer.h"
+				RelativePath="..\..\..\include\SloppyPhraseScorer.h"
 				>
 			</File>
 			<File
@@ -2880,7 +2880,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Sort.h"
+				RelativePath="..\..\..\include\Sort.h"
 				>
 			</File>
 			<File
@@ -2888,7 +2888,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SortField.h"
+				RelativePath="..\..\..\include\SortField.h"
 				>
 			</File>
 			<File
@@ -2896,7 +2896,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SpanFilter.h"
+				RelativePath="..\..\..\include\SpanFilter.h"
 				>
 			</File>
 			<File
@@ -2904,7 +2904,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SpanFilterResult.h"
+				RelativePath="..\..\..\include\SpanFilterResult.h"
 				>
 			</File>
 			<File
@@ -2912,7 +2912,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SpanQueryFilter.h"
+				RelativePath="..\..\..\include\SpanQueryFilter.h"
 				>
 			</File>
 			<File
@@ -2920,7 +2920,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermQuery.h"
+				RelativePath="..\..\..\include\TermQuery.h"
 				>
 			</File>
 			<File
@@ -2928,7 +2928,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermRangeFilter.h"
+				RelativePath="..\..\..\include\TermRangeFilter.h"
 				>
 			</File>
 			<File
@@ -2936,7 +2936,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermRangeQuery.h"
+				RelativePath="..\..\..\include\TermRangeQuery.h"
 				>
 			</File>
 			<File
@@ -2944,7 +2944,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermRangeTermEnum.h"
+				RelativePath="..\..\..\include\TermRangeTermEnum.h"
 				>
 			</File>
 			<File
@@ -2952,7 +2952,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TermScorer.h"
+				RelativePath="..\..\..\include\TermScorer.h"
 				>
 			</File>
 			<File
@@ -2960,7 +2960,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TimeLimitingCollector.h"
+				RelativePath="..\..\..\include\TimeLimitingCollector.h"
 				>
 			</File>
 			<File
@@ -2968,7 +2968,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TopDocs.h"
+				RelativePath="..\..\..\include\TopDocs.h"
 				>
 			</File>
 			<File
@@ -2976,7 +2976,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TopDocsCollector.h"
+				RelativePath="..\..\..\include\TopDocsCollector.h"
 				>
 			</File>
 			<File
@@ -2984,7 +2984,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TopFieldCollector.h"
+				RelativePath="..\..\..\include\TopFieldCollector.h"
 				>
 			</File>
 			<File
@@ -2992,7 +2992,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TopFieldDocs.h"
+				RelativePath="..\..\..\include\TopFieldDocs.h"
 				>
 			</File>
 			<File
@@ -3000,7 +3000,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TopScoreDocCollector.h"
+				RelativePath="..\..\..\include\TopScoreDocCollector.h"
 				>
 			</File>
 			<File
@@ -3008,7 +3008,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Weight.h"
+				RelativePath="..\..\..\include\Weight.h"
 				>
 			</File>
 			<File
@@ -3016,7 +3016,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\WildcardQuery.h"
+				RelativePath="..\..\..\include\WildcardQuery.h"
 				>
 			</File>
 			<File
@@ -3024,7 +3024,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\WildcardTermEnum.h"
+				RelativePath="..\..\..\include\WildcardTermEnum.h"
 				>
 			</File>
 			<Filter
@@ -3051,7 +3051,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\FieldMaskingSpanQuery.h"
+					RelativePath="..\..\..\include\FieldMaskingSpanQuery.h"
 					>
 				</File>
 				<File
@@ -3059,7 +3059,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\NearSpansOrdered.h"
+					RelativePath="..\..\..\include\NearSpansOrdered.h"
 					>
 				</File>
 				<File
@@ -3067,7 +3067,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\NearSpansUnordered.h"
+					RelativePath="..\..\..\include\NearSpansUnordered.h"
 					>
 				</File>
 				<File
@@ -3075,7 +3075,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanFirstQuery.h"
+					RelativePath="..\..\..\include\SpanFirstQuery.h"
 					>
 				</File>
 				<File
@@ -3083,7 +3083,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanNearQuery.h"
+					RelativePath="..\..\..\include\SpanNearQuery.h"
 					>
 				</File>
 				<File
@@ -3091,7 +3091,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanNotQuery.h"
+					RelativePath="..\..\..\include\SpanNotQuery.h"
 					>
 				</File>
 				<File
@@ -3099,7 +3099,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanOrQuery.h"
+					RelativePath="..\..\..\include\SpanOrQuery.h"
 					>
 				</File>
 				<File
@@ -3107,7 +3107,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanQuery.h"
+					RelativePath="..\..\..\include\SpanQuery.h"
 					>
 				</File>
 				<File
@@ -3115,7 +3115,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\Spans.h"
+					RelativePath="..\..\..\include\Spans.h"
 					>
 				</File>
 				<File
@@ -3123,7 +3123,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanScorer.h"
+					RelativePath="..\..\..\include\SpanScorer.h"
 					>
 				</File>
 				<File
@@ -3131,7 +3131,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanTermQuery.h"
+					RelativePath="..\..\..\include\SpanTermQuery.h"
 					>
 				</File>
 				<File
@@ -3139,7 +3139,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\SpanWeight.h"
+					RelativePath="..\..\..\include\SpanWeight.h"
 					>
 				</File>
 				<File
@@ -3147,7 +3147,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\TermSpans.h"
+					RelativePath="..\..\..\include\TermSpans.h"
 					>
 				</File>
 			</Filter>
@@ -3163,7 +3163,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\AveragePayloadFunction.h"
+					RelativePath="..\..\..\include\AveragePayloadFunction.h"
 					>
 				</File>
 				<File
@@ -3171,7 +3171,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\MaxPayloadFunction.h"
+					RelativePath="..\..\..\include\MaxPayloadFunction.h"
 					>
 				</File>
 				<File
@@ -3179,7 +3179,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\MinPayloadFunction.h"
+					RelativePath="..\..\..\include\MinPayloadFunction.h"
 					>
 				</File>
 				<File
@@ -3187,7 +3187,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\PayloadFunction.h"
+					RelativePath="..\..\..\include\PayloadFunction.h"
 					>
 				</File>
 				<File
@@ -3195,7 +3195,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\PayloadNearQuery.h"
+					RelativePath="..\..\..\include\PayloadNearQuery.h"
 					>
 				</File>
 				<File
@@ -3203,7 +3203,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\PayloadSpanUtil.h"
+					RelativePath="..\..\..\include\PayloadSpanUtil.h"
 					>
 				</File>
 				<File
@@ -3211,7 +3211,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\PayloadTermQuery.h"
+					RelativePath="..\..\..\include\PayloadTermQuery.h"
 					>
 				</File>
 			</Filter>
@@ -3247,7 +3247,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\ByteFieldSource.h"
+					RelativePath="..\..\..\include\ByteFieldSource.h"
 					>
 				</File>
 				<File
@@ -3255,7 +3255,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\CustomScoreProvider.h"
+					RelativePath="..\..\..\include\CustomScoreProvider.h"
 					>
 				</File>
 				<File
@@ -3263,7 +3263,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\CustomScoreQuery.h"
+					RelativePath="..\..\..\include\CustomScoreQuery.h"
 					>
 				</File>
 				<File
@@ -3271,7 +3271,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\DocValues.h"
+					RelativePath="..\..\..\include\DocValues.h"
 					>
 				</File>
 				<File
@@ -3279,7 +3279,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\DoubleFieldSource.h"
+					RelativePath="..\..\..\include\DoubleFieldSource.h"
 					>
 				</File>
 				<File
@@ -3287,7 +3287,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\FieldCacheSource.h"
+					RelativePath="..\..\..\include\FieldCacheSource.h"
 					>
 				</File>
 				<File
@@ -3295,7 +3295,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\FieldScoreQuery.h"
+					RelativePath="..\..\..\include\FieldScoreQuery.h"
 					>
 				</File>
 				<File
@@ -3303,7 +3303,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\IntFieldSource.h"
+					RelativePath="..\..\..\include\IntFieldSource.h"
 					>
 				</File>
 				<File
@@ -3311,7 +3311,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\OrdFieldSource.h"
+					RelativePath="..\..\..\include\OrdFieldSource.h"
 					>
 				</File>
 				<File
@@ -3319,7 +3319,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\ReverseOrdFieldSource.h"
+					RelativePath="..\..\..\include\ReverseOrdFieldSource.h"
 					>
 				</File>
 				<File
@@ -3327,7 +3327,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\ValueSource.h"
+					RelativePath="..\..\..\include\ValueSource.h"
 					>
 				</File>
 				<File
@@ -3335,7 +3335,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\include\ValueSourceQuery.h"
+					RelativePath="..\..\..\include\ValueSourceQuery.h"
 					>
 				</File>
 			</Filter>
@@ -3348,7 +3348,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\AbstractField.h"
+				RelativePath="..\..\..\include\AbstractField.h"
 				>
 			</File>
 			<File
@@ -3356,7 +3356,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CompressionTools.h"
+				RelativePath="..\..\..\include\CompressionTools.h"
 				>
 			</File>
 			<File
@@ -3364,7 +3364,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DateField.h"
+				RelativePath="..\..\..\include\DateField.h"
 				>
 			</File>
 			<File
@@ -3372,7 +3372,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\DateTools.h"
+				RelativePath="..\..\..\include\DateTools.h"
 				>
 			</File>
 			<File
@@ -3380,7 +3380,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Document.h"
+				RelativePath="..\..\..\include\Document.h"
 				>
 			</File>
 			<File
@@ -3388,7 +3388,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Field.h"
+				RelativePath="..\..\..\include\Field.h"
 				>
 			</File>
 			<File
@@ -3396,7 +3396,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Fieldable.h"
+				RelativePath="..\..\..\include\Fieldable.h"
 				>
 			</File>
 			<File
@@ -3404,7 +3404,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FieldSelector.h"
+				RelativePath="..\..\..\include\FieldSelector.h"
 				>
 			</File>
 			<File
@@ -3412,7 +3412,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LoadFirstFieldSelector.h"
+				RelativePath="..\..\..\include\LoadFirstFieldSelector.h"
 				>
 			</File>
 			<File
@@ -3420,7 +3420,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MapFieldSelector.h"
+				RelativePath="..\..\..\include\MapFieldSelector.h"
 				>
 			</File>
 			<File
@@ -3428,7 +3428,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NumberTools.h"
+				RelativePath="..\..\..\include\NumberTools.h"
 				>
 			</File>
 			<File
@@ -3436,7 +3436,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\NumericField.h"
+				RelativePath="..\..\..\include\NumericField.h"
 				>
 			</File>
 			<File
@@ -3444,7 +3444,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\SetBasedFieldSelector.h"
+				RelativePath="..\..\..\include\SetBasedFieldSelector.h"
 				>
 			</File>
 		</Filter>
@@ -3456,7 +3456,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FastCharStream.h"
+				RelativePath="..\..\..\include\FastCharStream.h"
 				>
 			</File>
 			<File
@@ -3464,7 +3464,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MultiFieldQueryParser.h"
+				RelativePath="..\..\..\include\MultiFieldQueryParser.h"
 				>
 			</File>
 			<File
@@ -3472,7 +3472,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryParseError.h"
+				RelativePath="..\..\..\include\QueryParseError.h"
 				>
 			</File>
 			<File
@@ -3480,7 +3480,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryParser.h"
+				RelativePath="..\..\..\include\QueryParser.h"
 				>
 			</File>
 			<File
@@ -3488,7 +3488,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryParserCharStream.h"
+				RelativePath="..\..\..\include\QueryParserCharStream.h"
 				>
 			</File>
 			<File
@@ -3496,7 +3496,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryParserConstants.h"
+				RelativePath="..\..\..\include\QueryParserConstants.h"
 				>
 			</File>
 			<File
@@ -3504,7 +3504,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryParserToken.h"
+				RelativePath="..\..\..\include\QueryParserToken.h"
 				>
 			</File>
 			<File
@@ -3512,7 +3512,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\QueryParserTokenManager.h"
+				RelativePath="..\..\..\include\QueryParserTokenManager.h"
 				>
 			</File>
 		</Filter>
@@ -3524,11 +3524,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Allocator.h"
+				RelativePath="..\..\..\include\Allocator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\Array.h"
+				RelativePath="..\..\..\include\Array.h"
 				>
 			</File>
 			<File
@@ -3536,7 +3536,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Base64.h"
+				RelativePath="..\..\..\include\Base64.h"
 				>
 			</File>
 			<File
@@ -3544,7 +3544,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BitSet.h"
+				RelativePath="..\..\..\include\BitSet.h"
 				>
 			</File>
 			<File
@@ -3552,7 +3552,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BufferedReader.h"
+				RelativePath="..\..\..\include\BufferedReader.h"
 				>
 			</File>
 			<File
@@ -3560,7 +3560,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CharFolder.h"
+				RelativePath="..\..\..\include\CharFolder.h"
 				>
 			</File>
 			<File
@@ -3568,11 +3568,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Collator.h"
+				RelativePath="..\..\..\include\Collator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\Collection.h"
+				RelativePath="..\..\..\include\Collection.h"
 				>
 			</File>
 			<File
@@ -3580,7 +3580,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\CycleCheck.h"
+				RelativePath="..\..\..\include\CycleCheck.h"
 				>
 			</File>
 			<File
@@ -3588,7 +3588,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FileReader.h"
+				RelativePath="..\..\..\include\FileReader.h"
 				>
 			</File>
 			<File
@@ -3596,15 +3596,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FileUtils.h"
+				RelativePath="..\..\..\include\FileUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\HashMap.h"
+				RelativePath="..\..\..\include\HashMap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\HashSet.h"
+				RelativePath="..\..\..\include\HashSet.h"
 				>
 			</File>
 			<File
@@ -3612,7 +3612,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InfoStream.h"
+				RelativePath="..\..\..\include\InfoStream.h"
 				>
 			</File>
 			<File
@@ -3620,7 +3620,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\InputStreamReader.h"
+				RelativePath="..\..\..\include\InputStreamReader.h"
 				>
 			</File>
 			<File
@@ -3628,11 +3628,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneException.h"
+				RelativePath="..\..\..\include\LuceneException.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneFactory.h"
+				RelativePath="..\..\..\include\LuceneFactory.h"
 				>
 			</File>
 			<File
@@ -3640,7 +3640,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneObject.h"
+				RelativePath="..\..\..\include\LuceneObject.h"
 				>
 			</File>
 			<File
@@ -3648,7 +3648,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneSignal.h"
+				RelativePath="..\..\..\include\LuceneSignal.h"
 				>
 			</File>
 			<File
@@ -3656,7 +3656,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneSync.h"
+				RelativePath="..\..\..\include\LuceneSync.h"
 				>
 			</File>
 			<File
@@ -3664,11 +3664,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LuceneThread.h"
+				RelativePath="..\..\..\include\LuceneThread.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\Map.h"
+				RelativePath="..\..\..\include\Map.h"
 				>
 			</File>
 			<File
@@ -3676,7 +3676,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\MiscUtils.h"
+				RelativePath="..\..\..\include\MiscUtils.h"
 				>
 			</File>
 			<File
@@ -3684,7 +3684,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Random.h"
+				RelativePath="..\..\..\include\Random.h"
 				>
 			</File>
 			<File
@@ -3692,11 +3692,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Reader.h"
+				RelativePath="..\..\..\include\Reader.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\Set.h"
+				RelativePath="..\..\..\include\Set.h"
 				>
 			</File>
 			<File
@@ -3704,7 +3704,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\StringReader.h"
+				RelativePath="..\..\..\include\StringReader.h"
 				>
 			</File>
 			<File
@@ -3712,7 +3712,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\StringUtils.h"
+				RelativePath="..\..\..\include\StringUtils.h"
 				>
 			</File>
 			<File
@@ -3720,7 +3720,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\Synchronize.h"
+				RelativePath="..\..\..\include\Synchronize.h"
 				>
 			</File>
 			<File
@@ -3728,7 +3728,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\TestPoint.h"
+				RelativePath="..\..\..\include\TestPoint.h"
 				>
 			</File>
 			<File
@@ -3736,7 +3736,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\ThreadPool.h"
+				RelativePath="..\..\..\include\ThreadPool.h"
 				>
 			</File>
 			<File
@@ -3744,7 +3744,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\UnicodeUtils.h"
+				RelativePath="..\..\..\include\UnicodeUtils.h"
 				>
 			</File>
 			<File
@@ -3752,11 +3752,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\UTF8Stream.h"
+				RelativePath="..\..\..\include\UTF8Stream.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\VariantUtils.h"
+				RelativePath="..\..\..\include\VariantUtils.h"
 				>
 			</File>
 			<Filter

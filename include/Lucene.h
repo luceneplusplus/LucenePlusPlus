@@ -47,6 +47,7 @@ using boost::uint64_t;
 namespace boost
 {
     struct blank;
+    template < typename Signature > class function;
     namespace interprocess
     {
         class file_lock;

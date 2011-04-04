@@ -7,6 +7,7 @@
 #ifndef SORTEDTERMVECTORMAPPER_H
 #define SORTEDTERMVECTORMAPPER_H
 
+#include <boost/function.hpp>
 #include "TermVectorMapper.h"
 
 namespace Lucene

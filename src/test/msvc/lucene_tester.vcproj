@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm180"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;LPP_HAVE_DLL"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -126,7 +126,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -206,7 +206,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm180"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -290,7 +290,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\..\core\include;..\..\contrib\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;LPP_HAVE_DLL"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -354,7 +354,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\core\include\Lucene.h"
+				RelativePath="..\..\..\include\Lucene.h"
 				>
 			</File>
 			<File
@@ -362,7 +362,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\core\include\targetver.h"
+				RelativePath="..\..\..\include\targetver.h"
 				>
 			</File>
 			<File
