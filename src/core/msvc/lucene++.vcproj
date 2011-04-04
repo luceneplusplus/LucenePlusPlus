@@ -444,6 +444,46 @@
 			Name="index"
 			>
 			<File
+				RelativePath="..\include\_CheckIndex.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_ConcurrentMergeScheduler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_DirectoryReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_IndexReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_IndexWriter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_MultipleTermPositions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_ParallelReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_SegmentInfos.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_SegmentReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_SnapshotDeletionPolicy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\index\AbstractAllTermDocs.cpp"
 				>
 			</File>
@@ -1464,6 +1504,30 @@
 			Name="store"
 			>
 			<File
+				RelativePath="..\include\_MMapDirectory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_NativeFSLockFactory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_NoLockFactory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_SimpleFSDirectory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_SimpleFSLockFactory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_SingleInstanceLockFactory.h"
+				>
+			</File>
+			<File
 				RelativePath="..\store\BufferedIndexInput.cpp"
 				>
 			</File>
@@ -1643,6 +1707,10 @@
 		<Filter
 			Name="analysis"
 			>
+			<File
+				RelativePath="..\include\_StopAnalyzer.h"
+				>
+			</File>
 			<File
 				RelativePath="..\analysis\Analyzer.cpp"
 				>
@@ -1963,6 +2031,10 @@
 				Name="standard"
 				>
 				<File
+					RelativePath="..\include\_StandardAnalyzer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\analysis\standard\StandardAnalyzer.cpp"
 					>
 				</File>
@@ -1999,6 +2071,22 @@
 		<Filter
 			Name="util"
 			>
+			<File
+				RelativePath="..\include\_DocIdBitSet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FieldCacheSanityChecker.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_ScorerDocQueue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_SortedVIntList.h"
+				>
+			</File>
 			<File
 				RelativePath="..\util\Attribute.cpp"
 				>
@@ -2139,6 +2227,110 @@
 		<Filter
 			Name="search"
 			>
+			<File
+				RelativePath="..\include\_BooleanQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_CachingSpanFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_CachingWrapperFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_ConstantScoreQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_DisjunctionMaxQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_DocIdSet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FieldCache.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FieldCacheRangeFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FieldCacheTermsFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FieldValueHitQueue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FilteredDocIdSet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FilteredQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FilterManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_FuzzyQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_MatchAllDocsQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_MultiPhraseQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_MultiSearcher.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_MultiTermQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_NumericRangeQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_PhraseQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_QueryWrapperFilter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_Similarity.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_TermQuery.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_TimeLimitingCollector.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_TopFieldCollector.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\_TopScoreDocCollector.h"
+				>
+			</File>
 			<File
 				RelativePath="..\search\BooleanClause.cpp"
 				>
@@ -2839,6 +3031,22 @@
 				Name="spans"
 				>
 				<File
+					RelativePath="..\include\_NearSpansUnordered.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_SpanFirstQuery.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_SpanNotQuery.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_SpanOrQuery.h"
+					>
+				</File>
+				<File
 					RelativePath="..\search\spans\FieldMaskingSpanQuery.cpp"
 					>
 				</File>
@@ -2947,6 +3155,10 @@
 				Name="payloads"
 				>
 				<File
+					RelativePath="..\include\_PayloadTermQuery.h"
+					>
+				</File>
+				<File
 					RelativePath="..\search\payloads\AveragePayloadFunction.cpp"
 					>
 				</File>
@@ -3006,6 +3218,30 @@
 			<Filter
 				Name="function"
 				>
+				<File
+					RelativePath="..\include\_ByteFieldSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_CustomScoreQuery.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_IntFieldSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_OrdFieldSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_ReverseOrdFieldSource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\include\_ValueSourceQuery.h"
+					>
+				</File>
 				<File
 					RelativePath="..\search\function\ByteFieldSource.cpp"
 					>

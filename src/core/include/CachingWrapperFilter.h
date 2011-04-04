@@ -8,12 +8,9 @@
 #define CACHINGWRAPPERFILTER_H
 
 #include "Filter.h"
-#include "FilteredDocIdSet.h"
 
 namespace Lucene
 {
-    
-    
     /// Wraps another filter's result and caches it.  The purpose is to allow filters to simply filter, and 
     /// then wrap with this class to add caching.
     class LPPAPI CachingWrapperFilter : public Filter
@@ -66,53 +63,6 @@ namespace Lucene
         virtual String toString();
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
-    };
-    
-    class LPPAPI FilterCache : public LuceneObject
-    {
-    public:
-        FilterCache(CachingWrapperFilter::DeletesMode deletesMode);
-        virtual ~FilterCache();
-        
-        LUCENE_CLASS(FilterCache);
-
-    public:
-        WeakMapObjectObject cache;
-        CachingWrapperFilter::DeletesMode deletesMode;
-
-    public:
-        virtual LuceneObjectPtr get(IndexReaderPtr reader, LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey);
-        virtual void put(LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey, LuceneObjectPtr value);
-    
-    protected:
-        virtual LuceneObjectPtr mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value) = 0;
-    };
-    
-    class LPPAPI FilterCacheDocIdSet : public FilterCache
-    {
-    public:
-        FilterCacheDocIdSet(CachingWrapperFilter::DeletesMode deletesMode);
-        virtual ~FilterCacheDocIdSet();
-        
-        LUCENE_CLASS(FilterCacheDocIdSet);
-
-    protected:
-        virtual LuceneObjectPtr mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value);
-    };
-    
-    class LPPAPI FilteredCacheDocIdSet : public FilteredDocIdSet
-    {
-    public:
-        FilteredCacheDocIdSet(IndexReaderPtr reader, DocIdSetPtr innerSet);
-        virtual ~FilteredCacheDocIdSet();
-        
-        LUCENE_CLASS(FilteredCacheDocIdSet);
-    
-    protected:
-        IndexReaderPtr reader;
-    
-    protected:
-        virtual bool match(int32_t docid);
     };
 }
 

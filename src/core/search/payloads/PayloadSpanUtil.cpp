@@ -17,6 +17,7 @@
 #include "DisjunctionMaxQuery.h"
 #include "MultiPhraseQuery.h"
 #include "Term.h"
+#include "Spans.h"
 
 namespace Lucene
 {

@@ -7,9 +7,7 @@
 #ifndef MMAPDIRECTORY_H
 #define MMAPDIRECTORY_H
 
-#include <boost/iostreams/device/mapped_file.hpp>
 #include "FSDirectory.h"
-#include "IndexInput.h"
 
 namespace Lucene
 {
@@ -41,50 +39,6 @@ namespace Lucene
         
         /// Creates an IndexOutput for the file with the given name.
         virtual IndexOutputPtr createOutput(const String& name);
-    };
-    
-    class LPPAPI MMapIndexInput : public IndexInput
-    {
-    public:
-        MMapIndexInput(const String& path = L"");
-        virtual ~MMapIndexInput();
-        
-        LUCENE_CLASS(MMapIndexInput);
-                
-    protected:
-        int32_t _length;
-        bool isClone;
-        boost::iostreams::mapped_file_source file;
-        int32_t bufferPosition; // next byte to read
-    
-    public:
-        /// Reads and returns a single byte.
-        /// @see IndexOutput#writeByte(uint8_t)
-        virtual uint8_t readByte();
-        
-        /// Reads a specified number of bytes into an array at the specified offset.
-        /// @param b the array to read bytes into.
-        /// @param offset the offset in the array to start storing bytes.
-        /// @param length the number of bytes to read.
-        /// @see IndexOutput#writeBytes(const uint8_t*,int)
-        virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
-        
-        /// Returns the current position in this file, where the next read will occur.
-        /// @see #seek(int64_t)
-        virtual int64_t getFilePointer();
-        
-        /// Sets current position in this file, where the next read will occur.
-        /// @see #getFilePointer()
-        virtual void seek(int64_t pos);
-        
-        /// The number of bytes in the file.
-        virtual int64_t length();
-        
-        /// Closes the stream to further operations.
-        virtual void close();
-        
-        /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     };
 }
 

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "DocIdBitSet.h"
+#include "_DocIdBitSet.h"
 #include "BitSet.h"
 
 namespace Lucene

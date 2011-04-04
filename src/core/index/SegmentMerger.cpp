@@ -17,6 +17,7 @@
 #include "IndexFileNames.h"
 #include "CompoundFileWriter.h"
 #include "SegmentReader.h"
+#include "_SegmentReader.h"
 #include "Directory.h"
 #include "TermPositions.h"
 #include "TermVectorsReader.h"

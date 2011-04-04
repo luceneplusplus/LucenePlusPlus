@@ -72,23 +72,6 @@ namespace Lucene
         void upHeap();
         void downHeap();
     };
-    
-    class LPPAPI HeapedScorerDoc : public LuceneObject
-    {
-    public:
-        HeapedScorerDoc(ScorerPtr scorer);
-        HeapedScorerDoc(ScorerPtr scorer, int32_t doc);
-        virtual ~HeapedScorerDoc();
-    
-        LUCENE_CLASS(HeapedScorerDoc);
-    
-    public:
-        ScorerPtr scorer;
-        int32_t doc;
-    
-    public:
-        void adjust();
-    };
 }
 
 #endif

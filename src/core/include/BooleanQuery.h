@@ -9,7 +9,6 @@
 
 #include "Query.h"
 #include "BooleanClause.h"
-#include "SimilarityDelegator.h"
 #include "Weight.h"
 
 namespace Lucene
@@ -97,45 +96,6 @@ namespace Lucene
         virtual int32_t hashCode();
         
         friend class BooleanWeight;
-    };
-    
-    /// The Weight for BooleanQuery, used to normalize, score and explain these queries.
-    class LPPAPI BooleanWeight : public Weight
-    {
-    public:
-        BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher);
-        virtual ~BooleanWeight();
-        
-        LUCENE_CLASS(BooleanWeight);
-    
-    protected:
-        BooleanQueryPtr query;
-        
-        /// The Similarity implementation.
-        SimilarityPtr similarity;
-        Collection<WeightPtr> weights;
-    
-    public:
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual bool scoresDocsOutOfOrder();
-    };
-    
-    /// Disabled coord Similarity
-    class LPPAPI SimilarityDisableCoord : public SimilarityDelegator
-    {
-    public:
-        SimilarityDisableCoord(SimilarityPtr delegee);
-        virtual ~SimilarityDisableCoord();
-        
-        LUCENE_CLASS(SimilarityDisableCoord);
-    
-    public:
-        virtual double coord(int32_t overlap, int32_t maxOverlap);
     };
 }
 

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FieldCacheRangeFilter.h"
+#include "_FieldCacheRangeFilter.h"
 #include "FieldCache.h"
 #include "IndexReader.h"
 #include "TermDocs.h"

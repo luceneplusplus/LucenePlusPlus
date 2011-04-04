@@ -13,6 +13,7 @@
 #include "IndexWriter.h"
 #include "IndexReader.h"
 #include "ConcurrentMergeScheduler.h"
+#include "_ConcurrentMergeScheduler.h"
 #include "Document.h"
 #include "Field.h"
 #include "LogDocMergePolicy.h"

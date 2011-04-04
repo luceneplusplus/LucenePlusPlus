@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include <boost/algorithm/string.hpp>
 #include "SegmentReader.h"
+#include "_SegmentReader.h"
 #include "BufferedIndexInput.h"
 #include "IndexFileNames.h"
 #include "DirectoryReader.h"

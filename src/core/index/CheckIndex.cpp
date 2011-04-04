@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "CheckIndex.h"
+#include "_CheckIndex.h"
 #include "SegmentInfos.h"
 #include "SegmentInfo.h"
 #include "SegmentReader.h"

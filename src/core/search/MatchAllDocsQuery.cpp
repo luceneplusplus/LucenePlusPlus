@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MatchAllDocsQuery.h"
+#include "_MatchAllDocsQuery.h"
 #include "IndexReader.h"
 #include "Similarity.h"
 #include "TermDocs.h"

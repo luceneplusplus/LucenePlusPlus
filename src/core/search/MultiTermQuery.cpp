@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MultiTermQuery.h"
+#include "_MultiTermQuery.h"
 #include "ConstantScoreQuery.h"
 #include "MultiTermQueryWrapperFilter.h"
 #include "QueryWrapperFilter.h"

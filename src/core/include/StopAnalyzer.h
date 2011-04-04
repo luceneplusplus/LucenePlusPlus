@@ -48,19 +48,6 @@ namespace Lucene
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
-    
-    /// Filters LowerCaseTokenizer with StopFilter.
-    class LPPAPI StopAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~StopAnalyzerSavedStreams();
-        
-        LUCENE_CLASS(StopAnalyzerSavedStreams);
-    
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
-    };
 }
 
 #endif

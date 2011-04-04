@@ -6,6 +6,7 @@
 
 #include "TestInc.h"
 #include "BaseTestRangeFilterFixture.h"
+#include "DocIdSet.h"
 #include "RAMDirectory.h"
 #include "IndexReader.h"
 #include "IndexSearcher.h"

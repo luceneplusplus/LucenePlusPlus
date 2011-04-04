@@ -8,7 +8,6 @@
 #define BYTEFIELDSOURCE_H
 
 #include "FieldCacheSource.h"
-#include "DocValues.h"
 
 namespace Lucene
 {
@@ -39,25 +38,6 @@ namespace Lucene
         virtual DocValuesPtr getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader);
         virtual bool cachedFieldSourceEquals(FieldCacheSourcePtr other);
         virtual int32_t cachedFieldSourceHashCode();
-    };
-    
-    class LPPAPI ByteDocValues : public DocValues
-    {
-    public:
-        ByteDocValues(ByteFieldSourcePtr source, Collection<uint8_t> arr);
-        virtual ~ByteDocValues();
-    
-        LUCENE_CLASS(ByteDocValues);
-    
-    protected:
-        ByteFieldSourceWeakPtr _source;
-        Collection<uint8_t> arr;
-    
-    public:
-        virtual double doubleVal(int32_t doc);
-        virtual int32_t intVal(int32_t doc);
-        virtual String toString(int32_t doc);
-        virtual CollectionValue getInnerArray();
     };
 }
 

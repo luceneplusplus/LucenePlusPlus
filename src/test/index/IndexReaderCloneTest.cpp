@@ -18,6 +18,8 @@
 #include "ReadOnlySegmentReader.h"
 #include "ReadOnlyDirectoryReader.h"
 #include "ParallelReader.h"
+#include "SegmentReader.h"
+#include "_SegmentReader.h"
 #include "Similarity.h"
 #include "Term.h"
 #include "MultiReader.h"

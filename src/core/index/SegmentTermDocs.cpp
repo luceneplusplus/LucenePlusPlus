@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "SegmentTermDocs.h"
 #include "SegmentReader.h"
+#include "_SegmentReader.h"
 #include "SegmentTermEnum.h"
 #include "IndexInput.h"
 #include "TermInfosReader.h"

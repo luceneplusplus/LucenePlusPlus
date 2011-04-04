@@ -8,7 +8,6 @@
 #define DOCIDBITSET_H
 
 #include "DocIdSet.h"
-#include "DocIdSetIterator.h"
 
 namespace Lucene
 {
@@ -38,24 +37,6 @@ namespace Lucene
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-    };
-    
-    class LPPAPI DocIdBitSetIterator : public DocIdSetIterator
-    {
-    public:
-        DocIdBitSetIterator(BitSetPtr bitSet);
-        virtual ~DocIdBitSetIterator();
-        
-        LUCENE_CLASS(DocIdBitSetIterator);
-    
-    protected:
-        int32_t docId;
-        BitSetPtr bitSet;
-    
-    public:
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual int32_t advance(int32_t target);
     };
 }
 

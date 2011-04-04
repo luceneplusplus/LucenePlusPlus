@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "PhraseQuery.h"
+#include "_PhraseQuery.h"
 #include "Similarity.h"
 #include "Term.h"
 #include "TermPositions.h"

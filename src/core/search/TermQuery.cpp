@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "TermQuery.h"
+#include "_TermQuery.h"
 #include "TermScorer.h"
 #include "IndexReader.h"
 #include "ComplexExplanation.h"

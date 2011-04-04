@@ -43,18 +43,6 @@ namespace Lucene
     protected:
         SpanFilterResultPtr getCachedResult(IndexReaderPtr reader);
     };
-    
-    class LPPAPI FilterCacheSpanFilterResult : public FilterCache
-    {
-    public:
-        FilterCacheSpanFilterResult(CachingWrapperFilter::DeletesMode deletesMode);
-        virtual ~FilterCacheSpanFilterResult();
-        
-        LUCENE_CLASS(FilterCacheSpanFilterResult);
-
-    protected:
-        virtual LuceneObjectPtr mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value);
-    };
 }
 
 #endif

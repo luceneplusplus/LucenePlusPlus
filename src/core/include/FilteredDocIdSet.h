@@ -8,7 +8,6 @@
 #define FILTEREDDOCIDSET_H
 
 #include "DocIdSet.h"
-#include "FilteredDocIdSetIterator.h"
 
 namespace Lucene
 {
@@ -49,22 +48,6 @@ namespace Lucene
         virtual bool match(int32_t docid) = 0;
         
         friend class DefaultFilteredDocIdSetIterator;
-    };
-    
-    /// Implementation of the contract to build a DocIdSetIterator.
-    class LPPAPI DefaultFilteredDocIdSetIterator : public FilteredDocIdSetIterator
-    {
-    public:
-        DefaultFilteredDocIdSetIterator(FilteredDocIdSetPtr filtered, DocIdSetIteratorPtr innerIter);
-        virtual ~DefaultFilteredDocIdSetIterator();
-    
-        LUCENE_CLASS(DefaultFilteredDocIdSetIterator);
-    
-    protected:
-        FilteredDocIdSetPtr filtered;
-    
-    protected:
-        virtual bool match(int32_t docid);
     };
 }
 

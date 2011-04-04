@@ -130,36 +130,6 @@ namespace Lucene
         virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query) = 0;
     };
     
-    class LPPAPI ConstantScoreFilterRewrite : public RewriteMethod
-    {
-    public:
-        virtual ~ConstantScoreFilterRewrite();
-        LUCENE_CLASS(ConstantScoreFilterRewrite);
-    
-    public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query);
-    };
-    
-    class LPPAPI ScoringBooleanQueryRewrite : public RewriteMethod
-    {
-    public:
-        virtual ~ScoringBooleanQueryRewrite();
-        LUCENE_CLASS(ScoringBooleanQueryRewrite);
-    
-    public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query);
-    };
-    
-    class LPPAPI ConstantScoreBooleanQueryRewrite : public ScoringBooleanQueryRewrite
-    {
-    public:
-        virtual ~ConstantScoreBooleanQueryRewrite();
-        LUCENE_CLASS(ConstantScoreBooleanQueryRewrite);
-    
-    public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query);
-    };
-    
     /// A rewrite method that tries to pick the best constant-score rewrite method based on term and document 
     /// counts from the query.  If both the number of terms and documents is small enough, then {@link 
     /// #CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE} is used.  Otherwise, {@link #CONSTANT_SCORE_FILTER_REWRITE} is
@@ -204,17 +174,6 @@ namespace Lucene
         
         virtual int32_t hashCode();
         virtual bool equals(LuceneObjectPtr other);
-    };
-    
-    class LPPAPI ConstantScoreAutoRewriteDefault : public ConstantScoreAutoRewrite
-    {
-    public:
-        virtual ~ConstantScoreAutoRewriteDefault();
-        LUCENE_CLASS(ConstantScoreAutoRewriteDefault);
-    
-    public:
-        virtual void setTermCountCutoff(int32_t count);
-        virtual void setDocCountPercent(double percent);
     };
 }
 

@@ -13,6 +13,7 @@
 #include "CompoundFileWriter.h"
 #include "CompoundFileReader.h"
 #include "SimpleFSDirectory.h"
+#include "_SimpleFSDirectory.h"
 #include "Random.h"
 
 using namespace Lucene;

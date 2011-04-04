@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FilterManager.h"
+#include "_FilterManager.h"
 #include "Filter.h"
 
 namespace Lucene

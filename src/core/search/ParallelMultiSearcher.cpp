@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include <boost/bind/protect.hpp>
 #include "ParallelMultiSearcher.h"
+#include "_MultiSearcher.h"
 #include "HitQueue.h"
 #include "FieldDocSortedHitQueue.h"
 #include "FieldDoc.h"

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "ByteFieldSource.h"
+#include "_ByteFieldSource.h"
 #include "FieldCache.h"
 
 namespace Lucene

@@ -6,6 +6,7 @@
 
 #include "TestInc.h"
 #include "LuceneTestFixture.h"
+#include "Explanation.h"
 #include "TestUtils.h"
 #include "IndexSearcher.h"
 #include "RAMDirectory.h"

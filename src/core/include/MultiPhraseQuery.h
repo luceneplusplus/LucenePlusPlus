@@ -8,7 +8,6 @@
 #define MULTIPHRASEQUERY_H
 
 #include "Query.h"
-#include "Weight.h"
 
 namespace Lucene
 {
@@ -75,31 +74,6 @@ namespace Lucene
         bool termArraysEquals(Collection< Collection<TermPtr> > first, Collection< Collection<TermPtr> > second);
         
         friend class MultiPhraseWeight;
-    };
-    
-    class LPPAPI MultiPhraseWeight : public Weight
-    {
-    public:
-        MultiPhraseWeight(MultiPhraseQueryPtr query, SearcherPtr searcher);
-        virtual ~MultiPhraseWeight();
-    
-        LUCENE_CLASS(MultiPhraseWeight);
-    
-    protected:
-        MultiPhraseQueryPtr query;
-        SimilarityPtr similarity;
-        double value;
-        double idf;
-        double queryNorm;
-        double queryWeight;
-    
-    public:
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
     };
 }
 

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "Similarity.h"
+#include "_Similarity.h"
 #include "DefaultSimilarity.h"
 #include "FieldInvertState.h"
 #include "Searcher.h"

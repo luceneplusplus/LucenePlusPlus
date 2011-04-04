@@ -8,7 +8,6 @@
 #define FUZZYQUERY_H
 
 #include "MultiTermQuery.h"
-#include "PriorityQueue.h"
 
 namespace Lucene
 {
@@ -73,32 +72,6 @@ namespace Lucene
         void ConstructQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength);
         
         virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
-    };
-    
-    class LPPAPI ScoreTerm : public LuceneObject
-    {
-    public:
-        virtual ~ScoreTerm();
-        LUCENE_CLASS(ScoreTerm);
-    
-    public:
-        TermPtr term;
-        double score;
-    
-    public:
-        int32_t compareTo(ScoreTermPtr other);
-    };
-    
-    class LPPAPI ScoreTermQueue : public PriorityQueue<ScoreTermPtr>
-    {
-    public:
-        ScoreTermQueue(int32_t size);
-        virtual ~ScoreTermQueue();
-        
-        LUCENE_CLASS(ScoreTermQueue);
-    
-    protected:
-        virtual bool lessThan(const ScoreTermPtr& first, const ScoreTermPtr& second);
     };
 }
 

@@ -8,7 +8,6 @@
 #define QUERYWRAPPERFILTER_H
 
 #include "Filter.h"
-#include "DocIdSet.h"
 
 namespace Lucene
 {
@@ -36,23 +35,6 @@ namespace Lucene
         virtual String toString();
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
-    };
-    
-    class LPPAPI QueryWrapperFilterDocIdSet : public DocIdSet
-    {
-    public:
-        QueryWrapperFilterDocIdSet(IndexReaderPtr reader, WeightPtr weight);
-        virtual ~QueryWrapperFilterDocIdSet();
-    
-        LUCENE_CLASS(QueryWrapperFilterDocIdSet);
-    
-    protected:
-        IndexReaderPtr reader;
-        WeightPtr weight;
-    
-    public:
-        virtual DocIdSetIteratorPtr iterator();
-        virtual bool isCacheable();
     };
 }
 

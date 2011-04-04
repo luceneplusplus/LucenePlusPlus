@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MultipleTermPositions.h"
+#include "_MultipleTermPositions.h"
 #include "IndexReader.h"
 #include "Term.h"
 

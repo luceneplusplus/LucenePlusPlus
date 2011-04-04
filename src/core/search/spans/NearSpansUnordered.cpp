@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "NearSpansUnordered.h"
+#include "_NearSpansUnordered.h"
 #include "NearSpansOrdered.h"
 #include "SpanNearQuery.h"
 

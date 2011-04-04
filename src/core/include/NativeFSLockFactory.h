@@ -8,7 +8,6 @@
 #define NATIVEFSLOCKFACTORY_H
 
 #include "FSLockFactory.h"
-#include "Lock.h"
 
 namespace Lucene
 {
@@ -42,32 +41,6 @@ namespace Lucene
         /// cause Lock.obtain to take far too long (it assumes the obtain() 
         /// call takes zero time).
         void acquireTestLock();
-    };
-    
-    class LPPAPI NativeFSLock : public Lock
-    {
-    public:
-        NativeFSLock(const String& lockDir, const String& lockFileName);
-        virtual ~NativeFSLock();
-        
-        LUCENE_CLASS(NativeFSLock);
-                
-    protected:
-        String lockDir;
-        String path;
-        filelockPtr lock;
-        
-        static SynchronizePtr LOCK_HELD_LOCK();
-        static HashSet<String> LOCK_HELD();
-    
-    public:
-        virtual bool obtain();
-        virtual void release();
-        virtual bool isLocked();
-        virtual String toString();
-    
-    protected:
-        bool lockExists();
     };
 }
 

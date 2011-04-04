@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "SimpleFSDirectory.h"
+#include "_SimpleFSDirectory.h"
 #include "IndexOutput.h"
 #include "FileReader.h"
 

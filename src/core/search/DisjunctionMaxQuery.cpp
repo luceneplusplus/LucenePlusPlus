@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "DisjunctionMaxQuery.h"
+#include "_DisjunctionMaxQuery.h"
 #include "BooleanQuery.h"
 #include "DocIdSetIterator.h"
 #include "ComplexExplanation.h"

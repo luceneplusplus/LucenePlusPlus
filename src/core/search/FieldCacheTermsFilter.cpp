@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FieldCacheTermsFilter.h"
+#include "_FieldCacheTermsFilter.h"
 #include "FieldCache.h"
 #include "OpenBitSet.h"
 

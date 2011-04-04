@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "ConcurrentMergeScheduler.h"
+#include "_ConcurrentMergeScheduler.h"
 #include "IndexWriter.h"
 #include "TestPoint.h"
 

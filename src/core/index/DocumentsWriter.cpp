@@ -9,6 +9,7 @@
 #include "DocumentsWriterThreadState.h"
 #include "LuceneThread.h"
 #include "IndexWriter.h"
+#include "_IndexWriter.h"
 #include "IndexReader.h"
 #include "IndexSearcher.h"
 #include "DocFieldProcessor.h"

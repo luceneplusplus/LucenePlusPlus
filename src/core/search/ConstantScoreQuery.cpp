@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "ConstantScoreQuery.h"
+#include "_ConstantScoreQuery.h"
 #include "Filter.h"
 #include "ComplexExplanation.h"
 #include "DocIdSet.h"

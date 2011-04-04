@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "TimeLimitingCollector.h"
+#include "_TimeLimitingCollector.h"
 
 namespace Lucene
 {

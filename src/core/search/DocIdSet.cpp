@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "DocIdSet.h"
+#include "_DocIdSet.h"
 
 namespace Lucene
 {

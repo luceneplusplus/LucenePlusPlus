@@ -8,7 +8,6 @@
 #define FILTERMANAGER_H
 
 #include "LuceneObject.h"
-#include "LuceneThread.h"
 
 namespace Lucene
 {
@@ -66,46 +65,6 @@ namespace Lucene
         FilterPtr getFilter(FilterPtr filter);
         
         friend class FilterCleaner;
-    };
-    
-    /// Holds the filter and the last time the filter was used, to make LRU-based cache cleaning possible.
-    class LPPAPI FilterItem : public LuceneObject
-    {
-    public:
-        FilterItem(FilterPtr filter);
-        virtual ~FilterItem();
-    
-        LUCENE_CLASS(FilterItem);
-    
-    public:
-        FilterPtr filter;
-        int64_t timestamp;
-    };
-    
-    /// Keeps the cache from getting too big.
-    ///
-    /// The SortedSet sortedFilterItems is used only to sort the items from the cache, so when it's time to clean 
-    /// up we have the TreeSet sort the FilterItems by timestamp.
-    ///
-    /// Removes 1.5 * the numbers of items to make the cache smaller. 
-    /// For example: If cache clean size is 10, and the cache is at 15, we would remove (15 - 10) * 1.5 = 7.5 
-    /// round up to 8.  This way we clean the cache a bit more, and avoid having the cache cleaner having to do 
-    /// it frequently.
-    class LPPAPI FilterCleaner : public LuceneThread
-    {
-    public:
-        FilterCleaner(FilterManagerPtr manager);
-        virtual ~FilterCleaner();
-        
-        LUCENE_CLASS(FilterCleaner);
-        
-    protected:
-        FilterManagerWeakPtr _manager;
-        bool running;
-        MapLongInt sortedFilterItems;
-    
-    public:
-        virtual void run();
     };
 }
 

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "NoLockFactory.h"
+#include "_NoLockFactory.h"
 
 namespace Lucene
 {

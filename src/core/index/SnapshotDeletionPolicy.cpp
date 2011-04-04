@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "SnapshotDeletionPolicy.h"
+#include "_SnapshotDeletionPolicy.h"
 
 namespace Lucene
 {

@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include <boost/interprocess/sync/file_lock.hpp>
 #include "NativeFSLockFactory.h"
+#include "_NativeFSLockFactory.h"
 #include "Random.h"
 
 namespace Lucene

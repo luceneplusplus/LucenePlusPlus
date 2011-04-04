@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MultiPhraseQuery.h"
+#include "_MultiPhraseQuery.h"
 #include "Searcher.h"
 #include "Term.h"
 #include "TermQuery.h"

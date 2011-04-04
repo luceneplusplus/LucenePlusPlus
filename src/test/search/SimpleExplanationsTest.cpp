@@ -6,6 +6,7 @@
 
 #include "TestInc.h"
 #include "ExplanationsFixture.h"
+#include "Explanation.h"
 #include "MatchAllDocsQuery.h"
 #include "FieldCacheTermsFilter.h"
 #include "QueryParser.h"

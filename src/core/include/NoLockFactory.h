@@ -8,7 +8,6 @@
 #define NOLOCKFACTORY_H
 
 #include "LockFactory.h"
-#include "Lock.h"
 
 namespace Lucene
 {
@@ -33,20 +32,6 @@ namespace Lucene
         /// Attempt to clear (forcefully unlock and remove) the specified lock.  Only call this at a time when you 
         /// are certain this lock is no longer in use.
         virtual void clearLock(const String& lockName);
-    };
-    
-    class LPPAPI NoLock : public Lock
-    {
-    public:
-        virtual ~NoLock();
-        
-        LUCENE_CLASS(NoLock);
-            
-    public:
-        virtual bool obtain();
-        virtual void release();
-        virtual bool isLocked();
-        virtual String toString();
     };
 }
 

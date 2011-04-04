@@ -8,7 +8,6 @@
 #define ORDFIELDSOURCE_H
 
 #include "ValueSource.h"
-#include "DocValues.h"
 
 namespace Lucene
 {
@@ -47,25 +46,6 @@ namespace Lucene
         virtual DocValuesPtr getValues(IndexReaderPtr reader);
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
-    };
-    
-    class LPPAPI OrdDocValues : public DocValues
-    {
-    public:
-        OrdDocValues(OrdFieldSourcePtr source, Collection<int32_t> arr);
-        virtual ~OrdDocValues();
-    
-        LUCENE_CLASS(OrdDocValues);
-    
-    protected:
-        OrdFieldSourceWeakPtr _source;
-        Collection<int32_t> arr;
-    
-    public:
-        virtual double doubleVal(int32_t doc);
-        virtual String strVal(int32_t doc);
-        virtual String toString(int32_t doc);
-        virtual CollectionValue getInnerArray();
     };
 }
 

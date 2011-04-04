@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "IndexWriter.h"
+#include "_IndexWriter.h"
 #include "IndexReader.h"
 #include "Directory.h"
 #include "Analyzer.h"

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "QueryWrapperFilter.h"
+#include "_QueryWrapperFilter.h"
 #include "Query.h"
 #include "Weight.h"
 #include "Scorer.h"

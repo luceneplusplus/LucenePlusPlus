@@ -611,27 +611,6 @@ namespace Lucene
         /// @return An implementation dependent float to be used as a scoring factor
         virtual double scorePayload(int32_t docId, const String& fieldName, int32_t start, int32_t end, ByteArray payload, int32_t offset, int32_t length);
     };
-    
-    class LPPAPI SimilarityIDFExplanation : public IDFExplanation
-    {
-    public:
-        SimilarityIDFExplanation(int32_t df, int32_t max, double idf);
-        SimilarityIDFExplanation(const String& exp, double idf);
-        
-        virtual ~SimilarityIDFExplanation();
-        
-        LUCENE_CLASS(SimilarityIDFExplanation);
-    
-    protected:
-        String exp;
-        int32_t df;
-        int32_t max;
-        double idf;
-    
-    public:
-        virtual String explain();
-        virtual double getIdf();
-    };
 }
 
 #endif

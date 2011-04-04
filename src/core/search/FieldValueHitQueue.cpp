@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FieldValueHitQueue.h"
+#include "_FieldValueHitQueue.h"
 #include "FieldComparator.h"
 #include "FieldDoc.h"
 #include "SortField.h"

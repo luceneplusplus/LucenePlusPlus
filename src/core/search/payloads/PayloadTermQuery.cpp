@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "PayloadTermQuery.h"
+#include "_PayloadTermQuery.h"
 #include "Term.h"
 #include "TermSpans.h"
 #include "TermPositions.h"

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "NumericRangeQuery.h"
+#include "_NumericRangeQuery.h"
 #include "Term.h"
 #include "IndexReader.h"
 

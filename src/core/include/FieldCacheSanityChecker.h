@@ -92,25 +92,6 @@ namespace Lucene
         Collection<LuceneObjectPtr> getAllDecendentReaderKeys(LuceneObjectPtr seed);
     };
     
-    /// Simple pair object for using "readerKey + fieldName" a Map key
-    class LPPAPI ReaderField : public LuceneObject
-    {
-    public:
-        ReaderField(LuceneObjectPtr readerKey, const String& fieldName);
-        virtual ~ReaderField();
-    
-        LUCENE_CLASS(ReaderField);
-    
-    public:
-        LuceneObjectPtr readerKey;
-        String fieldName;
-    
-    public:
-        virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
-        virtual String toString();
-    };
-    
     /// Simple container for a collection of related CacheEntry objects that in conjunction with each other 
     /// represent some "insane" usage of the FieldCache.
     class LPPAPI Insanity : public LuceneObject

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "ScorerDocQueue.h"
+#include "_ScorerDocQueue.h"
 #include "Scorer.h"
 
 namespace Lucene

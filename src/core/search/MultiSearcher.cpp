@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MultiSearcher.h"
+#include "_MultiSearcher.h"
 #include "Term.h"
 #include "ReaderUtil.h"
 #include "HitQueue.h"

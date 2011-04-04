@@ -16,6 +16,7 @@
 #include "TopDocs.h"
 #include "Document.h"
 #include "IndexReader.h"
+#include "DocValues.h"
 
 using namespace Lucene;
 
