@@ -9,6 +9,7 @@
 #include "_NumericRangeQuery.h"
 #include "Term.h"
 #include "IndexReader.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

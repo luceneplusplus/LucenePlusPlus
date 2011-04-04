@@ -18,6 +18,7 @@
 #include "IndexReader.h"
 #include "ConcurrentMergeScheduler.h"
 #include "Random.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "BitUtil.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

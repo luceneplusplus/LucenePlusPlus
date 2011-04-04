@@ -5,11 +5,13 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/thread/thread.hpp>
 #include "RAMDirectory.h"
 #include "RAMFile.h"
 #include "RAMInputStream.h"
 #include "RAMOutputStream.h"
 #include "SingleInstanceLockFactory.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

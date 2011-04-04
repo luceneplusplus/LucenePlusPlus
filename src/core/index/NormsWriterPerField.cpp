@@ -11,6 +11,7 @@
 #include "DocInverterPerField.h"
 #include "DocumentsWriter.h"
 #include "FieldInfo.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

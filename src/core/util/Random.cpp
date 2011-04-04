@@ -6,9 +6,15 @@
 
 #include "LuceneInc.h"
 #include "Random.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {
+    Random::Random()
+    {
+        this->seed = (int64_t)MiscUtils::currentTimeMillis();
+    }
+    
     Random::Random(int64_t seed)
     {
         this->seed = seed;

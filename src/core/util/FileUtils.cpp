@@ -8,6 +8,7 @@
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
+#include <boost/thread/thread.hpp>
 #include "FileUtils.h"
 
 #ifdef _WIN32

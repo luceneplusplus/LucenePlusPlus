@@ -8,6 +8,7 @@
 #include "OrdFieldSource.h"
 #include "_OrdFieldSource.h"
 #include "FieldCache.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

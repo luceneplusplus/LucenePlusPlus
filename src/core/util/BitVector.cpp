@@ -10,6 +10,7 @@
 #include "IndexInput.h"
 #include "IndexOutput.h"
 #include "TestPoint.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

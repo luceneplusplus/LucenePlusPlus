@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "AveragePayloadFunction.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

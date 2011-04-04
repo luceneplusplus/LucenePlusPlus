@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include <boost/algorithm/string.hpp>
+#include <boost/thread/thread.hpp>
 #include "SegmentInfos.h"
 #include "_SegmentInfos.h"
 #include "SegmentInfo.h"
@@ -16,6 +17,7 @@
 #include "IndexCommit.h"
 #include "InfoStream.h"
 #include "TestPoint.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

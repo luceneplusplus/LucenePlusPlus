@@ -8,6 +8,7 @@
 #include "LuceneTestFixture.h"
 #include "UnicodeUtils.h"
 #include "UTF8Stream.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

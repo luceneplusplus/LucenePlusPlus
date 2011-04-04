@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "BufferedReader.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

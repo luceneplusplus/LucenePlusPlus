@@ -6,6 +6,7 @@
 
 #include "ContribInc.h"
 #include "ArabicStemmer.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

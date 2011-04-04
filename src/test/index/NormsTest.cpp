@@ -14,6 +14,7 @@
 #include "Field.h"
 #include "DefaultSimilarity.h"
 #include "IndexReader.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

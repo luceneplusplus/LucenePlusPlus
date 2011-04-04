@@ -21,6 +21,7 @@
 #include "Weight.h"
 #include "DocIdSetIterator.h"
 #include "ReaderUtil.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

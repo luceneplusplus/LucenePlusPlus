@@ -25,6 +25,7 @@
 #include "Term.h"
 #include "ScoreDoc.h"
 #include "TopDocs.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

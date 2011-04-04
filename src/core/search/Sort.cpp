@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "Sort.h"
 #include "SortField.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

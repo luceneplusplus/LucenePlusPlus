@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "DateField.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

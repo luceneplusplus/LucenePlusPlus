@@ -19,6 +19,7 @@
 #include "SerialMergeScheduler.h"
 #include "ConcurrentMergeScheduler.h"
 #include "FSDirectory.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

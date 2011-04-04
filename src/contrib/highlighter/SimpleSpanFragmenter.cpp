@@ -12,6 +12,7 @@
 #include "OffsetAttribute.h"
 #include "QueryScorer.h"
 #include "TokenStream.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

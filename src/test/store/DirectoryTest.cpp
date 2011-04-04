@@ -15,6 +15,7 @@
 #include "RAMDirectory.h"
 #include "IndexInput.h"
 #include "IndexOutput.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

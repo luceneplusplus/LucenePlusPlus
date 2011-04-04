@@ -17,6 +17,7 @@
 #include "TermInfo.h"
 #include "DefaultSkipListReader.h"
 #include "BitVector.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

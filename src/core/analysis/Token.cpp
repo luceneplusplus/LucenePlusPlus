@@ -13,6 +13,7 @@
 #include "PayloadAttribute.h"
 #include "FlagsAttribute.h"
 #include "TypeAttribute.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

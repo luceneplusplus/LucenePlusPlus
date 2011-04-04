@@ -15,6 +15,7 @@
 #include "IndexReader.h"
 #include "LuceneThread.h"
 #include "TermFreqVector.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

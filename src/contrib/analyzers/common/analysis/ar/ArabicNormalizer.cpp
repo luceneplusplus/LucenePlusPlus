@@ -6,6 +6,7 @@
 
 #include "ContribInc.h"
 #include "ArabicNormalizer.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -18,6 +18,7 @@
 #include "ComplexExplanation.h"
 #include "BooleanQuery.h"
 #include "BooleanClause.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

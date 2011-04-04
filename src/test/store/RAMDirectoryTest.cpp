@@ -22,6 +22,7 @@
 #include "Field.h"
 #include "MockRAMDirectory.h"
 #include "LuceneThread.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

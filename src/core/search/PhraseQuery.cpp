@@ -15,6 +15,7 @@
 #include "ExactPhraseScorer.h"
 #include "SloppyPhraseScorer.h"
 #include "Explanation.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

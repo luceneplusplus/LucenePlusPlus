@@ -28,6 +28,7 @@
 #include "ScoreDoc.h"
 #include "MatchAllDocsQuery.h"
 #include "ConstantScoreQuery.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

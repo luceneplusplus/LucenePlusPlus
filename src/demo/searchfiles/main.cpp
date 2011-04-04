@@ -10,6 +10,7 @@
 #include <boost/algorithm/string.hpp>
 #include "LuceneHeaders.h"
 #include "FilterIndexReader.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

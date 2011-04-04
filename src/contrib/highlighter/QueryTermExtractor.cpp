@@ -12,6 +12,7 @@
 #include "FilteredQuery.h"
 #include "WeightedTerm.h"
 #include "IndexReader.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

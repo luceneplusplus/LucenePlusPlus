@@ -9,6 +9,7 @@
 #include "Term.h"
 #include "TermSpans.h"
 #include "IndexReader.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

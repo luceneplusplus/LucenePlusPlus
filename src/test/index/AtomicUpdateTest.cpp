@@ -17,6 +17,8 @@
 #include "MockRAMDirectory.h"
 #include "FSDirectory.h"
 #include "Random.h"
+#include "MiscUtils.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "SpanOrQuery.h"
 #include "_SpanOrQuery.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

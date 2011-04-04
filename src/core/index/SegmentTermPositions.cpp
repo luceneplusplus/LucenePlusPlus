@@ -10,6 +10,7 @@
 #include "_SegmentReader.h"
 #include "TermInfo.h"
 #include "IndexInput.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

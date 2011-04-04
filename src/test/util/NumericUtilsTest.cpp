@@ -9,6 +9,7 @@
 #include "NumericUtils.h"
 #include "OpenBitSet.h"
 #include "Random.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

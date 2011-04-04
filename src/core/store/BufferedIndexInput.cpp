@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "BufferedIndexInput.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

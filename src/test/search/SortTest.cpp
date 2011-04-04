@@ -33,6 +33,7 @@
 #include "IndexReader.h"
 #include "TopFieldCollector.h"
 #include "BooleanQuery.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

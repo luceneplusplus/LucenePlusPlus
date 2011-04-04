@@ -18,6 +18,7 @@
 #include "MultiPhraseQuery.h"
 #include "Term.h"
 #include "Spans.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

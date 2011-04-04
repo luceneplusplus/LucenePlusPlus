@@ -8,6 +8,7 @@
 #include "DocFieldConsumers.h"
 #include "DocFieldConsumersPerField.h"
 #include "DocFieldConsumersPerThread.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

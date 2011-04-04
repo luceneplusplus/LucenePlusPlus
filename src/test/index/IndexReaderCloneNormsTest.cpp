@@ -19,6 +19,7 @@
 #include "WhitespaceAnalyzer.h"
 #include "SegmentReader.h"
 #include "_SegmentReader.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

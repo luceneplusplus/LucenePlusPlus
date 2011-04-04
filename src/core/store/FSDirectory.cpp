@@ -5,10 +5,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/thread/thread.hpp>
 #include "FSDirectory.h"
 #include "NativeFSLockFactory.h"
 #include "SimpleFSDirectory.h"
 #include "BufferedIndexInput.h"
+#include "FileUtils.h"
 #include "md5.h"
 
 namespace Lucene

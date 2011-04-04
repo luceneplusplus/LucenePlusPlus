@@ -38,6 +38,7 @@
 #include "StopFilter.h"
 #include "MatchAllDocsQuery.h"
 #include "IndexReader.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 using namespace boost::posix_time;

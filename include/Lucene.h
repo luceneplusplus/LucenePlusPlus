@@ -27,8 +27,6 @@
 #include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/asio.hpp>
 
 using boost::int8_t;
 using boost::uint8_t;
@@ -47,10 +45,15 @@ using boost::uint64_t;
 namespace boost
 {
     struct blank;
+    class thread;
     template < typename Signature > class function;
     namespace interprocess
     {
         class file_lock;
+    }
+    namespace posix_time
+    {
+        class ptime;
     }
 }
 
@@ -63,8 +66,7 @@ namespace Lucene
     
     typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
     typedef boost::shared_ptr<boost::thread> threadPtr;
-    typedef boost::shared_ptr<boost::asio::io_service::work> workPtr;
-        
+            
     typedef boost::shared_ptr<std::ofstream> ofstreamPtr;
     typedef boost::shared_ptr<std::ifstream> ifstreamPtr;
     typedef boost::shared_ptr<std::locale> localePtr;
@@ -78,8 +80,6 @@ namespace Lucene
 #include "Set.h"
 #include "HashMap.h"
 #include "HashSet.h"
-#include "FileUtils.h"
-#include "MiscUtils.h"
 #include "Constants.h"
 
 namespace Lucene

@@ -13,6 +13,7 @@
 #include "Similarity.h"
 #include "SpanQuery.h"
 #include "Explanation.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

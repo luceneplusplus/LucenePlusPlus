@@ -23,6 +23,7 @@
 #include "Similarity.h"
 #include "Term.h"
 #include "MultiReader.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

@@ -11,6 +11,7 @@
 #include "MockRAMInputStream.h"
 #include "TestPoint.h"
 #include "Random.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

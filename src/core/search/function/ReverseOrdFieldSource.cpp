@@ -8,6 +8,7 @@
 #include "ReverseOrdFieldSource.h"
 #include "_ReverseOrdFieldSource.h"
 #include "FieldCache.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

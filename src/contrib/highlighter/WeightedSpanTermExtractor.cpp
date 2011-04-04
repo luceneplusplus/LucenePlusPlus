@@ -28,6 +28,7 @@
 #include "SpanNotQuery.h"
 #include "SpanOrQuery.h"
 #include "MemoryIndex.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

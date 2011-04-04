@@ -8,6 +8,7 @@
 #include "LuceneGlobalFixture.h"
 #include "TestUtils.h"
 #include "TestPoint.h"
+#include "FileUtils.h"
 
 namespace Lucene
 {

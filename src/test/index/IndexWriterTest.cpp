@@ -52,6 +52,8 @@
 #include "Random.h"
 #include "UTF8Stream.h"
 #include "InfoStream.h"
+#include "MiscUtils.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

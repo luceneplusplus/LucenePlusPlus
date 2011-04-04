@@ -9,6 +9,7 @@
 #include "LuceneTestFixture.h"
 #include "TestUtils.h"
 #include "FileReader.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

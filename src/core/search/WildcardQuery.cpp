@@ -11,6 +11,7 @@
 #include "Term.h"
 #include "PrefixQuery.h"
 #include "SingleTermEnum.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

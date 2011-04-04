@@ -14,6 +14,7 @@
 #include "IndexReader.h"
 #include "Similarity.h"
 #include "PayloadFunction.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

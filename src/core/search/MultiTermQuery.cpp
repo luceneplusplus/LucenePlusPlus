@@ -18,6 +18,7 @@
 #include "TermDocs.h"
 #include "FilteredTermEnum.h"
 #include "IndexReader.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

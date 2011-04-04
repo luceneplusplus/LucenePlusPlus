@@ -12,6 +12,7 @@
 #include "ComplexExplanation.h"
 #include "IndexReader.h"
 #include "TermDocs.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

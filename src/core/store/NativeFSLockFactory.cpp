@@ -9,6 +9,7 @@
 #include "NativeFSLockFactory.h"
 #include "_NativeFSLockFactory.h"
 #include "Random.h"
+#include "FileUtils.h"
 
 namespace Lucene
 {

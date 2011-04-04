@@ -10,6 +10,7 @@
 #include "BooleanClause.h"
 #include "PhraseQuery.h"
 #include "MultiPhraseQuery.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -22,6 +22,7 @@
 #include "ScoreDoc.h"
 #include "TopDocs.h"
 #include "Random.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

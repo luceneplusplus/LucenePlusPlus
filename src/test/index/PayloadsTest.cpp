@@ -28,6 +28,8 @@
 #include "WhitespaceAnalyzer.h"
 #include "TermEnum.h"
 #include "Base64.h"
+#include "MiscUtils.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

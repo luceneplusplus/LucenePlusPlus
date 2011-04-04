@@ -24,6 +24,7 @@
 #include "IndexSearcher.h"
 #include "ScoreDoc.h"
 #include "TopDocs.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

@@ -21,6 +21,7 @@
 #include "IndexSearcher.h"
 #include "TopDocs.h"
 #include "Random.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

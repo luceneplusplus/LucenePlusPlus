@@ -15,6 +15,7 @@
 #include "Document.h"
 #include "Field.h"
 #include "Random.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

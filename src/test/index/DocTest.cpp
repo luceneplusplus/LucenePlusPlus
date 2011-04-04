@@ -19,6 +19,7 @@
 #include "TermEnum.h"
 #include "TermPositions.h"
 #include "Term.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

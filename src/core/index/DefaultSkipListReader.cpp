@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "DefaultSkipListReader.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

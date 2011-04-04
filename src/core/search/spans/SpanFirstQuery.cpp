@@ -8,6 +8,7 @@
 #include "SpanFirstQuery.h"
 #include "_SpanFirstQuery.h"
 #include "SpanQuery.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

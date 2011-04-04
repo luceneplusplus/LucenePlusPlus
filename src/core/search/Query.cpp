@@ -11,6 +11,7 @@
 #include "Searcher.h"
 #include "Similarity.h"
 #include "Weight.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

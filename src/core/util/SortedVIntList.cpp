@@ -10,6 +10,7 @@
 #include "BitSet.h"
 #include "OpenBitSet.h"
 #include "DocIdSetIterator.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -13,6 +13,7 @@
 #include "FileReader.h"
 #include "TermAttribute.h"
 #include "StringReader.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

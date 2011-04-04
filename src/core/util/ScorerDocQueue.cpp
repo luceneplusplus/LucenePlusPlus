@@ -8,6 +8,7 @@
 #include "ScorerDocQueue.h"
 #include "_ScorerDocQueue.h"
 #include "Scorer.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -8,6 +8,7 @@
 #include "IntFieldSource.h"
 #include "_IntFieldSource.h"
 #include "FieldCache.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

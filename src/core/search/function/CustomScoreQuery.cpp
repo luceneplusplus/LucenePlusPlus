@@ -9,6 +9,7 @@
 #include "_CustomScoreQuery.h"
 #include "ValueSourceQuery.h"
 #include "ComplexExplanation.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

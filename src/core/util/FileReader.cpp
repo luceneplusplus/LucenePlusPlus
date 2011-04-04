@@ -6,6 +6,8 @@
 
 #include "LuceneInc.h"
 #include "FileReader.h"
+#include "MiscUtils.h"
+#include "FileUtils.h"
 
 namespace Lucene
 {

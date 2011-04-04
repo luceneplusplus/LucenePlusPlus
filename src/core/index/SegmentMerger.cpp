@@ -31,6 +31,7 @@
 #include "SegmentMergeQueue.h"
 #include "SegmentWriteState.h"
 #include "TestPoint.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

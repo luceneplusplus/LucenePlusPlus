@@ -18,6 +18,7 @@
 #include "StandardFilter.h"
 #include "StandardTokenizer.h"
 #include "PositionIncrementAttribute.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

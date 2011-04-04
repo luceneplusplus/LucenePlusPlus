@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "DefaultSkipListWriter.h"
 #include "IndexOutput.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -13,6 +13,7 @@
 #include "FieldInfos.h"
 #include "SegmentTermPositionVector.h"
 #include "TermVectorOffsetInfo.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

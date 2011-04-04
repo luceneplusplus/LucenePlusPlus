@@ -16,6 +16,7 @@
 #include "FieldSelector.h"
 #include "Similarity.h"
 #include "CompoundFileReader.h"
+#include "FileUtils.h"
 
 namespace Lucene
 {

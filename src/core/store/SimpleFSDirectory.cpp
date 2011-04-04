@@ -9,6 +9,7 @@
 #include "_SimpleFSDirectory.h"
 #include "IndexOutput.h"
 #include "FileReader.h"
+#include "FileUtils.h"
 
 namespace Lucene
 {

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "Term.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

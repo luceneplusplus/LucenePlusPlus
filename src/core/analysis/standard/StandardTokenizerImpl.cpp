@@ -10,6 +10,7 @@
 #include "Reader.h"
 #include "Token.h"
 #include "TermAttribute.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

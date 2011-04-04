@@ -15,6 +15,7 @@
 #include "DocumentsWriter.h"
 #include "CharBlockPool.h"
 #include "FieldInfo.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

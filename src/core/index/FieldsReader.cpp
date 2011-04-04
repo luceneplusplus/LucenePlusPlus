@@ -16,6 +16,7 @@
 #include "Document.h"
 #include "Field.h"
 #include "CompressionTools.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

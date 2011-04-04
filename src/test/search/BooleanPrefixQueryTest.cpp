@@ -19,6 +19,7 @@
 #include "Filter.h"
 #include "DocIdSetIterator.h"
 #include "DocIdSet.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

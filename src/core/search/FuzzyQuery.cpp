@@ -12,6 +12,7 @@
 #include "TermQuery.h"
 #include "BooleanQuery.h"
 #include "BooleanClause.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

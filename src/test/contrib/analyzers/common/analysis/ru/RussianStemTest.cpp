@@ -11,6 +11,7 @@
 #include "FileReader.h"
 #include "BufferedReader.h"
 #include "InputStreamReader.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

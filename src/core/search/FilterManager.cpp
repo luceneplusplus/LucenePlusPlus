@@ -8,6 +8,7 @@
 #include "FilterManager.h"
 #include "_FilterManager.h"
 #include "Filter.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

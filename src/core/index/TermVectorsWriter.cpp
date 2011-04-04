@@ -15,6 +15,7 @@
 #include "Directory.h"
 #include "FieldInfos.h"
 #include "UnicodeUtils.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

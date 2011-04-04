@@ -28,6 +28,7 @@
 #include "MatchAllDocsQuery.h"
 #include "SimpleAnalyzer.h"
 #include "DateField.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

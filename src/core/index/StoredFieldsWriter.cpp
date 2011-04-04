@@ -13,6 +13,7 @@
 #include "IndexFileNames.h"
 #include "IndexWriter.h"
 #include "Directory.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

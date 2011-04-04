@@ -17,6 +17,7 @@
 #include "Field.h"
 #include "TermDocs.h"
 #include "Random.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

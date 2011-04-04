@@ -10,6 +10,7 @@
 #include "IndexWriter.h"
 #include "FSDirectory.h"
 #include "StandardAnalyzer.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

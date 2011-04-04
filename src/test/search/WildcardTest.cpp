@@ -24,6 +24,7 @@
 #include "PrefixQuery.h"
 #include "QueryParser.h"
 #include "WhitespaceAnalyzer.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

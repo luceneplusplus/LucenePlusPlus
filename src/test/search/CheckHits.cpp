@@ -17,6 +17,7 @@
 #include "MultiSearcher.h"
 #include "IndexSearcher.h"
 #include "Scorer.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -12,6 +12,7 @@
 #include "ComplexExplanation.h"
 #include "Searcher.h"
 #include "DisjunctionMaxScorer.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

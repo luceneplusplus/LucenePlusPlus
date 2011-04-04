@@ -8,6 +8,7 @@
 #define VARIANTUTILS_H
 
 #include "Lucene.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

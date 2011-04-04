@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "MultiLevelSkipListReader.h"
 #include "BufferedIndexInput.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

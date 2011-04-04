@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "SmallDouble.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

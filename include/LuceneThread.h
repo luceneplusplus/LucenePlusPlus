@@ -8,6 +8,7 @@
 #define LUCENETHREAD_H
 
 #include "LuceneObject.h"
+#include <boost/thread/thread.hpp>
 
 namespace Lucene
 {

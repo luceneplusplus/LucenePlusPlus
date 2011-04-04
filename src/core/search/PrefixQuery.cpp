@@ -8,6 +8,7 @@
 #include "PrefixQuery.h"
 #include "PrefixTermEnum.h"
 #include "Term.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

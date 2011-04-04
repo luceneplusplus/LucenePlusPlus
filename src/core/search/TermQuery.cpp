@@ -13,6 +13,7 @@
 #include "Term.h"
 #include "TermDocs.h"
 #include "Similarity.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

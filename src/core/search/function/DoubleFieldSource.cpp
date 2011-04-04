@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "DoubleFieldSource.h"
 #include "FieldCache.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

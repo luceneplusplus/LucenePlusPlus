@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "ASCIIFoldingFilter.h"
 #include "TermAttribute.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -18,6 +18,7 @@
 #include "ScoreDoc.h"
 #include "TopDocs.h"
 #include "DateTools.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

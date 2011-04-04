@@ -21,6 +21,7 @@
 #include "Similarity.h"
 #include "FieldInvertState.h"
 #include "Document.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

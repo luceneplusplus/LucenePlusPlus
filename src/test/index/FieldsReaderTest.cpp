@@ -20,6 +20,8 @@
 #include "FSDirectory.h"
 #include "BufferedIndexInput.h"
 #include "IndexReader.h"
+#include "MiscUtils.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

@@ -10,6 +10,7 @@
 #include "TestUtils.h"
 #include "FileReader.h"
 #include "BufferedReader.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

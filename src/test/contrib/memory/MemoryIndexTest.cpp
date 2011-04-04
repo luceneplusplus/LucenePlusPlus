@@ -23,6 +23,7 @@
 #include "QueryParser.h"
 #include "TopDocs.h"
 #include "Random.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

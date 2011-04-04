@@ -13,6 +13,7 @@
 #include "Similarity.h"
 #include "Document.h"
 #include "IndexWriter.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

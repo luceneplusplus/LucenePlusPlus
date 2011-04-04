@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MaxPayloadFunction.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

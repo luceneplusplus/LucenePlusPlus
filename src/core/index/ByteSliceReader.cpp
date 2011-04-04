@@ -9,6 +9,7 @@
 #include "ByteBlockPool.h"
 #include "DocumentsWriter.h"
 #include "IndexOutput.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

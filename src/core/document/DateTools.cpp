@@ -9,6 +9,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "DateTools.h"
 #include "CharFolder.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

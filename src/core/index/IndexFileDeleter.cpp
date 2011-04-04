@@ -17,6 +17,7 @@
 #include "InfoStream.h"
 #include "DateTools.h"
 #include "LuceneThread.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

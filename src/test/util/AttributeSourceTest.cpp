@@ -13,6 +13,7 @@
 #include "OffsetAttribute.h"
 #include "PayloadAttribute.h"
 #include "PositionIncrementAttribute.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

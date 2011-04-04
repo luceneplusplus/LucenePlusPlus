@@ -18,6 +18,8 @@
 #include "LuceneThread.h"
 #include "IndexFileDeleter.h"
 #include "IndexInput.h"
+#include "MiscUtils.h"
+#include "FileUtils.h"
 
 using namespace Lucene;
 

@@ -10,6 +10,7 @@
 #include "FieldInfos.h"
 #include "Term.h"
 #include "UnicodeUtils.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

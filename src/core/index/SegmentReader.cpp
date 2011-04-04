@@ -29,6 +29,7 @@
 #include "AllTermDocs.h"
 #include "DefaultSimilarity.h"
 #include "FieldCache.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FieldMaskingSpanQuery.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

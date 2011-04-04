@@ -14,6 +14,7 @@
 #include "FilteredTermEnum.h"
 #include "DocIdSet.h"
 #include "OpenBitSet.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

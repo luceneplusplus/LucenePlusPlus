@@ -16,6 +16,7 @@
 #include "InvertedDocConsumerPerField.h"
 #include "TermsHashConsumerPerField.h"
 #include "IndexWriter.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

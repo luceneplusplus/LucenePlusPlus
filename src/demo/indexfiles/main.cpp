@@ -8,6 +8,8 @@
 
 #include "targetver.h"
 #include "LuceneHeaders.h"
+#include "FileUtils.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

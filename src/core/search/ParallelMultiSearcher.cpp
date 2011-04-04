@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/bind.hpp>
 #include <boost/bind/protect.hpp>
 #include "ParallelMultiSearcher.h"
 #include "_MultiSearcher.h"

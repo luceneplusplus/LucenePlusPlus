@@ -14,6 +14,7 @@
 #include "ByteSliceReader.h"
 #include "IndexWriter.h"
 #include "Random.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 

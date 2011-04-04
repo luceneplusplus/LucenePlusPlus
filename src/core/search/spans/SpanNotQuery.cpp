@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "SpanNotQuery.h"
 #include "_SpanNotQuery.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

@@ -33,6 +33,7 @@
 #include "InfoStream.h"
 #include "TestPoint.h"
 #include "DateTools.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

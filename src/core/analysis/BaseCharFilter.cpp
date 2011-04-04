@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "BaseCharFilter.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {

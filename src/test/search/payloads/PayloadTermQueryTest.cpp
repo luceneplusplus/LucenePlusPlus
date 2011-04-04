@@ -31,6 +31,7 @@
 #include "BooleanClause.h"
 #include "BooleanQuery.h"
 #include "PayloadHelper.h"
+#include "MiscUtils.h"
 
 using namespace Lucene;
 
