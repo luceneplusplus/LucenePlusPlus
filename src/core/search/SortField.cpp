@@ -9,6 +9,7 @@
 #include "FieldCache.h"
 #include "FieldComparator.h"
 #include "FieldComparatorSource.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

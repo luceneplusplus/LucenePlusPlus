@@ -10,6 +10,8 @@
 #include "Term.h"
 #include "IndexReader.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
+#include "VariantUtils.h"
 
 namespace Lucene
 {

@@ -11,6 +11,7 @@
 #include "IndexWriter.h"
 #include "Document.h"
 #include "Field.h"
+#include "VariantUtils.h"
 
 namespace Lucene
 {

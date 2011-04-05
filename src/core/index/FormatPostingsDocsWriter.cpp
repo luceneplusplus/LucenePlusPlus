@@ -18,6 +18,7 @@
 #include "IndexOutput.h"
 #include "TermInfo.h"
 #include "UnicodeUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "TermVectorEntry.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

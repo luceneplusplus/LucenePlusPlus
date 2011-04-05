@@ -8,6 +8,7 @@
 #include "MergePolicy.h"
 #include "SegmentInfos.h"
 #include "SegmentInfo.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

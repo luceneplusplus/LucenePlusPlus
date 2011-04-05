@@ -11,6 +11,7 @@
 #include "ComplexExplanation.h"
 #include "DocIdSet.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

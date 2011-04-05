@@ -9,6 +9,7 @@
 
 #include "Lucene.h"
 #include "LuceneContrib.h"
+#include "StringUtils.h"
 #include <boost/test/unit_test.hpp>
 
 namespace std

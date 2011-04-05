@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "NumberTools.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

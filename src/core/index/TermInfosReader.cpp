@@ -10,6 +10,7 @@
 #include "Directory.h"
 #include "IndexFileNames.h"
 #include "Term.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

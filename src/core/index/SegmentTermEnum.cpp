@@ -10,6 +10,7 @@
 #include "IndexInput.h"
 #include "TermBuffer.h"
 #include "TermInfo.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

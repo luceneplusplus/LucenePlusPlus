@@ -20,6 +20,7 @@
 #include "SegmentWriteState.h"
 #include "Directory.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

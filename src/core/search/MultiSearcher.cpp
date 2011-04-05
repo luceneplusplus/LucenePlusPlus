@@ -17,6 +17,7 @@
 #include "SortField.h"
 #include "TopFieldDocs.h"
 #include "FieldDoc.h"
+#include "VariantUtils.h"
 
 namespace Lucene
 {

@@ -24,6 +24,7 @@
 #include "OffsetAttribute.h"
 #include "AttributeSource.h"
 #include "InfoStream.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

@@ -8,6 +8,7 @@
 #include "SimpleFSLockFactory.h"
 #include "_SimpleFSLockFactory.h"
 #include "FileUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

@@ -32,6 +32,7 @@
 #include "SegmentWriteState.h"
 #include "TestPoint.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

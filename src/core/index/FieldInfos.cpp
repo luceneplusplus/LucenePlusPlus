@@ -12,6 +12,7 @@
 #include "Directory.h"
 #include "Document.h"
 #include "Fieldable.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

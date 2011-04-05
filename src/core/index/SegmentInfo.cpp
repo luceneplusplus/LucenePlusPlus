@@ -15,6 +15,7 @@
 #include "IndexFileNameFilter.h"
 #include "BitVector.h"
 #include "UnicodeUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

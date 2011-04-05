@@ -13,6 +13,7 @@
 #include "ComplexExplanation.h"
 #include "Similarity.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

@@ -9,6 +9,7 @@
 #include "RAMFile.h"
 #include "RAMOutputStream.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

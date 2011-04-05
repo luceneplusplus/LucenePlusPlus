@@ -11,6 +11,7 @@
 #include "SimpleFSDirectory.h"
 #include "BufferedIndexInput.h"
 #include "FileUtils.h"
+#include "StringUtils.h"
 #include "md5.h"
 
 namespace Lucene

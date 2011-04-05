@@ -7,6 +7,8 @@
 #include "LuceneInc.h"
 #include "AbstractField.h"
 #include "Field.h"
+#include "StringUtils.h"
+#include "VariantUtils.h"
 
 namespace Lucene
 {

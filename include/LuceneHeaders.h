@@ -141,6 +141,8 @@
 #include "SimpleFSDirectory.h"
 
 // Include most common files: util
+#include "MiscUtils.h"
+#include "StringUtils.h"
 #include "BitSet.h"
 #include "BitUtil.h"
 #include "BufferedReader.h"

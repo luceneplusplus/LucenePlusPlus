@@ -8,6 +8,7 @@
 #include "LogMergePolicy.h"
 #include "IndexWriter.h"
 #include "SegmentInfo.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

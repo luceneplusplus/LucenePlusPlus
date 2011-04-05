@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "CompressionTools.h"
 #include "UnicodeUtils.h"
+#include "StringUtils.h"
 #include "zlib.h"
 
 namespace Lucene

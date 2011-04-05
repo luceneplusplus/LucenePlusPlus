@@ -9,6 +9,7 @@
 #include "Field.h"
 #include "NumericUtils.h"
 #include "NumericTokenStream.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

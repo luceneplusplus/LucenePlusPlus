@@ -17,6 +17,7 @@
 #include "TermVectorOffsetInfo.h"
 #include "Token.h"
 #include "StringReader.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

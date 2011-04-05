@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "PayloadAttribute.h"
 #include "Payload.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

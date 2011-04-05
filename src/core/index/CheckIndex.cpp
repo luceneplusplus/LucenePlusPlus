@@ -19,6 +19,7 @@
 #include "Document.h"
 #include "FSDirectory.h"
 #include "InfoStream.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

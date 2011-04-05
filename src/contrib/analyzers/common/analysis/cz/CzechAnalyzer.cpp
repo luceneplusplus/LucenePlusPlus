@@ -10,6 +10,7 @@
 #include "StandardFilter.h"
 #include "LowerCaseFilter.h"
 #include "StopFilter.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

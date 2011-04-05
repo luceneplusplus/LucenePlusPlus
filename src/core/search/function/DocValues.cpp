@@ -8,6 +8,8 @@
 #include "DocValues.h"
 #include "Explanation.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
+#include "VariantUtils.h"
 
 namespace Lucene
 {

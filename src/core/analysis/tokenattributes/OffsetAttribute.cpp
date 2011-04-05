@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "OffsetAttribute.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

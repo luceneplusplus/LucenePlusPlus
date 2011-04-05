@@ -12,6 +12,7 @@
 #include "Term.h"
 #include "TermPositions.h"
 #include "FieldCache.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

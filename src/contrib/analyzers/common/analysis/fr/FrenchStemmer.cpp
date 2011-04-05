@@ -8,6 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include "FrenchStemmer.h"
 #include "UnicodeUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

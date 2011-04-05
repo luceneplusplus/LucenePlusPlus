@@ -14,6 +14,7 @@
 #include "SegmentTermPositionVector.h"
 #include "TermVectorOffsetInfo.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

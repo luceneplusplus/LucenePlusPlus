@@ -9,6 +9,7 @@
 #include "_ConcurrentMergeScheduler.h"
 #include "IndexWriter.h"
 #include "TestPoint.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

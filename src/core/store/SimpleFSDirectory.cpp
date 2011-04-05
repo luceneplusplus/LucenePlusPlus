@@ -10,6 +10,7 @@
 #include "IndexOutput.h"
 #include "FileReader.h"
 #include "FileUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

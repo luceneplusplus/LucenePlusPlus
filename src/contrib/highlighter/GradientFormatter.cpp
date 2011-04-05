@@ -7,6 +7,7 @@
 #include "ContribInc.h"
 #include "GradientFormatter.h"
 #include "TokenGroup.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

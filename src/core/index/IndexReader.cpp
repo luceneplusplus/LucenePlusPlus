@@ -17,6 +17,7 @@
 #include "Similarity.h"
 #include "CompoundFileReader.h"
 #include "FileUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

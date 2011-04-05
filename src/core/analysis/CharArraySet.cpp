@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "CharArraySet.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

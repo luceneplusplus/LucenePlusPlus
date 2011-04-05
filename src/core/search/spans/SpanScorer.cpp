@@ -10,6 +10,7 @@
 #include "Weight.h"
 #include "Similarity.h"
 #include "Spans.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

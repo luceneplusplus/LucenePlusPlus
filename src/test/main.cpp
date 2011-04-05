@@ -18,7 +18,9 @@
 #endif
 
 #include "TestUtils.h"
+#include "MiscUtils.h"
 #include "FileUtils.h"
+#include "StringUtils.h"
 
 #define BOOST_TEST_MODULE "Lucene"
 #define BOOST_TEST_NO_MAIN

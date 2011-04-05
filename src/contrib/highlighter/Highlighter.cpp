@@ -19,6 +19,7 @@
 #include "TextFragment.h"
 #include "TokenGroup.h"
 #include "SimpleFragmenter.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

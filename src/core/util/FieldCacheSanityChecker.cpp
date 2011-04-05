@@ -9,6 +9,8 @@
 #include "_FieldCacheSanityChecker.h"
 #include "FieldCache.h"
 #include "IndexReader.h"
+#include "StringUtils.h"
+#include "VariantUtils.h"
 
 namespace Lucene
 {

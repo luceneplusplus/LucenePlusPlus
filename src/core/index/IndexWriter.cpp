@@ -34,6 +34,7 @@
 #include "TestPoint.h"
 #include "DateTools.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

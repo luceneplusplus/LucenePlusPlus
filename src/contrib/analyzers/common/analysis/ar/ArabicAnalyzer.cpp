@@ -11,6 +11,7 @@
 #include "StopFilter.h"
 #include "ArabicNormalizationFilter.h"
 #include "ArabicStemFilter.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

@@ -11,6 +11,7 @@
 #include "_SimpleFSDirectory.h"
 #include "MiscUtils.h"
 #include "FileUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

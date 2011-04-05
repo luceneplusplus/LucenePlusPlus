@@ -9,6 +9,7 @@
 #include "StandardTokenizer.h"
 #include "GreekLowerCaseFilter.h"
 #include "StopFilter.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

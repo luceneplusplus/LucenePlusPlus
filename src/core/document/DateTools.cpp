@@ -10,6 +10,7 @@
 #include "DateTools.h"
 #include "CharFolder.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

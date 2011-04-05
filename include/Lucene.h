@@ -219,8 +219,6 @@ namespace Lucene
 }
 
 #include "Synchronize.h"
-#include "StringUtils.h"
 #include "CycleCheck.h"
-#include "VariantUtils.h"
 
 #endif

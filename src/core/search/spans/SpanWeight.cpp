@@ -11,6 +11,7 @@
 #include "IndexReader.h"
 #include "ComplexExplanation.h"
 #include "Similarity.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {

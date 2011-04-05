@@ -12,6 +12,7 @@
 #include "Searcher.h"
 #include "Term.h"
 #include "SmallDouble.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {
