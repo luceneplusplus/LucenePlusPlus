@@ -33,7 +33,7 @@ namespace Lucene
     /// 
     /// While this class takes care of writing the different skip levels, subclasses must define the 
     /// actual format of the skip data.
-    class LPPAPI MultiLevelSkipListWriter : public LuceneObject
+    class MultiLevelSkipListWriter : public LuceneObject
     {
     public:
         MultiLevelSkipListWriter(int32_t skipInterval, int32_t maxSkipLevels, int32_t df);

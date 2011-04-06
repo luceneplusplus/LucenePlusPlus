@@ -17,10 +17,10 @@ namespace Lucene
     const wchar_t* GermanAnalyzer::_GERMAN_STOP_WORDS[] = 
     {
         L"einer", L"eine", L"eines", L"einem", L"einen", L"der", L"die", 
-        L"das", L"dass", L"da\u00df", L"du", L"er", L"sie", L"es", L"was", 
+        L"das", L"dass", L"da\x00df", L"du", L"er", L"sie", L"es", L"was", 
         L"wer", L"wie", L"wir", L"und", L"oder", L"ohne", L"mit", L"am", 
         L"im", L"in", L"aus", L"auf", L"ist", L"sein", L"war", L"wird",
-        L"ihr", L"ihre", L"ihres", L"als", L"f\u00fcr", L"von", L"mit", 
+        L"ihr", L"ihre", L"ihres", L"als", L"f\x00fcr", L"von", L"mit", 
         L"dich", L"dir", L"mich", L"mir", L"mein", L"sein", L"kein", 
         L"durch", L"wegen", L"wird"
     };

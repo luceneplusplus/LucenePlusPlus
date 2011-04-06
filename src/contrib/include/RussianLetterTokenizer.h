@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// A RussianLetterTokenizer is a {@link Tokenizer} that extends {@link LetterTokenizer} by also 
     /// allowing the basic Latin digits 0-9. 
-    class LPPAPI RussianLetterTokenizer : public CharTokenizer
+    class LPPCONTRIBAPI RussianLetterTokenizer : public CharTokenizer
     {
     public:
         /// Construct a new RussianLetterTokenizer.

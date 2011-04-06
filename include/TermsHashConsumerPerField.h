@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// Implement this class to plug into the TermsHash processor, which inverts & stores Tokens into a hash
     /// table and provides an API for writing bytes into multiple streams for each unique Token.
-    class LPPAPI TermsHashConsumerPerField : public LuceneObject
+    class TermsHashConsumerPerField : public LuceneObject
     {
     public:
         virtual ~TermsHashConsumerPerField();

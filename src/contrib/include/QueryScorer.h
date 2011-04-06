@@ -15,7 +15,7 @@ namespace Lucene
     /// {@link HighlighterScorer} implementation which scores text fragments by the number of unique query terms found. 
     /// This class converts appropriate {@link Query}s to {@link SpanQuery}s and attempts to score only 
     /// those terms that participated in generating the 'hit' on the document.
-    class LPPAPI QueryScorer : public HighlighterScorer, public LuceneObject
+    class LPPCONTRIBAPI QueryScorer : public HighlighterScorer, public LuceneObject
     {
     public:
         /// @param query Query to use for highlighting

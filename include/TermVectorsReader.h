@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermVectorsReader : public LuceneObject
+    class TermVectorsReader : public LuceneObject
     {
     public:
         TermVectorsReader();
@@ -116,7 +116,7 @@ namespace Lucene
     };
     
     /// Models the existing parallel array structure
-    class LPPAPI ParallelArrayTermVectorMapper : public TermVectorMapper
+    class ParallelArrayTermVectorMapper : public TermVectorMapper
     {
     public:
         ParallelArrayTermVectorMapper();

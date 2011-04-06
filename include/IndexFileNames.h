@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Constants representing filenames and extensions used by Lucene.
-    class LPPAPI IndexFileNames : public LuceneObject
+    class IndexFileNames : public LuceneObject
     {
     public:
         virtual ~IndexFileNames();        

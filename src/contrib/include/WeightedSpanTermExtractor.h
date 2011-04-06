@@ -15,7 +15,7 @@ namespace Lucene
 {
     /// Class used to extract {@link WeightedSpanTerm}s from a {@link Query} based on whether {@link Term}s 
     /// from the {@link Query} are contained in a supplied {@link TokenStream}.
-    class LPPAPI WeightedSpanTermExtractor : public LuceneObject
+    class LPPCONTRIBAPI WeightedSpanTermExtractor : public LuceneObject
     {
     public:
         WeightedSpanTermExtractor(const String& defaultField = L"");
@@ -101,7 +101,7 @@ namespace Lucene
     
     /// This class makes sure that if both position sensitive and insensitive versions of the same 
     /// term are added, the position insensitive one wins.
-    class LPPAPI PositionCheckingMap : public MapWeightedSpanTerm
+    class LPPCONTRIBAPI PositionCheckingMap : public MapWeightedSpanTerm
     {
     public:
         virtual ~PositionCheckingMap();
@@ -112,7 +112,7 @@ namespace Lucene
     };
     
     /// A fake IndexReader class to extract the field from a MultiTermQuery
-    class LPPAPI FakeReader : public FilterIndexReader
+    class LPPCONTRIBAPI FakeReader : public FilterIndexReader
     {
     public:
         FakeReader();

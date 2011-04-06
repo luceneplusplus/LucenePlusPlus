@@ -55,14 +55,18 @@ namespace Lucene
         /// This must always point to the most recent file format.
         static const int32_t CURRENT_FORMAT;
         
+        int32_t counter; // used to name new segments
+
+    private:
         /// Advanced configuration of retry logic in loading segments_N file.
         static int32_t defaultGenFileRetryCount;
         static int32_t defaultGenFileRetryPauseMsec;
         static int32_t defaultGenLookaheadCount;
         
-        int32_t counter; // used to name new segments
-    
-    protected:
+        /// Counts how often the index has been changed by adding or deleting docs.
+        /// Starting with the current time in milliseconds forces to create unique version numbers.
+        int64_t version;
+
         int64_t generation; // generation of the "segments_N" for the next commit
         
         int64_t lastGeneration; // generation of the "segments_N" file we last successfully read
@@ -72,10 +76,6 @@ namespace Lucene
         MapStringString userData; // Opaque map<string, string> that user can specify during IndexWriter::commit
         
         static MapStringString singletonUserData;
-        
-        /// Counts how often the index has been changed by adding or deleting docs.
-        /// Starting with the current time in milliseconds forces to create unique version numbers.
-        int64_t version;
         
         static InfoStreamPtr infoStream;
         ChecksumIndexOutputPtr pendingSegnOutput;
@@ -175,6 +175,8 @@ namespace Lucene
         
     protected:
         void write(DirectoryPtr directory);
+        
+        friend class FindSegmentsFile;
     };
 }
 

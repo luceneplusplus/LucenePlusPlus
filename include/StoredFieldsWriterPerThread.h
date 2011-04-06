@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI StoredFieldsWriterPerThread : public LuceneObject
+    class StoredFieldsWriterPerThread : public LuceneObject
     {
     public:
         StoredFieldsWriterPerThread(DocStatePtr docState, StoredFieldsWriterPtr storedFieldsWriter);

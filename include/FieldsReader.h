@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// Class responsible for access to stored document fields.  It uses <segment>.fdt and <segment>.fdx; files.
-    class LPPAPI FieldsReader : public LuceneObject
+    class FieldsReader : public LuceneObject
     {
     public:
         /// Used only by clone
@@ -95,7 +95,7 @@ namespace Lucene
         friend class LazyField;
     };
     
-    class LPPAPI LazyField : public AbstractField
+    class LazyField : public AbstractField
     {
     public:
         LazyField(FieldsReaderPtr reader, const String& name, Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed);

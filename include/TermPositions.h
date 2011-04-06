@@ -17,6 +17,9 @@ namespace Lucene
     /// @see IndexReader#termPositions()
     class LPPAPI TermPositions : public TermDocs
     {
+    protected:
+        TermPositions();
+
     public:
         virtual ~TermPositions();        
         LUCENE_INTERFACE(TermPositions);

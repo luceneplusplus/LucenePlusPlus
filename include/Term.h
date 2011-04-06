@@ -21,7 +21,7 @@ namespace Lucene
     {
     public:
         /// Constructs a Term with the given field and text.
-        Term(const String& fld, const String& txt = L"");
+        Term(const String& fld, const String& txt = EmptyString);
         virtual ~Term();
         
         LUCENE_CLASS(Term);

@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(testRandomExceptionsThreads)
     for (int32_t i = 0; i < NUM_THREADS; ++i)
     {
         if (!threads[i]->failure.isNull())
-            BOOST_FAIL("thread hit unexpected failure");
+            BOOST_FAIL("thread hit unexpected failure: " << threads[i]->failure.getError());
     }
     
     writer->commit();

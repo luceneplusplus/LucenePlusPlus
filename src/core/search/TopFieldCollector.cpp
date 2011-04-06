@@ -10,11 +10,9 @@
 #include "FieldValueHitQueue.h"
 #include "FieldComparator.h"
 #include "FieldDoc.h"
-#include "ScoreDoc.h"
 #include "Scorer.h"
 #include "Sort.h"
 #include "TopFieldDocs.h"
-#include "HitQueueBase.h"
 
 namespace Lucene
 {

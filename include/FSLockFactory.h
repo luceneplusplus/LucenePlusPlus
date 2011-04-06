@@ -14,6 +14,9 @@ namespace Lucene
     /// Base class for file system based locking implementation.
     class LPPAPI FSLockFactory : public LockFactory
     {
+    protected:
+        FSLockFactory();
+    
     public:
         virtual ~FSLockFactory();
         

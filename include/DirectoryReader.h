@@ -8,9 +8,7 @@
 #define DIRECTORYREADER_H
 
 #include "IndexReader.h"
-#include "SegmentInfos.h"
 #include "TermEnum.h"
-#include "TermDocs.h"
 #include "TermPositions.h"
 #include "IndexCommit.h"
 #include "SegmentMergeQueue.h"
@@ -18,7 +16,7 @@
 namespace Lucene
 {
     /// An IndexReader which reads indexes with multiple segments.
-    class LPPAPI DirectoryReader : public IndexReader
+    class DirectoryReader : public IndexReader
     {
     public:
         /// Construct reading the named set of readers.
@@ -195,7 +193,7 @@ namespace Lucene
         friend class FindSegmentsReopen;
     };
     
-    class LPPAPI MultiTermEnum : public TermEnum
+    class MultiTermEnum : public TermEnum
     {
     public:
         MultiTermEnum(IndexReaderPtr topReader, Collection<IndexReaderPtr> readers, Collection<int32_t> starts, TermPtr t);
@@ -226,7 +224,7 @@ namespace Lucene
         virtual void close();
     };
     
-    class LPPAPI MultiTermDocs : public TermPositions, public LuceneObject
+    class MultiTermDocs : public TermPositions, public LuceneObject
     {
     public:
         MultiTermDocs(IndexReaderPtr topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s);
@@ -280,7 +278,7 @@ namespace Lucene
         virtual TermDocsPtr termDocs(IndexReaderPtr reader);
     };
     
-    class LPPAPI MultiTermPositions : public MultiTermDocs
+    class MultiTermPositions : public MultiTermDocs
     {
     public:
         MultiTermPositions(IndexReaderPtr topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s);
@@ -305,7 +303,7 @@ namespace Lucene
         virtual TermDocsPtr termDocs(IndexReaderPtr reader);
     };
     
-    class LPPAPI ReaderCommit : public IndexCommit
+    class ReaderCommit : public IndexCommit
     {
     public:
         ReaderCommit(SegmentInfosPtr infos, DirectoryPtr dir);

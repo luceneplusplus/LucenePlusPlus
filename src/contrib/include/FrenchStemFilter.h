@@ -21,7 +21,7 @@ namespace Lucene
     /// NOTE: This stemmer does not implement the Snowball algorithm correctly, especially 
     /// involving case problems. It is recommended that you consider using the "French" stemmer 
     /// in the snowball package instead. This stemmer will likely be deprecated in a future release.
-    class LPPAPI FrenchStemFilter : public TokenFilter
+    class LPPCONTRIBAPI FrenchStemFilter : public TokenFilter
     {
     public:
         FrenchStemFilter(TokenStreamPtr input);

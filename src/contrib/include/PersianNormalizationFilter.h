@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// A {@link TokenFilter} that applies {@link PersianNormalizer} to normalize the orthography.
-    class LPPAPI PersianNormalizationFilter : public TokenFilter
+    class LPPCONTRIBAPI PersianNormalizationFilter : public TokenFilter
     {
     public:
         PersianNormalizationFilter(TokenStreamPtr input);

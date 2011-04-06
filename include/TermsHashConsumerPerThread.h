@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermsHashConsumerPerThread : public LuceneObject
+    class TermsHashConsumerPerThread : public LuceneObject
     {
     public:
         virtual ~TermsHashConsumerPerThread();

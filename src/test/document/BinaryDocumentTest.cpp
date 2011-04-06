@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(testBinaryFieldInIndex)
     doc->add(stringFldStored);
 
     // test for field count
-    BOOST_CHECK_EQUAL(2, doc->fields.size());
+    BOOST_CHECK_EQUAL(2, doc->getFields().size());
 
     // add the doc to a ram index
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();

@@ -15,7 +15,7 @@ namespace Lucene
     /// Class for accessing a compound stream.
     /// This class implements a directory, but is limited to only read operations.
     /// Directory methods that would normally modify data throw an exception.
-    class LPPAPI CompoundFileReader : public Directory
+    class CompoundFileReader : public Directory
     {
     public:
         CompoundFileReader(DirectoryPtr dir, const String& name);
@@ -83,7 +83,7 @@ namespace Lucene
     };
     
     /// Implementation of an IndexInput that reads from a portion of the compound file. 
-    class LPPAPI CSIndexInput : public BufferedIndexInput
+    class CSIndexInput : public BufferedIndexInput
     {
     public:
         CSIndexInput();

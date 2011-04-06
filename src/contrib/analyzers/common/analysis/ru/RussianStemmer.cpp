@@ -6,31 +6,32 @@
 
 #include "ContribInc.h"
 #include "RussianStemmer.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 namespace Lucene
 {
-    const wchar_t RussianStemmer::A = L'\u0430';
-    const wchar_t RussianStemmer::V = L'\u0432';
-    const wchar_t RussianStemmer::G = L'\u0433';
-    const wchar_t RussianStemmer::E = L'\u0435';
-    const wchar_t RussianStemmer::I = L'\u0438';
-    const wchar_t RussianStemmer::I_ = L'\u0439';
-    const wchar_t RussianStemmer::L = L'\u043b';
-    const wchar_t RussianStemmer::M = L'\u043c';
-    const wchar_t RussianStemmer::N = L'\u043d';
-    const wchar_t RussianStemmer::O = L'\u043e';
-    const wchar_t RussianStemmer::S = L'\u0441';
-    const wchar_t RussianStemmer::T = L'\u0442';
-    const wchar_t RussianStemmer::U = L'\u0443';
-    const wchar_t RussianStemmer::X = L'\u0445';
-    const wchar_t RussianStemmer::SH = L'\u0448';
-    const wchar_t RussianStemmer::SHCH = L'\u0449';
-    const wchar_t RussianStemmer::Y = L'\u044b';
-    const wchar_t RussianStemmer::SOFT = L'\u044c';
-    const wchar_t RussianStemmer::AE = L'\u044d';
-    const wchar_t RussianStemmer::IU = L'\u044e';
-    const wchar_t RussianStemmer::IA = L'\u044f';
+    const wchar_t RussianStemmer::A = L'\x0430';
+    const wchar_t RussianStemmer::V = L'\x0432';
+    const wchar_t RussianStemmer::G = L'\x0433';
+    const wchar_t RussianStemmer::E = L'\x0435';
+    const wchar_t RussianStemmer::I = L'\x0438';
+    const wchar_t RussianStemmer::I_ = L'\x0439';
+    const wchar_t RussianStemmer::L = L'\x043b';
+    const wchar_t RussianStemmer::M = L'\x043c';
+    const wchar_t RussianStemmer::N = L'\x043d';
+    const wchar_t RussianStemmer::O = L'\x043e';
+    const wchar_t RussianStemmer::S = L'\x0441';
+    const wchar_t RussianStemmer::T = L'\x0442';
+    const wchar_t RussianStemmer::U = L'\x0443';
+    const wchar_t RussianStemmer::X = L'\x0445';
+    const wchar_t RussianStemmer::SH = L'\x0448';
+    const wchar_t RussianStemmer::SHCH = L'\x0449';
+    const wchar_t RussianStemmer::Y = L'\x044b';
+    const wchar_t RussianStemmer::SOFT = L'\x044c';
+    const wchar_t RussianStemmer::AE = L'\x044d';
+    const wchar_t RussianStemmer::IU = L'\x044e';
+    const wchar_t RussianStemmer::IA = L'\x044f';
     
     const wchar_t RussianStemmer::vowels[] = {A, E, I, O, U, Y, AE, IU, IA};
     
@@ -429,14 +430,14 @@ namespace Lucene
             }
             // check if ending was found
             if (match)
-                return theEndingClass[i].size(); // cut ending
+                return (int32_t)theEndingClass[i].size(); // cut ending
         }
         return 0;
     }
     
     int32_t RussianStemmer::findEnding(String& stemmingZone, Collection<String> theEndingClass)
     {
-        return findEnding(stemmingZone, stemmingZone.length() - 1, theEndingClass);
+        return findEnding(stemmingZone, (int32_t)(stemmingZone.length() - 1), theEndingClass);
     }
     
     bool RussianStemmer::findAndRemoveEnding(String& stemmingZone, Collection<String> theEndingClass)
@@ -458,7 +459,7 @@ namespace Lucene
             return false; // not found
         else
         {
-            int32_t predessorLength = findEnding(stemmingZone, stemmingZone.length() - endingLength - 1, thePredessors);
+            int32_t predessorLength = findEnding(stemmingZone, (int32_t)(stemmingZone.length() - endingLength - 1), thePredessors);
             if (predessorLength == 0)
                 return false;
             else

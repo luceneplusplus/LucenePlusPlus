@@ -10,7 +10,6 @@
 #include "TopScoreDocCollector.h"
 #include "TopFieldDocs.h"
 #include "TopFieldCollector.h"
-#include "TopDocsCollector.h"
 #include "Weight.h"
 #include "DocIdSet.h"
 #include "Scorer.h"

@@ -11,7 +11,6 @@
 #include "KeywordAnalyzer.h"
 #include "Query.h"
 #include "SimpleAnalyzer.h"
-#include "BooleanQuery.h"
 #include "TermQuery.h"
 #include "PhraseQuery.h"
 #include "FuzzyQuery.h"

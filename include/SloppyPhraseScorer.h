@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI SloppyPhraseScorer : public PhraseScorer
+    class SloppyPhraseScorer : public PhraseScorer
     {
     public:
         SloppyPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, int32_t slop, ByteArray norms);

@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Formats text with different color intensity depending on the score of the term.
-    class LPPAPI GradientFormatter : public Formatter, public LuceneObject
+    class LPPCONTRIBAPI GradientFormatter : public Formatter, public LuceneObject
     {
     public:
         GradientFormatter(double maxScore, const String& minForegroundColor, const String& maxForegroundColor, const String& minBackgroundColor, const String& maxBackgroundColor);

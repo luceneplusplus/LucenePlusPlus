@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// A TermInfo is the record of information stored for a term.
-    class LPPAPI TermInfo : public LuceneObject
+    class TermInfo : public LuceneObject
     {
     public:
         TermInfo(TermInfoPtr ti);

@@ -43,7 +43,7 @@ namespace Lucene
         
         LUCENE_CLASS(FieldCacheRangeFilter);
     
-    public:
+    INTERNAL:
         String field;
         ParserPtr parser;
         bool includeLower;

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    #ifdef _WIN32
+    #if defined(_WIN32) || defined(_WIN64)
     const int32_t LuceneThread::MAX_PRIORITY = THREAD_PRIORITY_HIGHEST;
     const int32_t LuceneThread::NORM_PRIORITY = THREAD_PRIORITY_NORMAL;
     const int32_t LuceneThread::MIN_PRIORITY = THREAD_PRIORITY_LOWEST;
@@ -69,7 +69,7 @@ namespace Lucene
     
     void LuceneThread::setPriority(int32_t priority)
     {
-        #ifdef _WIN32
+        #if defined(_WIN32) || defined(_WIN64)
         if (thread)
             SetThreadPriority(thread->native_handle(), priority);
         #endif
@@ -77,7 +77,7 @@ namespace Lucene
     
     int32_t LuceneThread::getPriority()
     {
-        #ifdef _WIN32
+        #if defined(_WIN32) || defined(_WIN64)
         return thread ? GetThreadPriority(thread->native_handle()) : NORM_PRIORITY;
         #else
         return NORM_PRIORITY;
@@ -104,7 +104,7 @@ namespace Lucene
     
     int64_t LuceneThread::currentId()
     {
-        #ifdef _WIN32
+        #if defined(_WIN32) || defined(_WIN64)
         return GetCurrentThreadId();
         #else
         return pthread_self();

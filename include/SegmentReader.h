@@ -19,12 +19,30 @@ namespace Lucene
         virtual ~SegmentReader();
         
         LUCENE_CLASS(SegmentReader);
-            
+
     protected:
-        SegmentInfoPtr si;
         bool readOnly;
+
+    INTERNAL:
+        BitVectorPtr deletedDocs;
+        SegmentReaderRefPtr deletedDocsRef;
+        CoreReadersPtr core;
+        FieldsReaderLocalPtr fieldsReaderLocal;
+        SegmentInfoPtr rollbackSegmentInfo;
+        CloseableThreadLocal<TermVectorsReader> termVectorsLocal;
+        FieldInfosPtr fieldInfos();
+
+        /// Create a clone from the initial TermVectorsReader and store it in the ThreadLocal.
+        /// @return TermVectorsReader
+        TermVectorsReaderPtr getTermVectorsReader();
+
+        TermVectorsReaderPtr getTermVectorsReaderOrig();
+        FieldsReaderPtr getFieldsReader();
+        MapStringNorm _norms;
+
+    private:
+        SegmentInfoPtr si;
         int32_t readBufferSize;
-        
         bool deletedDocsDirty;
         bool normsDirty;
         int32_t pendingDeleteCount;
@@ -32,22 +50,11 @@ namespace Lucene
         bool rollbackHasChanges;
         bool rollbackDeletedDocsDirty;
         bool rollbackNormsDirty;
-        SegmentInfoPtr rollbackSegmentInfo;
         int32_t rollbackPendingDeleteCount;
         
         // optionally used for the .nrm file shared by multiple norms
         IndexInputPtr singleNormStream;
         SegmentReaderRefPtr singleNormRef;
-        
-    public:
-        FieldsReaderLocalPtr fieldsReaderLocal;
-        CloseableThreadLocal<TermVectorsReader> termVectorsLocal;
-    
-        BitVectorPtr deletedDocs;
-        SegmentReaderRefPtr deletedDocsRef;
-        
-        CoreReadersPtr core;
-        MapStringNorm _norms;
         
     public:
         virtual void initialize();
@@ -63,7 +70,6 @@ namespace Lucene
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         virtual LuceneObjectPtr clone(bool openReadOnly, LuceneObjectPtr other = LuceneObjectPtr());
         SegmentReaderPtr reopenSegment(SegmentInfoPtr si, bool doClone, bool openReadOnly);
-        FieldsReaderPtr getFieldsReader();
         
         static bool hasDeletions(SegmentInfoPtr si);
         
@@ -80,8 +86,6 @@ namespace Lucene
         
         /// Returns an enumeration of all terms starting at a given term.
         virtual TermEnumPtr terms(TermPtr t);
-        
-        FieldInfosPtr fieldInfos();
         
         /// Get the {@link Document} at the n'th position.
         virtual DocumentPtr document(int32_t n, FieldSelectorPtr fieldSelector);
@@ -127,12 +131,6 @@ namespace Lucene
         
         bool normsClosed(); // for testing only
         bool normsClosed(const String& field); // for testing only
-        
-        /// Create a clone from the initial TermVectorsReader and store it in the ThreadLocal.
-        /// @return TermVectorsReader
-        TermVectorsReaderPtr getTermVectorsReader();
-        
-        TermVectorsReaderPtr getTermVectorsReaderOrig();
         
         /// Return a term frequency vector for the specified document and field. The vector returned contains term 
         /// numbers and frequencies for all terms in the specified field of this document, if the field had 

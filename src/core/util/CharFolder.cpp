@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "CharFolder.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 namespace Lucene

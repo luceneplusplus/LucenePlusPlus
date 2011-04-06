@@ -17,7 +17,7 @@ namespace Lucene
     /// If the compoundFile flag is set, then the segments will be merged into a compound file.
     /// @see #merge
     /// @see #add
-    class LPPAPI SegmentMerger : public LuceneObject
+    class SegmentMerger : public LuceneObject
     {
     public:
         SegmentMerger(DirectoryPtr dir, const String& name);
@@ -120,7 +120,7 @@ namespace Lucene
         void mergeNorms();
     };
     
-    class LPPAPI CheckAbort : public LuceneObject
+    class CheckAbort : public LuceneObject
     {
     public:
         CheckAbort(OneMergePtr merge, DirectoryPtr dir);
@@ -140,7 +140,7 @@ namespace Lucene
         virtual void work(double units);
     };
     
-    class LPPAPI CheckAbortNull : public CheckAbort
+    class CheckAbortNull : public CheckAbort
     {
     public:
         CheckAbortNull();

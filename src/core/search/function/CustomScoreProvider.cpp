@@ -6,7 +6,7 @@
 
 #include "LuceneInc.h"
 #include "CustomScoreProvider.h"
-#include "ComplexExplanation.h"
+#include "Explanation.h"
 
 namespace Lucene
 {

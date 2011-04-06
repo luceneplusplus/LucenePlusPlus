@@ -13,7 +13,6 @@
 #include "TermsHashConsumerPerThread.h"
 #include "CharBlockPool.h"
 #include "IntBlockPool.h"
-#include "ByteBlockPool.h"
 #include "DocumentsWriter.h"
 
 namespace Lucene

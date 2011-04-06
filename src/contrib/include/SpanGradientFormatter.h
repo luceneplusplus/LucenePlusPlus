@@ -15,7 +15,7 @@ namespace Lucene
     /// span tag.  GradientFormatter uses a bgcolor argument to the font tag which doesn't work 
     /// in Mozilla, thus this class.
     /// @see GradientFormatter
-    class LPPAPI SpanGradientFormatter : public GradientFormatter
+    class LPPCONTRIBAPI SpanGradientFormatter : public GradientFormatter
     {
     public:
         SpanGradientFormatter(double maxScore, const String& minForegroundColor, const String& maxForegroundColor, const String& minBackgroundColor, const String& maxBackgroundColor);

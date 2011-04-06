@@ -21,7 +21,7 @@ namespace Lucene
         if (_DATE_LEN == 0)
         {
             // make date strings long enough to last a millennium
-            _DATE_LEN = StringUtils::toString((int64_t)(1000 * 365 * 24) * (int64_t)(60 * 60 * 1000), StringUtils::CHARACTER_MAX_RADIX).length();
+            _DATE_LEN = (int32_t)StringUtils::toString((int64_t)(1000 * 365 * 24) * (int64_t)(60 * 60 * 1000), StringUtils::CHARACTER_MAX_RADIX).length();
         }
         return _DATE_LEN;
     }
@@ -45,7 +45,7 @@ namespace Lucene
         return _MAX_DATE_STRING;
     }
     
-    String DateField::dateToString(boost::posix_time::ptime date)
+    String DateField::dateToString(const boost::posix_time::ptime& date)
     {
         return timeToString(MiscUtils::getTimeMillis(date));
     }

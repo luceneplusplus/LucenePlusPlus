@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// Collects sorted results from Searchable's and collates them.  
     /// The elements put into this queue must be of type FieldDoc.
-    class LPPAPI FieldDocSortedHitQueue : public PriorityQueue<FieldDocPtr>
+    class FieldDocSortedHitQueue : public PriorityQueue<FieldDocPtr>
     {
     public:
         FieldDocSortedHitQueue(int32_t size);

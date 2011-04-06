@@ -111,7 +111,7 @@ namespace Lucene
     
     int32_t GradientFormatter::hexToInt(const String& hex)
     {
-        int32_t len = hex.length();
+        int32_t len = (int32_t)hex.length();
         if (len > 16)
             boost::throw_exception(NumberFormatException());
         int32_t l = 0;

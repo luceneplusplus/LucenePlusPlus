@@ -7,7 +7,6 @@
 #ifndef NUMERICFIELD_H
 #define NUMERICFIELD_H
 
-#include "AbstractField.h"
 #include "Field.h"
 
 namespace Lucene

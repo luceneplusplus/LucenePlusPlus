@@ -16,7 +16,7 @@ namespace Lucene
     /// must subclass this class with its own concrete class.  FreqProxTermsWriterPostingList is a private inner 
     /// class used for the freq/prox postings, and TermVectorsTermsWriterPostingList is a private inner class used 
     /// to hold TermVectors postings.
-    class LPPAPI RawPostingList : public LuceneObject
+    class RawPostingList : public LuceneObject
     {
     public:
         RawPostingList();

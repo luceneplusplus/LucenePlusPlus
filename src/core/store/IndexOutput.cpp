@@ -7,8 +7,8 @@
 #include "LuceneInc.h"
 #include "IndexOutput.h"
 #include "IndexInput.h"
-#include "UnicodeUtils.h"
 #include "MiscUtils.h"
+#include "UnicodeUtils.h"
 #include "StringUtils.h"
 
 namespace Lucene

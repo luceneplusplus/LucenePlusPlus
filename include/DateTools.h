@@ -61,7 +61,7 @@ namespace Lucene
         /// @param date the date to be converted
         /// @param resolution the desired resolution
         /// @return a string in format yyyyMMddHHmmssSSS or shorter, depending on resolution; using GMT as timezone 
-        static String dateToString(boost::posix_time::ptime date, Resolution resolution);
+        static String dateToString(const boost::posix_time::ptime& date, Resolution resolution);
         
         /// Converts a millisecond time to a string suitable for indexing.
         /// @param time the date expressed as milliseconds since January 1, 1970, 00:00:00 GMT
@@ -84,7 +84,7 @@ namespace Lucene
         /// when using Resolution.MONTH.
         /// @param resolution The desired resolution of the date to be returned
         /// @return the date with all values more precise than resolution set to 0 or 1
-        static boost::posix_time::ptime round(boost::posix_time::ptime date, Resolution resolution);
+        static boost::posix_time::ptime round(const boost::posix_time::ptime& date, Resolution resolution);
         
         /// Limit a date's resolution. For example, the date 1095767411000 (which represents 2004-09-21 13:50:11) will 
         /// be changed to 1093989600000 (2004-09-01 00:00:00) when using Resolution.MONTH.

@@ -12,7 +12,6 @@
 #include "InvertedDocEndConsumerPerThread.h"
 #include "DocFieldConsumerPerThread.h"
 #include "DocFieldConsumerPerField.h"
-#include "DocFieldConsumerPerThread.h"
 #include "DocInverterPerField.h"
 #include "DocInverterPerThread.h"
 

@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// This is just a "splitter" class: it lets you wrap two DocFieldConsumer instances as a single consumer.
-    class LPPAPI DocFieldConsumers : public DocFieldConsumer
+    class DocFieldConsumers : public DocFieldConsumer
     {
     public:
         DocFieldConsumers(DocFieldConsumerPtr one, DocFieldConsumerPtr two);
@@ -48,7 +48,7 @@ namespace Lucene
         void freePerDoc(DocFieldConsumersPerDocPtr perDoc);
     };
     
-    class LPPAPI DocFieldConsumersPerDoc : public DocWriter
+    class DocFieldConsumersPerDoc : public DocWriter
     {
     public:
         DocFieldConsumersPerDoc(DocFieldConsumersPtr fieldConsumers);

@@ -8,7 +8,6 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "DateTools.h"
-#include "CharFolder.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -20,7 +19,7 @@ namespace Lucene
     {
     }
     
-    String DateTools::dateToString(boost::posix_time::ptime date, Resolution resolution)
+    String DateTools::dateToString(const boost::posix_time::ptime& date, Resolution resolution)
     {
         return timeToString(MiscUtils::getTimeMillis(date), resolution);
     }
@@ -47,6 +46,9 @@ namespace Lucene
                 std::string fraction(timeString.length() > 16 ? timeString.substr(16, 3) : "000" );
                 return StringUtils::toUnicode(std::string(timeString.substr(0, 8) + timeString.substr(9, 6) + fraction).c_str());
             }
+            case RESOLUTION_NULL:
+                // silence static analyzers
+                break;
         }
         
         boost::throw_exception(IllegalArgumentException(L"unknown resolution '" + StringUtils::toString(resolution) + L"'"));
@@ -83,7 +85,7 @@ namespace Lucene
         return date;
     }
     
-    boost::posix_time::ptime DateTools::round(boost::posix_time::ptime date, Resolution resolution)
+    boost::posix_time::ptime DateTools::round(const boost::posix_time::ptime& date, Resolution resolution)
     {
         boost::posix_time::ptime roundDate;
         
@@ -109,6 +111,9 @@ namespace Lucene
                                                 boost::posix_time::seconds(boost::posix_time::time_duration(date.time_of_day()).seconds()));
             case RESOLUTION_MILLISECOND:
                 return date;
+            case RESOLUTION_NULL:
+                // silence static analyzers
+                break;
         }
         
         return boost::posix_time::ptime();
@@ -192,6 +197,9 @@ namespace Lucene
                 dateFormats.add(L"%y" + delimiter + L"%b" + delimiter + L"%d");
                 dateFormats.add(L"%Y" + delimiter + L"%B" + delimiter + L"%d");
                 dateFormats.add(L"%y" + delimiter + L"%B" + delimiter + L"%d");
+                break;
+            case DATEORDER_LOCALE:
+                // silence static analyzers
                 break;
         }
         

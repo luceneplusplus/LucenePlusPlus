@@ -16,7 +16,7 @@ namespace Lucene
     /// consumers to process field by field.
     ///
     /// Currently, only a single thread visits the fields, sequentially, for processing.
-    class LPPAPI DocFieldProcessorPerThread : public DocConsumerPerThread
+    class DocFieldProcessorPerThread : public DocConsumerPerThread
     {
     public:
         DocFieldProcessorPerThread(DocumentsWriterThreadStatePtr threadState, DocFieldProcessorPtr docFieldProcessor);
@@ -61,7 +61,7 @@ namespace Lucene
         void rehash();
     };
     
-    class LPPAPI DocFieldProcessorPerThreadPerDoc : public DocWriter
+    class DocFieldProcessorPerThreadPerDoc : public DocWriter
     {
     public:
         DocFieldProcessorPerThreadPerDoc(DocFieldProcessorPerThreadPtr docProcessor);

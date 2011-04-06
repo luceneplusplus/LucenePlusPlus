@@ -18,7 +18,7 @@ namespace Lucene
     /// A Future represents the result of an asynchronous computation. Methods are provided to check if the computation 
     /// is complete, to wait for its completion, and to retrieve the result of the computation. The result can only be 
     /// retrieved using method get when the computation has completed, blocking if necessary until it is ready.
-    class LPPAPI Future : public LuceneObject
+    class Future : public LuceneObject
     {
     public:
         virtual ~Future();
@@ -44,7 +44,7 @@ namespace Lucene
     };
     
     /// Utility class to handle a pool of threads.
-    class LPPAPI ThreadPool : public LuceneObject
+    class ThreadPool : public LuceneObject
     {
     public:
         ThreadPool();

@@ -16,7 +16,7 @@ namespace Lucene
     ///
     /// Supports an external list of stopwords (words that will not be indexed at all).
     /// A default set of stopwords is used unless an alternative list is specified.
-    class LPPAPI RussianAnalyzer : public Analyzer
+    class LPPCONTRIBAPI RussianAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -56,7 +56,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI RussianAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI RussianAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~RussianAnalyzerSavedStreams();

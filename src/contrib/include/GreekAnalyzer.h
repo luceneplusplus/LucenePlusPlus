@@ -18,7 +18,7 @@ namespace Lucene
     /// is used unless an alternative list is specified.
     ///
     /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPAPI GreekAnalyzer : public Analyzer
+    class LPPCONTRIBAPI GreekAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -58,7 +58,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI GreekAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI GreekAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~GreekAnalyzerSavedStreams();

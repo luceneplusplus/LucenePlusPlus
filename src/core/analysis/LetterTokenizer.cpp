@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "LetterTokenizer.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 namespace Lucene

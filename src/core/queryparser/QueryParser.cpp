@@ -781,16 +781,17 @@ namespace Lucene
         return buffer.str();
     }
     
-    void QueryParser::main(Collection<String> args)
+    int QueryParser::main(Collection<String> args)
     {
         if (args.empty())
         {
             std::wcout << L"Usage: QueryParser <input>";
-            exit(0);
+            return 1;
         }
         QueryParserPtr qp(newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<SimpleAnalyzer>()));
         QueryPtr q(qp->parse(args[0]));
         std::wcout << q->toString(L"field");
+        return 0;
     }
     
     int32_t QueryParser::Conjunction()

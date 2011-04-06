@@ -7,7 +7,6 @@
 #include "LuceneInc.h"
 #include "TermVectorsReader.h"
 #include "BufferedIndexInput.h"
-#include "TermVectorMapper.h"
 #include "IndexFileNames.h"
 #include "Directory.h"
 #include "FieldInfos.h"

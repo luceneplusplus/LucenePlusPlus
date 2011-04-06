@@ -68,7 +68,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="lucene++.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\lib&quot;;..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\stage\lib&quot;;..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -152,7 +152,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="lucene++.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\lib&quot;;..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\stage\lib&quot;;..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -232,7 +232,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\lib"
+				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -305,7 +305,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\lib"
+				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -7,9 +7,10 @@
 #include "ContribInc.h"
 #include "SnowballFilter.h"
 #include "TermAttribute.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
-#include "libstemmer.h"
+#include "libstemmer_c/include/libstemmer.h"
 
 namespace Lucene
 {

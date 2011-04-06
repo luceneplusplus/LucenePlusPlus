@@ -92,6 +92,9 @@ namespace Lucene
                 boost::throw_exception(TooManyClausesException(error, type));
             case LuceneException::UnsupportedOperation:
                 boost::throw_exception(UnsupportedOperationException(error, type));
+            case LuceneException::Null:
+                // silence static analyzer
+                break;
         }
     }
 }

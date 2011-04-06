@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// {@link Fragmenter} implementation which does not fragment the text.  This is useful for 
     /// highlighting the entire content of a document or field.
-    class LPPAPI NullFragmenter : public Fragmenter, public LuceneObject
+    class LPPCONTRIBAPI NullFragmenter : public Fragmenter, public LuceneObject
     {
     public:
         virtual ~NullFragmenter();

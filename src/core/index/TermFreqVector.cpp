@@ -9,6 +9,10 @@
 
 namespace Lucene
 {
+    TermFreqVector::TermFreqVector()
+    {
+    }
+    
     TermFreqVector::~TermFreqVector()
     {
     }

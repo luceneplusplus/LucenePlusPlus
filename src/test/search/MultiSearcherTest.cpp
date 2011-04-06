@@ -345,11 +345,11 @@ BOOST_AUTO_TEST_CASE(testCustomSimilarity)
 
     // Get a score from IndexSearcher
     TopDocsPtr topDocs = searcher->search(query, FilterPtr(), 1);
-    double score1 = topDocs->getMaxScore();
+    double score1 = topDocs->maxScore;
 
     // Get the score from MultiSearcher
     topDocs = msearcher->search(query, FilterPtr(), 1);
-    double scoreN = topDocs->getMaxScore();
+    double scoreN = topDocs->maxScore;
 
     // The scores from the IndexSearcher and Multisearcher should be the same if the same similarity is used.
     BOOST_CHECK_CLOSE_FRACTION(score1, scoreN, 1e-6);

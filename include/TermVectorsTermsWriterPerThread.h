@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermVectorsTermsWriterPerThread : public TermsHashConsumerPerThread
+    class TermVectorsTermsWriterPerThread : public TermsHashConsumerPerThread
     {
     public:
         TermVectorsTermsWriterPerThread(TermsHashPerThreadPtr termsHashPerThread, TermVectorsTermsWriterPtr termsWriter);

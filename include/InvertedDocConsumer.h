@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI InvertedDocConsumer : public LuceneObject
+    class InvertedDocConsumer : public LuceneObject
     {
     public:
         virtual ~InvertedDocConsumer();

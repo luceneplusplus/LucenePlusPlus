@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI InvertedDocConsumerPerThread : public LuceneObject
+    class InvertedDocConsumerPerThread : public LuceneObject
     {
     public:
         virtual ~InvertedDocConsumerPerThread();

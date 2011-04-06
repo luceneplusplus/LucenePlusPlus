@@ -16,7 +16,7 @@ namespace Lucene
     /// If marker is supplied, then tokens will be also prepended by that character. For example, with a 
     /// marker of &#x5C;u0001, "country" => "&#x5C;u0001yrtnuoc". This is useful when implementing efficient 
     /// leading wildcards search.
-    class LPPAPI ReverseStringFilter : public TokenFilter
+    class LPPCONTRIBAPI ReverseStringFilter : public TokenFilter
     {
     public:
         /// Create a new ReverseStringFilter that reverses all tokens in the supplied {@link TokenStream}.

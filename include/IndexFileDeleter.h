@@ -31,7 +31,7 @@ namespace Lucene
     ///
     /// Note that you must hold the write.lock before instantiating this class.  It opens segments_N file(s) directly 
     /// with no retry logic.
-    class LPPAPI IndexFileDeleter : public LuceneObject
+    class IndexFileDeleter : public LuceneObject
     {
     public:
         /// Initialize the deleter: find all previous commits in the Directory, incref the files they reference, call
@@ -128,7 +128,7 @@ namespace Lucene
     };
     
     /// Tracks the reference count for a single index file
-    class LPPAPI RefCount : public LuceneObject
+    class RefCount : public LuceneObject
     {
     public:
         RefCount(const String& fileName);
@@ -148,7 +148,7 @@ namespace Lucene
     
     /// Holds details for each commit point.  This class is also passed to the deletion policy.  Note: this class
     /// has a natural ordering that is inconsistent with equals.
-    class LPPAPI CommitPoint : public IndexCommit
+    class CommitPoint : public IndexCommit
     {
     public:
         CommitPoint(Collection<CommitPointPtr> commitsToDelete, DirectoryPtr directory, SegmentInfosPtr segmentInfos);

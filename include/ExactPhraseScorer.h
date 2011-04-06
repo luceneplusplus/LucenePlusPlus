@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI ExactPhraseScorer : public PhraseScorer
+    class ExactPhraseScorer : public PhraseScorer
     {
     public:
         ExactPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms);

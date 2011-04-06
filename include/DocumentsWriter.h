@@ -51,7 +51,7 @@ namespace Lucene
     /// updates are consistent, but, they represent only a part of the document seen up until the exception was hit.
     /// When this happens, we immediately mark the document as deleted so that the document is always atomically 
     /// ("all or none") added to the index.
-    class LPPAPI DocumentsWriter : public LuceneObject
+    class DocumentsWriter : public LuceneObject
     {
     public:
         DocumentsWriter(DirectoryPtr directory, IndexWriterPtr writer, IndexingChainPtr indexingChain);
@@ -152,7 +152,8 @@ namespace Lucene
         
         static const int32_t PER_DOC_BLOCK_SIZE;
 
-          IndexWriterWeakPtr _writer;
+    INTERNAL:
+        IndexWriterWeakPtr _writer;
         DirectoryPtr directory;
         IndexingChainPtr indexingChain;
         String segment; // Current segment we are working on
@@ -353,7 +354,7 @@ namespace Lucene
         friend class WaitQueue;
     };
     
-    class LPPAPI DocState : public LuceneObject
+    class DocState : public LuceneObject
     {
     public:
         DocState();
@@ -379,7 +380,7 @@ namespace Lucene
     };
     
     /// RAMFile buffer for DocWriters.
-    class LPPAPI PerDocBuffer : public RAMFile
+    class PerDocBuffer : public RAMFile
     {
     public:
         PerDocBuffer(DocumentsWriterPtr docWriter);
@@ -401,7 +402,7 @@ namespace Lucene
     
     /// Consumer returns this on each doc.  This holds any state that must be flushed synchronized 
     /// "in docID order".  We gather these and flush them in order.
-    class LPPAPI DocWriter : public LuceneObject
+    class DocWriter : public LuceneObject
     {
     public:
         DocWriter();
@@ -423,7 +424,7 @@ namespace Lucene
     
     /// The IndexingChain must define the {@link #getChain(DocumentsWriter)} method which returns the DocConsumer 
     /// that the DocumentsWriter calls to process the documents. 
-    class LPPAPI IndexingChain : public LuceneObject
+    class IndexingChain : public LuceneObject
     {
     public:
         virtual ~IndexingChain();
@@ -448,7 +449,7 @@ namespace Lucene
     ///          --> InvertedDocEndConsumer / InvertedDocConsumerPerThread / InvertedDocConsumerPerField
     ///            --> code: NormsWriter / NormsWriterPerThread / NormsWriterPerField
     ///        --> code: StoredFieldsWriter / StoredFieldsWriterPerThread / StoredFieldsWriterPerField
-    class LPPAPI DefaultIndexingChain : public IndexingChain
+    class DefaultIndexingChain : public IndexingChain
     {
     public:
         virtual ~DefaultIndexingChain();
@@ -459,7 +460,7 @@ namespace Lucene
         virtual DocConsumerPtr getChain(DocumentsWriterPtr documentsWriter);
     };
     
-    class LPPAPI SkipDocWriter : public DocWriter
+    class SkipDocWriter : public DocWriter
     {
     public:
         virtual ~SkipDocWriter();
@@ -472,7 +473,7 @@ namespace Lucene
         virtual int64_t sizeInBytes();
     };
     
-    class LPPAPI WaitQueue : public LuceneObject
+    class WaitQueue : public LuceneObject
     {
     public:
         WaitQueue(DocumentsWriterPtr docWriter);
@@ -501,7 +502,7 @@ namespace Lucene
         void writeDocument(DocWriterPtr doc);
     };
     
-    class LPPAPI ByteBlockAllocator : public ByteBlockPoolAllocatorBase
+    class ByteBlockAllocator : public ByteBlockPoolAllocatorBase
     {
     public:
         ByteBlockAllocator(DocumentsWriterPtr docWriter, int32_t blockSize);

@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// A Scorer for queries with a required part and an optional part.  Delays skipTo() on the optional part 
     /// until a score() is needed.  This Scorer implements {@link Scorer#skipTo(int32_t)}.
-    class LPPAPI ReqOptSumScorer : public Scorer
+    class ReqOptSumScorer : public Scorer
     {
     public:
         ReqOptSumScorer(ScorerPtr reqScorer, ScorerPtr optScorer);

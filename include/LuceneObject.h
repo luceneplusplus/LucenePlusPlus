@@ -33,6 +33,9 @@ namespace Lucene
     public:
         virtual ~LuceneObject();
     
+    protected:
+        LuceneObject();
+
     public:
         /// Called directly after instantiation to create objects that depend on this object being 
         /// fully constructed.

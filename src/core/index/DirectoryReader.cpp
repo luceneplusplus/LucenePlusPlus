@@ -589,7 +589,7 @@ namespace Lucene
     {
         // Binary search to locate reader
         Collection<int32_t>::iterator reader = std::upper_bound(starts.begin(), starts.begin() + numSubReaders, n);
-        return (std::distance(starts.begin(), reader) - 1);
+        return (int32_t)(std::distance(starts.begin(), reader) - 1);
     }
     
     bool DirectoryReader::hasNorms(const String& field)

@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    class LPPAPI FreqProxTermsWriter : public TermsHashConsumer
+    class FreqProxTermsWriter : public TermsHashConsumer
     {
     public:
         virtual ~FreqProxTermsWriter();
@@ -39,7 +39,7 @@ namespace Lucene
         static int32_t compareText(const wchar_t* text1, int32_t pos1, const wchar_t* text2, int32_t pos2);
     };
     
-    class LPPAPI FreqProxTermsWriterPostingList : public RawPostingList
+    class FreqProxTermsWriterPostingList : public RawPostingList
     {
     public:
         FreqProxTermsWriterPostingList();

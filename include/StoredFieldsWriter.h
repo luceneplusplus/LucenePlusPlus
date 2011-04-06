@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// This is a DocFieldConsumer that writes stored fields.
-    class LPPAPI StoredFieldsWriter : public LuceneObject
+    class StoredFieldsWriter : public LuceneObject
     {
     public:
         StoredFieldsWriter(DocumentsWriterPtr docWriter, FieldInfosPtr fieldInfos);
@@ -48,7 +48,7 @@ namespace Lucene
         void initFieldsWriter();
     };
     
-    class LPPAPI StoredFieldsWriterPerDoc : public DocWriter
+    class StoredFieldsWriterPerDoc : public DocWriter
     {
     public:
         StoredFieldsWriterPerDoc(StoredFieldsWriterPtr fieldsWriter);

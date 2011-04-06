@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Position of a term in a document that takes into account the term offset within the phrase.
-    class LPPAPI PhrasePositions : public LuceneObject
+    class PhrasePositions : public LuceneObject
     {
     public:
         PhrasePositions(TermPositionsPtr t, int32_t o);

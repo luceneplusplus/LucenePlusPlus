@@ -13,7 +13,7 @@ from TaskGen import feature, after
 import Task, ccroot
 
 APPNAME='Lucene++'
-VERSION='3.0.3'
+VERSION='3.0.3.4'
 
 srcdir = '.'
 blddir = 'bin'
@@ -38,12 +38,12 @@ lucene_contrib_source_dirs = [
 ]
 
 lucene_include_dirs = [
+    'include',
     'src/core/include',
     'src/contrib/include',
     'src/contrib/snowball/libstemmer_c/include',
     'src/core/util/md5',
     'src/core/util/nedmalloc',
-    'src/core/util/zlib',
     'src/core/util/unicode'
 ]
 
@@ -52,6 +52,7 @@ tester_source_dirs = [
 ]
 
 tester_include_dirs = [
+    'include',
     'src/core/include',
     'src/contrib/include',
     'src/test/include'
@@ -81,6 +82,7 @@ def set_options(opt):
 def configure(conf):
     conf.check_tool('g++')
     conf.check_tool('gcc')
+    conf.check_cc(lib = 'z', mandatory = True)
     conf.check_cc(lib = 'pthread', mandatory = True)
     conf.check_tool('boost')
     conf.check_tool('clang', 'build')
@@ -113,7 +115,7 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_BUILDING_LIB', 'LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD'
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD Z'
         )
     
     lucene_contrib_sources = []
@@ -131,7 +133,7 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_BUILDING_LIB', 'LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD Z',
         uselib_local = 'lucene++'
         )
     
@@ -149,8 +151,8 @@ def build(bld):
         includes = tester_include_dirs + [bld.env["CPPPATH_BOOST"]],
         ccflags = compile_flags,
         cxxflags = compile_flags,
-        defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS BOOST_UNIT_TEST_FRAMEWORK PTHREAD',
+        defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + ['LPP_EXPOSE_INTERNAL'] + [debug_define],
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS BOOST_UNIT_TEST_FRAMEWORK PTHREAD Z',
         uselib_local = 'lucene++ lucene_contrib'
         )
     
@@ -163,7 +165,7 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD Z',
         uselib_local = 'lucene++'
         )
 
@@ -176,7 +178,7 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD Z',
         uselib_local = 'lucene++'
         )
 
@@ -189,7 +191,7 @@ def build(bld):
         ccflags = compile_flags,
         cxxflags = compile_flags,
         defines = ['LPP_HAVE_GXXCLASSVISIBILITY'] + [debug_define],
-        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD',
+        uselib = 'BOOST_FILESYSTEM BOOST_THREAD BOOST_REGEX BOOST_SYSTEM BOOST_DATE_TIME BOOST_IOSTREAMS PTHREAD Z',
         uselib_local = 'lucene++'
         )
 

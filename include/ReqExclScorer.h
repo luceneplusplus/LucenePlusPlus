@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// A Scorer for queries with a required subscorer and an excluding (prohibited) sub DocIdSetIterator.
     /// This Scorer implements {@link Scorer#skipTo(int32_t)}, and it uses the skipTo() on the given scorers.
-    class LPPAPI ReqExclScorer : public Scorer
+    class ReqExclScorer : public Scorer
     {
     public:
         /// Construct a ReqExclScorer.

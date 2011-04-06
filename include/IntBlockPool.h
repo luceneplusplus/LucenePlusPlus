@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI IntBlockPool : public LuceneObject
+    class IntBlockPool : public LuceneObject
     {
     public:
         IntBlockPool(DocumentsWriterPtr docWriter, bool trackAllocations);

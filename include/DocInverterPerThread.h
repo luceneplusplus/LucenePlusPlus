@@ -14,7 +14,7 @@ namespace Lucene
 {
     /// This is a DocFieldConsumer that inverts each field, separately, from a Document, and accepts a
     /// InvertedTermsConsumer to process those terms.
-    class LPPAPI DocInverterPerThread : public DocFieldConsumerPerThread
+    class DocInverterPerThread : public DocFieldConsumerPerThread
     {
     public:
         DocInverterPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, DocInverterPtr docInverter);
@@ -42,7 +42,7 @@ namespace Lucene
         virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi);        
     };
     
-    class LPPAPI SingleTokenAttributeSource : public AttributeSource
+    class SingleTokenAttributeSource : public AttributeSource
     {
     public:
         SingleTokenAttributeSource();

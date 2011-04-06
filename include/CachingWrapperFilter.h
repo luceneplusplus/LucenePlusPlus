@@ -40,17 +40,17 @@ namespace Lucene
     
         LUCENE_CLASS(CachingWrapperFilter);
     
-    public:
+    INTERNAL:
         FilterPtr filter;
-        
-        /// A Filter cache
-        FilterCachePtr cache;
         
         // for testing
         int32_t hitCount;
         int32_t missCount;
     
     protected:
+        /// A Filter cache
+        FilterCachePtr cache;
+
         /// Provide the DocIdSet to be cached, using the DocIdSet provided by the wrapped Filter.
         ///
         /// This implementation returns the given {@link DocIdSet}, if {@link DocIdSet#isCacheable} returns 

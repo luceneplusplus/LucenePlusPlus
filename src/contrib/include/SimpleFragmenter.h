@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// {@link Fragmenter} implementation which breaks text up into same-size fragments with 
     /// no concerns over spotting sentence boundaries.
-    class LPPAPI SimpleFragmenter : public Fragmenter, public LuceneObject
+    class LPPCONTRIBAPI SimpleFragmenter : public Fragmenter, public LuceneObject
     {
     public:
         SimpleFragmenter();

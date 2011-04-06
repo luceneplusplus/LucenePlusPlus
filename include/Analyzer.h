@@ -7,7 +7,6 @@
 #ifndef ANALYZER_H
 #define ANALYZER_H
 
-#include "LuceneObject.h"
 #include "CloseableThreadLocal.h"
 
 namespace Lucene

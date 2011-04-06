@@ -7,7 +7,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #pragma warning(disable:4251)
 #pragma warning(disable:4275)
 #pragma warning(disable:4005)
@@ -17,7 +17,7 @@
 #endif
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #define LPP_IMPORT __declspec(dllimport)
 #define LPP_EXPORT __declspec(dllexport)
 #else
@@ -34,11 +34,14 @@
 #ifdef LPP_HAVE_DLL
 #ifdef LPP_BUILDING_LIB
 #define LPPAPI LPP_EXPORT
+#define LPPCONTRIBAPI LPP_EXPORT
 #else
 #define LPPAPI LPP_IMPORT
+#define LPPCONTRIBAPI LPP_IMPORT
 #endif
 #else
 #define LPPAPI
+#define LPPCONTRIBAPI
 #endif
 
 // Check windows

@@ -16,7 +16,7 @@ namespace Lucene
     ///
     /// The algorithm is based on the work of Dr Martin Porter on his snowball project refer to 
     /// http://snowball.sourceforge.net/french/stemmer.html (French stemming algorithm) for details.
-    class LPPAPI FrenchStemmer : public LuceneObject
+    class LPPCONTRIBAPI FrenchStemmer : public LuceneObject
     {
     public:
         FrenchStemmer();

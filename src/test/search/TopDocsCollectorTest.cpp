@@ -200,12 +200,12 @@ BOOST_AUTO_TEST_CASE(testMaxScore)
     // ask for all results
     TopDocsCollectorPtr tdc = doSearch(15);
     TopDocsPtr td = tdc->topDocs();
-    BOOST_CHECK_EQUAL(MAX_SCORE, td->getMaxScore());
+    BOOST_CHECK_EQUAL(MAX_SCORE, td->maxScore);
 
     // ask for 5 last results
     tdc = doSearch(15);
     td = tdc->topDocs(10);
-    BOOST_CHECK_EQUAL(MAX_SCORE, td->getMaxScore());
+    BOOST_CHECK_EQUAL(MAX_SCORE, td->maxScore);
 }
 
 /// This does not test the PQ's correctness, but whether topDocs() implementations 

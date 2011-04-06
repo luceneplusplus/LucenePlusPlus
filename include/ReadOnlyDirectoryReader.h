@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI ReadOnlyDirectoryReader : public DirectoryReader
+    class ReadOnlyDirectoryReader : public DirectoryReader
     {
     public:
         ReadOnlyDirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis, IndexDeletionPolicyPtr deletionPolicy, int32_t termInfosIndexDivisor);

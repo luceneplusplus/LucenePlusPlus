@@ -15,7 +15,7 @@ struct sb_stemmer;
 namespace Lucene
 {
     /// A filter that stems words using a Snowball-generated stemmer.
-    class LPPAPI SnowballFilter : public TokenFilter
+    class LPPCONTRIBAPI SnowballFilter : public TokenFilter
     {
     public:
         SnowballFilter(TokenStreamPtr input, const String& name);

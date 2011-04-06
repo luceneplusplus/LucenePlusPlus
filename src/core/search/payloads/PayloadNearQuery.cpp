@@ -11,8 +11,6 @@
 #include "NearSpansOrdered.h"
 #include "NearSpansUnordered.h"
 #include "Similarity.h"
-#include "SpanQuery.h"
-#include "Explanation.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 

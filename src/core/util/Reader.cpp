@@ -11,6 +11,10 @@ namespace Lucene
 {
     const int32_t Reader::READER_EOF = -1;
     
+    Reader::Reader()
+    {
+    }
+
     Reader::~Reader()
     {
     }

@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// One, or several overlapping tokens, along with the score(s) and the scope of the original text
-    class LPPAPI TokenGroup : public LuceneObject
+    class LPPCONTRIBAPI TokenGroup : public LuceneObject
     {
     public:
         TokenGroup(TokenStreamPtr tokenStream);

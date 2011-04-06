@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// A stemmer for Brazilian Portuguese words.
-    class LPPAPI BrazilianStemmer : public LuceneObject
+    class LPPCONTRIBAPI BrazilianStemmer : public LuceneObject
     {
     public:
         virtual ~BrazilianStemmer();

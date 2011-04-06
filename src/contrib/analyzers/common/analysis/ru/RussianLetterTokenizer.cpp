@@ -6,6 +6,7 @@
 
 #include "ContribInc.h"
 #include "RussianLetterTokenizer.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 namespace Lucene

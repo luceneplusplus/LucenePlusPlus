@@ -62,7 +62,7 @@ namespace Lucene
         
         int32_t size() const
         {
-            return container->size();
+            return (int32_t)container->size();
         }
         
         bool empty() const

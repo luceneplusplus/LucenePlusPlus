@@ -13,7 +13,7 @@ namespace Lucene
     String Constants::OS_NAME = L"Linux";
     #elif defined(sun) || defined(__sun)
     String Constants::OS_NAME = L"Sun";
-    #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32)
+    #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32) || defined(_WIN64) || defined(__WIN64__) || defined(WIN64)
     String Constants::OS_NAME = L"Windows";
     #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
     String Constants::OS_NAME = L"Mac";
@@ -21,7 +21,7 @@ namespace Lucene
     String Constants::OS_NAME = L"BSD";
     #endif
     
-    String Constants::LUCENE_MAIN_VERSION = L"3.0.3";
+    String Constants::LUCENE_MAIN_VERSION = L"3.0.3.4";
     String Constants::LUCENE_VERSION = L"3.0.3";
     
     Constants::Constants()

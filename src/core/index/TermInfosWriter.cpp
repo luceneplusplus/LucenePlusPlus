@@ -11,8 +11,8 @@
 #include "Term.h"
 #include "TermInfo.h"
 #include "FieldInfos.h"
-#include "UnicodeUtils.h"
 #include "MiscUtils.h"
+#include "UnicodeUtils.h"
 #include "StringUtils.h"
 
 namespace Lucene

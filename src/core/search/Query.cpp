@@ -6,11 +6,9 @@
 
 #include "LuceneInc.h"
 #include "Query.h"
-#include "BooleanClause.h"
 #include "BooleanQuery.h"
 #include "Searcher.h"
 #include "Similarity.h"
-#include "Weight.h"
 #include "MiscUtils.h"
 
 namespace Lucene

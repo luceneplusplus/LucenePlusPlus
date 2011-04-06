@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    TermDocs::~TermDocs()
+    TermDocs::TermDocs()
     {
     }
     

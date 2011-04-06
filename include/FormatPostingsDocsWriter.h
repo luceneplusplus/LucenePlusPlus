@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Consumes doc & freq, writing them using the current index file format
-    class LPPAPI FormatPostingsDocsWriter : public FormatPostingsDocsConsumer
+    class FormatPostingsDocsWriter : public FormatPostingsDocsConsumer
     {
     public:
         FormatPostingsDocsWriter(SegmentWriteStatePtr state, FormatPostingsTermsWriterPtr parent);

@@ -16,7 +16,7 @@ namespace Lucene
     /// the deletes prior to the last flush, the other for deletes after the last flush.  This is so if 
     /// we need to abort (discard all buffered docs) we can also discard the buffered deletes yet keep 
     /// the deletes done during previously flushed segments.
-    class LPPAPI BufferedDeletes : public LuceneObject
+    class BufferedDeletes : public LuceneObject
     {
     public:
         BufferedDeletes(bool doTermSort);
@@ -41,7 +41,7 @@ namespace Lucene
     };
     
     /// Number of documents a delete term applies to.
-    class LPPAPI Num : public LuceneObject
+    class Num : public LuceneObject
     {
     public:
         Num(int32_t num);

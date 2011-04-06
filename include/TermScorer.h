@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// A Scorer for documents matching a Term.
-    class LPPAPI TermScorer : public Scorer
+    class TermScorer : public Scorer
     {
     public:
         /// Construct a TermScorer.

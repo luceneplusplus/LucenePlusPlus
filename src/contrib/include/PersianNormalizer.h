@@ -22,7 +22,7 @@ namespace Lucene
     /// <li> Normalization of farsi yeh and yeh barree to arabic yeh.
     /// <li> Normalization of persian keheh to arabic kaf.
     /// </ul>
-    class LPPAPI PersianNormalizer : public LuceneObject
+    class LPPCONTRIBAPI PersianNormalizer : public LuceneObject
     {
     public:
         virtual ~PersianNormalizer();

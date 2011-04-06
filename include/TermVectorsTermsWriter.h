@@ -13,7 +13,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermVectorsTermsWriter : public TermsHashConsumer
+    class TermVectorsTermsWriter : public TermsHashConsumer
     {
     public:
         TermVectorsTermsWriter(DocumentsWriterPtr docWriter);
@@ -52,7 +52,7 @@ namespace Lucene
         virtual int32_t bytesPerPosting();
     };
     
-    class LPPAPI TermVectorsTermsWriterPerDoc : public DocWriter
+    class TermVectorsTermsWriterPerDoc : public DocWriter
     {
     public:
         TermVectorsTermsWriterPerDoc(TermVectorsTermsWriterPtr termsWriter = TermVectorsTermsWriterPtr());
@@ -79,7 +79,7 @@ namespace Lucene
         virtual void finish();
     };
     
-    class LPPAPI TermVectorsTermsWriterPostingList : public RawPostingList
+    class TermVectorsTermsWriterPostingList : public RawPostingList
     {
     public:
         TermVectorsTermsWriterPostingList();

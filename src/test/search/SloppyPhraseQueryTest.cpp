@@ -95,7 +95,7 @@ public:
         searcher->close();
         ramDir->close();
 
-        return td->getMaxScore();
+        return td->maxScore;
     }
 };
 

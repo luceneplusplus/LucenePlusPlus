@@ -17,6 +17,7 @@ namespace Lucene
         public:
             Random();
             Random(int64_t seed);
+
             virtual ~Random();
 
         protected:

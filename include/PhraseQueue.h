@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI PhraseQueue : public PriorityQueue<PhrasePositionsPtr>
+    class PhraseQueue : public PriorityQueue<PhrasePositionsPtr>
     {
     public:
         PhraseQueue(int32_t size);

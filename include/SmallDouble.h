@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Floating point numbers smaller than 32 bits.
-    class LPPAPI SmallDouble : public LuceneObject
+    class SmallDouble : public LuceneObject
     {
     public:
         virtual ~SmallDouble();    

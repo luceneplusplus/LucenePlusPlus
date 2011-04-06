@@ -9,9 +9,10 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/thread/thread.hpp>
+#include "StringUtils.h"
 #include "FileUtils.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <io.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -84,7 +85,7 @@ namespace Lucene
             {
                 if (!fileExists(path))
                     return false;
-                #ifdef _WIN32
+                #if defined(_WIN32) || defined(_WIN64)
                 int32_t fd = _wopen(path.c_str(), _O_WRONLY | _O_CREAT | _O_BINARY, _S_IWRITE);
                 return _chsize(fd, (long)length) == 0;
                 #else

@@ -6,7 +6,6 @@
 
 #include "TestInc.h"
 #include "BaseTestRangeFilterFixture.h"
-#include "DocIdSet.h"
 #include "RAMDirectory.h"
 #include "IndexReader.h"
 #include "IndexSearcher.h"
@@ -19,6 +18,7 @@
 #include "SimpleAnalyzer.h"
 #include "Document.h"
 #include "Field.h"
+#include "DocIdSet.h"
 
 using namespace Lucene;
 

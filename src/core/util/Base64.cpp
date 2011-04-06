@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "Base64.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 namespace Lucene

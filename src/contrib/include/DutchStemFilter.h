@@ -21,7 +21,7 @@ namespace Lucene
     /// NOTE: This stemmer does not implement the Snowball algorithm correctly, specifically 
     /// doubled consonants. It is recommended that you consider using the "Dutch" stemmer in 
     /// the snowball package instead. This stemmer will likely be deprecated in a future release.
-    class LPPAPI DutchStemFilter : public TokenFilter
+    class LPPCONTRIBAPI DutchStemFilter : public TokenFilter
     {
     public:
         DutchStemFilter(TokenStreamPtr input);

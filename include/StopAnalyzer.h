@@ -44,7 +44,6 @@ namespace Lucene
         /// An unmodifiable set containing some common English words that are usually not useful for searching.
         static const HashSet<String> ENGLISH_STOP_WORDS_SET();
     
-    public:
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };

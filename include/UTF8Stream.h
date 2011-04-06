@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI UTF8Base : public LuceneObject
+    class UTF8Base : public LuceneObject
     {
     public:
         virtual ~UTF8Base();
@@ -42,7 +42,7 @@ namespace Lucene
         bool isOverlongSequence(uint32_t cp, int32_t length);
     };
     
-    class LPPAPI UTF8Encoder : public UTF8Base
+    class UTF8Encoder : public UTF8Base
     {
     public:
         UTF8Encoder(const wchar_t* unicodeBegin, const wchar_t* unicodeEnd);
@@ -66,7 +66,7 @@ namespace Lucene
         uint8_t* appendChar(uint8_t* utf8, uint32_t cp);
     };
     
-    class LPPAPI UTF8EncoderStream : public UTF8Encoder
+    class UTF8EncoderStream : public UTF8Encoder
     {
     public:
         UTF8EncoderStream(ReaderPtr reader);
@@ -81,7 +81,7 @@ namespace Lucene
         virtual uint32_t readNext();
     };
     
-    class LPPAPI UTF8Decoder : public UTF8Base
+    class UTF8Decoder : public UTF8Base
     {
     public:
         UTF8Decoder(const uint8_t* utf8Begin, const uint8_t* utf8End);
@@ -107,7 +107,7 @@ namespace Lucene
         bool isValidNext(uint32_t& cp);
     };
     
-    class LPPAPI UTF8DecoderStream : public UTF8Decoder
+    class UTF8DecoderStream : public UTF8Decoder
     {
     public:
         UTF8DecoderStream(ReaderPtr reader);
@@ -122,7 +122,7 @@ namespace Lucene
         virtual uint32_t readNext();
     };
     
-    class LPPAPI UTF16Decoder : public UTF8Base
+    class UTF16Decoder : public UTF8Base
     {
     public:
         UTF16Decoder(const uint16_t* utf16Begin, const uint16_t* utf16End);

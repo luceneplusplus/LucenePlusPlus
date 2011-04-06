@@ -16,7 +16,7 @@ namespace Lucene
     ///
     /// The algorithm is based on the report "A Fast and Simple Stemming Algorithm for German Words" by J&ouml;rg
     /// Caumanns (joerg.caumanns at isst.fhg.de).
-    class LPPAPI GermanStemmer : public LuceneObject
+    class LPPCONTRIBAPI GermanStemmer : public LuceneObject
     {
     public:
         GermanStemmer();

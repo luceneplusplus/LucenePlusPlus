@@ -17,7 +17,7 @@ namespace Lucene
     /// The algorithm is an implementation of the 
     /// <a href="http://snowball.tartarus.org/algorithms/dutch/stemmer.html">dutch stemming</a>
     /// algorithm in Martin Porter's snowball project.
-    class LPPAPI DutchStemmer : public LuceneObject
+    class LPPCONTRIBAPI DutchStemmer : public LuceneObject
     {
     public:
         DutchStemmer();

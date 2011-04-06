@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// A Scorer for OR like queries, counterpart of ConjunctionScorer.  This Scorer implements {@link 
     /// Scorer#skipTo(int32_t)} and uses skipTo() on the given Scorers. 
-    class LPPAPI DisjunctionSumScorer : public Scorer
+    class DisjunctionSumScorer : public Scorer
     {
     public:
         DisjunctionSumScorer(Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers = 1);

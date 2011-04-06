@@ -28,12 +28,13 @@ namespace Lucene
     /// @see Directory
     class LPPAPI FSDirectory : public Directory
     {
-    public:
+    protected:
         /// Create a new FSDirectory for the named location (ctor for subclasses).
         /// @param path the path of the directory.
         /// @param lockFactory the lock factory to use, or null for the default ({@link NativeFSLockFactory})
         FSDirectory(const String& path, LockFactoryPtr lockFactory);
         
+    public:
         virtual ~FSDirectory();
         
         LUCENE_CLASS(FSDirectory);

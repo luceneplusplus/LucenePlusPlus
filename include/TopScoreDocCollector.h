@@ -26,7 +26,7 @@ namespace Lucene
     
         LUCENE_CLASS(TopScoreDocCollector);
     
-    public:
+    INTERNAL:
         ScoreDocPtr pqTop;
         int32_t docBase;
         ScorerWeakPtr _scorer;

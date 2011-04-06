@@ -7,6 +7,7 @@
 #include "ContribInc.h"
 #include "ChineseFilter.h"
 #include "TermAttribute.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 namespace Lucene

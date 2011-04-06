@@ -26,6 +26,9 @@ namespace Lucene
     /// removes the old commits.  Note that doing so will increase the storage requirements of the index.
     class LPPAPI IndexDeletionPolicy : public LuceneObject
     {
+    protected:
+        IndexDeletionPolicy();
+
     public:
         virtual ~IndexDeletionPolicy();
         

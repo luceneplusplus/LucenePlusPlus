@@ -36,6 +36,6 @@ namespace Lucene
         if (!currMap->normStr.empty())
             boost::throw_exception(RuntimeException(L"MappingCharFilter: there is already a mapping for " + singleMatch));
         currMap->normStr = replacement;
-        currMap->diff = singleMatch.length() - replacement.length();
+        currMap->diff = (int32_t)(singleMatch.length() - replacement.length());
     }
 }

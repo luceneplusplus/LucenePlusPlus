@@ -113,7 +113,7 @@ namespace Lucene
     
         LUCENE_CLASS(NumericRangeQuery);
     
-    public:
+    INTERNAL:
         String field;
         int32_t precisionStep;
         int32_t valSize;

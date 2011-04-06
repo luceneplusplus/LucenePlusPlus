@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI AllTermDocs : public AbstractAllTermDocs
+    class AllTermDocs : public AbstractAllTermDocs
     {
     public:
         AllTermDocs(SegmentReaderPtr parent);

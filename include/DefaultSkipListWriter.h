@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Implements the skip list writer for the default posting list format that stores positions and payloads.
-    class LPPAPI DefaultSkipListWriter : public MultiLevelSkipListWriter
+    class DefaultSkipListWriter : public MultiLevelSkipListWriter
     {
     public:
         DefaultSkipListWriter(int32_t skipInterval, int32_t numberOfSkipLevels, int32_t docCount, IndexOutputPtr freqOutput, IndexOutputPtr proxOutput);

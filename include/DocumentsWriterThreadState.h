@@ -14,7 +14,7 @@ namespace Lucene
     /// Used by DocumentsWriter to maintain per-thread state.
     /// We keep a separate Posting hash and other state for each thread and then merge postings 
     /// hashes from all threads when writing the segment.
-    class LPPAPI DocumentsWriterThreadState : public LuceneObject
+    class DocumentsWriterThreadState : public LuceneObject
     {
     public:
         DocumentsWriterThreadState(DocumentsWriterPtr docWriter);

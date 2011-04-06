@@ -95,7 +95,7 @@ namespace Lucene
     class NumericComparator : public FieldComparator
     {
     public:
-        NumericComparator(int32_t numHits, const String& field = L"")
+        NumericComparator(int32_t numHits, const String& field = EmptyString)
         {
             this->values = Collection<TYPE>::newInstance(numHits);
             this->field = field;

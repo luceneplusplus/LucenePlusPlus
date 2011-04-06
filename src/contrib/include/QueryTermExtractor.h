@@ -15,7 +15,7 @@ namespace Lucene
     /// Utility class used to extract the terms used in a query, plus any weights.  This class will not 
     /// find terms for MultiTermQuery, TermRangeQuery and PrefixQuery classes so the caller must pass a 
     /// rewritten query (see Query.rewrite) to obtain a list of expanded terms. 
-    class LPPAPI QueryTermExtractor : public LuceneObject
+    class LPPCONTRIBAPI QueryTermExtractor : public LuceneObject
     {
     public:
         virtual ~QueryTermExtractor();

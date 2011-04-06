@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// Encodes original text. The Encoder works with the {@link Formatter} to generate output.
-    class LPPAPI Encoder
+    class LPPCONTRIBAPI Encoder
     {
     public:
         virtual ~Encoder();

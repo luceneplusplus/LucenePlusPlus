@@ -19,7 +19,7 @@ namespace Lucene
         /// Create a NativeFSLockFactory instance, storing lock files into 
         /// the specified lockDirName.
         /// @param lockDirName where lock files are created.
-        NativeFSLockFactory(const String& lockDirName = L"");
+        NativeFSLockFactory(const String& lockDirName = EmptyString);
         virtual ~NativeFSLockFactory();
         
         LUCENE_CLASS(NativeFSLockFactory);

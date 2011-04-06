@@ -11,7 +11,6 @@
 #include "StandardAnalyzer.h"
 #include "FSDirectory.h"
 #include "IndexWriter.h"
-#include "IndexReader.h"
 #include "Document.h"
 #include "Field.h"
 #include "MockRAMDirectory.h"

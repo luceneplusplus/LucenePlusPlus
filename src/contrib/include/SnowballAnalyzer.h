@@ -16,7 +16,7 @@ namespace Lucene
     /// and {@link SnowballFilter}.
     ///
     /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPAPI SnowballAnalyzer : public Analyzer
+    class LPPCONTRIBAPI SnowballAnalyzer : public Analyzer
     {
     public:
         /// Builds the named analyzer with no stop words.
@@ -46,7 +46,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI SnowballAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI SnowballAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~SnowballAnalyzerSavedStreams();

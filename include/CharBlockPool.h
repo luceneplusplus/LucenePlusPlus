@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI CharBlockPool : public LuceneObject
+    class CharBlockPool : public LuceneObject
     {
     public:
         CharBlockPool(DocumentsWriterPtr docWriter);

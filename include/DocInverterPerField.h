@@ -14,7 +14,7 @@ namespace Lucene
     /// Holds state for inverting all occurrences of a single field in the document.  This class doesn't do 
     /// anything itself; instead, it forwards the tokens produced by analysis to its own consumer
     /// (InvertedDocConsumerPerField).  It also interacts with an endConsumer (InvertedDocEndConsumerPerField).
-    class LPPAPI DocInverterPerField : public DocFieldConsumerPerField
+    class DocInverterPerField : public DocFieldConsumerPerField
     {
     public:
         DocInverterPerField(DocInverterPerThreadPtr perThread, FieldInfoPtr fieldInfo);

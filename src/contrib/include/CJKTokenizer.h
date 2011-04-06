@@ -25,7 +25,7 @@ namespace Lucene
     /// </ul>
     /// For more info on Asian language (Chinese, Japanese, and Korean) text segmentation:
     /// please search <a href="http://www.google.com/search?q=word+chinese+segment">google</a>
-    class LPPAPI CJKTokenizer : public Tokenizer
+    class LPPCONTRIBAPI CJKTokenizer : public Tokenizer
     {
     public:
         CJKTokenizer(ReaderPtr input);

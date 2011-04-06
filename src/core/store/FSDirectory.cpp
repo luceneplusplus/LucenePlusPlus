@@ -12,7 +12,11 @@
 #include "BufferedIndexInput.h"
 #include "FileUtils.h"
 #include "StringUtils.h"
-#include "md5.h"
+
+extern "C"
+{
+#include "../util/md5/md5.h"
+}
 
 namespace Lucene
 {

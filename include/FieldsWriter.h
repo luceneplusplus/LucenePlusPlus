@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI FieldsWriter : public LuceneObject
+    class FieldsWriter : public LuceneObject
     {
     public:
         FieldsWriter(DirectoryPtr d, const String& segment, FieldInfosPtr fn);

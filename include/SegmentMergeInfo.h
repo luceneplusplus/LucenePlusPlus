@@ -7,12 +7,11 @@
 #ifndef SEGMENTMERGEINFO_H
 #define SEGMENTMERGEINFO_H
 
-#include "LuceneObject.h"
 #include "Term.h"
 
 namespace Lucene
 {
-    class LPPAPI SegmentMergeInfo : public LuceneObject
+    class SegmentMergeInfo : public LuceneObject
     {
     public:
         SegmentMergeInfo(int32_t b, TermEnumPtr te, IndexReaderPtr r);

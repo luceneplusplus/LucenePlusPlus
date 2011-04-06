@@ -17,6 +17,9 @@ namespace Lucene
     /// in the Document.
     class LPPAPI TermFreqVector
     {
+    protected:
+        TermFreqVector();
+
     public:
         virtual ~TermFreqVector();        
         LUCENE_INTERFACE(TermFreqVector);

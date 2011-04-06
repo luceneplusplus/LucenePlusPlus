@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI SegmentMergeQueue : public PriorityQueue<SegmentMergeInfoPtr>
+    class SegmentMergeQueue : public PriorityQueue<SegmentMergeInfoPtr>
     {
     public:
         SegmentMergeQueue(int32_t size);

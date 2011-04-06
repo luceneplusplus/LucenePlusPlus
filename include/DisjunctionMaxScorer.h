@@ -15,7 +15,7 @@ namespace Lucene
     /// is generated in document number order.  The score for each document is the maximum of the scores computed
     /// by the subquery scorers that generate that document, plus tieBreakerMultiplier times the sum of the scores
     /// for the other subqueries that generate the document.
-    class LPPAPI DisjunctionMaxScorer : public Scorer
+    class DisjunctionMaxScorer : public Scorer
     {
     public:
         DisjunctionMaxScorer(double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers);

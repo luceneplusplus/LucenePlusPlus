@@ -7,13 +7,13 @@
 #include "TestInc.h"
 #include "DocHelper.h"
 #include "Field.h"
-#include "UnicodeUtils.h"
 #include "SegmentInfo.h"
 #include "WhitespaceAnalyzer.h"
 #include "Similarity.h"
 #include "Document.h"
 #include "IndexWriter.h"
 #include "MiscUtils.h"
+#include "UnicodeUtils.h"
 
 namespace Lucene
 {

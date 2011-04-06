@@ -14,7 +14,7 @@ namespace Lucene
 {
     /// Processes terms found in the original text, typically by applying some form of mark-up to highlight 
     /// terms in HTML search results pages.
-    class LPPAPI Formatter
+    class LPPCONTRIBAPI Formatter
     {
     public:
         virtual ~Formatter();

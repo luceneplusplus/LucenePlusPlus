@@ -17,6 +17,7 @@
 #include "FieldInfo.h"
 #include "IndexOutput.h"
 #include "TermInfo.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
 

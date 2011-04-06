@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    const wchar_t ElisionFilter::apostrophes[] = {L'\'', L'\u2019'};
+    const wchar_t ElisionFilter::apostrophes[] = {L'\'', L'\x2019'};
     
     ElisionFilter::ElisionFilter(TokenStreamPtr input) : TokenFilter(input)
     {

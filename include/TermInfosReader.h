@@ -7,7 +7,6 @@
 #ifndef TERMINFOSREADER_H
 #define TERMINFOSREADER_H
 
-#include "LuceneObject.h"
 #include "CloseableThreadLocal.h"
 #include "SimpleLRUCache.h"
 
@@ -15,7 +14,7 @@ namespace Lucene
 {
     /// This stores a monotonically increasing set of <Term, TermInfo> pairs in a  Directory.  Pairs are 
     /// accessed either by Term or by ordinal position the set.
-    class LPPAPI TermInfosReader : public LuceneObject
+    class TermInfosReader : public LuceneObject
     {
     public:
         TermInfosReader(DirectoryPtr dir, const String& seg, FieldInfosPtr fis, int32_t readBufferSize, int32_t indexDivisor);
@@ -73,7 +72,7 @@ namespace Lucene
         void ensureIndexIsRead();
     };
     
-    class LPPAPI TermInfosReaderThreadResources : public LuceneObject
+    class TermInfosReaderThreadResources : public LuceneObject
     {
     public:
         virtual ~TermInfosReaderThreadResources();

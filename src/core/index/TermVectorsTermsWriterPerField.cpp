@@ -17,9 +17,9 @@
 #include "RAMOutputStream.h"
 #include "ByteSliceReader.h"
 #include "CharBlockPool.h"
-#include "DocumentsWriter.h"
 #include "OffsetAttribute.h"
 #include "AttributeSource.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
 

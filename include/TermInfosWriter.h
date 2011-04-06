@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// This stores a monotonically increasing set of <Term, TermInfo> pairs in a Directory.  A TermInfos 
     /// can be written once, in order.
-    class LPPAPI TermInfosWriter : public LuceneObject
+    class TermInfosWriter : public LuceneObject
     {
     public:
         TermInfosWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval);

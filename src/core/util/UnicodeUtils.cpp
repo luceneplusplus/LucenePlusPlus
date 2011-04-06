@@ -5,8 +5,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
-#include "guniprop.h"
+#include "unicode/guniprop.h"
 
 namespace Lucene
 {

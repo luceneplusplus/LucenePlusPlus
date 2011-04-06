@@ -9,10 +9,6 @@
 
 namespace Lucene
 {
-    Fieldable::~Fieldable()
-    {
-    }
-    
     void Fieldable::setBoost(double boost)
     {
         BOOST_ASSERT(false);

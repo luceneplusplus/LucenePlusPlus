@@ -10,6 +10,10 @@
 
 namespace Lucene
 {
+    LuceneObject::LuceneObject()
+    {
+    }
+
     LuceneObject::~LuceneObject()
     {
     }

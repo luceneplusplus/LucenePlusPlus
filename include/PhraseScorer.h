@@ -18,7 +18,7 @@ namespace Lucene
     /// #phraseFreq()} of extending classes is invoked for each document containing all the phrase query 
     /// terms, in order to compute the frequency of the phrase query in that document. A non zero frequency
     /// means a match. 
-    class LPPAPI PhraseScorer : public Scorer
+    class PhraseScorer : public Scorer
     {
     public:
         PhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms);

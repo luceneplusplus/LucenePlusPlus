@@ -9,7 +9,6 @@
 #include "TestUtils.h"
 #include "ByteBlockPool.h"
 #include "DocumentsWriter.h"
-#include "ByteBlockPool.h"
 #include "ByteSliceWriter.h"
 #include "ByteSliceReader.h"
 #include "IndexWriter.h"

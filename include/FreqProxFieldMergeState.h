@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Used by DocumentsWriter to merge the postings from multiple ThreadStates when creating a segment
-    class LPPAPI FreqProxFieldMergeState : public LuceneObject
+    class FreqProxFieldMergeState : public LuceneObject
     {
     public:
         FreqProxFieldMergeState(FreqProxTermsWriterPerFieldPtr field);

@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermVectorsWriter : public LuceneObject
+    class TermVectorsWriter : public LuceneObject
     {
     public:
         TermVectorsWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fieldInfos);

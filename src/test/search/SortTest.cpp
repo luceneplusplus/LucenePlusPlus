@@ -899,7 +899,7 @@ BOOST_AUTO_TEST_CASE(testSortWithoutScoreTracking)
         Collection<ScoreDocPtr> sd = td->scoreDocs;
         for (int32_t j = 1; j < sd.size(); ++j)
             BOOST_CHECK(MiscUtils::isNaN(sd[j]->score));
-        BOOST_CHECK(MiscUtils::isNaN(td->getMaxScore()));
+        BOOST_CHECK(MiscUtils::isNaN(td->maxScore));
     }
 }
 
@@ -918,7 +918,7 @@ BOOST_AUTO_TEST_CASE(testSortWithScoreNoMaxScoreTracking)
         Collection<ScoreDocPtr> sd = td->scoreDocs;
         for (int32_t j = 1; j < sd.size(); ++j)
             BOOST_CHECK(!MiscUtils::isNaN(sd[j]->score));
-        BOOST_CHECK(MiscUtils::isNaN(td->getMaxScore()));
+        BOOST_CHECK(MiscUtils::isNaN(td->maxScore));
     }
 }
 
@@ -937,7 +937,7 @@ BOOST_AUTO_TEST_CASE(testSortWithScoreAndMaxScoreTracking)
         Collection<ScoreDocPtr> sd = td->scoreDocs;
         for (int32_t j = 1; j < sd.size(); ++j)
             BOOST_CHECK(!MiscUtils::isNaN(sd[j]->score));
-        BOOST_CHECK(!MiscUtils::isNaN(td->getMaxScore()));
+        BOOST_CHECK(!MiscUtils::isNaN(td->maxScore));
     }
 }
 
@@ -999,7 +999,7 @@ BOOST_AUTO_TEST_CASE(testSortWithScoreAndMaxScoreTrackingNoResults)
         TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, true, true, true, true);
         TopDocsPtr td = tdc->topDocs();
         BOOST_CHECK_EQUAL(0, td->totalHits);
-        BOOST_CHECK(MiscUtils::isNaN(td->getMaxScore()));
+        BOOST_CHECK(MiscUtils::isNaN(td->maxScore));
     }
 }
 

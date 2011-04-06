@@ -30,6 +30,7 @@
 #include "PositionIncrementAttribute.h"
 #include "Payload.h"
 #include "TermFreqVector.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 using namespace Lucene;

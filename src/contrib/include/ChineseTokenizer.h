@@ -26,7 +26,7 @@ namespace Lucene
     ///
     /// The problem is that when searching for C1, C1C2, C1C3, C4C2, C1C2C3 ... the 
     /// ChineseTokenizer works, but the ChineseTokenizer will not work.
-    class LPPAPI ChineseTokenizer : public Tokenizer
+    class LPPCONTRIBAPI ChineseTokenizer : public Tokenizer
     {
     public:
         ChineseTokenizer(ReaderPtr input);

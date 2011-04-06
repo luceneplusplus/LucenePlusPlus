@@ -24,7 +24,7 @@ namespace Lucene
     /// <li> Removal of Arabic diacritics (the harakat)
     /// <li> Removal of tatweel (stretching character).
     /// </ul>
-    class LPPAPI ArabicNormalizer : public LuceneObject
+    class LPPCONTRIBAPI ArabicNormalizer : public LuceneObject
     {
     public:
         virtual ~ArabicNormalizer();

@@ -8,12 +8,11 @@
 #define FIELDCACHEIMPL_H
 
 #include "FieldCache.h"
-#include "LuceneObject.h"
 
 namespace Lucene
 {
     /// The default cache implementation, storing all values in memory.  A WeakHashMap is used for storage.
-    class LPPAPI FieldCacheImpl : public FieldCache, public LuceneObject
+    class FieldCacheImpl : public FieldCache, public LuceneObject
     {
     public:
         FieldCacheImpl();
@@ -50,7 +49,7 @@ namespace Lucene
         virtual InfoStreamPtr getInfoStream();
     };
     
-    class LPPAPI Entry : public LuceneObject
+    class Entry : public LuceneObject
     {
     public:
         /// Creates one of these objects for a custom comparator/parser.
@@ -72,7 +71,7 @@ namespace Lucene
     };
     
     /// Internal cache.
-    class LPPAPI Cache : public LuceneObject
+    class Cache : public LuceneObject
     {
     public:
         Cache(FieldCachePtr wrapper = FieldCachePtr());
@@ -95,7 +94,7 @@ namespace Lucene
         virtual void printNewInsanity(InfoStreamPtr infoStream, boost::any value);
     };
     
-    class LPPAPI ByteCache : public Cache
+    class ByteCache : public Cache
     {
     public:
         ByteCache(FieldCachePtr wrapper = FieldCachePtr());
@@ -107,7 +106,7 @@ namespace Lucene
         virtual boost::any createValue(IndexReaderPtr reader, EntryPtr key);
     };
     
-    class LPPAPI IntCache : public Cache
+    class IntCache : public Cache
     {
     public:
         IntCache(FieldCachePtr wrapper = FieldCachePtr());
@@ -119,7 +118,7 @@ namespace Lucene
         virtual boost::any createValue(IndexReaderPtr reader, EntryPtr key);
     };
     
-    class LPPAPI LongCache : public Cache
+    class LongCache : public Cache
     {
     public:
         LongCache(FieldCachePtr wrapper = FieldCachePtr());
@@ -131,7 +130,7 @@ namespace Lucene
         virtual boost::any createValue(IndexReaderPtr reader, EntryPtr key);
     };
     
-    class LPPAPI DoubleCache : public Cache
+    class DoubleCache : public Cache
     {
     public:
         DoubleCache(FieldCachePtr wrapper = FieldCachePtr());
@@ -143,7 +142,7 @@ namespace Lucene
         virtual boost::any createValue(IndexReaderPtr reader, EntryPtr key);
     };
     
-    class LPPAPI StringCache : public Cache
+    class StringCache : public Cache
     {
     public:
         StringCache(FieldCachePtr wrapper = FieldCachePtr());
@@ -155,7 +154,7 @@ namespace Lucene
         virtual boost::any createValue(IndexReaderPtr reader, EntryPtr key);
     };
     
-    class LPPAPI StringIndexCache : public Cache
+    class StringIndexCache : public Cache
     {
     public:
         StringIndexCache(FieldCachePtr wrapper = FieldCachePtr());
@@ -167,7 +166,7 @@ namespace Lucene
         virtual boost::any createValue(IndexReaderPtr reader, EntryPtr key);
     };
     
-    class LPPAPI FieldCacheEntryImpl : public FieldCacheEntry
+    class FieldCacheEntryImpl : public FieldCacheEntry
     {
     public:
         FieldCacheEntryImpl(LuceneObjectPtr readerKey, const String& fieldName, int32_t cacheType, boost::any custom, boost::any value);

@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Utility class to handle query parse errors
-    class LPPAPI QueryParseError : public LuceneObject
+    class QueryParseError : public LuceneObject
     {
     public:
         virtual ~QueryParseError();

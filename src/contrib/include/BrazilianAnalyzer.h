@@ -18,7 +18,7 @@ namespace Lucene
     /// exclusions (words that will not be stemmed, but indexed).
     ///
     /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPAPI BrazilianAnalyzer : public Analyzer
+    class LPPCONTRIBAPI BrazilianAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -67,7 +67,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI BrazilianAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI BrazilianAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~BrazilianAnalyzerSavedStreams();

@@ -18,7 +18,7 @@ namespace Lucene
     /// zero-width non-joiner in addition to whitespace.  Some persian-specific variant 
     /// forms (such as farsi yeh and keheh) are standardized. "Stemming" is accomplished 
     /// via stopwords.
-    class LPPAPI PersianAnalyzer : public Analyzer
+    class LPPCONTRIBAPI PersianAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -64,7 +64,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI PersianAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI PersianAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~PersianAnalyzerSavedStreams();

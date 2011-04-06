@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// This is a DocFieldConsumer that inverts each field, separately, from a Document, and accepts a
     /// InvertedTermsConsumer to process those terms.
-    class LPPAPI DocInverter : public DocFieldConsumer
+    class DocInverter : public DocFieldConsumer
     {
     public:
         DocInverter(InvertedDocConsumerPtr consumer, InvertedDocEndConsumerPtr endConsumer);

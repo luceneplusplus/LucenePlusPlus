@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI StandardTokenizerImpl : public LuceneObject
+    class StandardTokenizerImpl : public LuceneObject
     {
     public:
         /// Creates a new scanner

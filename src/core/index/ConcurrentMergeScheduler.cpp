@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/thread/thread.hpp>
 #include "ConcurrentMergeScheduler.h"
 #include "_ConcurrentMergeScheduler.h"
 #include "IndexWriter.h"

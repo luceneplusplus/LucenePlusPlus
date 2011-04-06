@@ -57,7 +57,7 @@ namespace Lucene
         {
             TopDocsPtr topDocs(searchThreads[i]->get<TopDocsPtr>());
             totalHits += topDocs->totalHits;
-            maxScore = std::max(maxScore, topDocs->getMaxScore());
+            maxScore = std::max(maxScore, topDocs->maxScore);
         }
         
         Collection<ScoreDocPtr> scoreDocs(Collection<ScoreDocPtr>::newInstance(hq->size()));
@@ -89,7 +89,7 @@ namespace Lucene
         {
             TopFieldDocsPtr topDocs(searchThreads[i]->get<TopFieldDocsPtr>());
             totalHits += topDocs->totalHits;
-            maxScore = std::max(maxScore, topDocs->getMaxScore());
+            maxScore = std::max(maxScore, topDocs->maxScore);
         }
         
         Collection<ScoreDocPtr> scoreDocs(Collection<ScoreDocPtr>::newInstance(hq->size()));

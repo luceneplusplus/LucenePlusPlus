@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// Lightweight class to hold term and a weight value used for scoring this term
-    class LPPAPI WeightedTerm : public LuceneObject
+    class LPPCONTRIBAPI WeightedTerm : public LuceneObject
     {
     public:
         WeightedTerm(double weight, const String& term);

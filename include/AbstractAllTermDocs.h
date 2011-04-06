@@ -7,7 +7,6 @@
 #ifndef ABSTRACTALLTERMDOCS_H
 #define ABSTRACTALLTERMDOCS_H
 
-#include "LuceneObject.h"
 #include "TermDocs.h"
 
 namespace Lucene

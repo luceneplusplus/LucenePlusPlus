@@ -82,14 +82,15 @@ namespace Lucene
         /// This is typically slower than {@link #STRING}, which uses ordinals to do the sorting.
         static const int32_t STRING_VAL;
         
+    INTERNAL:
         bool reverse; // defaults to natural order
     
-    protected:
         String field;
         int32_t type; // defaults to determining type dynamically
         localePtr locale; // defaults to "natural order" (no Locale)
         ParserPtr parser;
         
+    private:
         /// Used for CUSTOM sort
         FieldComparatorSourcePtr comparatorSource;
     

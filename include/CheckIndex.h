@@ -87,7 +87,7 @@ namespace Lucene
         /// affected segments will be removed.
         ///
         /// This tool exits with exit code 1 if the index cannot be opened or has any corruption, else 0.
-        static void main(Collection<String> args);
+        static int main(Collection<String> args);
         
     protected:
         void msg(const String& msg);

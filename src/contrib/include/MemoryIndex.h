@@ -85,7 +85,7 @@ namespace Lucene
     /// best case, and O(N logN) in the worst case.  Memory consumption is probably larger than for 
     /// RAMDirectory.
     ///
-    class LPPAPI MemoryIndex : public LuceneObject
+    class LPPCONTRIBAPI MemoryIndex : public LuceneObject
     {
     public:
         /// Constructs an empty instance that can optionally store the start and end character offset 
@@ -160,7 +160,7 @@ namespace Lucene
     };
     
     /// Index data structure for a field; Contains the tokenized term texts and their positions.
-    class LPPAPI MemoryIndexInfo : public LuceneObject
+    class LPPCONTRIBAPI MemoryIndexInfo : public LuceneObject
     {
     public:
         MemoryIndexInfo(MapStringIntCollection terms, int32_t numTokens, int32_t numOverlapTokens, double boost);
@@ -208,7 +208,7 @@ namespace Lucene
     
     /// Search support for Lucene framework integration; implements all methods required by the 
     /// Lucene IndexReader contracts.
-    class LPPAPI MemoryIndexReader : public IndexReader
+    class LPPCONTRIBAPI MemoryIndexReader : public IndexReader
     {
     public:
         MemoryIndexReader(MemoryIndexPtr memoryIndex);
@@ -266,7 +266,7 @@ namespace Lucene
         friend class MemoryIndexTermPositionVector;
     };
     
-    class LPPAPI MemoryIndexTermEnum : public TermEnum
+    class LPPCONTRIBAPI MemoryIndexTermEnum : public TermEnum
     {
     public:
         MemoryIndexTermEnum(MemoryIndexReaderPtr reader, int32_t ix, int32_t jx);
@@ -289,7 +289,7 @@ namespace Lucene
         TermPtr createTerm(MemoryIndexInfoPtr info, int32_t pos, const String& text);
     };
     
-    class LPPAPI MemoryIndexCollector : public Collector
+    class LPPCONTRIBAPI MemoryIndexCollector : public Collector
     {
     public:
         MemoryIndexCollector(Collection<double> scores);
@@ -308,7 +308,7 @@ namespace Lucene
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
     };
     
-    class LPPAPI MemoryIndexTermPositions : public TermPositions, public LuceneObject
+    class LPPCONTRIBAPI MemoryIndexTermPositions : public TermPositions, public LuceneObject
     {
     public:
         MemoryIndexTermPositions(MemoryIndexReaderPtr reader);

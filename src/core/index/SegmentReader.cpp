@@ -8,7 +8,6 @@
 #include <boost/algorithm/string.hpp>
 #include "SegmentReader.h"
 #include "_SegmentReader.h"
-#include "BufferedIndexInput.h"
 #include "IndexFileNames.h"
 #include "DirectoryReader.h"
 #include "CompoundFileReader.h"
@@ -22,7 +21,6 @@
 #include "ReadOnlySegmentReader.h"
 #include "BitVector.h"
 #include "SegmentTermEnum.h"
-#include "SegmentTermDocs.h"
 #include "SegmentTermPositions.h"
 #include "SegmentInfo.h"
 #include "SegmentMerger.h"

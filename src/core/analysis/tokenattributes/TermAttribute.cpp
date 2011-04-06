@@ -42,7 +42,7 @@ namespace Lucene
     
     void TermAttribute::setTermBuffer(const String& buffer)
     {
-        int32_t length = buffer.size();
+        int32_t length = (int32_t)buffer.size();
         growTermBuffer(length);
         MiscUtils::arrayCopy(buffer.begin(), 0, _termBuffer.get(), 0, length);
         _termLength = length;

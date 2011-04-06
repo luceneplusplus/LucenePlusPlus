@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermVectorsTermsWriterPerField : public TermsHashConsumerPerField
+    class TermVectorsTermsWriterPerField : public TermsHashConsumerPerField
     {
     public:
         TermVectorsTermsWriterPerField(TermsHashPerFieldPtr termsHashPerField, TermVectorsTermsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo);

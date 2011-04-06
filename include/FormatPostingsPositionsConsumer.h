@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI FormatPostingsPositionsConsumer : public LuceneObject
+    class FormatPostingsPositionsConsumer : public LuceneObject
     {
     public:
         virtual ~FormatPostingsPositionsConsumer();

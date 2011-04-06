@@ -24,7 +24,6 @@ namespace Lucene
     class LPPAPI Searchable
     {
     public:
-        virtual ~Searchable();
         LUCENE_INTERFACE(Searchable);
     
     public:
@@ -40,33 +39,33 @@ namespace Lucene
         /// @param weight To match documents
         /// @param filter If non-null, used to permit documents to be collected.
         /// @param collector To receive hits
-        virtual void search(WeightPtr weight, FilterPtr filter, CollectorPtr collector);
-        
+        virtual void search(WeightPtr weight, FilterPtr filter, CollectorPtr collector) = 0;
+
         /// Frees resources associated with this Searcher.  Be careful not to call this method while you are still 
         /// using objects that reference this Searchable.
-        virtual void close();
-        
+        virtual void close() = 0;
+
         /// Returns the number of documents containing term.
         /// @see IndexReader#docFreq(TermPtr)
-        virtual int32_t docFreq(TermPtr term);
-        
+        virtual int32_t docFreq(TermPtr term) = 0;
+
         /// For each term in the terms array, calculates the number of documents containing term. Returns an array 
         /// with these document frequencies. Used to minimize number of remote calls.
-        virtual Collection<int32_t> docFreqs(Collection<TermPtr> terms);
-        
+        virtual Collection<int32_t> docFreqs(Collection<TermPtr> terms) = 0;
+
         /// Returns one greater than the largest possible document number.
         /// @see IndexReader#maxDoc()
-        virtual int32_t maxDoc();
-        
+        virtual int32_t maxDoc() = 0;
+
         /// Low-level search implementation.  Finds the top n hits for query, applying filter if non-null.
         /// Applications should usually call {@link Searcher#search(QueryPtr, int32_t)} or {@link 
         /// Searcher#search(QueryPtr, FilterPtr, int32_t)} instead.
-        virtual TopDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n);
-        
+        virtual TopDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n) = 0;
+
         /// Returns the stored fields of document i.
         /// @see IndexReader#document(int32_t)
-        virtual DocumentPtr doc(int32_t n);
-        
+        virtual DocumentPtr doc(int32_t n) = 0;
+
         /// Get the {@link Document} at the n'th position. The {@link FieldSelector} may be used to determine what 
         /// {@link Field}s to load and how they should be loaded.
         ///
@@ -84,11 +83,11 @@ namespace Lucene
         /// @see FieldSelector
         /// @see SetBasedFieldSelector
         /// @see LoadFirstFieldSelector
-        virtual DocumentPtr doc(int32_t n, FieldSelectorPtr fieldSelector);
-        
+        virtual DocumentPtr doc(int32_t n, FieldSelectorPtr fieldSelector) = 0;
+
         /// Called to re-write queries into primitive queries.
-        virtual QueryPtr rewrite(QueryPtr query);
-        
+        virtual QueryPtr rewrite(QueryPtr query) = 0;
+
         /// Low-level implementation method.  Returns an Explanation that describes how doc scored against weight.
         ///
         /// This is intended to be used in developing Similarity implementations, and for good performance, should 
@@ -96,13 +95,13 @@ namespace Lucene
         /// the entire index.
         ///
         /// Applications should call {@link Searcher#explain(QueryPtr, int32_t)}.
-        virtual ExplanationPtr explain(WeightPtr weight, int32_t doc);
-        
+        virtual ExplanationPtr explain(WeightPtr weight, int32_t doc) = 0;
+
         /// Low-level search implementation with arbitrary sorting.  Finds the top n hits for query, applying filter 
         /// if non-null, and sorting the hits by the criteria in sort.
         ///
         /// Applications should usually call {@link Searcher#search(QueryPtr, FilterPtr, int32_t, SortPtr)} instead.
-        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort);
+        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort) = 0;
     };
 }
 

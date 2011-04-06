@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermsHashPerThread : public InvertedDocConsumerPerThread
+    class TermsHashPerThread : public InvertedDocConsumerPerThread
     {
     public:
         TermsHashPerThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPtr termsHash, TermsHashPtr nextTermsHash, TermsHashPerThreadPtr primaryPerThread);

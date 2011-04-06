@@ -18,7 +18,7 @@ namespace Lucene
     ///
     /// The input should be filtered by {@link LowerCaseFilter} before passing it to RussianStemFilter,
     /// because RussianStemFilter only works with lowercase characters.
-    class LPPAPI RussianStemFilter : public TokenFilter
+    class LPPCONTRIBAPI RussianStemFilter : public TokenFilter
     {
     public:
         RussianStemFilter(TokenStreamPtr input);

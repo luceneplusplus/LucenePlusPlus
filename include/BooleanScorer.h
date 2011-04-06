@@ -27,7 +27,7 @@ namespace Lucene
     /// the last, then there's a hit.  When some terms are required and some terms are optional, the conjunction can
     /// be evaluated first, then the optional terms can all skip to the match and be added to the score. Thus the 
     /// conjunction can reduce the number of priority queue updates for the optional terms.
-    class LPPAPI BooleanScorer : public Scorer
+    class BooleanScorer : public Scorer
     {
     public:
         BooleanScorer(SimilarityPtr similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers);
@@ -61,7 +61,7 @@ namespace Lucene
         virtual String toString();
     };
     
-    class LPPAPI BooleanScorerCollector : public Collector
+    class BooleanScorerCollector : public Collector
     {
     public:
         BooleanScorerCollector(int32_t mask, BucketTablePtr bucketTable);
@@ -84,7 +84,7 @@ namespace Lucene
     // An internal class which is used in score(Collector, int32_t) for setting the current score. This is required 
     // since Collector exposes a setScorer method and implementations that need the score will call scorer->score().
     // Therefore the only methods that are implemented are score() and doc().
-    class LPPAPI BucketScorer : public Scorer
+    class BucketScorer : public Scorer
     {
     public:
         BucketScorer();
@@ -103,7 +103,7 @@ namespace Lucene
         virtual double score();
     };
     
-    class LPPAPI Bucket : public LuceneObject
+    class Bucket : public LuceneObject
     {
     public:
         Bucket();
@@ -120,7 +120,7 @@ namespace Lucene
     };
     
     /// A simple hash table of document scores within a range.
-    class LPPAPI BucketTable : public LuceneObject
+    class BucketTable : public LuceneObject
     {
     public:
         BucketTable();
@@ -140,7 +140,7 @@ namespace Lucene
         int32_t size();
     };
     
-    class LPPAPI SubScorer : public LuceneObject
+    class SubScorer : public LuceneObject
     {
     public:
         SubScorer(ScorerPtr scorer, bool required, bool prohibited, CollectorPtr collector, SubScorerPtr next);

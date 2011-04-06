@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI DocConsumer : public LuceneObject
+    class DocConsumer : public LuceneObject
     {
     public:
         virtual ~DocConsumer();

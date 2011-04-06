@@ -22,7 +22,6 @@
 #include "SpanNotQuery.h"
 #include "BooleanQuery.h"
 #include "TermQuery.h"
-#include "Term.h"
 
 namespace Lucene
 {

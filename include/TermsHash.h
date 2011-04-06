@@ -15,7 +15,7 @@ namespace Lucene
     /// each field.  It stores these tokens in a hash table, and allocates separate byte streams per token.  Consumers 
     /// of this class, eg {@link FreqProxTermsWriter} and {@link TermVectorsTermsWriter}, write their own byte streams
     /// under each term.
-    class LPPAPI TermsHash : public InvertedDocConsumer
+    class TermsHash : public InvertedDocConsumer
     {
     public:
         TermsHash(DocumentsWriterPtr docWriter, bool trackAllocations, TermsHashConsumerPtr consumer, TermsHashPtr nextTermsHash);

@@ -13,6 +13,9 @@ namespace Lucene
 {
     class LPPAPI AttributeFactory : public LuceneObject
     {
+    protected:
+        AttributeFactory();
+
     public:
         virtual ~AttributeFactory();
         

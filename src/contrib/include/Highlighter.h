@@ -14,7 +14,7 @@ namespace Lucene
 {
     /// Class used to markup highlighted terms found in the best sections of a text, using configurable 
     /// {@link Fragmenter}, {@link Scorer}, {@link Formatter}, {@link Encoder} and tokenizers.
-    class LPPAPI Highlighter : public LuceneObject
+    class LPPCONTRIBAPI Highlighter : public LuceneObject
     {
     public:
         Highlighter(HighlighterScorerPtr fragmentScorer);
@@ -113,7 +113,7 @@ namespace Lucene
         void setEncoder(EncoderPtr encoder);
     };
     
-    class LPPAPI FragmentQueue : public PriorityQueue<TextFragmentPtr>
+    class LPPCONTRIBAPI FragmentQueue : public PriorityQueue<TextFragmentPtr>
     {
     public:
         FragmentQueue(int32_t size);

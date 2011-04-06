@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI TermBuffer : public LuceneObject
+    class TermBuffer : public LuceneObject
     {
     public:
         TermBuffer();

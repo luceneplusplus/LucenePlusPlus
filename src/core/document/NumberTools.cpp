@@ -44,7 +44,7 @@ namespace Lucene
     {
         static int32_t _STR_SIZE = 0;
         if (_STR_SIZE == 0)
-            _STR_SIZE = MIN_STRING_VALUE().length();
+            _STR_SIZE = (int32_t)MIN_STRING_VALUE().length();
         return _STR_SIZE;
     }
     
@@ -68,7 +68,7 @@ namespace Lucene
         
         String num(StringUtils::toString(l, RADIX));
         
-        int32_t padLen = STR_SIZE() - num.length() - buf.length();
+        int32_t padLen = (int32_t)(STR_SIZE() - num.length() - buf.length());
         while (padLen-- > 0)
             buf += L'0';
         

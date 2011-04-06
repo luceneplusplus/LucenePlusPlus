@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// Writes norms.  Each thread X field accumulates the norms for the doc/fields it saw, then the flush method 
     /// below merges all of these together into a single _X.nrm file.
-    class LPPAPI NormsWriter : public InvertedDocEndConsumer
+    class NormsWriter : public InvertedDocEndConsumer
     {
     public:
         NormsWriter();

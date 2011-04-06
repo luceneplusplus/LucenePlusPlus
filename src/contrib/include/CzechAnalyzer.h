@@ -18,7 +18,7 @@ namespace Lucene
     /// A default set of stopwords is used unless an alternative list is specified.
     ///
     /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPAPI CzechAnalyzer : public Analyzer
+    class LPPCONTRIBAPI CzechAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -58,7 +58,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI CzechAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI CzechAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~CzechAnalyzerSavedStreams();

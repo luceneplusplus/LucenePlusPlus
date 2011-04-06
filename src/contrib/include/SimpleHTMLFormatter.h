@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Simple {@link Formatter} implementation to highlight terms with a pre and post tag.
-    class LPPAPI SimpleHTMLFormatter : public Formatter, public LuceneObject
+    class LPPCONTRIBAPI SimpleHTMLFormatter : public Formatter, public LuceneObject
     {
     public:
         /// Default constructor uses HTML: &lt;B&gt; tags to markup terms.

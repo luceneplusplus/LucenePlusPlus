@@ -30,7 +30,7 @@ namespace Lucene
     
         LUCENE_CLASS(FilteredQuery);
     
-    public:
+    private:
         QueryPtr query;
         FilterPtr filter;
     

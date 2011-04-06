@@ -18,7 +18,7 @@ namespace Lucene
     /// <li> English tokens must be larger than 1 character.
     /// <li> One Chinese character as one Chinese word.
     /// </ul>
-    class LPPAPI ChineseFilter : public TokenFilter
+    class LPPCONTRIBAPI ChineseFilter : public TokenFilter
     {
     public:
         ChineseFilter(TokenStreamPtr input);

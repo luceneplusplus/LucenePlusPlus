@@ -64,6 +64,8 @@ namespace Lucene
     typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > String;
     typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > StringStream;
     
+    const std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > EmptyString;
+    
     typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
     typedef boost::shared_ptr<boost::thread> threadPtr;
             
@@ -220,5 +222,10 @@ namespace Lucene
 
 #include "Synchronize.h"
 #include "CycleCheck.h"
+#if defined(LPP_BUILDING_LIB) || defined(LPP_EXPOSE_INTERNAL)
+#define INTERNAL public
+#else
+#define INTERNAL protected
+#endif
 
 #endif

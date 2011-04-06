@@ -14,7 +14,7 @@ namespace Lucene
 {
     /// A HighlighterScorer is responsible for scoring a stream of tokens.  These token scores
     /// can then be used to compute {@link TextFragment} scores.
-    class LPPAPI HighlighterScorer
+    class LPPCONTRIBAPI HighlighterScorer
     {
     public:
         virtual ~HighlighterScorer();

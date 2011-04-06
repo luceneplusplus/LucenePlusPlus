@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Simple {@link Encoder} implementation to escape text for HTML output.
-    class LPPAPI SimpleHTMLEncoder : public Encoder, public LuceneObject
+    class LPPCONTRIBAPI SimpleHTMLEncoder : public Encoder, public LuceneObject
     {
     public:
         virtual ~SimpleHTMLEncoder();

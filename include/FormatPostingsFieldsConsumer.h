@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// Abstract API that consumes terms, doc, freq, prox and payloads postings.  Concrete implementations of this
     /// actually do "something" with the postings (write it into the index in a specific format).
-    class LPPAPI FormatPostingsFieldsConsumer : public LuceneObject
+    class FormatPostingsFieldsConsumer : public LuceneObject
     {
     public:
         virtual ~FormatPostingsFieldsConsumer();

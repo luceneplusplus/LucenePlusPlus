@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// @param normsField Field used for normalization factor (document boost). Null if nothing.
-        MatchAllDocsQuery(const String& normsField = L"");
+        MatchAllDocsQuery(const String& normsField = EmptyString);
         
         virtual ~MatchAllDocsQuery();
     

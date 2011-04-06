@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI DocFieldConsumersPerField : public DocFieldConsumerPerField
+    class DocFieldConsumersPerField : public DocFieldConsumerPerField
     {
     public:
         DocFieldConsumersPerField(DocFieldConsumersPerThreadPtr perThread, DocFieldConsumerPerFieldPtr one, DocFieldConsumerPerFieldPtr two);

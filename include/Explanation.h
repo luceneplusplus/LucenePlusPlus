@@ -15,7 +15,7 @@ namespace Lucene
     class LPPAPI Explanation : public LuceneObject
     {
     public:
-        Explanation(double value = 0, const String& description = L"");
+        Explanation(double value = 0, const String& description = EmptyString);
         virtual ~Explanation();
     
         LUCENE_CLASS(Explanation);

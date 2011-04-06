@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI FreqProxTermsWriterPerThread : public TermsHashConsumerPerThread
+    class FreqProxTermsWriterPerThread : public TermsHashConsumerPerThread
     {
     public:
         FreqProxTermsWriterPerThread(TermsHashPerThreadPtr perThread);

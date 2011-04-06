@@ -9,6 +9,10 @@
 
 namespace Lucene
 {
+    FSLockFactory::FSLockFactory()
+    {
+    }
+
     FSLockFactory::~FSLockFactory()
     {
     }

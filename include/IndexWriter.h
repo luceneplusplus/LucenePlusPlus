@@ -89,12 +89,14 @@ namespace Lucene
     /// IndexFileDeleter keeps track of the last non commit checkpoint.
     class LPPAPI IndexWriter : public LuceneObject
     {
+    protected:
+        IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexingChainPtr indexingChain, IndexCommitPtr commit);
+    
     public:
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl);
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl);
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl);
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl);
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexingChainPtr indexingChain, IndexCommitPtr commit);
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexCommitPtr commit);
         virtual ~IndexWriter();
         
@@ -196,6 +198,12 @@ namespace Lucene
         /// Used only by commit; lock order is commitLock -> IW
         SynchronizePtr commitLock;
         
+    INTERNAL:
+        SegmentInfosPtr pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
+        int64_t pendingCommitChangeCount;
+
+        ReaderPoolPtr readerPool;
+
     public:
         /// Default value for the write lock timeout (1,000).
         /// @see #setDefaultWriteLockTimeout
@@ -228,11 +236,6 @@ namespace Lucene
         /// this length, it is skipped and a message is printed to infoStream, if set (see {@link 
         /// #setInfoStream}).
         static int32_t MAX_TERM_LENGTH();
-        
-        SegmentInfosPtr pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
-        int64_t pendingCommitChangeCount;
-        
-        ReaderPoolPtr readerPool;
         
         /// Sets the maximum field length to INT_MAX
         static const int32_t MaxFieldLengthUNLIMITED;

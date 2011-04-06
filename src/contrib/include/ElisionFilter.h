@@ -17,7 +17,7 @@ namespace Lucene
     ///
     /// Note that {@link StandardTokenizer} sees " ' " as a space, and cuts it out.
     /// @see <a href="http://fr.wikipedia.org/wiki/%C3%89lision">Elision in Wikipedia</a>
-    class LPPAPI ElisionFilter : public TokenFilter
+    class LPPCONTRIBAPI ElisionFilter : public TokenFilter
     {
     public:
         /// Constructs an elision filter with standard stop words.

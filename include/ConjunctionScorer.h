@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Scorer for conjunctions, sets of queries, all of which are required.
-    class LPPAPI ConjunctionScorer : public Scorer
+    class ConjunctionScorer : public Scorer
     {
     public:
         ConjunctionScorer(SimilarityPtr similarity, Collection<ScorerPtr> scorers);

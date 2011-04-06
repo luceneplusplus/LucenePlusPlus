@@ -17,6 +17,7 @@
 #include "SortField.h"
 #include "TopFieldDocs.h"
 #include "FieldDoc.h"
+#include "StringUtils.h"
 #include "VariantUtils.h"
 
 namespace Lucene
@@ -121,7 +122,7 @@ namespace Lucene
         {
             TopFieldDocsPtr docs(newLucene<MultiSearcherCallableWithSort>(SynchronizePtr(), searchables[i], weight, filter, n, hq, sort, i, starts)->call());
             totalHits += docs->totalHits; // update totalHits
-            maxScore = std::max(maxScore, docs->getMaxScore());
+            maxScore = std::max(maxScore, docs->maxScore);
         }
         
         Collection<ScoreDocPtr> scoreDocs(Collection<ScoreDocPtr>::newInstance(hq->size()));

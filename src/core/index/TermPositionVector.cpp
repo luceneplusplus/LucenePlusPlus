@@ -9,6 +9,10 @@
 
 namespace Lucene
 {
+    TermPositionVector::TermPositionVector()
+    {
+    }
+    
     TermPositionVector::~TermPositionVector()
     {
     }

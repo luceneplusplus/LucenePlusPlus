@@ -48,7 +48,7 @@ protected:
     Collection<String> stems;
 };
 
-BOOST_FIXTURE_TEST_SUITE(RussianStemmerTest, RussianStemmerFixture)
+BOOST_FIXTURE_TEST_SUITE(RussianStemTest, RussianStemmerFixture)
 
 BOOST_AUTO_TEST_CASE(testStem)
 {

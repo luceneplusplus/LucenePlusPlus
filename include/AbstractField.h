@@ -82,13 +82,14 @@ namespace Lucene
         };
         
     public:
-        AbstractField();
-        AbstractField(const String& name, Store store, Index index, TermVector termVector);
         virtual ~AbstractField();
         
         LUCENE_CLASS(AbstractField);
     
     protected:
+        AbstractField();
+        AbstractField(const String& name, Store store, Index index, TermVector termVector);
+
         String _name;
         bool storeTermVector;
         bool storeOffsetWithTermVector;

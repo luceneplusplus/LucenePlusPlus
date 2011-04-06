@@ -24,11 +24,11 @@
 #include "Term.h"
 #include "TermPositions.h"
 #include "TermAttribute.h"
-#include "UnicodeUtils.h"
 #include "WhitespaceAnalyzer.h"
 #include "TermEnum.h"
 #include "Base64.h"
 #include "MiscUtils.h"
+#include "UnicodeUtils.h"
 #include "FileUtils.h"
 
 using namespace Lucene;

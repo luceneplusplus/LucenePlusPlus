@@ -7,6 +7,7 @@
 #include "ContribInc.h"
 #include <boost/algorithm/string.hpp>
 #include "GermanStemmer.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
 
@@ -111,14 +112,14 @@ namespace Lucene
             if (c > 0 && buffer[c] == buffer[c - 1])
                 buffer[c] = L'*';
             // Substitute Umlauts.
-            else if (buffer[c] == L'\u00e4')
+            else if (buffer[c] == L'\x00e4')
                 buffer[c] = L'a';
-            else if (buffer[c] == L'\u00f6')
+            else if (buffer[c] == L'\x00f6')
                 buffer[c] = L'o';
-            else if (buffer[c] == L'\u00fc')
+            else if (buffer[c] == L'\x00fc')
                 buffer[c] = L'u';
             // Fix bug so that 'ß' at the end of a word is replaced.
-            else if (buffer[c] == L'\u00df')
+            else if (buffer[c] == L'\x00df')
             {
                 buffer[c] = L's';
                 buffer.insert(c + 1, 1, L's');
@@ -136,7 +137,7 @@ namespace Lucene
                 }
                 else if (buffer[c] == L'c' && buffer[c + 1] == L'h')
                 {
-                    buffer[c] = L'\u00a7';
+                    buffer[c] = L'\x00a7';
                     buffer.erase(c + 1, 1);
                     ++substCount;
                 }
@@ -179,7 +180,7 @@ namespace Lucene
                 buffer[c] = L's';
                 buffer.insert(c + 1, L"ch");
             }
-            else if (buffer[c] == L'\u00a7')
+            else if (buffer[c] == L'\x00a7')
             {
                 buffer[c] = L'c';
                 buffer.insert(c + 1, 1, L'h');

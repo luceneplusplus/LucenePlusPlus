@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI SegmentWriteState : public LuceneObject
+    class SegmentWriteState : public LuceneObject
     {
     public:
         SegmentWriteState(DocumentsWriterPtr docWriter, DirectoryPtr directory, const String& segmentName, 

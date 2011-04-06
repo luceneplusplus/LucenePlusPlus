@@ -14,7 +14,7 @@ namespace Lucene
 {
     /// Russian stemming algorithm implementation (see http://snowball.sourceforge.net for 
     /// detailed description).
-    class LPPAPI RussianStemmer : public LuceneObject
+    class LPPCONTRIBAPI RussianStemmer : public LuceneObject
     {
     public:
         RussianStemmer();

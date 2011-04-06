@@ -283,7 +283,7 @@ namespace Lucene
         CollatorPtr getRangeCollator();
         
         /// Command line tool to test QueryParser, using {@link SimpleAnalyzer}.
-        static void main(Collection<String> args);
+        static int main(Collection<String> args);
         
         /// Query  ::= ( Clause )*
         /// Clause ::= ["+", "-"] [<TERM> ":"] ( <TERM> | "(" Query ")" )

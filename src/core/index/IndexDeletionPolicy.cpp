@@ -9,6 +9,10 @@
 
 namespace Lucene
 {
+    IndexDeletionPolicy::IndexDeletionPolicy()
+    {
+    }
+
     IndexDeletionPolicy::~IndexDeletionPolicy()
     {
     }

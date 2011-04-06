@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI NormsWriterPerThread : public InvertedDocEndConsumerPerThread
+    class NormsWriterPerThread : public InvertedDocEndConsumerPerThread
     {
     public:
         NormsWriterPerThread(DocInverterPerThreadPtr docInverterPerThread, NormsWriterPtr normsWriter);

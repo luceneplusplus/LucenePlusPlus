@@ -16,8 +16,9 @@ namespace Lucene
     /// CharFilter/CharStream subclass is used.
     class LPPAPI CharFilter : public CharStream
     {
-    public:
+    protected:
         CharFilter(CharStreamPtr in);
+    public:
         virtual ~CharFilter();
         
         LUCENE_CLASS(CharFilter);

@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI HitQueue : public HitQueueBase
+    class HitQueue : public HitQueueBase
     {
     public:
         /// Creates a new instance with size elements.

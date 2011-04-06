@@ -15,6 +15,9 @@ namespace Lucene
     /// contains both positions and offsets, but at least one of these arrays exists.
     class LPPAPI TermPositionVector : public TermFreqVector
     {
+    protected:
+        TermPositionVector();
+
     public:
         virtual ~TermPositionVector();
         LUCENE_INTERFACE(TermPositionVector);

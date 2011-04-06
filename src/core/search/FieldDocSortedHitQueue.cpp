@@ -9,6 +9,7 @@
 #include "FieldDoc.h"
 #include "SortField.h"
 #include "Collator.h"
+#include "StringUtils.h"
 #include "VariantUtils.h"
 
 namespace Lucene

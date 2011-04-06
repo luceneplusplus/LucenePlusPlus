@@ -7,6 +7,7 @@
 #include "ContribInc.h"
 #include <boost/algorithm/string.hpp>
 #include "DutchStemmer.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
 
@@ -54,7 +55,7 @@ namespace Lucene
         for (int32_t i = 0; i < enend.size(); ++i)
         {
             String end = enend[i];
-            int32_t index = buffer.length() - end.length();
+            int32_t index = (int32_t)(buffer.length() - end.length());
             if (boost::ends_with(buffer, end) && index >= R1 && isValidEnEnding(index - 1))
             {
                 buffer.erase(index, end.length());
@@ -70,7 +71,7 @@ namespace Lucene
         if (R1 >= (int32_t)buffer.length())
             return;
 
-        int32_t lengthR1 = buffer.length() - R1;
+        int32_t lengthR1 = (int32_t)(buffer.length() - R1);
         int32_t index;
 
         if (boost::ends_with(buffer, L"heden"))
@@ -82,14 +83,14 @@ namespace Lucene
         if (enEnding())
             return;
         
-        index = buffer.length() - 2;
+        index = (int32_t)buffer.length() - 2;
         if (boost::ends_with(buffer, L"se") && index >= R1 && isValidSEnding(index - 1))
         {
             buffer.erase(index, 2);
             return;
         }
         
-        index = buffer.length() - 1;
+        index = (int32_t)(buffer.length() - 1);
         if (boost::ends_with(buffer, L"s") && index >= R1 && isValidSEnding(index - 1))
             buffer.erase(index, 1);
     }
@@ -99,7 +100,7 @@ namespace Lucene
         removedE = false;
         if (R1 >= (int32_t)buffer.length())
             return;
-        int32_t index = buffer.length() - 1;
+        int32_t index = (int32_t)(buffer.length() - 1);
         if (index >= R1 && boost::ends_with(buffer, L"e") && !isVowel(buffer[index - 1]))
         {
             buffer.erase(index, 1);
@@ -112,7 +113,7 @@ namespace Lucene
     {
         if (R2 >= (int32_t)buffer.length())
             return;
-        int32_t index = buffer.length() - 4;
+        int32_t index = (int32_t)(buffer.length() - 4);
         if (boost::ends_with(buffer, L"heid") && index >= R2 && buffer[index - 1] != L'c')
         {
             buffer.erase(index, 4); // remove heid
@@ -125,7 +126,7 @@ namespace Lucene
         if (R2 >= (int32_t)buffer.length())
             return;
         
-        int32_t index = buffer.length() - 3;
+        int32_t index = (int32_t)(buffer.length() - 3);
         if ((boost::ends_with(buffer, L"end") || boost::ends_with(buffer, L"ing")) && index >= R2)
         {
             buffer.erase(index, 3);
@@ -141,27 +142,27 @@ namespace Lucene
                 unDouble(index);
             return;
         }
-        index = buffer.length() - 2;
+        index = (int32_t)(buffer.length() - 2);
         if (boost::ends_with(buffer, L"ig") && index >= R2)
         {
             if (buffer[index - 1] != L'e')
                 buffer.erase(index, 2);
             return;
         }
-        index = buffer.length() - 4;
+        index = (int32_t)(buffer.length() - 4);
         if (boost::ends_with(buffer, L"lijk") && index >= R2)
         {
             buffer.erase(index, 4);
             step2();
             return;
         }
-        index = buffer.length() - 4;
+        index = (int32_t)(buffer.length() - 4);
         if (boost::ends_with(buffer, L"baar") && index >= R2)
         {
             buffer.erase(index, 4);
             return;
         }
-        index = buffer.length() - 3;
+        index = (int32_t)(buffer.length() - 3);
         if (boost::ends_with(buffer, L"bar") && index >= R2)
         {
             if (removedE)
@@ -195,24 +196,24 @@ namespace Lucene
         {
             switch (buffer[i])
             {
-                case L'\u00e4':
-                case L'\u00e1':
+                case L'\x00e4':
+                case L'\x00e1':
                     buffer[i] = L'a';
                     break;
-                case L'\u00eb':
-                case L'\u00e9':
+                case L'\x00eb':
+                case L'\x00e9':
                     buffer[i] = L'e';
                     break;
-                case L'\u00fc':
-                case L'\u00fa':
+                case L'\x00fc':
+                case L'\x00fa':
                     buffer[i] = L'u';
                     break;
-                case L'\u00ef':
+                case L'\x00ef':
                 case L'i':
                     buffer[i] = L'i';
                     break;
-                case L'\u00f6':
-                case L'\u00f3':
+                case L'\x00f6':
+                case L'\x00f3':
                     buffer[i] = L'o';
                     break;
             }
@@ -242,7 +243,7 @@ namespace Lucene
     
     void DutchStemmer::unDouble()
     {
-        unDouble(buffer.length());
+        unDouble((int32_t)buffer.length());
     }
     
     void DutchStemmer::unDouble(int32_t endIndex)
@@ -272,7 +273,7 @@ namespace Lucene
         if (buffer[0] == L'y')
             buffer[0] = L'Y';
 
-        int32_t last = buffer.length() - 1;
+        int32_t last = (int32_t)(buffer.length() - 1);
 
         for (int32_t i = 1; i < last; i++)
         {
@@ -308,7 +309,7 @@ namespace Lucene
             case L'i':
             case L'u':
             case L'y':
-            case L'\u00e8':
+            case L'\x00e8':
                 return true;
             default:
                 return false;

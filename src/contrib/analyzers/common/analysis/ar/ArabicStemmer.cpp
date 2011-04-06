@@ -76,7 +76,7 @@ namespace Lucene
         for (int32_t i = 0; i < stemPrefixes.size(); ++i)
         {
             if (startsWith(s, len, stemPrefixes[i]))
-                return deleteChars(s, 0, len, stemPrefixes[i].length());
+                return deleteChars(s, 0, len, (int32_t)stemPrefixes[i].length());
         }
         return len;
     }
@@ -87,7 +87,7 @@ namespace Lucene
         for (int32_t i = 0; i < stemSuffixes.size(); ++i)
         {
             if (endsWith(s, len, stemSuffixes[i]))
-                len = deleteChars(s, len - stemSuffixes[i].length(), len, stemSuffixes[i].length());
+                len = (int32_t)deleteChars(s, (int32_t)(len - stemSuffixes[i].length()), len, (int32_t)stemSuffixes[i].length());
         }
         return len;
     }

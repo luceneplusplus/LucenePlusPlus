@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI FieldInfo : public LuceneObject
+    class FieldInfo : public LuceneObject
     {
     public:
         FieldInfo(const String& na, bool tk, int32_t nu, bool storeTermVector, bool storePositionWithTermVector, 

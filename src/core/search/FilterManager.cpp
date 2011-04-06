@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/thread/thread.hpp>
 #include "FilterManager.h"
 #include "_FilterManager.h"
 #include "Filter.h"

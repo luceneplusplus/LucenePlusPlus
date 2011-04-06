@@ -15,7 +15,7 @@ namespace Lucene
     /// Implements the policy for breaking text into multiple fragments for consideration by the 
     /// {@link Highlighter} class. A sophisticated implementation may do this on the basis of 
     /// detecting end of sentences in the text.
-    class LPPAPI Fragmenter
+    class LPPCONTRIBAPI Fragmenter
     {
     public:
         virtual ~Fragmenter();

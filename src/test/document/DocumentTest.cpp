@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(testBinaryField)
     doc->add(stringFld);
     doc->add(binaryFld);
 
-    BOOST_CHECK_EQUAL(2, doc->fields.size());
+    BOOST_CHECK_EQUAL(2, doc->getFields().size());
 
     BOOST_CHECK(binaryFld->isBinary());
     BOOST_CHECK(binaryFld->isStored());
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(testBinaryField)
 
     doc->add(binaryFld2);
 
-    BOOST_CHECK_EQUAL(3, doc->fields.size());
+    BOOST_CHECK_EQUAL(3, doc->getFields().size());
 
     Collection<ByteArray> binaryTests = doc->getBinaryValues(L"binary");
 
@@ -116,36 +116,36 @@ BOOST_AUTO_TEST_CASE(testBinaryField)
     BOOST_CHECK_EQUAL(binaryTest2, binaryVal2);
 
     doc->removeField(L"string");
-    BOOST_CHECK_EQUAL(2, doc->fields.size());
+    BOOST_CHECK_EQUAL(2, doc->getFields().size());
 
     doc->removeFields(L"binary");
-    BOOST_CHECK_EQUAL(0, doc->fields.size());
+    BOOST_CHECK_EQUAL(0, doc->getFields().size());
 }
 
 /// Tests {@link Document#removeField(String)} method for a brand new Document that has not been indexed yet.
 BOOST_AUTO_TEST_CASE(testRemoveForNewDocument)
 {
     DocumentPtr doc = makeDocumentWithFields();
-    BOOST_CHECK_EQUAL(8, doc->fields.size());
+    BOOST_CHECK_EQUAL(8, doc->getFields().size());
     doc->removeFields(L"keyword");
-    BOOST_CHECK_EQUAL(6, doc->fields.size());
+    BOOST_CHECK_EQUAL(6, doc->getFields().size());
     doc->removeFields(L"doesnotexists"); // removing non-existing fields is silently ignored
     doc->removeFields(L"keyword"); // removing a field more than once
-    BOOST_CHECK_EQUAL(6, doc->fields.size());
+    BOOST_CHECK_EQUAL(6, doc->getFields().size());
     doc->removeField(L"text");
-    BOOST_CHECK_EQUAL(5, doc->fields.size());
+    BOOST_CHECK_EQUAL(5, doc->getFields().size());
     doc->removeField(L"text");
-    BOOST_CHECK_EQUAL(4, doc->fields.size());
+    BOOST_CHECK_EQUAL(4, doc->getFields().size());
     doc->removeField(L"text");
-    BOOST_CHECK_EQUAL(4, doc->fields.size());
+    BOOST_CHECK_EQUAL(4, doc->getFields().size());
     doc->removeField(L"doesnotexists"); // removing non-existing fields is silently ignored
-    BOOST_CHECK_EQUAL(4, doc->fields.size());
+    BOOST_CHECK_EQUAL(4, doc->getFields().size());
     doc->removeFields(L"unindexed");
-    BOOST_CHECK_EQUAL(2, doc->fields.size());
+    BOOST_CHECK_EQUAL(2, doc->getFields().size());
     doc->removeFields(L"unstored");
-    BOOST_CHECK_EQUAL(0, doc->fields.size());
+    BOOST_CHECK_EQUAL(0, doc->getFields().size());
     doc->removeFields(L"doesnotexists"); // removing non-existing fields is silently ignored
-    BOOST_CHECK_EQUAL(0, doc->fields.size());
+    BOOST_CHECK_EQUAL(0, doc->getFields().size());
 }
 
 BOOST_AUTO_TEST_CASE(testConstructorExceptions)

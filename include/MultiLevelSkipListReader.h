@@ -17,7 +17,7 @@ namespace Lucene
     ///
     /// Subclasses must implement the abstract method {@link #readSkipData(int, IndexInput)} which defines the 
     /// actual format of the skip data.
-    class LPPAPI MultiLevelSkipListReader : public LuceneObject
+    class MultiLevelSkipListReader : public LuceneObject
     {
     public:
         MultiLevelSkipListReader(IndexInputPtr skipStream, int32_t maxSkipLevels, int32_t skipInterval);
@@ -86,7 +86,7 @@ namespace Lucene
     };
     
     /// Used to buffer the top skip levels
-    class LPPAPI SkipBuffer : public IndexInput
+    class SkipBuffer : public IndexInput
     {
     public:
         SkipBuffer(IndexInputPtr input, int32_t length);

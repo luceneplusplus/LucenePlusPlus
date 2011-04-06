@@ -6,6 +6,7 @@
 
 #include "ContribInc.h"
 #include "BrazilianStemmer.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
 
@@ -71,7 +72,7 @@ namespace Lucene
             return L"";
 
         // find 1st vowel
-        int32_t i = value.length() - 1;
+        int32_t i = (int32_t)(value.length() - 1);
         int32_t j = 0;
         for (; j < i; ++j)
         {
@@ -100,7 +101,7 @@ namespace Lucene
         if (value.empty())
             return L"";
 
-        int32_t i = value.length() - 1;
+        int32_t i = (int32_t)(value.length() - 1);
 
         // RV - IF the second letter is a consonant, RV is the region after the next following vowel
         if (i > 0 && !isVowel(value[1]))

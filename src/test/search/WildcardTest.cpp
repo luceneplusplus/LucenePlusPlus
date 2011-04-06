@@ -15,7 +15,6 @@
 #include "SimpleAnalyzer.h"
 #include "Document.h"
 #include "Field.h"
-#include "WildcardQuery.h"
 #include "TermQuery.h"
 #include "ConstantScoreQuery.h"
 #include "ScoreDoc.h"

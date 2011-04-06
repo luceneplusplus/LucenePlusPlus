@@ -22,9 +22,11 @@ namespace Lucene
         
         LUCENE_CLASS(NoLockFactory);
             
+    private:
+        static NoLockPtr getSingletonLock();
+
     public:
         static NoLockFactoryPtr getNoLockFactory();
-        static NoLockPtr getSingletonLock();
         
         /// Return a new Lock instance identified by lockName.
         virtual LockPtr makeLock(const String& lockName);

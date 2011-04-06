@@ -22,7 +22,7 @@ namespace Lucene
     /// best to switch your application to pass only atomic (single segment) readers to this API.  Alternatively, 
     /// for a short-term fix, you could wrap your ValueSource using {@link MultiValueSource}, which costs more CPU 
     /// per lookup but will not consume double the FieldCache RAM.
-    class LPPAPI DoubleFieldSource : public FieldCacheSource
+    class DoubleFieldSource : public FieldCacheSource
     {
     public:
         /// Create a cached double field source with a specific string-to-double parser.
@@ -41,7 +41,7 @@ namespace Lucene
         virtual int32_t cachedFieldSourceHashCode();
     };
     
-    class LPPAPI DoubleDocValues : public DocValues
+    class DoubleDocValues : public DocValues
     {
     public:
         DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr);

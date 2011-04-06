@@ -14,7 +14,7 @@ namespace Lucene
 {
     /// Hides implementation issues associated with obtaining a TokenStream for use with the highlighter - can obtain 
     /// from TermFreqVectors with offsets and (optionally) positions or from Analyzer class re-parsing the stored content.
-    class LPPAPI TokenSources : public LuceneObject
+    class LPPCONTRIBAPI TokenSources : public LuceneObject
     {
     public:
         virtual ~TokenSources();
@@ -70,7 +70,7 @@ namespace Lucene
     };
     
     /// an object used to iterate across an array of tokens
-    class LPPAPI StoredTokenStream : public TokenStream
+    class LPPCONTRIBAPI StoredTokenStream : public TokenStream
     {
     public:
         StoredTokenStream(Collection<TokenPtr> tokens);

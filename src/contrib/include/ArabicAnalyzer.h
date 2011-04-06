@@ -25,7 +25,7 @@ namespace Lucene
     /// <li> {@link ArabicStemFilter}: Arabic light stemming.
     /// <li> Arabic stop words file: a set of default Arabic stop words.
     /// </ul>
-    class LPPAPI ArabicAnalyzer : public Analyzer
+    class LPPCONTRIBAPI ArabicAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -71,7 +71,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI ArabicAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI ArabicAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~ArabicAnalyzerSavedStreams();

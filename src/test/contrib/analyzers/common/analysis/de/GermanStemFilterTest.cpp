@@ -11,10 +11,10 @@
 
 using namespace Lucene;
 
-class GermanStemmerFixture : public BaseTokenStreamFixture
+class GermanStemFilterFixture : public BaseTokenStreamFixture
 {
 public:
-    virtual ~GermanStemmerFixture()
+    virtual ~GermanStemFilterFixture()
     {
     }
 
@@ -30,7 +30,7 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(GermanStemmerTest, GermanStemmerFixture)
+BOOST_FIXTURE_TEST_SUITE(GermanStemFilterTest, GermanStemFilterFixture)
 
 /// Test the German stemmer. The stemming algorithm is known to work less than perfect, as it doesn't 
 /// use any word lists with exceptions. We also check some of the cases where the algorithm is wrong.

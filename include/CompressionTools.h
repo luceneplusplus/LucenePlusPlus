@@ -43,12 +43,6 @@ namespace Lucene
     
     protected:
         static const int32_t COMPRESS_BUFFER;
-    
-        /// Memory allocation callback
-        static void* zlibAlloc(void* opaque, unsigned int items, unsigned int size);
-        
-        /// Memory free callback
-        static void zlibFree(void* opaque, void* buffer);
     };
 }
 

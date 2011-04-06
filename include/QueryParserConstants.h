@@ -14,6 +14,9 @@ namespace Lucene
     /// Token literal values and constants.
     class LPPAPI QueryParserConstants
     {
+    protected:
+        QueryParserConstants();
+
     public:
         virtual ~QueryParserConstants();
         LUCENE_INTERFACE(QueryParserConstants);

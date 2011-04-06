@@ -10,12 +10,11 @@
 #include "IndexOutput.h"
 #include "TermVectorsReader.h"
 #include "TermVectorOffsetInfo.h"
-#include "TermFreqVector.h"
 #include "TermPositionVector.h"
 #include "Directory.h"
 #include "FieldInfos.h"
-#include "UnicodeUtils.h"
 #include "MiscUtils.h"
+#include "UnicodeUtils.h"
 #include "StringUtils.h"
 
 namespace Lucene

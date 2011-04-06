@@ -73,7 +73,7 @@ namespace Lucene
         
         int32_t size() const
         {
-            return cacheList.size();
+            return (int32_t)cacheList.size();
         }
         
         const_iterator begin() const

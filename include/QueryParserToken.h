@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// Constructs a new token for the specified Image and Kind.
-        QueryParserToken(int32_t kind = 0, const String& image = L"");
+        QueryParserToken(int32_t kind = 0, const String& image = EmptyString);
         
         virtual ~QueryParserToken();
         
@@ -63,7 +63,7 @@ namespace Lucene
         /// Returns a new Token object, by default. However, if you want, you can create and return subclass 
         /// objects based on the value of ofKind.  Simply add the cases to the switch for all those special 
         /// cases.
-        static QueryParserTokenPtr newToken(int32_t ofKind, const String& image = L"");
+        static QueryParserTokenPtr newToken(int32_t ofKind, const String& image = EmptyString);
     };
 }
 

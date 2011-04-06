@@ -21,7 +21,7 @@ namespace Lucene
         
         LUCENE_CLASS(FieldInvertState);
             
-    public:
+    INTERNAL:
         int32_t position;
         int32_t length;
         int32_t numOverlap;

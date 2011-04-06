@@ -10,6 +10,7 @@
 #include "OffsetAttribute.h"
 #include "Reader.h"
 #include "CharFolder.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
 namespace Lucene

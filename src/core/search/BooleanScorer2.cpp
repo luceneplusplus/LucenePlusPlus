@@ -8,7 +8,6 @@
 #include "BooleanScorer2.h"
 #include "ReqOptSumScorer.h"
 #include "ReqExclScorer.h"
-#include "ConjunctionScorer.h"
 #include "Similarity.h"
 #include "Collector.h"
 

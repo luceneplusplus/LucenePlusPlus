@@ -17,7 +17,7 @@ namespace Lucene
     /// The problem with the standard Letter tokenizer is that it fails on diacritics.
     /// Handling similar to this is necessary for Indic Scripts, Hebrew, Thaana, etc.
     ///
-     class LPPAPI ArabicLetterTokenizer : public LetterTokenizer
+    class LPPCONTRIBAPI ArabicLetterTokenizer : public LetterTokenizer
     {
     public:
         /// Construct a new ArabicLetterTokenizer.

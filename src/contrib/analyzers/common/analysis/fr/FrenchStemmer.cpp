@@ -7,6 +7,7 @@
 #include "ContribInc.h"
 #include <boost/algorithm/string.hpp>
 #include "FrenchStemmer.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
 
@@ -98,9 +99,9 @@ namespace Lucene
         deleteFromIfTestVowelBeforeIn(R1, newCollection<String>(L"issements", L"issement"), false, R0);
         deleteFrom(RV, newCollection<String>(L"ements", L"ement"));
 
-        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\u00e9s", L"it\u00e9"), L"abil", false, R0, L"abl");
-        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\u00e9s", L"it\u00e9"), L"ic", false, R0, L"iqU");
-        deleteButSuffixFrom(R2, newCollection<String>(L"it\u00e9s", L"it\u00e9"), L"iv", true);
+        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\x00e9s", L"it\x00e9"), L"abil", false, R0, L"abl");
+        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\x00e9s", L"it\x00e9"), L"ic", false, R0, L"iqU");
+        deleteButSuffixFrom(R2, newCollection<String>(L"it\x00e9s", L"it\x00e9"), L"iv", true);
 
         Collection<String> autre = newCollection<String>(L"ifs", L"ives", L"if", L"ive");
         deleteButSuffixFromElseReplace(R2, autre, L"icat", false, R0, L"iqU");
@@ -130,11 +131,11 @@ namespace Lucene
         {
             static const wchar_t* _search[] = 
             {
-                L"\u00eemes", L"\u00eetes", L"iraIent", L"irait", L"irais", L"irai", L"iras", L"ira",
+                L"\x00eemes", L"\x00eetes", L"iraIent", L"irait", L"irais", L"irai", L"iras", L"ira",
                 L"irent", L"iriez", L"irez", L"irions", L"irons", L"iront", L"issaIent", 
                 L"issais", L"issantes", L"issante", L"issants", L"issant", L"issait", 
                 L"issais", L"issions", L"issons", L"issiez", L"issez", L"issent", L"isses", 
-                L"isse", L"ir", L"is", L"\u00eet", L"it", L"ies", L"ie", L"i"
+                L"isse", L"ir", L"is", L"\x00eet", L"it", L"ies", L"ie", L"i"
             };
             search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
         }
@@ -149,8 +150,8 @@ namespace Lucene
             static const wchar_t* _suffix[] = 
             {
                 L"eraIent", L"erais", L"erait", L"erai", L"eras", L"erions", L"eriez", 
-                L"erons", L"eront", L"erez", L"\u00e8rent", L"era", L"\u00e9es", L"iez", L"\u00e9e", L"\u00e9s", 
-                L"er", L"ez", L"\u00e9"
+                L"erons", L"eront", L"erez", L"\x00e8rent", L"era", L"\x00e9es", L"iez", L"\x00e9e", L"\x00e9s", 
+                L"er", L"ez", L"\x00e9"
             };
             suffix = Collection<String>::newInstance(_suffix, _suffix + SIZEOF_ARRAY(_suffix));
         }
@@ -162,8 +163,8 @@ namespace Lucene
             static const wchar_t* _search[] = 
             {
                 L"assions", L"assiez", L"assent", L"asses", L"asse", L"aIent", L"antes", 
-                L"aIent", L"Aient", L"ante", L"\u00e2mes", L"\u00e2tes", L"ants", L"ant", L"ait", 
-                L"a\u00eet", L"ais", L"Ait", L"A\u00eet", L"Ais", L"\u00e2t", L"as", L"ai", L"Ai", L"a"
+                L"aIent", L"Aient", L"ante", L"\x00e2mes", L"\x00e2tes", L"ants", L"ant", L"ait", 
+                L"a\x00eet", L"ais", L"Ait", L"A\x00eet", L"Ais", L"\x00e2t", L"as", L"ai", L"Ai", L"a"
             };
             search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
         }
@@ -182,7 +183,7 @@ namespace Lucene
                 stringBuffer[stringBuffer.length() - 1] = L'i';
                 setStrings();
             }
-            else if (ch == L'\u00e7')
+            else if (ch == L'\x00e7')
             {
                 stringBuffer[stringBuffer.length() - 1] = L'c';
                 setStrings();
@@ -198,7 +199,7 @@ namespace Lucene
             if (ch == L's')
             {
                 wchar_t b = stringBuffer[stringBuffer.length() - 2];
-                if (b != L'a' && b != L'i' && b != L'o' && b != L'u' && b != L'\u00e8' && b != L's')
+                if (b != L'a' && b != L'i' && b != L'o' && b != L'u' && b != L'\x00e8' && b != L's')
                 {
                     stringBuffer.resize(stringBuffer.length() - 1);
                     setStrings();
@@ -208,9 +209,9 @@ namespace Lucene
         if (!deleteFromIfPrecededIn(R2, newCollection<String>(L"ion"), RV, L"s"))
             deleteFromIfPrecededIn(R2, newCollection<String>(L"ion"), RV, L"t");
 
-        replaceFrom(RV, newCollection<String>(L"I\u00e8re", L"i\u00e8re", L"Ier", L"ier"), L"i");
+        replaceFrom(RV, newCollection<String>(L"I\x00e8re", L"i\x00e8re", L"Ier", L"ier"), L"i");
         deleteFrom(RV, newCollection<String>(L"e"));
-        deleteFromIfPrecededIn(RV, newCollection<String>(L"\u00eb"), R0, L"gu");
+        deleteFromIfPrecededIn(RV, newCollection<String>(L"\x00eb"), R0, L"gu");
     }
     
     void FrenchStemmer::step5()
@@ -233,14 +234,14 @@ namespace Lucene
             bool seenVowel = false;
             bool seenConson = false;
             int32_t pos = -1;
-            for (int32_t i = R0.length() - 1; i > -1; --i)
+            for (int32_t i = (int32_t)(R0.length() - 1); i > -1; --i)
             {
                 wchar_t ch = R0[i];
                 if (isVowel(ch))
                 {
                     if (!seenVowel)
                     {
-                        if (ch == L'\u00e9' || ch == L'\u00e8')
+                        if (ch == L'\x00e9' || ch == L'\x00e8')
                         {
                             pos = i;
                             break;
@@ -414,18 +415,18 @@ namespace Lucene
             case L'o':
             case L'u':
             case L'y':
-            case L'\u00e2':
-            case L'\u00e0':
-            case L'\u00eb':
-            case L'\u00e9':
-            case L'\u00ea':
-            case L'\u00e8':
-            case L'\u00ef':
-            case L'\u00ee':
-            case L'\u00f4':
-            case L'\u00fc':
-            case L'\u00f9':
-            case L'\u00fb':
+            case L'\x00e2':
+            case L'\x00e0':
+            case L'\x00eb':
+            case L'\x00e9':
+            case L'\x00ea':
+            case L'\x00e8':
+            case L'\x00ef':
+            case L'\x00ee':
+            case L'\x00f4':
+            case L'\x00fc':
+            case L'\x00f9':
+            case L'\x00fb':
                 return true;
             default:
                 return false;
@@ -434,7 +435,7 @@ namespace Lucene
     
     String FrenchStemmer::retrieveR(const String& buffer)
     {
-        int32_t len = buffer.length();
+        int32_t len = (int32_t)buffer.length();
         int32_t pos = -1;
         for (int32_t c = 0; c < len; ++c)
         {
@@ -466,7 +467,7 @@ namespace Lucene
     
     String FrenchStemmer::retrieveRV(const String& buffer)
     {
-        int32_t len = buffer.length();
+        int32_t len = (int32_t)buffer.length();
         if (buffer.length() > 3)
         {
             if (isVowel(buffer[0]) && isVowel(buffer[1]))

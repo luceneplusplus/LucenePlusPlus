@@ -19,7 +19,7 @@ namespace Lucene
     /// alternative list is specified, but the exclusion list is empty by default.
     ///
     /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPAPI FrenchAnalyzer : public Analyzer
+    class LPPCONTRIBAPI FrenchAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -67,7 +67,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI FrenchAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI FrenchAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~FrenchAnalyzerSavedStreams();

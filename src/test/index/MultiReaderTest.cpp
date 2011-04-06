@@ -22,7 +22,6 @@
 #include "TermDocs.h"
 #include "TermEnum.h"
 #include "Term.h"
-#include "MultiReader.h"
 #include "SegmentReader.h"
 
 using namespace Lucene;

@@ -14,6 +14,7 @@
 #include "IndexFileNames.h"
 #include "IndexFileNameFilter.h"
 #include "BitVector.h"
+#include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
 

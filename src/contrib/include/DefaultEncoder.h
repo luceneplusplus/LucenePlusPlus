@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Simple {@link Encoder} implementation that does not modify the output.
-    class LPPAPI DefaultEncoder : public Encoder, public LuceneObject
+    class LPPCONTRIBAPI DefaultEncoder : public Encoder, public LuceneObject
     {
     public:
         virtual ~DefaultEncoder();

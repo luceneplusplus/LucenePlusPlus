@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Holds all per thread, per field state.
-    class LPPAPI DocFieldProcessorPerField : public LuceneObject
+    class DocFieldProcessorPerField : public LuceneObject
     {
     public:
         DocFieldProcessorPerField(DocFieldProcessorPerThreadPtr perThread, FieldInfoPtr fieldInfo);

@@ -21,10 +21,11 @@ namespace Lucene
     /// this is why it is not abstract.
     class LPPAPI MultiTermQueryWrapperFilter : public Filter
     {
-    public:
+    INTERNAL:
         /// Wrap a {@link MultiTermQuery} as a Filter.
         MultiTermQueryWrapperFilter(MultiTermQueryPtr query);
         
+    public:
         virtual ~MultiTermQueryWrapperFilter();
     
         LUCENE_CLASS(MultiTermQueryWrapperFilter);

@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// {@link Fragmenter} implementation which breaks text up into same-size fragments but 
     /// does not split up {@link Spans}.  This is a simple sample class.
-    class LPPAPI SimpleSpanFragmenter : public Fragmenter, public LuceneObject
+    class LPPCONTRIBAPI SimpleSpanFragmenter : public Fragmenter, public LuceneObject
     {
     public:
         /// @param queryScorer QueryScorer that was used to score hits

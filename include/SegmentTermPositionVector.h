@@ -8,11 +8,10 @@
 #define SEGMENTTERMPOSITIONVECTOR_H
 
 #include "SegmentTermVector.h"
-#include "TermPositionVector.h"
 
 namespace Lucene
 {
-    class LPPAPI SegmentTermPositionVector : public SegmentTermVector
+    class SegmentTermPositionVector : public SegmentTermVector
     {
     public:
         SegmentTermPositionVector(const String& field, Collection<String> terms, Collection<int32_t> termFreqs, 

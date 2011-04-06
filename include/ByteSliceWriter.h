@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// Class to write byte streams into slices of shared byte[].  This is used by DocumentsWriter to hold 
     /// the posting list for many terms in RAM.
-    class LPPAPI ByteSliceWriter : public LuceneObject
+    class ByteSliceWriter : public LuceneObject
     {
     public:
         ByteSliceWriter(ByteBlockPoolPtr pool);

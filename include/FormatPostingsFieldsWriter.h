@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI FormatPostingsFieldsWriter : public FormatPostingsFieldsConsumer
+    class FormatPostingsFieldsWriter : public FormatPostingsFieldsConsumer
     {
     public:
         FormatPostingsFieldsWriter(SegmentWriteStatePtr state, FieldInfosPtr fieldInfos);

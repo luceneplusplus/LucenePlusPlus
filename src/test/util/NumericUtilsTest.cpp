@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(testLongExtremeValues)
         newCollection<int32_t>(0)
     );
     checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 8, true, 
-        newCollection<int64_t>(0xffffffffffffffffL ,0xffffffffffffffffLL),
+        newCollection<int64_t>(0xffffffffffffffffLL ,0xffffffffffffffffLL),
         newCollection<int32_t>(0)
     );
     checkLongRangeSplit(LLONG_MAX, LLONG_MAX, 64, true, 

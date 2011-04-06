@@ -9,6 +9,7 @@
 #include "IndexReader.h"
 #include "Term.h"
 #include "Collator.h"
+#include "StringUtils.h"
 #include "VariantUtils.h"
 
 namespace Lucene

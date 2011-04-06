@@ -10,7 +10,6 @@
 #include "Document.h"
 #include "FieldSelector.h"
 #include "Term.h"
-#include "TermPositions.h"
 #include "FieldCache.h"
 #include "StringUtils.h"
 

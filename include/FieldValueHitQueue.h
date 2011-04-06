@@ -18,8 +18,10 @@ namespace Lucene
     /// @see FieldCache
     class LPPAPI FieldValueHitQueue : public HitQueueBase
     {
-    public:
+    protected:
         FieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
+
+    public:
         virtual ~FieldValueHitQueue();
     
         LUCENE_CLASS(FieldValueHitQueue);

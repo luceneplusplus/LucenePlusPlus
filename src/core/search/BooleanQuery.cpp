@@ -7,11 +7,9 @@
 #include "LuceneInc.h"
 #include "BooleanQuery.h"
 #include "_BooleanQuery.h"
-#include "BooleanClause.h"
 #include "BooleanScorer.h"
 #include "BooleanScorer2.h"
 #include "ComplexExplanation.h"
-#include "Similarity.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 

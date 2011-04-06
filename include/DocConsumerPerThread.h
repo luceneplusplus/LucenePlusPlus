@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI DocConsumerPerThread : public LuceneObject
+    class DocConsumerPerThread : public LuceneObject
     {
     public:
         virtual ~DocConsumerPerThread();

@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI FormatPostingsPositionsWriter : public FormatPostingsPositionsConsumer
+    class FormatPostingsPositionsWriter : public FormatPostingsPositionsConsumer
     {
     public:
         FormatPostingsPositionsWriter(SegmentWriteStatePtr state, FormatPostingsDocsWriterPtr parent);

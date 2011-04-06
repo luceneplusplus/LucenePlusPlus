@@ -14,7 +14,7 @@ namespace Lucene
     /// Remaps docIDs after a merge has completed, where the merged segments had at least one deletion.  
     /// This is used to renumber the buffered deletes in IndexWriter when a merge of segments with deletions 
     /// commits.
-    class LPPAPI MergeDocIDRemapper : public LuceneObject
+    class MergeDocIDRemapper : public LuceneObject
     {
     public:
         MergeDocIDRemapper(SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergedDocCount);

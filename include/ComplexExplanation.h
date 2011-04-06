@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI ComplexExplanation : public Explanation
     {
     public:
-        ComplexExplanation(bool match = false, double value = 0, const String& description = L"");
+        ComplexExplanation(bool match = false, double value = 0, const String& description = EmptyString);
         virtual ~ComplexExplanation();
     
         LUCENE_CLASS(ComplexExplanation);

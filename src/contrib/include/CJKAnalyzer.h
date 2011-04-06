@@ -13,7 +13,7 @@
 namespace Lucene
 {
     /// An {@link Analyzer} that tokenizes text with {@link CJKTokenizer} and filters with {@link StopFilter}
-    class LPPAPI CJKAnalyzer : public Analyzer
+    class LPPCONTRIBAPI CJKAnalyzer : public Analyzer
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -51,7 +51,7 @@ namespace Lucene
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
     
-    class LPPAPI CJKAnalyzerSavedStreams : public LuceneObject
+    class LPPCONTRIBAPI CJKAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~CJKAnalyzerSavedStreams();

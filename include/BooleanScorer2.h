@@ -17,7 +17,7 @@ namespace Lucene
     /// An alternative to BooleanScorer that also allows a minimum number of optional scorers that should match.
     /// Implements skipTo(), and has no limitations on the numbers of added scorers.
     /// Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
-    class LPPAPI BooleanScorer2 : public Scorer
+    class BooleanScorer2 : public Scorer
     {
     public:
         /// Creates a {@link Scorer} with the given similarity and lists of required, prohibited and optional 
@@ -83,7 +83,7 @@ namespace Lucene
         friend class CountingConjunctionSumScorer;
     };
     
-    class LPPAPI Coordinator : public LuceneObject
+    class Coordinator : public LuceneObject
     {
     public:
         Coordinator(BooleanScorer2Ptr scorer);
@@ -104,7 +104,7 @@ namespace Lucene
     };
     
     /// Count a scorer as a single match.
-    class LPPAPI SingleMatchScorer : public Scorer
+    class SingleMatchScorer : public Scorer
     {
     public:
         SingleMatchScorer(ScorerPtr scorer, CoordinatorPtr coordinator);
@@ -125,7 +125,7 @@ namespace Lucene
         virtual int32_t advance(int32_t target);
     };
     
-    class LPPAPI CountingDisjunctionSumScorer : public DisjunctionSumScorer
+    class CountingDisjunctionSumScorer : public DisjunctionSumScorer
     {
     public:
         CountingDisjunctionSumScorer(BooleanScorer2Ptr scorer, Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers);
@@ -146,7 +146,7 @@ namespace Lucene
         friend class BooleanScorer2;
     };
     
-    class LPPAPI CountingConjunctionSumScorer : public ConjunctionScorer
+    class CountingConjunctionSumScorer : public ConjunctionScorer
     {
     public:
         CountingConjunctionSumScorer(BooleanScorer2Ptr scorer, SimilarityPtr similarity, Collection<ScorerPtr> scorers);

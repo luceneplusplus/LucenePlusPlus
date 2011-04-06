@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// Used by DocumentsWriter to implemented a StringReader that can be reset to a new string; we use this 
     /// when tokenizing the string value from a Field.
-    class LPPAPI ReusableStringReader : public Reader
+    class ReusableStringReader : public Reader
     {
     public:
         ReusableStringReader();

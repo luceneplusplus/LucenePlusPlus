@@ -23,7 +23,7 @@ namespace Lucene
     /// of the Porter stemmer I have seen is anything like as exact as this version, even with the points of DEPARTURE!
     ///
     /// Release 2 (the more old-fashioned, non-thread-safe version may be regarded as release 1.)
-    class LPPAPI PorterStemmer : public LuceneObject
+    class PorterStemmer : public LuceneObject
     {
     public:
         PorterStemmer();
