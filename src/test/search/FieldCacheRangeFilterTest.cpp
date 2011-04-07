@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <float.h>
 #include "BaseTestRangeFilterFixture.h"
 #include "RAMDirectory.h"
 #include "IndexReader.h"

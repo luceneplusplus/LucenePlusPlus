@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_CASE(testNoWaitClose)
     directory->close();
     
     // allow time for merge threads to finish
-    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    LuceneThread::threadSleep(1000);
 }
 
 namespace TestSubclassConcurrentMergeScheduler

@@ -7,9 +7,10 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
-#include "LuceneObject.h"
 #include <boost/asio.hpp>
+#include <boost/any.hpp>
 #include <boost/thread/thread.hpp>
+#include "LuceneObject.h"
 
 namespace Lucene
 {

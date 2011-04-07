@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <float.h>
 #include "LogByteSizeMergePolicy.h"
 
 namespace Lucene

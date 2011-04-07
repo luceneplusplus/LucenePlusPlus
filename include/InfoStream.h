@@ -8,6 +8,7 @@
 #define INFOSTREAM_H
 
 #include "LuceneObject.h"
+#include <fstream>
 
 namespace Lucene
 {

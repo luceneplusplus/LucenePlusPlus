@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <boost/thread/thread.hpp>
 #include "FilterManager.h"
 #include "_FilterManager.h"
 #include "Filter.h"
@@ -119,7 +118,7 @@ namespace Lucene
             }
             
             // take a nap
-            boost::this_thread::sleep(boost::posix_time::milliseconds(manager->cleanSleepTime));
+            LuceneThread::threadSleep(manager->cleanSleepTime);
         }
     }
 }

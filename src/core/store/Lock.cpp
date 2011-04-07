@@ -5,8 +5,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <boost/thread/thread.hpp>
 #include "Lock.h"
+#include "LuceneThread.h"
 
 namespace Lucene
 {
@@ -29,7 +29,7 @@ namespace Lucene
         {
             if (lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER && sleepCount++ >= maxSleepCount)
                 boost::throw_exception(LockObtainFailedException(L"Lock obtain timed out"));
-            boost::this_thread::sleep(boost::posix_time::milliseconds(LOCK_POLL_INTERVAL));
+            LuceneThread::threadSleep(LOCK_POLL_INTERVAL);
             locked = obtain();
         }
         return locked;

@@ -6,7 +6,6 @@
 
 #include "LuceneInc.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/thread/thread.hpp>
 #include "SegmentInfos.h"
 #include "_SegmentInfos.h"
 #include "SegmentInfo.h"
@@ -15,6 +14,7 @@
 #include "ChecksumIndexInput.h"
 #include "ChecksumIndexOutput.h"
 #include "IndexCommit.h"
+#include "LuceneThread.h"
 #include "InfoStream.h"
 #include "TestPoint.h"
 #include "MiscUtils.h"
@@ -478,7 +478,7 @@ namespace Lucene
                             break;
                     }
                     
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(SegmentInfos::defaultGenFileRetryPauseMsec));
+                    LuceneThread::threadSleep(SegmentInfos::defaultGenFileRetryPauseMsec);
                 }
                 
                 segmentInfos->message(String(IndexFileNames::SEGMENTS_GEN()) + L" check: genB=" + StringUtils::toString(genB));

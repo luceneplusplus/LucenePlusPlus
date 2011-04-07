@@ -7,6 +7,7 @@
 #define NOMINMAX
 
 #include "targetver.h"
+#include <iostream>
 #include "LuceneHeaders.h"
 
 using namespace Lucene;

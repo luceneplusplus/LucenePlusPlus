@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <float.h>
 #include "LuceneTestFixture.h"
 #include "RAMDirectory.h"
 #include "IndexWriter.h"

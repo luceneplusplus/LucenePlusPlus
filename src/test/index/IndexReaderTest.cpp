@@ -665,7 +665,7 @@ BOOST_AUTO_TEST_CASE(testLastModified)
             reader->close();
             
             // modify index and check version has been incremented
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            LuceneThread::threadSleep(1000);
 
             writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
             addDocumentWithFields(writer);

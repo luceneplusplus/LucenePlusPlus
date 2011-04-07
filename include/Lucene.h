@@ -11,20 +11,15 @@
 
 #include <wctype.h>
 #include <wchar.h>
-#include <float.h>
 #include <sys/types.h>
 #include <sstream>
-#include <iostream>
-#include <fstream>
 #include <string>
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
-#include <typeinfo>
 
 #include <boost/cstdint.hpp>
 #include <boost/variant.hpp>
-#include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
@@ -46,6 +41,7 @@ namespace boost
 {
     struct blank;
     class thread;
+    class any;
     template < typename Signature > class function;
     namespace interprocess
     {

@@ -5,6 +5,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <fstream>
+#include <iostream>
 #include "IndexReader.h"
 #include "_IndexReader.h"
 #include "DirectoryReader.h"

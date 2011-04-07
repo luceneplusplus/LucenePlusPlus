@@ -8,7 +8,7 @@
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/thread/thread.hpp>
+#include "LuceneThread.h"
 #include "StringUtils.h"
 #include "FileUtils.h"
 
@@ -68,7 +68,7 @@ namespace Lucene
                 int64_t fileSize = (int64_t)boost::filesystem::file_size(path.c_str());
                 for (int32_t i = 0; fileSize == 0 && i < 100; ++i)
                 {
-                    boost::this_thread::yield();
+                    LuceneThread::threadYield();
                     fileSize = (int64_t)boost::filesystem::file_size(path.c_str());
                 }
                 return fileSize;

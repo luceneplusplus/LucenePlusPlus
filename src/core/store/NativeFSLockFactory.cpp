@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <fstream>
 #include <boost/interprocess/sync/file_lock.hpp>
 #include "NativeFSLockFactory.h"
 #include "_NativeFSLockFactory.h"

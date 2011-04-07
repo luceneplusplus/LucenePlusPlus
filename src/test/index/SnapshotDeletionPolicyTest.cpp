@@ -57,7 +57,7 @@ public:
                     if (i % 2 == 0)
                         writer->commit();
                 }
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+                LuceneThread::threadSleep(1);
             }
             while ((int64_t)MiscUtils::currentTimeMillis() < stopTime);
         }
@@ -103,7 +103,7 @@ public:
         do
         {
             backupIndex(dir, dp);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(20));
+            LuceneThread::threadSleep(20);
             if (!thread->isAlive())
                 break;
         }
@@ -175,7 +175,7 @@ public:
             // Don't do this in your real backups!  This is just to force a backup to take a somewhat 
             // long time, to make sure we are exercising the fact that the IndexWriter should not delete 
             // this file even when I take my time reading it.
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+            LuceneThread::threadSleep(1);
         }
         catch (LuceneException& e)
         {

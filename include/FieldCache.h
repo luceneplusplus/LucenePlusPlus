@@ -7,6 +7,7 @@
 #ifndef FIELDCACHE_H
 #define FIELDCACHE_H
 
+#include <boost/any.hpp>
 #include "LuceneObject.h"
 
 namespace Lucene

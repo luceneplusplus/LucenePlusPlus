@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <fstream>
 #include "FileReader.h"
 #include "MiscUtils.h"
 #include "FileUtils.h"

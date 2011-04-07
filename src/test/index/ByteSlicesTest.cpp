@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <iostream>
 #include "LuceneTestFixture.h"
 #include "TestUtils.h"
 #include "ByteBlockPool.h"

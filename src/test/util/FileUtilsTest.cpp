@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <fstream>
 #include "LuceneTestFixture.h"
 #include "TestUtils.h"
 #include "FileUtils.h"

@@ -7,6 +7,7 @@
 #ifndef VARIANTUTILS_H
 #define VARIANTUTILS_H
 
+#include <boost/any.hpp>
 #include "Lucene.h"
 #include "MiscUtils.h"
 

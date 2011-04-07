@@ -369,7 +369,7 @@ public:
             {
                 if (boost::starts_with(e.getError(), L"fake disk full at") || e.getError() == L"now failing on purpose")
                 {
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+                    LuceneThread::threadSleep(1);
                     if (fullCount++ >= 5)
                         break;
                 }
@@ -1925,7 +1925,7 @@ BOOST_AUTO_TEST_CASE(testBackgroundOptimize)
     dir->close();
     
     // allow time for merge threads to finish
-    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    LuceneThread::threadSleep(1000);
 }
 
 /// Test that no NullPointerException will be raised, when adding one document with a single, empty 
@@ -2514,7 +2514,7 @@ namespace TestNoWaitClose
                         break;
                     }
                 }
-                boost::this_thread::yield();
+                LuceneThread::threadYield();
             }
         }
     };
@@ -2609,7 +2609,7 @@ BOOST_AUTO_TEST_CASE(testCloseWithThreads)
         bool done = false;
         while (!done)
         {
-            boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+            LuceneThread::threadSleep(100);
             for (int32_t i = 0; i < NUM_THREADS; ++i)
             {
                 // only stop when at least one thread has added a doc
@@ -2698,7 +2698,7 @@ BOOST_AUTO_TEST_CASE(testImmediateDiskFullWithThreads)
         }
         
         // allow time for merge threads to finish
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        LuceneThread::threadSleep(1000);
         
         dir->close();
     }
@@ -2757,7 +2757,7 @@ static void _testMultipleThreadsFailure(MockDirectoryFailurePtr failure)
         for (int32_t i = 0; i < NUM_THREADS; ++i)
             threads[i]->start();
         
-        boost::this_thread::sleep(boost::posix_time::milliseconds(10));
+        LuceneThread::threadSleep(10);
         
         dir->failOn(failure);
         failure->setDoFail();
@@ -2793,7 +2793,7 @@ static void _testMultipleThreadsFailure(MockDirectoryFailurePtr failure)
         }
         
         // allow time for merge threads to finish
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        LuceneThread::threadSleep(1000);
         
         dir->close();
     }
@@ -3904,7 +3904,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexesWithCloseNoWait)
     TestAddIndexesWithCloseNoWait::CommitAndAddIndexesPtr c = newLucene<TestAddIndexesWithCloseNoWait::CommitAndAddIndexes>(NUM_COPY);
     c->launchThreads(-1);
     
-    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    LuceneThread::threadSleep(500);
 
     // Close without first stopping/joining the threads
     c->close(false);
@@ -3974,7 +3974,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexesWithRollback)
     TestAddIndexesWithRollback::CommitAndAddIndexesPtr c = newLucene<TestAddIndexesWithRollback::CommitAndAddIndexes>(NUM_COPY);
     c->launchThreads(-1);
     
-    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    LuceneThread::threadSleep(500);
 
     // Close without first stopping/joining the threads
     c->didClose = true;

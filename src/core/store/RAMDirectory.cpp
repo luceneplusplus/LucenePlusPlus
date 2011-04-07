@@ -5,12 +5,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <boost/thread/thread.hpp>
 #include "RAMDirectory.h"
 #include "RAMFile.h"
 #include "RAMInputStream.h"
 #include "RAMOutputStream.h"
 #include "SingleInstanceLockFactory.h"
+#include "LuceneThread.h"
 #include "MiscUtils.h"
 
 namespace Lucene
@@ -94,7 +94,7 @@ namespace Lucene
         }
         int64_t ts1 = MiscUtils::currentTimeMillis();
         while (ts1 == MiscUtils::currentTimeMillis())
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+            LuceneThread::threadSleep(1);
         file->setLastModified(MiscUtils::currentTimeMillis());
     }
     

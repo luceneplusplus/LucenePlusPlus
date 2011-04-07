@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "TestInc.h"
+#include <float.h>
 #include "LuceneTestFixture.h"
 #include "DocValues.h"
 #include "MiscUtils.h"

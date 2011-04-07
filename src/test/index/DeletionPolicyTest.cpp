@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(testExpirationTimeDeletionPolicy)
         writer->close();
 
         // Make sure to sleep long enough so that some commit points will be deleted
-        boost::this_thread::sleep(boost::posix_time::milliseconds((int32_t)(1000.0 * (SECONDS / 5.0))));
+        LuceneThread::threadSleep(1000.0 * (SECONDS / 5.0));
     }
     
     // First, make sure the policy in fact deleted something

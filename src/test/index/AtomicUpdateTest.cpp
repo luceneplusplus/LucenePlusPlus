@@ -43,7 +43,7 @@ public:
     virtual bool testPoint(const String& name)
     {
         if (random->nextInt(4) == 2)
-            boost::this_thread::yield();
+            LuceneThread::threadYield();
         return true;
     }
 };

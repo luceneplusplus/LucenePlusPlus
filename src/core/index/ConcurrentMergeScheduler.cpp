@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <boost/thread/thread.hpp>
 #include "ConcurrentMergeScheduler.h"
 #include "_ConcurrentMergeScheduler.h"
 #include "IndexWriter.h"
@@ -202,7 +201,7 @@ namespace Lucene
         // When an exception is hit during merge, IndexWriter removes any partial files and then 
         // allows another merge to run.  If whatever caused the error is not transient then the 
         // exception will keep happening, so, we sleep here to avoid saturating CPU in such cases
-        boost::this_thread::sleep(boost::posix_time::milliseconds(250)); // pause 250 msec
+        LuceneThread::threadSleep(250); // pause 250 msec
         boost::throw_exception(MergeException());
     }
     

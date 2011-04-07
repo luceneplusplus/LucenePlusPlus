@@ -8,7 +8,6 @@
 #define LUCENETHREAD_H
 
 #include "LuceneObject.h"
-#include <boost/thread/thread.hpp>
 
 namespace Lucene
 {
@@ -65,6 +64,12 @@ namespace Lucene
         
         /// Return representation of current execution thread.
         static int64_t currentId();
+        
+        /// Suspends current execution thread for a given time.
+        static void threadSleep(int32_t time);
+        
+        /// Yield current execution thread.
+        static void threadYield();
     
     protected:
         /// set thread running state.

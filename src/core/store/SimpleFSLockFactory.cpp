@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <fstream>
 #include "SimpleFSLockFactory.h"
 #include "_SimpleFSLockFactory.h"
 #include "FileUtils.h"
