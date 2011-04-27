@@ -17,6 +17,7 @@
 #include "MockRAMDirectory.h"
 #include "Random.h"
 #include "MiscUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -96,13 +97,13 @@ public:
         IndexWriterPtr writer1 = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
         writer1->setMaxBufferedDocs(3);
         writer1->setMergeFactor(2);
-        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer1->getMergeScheduler())->setSuppressExceptions();
+        boost::static_pointer_cast<ConcurrentMergeScheduler>(writer1->getMergeScheduler())->setSuppressExceptions();
 
         IndexWriterPtr writer2 = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
         // Intentionally use different params so flush/merge happen at different times
         writer2->setMaxBufferedDocs(2);
         writer2->setMergeFactor(3);
-        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer2->getMergeScheduler())->setSuppressExceptions();
+        boost::static_pointer_cast<ConcurrentMergeScheduler>(writer2->getMergeScheduler())->setSuppressExceptions();
 
         update(writer1);
         update(writer2);
@@ -158,7 +159,7 @@ public:
         {
             DocumentPtr d = newLucene<Document>();
             d->add(newLucene<Field>(L"id", StringUtils::toString(nextID++), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-            d->add(newLucene<Field>(L"contents", intToEnglish(random->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
+            d->add(newLucene<Field>(L"contents", English::intToEnglish(random->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
             writer->addDocument(d);
         }
         
@@ -242,7 +243,7 @@ static void initIndex(DirectoryPtr dir)
     for (int32_t j = 0; j < 7; ++j)
     {
         DocumentPtr d = newLucene<Document>();
-        d->add(newLucene<Field>(L"contents", intToEnglish(random->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
+        d->add(newLucene<Field>(L"contents", English::intToEnglish(random->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(d);
     }
     writer->close();

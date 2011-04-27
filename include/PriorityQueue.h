@@ -204,6 +204,7 @@ namespace Lucene
         }
         
         /// Determines the ordering of objects in this priority queue.  Subclasses must define this one method.
+        /// @return true if parameter first is less than parameter second.
         virtual bool lessThan(const TYPE& first, const TYPE& second)
         {
             return std::less<TYPE>()(first, second);

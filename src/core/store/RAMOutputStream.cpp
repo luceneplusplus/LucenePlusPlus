@@ -9,6 +9,7 @@
 #include "RAMFile.h"
 #include "RAMDirectory.h"
 #include "MiscUtils.h"
+#include "IndexInput.h"
 
 namespace Lucene
 {
@@ -151,5 +152,25 @@ namespace Lucene
     int64_t RAMOutputStream::sizeInBytes()
     {
         return file->numBuffers() * BUFFER_SIZE;
+    }
+    
+    void RAMOutputStream::copyBytes(IndexInputPtr input, int64_t numBytes)
+    {
+        BOOST_ASSERT(numBytes >= 0);
+        while (numBytes > 0)
+        {
+            if (bufferPosition == bufferLength)
+            {
+                ++currentBufferIndex;
+                switchCurrentBuffer();
+            }
+
+            int32_t toCopy = currentBuffer.size() - bufferPosition;
+            if (numBytes < toCopy)
+                toCopy = (int32_t)numBytes;
+            input->readBytes(currentBuffer.get(), bufferPosition, toCopy, false);
+            numBytes -= toCopy;
+            bufferPosition += toCopy;
+        }
     }
 }

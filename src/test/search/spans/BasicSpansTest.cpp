@@ -25,6 +25,7 @@
 #include "SpanNotQuery.h"
 #include "SpanOrQuery.h"
 #include "SpanFirstQuery.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -46,7 +47,7 @@ public:
         for (int32_t i = 0; i < 1000; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
-            doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
+            doc->add(newLucene<Field>(L"field", English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
         }
 
@@ -257,7 +258,7 @@ BOOST_AUTO_TEST_CASE(testNpeInSpanNearInSpanFirstInSpanNot)
     int32_t n = 5;
     SpanTermQueryPtr hun = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"hundred"));
     SpanTermQueryPtr term40 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"forty"));
-    SpanTermQueryPtr term40c = boost::dynamic_pointer_cast<SpanTermQuery>(term40->clone());
+    SpanTermQueryPtr term40c = boost::static_pointer_cast<SpanTermQuery>(term40->clone());
     
     SpanFirstQueryPtr include = newLucene<SpanFirstQuery>(term40, n);
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(hun, term40c), n - 1, true);

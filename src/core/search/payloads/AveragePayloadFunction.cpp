@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "AveragePayloadFunction.h"
+#include "Explanation.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -24,6 +25,15 @@ namespace Lucene
     double AveragePayloadFunction::docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore)
     {
         return numPayloadsSeen > 0 ? (payloadScore / (double)numPayloadsSeen) : 1.0;
+    }
+    
+    ExplanationPtr AveragePayloadFunction::explain(int32_t docId, int32_t numPayloadsSeen, double payloadScore)
+    {
+        ExplanationPtr payloadBoost(newLucene<Explanation>());
+        double avgPayloadScore = (numPayloadsSeen > 0 ? (payloadScore / numPayloadsSeen) : 1);
+        payloadBoost->setValue(avgPayloadScore);
+        payloadBoost->setDescription(L"AveragePayloadFunction(...)");
+        return payloadBoost;
     }
     
     int32_t AveragePayloadFunction::hashCode()

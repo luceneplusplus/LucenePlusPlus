@@ -22,6 +22,7 @@ namespace Lucene
         LUCENE_CLASS(NormsWriter);
             
     protected:
+        uint8_t defaultNorm;
         FieldInfosPtr fieldInfos;
     
     public:
@@ -35,10 +36,6 @@ namespace Lucene
         
         /// Produce _X.nrm if any document had a field with norms not disabled
         virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
-        virtual void closeDocStore(SegmentWriteStatePtr state);
-    
-    protected:
-        static uint8_t getDefaultNorm();
     };
 }
 

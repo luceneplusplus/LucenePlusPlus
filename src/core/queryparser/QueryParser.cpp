@@ -19,7 +19,7 @@
 #include "StringReader.h"
 #include "BooleanQuery.h"
 #include "CachingTokenFilter.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "Term.h"
 #include "PositionIncrementAttribute.h"
 #include "PhraseQuery.h"
@@ -60,6 +60,7 @@ namespace Lucene
         this->analyzer = analyzer;
         this->field = field;
         this->enablePositionIncrements = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
+        setAutoGeneratePhraseQueries(!LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31));
     }
     
     QueryParser::QueryParser(QueryParserCharStreamPtr stream)
@@ -78,6 +79,7 @@ namespace Lucene
     
     void QueryParser::ConstructParser(QueryParserCharStreamPtr stream, QueryParserTokenManagerPtr tokenMgr)
     {
+        hasNewAPI = true;
         _operator = OR_OPERATOR;
         lowercaseExpandedTerms = true;
         multiTermRewriteMethod = MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT();
@@ -136,6 +138,22 @@ namespace Lucene
     String QueryParser::getField()
     {
         return field;
+    }
+    
+    bool QueryParser::getAutoGeneratePhraseQueries()
+    {
+        return autoGeneratePhraseQueries;
+    }
+    
+    void QueryParser::setAutoGeneratePhraseQueries(bool value)
+    {
+        if (!value && !hasNewAPI)
+        {
+            boost::throw_exception(IllegalArgumentException(L"You must implement the new API: "
+                                                            L"getFieldQuery(String, String, bool)"
+                                                            L" to use setAutoGeneratePhraseQueries(false)"));
+        }
+        this->autoGeneratePhraseQueries = value;
     }
     
     double QueryParser::getFuzzyMinSim()
@@ -333,6 +351,12 @@ namespace Lucene
     
     QueryPtr QueryParser::getFieldQuery(const String& field, const String& queryText)
     {
+        // treat the text as if it was quoted, to drive phrase logic with old versions.
+        return getFieldQuery(field, queryText, true);
+    }
+    
+    QueryPtr QueryParser::getFieldQuery(const String& field, const String& queryText, bool quoted)
+    {
         TokenStreamPtr source;
         try
         {
@@ -345,7 +369,7 @@ namespace Lucene
         }
         
         CachingTokenFilterPtr buffer(newLucene<CachingTokenFilter>(source));
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
         PositionIncrementAttributePtr posIncrAtt;
         int32_t numTokens = 0;
         
@@ -361,8 +385,8 @@ namespace Lucene
         }
         if (success)
         {
-            if (buffer->hasAttribute<TermAttribute>())
-                termAtt = buffer->getAttribute<TermAttribute>();
+            if (buffer->hasAttribute<CharTermAttribute>())
+                termAtt = buffer->getAttribute<CharTermAttribute>();
             if (buffer->hasAttribute<PositionIncrementAttribute>())
                 posIncrAtt = buffer->getAttribute<PositionIncrementAttribute>();
         }
@@ -414,7 +438,7 @@ namespace Lucene
             {
                 bool hasNext = buffer->incrementToken();
                 BOOST_ASSERT(hasNext);
-                term = termAtt->term();
+                term = termAtt->toString();
             }
             catch (IOException&)
             {
@@ -424,12 +448,13 @@ namespace Lucene
         }
         else
         {
-            if (severalTokensAtSamePosition)
+            if (severalTokensAtSamePosition || (!quoted && !autoGeneratePhraseQueries))
             {
-                if (positionCount == 1)
+                if (positionCount == 1 || (!quoted && !autoGeneratePhraseQueries))
                 {
                     // no phrase query
-                    BooleanQueryPtr q(newBooleanQuery(true));
+                    BooleanQueryPtr q(newBooleanQuery(positionCount == 1));
+                    BooleanClause::Occur occur = positionCount > 1 && _operator == AND_OPERATOR ? BooleanClause::MUST : BooleanClause::SHOULD;
                     for (int32_t i = 0; i < numTokens; ++i)
                     {
                         String term;
@@ -437,7 +462,7 @@ namespace Lucene
                         {
                             bool hasNext = buffer->incrementToken();
                             BOOST_ASSERT(hasNext);
-                            term = termAtt->term();
+                            term = termAtt->toString();
                         }
                         catch (IOException&)
                         {
@@ -445,7 +470,7 @@ namespace Lucene
                         }
                         
                         QueryPtr currentQuery(newTermQuery(newLucene<Term>(field, term)));
-                        q->add(currentQuery, BooleanClause::SHOULD);
+                        q->add(currentQuery, occur);
                     }
                     return q;
                 }
@@ -464,7 +489,7 @@ namespace Lucene
                         {
                             bool hasNext = buffer->incrementToken();
                             BOOST_ASSERT(hasNext);
-                            term = termAtt->term();
+                            term = termAtt->toString();
                             if (posIncrAtt)
                                 positionIncrement = posIncrAtt->getPositionIncrement();
                         }
@@ -506,7 +531,7 @@ namespace Lucene
                     {
                         bool hasNext = buffer->incrementToken();
                         BOOST_ASSERT(hasNext);
-                        term = termAtt->term();
+                        term = termAtt->toString();
                         if (posIncrAtt)
                             positionIncrement = posIncrAtt->getPositionIncrement();
                     }
@@ -530,11 +555,11 @@ namespace Lucene
     
     QueryPtr QueryParser::getFieldQuery(const String& field, const String& queryText, int32_t slop)
     {
-        QueryPtr query(getFieldQuery(field, queryText));
+        QueryPtr query(hasNewAPI ? getFieldQuery(field, queryText, true) : getFieldQuery(field, queryText));
         if (MiscUtils::typeOf<PhraseQuery>(query))
-            boost::dynamic_pointer_cast<PhraseQuery>(query)->setSlop(slop);
+            boost::static_pointer_cast<PhraseQuery>(query)->setSlop(slop);
         if (MiscUtils::typeOf<MultiPhraseQuery>(query))
-            boost::dynamic_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
+            boost::static_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
         return query;
     }
     
@@ -782,7 +807,7 @@ namespace Lucene
         return buffer.str();
     }
     
-    int QueryParser::main(Collection<String> args)
+    int32_t QueryParser::main(Collection<String> args)
     {
         if (args.empty())
         {
@@ -1075,7 +1100,7 @@ namespace Lucene
                         q = getFuzzyQuery(field, termImage, fms);
                     }
                     else
-                        q = getFieldQuery(field, termImage);
+                        q = hasNewAPI ? getFieldQuery(field, termImage, false) : getFieldQuery(field, termImage);
                 }
                 break;
             case RANGEIN_START:
@@ -1263,6 +1288,15 @@ namespace Lucene
         return _jj_2_1;
     }
     
+    bool QueryParser::jj_3R_3()
+    {
+        if (jj_scan_token(STAR))
+            return true;
+        if (jj_scan_token(COLON))
+            return true;
+        return false;
+    }
+    
     bool QueryParser::jj_3R_2()
     {
         if (jj_scan_token(TERM))
@@ -1281,15 +1315,6 @@ namespace Lucene
             if (jj_3R_3())
                 return true;
         }
-        return false;
-    }
-    
-    bool QueryParser::jj_3R_3()
-    {
-        if (jj_scan_token(STAR))
-            return true;
-        if (jj_scan_token(COLON))
-            return true;
         return false;
     }
     

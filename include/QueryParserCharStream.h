@@ -22,6 +22,7 @@ namespace Lucene
     class LPPAPI QueryParserCharStream
     {
     public:
+        virtual ~QueryParserCharStream();
         LUCENE_INTERFACE(QueryParserCharStream);
     
     public:

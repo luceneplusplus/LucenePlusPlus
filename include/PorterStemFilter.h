@@ -11,12 +11,14 @@
 
 namespace Lucene
 {
-    /// Transforms the token stream as per the Porter stemming algorithm.  Note: the input to the stemming filter must 
-    /// already be in lower case, so you will need to use LowerCaseFilter or LowerCaseTokenizer further down the Tokenizer 
-    /// chain in order for this to work properly.
+    /// Transforms the token stream as per the Porter stemming algorithm.  Note: the input to
+    /// the stemming filter must already be in lower case, so you will need to use 
+    /// LowerCaseFilter or LowerCaseTokenizer further down the Tokenizer chain in order for 
+    /// this to work properly.
     ///
-    /// To use this filter with other analyzers, you'll want to write an Analyzer class that sets up the TokenStream chain 
-    /// as you want it.  To use this with LowerCaseTokenizer, for example, you'd write an analyzer like this:
+    /// To use this filter with other analyzers, you'll want to write an Analyzer class that 
+    /// sets up the TokenStream chain as you want it.  To use this with LowerCaseTokenizer, 
+    /// for example, you'd write an analyzer like this:
     ///
     /// <pre>
     /// class MyAnalyzer : public Analyzer
@@ -28,6 +30,10 @@ namespace Lucene
     ///     }
     /// };
     /// </pre>
+    ///
+    /// Note: This filter is aware of the {@link KeywordAttribute}. To prevent certain terms 
+    /// from being passed to the stemmer {@link KeywordAttribute#isKeyword()} should be set 
+    /// to true in a previous {@link TokenStream}.
     class LPPAPI PorterStemFilter : public TokenFilter
     {
     public:
@@ -38,7 +44,8 @@ namespace Lucene
     
     protected:
         PorterStemmerPtr stemmer;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
+        KeywordAttributePtr keywordAttr;
     
     public:
         virtual bool incrementToken();

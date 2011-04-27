@@ -33,7 +33,6 @@ namespace Lucene
     public:
         StoredFieldsWriterPerThreadPtr addThread(DocStatePtr docState);
         void flush(SegmentWriteStatePtr state);
-        void closeDocStore(SegmentWriteStatePtr state);
         StoredFieldsWriterPerDocPtr getPerDoc();
         void abort();
         
@@ -41,34 +40,10 @@ namespace Lucene
         void fill(int32_t docID);
         
         void finishDocument(StoredFieldsWriterPerDocPtr perDoc);
-        bool freeRAM();
         void free(StoredFieldsWriterPerDocPtr perDoc);
         
-    protected:
+    private:
         void initFieldsWriter();
-    };
-    
-    class StoredFieldsWriterPerDoc : public DocWriter
-    {
-    public:
-        StoredFieldsWriterPerDoc(StoredFieldsWriterPtr fieldsWriter);
-        virtual ~StoredFieldsWriterPerDoc();
-        
-        LUCENE_CLASS(StoredFieldsWriterPerDoc);
-            
-    protected:
-        StoredFieldsWriterWeakPtr _fieldsWriter;
-    
-    public:
-        PerDocBufferPtr buffer;
-        RAMOutputStreamPtr fdt;
-        int32_t numStoredFields;
-    
-    public:
-        void reset();
-        virtual void abort();
-        virtual int64_t sizeInBytes();
-        virtual void finish();
     };
 }
 

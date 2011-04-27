@@ -54,7 +54,7 @@ namespace Lucene
     LuceneObjectPtr MatchAllDocsQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<MatchAllDocsQuery>();
-        MatchAllDocsQueryPtr cloneQuery(boost::dynamic_pointer_cast<MatchAllDocsQuery>(Query::clone(clone)));
+        MatchAllDocsQueryPtr cloneQuery(boost::static_pointer_cast<MatchAllDocsQuery>(Query::clone(clone)));
         cloneQuery->normsField = normsField;
         return cloneQuery;
     }
@@ -115,7 +115,7 @@ namespace Lucene
         return queryExpl;
     }
     
-    MatchAllScorer::MatchAllScorer(MatchAllDocsQueryPtr query, IndexReaderPtr reader, SimilarityPtr similarity, WeightPtr weight, ByteArray norms) : Scorer(similarity)
+    MatchAllScorer::MatchAllScorer(MatchAllDocsQueryPtr query, IndexReaderPtr reader, SimilarityPtr similarity, WeightPtr weight, ByteArray norms) : Scorer(similarity, weight)
     {
         this->query = query;
         this->termDocs = reader->termDocs(TermPtr());
@@ -141,7 +141,7 @@ namespace Lucene
     
     double MatchAllScorer::score()
     {
-        return norms ? _score * Similarity::decodeNorm(norms[docID()]) : _score;
+        return norms ? _score * getSimilarity()->decodeNormValue(norms[docID()]) : _score;
     }
     
     int32_t MatchAllScorer::advance(int32_t target)

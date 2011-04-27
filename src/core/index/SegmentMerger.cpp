@@ -17,6 +17,7 @@
 #include "CompoundFileWriter.h"
 #include "SegmentReader.h"
 #include "_SegmentReader.h"
+#include "SegmentInfo.h"
 #include "Directory.h"
 #include "TermPositions.h"
 #include "TermVectorsReader.h"
@@ -31,6 +32,10 @@
 #include "TestPoint.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
+#include "IndexWriterConfig.h"
+#include "ReaderUtil.h"
+#include "PayloadProcessorProvider.h"
+#include "_PayloadProcessorProvider.h"
 
 namespace Lucene
 {
@@ -41,64 +46,42 @@ namespace Lucene
     const uint8_t SegmentMerger::NORMS_HEADER[] = {'N', 'R', 'M', -1};
     const int32_t SegmentMerger::NORMS_HEADER_LENGTH = 4;
     
-    SegmentMerger::SegmentMerger(DirectoryPtr dir, const String& name)
-    {
-        readers = Collection<IndexReaderPtr>::newInstance();
-        termIndexInterval = IndexWriter::DEFAULT_TERM_INDEX_INTERVAL;
-        mergedDocs = 0;
-        mergeDocStores = false;
-        omitTermFreqAndPositions = false;
-        
-        directory = dir;
-        segment = name;
-        checkAbort = newLucene<CheckAbortNull>();
-    }
-    
-    SegmentMerger::SegmentMerger(IndexWriterPtr writer, const String& name, OneMergePtr merge)
+    SegmentMerger::SegmentMerger(DirectoryPtr dir, int32_t termIndexInterval, const String& name, OneMergePtr merge, 
+                                 PayloadProcessorProviderPtr payloadProcessorProvider, FieldInfosPtr fieldInfos)
     {
         readers = Collection<IndexReaderPtr>::newInstance();
         mergedDocs = 0;
-        mergeDocStores = false;
         omitTermFreqAndPositions = false;
+        matchedCount = 0;
         
-        directory = writer->getDirectory();
-        segment = name;
+        this->payloadProcessorProvider = payloadProcessorProvider;
+        this->directory = dir;
+        this->_fieldInfos = fieldInfos;
+        this->segment = name;
         
         if (merge)
             checkAbort = newLucene<CheckAbort>(merge, directory);
         else
             checkAbort = newLucene<CheckAbortNull>();
-        termIndexInterval = writer->getTermIndexInterval();
+        this->termIndexInterval = termIndexInterval;
     }
     
     SegmentMerger::~SegmentMerger()
     {
     }
 
-    bool SegmentMerger::hasProx()
+    FieldInfosPtr SegmentMerger::fieldInfos()
     {
-        return fieldInfos->hasProx();
+        return _fieldInfos;
     }
     
     void SegmentMerger::add(IndexReaderPtr reader)
     {
-        readers.add(reader);
-    }
-    
-    IndexReaderPtr SegmentMerger::segmentReader(int32_t i)
-    {
-        return readers[i];
+        ReaderUtil::gatherSubReaders(readers, reader);
     }
     
     int32_t SegmentMerger::merge()
     {
-        return merge(true);
-    }
-    
-    int32_t SegmentMerger::merge(bool mergeDocStores)
-    {
-        this->mergeDocStores = mergeDocStores;
-        
         // NOTE: it's important to add calls to checkAbort.work(...) if you make any changes to this method that will spend a lot of time.  
         // The frequency of this check impacts how long IndexWriter.close(false) takes to actually stop the threads.
         
@@ -106,65 +89,22 @@ namespace Lucene
         mergeTerms();
         mergeNorms();
         
-        if (mergeDocStores && fieldInfos->hasVectors())
+        if (_fieldInfos->hasVectors())
             mergeVectors();
         
         return mergedDocs;
     }
     
-    void SegmentMerger::closeReaders()
+    HashSet<String> SegmentMerger::createCompoundFile(const String& fileName, SegmentInfoPtr info)
     {
-        for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
-            (*reader)->close();
-    }
-    
-    HashSet<String> SegmentMerger::getMergedFiles()
-    {
-        HashSet<String> fileSet(HashSet<String>::newInstance());
-        
-        // Basic files
-        for (HashSet<String>::iterator ext = IndexFileNames::COMPOUND_EXTENSIONS().begin(); ext != IndexFileNames::COMPOUND_EXTENSIONS().end(); ++ext)
-        {
-            if (*ext == IndexFileNames::PROX_EXTENSION() && !hasProx())
-                continue;
-            
-            if (mergeDocStores || (*ext != IndexFileNames::FIELDS_EXTENSION() && *ext != IndexFileNames::FIELDS_INDEX_EXTENSION()))
-                fileSet.add(segment + L"." + *ext);
-        }
-        
-        // Fieldable norm files
-        for (int32_t i = 0; i < fieldInfos->size(); ++i)
-        {
-            FieldInfoPtr fi(fieldInfos->fieldInfo(i));
-            if (fi->isIndexed && !fi->omitNorms)
-            {
-                fileSet.add(segment + L"." + IndexFileNames::NORMS_EXTENSION());
-                break;
-            }
-        }
-        
-        // Vector files
-        if (fieldInfos->hasVectors() && mergeDocStores)
-        {
-            for (HashSet<String>::iterator ext = IndexFileNames::VECTOR_EXTENSIONS().begin(); ext != IndexFileNames::VECTOR_EXTENSIONS().end(); ++ext)
-                fileSet.add(segment + L"." + *ext);
-        }
-        
-        return fileSet;
-    }
-        
-    HashSet<String> SegmentMerger::createCompoundFile(const String& fileName)
-    {
-        HashSet<String> files(getMergedFiles());
-        CompoundFileWriterPtr cfsWriter(newLucene<CompoundFileWriter>(directory, fileName, checkAbort));
-        
         // Now merge all added files
+        HashSet<String> files(info->files());
+        CompoundFileWriterPtr cfsWriter(newLucene<CompoundFileWriter>(directory, fileName, checkAbort));
         for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
             cfsWriter->addFile(*file);
-        
         // Perform the merge
         cfsWriter->close();
-        
+
         return files;
     }
     
@@ -177,6 +117,11 @@ namespace Lucene
             fInfos->add(*field, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector, 
                         !reader->hasNorms(*field), storePayloads, omitTFAndPositions);
         }
+    }
+    
+    int32_t SegmentMerger::getMatchedSubReaderCount()
+    {
+        return matchedCount;
     }
 
     void SegmentMerger::setMatchingSegmentReaders()
@@ -198,9 +143,12 @@ namespace Lucene
                 FieldInfosPtr segmentFieldInfos(segmentReader->fieldInfos());
                 int32_t numFieldInfos = segmentFieldInfos->size();
                 for (int32_t j = 0; same && j < numFieldInfos; ++j)
-                    same = (fieldInfos->fieldName(j) == segmentFieldInfos->fieldName(j));
+                    same = (_fieldInfos->fieldName(j) == segmentFieldInfos->fieldName(j));
                 if (same)
+                {
                     matchingSegmentReaders[i] = segmentReader;
+                    ++matchedCount;
+                }
             }
         }
         
@@ -211,15 +159,6 @@ namespace Lucene
 
     int32_t SegmentMerger::mergeFields()
     {
-        if (!mergeDocStores)
-        {
-            // When we are not merging by doc stores, their field name -> number mapping are the same.  
-            // So, we start with the fieldInfos of the last segment in this case, to keep that numbering
-            fieldInfos = boost::dynamic_pointer_cast<FieldInfos>(boost::dynamic_pointer_cast<SegmentReader>(readers[readers.size() - 1])->core->fieldInfos->clone());
-        }
-        else
-            fieldInfos = newLucene<FieldInfos>();          // merge field names
-        
         for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
         {
             SegmentReaderPtr segmentReader(boost::dynamic_pointer_cast<SegmentReader>(*reader));
@@ -228,81 +167,66 @@ namespace Lucene
                 FieldInfosPtr readerFieldInfos(segmentReader->fieldInfos());
                 int32_t numReaderFieldInfos = readerFieldInfos->size();
                 for (int32_t j = 0; j < numReaderFieldInfos; ++j)
-                {
-                    FieldInfoPtr fi(readerFieldInfos->fieldInfo(j));
-                    fieldInfos->add(fi->name, fi->isIndexed, fi->storeTermVector, fi->storePositionWithTermVector, 
-                                    fi->storeOffsetWithTermVector, !(*reader)->hasNorms(fi->name), fi->storePayloads, 
-                                    fi->omitTermFreqAndPositions);
-                }
+                    _fieldInfos->add(readerFieldInfos->fieldInfo(j));
             }
             else
             {
-                addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR_WITH_POSITION_OFFSET), true, true, true, false, false);
-                addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR_WITH_POSITION), true, true, false, false, false);
-                addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR_WITH_OFFSET), true, false, true, false, false);
-                addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR), true, false, false, false, false);
-                addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_OMIT_TERM_FREQ_AND_POSITIONS), false, false, false, false, true);
-                addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_STORES_PAYLOADS), false, false, false, true, false);
-                addIndexed(*reader, fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_INDEXED), false, false, false, false, false);
-                fieldInfos->add((*reader)->getFieldNames(IndexReader::FIELD_OPTION_UNINDEXED), false);
+                addIndexed(*reader, _fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR_WITH_POSITION_OFFSET), true, true, true, false, false);
+                addIndexed(*reader, _fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR_WITH_POSITION), true, true, false, false, false);
+                addIndexed(*reader, _fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR_WITH_OFFSET), true, false, true, false, false);
+                addIndexed(*reader, _fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR), true, false, false, false, false);
+                addIndexed(*reader, _fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_OMIT_TERM_FREQ_AND_POSITIONS), false, false, false, false, true);
+                addIndexed(*reader, _fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_STORES_PAYLOADS), false, false, false, true, false);
+                addIndexed(*reader, _fieldInfos, (*reader)->getFieldNames(IndexReader::FIELD_OPTION_INDEXED), false, false, false, false, false);
+                _fieldInfos->add((*reader)->getFieldNames(IndexReader::FIELD_OPTION_UNINDEXED), false);
             }
         }
-        fieldInfos->write(directory, segment + L".fnm");
+        _fieldInfos->write(directory, segment + L".fnm");
         
         int32_t docCount = 0;
         
         setMatchingSegmentReaders();
         
-        if (mergeDocStores)
+        // merge field values
+        FieldsWriterPtr fieldsWriter(newLucene<FieldsWriter>(directory, segment, _fieldInfos));
+        
+        LuceneException finally;
+        try
         {
-            // merge field values
-            FieldsWriterPtr fieldsWriter(newLucene<FieldsWriter>(directory, segment, fieldInfos));
-            
-            LuceneException finally;
-            try
+            int32_t idx = 0;
+            for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
             {
-                int32_t idx = 0;
-                for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
+                SegmentReaderPtr matchingSegmentReader(matchingSegmentReaders[idx++]);
+                FieldsReaderPtr matchingFieldsReader;
+                if (matchingSegmentReader)
                 {
-                    SegmentReaderPtr matchingSegmentReader(matchingSegmentReaders[idx++]);
-                    FieldsReaderPtr matchingFieldsReader;
-                    if (matchingSegmentReader)
-                    {
-                        FieldsReaderPtr fieldsReader(matchingSegmentReader->getFieldsReader());
-                        if (fieldsReader && fieldsReader->canReadRawDocs())
-                            matchingFieldsReader = fieldsReader;
-                    }
-                    if ((*reader)->hasDeletions())
-                        docCount += copyFieldsWithDeletions(fieldsWriter, *reader, matchingFieldsReader);
-                    else
-                        docCount += copyFieldsNoDeletions(fieldsWriter, *reader, matchingFieldsReader);
+                    FieldsReaderPtr fieldsReader(matchingSegmentReader->getFieldsReader());
+                    if (fieldsReader && fieldsReader->canReadRawDocs())
+                        matchingFieldsReader = fieldsReader;
                 }
-            }
-            catch (LuceneException& e)
-            {
-                finally = e;
-            }
-            fieldsWriter->close();
-            finally.throwException();
-            
-            String fileName(segment + L"." + IndexFileNames::FIELDS_INDEX_EXTENSION());
-            int64_t fdxFileLength = directory->fileLength(fileName);
-            
-            if (4 + ((int64_t)docCount) * 8 != fdxFileLength)
-            {
-                boost::throw_exception(RuntimeException(L"mergeFields produced an invalid result: docCount is " + 
-                                                        StringUtils::toString(docCount) + L" but fdx file size is " + 
-                                                        StringUtils::toString(fdxFileLength) + L" file=" + fileName + 
-                                                        L" file exists?=" + StringUtils::toString(directory->fileExists(fileName)) + 
-                                                        L"; now aborting this merge to prevent index corruption"));
+                if ((*reader)->hasDeletions())
+                    docCount += copyFieldsWithDeletions(fieldsWriter, *reader, matchingFieldsReader);
+                else
+                    docCount += copyFieldsNoDeletions(fieldsWriter, *reader, matchingFieldsReader);
             }
         }
-        else
+        catch (LuceneException& e)
         {
-            // If we are skipping the doc stores, that means there are no deletions in any of these segments, 
-            // so we just sum numDocs() of each segment to get total docCount
-            for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
-                docCount += (*reader)->numDocs();
+            finally = e;
+        }
+        fieldsWriter->close();
+        finally.throwException();
+        
+        String fileName(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_INDEX_EXTENSION()));
+        int64_t fdxFileLength = directory->fileLength(fileName);
+        
+        if (4 + ((int64_t)docCount) * 8 != fdxFileLength)
+        {
+            boost::throw_exception(RuntimeException(L"mergeFields produced an invalid result: docCount is " + 
+                                                    StringUtils::toString(docCount) + L" but fdx file size is " + 
+                                                    StringUtils::toString(fdxFileLength) + L" file=" + fileName + 
+                                                    L" file exists?=" + StringUtils::toString(directory->fileExists(fileName)) + 
+                                                    L"; now aborting this merge to prevent index corruption"));
         }
         
         return docCount;
@@ -395,7 +319,7 @@ namespace Lucene
 
     void SegmentMerger::mergeVectors()
     {
-        TermVectorsWriterPtr termVectorsWriter(newLucene<TermVectorsWriter>(directory, segment, fieldInfos));
+        TermVectorsWriterPtr termVectorsWriter(newLucene<TermVectorsWriter>(directory, segment, _fieldInfos));
         
         LuceneException finally;
         try
@@ -407,7 +331,7 @@ namespace Lucene
                 TermVectorsReaderPtr matchingVectorsReader;
                 if (matchingSegmentReader)
                 {
-                    TermVectorsReaderPtr vectorsReader(matchingSegmentReader->getTermVectorsReaderOrig());
+                    TermVectorsReaderPtr vectorsReader(matchingSegmentReader->getTermVectorsReader());
                     
                     // If the TV* files are an older format then they cannot read raw docs
                     if (vectorsReader && vectorsReader->canReadRawDocs())
@@ -426,7 +350,7 @@ namespace Lucene
         termVectorsWriter->close();
         finally.throwException();
         
-        String fileName(segment + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
+        String fileName(IndexFileNames::segmentFileName(segment, IndexFileNames::VECTORS_INDEX_EXTENSION()));
         int64_t tvxSize = directory->fileLength(fileName);
         
         if (4 + ((int64_t)mergedDocs) * 16 != tvxSize)
@@ -523,21 +447,19 @@ namespace Lucene
     {
         TestScope testScope(L"SegmentMerger", L"mergeTerms");
         
-        SegmentWriteStatePtr state(newLucene<SegmentWriteState>(DocumentsWriterPtr(), directory, segment, L"", mergedDocs, 0, termIndexInterval));
-
-        FormatPostingsFieldsConsumerPtr consumer(newLucene<FormatPostingsFieldsWriter>(state, fieldInfos));
-
+        FormatPostingsFieldsConsumerPtr fieldsConsumer(newLucene<FormatPostingsFieldsWriter>(segmentWriteState, _fieldInfos));
+        
         LuceneException finally;
         try
         {
             queue = newLucene<SegmentMergeQueue>(readers.size());
-            mergeTermInfos(consumer);
+            mergeTermInfos(fieldsConsumer);
         }
         catch (LuceneException& e)
         {
             finally = e;
         }
-        consumer->finish();
+        fieldsConsumer->finish();
         if (queue)
             queue->close();
         finally.throwException();
@@ -552,6 +474,8 @@ namespace Lucene
             IndexReaderPtr reader(readers[i]);
             TermEnumPtr termEnum(reader->terms());
             SegmentMergeInfoPtr smi(newLucene<SegmentMergeInfo>(base, termEnum, reader));
+            if (payloadProcessorProvider)
+                smi->dirPayloadProcessor = payloadProcessorProvider->getDirProcessor(reader->directory());
             Collection<int32_t> docMap(smi->getDocMap());
             if (docMap)
             {
@@ -598,7 +522,7 @@ namespace Lucene
                 currentField = term->_field;
                 if (termsConsumer)
                     termsConsumer->finish();
-                FieldInfoPtr fieldInfo(fieldInfos->fieldInfo(currentField));
+                FieldInfoPtr fieldInfo(_fieldInfos->fieldInfo(currentField));
                 termsConsumer = consumer->addField(fieldInfo);
                 omitTermFreqAndPositions = fieldInfo->omitTermFreqAndPositions;
             }
@@ -641,6 +565,10 @@ namespace Lucene
             Collection<int32_t> docMap(smi->getDocMap());
             postings->seek(smi->termEnum);
             
+            PayloadProcessorPtr payloadProcessor;
+            if (smi->dirPayloadProcessor)
+                payloadProcessor = smi->dirPayloadProcessor->getProcessor(smi->term);
+            
             while (postings->next())
             {
                 ++df;
@@ -665,6 +593,11 @@ namespace Lucene
                             if (payloadBuffer.size() < payloadLength)
                                 payloadBuffer.resize(payloadLength);
                             postings->getPayload(payloadBuffer, 0);
+                            if (payloadProcessor)
+                            {
+                                payloadBuffer = payloadProcessor->processPayload(payloadBuffer, 0, payloadLength);
+                                payloadLength = payloadProcessor->payloadLength();
+                            }
                         }
                         posConsumer->addPosition(position, payloadBuffer, 0, payloadLength);
                     }
@@ -679,31 +612,32 @@ namespace Lucene
 
     void SegmentMerger::mergeNorms()
     {
+        // get needed buffer size by finding the largest segment
+        int32_t bufferSize = 0;
+        for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
+            bufferSize = std::max(bufferSize, (*reader)->maxDoc());
+    
         ByteArray normBuffer;
         IndexOutputPtr output;
         LuceneException finally;
         try
         {
-            int32_t numFieldInfos = fieldInfos->size();
+            int32_t numFieldInfos = _fieldInfos->size();
             for (int32_t i = 0; i < numFieldInfos; ++i)
             {
-                FieldInfoPtr fi(fieldInfos->fieldInfo(i));
+                FieldInfoPtr fi(_fieldInfos->fieldInfo(i));
                 if (fi->isIndexed && !fi->omitNorms)
                 {
                     if (!output)
                     {
-                        output = directory->createOutput(segment + L"." + IndexFileNames::NORMS_EXTENSION());
+                        output = directory->createOutput(IndexFileNames::segmentFileName(segment, IndexFileNames::NORMS_EXTENSION()));
                         output->writeBytes(NORMS_HEADER, SIZEOF_ARRAY(NORMS_HEADER));
                     }
+                    if (!normBuffer)
+                        normBuffer = ByteArray::newInstance(bufferSize);
                     for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
                     {
                         int32_t maxDoc = (*reader)->maxDoc();
-                        
-                        if (!normBuffer)
-                            normBuffer = ByteArray::newInstance(maxDoc);
-                        if (normBuffer.size() < maxDoc) // the buffer is too small for the current segment
-                            normBuffer.resize(maxDoc);
-                        MiscUtils::arrayFill(normBuffer.get(), 0, normBuffer.size(), 0);
                         (*reader)->norms(fi->name, normBuffer, 0);
                         if (!(*reader)->hasDeletions())
                         {

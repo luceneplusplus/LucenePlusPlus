@@ -368,7 +368,7 @@ void checkReadBytes(IndexInputPtr input, int32_t size, int32_t pos)
     // the beginning of the array
     int32_t offset = size % 10; // arbitrary
     ByteArray buffer(ByteArray::newInstance(10));
-    buffer.resize(MiscUtils::getNextSize(offset + size));
+    MiscUtils::grow(buffer, offset + size);
     BOOST_CHECK_EQUAL(pos, input->getFilePointer());
     int64_t left = TEST_FILE_LENGTH - input->getFilePointer();
     if (left <= 0)

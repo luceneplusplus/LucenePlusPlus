@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "DocumentsWriterThreadState.h"
 #include "DocumentsWriter.h"
+#include "_DocumentsWriter.h"
 #include "DocConsumer.h"
 
 namespace Lucene
@@ -23,7 +24,6 @@ namespace Lucene
     void DocumentsWriterThreadState::initialize()
     {
         isIdle = true;
-        doFlushAfter = false;
         numThreads = 1;
         DocumentsWriterPtr docWriter(_docWriter);
         docState = newLucene<DocState>();
@@ -37,6 +37,5 @@ namespace Lucene
     void DocumentsWriterThreadState::doAfterFlush()
     {
         numThreads = 0;
-        doFlushAfter = false;
     }
 }

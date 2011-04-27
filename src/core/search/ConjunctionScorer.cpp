@@ -18,11 +18,11 @@ namespace Lucene
         }
     };
 
-    ConjunctionScorer::ConjunctionScorer(SimilarityPtr similarity, Collection<ScorerPtr> scorers) : Scorer(similarity)
+    ConjunctionScorer::ConjunctionScorer(WeightPtr weight, double coord, Collection<ScorerPtr> scorers) : Scorer(weight)
     {
         this->lastDoc = -1;
         this->scorers = scorers;
-        this->coord = similarity->coord(scorers.size(), scorers.size());
+        this->coord = coord;
         
         for (Collection<ScorerPtr>::iterator scorer = scorers.begin(); scorer != scorers.end(); ++scorer)
         {
@@ -38,7 +38,11 @@ namespace Lucene
         // Sort the array the first time...
         // We don't need to sort the array in any future calls because we know it will already start off 
         // sorted (all scorers on same doc).
-        std::sort(scorers.begin(), scorers.end(), lessScorerDocId());
+        
+        // Note that this comparator is not consistent with equals
+        // Also we use mergeSort here to be stable (so order of Scoreres that match on first document 
+        // keeps preserved).
+        std::stable_sort(scorers.begin(), scorers.end(), lessScorerDocId());
         
         // NOTE: doNext() must be called before the re-sorting of the array later on.  The reason is this: 
         // assume there are 5 scorers, whose first docs are 1, 2, 3, 5, 5 respectively. Sorting (above) leaves 

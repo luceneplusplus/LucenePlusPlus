@@ -18,16 +18,17 @@
 
 namespace Lucene
 {
-    const int32_t Token::MIN_BUFFER_SIZE = 10;
+    /// the default type
+    const String Token::DEFAULT_TYPE = L"word";
     
     Token::Token()
     {
-        ConstructToken(0, 0, DEFAULT_TYPE(), 0);
+        ConstructToken(0, 0, DEFAULT_TYPE, 0);
     }
     
     Token::Token(int32_t start, int32_t end)
     {
-        ConstructToken(start, end, DEFAULT_TYPE(), 0);
+        ConstructToken(start, end, DEFAULT_TYPE, 0);
     }
     
     Token::Token(int32_t start, int32_t end, const String& type)
@@ -37,31 +38,31 @@ namespace Lucene
     
     Token::Token(int32_t start, int32_t end, int32_t flags)
     {
-        ConstructToken(start, end, DEFAULT_TYPE(), flags);
+        ConstructToken(start, end, DEFAULT_TYPE, flags);
     }
     
     Token::Token(const String& text, int32_t start, int32_t end)
     {
-        ConstructToken(start, end, DEFAULT_TYPE(), 0);
-        setTermBuffer(text);
+        ConstructToken(start, end, DEFAULT_TYPE, 0);
+        append(text);
     }
     
     Token::Token(const String& text, int32_t start, int32_t end, const String& type)
     {
         ConstructToken(start, end, type, 0);
-        setTermBuffer(text);
+        append(text);
     }
     
     Token::Token(const String& text, int32_t start, int32_t end, int32_t flags)
     {
-        ConstructToken(start, end, DEFAULT_TYPE(), flags);
-        setTermBuffer(text);
+        ConstructToken(start, end, DEFAULT_TYPE, flags);
+        append(text);
     }
     
     Token::Token(CharArray startTermBuffer, int32_t termBufferOffset, int32_t termBufferLength, int32_t start, int32_t end)
     {
-        ConstructToken(start, end, DEFAULT_TYPE(), 0);
-        setTermBuffer(startTermBuffer.get(), termBufferOffset, termBufferLength);
+        ConstructToken(start, end, DEFAULT_TYPE, 0);
+        copyBuffer(startTermBuffer.get(), termBufferOffset, termBufferLength);
     }
     
     Token::~Token()
@@ -70,18 +71,11 @@ namespace Lucene
     
     void Token::ConstructToken(int32_t start, int32_t end, const String& type, int32_t flags)
     {
-        this->_termLength = 0;
         this->_startOffset = start;
         this->_endOffset = end;
         this->_type = type;
         this->flags = flags;
         this->positionIncrement = 1;
-    }
-    
-    const String& Token::DEFAULT_TYPE()
-    {
-        static String _DEFAULT_TYPE(L"word");
-        return _DEFAULT_TYPE;
     }
     
     void Token::setPositionIncrement(int32_t positionIncrement)
@@ -94,101 +88,6 @@ namespace Lucene
     int32_t Token::getPositionIncrement()
     {
         return positionIncrement;
-    }
-    
-    String Token::term()
-    {
-        initTermBuffer();
-        return String(_termBuffer.get(), _termLength);
-    }
-    
-    void Token::setTermBuffer(const wchar_t* buffer, int32_t offset, int32_t length)
-    {
-        growTermBuffer(length);
-        MiscUtils::arrayCopy(buffer, offset, _termBuffer.get(), 0, length);
-        _termLength = length;
-    }
-    
-    void Token::setTermBuffer(const String& buffer)
-    {
-        int32_t length = (int32_t)buffer.size();
-        growTermBuffer(length);
-        MiscUtils::arrayCopy(buffer.begin(), 0, _termBuffer.get(), 0, length);
-        _termLength = length;
-    }
-    
-    void Token::setTermBuffer(const String& buffer, int32_t offset, int32_t length)
-    {
-        BOOST_ASSERT(offset <= (int32_t)buffer.length());
-        BOOST_ASSERT(offset + length <= (int32_t)buffer.length());
-        growTermBuffer(length);
-        MiscUtils::arrayCopy(buffer.begin(), offset, _termBuffer.get(), 0, length);
-        _termLength = length;
-    }
-    
-    CharArray Token::termBuffer()
-    {
-        if (!_termBuffer)
-            initTermBuffer();
-        return _termBuffer;
-    }
-    
-    wchar_t* Token::termBufferArray()
-    {
-        if (!_termBuffer)
-            initTermBuffer();
-        return _termBuffer.get();
-    }
-    
-    CharArray Token::resizeTermBuffer(int32_t newSize)
-    {
-        if (!_termBuffer)
-        {
-            // The buffer is always at least MIN_BUFFER_SIZE
-            _termBuffer = CharArray::newInstance(MiscUtils::getNextSize(std::max(newSize, MIN_BUFFER_SIZE)));
-        }
-        else
-        {
-            if (_termBuffer.size() < newSize)
-            {
-                // Not big enough; create a new array with slight over allocation and preserve content
-                _termBuffer.resize(MiscUtils::getNextSize(newSize));
-            }
-        }
-        return _termBuffer;
-    }
-    
-    void Token::growTermBuffer(int32_t newSize)
-    {
-        _termBuffer = resizeTermBuffer(newSize);
-    }
-    
-    void Token::initTermBuffer()
-    {
-        if (!_termBuffer)
-        {
-            _termBuffer = CharArray::newInstance(MiscUtils::getNextSize(MIN_BUFFER_SIZE));
-            _termLength = 0;
-        }
-    }
-    
-    int32_t Token::termLength()
-    {
-        if (!_termBuffer)
-            initTermBuffer();
-        return _termLength;
-    }
-    
-    void Token::setTermLength(int32_t length)
-    {
-        initTermBuffer();
-        if (length > _termBuffer.size())
-        {
-            boost::throw_exception(IllegalArgumentException(L"length " + StringUtils::toString(length) + 
-                                                            L" exceeds the size of the termBuffer (" + 
-                                                            StringUtils::toString(_termBuffer.size()) + L")"));
-        }
-        _termLength = length;
     }
     
     int32_t Token::startOffset()
@@ -247,39 +146,21 @@ namespace Lucene
         this->payload = payload;
     }
     
-    String Token::toString()
-    {
-        StringStream buffer;
-        initTermBuffer();
-        buffer << L"(";
-        if (!_termBuffer)
-            buffer << L"null";
-        else
-            buffer << term() << L"," << _startOffset << L"," << _endOffset;
-        if (_type != L"word")
-            buffer << L",type=" << _type;
-        if (positionIncrement != 1)
-            buffer << L",posIncr=" << positionIncrement;
-        buffer << L")";
-        return buffer.str();
-    }
-    
     void Token::clear()
     {
+        TermAttribute::clear();
         payload.reset();
-        // Leave termBuffer to allow re-use
-        _termLength = 0;
         positionIncrement = 1;
         flags = 0;
         _startOffset = 0;
         _endOffset = 0;
-        _type = DEFAULT_TYPE();
+        _type = DEFAULT_TYPE;
     }
     
     LuceneObjectPtr Token::clone(LuceneObjectPtr other)
     {
-        LuceneObjectPtr clone = Attribute::clone(other ? other : newLucene<Token>());
-        TokenPtr cloneToken(boost::dynamic_pointer_cast<Token>(clone));
+        LuceneObjectPtr clone = TermAttribute::clone(other ? other : newLucene<Token>());
+        TokenPtr cloneToken(boost::static_pointer_cast<Token>(clone));
         cloneToken->_termLength = _termLength;
         cloneToken->_startOffset = _startOffset;
         cloneToken->_endOffset = _endOffset;
@@ -288,13 +169,8 @@ namespace Lucene
         cloneToken->positionIncrement = positionIncrement;
         
         // Do a deep clone
-        if (_termBuffer)
-        {
-            cloneToken->_termBuffer = CharArray::newInstance(_termBuffer.size());
-            MiscUtils::arrayCopy(_termBuffer.get(), 0, cloneToken->_termBuffer.get(), 0, _termBuffer.size());
-        }
         if (payload)
-            cloneToken->payload = boost::dynamic_pointer_cast<Payload>(payload->clone());
+            cloneToken->payload = boost::static_pointer_cast<Payload>(payload->clone());
             
         return cloneToken;
     }
@@ -306,7 +182,7 @@ namespace Lucene
         clone->flags = flags;
         clone->_type = _type;
         if (payload)
-            clone->payload = boost::dynamic_pointer_cast<Payload>(payload->clone());
+            clone->payload = boost::static_pointer_cast<Payload>(payload->clone());
         return clone;
     }
     
@@ -318,23 +194,11 @@ namespace Lucene
         TokenPtr otherToken(boost::dynamic_pointer_cast<Token>(other));
         if (otherToken)
         {
-            initTermBuffer();
-            otherToken->initTermBuffer();
-            
-            if (_termLength == otherToken->_termLength && _startOffset == otherToken->_startOffset &&
-                _endOffset == otherToken->_endOffset && flags == otherToken->flags &&
-                positionIncrement == otherToken->positionIncrement && _type == otherToken->_type &&
-                (payload ? payload->equals(otherToken->payload) : !otherToken->payload))
-            {
-                for (int32_t i = 0; i < _termLength; ++i)
-                {
-                    if (_termBuffer[i] != otherToken->_termBuffer[i])
-                        return false;
-                }
-                return true;
-            }
-            else
-                return false;
+            return (_startOffset == otherToken->_startOffset && _endOffset == otherToken->_endOffset && 
+                    flags == otherToken->flags && positionIncrement == otherToken->positionIncrement &&
+                    (_type.empty() ? otherToken->_type.empty() : _type == otherToken->_type) &&
+                    (!payload ? !otherToken->payload : payload->equals(otherToken->payload)) &&
+                    TermAttribute::equals(otherToken));
         }
         else
             return false;
@@ -342,15 +206,15 @@ namespace Lucene
     
     int32_t Token::hashCode()
     {
-        initTermBuffer();
-        int32_t code = _termLength;
+        int32_t code = TermAttribute::hashCode();
         code = code * 31 + _startOffset;
         code = code * 31 + _endOffset;
         code = code * 31 + flags;
         code = code * 31 + positionIncrement;
-        code = code * 31 + StringUtils::hashCode(_type);
-        code = payload ? code * 31 + payload->hashCode() : code;
-        code = code * 31 + MiscUtils::hashCode(_termBuffer.get(), 0, _termLength);
+        if (!_type.empty())
+            code = code * 31 + StringUtils::hashCode(_type);
+        if (payload)
+            code = code * 31 + payload->hashCode();
         return code;
     }
     
@@ -361,15 +225,15 @@ namespace Lucene
         flags = 0;
         _startOffset = 0;
         _endOffset = 0;
-        _type = DEFAULT_TYPE();
+        _type = DEFAULT_TYPE;
     }
     
     TokenPtr Token::reinit(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset, const String& newType)
     {
         clearNoTermBuffer();
+        copyBuffer(newTermBuffer.get(), newTermOffset, newTermLength);
         payload.reset();
         positionIncrement = 1;
-        setTermBuffer(newTermBuffer.get(), newTermOffset, newTermLength);
         _startOffset = newStartOffset;
         _endOffset = newEndOffset;
         _type = newType;
@@ -379,17 +243,17 @@ namespace Lucene
     TokenPtr Token::reinit(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset)
     {
         clearNoTermBuffer();
-        setTermBuffer(newTermBuffer.get(), newTermOffset, newTermLength);
+        copyBuffer(newTermBuffer.get(), newTermOffset, newTermLength);
         _startOffset = newStartOffset;
         _endOffset = newEndOffset;
-        _type = DEFAULT_TYPE();
+        _type = DEFAULT_TYPE;
         return shared_from_this();
     }
     
     TokenPtr Token::reinit(const String& newTerm, int32_t newStartOffset, int32_t newEndOffset, const String& newType)
     {
-        clearNoTermBuffer();
-        setTermBuffer(newTerm);
+        clear();
+        append(newTerm);
         _startOffset = newStartOffset;
         _endOffset = newEndOffset;
         _type = newType;
@@ -398,8 +262,8 @@ namespace Lucene
     
     TokenPtr Token::reinit(const String& newTerm, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset, const String& newType)
     {
-        clearNoTermBuffer();
-        setTermBuffer(newTerm, newTermOffset, newTermLength);
+        clear();
+        append(newTerm, newTermOffset, newTermOffset + newTermLength);
         _startOffset = newStartOffset;
         _endOffset = newEndOffset;
         _type = newType;
@@ -408,28 +272,27 @@ namespace Lucene
     
     TokenPtr Token::reinit(const String& newTerm, int32_t newStartOffset, int32_t newEndOffset)
     {
-        clearNoTermBuffer();
-        setTermBuffer(newTerm);
+        clear();
+        append(newTerm);
         _startOffset = newStartOffset;
         _endOffset = newEndOffset;
-        _type = DEFAULT_TYPE();
+        _type = DEFAULT_TYPE;
         return shared_from_this();
     }
     
     TokenPtr Token::reinit(const String& newTerm, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset)
     {
-        clearNoTermBuffer();
-        setTermBuffer(newTerm, newTermOffset, newTermLength);
+        clear();
+        append(newTerm, newTermOffset, newTermOffset + newTermLength);
         _startOffset = newStartOffset;
         _endOffset = newEndOffset;
-        _type = DEFAULT_TYPE();
+        _type = DEFAULT_TYPE;
         return shared_from_this();
     }
     
     void Token::reinit(TokenPtr prototype)
     {
-        prototype->initTermBuffer();
-        setTermBuffer(prototype->_termBuffer.get(), 0, prototype->_termLength);
+        copyBuffer(prototype->buffer().get(), 0, prototype->length());
         positionIncrement = prototype->positionIncrement;
         flags = prototype->flags;
         _startOffset = prototype->_startOffset;
@@ -440,7 +303,7 @@ namespace Lucene
     
     void Token::reinit(TokenPtr prototype, const String& newTerm)
     {
-        setTermBuffer(newTerm);
+        setEmpty()->append(newTerm);
         positionIncrement = prototype->positionIncrement;
         flags = prototype->flags;
         _startOffset = prototype->_startOffset;
@@ -451,7 +314,7 @@ namespace Lucene
     
     void Token::reinit(TokenPtr prototype, CharArray newTermBuffer, int32_t offset, int32_t length)
     {
-        setTermBuffer(newTermBuffer.get(), offset, length);
+        copyBuffer(newTermBuffer.get(), offset, length);
         positionIncrement = prototype->positionIncrement;
         flags = prototype->flags;
         _startOffset = prototype->_startOffset;
@@ -468,14 +331,11 @@ namespace Lucene
             targetToken->reinit(shared_from_this());
             // reinit shares the payload, so clone it
             if (payload)
-                targetToken->payload = boost::dynamic_pointer_cast<Payload>(payload->clone());
+                targetToken->payload = boost::static_pointer_cast<Payload>(payload->clone());
         }
         else
         {
-            initTermBuffer();
-            TermAttributePtr targetTermAttribute(boost::dynamic_pointer_cast<TermAttribute>(target));
-            if (targetTermAttribute)
-                targetTermAttribute->setTermBuffer(_termBuffer.get(), 0, _termLength);
+            TermAttribute::copyTo(target);
             OffsetAttributePtr targetOffsetAttribute(boost::dynamic_pointer_cast<OffsetAttribute>(target));
             if (targetOffsetAttribute)
                 targetOffsetAttribute->setOffset(_startOffset, _endOffset);

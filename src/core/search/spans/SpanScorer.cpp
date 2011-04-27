@@ -14,13 +14,12 @@
 
 namespace Lucene
 {
-    SpanScorer::SpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity)
+    SpanScorer::SpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity, weight)
     {
         this->spans = spans;
         this->norms = norms;
-        this->weight = weight;
         this->value = weight->getValue();
-        this->freq = 0.0;
+        this->_freq = 0.0;
         if (this->spans->next())
         {
             doc = -1;
@@ -63,11 +62,11 @@ namespace Lucene
         if (!more)
             return false;
         doc = spans->doc();
-        freq = 0.0;
+        _freq = 0.0;
         do
         {
             int32_t matchLength = spans->end() - spans->start();
-            freq += getSimilarity()->sloppyFreq(matchLength);
+            _freq += getSimilarity()->sloppyFreq(matchLength);
             more = spans->next();
         }
         while (more && (doc == spans->doc()));
@@ -81,8 +80,13 @@ namespace Lucene
     
     double SpanScorer::score()
     {
-        double raw = getSimilarity()->tf(freq) * value; // raw score
-        return norms ? raw * Similarity::decodeNorm(norms[doc]) : raw; // normalize
+        double raw = getSimilarity()->tf(_freq) * value; // raw score
+        return norms ? raw * getSimilarity()->decodeNormValue(norms[doc]) : raw; // normalize
+    }
+    
+    double SpanScorer::freq()
+    {
+        return _freq;
     }
     
     ExplanationPtr SpanScorer::explain(int32_t doc)
@@ -91,7 +95,7 @@ namespace Lucene
         
         int32_t expDoc = advance(doc);
         
-        double phraseFreq = expDoc == doc ? freq : 0.0;
+        double phraseFreq = expDoc == doc ? _freq : 0.0;
         tfExplanation->setValue(getSimilarity()->tf(phraseFreq));
         tfExplanation->setDescription(L"tf(phraseFreq=" + StringUtils::toString(phraseFreq) + L")");
         

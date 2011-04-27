@@ -23,6 +23,8 @@ namespace Lucene
     public:
         TermPtr getPrefix();
         
+        virtual String getField();
+        
         virtual String toString();
     };
 }

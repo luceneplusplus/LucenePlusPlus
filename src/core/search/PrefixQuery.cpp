@@ -26,6 +26,11 @@ namespace Lucene
         return prefix;
     }
     
+    String PrefixQuery::getField()
+    {
+        return prefix->field();
+    }
+    
     FilteredTermEnumPtr PrefixQuery::getEnum(IndexReaderPtr reader)
     {
         return newLucene<PrefixTermEnum>(reader, prefix);
@@ -43,7 +48,7 @@ namespace Lucene
     LuceneObjectPtr PrefixQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<PrefixQuery>(prefix));
-        PrefixQueryPtr cloneQuery(boost::dynamic_pointer_cast<PrefixQuery>(clone));
+        PrefixQueryPtr cloneQuery(boost::static_pointer_cast<PrefixQuery>(clone));
         cloneQuery->prefix = prefix;
         return cloneQuery;
     }

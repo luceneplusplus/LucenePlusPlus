@@ -14,21 +14,8 @@ namespace Lucene
     {
     }
     
-    TokenStreamPtr KeywordAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamComponentsPtr KeywordAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        return newLucene<KeywordTokenizer>(reader);
-    }
-    
-    TokenStreamPtr KeywordAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
-        if (!tokenizer)
-        {
-            tokenizer = newLucene<KeywordTokenizer>(reader);
-            setPreviousTokenStream(tokenizer);
-        }
-        else
-            tokenizer->reset(reader);
-        return tokenizer;
+        return newLucene<TokenStreamComponents>(newLucene<KeywordTokenizer>(reader));
     }
 }

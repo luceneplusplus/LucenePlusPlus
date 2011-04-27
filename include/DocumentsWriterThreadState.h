@@ -25,7 +25,6 @@ namespace Lucene
     public:
         bool isIdle; // false if this is currently in use by a thread
         int32_t numThreads; // Number of threads that share this instance
-        bool doFlushAfter; // true if we should flush after processing current doc
         DocConsumerPerThreadPtr consumer;
         DocStatePtr docState;
         DocumentsWriterWeakPtr _docWriter;

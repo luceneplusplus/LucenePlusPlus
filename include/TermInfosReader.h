@@ -22,7 +22,7 @@ namespace Lucene
         
         LUCENE_CLASS(TermInfosReader);
             
-    protected:
+    private:
         DirectoryPtr directory;
         String segment;
         FieldInfosPtr fieldInfos;
@@ -37,6 +37,8 @@ namespace Lucene
         int32_t totalIndexInterval;
         
         static const int32_t DEFAULT_CACHE_SIZE;
+        
+        TermInfoCachePtr termsCache;
     
     public:
         int32_t getSkipInterval();
@@ -58,7 +60,7 @@ namespace Lucene
         /// Returns an enumeration of terms starting at or after the named term.
         SegmentTermEnumPtr terms(TermPtr term);
         
-    protected:
+    private:
         TermInfosReaderThreadResourcesPtr getThreadResources();
         
         /// Returns the offset of the greatest index entry which is less than or equal to term.
@@ -67,23 +69,12 @@ namespace Lucene
         void seekEnum(SegmentTermEnumPtr enumerator, int32_t indexOffset);
         
         /// Returns the TermInfo for a Term in the set, or null.
-        TermInfoPtr get(TermPtr term, bool useCache);
+        TermInfoPtr get(TermPtr term, bool mustSeekEnum);
+        
+        /// called only from asserts
+        bool sameTermInfo(TermInfoPtr ti1, TermInfoPtr ti2, SegmentTermEnumPtr enumerator);
         
         void ensureIndexIsRead();
-    };
-    
-    class TermInfosReaderThreadResources : public LuceneObject
-    {
-    public:
-        virtual ~TermInfosReaderThreadResources();
-        
-        LUCENE_CLASS(TermInfosReaderThreadResources);
-            
-    public:
-        SegmentTermEnumPtr termEnum;
-    
-        // Used for caching the least recently looked-up Terms
-        TermInfoCachePtr termInfoCache;
     };
 }
 

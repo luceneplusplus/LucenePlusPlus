@@ -19,21 +19,15 @@ namespace Lucene
 {
     DocFieldProcessor::DocFieldProcessor(DocumentsWriterPtr docWriter, DocFieldConsumerPtr consumer)
     {
-        this->fieldInfos = newLucene<FieldInfos>();
         this->_docWriter = docWriter;
         this->consumer = consumer;
+        this->fieldInfos = docWriter->getFieldInfos();
         consumer->setFieldInfos(fieldInfos);
         fieldsWriter = newLucene<StoredFieldsWriter>(docWriter, fieldInfos);
     }
     
     DocFieldProcessor::~DocFieldProcessor()
     {
-    }
-    
-    void DocFieldProcessor::closeDocStore(SegmentWriteStatePtr state)
-    {
-        consumer->closeDocStore(state);
-        fieldsWriter->closeDocStore(state);
     }
     
     void DocFieldProcessor::flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state)
@@ -52,9 +46,8 @@ namespace Lucene
         
         // Important to save after asking consumer to flush so consumer can alter the FieldInfo* if necessary.
         // eg FreqProxTermsWriter does this with FieldInfo.storePayload.
-        String fileName(state->segmentFileName(IndexFileNames::FIELD_INFOS_EXTENSION()));
+        String fileName(IndexFileNames::segmentFileName(state->segmentName, IndexFileNames::FIELD_INFOS_EXTENSION()));
         fieldInfos->write(state->directory, fileName);
-        state->flushedFiles.add(fileName);
     }
     
     void DocFieldProcessor::abort()

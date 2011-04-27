@@ -58,7 +58,7 @@ namespace Lucene
         
         for (int32_t i = 0; i < valSrcQueries.size(); ++i)
         {
-            ValueSourceQueryPtr v = boost::dynamic_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->rewrite(reader));
+            ValueSourceQueryPtr v = boost::static_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->rewrite(reader));
             if (v != valSrcQueries[i])
             {
                 if (!cloneQuery)
@@ -80,12 +80,12 @@ namespace Lucene
     LuceneObjectPtr CustomScoreQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<CustomScoreQuery>(subQuery));
-        CustomScoreQueryPtr cloneQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(clone));
+        CustomScoreQueryPtr cloneQuery(boost::static_pointer_cast<CustomScoreQuery>(clone));
         cloneQuery->strict = strict;
-        cloneQuery->subQuery = boost::dynamic_pointer_cast<Query>(subQuery->clone());
+        cloneQuery->subQuery = boost::static_pointer_cast<Query>(subQuery->clone());
         cloneQuery->valSrcQueries = Collection<ValueSourceQueryPtr>::newInstance(valSrcQueries.size());
         for (int32_t i = 0; i < valSrcQueries.size(); ++i)
-            cloneQuery->valSrcQueries[i] = boost::dynamic_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->clone());
+            cloneQuery->valSrcQueries[i] = boost::static_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->clone());
         return cloneQuery;
     }
     
@@ -101,6 +101,8 @@ namespace Lucene
     
     bool CustomScoreQuery::equals(LuceneObjectPtr other)
     {
+        if (LuceneObject::equals(other))
+            return true;
         CustomScoreQueryPtr otherQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(other));
         if (!otherQuery)
             return false;
@@ -119,51 +121,7 @@ namespace Lucene
     CustomScoreProviderPtr CustomScoreQuery::getCustomScoreProvider(IndexReaderPtr reader)
     {
         // when deprecated methods are removed, do not extend class here, just return new default CustomScoreProvider
-        return newLucene<DefaultCustomScoreProvider>(shared_from_this(), reader);
-    }
-    
-    double CustomScoreQuery::customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
-    {
-        if (valSrcScores.size() == 1)
-            return customScore(doc, subQueryScore, valSrcScores[0]);
-        if (valSrcScores.empty())
-            return customScore(doc, subQueryScore, 1);
-        double score = subQueryScore;
-        for (Collection<double>::iterator srcScore = valSrcScores.begin(); srcScore != valSrcScores.end(); ++srcScore)
-            score *= *srcScore;
-        return score;
-    }
-    
-    double CustomScoreQuery::customScore(int32_t doc, double subQueryScore, double valSrcScore)
-    {
-        return subQueryScore * valSrcScore;
-    }
-    
-    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
-    {
-        if (valSrcExpls.size() == 1)
-            return customExplain(doc, subQueryExpl, valSrcExpls[0]);
-        if (valSrcExpls.empty())
-            return subQueryExpl;
-        double valSrcScore = 1;
-        for (Collection<ExplanationPtr>::iterator srcExpl = valSrcExpls.begin(); srcExpl != valSrcExpls.end(); ++srcExpl)
-            valSrcScore *= (*srcExpl)->getValue();
-        ExplanationPtr exp(newLucene<Explanation>(valSrcScore * subQueryExpl->getValue(), L"custom score: product of:"));
-        exp->addDetail(subQueryExpl);
-        for (Collection<ExplanationPtr>::iterator srcExpl = valSrcExpls.begin(); srcExpl != valSrcExpls.end(); ++srcExpl)
-            exp->addDetail(*srcExpl);
-        return exp;
-    }
-    
-    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
-    {
-        double valSrcScore = 1;
-        if (valSrcExpl)
-            valSrcScore *= valSrcExpl->getValue();
-        ExplanationPtr exp(newLucene<Explanation>(valSrcScore * subQueryExpl->getValue(), L"custom score: product of:"));
-        exp->addDetail(subQueryExpl);
-        exp->addDetail(valSrcExpl);
-        return exp;
+        return newLucene<CustomScoreProvider>(reader);
     }
     
     WeightPtr CustomScoreQuery::createWeight(SearcherPtr searcher)
@@ -184,35 +142,6 @@ namespace Lucene
     String CustomScoreQuery::name()
     {
         return L"custom";
-    }
-    
-    DefaultCustomScoreProvider::DefaultCustomScoreProvider(CustomScoreQueryPtr customQuery, IndexReaderPtr reader) : CustomScoreProvider(reader)
-    {
-        _customQuery = customQuery;
-    }
-    
-    DefaultCustomScoreProvider::~DefaultCustomScoreProvider()
-    {
-    }
-    
-    double DefaultCustomScoreProvider::customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
-    {
-        return CustomScoreQueryPtr(_customQuery)->customScore(doc, subQueryScore, valSrcScores);
-    }
-    
-    double DefaultCustomScoreProvider::customScore(int32_t doc, double subQueryScore, double valSrcScore)
-    {
-        return CustomScoreQueryPtr(_customQuery)->customScore(doc, subQueryScore, valSrcScore);
-    }
-    
-    ExplanationPtr DefaultCustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
-    {
-        return CustomScoreQueryPtr(_customQuery)->customExplain(doc, subQueryExpl, valSrcExpls);
-    }
-    
-    ExplanationPtr DefaultCustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
-    {
-        return CustomScoreQueryPtr(_customQuery)->customExplain(doc, subQueryExpl, valSrcExpl);
     }
     
     CustomWeight::CustomWeight(CustomScoreQueryPtr query, SearcherPtr searcher)
@@ -309,12 +238,11 @@ namespace Lucene
         return false;
     }
     
-    CustomScorer::CustomScorer(SimilarityPtr similarity, IndexReaderPtr reader, CustomWeightPtr weight, ScorerPtr subQueryScorer, Collection<ScorerPtr> valSrcScorers) : Scorer(similarity)
+    CustomScorer::CustomScorer(SimilarityPtr similarity, IndexReaderPtr reader, CustomWeightPtr weight, ScorerPtr subQueryScorer, Collection<ScorerPtr> valSrcScorers) : Scorer(similarity, weight)
     {
         this->qWeight = weight->getValue();
         this->subQueryScorer = subQueryScorer;
         this->valSrcScorers = valSrcScorers;
-        this->reader = reader;
         this->vScores = Collection<double>::newInstance(valSrcScorers.size());
         this->provider = weight->query->getCustomScoreProvider(reader);
     }

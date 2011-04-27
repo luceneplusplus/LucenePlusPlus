@@ -37,9 +37,16 @@ namespace Lucene
         
         if (FileUtils::isDirectory(lockDir))
         {
+            // Try to release the lock first - if it's held by another process, this method should not 
+            // silently fail.
+            // NOTE: makeLock fixes the lock name by prefixing it with lockPrefix.  Therefore it should 
+            // be called before the code block next which prefixes the given name.
+            makeLock(lockName)->release();
+
             String lockPath(FileUtils::joinPath(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName));
-            if (FileUtils::fileExists(lockPath) && !FileUtils::removeFile(lockPath))
-                boost::throw_exception(IOException(L"Failed to delete: " + lockPath));
+            
+            // As mentioned above, we don't care if the deletion of the file failed.
+            FileUtils::removeFile(lockPath);
         }
     }
     

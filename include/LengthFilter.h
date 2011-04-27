@@ -7,30 +7,32 @@
 #ifndef LENGTHFILTER_H
 #define LENGTHFILTER_H
 
-#include "TokenFilter.h"
+#include "FilteringTokenFilter.h"
 
 namespace Lucene
 {
     /// Removes words that are too long or too short from the stream.
-    class LPPAPI LengthFilter : public TokenFilter
+    class LPPAPI LengthFilter : public FilteringTokenFilter
     {
     public:
         /// Build a filter that removes words that are too long or too short from the text.
+        LengthFilter(bool enablePositionIncrements, TokenStreamPtr input, int32_t min, int32_t max);
+        
+        /// Build a filter that removes words that are too long or too short from the text.
+        /// @deprecated Use {@link #LengthFilter(boolean, TokenStream, int, int)} instead.
         LengthFilter(TokenStreamPtr input, int32_t min, int32_t max);
+        
         virtual ~LengthFilter();
         
         LUCENE_CLASS(LengthFilter);
     
-    public:
+    protected:
         int32_t min;
         int32_t max;
-    
-    protected:
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
     
     public:
-        /// Returns the next input Token whose term() is the right len
-        virtual bool incrementToken();
+        virtual bool accept();
     };
 }
 

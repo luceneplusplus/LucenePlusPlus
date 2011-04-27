@@ -11,25 +11,21 @@
 
 namespace Lucene
 {
-    /// A grammar-based tokenizer
+    /// A grammar-based tokenizer.
     ///
-    /// This should be a good tokenizer for most European-language documents:
+    /// As of Lucene version 3.1, this class implements the Word Break rules from the Unicode Text 
+    /// Segmentation algorithm, as specified in 
+    /// <a href="http://unicode.org/reports/tr29/">Unicode Standard Annex #29</a>.
     ///
+    /// Many applications have specific tokenizer needs.  If this tokenizer does not suit your application,
+    /// please consider copying this source code directory to your project and maintaining your own 
+    /// grammar-based tokenizer.
+    ///
+    /// You must specify the required {@link Version} compatibility when creating StandardTokenizer:
     /// <ul>
-    ///   <li>Splits words at punctuation characters, removing punctuation. However, a dot that's not followed by 
-    ///     whitespace is considered part of a token.
-    ///   <li>Splits words at hyphens, unless there's a number in the token, in which case the whole token is interpreted 
-    ///     as a product number and is not split.
-    ///   <li>Recognizes email addresses and internet hostnames as one token.
-    /// </ul>
-    ///
-    /// Many applications have specific tokenizer needs.  If this tokenizer does not suit your application, please consider 
-    /// copying this source code directory to your project and maintaining your own grammar-based tokenizer.
-    ///
-    /// You must specify the required {@link Version} compatibility when creating StandardAnalyzer:
-    ///
-    /// <ul>
-    ///   <li> As of 2.4, Tokens incorrectly identified as acronyms are corrected
+    ///   <li> As of 3.1, StandardTokenizer implements Unicode text segmentation.
+    ///   If you use a previous version number, you get the exact behavior of {@link ClassicTokenizer} for 
+    /// backwards compatibility.
     /// </ul>
     class LPPAPI StandardTokenizer : public Tokenizer
     {
@@ -50,29 +46,47 @@ namespace Lucene
     
     protected:
         /// A private instance of the scanner
-        StandardTokenizerImplPtr scanner;
+        StandardTokenizerInterfacePtr scanner;
         
         bool replaceInvalidAcronym;
         int32_t maxTokenLength;
         
         // this tokenizer generates three attributes: offset, positionIncrement and type
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
         PositionIncrementAttributePtr posIncrAtt;
         TypeAttributePtr typeAtt;
         
     public:
         static const int32_t ALPHANUM;
+        
+        /// @deprecated
         static const int32_t APOSTROPHE;
+        
+        /// @deprecated
         static const int32_t ACRONYM;
+        
+        /// @deprecated
         static const int32_t COMPANY;
+        
         static const int32_t EMAIL;
+        
+        /// @deprecated
         static const int32_t HOST;
+        
         static const int32_t NUM;
+        
+        /// @deprecated
         static const int32_t CJ;
         
         /// @deprecated this solves a bug where HOSTs that end with '.' are identified as ACRONYMs.
         static const int32_t ACRONYM_DEP;
+        
+        static const int32_t SOUTHEAST_ASIAN;
+        static const int32_t IDEOGRAPHIC;
+        static const int32_t HIRAGANA;
+        static const int32_t KATAKANA;
+        static const int32_t HANGUL;
   
         /// String token types that correspond to token type int constants
         static const Collection<String> TOKEN_TYPES();

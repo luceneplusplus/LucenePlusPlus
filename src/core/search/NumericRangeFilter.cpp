@@ -82,4 +82,9 @@ namespace Lucene
     {
         return boost::static_pointer_cast<NumericRangeQuery>(query)->min;
     }
+    
+    int32_t NumericRangeFilter::getPrecisionStep()
+    {
+        return boost::static_pointer_cast<NumericRangeQuery>(query)->precisionStep;
+    }
 }

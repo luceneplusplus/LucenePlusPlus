@@ -24,9 +24,6 @@ namespace Lucene
         termsOut = newLucene<TermInfosWriter>(dir, segment, fieldInfos, state->termIndexInterval);
 
         skipListWriter = newLucene<DefaultSkipListWriter>(termsOut->skipInterval, termsOut->maxSkipLevels, totalNumDocs, IndexOutputPtr(), IndexOutputPtr());
-
-        state->flushedFiles.add(state->segmentFileName(IndexFileNames::TERMS_EXTENSION()));
-        state->flushedFiles.add(state->segmentFileName(IndexFileNames::TERMS_INDEX_EXTENSION()));
     }
     
     FormatPostingsFieldsWriter::~FormatPostingsFieldsWriter()

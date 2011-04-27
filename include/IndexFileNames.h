@@ -11,7 +11,12 @@
 
 namespace Lucene
 {
-    /// Constants representing filenames and extensions used by Lucene.
+    /// This class contains useful constants representing filenames and extensions used by lucene, as 
+    /// well as convenience methods for querying whether a file name matches an extension ({@link 
+    /// #matchesExtension(String, String) matchesExtension}), as well as generating file names from a 
+    /// segment name, generation and extension ({@link 
+    /// #fileNameFromGeneration(String, String, long) fileNameFromGeneration}, * {@link 
+    /// #segmentFileName(String, String) segmentFileName}).
     class IndexFileNames : public LuceneObject
     {
     public:
@@ -98,18 +103,38 @@ namespace Lucene
         /// File extensions for term vector support.
         static const HashSet<String> VECTOR_EXTENSIONS();
         
-        /// Computes the full file name from base, extension and generation.  
-        /// If the generation is {@link SegmentInfo#NO}, the file name is null.
-        /// If it's {@link SegmentInfo#WITHOUT_GEN} the file name is base+extension.
-        /// If it's > 0, the file name is base_generation+extension.
-        static String fileNameFromGeneration(const String& base, const String& extension, int64_t gen);
+        /// Computes the full file name from base, extension and generation. If the generation is -1, 
+        /// the file name is null. If it's 0, the file name is <base>.<ext>. If it's > 0, the file 
+        /// name is <base>_<gen>.<ext>.<br>
+        ///
+        /// NOTE: .<ext> is added to the name only if ext is not an empty string.
+        /// @param base main part of the file name
+        /// @param ext extension of the filename
+        /// @param gen generation
+        static String fileNameFromGeneration(const String& base, const String& ext, int64_t gen);
         
-        /// Returns true if the provided filename is one of the doc store files 
-        /// (ends with an extension in STORE_INDEX_EXTENSIONS).
+        /// Returns true if the provided filename is one of the doc store files (ends with an 
+        /// extension in {@link #STORE_INDEX_EXTENSIONS}).
         static bool isDocStoreFile(const String& fileName);
         
-        /// Return segment file name.
+        /// Returns the file name that matches the given segment name and extension. This method 
+        /// takes care to return the full file name in the form <segmentName>.<ext>, therefore you 
+        /// don't need to prefix the extension with a '.'.
+        ///
+        /// NOTE: .<ext> is added to the result file name only if ext is not empty.
         static String segmentFileName(const String& segmentName, const String& ext);
+        
+        /// Returns true if the given filename ends with the given extension. One should provide a 
+        /// pure extension, without '.'.
+        static bool matchesExtension(const String& filename, const String& ext);
+        
+        /// Strips the segment file name out of the given one. If you used {@link #segmentFileName} 
+        /// or {@link #fileNameFromGeneration} to create your files, then this method simply removes 
+        /// whatever comes before the first '.', or the second '_' (excluding both), in case of 
+        /// deleted docs.
+        /// @return the filename with the segment name removed, or the given filename if it does not 
+        /// contain a '.' and '_'.
+        static String stripSegmentName(const String& filename);
     };
 }
 

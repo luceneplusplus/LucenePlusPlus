@@ -11,13 +11,31 @@
 
 namespace Lucene
 {
-    class MyCommitPoint : public IndexCommit
+    /// Holds a Snapshot's information.
+    class SnapshotInfo : public LuceneObject
     {
     public:
-        MyCommitPoint(SnapshotDeletionPolicyPtr deletionPolicy, IndexCommitPtr cp);
-        virtual ~MyCommitPoint();
+        SnapshotInfo(const String& id, const String& segmentsFileName, IndexCommitPtr commit);
+        virtual ~SnapshotInfo();
         
-        LUCENE_CLASS(MyCommitPoint);
+        LUCENE_CLASS(SnapshotInfo);
+
+    public:
+        String id;
+        String segmentsFileName;
+        IndexCommitPtr commit;
+    
+    public:
+        virtual String toString();
+    };
+
+    class SnapshotCommitPoint : public IndexCommit
+    {
+    public:
+        SnapshotCommitPoint(SnapshotDeletionPolicyPtr deletionPolicy, IndexCommitPtr cp);
+        virtual ~SnapshotCommitPoint();
+        
+        LUCENE_CLASS(SnapshotCommitPoint);
             
     protected:
         SnapshotDeletionPolicyWeakPtr _deletionPolicy;
@@ -28,30 +46,35 @@ namespace Lucene
     public:
         virtual String toString();
         
-        /// Get the segments file (segments_N) associated with this commit point.
-        virtual String getSegmentsFileName();
-        
-        /// Returns all index files referenced by this commit point.
-        virtual HashSet<String> getFileNames();
+        /// Delete this commit point.
+        virtual void _delete();
         
         /// Returns the {@link Directory} for the index.
         virtual DirectoryPtr getDirectory();
         
-        /// Delete this commit point.
-        virtual void deleteCommit();
-        
-        virtual bool isDeleted();
-        
-        /// Returns the version for this IndexCommit.
-        virtual int64_t getVersion();
+        /// Returns all index files referenced by this commit point.
+        virtual HashSet<String> getFileNames();
         
         /// Returns the generation (the _N in segments_N) for this IndexCommit.
         virtual int64_t getGeneration();
         
+        /// Get the segments file (segments_N) associated with this commit point.
+        virtual String getSegmentsFileName();
+        
         /// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
         virtual MapStringString getUserData();
         
+        /// Returns the version for this IndexCommit.
+        virtual int64_t getVersion();
+        
+        virtual bool isDeleted();
+        
         virtual bool isOptimized();
+
+    protected:
+        /// Returns true if this segment can be deleted. The default implementation returns false 
+        /// if this segment is currently held as snapshot.
+        bool shouldDelete(const String& segmentsFileName);
     };
 }
 

@@ -7,8 +7,9 @@
 #include "LuceneInc.h"
 #include "StandardTokenizer.h"
 #include "StandardTokenizerImpl.h"
+#include "ClassicTokenizerImpl.h"
 #include "StandardAnalyzer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "OffsetAttribute.h"
 #include "PositionIncrementAttribute.h"
 #include "TypeAttribute.h"
@@ -23,25 +24,27 @@ namespace Lucene
     const int32_t StandardTokenizer::HOST = 5;
     const int32_t StandardTokenizer::NUM = 6;
     const int32_t StandardTokenizer::CJ = 7;
-
-    /// @deprecated this solves a bug where HOSTs that end with '.' are identified as ACRONYMs.
+    
     const int32_t StandardTokenizer::ACRONYM_DEP = 8;
+    
+    const int32_t StandardTokenizer::SOUTHEAST_ASIAN = 9;
+    const int32_t StandardTokenizer::IDEOGRAPHIC = 10;
+    const int32_t StandardTokenizer::HIRAGANA = 11;
+    const int32_t StandardTokenizer::KATAKANA = 12;
+    const int32_t StandardTokenizer::HANGUL = 13;
     
     StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input)
     {
-        this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
     
     StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source)
     {
-        this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
     
     StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory)
     {
-        this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
     
@@ -54,27 +57,35 @@ namespace Lucene
         static Collection<String> _TOKEN_TYPES;
         if (!_TOKEN_TYPES)
         {
-            _TOKEN_TYPES = newCollection<String>(
-                L"<ALPHANUM>",
-                L"<APOSTROPHE>",
-                L"<ACRONYM>",
-                L"<COMPANY>",
-                L"<EMAIL>",
-                L"<HOST>",
-                L"<NUM>",
-                L"<CJ>",
-                L"<ACRONYM_DEP>"
-            );
+            _TOKEN_TYPES = Collection<String>::newInstance();
+            _TOKEN_TYPES.add(L"<ALPHANUM>");
+            _TOKEN_TYPES.add(L"<APOSTROPHE>");
+            _TOKEN_TYPES.add(L"<ACRONYM>");
+            _TOKEN_TYPES.add(L"<COMPANY>");
+            _TOKEN_TYPES.add(L"<EMAIL>");
+            _TOKEN_TYPES.add(L"<HOST>");
+            _TOKEN_TYPES.add(L"<NUM>");
+            _TOKEN_TYPES.add(L"<CJ>");
+            _TOKEN_TYPES.add(L"<ACRONYM_DEP>");
+            _TOKEN_TYPES.add(L"<SOUTHEAST_ASIAN>");
+            _TOKEN_TYPES.add(L"<IDEOGRAPHIC>");
+            _TOKEN_TYPES.add(L"<HIRAGANA>");
+            _TOKEN_TYPES.add(L"<KATAKANA>");
+            _TOKEN_TYPES.add(L"<HANGUL>");
         }
         return _TOKEN_TYPES;
     }
     
     void StandardTokenizer::init(ReaderPtr input, LuceneVersion::Version matchVersion)
     {
+        if (LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31))
+            this->scanner = newLucene<StandardTokenizerImpl>(input);
+        else
+            this->scanner = newLucene<ClassicTokenizerImpl>(input);
         replaceInvalidAcronym = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_24);
         maxTokenLength = StandardAnalyzer::DEFAULT_MAX_TOKEN_LENGTH;
         this->input = input;
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
@@ -107,7 +118,7 @@ namespace Lucene
                 posIncrAtt->setPositionIncrement(posIncr);
                 scanner->getText(termAtt);
                 int32_t start = scanner->yychar();
-                offsetAtt->setOffset(correctOffset(start), correctOffset(start + termAtt->termLength()));
+                offsetAtt->setOffset(correctOffset(start), correctOffset(start + termAtt->length()));
                 
                 // This 'if' should be removed in the next release. For now, it converts invalid acronyms to HOST. 
                 /// When removed, only the 'else' part should remain.
@@ -116,7 +127,7 @@ namespace Lucene
                     if (replaceInvalidAcronym)
                     {
                         typeAtt->setType(TOKEN_TYPES()[HOST]);
-                        termAtt->setTermLength(termAtt->termLength() - 1); // remove extra '.'
+                        termAtt->setTermLength(termAtt->length() - 1); // remove extra '.'
                     }
                     else
                         typeAtt->setType(TOKEN_TYPES()[ACRONYM]);
@@ -143,7 +154,7 @@ namespace Lucene
     void StandardTokenizer::reset(ReaderPtr input)
     {
         Tokenizer::reset(input);
-        scanner->reset(input);
+        scanner->yyreset(input);
     }
     
     bool StandardTokenizer::isReplaceInvalidAcronym()

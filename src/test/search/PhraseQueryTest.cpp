@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(testToString)
     StopAnalyzerPtr analyzer = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", analyzer);
     qp->setEnablePositionIncrements(true);
-    PhraseQueryPtr q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"this hi this is a test is\""));
+    PhraseQueryPtr q = boost::static_pointer_cast<PhraseQuery>(qp->parse(L"\"this hi this is a test is\""));
     BOOST_CHECK_EQUAL(L"field:\"? hi ? ? ? test\"", q->toString());
     q->add(newLucene<Term>(L"field", L"hello"), 1);
     BOOST_CHECK_EQUAL(L"field:\"? hi|hello ? ? ? test\"", q->toString());

@@ -6,16 +6,19 @@
 
 #include "LuceneInc.h"
 #include "DocumentsWriter.h"
+#include "_DocumentsWriter.h"
 #include "DocumentsWriterThreadState.h"
 #include "LuceneThread.h"
 #include "IndexWriter.h"
 #include "_IndexWriter.h"
+#include "IndexWriterConfig.h"
 #include "IndexReader.h"
 #include "IndexSearcher.h"
 #include "DocFieldProcessor.h"
 #include "Term.h"
 #include "TermDocs.h"
 #include "TermVectorsTermsWriter.h"
+#include "_TermVectorsTermsWriter.h"
 #include "FreqProxTermsWriter.h"
 #include "TermsHashConsumer.h"
 #include "InvertedDocConsumer.h"
@@ -28,59 +31,23 @@
 #include "DocConsumerPerThread.h"
 #include "SegmentWriteState.h"
 #include "IndexFileNames.h"
+#include "IndexFileDeleter.h"
 #include "CompoundFileWriter.h"
 #include "MergeDocIDRemapper.h"
 #include "SegmentReader.h"
 #include "SegmentInfos.h"
 #include "SegmentInfo.h"
+#include "SegmentDeletes.h"
 #include "Query.h"
 #include "Weight.h"
 #include "Scorer.h"
 #include "TestPoint.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
+#include "AtomicLong.h"
 
 namespace Lucene
 {
-    /// Max # ThreadState instances; if there are more threads than this they share ThreadStates
-    const int32_t DocumentsWriter::MAX_THREAD_STATE = 5;
-    
-    /// Coarse estimates used to measure RAM usage of buffered deletes
-    const int32_t DocumentsWriter::OBJECT_HEADER_BYTES = 8;
-    #ifdef LPP_BUILD_64
-    const int32_t DocumentsWriter::POINTER_NUM_BYTE = 8;
-    #else
-    const int32_t DocumentsWriter::POINTER_NUM_BYTE = 4;
-    #endif
-    const int32_t DocumentsWriter::INT_NUM_BYTE = 4;
-    #ifdef LPP_UNICODE_CHAR_SIZE_4
-    const int32_t DocumentsWriter::CHAR_NUM_BYTE = 4;
-    #else
-    const int32_t DocumentsWriter::CHAR_NUM_BYTE = 2;
-    #endif
-
-    /// Rough logic: HashMap has an array[Entry] with varying load factor (say 2 * POINTER).  Entry is object 
-    /// with Term key, BufferedDeletes.Num val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).  Term is 
-    /// object with String field and String text (OBJ_HEADER + 2*POINTER).  We don't count Term's field since 
-    /// it's interned.  Term's text is String (OBJ_HEADER + 4*INT + POINTER + OBJ_HEADER + string.length*CHAR).  
-    /// BufferedDeletes.num is OBJ_HEADER + INT.
-    const int32_t DocumentsWriter::BYTES_PER_DEL_TERM = 8 * DocumentsWriter::POINTER_NUM_BYTE + 5 * 
-                                                        DocumentsWriter::OBJECT_HEADER_BYTES + 6 * 
-                                                        DocumentsWriter::INT_NUM_BYTE;
-
-    /// Rough logic: del docIDs are List<Integer>.  Say list allocates ~2X size (2*POINTER).  Integer is 
-    /// OBJ_HEADER + int
-    const int32_t DocumentsWriter::BYTES_PER_DEL_DOCID = 2 * DocumentsWriter::POINTER_NUM_BYTE + 
-                                                         DocumentsWriter::OBJECT_HEADER_BYTES + 
-                                                         DocumentsWriter::INT_NUM_BYTE;
-
-    /// Rough logic: HashMap has an array[Entry] with varying load factor (say 2 * POINTER).  Entry is object 
-    /// with Query key, Integer val, int hash, Entry next (OBJ_HEADER + 3*POINTER + INT).  Query we often undercount 
-    /// (say 24 bytes).  Integer is OBJ_HEADER + INT.
-    const int32_t DocumentsWriter::BYTES_PER_DEL_QUERY = 5 * DocumentsWriter::POINTER_NUM_BYTE + 2 * 
-                                                         DocumentsWriter::OBJECT_HEADER_BYTES + 2 * 
-                                                         DocumentsWriter::INT_NUM_BYTE + 24;
-
     /// Initial chunks size of the shared byte[] blocks used to store postings data
     const int32_t DocumentsWriter::BYTE_BLOCK_SHIFT = 15;
     const int32_t DocumentsWriter::BYTE_BLOCK_SIZE = 1 << DocumentsWriter::BYTE_BLOCK_SHIFT;
@@ -101,18 +68,23 @@ namespace Lucene
 
     const int32_t DocumentsWriter::PER_DOC_BLOCK_SIZE = 1024;
     
-    DocumentsWriter::DocumentsWriter(DirectoryPtr directory, IndexWriterPtr writer, IndexingChainPtr indexingChain)
+    DocumentsWriter::DocumentsWriter(IndexWriterConfigPtr config, DirectoryPtr directory, IndexWriterPtr writer, 
+                                     FieldInfosPtr fieldInfos, BufferedDeletesPtr bufferedDeletes)
     {
+        this->_bytesUsed = newLucene<AtomicLong>();
         this->threadStates = Collection<DocumentsWriterThreadStatePtr>::newInstance();
-        this->threadBindings = MapThreadDocumentsWriterThreadState::newInstance();
-        this->_openFiles = HashSet<String>::newInstance();
-        this->_closedFiles = HashSet<String>::newInstance();
+        this->threadBindings = SortedMapThreadDocumentsWriterThreadState::newInstance();
         this->freeIntBlocks = Collection<IntArray>::newInstance();
         this->freeCharBlocks = Collection<CharArray>::newInstance();
         
         this->directory = directory;
         this->_writer = writer;
-        this->indexingChain = indexingChain;
+        this->similarity = config->getSimilarity();
+        this->maxThreadStates = config->getMaxThreadStates();
+        this->fieldInfos = fieldInfos;
+        this->bufferedDeletes = bufferedDeletes;
+        this->flushControl = writer->flushControl;
+        this->config = config;
     }
     
     DocumentsWriter::~DocumentsWriter()
@@ -121,39 +93,77 @@ namespace Lucene
     
     void DocumentsWriter::initialize()
     {
-        docStoreOffset = 0;
         nextDocID = 0;
-        numDocsInRAM = 0;
-        numDocsInStore = 0;
-        pauseThreads = 0;
-        flushPending = false;
+        numDocs = 0;
         bufferIsFull = false;
         aborting = false;
+        maxThreadStates = 0;
+        pendingDeletes = newLucene<SegmentDeletes>();
         maxFieldLength = IndexWriter::DEFAULT_MAX_FIELD_LENGTH;
-        deletesInRAM = newLucene<BufferedDeletes>(false);
-        deletesFlushed = newLucene<BufferedDeletes>(true);
-        maxBufferedDeleteTerms = IndexWriter::DEFAULT_MAX_BUFFERED_DELETE_TERMS;
-        ramBufferSize = (int64_t)(IndexWriter::DEFAULT_RAM_BUFFER_SIZE_MB * 1024 * 1024);
-        waitQueuePauseBytes = (int64_t)((double)ramBufferSize * 0.1);
-        waitQueueResumeBytes = (int64_t)((double)ramBufferSize * 0.05);
-        freeTrigger = (int64_t)(IndexWriter::DEFAULT_RAM_BUFFER_SIZE_MB * 1024.0 * 1024.0 * 1.05);
-        freeLevel = (int64_t)(IndexWriter::DEFAULT_RAM_BUFFER_SIZE_MB * 1024.0 * 1024.0 * 0.95);
-        maxBufferedDocs = IndexWriter::DEFAULT_MAX_BUFFERED_DOCS;
-        flushedDocCount = 0;
         closed = false;
         waitQueue = newLucene<WaitQueue>(shared_from_this());
         skipDocWriter = newLucene<SkipDocWriter>();
-        numBytesAlloc = 0;
-        numBytesUsed = 0;
         byteBlockAllocator = newLucene<ByteBlockAllocator>(shared_from_this(), BYTE_BLOCK_SIZE);
         perDocAllocator = newLucene<ByteBlockAllocator>(shared_from_this(), PER_DOC_BLOCK_SIZE);
-        
-        IndexWriterPtr writer(_writer);
-        this->similarity = writer->getSimilarity();
-        flushedDocCount = writer->maxDoc();
-        
-        consumer = indexingChain->getChain(shared_from_this());
-        docFieldProcessor = boost::dynamic_pointer_cast<DocFieldProcessor>(consumer);
+        consumer = config->getIndexingChain()->getChain(shared_from_this());
+    }
+    
+    void DocumentsWriter::deleteDocID(int32_t docIDUpto)
+    {
+        SyncLock syncLock(this);
+        pendingDeletes->addDocID(docIDUpto);
+        // NOTE: we do not trigger flush here.  This is potentially a RAM leak, if you have an app 
+        // that tries to add docs but every single doc always hits a non-aborting exception.  
+        // Allowing a flush here gets very messy because we are only invoked when handling exceptions 
+        // so to do this properly, while handling an exception we'd have to go off and flush new deletes
+        // which is risky (likely would hit some other confounding exception).
+    }
+    
+    bool DocumentsWriter::deleteQueries(Collection<QueryPtr> queries)
+    {
+        bool doFlush = flushControl->waitUpdate(0, queries.size());
+        {
+            SyncLock syncLock(this);
+            for (Collection<QueryPtr>::iterator query = queries.begin(); query != queries.end(); ++query)
+                pendingDeletes->addQuery(*query, numDocs);
+        }
+        return doFlush;
+    }
+    
+    bool DocumentsWriter::deleteQuery(QueryPtr query)
+    {
+        bool doFlush = flushControl->waitUpdate(0, 1);
+        {
+            SyncLock syncLock(this);
+            pendingDeletes->addQuery(query, numDocs);
+        }
+        return doFlush;
+    }
+    
+    bool DocumentsWriter::deleteTerms(Collection<TermPtr> terms)
+    {
+        bool doFlush = flushControl->waitUpdate(0, terms.size());
+        {
+            SyncLock syncLock(this);
+            for (Collection<TermPtr>::iterator term = terms.begin(); term != terms.end(); ++term)
+                pendingDeletes->addTerm(*term, numDocs);
+        }
+        return doFlush;
+    }
+    
+    bool DocumentsWriter::deleteTerm(TermPtr term, bool skipWait)
+    {
+        bool doFlush = flushControl->waitUpdate(0, 1, skipWait);
+        {
+            SyncLock syncLock(this);
+            pendingDeletes->addTerm(term, numDocs);
+        }
+        return doFlush;
+    }
+    
+    FieldInfosPtr DocumentsWriter::getFieldInfos()
+    {
+        return fieldInfos;
     }
     
     PerDocBufferPtr DocumentsWriter::newPerDocBuffer()
@@ -161,38 +171,15 @@ namespace Lucene
         return newLucene<PerDocBuffer>(shared_from_this());
     }
     
-    IndexingChainPtr DocumentsWriter::getDefaultIndexingChain()
+    IndexingChainPtr DocumentsWriter::defaultIndexingChain()
     {
-        static DefaultIndexingChainPtr defaultIndexingChain;
-        if (!defaultIndexingChain)
+        static DefaultIndexingChainPtr _defaultIndexingChain;
+        if (!_defaultIndexingChain)
         {
-            defaultIndexingChain = newLucene<DefaultIndexingChain>();
-            CycleCheck::addStatic(defaultIndexingChain);
+            _defaultIndexingChain = newLucene<DefaultIndexingChain>();
+            CycleCheck::addStatic(_defaultIndexingChain);
         }
-        return defaultIndexingChain;
-    }
-    
-    void DocumentsWriter::updateFlushedDocCount(int32_t n)
-    {
-        SyncLock syncLock(this);
-        flushedDocCount += n;
-    }
-    
-    int32_t DocumentsWriter::getFlushedDocCount()
-    {
-        SyncLock syncLock(this);
-        return flushedDocCount;
-    }
-    
-    void DocumentsWriter::setFlushedDocCount(int32_t n)
-    {
-        SyncLock syncLock(this);
-        flushedDocCount = n;
-    }
-    
-    bool DocumentsWriter::hasProx()
-    {
-        return docFieldProcessor ? docFieldProcessor->fieldInfos->hasProx() : true;
+        return _defaultIndexingChain;
     }
     
     void DocumentsWriter::setInfoStream(InfoStreamPtr infoStream)
@@ -219,107 +206,16 @@ namespace Lucene
             (*threadState)->docState->similarity = similarity;
     }
     
-    void DocumentsWriter::setRAMBufferSizeMB(double mb)
-    {
-        SyncLock syncLock(this);
-        if (mb == IndexWriter::DISABLE_AUTO_FLUSH)
-        {
-            ramBufferSize = IndexWriter::DISABLE_AUTO_FLUSH;
-            waitQueuePauseBytes = 4 * 1024 * 1024;
-            waitQueueResumeBytes = 2 * 1024 * 1024;
-        }
-        else
-        {
-            ramBufferSize = (int64_t)(mb * 1024.0 * 1024.0);
-            waitQueuePauseBytes = (int64_t)((double)ramBufferSize * 0.1);
-            waitQueueResumeBytes = (int64_t)((double)ramBufferSize * 0.05);
-            freeTrigger = (int64_t)(1.05 * (double)ramBufferSize);
-            freeLevel = (int64_t)(0.95 * (double)ramBufferSize);
-        }
-    }
-    
-    double DocumentsWriter::getRAMBufferSizeMB()
-    {
-        SyncLock syncLock(this);
-        if (ramBufferSize == IndexWriter::DISABLE_AUTO_FLUSH)
-            return (double)ramBufferSize;
-        else
-            return (double)ramBufferSize / 1024.0 / 1024.0;
-    }
-    
-    void DocumentsWriter::setMaxBufferedDocs(int32_t count)
-    {
-        maxBufferedDocs = count;
-    }
-    
-    int32_t DocumentsWriter::getMaxBufferedDocs()
-    {
-        return maxBufferedDocs;
-    }
-    
     String DocumentsWriter::getSegment()
     {
+        SyncLock syncLock(this);
         return segment;
     }
     
-    int32_t DocumentsWriter::getNumDocsInRAM()
-    {
-        return numDocsInRAM;
-    }
-    
-    String DocumentsWriter::getDocStoreSegment()
+    int32_t DocumentsWriter::getNumDocs()
     {
         SyncLock syncLock(this);
-        return docStoreSegment;
-    }
-    
-    int32_t DocumentsWriter::getDocStoreOffset()
-    {
-        return docStoreOffset;
-    }
-    
-    String DocumentsWriter::closeDocStore()
-    {
-        TestScope testScope(L"DocumentsWriter", L"closeDocStore");
-        SyncLock syncLock(this);
-        BOOST_ASSERT(allThreadsIdle());
-        
-        if (infoStream)
-        {
-            message(L"closeDocStore: " + StringUtils::toString(_openFiles.size()) + L" files to flush to segment " + 
-                    docStoreSegment + L" numDocs=" + StringUtils::toString(numDocsInStore));
-        }
-        
-        bool success = false;
-        LuceneException finally;
-        String s;
-        try
-        {
-            initFlushState(true);
-            _closedFiles.clear();
-            
-            consumer->closeDocStore(flushState);
-            BOOST_ASSERT(_openFiles.empty());
-            
-            s = docStoreSegment;
-            docStoreSegment.clear();
-            docStoreOffset = 0;
-            numDocsInStore = 0;
-            success = true;
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        if (!success)
-            abort();
-        finally.throwException();
-        return s;
-    }
-    
-    HashSet<String> DocumentsWriter::abortedFiles()
-    {
-        return _abortedFiles;
+        return numDocs;
     }
     
     void DocumentsWriter::message(const String& message)
@@ -328,36 +224,11 @@ namespace Lucene
             *infoStream << L"DW " << message << L"\n";
     }
     
-    HashSet<String> DocumentsWriter::openFiles()
-    {
-        SyncLock syncLock(this);
-        return HashSet<String>::newInstance(_openFiles.begin(), _openFiles.end());
-    }
-    
-    HashSet<String> DocumentsWriter::closedFiles()
-    {
-        SyncLock syncLock(this);
-        return HashSet<String>::newInstance(_closedFiles.begin(), _closedFiles.end());
-    }
-    
-    void DocumentsWriter::addOpenFile(const String& name)
-    {
-        SyncLock syncLock(this);
-        BOOST_ASSERT(!_openFiles.contains(name));
-        _openFiles.add(name);
-    }
-    
-    void DocumentsWriter::removeOpenFile(const String& name)
-    {
-        SyncLock syncLock(this);
-        BOOST_ASSERT(_openFiles.contains(name));
-        _openFiles.remove(name);
-        _closedFiles.add(name);
-    }
-    
     void DocumentsWriter::setAborting()
     {
         SyncLock syncLock(this);
+        if (infoStream)
+            message(L"setAborting");
         aborting = true;
     }
     
@@ -365,78 +236,61 @@ namespace Lucene
     {
         TestScope testScope(L"DocumentsWriter", L"abort");
         SyncLock syncLock(this);
+        if (infoStream)
+            message(L"docWriter: abort");
+
+        bool success = false;
+
         LuceneException finally;
         try
         {
-            if (infoStream)
-                message(L"docWriter: now abort");
-            
             // Forcefully remove waiting ThreadStates from line
             waitQueue->abort();
-            
-            // Wait for all other threads to finish with DocumentsWriter
-            pauseAllThreads();
-            
+
+            // Wait for all other threads to finish with
+            // DocumentsWriter:
+            waitIdle();
+
+            if (infoStream)
+                message(L"docWriter: abort waitIdle done");
+
+            BOOST_ASSERT(waitQueue->numWaiting == 0);
+
+            waitQueue->waitingBytes = 0;
+
+            pendingDeletes->clear();
+
+            for (Collection<DocumentsWriterThreadStatePtr>::iterator threadState = threadStates.begin(); threadState != threadStates.end(); ++threadState)
+            {
+                try
+                {
+                    (*threadState)->consumer->abort();
+                }
+                catch (...)
+                {
+                }
+            }
+
             try
             {
-                BOOST_ASSERT(waitQueue->numWaiting == 0);
-                
-                waitQueue->waitingBytes = 0;
-                
-                try
-                {
-                    _abortedFiles = openFiles();
-                }
-                catch (...)
-                {
-                    _abortedFiles.reset();
-                }
-                
-                deletesInRAM->clear();
-                deletesFlushed->clear();
-                _openFiles.clear();
-                
-                for (Collection<DocumentsWriterThreadStatePtr>::iterator threadState = threadStates.begin(); threadState != threadStates.end(); ++threadState)
-                {
-                    try
-                    {
-                        (*threadState)->consumer->abort();
-                    }
-                    catch (...)
-                    {
-                    }
-                }
-                
-                try
-                {
-                    consumer->abort();
-                }
-                catch (...)
-                {
-                }
-                
-                docStoreSegment.clear();
-                numDocsInStore = 0;
-                docStoreOffset = 0;
-                
-                // Reset all postings data
-                doAfterFlush();
+                consumer->abort();
             }
-            catch (LuceneException& e)
+            catch (...)
             {
-                finally = e;
             }
-            resumeAllThreads();
+
+            // Reset all postings data
+            doAfterFlush();
+            success = true;
         }
         catch (LuceneException& e)
         {
-            if (finally.isNull())
-                finally = e;
+            finally = e;
         }
         aborting = false;
         notifyAll();
         if (infoStream)
-            message(L"docWriter: done abort");
+            message(L"docWriter: done abort; success=" + StringUtils::toString(success));
         finally.throwException();
     }
     
@@ -447,31 +301,11 @@ namespace Lucene
         threadBindings.clear();
         waitQueue->reset();
         segment.clear();
-        numDocsInRAM = 0;
+        numDocs = 0;
         nextDocID = 0;
         bufferIsFull = false;
-        flushPending = false;
         for (Collection<DocumentsWriterThreadStatePtr>::iterator threadState = threadStates.begin(); threadState != threadStates.end(); ++threadState)
             (*threadState)->doAfterFlush();
-        numBytesUsed = 0;
-    }
-    
-    bool DocumentsWriter::pauseAllThreads()
-    {
-        SyncLock syncLock(this);
-        ++pauseThreads;
-        while (!allThreadsIdle())
-            wait(1000);
-        return aborting;
-    }
-    
-    void DocumentsWriter::resumeAllThreads()
-    {
-        SyncLock syncLock(this);
-        --pauseThreads;
-        BOOST_ASSERT(pauseThreads >= 0);
-        if (pauseThreads == 0)
-            notifyAll();
     }
     
     bool DocumentsWriter::allThreadsIdle()
@@ -488,122 +322,158 @@ namespace Lucene
     bool DocumentsWriter::anyChanges()
     {
         SyncLock syncLock(this);
-        return (numDocsInRAM != 0 || deletesInRAM->numTerms != 0 || !deletesInRAM->docIDs.empty() || !deletesInRAM->queries.empty());
+        return (numDocs != 0 || pendingDeletes->any());
     }
     
-    void DocumentsWriter::initFlushState(bool onlyDocStore)
+    SegmentDeletesPtr DocumentsWriter::getPendingDeletes()
     {
-        SyncLock syncLock(this);
-        initSegmentName(onlyDocStore);
-        flushState = newLucene<SegmentWriteState>(shared_from_this(), directory, segment, docStoreSegment, numDocsInRAM, numDocsInStore, IndexWriterPtr(_writer)->getTermIndexInterval());
+        return pendingDeletes;
     }
     
-    int32_t DocumentsWriter::flush(bool _closeDocStore)
+    void DocumentsWriter::pushDeletes(SegmentInfoPtr newSegment, SegmentInfosPtr segmentInfos)
     {
-        SyncLock syncLock(this);
-        BOOST_ASSERT(allThreadsIdle());
-        
-        BOOST_ASSERT(numDocsInRAM > 0);
-        
-        BOOST_ASSERT(nextDocID == numDocsInRAM);
-        BOOST_ASSERT(waitQueue->numWaiting == 0);
-        BOOST_ASSERT(waitQueue->waitingBytes == 0);
-        
-        initFlushState(false);
-        
-        docStoreOffset = numDocsInStore;
-        
-        if (infoStream)
-            message(L"flush postings as segment " + flushState->segmentName + L" numDocs=" + StringUtils::toString(numDocsInRAM));
-        
-        bool success = false;
-        LuceneException finally;
+        // Lock order: DW -> BD
+        if (pendingDeletes->any())
+        {
+            if (newSegment)
+            {
+                if (infoStream)
+                    message(L"flush: push buffered deletes to newSegment");
+                bufferedDeletes->pushDeletes(pendingDeletes, newSegment);
+            }
+            else if (!segmentInfos->empty())
+            {
+                if (infoStream)
+                    message(L"flush: push buffered deletes to previously flushed segment " + segmentInfos->info(segmentInfos->size() - 1)->toString());
+                bufferedDeletes->pushDeletes(pendingDeletes, segmentInfos->info(segmentInfos->size() - 1), true);
+            }
+            else
+            {
+                if (infoStream)
+                    message(L"flush: drop buffered deletes: no segments");
+                // We can safely discard these deletes: since there are no segments, the deletions cannot affect anything.
+            }
+            pendingDeletes = newLucene<SegmentDeletes>();
+        }
+    }
+    
+    bool DocumentsWriter::anyDeletions()
+    {
+        return pendingDeletes->any();
+    }
+    
+    SegmentInfoPtr DocumentsWriter::flush(IndexWriterPtr writer, IndexFileDeleterPtr deleter, MergePolicyPtr mergePolicy, SegmentInfosPtr segmentInfos)
+    {
+        int64_t startTime = MiscUtils::currentTimeMillis();
 
+        // We change writer's segmentInfos:
+        BOOST_ASSERT(writer->holdsLock());
+
+        waitIdle();
+
+        if (numDocs == 0)
+        {
+            // nothing to do!
+            if (infoStream)
+                message(L"flush: no docs; skipping");
+            // Lock order: IW -> DW -> BD
+            pushDeletes(SegmentInfoPtr(), segmentInfos);
+            return SegmentInfoPtr();
+        }
+
+        if (aborting)
+        {
+            if (infoStream)
+                message(L"flush: skip because aborting is set");
+            return SegmentInfoPtr();
+        }
+
+        bool success = false;
+
+        SegmentInfoPtr newSegment;
+
+        LuceneException finally;
         try
         {
-            if (_closeDocStore)
-            {
-                BOOST_ASSERT(!flushState->docStoreSegmentName.empty());
-                BOOST_ASSERT(flushState->docStoreSegmentName == flushState->segmentName);
-                
-                closeDocStore();
-                flushState->numDocsInStore = 0;
-            }
-            
+            BOOST_ASSERT(nextDocID == numDocs);
+            BOOST_ASSERT(waitQueue->numWaiting == 0);
+            BOOST_ASSERT(waitQueue->waitingBytes == 0);
+
+            if (infoStream)
+                message(L"flush postings as segment " + segment + L" numDocs=" + StringUtils::toString(numDocs));
+
+            SegmentWriteStatePtr flushState(newLucene<SegmentWriteState>(infoStream, directory, segment, fieldInfos,
+                                                                         numDocs, writer->getConfig()->getTermIndexInterval()));
+
+            newSegment = newLucene<SegmentInfo>(segment, numDocs, directory, false, true, fieldInfos->hasProx(), false);
+
             Collection<DocConsumerPerThreadPtr> threads(Collection<DocConsumerPerThreadPtr>::newInstance());
             for (Collection<DocumentsWriterThreadStatePtr>::iterator threadState = threadStates.begin(); threadState != threadStates.end(); ++threadState)
                 threads.add((*threadState)->consumer);
+
+            double startMBUsed = bytesUsed() / 1024.0 / 1024.0;
+
             consumer->flush(threads, flushState);
-            
+            newSegment->setHasVectors(flushState->hasVectors);
+
             if (infoStream)
             {
-                SegmentInfoPtr si(newLucene<SegmentInfo>(flushState->segmentName, flushState->numDocs, directory));
-                int64_t newSegmentSize = si->sizeInBytes();
-                if (infoStream)
-                {
-                    message(L"  oldRAMSize=" + StringUtils::toString(numBytesUsed) + L" newFlushedSize=" + 
-                            StringUtils::toString(newSegmentSize) + L" docs/MB=" + 
-                            StringUtils::toString((double)numDocsInRAM / ((double)newSegmentSize / 1024.0 / 1024.0)) +
-                            L" new/old=" + StringUtils::toString(100.0 * (double)newSegmentSize / (double)numBytesUsed) + L"%");
-                }
+                message(L"new segment has " + String(flushState->hasVectors ? L"vectors" : L"no vectors"));
+                message(L"flushedFiles=" + StringUtils::toString(newSegment->files().size()));
             }
-            
-            flushedDocCount += flushState->numDocs;
-            
-            doAfterFlush();
-            
+
+            if (mergePolicy->useCompoundFile(segmentInfos, newSegment))
+            {
+                String cfsFileName(IndexFileNames::segmentFileName(segment, IndexFileNames::COMPOUND_FILE_EXTENSION()));
+
+                if (infoStream)
+                    message(L"flush: create compound file \"" + cfsFileName + L"\"");
+                
+                CompoundFileWriterPtr cfsWriter(newLucene<CompoundFileWriter>(directory, cfsFileName));
+                HashSet<String> files(newSegment->files());
+                for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
+                    cfsWriter->addFile(*fileName);
+                cfsWriter->close();
+                deleter->deleteNewFiles(newSegment->files());
+                newSegment->setUseCompoundFile(true);
+            }
+
+            if (infoStream)
+            {
+                message(L"flush: segment=" + newSegment->toString());
+                double newSegmentSizeNoStore = newSegment->sizeInBytes(false) / 1024.0 / 1024.0;
+                double newSegmentSize = newSegment->sizeInBytes(true) / 1024.0 / 1024.0;
+                message(L"  ramUsed=" + StringUtils::toString(startMBUsed) + L" MB" +
+                        L" newFlushedSize=" + StringUtils::toString(newSegmentSize) + L" MB" +
+                        L" (" + StringUtils::toString(newSegmentSizeNoStore) + L" MB w/o doc stores)" +
+                        L" docs/MB=" + StringUtils::toString(numDocs / newSegmentSize) +
+                        L" new/old=" + StringUtils::toString(100.0 * newSegmentSizeNoStore / startMBUsed) + L"%");
+            }
+
             success = true;
         }
         catch (LuceneException& e)
         {
             finally = e;
         }
+        notifyAll();
         if (!success)
+        {
+            if (!segment.empty())
+                deleter->refresh(segment);
             abort();
+        }
         finally.throwException();
         
-        BOOST_ASSERT(waitQueue->waitingBytes == 0);
-        
-        return flushState->numDocs;
-    }
-    
-    HashSet<String> DocumentsWriter::getFlushedFiles()
-    {
-        return flushState->flushedFiles;
-    }
-    
-    void DocumentsWriter::createCompoundFile(const String& segment)
-    {
-        CompoundFileWriterPtr cfsWriter(newLucene<CompoundFileWriter>(directory, segment + L"." + IndexFileNames::COMPOUND_FILE_EXTENSION()));
-        for (HashSet<String>::iterator flushedFile = flushState->flushedFiles.begin(); flushedFile != flushState->flushedFiles.end(); ++flushedFile)
-            cfsWriter->addFile(*flushedFile);
-        
-        // Perform the merge
-        cfsWriter->close();
-    }
-    
-    bool DocumentsWriter::setFlushPending()
-    {
-        SyncLock syncLock(this);
-        if (flushPending)
-            return false;
-        else
-        {
-            flushPending = true;
-            return true;
-        }
-    }
-    
-    void DocumentsWriter::clearFlushPending()
-    {
-        SyncLock syncLock(this);
-        flushPending = false;
-    }
-    
-    void DocumentsWriter::pushDeletes()
-    {
-        SyncLock syncLock(this);
-        deletesFlushed->update(deletesInRAM);
+        doAfterFlush();
+
+        // Lock order: IW -> DW -> BD
+        pushDeletes(newSegment, segmentInfos);
+
+        if (infoStream)
+            message(L"flush time " + StringUtils::toString(MiscUtils::currentTimeMillis() - startTime) + L" msec");
+
+        return newSegment;
     }
     
     void DocumentsWriter::close()
@@ -613,26 +483,16 @@ namespace Lucene
         notifyAll();
     }
     
-    void DocumentsWriter::initSegmentName(bool onlyDocStore)
-    {
-        SyncLock syncLock(this);
-        if (segment.empty() && (!onlyDocStore || docStoreSegment.empty()))
-        {
-            segment = IndexWriterPtr(_writer)->newSegmentName();
-            BOOST_ASSERT(numDocsInRAM == 0);
-        }
-        if (docStoreSegment.empty())
-        {
-            docStoreSegment = segment;
-            BOOST_ASSERT(numDocsInStore == 0);
-        }
-    }
-    
     DocumentsWriterThreadStatePtr DocumentsWriter::getThreadState(DocumentPtr doc, TermPtr delTerm)
     {
         SyncLock syncLock(this);
+        
+        int64_t currentThread = LuceneThread::currentId();
+        IndexWriterPtr writer(_writer);
+        BOOST_ASSERT(writer->holdsLock());
+        
         // First, find a thread state.  If this thread already has affinity to a specific ThreadState, use that one again.
-        DocumentsWriterThreadStatePtr state(threadBindings.get(LuceneThread::currentId()));
+        DocumentsWriterThreadStatePtr state(threadBindings.get(currentThread));
         if (!state)
         {
             // First time this thread has called us since last flush.  Find the least loaded thread state
@@ -642,7 +502,7 @@ namespace Lucene
                 if (!minThreadState || (*threadState)->numThreads < minThreadState->numThreads)
                     minThreadState = *threadState;
             }
-            if (minThreadState && (minThreadState->numThreads == 0 || threadStates.size() >= MAX_THREAD_STATE))
+            if (minThreadState && (minThreadState->numThreads == 0 || threadStates.size() >= maxThreadStates))
             {
                 state = minThreadState;
                 ++state->numThreads;
@@ -654,64 +514,27 @@ namespace Lucene
                 state = newLucene<DocumentsWriterThreadState>(shared_from_this());
                 threadStates[threadStates.size() - 1] = state;
             }
-            threadBindings.put(LuceneThread::currentId(), state);
+            threadBindings.put(currentThread, state);
         }
         
-        // Next, wait until my thread state is idle (in case it's shared with other threads) and for threads to
-        // not be paused nor a flush pending
+        // Next, wait until my thread state is idle (in case it's shared with other threads), 
+        // and no flush/abort pending 
         waitReady(state);
-        
+
         // Allocate segment name if this is the first doc since last flush
-        initSegmentName(false);
-        
+        if (segment.empty())
+        {
+            segment = writer->newSegmentName();
+            BOOST_ASSERT(numDocs == 0);
+        }
+
+        state->docState->docID = nextDocID++;
+
+        if (delTerm)
+            pendingDeletes->addTerm(delTerm, state->docState->docID);
+
+        ++numDocs;
         state->isIdle = false;
-        
-        bool success = false;
-        LuceneException finally;
-        try
-        {
-            state->docState->docID = nextDocID;
-            
-            BOOST_ASSERT(IndexWriterPtr(_writer)->testPoint(L"DocumentsWriter.ThreadState.init start"));
-            
-            if (delTerm)
-            {
-                addDeleteTerm(delTerm, state->docState->docID);
-                state->doFlushAfter = timeToFlushDeletes();
-            }
-            
-            BOOST_ASSERT(IndexWriterPtr(_writer)->testPoint(L"DocumentsWriter.ThreadState.init after delTerm"));
-            
-            ++nextDocID;
-            ++numDocsInRAM;
-            
-            // We must at this point commit to flushing to ensure we always get N docs when we flush by doc 
-            // count, even if > 1 thread is adding documents
-            if (!flushPending && maxBufferedDocs != IndexWriter::DISABLE_AUTO_FLUSH && numDocsInRAM >= maxBufferedDocs)
-            {
-                flushPending = true;
-                state->doFlushAfter = true;
-            }
-            
-            success = true;
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        if (!success)
-        {
-            // Forcefully idle this ThreadState
-            state->isIdle = true;
-            notifyAll();
-            if (state->doFlushAfter)
-            {
-                state->doFlushAfter = false;
-                flushPending = false;
-            }
-        }
-        finally.throwException();
-        
         return state;
     }
     
@@ -720,13 +543,11 @@ namespace Lucene
         return updateDocument(doc, analyzer, TermPtr());
     }
     
-    bool DocumentsWriter::updateDocument(TermPtr t, DocumentPtr doc, AnalyzerPtr analyzer)
-    {
-        return updateDocument(doc, analyzer, t);
-    }
-    
     bool DocumentsWriter::updateDocument(DocumentPtr doc, AnalyzerPtr analyzer, TermPtr delTerm)
     {
+        // Possibly trigger a flush, or wait until any running flush completes
+        bool doFlush = flushControl->waitUpdate(1, delTerm ? 1 : 0);
+
         // This call is synchronized but fast
         DocumentsWriterThreadStatePtr state(getThreadState(doc, delTerm));
         
@@ -762,334 +583,75 @@ namespace Lucene
         }
         if (!success)
         {
-            SyncLock syncLock(this);
-            if (aborting)
+            // If this thread state had decided to flush, we must clear it so another thread can flush
+            if (doFlush)
+                flushControl->clearFlushPending();
+
+            if (infoStream)
+                message(L"exception in updateDocument aborting=" + StringUtils::toString(aborting));
+            
             {
+                SyncLock syncLock(this);
+
                 state->isIdle = true;
                 notifyAll();
-                abort();
-            }
-            else
-            {
-                skipDocWriter->docID = docState->docID;
-                bool success2 = false;
-                try
-                {
-                    waitQueue->add(skipDocWriter);
-                    success2 = true;
-                }
-                catch (LuceneException& e)
-                {
-                    finally = e;
-                }
-                if (!success2)
-                {
-                    state->isIdle = true;
-                    notifyAll();
+
+                if (aborting)
                     abort();
-                    return false;
-                }
-                
-                state->isIdle = true;
-                notifyAll();
-                
-                // If this thread state had decided to flush, we must clear it so another thread can flush
-                if (state->doFlushAfter)
+                else
                 {
-                    state->doFlushAfter = false;
-                    flushPending = false;
-                    notifyAll();
+                    skipDocWriter->docID = docState->docID;
+                    bool success2 = false;
+                    try
+                    {
+                        waitQueue->add(skipDocWriter);
+                        success2 = true;
+                    }
+                    catch (LuceneException& e)
+                    {
+                        finally = e;
+                    }
+                    if (!success2)
+                    {
+                        abort();
+                        return false;
+                    }
+
+                    // Immediately mark this document as deleted since likely it was partially added.  
+                    // This keeps indexing as "all or none" (atomic) when adding a document
+                    deleteDocID(state->docState->docID);
                 }
-                
-                // Immediately mark this document as deleted since likely it was partially added.  This keeps 
-                // indexing as "all or none" (atomic) when adding a document
-                addDeleteDocID(state->docState->docID);
             }
         }
 
         finally.throwException();
         
-        return (state->doFlushAfter || timeToFlushDeletes());
+        if (flushControl->flushByRAMUsage(L"new document"))
+            doFlush = true;
+
+        return doFlush;
     }
     
-    int32_t DocumentsWriter::getNumBufferedDeleteTerms()
+    void DocumentsWriter::waitIdle()
     {
         SyncLock syncLock(this);
-        return deletesInRAM->numTerms;
-    }
-    
-    MapTermNum DocumentsWriter::getBufferedDeleteTerms()
-    {
-        SyncLock syncLock(this);
-        return deletesInRAM->terms;
-    }
-    
-    void DocumentsWriter::remapDeletes(SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergeDocCount)
-    {
-        SyncLock syncLock(this);
-        if (!docMaps)
-        {
-            // The merged segments had no deletes so docIDs did not change and we have nothing to do
-            return;
-        }
-        MergeDocIDRemapperPtr mapper(newLucene<MergeDocIDRemapper>(infos, docMaps, delCounts, merge, mergeDocCount));
-        deletesInRAM->remap(mapper, infos, docMaps, delCounts, merge, mergeDocCount);
-        deletesFlushed->remap(mapper, infos, docMaps, delCounts, merge, mergeDocCount);
-        flushedDocCount -= mapper->docShift;
+        while (!allThreadsIdle())
+            wait();
     }
     
     void DocumentsWriter::waitReady(DocumentsWriterThreadStatePtr state)
     {
         SyncLock syncLock(this);
-        while (!closed && ((state && !state->isIdle) || pauseThreads != 0 || flushPending || aborting))
-            wait(1000);
+        while (!closed && (!state->isIdle || aborting))
+            wait();
         if (closed)
             boost::throw_exception(AlreadyClosedException(L"this IndexWriter is closed"));
     }
     
-    bool DocumentsWriter::bufferDeleteTerms(Collection<TermPtr> terms)
-    {
-        SyncLock syncLock(this);
-        waitReady(DocumentsWriterThreadStatePtr());
-        for (Collection<TermPtr>::iterator term = terms.begin(); term != terms.end(); ++term)
-            addDeleteTerm(*term, numDocsInRAM);
-        return timeToFlushDeletes();
-    }
-    
-    bool DocumentsWriter::bufferDeleteTerm(TermPtr term)
-    {
-        SyncLock syncLock(this);
-        waitReady(DocumentsWriterThreadStatePtr());
-        addDeleteTerm(term, numDocsInRAM);
-        return timeToFlushDeletes();
-    }
-    
-    bool DocumentsWriter::bufferDeleteQueries(Collection<QueryPtr> queries)
-    {
-        SyncLock syncLock(this);
-        waitReady(DocumentsWriterThreadStatePtr());
-        for (Collection<QueryPtr>::iterator query = queries.begin(); query != queries.end(); ++query)
-            addDeleteQuery(*query, numDocsInRAM);
-        return timeToFlushDeletes();
-    }
-    
-    bool DocumentsWriter::bufferDeleteQuery(QueryPtr query)
-    {
-        SyncLock syncLock(this);
-        waitReady(DocumentsWriterThreadStatePtr());
-        addDeleteQuery(query, numDocsInRAM);
-        return timeToFlushDeletes();
-    }
-    
-    bool DocumentsWriter::deletesFull()
-    {
-        SyncLock syncLock(this);
-        return ((ramBufferSize != IndexWriter::DISABLE_AUTO_FLUSH &&
-                (deletesInRAM->bytesUsed + deletesFlushed->bytesUsed + numBytesUsed) >= ramBufferSize) ||
-                (maxBufferedDeleteTerms != IndexWriter::DISABLE_AUTO_FLUSH &&
-                ((deletesInRAM->size() + deletesFlushed->size()) >= maxBufferedDeleteTerms)));
-    }
-    
-    bool DocumentsWriter::doApplyDeletes()
-    {
-        SyncLock syncLock(this);
-        // Very similar to deletesFull(), except we don't count numBytesAlloc, because we are checking whether
-        // deletes (alone) are consuming too many resources now and thus should be applied.  We apply deletes 
-        // if RAM usage is > 1/2 of our allowed RAM buffer, to prevent too-frequent flushing of a long tail of
-        // tiny segments when merges (which always apply deletes) are infrequent.
-        return ((ramBufferSize != IndexWriter::DISABLE_AUTO_FLUSH &&
-                (deletesInRAM->bytesUsed + deletesFlushed->bytesUsed) >= ramBufferSize / 2) ||
-                (maxBufferedDeleteTerms != IndexWriter::DISABLE_AUTO_FLUSH &&
-                ((deletesInRAM->size() + deletesFlushed->size()) >= maxBufferedDeleteTerms)));
-    }
-    
-    bool DocumentsWriter::timeToFlushDeletes()
-    {
-        SyncLock syncLock(this);
-        return ((bufferIsFull || deletesFull()) && setFlushPending());
-    }
-    
-    bool DocumentsWriter::checkDeleteTerm(TermPtr term)
-    {
-        if (term)
-            BOOST_ASSERT(!lastDeleteTerm || term->compareTo(lastDeleteTerm) > 0);
-        lastDeleteTerm = term;
-        return true;
-    }
-    
-    void DocumentsWriter::setMaxBufferedDeleteTerms(int32_t maxBufferedDeleteTerms)
-    {
-        this->maxBufferedDeleteTerms = maxBufferedDeleteTerms;
-    }
-    
-    int32_t DocumentsWriter::getMaxBufferedDeleteTerms()
-    {
-        return maxBufferedDeleteTerms;
-    }
-    
-    bool DocumentsWriter::hasDeletes()
-    {
-        SyncLock syncLock(this);
-        return deletesFlushed->any();
-    }
-    
-    bool DocumentsWriter::applyDeletes(SegmentInfosPtr infos)
-    {
-        SyncLock syncLock(this);
-        if (!hasDeletes())
-            return false;
-        
-        if (infoStream)
-        {
-            message(L"apply " + StringUtils::toString(deletesFlushed->numTerms) + L" buffered deleted terms and " +
-                    StringUtils::toString(deletesFlushed->docIDs.size()) + L" deleted docIDs and " +
-                    StringUtils::toString(deletesFlushed->queries.size()) + L" deleted queries on " +
-                    StringUtils::toString(infos->size()) + L" segments.");
-        }
-        
-        int32_t infosEnd = infos->size();
-        
-        int32_t docStart = 0;
-        bool any = false;
-        IndexWriterPtr writer(_writer);
-        
-        for (int32_t i = 0; i < infosEnd; ++i)
-        {
-            // Make sure we never attempt to apply deletes to segment in external dir
-            BOOST_ASSERT(infos->info(i)->dir == directory);
-            
-            SegmentReaderPtr reader(writer->readerPool->get(infos->info(i), false));
-            LuceneException finally;
-            try
-            {
-                if (applyDeletes(reader, docStart))
-                    any = true;
-                docStart += reader->maxDoc();
-            }
-            catch (LuceneException& e)
-            {
-                finally = e;
-            }
-            writer->readerPool->release(reader);
-            finally.throwException();
-        }
-        
-        deletesFlushed->clear();
-        
-        return any;
-    }
-    
-    bool DocumentsWriter::applyDeletes(IndexReaderPtr reader, int32_t docIDStart)
-    {
-        SyncLock syncLock(this);
-        int32_t docEnd = docIDStart + reader->maxDoc();
-        bool any = false;
-        
-        BOOST_ASSERT(checkDeleteTerm(TermPtr()));
-        
-        // Delete by term
-        TermDocsPtr docs(reader->termDocs());
-        LuceneException finally;
-        try
-        {
-            for (MapTermNum::iterator entry = deletesFlushed->terms.begin(); entry != deletesFlushed->terms.end(); ++entry)
-            {
-                // we should be iterating a Map here, so terms better be in order
-                BOOST_ASSERT(checkDeleteTerm(entry->first));
-                docs->seek(entry->first);
-                int32_t limit = entry->second->getNum();
-                while (docs->next())
-                {
-                    int32_t docID = docs->doc();
-                    if (docIDStart + docID >= limit)
-                        break;
-                    reader->deleteDocument(docID);
-                    any = true;
-                }
-            }
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        docs->close();
-        finally.throwException();
-        
-        // Delete by docID
-        for (Collection<int32_t>::iterator docID = deletesFlushed->docIDs.begin(); docID != deletesFlushed->docIDs.end(); ++docID)
-        {
-            if (*docID >= docIDStart && *docID < docEnd)
-            {
-                reader->deleteDocument(*docID - docIDStart);
-                any = true;
-            }
-        }
-        
-        // Delete by query
-        IndexSearcherPtr searcher(newLucene<IndexSearcher>(reader));
-        for (MapQueryInt::iterator entry = deletesFlushed->queries.begin(); entry != deletesFlushed->queries.end(); ++entry)
-        {
-            WeightPtr weight(entry->first->weight(searcher));
-            ScorerPtr scorer(weight->scorer(reader, true, false));
-            if (scorer)
-            {
-                while (true)
-                {
-                    int32_t doc = scorer->nextDoc();
-                    if ((int64_t)docIDStart + doc >= entry->second)
-                        break;
-                    reader->deleteDocument(doc);
-                    any = true;
-                }
-            }
-        }
-        searcher->close();
-        return any;
-    }
-    
-    void DocumentsWriter::addDeleteTerm(TermPtr term, int32_t docCount)
-    {
-        SyncLock syncLock(this);
-        NumPtr num(deletesInRAM->terms.get(term));
-        int32_t docIDUpto = flushedDocCount + docCount;
-        if (!num)
-            deletesInRAM->terms.put(term, newLucene<Num>(docIDUpto));
-        else
-            num->setNum(docIDUpto);
-        ++deletesInRAM->numTerms;
-        
-        deletesInRAM->addBytesUsed(BYTES_PER_DEL_TERM + term->_text.length() * CHAR_NUM_BYTE);
-    }
-    
-    void DocumentsWriter::addDeleteDocID(int32_t docID)
-    {
-        SyncLock syncLock(this);
-        deletesInRAM->docIDs.add(flushedDocCount + docID);
-        deletesInRAM->addBytesUsed(BYTES_PER_DEL_DOCID);
-    }
-    
-    void DocumentsWriter::addDeleteQuery(QueryPtr query, int32_t docID)
-    {
-        SyncLock syncLock(this);
-        deletesInRAM->queries.put(query, flushedDocCount + docID);
-        deletesInRAM->addBytesUsed(BYTES_PER_DEL_QUERY);
-    }
-    
-    bool DocumentsWriter::doBalanceRAM()
-    {
-        SyncLock syncLock(this);
-        return (ramBufferSize != IndexWriter::DISABLE_AUTO_FLUSH && !bufferIsFull &&
-                (numBytesUsed + deletesInRAM->bytesUsed + deletesFlushed->bytesUsed >= ramBufferSize || 
-                numBytesAlloc >= freeTrigger));
-    }
-    
     void DocumentsWriter::finishDocument(DocumentsWriterThreadStatePtr perThread, DocWriterPtr docWriter)
     {
-        if (doBalanceRAM())
-        {
-            // Must call this without holding synchronized(this) else we'll hit deadlock
-            balanceRAM();
-        }
+        // Must call this without holding synchronized(this) else we'll hit deadlock
+        balanceRAM();
         
         {
             SyncLock syncLock(this);
@@ -1111,7 +673,10 @@ namespace Lucene
                 }
                 
                 perThread->isIdle = true;
+                
+                // wakes up any threads waiting on the wait queue
                 notifyAll();
+                
                 return;
             }
             
@@ -1128,13 +693,9 @@ namespace Lucene
             if (doPause)
                 waitForWaitQueue();
             
-            if (bufferIsFull && !flushPending)
-            {
-                flushPending = true;
-                perThread->doFlushAfter = true;
-            }
-            
             perThread->isIdle = true;
+            
+            // wakes up any threads waiting on the wait queue
             notifyAll();
         }
     }
@@ -1144,48 +705,36 @@ namespace Lucene
         SyncLock syncLock(this);
         do
         {
-            wait(1000);
+            wait();
         }
         while (!waitQueue->doResume());
     }
     
-    int64_t DocumentsWriter::getRAMUsed()
-    {
-        return numBytesUsed + deletesInRAM->bytesUsed + deletesFlushed->bytesUsed;
-    }
-    
-    IntArray DocumentsWriter::getIntBlock(bool trackAllocations)
+    IntArray DocumentsWriter::getIntBlock()
     {
         SyncLock syncLock(this);
         int32_t size = freeIntBlocks.size();
         IntArray b;
         if (size == 0)
         {
-            // Always record a block allocated, even if trackAllocations is false.  This is necessary because 
-            // this block will be shared between things that don't track allocations (term vectors) and things 
-            // that do (freq/prox postings).
-            numBytesAlloc += INT_BLOCK_SIZE * INT_NUM_BYTE;
             b = IntArray::newInstance(INT_BLOCK_SIZE);
+            _bytesUsed->addAndGet(INT_BLOCK_SIZE * sizeof(int32_t));
         }
         else
             b = freeIntBlocks.removeLast();
-        if (trackAllocations)
-            numBytesUsed += INT_BLOCK_SIZE * INT_NUM_BYTE;
-        BOOST_ASSERT(numBytesUsed <= numBytesAlloc);
         return b;
-    }
-    
-    void DocumentsWriter::bytesAllocated(int64_t numBytes)
-    {
-        SyncLock syncLock(this);
-        numBytesAlloc += numBytes;
     }
     
     void DocumentsWriter::bytesUsed(int64_t numBytes)
     {
         SyncLock syncLock(this);
-        numBytesUsed += numBytes;
-        BOOST_ASSERT(numBytesUsed <= numBytesAlloc);
+        _bytesUsed->addAndGet(numBytes);
+    }
+    
+    int64_t DocumentsWriter::bytesUsed()
+    {
+        SyncLock syncLock(this);
+        return _bytesUsed->get() + pendingDeletes->bytesUsed->get();
     }
     
     void DocumentsWriter::recycleIntBlocks(Collection<IntArray> blocks, int32_t start, int32_t end)
@@ -1205,15 +754,13 @@ namespace Lucene
         CharArray c;
         if (size == 0)
         {
-            numBytesAlloc += CHAR_BLOCK_SIZE * CHAR_NUM_BYTE;
+            _bytesUsed->addAndGet(CHAR_BLOCK_SIZE * sizeof(wchar_t));
             c = CharArray::newInstance(CHAR_BLOCK_SIZE);
         }
         else
             c = freeCharBlocks.removeLast();
         // We always track allocations of char blocks for now because nothing that skips allocation tracking
         // (currently only term vectors) uses its own char blocks.
-        numBytesUsed += CHAR_BLOCK_SIZE * CHAR_NUM_BYTE;
-        BOOST_ASSERT(numBytesUsed <= numBytesAlloc);
         return c;
     }
     
@@ -1234,34 +781,45 @@ namespace Lucene
     
     void DocumentsWriter::balanceRAM()
     {
-        // We flush when we've used our target usage
-        int64_t flushTrigger = ramBufferSize;
+        bool doBalance = false;
+        int64_t deletesRAMUsed = bufferedDeletes->bytesUsed();
+
+        int64_t ramBufferSize = 0;
+        double mb = config->getRAMBufferSizeMB();
+        if (mb == IndexWriterConfig::DISABLE_AUTO_FLUSH)
+            ramBufferSize = IndexWriterConfig::DISABLE_AUTO_FLUSH;
+        else
+            ramBufferSize = (int64_t)(mb * 1024 * 1024);
         
-        int64_t deletesRAMUsed = deletesInRAM->bytesUsed + deletesFlushed->bytesUsed;
-        
-        if (numBytesAlloc + deletesRAMUsed > freeTrigger)
+        {
+            SyncLock syncLock(this);
+            if (ramBufferSize == IndexWriterConfig::DISABLE_AUTO_FLUSH || bufferIsFull)
+                return;
+            doBalance = (bytesUsed() + deletesRAMUsed >= ramBufferSize);
+        }
+
+        if (doBalance)
         {
             if (infoStream)
             {
-                message(L"  RAM: now balance allocations: usedMB=" + toMB(numBytesUsed) +
-                        L" vs trigger=" + toMB(flushTrigger) +
-                        L" allocMB=" + toMB(numBytesAlloc) +
+                message(L"  RAM: balance allocations: usedMB=" + toMB(bytesUsed()) +
+                        L" vs trigger=" + toMB(ramBufferSize) +
                         L" deletesMB=" + toMB(deletesRAMUsed) +
-                        L" vs trigger=" + toMB(freeTrigger) +
                         L" byteBlockFree=" + toMB(byteBlockAllocator->freeByteBlocks.size() * BYTE_BLOCK_SIZE) +
                         L" perDocFree=" + toMB(perDocAllocator->freeByteBlocks.size() * PER_DOC_BLOCK_SIZE) +
-                        L" charBlockFree=" + toMB(freeCharBlocks.size() * CHAR_BLOCK_SIZE * CHAR_NUM_BYTE));
+                        L" charBlockFree=" + toMB(freeCharBlocks.size() * CHAR_BLOCK_SIZE * sizeof(wchar_t)));
             }
-            
-            int64_t startBytesAlloc = numBytesAlloc + deletesRAMUsed;
-            
+
+            int64_t startBytesUsed = bytesUsed() + deletesRAMUsed;
+
             int32_t iter = 0;
-            
+
             // We free equally from each pool in 32 KB chunks until we are below our threshold (freeLevel)
-            
             bool any = true;
-            
-            while (numBytesAlloc + deletesRAMUsed > freeLevel)
+
+            int64_t freeLevel = (int64_t)(0.95 * (double)ramBufferSize);
+
+            while (bytesUsed() + deletesRAMUsed > freeLevel)
             {
                 {
                     SyncLock syncLock(this);
@@ -1269,80 +827,62 @@ namespace Lucene
                         freeCharBlocks.empty() && freeIntBlocks.empty() && !any)
                     {
                         // Nothing else to free -- must flush now.
-                        bufferIsFull = (numBytesUsed + deletesRAMUsed > flushTrigger);
+                        bufferIsFull = (bytesUsed() + deletesRAMUsed > ramBufferSize);
                         if (infoStream)
                         {
-                            if (bufferIsFull)
-                                message(L"    nothing to free; now set bufferIsFull");
+                            if (bytesUsed() + deletesRAMUsed > ramBufferSize)
+                                message(L"    nothing to free; set bufferIsFull");
                             else
                                 message(L"    nothing to free");
                         }
-                        BOOST_ASSERT(numBytesUsed <= numBytesAlloc);
                         break;
                     }
-                    
-                    if ((iter % 5) == 0 && !byteBlockAllocator->freeByteBlocks.empty())
+
+                    if ((0 == iter % 5) && !byteBlockAllocator->freeByteBlocks.empty())
                     {
                         byteBlockAllocator->freeByteBlocks.removeLast();
-                        numBytesAlloc -= BYTE_BLOCK_SIZE;
+                        _bytesUsed->addAndGet(-BYTE_BLOCK_SIZE);
                     }
-                    
-                    if ((iter % 5) == 1 && !freeCharBlocks.empty())
+
+                    if ((1 == iter % 5) && !freeCharBlocks.empty())
                     {
                         freeCharBlocks.removeLast();
-                        numBytesAlloc -= CHAR_BLOCK_SIZE * CHAR_NUM_BYTE;
+                        _bytesUsed->addAndGet(-CHAR_BLOCK_SIZE * (int32_t)sizeof(wchar_t));
                     }
-                    
-                    if ((iter % 5) == 2 && !freeIntBlocks.empty())
+
+                    if ((2 == iter % 5) && !freeIntBlocks.empty())
                     {
                         freeIntBlocks.removeLast();
-                        numBytesAlloc -= INT_BLOCK_SIZE * INT_NUM_BYTE;
+                        _bytesUsed->addAndGet(-INT_BLOCK_SIZE * (int32_t)sizeof(int32_t));
                     }
-                    
-                    if ((iter % 5) == 3 && !perDocAllocator->freeByteBlocks.empty())
+
+                    if ((3 == iter % 5) && !perDocAllocator->freeByteBlocks.empty())
                     {
                         // Remove upwards of 32 blocks (each block is 1K)
                         for (int32_t i = 0; i < 32; ++i)
                         {
                             perDocAllocator->freeByteBlocks.removeLast();
-                            numBytesAlloc -= PER_DOC_BLOCK_SIZE;
+                            _bytesUsed->addAndGet(-PER_DOC_BLOCK_SIZE);
                             if (perDocAllocator->freeByteBlocks.empty())
                                 break;
                         }
                     }
                 }
-                
-                if ((iter % 5) == 4 && any)
+
+                if ((4 == iter % 5) && any)
                 {
                     // Ask consumer to free any recycled state
                     any = consumer->freeRAM();
                 }
-                
+
                 ++iter;
             }
-                
+
             if (infoStream)
             {
-                message(L"    after free: freedMB=" + StringUtils::toString((double)(startBytesAlloc - numBytesAlloc - deletesRAMUsed) / 1024.0 / 1024.0) + 
-                        L" usedMB=" + StringUtils::toString((double)(numBytesUsed + deletesRAMUsed) / 1024.0 / 1024.0) + 
-                        L" allocMB=" + StringUtils::toString((double)numBytesAlloc / 1024.0 / 1024.0));
-            }
-        }
-        else
-        {
-            // If we have not crossed the 100% mark, but have crossed the 95% mark of RAM we are actually
-            // using, go ahead and flush.  This prevents over-allocating and then freeing, with every flush.
-            SyncLock syncLock(this);
-            if (numBytesUsed + deletesRAMUsed > flushTrigger)
-            {
-                if (infoStream)
-                {
-                    message(L"  RAM: now flush @ usedMB=" + StringUtils::toString((double)numBytesUsed / 1024.0 / 1024.0) +
-                            L" allocMB=" + StringUtils::toString((double)numBytesAlloc / 1024.0 / 1024.0) +
-                            L" deletesMB=" + StringUtils::toString((double)deletesRAMUsed / 1024.0 / 1024.0) +
-                            L" triggerMB=" + StringUtils::toString((double)flushTrigger / 1024.0 / 1024.0));
-                }
-                bufferIsFull = true;
+                message(L"    after free: freedMB=" + 
+                        StringUtils::toString((startBytesUsed - bytesUsed() - deletesRAMUsed) / 1024.0 / 1024.0) + 
+                        L" usedMB=" + StringUtils::toString((bytesUsed() + deletesRAMUsed) / 1024.0 / 1024.0));
             }
         }
     }
@@ -1381,7 +921,7 @@ namespace Lucene
     ByteArray PerDocBuffer::newBuffer(int32_t size)
     {
         BOOST_ASSERT(size == DocumentsWriter::PER_DOC_BLOCK_SIZE);
-        return DocumentsWriterPtr(_docWriter)->perDocAllocator->getByteBlock(false);
+        return DocumentsWriterPtr(_docWriter)->perDocAllocator->getByteBlock();
     }
     
     void PerDocBuffer::recycle()
@@ -1478,13 +1018,27 @@ namespace Lucene
     bool WaitQueue::doResume()
     {
         SyncLock syncLock(this);
-        return (waitingBytes <= DocumentsWriterPtr(_docWriter)->waitQueueResumeBytes);
+        DocumentsWriterPtr docWriter(_docWriter);
+        double mb = docWriter->config->getRAMBufferSizeMB();
+        int64_t waitQueueResumeBytes = 0;
+        if (mb == IndexWriterConfig::DISABLE_AUTO_FLUSH)
+            waitQueueResumeBytes = 2 * 1024 * 1024;
+        else
+            waitQueueResumeBytes = (int64_t)(mb * 1024 * 1024 * 0.05);
+        return (waitingBytes <= waitQueueResumeBytes);
     }
     
     bool WaitQueue::doPause()
     {
         SyncLock syncLock(this);
-        return (waitingBytes > DocumentsWriterPtr(_docWriter)->waitQueuePauseBytes);
+        DocumentsWriterPtr docWriter(_docWriter);
+        double mb = docWriter->config->getRAMBufferSizeMB();
+        int64_t waitQueuePauseBytes = 0;
+        if (mb == IndexWriterConfig::DISABLE_AUTO_FLUSH)
+            waitQueuePauseBytes = 4 * 1024 * 1024;
+        else
+            waitQueuePauseBytes = (int64_t)(mb * 1024 * 1024 * 0.1);
+        return (waitingBytes > waitQueuePauseBytes);
     }
     
     void WaitQueue::abort()
@@ -1515,7 +1069,6 @@ namespace Lucene
         {
             doc->finish();
             ++nextWriteDocID;
-            ++docWriter->numDocsInStore;
             ++nextWriteLoc;
             BOOST_ASSERT(nextWriteLoc <= waiting.size());
             if (nextWriteLoc == waiting.size())
@@ -1561,7 +1114,7 @@ namespace Lucene
             if (gap >= waiting.size())
             {
                 // Grow queue
-                Collection<DocWriterPtr> newArray(Collection<DocWriterPtr>::newInstance(MiscUtils::getNextSize(gap)));
+                Collection<DocWriterPtr> newArray(Collection<DocWriterPtr>::newInstance(MiscUtils::oversize(gap, sizeof(DocWriterPtr))));
                 BOOST_ASSERT(nextWriteLoc >= 0);
                 MiscUtils::arrayCopy(waiting.begin(), nextWriteLoc, newArray.begin(), 0, waiting.size() - nextWriteLoc);
                 MiscUtils::arrayCopy(waiting.begin(), 0, newArray.begin(), waiting.size() - nextWriteLoc, nextWriteLoc);
@@ -1598,7 +1151,7 @@ namespace Lucene
     {
     }
     
-    ByteArray ByteBlockAllocator::getByteBlock(bool trackAllocations)
+    ByteArray ByteBlockAllocator::getByteBlock()
     {
         DocumentsWriterPtr docWriter(_docWriter);
         SyncLock syncLock(docWriter);
@@ -1606,17 +1159,11 @@ namespace Lucene
         ByteArray b;
         if (size == 0)
         {
-            // Always record a block allocated, even if trackAllocations is false.  This is necessary because this block will 
-            // be shared between things that don't track allocations (term vectors) and things that do (freq/prox postings).
-            docWriter->numBytesAlloc += blockSize;
             b = ByteArray::newInstance(blockSize);
             MiscUtils::arrayFill(b.get(), 0, b.size(), 0);
         }
         else
             b = freeByteBlocks.removeLast();
-        if (trackAllocations)
-            docWriter->numBytesUsed += blockSize;
-        BOOST_ASSERT(docWriter->numBytesUsed <= docWriter->numBytesAlloc);
         return b;
     }
     

@@ -6,38 +6,46 @@
 
 #include "LuceneInc.h"
 #include "FuzzyQuery.h"
-#include "_FuzzyQuery.h"
 #include "FuzzyTermEnum.h"
+#include "SingleTermEnum.h"
 #include "Term.h"
 #include "TermQuery.h"
 #include "BooleanQuery.h"
 #include "BooleanClause.h"
+#include "TopTermsRewrite.h"
 #include "MiscUtils.h"
 
 namespace Lucene
 {
     const int32_t FuzzyQuery::defaultPrefixLength = 0;
     
+    const int32_t FuzzyQuery::defaultMaxExpansions = INT_MAX;
+    
+    FuzzyQuery::FuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength, int32_t maxExpansions)
+    {
+        ConstructQuery(term, minimumSimilarity, prefixLength, maxExpansions);
+    }
+    
     FuzzyQuery::FuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength)
     {
-        ConstructQuery(term, minimumSimilarity, prefixLength);
+        ConstructQuery(term, minimumSimilarity, prefixLength, defaultMaxExpansions);
     }
     
     FuzzyQuery::FuzzyQuery(TermPtr term, double minimumSimilarity)
     {
-        ConstructQuery(term, minimumSimilarity, defaultPrefixLength);
+        ConstructQuery(term, minimumSimilarity, defaultPrefixLength, defaultMaxExpansions);
     }
     
     FuzzyQuery::FuzzyQuery(TermPtr term)
     {
-        ConstructQuery(term, defaultMinSimilarity(), defaultPrefixLength);
+        ConstructQuery(term, defaultMinSimilarity(), defaultPrefixLength, defaultMaxExpansions);
     }
     
     FuzzyQuery::~FuzzyQuery()
     {
     }
     
-    void FuzzyQuery::ConstructQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength)
+    void FuzzyQuery::ConstructQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength, int32_t maxExpansions)
     {
         this->term = term;
         
@@ -47,6 +55,10 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"minimumSimilarity < 0"));
         if (prefixLength < 0)
             boost::throw_exception(IllegalArgumentException(L"prefixLength < 0"));
+        if (maxExpansions < 0)
+            boost::throw_exception(IllegalArgumentException(L"maxExpansions < 0"));
+        
+        setRewriteMethod(newLucene<TopTermsScoringBooleanQueryRewrite>(maxExpansions));
         
         this->termLongEnough = ((int32_t)term->text().length() > (int32_t)(1.0 / (1.0 - minimumSimilarity)));
         
@@ -73,6 +85,8 @@ namespace Lucene
     
     FilteredTermEnumPtr FuzzyQuery::getEnum(IndexReaderPtr reader)
     {
+        if (!termLongEnough) // can only match if it's exact
+            return newLucene<SingleTermEnum>(reader, term);
         return newLucene<FuzzyTermEnum>(reader, getTerm(), minimumSimilarity, prefixLength);
     }
     
@@ -81,65 +95,15 @@ namespace Lucene
         return term;
     }
     
-    void FuzzyQuery::setRewriteMethod(RewriteMethodPtr method)
+    String FuzzyQuery::getField()
     {
-        boost::throw_exception(UnsupportedOperationException(L"FuzzyQuery cannot change rewrite method"));
-    }
-    
-    QueryPtr FuzzyQuery::rewrite(IndexReaderPtr reader)
-    {
-        if (!termLongEnough) // can only match if it's exact
-            return newLucene<TermQuery>(term);
-        
-        int32_t maxSize = BooleanQuery::getMaxClauseCount();
-        ScoreTermQueuePtr stQueue(newLucene<ScoreTermQueue>(1024));
-        FilteredTermEnumPtr enumerator(getEnum(reader));
-        LuceneException finally;
-        try
-        {
-            ScoreTermPtr st = newLucene<ScoreTerm>();
-            do
-            {
-                TermPtr t(enumerator->term());
-                if (!t)
-                    break;
-                double score = enumerator->difference();
-                // ignore uncompetitive hits
-                if (stQueue->size() >= maxSize && score <= stQueue->top()->score)
-                    continue;
-                // add new entry in PQ
-                st->term = t;
-                st->score = score;
-                stQueue->add(st);
-                // possibly drop entries from queue
-                st = (stQueue->size() > maxSize) ? stQueue->pop() : newLucene<ScoreTerm>();
-            }
-            while (enumerator->next());
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        enumerator->close();
-        finally.throwException();
-        
-        BooleanQueryPtr query(newLucene<BooleanQuery>(true));
-        int32_t size = stQueue->size();
-        for (int32_t i = 0; i < size; ++i)
-        {
-            ScoreTermPtr st(stQueue->pop());
-            TermQueryPtr tq(newLucene<TermQuery>(st->term)); // found a match
-            tq->setBoost(getBoost() * st->score); // set the boost
-            query->add(tq, BooleanClause::SHOULD); // add to query
-        }
-        
-        return query;
+        return term->field();
     }
     
     LuceneObjectPtr FuzzyQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<FuzzyQuery>(term));
-        FuzzyQueryPtr cloneQuery(boost::dynamic_pointer_cast<FuzzyQuery>(clone));
+        FuzzyQueryPtr cloneQuery(boost::static_pointer_cast<FuzzyQuery>(clone));
         cloneQuery->minimumSimilarity = minimumSimilarity;
         cloneQuery->prefixLength = prefixLength;
         cloneQuery->termLongEnough = termLongEnough;
@@ -189,30 +153,5 @@ namespace Lucene
         else if (!term->equals(otherFuzzyQuery->term))
             return false;
         return true;
-    }
-    
-    ScoreTerm::~ScoreTerm()
-    {
-    }
-    
-    int32_t ScoreTerm::compareTo(ScoreTermPtr other)
-    {
-        if (this->score == other->score)
-            return other->term->compareTo(this->term);
-        else
-            return this->score < other->score ? -1 : (this->score > other->score ? 1 : 0);
-    }
-    
-    ScoreTermQueue::ScoreTermQueue(int32_t size) : PriorityQueue<ScoreTermPtr>(size)
-    {
-    }
-    
-    ScoreTermQueue::~ScoreTermQueue()
-    {
-    }
-    
-    bool ScoreTermQueue::lessThan(const ScoreTermPtr& first, const ScoreTermPtr& second)
-    {
-        return (first->compareTo(second) < 0);
     }
 }

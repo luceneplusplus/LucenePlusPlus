@@ -10,6 +10,10 @@
 
 namespace Lucene
 {
+    ReaderUtil::ReaderUtil()
+    {
+    }
+    
     ReaderUtil::~ReaderUtil()
     {
     }
@@ -55,5 +59,37 @@ namespace Lucene
         // Binary search to locate reader
         Collection<int32_t>::iterator index = std::upper_bound(docStarts.begin(), docStarts.end(), n);
         return (std::distance(docStarts.begin(), index) - 1);
+    }
+    
+    ReaderGather::ReaderGather(IndexReaderPtr r)
+    {
+        topReader = r;
+    }
+    
+    ReaderGather::~ReaderGather()
+    {
+    }
+    
+    int32_t ReaderGather::run(int32_t base, IndexReaderPtr reader)
+    {
+        Collection<IndexReaderPtr> subReaders(reader->getSequentialSubReaders());
+        if (!subReaders)
+        {
+            // atomic reader
+            add(base, reader);
+            base += reader->maxDoc();
+        }
+        else
+        {
+            // composite reader
+            for (int32_t i = 0; i < subReaders.size(); ++i)
+                base = run(base, subReaders[i]);
+        }
+        return base;
+    }
+    
+    int32_t ReaderGather::run(int32_t docBase)
+    {
+        return run(docBase, topReader);
     }
 }

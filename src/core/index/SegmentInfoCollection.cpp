@@ -49,6 +49,11 @@ namespace Lucene
         this->segmentInfos.addAll(segmentInfos->segmentInfos.begin(), segmentInfos->segmentInfos.end());
     }
     
+    void SegmentInfoCollection::addAll(Collection<SegmentInfoPtr> segmentInfos)
+    {
+        this->segmentInfos.addAll(segmentInfos.begin(), segmentInfos.end());
+    }
+    
     bool SegmentInfoCollection::equals(SegmentInfoCollectionPtr other)
     {
         if (LuceneObject::equals(other))
@@ -80,7 +85,7 @@ namespace Lucene
     LuceneObjectPtr SegmentInfoCollection::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<SegmentInfoCollection>());
-        SegmentInfoCollectionPtr cloneInfos(boost::dynamic_pointer_cast<SegmentInfoCollection>(clone));
+        SegmentInfoCollectionPtr cloneInfos(boost::static_pointer_cast<SegmentInfoCollection>(clone));
         for (Collection<SegmentInfoPtr>::iterator info = segmentInfos.begin(); info != segmentInfos.end(); ++info)
             cloneInfos->segmentInfos.add(*info);
         return cloneInfos;

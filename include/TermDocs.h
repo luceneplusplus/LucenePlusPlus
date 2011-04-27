@@ -22,6 +22,7 @@ namespace Lucene
         TermDocs();
 
     public:
+        ~TermDocs();
         LUCENE_INTERFACE(TermDocs);
                 
     public:

@@ -32,6 +32,7 @@
 #include "BooleanQuery.h"
 #include "PayloadHelper.h"
 #include "MiscUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -198,10 +199,10 @@ public:
         for (int32_t i = 0; i < 1000; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
-            FieldPtr noPayloadField = newLucene<Field>(PayloadHelper::NO_PAYLOAD_FIELD, intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED);
+            FieldPtr noPayloadField = newLucene<Field>(PayloadHelper::NO_PAYLOAD_FIELD, English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED);
             doc->add(noPayloadField);
-            doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
-            doc->add(newLucene<Field>(L"multiField", intToEnglish(i) + L"  " + intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
+            doc->add(newLucene<Field>(L"field", English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
+            doc->add(newLucene<Field>(L"multiField", English::intToEnglish(i) + L"  " + English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
         }
         writer->optimize();

@@ -13,6 +13,7 @@
 #include "WhitespaceTokenizer.h"
 #include "TermAttribute.h"
 #include "PositionIncrementAttribute.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -26,7 +27,7 @@ static void doTestStopPositons(StopFilterPtr stpf, bool enableIcrements)
     for (int32_t i = 0; i < 20; i += 3)
     {
         BOOST_CHECK(stpf->incrementToken());
-        String w = intToEnglish(i);
+        String w = English::intToEnglish(i);
         BOOST_CHECK_EQUAL(w, termAtt->term());
         BOOST_CHECK_EQUAL(enableIcrements ? (i == 0 ? 1 : 3) : 1, posIncrAtt->getPositionIncrement());
     }
@@ -69,7 +70,7 @@ BOOST_AUTO_TEST_CASE(testStopPositons)
     Collection<String> stopWords = Collection<String>::newInstance();
     for (int32_t i = 0; i < 20; ++i)
     {
-        String w = intToEnglish(i);
+        String w = English::intToEnglish(i);
         buf << w << L" ";
         if (i % 3 != 0)
             stopWords.add(w);

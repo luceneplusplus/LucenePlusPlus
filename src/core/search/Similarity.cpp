@@ -20,6 +20,7 @@ namespace Lucene
     
     Similarity::Similarity()
     {
+        hasIDFExplainWithDocFreqAPI = true;
     }
     
     Similarity::~Similarity()
@@ -51,7 +52,12 @@ namespace Lucene
     
     double Similarity::decodeNorm(uint8_t b)
     {
-        return NORM_TABLE()[b & 0xff];  // & 0xff maps negative bytes to positive above 127
+        return NORM_TABLE()[b & 0xff]; // & 0xff maps negative bytes to positive above 127
+    }
+    
+    double Similarity::decodeNormValue(uint8_t b)
+    {
+        return NORM_TABLE()[b & 0xff]; // & 0xff maps negative bytes to positive above 127
     }
     
     const Collection<double> Similarity::getNormDecoder()
@@ -59,9 +65,15 @@ namespace Lucene
         return NORM_TABLE();
     }
     
-    double Similarity::computeNorm(const String& fieldName, FieldInvertStatePtr state)
+    double Similarity::lengthNorm(const String& fieldName, int32_t numTokens)
     {
-        return (double)(state->getBoost() * lengthNorm(fieldName, state->getLength()));
+        boost::throw_exception(UnsupportedOperationException(L"please use computeNorm instead"));
+        return 0;
+    }
+    
+    uint8_t Similarity::encodeNormValue(double f)
+    {
+        return SmallDouble::doubleToByte(f);
     }
     
     uint8_t Similarity::encodeNorm(double f)
@@ -74,12 +86,22 @@ namespace Lucene
         return tf((double)freq);
     }
     
-    IDFExplanationPtr Similarity::idfExplain(TermPtr term, SearcherPtr searcher)
+    IDFExplanationPtr Similarity::idfExplain(TermPtr term, SearcherPtr searcher, int32_t docFreq)
     {
-        int32_t df = searcher->docFreq(term);
+        if (!hasIDFExplainWithDocFreqAPI)
+        {
+            // Fallback to slow impl
+            return idfExplain(term, searcher);
+        }
+        int32_t df = docFreq;
         int32_t max = searcher->maxDoc();
         double _idf = idf(df, max);
         return newLucene<SimilarityIDFExplanation>(df, max, _idf);
+    }
+    
+    IDFExplanationPtr Similarity::idfExplain(TermPtr term, SearcherPtr searcher)
+    {
+        return idfExplain(term, searcher, searcher->docFreq(term));
     }
     
     IDFExplanationPtr Similarity::idfExplain(Collection<TermPtr> terms, SearcherPtr searcher)

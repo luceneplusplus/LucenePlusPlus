@@ -6,8 +6,10 @@
 
 #include "LuceneInc.h"
 #include "TermVectorsTermsWriterPerField.h"
+#include "_TermVectorsTermsWriterPerField.h"
 #include "TermVectorsTermsWriterPerThread.h"
 #include "TermVectorsTermsWriter.h"
+#include "_TermVectorsTermsWriter.h"
 #include "TermsHashPerField.h"
 #include "TermsHashPerThread.h"
 #include "TermVectorsReader.h"
@@ -22,6 +24,7 @@
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 #include "StringUtils.h"
+#include "DocumentsWriter.h"
 
 namespace Lucene
 {
@@ -126,8 +129,9 @@ namespace Lucene
         BOOST_ASSERT(perThread->vectorFieldsInOrder(fieldInfo));
         
         perThread->doc->addField(termsHashPerField->fieldInfo->number);
+        TermVectorsPostingsArrayPtr postings(boost::static_pointer_cast<TermVectorsPostingsArray>(termsHashPerField->postingsArray));
         
-        Collection<RawPostingListPtr> postings(termsHashPerField->sortPostings());
+        IntArray termIDs(termsHashPerField->sortPostings());
         
         tvf->writeVInt(numPostings);
         uint8_t bits = 0x0;
@@ -145,12 +149,12 @@ namespace Lucene
         
         for (int32_t j = 0; j < numPostings; ++j)
         {
-            TermVectorsTermsWriterPostingListPtr posting(boost::static_pointer_cast<TermVectorsTermsWriterPostingList>(postings[j]));
-            int32_t freq = posting->freq;
-            
-            CharArray text2(charBuffers[posting->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT]);
-            int32_t start2 = (posting->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-            
+            int32_t termID = termIDs[j];
+            int32_t freq = postings->freqs[termID];
+
+            CharArray text2(charBuffers[postings->textStarts[termID] >> DocumentsWriter::CHAR_BLOCK_SHIFT]);
+            int32_t start2 = (postings->textStarts[termID] & DocumentsWriter::CHAR_BLOCK_MASK);
+
             // We swap between two encoders to save copying last Term's byte array
             UTF8ResultPtr utf8Result(perThread->utf8Results[encoderUpto]);
             
@@ -181,13 +185,13 @@ namespace Lucene
             
             if (doVectorPositions)
             {
-                termsHashPerField->initReader(reader, posting, 0);
+                termsHashPerField->initReader(reader, termID, 0);
                 reader->writeTo(tvf);
             }
             
             if (doVectorOffsets)
             {
-                termsHashPerField->initReader(reader, posting, 1);
+                termsHashPerField->initReader(reader, termID, 1);
                 reader->writeTo(tvf);
             }
         }
@@ -214,16 +218,16 @@ namespace Lucene
             offsetAttribute.reset();
     }
     
-    void TermVectorsTermsWriterPerField::newTerm(RawPostingListPtr p0)
+    void TermVectorsTermsWriterPerField::newTerm(int32_t termID)
     {
         BOOST_ASSERT(DocStatePtr(_docState)->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
         
-        TermVectorsTermsWriterPostingListPtr p(boost::static_pointer_cast<TermVectorsTermsWriterPostingList>(p0));
-        
-        p->freq = 1;
+        TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
+        TermVectorsPostingsArrayPtr postings(boost::static_pointer_cast<TermVectorsPostingsArray>(termsHashPerField->postingsArray));
+
+        postings->freqs[termID] = 1;
         
         FieldInvertStatePtr fieldState(_fieldState);
-        TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
         
         if (doVectorOffsets)
         {
@@ -232,45 +236,79 @@ namespace Lucene
             
             termsHashPerField->writeVInt(1, startOffset);
             termsHashPerField->writeVInt(1, endOffset - startOffset);
-            p->lastOffset = endOffset;
+            postings->lastOffsets[termID] = endOffset;
         }
         
         if (doVectorPositions)
         {
             termsHashPerField->writeVInt(0, fieldState->position);
-            p->lastPosition = fieldState->position;
+            postings->lastPositions[termID] = fieldState->position;
         }
     }
     
-    void TermVectorsTermsWriterPerField::addTerm(RawPostingListPtr p0)
+    void TermVectorsTermsWriterPerField::addTerm(int32_t termID)
     {
         BOOST_ASSERT(DocStatePtr(_docState)->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
         
-        TermVectorsTermsWriterPostingListPtr p(boost::static_pointer_cast<TermVectorsTermsWriterPostingList>(p0));
-        
-        ++p->freq;
+        TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
+        TermVectorsPostingsArrayPtr postings(boost::static_pointer_cast<TermVectorsPostingsArray>(termsHashPerField->postingsArray));
+
+        ++postings->freqs[termID];
         
         FieldInvertStatePtr fieldState(_fieldState);
-        TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
         
         if (doVectorOffsets)
         {
             int32_t startOffset = fieldState->offset + offsetAttribute->startOffset();
             int32_t endOffset = fieldState->offset + offsetAttribute->endOffset();
             
-            termsHashPerField->writeVInt(1, startOffset - p->lastOffset);
+            termsHashPerField->writeVInt(1, startOffset - postings->lastOffsets[termID]);
             termsHashPerField->writeVInt(1, endOffset - startOffset);
-            p->lastOffset = endOffset;
+            postings->lastOffsets[termID] = endOffset;
         }
         
         if (doVectorPositions)
         {
-            termsHashPerField->writeVInt(0, fieldState->position - p->lastPosition);
-            p->lastPosition = fieldState->position;
+            termsHashPerField->writeVInt(0, fieldState->position - postings->lastPositions[termID]);
+            postings->lastPositions[termID] = fieldState->position;
         }
     }
     
     void TermVectorsTermsWriterPerField::skippingLongTerm()
     {
+    }
+    
+    ParallelPostingsArrayPtr TermVectorsTermsWriterPerField::createPostingsArray(int32_t size)
+    {
+        return newLucene<TermVectorsPostingsArray>(size);
+    }
+    
+    TermVectorsPostingsArray::TermVectorsPostingsArray(int32_t size) : ParallelPostingsArray(size)
+    {
+        freqs = IntArray::newInstance(size);
+        lastOffsets = IntArray::newInstance(size);
+        lastPositions = IntArray::newInstance(size);
+    }
+    
+    int32_t TermVectorsPostingsArray::bytesPerPosting()
+    {
+        return ParallelPostingsArray::bytesPerPosting() + (3 * sizeof(int32_t));
+    }
+    
+    ParallelPostingsArrayPtr TermVectorsPostingsArray::newInstance(int32_t size)
+    {
+        return newLucene<TermVectorsPostingsArray>(size);
+    }
+    
+    void TermVectorsPostingsArray::copyTo(ParallelPostingsArrayPtr toArray, int32_t numToCopy)
+    {
+        BOOST_ASSERT(MiscUtils::typeOf<TermVectorsPostingsArray>(toArray));
+        TermVectorsPostingsArrayPtr to(boost::static_pointer_cast<TermVectorsPostingsArray>(toArray));
+        
+        ParallelPostingsArray::copyTo(toArray, numToCopy);
+        
+        MiscUtils::arrayCopy(freqs.get(), 0, to->freqs.get(), 0, size);
+        MiscUtils::arrayCopy(lastOffsets.get(), 0, to->lastOffsets.get(), 0, size);
+        MiscUtils::arrayCopy(lastPositions.get(), 0, to->lastPositions.get(), 0, size);
     }
 }

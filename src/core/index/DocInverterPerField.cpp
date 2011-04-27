@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "DocInverterPerField.h"
 #include "DocInverterPerThread.h"
+#include "_DocInverterPerThread.h"
 #include "InvertedDocConsumerPerThread.h"
 #include "InvertedDocEndConsumerPerThread.h"
 #include "InvertedDocConsumerPerField.h"
@@ -15,6 +16,7 @@
 #include "FieldInfo.h"
 #include "FieldInvertState.h"
 #include "DocumentsWriter.h"
+#include "_DocumentsWriter.h"
 #include "Document.h"
 #include "Analyzer.h"
 #include "ReusableStringReader.h"
@@ -66,9 +68,7 @@ namespace Lucene
             FieldablePtr field = fields[i];
             if (field->isIndexed() && doInvert)
             {
-                bool anyToken;
-                
-                if (fieldState->length > 0)
+                if (i > 0)
                     fieldState->position += docState->analyzer->getPositionIncrementGap(fieldInfo->name);
                 
                 if (!field->isTokenized())
@@ -97,7 +97,6 @@ namespace Lucene
                     fieldState->offset += valueLength;
                     ++fieldState->length;
                     ++fieldState->position;
-                    anyToken = (valueLength > 0);
                 }
                 else
                 {
@@ -134,8 +133,6 @@ namespace Lucene
                     LuceneException finally;
                     try
                     {
-                        int32_t offsetEnd = fieldState->offset - 1;
-                        
                         bool hasMoreTokens = stream->incrementToken();
                         
                         fieldState->attributeSource = stream;
@@ -178,7 +175,6 @@ namespace Lucene
                                 docWriter->setAborting();
                             finally.throwException();
                             ++fieldState->position;
-                            offsetEnd = fieldState->offset + offsetAttribute->endOffset();
                             if (++fieldState->length >= maxFieldLength)
                             {
                                 if (docState->infoStream)
@@ -193,7 +189,6 @@ namespace Lucene
                         stream->end();
                         
                         fieldState->offset += offsetAttribute->endOffset();
-                        anyToken = (fieldState->length > startLength);
                     }
                     catch (LuceneException& e)
                     {
@@ -203,8 +198,7 @@ namespace Lucene
                     finally.throwException();
                 }
                 
-                if (anyToken)
-                    fieldState->offset += docState->analyzer->getOffsetGap(field);
+                fieldState->offset += docState->analyzer->getOffsetGap(field);
                 fieldState->boost *= field->getBoost();
             }
             

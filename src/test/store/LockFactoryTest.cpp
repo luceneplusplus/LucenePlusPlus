@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(testCustomLockFactory)
     
     for (MapStringLock::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName)
     {
-        MockLockPtr lock(boost::dynamic_pointer_cast<MockLock>(lockName->second));
+        MockLockPtr lock(boost::static_pointer_cast<MockLock>(lockName->second));
         BOOST_CHECK(lock->lockAttempts > 0); // # calls to Lock.obtain is 0 (after instantiating IndexWriter)
     }
     

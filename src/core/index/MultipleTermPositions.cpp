@@ -188,7 +188,6 @@ namespace Lucene
     
     void IntQueue::growArray()
     {
-        array.resize(arraySize * 2);
-        arraySize *= 2;
+        MiscUtils::grow(array, arraySize + 1);
     }
 }

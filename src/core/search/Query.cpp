@@ -128,7 +128,7 @@ namespace Lucene
     LuceneObjectPtr Query::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Query>());
-        QueryPtr cloneQuery(boost::dynamic_pointer_cast<Query>(clone));
+        QueryPtr cloneQuery(boost::static_pointer_cast<Query>(clone));
         cloneQuery->boost = boost;
         return cloneQuery;
     }

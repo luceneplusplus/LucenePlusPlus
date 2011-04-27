@@ -11,6 +11,18 @@
 
 namespace Lucene
 {
+    WhitespaceTokenizer::WhitespaceTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input) : CharTokenizer(matchVersion, input)
+    {
+    }
+    
+    WhitespaceTokenizer::WhitespaceTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : CharTokenizer(matchVersion, source, input)
+    {
+    }
+    
+    WhitespaceTokenizer::WhitespaceTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : CharTokenizer(matchVersion, factory, input)
+    {
+    }
+    
     WhitespaceTokenizer::WhitespaceTokenizer(ReaderPtr input) : CharTokenizer(input)
     {
     }

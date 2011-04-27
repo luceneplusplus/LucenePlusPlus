@@ -19,7 +19,11 @@ namespace Lucene
         /// Construct a SpanNearQuery.  Matches spans matching a span from each clause, with up to slop total 
         /// unmatched positions between them.  * When inOrder is true, the spans from each clause must be 
         /// ordered as in clauses.
+        /// @param clauses the clauses to find near each other
+        /// @param slop The slop value
+        /// @param inOrder true if order is important
         SpanNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, bool collectPayloads = true);
+        
         virtual ~SpanNearQuery();
         
         LUCENE_CLASS(SpanNearQuery);

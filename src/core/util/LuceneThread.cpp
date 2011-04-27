@@ -23,6 +23,7 @@ namespace Lucene
     LuceneThread::LuceneThread()
     {
         running = false;
+        _threadId = 0;
     }
     
     LuceneThread::~LuceneThread()
@@ -41,6 +42,7 @@ namespace Lucene
         LuceneThreadPtr threadObject(thread->shared_from_this());
         try
         {
+            threadObject->_threadId = currentId();
             threadObject->run();
         }
         catch (...)
@@ -66,6 +68,11 @@ namespace Lucene
     bool LuceneThread::isAlive()
     {
         return (thread && isRunning());
+    }
+    
+    int64_t LuceneThread::threadId()
+    {
+        return _threadId;
     }
     
     void LuceneThread::setPriority(int32_t priority)
@@ -120,5 +127,10 @@ namespace Lucene
     void LuceneThread::threadYield()
     {
         boost::this_thread::yield();
+    }
+    
+    int32_t LuceneThread::availableProcessors()
+    {
+        return (int32_t)boost::thread::hardware_concurrency();
     }
 }

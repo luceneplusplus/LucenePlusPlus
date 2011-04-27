@@ -42,6 +42,11 @@ namespace Lucene
         return term;
     }
     
+    String WildcardQuery::getField()
+    {
+        return term->field();
+    }
+    
     QueryPtr WildcardQuery::rewrite(IndexReaderPtr reader)
     {
         if (termIsPrefix)
@@ -67,7 +72,7 @@ namespace Lucene
     LuceneObjectPtr WildcardQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<WildcardQuery>(term));
-        WildcardQueryPtr cloneQuery(boost::dynamic_pointer_cast<WildcardQuery>(clone));
+        WildcardQueryPtr cloneQuery(boost::static_pointer_cast<WildcardQuery>(clone));
         cloneQuery->termContainsWildcard = termContainsWildcard;
         cloneQuery->termIsPrefix = termIsPrefix;
         cloneQuery->term = term;

@@ -10,14 +10,13 @@
 
 namespace Lucene
 {
-    IntBlockPool::IntBlockPool(DocumentsWriterPtr docWriter, bool trackAllocations)
+    IntBlockPool::IntBlockPool(DocumentsWriterPtr docWriter)
     {
         this->buffers = Collection<IntArray>::newInstance(10);
         this->bufferUpto = -1;
         this->intUpto = DocumentsWriter::INT_BLOCK_SIZE;
         this->intOffset = -DocumentsWriter::INT_BLOCK_SIZE;
         this->_docWriter = docWriter;
-        this->trackAllocations = trackAllocations;
     }
     
     IntBlockPool::~IntBlockPool()
@@ -46,7 +45,7 @@ namespace Lucene
     {
         if (bufferUpto + 1 == buffers.size())
             buffers.resize((int32_t)((double)buffers.size() * 1.5));
-        buffer = DocumentsWriterPtr(_docWriter)->getIntBlock(trackAllocations);
+        buffer = DocumentsWriterPtr(_docWriter)->getIntBlock();
         buffers[1 + bufferUpto] = buffer;
         ++bufferUpto;
         

@@ -94,11 +94,11 @@ namespace Lucene
         for (int32_t i = 0; i < clauses.size(); ++i)
         {
             SpanQueryPtr clause(clauses[i]);
-            SpanQueryPtr query(boost::dynamic_pointer_cast<SpanQuery>(clause->rewrite(reader)));
+            SpanQueryPtr query(boost::static_pointer_cast<SpanQuery>(clause->rewrite(reader)));
             if (query != clause) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<SpanNearQuery>(this->clone());
+                    clone = boost::static_pointer_cast<SpanNearQuery>(this->clone());
                 clone->clauses[i] = query;
             }
         }
@@ -114,7 +114,7 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
         
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = boost::static_pointer_cast<SpanQuery>(clauses[i]->clone());
         
         SpanNearQueryPtr spanNearQuery(newLucene<SpanNearQuery>(newClauses, slop, inOrder));
         spanNearQuery->setBoost(getBoost());

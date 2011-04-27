@@ -32,6 +32,12 @@ namespace Lucene
     {
     }
     
+    void Directory::sync(HashSet<String> names)
+    {
+        for (HashSet<String>::iterator name = names.begin(); name != names.end(); ++name)
+            sync(*name);
+    }
+    
     IndexInputPtr Directory::openInput(const String& name, int32_t bufferSize)
     {
         return openInput(name);
@@ -70,60 +76,35 @@ namespace Lucene
         return LuceneObject::toString() + L" lockFactory=" + getLockFactory()->toString();
     }
     
+    void Directory::copy(DirectoryPtr to, const String& src, const String& dest)
+    {
+        IndexOutputPtr os(to->createOutput(dest));
+        IndexInputPtr is(openInput(src));
+        LuceneException finally;
+        try
+        {
+            is->copyBytes(os, is->length());
+        }
+        catch (IOException&)
+        {
+        }
+        catch (LuceneException& e)
+        {
+            finally = e;
+        }
+        os->close();
+        is->close();
+        finally.throwException();
+    }
+    
     void Directory::copy(DirectoryPtr src, DirectoryPtr dest, bool closeDirSrc)
     {
+        IndexFileNameFilterPtr filter(IndexFileNameFilter::getFilter());
         HashSet<String> files(src->listAll());
-        
-        ByteArray buf(ByteArray::newInstance(BufferedIndexOutput::BUFFER_SIZE));
-        
         for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
         {
-            if (!IndexFileNameFilter::accept(L"", *file))
-                continue;
-
-            IndexOutputPtr os;
-            IndexInputPtr is;
-            
-            LuceneException finally;
-            try
-            {
-                // create file in dest directory
-                os = dest->createOutput(*file);
-                // read current file
-                is = src->openInput(*file);
-                // and copy to dest directory
-                int64_t len = is->length();
-                int64_t readCount = 0;
-                while (readCount < len)
-                {
-                    int32_t toRead = readCount + BufferedIndexOutput::BUFFER_SIZE > len ? (int32_t)(len - readCount) : BufferedIndexOutput::BUFFER_SIZE;
-                    is->readBytes(buf.get(), 0, toRead);
-                    os->writeBytes(buf.get(), toRead);
-                    readCount += toRead;
-                }
-            }
-            catch (LuceneException& e)
-            {
-                finally = e;
-            }
-            // graceful cleanup
-            try
-            {
-                if (os)
-                    os->close();
-            }
-            catch (...)
-            {
-            }
-            try
-            {
-                if (is)
-                    is->close();
-            }
-            catch (...)
-            {
-            }
-            finally.throwException();
+            if (filter->accept(L"", *file))
+                src->copy(dest, *file, *file);
         }
         if (closeDirSrc)
             src->close();

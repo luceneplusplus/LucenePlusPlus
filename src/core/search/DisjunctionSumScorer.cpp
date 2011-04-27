@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    DisjunctionSumScorer::DisjunctionSumScorer(Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers) : Scorer(SimilarityPtr())
+    DisjunctionSumScorer::DisjunctionSumScorer(WeightPtr weight, Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers) : Scorer(weight)
     {
         this->currentDoc = -1;
         this->_nrMatchers = -1;

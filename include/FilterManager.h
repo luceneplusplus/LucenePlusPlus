@@ -11,12 +11,16 @@
 
 namespace Lucene
 {
-    /// Filter caching singleton.  It can be used to save filters locally for reuse.  Also could be used as a 
-    /// persistent storage for any filter as long as the filter provides a proper hashCode(), as that is used 
-    /// as the key in the cache.
+    /// Filter caching singleton. It can be used to save filters locally for reuse.
+    ///
+    /// Also could be used as a persistent storage for any filter as long as the filter provides a proper 
+    /// hashCode(), as that is used as the key in the cache.
     ///
     /// The cache is periodically cleaned up from a separate thread to ensure the cache doesn't exceed the 
     /// maximum size.
+    ///
+    /// @deprecated used by remote package which is deprecated as well. You should use {@link 
+    /// CachingWrapperFilter} if you wish to cache {@link Filter}s.
     class LPPAPI FilterManager : public LuceneObject
     {
     public:

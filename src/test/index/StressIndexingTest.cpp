@@ -29,6 +29,7 @@
 #include "Random.h"
 #include "MiscUtils.h"
 #include "FileUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -604,8 +605,8 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
         if (boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1))
         {
             BOOST_CHECK(boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2));
-            SegmentTermPositionVectorPtr tpv1 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1);
-            SegmentTermPositionVectorPtr tpv2 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2);
+            SegmentTermPositionVectorPtr tpv1 = boost::static_pointer_cast<SegmentTermPositionVector>(v1);
+            SegmentTermPositionVectorPtr tpv2 = boost::static_pointer_cast<SegmentTermPositionVector>(v2);
             for (int32_t j = 0; j < numTerms; ++j)
             {
                 Collection<int32_t> pos1 = tpv1->getTermPositions(j);
@@ -707,7 +708,7 @@ namespace RunStressTest
             {
                 DocumentPtr d = newLucene<Document>();
                 d->add(newLucene<Field>(L"id", StringUtils::toString(nextID++), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-                d->add(newLucene<Field>(L"contents", intToEnglish(rand->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
+                d->add(newLucene<Field>(L"contents", English::intToEnglish(rand->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
                 writer->addDocument(d);
             }
             

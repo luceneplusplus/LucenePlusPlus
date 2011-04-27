@@ -25,6 +25,7 @@ namespace Lucene
             FileNotFound,        
             IllegalArgument,
             IllegalState,
+            IndexNotFound,
             IndexOutOfBounds,
             IO,
             LockObtainFailed,
@@ -93,6 +94,7 @@ namespace Lucene
     typedef ExceptionTemplate<IOException, LuceneException::MergeAborted> MergeAbortedException;
     typedef ExceptionTemplate<IOException, LuceneException::StaleReader> StaleReaderException;
     typedef ExceptionTemplate<FileNotFoundException, LuceneException::NoSuchDirectory> NoSuchDirectoryException;
+    typedef ExceptionTemplate<FileNotFoundException, LuceneException::IndexNotFound> IndexNotFoundException;
     typedef ExceptionTemplate<LuceneException, LuceneException::Lookahead> LookaheadSuccess;
     typedef ExceptionTemplate<LuceneException, LuceneException::Parse> ParseException;
     typedef ExceptionTemplate<LuceneException, LuceneException::QueryParser> QueryParserError;

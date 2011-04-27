@@ -17,7 +17,7 @@ namespace Lucene
     const int32_t ByteBlockPool::nextLevelArray[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 9};
     const int32_t ByteBlockPool::levelSizeArray[] = {5, 14, 20, 30, 40, 40, 80, 80, 120, 200};
     
-    ByteBlockPool::ByteBlockPool(ByteBlockPoolAllocatorBasePtr allocator, bool trackAllocations)
+    ByteBlockPool::ByteBlockPool(ByteBlockPoolAllocatorBasePtr allocator)
     {
         buffers = Collection<ByteArray>::newInstance(10);
         bufferUpto = -1;
@@ -25,7 +25,6 @@ namespace Lucene
         byteOffset = -DocumentsWriter::BYTE_BLOCK_SIZE;
         
         this->allocator = allocator;
-        this->trackAllocations = trackAllocations;
     }
     
     ByteBlockPool::~ByteBlockPool()
@@ -68,8 +67,8 @@ namespace Lucene
     void ByteBlockPool::nextBuffer()
     {
         if (1 + bufferUpto == buffers.size())
-            buffers.resize((int32_t)((double)buffers.size() * 1.5));
-        buffers[1 + bufferUpto] = allocator->getByteBlock(trackAllocations);
+            MiscUtils::grow(buffers);
+        buffers[1 + bufferUpto] = allocator->getByteBlock();
         buffer = buffers[1 + bufferUpto];
         ++bufferUpto;
         

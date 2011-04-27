@@ -8,7 +8,7 @@
 #include "NumericTokenStream.h"
 #include "NumericUtils.h"
 #include "AttributeSource.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "TypeAttribute.h"
 #include "PositionIncrementAttribute.h"
 
@@ -18,7 +18,7 @@ namespace Lucene
     {
         this->shift = 0;
         this->valSize = 0;
-        this->termAtt = addAttribute<TermAttribute>();
+        this->termAtt = addAttribute<CharTermAttribute>();
         this->typeAtt = addAttribute<TypeAttribute>();
         this->posIncrAtt = addAttribute<PositionIncrementAttribute>();
         this->precisionStep = NumericUtils::PRECISION_STEP_DEFAULT;
@@ -28,7 +28,7 @@ namespace Lucene
     {
         this->shift = 0;
         this->valSize = 0;
-        this->termAtt = addAttribute<TermAttribute>();
+        this->termAtt = addAttribute<CharTermAttribute>();
         this->typeAtt = addAttribute<TypeAttribute>();
         this->posIncrAtt = addAttribute<PositionIncrementAttribute>();
         this->precisionStep = precisionStep;
@@ -40,7 +40,7 @@ namespace Lucene
     {
         this->shift = 0;
         this->valSize = 0;
-        this->termAtt = addAttribute<TermAttribute>();
+        this->termAtt = addAttribute<CharTermAttribute>();
         this->typeAtt = addAttribute<TypeAttribute>();
         this->posIncrAtt = addAttribute<PositionIncrementAttribute>();
         this->precisionStep = precisionStep;
@@ -52,7 +52,7 @@ namespace Lucene
     {
         this->shift = 0;
         this->valSize = 0;
-        this->termAtt = addAttribute<TermAttribute>();
+        this->termAtt = addAttribute<CharTermAttribute>();
         this->typeAtt = addAttribute<TypeAttribute>();
         this->posIncrAtt = addAttribute<PositionIncrementAttribute>();
         this->precisionStep = precisionStep;
@@ -119,12 +119,12 @@ namespace Lucene
         switch (valSize)
         {
             case 64:
-                buffer = termAtt->resizeTermBuffer(NumericUtils::BUF_SIZE_LONG);
-                termAtt->setTermLength(NumericUtils::longToPrefixCoded(value, shift, buffer));
+                buffer = termAtt->resizeBuffer(NumericUtils::BUF_SIZE_LONG);
+                termAtt->setLength(NumericUtils::longToPrefixCoded(value, shift, buffer));
                 break;
             case 32:
-                buffer = termAtt->resizeTermBuffer(NumericUtils::BUF_SIZE_INT);
-                termAtt->setTermLength(NumericUtils::intToPrefixCoded((int32_t)value, shift, buffer));
+                buffer = termAtt->resizeBuffer(NumericUtils::BUF_SIZE_INT);
+                termAtt->setLength(NumericUtils::intToPrefixCoded((int32_t)value, shift, buffer));
                 break;
             default:
                 // should not happen
@@ -142,5 +142,10 @@ namespace Lucene
         StringStream buffer;
         buffer << L"(numeric,valSize=" << valSize << L",precisionStep=" << precisionStep << L")";
         return buffer.str();
+    }
+    
+    int32_t NumericTokenStream::getPrecisionStep()
+    {
+        return precisionStep;
     }
 }

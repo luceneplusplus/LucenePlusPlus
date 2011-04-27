@@ -89,15 +89,74 @@ namespace Lucene
     /// IndexFileDeleter keeps track of the last non commit checkpoint.
     class LPPAPI IndexWriter : public LuceneObject
     {
-    protected:
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexingChainPtr indexingChain, IndexCommitPtr commit);
-    
     public:
+        /// Constructs an IndexWriter for the index in d. Text will be analyzed with a.  If create
+        /// is true, then a new, empty index will be created in d, replacing the index already there, 
+        /// if any.
+        /// @param d the index directory
+        /// @param a the analyzer to use
+        /// @param create true to create the index or overwrite the existing one; false to append to 
+        /// the existing index
+        /// @param mfl Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified.
+        /// @deprecated use {@link #IndexWriter(Directory, IndexWriterConfig)} instead
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl);
+        
+        /// Constructs an IndexWriter for the index in d, first creating it if it does not already exist.
+        /// Text will be analyzed with a.
+        /// @param d the index directory
+        /// @param a the analyzer to use
+        /// @param mfl Maximum field length in number of terms/tokens: LIMITED, UNLIMITED, or user-specified.
+        /// @deprecated use {@link #IndexWriter(Directory, IndexWriterConfig)} instead
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl);
+        
+        /// Constructs an IndexWriter with a custom {@link IndexDeletionPolicy}, for the index in d, first 
+        /// creating it if it does not already exist.  Text will be analyzed with a.
+        /// @param d the index directory
+        /// @param a the analyzer to use
+        /// @param deletionPolicy see #deletionPolicy above
+        /// @param mfl whether or not to limit field lengths
+        /// @deprecated use {@link #IndexWriter(Directory, IndexWriterConfig)} instead
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl);
+        
+        /// Constructs an IndexWriter with a custom {@link IndexDeletionPolicy}, for the index in d.
+        /// Text will be analyzed with a.  If create is true, then a new, empty index will be created in d, 
+        /// replacing the index already there, if any.
+        /// @param d the index directory
+        /// @param a the analyzer to use
+        /// @param create true to create the index or overwrite the existing one; false to append to the 
+        /// existing index
+        /// @param deletionPolicy see deletionPolicy above
+        /// @param mfl {@link MaxFieldLength}, whether or not to limit field lengths.  Value is in number 
+        /// of terms/tokens
+        /// @deprecated use {@link #IndexWriter(Directory, IndexWriterConfig)} instead
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl);
+        
+        /// Constructs an IndexWriter on specific commit point, with a custom {@link IndexDeletionPolicy}, for
+        /// the index in d.  Text will be analyzed with a.
+        ///
+        /// This is only meaningful if you've used a {@link IndexDeletionPolicy} in that past that keeps more 
+        /// than just the last commit.
+        ///
+        /// This operation is similar to {@link #rollback()}, except that method can only rollback what's been 
+        /// done with the current instance of IndexWriter since its last commit, whereas this method can 
+        /// rollback to an arbitrary commit point from the past, assuming the {@link IndexDeletionPolicy} has 
+        /// preserved past commits.
+        /// @param d the index directory
+        /// @param a the analyzer to use
+        /// @param deletionPolicy see #deletionPolicy above
+        /// @param mfl whether or not to limit field lengths, value is in number of terms/tokens.  See 
+        /// {@link MaxFieldLength}.
+        /// @param commit which commit to open
+        /// @deprecated use {@link #IndexWriter(Directory, IndexWriterConfig)} instead
         IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexCommitPtr commit);
+        
+        /// Constructs a new IndexWriter per the settings given in conf.
+        /// Note that the passed in {@link IndexWriterConfig} is privately cloned; if you need to make 
+        /// subsequent "live" changes to the configuration use {@link #getConfig}.
+        /// @param d the index directory. The index is either created or appended according conf.getOpenMode().
+        /// @param conf the configuration settings according to which IndexWriter should be initialized.
+        IndexWriter(DirectoryPtr d, IndexWriterConfigPtr conf);
+        
         virtual ~IndexWriter();
         
         LUCENE_CLASS(IndexWriter);
@@ -110,18 +169,11 @@ namespace Lucene
         /// quite a few BufferedIndexInputs created during merging.
         static const int32_t MERGE_READ_BUFFER_SIZE;
         
-        SynchronizePtr messageIDLock;
-        static int32_t MESSAGE_ID;
         int32_t messageID;
         bool hitOOM;
         
         DirectoryPtr directory; // where this index resides
         AnalyzerPtr analyzer; // how to analyze text
-        
-        bool create;
-        IndexDeletionPolicyPtr deletionPolicy;
-        IndexingChainPtr indexingChain;
-        IndexCommitPtr indexCommit;
         
         SimilarityPtr similarity; // how to normalize
         
@@ -129,13 +181,7 @@ namespace Lucene
         int64_t lastCommitChangeCount; // last changeCount that was committed
         
         SegmentInfosPtr rollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-        MapSegmentInfoInt rollbackSegments;
-        
-        SegmentInfosPtr localRollbackSegmentInfos; // segmentInfos we will fallback to if the commit fails
-        int32_t localFlushedDocCount;
-        
-        SegmentInfosPtr segmentInfos; // the segments
-        
+                
         DocumentsWriterPtr docWriter;
         IndexFileDeleterPtr deleter;
         
@@ -143,8 +189,6 @@ namespace Lucene
         int32_t optimizeMaxNumSegments;
         
         LockPtr writeLock;
-        
-        int32_t termIndexInterval;
         
         bool closed;
         bool closing;
@@ -158,15 +202,8 @@ namespace Lucene
         int64_t mergeGen;
         bool stopMerges;
         
-        int32_t flushCount;
-        int32_t flushDeletesCount;
-        
-        /// Used to only allow one addIndexes to proceed at once
-        int32_t readCount; // count of how many threads are holding read lock
-        int64_t writeThread; // non-null if any thread holds write lock
-        int32_t upgradeCount;
-        
-        int32_t readerTermsIndexDivisor;
+        AtomicLongPtr flushCount;
+        AtomicLongPtr flushDeletesCount;
         
         // This is a "write once" variable (like the organic dye  on a DVD-R that may or may not 
         // be heated by a laser and then cooled to permanently record the event): it's false, 
@@ -174,6 +211,13 @@ namespace Lucene
         // and never changes back to false.  Once this is true, we hold open and reuse SegmentReader 
         // instances internally for applying deletes, doing merges, and reopening near real-time readers.
         bool poolReaders;
+        
+        // The instance that was passed to the constructor. It is saved only in order to allow users 
+        // to query an IndexWriter settings.
+        IndexWriterConfigPtr config;
+        
+        // The PayloadProcessorProvider to use when segments are merged
+        PayloadProcessorProviderPtr payloadProcessorProvider;
         
         /// The maximum number of terms that will be indexed for a single field in a document.  This 
         /// limits the amount of memory required for indexing, so that collections with very large files 
@@ -185,51 +229,53 @@ namespace Lucene
         /// than 10,000 terms will be indexed for a field.
         ///
         /// @see #setMaxFieldLength(int32_t)
+        /// @deprecated
         int32_t maxFieldLength;
         
         InfoStreamPtr infoStream;
         static InfoStreamPtr defaultInfoStream;
         
-        HashSet<String> synced; // files that have been sync'd already
-        HashSet<String> syncing; // files that are now being sync'd
-        
-        IndexReaderWarmerPtr mergedSegmentWarmer;
-        
         /// Used only by commit; lock order is commitLock -> IW
         SynchronizePtr commitLock;
         
-    INTERNAL:
-        SegmentInfosPtr pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
-        int64_t pendingCommitChangeCount;
-
-        ReaderPoolPtr readerPool;
-
+        // Used for all SegmentReaders we open
+        SetReaderFinishedListener readerFinishedListeners;
+        
+        bool _keepFullyDeletedSegments;
+        
     public:
-        /// Default value for the write lock timeout (1,000).
+        /// Default value for the write lock timeout (1000).
         /// @see #setDefaultWriteLockTimeout
+        /// @deprecated use {@link IndexWriterConfig#WRITE_LOCK_TIMEOUT} instead
         static int64_t WRITE_LOCK_TIMEOUT;
         
         static const String WRITE_LOCK_NAME;
         
         /// Value to denote a flush trigger is disabled.
+        /// @deprecated use {@link IndexWriterConfig#DISABLE_AUTO_FLUSH} instead
         static const int32_t DISABLE_AUTO_FLUSH;
         
         /// Disabled by default (because IndexWriter flushes by RAM usage by default). Change using 
         /// {@link #setMaxBufferedDocs(int32_t)}.
+        /// @deprecated use {@link IndexWriterConfig#DEFAULT_MAX_BUFFERED_DOCS} instead.
         static const int32_t DEFAULT_MAX_BUFFERED_DOCS;
         
         /// Default value is 16 MB (which means flush when buffered docs consume 16 MB RAM).  
         /// Change using {@link #setRAMBufferSizeMB}.
+        /// @deprecated use {@link IndexWriterConfig#DEFAULT_RAM_BUFFER_SIZE_MB} instead.
         static const double DEFAULT_RAM_BUFFER_SIZE_MB;
         
         /// Disabled by default (because IndexWriter flushes by RAM usage by default). Change using 
         /// {@link #setMaxBufferedDeleteTerms(int32_t)}.
+        /// @deprecated use {@link IndexWriterConfig#DEFAULT_MAX_BUFFERED_DELETE_TERMS} instead
         static const int32_t DEFAULT_MAX_BUFFERED_DELETE_TERMS;
         
-        /// Default value is 10,000. Change using {@link #setMaxFieldLength(int32_t)}.
+        /// Default value is 10000. Change using {@link #setMaxFieldLength(int32_t)}.
+        /// @deprecated see {@link IndexWriterConfig}
         static const int32_t DEFAULT_MAX_FIELD_LENGTH;
         
         /// Default value is 128. Change using {@link #setTermIndexInterval(int32_t)}.
+        /// @deprecated use {@link IndexWriterConfig#DEFAULT_TERM_INDEX_INTERVAL} instead.
         static const int32_t DEFAULT_TERM_INDEX_INTERVAL;
         
         /// Absolute hard maximum length for a term.  If a term arrives from the analyzer longer than 
@@ -243,6 +289,19 @@ namespace Lucene
         /// Sets the maximum field length to {@link #DEFAULT_MAX_FIELD_LENGTH}
         static const int32_t MaxFieldLengthLIMITED;
         
+        SegmentInfosPtr pendingCommit; // set when a commit is pending (after prepareCommit() & before commit())
+        int64_t pendingCommitChangeCount;
+        
+        SegmentInfosPtr segmentInfos; // the segments
+        
+        ReaderPoolPtr readerPool;
+        BufferedDeletesPtr bufferedDeletes;
+        
+        // for testing
+        bool anyNonBulkMerges;
+        
+        FlushControlPtr flushControl;
+        
     public:
         virtual void initialize();
         
@@ -251,7 +310,7 @@ namespace Lucene
         /// session can be quickly made available for searching without closing the writer nor calling 
         /// {@link #commit}.
         ///
-        /// Note that this is functionally equivalent to calling {#commit} and then using {@link 
+        /// Note that this is functionally equivalent to calling {#flush} and then using {@link 
         /// IndexReader#open} to open a new reader.  But the turnaround time of this method should be 
         /// faster since it avoids the potentially costly {@link #commit}.
         ///
@@ -283,7 +342,9 @@ namespace Lucene
         ///
         /// @return IndexReader that covers entire index plus all changes made so far by this IndexWriter 
         /// instance
+        /// @deprecated Please use {@link IndexReader#open(IndexWriterPtr, bool)} instead.
         virtual IndexReaderPtr getReader();
+        virtual IndexReaderPtr getReader(bool applyAllDeletes);
         
         /// Like {@link #getReader}, except you can specify which termInfosIndexDivisor should be used for
         /// any newly opened readers.
@@ -294,22 +355,22 @@ namespace Lucene
         /// N*termIndexInterval terms in the index is loaded into memory.  By setting this to a value > 1 
         /// you can reduce memory usage, at the expense of higher latency when loading a TermInfo.  
         /// The default value is 1.  Set this to -1 to skip loading the terms index entirely.
+        ///
+        /// @deprecated Please use {@link IndexReader#open(IndexWriter,boolean)} instead.  Furthermore,
+        /// this method cannot guarantee the reader (and its sub-readers) will be opened with the 
+        /// termInfosIndexDivisor setting because some of them may have already been opened according to 
+        /// {@link IndexWriterConfig#setReaderTermsIndexDivisor}. You should set the requested 
+        /// termInfosIndexDivisor through  {@link IndexWriterConfig#setReaderTermsIndexDivisor} and use 
+        /// {@link #getReader()}.
         virtual IndexReaderPtr getReader(int32_t termInfosIndexDivisor);
+        virtual IndexReaderPtr getReader(int32_t termInfosIndexDivisor, bool applyAllDeletes);
+        
+        virtual SetReaderFinishedListener getReaderFinishedListeners();
         
         /// Obtain the number of deleted docs for a pooled reader. If the reader isn't being pooled, 
         /// the segmentInfo's delCount is returned.
         virtual int32_t numDeletedDocs(SegmentInfoPtr info);
         
-        virtual void acquireWrite();
-        virtual void releaseWrite();
-        virtual void acquireRead();
-        
-        /// Allows one readLock to upgrade to a writeLock even if there are other readLocks as long 
-        /// as all other readLocks are also blocked in this method
-        virtual void upgradeReadToWrite();
-        
-        virtual void releaseRead();
-        virtual bool isOpen(bool includePendingClose);
         virtual void message(const String& message);
         
         /// Get the current setting of whether newly flushed segments will use the compound file format.
@@ -320,21 +381,25 @@ namespace Lucene
         /// as long as mergePolicy is an instance of {@link LogMergePolicy}. Otherwise an IllegalArgument
         /// exception is thrown.
         /// @see #setUseCompoundFile(bool)
+        /// @deprecated use {@link LogMergePolicy#getUseCompoundFile()}
         virtual bool getUseCompoundFile();
         
-        /// Setting to turn on usage of a compound file. When on, multiple files for each segment are 
-        /// merged into a single file when a new segment is flushed.
+        /// Setting to turn on usage of a compound file. When on, multiple files for each segment are merged 
+        /// into a single file when a new segment is flushed.
         ///
-        /// Note that this method is a convenience method: it just calls mergePolicy.setUseCompoundFile 
-        /// as long as mergePolicy is an instance of {@link LogMergePolicy}. Otherwise an IllegalArgument
-        /// exception is thrown.
+        /// Note that this method is a convenience method: it just calls mergePolicy.setUseCompoundFile as 
+        /// long as mergePolicy is an instance of {@link LogMergePolicy}. Otherwise an 
+        /// IllegalArgumentException is thrown.
+        /// @deprecated use {@link LogMergePolicy#setUseCompoundFile(bool)}.
         virtual void setUseCompoundFile(bool value);
         
-        /// Set the Similarity implementation used by this IndexWriter. 
+        /// Set the Similarity implementation used by this IndexWriter.
+        /// @deprecated use {@link IndexWriterConfig#setSimilarity(Similarity)} instead
         virtual void setSimilarity(SimilarityPtr similarity);
         
         /// Return the Similarity implementation used by this IndexWriter.
         /// This defaults to the current value of {@link Similarity#getDefault()}.
+        /// @deprecated use {@link IndexWriterConfig#getSimilarity()} instead
         virtual SimilarityPtr getSimilarity();
         
         /// Set the interval between indexed terms.  Large values cause less memory to be used by 
@@ -353,24 +418,38 @@ namespace Lucene
         /// average, interval/2 terms must be scanned for each random term access.
         ///
         /// @see #DEFAULT_TERM_INDEX_INTERVAL
+        /// @deprecated use {@link IndexWriterConfig#setTermIndexInterval(int32_t)}
         virtual void setTermIndexInterval(int32_t interval);
         
         /// Return the interval between indexed terms.
         /// @see #setTermIndexInterval(int32_t)
+        /// @deprecated use {@link IndexWriterConfig#getTermIndexInterval()}
         virtual int32_t getTermIndexInterval();
         
+        /// Returns the private {@link IndexWriterConfig}, cloned from the {@link IndexWriterConfig} 
+        /// passed to {@link #IndexWriter(Directory, IndexWriterConfig)}.
+        ///
+        /// NOTE: some settings may be changed on the returned {@link IndexWriterConfig}, and will take
+        /// effect in the current IndexWriter instance.  See the the specific setters in {@link
+        /// IndexWriterConfig} for details.
+        virtual IndexWriterConfigPtr getConfig();
+        
         /// Set the merge policy used by this writer.
+        /// @deprecated use {@link IndexWriterConfig#setMergePolicy(MergePolicy)} instead.
         virtual void setMergePolicy(MergePolicyPtr mp);
         
         /// Returns the current MergePolicy in use by this writer.
         /// @see #setMergePolicy
+        /// @deprecated use {@link IndexWriterConfig#getMergePolicy()} instead
         virtual MergePolicyPtr getMergePolicy();
         
         /// Set the merge scheduler used by this writer.
+        /// @deprecated use {@link IndexWriterConfig#setMergeScheduler(MergeScheduler)} instead
         virtual void setMergeScheduler(MergeSchedulerPtr mergeScheduler);
         
-        /// Returns the current MergePolicy in use by this writer.
-        /// @see #setMergePolicy
+        /// Returns the current MergeScheduler in use by this writer.
+        /// @see #setMergeScheduler(MergeScheduler)
+        /// @deprecated use {@link IndexWriterConfig#getMergeScheduler()} instead
         virtual MergeSchedulerPtr getMergeScheduler();
         
         /// Determines the largest segment (measured by document count) that may be merged with other 
@@ -386,6 +465,7 @@ namespace Lucene
         ///
         /// The default merge policy ({@link LogByteSizeMergePolicy}) also allows you to set this limit 
         /// by net size (in MB) of the segment, using {@link LogByteSizeMergePolicy#setMaxMergeMB}.
+        /// @deprecated use {@link LogMergePolicy#setMaxMergeDocs(int)} directly.
         virtual void setMaxMergeDocs(int32_t maxMergeDocs);
         
         /// Returns the largest segment (measured by document count) that may be merged with other 
@@ -396,29 +476,35 @@ namespace Lucene
         /// exception is thrown.
         ///
         /// @see #setMaxMergeDocs
+        /// @deprecated use {@link LogMergePolicy#getMaxMergeDocs()} directly.
         virtual int32_t getMaxMergeDocs();
         
-        /// The maximum number of terms that will be indexed for a single field in a document.  This 
+        /// The maximum number of terms that will be indexed for a single field in a document. This 
         /// limits the amount of memory required for indexing, so that collections with very large files 
-        /// will not crash the indexing process by running out of memory.  This setting refers to the 
+        /// will not crash the indexing process by running out of memory. This setting refers to the 
         /// number of running terms, not to the number of different terms.
+        ///
         /// Note: this silently truncates large documents, excluding from the index all terms that occur 
-        /// further in the document.  If you know your source documents are large, be sure to set this 
-        /// value high enough to accommodate the expected size.  If you set it to INT_MAX, then the only 
-        /// limit is your memory, but you should anticipate an std::bad_alloc.
+        /// further in the document. If you know your source documents are large, be sure to set this 
+        /// value high enough to accommodate the expected size. If you set it to INT_MAX, then the only 
+        /// limit is your memory, but you should anticipate an OutOfMemoryError.
+        ///
         /// By default, no more than {@link #DEFAULT_MAX_FIELD_LENGTH} terms will be indexed for a field.
+        /// @deprecated use {@link LimitTokenCountAnalyzer} instead. Note that the behavior slightly 
+        /// changed - the analyzer limits the number of tokens per token stream created, while this 
+        /// setting limits the total number of tokens to index. This only matters if you index many 
+        /// multi-valued fields though.
         virtual void setMaxFieldLength(int32_t maxFieldLength);
         
         /// Returns the maximum number of terms that will be indexed for a single field in a document.
         /// @see #setMaxFieldLength
+        /// @deprecated use {@link LimitTokenCountAnalyzer} to limit number of tokens.
         virtual int32_t getMaxFieldLength();
         
-        /// Sets the termsIndexDivisor passed to any readers that IndexWriter opens, for example when 
-        /// applying deletes or creating a near-real-time reader in {@link IndexWriter#getReader}.  
-        /// Default value is {@link IndexReader#DEFAULT_TERMS_INDEX_DIVISOR}.
+        /// @deprecated use {@link IndexWriterConfig#setReaderTermsIndexDivisor} instead.
         virtual void setReaderTermsIndexDivisor(int32_t divisor);
         
-        /// @see #setReaderTermsIndexDivisor()
+        /// @deprecated use {@link IndexWriterConfig#getReaderTermsIndexDivisor} instead.
         virtual int32_t getReaderTermsIndexDivisor();
         
         /// Determines the minimal number of documents required before the buffered in-memory documents 
@@ -432,10 +518,12 @@ namespace Lucene
         /// Disabled by default (writer flushes by RAM usage).
         ///
         /// @see #setRAMBufferSizeMB
+        /// @deprecated use {@link IndexWriterConfig#setMaxBufferedDocs(int)} instead.
         virtual void setMaxBufferedDocs(int32_t maxBufferedDocs);
         
         /// Returns the number of buffered added documents that will trigger a flush if enabled.
         /// @see #setMaxBufferedDocs
+        /// @deprecated use {@link IndexWriterConfig#getMaxBufferedDocs()} instead.
         virtual int32_t getMaxBufferedDocs();
         
         /// Determines the amount of RAM that may be used for buffering added documents and deletions 
@@ -459,9 +547,11 @@ namespace Lucene
         /// it's best to set this value comfortably under 2048.
         ///
         /// The default value is {@link #DEFAULT_RAM_BUFFER_SIZE_MB}.
+        /// @deprecated use {@link IndexWriterConfig#setRAMBufferSizeMB(double)} instead.
         virtual void setRAMBufferSizeMB(double mb);
         
         /// Returns the value set by {@link #setRAMBufferSizeMB} if enabled.
+        /// @deprecated use {@link IndexWriterConfig#getRAMBufferSizeMB()} instead.
         virtual double getRAMBufferSizeMB();
         
         /// Determines the minimal number of delete terms required before the buffered in-memory delete 
@@ -469,11 +559,13 @@ namespace Lucene
         /// are merged and a new segment is created.
         ///
         /// Disabled by default (writer flushes by RAM usage).
-        /// @see #setRAMBufferSizeMB        
+        /// @see #setRAMBufferSizeMB
+        /// @deprecated use {@link IndexWriterConfig#setMaxBufferedDeleteTerms(int)} instead.
         virtual void setMaxBufferedDeleteTerms(int32_t maxBufferedDeleteTerms);
         
         /// Returns the number of buffered deleted terms that will trigger a flush if enabled.
         /// @see #setMaxBufferedDeleteTerms
+        /// @deprecated use {@link IndexWriterConfig#getMaxBufferedDeleteTerms()} instead
         virtual int32_t getMaxBufferedDeleteTerms();
         
         /// Determines how often segment indices are merged by addDocument().  With smaller values, less 
@@ -485,6 +577,7 @@ namespace Lucene
         /// Note that this method is a convenience method: it just calls mergePolicy.setMergeFactor as long 
         /// as mergePolicy is an instance of {@link LogMergePolicy}. Otherwise an IllegalArgument exception 
         /// is thrown.  This must never be less than 2.  The default value is 10.
+        /// @deprecated use {@link LogMergePolicy#setMergeFactor(int)} directly.
         virtual void setMergeFactor(int32_t mergeFactor);
         
         /// Returns the number of segments that are merged at once and also controls the total number of 
@@ -494,6 +587,7 @@ namespace Lucene
         /// as mergePolicy is an instance of {@link LogMergePolicy}. Otherwise an IllegalArgument exception 
         /// is thrown.
         /// @see #setMergeFactor
+        /// @deprecated use {@link LogMergePolicy#getMergeFactor()} directly.
         virtual int32_t getMergeFactor();
         
         /// If non-null, this will be the default infoStream used by a newly instantiated IndexWriter.
@@ -518,18 +612,22 @@ namespace Lucene
         /// Sets the maximum time to wait for a write lock (in milliseconds) for this instance of 
         /// IndexWriter.  @see #setDefaultWriteLockTimeout to change the default value for all instances 
         /// of IndexWriter.
+        /// @deprecated use {@link IndexWriterConfig#setWriteLockTimeout(long)} instead
         virtual void setWriteLockTimeout(int64_t writeLockTimeout);
         
         /// Returns allowed timeout when acquiring the write lock.
         /// @see #setWriteLockTimeout
+        /// @deprecated use {@link IndexWriterConfig#getWriteLockTimeout()}
         virtual int64_t getWriteLockTimeout();
         
         /// Sets the default (for any instance of IndexWriter) maximum time to wait for a write lock 
         /// (in milliseconds).
+        /// @deprecated use {@link IndexWriterConfig#setDefaultWriteLockTimeout(long)} instead
         static void setDefaultWriteLockTimeout(int64_t writeLockTimeout);
         
         /// Returns default write lock timeout for newly instantiated IndexWriters.
         /// @see #setDefaultWriteLockTimeout
+        /// @deprecated use {@link IndexWriterConfig#getDefaultWriteLockTimeout()} instead
         static int64_t getDefaultWriteLockTimeout();
         
         /// Commits all changes to an index and closes all associated files.  Note that this may be 
@@ -675,12 +773,13 @@ namespace Lucene
         /// search. Traditionally this has meant merging all segments into a single segment as is done in 
         /// the default merge policy, but individual merge policies may implement optimize in different ways.
         ///
-        /// It is recommended that this method be called upon completion of indexing.  In environments with 
-        /// frequent updates, optimize is best done during low volume times, if at all. 
-        ///
+        /// Optimize is a fairly costly operation, so you should only do it if your search performance really
+        /// requires it.  Many search applications do fine never calling optimize.
+        /// 
         /// Note that optimize requires 2X the index size free space in your Directory (3X if you're using 
         /// compound file format).  For example, if your index size is 10 MB then you need 20 MB free for 
-        /// optimize to complete (30 MB if you're using compound file format).
+        /// optimize to complete (30 MB if you're using compound file format).  Also, it's best to call 
+        /// {@link #commit()} after the optimize completes to allow IndexWriter to free up disk space.
         ///
         /// If some but not all readers re-open while an optimize is underway, this will cause > 2X temporary
         /// space to be consumed as those new readers will then hold open the partially optimized segments at 
@@ -704,7 +803,9 @@ namespace Lucene
         ///
         /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
         ///
-        /// @see LogMergePolicy#findMergesForOptimize
+        /// NOTE: if you call {@link #close(boolean)} with false, which aborts all running merges, then any 
+        /// thread still running this method might hit a {@link MergeAbortedException}.
+        /// @see MergePolicy#findMergesForOptimize
         virtual void optimize();
         
         /// Optimize the index down to <= maxNumSegments.  If maxNumSegments==1 then this is the same as 
@@ -734,6 +835,9 @@ namespace Lucene
         /// is able to run merges in background threads.
         ///
         /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
+        ///
+        /// NOTE: if you call {@link #close(boolean)} with false, which aborts all running merges, then 
+        /// any thread still running this method might hit a {@link MergeAbortedException}.
         virtual void expungeDeletes(bool doWait);
         
         /// Expunges all deletes from the index.  When an index has many document deletions (or updates 
@@ -779,8 +883,8 @@ namespace Lucene
         /// NOTE: this method is much faster than using {@link #deleteDocuments()}.
         ///
         /// NOTE: this method will forcefully abort all merges in progress.  If other threads are running 
-        /// {@link #optimize()} or any of the addIndexes methods, they will receive {@link 
-        /// MergePolicy.MergeAbortedException}
+        /// {@link #optimize()}, {@link #addIndexes(IndexReader[])} or {@link #expungeDeletes} methods, 
+        /// they may receive {@link MergeAbortedException}s.
         virtual void deleteAll();
         
         /// Wait for any currently outstanding merges to finish.
@@ -789,49 +893,61 @@ namespace Lucene
         /// this method completes.
         virtual void waitForMerges();
         
-        /// Merges all segments from an array of indexes into this index.
+        /// Called whenever the SegmentInfos has been updated and the index files referenced exist 
+        /// (correctly) in the index directory.
+        virtual void checkpoint();
+        
+        /// @deprecated use {@link #addIndexes(Collection<DirectoryPtr>)} instead
+        virtual void addIndexesNoOptimize(Collection<DirectoryPtr> dirs);
+        
+        /// Merges the provided indexes into this index. This method is useful if you use extensions of 
+        /// {@link IndexReader}. Otherwise, using {@link #addIndexes(Collection<DirectoryPtr>)} is highly 
+        /// recommended for performance reasons. It uses the {@link MergeScheduler} and {@link MergePolicy} 
+        /// set on this writer, which may perform merges in parallel.
         ///
-        /// This may be used to parallelize batch indexing.  A large document collection can be broken into 
-        /// sub-collections.  Each sub-collection can be indexed in parallel, on a different thread, process 
-        /// or machine.  The complete index can then be created by merging sub-collection indexes with this 
+        /// The provided IndexReaders are not closed.
+        ///
+        /// NOTE: this method does not merge the current segments, only the incoming ones.
+        ///
+        /// See {@link #addIndexes(Collection<DirectoryPtr>)} for details on transactional semantics, 
+        /// temporary free space required in the Directory, and non-CFS segments on an Exception.
+        ///
+        /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
+        ///
+        /// NOTE: if you call {@link #close(bool)} with false, which aborts all running merges, then any 
+        /// thread still running this method might hit a {@link MergeAbortedException}.
+        virtual void addIndexes(Collection<IndexReaderPtr> readers);
+        
+        /// Adds all segments from an array of indexes into this index.
+        /// 
+        /// This may be used to parallelize batch indexing. A large document collection can be broken into 
+        /// sub-collections. Each sub-collection can be indexed in parallel, on a different thread, process 
+        /// or machine. The complete index can then be created by merging sub-collection indexes with this 
         /// method.
         ///
-        /// NOTE: the index in each Directory must not be changed (opened by a writer) while this method is
-        /// running.  This method does not acquire a write lock in each input Directory, so it is up to the 
-        /// caller to enforce this.
+        /// NOTE: the index in each {@link Directory} must not be changed (opened by a writer) while this 
+        /// method is running.  This method does not acquire a write lock in each input Directory, so it 
+        /// is up to the caller to enforce this.
         ///
-        /// NOTE: while this is running, any attempts to add or delete documents (with another thread) will 
-        /// be paused until this method completes.
-        ///
-        /// This method is transactional in how exceptions are handled: it does not commit a new segments_N 
-        /// file until all indexes are added.  This means if an exception occurs (for example disk full), 
+        /// This method is transactional in how Exceptions are handled: it does not commit a new segments_N 
+        /// file until all indexes are added.  This means if an Exception occurs (for example disk full), 
         /// then either no indexes will have been added or they all will have been.
         ///
-        /// Note that this requires temporary free space in the Directory up to 2X the sum of all input 
-        /// indexes (including the starting index).  If readers/searchers are open against the starting index, 
-        /// then temporary free space required will be higher by the size of the starting index (see 
+        /// Note that this requires temporary free space in the {@link Directory} up to 2X the sum of all 
+        /// input indexes (including the starting index). If readers/searchers are open against the starting 
+        /// index, then temporary free space required will be higher by the size of the starting index (see 
         /// {@link #optimize()} for details).
         ///
-        /// Once this completes, the final size of the index will be less than the sum of all input index 
-        /// sizes (including the starting index).  It could be quite a bit smaller (if there were many pending 
-        /// deletes) or just slightly smaller.
+        /// NOTE: this method only copies the segments of the incoming indexes and does not merge them. 
+        /// Therefore deleted documents are not removed and the new segments are not merged with the 
+        /// existing ones. Also, the segments are copied as-is, meaning they are not converted to CFS if they 
+        /// aren't, and vice-versa. If you wish to do that, you can call {@link #maybeMerge} or {@link 
+        /// #optimize} afterwards.
         ///
         /// This requires this index not be among those to be added.
         ///
         /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
-        virtual void addIndexesNoOptimize(Collection<DirectoryPtr> dirs);
-        
-        /// Merges the provided indexes into this index.
-        /// After this completes, the index is optimized.  The provided IndexReaders are not closed.
-        ///
-        /// NOTE: while this is running, any attempts to add or delete documents (with another thread) will 
-        /// be paused until this method completes.
-        ///
-        /// See {@link #addIndexesNoOptimize} for details on transactional semantics, temporary free space 
-        /// required in the Directory, and non-CFS segments on an exception.
-        ///
-        /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
-        virtual void addIndexes(Collection<IndexReaderPtr> readers);
+        virtual void addIndexes(Collection<DirectoryPtr> dirs);
         
         /// Prepare for commit.
         ///
@@ -921,6 +1037,9 @@ namespace Lucene
         
         virtual String segString();
         
+        /// Only for testing.
+        virtual void keepFullyDeletedSegments();
+        
         /// Returns true if the index in the named directory is currently locked.
         /// @param directory the directory to check for a lock
         static bool isLocked(DirectoryPtr directory);
@@ -930,10 +1049,12 @@ namespace Lucene
         /// nor thread is in fact currently accessing this index.
         static void unlock(DirectoryPtr directory);
         
-        /// Set the merged segment warmer.  See {@link IndexReaderWarmer}.
+        /// Set the merged segment warmer. See {@link IndexReaderWarmer}.
+        /// @deprecated use {@link IndexWriterConfig#setMergedSegmentWarmer} instead.
         virtual void setMergedSegmentWarmer(IndexReaderWarmerPtr warmer);
         
-        /// Returns the current merged segment warmer.  See {@link IndexReaderWarmer}.
+        /// Returns the current merged segment warmer. See {@link IndexReaderWarmer}.
+        /// @deprecated use {@link IndexWriterConfig#getMergedSegmentWarmer()} instead.
         virtual IndexReaderWarmerPtr getMergedSegmentWarmer();
         
         /// Used only by assert for testing.  Current points:
@@ -946,7 +1067,6 @@ namespace Lucene
         ///   finishStartCommit
         ///   startCommitMergeDeletes
         ///   startMergeInit
-        ///   startApplyDeletes
         ///   startMergeInit
         ///   startMergeInit
         virtual bool testPoint(const String& name);
@@ -954,14 +1074,54 @@ namespace Lucene
         virtual bool nrtIsCurrent(SegmentInfosPtr infos);
         virtual bool isClosed();
         
+        /// Remove any index files that are no longer used.
+        ///
+        /// IndexWriter normally deletes unused files itself, during indexing.  However, on Windows, which 
+        /// disallows deletion of open files, if there is a reader open on the index then those files cannot 
+        /// be deleted.  This is fine, because IndexWriter will periodically retry the deletion.
+        ///
+        /// However, IndexWriter doesn't try that often: only on open, close, flushing a new segment, and 
+        /// finishing a merge.  If you don't do any of these actions with your IndexWriter, you'll see the 
+        /// unused files linger.  If that's a problem, call this method to delete them (once you've closed 
+        /// the open readers that were preventing their deletion). 
+        ///
+        /// In addition, you can call this method to delete unreferenced index commits. This might be useful 
+        /// if you are using an {@link IndexDeletionPolicy} which holds onto index commits until some 
+        /// criteria are met, but those commits are no longer needed. Otherwise, those commits will be 
+        /// deleted the next time commit() is called.
+        virtual void deleteUnusedFiles();
+        
+        /// Sets the {@link PayloadProcessorProvider} to use when merging payloads. Note that the given pcp 
+        /// will be invoked for every segment that is merged, not only external ones that are given through
+        /// {@link #addIndexes}. If you want only the payloads of the external segments to be processed, 
+        /// you can return null whenever a {@link DirPayloadProcessor} is requested for the {@link Directory} 
+        /// of the {@link IndexWriter}.
+        ///
+        /// The default is null which means payloads are processed normally (copied) during segment merges. 
+        /// You can also unset it by passing null.
+        ///
+        /// NOTE: the set {@link PayloadProcessorProvider} will be in effect immediately, potentially for 
+        /// already running merges too. If you want to be sure it is used for further operations only, such 
+        /// as {@link #addIndexes} or {@link #optimize}, you can call {@link #waitForMerges()} before.
+        virtual void setPayloadProcessorProvider(PayloadProcessorProviderPtr pcp);
+        
+        /// Returns the {@link PayloadProcessorProvider} that is used during segment merges to process payloads.
+        virtual PayloadProcessorProviderPtr getPayloadProcessorProvider();
+        
     protected:
+        void ConstructIndexWriter(DirectoryPtr d, IndexWriterConfigPtr conf);
+        
+        static AtomicLongPtr MESSAGE_ID();
+        
         virtual void ensureOpen(bool includePendingClose);
         virtual void ensureOpen();
-        virtual void setMessageID(InfoStreamPtr infoStream);
         
         /// Casts current mergePolicy to LogMergePolicy, and throws an exception if the 
         /// mergePolicy is not a LogMergePolicy.
         virtual LogMergePolicyPtr getLogMergePolicy();
+        
+        virtual FieldInfosPtr getFieldInfos(SegmentInfoPtr info);
+        virtual FieldInfosPtr getCurrentFieldInfos();
         
         virtual void setRollbackSegmentInfos(SegmentInfosPtr infos);
         
@@ -976,10 +1136,6 @@ namespace Lucene
         virtual bool shouldClose();
         virtual void closeInternal(bool waitForMerges);
         
-        /// Tells the docWriter to close its currently open shared doc stores (stored fields & vectors 
-        /// files).  Return value specifies whether new doc store files are compound or not.
-        virtual bool flushDocStores();
-        
         /// Returns true if any merges in pendingMerges or runningMerges are optimization merges.
         virtual bool optimizeMergesPending();
         
@@ -987,45 +1143,11 @@ namespace Lucene
         virtual void maybeMerge(int32_t maxNumSegmentsOptimize, bool optimize);
         virtual void updatePendingMerges(int32_t maxNumSegmentsOptimize, bool optimize);
         
-        /// Like {@link #getNextMerge()} except only returns a merge if it's external.
-        virtual OneMergePtr getNextExternalMerge();
-        
-        /// Begin a transaction.  During a transaction, any segment merges that happen (or ram segments 
-        /// flushed) will not write a new segments file and will not remove any files that were present
-        /// at the start of the transaction.  You must make a matched call to commitTransaction() or 
-        /// rollbackTransaction() to finish the transaction.
-        ///
-        /// Note that buffered documents and delete terms are not handled within the transactions, so 
-        /// they must be flushed before the transaction is started.
-        virtual void startTransaction(bool haveReadLock);
-        
-        /// Rolls back the transaction and restores state to where we were at the start.
-        virtual void rollbackTransaction();
-        
-        /// Commits the transaction.  This will write the new segments file and remove and pending 
-        /// deletions we have accumulated during the transaction.
-        virtual void commitTransaction();
         virtual void rollbackInternal();
         
         virtual void finishMerges(bool waitForMerges);
-        
-        /// Called whenever the SegmentInfos has been updated and the index files referenced exist 
-        /// (correctly) in the index directory.
-        virtual void checkpoint();
-        
-        virtual void finishAddIndexes();
-        virtual void blockAddIndexes(bool includePendingClose);
-        virtual void resumeAddIndexes();
         virtual void resetMergeExceptions();
-        virtual void noDupDirs(Collection<DirectoryPtr> dirs);
-        
-        virtual bool hasExternalSegments();
-        
-        /// If any of our segments are using a directory != ours then we have to either copy them over one 
-        /// by one, merge them (if merge policy has chosen to) or wait until currently running merges (in 
-        /// the background) complete.  We don't return until the SegmentInfos has no more external segments.
-        /// Currently this is only used by addIndexesNoOptimize().
-        virtual void resolveExternalSegments();
+        virtual void noDupDirs(Collection<DirectoryPtr> dirs);        
         
         /// A hook for extending classes to execute operations after pending added and deleted documents have 
         /// been flushed to the Directory but before the change is committed (new segments_N file written).
@@ -1035,16 +1157,19 @@ namespace Lucene
         /// flushed to the Directory.
         virtual void doBeforeFlush();
         
-        virtual void commit(int64_t sizeInBytes);
+        virtual void commitInternal(MapStringString commitUserData);
         virtual void finishCommit();
+        
+        /// NOTE: flushDocStores is ignored now (hardwired to true); this method is only here for backwards
+        /// compatibility
+        virtual void flush(bool triggerMerge, bool flushDocStores, bool flushDeletes);
         
         /// Flush all in-memory buffered updates (adds and deletes) to the Directory.
         /// @param triggerMerge if true, we may merge segments (if deletes or docs were flushed) if necessary
-        /// @param flushDocStores if false we are allowed to keep doc stores open to share with the next segment
-        /// @param flushDeletes whether pending deletes should also be flushed
-        virtual void flush(bool triggerMerge, bool flushDocStores, bool flushDeletes);
-        virtual bool doFlush(bool flushDocStores, bool flushDeletes);
-        virtual bool doFlushInternal(bool flushDocStores, bool flushDeletes);
+        /// @param applyAllDeletes whether pending deletes should also
+        virtual void flush(bool triggerMerge, bool applyAllDeletes);
+        
+        virtual bool doFlush(bool applyAllDeletes);
         
         virtual int32_t ensureContiguousMerge(OneMergePtr merge);
         
@@ -1053,8 +1178,8 @@ namespace Lucene
         /// since the merge was started.  This method "carries over" such new deletes onto the newly merged 
         /// segment, and saves the resulting deletes file (incrementing the delete generation for merge.info).
         /// If no deletes were flushed, no new deletes file is saved.
-        virtual void commitMergedDeletes(OneMergePtr merge, SegmentReaderPtr mergeReader);
-        virtual bool commitMerge(OneMergePtr merge, SegmentMergerPtr merger, int32_t mergedDocCount, SegmentReaderPtr mergedReader);
+        virtual void commitMergedDeletes(OneMergePtr merge, SegmentReaderPtr mergedReader);
+        virtual bool commitMerge(OneMergePtr merge, SegmentReaderPtr mergedReader);
         
         virtual LuceneException handleMergeException(const LuceneException& exc, OneMergePtr merge);
         
@@ -1070,26 +1195,22 @@ namespace Lucene
         /// IndexWriter instance.
         virtual int32_t mergeMiddle(OneMergePtr merge);    
         
-        /// Apply buffered deletes to all segments.
-        virtual bool applyDeletes();
-        
         virtual String segString(SegmentInfosPtr infos);
         
-        virtual bool startSync(const String& fileName, HashSet<String> pending);
-        virtual void finishSync(const String& fileName, bool success);
+        virtual void doWait();
         
-        /// Blocks until all files in syncing are sync'd
-        bool waitForAllSynced(HashSet<String> syncing);
-        void doWait();
+        /// Called only from assert
+        virtual bool filesExist(SegmentInfosPtr toSync);
         
         /// Walk through all files referenced by the current segmentInfos and ask the Directory to sync each 
         /// file, if it wasn't already.  If that succeeds, then we prepare a new segments_N file but do not 
         /// fully commit it.
-        virtual void startCommit(int64_t sizeInBytes, MapStringString commitUserData);
+        virtual void startCommit(MapStringString commitUserData);
         
         virtual LuceneException handleOOM(const std::bad_alloc& oom, const String& location);
         
         friend class ReaderPool;
+        friend class FlushControl;
     };
     
     /// If {@link #getReader} has been called (ie, this writer is in near real-time mode), then after 

@@ -17,6 +17,7 @@
 #include "IndexReader.h"
 #include "ComplexExplanation.h"
 #include "BooleanQuery.h"
+#include "PhraseQuery.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -111,7 +112,7 @@ namespace Lucene
     String MultiPhraseQuery::toString(const String& field)
     {
         StringStream buffer;
-        if (this->field != field)
+        if (field.empty() || this->field != field)
             buffer << this->field << L":";
         buffer << L"\"";
         for (Collection< Collection<TermPtr> >::iterator arr = termArrays.begin(); arr != termArrays.end(); ++arr)
@@ -187,7 +188,7 @@ namespace Lucene
     LuceneObjectPtr MultiPhraseQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<MultiPhraseQuery>();
-        MultiPhraseQueryPtr cloneQuery(boost::dynamic_pointer_cast<MultiPhraseQuery>(Query::clone(clone)));
+        MultiPhraseQueryPtr cloneQuery(boost::static_pointer_cast<MultiPhraseQuery>(Query::clone(clone)));
         cloneQuery->field = field;
         cloneQuery->termArrays = termArrays;
         cloneQuery->positions = positions;
@@ -205,12 +206,14 @@ namespace Lucene
         this->queryWeight = 0.0;
         
         // compute idf
-        int32_t maxDoc = searcher->maxDoc();
+        Collection<TermPtr> allTerms(Collection<TermPtr>::newInstance());
         for (Collection< Collection<TermPtr> >::iterator arr = query->termArrays.begin(); arr != query->termArrays.end(); ++arr)
         {
             for (Collection<TermPtr>::iterator term = arr->begin(); term != arr->end(); ++term)
-                idf += this->similarity->idf(searcher->docFreq(*term), maxDoc);
+                allTerms.add(*term);
         }
+        idfExp = similarity->idfExplain(allTerms, searcher);
+        idf = idfExp->getIdf();
     }
     
     MultiPhraseWeight::~MultiPhraseWeight()
@@ -245,27 +248,50 @@ namespace Lucene
         if (query->termArrays.empty()) // optimize zero-term case
             return ScorerPtr();
         
-        Collection<TermPositionsPtr> tps(Collection<TermPositionsPtr>::newInstance(query->termArrays.size()));
-        for (int32_t i = 0; i < tps.size(); ++i)
+        Collection<PostingsAndFreqPtr> postingsFreqs(Collection<PostingsAndFreqPtr>::newInstance(query->termArrays.size()));
+
+        for (int32_t pos = 0; pos < postingsFreqs.size(); ++pos)
         {
-            Collection<TermPtr> terms(query->termArrays[i]);
-            
+            Collection<TermPtr> terms(query->termArrays[pos]);
+
             TermPositionsPtr p;
+            int32_t docFreq = 0;
+
             if (terms.size() > 1)
+            {
                 p = newLucene<MultipleTermPositions>(reader, terms);
+
+                // coarse -- this over counts since a given doc can have more than one terms
+                docFreq = 0;
+                for (int32_t termIdx = 0; termIdx < terms.size(); ++termIdx)
+                    docFreq += reader->docFreq(terms[termIdx]);
+            }
             else
+            {
                 p = reader->termPositions(terms[0]);
-            
-            if (!p)
-                return ScorerPtr();
-            
-            tps[i] = p;
+                docFreq = reader->docFreq(terms[0]);
+
+                if (!p)
+                    return ScorerPtr();
+            }
+
+            postingsFreqs[pos] = newLucene<PostingsAndFreq>(p, docFreq, query->positions[pos]);
         }
+
+        // sort by increasing docFreq order
+        if (query->slop == 0)
+            std::sort(postingsFreqs.begin(), postingsFreqs.end(), luceneCompare<PostingsAndFreqPtr>());
         
-        if (query->slop == 0) // optimize exact case
-            return newLucene<ExactPhraseScorer>(shared_from_this(), tps, query->getPositions(), similarity, reader->norms(query->field));
+        if (query->slop == 0)
+        {
+            ExactPhraseScorerPtr s(newLucene<ExactPhraseScorer>(shared_from_this(), postingsFreqs, similarity, reader->norms(query->field)));
+            if (s->noDocs)
+                return ScorerPtr();
+            else
+                return s;
+        }
         else
-            return newLucene<SloppyPhraseScorer>(shared_from_this(), tps, query->getPositions(), similarity, query->slop, reader->norms(query->field));
+            return newLucene<SloppyPhraseScorer>(shared_from_this(), postingsFreqs, similarity, query->slop, reader->norms(query->field));
     }
     
     ExplanationPtr MultiPhraseWeight::explain(IndexReaderPtr reader, int32_t doc)
@@ -273,7 +299,7 @@ namespace Lucene
         ComplexExplanationPtr result(newLucene<ComplexExplanation>());
         result->setDescription(L"weight(" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
         
-        ExplanationPtr idfExpl(newLucene<Explanation>(idf, L"idf(" + query->toString() + L")"));
+        ExplanationPtr idfExpl(newLucene<Explanation>(idf, L"idf(" + query->field + L":" + idfExp->explain() + L")"));
         
         // explain query weight
         ExplanationPtr queryExpl(newLucene<Explanation>());
@@ -295,13 +321,13 @@ namespace Lucene
         ComplexExplanationPtr fieldExpl(newLucene<ComplexExplanation>());
         fieldExpl->setDescription(L"fieldWeight(" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
         
-        PhraseScorerPtr phraseScorer(boost::dynamic_pointer_cast<PhraseScorer>(scorer(reader, true, false)));
-        if (!phraseScorer)
+        ScorerPtr _scorer(scorer(reader, true, false));
+        if (!_scorer)
             return newLucene<Explanation>(0.0, L"no matching docs");
             
         ExplanationPtr tfExplanation(newLucene<Explanation>());
-        int32_t d = phraseScorer->advance(doc);
-        double phraseFreq = d == doc ? phraseScorer->currentFreq() : 0.0;
+        int32_t d = _scorer->advance(doc);
+        double phraseFreq = d == doc ? _scorer->freq() : 0.0;
         tfExplanation->setValue(similarity->tf(phraseFreq));
         tfExplanation->setDescription(L"tf(phraseFreq=" + StringUtils::toString(phraseFreq) + L")");
         
@@ -310,7 +336,7 @@ namespace Lucene
         
         ExplanationPtr fieldNormExpl(newLucene<Explanation>());
         ByteArray fieldNorms(reader->norms(query->field));
-        double fieldNorm = fieldNorms ? Similarity::decodeNorm(fieldNorms[doc]) : 1.0;
+        double fieldNorm = fieldNorms ? similarity->decodeNormValue(fieldNorms[doc]) : 1.0;
         fieldNormExpl->setValue(fieldNorm);
         fieldNormExpl->setDescription(L"fieldNorm(field=" + query->field + L", doc=" + StringUtils::toString(doc) + L")");
         fieldExpl->addDetail(fieldNormExpl);

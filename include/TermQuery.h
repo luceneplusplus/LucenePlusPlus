@@ -43,6 +43,7 @@ namespace Lucene
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         
         friend class TermWeight;
+        friend class TermQueryReaderGather;
     };
 }
 

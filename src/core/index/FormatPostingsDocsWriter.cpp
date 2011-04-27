@@ -34,9 +34,7 @@ namespace Lucene
         FormatPostingsFieldsWriterPtr parentPostings(parent->_parent);
         this->_parent = parent;
         this->state = state;
-        String fileName(IndexFileNames::segmentFileName(parentPostings->segment, IndexFileNames::FREQ_EXTENSION()));
-        state->flushedFiles.add(fileName);
-        out = parentPostings->dir->createOutput(fileName);
+        out = parentPostings->dir->createOutput(IndexFileNames::segmentFileName(parentPostings->segment, IndexFileNames::FREQ_EXTENSION()));
         totalNumDocs = parentPostings->totalNumDocs;
         
         skipInterval = parentPostings->termsOut->skipInterval;

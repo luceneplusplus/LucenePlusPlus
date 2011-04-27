@@ -15,7 +15,7 @@ namespace Lucene
     class BooleanWeight : public Weight
     {
     public:
-        BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher);
+        BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher, bool disableCoord);
         virtual ~BooleanWeight();
         
         LUCENE_CLASS(BooleanWeight);
@@ -26,6 +26,8 @@ namespace Lucene
         /// The Similarity implementation.
         SimilarityPtr similarity;
         Collection<WeightPtr> weights;
+        int32_t maxCoord; // num optional + num required
+        bool disableCoord;
     
     public:
         virtual QueryPtr getQuery();

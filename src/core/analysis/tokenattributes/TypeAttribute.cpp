@@ -10,9 +10,12 @@
 
 namespace Lucene
 {
+    /// the default type
+    const String TypeAttribute::DEFAULT_TYPE = L"word";
+    
     TypeAttribute::TypeAttribute()
     {
-        _type = DEFAULT_TYPE();
+        _type = DEFAULT_TYPE;
     }
     
     TypeAttribute::TypeAttribute(const String& type)
@@ -22,12 +25,6 @@ namespace Lucene
     
     TypeAttribute::~TypeAttribute()
     {
-    }
-    
-    const String& TypeAttribute::DEFAULT_TYPE()
-    {
-        static String _DEFAULT_TYPE(L"word");
-        return _DEFAULT_TYPE;
     }
     
     String TypeAttribute::toString()
@@ -47,7 +44,7 @@ namespace Lucene
     
     void TypeAttribute::clear()
     {
-        _type = DEFAULT_TYPE();
+        _type = DEFAULT_TYPE;
     }
     
     bool TypeAttribute::equals(LuceneObjectPtr other)
@@ -64,18 +61,18 @@ namespace Lucene
     
     int32_t TypeAttribute::hashCode()
     {
-        return StringUtils::hashCode(_type);
+        return _type.empty() ? 0 : StringUtils::hashCode(_type);
     }
     
     void TypeAttribute::copyTo(AttributePtr target)
     {
-        boost::dynamic_pointer_cast<TypeAttribute>(target)->setType(_type);
+        boost::static_pointer_cast<TypeAttribute>(target)->setType(_type);
     }
     
     LuceneObjectPtr TypeAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TypeAttribute>();
-        TypeAttributePtr cloneAttribute(boost::dynamic_pointer_cast<TypeAttribute>(Attribute::clone(clone)));
+        TypeAttributePtr cloneAttribute(boost::static_pointer_cast<TypeAttribute>(Attribute::clone(clone)));
         cloneAttribute->_type = _type;
         return cloneAttribute;
     }

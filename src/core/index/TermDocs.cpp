@@ -13,6 +13,10 @@ namespace Lucene
     {
     }
     
+    TermDocs::~TermDocs()
+    {
+    }
+    
     void TermDocs::seek(TermPtr term)
     {
         BOOST_ASSERT(false);

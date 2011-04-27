@@ -7,51 +7,70 @@
 #ifndef BUFFEREDDELETES_H
 #define BUFFEREDDELETES_H
 
-#include "Term.h"
-#include "Query.h"
+#include "LuceneObject.h"
 
 namespace Lucene
 {
-    /// Holds buffered deletes, by docID, term or query.  We hold two instances of this class: one for 
-    /// the deletes prior to the last flush, the other for deletes after the last flush.  This is so if 
-    /// we need to abort (discard all buffered docs) we can also discard the buffered deletes yet keep 
-    /// the deletes done during previously flushed segments.
+    /// Holds a {@link SegmentDeletes} for each segment in the index.
     class BufferedDeletes : public LuceneObject
     {
     public:
-        BufferedDeletes(bool doTermSort);
+        BufferedDeletes(int32_t messageID);
         virtual ~BufferedDeletes();
         
         LUCENE_CLASS(BufferedDeletes);
         
-    public:
-        int32_t numTerms;
-        MapTermNum terms;
-        MapQueryInt queries;
-        Collection<int32_t> docIDs;
-        int64_t bytesUsed;
-    
-    public:
-        int32_t size();
-        void update(BufferedDeletesPtr in);
-        void clear();
-        void addBytesUsed(int64_t b);
-        bool any();
-        void remap(MergeDocIDRemapperPtr mapper, SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergedDocCount);
-    };
-    
-    /// Number of documents a delete term applies to.
-    class Num : public LuceneObject
-    {
-    public:
-        Num(int32_t num);
+    private:
+        /// Deletes for all flushed/merged segments
+        MapSegmentInfoSegmentDeletes deletesMap;
         
-    protected:
-        int32_t num;
+        // used only by assert
+        TermPtr lastDeleteTerm;
+        
+        InfoStreamPtr infoStream;
+        AtomicLongPtr _bytesUsed;
+        AtomicLongPtr _numTerms;
+        int32_t messageID;
     
     public:
-        int32_t getNum();
-        void setNum(int32_t num);
+        void setInfoStream(InfoStreamPtr infoStream);
+        
+        void pushDeletes(SegmentDeletesPtr newDeletes, SegmentInfoPtr info);
+        
+        /// Moves all pending deletes onto the provided segment, then clears the pending deletes
+        void pushDeletes(SegmentDeletesPtr newDeletes, SegmentInfoPtr info, bool noLimit);
+        
+        void clear();
+        bool any();
+        int32_t numTerms();
+        int64_t bytesUsed();
+        
+        /// IW calls this on finishing a merge.  While the merge was running, it's possible new 
+        /// deletes were pushed onto our last (and only our last) segment.  In this case we must 
+        /// carry forward those deletes onto the merged segment.
+        void commitMerge(OneMergePtr merge);
+        
+        void clear(SegmentDeletesPtr deletes);
+        
+        bool applyDeletes(ReaderPoolPtr readerPool, SegmentInfosPtr segmentInfos, SegmentInfosPtr applyInfos);
+        int64_t applyDeletes(ReaderPoolPtr readerPool, SegmentInfoPtr info, SegmentDeletesPtr coalescedDeletes, SegmentDeletesPtr segmentDeletes);
+        int64_t applyDeletes(SegmentDeletesPtr deletes, SegmentReaderPtr reader);
+        
+        SegmentDeletesPtr getDeletes(SegmentInfoPtr info);
+        
+        void remove(SegmentInfosPtr infos);
+    
+    private:
+        void message(const String& message);
+        
+        /// used only by assert
+        bool anyDeletes(SegmentInfosPtr infos);
+        
+        /// used only by assert
+        bool checkDeleteTerm(TermPtr term);
+        
+        /// used only by assert
+        bool checkDeleteStats();
     };
 }
 

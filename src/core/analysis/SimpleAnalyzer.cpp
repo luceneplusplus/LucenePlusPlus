@@ -10,25 +10,22 @@
 
 namespace Lucene
 {
+    SimpleAnalyzer::SimpleAnalyzer(LuceneVersion::Version matchVersion)
+    {
+        this->matchVersion = matchVersion;
+    }
+    
+    SimpleAnalyzer::SimpleAnalyzer()
+    {
+        this->matchVersion = LuceneVersion::LUCENE_30;
+    }
+    
     SimpleAnalyzer::~SimpleAnalyzer()
     {
     }
     
-    TokenStreamPtr SimpleAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamComponentsPtr SimpleAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        return newLucene<LowerCaseTokenizer>(reader);
-    }
-    
-    TokenStreamPtr SimpleAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
-        if (!tokenizer)
-        {
-            tokenizer = newLucene<LowerCaseTokenizer>(reader);
-            setPreviousTokenStream(tokenizer);
-        }
-        else
-            tokenizer->reset(reader);
-        return tokenizer;
+        return newLucene<TokenStreamComponents>(newLucene<LowerCaseTokenizer>(matchVersion, reader));
     }
 }

@@ -8,11 +8,13 @@
 #include <boost/bind.hpp>
 #include <boost/bind/protect.hpp>
 #include "ParallelMultiSearcher.h"
+#include "_ParallelMultiSearcher.h"
 #include "_MultiSearcher.h"
 #include "HitQueue.h"
 #include "FieldDocSortedHitQueue.h"
 #include "FieldDoc.h"
 #include "TopFieldDocs.h"
+#include "Term.h"
 #include "ThreadPool.h"
 
 namespace Lucene
@@ -97,5 +99,53 @@ namespace Lucene
             scoreDocs[i] = hq->pop();
         
         return newLucene<TopFieldDocs>(totalHits, scoreDocs, hq->getFields(), maxScore);
+    }
+    
+    void ParallelMultiSearcher::close()
+    {
+        MultiSearcher::close();
+    }
+    
+    MapTermInt ParallelMultiSearcher::createDocFrequencyMap(SetTerm terms)
+    {
+        Collection<TermPtr> allTermsArray(Collection<TermPtr>::newInstance(terms.begin(), terms.end()));
+        Collection<int32_t> aggregatedDocFreqs(Collection<int32_t>::newInstance(terms.size()));
+        ThreadPoolPtr threadPool(ThreadPool::getInstance());
+        Collection<FuturePtr> searchThreads(Collection<FuturePtr>::newInstance(searchables.size()));
+        Collection<DocumentFrequencyCallablePtr> multiSearcher(Collection<DocumentFrequencyCallablePtr>::newInstance(searchables.size()));
+        for (int32_t i = 0; i < searchables.size(); ++i) // search each searchable
+        {
+            multiSearcher[i] = newLucene<DocumentFrequencyCallable>(searchables[i], allTermsArray);
+            searchThreads[i] = threadPool->scheduleTask(boost::protect(boost::bind< Collection<int32_t> >(boost::mem_fn(&DocumentFrequencyCallable::call), multiSearcher[i])));
+        }
+        
+        int32_t docFreqLen = aggregatedDocFreqs.size();
+        for (int32_t i = 0; i < searchThreads.size(); ++i)
+        {
+            Collection<int32_t> docFreqs(searchThreads[i]->get< Collection<int32_t> >());
+            for (int32_t i = 0; i < docFreqLen; ++i)
+                aggregatedDocFreqs[i] += docFreqs[i];
+        }
+
+        MapTermInt dfMap(MapTermInt::newInstance());
+        for (int32_t i = 0; i < allTermsArray.size(); ++i)
+            dfMap.put(allTermsArray[i], aggregatedDocFreqs[i]);
+
+        return dfMap;
+    }
+    
+    DocumentFrequencyCallable::DocumentFrequencyCallable(SearchablePtr searchable, Collection<TermPtr> terms)
+    {
+        this->searchable = searchable;
+        this->terms = terms;
+    }
+    
+    DocumentFrequencyCallable::~DocumentFrequencyCallable()
+    {
+    }
+    
+    Collection<int32_t> DocumentFrequencyCallable::call()
+    {
+        return searchable->docFreqs(terms);
     }
 }

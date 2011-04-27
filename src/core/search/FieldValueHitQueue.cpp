@@ -82,9 +82,6 @@ namespace Lucene
     
     OneComparatorFieldValueHitQueue::OneComparatorFieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size) : FieldValueHitQueue(fields, size)
     {
-        if (fields.empty())
-            boost::throw_exception(IllegalArgumentException(L"Sort must contain at least one field"));
-        
         SortFieldPtr field(fields[0]);
         comparator = field->getComparator(size, 0);
         oneReverseMul = field->reverse ? -1 : 1;

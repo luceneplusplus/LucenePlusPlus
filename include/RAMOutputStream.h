@@ -67,7 +67,10 @@ namespace Lucene
         virtual int64_t getFilePointer();
         
         /// Returns byte usage of all buffers.
-        int64_t sizeInBytes();
+        virtual int64_t sizeInBytes();
+        
+        /// Copy numBytes bytes from input to ourself.
+        virtual void copyBytes(IndexInputPtr input, int64_t numBytes);
     
     protected:
         void switchCurrentBuffer();

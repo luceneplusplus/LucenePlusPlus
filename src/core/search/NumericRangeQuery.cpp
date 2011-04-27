@@ -126,10 +126,15 @@ namespace Lucene
         return min;
     }
     
+    int32_t NumericRangeQuery::getPrecisionStep()
+    {
+        return precisionStep;
+    }
+    
     LuceneObjectPtr NumericRangeQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<NumericRangeQuery>(field, precisionStep, valSize, min, max, minInclusive, maxInclusive));
-        NumericRangeQueryPtr cloneQuery(boost::dynamic_pointer_cast<NumericRangeQuery>(clone));
+        NumericRangeQueryPtr cloneQuery(boost::static_pointer_cast<NumericRangeQuery>(clone));
         cloneQuery->field = field;
         cloneQuery->precisionStep = precisionStep;
         cloneQuery->valSize = valSize;

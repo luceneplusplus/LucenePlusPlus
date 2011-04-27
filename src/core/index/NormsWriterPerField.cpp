@@ -10,6 +10,7 @@
 #include "Similarity.h"
 #include "DocInverterPerField.h"
 #include "DocumentsWriter.h"
+#include "_DocumentsWriter.h"
 #include "FieldInfo.h"
 #include "MiscUtils.h"
 
@@ -34,8 +35,8 @@ namespace Lucene
     void NormsWriterPerField::reset()
     {
         // Shrink back if we are over allocated now
-        docIDs.resize(MiscUtils::getShrinkSize(docIDs.size(), upto));
-        norms.resize(MiscUtils::getShrinkSize(norms.size(), upto));
+        MiscUtils::shrink(docIDs, upto);
+        MiscUtils::shrink(norms, upto);
         upto = 0;
     }
     
@@ -51,17 +52,20 @@ namespace Lucene
     
     void NormsWriterPerField::finish()
     {
-        BOOST_ASSERT(docIDs.size() == norms.size());
         if (fieldInfo->isIndexed && !fieldInfo->omitNorms)
         {
             if (docIDs.size() <= upto)
             {
                 BOOST_ASSERT(docIDs.size() == upto);
-                docIDs.resize(MiscUtils::getNextSize(1 + upto));
-                norms.resize(MiscUtils::getNextSize(1 + upto));
+                MiscUtils::grow(docIDs, 1 + upto);
+            }
+            if (norms.size() <= upto)
+            {
+                BOOST_ASSERT(norms.size() == upto);
+                MiscUtils::grow(norms, 1 + upto);
             }
             double norm = docState->similarity->computeNorm(fieldInfo->name, fieldState);
-            norms[upto] = Similarity::encodeNorm(norm);
+            norms[upto] = docState->similarity->encodeNormValue(norm);
             docIDs[upto] = docState->docID;
             ++upto;
         }

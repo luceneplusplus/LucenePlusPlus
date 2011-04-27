@@ -24,7 +24,7 @@ namespace Lucene
     class LPPAPI LogMergePolicy : public MergePolicy
     {
     public:
-        LogMergePolicy(IndexWriterPtr writer);
+        LogMergePolicy();
         virtual ~LogMergePolicy();
         
         LUCENE_CLASS(LogMergePolicy);
@@ -32,11 +32,18 @@ namespace Lucene
     protected:
         int32_t mergeFactor;
         
+        int64_t minMergeSize;
+        int64_t maxMergeSize;
+        
+        // Although the core MPs set it explicitly, we must default in case someone out there wrote his own LMP
+        int64_t maxMergeSizeForOptimize;
+  
+        int32_t maxMergeDocs;
+        
         double noCFSRatio;
         
         bool calibrateSizeByDeletes;
         bool _useCompoundFile;
-        bool _useCompoundDocStore;
     
     public:
         /// Defines the allowed range of log(size) for each level.  A level is computed by taking the max segment
@@ -53,10 +60,6 @@ namespace Lucene
         /// Default noCFSRatio.  If a merge's size is >= 10% of the index, then we disable compound file for it.
         /// @see #setNoCFSRatio
         static const double DEFAULT_NO_CFS_RATIO;
-        
-        int64_t minMergeSize;
-        int64_t maxMergeSize;
-        int32_t maxMergeDocs;
         
     public:
         /// @see #setNoCFSRatio
@@ -87,17 +90,6 @@ namespace Lucene
         /// @see #setUseCompoundFile
         bool getUseCompoundFile();
         
-        /// Returns true if the doc store files should use the compound file format.
-        virtual bool useCompoundDocStore(SegmentInfosPtr segments);
-        
-        /// Sets whether compound file format should be used for newly flushed and newly merged doc store
-        /// segment files (term vectors and stored fields).
-        void setUseCompoundDocStore(bool useCompoundDocStore);
-        
-        /// Returns true if newly flushed and newly merge doc store segment files (term vectors and stored fields)
-        /// are written in compound file format. @see #setUseCompoundDocStore
-        bool getUseCompoundDocStore();
-        
         /// Sets whether the segment size should be calibrated by the number of deletes when choosing segments 
         /// for merge.
         void setCalibrateSizeByDeletes(bool calibrateSizeByDeletes);
@@ -109,11 +101,13 @@ namespace Lucene
         /// Release all resources for the policy.
         virtual void close();
         
-        /// Returns the merges necessary to optimize the index.  This merge policy defines "optimized" to mean only 
-        /// one segment in the index, where that segment has no deletions pending nor separate norms, and it is in
-        /// compound file format if the current useCompoundFile setting is true.  This method returns multiple merges
-        /// (mergeFactor at a time) so the {@link MergeScheduler} in use may make use of concurrency.
-        virtual MergeSpecificationPtr findMergesForOptimize(SegmentInfosPtr segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize);
+        /// Returns the merges necessary to optimize the index.  This merge policy defines "optimized" to mean 
+        /// only the requested number of segments is left in the index, and respects the {@link 
+        /// #maxMergeSizeForOptimize} setting. By default, and assuming {@code maxNumSegments=1}, only one segment 
+        /// will be left in the index, where that segment has no deletions pending nor separate norms, and it is in
+        /// compound file format if the current useCompoundFile setting is true.  This method returns multiple 
+        /// merges mergeFactor at a time) so the {@link MergeScheduler} in use may make use of concurrency.
+        virtual MergeSpecificationPtr findMergesForOptimize(SegmentInfosPtr infos, int32_t maxNumSegments, SetSegmentInfo segmentsToOptimize);
         
         /// Finds merges necessary to expunge all deletes from the index.  We simply merge adjacent segments that have
         /// deletes, up to mergeFactor at a time.
@@ -139,6 +133,8 @@ namespace Lucene
         /// @see #setMaxMergeDocs
         int32_t getMaxMergeDocs();
         
+        virtual String toString();
+        
     protected:
         bool verbose();
         void message(const String& message);
@@ -154,7 +150,15 @@ namespace Lucene
         /// writer, and matches the current compound file setting
         bool isOptimized(SegmentInfoPtr info);
         
-        OneMergePtr makeOneMerge(SegmentInfosPtr infos, SegmentInfosPtr infosToMerge);
+        /// Returns the merges necessary to optimize the index, taking the max merge size or max merge docs into 
+        /// consideration. This method attempts to respect the {@code maxNumSegments} parameter, however it might be, 
+        /// due to size constraints, that more than that number of segments will remain in the index. Also, this method 
+        /// does not guarantee that exactly maxNumSegments will remain, but <= that number.
+        MergeSpecificationPtr findMergesForOptimizeSizeLimit(SegmentInfosPtr infos, int32_t maxNumSegments, int32_t last);
+        
+        /// Returns the merges necessary to optimize the index. This method constraints the returned merges only by the 
+        /// {@code maxNumSegments} parameter, and guaranteed that exactly that number of segments will remain in the index.
+        MergeSpecificationPtr findMergesForOptimizeMaxNumSegments(SegmentInfosPtr infos, int32_t maxNumSegments, int32_t last);
     };
 }
 

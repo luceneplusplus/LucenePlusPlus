@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "StoredFieldsWriterPerThread.h"
 #include "StoredFieldsWriter.h"
+#include "_StoredFieldsWriter.h"
 #include "FieldsWriter.h"
 #include "RAMOutputStream.h"
 

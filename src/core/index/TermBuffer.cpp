@@ -114,7 +114,7 @@ namespace Lucene
     LuceneObjectPtr TermBuffer::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermBuffer>();
-        TermBufferPtr cloneBuffer(boost::dynamic_pointer_cast<TermBuffer>(LuceneObject::clone(clone)));
+        TermBufferPtr cloneBuffer(boost::static_pointer_cast<TermBuffer>(LuceneObject::clone(clone)));
         cloneBuffer->field = field;
         cloneBuffer->term = term;
         cloneBuffer->preUTF8Strings = preUTF8Strings;

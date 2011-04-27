@@ -222,12 +222,11 @@ namespace Lucene
         this->ords = Collection<int32_t>::newInstance(numHits);
         this->values = Collection<String>::newInstance(numHits);
         this->readerGen = Collection<int32_t>::newInstance(numHits);
-        this->sortPos = sortPos;
-        this->reversed = reversed;
         this->field = field;
         this->currentReaderGen = -1;
         this->bottomSlot = -1;
         this->bottomOrd = 0;
+        this->bottomSameReader = false;
     }
     
     StringOrdValComparator::~StringOrdValComparator()
@@ -237,54 +236,28 @@ namespace Lucene
     int32_t StringOrdValComparator::compare(int32_t slot1, int32_t slot2)
     {
         if (readerGen[slot1] == readerGen[slot2])
-        {
-            int32_t cmp = ords[slot1] - ords[slot2];
-            if (cmp != 0)
-                return cmp;
-        }
+            return ords[slot1] - ords[slot2];
         return values[slot1].compare(values[slot2]);
     }
 
     int32_t StringOrdValComparator::compareBottom(int32_t doc)
     {
         BOOST_ASSERT(bottomSlot != -1);
-        int32_t order = this->order[doc];
-        int32_t cmp = bottomOrd - order;
-        if (cmp != 0)
-            return cmp;
-        return bottomValue.compare(lookup[order]);
-    }
-    
-    void StringOrdValComparator::convert(int32_t slot)
-    {
-        readerGen[slot] = currentReaderGen;
-        int32_t index = 0;
-        String value(values[slot]);
-        if (value.empty())
+        if (bottomSameReader)
         {
-            ords[slot] = 0;
-            return;
-        }
-        
-        if (sortPos == 0 && bottomSlot != -1 && bottomSlot != slot)
-        {
-            // Since we are the primary sort, the entries in the queue are bounded by bottomOrd
-            BOOST_ASSERT(bottomOrd < lookup.size());
-            if (reversed)
-                index = binarySearch(lookup, value, bottomOrd, lookup.size() - 1);
-            else
-                index = binarySearch(lookup, value, 0, bottomOrd);
+            // ord is precisely comparable, even in the equal case
+            return bottomOrd - this->order[doc];
         }
         else
         {
-            // Full binary search
-            index = binarySearch(lookup, value, 0, lookup.size() - 1);
+            // ord is only approx comparable: if they are not equal, we can use that; 
+            // if they are equal, we must fallback to compare by value
+            int32_t order = this->order[doc];
+            int32_t cmp = bottomOrd - order;
+            if (cmp != 0)
+                return cmp;
+            return bottomValue.compare(lookup[order]);
         }
-        
-        if (index < 0)
-            index = -index - 2;
-        
-        ords[slot] = index;
     }
     
     int32_t StringOrdValComparator::binarySearch(Collection<String> lookup, const String& key, int32_t low, int32_t high)
@@ -311,21 +284,46 @@ namespace Lucene
         lookup = currentReaderValues->lookup;
         BOOST_ASSERT(!lookup.empty());
         if (bottomSlot != -1)
-        {
-            convert(bottomSlot);
-            bottomOrd = ords[bottomSlot];
-        }
+            setBottom(bottomSlot);
     }
     
     void StringOrdValComparator::setBottom(int32_t slot)
     {
         bottomSlot = slot;
-        if (readerGen[slot] != currentReaderGen)
-            convert(bottomSlot);
-        bottomOrd = ords[slot];
-        BOOST_ASSERT(bottomOrd >= 0);
-        BOOST_ASSERT(bottomOrd < lookup.size());
-        bottomValue = values[slot];
+
+        bottomValue = values[bottomSlot];
+        if (currentReaderGen == readerGen[bottomSlot])
+        {
+            bottomOrd = ords[bottomSlot];
+            bottomSameReader = true;
+        }
+        else
+        {
+            if (bottomValue.empty())
+            {
+                ords[bottomSlot] = 0;
+                bottomOrd = 0;
+                bottomSameReader = true;
+                readerGen[bottomSlot] = currentReaderGen;
+            }
+            else
+            {
+                int32_t index = binarySearch(lookup, bottomValue, 0, lookup.size() - 1);
+                if (index < 0)
+                {
+                    bottomOrd = -index - 2;
+                    bottomSameReader = false;
+                }
+                else
+                {
+                    bottomOrd = index;
+                    // exact value match
+                    bottomSameReader = true;
+                    readerGen[bottomSlot] = currentReaderGen;            
+                    ords[bottomSlot] = bottomOrd;
+                }
+            }
+        }
     }
     
     ComparableValue StringOrdValComparator::value(int32_t slot)

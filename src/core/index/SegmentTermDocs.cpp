@@ -35,7 +35,7 @@ namespace Lucene
         this->currentFieldStoresPayloads = false;
         this->currentFieldOmitTermFreqAndPositions = false;
         
-        this->_freqStream = boost::dynamic_pointer_cast<IndexInput>(parent->core->freqStream->clone());
+        this->_freqStream = boost::static_pointer_cast<IndexInput>(parent->core->freqStream->clone());
         {
             SyncLock parentLock(parent);
             this->deletedDocs = parent->deletedDocs;
@@ -206,10 +206,10 @@ namespace Lucene
     
     bool SegmentTermDocs::skipTo(int32_t target)
     {
-        if (df >= skipInterval) // optimized case
+        if ((target - skipInterval) >= _doc && df >= skipInterval) // optimized case
         {
             if (!skipListReader)
-                skipListReader = newLucene<DefaultSkipListReader>(boost::dynamic_pointer_cast<IndexInput>(_freqStream->clone()), maxSkipLevels, skipInterval); // lazily clone
+                skipListReader = newLucene<DefaultSkipListReader>(boost::static_pointer_cast<IndexInput>(_freqStream->clone()), maxSkipLevels, skipInterval); // lazily clone
             
             if (!haveSkipped) // lazily initialize skip stream
             {

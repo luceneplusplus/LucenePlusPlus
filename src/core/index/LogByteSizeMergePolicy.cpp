@@ -14,12 +14,17 @@ namespace Lucene
     const double LogByteSizeMergePolicy::DEFAULT_MIN_MERGE_MB = 1.6;
     
     /// Default maximum segment size.  A segment of this size or larger will never be merged.
-    const double LogByteSizeMergePolicy::DEFAULT_MAX_MERGE_MB = DBL_MAX;
+    const double LogByteSizeMergePolicy::DEFAULT_MAX_MERGE_MB = 2048.0;
     
-    LogByteSizeMergePolicy::LogByteSizeMergePolicy(IndexWriterPtr writer) : LogMergePolicy(writer)
+    /// Default maximum segment size.  A segment of this size or larger will never be merged 
+    /// during optimize.  @see setMaxMergeMBForOptimize
+    const double LogByteSizeMergePolicy::DEFAULT_MAX_MERGE_MB_FOR_OPTIMIZE = DBL_MAX;
+    
+    LogByteSizeMergePolicy::LogByteSizeMergePolicy()
     {
         minMergeSize = (int64_t)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
         maxMergeSize = DEFAULT_MAX_MERGE_MB == DBL_MAX ? LLONG_MAX : (int64_t)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
+        maxMergeSizeForOptimize = (int64_t)(DEFAULT_MAX_MERGE_MB_FOR_OPTIMIZE * 1024 * 1024);
     }
     
     LogByteSizeMergePolicy::~LogByteSizeMergePolicy()
@@ -39,6 +44,16 @@ namespace Lucene
     double LogByteSizeMergePolicy::getMaxMergeMB()
     {
         return ((double)maxMergeSize) / 1024 / 1024;
+    }
+    
+    void LogByteSizeMergePolicy::setMaxMergeMBForOptimize(double mb)
+    {
+        maxMergeSizeForOptimize = (int64_t)(mb * 1024 * 1024);
+    }
+    
+    double LogByteSizeMergePolicy::getMaxMergeMBForOptimize()
+    {
+        return ((double)maxMergeSizeForOptimize) / 1024 / 1024;
     }
     
     void LogByteSizeMergePolicy::setMinMergeMB(double mb)

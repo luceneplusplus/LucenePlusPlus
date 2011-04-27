@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MinPayloadFunction.h"
+#include "Explanation.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -27,6 +28,15 @@ namespace Lucene
     double MinPayloadFunction::docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore)
     {
         return numPayloadsSeen > 0 ? payloadScore : 1.0;
+    }
+    
+    ExplanationPtr MinPayloadFunction::explain(int32_t docId, int32_t numPayloadsSeen, double payloadScore)
+    {
+        ExplanationPtr expl(newLucene<Explanation>());
+        double minPayloadScore = (numPayloadsSeen > 0 ? payloadScore : 1);
+        expl->setValue(minPayloadScore);
+        expl->setDescription(L"MinPayloadFunction(...)");
+        return expl;
     }
     
     int32_t MinPayloadFunction::hashCode()

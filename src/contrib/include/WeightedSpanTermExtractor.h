@@ -26,7 +26,7 @@ namespace Lucene
     protected:
         String fieldName;
         TokenStreamPtr tokenStream;
-        MapStringIndexReader readers;
+        SortedMapStringIndexReader readers;
         String defaultField;
         bool expandMultiTermQuery;
         bool cachedTokenStream;

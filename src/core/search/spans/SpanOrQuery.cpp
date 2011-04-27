@@ -11,23 +11,30 @@
 
 namespace Lucene
 {
+    SpanOrQuery::SpanOrQuery()
+    {
+        this->clauses = Collection<SpanQueryPtr>::newInstance();
+    }
+    
     SpanOrQuery::SpanOrQuery(Collection<SpanQueryPtr> clauses)
     {
         // copy clauses array into an ArrayList
         this->clauses = Collection<SpanQueryPtr>::newInstance();
         for (int32_t i = 0; i < clauses.size(); ++i)
-        {
-            SpanQueryPtr clause(clauses[i]);
-            if (i == 0) // check field
-                field = clause->getField();
-            else if (clause->getField() != field)
-                boost::throw_exception(IllegalArgumentException(L"Clauses must have same field."));
-            this->clauses.add(clause);
-        }
+            addClause(clauses[i]);
     }
     
     SpanOrQuery::~SpanOrQuery()
     {
+    }
+    
+    void SpanOrQuery::addClause(SpanQueryPtr clause)
+    {
+        if (field.empty())
+            field = clause->getField();
+        else if (clause->getField() != field)
+            boost::throw_exception(IllegalArgumentException(L"Clauses must have same field."));
+        this->clauses.add(clause);
     }
     
     Collection<SpanQueryPtr> SpanOrQuery::getClauses()
@@ -52,7 +59,7 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
         
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = boost::static_pointer_cast<SpanQuery>(clauses[i]->clone());
         
         SpanOrQueryPtr spanOrQuery(newLucene<SpanOrQuery>(newClauses));
         spanOrQuery->setBoost(getBoost());
@@ -65,11 +72,11 @@ namespace Lucene
         for (int32_t i = 0; i < clauses.size(); ++i)
         {
             SpanQueryPtr clause(clauses[i]);
-            SpanQueryPtr query(boost::dynamic_pointer_cast<SpanQuery>(clause->rewrite(reader)));
+            SpanQueryPtr query(boost::static_pointer_cast<SpanQuery>(clause->rewrite(reader)));
             if (query != clause) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<SpanOrQuery>(this->clone());
+                    clone = boost::static_pointer_cast<SpanOrQuery>(this->clone());
                 clone->clauses[i] = query;
             }
         }

@@ -189,7 +189,7 @@ namespace Lucene
             {
                 Collection<IndexReaderPtr> subs(indexReader->getSequentialSubReaders());
                 for (int32_t j = 0; subs && j < subs.size(); ++j)
-                    all.add(subs[j]->getFieldCacheKey());
+                    all.add(subs[j]->getCoreCacheKey());
             }
         }
         

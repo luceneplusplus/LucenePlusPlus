@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "PhraseScorer.h"
+#include "PhraseQuery.h"
 #include "PhrasePositions.h"
 #include "PhraseQueue.h"
 #include "Weight.h"
@@ -13,22 +14,21 @@
 
 namespace Lucene
 {
-    PhraseScorer::PhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity)
+    PhraseScorer::PhraseScorer(WeightPtr weight, Collection<PostingsAndFreqPtr> postings, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity, weight)
     {
         this->firstTime = true;
         this->more = true;
-        this->freq = 0.0;
+        this->_freq = 0.0;
         
         this->norms = norms;
-        this->weight = weight;
         this->value = weight->getValue();
         
         // convert tps to a list of phrase positions.  
         // Note: phrase-position differs from term-position in that its position reflects the phrase offset: pp.pos = tp.pos - offset.
         // This allows to easily identify a matching (exact) phrase when all PhrasePositions have exactly the same position.
-        for (int32_t i = 0; i < tps.size(); ++i)
+        for (int32_t i = 0; i < postings.size(); ++i)
         {
-            PhrasePositionsPtr pp(newLucene<PhrasePositions>(tps[i], offsets[i]));
+            PhrasePositionsPtr pp(newLucene<PhrasePositions>(postings[i]->postings, postings[i]->position));
             if (last) // add next to end of list
                 last->_next = pp;
             else
@@ -36,7 +36,7 @@ namespace Lucene
             last = pp;
         }
         
-        pq = newLucene<PhraseQueue>(tps.size()); // construct empty pq
+        pq = newLucene<PhraseQueue>(postings.size()); // construct empty pq
         first->doc = -1;
     }
     
@@ -76,8 +76,8 @@ namespace Lucene
             if (more)
             {
                 // found a doc with all of the terms
-                freq = phraseFreq(); // check for phrase
-                if (freq == 0.0) // no match
+                _freq = phraseFreq(); // check for phrase
+                if (_freq == 0.0) // no match
                     more = last->next(); // trigger further scanning
                 else
                     return true;
@@ -88,8 +88,8 @@ namespace Lucene
     
     double PhraseScorer::score()
     {
-        double raw = getSimilarity()->tf(freq) * value; // raw score
-        return !norms ? raw : raw * Similarity::decodeNorm(norms[first->doc]); // normalize
+        double raw = getSimilarity()->tf(_freq) * value; // raw score
+        return !norms ? raw : raw * getSimilarity()->decodeNormValue(norms[first->doc]); // normalize
     }
     
     int32_t PhraseScorer::advance(int32_t target)
@@ -104,9 +104,9 @@ namespace Lucene
         return first->doc;
     }
     
-    double PhraseScorer::currentFreq()
+    double PhraseScorer::freq()
     {
-        return freq;
+        return _freq;
     }
     
     void PhraseScorer::init()

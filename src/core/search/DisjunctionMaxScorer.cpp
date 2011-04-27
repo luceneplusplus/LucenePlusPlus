@@ -9,8 +9,10 @@
 
 namespace Lucene
 {
-    DisjunctionMaxScorer::DisjunctionMaxScorer(double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers) : Scorer(similarity)
+    DisjunctionMaxScorer::DisjunctionMaxScorer(WeightPtr weight, double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers) : Scorer(similarity, weight)
     {
+        this->scoreSum = 0;
+        this->scoreMax = 0;
         this->doc = -1;
         this->tieBreakerMultiplier = tieBreakerMultiplier;
         
@@ -60,23 +62,23 @@ namespace Lucene
     double DisjunctionMaxScorer::score()
     {
         int32_t doc = subScorers[0]->docID();
-        Collection<double> sum(newCollection<double>(subScorers[0]->score()));
-        Collection<double> max(Collection<double>::newInstance(sum.begin(), sum.end()));
+        scoreMax = subScorers[0]->score();
+        scoreSum = scoreMax;
         int32_t size = numScorers;
-        scoreAll(1, size, doc, sum, max);
-        scoreAll(2, size, doc, sum, max);
-        return max[0] + (sum[0] - max[0]) * tieBreakerMultiplier;
+        scoreAll(1, size, doc);
+        scoreAll(2, size, doc);
+        return scoreMax + (scoreSum - scoreMax) * tieBreakerMultiplier;
     }
     
-    void DisjunctionMaxScorer::scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double> sum, Collection<double> max)
+    void DisjunctionMaxScorer::scoreAll(int32_t root, int32_t size, int32_t doc)
     {
         if (root < size && subScorers[root]->docID() == doc)
         {
             double sub = subScorers[root]->score();
-            sum[0] += sub;
-            max[0] = std::max(max[0], sub);
-            scoreAll((root << 1) + 1, size, doc, sum, max);
-            scoreAll((root << 1) + 2, size, doc, sum, max);
+            scoreSum += sub;
+            scoreMax = std::max(scoreMax, sub);
+            scoreAll((root << 1) + 1, size, doc);
+            scoreAll((root << 1) + 2, size, doc);
         }
     }
     

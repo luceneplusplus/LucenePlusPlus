@@ -16,6 +16,9 @@ namespace Lucene
     ///
     /// Applications usually need only call the inherited {@link #search(QueryPtr, int32_t)} or {@link 
     /// #search(QueryPtr, FilterPtr, int32_t)} methods.
+    ///
+    /// @deprecated If you are using MultiSearcher over IndexSearchers, please use MultiReader instead; 
+    /// this class does not properly handle certain kinds of queries.
     class LPPAPI MultiSearcher : public Searcher
     {
     public:
@@ -54,6 +57,12 @@ namespace Lucene
         virtual void search(WeightPtr weight, FilterPtr filter, CollectorPtr results);
         virtual QueryPtr rewrite(QueryPtr query);
         virtual ExplanationPtr explain(WeightPtr weight, int32_t doc);
+        
+        /// Collects the document frequency for the given terms form all searchables
+        /// @param terms term set used to collect the document frequency form all searchables 
+        /// @return a map with a term as the key and the terms aggregated document frequency 
+        /// as a value
+        virtual MapTermInt createDocFrequencyMap(SetTerm terms);
         
     protected:
         Collection<int32_t> getStarts();

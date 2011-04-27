@@ -227,31 +227,31 @@ BOOST_AUTO_TEST_CASE(testSetPosition)
 
     // should not find "1 2" because there is a gap of 1 in the index
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<TestSetPosition::StopWhitespaceAnalyzer>(false));
-    q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"1 2\""));
+    q = boost::static_pointer_cast<PhraseQuery>(qp->parse(L"\"1 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // omitted stop word cannot help because stop filter swallows the increments. 
-    q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
+    q = boost::static_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // query parser alone won't help, because stop filter swallows the increments. 
     qp->setEnablePositionIncrements(true);
-    q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
+    q = boost::static_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // stop filter alone won't help, because query parser swallows the increments. 
     qp->setEnablePositionIncrements(false);
-    q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
+    q = boost::static_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // when both qp and stopFilter propagate increments, we should find the doc.
     qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<TestSetPosition::StopWhitespaceAnalyzer>(true));
     qp->setEnablePositionIncrements(true);
-    q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
+    q = boost::static_pointer_cast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
 }

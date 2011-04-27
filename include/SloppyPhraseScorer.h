@@ -14,7 +14,7 @@ namespace Lucene
     class SloppyPhraseScorer : public PhraseScorer
     {
     public:
-        SloppyPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, int32_t slop, ByteArray norms);
+        SloppyPhraseScorer(WeightPtr weight, Collection<PostingsAndFreqPtr> postings, SimilarityPtr similarity, int32_t slop, ByteArray norms);
         virtual ~SloppyPhraseScorer();
     
         LUCENE_CLASS(SloppyPhraseScorer);

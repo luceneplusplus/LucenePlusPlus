@@ -19,9 +19,9 @@ namespace Lucene
     {
         int32_t len = text.length();
         if (!termBuffer)
-            termBuffer = CharArray::newInstance(MiscUtils::getNextSize(len + 1));
+            termBuffer = CharArray::newInstance(MiscUtils::oversize(len + 1, sizeof(wchar_t)));
         if (termBuffer.size() < len + 1)
-            termBuffer.resize(MiscUtils::getNextSize(len + 1));
+            MiscUtils::grow(termBuffer, len + 1);
         MiscUtils::arrayCopy(text.begin(), 0, termBuffer.get(), 0, len);
         termBuffer[len] = UTF8Base::UNICODE_TERMINATOR;
         return addTerm(termBuffer, 0);

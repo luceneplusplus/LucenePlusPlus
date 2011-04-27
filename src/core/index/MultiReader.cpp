@@ -7,8 +7,7 @@
 #include "LuceneInc.h"
 #include "MultiReader.h"
 #include "DirectoryReader.h"
-#include "DefaultSimilarity.h"
-#include "FieldCache.h"
+#include "Similarity.h"
 #include "MiscUtils.h"
 
 namespace Lucene
@@ -39,6 +38,7 @@ namespace Lucene
                 _hasDeletions = true;
         }
         starts[subReaders.size()] = _maxDoc;
+        readerFinishedListeners = SetReaderFinishedListener::newInstance();
     }
     
     MultiReader::~MultiReader()
@@ -79,7 +79,7 @@ namespace Lucene
             for (int32_t i = 0; i < subReaders.size(); ++i)
             {
                 if (doClone)
-                    newSubReaders[i] = boost::dynamic_pointer_cast<IndexReader>(subReaders[i]->clone());
+                    newSubReaders[i] = boost::static_pointer_cast<IndexReader>(subReaders[i]->clone());
                 else
                     newSubReaders[i] = subReaders[i]->reopen();
                 // if at least one of the subreaders was updated we remember that and return a new MultiReader
@@ -265,7 +265,7 @@ namespace Lucene
             subReaders[i]->norms(field, norms, offset + starts[i]);
         
         if (!bytes && !hasNorms(field))
-            MiscUtils::arrayFill(norms.get(), offset, norms.size(), DefaultSimilarity::encodeNorm(1.0));
+            MiscUtils::arrayFill(norms.get(), offset, norms.size(), Similarity::getDefault()->encodeNormValue(1.0));
         else if (bytes)    // cache hit
             MiscUtils::arrayCopy(bytes.get(), 0, norms.get(), offset, maxDoc());
         else
@@ -288,13 +288,25 @@ namespace Lucene
     TermEnumPtr MultiReader::terms()
     {
         ensureOpen();
-        return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, TermPtr());
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->terms();
+        }
+        else
+            return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, TermPtr());
     }
     
     TermEnumPtr MultiReader::terms(TermPtr t)
     {
         ensureOpen();
-        return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, t);
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->terms(t);
+        }
+        else
+            return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, t);
     }
     
     int32_t MultiReader::docFreq(TermPtr t)
@@ -309,13 +321,37 @@ namespace Lucene
     TermDocsPtr MultiReader::termDocs()
     {
         ensureOpen();
-        return newLucene<MultiTermDocs>(shared_from_this(), subReaders, starts);
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->termDocs();
+        }
+        else
+            return newLucene<MultiTermDocs>(shared_from_this(), subReaders, starts);
+    }
+    
+    TermDocsPtr MultiReader::termDocs(TermPtr term)
+    {
+        ensureOpen();
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->termDocs(term);
+        }
+        else
+            return IndexReader::termDocs(term);
     }
     
     TermPositionsPtr MultiReader::termPositions()
     {
         ensureOpen();
-        return newLucene<MultiTermPositions>(shared_from_this(), subReaders, starts);
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->termPositions();
+        }
+        else
+            return newLucene<MultiTermPositions>(shared_from_this(), subReaders, starts);
     }
     
     void MultiReader::doCommit(MapStringString commitUserData)
@@ -334,10 +370,6 @@ namespace Lucene
             else
                 subReaders[i]->close();
         }
-        
-        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
-        // generally not a good idea)
-        FieldCache::DEFAULT()->purge(shared_from_this());
     }
     
     HashSet<String> MultiReader::getFieldNames(FieldOption fieldOption)
@@ -366,5 +398,19 @@ namespace Lucene
     Collection<IndexReaderPtr> MultiReader::getSequentialSubReaders()
     {
         return subReaders;
+    }
+    
+    void MultiReader::addReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        IndexReader::addReaderFinishedListener(listener);
+        for (Collection<IndexReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
+            (*reader)->addReaderFinishedListener(listener);
+    }
+    
+    void MultiReader::removeReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        IndexReader::removeReaderFinishedListener(listener);
+        for (Collection<IndexReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
+            (*reader)->removeReaderFinishedListener(listener);
     }
 }

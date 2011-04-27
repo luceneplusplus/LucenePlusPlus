@@ -31,9 +31,6 @@ namespace Lucene
         /// Flush a new segment
         virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state) = 0;
         
-        /// Close doc stores
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
-        
         /// Attempt to free RAM, returning true if any RAM was freed
         virtual bool freeRAM() = 0;
         

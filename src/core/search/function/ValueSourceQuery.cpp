@@ -48,6 +48,10 @@ namespace Lucene
     
     bool ValueSourceQuery::equals(LuceneObjectPtr other)
     {
+        if (LuceneObject::equals(other))
+            return true;
+        if (!Query::equals(other))
+            return false;
         ValueSourceQueryPtr otherQuery(boost::dynamic_pointer_cast<ValueSourceQuery>(other));
         if (!otherQuery)
             return false;
@@ -62,7 +66,7 @@ namespace Lucene
     LuceneObjectPtr ValueSourceQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<ValueSourceQuery>(valSrc);
-        ValueSourceQueryPtr cloneQuery(boost::dynamic_pointer_cast<ValueSourceQuery>(Query::clone(clone)));
+        ValueSourceQueryPtr cloneQuery(boost::static_pointer_cast<ValueSourceQuery>(Query::clone(clone)));
         cloneQuery->valSrc = valSrc;
         return cloneQuery;
     }
@@ -117,9 +121,8 @@ namespace Lucene
         return result;
     }
     
-    ValueSourceScorer::ValueSourceScorer(SimilarityPtr similarity, IndexReaderPtr reader, ValueSourceWeightPtr weight) : Scorer(similarity)
+    ValueSourceScorer::ValueSourceScorer(SimilarityPtr similarity, IndexReaderPtr reader, ValueSourceWeightPtr weight) : Scorer(similarity, weight)
     {
-        this->weight = weight;
         this->qWeight = weight->getValue();
         this->doc = -1;
         // this is when/where the values are first created.

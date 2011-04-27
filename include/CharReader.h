@@ -21,7 +21,7 @@ namespace Lucene
         
         LUCENE_CLASS(CharReader);
     
-    protected:
+    private:
         ReaderPtr input;
     
     public:

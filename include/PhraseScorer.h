@@ -21,13 +21,12 @@ namespace Lucene
     class PhraseScorer : public Scorer
     {
     public:
-        PhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms);
+        PhraseScorer(WeightPtr weight, Collection<PostingsAndFreqPtr> postings, SimilarityPtr similarity, ByteArray norms);
         virtual ~PhraseScorer();
     
         LUCENE_CLASS(PhraseScorer);
     
     protected:
-        WeightPtr weight;
         ByteArray norms;
         double value;
         
@@ -37,7 +36,7 @@ namespace Lucene
         PhrasePositionsPtr first;
         PhrasePositionsPtr last;
         
-        double freq; // phrase frequency in current doc as computed by phraseFreq().
+        double _freq; // phrase frequency in current doc as computed by phraseFreq().
     
     public:
         virtual int32_t docID();
@@ -46,7 +45,7 @@ namespace Lucene
         virtual int32_t advance(int32_t target);
         
         /// Phrase frequency in current doc as computed by phraseFreq().
-        double currentFreq();
+        virtual double freq();
         
         virtual String toString();
     

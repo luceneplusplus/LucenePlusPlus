@@ -67,9 +67,9 @@ namespace Lucene
         void setLength(int32_t length)
         {
             if (!result)
-                result = Array<TYPE>::newInstance((int32_t)(1.5 * (double)length));
+                result = Array<TYPE>::newInstance(MiscUtils::oversize(length, sizeof(TYPE)));
             if (result.size() < length)
-                result.resize((int32_t)(1.5 * (double)length));
+                MiscUtils::grow(result, length);
             this->length = length;
         }
         

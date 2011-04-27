@@ -46,9 +46,10 @@ namespace Lucene
         void shrinkHash();
         
         virtual void start(FieldablePtr field);
-        virtual void newTerm(RawPostingListPtr p0);
-        virtual void addTerm(RawPostingListPtr p0);
+        virtual void newTerm(int32_t termID);
+        virtual void addTerm(int32_t termID);
         virtual void skippingLongTerm();
+        virtual ParallelPostingsArrayPtr createPostingsArray(int32_t size);
     };
 }
 

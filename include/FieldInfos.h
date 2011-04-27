@@ -122,6 +122,8 @@ namespace Lucene
         FieldInfoPtr add(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, 
                          bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions);
         
+        FieldInfoPtr add(FieldInfoPtr fi);
+        
         int32_t fieldNumber(const String& fieldName);
         FieldInfoPtr fieldInfo(const String& fieldName);
         

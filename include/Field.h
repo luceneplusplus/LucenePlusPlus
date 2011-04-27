@@ -70,8 +70,15 @@ namespace Lucene
         ///
         /// @param name The name of the field
         /// @param value The binary value
-        /// @param store How value should be stored (compressed or not)
+        /// @param store Must be Store.YES
+        /// @deprecated Use {@link #Field(String, byte[]) instead}
         Field(const String& name, ByteArray value, Store store);
+        
+        /// Create a stored field with binary value. Optionally the value may be compressed.
+        ///
+        /// @param name The name of the field
+        /// @param value The binary value
+        Field(const String& name, ByteArray value);
         
         /// Create a stored field with binary value. Optionally the value may be compressed.
         ///
@@ -80,7 +87,16 @@ namespace Lucene
         /// @param offset Starting offset in value where this Field's bytes are
         /// @param length Number of bytes to use for this Field, starting at offset
         /// @param store How value should be stored (compressed or not)
+        /// @deprecated Use {@link #Field(String, byte[], int, int) instead}
         Field(const String& name, ByteArray value, int32_t offset, int32_t length, Store store);
+        
+        /// Create a stored field with binary value. Optionally the value may be compressed.
+        ///
+        /// @param name The name of the field
+        /// @param value The binary value
+        /// @param offset Starting offset in value where this Field's bytes are
+        /// @param length Number of bytes to use for this Field, starting at offset
+        Field(const String& name, ByteArray value, int32_t offset, int32_t length);
         
         virtual ~Field();
         
@@ -148,7 +164,7 @@ namespace Lucene
         void ConstructField(const String& name, const String& value, Store store, Index index, TermVector termVector);
         void ConstructField(const String& name, ReaderPtr reader, TermVector termVector);
         void ConstructField(const String& name, TokenStreamPtr tokenStream, TermVector termVector);
-        void ConstructField(const String& name, ByteArray value, int32_t offset, int32_t length, Store store);
+        void ConstructField(const String& name, ByteArray value, int32_t offset, int32_t length);
     };
 }
 

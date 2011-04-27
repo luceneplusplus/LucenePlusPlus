@@ -44,7 +44,7 @@ namespace Lucene
         /// Decision that a commit-point should be deleted is taken by the {@link IndexDeletionPolicy} in effect
         /// and therefore this should only be called by its {@link IndexDeletionPolicy#onInit onInit()} or 
         /// {@link IndexDeletionPolicy#onCommit onCommit()} methods.
-        virtual void deleteCommit() = 0;
+        virtual void _delete() = 0;
         
         virtual bool isDeleted() = 0;
         
@@ -70,6 +70,8 @@ namespace Lucene
         /// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.  Map is
         /// String -> String.
         virtual MapStringString getUserData() = 0;
+        
+        virtual int32_t compareTo(LuceneObjectPtr other);
     };
 }
 

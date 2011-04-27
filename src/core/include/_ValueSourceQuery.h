@@ -47,7 +47,6 @@ namespace Lucene
         LUCENE_CLASS(ValueSourceScorer);
     
     public:
-        ValueSourceWeightPtr weight;
         double qWeight;
         DocValuesPtr vals;
         TermDocsPtr termDocs;

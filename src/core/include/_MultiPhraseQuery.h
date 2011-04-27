@@ -19,10 +19,11 @@ namespace Lucene
     
         LUCENE_CLASS(MultiPhraseWeight);
     
-    protected:
+    private:
         MultiPhraseQueryPtr query;
         SimilarityPtr similarity;
         double value;
+        IDFExplanationPtr idfExp;
         double idf;
         double queryNorm;
         double queryWeight;

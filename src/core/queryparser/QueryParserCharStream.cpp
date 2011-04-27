@@ -9,6 +9,10 @@
 
 namespace Lucene
 {
+    QueryParserCharStream::~QueryParserCharStream()
+    {
+    }
+    
     wchar_t QueryParserCharStream::readChar()
     {
         BOOST_ASSERT(false);

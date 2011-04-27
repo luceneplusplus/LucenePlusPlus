@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "CharBlockPool.h"
 #include "DocumentsWriter.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {
@@ -35,7 +36,7 @@ namespace Lucene
     void CharBlockPool::nextBuffer()
     {
         if (1 + bufferUpto == buffers.size())
-            buffers.resize((int32_t)((double)buffers.size() * 1.5));
+            MiscUtils::grow(buffers);
         buffers[1 + bufferUpto] = DocumentsWriterPtr(_docWriter)->getCharBlock();
         buffer = buffers[1 + bufferUpto];
         ++bufferUpto;

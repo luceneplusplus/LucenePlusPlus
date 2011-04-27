@@ -6,6 +6,9 @@
 
 #include "LuceneInc.h"
 #include "CompoundFileReader.h"
+#include "CompoundFileWriter.h"
+#include "IndexFileNames.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {
@@ -37,15 +40,42 @@ namespace Lucene
         {
             stream = dir->openInput(name, readBufferSize);
             
-            // read the directory and init files
-            int32_t count = stream->readVInt();
+            // read the first VInt. If it is negative, it's the version number otherwise it's 
+            // the count (pre-3.1 indexes)
+            int32_t firstInt = stream->readVInt();
+
+            int32_t count = 0;
+            bool stripSegmentName = false;
+            if (firstInt < CompoundFileWriter::FORMAT_PRE_VERSION)
+            {
+                if (firstInt < CompoundFileWriter::FORMAT_CURRENT)
+                {
+                    boost::throw_exception(CorruptIndexException(L"Incompatible format version: " + StringUtils::toString(firstInt) + 
+                                                                 L" expected " + StringUtils::toString(CompoundFileWriter::FORMAT_CURRENT)));
+                }
+                // It's a post-3.1 index, read the count.
+                count = stream->readVInt();
+                stripSegmentName = false;
+            }
+            else
+            {
+                count = firstInt;
+                stripSegmentName = true;
+            }
             
+            // read the directory and init files
             FileEntryPtr entry;
             for (int32_t i = 0; i < count; ++i)
             {
                 int64_t offset = stream->readLong();
                 String id(stream->readString());
                 
+                if (stripSegmentName)
+                {
+                    // Fix the id to not include the segment names. This is relevant for pre-3.1 indexes.
+                    id = IndexFileNames::stripSegmentName(id);
+                }
+
                 if (entry)
                 {
                     // set length of the previous entry
@@ -116,9 +146,10 @@ namespace Lucene
         if (!stream)
             boost::throw_exception(IOException(L"Stream closed"));
         
-        MapStringFileEntryPtr::iterator entry = entries.find(name);
+        String id(IndexFileNames::stripSegmentName(name));
+        MapStringFileEntryPtr::iterator entry = entries.find(id);
         if (entry == entries.end())
-            boost::throw_exception(IOException(L"No sub-file with id " + name + L" found"));
+            boost::throw_exception(IOException(L"No sub-file with id " + id + L" found"));
         
         return newLucene<CSIndexInput>(stream, entry->second->offset, entry->second->length, readBufferSize);
     }
@@ -126,14 +157,16 @@ namespace Lucene
     HashSet<String> CompoundFileReader::listAll()
     {
         HashSet<String> res(HashSet<String>::newInstance());
+        // Add the segment name
+        String seg(fileName.substr(0, fileName.find(L".")));
         for (MapStringFileEntryPtr::iterator entry = entries.begin(); entry != entries.end(); ++entry)
-            res.add(entry->first);
+            res.add(seg + entry->first);
         return res;
     }
     
     bool CompoundFileReader::fileExists(const String& name)
     {
-        return entries.contains(name);
+        return entries.contains(IndexFileNames::stripSegmentName(name));
     }
     
     uint64_t CompoundFileReader::fileModified(const String& name)
@@ -158,9 +191,9 @@ namespace Lucene
     
     int64_t CompoundFileReader::fileLength(const String& name)
     {
-        MapStringFileEntryPtr::iterator entry = entries.find(name);
+        MapStringFileEntryPtr::iterator entry = entries.find(IndexFileNames::stripSegmentName(name));
         if (entry == entries.end())
-            boost::throw_exception(IOException(L"File " + name + L" does not exist"));
+            boost::throw_exception(FileNotFoundException(name));
         return entry->second->length;
     }
     
@@ -184,14 +217,14 @@ namespace Lucene
     
     CSIndexInput::CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length) : BufferedIndexInput(BufferedIndexInput::BUFFER_SIZE)
     {
-        this->base = boost::dynamic_pointer_cast<IndexInput>(base->clone());
+        this->base = boost::static_pointer_cast<IndexInput>(base->clone());
         this->fileOffset = fileOffset;
         this->_length = length;
     }
     
     CSIndexInput::CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length, int32_t readBufferSize) : BufferedIndexInput(readBufferSize)
     {
-        this->base = boost::dynamic_pointer_cast<IndexInput>(base->clone());
+        this->base = boost::static_pointer_cast<IndexInput>(base->clone());
         this->fileOffset = fileOffset;
         this->_length = length;
     }
@@ -226,10 +259,27 @@ namespace Lucene
     LuceneObjectPtr CSIndexInput::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<CSIndexInput>();
-        CSIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<CSIndexInput>(BufferedIndexInput::clone(clone)));
-        cloneIndexInput->base = boost::dynamic_pointer_cast<IndexInput>(this->base->clone());
+        CSIndexInputPtr cloneIndexInput(boost::static_pointer_cast<CSIndexInput>(BufferedIndexInput::clone(clone)));
+        cloneIndexInput->base = boost::static_pointer_cast<IndexInput>(this->base->clone());
         cloneIndexInput->fileOffset = fileOffset;
         cloneIndexInput->_length = _length;
         return cloneIndexInput;
+    }
+    
+    void CSIndexInput::copyBytes(IndexOutputPtr out, int64_t numBytes)
+    {
+        // Copy first whatever is in the buffer
+        numBytes -= flushBuffer(out, numBytes);
+
+        // If there are more bytes left to copy, delegate the copy task to the base IndexInput, 
+        // in case it can do an optimized copy.
+        if (numBytes > 0)
+        {
+            int64_t start = getFilePointer();
+            if (start + numBytes > _length)
+                boost::throw_exception(IOException(L"read past EOF"));
+            base->seek(fileOffset + start);
+            base->copyBytes(out, numBytes);
+        }
     }
 }

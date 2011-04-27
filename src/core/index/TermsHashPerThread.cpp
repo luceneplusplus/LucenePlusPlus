@@ -14,13 +14,12 @@
 #include "CharBlockPool.h"
 #include "IntBlockPool.h"
 #include "DocumentsWriter.h"
+#include "_DocumentsWriter.h"
 
 namespace Lucene
 {
     TermsHashPerThread::TermsHashPerThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPtr termsHash, TermsHashPtr nextTermsHash, TermsHashPerThreadPtr primaryPerThread)
     {
-        this->freePostings = Collection<RawPostingListPtr>::newInstance(256);
-        this->freePostingsCount = 0;
         this->primary = false;
         this->_docInverterPerThread = docInverterPerThread;
         this->_termsHash = termsHash;
@@ -51,9 +50,9 @@ namespace Lucene
             primary = false;
         }
         
-        intPool = newLucene<IntBlockPool>(DocumentsWriterPtr(termsHash->_docWriter), termsHash->trackAllocations);
-        bytePool = newLucene<ByteBlockPool>(DocumentsWriterPtr(termsHash->_docWriter)->byteBlockAllocator, termsHash->trackAllocations);
-        
+        intPool = newLucene<IntBlockPool>(DocumentsWriterPtr(termsHash->_docWriter));
+        bytePool = newLucene<ByteBlockPool>(DocumentsWriterPtr(termsHash->_docWriter)->byteBlockAllocator);
+
         if (nextTermsHash)
             nextPerThread = nextTermsHash->addThread(docInverterPerThread, shared_from_this());
     }
@@ -70,23 +69,6 @@ namespace Lucene
         consumer->abort();
         if (nextPerThread)
             nextPerThread->abort();
-    }
-    
-    void TermsHashPerThread::morePostings()
-    {
-        BOOST_ASSERT(freePostingsCount == 0);
-        TermsHashPtr(_termsHash)->getPostings(freePostings);
-        freePostingsCount = freePostings.size();
-        BOOST_ASSERT(noNullPostings(freePostings, freePostingsCount, L"consumer=" + consumer->toString()));
-    }
-    
-    bool TermsHashPerThread::noNullPostings(Collection<RawPostingListPtr> postings, int32_t count, const String& details)
-    {
-        for (int32_t i = 0; i < count; ++i)
-        {
-            BOOST_ASSERT(postings[i]);
-        }
-        return true;
     }
     
     void TermsHashPerThread::startDocument()
@@ -116,11 +98,5 @@ namespace Lucene
         
         if (primary)
             charPool->reset();
-        
-        if (recyclePostings)
-        {
-            TermsHashPtr(_termsHash)->recyclePostings(freePostings, freePostingsCount);
-            freePostingsCount = 0;
-        }
     }
 }

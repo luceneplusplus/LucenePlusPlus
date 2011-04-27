@@ -15,7 +15,7 @@ BOOST_FIXTURE_TEST_SUITE(TokenTest, LuceneTestFixture)
 
 static AttributePtr checkCloneIsEqual(AttributePtr att)
 {
-    AttributePtr clone = boost::dynamic_pointer_cast<Attribute>(att->clone());
+    AttributePtr clone = boost::static_pointer_cast<Attribute>(att->clone());
     BOOST_CHECK(att->equals(clone));
     BOOST_CHECK_EQUAL(att->hashCode(), clone->hashCode());
     return clone;
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(testClone)
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    TokenPtr clone = boost::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
+    TokenPtr clone = boost::static_pointer_cast<Token>(checkCloneIsEqual(t));
     BOOST_CHECK_EQUAL(t->term(), clone->term());
     BOOST_CHECK(buf != clone->termBuffer());
 
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(testClone)
 
     PayloadPtr pl = newLucene<Payload>(payload);
     t->setPayload(pl);
-    clone = boost::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
+    clone = boost::static_pointer_cast<Token>(checkCloneIsEqual(t));
     BOOST_CHECK(pl->equals(clone->getPayload()));
     BOOST_CHECK_NE(pl, clone->getPayload());
 }
@@ -177,14 +177,14 @@ BOOST_AUTO_TEST_CASE(testClone)
 BOOST_AUTO_TEST_CASE(testCopyTo)
 {
     TokenPtr t = newLucene<Token>();
-    TokenPtr copy = boost::dynamic_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
+    TokenPtr copy = boost::static_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
     BOOST_CHECK_EQUAL(L"", t->term());
     BOOST_CHECK_EQUAL(L"", copy->term());
     
     t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    copy = boost::dynamic_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
+    copy = boost::static_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
     BOOST_CHECK_EQUAL(t->term(), copy->term());
     BOOST_CHECK(buf != copy->termBuffer());
     
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(testCopyTo)
 
     PayloadPtr pl = newLucene<Payload>(payload);
     t->setPayload(pl);
-    copy = boost::dynamic_pointer_cast<Token>(checkCloneIsEqual(t));
+    copy = boost::static_pointer_cast<Token>(checkCloneIsEqual(t));
     BOOST_CHECK(pl->equals(copy->getPayload()));
     BOOST_CHECK_NE(pl, copy->getPayload());
 }

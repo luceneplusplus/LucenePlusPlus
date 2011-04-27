@@ -15,26 +15,27 @@ namespace Lucene
     class LPPAPI StandardFilter : public TokenFilter
     {
     public:
-        /// Construct filtering input.
+        /// @deprecated Use {@link #StandardFilter(Version, TokenStream)} instead.
         StandardFilter(TokenStreamPtr input);
+        
+        StandardFilter(LuceneVersion::Version matchVersion, TokenStreamPtr input);
+        
         virtual ~StandardFilter();
         
         LUCENE_CLASS(StandardFilter);
     
     protected:
+        LuceneVersion::Version matchVersion;
         TypeAttributePtr typeAtt;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
     
     protected:
         static const String& APOSTROPHE_TYPE();
         static const String& ACRONYM_TYPE();
     
     public:
-        /// Returns the next token in the stream, or null at EOS.
-        ///
-        /// Removes <tt>'s</tt> from the end of words.
-        /// Removes dots from acronyms.
         virtual bool incrementToken();
+        virtual bool incrementTokenClassic();
     };
 }
 

@@ -19,6 +19,7 @@
 #include "SpanFilterResult.h"
 #include "DocIdSet.h"
 #include "DocIdSetIterator.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -47,7 +48,7 @@ BOOST_AUTO_TEST_CASE(testFilterWorks)
     for (int32_t i = 0; i < 500; ++i)
     {
         DocumentPtr document = newLucene<Document>();
-        document->add(newLucene<Field>(L"field", intToEnglish(i) + L" equals " + intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
+        document->add(newLucene<Field>(L"field", English::intToEnglish(i) + L" equals " + English::intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(document);
     }
     
@@ -55,7 +56,7 @@ BOOST_AUTO_TEST_CASE(testFilterWorks)
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
 
-    SpanTermQueryPtr query = newLucene<SpanTermQuery>(newLucene<Term>(L"field", intToEnglish(10)));
+    SpanTermQueryPtr query = newLucene<SpanTermQuery>(newLucene<Term>(L"field", English::intToEnglish(10)));
     SpanQueryFilterPtr filter = newLucene<SpanQueryFilter>(query);
     SpanFilterResultPtr result = filter->bitSpans(reader);
     DocIdSetPtr docIdSet = result->getDocIdSet();

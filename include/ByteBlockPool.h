@@ -23,7 +23,7 @@ namespace Lucene
     class ByteBlockPool : public LuceneObject
     {
     public:
-        ByteBlockPool(ByteBlockPoolAllocatorBasePtr allocator, bool trackAllocations);
+        ByteBlockPool(ByteBlockPoolAllocatorBasePtr allocator);
         virtual ~ByteBlockPool();
         
         LUCENE_CLASS(ByteBlockPool);
@@ -40,7 +40,6 @@ namespace Lucene
         static const int32_t levelSizeArray[];
         
     protected:
-        bool trackAllocations;
         ByteBlockPoolAllocatorBasePtr allocator;
     
     public:
@@ -62,7 +61,7 @@ namespace Lucene
     public:
         virtual void recycleByteBlocks(Collection<ByteArray> blocks, int32_t start, int32_t end) = 0;
         virtual void recycleByteBlocks(Collection<ByteArray> blocks) = 0;
-        virtual ByteArray getByteBlock(bool trackAllocations) = 0;
+        virtual ByteArray getByteBlock() = 0;
     };
 }
 

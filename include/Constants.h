@@ -60,9 +60,12 @@ namespace Lucene
             LUCENE_29,
             
             /// Match settings and bugs in Lucene's 3.0 release. 
-            ///
-            /// Use this to get the latest &amp; greatest settings, bug fixes, etc, for Lucene.
             LUCENE_30,
+            
+            /// Match settings and bugs in Lucene's 3.1 release.
+            ///
+            /// Use this to get the latest & greatest settings, bug fixes, etc, for Lucene.
+            LUCENE_31,
             
             /// Add new constants for later versions **here** to respect order!
 

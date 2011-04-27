@@ -20,7 +20,7 @@ namespace Lucene
     BooleanQuery::BooleanQuery(bool disableCoord)
     {
         this->disableCoord = disableCoord;
-        this->clauses = Collection<BooleanClausePtr>::newInstance();
+        this->_clauses = Collection<BooleanClausePtr>::newInstance();
         this->minNrShouldMatch = 0;
     }
     
@@ -45,14 +45,6 @@ namespace Lucene
         return disableCoord;
     }
     
-    SimilarityPtr BooleanQuery::getSimilarity(SearcherPtr searcher)
-    {
-        SimilarityPtr result(Query::getSimilarity(searcher));
-        if (disableCoord) // disable coord as requested
-            result = newLucene<SimilarityDisableCoord>(result);
-        return result;
-    }
-    
     void BooleanQuery::setMinimumNumberShouldMatch(int32_t min)
     {
         this->minNrShouldMatch = min;
@@ -70,36 +62,41 @@ namespace Lucene
     
     void BooleanQuery::add(BooleanClausePtr clause)
     {
-        if (clauses.size() >= maxClauseCount)
+        if (_clauses.size() >= maxClauseCount)
             boost::throw_exception(TooManyClausesException(L"maxClauseCount is set to " + StringUtils::toString(maxClauseCount)));
-        clauses.add(clause);
+        _clauses.add(clause);
     }
     
     Collection<BooleanClausePtr> BooleanQuery::getClauses()
     {
-        return clauses;
+        return _clauses;
+    }
+    
+    Collection<BooleanClausePtr> BooleanQuery::clauses()
+    {
+        return _clauses;
     }
     
     Collection<BooleanClausePtr>::iterator BooleanQuery::begin()
     {
-        return clauses.begin();
+        return _clauses.begin();
     }
     
     Collection<BooleanClausePtr>::iterator BooleanQuery::end()
     {
-        return clauses.end();
+        return _clauses.end();
     }
     
     WeightPtr BooleanQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<BooleanWeight>(shared_from_this(), searcher);
+        return newLucene<BooleanWeight>(shared_from_this(), searcher, disableCoord);
     }
     
     QueryPtr BooleanQuery::rewrite(IndexReaderPtr reader)
     {
-        if (minNrShouldMatch == 0 && clauses.size() == 1) // optimize 1-clause queries
+        if (minNrShouldMatch == 0 && _clauses.size() == 1) // optimize 1-clause queries
         {
-            BooleanClausePtr c(clauses[0]);
+            BooleanClausePtr c(_clauses[0]);
             if (!c->isProhibited()) // just return clause
             {
                 QueryPtr query(c->getQuery()->rewrite(reader)); // rewrite first
@@ -107,7 +104,7 @@ namespace Lucene
                 if (getBoost() != 1.0) // incorporate boost
                 {
                     if (query == c->getQuery()) // if rewrite was no-op
-                        query = boost::dynamic_pointer_cast<Query>(query->clone()); // then clone before boost
+                        query = boost::static_pointer_cast<Query>(query->clone()); // then clone before boost
                     query->setBoost(getBoost() * query->getBoost());
                 }
                 
@@ -116,15 +113,15 @@ namespace Lucene
         }
         
         BooleanQueryPtr clone; // recursively rewrite
-        for (int32_t i = 0; i < clauses.size(); ++i)
+        for (int32_t i = 0; i < _clauses.size(); ++i)
         {
-            BooleanClausePtr c(clauses[i]);
+            BooleanClausePtr c(_clauses[i]);
             QueryPtr query(c->getQuery()->rewrite(reader));
             if (query != c->getQuery()) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<BooleanQuery>(this->clone());
-                clone->clauses[i] = newLucene<BooleanClause>(query, c->getOccur());
+                    clone = boost::static_pointer_cast<BooleanQuery>(this->clone());
+                clone->_clauses[i] = newLucene<BooleanClause>(query, c->getOccur());
             }
         }
         
@@ -136,17 +133,17 @@ namespace Lucene
     
     void BooleanQuery::extractTerms(SetTerm terms)
     {
-        for (Collection<BooleanClausePtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
+        for (Collection<BooleanClausePtr>::iterator clause = _clauses.begin(); clause != _clauses.end(); ++clause)
             (*clause)->getQuery()->extractTerms(terms);
     }
     
     LuceneObjectPtr BooleanQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<BooleanQuery>());
-        BooleanQueryPtr cloneQuery(boost::dynamic_pointer_cast<BooleanQuery>(clone));
+        BooleanQueryPtr cloneQuery(boost::static_pointer_cast<BooleanQuery>(clone));
         cloneQuery->disableCoord = disableCoord;
         cloneQuery->minNrShouldMatch = minNrShouldMatch;
-        cloneQuery->clauses = Collection<BooleanClausePtr>::newInstance(clauses.begin(), clauses.end());
+        cloneQuery->_clauses = Collection<BooleanClausePtr>::newInstance(_clauses.begin(), _clauses.end());
         return cloneQuery;
     }
     
@@ -157,9 +154,9 @@ namespace Lucene
         if (needParens)
             buffer += L"(";
 
-        for (Collection<BooleanClausePtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
+        for (Collection<BooleanClausePtr>::iterator clause = _clauses.begin(); clause != _clauses.end(); ++clause)
         {
-            if (clause != clauses.begin())
+            if (clause != _clauses.begin())
                 buffer += L" ";
                 
             if ((*clause)->isProhibited())
@@ -170,7 +167,7 @@ namespace Lucene
             QueryPtr subQuery((*clause)->getQuery());
             if (subQuery)
             {
-                if (boost::dynamic_pointer_cast<BooleanQuery>(subQuery)) // wrap sub-bools in parens
+                if (boost::static_pointer_cast<BooleanQuery>(subQuery)) // wrap sub-bools in parens
                 {
                     buffer += L"(";
                     buffer += subQuery->toString(field);
@@ -204,24 +201,30 @@ namespace Lucene
         if (!otherQuery)
             return false;
         return (getBoost() == otherQuery->getBoost() && 
-                clauses.equals(otherQuery->clauses, luceneEquals<BooleanClausePtr>()) && 
+                _clauses.equals(otherQuery->_clauses, luceneEquals<BooleanClausePtr>()) && 
                 getMinimumNumberShouldMatch() == otherQuery->getMinimumNumberShouldMatch() &&
                 disableCoord == otherQuery->disableCoord);
     }
     
     int32_t BooleanQuery::hashCode()
     {
-        return MiscUtils::doubleToIntBits(getBoost()) ^ MiscUtils::hashCode(clauses.begin(), clauses.end(), MiscUtils::hashLucene<BooleanClausePtr>) + 
+        return MiscUtils::doubleToIntBits(getBoost()) ^ MiscUtils::hashCode(_clauses.begin(), _clauses.end(), MiscUtils::hashLucene<BooleanClausePtr>) + 
                getMinimumNumberShouldMatch() + (disableCoord ? 17 : 0);
     }
     
-    BooleanWeight::BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher)
+    BooleanWeight::BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher, bool disableCoord)
     {
         this->query = query;
         this->similarity = query->getSimilarity(searcher);
+        this->disableCoord = disableCoord;
+        this->maxCoord = 0;
         weights = Collection<WeightPtr>::newInstance();
-        for (Collection<BooleanClausePtr>::iterator clause = query->clauses.begin(); clause != query->clauses.end(); ++clause)
+        for (Collection<BooleanClausePtr>::iterator clause = query->_clauses.begin(); clause != query->_clauses.end(); ++clause)
+        {
             weights.add((*clause)->getQuery()->createWeight(searcher));
+            if (!(*clause)->isProhibited())
+                ++maxCoord;
+        }
     }
     
     BooleanWeight::~BooleanWeight()
@@ -245,7 +248,7 @@ namespace Lucene
         {
             // call sumOfSquaredWeights for all clauses in case of side effects
             double s = weights[i]->sumOfSquaredWeights(); // sum sub weights
-            if (!query->clauses[i]->isProhibited())
+            if (!query->_clauses[i]->isProhibited())
             {
                 // only add to sum for non-prohibited clauses
                 sum += s;
@@ -273,18 +276,23 @@ namespace Lucene
         ComplexExplanationPtr sumExpl(newLucene<ComplexExplanation>());
         sumExpl->setDescription(L"sum of:");
         int32_t coord = 0;
-        int32_t maxCoord = 0;
         double sum = 0.0;
         bool fail = false;
         int32_t shouldMatchCount = 0;
-        Collection<BooleanClausePtr>::iterator c = query->clauses.begin();
+        Collection<BooleanClausePtr>::iterator c = query->_clauses.begin();
         for (Collection<WeightPtr>::iterator w = weights.begin(); w != weights.end(); ++w, ++c)
         {
             if (!(*w)->scorer(reader, true, true))
+            {
+                if ((*c)->isRequired())
+                {
+                    fail = true;
+                    ExplanationPtr r(newLucene<Explanation>(0.0, L"no match on required clause (" + (*c)->getQuery()->toString() + L")"));
+                    sumExpl->addDetail(r);
+                }
                 continue;
+            }
             ExplanationPtr e((*w)->explain(reader, doc));
-            if (!(*c)->isProhibited())
-                ++maxCoord;
             if (e->isMatch())
             {
                 if (!(*c)->isProhibited())
@@ -328,7 +336,7 @@ namespace Lucene
         
         sumExpl->setMatch(0 < coord);
         sumExpl->setValue(sum);
-        double coordFactor = similarity->coord(coord, maxCoord);
+        double coordFactor = disableCoord ? 1.0 : similarity->coord(coord, maxCoord);
         if (coordFactor == 1.0) // coord is no-op
             return sumExpl; // eliminate wrapper
         else
@@ -345,7 +353,7 @@ namespace Lucene
         Collection<ScorerPtr> required(Collection<ScorerPtr>::newInstance());
         Collection<ScorerPtr> prohibited(Collection<ScorerPtr>::newInstance());
         Collection<ScorerPtr> optional(Collection<ScorerPtr>::newInstance());
-        Collection<BooleanClausePtr>::iterator c = query->clauses.begin();
+        Collection<BooleanClausePtr>::iterator c = query->_clauses.begin();
         for (Collection<WeightPtr>::iterator w = weights.begin(); w != weights.end(); ++w, ++c)
         {
             ScorerPtr subScorer((*w)->scorer(reader, true, false));
@@ -364,7 +372,7 @@ namespace Lucene
         
         // Check if we can return a BooleanScorer
         if (!scoreDocsInOrder && topScorer && required.empty() && prohibited.size() < 32)
-            return newLucene<BooleanScorer>(similarity, query->minNrShouldMatch, optional, prohibited);
+            return newLucene<BooleanScorer>(shared_from_this(), disableCoord, similarity, query->minNrShouldMatch, optional, prohibited, maxCoord);
         
         if (required.empty() && optional.empty())
         {
@@ -379,13 +387,13 @@ namespace Lucene
         }
         
         // Return a BooleanScorer2
-        return newLucene<BooleanScorer2>(similarity, query->minNrShouldMatch, required, prohibited, optional);
+        return newLucene<BooleanScorer2>(shared_from_this(), disableCoord, similarity, query->minNrShouldMatch, required, prohibited, optional, maxCoord);
     }
     
     bool BooleanWeight::scoresDocsOutOfOrder()
     {
         int32_t numProhibited = 0;
-        for (Collection<BooleanClausePtr>::iterator c = query->clauses.begin(); c != query->clauses.end(); ++c)
+        for (Collection<BooleanClausePtr>::iterator c = query->_clauses.begin(); c != query->_clauses.end(); ++c)
         {
             if ((*c)->isRequired())
                 return false; // BS2 (in-order) will be used by scorer()

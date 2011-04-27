@@ -21,7 +21,6 @@ namespace Lucene
     public:
         virtual DocConsumerPerThreadPtr addThread(DocumentsWriterThreadStatePtr perThread) = 0;
         virtual void flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state) = 0;
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
         virtual void abort() = 0;
         virtual bool freeRAM() = 0;
     };

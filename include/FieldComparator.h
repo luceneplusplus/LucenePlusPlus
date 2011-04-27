@@ -287,7 +287,7 @@ namespace Lucene
         
         LUCENE_CLASS(StringOrdValComparator);
     
-    protected:
+    private:
         Collection<int32_t> ords;
         Collection<String> values;
         Collection<int32_t> readerGen;
@@ -299,9 +299,8 @@ namespace Lucene
         
         int32_t bottomSlot;
         int32_t bottomOrd;
+        bool bottomSameReader;
         String bottomValue;
-        bool reversed;
-        int32_t sortPos;
         
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
@@ -315,7 +314,6 @@ namespace Lucene
         virtual String getField();
     
     protected:
-        void convert(int32_t slot);
         int32_t binarySearch(Collection<String> lookup, const String& key, int32_t low, int32_t high);
     };
     

@@ -25,6 +25,6 @@ namespace Lucene
         // Note that commits.size() should normally be 2 (if not called by onInit above)
         int32_t size = commits.size();
         for (int32_t i = 0; i < size - 1; ++i)
-            commits[i]->deleteCommit();
+            commits[i]->_delete();
     }
 }

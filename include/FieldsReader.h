@@ -51,6 +51,11 @@ namespace Lucene
         bool isOriginal;
         
     public:
+        /// Detects the code version this segment was written with. Returns either "2.x" for all pre-3.0 segments, 
+        /// or "3.0" for 3.0 segments. This method should not be called for 3.1+ segments since they already record 
+        /// their code version.
+        static String detectCodeVersion(DirectoryPtr dir, const String& segment);
+        
         /// Returns a cloned FieldsReader that shares open IndexInputs with the original one.  It is the caller's job not to 
         /// close the original FieldsReader until all clones are called (eg, currently SegmentReader manages this logic).
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
@@ -81,7 +86,7 @@ namespace Lucene
         void skipField(bool binary, bool compressed);
         void skipField(bool binary, bool compressed, int32_t toRead);
         
-        void addFieldLazy(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize);
+        void addFieldLazy(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize, bool cacheResult);
         void addField(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize);
         
         /// Add the size of field as a byte[] containing the 4 bytes of the integer byte size (high order byte first; char = 2 bytes).  
@@ -93,48 +98,6 @@ namespace Lucene
         String uncompressString(ByteArray b);
         
         friend class LazyField;
-    };
-    
-    class LazyField : public AbstractField
-    {
-    public:
-        LazyField(FieldsReaderPtr reader, const String& name, Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed);
-        LazyField(FieldsReaderPtr reader, const String& name, Store store, Index index, TermVector termVector, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed);
-        virtual ~LazyField();
-        
-        LUCENE_CLASS(LazyField);
-                
-    protected:
-        FieldsReaderWeakPtr _reader; 
-        int32_t toRead;
-        int64_t pointer;
-        
-        /// @deprecated Only kept for backward-compatibility with <3.0 indexes.
-        bool isCompressed;
-    
-    public:
-        /// The value of the field as a Reader, or null.  If null, the String value, binary value, or TokenStream value is used.  
-        /// Exactly one of stringValue(), readerValue(), getBinaryValue(), and tokenStreamValue() must be set.
-        ReaderPtr readerValue();
-        
-        /// The value of the field as a TokenStream, or null.  If null, the Reader value, String value, or binary value is used. 
-        /// Exactly one of stringValue(), readerValue(), getBinaryValue(), and tokenStreamValue() must be set.
-        TokenStreamPtr tokenStreamValue();
-        
-        /// The value of the field as a String, or null.  If null, the Reader value, binary value, or TokenStream value is used.  
-        /// Exactly one of stringValue(), readerValue(), getBinaryValue(), and tokenStreamValue() must be set.
-        String stringValue();
-        
-        int64_t getPointer();
-        void setPointer(int64_t pointer);
-        int32_t getToRead();
-        void setToRead(int32_t toRead);
-        
-        /// Return the raw byte[] for the binary field.
-        virtual ByteArray getBinaryValue(ByteArray result);
-        
-    protected:
-        IndexInputPtr getFieldStream();
     };
 }
 

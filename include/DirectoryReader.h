@@ -20,15 +20,17 @@ namespace Lucene
     {
     public:
         /// Construct reading the named set of readers.
-        DirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
+        DirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis, IndexDeletionPolicyPtr deletionPolicy, 
+                        bool readOnly, int32_t termInfosIndexDivisor, SetReaderFinishedListener readerFinishedListeners);
         
         /// Used by near real-time search.
-        DirectoryReader(IndexWriterPtr writer, SegmentInfosPtr infos, int32_t termInfosIndexDivisor);
+        DirectoryReader(IndexWriterPtr writer, SegmentInfosPtr infos, int32_t termInfosIndexDivisor,
+                        bool applyAllDeletes);
         
         /// This constructor is only used for {@link #reopen()}
         DirectoryReader(DirectoryPtr directory, SegmentInfosPtr infos, Collection<SegmentReaderPtr> oldReaders, 
                         Collection<int32_t> oldStarts, MapStringByteArray oldNormsCache, bool readOnly, 
-                        bool doClone, int32_t termInfosIndexDivisor);
+                        bool doClone, int32_t termInfosIndexDivisor, SetReaderFinishedListener readerFinishedListeners);
         
         virtual ~DirectoryReader();
         
@@ -39,10 +41,8 @@ namespace Lucene
         bool readOnly;
         IndexWriterWeakPtr _writer;
         IndexDeletionPolicyPtr deletionPolicy;
-        HashSet<String> synced;
         LockPtr writeLock;
         SegmentInfosPtr segmentInfos;
-        SegmentInfosPtr segmentInfosStart;
         bool stale;
         int32_t termInfosIndexDivisor;
         
@@ -58,8 +58,12 @@ namespace Lucene
         // Max version in index as of when we opened; this can be > our current segmentInfos version 
         // in case we were opened on a past IndexCommit
         int64_t maxIndexVersion;
+        
+        bool applyAllDeletes;
     
     public:
+        virtual String toString();
+        
         void _initialize(Collection<SegmentReaderPtr> subReaders);
         
         static IndexReaderPtr open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, IndexCommitPtr commit, bool readOnly, int32_t termInfosIndexDivisor);
@@ -128,6 +132,9 @@ namespace Lucene
         
         /// Returns an unpositioned {@link TermDocs} enumerator.
         virtual TermDocsPtr termDocs();
+        
+        /// Returns an enumeration of all the documents which contain term.
+        virtual TermDocsPtr termDocs(TermPtr term);
         
         /// Returns an unpositioned {@link TermPositions} enumerator.
         virtual TermPositionsPtr termPositions();
@@ -346,7 +353,7 @@ namespace Lucene
         /// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
         virtual MapStringString getUserData();
         
-        virtual void deleteCommit();
+        virtual void _delete();
     };
 }
 

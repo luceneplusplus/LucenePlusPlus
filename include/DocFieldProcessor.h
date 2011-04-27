@@ -29,7 +29,6 @@ namespace Lucene
         StoredFieldsWriterPtr fieldsWriter;
     
     public:
-        virtual void closeDocStore(SegmentWriteStatePtr state);
         virtual void flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state);
         virtual void abort();
         virtual bool freeRAM();

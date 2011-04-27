@@ -16,8 +16,10 @@ namespace Lucene
     /// by providing a single constructor which accepts a {@link PriorityQueue} as well as protected members for 
     /// that priority queue and a counter of the number of total hits.
     ///
-    /// Extending classes can override {@link #topDocs(int32_t, int32_t)} and {@link #getTotalHits()} in order to 
-    /// provide their own implementation. 
+    /// Extending classes can override any of the methods to provide their own implementation, as well as avoid 
+    /// the use of the priority queue entirely by passing null to {@link #TopDocsCollector(PriorityQueue)}. In 
+    /// that case however, you might want to consider overriding all methods, in order to avoid a 
+    /// NullPointerException.
     class LPPAPI TopDocsCollector : public Collector
     {
     public:

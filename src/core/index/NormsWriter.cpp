@@ -22,18 +22,11 @@ namespace Lucene
 {
     NormsWriter::NormsWriter()
     {
+        defaultNorm = Similarity::getDefault()->encodeNormValue(1.0);
     }
     
     NormsWriter::~NormsWriter()
     {
-    }
-    
-    uint8_t NormsWriter::getDefaultNorm()
-    {
-        static uint8_t defaultNorm = 0;
-        if (defaultNorm == 0)
-            defaultNorm = Similarity::encodeNorm(1.0);
-        return defaultNorm;
     }
     
     InvertedDocEndConsumerPerThreadPtr NormsWriter::addThread(DocInverterPerThreadPtr docInverterPerThread)
@@ -85,8 +78,7 @@ namespace Lucene
             }
         }
         
-        String normsFileName(state->segmentName + L"." + IndexFileNames::NORMS_EXTENSION());
-        state->flushedFiles.add(normsFileName);
+        String normsFileName(IndexFileNames::segmentFileName(state->segmentName, IndexFileNames::NORMS_EXTENSION()));
         IndexOutputPtr normsOut(state->directory->createOutput(normsFileName));
         
         LuceneException finally;
@@ -140,7 +132,7 @@ namespace Lucene
                         
                         // Fill hole
                         for (;upto < minDocID; ++upto)
-                            normsOut->writeByte(getDefaultNorm());
+                            normsOut->writeByte(defaultNorm);
                         
                         normsOut->writeByte(fields[minLoc]->norms[uptos[minLoc]]);
                         ++(uptos[minLoc]);
@@ -160,14 +152,14 @@ namespace Lucene
                     
                     // Fill final hole with defaultNorm
                     for (;upto < state->numDocs; ++upto)
-                        normsOut->writeByte(getDefaultNorm());
+                        normsOut->writeByte(defaultNorm);
                 }
                 else if (fieldInfo->isIndexed && !fieldInfo->omitNorms)
                 {
                     ++normCount;
                     // Fill entire field with default norm
                     for (;upto < state->numDocs; ++upto)
-                        normsOut->writeByte(getDefaultNorm());
+                        normsOut->writeByte(defaultNorm);
                 }
                 
                 BOOST_ASSERT(4 + normCount * state->numDocs == normsOut->getFilePointer()); // .nrm file size mismatch?
@@ -181,9 +173,5 @@ namespace Lucene
         normsOut->close();
         
         finally.throwException();
-    }
-    
-    void NormsWriter::closeDocStore(SegmentWriteStatePtr state)
-    {
     }
 }

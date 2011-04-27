@@ -13,10 +13,12 @@
 #include "SegmentReader.h"
 #include "Directory.h"
 #include "IndexInput.h"
+#include "IndexSearcher.h"
 #include "BitVector.h"
 #include "Term.h"
 #include "TermEnum.h"
 #include "TermPositions.h"
+#include "TermQuery.h"
 #include "Document.h"
 #include "FSDirectory.h"
 #include "InfoStream.h"
@@ -121,6 +123,12 @@ namespace Lucene
                 sFormat = L"FORMAT_USER_DATA [Lucene 2.9]";
             else if (format == SegmentInfos::FORMAT_DIAGNOSTICS)
                 sFormat = L"FORMAT_DIAGNOSTICS [Lucene 2.9]";
+            else if (format == SegmentInfos::FORMAT_HAS_VECTORS)
+                sFormat = L"FORMAT_HAS_VECTORS [Lucene 3.1]";
+            else if (format == SegmentInfos::FORMAT_3_1)
+                sFormat = L"FORMAT_3_1 [Lucene 3.1]";
+            else if (format == SegmentInfos::CURRENT_FORMAT)
+                boost::throw_exception(RuntimeException(L"BUG: You should update this tool!"));
             else if (format < SegmentInfos::CURRENT_FORMAT)
             {
                 sFormat = L"int=" + StringUtils::toString(format) + L" [newer version of Lucene than this tool]";
@@ -159,7 +167,7 @@ namespace Lucene
             return result;
         }
         
-        result->newSegments = boost::dynamic_pointer_cast<SegmentInfos>(sis->clone());
+        result->newSegments = boost::static_pointer_cast<SegmentInfos>(sis->clone());
         result->newSegments->clear();
         
         for (int32_t i = 0; i < numSegments; ++i)
@@ -185,8 +193,8 @@ namespace Lucene
                 segInfoStat->hasProx = info->getHasProx();
                 msg(L"    numFiles=" + StringUtils::toString(info->files().size()));
                 segInfoStat->numFiles = info->files().size();
-                msg(L"    size (MB)=" + StringUtils::toString((double)info->sizeInBytes() / (double)(1024 * 1024)));
-                segInfoStat->sizeMB = (double)info->sizeInBytes() / (double)(1024 * 1024);
+                segInfoStat->sizeMB = info->sizeInBytes(true) / (1024.0 * 1024.0);
+                msg(L"    size (MB)=" + StringUtils::toString(segInfoStat->sizeMB));
                 MapStringString diagnostics(info->getDiagnostics());
                 segInfoStat->diagnostics = diagnostics;
                 if (!diagnostics.empty())
@@ -302,7 +310,7 @@ namespace Lucene
                 reader->close();
             
             // Keeper
-            result->newSegments->add(boost::dynamic_pointer_cast<SegmentInfo>(info->clone()));
+            result->newSegments->add(boost::static_pointer_cast<SegmentInfo>(info->clone()));
         }
         
         if (result->numBadSegments == 0)
@@ -354,6 +362,8 @@ namespace Lucene
     {
         TermIndexStatusPtr status(newLucene<TermIndexStatus>());
         
+        IndexSearcherPtr is = newLucene<IndexSearcher>(reader);
+        
         try
         {
             msg(L"    test: terms, freq, prox...");
@@ -365,11 +375,13 @@ namespace Lucene
             MySegmentTermDocsPtr myTermDocs(newLucene<MySegmentTermDocs>(reader));
             
             int32_t maxDoc = reader->maxDoc();
-            
+            TermPtr lastTerm;
             while (termEnum->next())
             {
                 ++status->termCount;
                 TermPtr term(termEnum->term());
+                lastTerm = term;
+                
                 int32_t docFreq = termEnum->docFreq();
                 termPositions->seek(term);
                 int32_t lastDoc = -1;
@@ -445,6 +457,10 @@ namespace Lucene
                                                             L" != num docs seen " + StringUtils::toString(freq0) +
                                                             L" + num docs deleted " + StringUtils::toString(delCount)));
                 }
+                
+                // Test search on last term
+                if (lastTerm)
+                    is->search(newLucene<TermQuery>(lastTerm), 1);
             }
             
             msg(L"OK [" + StringUtils::toString(status->termCount) + L" terms; " + StringUtils::toString(status->totFreq) + 
@@ -533,6 +549,7 @@ namespace Lucene
     {
         if (result->partial)
             boost::throw_exception(IllegalArgumentException(L"can only fix an index that was fully checked (this status checked a subset of segments)"));
+        result->newSegments->changed();
         result->newSegments->commit(result->dir);
     }
     
@@ -548,7 +565,7 @@ namespace Lucene
         return _assertsOn;
     }
     
-    int CheckIndex::main(Collection<String> args)
+    int32_t CheckIndex::main(Collection<String> args)
     {
         bool doFix = false;
         Collection<String> onlySegments(Collection<String>::newInstance());
@@ -656,7 +673,7 @@ namespace Lucene
         }
         
         std::wcout << L"\n";
-       return ((result && result->clean) ? 0 : 1);
+        return result->clean ? 0 : 1;
     }
     
     IndexStatus::IndexStatus()

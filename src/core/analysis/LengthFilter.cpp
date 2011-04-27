@@ -6,32 +6,31 @@
 
 #include "LuceneInc.h"
 #include "LengthFilter.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 
 namespace Lucene
 {
-    LengthFilter::LengthFilter(TokenStreamPtr input, int32_t min, int32_t max) : TokenFilter(input)
+    LengthFilter::LengthFilter(bool enablePositionIncrements, TokenStreamPtr input, int32_t min, int32_t max) : FilteringTokenFilter(enablePositionIncrements, input)
     {
         this->min = min;
         this->max = max;
-        this->termAtt = addAttribute<TermAttribute>();
+        this->termAtt = addAttribute<CharTermAttribute>();
+    }
+    
+    LengthFilter::LengthFilter(TokenStreamPtr input, int32_t min, int32_t max) : FilteringTokenFilter(false, input)
+    {
+        this->min = min;
+        this->max = max;
+        this->termAtt = addAttribute<CharTermAttribute>();
     }
     
     LengthFilter::~LengthFilter()
     {
     }
     
-    bool LengthFilter::incrementToken()
+    bool LengthFilter::accept()
     {
-        // return the first non-stop word found
-        while (input->incrementToken())
-        {
-            int32_t len = termAtt->termLength();
-            if (len >= min && len <= max)
-                return true;
-            // note: else we ignore it but should we index each part of it?
-        }
-        // reached EOS -- return false
-        return false;
+        int32_t len = termAtt->length();
+        return (len >= min && len <= max);
     }
 }

@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI LogByteSizeMergePolicy : public LogMergePolicy
     {
     public:
-        LogByteSizeMergePolicy(IndexWriterPtr writer);
+        LogByteSizeMergePolicy();
         virtual ~LogByteSizeMergePolicy();
         
         LUCENE_CLASS(LogByteSizeMergePolicy);
@@ -28,6 +28,10 @@ namespace Lucene
         /// Default maximum segment size.  A segment of this size or larger will never be merged.
         /// @see setMaxMergeMB
         static const double DEFAULT_MAX_MERGE_MB;
+        
+        /// Default maximum segment size.  A segment of this size or larger will never be merged 
+        /// during optimize.  @see setMaxMergeMBForOptimize
+        static const double DEFAULT_MAX_MERGE_MB_FOR_OPTIMIZE;
         
     protected:
         virtual int64_t size(SegmentInfoPtr info);
@@ -45,6 +49,15 @@ namespace Lucene
         /// Returns the largest segment (measured by total byte size of the segment's files, in MB) that 
         /// may be merged with other segments. @see #setMaxMergeMB        
         double getMaxMergeMB();
+        
+        /// Determines the largest segment (measured by total byte size of the segment's files, in MB) 
+        /// that may be merged with other segments during optimize. Setting it low will leave the index 
+        /// with more than 1 segment, even if {@link IndexWriter#optimize()} is called.
+        void setMaxMergeMBForOptimize(double mb);
+        
+        /// Returns the largest segment (measured by total byte size of the segment's files, in MB) that 
+        /// may be merged with other segments during optimize. @see #setMaxMergeMBForOptimize
+        double getMaxMergeMBForOptimize();
         
         /// Sets the minimum size for the lowest level segments.  Any segments below this size are 
         /// considered to be on the same level (even if they vary drastically in size) and will be merged 

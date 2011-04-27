@@ -48,7 +48,7 @@ namespace Lucene
         /// This is a dummy, it is not used by this class.
         virtual void setEnum(TermEnumPtr actualEnum);
         
-        /// Compares if current upper bound is reached, this also updates the term count for statistics.
+        /// Compares if current upper bound is reached.
         /// In contrast to {@link FilteredTermEnum}, a return value of false ends iterating the current enum
         /// and forwards to the next sub-range.
         virtual bool termCompare(TermPtr term);

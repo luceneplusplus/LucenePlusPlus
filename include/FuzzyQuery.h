@@ -16,6 +16,11 @@ namespace Lucene
     ///
     /// Warning: this query is not very scalable with its default prefix length of 0 - in this case, *every* 
     /// term will be enumerated and cause an edit score calculation.
+    ///
+    /// This query uses {@link MultiTermQuery.TopTermsScoringBooleanQueryRewrite} as default. So terms will 
+    /// be collected and scored according to their edit distance. Only the top terms are used for building 
+    /// the {@link BooleanQuery}.
+    /// It is not recommended to change the rewrite mode for fuzzy queries.
     class LPPAPI FuzzyQuery : public MultiTermQuery
     {
     public:
@@ -27,7 +32,13 @@ namespace Lucene
         /// length as the query term is considered similar to the query term if the edit distance between 
         /// both terms is less than length(term) * 0.5
         /// @param prefixLength Length of common (non-fuzzy) prefix
+        /// @param maxExpansions the maximum number of terms to match. If this number is greater than {@link 
+        /// BooleanQuery#getMaxClauseCount} when the query is rewritten, then the maxClauseCount will be 
+        /// used instead.
+        FuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength, int32_t maxExpansions);
+        
         FuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength);
+        
         FuzzyQuery(TermPtr term, double minimumSimilarity);
         FuzzyQuery(TermPtr term);
         
@@ -45,6 +56,7 @@ namespace Lucene
     public:
         static double defaultMinSimilarity();
         static const int32_t defaultPrefixLength;
+        static const int32_t defaultMaxExpansions;
     
     public:
         using MultiTermQuery::toString;
@@ -60,8 +72,7 @@ namespace Lucene
         /// Returns the pattern term.
         TermPtr getTerm();
         
-        virtual void setRewriteMethod(RewriteMethodPtr method);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual String getField();
         
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         virtual String toString(const String& field);
@@ -69,7 +80,7 @@ namespace Lucene
         virtual bool equals(LuceneObjectPtr other);
     
     protected:
-        void ConstructQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength);
+        void ConstructQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength, int32_t maxExpansions);
         
         virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
     };

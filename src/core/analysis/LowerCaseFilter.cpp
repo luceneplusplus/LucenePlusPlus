@@ -6,14 +6,19 @@
 
 #include "LuceneInc.h"
 #include "LowerCaseFilter.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "CharFolder.h"
 
 namespace Lucene
 {
+    LowerCaseFilter::LowerCaseFilter(LuceneVersion::Version matchVersion, TokenStreamPtr input) : TokenFilter(input)
+    {
+        termAtt = addAttribute<CharTermAttribute>();
+    }
+    
     LowerCaseFilter::LowerCaseFilter(TokenStreamPtr input) : TokenFilter(input)
     {
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
     }
     
     LowerCaseFilter::~LowerCaseFilter()
@@ -24,8 +29,8 @@ namespace Lucene
     {
         if (input->incrementToken())
         {
-            wchar_t* buffer = termAtt->termBufferArray();
-            CharFolder::toLower(buffer, buffer + termAtt->termLength());
+            wchar_t* buffer = termAtt->bufferArray();
+            CharFolder::toLower(buffer, buffer + termAtt->length());
             return true;
         }
         return false;

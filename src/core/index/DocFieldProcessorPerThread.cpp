@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "DocFieldProcessorPerThread.h"
+#include "_DocFieldProcessorPerThread.h"
 #include "DocFieldProcessorPerField.h"
 #include "DocFieldProcessor.h"
 #include "DocFieldConsumer.h"
@@ -107,9 +108,8 @@ namespace Lucene
                     else
                         lastPerField->next = current->next;
                     
-                    DocumentsWriterPtr docWriter(state->_docWriter);
-                    if (docWriter->infoStream)
-                        *(docWriter->infoStream) << L"  purge field=" << current->fieldInfo->name << L"\n";
+                    if (state->infoStream)
+                        *(state->infoStream) << L"  purge field=" << current->fieldInfo->name << L"\n";
                     
                     --totalFieldCount;
                 }
@@ -276,7 +276,7 @@ namespace Lucene
                 // Grow our free list up front to make sure we have enough space to recycle all 
                 // outstanding PerDoc instances
                 BOOST_ASSERT(allocCount == docFreeList.size() + 1);
-                docFreeList.resize(MiscUtils::getNextSize(allocCount));
+                MiscUtils::grow(docFreeList, allocCount);
             }
             return newLucene<DocFieldProcessorPerThreadPerDoc>(shared_from_this());
         }

@@ -36,7 +36,7 @@ namespace Lucene
     public:
         /// Initialize the deleter: find all previous commits in the Directory, incref the files they reference, call
         /// the policy to let it delete commits.  This will remove any files not referenced by any of the commits.
-        IndexFileDeleter(DirectoryPtr directory, IndexDeletionPolicyPtr policy, SegmentInfosPtr segmentInfos, InfoStreamPtr infoStream, DocumentsWriterPtr docWriter, HashSet<String> synced);
+        IndexFileDeleter(DirectoryPtr directory, IndexDeletionPolicyPtr policy, SegmentInfosPtr segmentInfos, InfoStreamPtr infoStream);
         virtual ~IndexFileDeleter();
         
         LUCENE_CLASS(IndexFileDeleter);
@@ -63,10 +63,8 @@ namespace Lucene
         InfoStreamPtr infoStream;
         DirectoryPtr directory;
         IndexDeletionPolicyPtr policy;
-        DocumentsWriterPtr docWriter;
         
         SegmentInfosPtr lastSegmentInfos;
-        HashSet<String> synced;
         
         /// Change to true to see details of reference counts when infoStream != null
         static bool VERBOSE_REF_COUNTS;
@@ -79,8 +77,6 @@ namespace Lucene
         
         /// Remove the CommitPoints in the commitsToDelete List by DecRef'ing all files from each SegmentInfos.
         void deleteCommits();
-        
-        void deletePendingFiles();
         
         RefCountPtr getRefCount(const String& fileName);
         
@@ -96,6 +92,15 @@ namespace Lucene
         void refresh();
         
         void close();
+        
+        /// Revisits the {@link IndexDeletionPolicy} by calling its {@link IndexDeletionPolicy#onCommit(List)} 
+        /// again with the known commits. This is useful in cases where a deletion policy which holds onto index
+        /// commits is used. The application may know that some commits are not held by the deletion policy 
+        /// anymore and call {@link IndexWriter#deleteUnusedFiles()}, which will attempt to delete the unused 
+        /// commits again.
+        void revisitPolicy();
+        
+        void deletePendingFiles();
         
         /// For definition of "check point" see IndexWriter comments: "Clarification: Check Points (and commits)".
         /// Writer calls this when it has made a "consistent change" to the index, meaning new files are written to
@@ -127,25 +132,6 @@ namespace Lucene
         void deleteFile(const String& fileName);
     };
     
-    /// Tracks the reference count for a single index file
-    class RefCount : public LuceneObject
-    {
-    public:
-        RefCount(const String& fileName);
-        virtual ~RefCount();
-        
-        LUCENE_CLASS(RefCount);
-            
-    public:
-        String fileName; // fileName used only for better assert error messages
-        bool initDone;
-        int32_t count;
-    
-    public:
-        int32_t IncRef();
-        int32_t DecRef();
-    };    
-    
     /// Holds details for each commit point.  This class is also passed to the deletion policy.  Note: this class
     /// has a natural ordering that is inconsistent with equals.
     class CommitPoint : public IndexCommit
@@ -157,7 +143,6 @@ namespace Lucene
         LUCENE_CLASS(CommitPoint);
             
     public:
-        int64_t gen;
         HashSet<String> files;
         String segmentsFileName;
         bool deleted;
@@ -193,11 +178,9 @@ namespace Lucene
         virtual MapStringString getUserData();
         
         /// Called only be the deletion policy, to remove this commit point from the index.
-        virtual void deleteCommit();
+        virtual void _delete();
         
         virtual bool isDeleted();
-        
-        virtual int32_t compareTo(LuceneObjectPtr other);
     };
 }
 

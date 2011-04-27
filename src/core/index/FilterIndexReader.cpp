@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FilterIndexReader.h"
+#include "_FilterIndexReader.h"
 #include "FieldCache.h"
 
 namespace Lucene
@@ -13,6 +14,7 @@ namespace Lucene
     FilterIndexReader::FilterIndexReader(IndexReaderPtr in)
     {
         this->in = in;
+        readerFinishedListeners = SetReaderFinishedListener::newInstance();
     }
     
     FilterIndexReader::~FilterIndexReader()
@@ -155,10 +157,6 @@ namespace Lucene
     void FilterIndexReader::doClose()
     {
         in->close();
-        
-        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
-        // generally not a good idea)
-        FieldCache::DEFAULT()->purge(shared_from_this());
     }
     
     HashSet<String> FilterIndexReader::getFieldNames(FieldOption fieldOption)
@@ -190,14 +188,33 @@ namespace Lucene
         return in->getSequentialSubReaders();
     }
     
-    LuceneObjectPtr FilterIndexReader::getFieldCacheKey()
+    LuceneObjectPtr FilterIndexReader::getCoreCacheKey()
     {
-        return in->getFieldCacheKey();
+        return in->getCoreCacheKey();
     }
     
     LuceneObjectPtr FilterIndexReader::getDeletesCacheKey()
     {
         return in->getDeletesCacheKey();
+    }
+    
+    String FilterIndexReader::toString()
+    {
+        StringStream buffer;
+        buffer << L"FilterReader(" << in->toString() << L")";
+        return buffer.str();
+    }
+    
+    void FilterIndexReader::addReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        IndexReader::addReaderFinishedListener(listener);
+        in->addReaderFinishedListener(listener);
+    }
+    
+    void FilterIndexReader::removeReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        IndexReader::removeReaderFinishedListener(listener);
+        in->removeReaderFinishedListener(listener);
     }
     
     FilterTermDocs::FilterTermDocs(TermDocsPtr in)

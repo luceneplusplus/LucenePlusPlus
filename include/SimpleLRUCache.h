@@ -42,6 +42,7 @@ namespace Lucene
     public:
         void put(const KEY& key, const VALUE& value)
         {
+            SyncLock syncLock(this);
             cacheList.push_front(std::make_pair(key, value));
             cacheMap[key] = cacheList.begin();
             
@@ -54,6 +55,7 @@ namespace Lucene
         
         VALUE get(const KEY& key)
         {
+            SyncLock syncLock(this);
             map_iterator find = cacheMap.find(key);
             if (find == cacheMap.end())
                 return VALUE();
@@ -68,11 +70,13 @@ namespace Lucene
         
         bool contains(const KEY& key) const
         {
+            SyncLock syncLock(this);
             return (cacheMap.find(key) != cacheMap.end());
         }
         
         int32_t size() const
         {
+            SyncLock syncLock(this);
             return (int32_t)cacheList.size();
         }
         

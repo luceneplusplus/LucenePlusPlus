@@ -131,7 +131,7 @@ public:
         // On init, delete all commit points
         for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
         {
-            (*commit)->deleteCommit();
+            (*commit)->_delete();
             BOOST_CHECK((*commit)->isDeleted());
         }
     }
@@ -142,7 +142,7 @@ public:
         int32_t size = commits.size();
         // Delete all but last one
         for (int32_t i = 0; i < size - 1; ++i)
-            commits[i]->deleteCommit();
+            commits[i]->_delete();
         ++numOnCommit;
     }
 };
@@ -202,7 +202,7 @@ protected:
         int32_t size = commits.size();
         for (int32_t i = 0; i < size - numToKeep; ++i)
         {
-            commits[i]->deleteCommit();
+            commits[i]->_delete();
             ++numDelete;
         }
     }
@@ -251,7 +251,7 @@ public:
             double modTime = dir->fileModified((*commit)->getSegmentsFileName()) / 1000.0;
             if (*commit != lastCommit && modTime < expireTime)
             {
-                (*commit)->deleteCommit();
+                (*commit)->_delete();
                 ++numDelete;
             }
         }

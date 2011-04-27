@@ -28,6 +28,7 @@
 #include "Similarity.h"
 #include "TermVectorEntry.h"
 #include "TermVectorOffsetInfo.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -52,7 +53,7 @@ public:
                 termVector = Field::TERM_VECTOR_WITH_OFFSETS;
             else
                 termVector = Field::TERM_VECTOR_YES;
-            doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED, termVector));
+            doc->add(newLucene<Field>(L"field", English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED, termVector));
             writer->addDocument(doc);
         }
         writer->close();
@@ -108,7 +109,7 @@ BOOST_AUTO_TEST_CASE(testTermVectorsFieldOrder)
     Collection<int32_t> expectedPositions = newCollection<int32_t>(1, 2, 0);
     for (int32_t i = 0; i < v.size(); ++i)
     {
-        TermPositionVectorPtr posVec = boost::dynamic_pointer_cast<TermPositionVector>(v[i]);
+        TermPositionVectorPtr posVec = boost::static_pointer_cast<TermPositionVector>(v[i]);
         BOOST_CHECK_EQUAL(expectedFields[i], posVec->getField());
         Collection<String> terms = posVec->getTerms();
         BOOST_CHECK_EQUAL(3, terms.size());
@@ -144,7 +145,7 @@ BOOST_AUTO_TEST_CASE(testTermPositionVectors)
         
         if (shouldBePosVector || shouldBeOffVector)
         {
-            TermPositionVectorPtr posVec = boost::dynamic_pointer_cast<TermPositionVector>(vector[0]);
+            TermPositionVectorPtr posVec = boost::static_pointer_cast<TermPositionVector>(vector[0]);
             Collection<String> terms = posVec->getTerms();
             BOOST_CHECK(terms && !terms.empty());
             
@@ -173,7 +174,7 @@ BOOST_AUTO_TEST_CASE(testTermPositionVectors)
         else
         {
             BOOST_CHECK(!boost::dynamic_pointer_cast<TermPositionVector>(vector[0]));
-            TermFreqVectorPtr freqVec = boost::dynamic_pointer_cast<TermFreqVector>(vector[0]);
+            TermFreqVectorPtr freqVec = boost::static_pointer_cast<TermFreqVector>(vector[0]);
             Collection<String> terms = freqVec->getTerms();
             BOOST_CHECK(terms && !terms.empty());
         }
@@ -315,14 +316,14 @@ BOOST_AUTO_TEST_CASE(testRareVectors)
     for (int32_t i = 0; i < 100; ++i)
     {
         DocumentPtr doc = newLucene<Document>();
-        doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO));
+        doc->add(newLucene<Field>(L"field", English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO));
         writer->addDocument(doc);
     }
 
     for (int32_t i = 0; i < 10; ++i)
     {
         DocumentPtr doc = newLucene<Document>();
-        doc->add(newLucene<Field>(L"field", intToEnglish(100 + i), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
+        doc->add(newLucene<Field>(L"field", English::intToEnglish(100 + i), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
         writer->addDocument(doc);
     }
     
@@ -362,7 +363,7 @@ BOOST_AUTO_TEST_CASE(testMixedVectrosVectors)
     Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[0]->doc);
     BOOST_CHECK(vector);
     BOOST_CHECK_EQUAL(vector.size(), 1);
-    TermPositionVectorPtr tfv = boost::dynamic_pointer_cast<TermPositionVector>(vector[0]);
+    TermPositionVectorPtr tfv = boost::static_pointer_cast<TermPositionVector>(vector[0]);
     BOOST_CHECK_EQUAL(tfv->getField(), L"field");
     Collection<String> terms = tfv->getTerms();
     BOOST_CHECK_EQUAL(1, terms.size());

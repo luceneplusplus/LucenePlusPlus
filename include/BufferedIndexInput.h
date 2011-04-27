@@ -63,6 +63,11 @@ namespace Lucene
         /// @see #readInternal(uint8_t*, int32_t, int32_t)
         virtual void readBytes(uint8_t* b, int32_t offset, int32_t length, bool useBuffer);
         
+        virtual int32_t readInt();
+        virtual int64_t readLong();
+        virtual int32_t readVInt();
+        virtual int64_t readVLong();
+        
         /// Closes the stream to further operations.
         virtual void close();
         
@@ -77,6 +82,8 @@ namespace Lucene
         
         /// Returns a clone of this stream.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        
+        virtual void copyBytes(IndexOutputPtr out, int64_t numBytes);
     
     protected:
         virtual void newBuffer(ByteArray newBuffer);
@@ -99,6 +106,14 @@ namespace Lucene
         /// @param pos position to set next write.
         /// @see #readInternal(uint8_t*, int32_t, int32_t)
         virtual void seekInternal(int64_t pos) = 0;
+        
+        /// Flushes the in-memory buffer to the given output, copying at most numBytes.
+        ///
+        /// NOTE: this method does not refill the buffer, however it does advance the 
+        /// buffer position.
+        ///
+        /// @return the number of bytes actually flushed from the in-memory buffer.
+        virtual int32_t flushBuffer(IndexOutputPtr out, int64_t numBytes);
     };
 }
 

@@ -25,7 +25,7 @@ namespace Lucene
     /// {@link FuzzyQuery}
     /// {@link TermRangeQuery}
     /// {@link NumericRangeQuery}
-    /// {@link org.apache.lucene.search.spans.SpanQuery}
+    /// {@link SpanQuery}
     ///
     /// A parser for queries is contained in: {@link QueryParser}
     class LPPAPI Query : public LuceneObject
@@ -96,6 +96,7 @@ namespace Lucene
         /// Returns the Similarity implementation to be used for this query.  Subclasses may override this method 
         /// to specify their own Similarity implementation, perhaps one that delegates through that of the Searcher.
         /// By default the Searcher's Similarity implementation is returned.
+        /// @deprecated Instead of using "runtime" subclassing/delegation, subclass the Weight instead.
         virtual SimilarityPtr getSimilarity(SearcherPtr searcher);
         
         /// Returns a clone of this query.

@@ -38,10 +38,11 @@ namespace Lucene
     /// instance; use your own (non-Lucene) objects instead.
     class LPPAPI IndexReader : public LuceneObject
     {
-    public:
+    protected:
         IndexReader();
-        virtual ~IndexReader();
         
+    public:
+        virtual ~IndexReader();
         LUCENE_CLASS(IndexReader);
             
     public:        
@@ -75,11 +76,22 @@ namespace Lucene
         static const int32_t DEFAULT_TERMS_INDEX_DIVISOR;
         
     protected:
+        // Impls must set this if they may call add/removeReaderFinishedListener
+        SetReaderFinishedListener readerFinishedListeners;
+  
         bool closed;
         bool _hasChanges;
-        int32_t refCount;
+        AtomicLongPtr refCount;
     
     public:
+        /// Adds a {@link ReaderFinishedListener}.  The provided listener is also added to any sub-readers, if this 
+        /// is a composite reader.  Also, any reader reopened or cloned from this one will also copy the listeners at
+        /// the time of reopen.
+        virtual void addReaderFinishedListener(ReaderFinishedListenerPtr listener);
+        
+        /// Remove a previously added {@link ReaderFinishedListener}.
+        virtual void removeReaderFinishedListener(ReaderFinishedListenerPtr listener);
+        
         /// Returns the current refCount for this reader
         int32_t getRefCount();
         
@@ -91,10 +103,11 @@ namespace Lucene
         /// @see #decRef
         void incRef();
         
-        /// Decreases the refCount of this IndexReader instance.  If the refCount drops to 0, then pending changes 
-        /// (if any) are committed to the index and this reader is closed.
+        /// Decreases the refCount of this IndexReader instance.  If an exception is hit, the refCount is unchanged.
         /// @see #incRef
         void decRef();
+        
+        virtual String toString();
         
         /// Returns a IndexReader reading the index in the given Directory, with readOnly = true.
         /// @param directory the index directory
@@ -106,6 +119,16 @@ namespace Lucene
         /// @param directory the index directory
         /// @param readOnly true if no changes (deletions, norms) will be made with this IndexReader
         static IndexReaderPtr open(DirectoryPtr directory, bool readOnly);
+        
+        /// Open a near real time IndexReader from the {@link IndexWriter}.
+        /// @param writer The IndexWriter to open from
+        /// @param applyAllDeletes If true, all buffered deletes will be applied (made visible) in the returned reader.
+        /// If false, the deletes are not applied but remain buffered (in IndexWriter) so that they will be applied in 
+        /// the future.  Applying deletes can be costly, so if your app can tolerate deleted documents being returned 
+        /// you might gain some performance by passing false.
+        /// @return The new IndexReader
+        /// @see #reopen(IndexWriter,boolean)
+        static IndexReaderPtr open(IndexWriterPtr writer, bool applyAllDeletes);
         
         /// Returns an IndexReader reading the index in the given {@link IndexCommit}.  You should pass readOnly = true, 
         /// since it gives much better concurrent performance, unless you intend to do write operations (delete documents 
@@ -135,7 +158,9 @@ namespace Lucene
         /// indexing time while this setting can be set per reader.  When set to N, then one in every 
         /// N*termIndexInterval terms in the index is loaded into memory.  By setting this to a value > 1 
         /// you can reduce memory usage, at the expense of higher latency when loading a TermInfo.  The 
-        /// default value is 1.  Set this to -1 to skip loading the terms index entirely.
+        /// default value is 1.  Set this to -1 to skip loading the terms index entirely. This is only useful 
+        /// in advanced situations when you will only .next() through all terms; attempts to seek will hit 
+        /// an exception.
         static IndexReaderPtr open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
         
         /// Returns an IndexReader reading the index in the given Directory, using a specific commit and with a custom 
@@ -206,6 +231,46 @@ namespace Lucene
         /// point matches what this reader is already on, and this reader is already readOnly, then this same instance is 
         /// returned; if it is not already readOnly, a readOnly clone is returned.
         virtual IndexReaderPtr reopen(IndexCommitPtr commit);
+        
+        /// Returns a readonly reader, covering all committed as well as un-committed changes to the index. This 
+        /// provides "near real-time" searching, in that changes made during an IndexWriter session can be quickly 
+        /// made available for searching without closing the writer nor calling {@link #commit}.
+        ///
+        /// Note that this is functionally equivalent to calling {#flush} (an internal IndexWriter operation) and 
+        /// then using {@link IndexReader#open} to open a new reader.  But the turnaround time of this method should 
+        /// be faster since it avoids the potentially costly {@link #commit}.
+        ///
+        /// You must close the {@link IndexReader} returned by this method once you are done using it.
+        ///
+        /// It's near real-time because there is no hard guarantee on how quickly you can get a new reader after
+        /// making changes with IndexWriter.  You'll have to experiment in your situation to determine if it's fast 
+        /// enough.  As this is a new and experimental feature, please report back on your findings so we can learn, 
+        /// improve and iterate.
+        ///
+        /// The resulting reader supports {@link IndexReader#reopen}, but that call will simply forward back to this 
+        /// method (though this may change in the future).
+        ///
+        /// The very first time this method is called, this writer instance will make every effort to pool the 
+        /// readers that it opens for doing merges, applying deletes, etc.  This means additional resources (RAM,
+        /// file descriptors, CPU time) will be consumed.
+        ///
+        /// For lower latency on reopening a reader, you should call {@link IndexWriterConfig#setMergedSegmentWarmer} 
+        /// to pre-warm a newly merged segment before it's committed to the index.  This is important for minimizing
+        /// index-to-search delay after a large merge.
+        ///
+        /// If an addIndexes* call is running in another thread, then this reader will only search those segments 
+        /// from the foreign index that have been successfully copied over, so far.
+        ///
+        /// NOTE: Once the writer is closed, any outstanding readers may continue to be used.  However, if you 
+        /// attempt to reopen any of those readers, you'll hit an {@link AlreadyClosedException}.
+        ///
+        /// @return IndexReader that covers entire index plus all changes made so far by this IndexWriter instance
+        /// @param writer The IndexWriter to open from
+        /// @param applyAllDeletes If true, all buffered deletes will be applied (made visible) in the returned 
+        /// reader.  If false, the deletes are not applied but remain buffered (in IndexWriter) so that they will 
+        /// be applied in the future.  Applying deletes can be costly, so if your app can tolerate deleted documents 
+        /// being returned you might gain some performance by passing false.
+        virtual IndexReaderPtr reopen(IndexWriterPtr writer, bool applyAllDeletes);
         
         /// Efficiently clones the IndexReader (sharing most internal state).
         ///
@@ -314,8 +379,7 @@ namespace Lucene
         /// @param mapper The {@link TermVectorMapper} to process the vector.  Must not be null.
         virtual void getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper) = 0;
         
-        /// Returns true if an index exists at the specified directory.  If the directory does not exist or 
-        /// if there is no index in it.
+        /// Returns true if an index exists at the specified directory.
         /// @param directory the directory to check for an index
         /// @return true if an index exists; false otherwise
         static bool indexExists(DirectoryPtr directory);
@@ -328,7 +392,7 @@ namespace Lucene
         virtual int32_t maxDoc() = 0;
         
         /// Returns the number of deleted documents.
-        int32_t numDeletedDocs();
+        virtual int32_t numDeletedDocs();
         
         /// Returns the stored fields of the n'th Document in this index.
         ///
@@ -390,13 +454,15 @@ namespace Lucene
         /// NOTE: If this field does not store norms, then this method call will silently do nothing.
         ///
         /// @see #norms(String)
-        /// @see Similarity#decodeNorm(byte)
+        /// @see Similarity#decodeNormValue(byte)
         virtual void setNorm(int32_t doc, const String& field, uint8_t value);
         
         /// Resets the normalization factor for the named field of the named document.
         ///
         /// @see #norms(String)
-        /// @see Similarity#decodeNorm(byte)
+        /// @see Similarity#decodeNormValue(byte)
+        /// @deprecated Use {@link #setNorm(int32_t, String, uint8_t)} instead, encoding the double to byte with 
+        /// your Similarity's {@link Similarity#encodeNormValue(double)}.
         virtual void setNorm(int32_t doc, const String& field, double value);
         
         /// Returns an enumeration of all the terms in the index. The enumeration is ordered by 
@@ -422,6 +488,8 @@ namespace Lucene
         virtual TermDocsPtr termDocs(TermPtr term);
         
         /// Returns an unpositioned {@link TermDocs} enumerator.
+        /// Note: the TermDocs returned is unpositioned. Before using it, ensure that you first 
+        /// position it with {@link TermDocs#seek(Term)} or {@link TermDocs#seek(TermEnum)}.
         virtual TermDocsPtr termDocs() = 0;
         
         /// Returns an enumeration of all the documents which contain term.  For each document, in 
@@ -452,22 +520,27 @@ namespace Lucene
         virtual int32_t deleteDocuments(TermPtr term);
         
         /// Undeletes all documents currently marked as deleted in this index.
+        ///
+        /// NOTE: this method can only recover documents marked for deletion but not yet removed from 
+        /// the index; when and how Lucene removes deleted documents is an implementation detail, 
+        /// subject to change from release to release.  However, you can use {@link #numDeletedDocs} 
+        /// on the current IndexReader instance to see how many documents will be un-deleted.
         virtual void undeleteAll();
         
-        void flush();
+        virtual void flush();
         
         /// @param commitUserData Opaque Map (String -> String) that's recorded into the segments file 
         /// in the index, and retrievable by {@link IndexReader#getCommitUserData}.
-        void flush(MapStringString commitUserData);
+        virtual void flush(MapStringString commitUserData);
         
         /// Commit changes resulting from delete, undeleteAll, or setNorm operations.
         /// If an exception is hit, then either no changes or all changes will have been committed to 
         /// the index (transactional semantics).
-        void commit(MapStringString commitUserData);
+        virtual void commit(MapStringString commitUserData);
         
         /// Closes files associated with this index.  Also saves any new deletions to disk.
         /// No other methods should be called after this has been called.
-        void close();
+        virtual void close();
         
         /// Get a list of unique field names that exist in this index and have the specified field option information.
         /// @param fieldOption specifies which field option should be available for the returned fields
@@ -483,15 +556,16 @@ namespace Lucene
         /// the index work, you have to copy the segments file from the compound index into the directory 
         /// where the extracted files are stored.
         /// @param args Usage: IndexReader [-extract] <cfsfile>
-        static void main(Collection<String> args);
+        static int32_t main(Collection<String> args);
         
         /// Returns all commit points that exist in the Directory.  Normally, because the default is {@link
         /// KeepOnlyLastCommitDeletionPolicy}, there would be only one commit point.  But if you're using a 
         /// custom {@link IndexDeletionPolicy} then there could be many commits.  Once you have a given 
         /// commit, you can open a reader on it by calling {@link IndexReader#open(IndexCommit,bool)}.
-        /// There must be at least one commit in the Directory, else this method throws an exception.  
-        /// Note that if a commit is in progress while this method is running, that commit may or may not 
-        /// be returned array.
+        /// There must be at least one commit in the Directory, else this method throws {@link
+        /// IndexNotFoundException}.  Note that if a commit is in progress while this method is running, 
+        /// that commit may or may not be returned.
+        /// @return a sorted list of {@link IndexCommit}s, from oldest to latest.
         static Collection<IndexCommitPtr> listCommits(DirectoryPtr dir);
         
         /// Returns the sequential sub readers that this reader is logically composed of.  For example,
@@ -505,7 +579,7 @@ namespace Lucene
         /// through {@link #open}. Use the parent reader directly.
         virtual Collection<IndexReaderPtr> getSequentialSubReaders();
         
-        virtual LuceneObjectPtr getFieldCacheKey();
+        virtual LuceneObjectPtr getCoreCacheKey();
         
         /// This returns null if the reader has no deletions.
         virtual LuceneObjectPtr getDeletesCacheKey();
@@ -521,7 +595,10 @@ namespace Lucene
         virtual int32_t getTermInfosIndexDivisor();
     
     protected:
-        void ensureOpen();
+        virtual void notifyReaderFinishedListeners();
+        virtual void readerFinished();
+        
+        virtual void ensureOpen();
         
         static IndexReaderPtr open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, IndexCommitPtr commit, bool readOnly, int32_t termInfosIndexDivisor);
         
@@ -542,7 +619,7 @@ namespace Lucene
         /// Commit changes resulting from delete, undeleteAll, or setNorm operations.
         /// If an exception is hit, then either no changes or all changes will have been committed to 
         /// the index (transactional semantics).
-        void commit();
+        virtual void commit();
         
         /// Implements commit.
         virtual void doCommit(MapStringString commitUserData) = 0;
@@ -552,6 +629,24 @@ namespace Lucene
         
         friend class DirectoryReader;
         friend class ParallelReader;
+    };
+    
+    /// A custom listener that's invoked when the IndexReader is finished.
+    ///
+    /// For a SegmentReader, this listener is called only once all SegmentReaders sharing the same 
+    /// core are closed.  At this point it is safe for apps to evict this reader from any caches 
+    /// keyed on {@link #getCoreCacheKey}.  This is the same interface that {@link FieldCache} uses, 
+    /// internally, to evict entries.
+    ///
+    /// For other readers, this listener is called when they are closed.
+    class LPPAPI ReaderFinishedListener : public LuceneObject
+    {
+    public:
+        virtual ~ReaderFinishedListener();
+        LUCENE_CLASS(ReaderFinishedListener);
+    
+    public:
+        virtual void finished(IndexReaderPtr reader) = 0;
     };
 }
 

@@ -21,7 +21,6 @@ namespace Lucene
     public:
         virtual InvertedDocEndConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread) = 0;
         virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, SegmentWriteStatePtr state) = 0;
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
         virtual void abort() = 0;
         virtual void setFieldInfos(FieldInfosPtr fieldInfos) = 0;
     };

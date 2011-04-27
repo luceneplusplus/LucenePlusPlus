@@ -9,6 +9,7 @@
 #include "WordlistLoader.h"
 #include "FileReader.h"
 #include "BufferedReader.h"
+#include "StringUtils.h"
 
 namespace Lucene
 {
@@ -65,16 +66,48 @@ namespace Lucene
         return result;
     }
     
+    HashSet<String> WordlistLoader::getSnowballWordSet(ReaderPtr reader)
+    {
+        HashSet<String> result(HashSet<String>::newInstance());
+        LuceneException finally;
+        BufferedReaderPtr bufferedReader(boost::dynamic_pointer_cast<BufferedReader>(reader));
+        try
+        {
+            if (!bufferedReader)
+                bufferedReader = newLucene<BufferedReader>(reader);
+            String line;
+            while (bufferedReader->readLine(line))
+            {
+                String::size_type comment = line.find(L"|");
+                if (comment != String::npos)
+                    line = line.substr(0, comment);
+                Collection<String> words(StringUtils::split(line, L"\t "));
+                for (Collection<String>::iterator word = words.begin(); word != words.end(); ++word)
+                {
+                    boost::trim(*word);
+                    if (!word->empty())
+                        result.add(*word);
+                }
+            }
+        }
+        catch (LuceneException& e)
+        {
+            finally = e;
+        }
+        if (bufferedReader)
+            bufferedReader->close();
+        finally.throwException();
+        return result;
+    }
+    
     MapStringString WordlistLoader::getStemDict(const String& wordstemfile)
     {
         MapStringString result(MapStringString::newInstance());
         BufferedReaderPtr bufferedReader;
-        FileReaderPtr reader;
         LuceneException finally;
         try
         {
-            reader = newLucene<FileReader>(wordstemfile);
-            bufferedReader = newLucene<BufferedReader>(reader);
+            bufferedReader = newLucene<BufferedReader>(newLucene<FileReader>(wordstemfile));
             String line;
             while (bufferedReader->readLine(line))
             {
@@ -87,8 +120,6 @@ namespace Lucene
         {
             finally = e;
         }
-        if (reader)
-            reader->close();
         if (bufferedReader)
             bufferedReader->close();
         finally.throwException();

@@ -7,66 +7,58 @@
 #include "LuceneInc.h"
 #include "StopFilter.h"
 #include "CharArraySet.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "PositionIncrementAttribute.h"
 
 namespace Lucene
 {
-    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, HashSet<String> stopWords, bool ignoreCase) : TokenFilter(input)
+    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, HashSet<String> stopWords, bool ignoreCase) : FilteringTokenFilter(enablePositionIncrements, input)
     {
-        this->stopWords = newLucene<CharArraySet>(stopWords, ignoreCase);
-        this->enablePositionIncrements = enablePositionIncrements;
-        termAtt = addAttribute<TermAttribute>();
-        posIncrAtt = addAttribute<PositionIncrementAttribute>();
+        ConstructStopFilter(LuceneVersion::LUCENE_30, enablePositionIncrements, input, newLucene<CharArraySet>(LuceneVersion::LUCENE_30, stopWords, ignoreCase));
     }
     
-    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords, bool ignoreCase) : TokenFilter(input)
+    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords) : FilteringTokenFilter(enablePositionIncrements, input)
     {
-        this->stopWords = stopWords;
-        this->enablePositionIncrements = enablePositionIncrements;
-        termAtt = addAttribute<TermAttribute>();
-        posIncrAtt = addAttribute<PositionIncrementAttribute>();
+        ConstructStopFilter(LuceneVersion::LUCENE_30, enablePositionIncrements, input, stopWords);
+    }
+    
+    StopFilter::StopFilter(LuceneVersion::Version matchVersion, TokenStreamPtr input, HashSet<String> stopWords, bool ignoreCase) : FilteringTokenFilter(LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29), input)
+    {
+        ConstructStopFilter(matchVersion, LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29), input, newLucene<CharArraySet>(matchVersion, stopWords, ignoreCase));
+    }
+    
+    StopFilter::StopFilter(LuceneVersion::Version matchVersion, TokenStreamPtr input, CharArraySetPtr stopWords) : FilteringTokenFilter(LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29), input)
+    {
+        ConstructStopFilter(matchVersion, LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29), input, stopWords);
+    }
+    
+    StopFilter::StopFilter(LuceneVersion::Version matchVersion, bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords) : FilteringTokenFilter(enablePositionIncrements, input)
+    {
+        ConstructStopFilter(matchVersion, enablePositionIncrements, input, stopWords);
     }
     
     StopFilter::~StopFilter()
     {
     }
     
-    HashSet<String> StopFilter::makeStopSet(Collection<String> stopWords)
+    void StopFilter::ConstructStopFilter(LuceneVersion::Version matchVersion, bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords)
     {
-        return HashSet<String>::newInstance(stopWords.begin(), stopWords.end());
+        this->stopWords = stopWords;
+        termAtt = addAttribute<CharTermAttribute>();
     }
     
-    bool StopFilter::incrementToken()
+    CharArraySetPtr StopFilter::makeStopSet(LuceneVersion::Version matchVersion, Collection<String> stopWords, bool ignoreCase)
     {
-        // return the first non-stop word found
-        int32_t skippedPositions = 0;
-        while (input->incrementToken())
-        {
-            if (!stopWords->contains(termAtt->termBufferArray(), 0, termAtt->termLength()))
-            {
-                if (enablePositionIncrements)
-                    posIncrAtt->setPositionIncrement(posIncrAtt->getPositionIncrement() + skippedPositions);
-                return true;
-            }
-            skippedPositions += posIncrAtt->getPositionIncrement();
-        }
-        // reached EOS -- return false
-        return false;
+        return newLucene<CharArraySet>(matchVersion, stopWords, ignoreCase);
+    }
+    
+    bool StopFilter::accept()
+    {
+        return !stopWords->contains(termAtt->bufferArray(), 0, termAtt->length());
     }
     
     bool StopFilter::getEnablePositionIncrementsVersionDefault(LuceneVersion::Version matchVersion)
     {
         return LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
-    }
-    
-    bool StopFilter::getEnablePositionIncrements()
-    {
-        return enablePositionIncrements;
-    }
-    
-    void StopFilter::setEnablePositionIncrements(bool enable)
-    {
-        this->enablePositionIncrements = enable;
     }
 }

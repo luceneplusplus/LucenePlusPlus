@@ -33,13 +33,11 @@ namespace Lucene
     protected:
         static int32_t maxClauseCount;
         
-        Collection<BooleanClausePtr> clauses;
+        Collection<BooleanClausePtr> _clauses;
         bool disableCoord;
         int32_t minNrShouldMatch;
     
     public:
-        using Query::toString;
-        
         /// Return the maximum number of clauses permitted, 1024 by default.  Attempts to add more than the permitted 
         /// number of clauses cause TooManyClauses to be thrown.
         /// @see #setMaxClauseCount(int32_t)
@@ -51,9 +49,6 @@ namespace Lucene
         /// Returns true if {@link Similarity#coord(int32_t, int32_t)} is disabled in scoring for this query instance.
         /// @see #BooleanQuery(bool)
         bool isCoordDisabled();
-        
-        /// Implement coord disabling.
-        virtual SimilarityPtr getSimilarity(SearcherPtr searcher);
         
         /// Specifies a minimum number of the optional BooleanClauses which must be satisfied.
         ///
@@ -80,6 +75,9 @@ namespace Lucene
         /// Returns the set of clauses in this query.
         Collection<BooleanClausePtr> getClauses();
         
+        /// Returns the list of clauses in this query.
+        Collection<BooleanClausePtr> clauses();
+        
         /// Returns an iterator on the clauses in this query.
         Collection<BooleanClausePtr>::iterator begin();
         Collection<BooleanClausePtr>::iterator end();
@@ -91,7 +89,10 @@ namespace Lucene
         virtual void extractTerms(SetTerm terms);
         
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        
+        using Query::toString;
         virtual String toString(const String& field);
+        
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
         

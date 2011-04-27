@@ -54,8 +54,8 @@ namespace Lucene
     
     LuceneObjectPtr SpanNotQuery::clone(LuceneObjectPtr other)
     {
-        SpanNotQueryPtr spanNotQuery(newLucene<SpanNotQuery>(boost::dynamic_pointer_cast<SpanQuery>(include->clone()),
-                                     boost::dynamic_pointer_cast<SpanQuery>(exclude->clone())));
+        SpanNotQueryPtr spanNotQuery(newLucene<SpanNotQuery>(boost::static_pointer_cast<SpanQuery>(include->clone()),
+                                     boost::static_pointer_cast<SpanQuery>(exclude->clone())));
         spanNotQuery->setBoost(getBoost());
         return spanNotQuery;
     }
@@ -68,18 +68,18 @@ namespace Lucene
     QueryPtr SpanNotQuery::rewrite(IndexReaderPtr reader)
     {
         SpanNotQueryPtr clone;
-        SpanQueryPtr rewrittenInclude(boost::dynamic_pointer_cast<SpanQuery>(include->rewrite(reader)));
+        SpanQueryPtr rewrittenInclude(boost::static_pointer_cast<SpanQuery>(include->rewrite(reader)));
         if (rewrittenInclude != include)
         {
-            clone = boost::dynamic_pointer_cast<SpanNotQuery>(this->clone());
+            clone = boost::static_pointer_cast<SpanNotQuery>(this->clone());
             clone->include = rewrittenInclude;
         }
         
-        SpanQueryPtr rewrittenExclude(boost::dynamic_pointer_cast<SpanQuery>(exclude->rewrite(reader)));
+        SpanQueryPtr rewrittenExclude(boost::static_pointer_cast<SpanQuery>(exclude->rewrite(reader)));
         if (rewrittenExclude != exclude)
         {
             if (!clone)
-                clone = boost::dynamic_pointer_cast<SpanNotQuery>(this->clone());
+                clone = boost::static_pointer_cast<SpanNotQuery>(this->clone());
             clone->exclude = rewrittenExclude;
         }
         

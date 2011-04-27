@@ -17,6 +17,7 @@
 #include "Payload.h"
 #include "LowerCaseTokenizer.h"
 #include "Analyzer.h"
+#include "English.h"
 
 namespace Lucene
 {
@@ -132,9 +133,9 @@ namespace Lucene
         for (int32_t i = 0; i < numDocs; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
-            doc->add(newLucene<Field>(FIELD, intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
-            doc->add(newLucene<Field>(MULTI_FIELD, intToEnglish(i) + L"  " + intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
-            doc->add(newLucene<Field>(NO_PAYLOAD_FIELD, intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
+            doc->add(newLucene<Field>(FIELD, English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
+            doc->add(newLucene<Field>(MULTI_FIELD, English::intToEnglish(i) + L"  " + English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
+            doc->add(newLucene<Field>(NO_PAYLOAD_FIELD, English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
         }
         writer->close();

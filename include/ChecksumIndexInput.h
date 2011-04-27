@@ -14,7 +14,7 @@ namespace Lucene
 {
     /// Writes bytes through to a primary IndexInput, computing checksum as it goes. 
     /// Note that you cannot use seek().
-    class LPPAPI ChecksumIndexInput : public IndexInput
+    class ChecksumIndexInput : public IndexInput
     {
     public:
         ChecksumIndexInput(IndexInputPtr main);

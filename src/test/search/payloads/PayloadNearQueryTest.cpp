@@ -27,6 +27,7 @@
 #include "PayloadTermQuery.h"
 #include "Term.h"
 #include "AveragePayloadFunction.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -185,8 +186,8 @@ public:
         for (int32_t i = 0; i < 1000; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
-            doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
-            String txt = intToEnglish(i) + L" " + intToEnglish(i + 1);
+            doc->add(newLucene<Field>(L"field", English::intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
+            String txt = English::intToEnglish(i) + L" " + English::intToEnglish(i + 1);
             doc->add(newLucene<Field>(L"field2", txt, Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
         }
@@ -255,7 +256,7 @@ BOOST_AUTO_TEST_CASE(testSetup)
     }
     for (int32_t i = 1; i < 10; ++i)
     {
-        query = newPhraseQuery(L"field", intToEnglish(i) + L" hundred", true);
+        query = newPhraseQuery(L"field", English::intToEnglish(i) + L" hundred", true);
         // all should have score = 3 because adjacent terms have payloads of 2, 4 and all the similarity factors are set to 1
         hits = searcher->search(query, FilterPtr(), 100);
         BOOST_CHECK(hits);

@@ -38,7 +38,7 @@ namespace Lucene
         LUCENE_CLASS(RAMDirectory);
                 
     INTERNAL:
-        int64_t _sizeInBytes;
+        AtomicLongPtr _sizeInBytes;
         MapStringRAMFile fileMap;
 
     protected:
@@ -80,6 +80,12 @@ namespace Lucene
         
         /// Closes the store.
         virtual void close();
+    
+    protected:
+        /// Returns a new {@link RAMFile} for storing data. This method can be overridden
+        /// to return different {@link RAMFile} impls, that eg. override 
+        /// {@link RAMFile#newBuffer(int32_t)}.
+        virtual RAMFilePtr newRAMFile();
     };
 }
 

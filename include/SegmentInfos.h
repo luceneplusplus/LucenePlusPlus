@@ -51,11 +51,21 @@ namespace Lucene
         
         /// This format adds optional per-segment string diagnostics storage, and switches userData to Map
         static const int32_t FORMAT_DIAGNOSTICS;
+        
+        /// Each segment records whether it has term vectors
+        static const int32_t FORMAT_HAS_VECTORS;
+        
+        /// Each segment records the Lucene version that created it.
+        static const int32_t FORMAT_3_1;
   
         /// This must always point to the most recent file format.
         static const int32_t CURRENT_FORMAT;
         
         int32_t counter; // used to name new segments
+        
+        /// Counts how often the index has been changed by adding or deleting docs.
+        /// Starting with the current time in milliseconds forces to create unique version numbers.
+        int64_t version;
 
     private:
         /// Advanced configuration of retry logic in loading segments_N file.
@@ -63,10 +73,6 @@ namespace Lucene
         static int32_t defaultGenFileRetryPauseMsec;
         static int32_t defaultGenLookaheadCount;
         
-        /// Counts how often the index has been changed by adding or deleting docs.
-        /// Starting with the current time in milliseconds forces to create unique version numbers.
-        int64_t version;
-
         int64_t generation; // generation of the "segments_N" for the next commit
         
         int64_t lastGeneration; // generation of the "segments_N" file we last successfully read
@@ -75,12 +81,17 @@ namespace Lucene
     
         MapStringString userData; // Opaque map<string, string> that user can specify during IndexWriter::commit
         
+        int32_t format;
+        
         static MapStringString singletonUserData;
         
         static InfoStreamPtr infoStream;
         ChecksumIndexOutputPtr pendingSegnOutput;
     
     public:
+        void setFormat(int32_t format);
+        int32_t getFormat();
+        
         SegmentInfoPtr info(int32_t i);
         String getCurrentSegmentFileName();
         String getNextSegmentFileName();
@@ -90,6 +101,9 @@ namespace Lucene
         
         /// This version of read uses the retry logic (for lock-less commits) to find the right segments file to load.
         void read(DirectoryPtr directory);
+        
+        /// Prunes any segment whose docs are all deleted.
+        void pruneDeletedSegments();
         
         /// Returns a copy of this instance, also copying each SegmentInfo.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
@@ -108,10 +122,12 @@ namespace Lucene
         
         void rollbackCommit(DirectoryPtr dir);
         
-        /// Call this to start a commit.  This writes the new segments file, but writes an invalid checksum at the end, so 
-        /// that it is not visible to readers.  Once this is called you must call.
-        /// {@link #finishCommit} to complete the commit or 
-        /// {@link #rollbackCommit} to abort it.
+        /// Call this to start a commit.  This writes the new segments file, but writes an invalid checksum at the end, 
+        /// so that it is not visible to readers.  Once this is called you must call {@link #finishCommit} to complete
+        /// the commit or {@link #rollbackCommit} to abort it.
+        ///
+        /// Note: {@link #changed()} should be called prior to this method if changes have been made to this {@link 
+        /// SegmentInfos} instance.
         void prepareCommit(DirectoryPtr dir);
         
         /// Returns all file names referenced by SegmentInfo instances matching the provided Directory (ie files associated 
@@ -120,10 +136,14 @@ namespace Lucene
         
         void finishCommit(DirectoryPtr dir);
         
-        /// Writes & syncs to the Directory dir, taking care to remove the segments file on exception.
+        /// Writes and syncs to the Directory dir, taking care to remove the segments file on exception
+        ///
+        /// Note: {@link #changed()} should be called prior to this method if changes have been made to this {@link 
+        /// SegmentInfos} instance.
         void commit(DirectoryPtr dir);
         
-        String segString(DirectoryPtr directory);
+        using SegmentInfoCollection::toString;
+        String toString(DirectoryPtr directory);
         MapStringString getUserData();
         void setUserData(MapStringString data);
         
@@ -131,8 +151,12 @@ namespace Lucene
         /// write once.
         void replace(SegmentInfosPtr other);
         
-        bool hasExternalSegments(DirectoryPtr dir);
-                
+        /// Returns sum of all segment's docCounts.  Note that this does not include deletions.
+        int32_t totalDocCount();
+        
+        /// Call this before committing if changes have been made to the segments.
+        void changed();
+        
         static int64_t getCurrentSegmentGeneration(HashSet<String> files);
         static int64_t getCurrentSegmentGeneration(DirectoryPtr directory);
         static String getCurrentSegmentFileName(HashSet<String> files);
@@ -171,6 +195,8 @@ namespace Lucene
         /// @see #setInfoStream
         static InfoStreamPtr getInfoStream();
         
+        /// Prints the given message to the infoStream. Note, this method does not check for null infoStream. It assumes this 
+        /// check has been performed by the caller, which is recommended to avoid the (usually) expensive message creation.
         static void message(const String& message);
         
     protected:

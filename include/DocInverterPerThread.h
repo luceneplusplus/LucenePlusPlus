@@ -41,22 +41,6 @@ namespace Lucene
         virtual void abort();
         virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi);        
     };
-    
-    class SingleTokenAttributeSource : public AttributeSource
-    {
-    public:
-        SingleTokenAttributeSource();
-        virtual ~SingleTokenAttributeSource();
-        
-        LUCENE_CLASS(SingleTokenAttributeSource);
-                
-    public:
-        TermAttributePtr termAttribute;
-        OffsetAttributePtr offsetAttribute;
-    
-    public:
-        void reinit(const String& stringValue, int32_t startOffset, int32_t endOffset);
-    };
 }
 
 #endif

@@ -25,9 +25,6 @@ namespace Lucene
         /// Called when DocumentsWriter decides to create a new segment
         virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, SegmentWriteStatePtr state) = 0;
         
-        /// Called when DocumentsWriter decides to close the doc stores
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
-        
         /// Called when an aborting exception is hit
         virtual void abort() = 0;
         

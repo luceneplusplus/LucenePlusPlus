@@ -45,7 +45,8 @@ namespace Lucene
         static const int32_t DEFAULT_READ_CHUNK_SIZE;
         
     protected:
-        bool checked;
+        /// Files written, but not yet sync'ed
+        HashSet<String> staleFiles;
         
         /// The underlying filesystem directory.
         String directory;
@@ -60,6 +61,8 @@ namespace Lucene
         /// Just like {@link #open(File)}, but allows you to also specify a custom {@link LockFactory}.
         static FSDirectoryPtr open(const String& path, LockFactoryPtr lockFactory);
         
+        virtual void setLockFactory(LockFactoryPtr lockFactory);
+        
         /// Lists all files (not subdirectories) in the directory.
         /// @throws NoSuchDirectoryException if the directory does not exist, or does exist but is not a directory.
         static HashSet<String> listAll(const String& dir);
@@ -71,7 +74,11 @@ namespace Lucene
         void createDir();
         
         /// Return file system directory.
+        /// @deprecated Use {@link #getDirectory} instead.
         String getFile();
+        
+        /// @return the underlying filesystem directory.
+        String getDirectory();
         
         /// Sets the maximum number of bytes read at once from the underlying file during {@link IndexInput#readBytes}.  
         /// The default value is {@link #DEFAULT_READ_CHUNK_SIZE}.  Changes to this value will not impact any already-opened 
@@ -102,9 +109,14 @@ namespace Lucene
         /// Returns the length in bytes of a file in the directory.
         virtual int64_t fileLength(const String& name);
         
+        /// Creates an IndexOutput for the file with the given name.
+        virtual IndexOutputPtr createOutput(const String& name);
+        
         /// Ensure that any writes to this file are moved to stable storage.  Lucene uses this to properly commit changes to 
         /// the index, to prevent a machine/OS crash from corrupting the index.
         virtual void sync(const String& name);
+        
+        virtual void sync(HashSet<String> names);
         
         /// Returns a stream reading an existing file, with the specified read buffer size.  The particular Directory 
         /// implementation may ignore the buffer size.
@@ -125,8 +137,12 @@ namespace Lucene
         virtual String toString();
     
     protected:
-        /// Initializes the directory to create a new file with the given name. This method should be used in {@link #createOutput}.
-        void initOutput(const String& name);
+        void ensureCanWrite(const String& name);
+        void onIndexOutputClosed(FSIndexOutputPtr io);
+        
+        void fsync(const String& name);
+        
+        friend class FSIndexOutput;
     };
 }
 

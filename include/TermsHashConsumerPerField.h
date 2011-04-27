@@ -25,9 +25,11 @@ namespace Lucene
         virtual void finish() = 0;
         virtual void skippingLongTerm() = 0;
         virtual void start(FieldablePtr field) = 0;
-        virtual void newTerm(RawPostingListPtr p) = 0;
-        virtual void addTerm(RawPostingListPtr p) = 0;
+        virtual void newTerm(int32_t termID) = 0;
+        virtual void addTerm(int32_t termID) = 0;
         virtual int32_t getStreamCount() = 0;
+        
+        virtual ParallelPostingsArrayPtr createPostingsArray(int32_t size) = 0;
     };
 }
 

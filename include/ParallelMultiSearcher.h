@@ -18,8 +18,10 @@ namespace Lucene
     class LPPAPI ParallelMultiSearcher : public MultiSearcher
     {
     public:
-        /// Creates a {@link Searchable} which searches searchables.
+        /// Creates a {@link Searchable} which searches searchables with the default  executor service 
+        /// (a cached thread pool).
         ParallelMultiSearcher(Collection<SearchablePtr> searchables);
+        
         virtual ~ParallelMultiSearcher();
     
         LUCENE_CLASS(ParallelMultiSearcher);
@@ -36,6 +38,10 @@ namespace Lucene
         /// A search implementation allowing sorting which spans a new thread for each Searchable, waits 
         /// for each search to complete and merges the results back together.
         virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort);
+        
+        virtual void close();
+        
+        virtual MapTermInt createDocFrequencyMap(SetTerm terms);
     };
 }
 

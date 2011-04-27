@@ -27,11 +27,11 @@ namespace Lucene
         LUCENE_CLASS(TermScorer);
     
     protected:
-        WeightPtr weight;
         TermDocsPtr termDocs;
         ByteArray norms;
         double weightValue;
         int32_t doc;
+        int32_t _freq;
         
         Collection<int32_t> docs; // buffered doc numbers
         Collection<int32_t> freqs; // buffered term freqs
@@ -45,10 +45,12 @@ namespace Lucene
         virtual void score(CollectorPtr collector);
         virtual int32_t docID();
         
+        virtual double freq();
+        
         /// Advances to the next document matching the query.
         /// The iterator over the matching documents is buffered using {@link 
         /// TermDocs#read(Collection<int32_t>, Collection<int32_t>)}.
-        /// @return the document matching the query or -1 if there are no more documents.
+        /// @return the document matching the query or NO_MORE_DOCS if there are no more documents.
         virtual int32_t nextDoc();
         
         virtual double score();
@@ -56,15 +58,13 @@ namespace Lucene
         /// Advances to the first match beyond the current whose document number is greater than or equal to a 
         /// given target.  The implementation uses {@link TermDocs#skipTo(int32_t)}.
         /// @param target The target document number.
-        /// @return the matching document or -1 if none exist.
+        /// @return the matching document or NO_MORE_DOCS if none exist.
         virtual int32_t advance(int32_t target);
         
         /// Returns a string representation of this TermScorer.
         virtual String toString();
         
     protected:
-        static const Collection<double> SIM_NORM_DECODER();
-        
         virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
     };
 }

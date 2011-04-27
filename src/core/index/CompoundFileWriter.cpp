@@ -11,9 +11,20 @@
 #include "IndexInput.h"
 #include "IndexOutput.h"
 #include "StringUtils.h"
+#include "IndexFileNames.h"
 
 namespace Lucene
 {
+    /// Before versioning started.
+    const int32_t CompoundFileWriter::FORMAT_PRE_VERSION = 0;
+    
+    /// Segment name is not written in the file names.
+    const int32_t CompoundFileWriter::FORMAT_NO_SEGMENT_PREFIX = -1;
+    
+    /// NOTE: if you introduce a new format, make it 1 lower than the current one, and always 
+    /// change this if you switch to a new format
+    const int32_t CompoundFileWriter::FORMAT_CURRENT = CompoundFileWriter::FORMAT_NO_SEGMENT_PREFIX;
+    
     CompoundFileWriter::CompoundFileWriter(DirectoryPtr dir, const String& name, CheckAbortPtr checkAbort)
     {
         if (!dir)
@@ -71,11 +82,12 @@ namespace Lucene
         DirectoryPtr directory(_directory);
         
         // open the compound stream
-        IndexOutputPtr os;
+        IndexOutputPtr os(directory->createOutput(fileName));
         LuceneException finally;
         try
         {
-            os = directory->createOutput(fileName);
+            // Write the Version info - must be a VInt because CFR reads a VInt in older versions
+            os->writeVInt(FORMAT_CURRENT);
             
             // Write the number of entries
             os->writeVInt(entries.size());
@@ -87,7 +99,7 @@ namespace Lucene
             {
                 fe->directoryOffset = os->getFilePointer();
                 os->writeLong(0); // for now
-                os->writeString(fe->file);
+                os->writeString(IndexFileNames::stripSegmentName(fe->file));
                 totalSize += directory->fileLength(fe->file);
             }
             
@@ -98,11 +110,10 @@ namespace Lucene
             os->setLength(finalLength);
             
             // Open the files and copy their data into the stream. Remember the locations of each file's data section.
-            ByteArray buffer(ByteArray::newInstance(16384));
             for (Collection<FileEntry>::iterator fe = entries.begin(); fe != entries.end(); ++fe)
             {
                 fe->dataOffset = os->getFilePointer();
-                copyFile(*fe, os, buffer);
+                copyFile(*fe, os);
             }
             
             // Write the data offsets into the directory of the compound stream
@@ -138,41 +149,20 @@ namespace Lucene
         finally.throwException();
     }
     
-    void CompoundFileWriter::copyFile(const FileEntry& source, IndexOutputPtr os, ByteArray buffer)
+    void CompoundFileWriter::copyFile(const FileEntry& source, IndexOutputPtr os)
     {
-        IndexInputPtr is;
         DirectoryPtr directory(_directory);
+        IndexInputPtr is(directory->openInput(source.file));
         LuceneException finally;
         try
         {
             int64_t startPtr = os->getFilePointer();
-            
-            is = directory->openInput(source.file);
             int64_t length = is->length();
-            int64_t remainder = length;
-            int32_t chunk = buffer.size();
-            
-            while (remainder > 0)
-            {
-                int32_t len = std::min(chunk, (int32_t)remainder);
-                is->readBytes(buffer.get(), 0, len, false);
-                os->writeBytes(buffer.get(), len);
-                remainder -= len;
-                if (checkAbort)
-                {
-                    // Roughly every 2 MB we will check if it's time to abort
-                    checkAbort->work(80);
-                }
-            }
-            
-            // Verify that remainder is 0
-            if (remainder != 0)
-            {
-                boost::throw_exception(IOException(L"Non-zero remainder length after copying: " + StringUtils::toString(remainder) + 
-                                                   L" (id: " + source.file + L", length: " + StringUtils::toString(length) +
-                                                   L", buffer size: " + StringUtils::toString(chunk) + L")"));
-            }
-            
+            os->copyBytes(is, length);
+
+            if (checkAbort)
+                checkAbort->work(length);
+
             // Verify that the output length diff is equal to original file
             int64_t endPtr = os->getFilePointer();
             int64_t diff = endPtr - startPtr;
@@ -186,9 +176,7 @@ namespace Lucene
         {
             finally = e;
         }
-        
-        if (is)
-            is->close();
+        is->close();
         finally.throwException();
     }
 }

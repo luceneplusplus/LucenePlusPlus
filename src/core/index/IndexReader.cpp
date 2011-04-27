@@ -9,6 +9,7 @@
 #include <iostream>
 #include "IndexReader.h"
 #include "_IndexReader.h"
+#include "IndexWriter.h"
 #include "DirectoryReader.h"
 #include "IndexDeletionPolicy.h"
 #include "FSDirectory.h"
@@ -17,6 +18,7 @@
 #include "CompoundFileReader.h"
 #include "FileUtils.h"
 #include "StringUtils.h"
+#include "AtomicLong.h"
 
 namespace Lucene
 {
@@ -24,7 +26,7 @@ namespace Lucene
     
     IndexReader::IndexReader()
     {
-        refCount = 1;
+        refCount = newLucene<AtomicLong>(1);
         closed = false;
         _hasChanges = false;
     }
@@ -33,36 +35,90 @@ namespace Lucene
     {
     }
     
+    void IndexReader::addReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        readerFinishedListeners.add(listener);
+    }
+    
+    void IndexReader::removeReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        readerFinishedListeners.remove(listener);
+    }
+    
+    void IndexReader::notifyReaderFinishedListeners()
+    {
+        // Defensive (should never be null -- all impls must set this)
+        if (readerFinishedListeners)
+        {
+            for (SetReaderFinishedListener::iterator listener = readerFinishedListeners.begin(); listener != readerFinishedListeners.end(); ++listener)
+                (*listener)->finished(shared_from_this());
+        }
+    }
+    
+    void IndexReader::readerFinished()
+    {
+        notifyReaderFinishedListeners();
+    }
+    
     int32_t IndexReader::getRefCount()
     {
-        SyncLock syncLock(this);
-        return refCount;
+        return refCount->get();
     }
     
     void IndexReader::incRef()
     {
-        SyncLock syncLock(this);
-        BOOST_ASSERT(refCount > 0);
         ensureOpen();
-        ++refCount;
+        refCount->incrementAndGet();
     }
     
     void IndexReader::decRef()
     {
-        SyncLock syncLock(this);
-        BOOST_ASSERT(refCount > 0);
         ensureOpen();
-        if (refCount == 1)
+        if (refCount->getAndDecrement() == 1)
         {
-            commit();
-            doClose();
+            bool success = false;
+            LuceneException finally;
+            try
+            {
+                commit();
+                doClose();
+                success = true;
+            }
+            catch (LuceneException& e)
+            {
+                finally = e;
+            }
+            if (!success)
+            {
+                // Put reference back on failure
+                refCount->incrementAndGet();
+            }
+            finally.throwException();
+            readerFinished();
         }
-        --refCount;
+    }
+    
+    String IndexReader::toString()
+    {
+        StringStream buffer;
+        if (_hasChanges)
+            buffer << L"*";
+        buffer << getClassName();
+        buffer << L"(";
+        Collection<IndexReaderPtr> subReaders(getSequentialSubReaders());
+        if (subReaders && !subReaders.empty())
+        {
+            buffer << subReaders[0]->toString();
+            for (int32_t i = 1; i < subReaders.size(); ++i)
+                buffer << L" " << subReaders[i]->toString();
+        }
+        buffer << L")";
+        return buffer.str();
     }
     
     void IndexReader::ensureOpen()
     {
-        if (refCount <= 0)
+        if (refCount->get() <= 0)
             boost::throw_exception(AlreadyClosedException(L"this IndexReader is closed"));
     }
     
@@ -74,6 +130,11 @@ namespace Lucene
     IndexReaderPtr IndexReader::open(DirectoryPtr directory, bool readOnly)
     {
         return open(directory, IndexDeletionPolicyPtr(), IndexCommitPtr(), readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
+    }
+    
+    IndexReaderPtr IndexReader::open(IndexWriterPtr writer, bool applyAllDeletes)
+    {
+        return writer->getReader(applyAllDeletes);
     }
     
     IndexReaderPtr IndexReader::open(IndexCommitPtr commit, bool readOnly)
@@ -125,6 +186,11 @@ namespace Lucene
         SyncLock syncLock(this);
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support reopen(IndexCommit)."));
         return IndexReaderPtr();
+    }
+    
+    IndexReaderPtr IndexReader::reopen(IndexWriterPtr writer, bool applyAllDeletes)
+    {
+        return writer->getReader(applyAllDeletes);
     }
 
     LuceneObjectPtr IndexReader::clone(LuceneObjectPtr other)
@@ -191,7 +257,15 @@ namespace Lucene
     
     bool IndexReader::indexExists(DirectoryPtr directory)
     {
-        return (SegmentInfos::getCurrentSegmentGeneration(directory) != -1);
+        try
+        {
+            newLucene<SegmentInfos>()->read(directory);
+            return true;
+        }
+        catch (IOException&)
+        {
+            return false;
+        }
     }
     
     int32_t IndexReader::numDeletedDocs()
@@ -230,7 +304,7 @@ namespace Lucene
     void IndexReader::setNorm(int32_t doc, const String& field, double value)
     {
         ensureOpen();
-        setNorm(doc, field, Similarity::encodeNorm(value));
+        setNorm(doc, field, Similarity::getDefault()->encodeNormValue(value));
     }
 
     TermDocsPtr IndexReader::termDocs(TermPtr term)
@@ -341,7 +415,7 @@ namespace Lucene
         return IndexCommitPtr();
     }
     
-    void IndexReader::main(Collection<String> args)
+    int32_t IndexReader::main(Collection<String> args)
     {
         String filename;
         bool extract = false;
@@ -357,7 +431,7 @@ namespace Lucene
         if (filename.empty())
         {
             std::wcout << L"Usage: IndexReader [-extract] <cfsfile>";
-            return;
+            return 1;
         }
         
         DirectoryPtr dir;
@@ -414,6 +488,8 @@ namespace Lucene
             cfr->close();
         
         finally.throwException();
+        
+        return 0;
     }
     
     Collection<IndexCommitPtr> IndexReader::listCommits(DirectoryPtr dir)
@@ -426,7 +502,7 @@ namespace Lucene
         return Collection<IndexReaderPtr>(); // override
     }
     
-    LuceneObjectPtr IndexReader::getFieldCacheKey()
+    LuceneObjectPtr IndexReader::getCoreCacheKey()
     {
         return shared_from_this();
     }
@@ -460,5 +536,15 @@ namespace Lucene
     uint64_t FindSegmentsModified::doBody(const String& segmentFileName)
     {
         return directory->fileModified(segmentFileName);
+    }
+    
+    ReaderFinishedListener::~ReaderFinishedListener()
+    {
+    }
+    
+    void ReaderFinishedListener::finished(IndexReaderPtr reader)
+    {
+        BOOST_ASSERT(false);
+        // override
     }
 }

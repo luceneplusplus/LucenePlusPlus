@@ -163,7 +163,7 @@ namespace Lucene
         output->writeBytes(termBytes.get(), start, length); // write delta bytes
         output->writeVInt(fieldNumber); // write field num
         if (lastTermBytes.size() < termBytesLength)
-            lastTermBytes.resize((int32_t)((double)termBytesLength * 1.5));
+            MiscUtils::grow(lastTermBytes, termBytesLength);
         MiscUtils::arrayCopy(termBytes.get(), start, lastTermBytes.get(), start, length);
         lastTermBytesLength = termBytesLength;
     }

@@ -10,7 +10,6 @@
 #include "Document.h"
 #include "FieldSelector.h"
 #include "Term.h"
-#include "FieldCache.h"
 #include "StringUtils.h"
 
 namespace Lucene
@@ -19,7 +18,7 @@ namespace Lucene
     {
         this->readers = Collection<IndexReaderPtr>::newInstance();
         this->decrefOnClose = Collection<uint8_t>::newInstance();
-        this->fieldToReader = MapStringIndexReader::newInstance();
+        this->fieldToReader = SortedMapStringIndexReader::newInstance();
         this->readerToFields = MapIndexReaderSetString::newInstance();
         this->storedFieldReaders = Collection<IndexReaderPtr>::newInstance();
         this->_maxDoc = 0;
@@ -27,10 +26,25 @@ namespace Lucene
         this->_hasDeletions = false;
         
         this->incRefReaders = !closeSubReaders;
+        this->readerFinishedListeners = SetReaderFinishedListener::newInstance();
     }
     
     ParallelReader::~ParallelReader()
     {
+    }
+    
+    String ParallelReader::toString()
+    {
+        StringStream buffer;
+        buffer << L"ParallelReader(";
+        for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
+        {
+            if (reader != readers.begin())
+                buffer << L", ";
+            buffer << (*reader)->toString();
+        }
+        buffer << L")";
+        return buffer.str();
     }
     
     void ParallelReader::add(IndexReaderPtr reader)
@@ -113,7 +127,7 @@ namespace Lucene
             {
                 IndexReaderPtr newReader;
                 if (doClone)
-                    newReader = boost::dynamic_pointer_cast<IndexReader>((*oldReader)->clone());
+                    newReader = boost::static_pointer_cast<IndexReader>((*oldReader)->clone());
                 else
                     newReader = (*oldReader)->reopen();
                 newReaders.add(newReader);
@@ -256,7 +270,7 @@ namespace Lucene
         Collection<TermFreqVectorPtr> results(Collection<TermFreqVectorPtr>::newInstance());
         
         // get all vectors
-        for (MapStringIndexReader::iterator entry = fieldToReader.begin(); entry != fieldToReader.end(); ++entry)
+        for (SortedMapStringIndexReader::iterator entry = fieldToReader.begin(); entry != fieldToReader.end(); ++entry)
         {
             TermFreqVectorPtr vector(entry->second->getTermFreqVector(docNumber, entry->first));
             if (vector)
@@ -269,14 +283,14 @@ namespace Lucene
     TermFreqVectorPtr ParallelReader::getTermFreqVector(int32_t docNumber, const String& field)
     {
         ensureOpen();
-        MapStringIndexReader::iterator reader = fieldToReader.find(field);
+        SortedMapStringIndexReader::iterator reader = fieldToReader.find(field);
         return reader == fieldToReader.end() ? TermFreqVectorPtr() : reader->second->getTermFreqVector(docNumber, field);
     }
     
     void ParallelReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
     {
         ensureOpen();
-        MapStringIndexReader::iterator reader = fieldToReader.find(field);
+        SortedMapStringIndexReader::iterator reader = fieldToReader.find(field);
         if (reader != fieldToReader.end())
             reader->second->getTermFreqVector(docNumber, field, mapper);
     }
@@ -284,28 +298,28 @@ namespace Lucene
     void ParallelReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
     {
         ensureOpen();
-        for (MapStringIndexReader::iterator entry = fieldToReader.begin(); entry != fieldToReader.end(); ++entry)
+        for (SortedMapStringIndexReader::iterator entry = fieldToReader.begin(); entry != fieldToReader.end(); ++entry)
             entry->second->getTermFreqVector(docNumber, entry->first, mapper);
     }
     
     bool ParallelReader::hasNorms(const String& field)
     {
         ensureOpen();
-        MapStringIndexReader::iterator reader = fieldToReader.find(field);
+        SortedMapStringIndexReader::iterator reader = fieldToReader.find(field);
         return reader == fieldToReader.end() ? false : reader->second->hasNorms(field);
     }
     
     ByteArray ParallelReader::norms(const String& field)
     {
         ensureOpen();
-        MapStringIndexReader::iterator reader = fieldToReader.find(field);
+        SortedMapStringIndexReader::iterator reader = fieldToReader.find(field);
         return reader == fieldToReader.end() ? ByteArray() : reader->second->norms(field);
     }
     
     void ParallelReader::norms(const String& field, ByteArray norms, int32_t offset)
     {
         ensureOpen();
-        MapStringIndexReader::iterator reader = fieldToReader.find(field);
+        SortedMapStringIndexReader::iterator reader = fieldToReader.find(field);
         if (reader != fieldToReader.end())
             reader->second->norms(field, norms, offset);
     }
@@ -313,7 +327,7 @@ namespace Lucene
     void ParallelReader::doSetNorm(int32_t doc, const String& field, uint8_t value)
     {
         ensureOpen();
-        MapStringIndexReader::iterator reader = fieldToReader.find(field);
+        SortedMapStringIndexReader::iterator reader = fieldToReader.find(field);
         if (reader != fieldToReader.end())
             reader->second->doSetNorm(doc, field, value);
     }
@@ -333,7 +347,7 @@ namespace Lucene
     int32_t ParallelReader::docFreq(TermPtr t)
     {
         ensureOpen();
-        MapStringIndexReader::iterator reader = fieldToReader.find(t->field());
+        SortedMapStringIndexReader::iterator reader = fieldToReader.find(t->field());
         return reader == fieldToReader.end() ? 0 : reader->second->docFreq(t);
     }
     
@@ -412,8 +426,6 @@ namespace Lucene
             else
                 readers[i]->close();
         }
-        
-        FieldCache::DEFAULT()->purge(shared_from_this());
     }
     
     HashSet<String> ParallelReader::getFieldNames(FieldOption fieldOption)
@@ -428,11 +440,25 @@ namespace Lucene
         return fieldSet;
     }
     
+    void ParallelReader::addReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        IndexReader::addReaderFinishedListener(listener);
+        for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
+            (*reader)->addReaderFinishedListener(listener);
+    }
+    
+    void ParallelReader::removeReaderFinishedListener(ReaderFinishedListenerPtr listener)
+    {
+        IndexReader::removeReaderFinishedListener(listener);
+        for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
+            (*reader)->removeReaderFinishedListener(listener);
+    }
+    
     ParallelTermEnum::ParallelTermEnum(ParallelReaderPtr reader)
     {
         this->setIterator = false;
         this->_reader = reader;
-        MapStringIndexReader::iterator indexReader = reader->fieldToReader.begin();
+        SortedMapStringIndexReader::iterator indexReader = reader->fieldToReader.begin();
         if (indexReader != reader->fieldToReader.end())
             this->field = indexReader->first;
         if (!field.empty())
@@ -444,7 +470,7 @@ namespace Lucene
         this->setIterator = false;
         this->_reader = reader;
         this->field = term->field();
-        MapStringIndexReader::iterator indexReader = reader->fieldToReader.find(field);
+        SortedMapStringIndexReader::iterator indexReader = reader->fieldToReader.find(field);
         if (indexReader != reader->fieldToReader.end())
             this->termEnum = indexReader->second->terms(term);
     }
@@ -535,7 +561,7 @@ namespace Lucene
     void ParallelTermDocs::seek(TermPtr term)
     {
         ParallelReaderPtr reader(_reader);
-        MapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());
+        SortedMapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());
         termDocs = indexReader != reader->fieldToReader.end() ? indexReader->second->termDocs(term) : TermDocsPtr();
     }
     
@@ -581,7 +607,7 @@ namespace Lucene
     void ParallelTermPositions::seek(TermPtr term)
     {
         ParallelReaderPtr reader(_reader);
-        MapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());
+        SortedMapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());
         termDocs = indexReader != reader->fieldToReader.end() ? indexReader->second->termPositions(term) : TermDocsPtr();
     }
     

@@ -131,7 +131,7 @@ namespace Lucene
         /// Collector allows them to deliver the docIDs out of order.
         ///
         /// Many collectors don't mind getting docIDs out of order, so it's important to return true here.
-           virtual bool acceptsDocsOutOfOrder() = 0;
+        virtual bool acceptsDocsOutOfOrder() = 0;
     };
 }
 

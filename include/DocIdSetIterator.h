@@ -59,10 +59,9 @@ namespace Lucene
         ///
         /// Some implementations are considerably more efficient than that.
         ///
-        /// NOTE: certain implementations may return a different value (each time) if called several times in a row 
-        /// with the same target.
+        /// NOTE: when  target <= current implementations may opt not to advance beyond their current {@link #docID()}.
         ///
-        /// NOTE: this method may be called with {@value #NO_MORE_DOCS} for efficiency by some Scorers. If your 
+        /// NOTE: this method may be called with {@link #NO_MORE_DOCS} for efficiency by some Scorers. If your 
         /// implementation cannot efficiently determine that it should exhaust, it is recommended that you check for 
         /// that value in each call to this method.
         ///

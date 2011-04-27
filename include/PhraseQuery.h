@@ -65,6 +65,8 @@ namespace Lucene
         /// Returns the relative positions of terms in this phrase.
         Collection<int32_t> getPositions();
         
+        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        
         virtual WeightPtr createWeight(SearcherPtr searcher);
         virtual void extractTerms(SetTerm terms);
         
@@ -76,6 +78,23 @@ namespace Lucene
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         
         friend class PhraseWeight;
+    };
+    
+    class LPPAPI PostingsAndFreq : public LuceneObject
+    {
+    public:
+        PostingsAndFreq(TermPositionsPtr postings, int32_t docFreq, int32_t position);
+        virtual ~PostingsAndFreq();
+    
+        LUCENE_CLASS(PostingsAndFreq);
+
+    public:
+        TermPositionsPtr postings;
+        int32_t docFreq;
+        int32_t position;
+    
+    public:
+        virtual int32_t compareTo(LuceneObjectPtr other);
     };
 }
 

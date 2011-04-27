@@ -15,8 +15,11 @@ namespace Lucene
     class LPPAPI SpanOrQuery : public SpanQuery
     {
     public:
+        SpanOrQuery();
+        
         /// Construct a SpanOrQuery merging the provided clauses.
         SpanOrQuery(Collection<SpanQueryPtr> clauses);
+        
         virtual ~SpanOrQuery();
         
         LUCENE_CLASS(SpanOrQuery);
@@ -27,6 +30,8 @@ namespace Lucene
     
     public:
         using SpanQuery::toString;
+        
+        virtual void addClause(SpanQueryPtr clause);
         
         /// Return the clauses whose spans are matched.
         Collection<SpanQueryPtr> getClauses();

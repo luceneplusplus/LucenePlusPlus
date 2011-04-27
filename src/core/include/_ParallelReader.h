@@ -25,7 +25,7 @@ namespace Lucene
     protected:
         ParallelReaderWeakPtr _reader;
         String field;
-        MapStringIndexReader::iterator fieldIterator;
+        SortedMapStringIndexReader::iterator fieldIterator;
         bool setIterator;
         TermEnumPtr termEnum;
     

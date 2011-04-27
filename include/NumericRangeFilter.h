@@ -16,9 +16,9 @@ namespace Lucene
     ///
     /// You create a new NumericRangeFilter with the static factory methods, eg:
     /// <pre>
-    /// FilterPtr f = NumericRangeFilter::newDoubleRange(L"weight", 0.3, 0.10, true, true);
+    /// FilterPtr f = NumericRangeFilter::newDoubleRange(L"weight", 0.03, 0.10, true, true);
     /// </pre>
-    /// accepts all documents whose double valued "weight" field ranges from 0.3 to 0.10, inclusive.
+    /// accepts all documents whose double valued "weight" field ranges from 0.03 to 0.10, inclusive.
     ///
     /// See {@link NumericRangeQuery} for details on how Lucene indexes and searches numeric valued fields.
     class LPPAPI NumericRangeFilter : public MultiTermQueryWrapperFilter
@@ -64,7 +64,7 @@ namespace Lucene
         static NumericRangeFilterPtr newNumericRange(const String& field, NumericValue min, NumericValue max, bool minInclusive, bool maxInclusive);
         
         /// Returns the field name for this filter
-        String getField();
+        virtual String getField();
         
         /// Returns true if the lower endpoint is inclusive
         bool includesMin();
@@ -77,6 +77,9 @@ namespace Lucene
         
         /// Returns the upper value of this range filter
         NumericValue getMax();
+        
+        /// Returns the precision step.
+        int32_t getPrecisionStep();
     };
 }
 

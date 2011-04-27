@@ -36,10 +36,14 @@ namespace Lucene
         SegmentInfoPtr mapToLive(SegmentInfoPtr info);
         
         /// Release the segment reader (i.e. decRef it and close if there are no more references.
-        void release(SegmentReaderPtr sr);
+        /// @return true if this release altered the index (eg. the SegmentReader had pending changes 
+        /// to del docs and was closed).  Caller must call checkpoint() if so.
+        bool release(SegmentReaderPtr sr);
         
         /// Release the segment reader (i.e. decRef it and close if there are no more references.
-        void release(SegmentReaderPtr sr, bool drop);
+        /// @return true if this release altered the index (eg. the SegmentReader had pending changes 
+        /// to del docs and was closed).  Caller must call checkpoint() if so.
+        bool release(SegmentReaderPtr sr, bool drop);
         
         /// Remove all our references to readers, and commits any pending changes.
         void close();
@@ -61,6 +65,39 @@ namespace Lucene
         
         /// Returns a ref
         SegmentReaderPtr getIfExists(SegmentInfoPtr info);
+    };
+    
+    /// Decides when flushes happen
+    class FlushControl : public LuceneObject
+    {
+    public:
+        FlushControl(IndexWriterPtr writer);
+        virtual ~FlushControl();
+        
+        LUCENE_CLASS(FlushControl);
+    
+    protected:
+        IndexWriterWeakPtr _writer;
+        
+    private:
+        bool flushPending;
+        bool flushDeletes;
+        int32_t delCount;
+        int32_t docCount;
+        bool flushing;
+    
+    public:
+        void setFlushPendingNoWait(const String& reason);
+        bool getFlushPending();
+        bool getFlushDeletes();
+        void clearFlushPending();
+        void clearDeletes();
+        bool waitUpdate(int32_t docInc, int32_t delInc);
+        bool waitUpdate(int32_t docInc, int32_t delInc, bool skipWait);
+        bool flushByRAMUsage(const String& reason);
+    
+    private:
+        bool setFlushPending(const String& reason, bool doWait);
     };
 }
 

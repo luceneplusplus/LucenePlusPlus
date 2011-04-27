@@ -89,7 +89,7 @@ namespace Lucene
     {
         // Start with a shallow copy of data
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Payload>());
-        PayloadPtr clonePayload(boost::dynamic_pointer_cast<Payload>(clone));
+        PayloadPtr clonePayload(boost::static_pointer_cast<Payload>(clone));
         clonePayload->offset = offset;
         clonePayload->_length = _length;
         

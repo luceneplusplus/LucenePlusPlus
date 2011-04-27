@@ -26,6 +26,7 @@ namespace Lucene
         int32_t length;
         int32_t numOverlap;
         int32_t offset;
+        int32_t maxTermFrequency;
         double boost;
         AttributeSourcePtr attributeSource;
     
@@ -41,10 +42,12 @@ namespace Lucene
         /// Get total number of terms in this field.
         /// @return the length
         int32_t getLength();
+        void setLength(int32_t length);
         
         /// Get the number of terms with positionIncrement == 0.
         /// @return the numOverlap
         int32_t getNumOverlap();
+        void setNumOverlap(int32_t numOverlap);
         
         /// Get end offset of the last processed term.
         /// @return the offset
@@ -54,6 +57,11 @@ namespace Lucene
         /// instances sharing the same field name.
         /// @return the boost
         double getBoost();
+        void setBoost(double boost);
+        
+        /// Get the maximum term-frequency encountered for any term in the field.  A field containing 
+        /// "the quick brown fox jumps over the lazy dog" would have a value of 2, because "the" appears twice.
+        int32_t getMaxTermFrequency();
         
         AttributeSourcePtr getAttributeSource();
     };

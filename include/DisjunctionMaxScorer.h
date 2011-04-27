@@ -18,7 +18,16 @@ namespace Lucene
     class DisjunctionMaxScorer : public Scorer
     {
     public:
-        DisjunctionMaxScorer(double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers);
+        /// Creates a new instance of DisjunctionMaxScorer
+        /// @param weight The Weight to be used.
+        /// @param tieBreakerMultiplier Multiplier applied to non-maximum-scoring subqueries for a document as 
+        /// they are summed into the result.
+        /// @param similarity not used since our definition involves neither coord nor terms directly
+        /// @param subScorers The sub scorers this Scorer should iterate on
+        /// @param numScorers The actual number of scorers to iterate on. Note that the array's length may be larger 
+        //// than the actual number of scorers.
+        DisjunctionMaxScorer(WeightPtr weight, double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers);
+        
         virtual ~DisjunctionMaxScorer();
     
         LUCENE_CLASS(DisjunctionMaxScorer);
@@ -32,12 +41,16 @@ namespace Lucene
         double tieBreakerMultiplier;
         
         int32_t doc;
+        
+        /// Used when scoring currently matching doc.
+        double scoreSum;
+        double scoreMax;
     
     public:
         virtual int32_t nextDoc();
         virtual int32_t docID();
         
-        /// Determine the current document score.  Initially invalid, until {@link #next()} is called the first time.
+        /// Determine the current document score.  Initially invalid, until {@link #nextDoc()} is called the first time.
         /// @return the score of the current generated document
         virtual double score();
         
@@ -45,7 +58,7 @@ namespace Lucene
     
     protected:
         /// Recursively iterate all subScorers that generated last doc computing sum and max
-        void scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double> sum, Collection<double> max);
+        void scoreAll(int32_t root, int32_t size, int32_t doc);
         
         /// Organize subScorers into a min heap with scorers generating the earliest document on top.
         void heapify();

@@ -33,26 +33,17 @@ namespace Lucene
         bool primary;
         DocStatePtr docState;
         
-        Collection<RawPostingListPtr> freePostings;
-        int32_t freePostingsCount;
-    
     public:
         virtual void initialize();
         
         virtual InvertedDocConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo);
         virtual void abort();
         
-        /// perField calls this when it needs more postings
-        void morePostings();
-        
         virtual void startDocument();
         virtual DocWriterPtr finishDocument();
         
         /// Clear all state
         void reset(bool recyclePostings);        
-    
-    protected:
-        static bool noNullPostings(Collection<RawPostingListPtr> postings, int32_t count, const String& details);
     };
 }
 

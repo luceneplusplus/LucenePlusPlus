@@ -24,7 +24,7 @@ namespace Lucene
         /// Counts how many other reader share the core objects (freqStream, proxStream, tis, etc.) of this reader;
         /// when coreRef drops to 0, these core objects may be closed.  A given instance of SegmentReader may be
         /// closed, even those it shares core objects with other SegmentReaders
-        SegmentReaderRefPtr ref;
+        AtomicLongPtr ref;
         
         SegmentReaderWeakPtr _origInstance;
     
@@ -79,26 +79,6 @@ namespace Lucene
         virtual FieldsReaderPtr initialValue();
     };
     
-    class SegmentReaderRef : public LuceneObject
-    {
-    public:
-        SegmentReaderRef();
-        virtual ~SegmentReaderRef();
-        
-        LUCENE_CLASS(SegmentReaderRef);
-            
-    protected:
-        int32_t _refCount;
-    
-    public:
-        virtual String toString();
-        int32_t refCount();
-        int32_t incRef();
-        int32_t decRef();
-        
-        friend class SegmentReader;
-    };
-    
     /// Byte[] referencing is used because a new norm object needs to be created for each clone, and the byte 
     /// array is all that is needed for sharing between cloned readers.  The current norm referencing is for 
     /// sharing between readers whereas the byte[] referencing is for copy on write which is independent of 
@@ -112,7 +92,7 @@ namespace Lucene
         
         LUCENE_CLASS(Norm);
                 
-    protected:
+    private:
         SegmentReaderWeakPtr _reader;
         int32_t refCount;
         
@@ -123,7 +103,7 @@ namespace Lucene
         IndexInputPtr in;
         int64_t normSeek;
         
-        SegmentReaderRefPtr _bytesRef;
+        AtomicLongPtr _bytesRef;
         ByteArray _bytes;
         bool dirty;
         int32_t number;
@@ -140,7 +120,7 @@ namespace Lucene
         ByteArray bytes();
         
         /// Only for testing
-        SegmentReaderRefPtr bytesRef();
+        AtomicLongPtr bytesRef();
         
         /// Called if we intend to change a norm value.  We make a private copy of bytes if it's shared 
         // with others

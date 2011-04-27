@@ -68,50 +68,39 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            if (d->fileExists(segment + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION()))
+            String idxName(IndexFileNames::segmentFileName(segment, IndexFileNames::VECTORS_INDEX_EXTENSION()));
+            tvx = d->openInput(idxName, readBufferSize);
+            format = checkValidFormat(tvx);
+            tvd = d->openInput(IndexFileNames::segmentFileName(segment, IndexFileNames::VECTORS_DOCUMENTS_EXTENSION()), readBufferSize);
+            int32_t tvdFormat = checkValidFormat(tvd);
+            tvf = d->openInput(IndexFileNames::segmentFileName(segment, IndexFileNames::VECTORS_FIELDS_EXTENSION()), readBufferSize);
+            int32_t tvfFormat = checkValidFormat(tvf);
+
+            BOOST_ASSERT(format == tvdFormat);
+            BOOST_ASSERT(format == tvfFormat);
+
+            if (format >= FORMAT_VERSION2)
+                numTotalDocs = (int32_t)(tvx->length() >> 4);
+            else
             {
-                tvx = d->openInput(segment + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION(), readBufferSize);
-                format = checkValidFormat(tvx);
-                tvd = d->openInput(segment + L"." + IndexFileNames::VECTORS_DOCUMENTS_EXTENSION(), readBufferSize);
-                int32_t tvdFormat = checkValidFormat(tvd);
-                tvf = d->openInput(segment + L"." + IndexFileNames::VECTORS_FIELDS_EXTENSION(), readBufferSize);
-                int32_t tvfFormat = checkValidFormat(tvf);
-                
-                BOOST_ASSERT(format == tvdFormat);
-                BOOST_ASSERT(format == tvfFormat);
-                
-                if (format >= FORMAT_VERSION2)
-                {
-                    BOOST_ASSERT((tvx->length() - FORMAT_SIZE) % 16 == 0);
-                    numTotalDocs = (int32_t)(tvx->length() >> 4);
-                }
-                else
-                {
-                    BOOST_ASSERT((tvx->length() - FORMAT_SIZE) % 8 == 0);
-                    numTotalDocs = (int32_t)(tvx->length() >> 3);
-                }
-                
-                if (docStoreOffset == -1)
-                {
-                    this->docStoreOffset = 0;
-                    this->_size = numTotalDocs;
-                    BOOST_ASSERT(size == 0 || numTotalDocs == size);
-                }
-                else
-                {
-                    this->docStoreOffset = docStoreOffset;
-                    this->_size = size;
-                    // Verify the file is long enough to hold all of our docs
-                    BOOST_ASSERT(numTotalDocs >= size + docStoreOffset);
-                }
+                BOOST_ASSERT((tvx->length() - FORMAT_SIZE) % 8 == 0);
+                numTotalDocs = (int32_t)(tvx->length() >> 3);
+            }
+
+            if (docStoreOffset == -1)
+            {
+                this->docStoreOffset = 0;
+                this->_size = numTotalDocs;
+                BOOST_ASSERT(size == 0 || numTotalDocs == size);
             }
             else
             {
-                // If all documents flushed in a segment had hit non-aborting exceptions, it's possible that
-                // FieldInfos.hasVectors returns true yet the term vector files don't exist.
-                format = 0;
+                this->docStoreOffset = docStoreOffset;
+                this->_size = size;
+                // Verify the file is long enough to hold all of our docs
+                BOOST_ASSERT(numTotalDocs >= size + docStoreOffset);
             }
-            
+
             this->fieldInfos = fieldInfos;
             success = true;
         }
@@ -120,8 +109,9 @@ namespace Lucene
             finally = e;
         }
         
-        // With lock-less commits, it's entirely possible (and fine) to hit a FileNotFound exception 
-        // above. In this case, we want to explicitly close any subset of things that were opened.
+        // With lock-less commits, it's entirely possible (and fine) to hit a 
+        // FileNotFound exception above. In this case, we want to explicitly 
+        // close any subset of things that were opened
         if (!success)
             close();
         finally.throwException();
@@ -222,8 +212,7 @@ namespace Lucene
             }
             catch (LuceneException& e)
             {
-                if (keep.isNull())
-                    keep = e;
+                keep = e;
             }
         }
         if (tvd)
@@ -476,7 +465,7 @@ namespace Lucene
             {
                 // Term stored as "java chars"
                 if (charBuffer.size() < totalLength)
-                    charBuffer.resize((int32_t)(1.5 * (double)totalLength));
+                    MiscUtils::grow(charBuffer, totalLength);
                 totalLength = start + tvf->readChars(charBuffer.get(), start, deltaLength);
                 term.append(charBuffer.get(), totalLength);
             }
@@ -484,7 +473,7 @@ namespace Lucene
             {
                 // Term stored as utf8 bytes
                 if (byteBuffer.size() < totalLength)
-                    byteBuffer.resize((int32_t)(1.5 * (double)totalLength));
+                    MiscUtils::grow(byteBuffer, totalLength);
                 tvf->readBytes(byteBuffer.get(), start, deltaLength);
                 term = StringUtils::toUnicode(byteBuffer.get(), totalLength);
             }
@@ -544,7 +533,7 @@ namespace Lucene
     LuceneObjectPtr TermVectorsReader::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermVectorsReader>();
-        TermVectorsReaderPtr cloneReader(boost::dynamic_pointer_cast<TermVectorsReader>(LuceneObject::clone(clone)));
+        TermVectorsReaderPtr cloneReader(boost::static_pointer_cast<TermVectorsReader>(LuceneObject::clone(clone)));
         cloneReader->fieldInfos = fieldInfos;
         cloneReader->_size = _size;
         cloneReader->numTotalDocs = numTotalDocs;
@@ -554,9 +543,9 @@ namespace Lucene
         // These are null when a TermVectorsReader was created on a segment that did not have term vectors saved
         if (tvx && tvd && tvf)
         {
-            cloneReader->tvx = boost::dynamic_pointer_cast<IndexInput>(tvx->clone());
-            cloneReader->tvd = boost::dynamic_pointer_cast<IndexInput>(tvd->clone());
-            cloneReader->tvf = boost::dynamic_pointer_cast<IndexInput>(tvf->clone());
+            cloneReader->tvx = boost::static_pointer_cast<IndexInput>(tvx->clone());
+            cloneReader->tvd = boost::static_pointer_cast<IndexInput>(tvd->clone());
+            cloneReader->tvf = boost::static_pointer_cast<IndexInput>(tvf->clone());
         }
         
         return cloneReader;

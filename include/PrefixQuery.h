@@ -34,6 +34,8 @@ namespace Lucene
         /// Returns the prefix of this query.
         TermPtr getPrefix();
         
+        virtual String getField();
+        
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
         

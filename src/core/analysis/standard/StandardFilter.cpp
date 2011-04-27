@@ -7,14 +7,22 @@
 #include "LuceneInc.h"
 #include "StandardFilter.h"
 #include "StandardTokenizer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "TypeAttribute.h"
 
 namespace Lucene
 {
     StandardFilter::StandardFilter(TokenStreamPtr input) : TokenFilter(input)
     {
-        termAtt = addAttribute<TermAttribute>();
+        this->matchVersion = LuceneVersion::LUCENE_30;
+        termAtt = addAttribute<CharTermAttribute>();
+        typeAtt = addAttribute<TypeAttribute>();
+    }
+    
+    StandardFilter::StandardFilter(LuceneVersion::Version matchVersion, TokenStreamPtr input) : TokenFilter(input)
+    {
+        this->matchVersion = matchVersion;
+        termAtt = addAttribute<CharTermAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
     }
     
@@ -40,18 +48,26 @@ namespace Lucene
     
     bool StandardFilter::incrementToken()
     {
+        if (LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31))
+            return input->incrementToken();
+        else
+            return incrementTokenClassic();
+    }
+    
+    bool StandardFilter::incrementTokenClassic()
+    {    
         if (!input->incrementToken())
             return false;
         
-        wchar_t* termBuffer = termAtt->termBufferArray();
-        int32_t bufferLength = termAtt->termLength();
+        wchar_t* termBuffer = termAtt->bufferArray();
+        int32_t bufferLength = termAtt->length();
         String type(typeAtt->type());
         
         if (type == APOSTROPHE_TYPE() && bufferLength >= 2 && termBuffer[bufferLength - 2] == L'\'' &&
             (termBuffer[bufferLength - 1] == L's' || termBuffer[bufferLength - 1] == L'S')) // remove 's
         {
             // Strip last 2 characters off
-            termAtt->setTermLength(bufferLength - 2);
+            termAtt->setLength(bufferLength - 2);
         }
         else if (type == ACRONYM_TYPE()) // remove dots
         {
@@ -62,7 +78,7 @@ namespace Lucene
                 if (c != L'.')
                     termBuffer[upto++] = c;
             }
-            termAtt->setTermLength(upto);
+            termAtt->setLength(upto);
         }
         
         return true;

@@ -11,15 +11,27 @@
 
 namespace Lucene
 {
-    LetterTokenizer::LetterTokenizer(ReaderPtr input) : CharTokenizer(input)
+    LetterTokenizer::LetterTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input) : CharTokenizer(matchVersion, input)
     {
     }
     
-    LetterTokenizer::LetterTokenizer(AttributeSourcePtr source, ReaderPtr input) : CharTokenizer(source, input)
+    LetterTokenizer::LetterTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : CharTokenizer(matchVersion, source, input)
     {
     }
     
-    LetterTokenizer::LetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : CharTokenizer(factory, input)
+    LetterTokenizer::LetterTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : CharTokenizer(matchVersion, factory, input)
+    {
+    }
+    
+    LetterTokenizer::LetterTokenizer(ReaderPtr input) : CharTokenizer(LuceneVersion::LUCENE_30, input)
+    {
+    }
+    
+    LetterTokenizer::LetterTokenizer(AttributeSourcePtr source, ReaderPtr input) : CharTokenizer(LuceneVersion::LUCENE_30, source, input)
+    {
+    }
+    
+    LetterTokenizer::LetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : CharTokenizer(LuceneVersion::LUCENE_30, factory, input)
     {
     }
     

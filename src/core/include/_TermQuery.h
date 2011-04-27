@@ -8,6 +8,7 @@
 #define _TERMQUERY_H
 
 #include "Weight.h"
+#include "ReaderUtil.h"
 
 namespace Lucene
 {
@@ -27,6 +28,7 @@ namespace Lucene
         double queryNorm;
         double queryWeight;
         IDFExplanationPtr idfExp;
+        HashSet<int32_t> hash;
     
     public:
         virtual String toString();
@@ -36,6 +38,23 @@ namespace Lucene
         virtual void normalize(double norm);
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
         virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+    };
+    
+    class TermQueryReaderGather : public ReaderGather
+    {
+    public:
+        TermQueryReaderGather(TermQueryPtr query, IntArray dfSum, HashSet<int32_t> hash, IndexReaderPtr r);
+        virtual ~TermQueryReaderGather();
+        
+        LUCENE_CLASS(TermQueryReaderGather);
+    
+    protected:
+        TermQueryWeakPtr _query;
+        IntArray dfSum;
+        HashSet<int32_t> hash;
+    
+    protected:
+        virtual void add(int32_t base, IndexReaderPtr r);
     };
 }
 

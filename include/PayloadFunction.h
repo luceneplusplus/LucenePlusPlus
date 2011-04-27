@@ -39,6 +39,8 @@ namespace Lucene
         virtual double currentScore(int32_t docId, const String& field, int32_t start, int32_t end, int32_t numPayloadsSeen, 
                                     double currentScore, double currentPayloadScore) = 0;
 
+        virtual ExplanationPtr explain(int32_t docId, int32_t numPayloadsSeen, double payloadScore);
+        
         /// Calculate the final score for all the payloads seen so far for this doc/field
         /// @param docId The current doc
         /// @param field The current field

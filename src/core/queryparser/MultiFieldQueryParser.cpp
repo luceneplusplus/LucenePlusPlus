@@ -36,7 +36,7 @@ namespace Lucene
             Collection<BooleanClausePtr> clauses(Collection<BooleanClausePtr>::newInstance());
             for (Collection<String>::iterator field = fields.begin(); field != fields.end(); ++field)
             {
-                QueryPtr query(QueryParser::getFieldQuery(*field, queryText));
+                QueryPtr query(QueryParser::getFieldQuery(*field, queryText, true));
                 if (query)
                 {
                     // If the user passes a map of boosts
@@ -55,22 +55,46 @@ namespace Lucene
                 return QueryPtr();
             return getBooleanQuery(clauses, true);
         }
-        QueryPtr query(QueryParser::getFieldQuery(field, queryText));
+        QueryPtr query(QueryParser::getFieldQuery(field, queryText, true));
         applySlop(query, slop);
         return query;
     }
     
-    QueryPtr MultiFieldQueryParser::getFieldQuery(const String& field, const String& queryText)
+    QueryPtr MultiFieldQueryParser::getFieldQuery(const String& field, const String& queryText, bool quoted)
     {
-        return getFieldQuery(field, queryText, 0);
+        if (field.empty())
+        {
+            Collection<BooleanClausePtr> clauses(Collection<BooleanClausePtr>::newInstance());
+            for (Collection<String>::iterator field = fields.begin(); field != fields.end(); ++field)
+            {
+                QueryPtr query(QueryParser::getFieldQuery(*field, queryText, quoted));
+                if (query)
+                {
+                    // If the user passes a map of boosts
+                    if (boosts)
+                    {
+                        // Get the boost from the map and apply them
+                        MapStringDouble::iterator boost = boosts.find(*field);
+                        if (boost != boosts.end())
+                            query->setBoost(boost->second);
+                    }
+                    clauses.add(newLucene<BooleanClause>(query, BooleanClause::SHOULD));
+                }
+            }
+            if (clauses.empty()) // happens for stopwords
+                return QueryPtr();
+            return getBooleanQuery(clauses, true);
+        }
+        QueryPtr query(QueryParser::getFieldQuery(field, queryText, quoted));
+        return query;
     }
     
     void MultiFieldQueryParser::applySlop(QueryPtr query, int32_t slop)
     {
         if (MiscUtils::typeOf<PhraseQuery>(query))
-            boost::dynamic_pointer_cast<PhraseQuery>(query)->setSlop(slop);
+            boost::static_pointer_cast<PhraseQuery>(query)->setSlop(slop);
         if (MiscUtils::typeOf<MultiPhraseQuery>(query))
-            boost::dynamic_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
+            boost::static_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
     }
     
     QueryPtr MultiFieldQueryParser::getFuzzyQuery(const String& field, const String& termStr, double minSimilarity)
@@ -130,7 +154,7 @@ namespace Lucene
         {
             QueryParserPtr queryParser(newLucene<QueryParser>(matchVersion, fields[i], analyzer));
             QueryPtr query(queryParser->parse(queries[i]));
-            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !boost::dynamic_pointer_cast<BooleanQuery>(query)->getClauses().empty()))
+            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !boost::static_pointer_cast<BooleanQuery>(query)->getClauses().empty()))
                 booleanQuery->add(query, BooleanClause::SHOULD);
         }
         return booleanQuery;
@@ -145,7 +169,7 @@ namespace Lucene
         {
             QueryParserPtr queryParser(newLucene<QueryParser>(matchVersion, fields[i], analyzer));
             QueryPtr q(queryParser->parse(query));
-            if (q && (!MiscUtils::typeOf<BooleanQuery>(q) || !boost::dynamic_pointer_cast<BooleanQuery>(q)->getClauses().empty()))
+            if (q && (!MiscUtils::typeOf<BooleanQuery>(q) || !boost::static_pointer_cast<BooleanQuery>(q)->getClauses().empty()))
                 booleanQuery->add(q, flags[i]);
         }
         return booleanQuery;
@@ -160,7 +184,7 @@ namespace Lucene
         {
             QueryParserPtr queryParser(newLucene<QueryParser>(matchVersion, fields[i], analyzer));
             QueryPtr query(queryParser->parse(queries[i]));
-            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !boost::dynamic_pointer_cast<BooleanQuery>(query)->getClauses().empty()))
+            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !boost::static_pointer_cast<BooleanQuery>(query)->getClauses().empty()))
                 booleanQuery->add(query, flags[i]);
         }
         return booleanQuery;

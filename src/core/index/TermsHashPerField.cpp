@@ -10,17 +10,19 @@
 #include "TermsHashConsumerPerThread.h"
 #include "TermsHashConsumerPerField.h"
 #include "TermsHash.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "AttributeSource.h"
 #include "DocInverterPerField.h"
 #include "DocumentsWriter.h"
+#include "_DocumentsWriter.h"
 #include "IntBlockPool.h"
 #include "CharBlockPool.h"
 #include "ByteSliceReader.h"
-#include "RawPostingList.h"
 #include "FieldInvertState.h"
 #include "UTF8Stream.h"
 #include "MiscUtils.h"
+#include "ParallelPostingsArray.h"
+#include "ByteBlockPool.h"
 
 namespace Lucene
 {
@@ -43,7 +45,6 @@ namespace Lucene
         this->postingsHashSize = 4;
         this->postingsHashHalfSize = this->postingsHashSize / 2;
         this->postingsHashMask = this->postingsHashSize - 1;
-        this->postingsHash = Collection<RawPostingListPtr>::newInstance(postingsHashSize);
         this->doCall = false;
         this->doNextCall = false;
         this->intUptoStart = 0;
@@ -53,13 +54,33 @@ namespace Lucene
         charPool = perThread->charPool;
         bytePool = perThread->bytePool;
         docState = perThread->docState;
+
+        postingsHash = IntArray::newInstance(postingsHashSize);
+        MiscUtils::arrayFill(postingsHash.get(), 0, postingsHash.size(), -1);
+        bytesUsed(postingsHashSize * sizeof(int32_t));
+        
         DocInverterPerFieldPtr docInverterPerField(_docInverterPerField);
         fieldState = docInverterPerField->fieldState;
         this->consumer = perThread->consumer->addField(shared_from_this(), fieldInfo);
+        initPostingsArray();
+        
         streamCount = consumer->getStreamCount();
         numPostingInt = 2 * streamCount;
         if (nextPerThread)
-            nextPerField = boost::dynamic_pointer_cast<TermsHashPerField>(nextPerThread->addField(docInverterPerField, fieldInfo));
+            nextPerField = boost::static_pointer_cast<TermsHashPerField>(nextPerThread->addField(docInverterPerField, fieldInfo));
+    }
+    
+    void TermsHashPerField::initPostingsArray()
+    {
+        postingsArray = consumer->createPostingsArray(2);
+        bytesUsed(postingsArray->size * postingsArray->bytesPerPosting());
+    }
+    
+    void TermsHashPerField::bytesUsed(int64_t size)
+    {
+        TermsHashPtr termsHash(TermsHashPerThreadPtr(_perThread)->_termsHash);
+        if (termsHash->trackAllocations)
+            DocumentsWriterPtr(termsHash->_docWriter)->bytesUsed(size);
     }
     
     void TermsHashPerField::shrinkHash(int32_t targetSize)
@@ -69,12 +90,21 @@ namespace Lucene
         int32_t newSize = 4;
         if (newSize != postingsHash.size())
         {
+            int64_t previousSize = postingsHash.size();
             postingsHash.resize(newSize);
+            bytesUsed((newSize - previousSize) * sizeof(int32_t));
+            MiscUtils::arrayFill(postingsHash.get(), 0, postingsHash.size(), -1);
             postingsHashSize = newSize;
             postingsHashHalfSize = newSize / 2;
             postingsHashMask = newSize - 1;
         }
-        MiscUtils::arrayFill(postingsHash.begin(), 0, postingsHash.size(), RawPostingListPtr());
+        
+        // Fully free the postings array on each flush
+        if (postingsArray)
+        {
+            bytesUsed(-postingsArray->bytesPerPosting() * postingsArray->size);
+            postingsArray.reset();
+        }
     }
     
     void TermsHashPerField::reset()
@@ -84,8 +114,7 @@ namespace Lucene
         BOOST_ASSERT(numPostings <= postingsHash.size());
         if (numPostings > 0)
         {
-            TermsHashPtr(TermsHashPerThreadPtr(_perThread)->_termsHash)->recyclePostings(postingsHash, numPostings);
-            MiscUtils::arrayFill(postingsHash.begin(), 0, numPostings, RawPostingListPtr());
+            MiscUtils::arrayFill(postingsHash.get(), 0, postingsHash.size(), -1);
             numPostings = 0;
         }
         postingsCompacted = false;
@@ -101,91 +130,103 @@ namespace Lucene
             nextPerField->abort();
     }
     
-    void TermsHashPerField::initReader(ByteSliceReaderPtr reader, RawPostingListPtr p, int32_t stream)
+    void TermsHashPerField::growParallelPostingsArray()
+    {
+        int32_t oldSize = postingsArray->size;
+        this->postingsArray = this->postingsArray->grow();
+        bytesUsed(postingsArray->bytesPerPosting() * (postingsArray->size - oldSize));
+    }
+    
+    void TermsHashPerField::initReader(ByteSliceReaderPtr reader, int32_t termID, int32_t stream)
     {
         BOOST_ASSERT(stream < streamCount);
-        IntArray ints(intPool->buffers[p->intStart >> DocumentsWriter::INT_BLOCK_SHIFT]);
-        int32_t upto = (p->intStart & DocumentsWriter::INT_BLOCK_MASK);
-        reader->init(bytePool, p->byteStart + stream * ByteBlockPool::FIRST_LEVEL_SIZE(), ints[upto + stream]);
+        int32_t intStart = postingsArray->intStarts[termID];
+        IntArray ints = (intPool->buffers[intStart >> DocumentsWriter::INT_BLOCK_SHIFT]);
+        int32_t upto = (intStart & DocumentsWriter::INT_BLOCK_MASK);
+        reader->init(bytePool, postingsArray->byteStarts[termID] + stream * ByteBlockPool::FIRST_LEVEL_SIZE(), ints[upto + stream]);
     }
     
     void TermsHashPerField::compactPostings()
     {
-        SyncLock syncLock(this);
         int32_t upto = 0;
         for (int32_t i = 0; i < postingsHashSize; ++i)
         {
-            if (postingsHash[i])
+            if (postingsHash[i] != -1)
             {
                 if (upto < i)
                 {
                     postingsHash[upto] = postingsHash[i];
-                    postingsHash[i].reset();
+                    postingsHash[i] = -1;
                 }
                 ++upto;
             }
         }
-        
+
         BOOST_ASSERT(upto == numPostings);
         postingsCompacted = true;
     }
     
     struct comparePostings
     {
-        comparePostings(Collection<CharArray> buffers)
-    {
-            this->buffers = buffers;
-    }
-    
-        /// Compares term text for two Posting instance
-        inline bool operator()(const RawPostingListPtr& first, const RawPostingListPtr& second) const
-    {
-            if (first == second)
-            return false;
-        
-            wchar_t* text1 = buffers[first->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
-            int32_t pos1 = (first->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-            wchar_t* text2 = buffers[second->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
-            int32_t pos2 = (second->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-        
-        BOOST_ASSERT(text1 != text2 || pos1 != pos2);
-        
-        while (true)
+        comparePostings(ParallelPostingsArrayPtr postingsArray, Collection<CharArray> buffers)
         {
-            wchar_t c1 = text1[pos1++];
-            wchar_t c2 = text2[pos2++];
-            if (c1 != c2)
-            {
-                if (c2 == UTF8Base::UNICODE_TERMINATOR)
-                    return false;
-                else if (c1 == UTF8Base::UNICODE_TERMINATOR)
-                    return true;
-                else
-                    return (c1 < c2);
-            }
-            else
-            {
-                    // This method should never compare equal postings unless first == second
-                BOOST_ASSERT(c1 != UTF8Base::UNICODE_TERMINATOR);
-            }
-        }
+            this->postingsArray = postingsArray;
+            this->buffers = buffers;
         }
         
+        inline bool operator()(const int32_t& first, const int32_t& second) const
+        {
+            if (first == second)
+                return false;
+                
+            int32_t textStart1 = postingsArray->textStarts[first];
+            int32_t textStart2 = postingsArray->textStarts[second];
+            wchar_t* text1 = buffers[textStart1 >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
+            int32_t pos1 = (textStart1 & DocumentsWriter::CHAR_BLOCK_MASK);
+            wchar_t* text2 = buffers[textStart2 >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
+            int32_t pos2 = (textStart2 & DocumentsWriter::CHAR_BLOCK_MASK);
+        
+            BOOST_ASSERT(text1 != text2 || pos1 != pos2);
+            
+            while (true)
+            {
+                wchar_t c1 = text1[pos1++];
+                wchar_t c2 = text2[pos2++];
+                if (c1 != c2)
+                {
+                    if (c2 == UTF8Base::UNICODE_TERMINATOR)
+                        return false;
+                    else if (c1 == UTF8Base::UNICODE_TERMINATOR)
+                        return true;
+                    else
+                        return (c1 < c2);
+                }
+                else
+                {
+                    // This method should never compare equal postings unless first == second
+                    BOOST_ASSERT(c1 != UTF8Base::UNICODE_TERMINATOR);
+                }
+            }
+        }
+        
+        ParallelPostingsArrayPtr postingsArray;
         Collection<CharArray> buffers;
     };
     
-    Collection<RawPostingListPtr> TermsHashPerField::sortPostings()
+    IntArray TermsHashPerField::sortPostings()
     {
         compactPostings();
-        std::sort(postingsHash.begin(), postingsHash.begin() + numPostings, comparePostings(charPool->buffers));
+        std::sort(postingsHash.get(), postingsHash.get() + numPostings, comparePostings(postingsArray, charPool->buffers));
         return postingsHash;
     }
     
-    bool TermsHashPerField::postingEquals(const wchar_t* tokenText, int32_t tokenTextLen)
+    bool TermsHashPerField::postingEquals(int32_t termID, const wchar_t* tokenText, int32_t tokenTextLen)
     {
-        wchar_t* text = TermsHashPerThreadPtr(_perThread)->charPool->buffers[p->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
+        int32_t textStart = postingsArray->textStarts[termID];
+
+        wchar_t* text = TermsHashPerThreadPtr(_perThread)->charPool->buffers[textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
         BOOST_ASSERT(text);
-        int32_t pos = (p->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
+        int32_t pos = (textStart & DocumentsWriter::CHAR_BLOCK_MASK);
         int32_t tokenPos = 0;
         for (; tokenPos < tokenTextLen; ++pos, ++tokenPos)
         {
@@ -197,7 +238,7 @@ namespace Lucene
     
     void TermsHashPerField::start(FieldablePtr field)
     {
-        termAtt = fieldState->attributeSource->addAttribute<TermAttribute>();
+        termAtt = fieldState->attributeSource->addAttribute<CharTermAttribute>();
         consumer->start(field);
         if (nextPerField)
             nextPerField->start(field);
@@ -206,6 +247,8 @@ namespace Lucene
     bool TermsHashPerField::start(Collection<FieldablePtr> fields, int32_t count)
     {
         doCall = consumer->start(fields, count);
+        if (!postingsArray)
+            initPostingsArray();
         if (nextPerField)
             doNextCall = nextPerField->start(fields, count);
         return (doCall || doNextCall);
@@ -221,9 +264,9 @@ namespace Lucene
         BOOST_ASSERT(!postingsCompacted);
         
         // Locate RawPostingList in hash
-        p = postingsHash[hashPos];
+        int32_t termID = postingsHash[hashPos];
         
-        if (p && p->textStart != textStart)
+        if (termID != -1 && postingsArray->textStarts[termID] != textStart)
         {
             // Conflict: keep searching different locations in the hash table.
             int32_t inc = (((code >> 8) + code) | 1);
@@ -231,29 +274,27 @@ namespace Lucene
             {
                 code += inc;
                 hashPos = (code & postingsHashMask);
-                p = postingsHash[hashPos];
+                termID = postingsHash[hashPos];
             }
-            while (p && p->textStart != textStart);
+            while (termID != -1 && postingsArray->textStarts[termID] != textStart);
         }
         
-        if (!p)
+        if (termID == -1)
         {
             // First time we are seeing this token since we last flushed the hash.
             TermsHashPerThreadPtr perThread(_perThread);
             
-            // Refill?
-            if (perThread->freePostingsCount == 0)
-                perThread->morePostings();
-            
-            // Pull next free RawPostingList from free list
-            p = perThread->freePostings[--perThread->freePostingsCount];
-            BOOST_ASSERT(p);
-            
-            p->textStart = textStart;
-            
-            BOOST_ASSERT(!postingsHash[hashPos]);
-            postingsHash[hashPos] = p;
-            ++numPostings;
+            // New posting
+            termID = numPostings++;
+            if (termID >= postingsArray->size)
+                growParallelPostingsArray();
+
+            BOOST_ASSERT(termID >= 0);
+
+            postingsArray->textStarts[termID] = textStart;
+
+            BOOST_ASSERT(postingsHash[hashPos] == -1);
+            postingsHash[hashPos] = termID;
             
             if (numPostings == postingsHashHalfSize)
                 rehashPostings(2 * postingsHashSize);
@@ -269,22 +310,23 @@ namespace Lucene
             intUptoStart = intPool->intUpto;
             intPool->intUpto += streamCount;
             
-            p->intStart = intUptoStart + intPool->intOffset;
+            postingsArray->intStarts[termID] = intUptoStart + intPool->intOffset;
             
             for (int32_t i = 0; i < streamCount; ++i)
             {
                 int32_t upto = bytePool->newSlice(ByteBlockPool::FIRST_LEVEL_SIZE());
                 intUptos[intUptoStart + i] = upto + bytePool->byteOffset;
             }
-            p->byteStart = intUptos[intUptoStart];
+            postingsArray->byteStarts[termID] = intUptos[intUptoStart];
             
-            consumer->newTerm(p);
+            consumer->newTerm(termID);
         }
         else
         {
-            intUptos = intPool->buffers[p->intStart >> DocumentsWriter::INT_BLOCK_SHIFT];
-            intUptoStart = (p->intStart & DocumentsWriter::INT_BLOCK_MASK);
-            consumer->addTerm(p);
+            int32_t intStart = postingsArray->intStarts[termID];
+            intUptos = intPool->buffers[intStart >> DocumentsWriter::INT_BLOCK_SHIFT];
+            intUptoStart = (intStart & DocumentsWriter::INT_BLOCK_MASK);
+            consumer->addTerm(termID);
         }
     }
     
@@ -293,8 +335,8 @@ namespace Lucene
         BOOST_ASSERT(!postingsCompacted);
         
         // Get the text of this term.
-        wchar_t* tokenText = termAtt->termBufferArray();
-        int32_t tokenTextLen = termAtt->termLength();
+        wchar_t* tokenText = termAtt->bufferArray();
+        int32_t tokenTextLen = termAtt->length();
         
         // Compute hashcode and replace any invalid UTF16 sequences
         int32_t downto = tokenTextLen;
@@ -352,9 +394,9 @@ namespace Lucene
         int32_t hashPos = (code & postingsHashMask);
         
         // Locate RawPostingList in hash
-        p = postingsHash[hashPos];
+        int32_t termID = postingsHash[hashPos];
         
-        if (p && !postingEquals(tokenText, tokenTextLen))
+        if (termID != -1 && !postingEquals(termID, tokenText, tokenTextLen))
         {
             // Conflict: keep searching different locations in the hash table.
             int32_t inc = (((code >> 8) + code) | 1);
@@ -362,12 +404,12 @@ namespace Lucene
             {
                 code += inc;
                 hashPos = (code & postingsHashMask);
-                p = postingsHash[hashPos];
+                termID = postingsHash[hashPos];
             }
-            while (p && !postingEquals(tokenText, tokenTextLen));
+            while (termID != -1 && !postingEquals(termID, tokenText, tokenTextLen));
         }
             
-        if (!p)
+        if (termID == -1)
         {
             // First time we are seeing this token since we last flushed the hash.
             int32_t textLen1 = 1 + tokenTextLen;
@@ -390,29 +432,30 @@ namespace Lucene
             
             TermsHashPerThreadPtr perThread(_perThread);
             
-            // Refill?
-            if (perThread->freePostingsCount == 0)
-                perThread->morePostings();
-            
-            // Pull next free RawPostingList from free list
-            p = perThread->freePostings[--perThread->freePostingsCount];
-            BOOST_ASSERT(p);
+            // New posting
+            termID = numPostings++;
+            if (termID >= postingsArray->size)
+                growParallelPostingsArray();
+
+            BOOST_ASSERT(termID != -1);
             
             wchar_t* text = charPool->buffer.get();
             int32_t textUpto = charPool->charUpto;
             
-            p->textStart = textUpto + charPool->charOffset;
+            postingsArray->textStarts[termID] = textUpto + charPool->charOffset;
             charPool->charUpto += textLen1;
             
             MiscUtils::arrayCopy(tokenText, 0, text, textUpto, tokenTextLen);
             text[textUpto + tokenTextLen] = UTF8Base::UNICODE_TERMINATOR;
             
-            BOOST_ASSERT(!postingsHash[hashPos]);
-            postingsHash[hashPos] = p;
-            ++numPostings;
+            BOOST_ASSERT(postingsHash[hashPos] == -1);
+            postingsHash[hashPos] = termID;
             
             if (numPostings == postingsHashHalfSize)
+            {
                 rehashPostings(2 * postingsHashSize);
+                bytesUsed(2 * numPostings * sizeof(int32_t));
+            }
             
             // Init stream slices
             if (numPostingInt + intPool->intUpto > DocumentsWriter::INT_BLOCK_SIZE)
@@ -425,26 +468,27 @@ namespace Lucene
             intUptoStart = intPool->intUpto;
             intPool->intUpto += streamCount;
             
-            p->intStart = intUptoStart + intPool->intOffset;
+            postingsArray->intStarts[termID] = intUptoStart + intPool->intOffset;
             
             for (int32_t i = 0; i < streamCount; ++i)
             {
                 int32_t upto = bytePool->newSlice(ByteBlockPool::FIRST_LEVEL_SIZE());
                 intUptos[intUptoStart + i] = upto + bytePool->byteOffset;
             }
-            p->byteStart = intUptos[intUptoStart];
+            postingsArray->byteStarts[termID] = intUptos[intUptoStart];
             
-            consumer->newTerm(p);
+            consumer->newTerm(termID);
         }
         else
         {
-            intUptos = intPool->buffers[p->intStart >> DocumentsWriter::INT_BLOCK_SHIFT];
-            intUptoStart = (p->intStart & DocumentsWriter::INT_BLOCK_MASK);
-            consumer->addTerm(p);
+            int32_t intStart = postingsArray->intStarts[termID];
+            intUptos = intPool->buffers[intStart >> DocumentsWriter::INT_BLOCK_SHIFT];
+            intUptoStart = (intStart & DocumentsWriter::INT_BLOCK_MASK);
+            consumer->addTerm(termID);
         }
         
         if (doNextCall)
-            nextPerField->add(p->textStart);
+            nextPerField->add(postingsArray->textStarts[termID]);
     }
     
     void TermsHashPerField::writeByte(int32_t stream, int8_t b)
@@ -493,19 +537,21 @@ namespace Lucene
     {
         int32_t newMask = newSize - 1;
         
-        Collection<RawPostingListPtr> newHash(Collection<RawPostingListPtr>::newInstance(newSize));
+        IntArray newHash(IntArray::newInstance(newSize));
+        MiscUtils::arrayFill(newHash.get(), 0, newHash.size(), -1);
         TermsHashPerThreadPtr perThread(_perThread);
         
         for (int32_t i = 0; i < postingsHashSize; ++i)
         {
-            RawPostingListPtr p0(postingsHash[i]);
-            if (p0)
+            int32_t termID = postingsHash[i];
+            if (termID != -1)
             {
                 int32_t code;
                 if (perThread->primary)
                 {
-                    int32_t start = (p0->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-                    CharArray text = charPool->buffers[p0->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
+                    int32_t textStart = postingsArray->textStarts[termID];
+                    int32_t start = (textStart & DocumentsWriter::CHAR_BLOCK_MASK);
+                    CharArray text = charPool->buffers[textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
                     int32_t pos = start;
                     while (text[pos] != UTF8Base::UNICODE_TERMINATOR)
                         ++pos;
@@ -514,11 +560,11 @@ namespace Lucene
                         code = (code * 31) + text[--pos];
                 }
                 else
-                    code = p0->textStart;
+                    code = postingsArray->textStarts[termID];
                 
                 int32_t hashPos = (code & newMask);
                 BOOST_ASSERT(hashPos >= 0);
-                if (newHash[hashPos])
+                if (newHash[hashPos] != -1)
                 {
                     int32_t inc = (((code >> 8) + code) | 1);
                     do
@@ -526,9 +572,9 @@ namespace Lucene
                         code += inc;
                         hashPos = (code & newMask);
                     }
-                    while (newHash[hashPos]);
+                    while (newHash[hashPos] != -1);
                 }
-                newHash[hashPos] = p0;
+                newHash[hashPos] = termID;
             }
         }
         

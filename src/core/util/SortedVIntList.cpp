@@ -95,8 +95,8 @@ namespace Lucene
         
         if (!bytes || (lastBytePos + MAX_BYTES_PER_INT) > bytes.size())
         {
-            // biggest possible int does not fit
-            bytes.resize((bytes.size() * 2) + MAX_BYTES_PER_INT);
+            // Biggest possible int does not fit.
+            MiscUtils::grow(bytes, lastBytePos + MAX_BYTES_PER_INT);
         }
         
         // See IndexOutput.writeVInt()

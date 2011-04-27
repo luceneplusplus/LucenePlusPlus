@@ -16,14 +16,9 @@ namespace Lucene
     class LPPAPI SegmentInfo : public LuceneObject
     {
     public:
-        SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir);
-        
-        SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, bool hasSingleNormFile);
+        SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, bool hasSingleNormFile, 
+                    bool hasProx, bool hasVectors);
                     
-        SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, 
-                    bool hasSingleNormFile, int32_t docStoreOffset, const String& docStoreSegment,
-                    bool docStoreIsCompoundFile, bool hasProx);
-        
         /// Construct a new SegmentInfo instance by reading a previously saved SegmentInfo from input.
         /// @param dir directory to load from.
         /// @param format format of the segments info file.
@@ -67,8 +62,11 @@ namespace Lucene
         // cached list of files that this segment uses in the Directory
         HashSet<String> _files;
         
+        // total byte size of all but the store files (computed on demand)
+        int64_t sizeInBytesNoStore;
+        
         // total byte size of all of our files (computed on demand)
-        int64_t _sizeInBytes;
+        int64_t sizeInBytesWithStore;
         
         // if this segment shares stored fields & vectors, this offset is where in that file this segment's 
         // docs begin
@@ -86,7 +84,15 @@ namespace Lucene
         // True if this segment has any fields with omitTermFreqAndPositions == false
         bool hasProx;
         
+        // True if this segment wrote term vectors
+        bool hasVectors;
+        
         MapStringString diagnostics;
+        
+        // Tracks the Lucene version this segment was created with, since 3.1. The format expected is 
+        // "x.y" - "2.x" for pre-3.0 indexes, and specific versions afterwards ("3.0", "3.1" etc.).
+        // see Constants::LUCENE_MAIN_VERSION.
+        String version;
                             
     public:
         String name; // unique name in dir
@@ -102,8 +108,12 @@ namespace Lucene
         
         void setNumFields(int32_t numFields);
         
-        /// Returns total size in bytes of all of files used by this segment.
-        int64_t sizeInBytes();
+        /// Returns total size in bytes of all of files used by this segment (if {@code includeDocStores} 
+        /// is true), or the size of all files except the store files otherwise.
+        int64_t sizeInBytes(bool includeDocStores);
+        
+        bool getHasVectors();
+        void setHasVectors(bool v);
         
         bool hasDeletions();
         void advanceDelGen();
@@ -141,6 +151,7 @@ namespace Lucene
         bool getDocStoreIsCompoundFile();
         void setDocStoreIsCompoundFile(bool v);
         String getDocStoreSegment();
+        void setDocStoreSegment(const String& segment);
         void setDocStoreOffset(int32_t offset);
         void setDocStore(int32_t offset, const String& segment, bool isCompoundFile);
         
@@ -154,13 +165,29 @@ namespace Lucene
         /// you should not modify it.
         HashSet<String> files();
         
-        /// Used for debugging.
-        String segString(DirectoryPtr dir);
+        virtual String toString();
+        
+        /// Used for debugging.  Format may suddenly change.
+        ///
+        /// Current format looks like _a(3.1):c45/4->_1, which means the segment's name is _a; it was created 
+        /// with Lucene 3.1 (or '?' if it's unknown); it's using compound file format (would be C if not compound); 
+        /// it has 45 documents; it has 4 deletions (this part is left off when there are no deletions); it's 
+        /// using the shared doc stores named _1 (this part is left off if doc stores are private).
+        String toString(DirectoryPtr dir, int32_t pendingDelCount);
         
         /// We consider another SegmentInfo instance equal if it has the same dir and same name.
         virtual bool equals(LuceneObjectPtr other);        
         
         virtual int32_t hashCode();
+        
+        /// Used by SegmentInfos to upgrade segments that do not record their code version (either "2.x" or "3.0").
+        ///
+        /// NOTE: this method is used for internal purposes only - you should not modify the version of a 
+        /// SegmentInfo, or it may result in unexpected exceptions thrown when you attempt to open the index.
+        void setVersion(const String& version);
+        
+        /// Returns the version of the code which wrote the segment.
+        String getVersion();
         
     protected:
         void addIfExists(HashSet<String> files, const String& fileName);

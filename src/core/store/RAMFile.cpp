@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "RAMFile.h"
 #include "RAMDirectory.h"
+#include "AtomicLong.h"
 #include "MiscUtils.h"
 
 namespace Lucene
@@ -67,10 +68,8 @@ namespace Lucene
         
         RAMDirectoryPtr directory(_directory.lock());
         if (directory)
-        {
-            SyncLock dirLock(directory);
-            directory->_sizeInBytes += size;
-        }
+            directory->_sizeInBytes->getAndAdd(size);
+
         return buffer;
     }
     

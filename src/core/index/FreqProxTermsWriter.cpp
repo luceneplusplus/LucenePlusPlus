@@ -20,7 +20,6 @@
 #include "FormatPostingsPositionsConsumer.h"
 #include "FieldInfo.h"
 #include "ByteSliceReader.h"
-#include "RawPostingList.h"
 #include "DocumentsWriter.h"
 #include "UTF8Stream.h"
 #include "TestPoint.h"
@@ -34,13 +33,6 @@ namespace Lucene
     TermsHashConsumerPerThreadPtr FreqProxTermsWriter::addThread(TermsHashPerThreadPtr perThread)
     {
         return newLucene<FreqProxTermsWriterPerThread>(perThread);
-    }
-    
-    void FreqProxTermsWriter::createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count)
-    {
-        int32_t end = start + count;
-        for (int32_t i = start; i < end; ++i)
-            postings[i] = newLucene<FreqProxTermsWriterPostingList>();
     }
     
     int32_t FreqProxTermsWriter::compareText(const wchar_t* text1, int32_t pos1, const wchar_t* text2, int32_t pos2)
@@ -61,10 +53,6 @@ namespace Lucene
             else if (c1 == UTF8Base::UNICODE_TERMINATOR)
                 return 0;
         }
-    }
-    
-    void FreqProxTermsWriter::closeDocStore(SegmentWriteStatePtr state)
-    {
     }
     
     void FreqProxTermsWriter::abort()
@@ -274,22 +262,5 @@ namespace Lucene
         }
         
         termsConsumer->finish();
-    }
-    
-    int32_t FreqProxTermsWriter::bytesPerPosting()
-    {
-        return RawPostingList::BYTES_SIZE + 4 * DocumentsWriter::INT_NUM_BYTE;
-    }
-    
-    FreqProxTermsWriterPostingList::FreqProxTermsWriterPostingList()
-    {
-        docFreq = 0;
-        lastDocID = 0;
-        lastDocCode = 0;
-        lastPosition = 0;
-    }
-    
-    FreqProxTermsWriterPostingList::~FreqProxTermsWriterPostingList()
-    {
     }
 }

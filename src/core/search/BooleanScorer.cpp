@@ -6,26 +6,26 @@
 
 #include "LuceneInc.h"
 #include "BooleanScorer.h"
+#include "_BooleanScorer.h"
 #include "Similarity.h"
+#include "Weight.h"
 
 namespace Lucene
 {
-    BooleanScorer::BooleanScorer(SimilarityPtr similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers) : Scorer(similarity)
+    BooleanScorer::BooleanScorer(WeightPtr weight, bool disableCoord, SimilarityPtr similarity, int32_t minNrShouldMatch, 
+                                 Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers, int32_t maxCoord) : Scorer(weight)
     {
         this->bucketTable = newLucene<BucketTable>();
-        this->maxCoord = 1;
-        this->requiredMask = 0;
         this->prohibitedMask = 0;
         this->nextMask = 1;
         this->minNrShouldMatch = minNrShouldMatch;
         this->end = 0;
         this->doc = -1;
-        
+                
         if (optionalScorers && !optionalScorers.empty())
         {
             for (Collection<ScorerPtr>::iterator scorer = optionalScorers.begin(); scorer != optionalScorers.end(); ++scorer)
             {
-                ++maxCoord;
                 if ((*scorer)->nextDoc() != NO_MORE_DOCS)
                     scorers = newLucene<SubScorer>(*scorer, false, false, bucketTable->newCollector(0), scorers);
             }
@@ -43,10 +43,9 @@ namespace Lucene
             }
         }
         
-        coordFactors = Collection<double>::newInstance(maxCoord);
-        SimilarityPtr sim(getSimilarity());
-        for (int32_t i = 0; i < maxCoord; ++i)
-            coordFactors[i] = sim->coord(i, maxCoord - 1); 
+        coordFactors = DoubleArray::newInstance(optionalScorers.size() + 1);
+        for (int32_t i = 0; i < coordFactors.size(); ++i)
+            coordFactors[i] = disableCoord ? 1.0 : similarity->coord(i, maxCoord); 
     }
     
     BooleanScorer::~BooleanScorer()
@@ -57,7 +56,7 @@ namespace Lucene
     {
         bool more = false;
         BucketPtr tmp;
-        BucketScorerPtr bs(newLucene<BucketScorer>());
+        BucketScorerPtr bs(newLucene<BucketScorer>(weight));
         // The internal loop will set the score and doc before calling collect.
         collector->setScorer(bs);
         do
@@ -66,8 +65,8 @@ namespace Lucene
             
             while (current) // more queued
             {
-                // check prohibited & required
-                if ((current->bits & prohibitedMask) == 0 && (current->bits & requiredMask) == requiredMask)
+                // check prohibited and required
+                if ((current->bits & prohibitedMask) == 0)
                 {
                     if (current->doc >= max)
                     {
@@ -82,6 +81,7 @@ namespace Lucene
                     {
                         bs->_score = current->score * coordFactors[current->coord];
                         bs->doc = current->doc;
+                        bs->_freq = current->coord;
                         collector->collect(current->doc);
                     }
                 }
@@ -137,8 +137,8 @@ namespace Lucene
                 current = bucketTable->first;
                 bucketTable->first = current->_next.lock(); // pop the queue
                 
-                // check prohibited & required and minNrShouldMatch
-                if ((current->bits & prohibitedMask) == 0 && (current->bits & requiredMask) == requiredMask && current->coord >= minNrShouldMatch)
+                // check prohibited and required and minNrShouldMatch
+                if ((current->bits & prohibitedMask) == 0 && current->coord >= minNrShouldMatch)
                 {
                     doc = current->doc;
                     return doc;
@@ -151,16 +151,12 @@ namespace Lucene
             
             for (SubScorerPtr sub(scorers); sub; sub = sub->next)
             {
-                ScorerPtr scorer(sub->scorer);
-                sub->collector->setScorer(scorer);
-                int32_t doc = scorer->docID();
-                while (doc < end)
+                int32_t subScorerDocID = sub->scorer->docID();
+                if (subScorerDocID != NO_MORE_DOCS)
                 {
-                    sub->collector->collect(doc);
-                    doc = scorer->nextDoc();
+                    if (sub->scorer->score(sub->collector, end, subScorerDocID))
+                        more = true;
                 }
-                if (doc != NO_MORE_DOCS)
-                    more = true;
             }
         }
         while (bucketTable->first || more);
@@ -187,6 +183,22 @@ namespace Lucene
             buffer << sub->scorer->toString() << L" ";
         buffer << L")";
         return buffer.str();
+    }
+    
+    void BooleanScorer::visitSubScorers(QueryPtr parent, BooleanClause::Occur relationship, ScorerVisitorPtr visitor)
+    {
+        Scorer::visitSubScorers(parent, relationship, visitor);
+        QueryPtr q(weight->getQuery());
+        SubScorerPtr sub(scorers);
+        while (sub)
+        {
+            if (!sub->prohibited)
+                relationship = BooleanClause::SHOULD;
+            else
+                relationship = BooleanClause::MUST_NOT;
+            sub->scorer->visitSubScorers(q, relationship, visitor);
+            sub = sub->next;
+        }
     }
     
     BooleanScorerCollector::BooleanScorerCollector(int32_t mask, BucketTablePtr bucketTable)
@@ -243,10 +255,11 @@ namespace Lucene
         return true;
     }
     
-    BucketScorer::BucketScorer() : Scorer(SimilarityPtr())
+    BucketScorer::BucketScorer(WeightPtr weight) : Scorer(weight)
     {
         _score = 0;
         doc = NO_MORE_DOCS;
+        this->_freq = 0;
     }
     
     BucketScorer::~BucketScorer()
@@ -261,6 +274,11 @@ namespace Lucene
     int32_t BucketScorer::docID()
     {
         return doc;
+    }
+    
+    double BucketScorer::freq()
+    {
+        return _freq;
     }
     
     int32_t BucketScorer::nextDoc()
@@ -309,8 +327,9 @@ namespace Lucene
     
     SubScorer::SubScorer(ScorerPtr scorer, bool required, bool prohibited, CollectorPtr collector, SubScorerPtr next)
     {
+        if (required)
+            boost::throw_exception(IllegalArgumentException(L"this scorer cannot handle required=true"));
         this->scorer = scorer;
-        this->required = required;
         this->prohibited = prohibited;
         this->collector = collector;
         this->next = next;

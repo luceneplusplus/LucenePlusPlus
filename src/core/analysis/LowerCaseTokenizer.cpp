@@ -10,15 +10,27 @@
 
 namespace Lucene
 {
-    LowerCaseTokenizer::LowerCaseTokenizer(ReaderPtr input) : LetterTokenizer(input)
+    LowerCaseTokenizer::LowerCaseTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input) : LetterTokenizer(matchVersion, input)
     {
     }
     
-    LowerCaseTokenizer::LowerCaseTokenizer(AttributeSourcePtr source, ReaderPtr input) : LetterTokenizer(source, input)
+    LowerCaseTokenizer::LowerCaseTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : LetterTokenizer(matchVersion, source, input)
     {
     }
     
-    LowerCaseTokenizer::LowerCaseTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : LetterTokenizer(factory, input)
+    LowerCaseTokenizer::LowerCaseTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : LetterTokenizer(matchVersion, factory, input)
+    {
+    }
+    
+    LowerCaseTokenizer::LowerCaseTokenizer(ReaderPtr input) : LetterTokenizer(LuceneVersion::LUCENE_30, input)
+    {
+    }
+    
+    LowerCaseTokenizer::LowerCaseTokenizer(AttributeSourcePtr source, ReaderPtr input) : LetterTokenizer(LuceneVersion::LUCENE_30, source, input)
+    {
+    }
+    
+    LowerCaseTokenizer::LowerCaseTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : LetterTokenizer(LuceneVersion::LUCENE_30, factory, input)
     {
     }
     

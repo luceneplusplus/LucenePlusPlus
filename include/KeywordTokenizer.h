@@ -29,11 +29,11 @@ namespace Lucene
         
         bool done;
         int32_t finalOffset;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
     
     protected:
-        void init(int32_t bufferSize);
+        void ConstructKeywordTokenizer(int32_t bufferSize);
     
     public:
         virtual bool incrementToken();

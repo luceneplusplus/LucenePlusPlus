@@ -25,7 +25,7 @@ namespace Lucene
 
     INTERNAL:
         BitVectorPtr deletedDocs;
-        SegmentReaderRefPtr deletedDocsRef;
+        AtomicLongPtr deletedDocsRef;
         CoreReadersPtr core;
         FieldsReaderLocalPtr fieldsReaderLocal;
         SegmentInfoPtr rollbackSegmentInfo;
@@ -54,7 +54,7 @@ namespace Lucene
         
         // optionally used for the .nrm file shared by multiple norms
         IndexInputPtr singleNormStream;
-        SegmentReaderRefPtr singleNormRef;
+        AtomicLongPtr singleNormRef;
         
     public:
         virtual void initialize();
@@ -70,6 +70,9 @@ namespace Lucene
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         virtual LuceneObjectPtr clone(bool openReadOnly, LuceneObjectPtr other = LuceneObjectPtr());
         SegmentReaderPtr reopenSegment(SegmentInfoPtr si, bool doClone, bool openReadOnly);
+        
+        virtual IndexReaderPtr reopen();
+        virtual IndexReaderPtr reopen(bool openReadOnly);
         
         static bool hasDeletions(SegmentInfoPtr si);
         
@@ -149,6 +152,8 @@ namespace Lucene
         /// terms in a given vectorized field.  If no such fields existed, the method returns null.
         virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
         
+        virtual String toString();
+        
         /// Return the name of the segment this reader is reading.
         String getSegmentName();
         
@@ -164,13 +169,15 @@ namespace Lucene
         
         /// This is necessary so that cloned SegmentReaders (which share the underlying postings data) 
         /// will map to the same entry in the FieldCache.
-        virtual LuceneObjectPtr getFieldCacheKey();
+        virtual LuceneObjectPtr getCoreCacheKey();
         virtual LuceneObjectPtr getDeletesCacheKey();
         
         /// Returns the number of unique terms (across all fields) in this reader.
         virtual int64_t getUniqueTermCount();
         
+        /// @Deprecated
         static SegmentReaderPtr getOnlySegmentReader(DirectoryPtr dir);
+        
         static SegmentReaderPtr getOnlySegmentReader(IndexReaderPtr reader);
         
         virtual int32_t getTermInfosIndexDivisor();
@@ -212,9 +219,12 @@ namespace Lucene
         
         void openNorms(DirectoryPtr cfsDir, int32_t readBufferSize);
         
+        virtual void readerFinished();
+        
         friend class ReaderPool;
         friend class IndexWriter;
         friend class Norm;
+        friend class CoreReaders;
     };
 }
 

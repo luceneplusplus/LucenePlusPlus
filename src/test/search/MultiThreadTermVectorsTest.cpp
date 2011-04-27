@@ -16,6 +16,7 @@
 #include "LuceneThread.h"
 #include "TermFreqVector.h"
 #include "MiscUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -91,8 +92,8 @@ protected:
                 temp << terms[z];
         }
         
-        if (intToEnglish(num) != temp.str())
-            BOOST_FAIL(intToEnglish(num) << "!=" << temp.str());
+        if (English::intToEnglish(num) != temp.str())
+            BOOST_FAIL(English::intToEnglish(num) << "!=" << temp.str());
     }
 };
 
@@ -111,7 +112,7 @@ public:
         for (int32_t i = 0; i < numDocs; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
-            FieldablePtr fld = newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED, Field::TERM_VECTOR_YES);
+            FieldablePtr fld = newLucene<Field>(L"field", English::intToEnglish(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED, Field::TERM_VECTOR_YES);
             doc->add(fld);
             writer->addDocument(doc);
         }

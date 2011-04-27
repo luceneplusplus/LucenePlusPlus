@@ -9,6 +9,7 @@
 #include "_TermQuery.h"
 #include "TermScorer.h"
 #include "IndexReader.h"
+#include "IndexSearcher.h"
 #include "ComplexExplanation.h"
 #include "Term.h"
 #include "TermDocs.h"
@@ -71,21 +72,31 @@ namespace Lucene
     LuceneObjectPtr TermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermQuery>(term);
-        TermQueryPtr cloneQuery(boost::dynamic_pointer_cast<TermQuery>(Query::clone(clone)));
+        TermQueryPtr cloneQuery(boost::static_pointer_cast<TermQuery>(Query::clone(clone)));
         cloneQuery->term = term;
         return cloneQuery;
     }
     
     TermWeight::TermWeight(TermQueryPtr query, SearcherPtr searcher)
     {
-        this->query = query;
-        this->similarity = query->getSimilarity(searcher);
         this->value = 0.0;
         this->idf = 0.0;
         this->queryNorm = 0.0;
         this->queryWeight = 0.0;
         
-        this->idfExp = similarity->idfExplain(query->term, searcher);
+        this->query = query;
+        this->similarity = query->getSimilarity(searcher);
+        if (MiscUtils::typeOf<IndexSearcher>(searcher))
+        {
+            hash = HashSet<int32_t>::newInstance();
+            IndexReaderPtr ir(boost::static_pointer_cast<IndexSearcher>(searcher)->getIndexReader());
+            IntArray dfSum(IntArray::newInstance(1));
+            newLucene<TermQueryReaderGather>(query, dfSum, hash, ir)->run();
+            this->idfExp = similarity->idfExplain(query->term, searcher, dfSum[0]);
+        }
+        else
+            this->idfExp = similarity->idfExplain(query->term, searcher);
+        
         idf = idfExp->getIdf();
     }
     
@@ -123,6 +134,8 @@ namespace Lucene
     
     ScorerPtr TermWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
+        if (hash && !hash.contains(reader->hashCode()))
+            return ScorerPtr();
         TermDocsPtr termDocs(reader->termDocs(query->term));
         return termDocs ? newLucene<TermScorer>(shared_from_this(), termDocs, similarity, reader->norms(query->term->field())) : ScorerPtr();
     }
@@ -185,7 +198,7 @@ namespace Lucene
         
         ExplanationPtr fieldNormExpl(newLucene<Explanation>());
         ByteArray fieldNorms(reader->norms(field));
-        double fieldNorm = fieldNorms ? Similarity::decodeNorm(fieldNorms[doc]) : 1.0;
+        double fieldNorm = fieldNorms ? similarity->decodeNormValue(fieldNorms[doc]) : 1.0;
         fieldNormExpl->setValue(fieldNorm);
         fieldNormExpl->setDescription(L"fieldNorm(field=" + field + L", doc=" + StringUtils::toString(doc) + L")");
         fieldExpl->addDetail(fieldNormExpl);
@@ -203,5 +216,24 @@ namespace Lucene
             return fieldExpl;
         
         return result;
+    }
+    
+    TermQueryReaderGather::TermQueryReaderGather(TermQueryPtr query, IntArray dfSum, HashSet<int32_t> hash, IndexReaderPtr r) : ReaderGather(r)
+    {
+        this->_query = query;
+        this->dfSum = dfSum;
+        this->hash = hash;
+    }
+    
+    TermQueryReaderGather::~TermQueryReaderGather()
+    {
+    }
+    
+    void TermQueryReaderGather::add(int32_t base, IndexReaderPtr r)
+    {
+        int32_t df = r->docFreq(TermQueryPtr(_query)->term);
+        dfSum[0] += df;
+        if (df > 0)
+            hash.add(r->hashCode());
     }
 }

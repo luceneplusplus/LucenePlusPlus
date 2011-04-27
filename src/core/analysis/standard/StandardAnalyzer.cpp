@@ -13,28 +13,29 @@
 #include "StopAnalyzer.h"
 #include "StopFilter.h"
 #include "WordlistLoader.h"
+#include "CharArraySet.h"
 
 namespace Lucene
 {
     /// Construct an analyzer with the given stop words.
     const int32_t StandardAnalyzer::DEFAULT_MAX_TOKEN_LENGTH = 255;
     
-    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion)
-    {
-        ConstructAnalyser(matchVersion, StopAnalyzer::ENGLISH_STOP_WORDS_SET());
-    }
-    
-    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopWords)
+    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopWords) : StopwordAnalyzerBase(matchVersion, stopWords)
     {
         ConstructAnalyser(matchVersion, stopWords);
     }
     
-    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, const String& stopwords)
+    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion) : StopwordAnalyzerBase(matchVersion)
+    {
+        ConstructAnalyser(matchVersion, StopAnalyzer::ENGLISH_STOP_WORDS_SET());
+    }
+    
+    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, const String& stopwords) : StopwordAnalyzerBase(matchVersion)
     {
         ConstructAnalyser(matchVersion, WordlistLoader::getWordSet(stopwords));
     }
     
-    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, ReaderPtr stopwords)
+    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, ReaderPtr stopwords) : StopwordAnalyzerBase(matchVersion)
     {
         ConstructAnalyser(matchVersion, WordlistLoader::getWordSet(stopwords));
     }
@@ -45,21 +46,10 @@ namespace Lucene
     
     void StandardAnalyzer::ConstructAnalyser(LuceneVersion::Version matchVersion, HashSet<String> stopWords)
     {
-        stopSet = stopWords;
-        enableStopPositionIncrements = StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion);
-        replaceInvalidAcronym = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_24);
+        this->stopwords = newLucene<CharArraySet>(matchVersion, stopWords, false);
+        this->replaceInvalidAcronym = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_24);
         this->matchVersion = matchVersion;
         this->maxTokenLength = DEFAULT_MAX_TOKEN_LENGTH;
-    }
-    
-    TokenStreamPtr StandardAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        StandardTokenizerPtr tokenStream(newLucene<StandardTokenizer>(matchVersion, reader));
-        tokenStream->setMaxTokenLength(maxTokenLength);
-        TokenStreamPtr result(newLucene<StandardFilter>(tokenStream));
-        result = newLucene<LowerCaseFilter>(result);
-        result = newLucene<StopFilter>(enableStopPositionIncrements, result, stopSet);
-        return result;
     }
     
     void StandardAnalyzer::setMaxTokenLength(int32_t length)
@@ -72,28 +62,35 @@ namespace Lucene
         return maxTokenLength;
     }
     
-    TokenStreamPtr StandardAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamComponentsPtr StandardAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        StandardAnalyzerSavedStreamsPtr streams = boost::dynamic_pointer_cast<StandardAnalyzerSavedStreams>(getPreviousTokenStream());
-        if (!streams)
-        {
-            streams = newLucene<StandardAnalyzerSavedStreams>();
-            setPreviousTokenStream(streams);
-            streams->tokenStream = newLucene<StandardTokenizer>(matchVersion, reader);
-            streams->filteredTokenStream = newLucene<StandardFilter>(streams->tokenStream);
-            streams->filteredTokenStream = newLucene<LowerCaseFilter>(streams->filteredTokenStream);
-            streams->filteredTokenStream = newLucene<StopFilter>(enableStopPositionIncrements, streams->filteredTokenStream, stopSet);
-        }
-        else
-            streams->tokenStream->reset(reader);
-        streams->tokenStream->setMaxTokenLength(maxTokenLength);
-        
-        streams->tokenStream->setReplaceInvalidAcronym(replaceInvalidAcronym);
-        
-        return streams->filteredTokenStream;
+        StandardTokenizerPtr src(newLucene<StandardTokenizer>(matchVersion, reader));
+        src->setMaxTokenLength(maxTokenLength);
+        src->setReplaceInvalidAcronym(replaceInvalidAcronym);
+        TokenStreamPtr tok(newLucene<StandardFilter>(matchVersion, src));
+        tok = newLucene<LowerCaseFilter>(matchVersion, tok);
+        tok = newLucene<StopFilter>(matchVersion, tok, stopwords);
+        return newLucene<StandardAnalyzerTokenStreamComponents>(shared_from_this(), src, tok);
     }
     
-    StandardAnalyzerSavedStreams::~StandardAnalyzerSavedStreams()
+    StandardAnalyzerTokenStreamComponents::StandardAnalyzerTokenStreamComponents(StandardAnalyzerPtr analyzer, TokenizerPtr source, TokenStreamPtr result) : TokenStreamComponents(source, result)
     {
+        _analyzer = analyzer;
+    }
+    
+    StandardAnalyzerTokenStreamComponents::StandardAnalyzerTokenStreamComponents(StandardAnalyzerPtr analyzer, TokenizerPtr source) : TokenStreamComponents(source)
+    {
+        _analyzer = analyzer;
+    }
+    
+    StandardAnalyzerTokenStreamComponents::~StandardAnalyzerTokenStreamComponents()
+    {
+    }
+    
+    bool StandardAnalyzerTokenStreamComponents::reset(ReaderPtr reader)
+    {
+        StandardTokenizerPtr src(boost::static_pointer_cast<StandardTokenizer>(source));
+        src->setMaxTokenLength(StandardAnalyzerPtr(_analyzer)->maxTokenLength);
+        return TokenStreamComponents::reset(reader);
     }
 }

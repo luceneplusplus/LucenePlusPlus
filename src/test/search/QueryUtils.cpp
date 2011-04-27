@@ -57,10 +57,10 @@ namespace Lucene
     
     void QueryUtils::checkHashEquals(QueryPtr q)
     {
-        QueryPtr q2 = boost::dynamic_pointer_cast<Query>(q->clone());
+        QueryPtr q2 = boost::static_pointer_cast<Query>(q->clone());
         checkEqual(q, q2);
 
-        QueryPtr q3 = boost::dynamic_pointer_cast<Query>(q->clone());
+        QueryPtr q3 = boost::static_pointer_cast<Query>(q->clone());
         q3->setBoost(7.21792348);
         checkUnequal(q, q3);
 
@@ -121,7 +121,7 @@ namespace Lucene
             }
             checkExplanations(q1, s);
 
-            QueryPtr q2 = boost::dynamic_pointer_cast<Query>(q1->clone());
+            QueryPtr q2 = boost::static_pointer_cast<Query>(q1->clone());
             checkEqual(s->rewrite(q1), s->rewrite(q2));
         }
     }

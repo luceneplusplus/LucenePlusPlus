@@ -98,6 +98,8 @@ namespace Lucene
         /// Returns an unpositioned {@link TermDocs} enumerator.
         virtual TermDocsPtr termDocs();
         
+        virtual TermDocsPtr termDocs(TermPtr term);
+        
         /// Returns an unpositioned {@link TermPositions} enumerator.
         virtual TermPositionsPtr termPositions();
         
@@ -113,6 +115,9 @@ namespace Lucene
         
         /// Returns the sequential sub readers that this reader is logically composed of.
         virtual Collection<IndexReaderPtr> getSequentialSubReaders();
+        
+        virtual void addReaderFinishedListener(ReaderFinishedListenerPtr listener);
+        virtual void removeReaderFinishedListener(ReaderFinishedListenerPtr listener);
         
     protected:
         /// If clone is true then we clone each of the subreaders

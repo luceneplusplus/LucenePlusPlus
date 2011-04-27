@@ -35,6 +35,13 @@ namespace Lucene
         /// to enable scoring.
         virtual TopFieldDocsPtr search(QueryPtr query, FilterPtr filter, int32_t n, SortPtr sort);
         
+        /// Search implementation with arbitrary sorting and no filter.
+        /// @param query The query to search for
+        /// @param n Return only the top n results
+        /// @param sort The {@link Sort} object
+        /// @return The top docs, sorted according to the supplied {@link Sort} instance
+        virtual TopFieldDocsPtr search(QueryPtr query, int32_t n, SortPtr sort);
+                             
         /// Lower-level search API.
         ///
         /// {@link Collector#collect(int32_t)} is called for every matching document.

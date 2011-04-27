@@ -68,9 +68,9 @@ namespace Lucene
         try
         {
             if (MiscUtils::typeOf<BooleanQuery>(query))
-                getTermsFromBooleanQuery(boost::dynamic_pointer_cast<BooleanQuery>(query), terms, prohibited, fieldName);
+                getTermsFromBooleanQuery(boost::static_pointer_cast<BooleanQuery>(query), terms, prohibited, fieldName);
             else if (MiscUtils::typeOf<FilteredQuery>(query))
-                getTermsFromFilteredQuery(boost::dynamic_pointer_cast<FilteredQuery>(query), terms, prohibited, fieldName);
+                getTermsFromFilteredQuery(boost::static_pointer_cast<FilteredQuery>(query), terms, prohibited, fieldName);
             else
             {
                 SetTerm nonWeightedTerms(SetTerm::newInstance());

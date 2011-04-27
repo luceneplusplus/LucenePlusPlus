@@ -321,7 +321,7 @@ namespace HighlighterTest
             {
                 scorer = newLucene<QueryScorer>(query, fieldName);
                 if (!expanMultiTerm)
-                    boost::dynamic_pointer_cast<QueryScorer>(scorer)->setExpandMultiTermQuery(false);
+                    boost::static_pointer_cast<QueryScorer>(scorer)->setExpandMultiTermQuery(false);
             }
             else if (mode == QUERY_TERM)
                 scorer = newLucene<QueryTermScorer>(query);
@@ -337,7 +337,7 @@ namespace HighlighterTest
             {
                 Collection<WeightedSpanTermPtr> weightedSpanTerms = Collection<WeightedSpanTermPtr>::newInstance(weightedTerms.size());
                 for (int32_t i = 0; i < weightedTerms.size(); ++i)
-                    weightedSpanTerms[i] = boost::dynamic_pointer_cast<WeightedSpanTerm>(weightedTerms[i]);
+                    weightedSpanTerms[i] = boost::static_pointer_cast<WeightedSpanTerm>(weightedTerms[i]);
                 return newLucene<Highlighter>(formatter, newLucene<QueryScorer>(weightedSpanTerms));
             }
             else if (mode == QUERY_TERM)
@@ -1105,7 +1105,7 @@ BOOST_AUTO_TEST_CASE(testConstantScoreMultiTermQuery)
     numHighlights = 0;
 
     query = newLucene<WildcardQuery>(newLucene<Term>(FIELD_NAME, L"ken*"));
-    boost::dynamic_pointer_cast<WildcardQuery>(query)->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
+    boost::static_pointer_cast<WildcardQuery>(query)->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
     searcher = newLucene<IndexSearcher>(ramDir, true);
     // can't rewrite ConstantScore if you want to highlight it - it rewrites to ConstantScoreQuery which cannot be highlighted
     // query = unReWrittenQuery.rewrite(reader);
@@ -1557,11 +1557,11 @@ namespace TestGetBestSingleFragmentWithWeights
             wTerms[0] = newLucene<WeightedSpanTerm>(10.0, L"hello");
 
             Collection<PositionSpanPtr> positionSpans = newCollection<PositionSpanPtr>(newLucene<PositionSpan>(0, 0));
-            boost::dynamic_pointer_cast<WeightedSpanTerm>(wTerms[0])->addPositionSpans(positionSpans);
+            boost::static_pointer_cast<WeightedSpanTerm>(wTerms[0])->addPositionSpans(positionSpans);
 
             wTerms[1] = newLucene<WeightedSpanTerm>(1.0, L"kennedy");
             positionSpans = newCollection<PositionSpanPtr>(newLucene<PositionSpan>(14, 14));
-            boost::dynamic_pointer_cast<WeightedSpanTerm>(wTerms[1])->addPositionSpans(positionSpans);
+            boost::static_pointer_cast<WeightedSpanTerm>(wTerms[1])->addPositionSpans(positionSpans);
 
             HighlighterPtr highlighter = getHighlighter(wTerms, newLucene<HighlighterTest::TestFormatter>(fixture));
             TokenStreamPtr tokenStream = fixture->analyzer->tokenStream(HighlighterTestFixture::FIELD_NAME, newLucene<StringReader>(fixture->texts[0]));

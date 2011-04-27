@@ -36,7 +36,7 @@ namespace Lucene
     
     AttributeSource::AttributeSource()
     {
-        this->attributes = MapStringAttribute::newInstance();
+        this->attributes = SortedMapStringAttribute::newInstance();
         this->factory = AttributeFactory::DEFAULT_ATTRIBUTE_FACTORY();
     }
     
@@ -50,7 +50,7 @@ namespace Lucene
     
     AttributeSource::AttributeSource(AttributeFactoryPtr factory)
     {
-        this->attributes = MapStringAttribute::newInstance();
+        this->attributes = SortedMapStringAttribute::newInstance();
         this->factory = factory;
     }
     
@@ -89,7 +89,7 @@ namespace Lucene
     {
         currentState = newLucene<AttributeSourceState>();
         AttributeSourceStatePtr c(currentState);
-        MapStringAttribute::iterator attrImpl = attributes.begin();
+        SortedMapStringAttribute::iterator attrImpl = attributes.begin();
         c->attribute = attrImpl->second;
         ++attrImpl;
         while (attrImpl != attributes.end())
@@ -107,7 +107,7 @@ namespace Lucene
         {
             if (!currentState)
                 computeCurrentState();
-            for (MapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
+            for (SortedMapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
                 attrImpl->second->clear();
         }
     }
@@ -120,7 +120,7 @@ namespace Lucene
         if (!currentState)
             computeCurrentState();
         
-        return boost::dynamic_pointer_cast<AttributeSourceState>(currentState->clone());
+        return boost::static_pointer_cast<AttributeSourceState>(currentState->clone());
     }
     
     void AttributeSource::restoreState(AttributeSourceStatePtr state)
@@ -130,7 +130,7 @@ namespace Lucene
         
         do
         {
-            MapStringAttribute::iterator attrImpl = attributes.find(state->attribute->getClassName());
+            SortedMapStringAttribute::iterator attrImpl = attributes.find(state->attribute->getClassName());
             if (attrImpl == attributes.end())
                 boost::throw_exception(IllegalArgumentException(L"State contains an AttributeImpl that is not in this AttributeSource"));
             state->attribute->copyTo(attrImpl->second);
@@ -142,7 +142,7 @@ namespace Lucene
     int32_t AttributeSource::hashCode()
     {
         int32_t code = 0;
-        for (MapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
+        for (SortedMapStringAttribute::iterator attrImpl = attributes.begin(); attrImpl != attributes.end(); ++attrImpl)
             code = code * 31 + attrImpl->second->hashCode();
         return code;
     }
@@ -216,10 +216,26 @@ namespace Lucene
             if (!currentState)
                 computeCurrentState();
             for (AttributeSourceStatePtr state(currentState); state; state = state->next)
-                clone->attributes.put(state->attribute->getClassName(), boost::dynamic_pointer_cast<Attribute>(state->attribute->clone()));
+                clone->attributes.put(state->attribute->getClassName(), boost::static_pointer_cast<Attribute>(state->attribute->clone()));
         }
         
         return clone;
+    }
+    
+    void AttributeSource::copyTo(AttributeSourcePtr target)
+    {
+        if (hasAttributes())
+        {
+            if (!currentState)
+                computeCurrentState();
+            for (AttributeSourceStatePtr state(currentState); state; state = state->next)
+            {
+                SortedMapStringAttribute::iterator attrImpl = target->attributes.find(state->attribute->getClassName());
+                if (attrImpl == target->attributes.end())
+                    boost::throw_exception(IllegalArgumentException(L"State contains an AttributeImpl that is not in the target"));
+                state->attribute->copyTo(attrImpl->second);
+            }
+        }
     }
     
     Collection<AttributePtr> AttributeSource::getAttributes()
@@ -251,10 +267,10 @@ namespace Lucene
     LuceneObjectPtr AttributeSourceState::clone(LuceneObjectPtr other)
     {
         AttributeSourceStatePtr clone(newLucene<AttributeSourceState>());
-        clone->attribute = boost::dynamic_pointer_cast<Attribute>(attribute->clone());
+        clone->attribute = boost::static_pointer_cast<Attribute>(attribute->clone());
         
         if (next)
-            clone->next = boost::dynamic_pointer_cast<AttributeSourceState>(next->clone());
+            clone->next = boost::static_pointer_cast<AttributeSourceState>(next->clone());
         
         return clone;
     }

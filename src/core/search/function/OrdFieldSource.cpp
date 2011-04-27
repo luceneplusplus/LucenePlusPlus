@@ -35,6 +35,8 @@ namespace Lucene
     
     bool OrdFieldSource::equals(LuceneObjectPtr other)
     {
+        if (LuceneObject::equals(other))
+            return true;
         if (!MiscUtils::equalTypes(shared_from_this(), other))
             return false;
         OrdFieldSourcePtr otherSource(boost::dynamic_pointer_cast<OrdFieldSource>(other));

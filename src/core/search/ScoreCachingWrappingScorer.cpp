@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    ScoreCachingWrappingScorer::ScoreCachingWrappingScorer(ScorerPtr scorer) : Scorer(scorer->getSimilarity())
+    ScoreCachingWrappingScorer::ScoreCachingWrappingScorer(ScorerPtr scorer) : Scorer(scorer->getSimilarity(), scorer->weight)
     {
         this->curDoc = -1;
         this->curScore = 0.0;

@@ -30,6 +30,7 @@ namespace Lucene
         void add(SegmentInfoPtr info);
         void add(int32_t pos, SegmentInfoPtr info);
         void addAll(SegmentInfoCollectionPtr segmentInfos);
+        void addAll(Collection<SegmentInfoPtr> segmentInfos);
         bool equals(SegmentInfoCollectionPtr other);
         int32_t find(SegmentInfoPtr info);
         bool contains(SegmentInfoPtr info);

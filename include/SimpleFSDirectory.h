@@ -24,9 +24,6 @@ namespace Lucene
         LUCENE_CLASS(SimpleFSDirectory);
                 
     public:
-        /// Creates an IndexOutput for the file with the given name.
-        virtual IndexOutputPtr createOutput(const String& name);
-        
         /// Returns a stream reading an existing file, with the specified read buffer size.  The particular Directory implementation may ignore the buffer size.
         virtual IndexInputPtr openInput(const String& name);
         

@@ -20,6 +20,7 @@ namespace Lucene
     class LPPAPI Fieldable
     {
     public:
+        virtual ~Fieldable();
         LUCENE_INTERFACE(Fieldable);
     
     public:
@@ -30,13 +31,13 @@ namespace Lucene
         /// If a document has multiple fields with the same name, all such values are multiplied together.  
         /// This product is then used to compute the norm factor for the field.  By default, in the {@link
         /// Similarity#computeNorm(String, FieldInvertState)} method, the boost value is multiplied by the 
-        /// {@link Similarity#lengthNorm(String,int)} and then rounded by {@link Similarity#encodeNorm(double)} 
-        /// before it is stored in the index.  One should attempt to ensure that this product does not overflow
-        /// the range of that encoding.
+        /// {@link Similarity#lengthNorm(String,int)} and then rounded by {@link 
+        /// Similarity#encodeNormValue(double)} before it is stored in the before it is stored in the index.
+        /// One should attempt to ensure that this product does not overflow the range of that encoding.
         ///
         /// @see Document#setBoost(double)
         /// @see Similarity#computeNorm(String, FieldInvertState)
-        /// @see Similarity#encodeNorm(double)
+        /// @see Similarity#encodeNormValue(double)
         virtual void setBoost(double boost) = 0;
         
         /// Returns the boost factor for hits for this field.

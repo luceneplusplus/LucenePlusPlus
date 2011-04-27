@@ -7,21 +7,39 @@
 #ifndef WHITESPACEANALYZER_H
 #define WHITESPACEANALYZER_H
 
-#include "Analyzer.h"
+#include "ReusableAnalyzerBase.h"
 
 namespace Lucene
 {
     /// An Analyzer that uses {@link WhitespaceTokenizer}.
-    class LPPAPI WhitespaceAnalyzer : public Analyzer
+    ///
+    /// You must specify the required {@link Version} compatibility when creating 
+    /// {@link CharTokenizer}:
+    /// <ul>
+    ///    <li>As of 3.1, {@link WhitespaceTokenizer} uses an int based API to normalize and
+    ///    detect token codepoints. See {@link CharTokenizer#isTokenChar(int)} and {@link 
+    ///    CharTokenizer#normalize(int)} for details.
+    /// </ul>
+    class LPPAPI WhitespaceAnalyzer : public ReusableAnalyzerBase
     {
     public:
+        /// Creates a new {@link WhitespaceAnalyzer}
+        /// @param matchVersion Lucene version to match
+        WhitespaceAnalyzer(LuceneVersion::Version matchVersion);
+        
+        /// Creates a new {@link WhitespaceAnalyzer}
+        /// @deprecated use {@link #WhitespaceAnalyzer(Version)} instead 
+        WhitespaceAnalyzer();
+        
         virtual ~WhitespaceAnalyzer();
         
         LUCENE_CLASS(WhitespaceAnalyzer);
     
+    private:
+        LuceneVersion::Version matchVersion;
+    
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamComponentsPtr createComponents(const String& fieldName, ReaderPtr reader);
     };
 }
 

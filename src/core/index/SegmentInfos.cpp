@@ -19,6 +19,8 @@
 #include "TestPoint.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
+#include "CompoundFileReader.h"
+#include "FieldsReader.h"
 
 namespace Lucene
 {
@@ -52,8 +54,14 @@ namespace Lucene
     /// This format adds optional per-segment string diagnostics storage, and switches userData to Map
     const int32_t SegmentInfos::FORMAT_DIAGNOSTICS = -9;
     
+    /// Each segment records whether it has term vectors
+    const int32_t SegmentInfos::FORMAT_HAS_VECTORS = -10;
+    
+    /// Each segment records whether it has term vectors
+    const int32_t SegmentInfos::FORMAT_3_1 = -11;
+    
     /// This must always point to the most recent file format.
-    const int32_t SegmentInfos::CURRENT_FORMAT = SegmentInfos::FORMAT_DIAGNOSTICS;
+    const int32_t SegmentInfos::CURRENT_FORMAT = SegmentInfos::FORMAT_3_1;
     
     /// Advanced configuration of retry logic in loading segments_N file.
     int32_t SegmentInfos::defaultGenFileRetryCount = 10;
@@ -69,11 +77,22 @@ namespace Lucene
         lastGeneration = 0;
         generation = 0;
         counter = 0;
+        format = 0;
         version = MiscUtils::currentTimeMillis();
     }
     
     SegmentInfos::~SegmentInfos()
     {
+    }
+    
+    void SegmentInfos::setFormat(int32_t format)
+    {
+        this->format = format;
+    }
+    
+    int32_t SegmentInfos::getFormat()
+    {
+        return format;
     }
     
     SegmentInfoPtr SegmentInfos::info(int32_t i)
@@ -164,7 +183,36 @@ namespace Lucene
                 counter = format;
             
             for (int32_t i = input->readInt(); i > 0; --i) // read segmentInfos
-                segmentInfos.add(newLucene<SegmentInfo>(directory, format, input));
+            {
+                SegmentInfoPtr si(newLucene<SegmentInfo>(directory, format, input));
+                if (si->getVersion().empty())
+                {
+                    // It's a pre-3.1 segment, upgrade its version to either 3.0 or 2.x
+                    DirectoryPtr dir(directory);
+                    if (si->getDocStoreOffset() != -1)
+                    {
+                        if (si->getDocStoreIsCompoundFile())
+                            dir = newLucene<CompoundFileReader>(dir, IndexFileNames::segmentFileName(si->getDocStoreSegment(), IndexFileNames::COMPOUND_FILE_STORE_EXTENSION()), 1024);
+                    }
+                    else if (si->getUseCompoundFile())
+                        dir = newLucene<CompoundFileReader>(dir, IndexFileNames::segmentFileName(si->name, IndexFileNames::COMPOUND_FILE_EXTENSION()), 1024);
+
+                    try
+                    {
+                        String store(si->getDocStoreOffset() != -1 ? si->getDocStoreSegment() : si->name);
+                        si->setVersion(FieldsReader::detectCodeVersion(dir, store));
+                    }
+                    catch (LuceneException& e)
+                    {
+                        finally = e;
+                    }
+                    // If we opened the directory, close it
+                    if (dir != directory)
+                        dir->close();
+                    finally.throwException();
+                }
+                add(si);
+            }
             
             // in old format the version number may be at the end of the file
             if (format >= 0)
@@ -240,7 +288,8 @@ namespace Lucene
         try
         {
             segnOutput->writeInt(CURRENT_FORMAT); // write FORMAT
-            segnOutput->writeLong(++version); // every write changes the index
+            segnOutput->writeLong(version); 
+
             segnOutput->writeInt(counter); // write counter
             segnOutput->writeInt(segmentInfos.size()); // write infos
             for (Collection<SegmentInfoPtr>::iterator seginfo = segmentInfos.begin(); seginfo != segmentInfos.end(); ++seginfo)
@@ -281,17 +330,30 @@ namespace Lucene
         finally.throwException();
     }
     
+    void SegmentInfos::pruneDeletedSegments()
+    {
+        int32_t segIdx = 0;
+        while (segIdx < segmentInfos.size())
+        {
+            SegmentInfoPtr info(segmentInfos[segIdx]);
+            if (info->getDelCount() == info->docCount)
+                remove(segIdx);
+            else
+                ++segIdx;
+        }
+    }
+    
     LuceneObjectPtr SegmentInfos::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SegmentInfoCollection::clone(other ? other : newLucene<SegmentInfos>());
-        SegmentInfosPtr cloneInfos(boost::dynamic_pointer_cast<SegmentInfos>(clone));
+        SegmentInfosPtr cloneInfos(boost::static_pointer_cast<SegmentInfos>(clone));
         cloneInfos->counter = counter;
         cloneInfos->generation = generation;
         cloneInfos->lastGeneration = lastGeneration;
         cloneInfos->version = version;
         cloneInfos->pendingSegnOutput = pendingSegnOutput;
         for (int32_t i = 0; i < cloneInfos->size(); ++i)
-            cloneInfos->segmentInfos[i] = boost::dynamic_pointer_cast<SegmentInfo>(cloneInfos->info(i)->clone());
+            cloneInfos->segmentInfos[i] = boost::static_pointer_cast<SegmentInfo>(cloneInfos->info(i)->clone());
         cloneInfos->userData = MapStringString::newInstance();
         cloneInfos->userData.putAll(userData.begin(), userData.end());
         return cloneInfos;
@@ -370,8 +432,7 @@ namespace Lucene
     
     void SegmentInfos::message(const String& message)
     {
-        if (infoStream)
-            *infoStream << L"SIS [" << message << L"]\n";
+        *infoStream << L"SIS [" << message << L"]\n";
     }
     
     FindSegmentsFile::FindSegmentsFile(SegmentInfosPtr infos, DirectoryPtr directory)
@@ -398,11 +459,11 @@ namespace Lucene
         int64_t lastGen = -1;
         int64_t gen = 0;
         int32_t genLookaheadCount = 0;
-        bool retry = false;
+        int32_t retryCount = 0;
         LuceneException exc;
         SegmentInfosPtr segmentInfos(_segmentInfos);
         
-        int32_t method = 0;
+        bool useFirstMethod = true;
         
         // Loop until we succeed in calling runBody() without hitting an IOException.  An IOException most likely
         // means a commit was in process and has finished, in the time it took us to load the now-old infos files
@@ -410,22 +471,24 @@ namespace Lucene
         // on each retry we must see "forward progress" on which generation we are trying to load.  If we don't, 
         // then the original error is real and we throw it.
 
-        // We have three methods for determining the current generation.  We try the first two in parallel, and
-        // fall back to the third when necessary.
+        // We have three methods for determining the current generation.  We try the first two in parallel (when
+        // useFirstMethod is true), and fall back to the third when necessary.
         
         while (true)
         {
-            if (method == 0)
+            if (useFirstMethod)
             {
-                // Method 1: list the directory and use the highest segments_N file.  This method works well as long
-                // as there is no stale caching on the directory contents (NOTE: NFS clients often have such stale caching)
+                // List the directory and use the highest segments_N file.  This method works well as long as there 
+                // is no stale caching on the directory contents (NOTE: NFS clients often have such stale caching)
                 HashSet<String> files(directory->listAll());
-                int64_t genA = segmentInfos->getCurrentSegmentGeneration(files);
+                int64_t genA = files ? segmentInfos->getCurrentSegmentGeneration(files) : -1;
                 
-                segmentInfos->message(L"directory listing genA=" + genA);
+                if (segmentInfos->infoStream)
+                    segmentInfos->message(L"directory listing genA=" + genA);
                 
-                // Method 2: open segments.gen and read its contents.  Then we take the larger of the two gens.  This way, 
-                // if either approach is hitting a stale cache (NFS) we have a better chance of getting the right generation.
+                // Also open segments.gen and read its contents.  Then we take the larger of the two gens.  This 
+                // way, if either approach is hitting a stale cache (NFS) we have a better chance of getting the 
+                // right generation.
                 int64_t genB = -1;
                 for (int32_t i = 0; i < SegmentInfos::defaultGenFileRetryCount; ++i)
                 {
@@ -436,12 +499,14 @@ namespace Lucene
                     }
                     catch (FileNotFoundException& e)
                     {
-                        segmentInfos->message(L"Segments.gen open: FileNotFoundException " + e.getError());
+                        if (segmentInfos->infoStream)
+                            segmentInfos->message(L"Segments.gen open: FileNotFoundException " + e.getError());
                         break;
                     }
                     catch (IOException& e)
                     {
-                        segmentInfos->message(L"Segments.gen open: IOException " + e.getError());
+                        if (segmentInfos->infoStream)
+                            segmentInfos->message(L"Segments.gen open: IOException " + e.getError());
                     }
                     
                     if (genInput)
@@ -455,7 +520,8 @@ namespace Lucene
                             {
                                 int64_t gen0 = genInput->readLong();
                                 int64_t gen1 = genInput->readLong();
-                                segmentInfos->message(L"fallback check: " + StringUtils::toString(gen0) + L"; " + StringUtils::toString(gen1));
+                                if (segmentInfos->infoStream)
+                                    segmentInfos->message(L"fallback check: " + StringUtils::toString(gen0) + L"; " + StringUtils::toString(gen1));
                                 if (gen0 == gen1)
                                 {
                                     // the file is consistent
@@ -481,47 +547,50 @@ namespace Lucene
                     LuceneThread::threadSleep(SegmentInfos::defaultGenFileRetryPauseMsec);
                 }
                 
-                segmentInfos->message(String(IndexFileNames::SEGMENTS_GEN()) + L" check: genB=" + StringUtils::toString(genB));
+                if (segmentInfos->infoStream)
+                    segmentInfos->message(String(IndexFileNames::SEGMENTS_GEN()) + L" check: genB=" + StringUtils::toString(genB));
 
                 // pick the larger of the two gen's
                 gen = std::max(genA, genB);
                 
                 // neither approach found a generation
                 if (gen == -1)
-                    boost::throw_exception(FileNotFoundException(L"No segments* file found in directory"));
+                    boost::throw_exception(IndexNotFoundException(L"No segments* file found in directory"));
             }
             
-            // Third method (fallback if first & second methods are not reliable): since both directory cache and
-            // file contents cache seem to be stale, just advance the generation.
-            if (method == 1 || (method == 0 && lastGen == gen && retry))
+            if (useFirstMethod && lastGen == gen && retryCount >= 2)
             {
-                method = 1;
-                
+                // Give up on first method -- this is 3rd cycle on listing directory and checking gen file to
+                // attempt to locate the segments file.
+                useFirstMethod = false;
+            }
+            
+            // Second method: since both directory cache and file contents cache seem to be stale, just 
+            // advance the generation.
+            if (!useFirstMethod)
+            {
                 if (genLookaheadCount < SegmentInfos::defaultGenLookaheadCount)
                 {
                     ++gen;
                     ++genLookaheadCount;
-                    segmentInfos->message(L"look ahead increment gen to " + StringUtils::toString(gen));
-                }
-            }
-            
-            if (lastGen == gen)
-            {
-                // This means we're about to try the same segments_N last tried.  This is allowed, exactly once, because 
-                // writer could have been in the process of writing segments_N last time.
-                
-                if (retry)
-                {
-                    // OK, we've tried the same segments_N file twice in a row, so this must be a real error.
-                    exc.throwException();
+                    if (segmentInfos->infoStream)
+                        segmentInfos->message(L"look ahead increment gen to " + StringUtils::toString(gen));
                 }
                 else
-                    retry = true;
+                {
+                    // All attempts have failed -- throw first exc:
+                    exc.throwException();
+                }
             }
-            else if (method == 0)
+            else if (lastGen == gen)
             {
-                // Segment file has advanced since our last loop, so reset retry
-                retry = false;
+                // This means we're about to try the same segments_N last tried.
+                ++retryCount;
+            }
+            else
+            {
+                // Segment file has advanced since our last loop (we made "progress"), so reset retryCount
+                retryCount = 0;
             }
             
             lastGen = gen;
@@ -531,7 +600,8 @@ namespace Lucene
             try
             {
                 runBody(segmentFileName);
-                segmentInfos->message(L"success on " + segmentFileName);
+                if (segmentInfos->infoStream)
+                    segmentInfos->message(L"success on " + segmentFileName);
                 return;
             }
             catch (LuceneException& err)
@@ -540,23 +610,33 @@ namespace Lucene
                 if (exc.isNull())
                     exc = err;
                 
-                segmentInfos->message(L"primary Exception on '" + segmentFileName + L"': " + err.getError() + L"'; will retry: retry=" + StringUtils::toString(retry) + L"; gen = " + StringUtils::toString(gen));
-                
-                if (!retry && gen > 1)
+                if (segmentInfos->infoStream)
                 {
-                    // This is our first time trying this segments file (because retry is false), and, there is possibly a 
-                    // segments_(N-1) (because gen > 1). So, check if the segments_(N-1) exists and try it if so.
+                    segmentInfos->message(L"primary Exception on '" + segmentFileName + 
+                                          L"': " + err.getError() + 
+                                          L"'; will retry: retry=" + StringUtils::toString(retryCount) + 
+                                          L"; gen = " + StringUtils::toString(gen));
+                }
+                
+                if (gen > 1 && useFirstMethod && retryCount == 1)
+                {
+                    // This is our second time trying this same segments file (because retryCount is 1), and, there is possibly a 
+                    // segments_(N-1) (because gen > 1).  So, check if the segments_(N-1) exists and try it if so.
                     String prevSegmentFileName(IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", gen - 1));
                     
                     if (directory->fileExists(prevSegmentFileName))
                     {
-                        segmentInfos->message(L"fallback to prior segment file '" + prevSegmentFileName + L"'");
+                        if (segmentInfos->infoStream)
+                            segmentInfos->message(L"fallback to prior segment file '" + prevSegmentFileName + L"'");
                         
                         try
                         {
                             runBody(prevSegmentFileName);
                             if (!exc.isNull())
-                                segmentInfos->message(L"success on fallback " + prevSegmentFileName);
+                            {
+                                if (segmentInfos->infoStream)
+                                    segmentInfos->message(L"success on fallback " + prevSegmentFileName);
+                            }
                             return;
                         }
                         catch (LuceneException& err2)
@@ -595,7 +675,6 @@ namespace Lucene
     {
         lastGeneration = other->lastGeneration;
         generation = other->generation;
-        version = other->version;
     }
     
     void SegmentInfos::rollbackCommit(DirectoryPtr dir)
@@ -681,7 +760,9 @@ namespace Lucene
         success = false;
         try
         {
-            dir->sync(fileName);
+            HashSet<String> files(HashSet<String>::newInstance());
+            files.add(fileName);
+            dir->sync(files);
             success = true;
         }
         catch (...)
@@ -722,19 +803,18 @@ namespace Lucene
         finishCommit(dir);
     }
     
-    String SegmentInfos::segString(DirectoryPtr directory)
+    String SegmentInfos::toString(DirectoryPtr directory)
     {
         SyncLock syncLock(this);
-        String buffer;
+        StringStream buffer;
+        buffer << getCurrentSegmentFileName() << L": ";
         for (Collection<SegmentInfoPtr>::iterator seginfo = segmentInfos.begin(); seginfo != segmentInfos.end(); ++seginfo)
         {
             if (seginfo != segmentInfos.begin())
-                buffer += L' ';
-            buffer += (*seginfo)->segString(directory);
-            if ((*seginfo)->dir != directory)
-                buffer += L"**";
+                buffer << L" ";
+            buffer << (*seginfo)->toString(directory, 0);
         }
-        return buffer;
+        return buffer.str();
     }
     
     MapStringString SegmentInfos::getUserData()
@@ -757,13 +837,16 @@ namespace Lucene
         lastGeneration = other->lastGeneration;
     }
     
-    bool SegmentInfos::hasExternalSegments(DirectoryPtr dir)
+    int32_t SegmentInfos::totalDocCount()
     {
+        int32_t count = 0;
         for (Collection<SegmentInfoPtr>::iterator seginfo = segmentInfos.begin(); seginfo != segmentInfos.end(); ++seginfo)
-        {
-            if ((*seginfo)->dir != dir)
-                return true;
-        }
-        return false;
+            count += (*seginfo)->docCount;
+        return count;
+    }
+    
+    void SegmentInfos::changed()
+    {
+        ++version;
     }
 }

@@ -46,7 +46,7 @@ namespace Lucene
         static TermRangeFilterPtr More(const String& fieldName, StringValue lowerTerm);
         
         /// Returns the field name for this filter
-        String getField();
+        virtual String getField();
         
         /// Returns the lower value of this range filter
         String getLowerTerm();

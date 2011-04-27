@@ -38,6 +38,12 @@ namespace Lucene
         /// @see IndexOutput#writeBytes(const uint8_t*,int)
         virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
         
+        /// Reads four bytes and returns an int.
+        virtual int32_t readInt();
+        
+        /// Reads eight bytes and returns a int64.
+        virtual int64_t readLong();
+        
         /// Returns the current position in this file, where the next read will occur.
         /// @see #seek(int64_t)
         virtual int64_t getFilePointer();

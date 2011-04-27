@@ -7,21 +7,39 @@
 #ifndef SIMPLEANALYZER_H
 #define SIMPLEANALYZER_H
 
-#include "Analyzer.h"
+#include "ReusableAnalyzerBase.h"
 
 namespace Lucene
 {
-    /// An {@link Analyzer} that filters {@link LetterTokenizer} with {@link LowerCaseFilter}
-    class LPPAPI SimpleAnalyzer : public Analyzer
+    /// An {@link Analyzer} that filters {@link LetterTokenizer} with {@link LowerCaseFilter} 
+    ///
+    /// You must specify the required {@link Version} compatibility when creating {@link 
+    /// CharTokenizer}:
+    /// <ul>
+    ///    <li>As of 3.1, {@link LowerCaseTokenizer} uses an int based API to normalize and
+    ///    detect token codepoints. See {@link CharTokenizer#isTokenChar(int)} and {@link 
+    ///    CharTokenizer#normalize(wchar_t)} for details.
+    /// </ul>
+    class LPPAPI SimpleAnalyzer : public ReusableAnalyzerBase
     {
     public:
+        /// Creates a new {@link SimpleAnalyzer}
+        /// @param matchVersion Lucene version to match.
+        SimpleAnalyzer(LuceneVersion::Version matchVersion);
+        
+        /// Creates a new {@link SimpleAnalyzer}
+        /// @deprecated use {@link #SimpleAnalyzer(Version)} instead 
+        SimpleAnalyzer();
+        
         virtual ~SimpleAnalyzer();
         
         LUCENE_CLASS(SimpleAnalyzer);
     
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+    protected:
+        LuceneVersion::Version matchVersion;
+    
+    protected:
+        virtual TokenStreamComponentsPtr createComponents(const String& fieldName, ReaderPtr reader);
     };
 }
 

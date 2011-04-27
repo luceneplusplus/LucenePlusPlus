@@ -10,6 +10,8 @@
 
 namespace Lucene
 {
+    // todo: port utils/IndexableBinaryStringTools + collation/CollationKeyFilter + collation/CollationKeyAnalyzer
+    
     Collator::Collator(std::locale locale) : collate(std::use_facet< std::collate<wchar_t> >(locale))
     {
     }

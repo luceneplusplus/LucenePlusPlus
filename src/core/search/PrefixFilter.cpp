@@ -24,6 +24,11 @@ namespace Lucene
         return boost::static_pointer_cast<PrefixQuery>(query)->getPrefix();
     }
     
+    String PrefixFilter::getField()
+    {
+        return getPrefix()->field();
+    }
+    
     String PrefixFilter::toString()
     {
         StringStream buffer;

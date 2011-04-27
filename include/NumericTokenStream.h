@@ -76,7 +76,7 @@ namespace Lucene
         LUCENE_CLASS(NumericTokenStream);
     
     protected:
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
         TypeAttributePtr typeAtt;
         PositionIncrementAttributePtr posIncrAtt;
         
@@ -114,6 +114,9 @@ namespace Lucene
         virtual void reset();
         virtual bool incrementToken();
         virtual String toString();
+        
+        /// Returns the precision step.
+        int32_t getPrecisionStep();
     };
 }
 

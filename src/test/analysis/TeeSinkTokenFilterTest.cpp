@@ -19,6 +19,7 @@
 #include "StandardTokenizer.h"
 #include "PositionIncrementAttribute.h"
 #include "MiscUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -198,7 +199,7 @@ BOOST_AUTO_TEST_CASE(testPerformance)
         StringStream buffer;
         BOOST_TEST_MESSAGE("-----Tokens: " << tokCount[k] << "-----");
         for (int32_t i = 0; i < tokCount[k]; ++i)
-            buffer << StringUtils::toUpper(intToEnglish(i)) << L" ";
+            buffer << StringUtils::toUpper(English::intToEnglish(i)) << L" ";
         // make sure we produce the same tokens
         TeeSinkTokenFilterPtr teeStream = newLucene<TeeSinkTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))));
         TokenStreamPtr sink = teeStream->newSinkTokenStream(newLucene<TestPerformance::ModuloSinkFilter>(100));

@@ -12,6 +12,7 @@
 #include "TestPoint.h"
 #include "Random.h"
 #include "MiscUtils.h"
+#include "AtomicLong.h"
 
 namespace Lucene
 {
@@ -218,7 +219,7 @@ namespace Lucene
         {
             if (existing)
             {
-                _sizeInBytes -= existing->getSizeInBytes();
+                _sizeInBytes->getAndAdd(-existing->getSizeInBytes());
                 existing->_directory.reset();
             }
             fileMap.put(name, file);

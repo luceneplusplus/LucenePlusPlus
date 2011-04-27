@@ -19,6 +19,7 @@
 #include "ConcurrentMergeScheduler.h"
 #include "FSDirectory.h"
 #include "FileUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -59,7 +60,7 @@ public:
                 {
                     DocumentPtr d = newLucene<Document>();
                     d->add(newLucene<Field>(L"id", StringUtils::toString(iterFinal) + L"_" + StringUtils::toString(iFinal) + L"_" + StringUtils::toString(j) + L"_" + StringUtils::toString(k), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-                    d->add(newLucene<Field>(L"contents", intToEnglish(iFinal + k), Field::STORE_NO, Field::INDEX_ANALYZED));
+                    d->add(newLucene<Field>(L"contents", English::intToEnglish(iFinal + k), Field::STORE_NO, Field::INDEX_ANALYZED));
                     writer->addDocument(d);
                 }
                 for (int32_t k = 0; k < 9 * (1 + iFinal); ++k)
@@ -111,7 +112,7 @@ public:
             {
                 DocumentPtr d = newLucene<Document>();
                 d->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-                d->add(newLucene<Field>(L"contents", intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
+                d->add(newLucene<Field>(L"contents", English::intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
                 writer->addDocument(d);
             }
             

@@ -22,18 +22,18 @@ namespace Lucene
     
     protected:
         SpansPtr spans;
-        WeightPtr weight;
         ByteArray norms;
         double value;
         bool more;
         int32_t doc;
-        double freq;
+        double _freq;
     
     public:
         virtual int32_t nextDoc();
         virtual int32_t advance(int32_t target);
         virtual int32_t docID();
         virtual double score();
+        virtual double freq();
         
     protected:
         virtual bool setFreqCurrentDoc();

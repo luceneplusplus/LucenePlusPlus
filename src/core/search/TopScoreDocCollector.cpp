@@ -29,6 +29,8 @@ namespace Lucene
     
     TopScoreDocCollectorPtr TopScoreDocCollector::create(int32_t numHits, bool docsScoredInOrder)
     {
+        if (numHits <= 0)
+            boost::throw_exception(IllegalArgumentException(L"numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count"));
         if (docsScoredInOrder)
             return newLucene<InOrderTopScoreDocCollector>(numHits);
         else

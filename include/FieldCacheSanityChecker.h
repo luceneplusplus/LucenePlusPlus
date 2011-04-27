@@ -88,7 +88,7 @@ namespace Lucene
                                                 MapSetReaderFieldInt readerFieldToValIds);
 
         /// Checks if the seed is an IndexReader, and if so will walk the hierarchy of subReaders building up a 
-        /// list of the objects returned by obj.getFieldCacheKey()
+        /// list of the objects returned by obj.getCoreCacheKey()
         Collection<LuceneObjectPtr> getAllDecendentReaderKeys(LuceneObjectPtr seed);
     };
     

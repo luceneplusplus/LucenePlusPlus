@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "BufferedIndexInput.h"
+#include "IndexOutput.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -132,6 +133,76 @@ namespace Lucene
         }
     }
     
+    int32_t BufferedIndexInput::readInt()
+    {
+        if (sizeof(int32_t) <= (bufferLength - bufferPosition))
+        {
+            uint8_t* readBuffer = buffer.get();
+            int32_t i = (readBuffer[bufferPosition++] & 0xff) << 24;
+            i |= (readBuffer[bufferPosition++] & 0xff) << 16;
+            i |= (readBuffer[bufferPosition++] & 0xff) << 8;
+            i |= (readBuffer[bufferPosition++] & 0xff);
+            return i;
+        }
+        else
+            return IndexInput::readInt();
+    }
+    
+    int64_t BufferedIndexInput::readLong()
+    {
+        if (sizeof(int64_t) <= (bufferLength - bufferPosition))
+        {
+            uint8_t* readBuffer = buffer.get();
+            int32_t i1 = (readBuffer[bufferPosition++] & 0xff) << 24;
+            i1 |= (readBuffer[bufferPosition++] & 0xff) << 16;
+            i1 |= (readBuffer[bufferPosition++] & 0xff) << 8;
+            i1 |= (readBuffer[bufferPosition++] & 0xff);
+            int32_t i2 = (readBuffer[bufferPosition++] & 0xff) << 24;
+            i2 |= (readBuffer[bufferPosition++] & 0xff) << 16;
+            i2 |= (readBuffer[bufferPosition++] & 0xff) << 8;
+            i2 |= (readBuffer[bufferPosition++] & 0xff);
+            return (((int64_t)i1) << 32) | (i2 & 0xffffffffLL);
+        }
+        else
+            return IndexInput::readLong();
+    }
+    
+    int32_t BufferedIndexInput::readVInt()
+    {
+        if (5 <= (bufferLength - bufferPosition))
+        {
+            uint8_t* readBuffer = buffer.get();
+            uint8_t b = readBuffer[bufferPosition++];
+            int32_t i = b & 0x7f;
+            for (int32_t shift = 7; (b & 0x80) != 0; shift += 7)
+            {
+                b = readBuffer[bufferPosition++];
+                i |= (b & 0x7f) << shift;
+            }
+            return i;
+        }
+        else
+            return IndexInput::readVInt();
+    }
+    
+    int64_t BufferedIndexInput::readVLong()
+    {
+        if (9 <= (bufferLength - bufferPosition))
+        {
+            uint8_t* readBuffer = buffer.get();
+            uint8_t b = readBuffer[bufferPosition++];
+            int64_t i = b & 0x7f;
+            for (int32_t shift = 7; (b & 0x80) != 0; shift += 7)
+            {
+                b = readBuffer[bufferPosition++];
+                i |= (b & 0x7f) << shift;
+            }
+            return i;
+        }
+        else
+            return IndexInput::readVLong();
+    }
+    
     void BufferedIndexInput::refill()
     {
         int64_t start = bufferStart + bufferPosition;
@@ -180,12 +251,36 @@ namespace Lucene
     
     LuceneObjectPtr BufferedIndexInput::clone(LuceneObjectPtr other)
     {
-        BufferedIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<BufferedIndexInput>(IndexInput::clone(other)));
+        BufferedIndexInputPtr cloneIndexInput(boost::static_pointer_cast<BufferedIndexInput>(IndexInput::clone(other)));
         cloneIndexInput->bufferSize = bufferSize;
         cloneIndexInput->buffer.reset();
         cloneIndexInput->bufferLength = 0;
         cloneIndexInput->bufferPosition = 0;
         cloneIndexInput->bufferStart = getFilePointer();
         return cloneIndexInput;
+    }
+    
+    int32_t BufferedIndexInput::flushBuffer(IndexOutputPtr out, int64_t numBytes)
+    {
+        int32_t toCopy = bufferLength - bufferPosition;
+        if (toCopy > numBytes)
+            toCopy = (int32_t)numBytes;
+        if (toCopy > 0)
+        {
+            out->writeBytes(buffer.get(), bufferPosition, toCopy);
+            bufferPosition += toCopy;
+        }
+        return toCopy;
+    }
+    
+    void BufferedIndexInput::copyBytes(IndexOutputPtr out, int64_t numBytes)
+    {
+        BOOST_ASSERT(numBytes >= 0);
+        while (numBytes > 0)
+        {
+            if (bufferLength == bufferPosition)
+                refill();
+        }
+        numBytes -= flushBuffer(out, numBytes);
     }
 }

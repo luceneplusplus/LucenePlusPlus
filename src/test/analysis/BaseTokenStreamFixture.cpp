@@ -56,14 +56,14 @@ namespace Lucene
     
     void CheckClearAttributesAttribute::copyTo(AttributePtr target)
     {
-        CheckClearAttributesAttributePtr clearAttribute(boost::dynamic_pointer_cast<CheckClearAttributesAttribute>(target));
+        CheckClearAttributesAttributePtr clearAttribute(boost::static_pointer_cast<CheckClearAttributesAttribute>(target));
         clearAttribute->clear();
     }
     
     LuceneObjectPtr CheckClearAttributesAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<CheckClearAttributesAttribute>();
-        CheckClearAttributesAttributePtr cloneAttribute(boost::dynamic_pointer_cast<CheckClearAttributesAttribute>(Attribute::clone(clone)));
+        CheckClearAttributesAttributePtr cloneAttribute(boost::static_pointer_cast<CheckClearAttributesAttribute>(Attribute::clone(clone)));
         cloneAttribute->clearCalled = clearCalled;
         return cloneAttribute;
     }

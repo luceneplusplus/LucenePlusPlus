@@ -20,9 +20,9 @@ namespace Lucene
     ///
     /// You create a new NumericRangeQuery with the static factory methods, eg:
     /// <pre>
-    /// QueryPtr q = NumericRangeQuery::newDoubleRange("weight", 0.3, 0.10, true, true);
+    /// QueryPtr q = NumericRangeQuery::newDoubleRange("weight", 0.03, 0.10, true, true);
     /// </pre>
-    /// matches all documents whose double valued "weight" field ranges from 0.3 to 0.10, inclusive.
+    /// matches all documents whose double valued "weight" field ranges from 0.03 to 0.10, inclusive.
     ///
     /// The performance of NumericRangeQuery is much better than the corresponding {@link TermRangeQuery} 
     /// because the number of terms that must be searched is usually far fewer, thanks to trie indexing, 
@@ -160,7 +160,7 @@ namespace Lucene
         static NumericRangeQueryPtr newNumericRange(const String& field, NumericValue min, NumericValue max, bool minInclusive, bool maxInclusive);
         
         /// Returns the field name for this query
-        String getField();
+        virtual String getField();
         
         /// Returns true if the lower endpoint is inclusive
         bool includesMin();
@@ -173,6 +173,9 @@ namespace Lucene
         
         /// Returns the upper value of this range query
         NumericValue getMax();
+        
+        /// Returns the precision step.
+        int32_t getPrecisionStep();
         
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         virtual String toString(const String& field);

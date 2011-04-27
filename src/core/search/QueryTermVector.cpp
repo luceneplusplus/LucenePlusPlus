@@ -9,7 +9,7 @@
 #include "Analyzer.h"
 #include "TokenStream.h"
 #include "StringReader.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 
 namespace Lucene
 {
@@ -35,12 +35,12 @@ namespace Lucene
                     bool hasMoreTokens = false;
                     
                     stream->reset();
-                    TermAttributePtr termAtt(stream->addAttribute<TermAttribute>());
+                    CharTermAttributePtr termAtt(stream->addAttribute<CharTermAttribute>());
                     
                     hasMoreTokens = stream->incrementToken();
                     while (hasMoreTokens)
                     {
-                        terms.add(termAtt->term());
+                        terms.add(termAtt->toString());
                         hasMoreTokens = stream->incrementToken();
                     }
                     processTerms(terms);

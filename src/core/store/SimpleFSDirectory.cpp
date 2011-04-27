@@ -23,12 +23,6 @@ namespace Lucene
     {
     }
     
-    IndexOutputPtr SimpleFSDirectory::createOutput(const String& name)
-    {
-        initOutput(name);
-        return newLucene<SimpleFSIndexOutput>(FileUtils::joinPath(directory, name));
-    }
-    
     IndexInputPtr SimpleFSDirectory::openInput(const String& name)
     {
         return FSDirectory::openInput(name);
@@ -161,10 +155,17 @@ namespace Lucene
         return file->isValid();
     }
     
+    void SimpleFSIndexInput::copyBytes(IndexOutputPtr out, int64_t numBytes)
+    {
+        numBytes -= flushBuffer(out, numBytes);
+        // If out is FSIndexOutput, the copy will be optimized
+        out->copyBytes(shared_from_this(), numBytes);
+    }
+    
     LuceneObjectPtr SimpleFSIndexInput::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = BufferedIndexInput::clone(other ? other : newLucene<SimpleFSIndexInput>());
-        SimpleFSIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<SimpleFSIndexInput>(clone));
+        SimpleFSIndexInputPtr cloneIndexInput(boost::static_pointer_cast<SimpleFSIndexInput>(clone));
         cloneIndexInput->path = path;
         cloneIndexInput->file = file;
         cloneIndexInput->chunkSize = chunkSize;
@@ -228,47 +229,5 @@ namespace Lucene
     bool OutputFile::isValid()
     {
         return (file && file->is_open() && file->good());
-    }
-    
-    SimpleFSIndexOutput::SimpleFSIndexOutput(const String& path)
-    {
-        file = newLucene<OutputFile>(path);
-        isOpen = true;
-    }
-    
-    SimpleFSIndexOutput::~SimpleFSIndexOutput()
-    {
-    }
-    
-    void SimpleFSIndexOutput::flushBuffer(const uint8_t* b, int32_t offset, int32_t length)
-    {
-        file->write(b, offset, length);
-        file->flush();
-    }
-    
-    void SimpleFSIndexOutput::close()
-    {
-        if (isOpen)
-        {
-            BufferedIndexOutput::close();
-            file.reset();
-            isOpen = false;
-        }
-    }
-    
-    void SimpleFSIndexOutput::seek(int64_t pos)
-    {
-        BufferedIndexOutput::seek(pos);
-        file->setPosition(pos);
-    }
-    
-    int64_t SimpleFSIndexOutput::length()
-    {
-        return file->getLength();
-    }
-    
-    void SimpleFSIndexOutput::setLength(int64_t length)
-    {
-        file->setLength(length);
     }
 }

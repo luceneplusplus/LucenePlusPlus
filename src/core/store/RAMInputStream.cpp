@@ -85,6 +85,7 @@ namespace Lucene
     
     void RAMInputStream::switchCurrentBuffer(bool enforceEOF)
     {
+        bufferStart = (int64_t)BUFFER_SIZE * (int64_t)currentBufferIndex;
         if (currentBufferIndex >= file->numBuffers())
         {
             // end of file reached, no more buffers left
@@ -101,10 +102,31 @@ namespace Lucene
         {
             currentBuffer = file->getBuffer(currentBufferIndex);
             bufferPosition = 0;
-            bufferStart = (int64_t)BUFFER_SIZE * (int64_t)currentBufferIndex;
             int64_t buflen = _length - bufferStart;
             bufferLength = buflen > BUFFER_SIZE ? BUFFER_SIZE : (int32_t)buflen;
         }
+    }
+    
+    void RAMInputStream::copyBytes(IndexOutputPtr out, int64_t numBytes)
+    {
+        BOOST_ASSERT(numBytes >= 0);
+        int64_t left = numBytes;
+        while (left > 0)
+        {
+            if (bufferPosition == bufferLength)
+            {
+                ++currentBufferIndex;
+                switchCurrentBuffer(true);
+            }
+
+            int32_t bytesInBuffer = bufferLength - bufferPosition;
+            int32_t toCopy = (int32_t)(bytesInBuffer < left ? bytesInBuffer : left);
+            out->writeBytes(currentBuffer.get(), bufferPosition, toCopy);
+            bufferPosition += toCopy;
+            left -= toCopy;
+        }
+
+        BOOST_ASSERT(left == 0);
     }
     
     int64_t RAMInputStream::getFilePointer()
@@ -125,7 +147,7 @@ namespace Lucene
     LuceneObjectPtr RAMInputStream::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<RAMInputStream>());
-        RAMInputStreamPtr cloneInputStream(boost::dynamic_pointer_cast<RAMInputStream>(clone));
+        RAMInputStreamPtr cloneInputStream(boost::static_pointer_cast<RAMInputStream>(clone));
         cloneInputStream->file = file;
         cloneInputStream->_length = _length;
         cloneInputStream->currentBuffer = currentBuffer;

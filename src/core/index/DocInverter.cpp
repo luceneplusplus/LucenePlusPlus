@@ -58,12 +58,6 @@ namespace Lucene
         endConsumer->flush(endChildThreadsAndFields, state);
     }
     
-    void DocInverter::closeDocStore(SegmentWriteStatePtr state)
-    {
-        consumer->closeDocStore(state);
-        endConsumer->closeDocStore(state);
-    }
-    
     void DocInverter::abort()
     {
         consumer->abort();

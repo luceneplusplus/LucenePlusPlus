@@ -27,7 +27,7 @@ namespace Lucene
         TermsHashPerThreadWeakPtr _perThread;
         DocStatePtr docState;
         FieldInvertStatePtr fieldState;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
         
         // Copied from our perThread
         CharBlockPoolPtr charPool;
@@ -42,15 +42,16 @@ namespace Lucene
         bool postingsCompacted;
         int32_t numPostings;
         
+        ParallelPostingsArrayPtr postingsArray;
+        
         IntArray intUptos;
         int32_t intUptoStart;
-    
+        
     protected:
         int32_t postingsHashSize;
         int32_t postingsHashHalfSize;
         int32_t postingsHashMask;
-        Collection<RawPostingListPtr> postingsHash;
-        RawPostingListPtr p;
+        IntArray postingsHash;
         bool doCall;
         bool doNextCall;
     
@@ -62,10 +63,10 @@ namespace Lucene
         /// Called on hitting an aborting exception
         virtual void abort();
         
-        void initReader(ByteSliceReaderPtr reader, RawPostingListPtr p, int32_t stream);
+        void initReader(ByteSliceReaderPtr reader, int32_t termID, int32_t stream);
         
         /// Collapse the hash table and sort in-place.
-        Collection<RawPostingListPtr> sortPostings();
+        IntArray sortPostings();
         
         /// Called before a field instance is being processed
         virtual void start(FieldablePtr field);
@@ -89,10 +90,15 @@ namespace Lucene
         void rehashPostings(int32_t newSize);
     
     protected:
+        void initPostingsArray();
+        void bytesUsed(int64_t size);
+        
+        void growParallelPostingsArray();
+        
         void compactPostings();
         
-        /// Test whether the text for current RawPostingList p equals current tokenText.
-        bool postingEquals(const wchar_t* tokenText, int32_t tokenTextLen);
+        /// Test whether the text for current term equals current tokenText.
+        bool postingEquals(int32_t termID, const wchar_t* tokenText, int32_t tokenTextLen);
     };
 }
 

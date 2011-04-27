@@ -8,7 +8,6 @@
 #define DOCFIELDPROCESSORPERTHREAD_H
 
 #include "DocConsumerPerThread.h"
-#include "DocumentsWriter.h"
 
 namespace Lucene
 {
@@ -59,27 +58,6 @@ namespace Lucene
     
     protected:
         void rehash();
-    };
-    
-    class DocFieldProcessorPerThreadPerDoc : public DocWriter
-    {
-    public:
-        DocFieldProcessorPerThreadPerDoc(DocFieldProcessorPerThreadPtr docProcessor);
-        virtual ~DocFieldProcessorPerThreadPerDoc();
-        
-        LUCENE_CLASS(DocFieldProcessorPerThreadPerDoc);
-                
-    public:
-        DocWriterPtr one;
-        DocWriterPtr two;
-    
-    protected:
-        DocFieldProcessorPerThreadWeakPtr _docProcessor;
-        
-    public:
-        virtual int64_t sizeInBytes();
-        virtual void finish();
-        virtual void abort();
     };
 }
 

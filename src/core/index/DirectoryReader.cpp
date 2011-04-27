@@ -12,6 +12,8 @@
 #include "ReadOnlyDirectoryReader.h"
 #include "IndexWriter.h"
 #include "_IndexWriter.h"
+#include "IndexWriterConfig.h"
+#include "IndexReader.h"
 #include "IndexCommit.h"
 #include "IndexDeletionPolicy.h"
 #include "IndexFileDeleter.h"
@@ -20,7 +22,7 @@
 #include "SegmentInfos.h"
 #include "SegmentInfo.h"
 #include "SegmentReader.h"
-#include "DefaultSimilarity.h"
+#include "Similarity.h"
 #include "ReadOnlySegmentReader.h"
 #include "SegmentMergeInfo.h"
 #include "Lock.h"
@@ -29,13 +31,13 @@
 
 namespace Lucene
 {
-    DirectoryReader::DirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
+    DirectoryReader::DirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis, IndexDeletionPolicyPtr deletionPolicy, 
+                                     bool readOnly, int32_t termInfosIndexDivisor, SetReaderFinishedListener readerFinishedListeners)
     {
         normsCache = MapStringByteArray::newInstance();
         _maxDoc = 0;
         _numDocs = -1;
         _hasDeletions = false;
-        synced = HashSet<String>::newInstance();
         stale = false;
         rollbackHasChanges = false;
         
@@ -44,13 +46,12 @@ namespace Lucene
         this->segmentInfos = sis;
         this->deletionPolicy = deletionPolicy;
         this->termInfosIndexDivisor = termInfosIndexDivisor;
-
-        if (!readOnly)
-        {
-            // We assume that this segments_N was previously properly sync'd
-            HashSet<String> files(sis->files(directory, true));
-            synced.addAll(files.begin(), files.end());
-        }
+        
+        if (!readerFinishedListeners)
+            this->readerFinishedListeners = SetReaderFinishedListener::newInstance();
+        else
+            this->readerFinishedListeners = readerFinishedListeners;
+        applyAllDeletes = false;
         
         // To reduce the chance of hitting FileNotFound (and having to retry), we open segments in
         // reverse because IndexWriter merges & deletes the newest segments first.
@@ -63,6 +64,7 @@ namespace Lucene
             try
             {
                 readers[i] = SegmentReader::get(readOnly, sis->info(i), termInfosIndexDivisor);
+                readers[i]->readerFinishedListeners = this->readerFinishedListeners;
                 success = true;
             }
             catch (LuceneException& e)
@@ -91,35 +93,29 @@ namespace Lucene
         _initialize(readers);
     }
     
-    DirectoryReader::DirectoryReader(IndexWriterPtr writer, SegmentInfosPtr infos, int32_t termInfosIndexDivisor)
+    DirectoryReader::DirectoryReader(IndexWriterPtr writer, SegmentInfosPtr infos, int32_t termInfosIndexDivisor,
+                                     bool applyAllDeletes)
     {
         normsCache = MapStringByteArray::newInstance();
         _maxDoc = 0;
         _numDocs = -1;
         _hasDeletions = false;
-        synced = HashSet<String>::newInstance();
         stale = false;
         rollbackHasChanges = false;
         
         this->_directory = writer->getDirectory();
         this->readOnly = true;
-        this->segmentInfos = infos;
-        this->segmentInfosStart = boost::dynamic_pointer_cast<SegmentInfos>(infos->clone());
+        this->applyAllDeletes = applyAllDeletes; // saved for reopen
+        
+        segmentInfos = boost::static_pointer_cast<SegmentInfos>(infos->clone()); // make sure we clone otherwise we share mutable state with IW
         this->termInfosIndexDivisor = termInfosIndexDivisor;
-        
-        if (!readOnly)
-        {
-            // We assume that this segments_N was previously properly sync'd
-            HashSet<String> files(infos->files(_directory, true));
-            synced.addAll(files.begin(), files.end());
-        }
-        
+        readerFinishedListeners = writer->getReaderFinishedListeners();
+
         // IndexWriter synchronizes externally before calling us, which ensures infos will not change; so there's
         // no need to process segments in reverse order
         int32_t numSegments = infos->size();
         Collection<SegmentReaderPtr> readers(Collection<SegmentReaderPtr>::newInstance(numSegments));
         DirectoryPtr dir(writer->getDirectory());
-        int32_t upto = 0;
         
         for (int32_t i = 0; i < numSegments; ++i)
         {
@@ -128,8 +124,10 @@ namespace Lucene
             try
             {
                 SegmentInfoPtr info(infos->info(i));
-                if (info->dir == dir)
-                    readers[upto++] = boost::dynamic_pointer_cast<SegmentReader>(writer->readerPool->getReadOnlyClone(info, true, termInfosIndexDivisor));
+                BOOST_ASSERT(info->dir == dir);
+                
+                readers[i] = boost::static_pointer_cast<SegmentReader>(writer->readerPool->getReadOnlyClone(info, true, termInfosIndexDivisor));
+                readers[i]->readerFinishedListeners = readerFinishedListeners;
                 success = true;
             }
             catch (LuceneException& e)
@@ -139,12 +137,11 @@ namespace Lucene
             if (!success)
             {
                 // Close all readers we had opened
-                for (--upto; upto >= 0; --upto)
+                for (i--; i >= 0; --i)
                 {
                     try
                     {
-                        if (readers[upto])
-                            readers[upto]->close();
+                        readers[i]->close();
                     }
                     catch (...)
                     {
@@ -157,24 +154,17 @@ namespace Lucene
         
         this->_writer = writer;
         
-        if (upto < readers.size())
-        {
-            // This means some segments were in a foreign Directory
-            readers.resize(upto);
-        }
-        
         _initialize(readers);
     }
     
     DirectoryReader::DirectoryReader(DirectoryPtr directory, SegmentInfosPtr infos, Collection<SegmentReaderPtr> oldReaders, 
                                      Collection<int32_t> oldStarts, MapStringByteArray oldNormsCache, bool readOnly, 
-                                     bool doClone, int32_t termInfosIndexDivisor)
+                                     bool doClone, int32_t termInfosIndexDivisor, SetReaderFinishedListener readerFinishedListeners)
     {
         normsCache = MapStringByteArray::newInstance();
         _maxDoc = 0;
         _numDocs = -1;
         _hasDeletions = false;
-        synced = HashSet<String>::newInstance();
         stale = false;
         rollbackHasChanges = false;
         
@@ -182,12 +172,9 @@ namespace Lucene
         this->readOnly = readOnly;
         this->segmentInfos = infos;
         this->termInfosIndexDivisor = termInfosIndexDivisor;
-        if (!readOnly)
-        {
-            // We assume that this segments_N was previously properly sync'd
-            HashSet<String> files(infos->files(directory, true));
-            synced.addAll(files.begin(), files.end());
-        }
+        BOOST_ASSERT(readerFinishedListeners);
+        this->readerFinishedListeners = readerFinishedListeners;
+        applyAllDeletes = false;
         
         // we put the old SegmentReaders in a map, that allows us to lookup a reader using its segment name
         MapStringInt segmentReaders(MapStringInt::newInstance());
@@ -232,9 +219,13 @@ namespace Lucene
                     
                     // this is a new reader; in case we hit an exception we can close it safely
                     newReader = SegmentReader::get(readOnly, infos->info(i), termInfosIndexDivisor);
+                    newReader->readerFinishedListeners = readerFinishedListeners;
                 }
                 else
+                {
                     newReader = newReaders[i]->reopenSegment(infos->info(i), doClone, readOnly);
+                    BOOST_ASSERT(newReader->readerFinishedListeners == readerFinishedListeners);
+                }
                 
                 if (newReader == newReaders[i])
                 {
@@ -320,6 +311,24 @@ namespace Lucene
     {
     }
     
+    String DirectoryReader::toString()
+    {
+        StringStream buffer;
+        if (_hasChanges)
+            buffer << L"*";
+        buffer << getClassName() << L"(";
+        String segmentsFile(segmentInfos->getCurrentSegmentFileName());
+        if (!segmentsFile.empty())
+            buffer << segmentsFile;
+        IndexWriterPtr writer(_writer.lock());
+        if (writer)
+            buffer << L":nrt";
+        for (int32_t i = 0; i < subReaders.size(); ++i)
+            buffer << L" " << subReaders[i]->toString();
+        buffer << ")";
+        return buffer.str();
+    }
+    
     void DirectoryReader::_initialize(Collection<SegmentReaderPtr> subReaders)
     {
         this->subReaders = subReaders;
@@ -359,7 +368,7 @@ namespace Lucene
     LuceneObjectPtr DirectoryReader::clone(bool openReadOnly, LuceneObjectPtr other)
     {
         SyncLock syncLock(this);
-        DirectoryReaderPtr newReader(doReopen(boost::dynamic_pointer_cast<SegmentInfos>(segmentInfos->clone()), true, openReadOnly));
+        DirectoryReaderPtr newReader(doReopen(boost::static_pointer_cast<SegmentInfos>(segmentInfos->clone()), true, openReadOnly));
         
         if (shared_from_this() != newReader)
             newReader->deletionPolicy = deletionPolicy;
@@ -377,6 +386,7 @@ namespace Lucene
             writeLock.reset();
             _hasChanges = false;
         }
+        BOOST_ASSERT(newReader->readerFinishedListeners);
         
         return newReader;
     }
@@ -407,7 +417,9 @@ namespace Lucene
         if (commit)
             boost::throw_exception(IllegalArgumentException(L"a reader obtained from IndexWriter.getReader() cannot currently accept a commit"));
         
-        return IndexWriterPtr(_writer)->getReader();
+        IndexReaderPtr reader(IndexWriterPtr(_writer)->getReader(applyAllDeletes));
+        reader->readerFinishedListeners = readerFinishedListeners;
+        return reader;
     }
     
     IndexReaderPtr DirectoryReader::doReopen(bool openReadOnly, IndexCommitPtr commit)
@@ -440,7 +452,7 @@ namespace Lucene
                 BOOST_ASSERT(isCurrent());
                 
                 if (openReadOnly)
-                    return boost::dynamic_pointer_cast<IndexReader>(clone(openReadOnly));
+                    return boost::static_pointer_cast<IndexReader>(clone(openReadOnly));
                 else
                     return shared_from_this();
             }
@@ -449,7 +461,7 @@ namespace Lucene
                 if (openReadOnly != readOnly)
                 {
                     // Just fallback to clone
-                    return boost::dynamic_pointer_cast<IndexReader>(clone(openReadOnly));
+                    return boost::static_pointer_cast<IndexReader>(clone(openReadOnly));
                 }
                 else
                     return shared_from_this();
@@ -464,7 +476,7 @@ namespace Lucene
                 if (readOnly != openReadOnly)
                 {
                     // Just fallback to clone
-                    return boost::dynamic_pointer_cast<IndexReader>(clone(openReadOnly));
+                    return boost::static_pointer_cast<IndexReader>(clone(openReadOnly));
                 }
                 else
                     return shared_from_this();
@@ -478,9 +490,9 @@ namespace Lucene
     {
         SyncLock syncLock(this);
         if (openReadOnly)
-            return newLucene<ReadOnlyDirectoryReader>(_directory, infos, subReaders, starts, normsCache, doClone, termInfosIndexDivisor);
+            return newLucene<ReadOnlyDirectoryReader>(_directory, infos, subReaders, starts, normsCache, doClone, termInfosIndexDivisor, readerFinishedListeners);
         else
-            return newLucene<DirectoryReader>(_directory, infos, subReaders, starts, normsCache, false, doClone, termInfosIndexDivisor);
+            return newLucene<DirectoryReader>(_directory, infos, subReaders, starts, normsCache, false, doClone, termInfosIndexDivisor, readerFinishedListeners);
     }
     
     int64_t DirectoryReader::getVersion()
@@ -626,7 +638,7 @@ namespace Lucene
         ensureOpen();
         ByteArray bytes(normsCache.get(field));
         if (!bytes && !hasNorms(field))
-            MiscUtils::arrayFill(norms.get(), offset, norms.size(), DefaultSimilarity::encodeNorm(1.0));
+            MiscUtils::arrayFill(norms.get(), offset, norms.size(), Similarity::getDefault()->encodeNormValue(1.0));
         else if (bytes) // cache hit
             MiscUtils::arrayCopy(bytes.get(), 0, norms.get(), offset, maxDoc());
         else
@@ -649,13 +661,25 @@ namespace Lucene
     TermEnumPtr DirectoryReader::terms()
     {
         ensureOpen();
-        return newLucene<MultiTermEnum>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts, TermPtr());
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->terms();
+        }
+        else
+            return newLucene<MultiTermEnum>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts, TermPtr());
     }
     
     TermEnumPtr DirectoryReader::terms(TermPtr t)
     {
         ensureOpen();
-        return newLucene<MultiTermEnum>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts, t);
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->terms(t);
+        }
+        else
+            return newLucene<MultiTermEnum>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts, t);
     }
     
     int32_t DirectoryReader::docFreq(TermPtr t)
@@ -670,13 +694,37 @@ namespace Lucene
     TermDocsPtr DirectoryReader::termDocs()
     {
         ensureOpen();
-        return newLucene<MultiTermDocs>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts);
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->termDocs();
+        }
+        else
+            return newLucene<MultiTermDocs>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts);
+    }
+    
+    TermDocsPtr DirectoryReader::termDocs(TermPtr term)
+    {
+        ensureOpen();
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->termDocs(term);
+        }
+        else
+            return IndexReader::termDocs(term);
     }
     
     TermPositionsPtr DirectoryReader::termPositions()
     {
         ensureOpen();
-        return newLucene<MultiTermPositions>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts);
+        if (subReaders.size() == 1)
+        {
+            // Optimize single segment case
+            return subReaders[0]->termPositions();
+        }
+        else
+            return newLucene<MultiTermPositions>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts);
     }
     
     void DirectoryReader::acquireWriteLock()
@@ -697,7 +745,7 @@ namespace Lucene
             if (!writeLock)
             {
                 LockPtr writeLock(_directory->makeLock(IndexWriter::WRITE_LOCK_NAME));
-                if (!writeLock->obtain((int32_t)IndexWriter::WRITE_LOCK_TIMEOUT)) // obtain write lock
+                if (!writeLock->obtain((int32_t)IndexWriterConfig::WRITE_LOCK_TIMEOUT)) // obtain write lock
                     boost::throw_exception(LockObtainFailedException(L"Index locked for write: " + writeLock->toString()));
                 this->writeLock = writeLock;
                 
@@ -721,11 +769,15 @@ namespace Lucene
             segmentInfos->setUserData(commitUserData);
             
             // Default deleter (for backwards compatibility) is KeepOnlyLastCommitDeleter
-            IndexFileDeleterPtr deleter(newLucene<IndexFileDeleter>(_directory, deletionPolicy ? deletionPolicy : newLucene<KeepOnlyLastCommitDeletionPolicy>(), segmentInfos, InfoStreamPtr(), DocumentsWriterPtr(), synced));
+            IndexFileDeleterPtr deleter(newLucene<IndexFileDeleter>(_directory, deletionPolicy ? deletionPolicy : newLucene<KeepOnlyLastCommitDeletionPolicy>(), segmentInfos, InfoStreamPtr()));
             segmentInfos->updateGeneration(deleter->getLastSegmentInfos());
+            segmentInfos->changed();
             
             // Checkpoint the state we are about to change, in case we have to roll back
             startCommit();
+            
+            SegmentInfosPtr rollbackSegmentInfos(newLucene<SegmentInfos>());
+            rollbackSegmentInfos->addAll(segmentInfos);
             
             bool success = false;
             LuceneException finally;
@@ -734,18 +786,11 @@ namespace Lucene
                 for (Collection<SegmentReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
                     (*reader)->commit();
                 
+                // Remove segments that contain only 100% deleted docs
+                segmentInfos->pruneDeletedSegments();
+
                 // Sync all files we just wrote
-                HashSet<String> files(segmentInfos->files(_directory, false));
-                for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
-                {
-                    if (!synced.contains(*fileName))
-                    {
-                        BOOST_ASSERT(_directory->fileExists(*fileName));
-                        _directory->sync(*fileName);
-                        synced.add(*fileName);
-                    }
-                }
-                
+                _directory->sync(segmentInfos->files(_directory, false));                
                 segmentInfos->commit(_directory);
                 success = true;
             }
@@ -764,6 +809,10 @@ namespace Lucene
                 // Recompute deletable files & remove them (so partially written .del files, etc, 
                 // are removed)
                 deleter->refresh();
+                
+                // Restore all SegmentInfos (in case we pruned some)
+                segmentInfos->clear();
+                segmentInfos->addAll(rollbackSegmentInfos);
             }
             finally.throwException();
             
@@ -812,7 +861,7 @@ namespace Lucene
             return (SegmentInfos::readCurrentVersion(_directory) == segmentInfos->getVersion());
         }
         else
-            return writer->nrtIsCurrent(segmentInfosStart);
+            return writer->nrtIsCurrent(segmentInfos);
     }
     
     void DirectoryReader::doClose()
@@ -834,9 +883,13 @@ namespace Lucene
             }
         }
         
-        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
-        // generally not a good idea):
-        FieldCache::DEFAULT()->purge(shared_from_this());
+        IndexWriterPtr writer(_writer.lock());
+        if (writer)
+        {
+            // Since we just closed, writer may now be able to
+            // delete unused files:
+            writer->deleteUnusedFiles();
+        }
         
         // throw the first exception
         ioe.throwException();
@@ -917,6 +970,9 @@ namespace Lucene
             }
         }
         
+        // Ensure that the commit points are sorted in ascending order.
+        std::sort(commits.begin(), commits.end(), luceneCompare<IndexCommitPtr>());
+        
         return commits;
     }
     
@@ -936,9 +992,9 @@ namespace Lucene
         SegmentInfosPtr segmentInfos(_segmentInfos);
         segmentInfos->read(directory, segmentFileName);
         if (readOnly)
-            return newLucene<ReadOnlyDirectoryReader>(directory, segmentInfos, deletionPolicy, termInfosIndexDivisor);
+            return newLucene<ReadOnlyDirectoryReader>(directory, segmentInfos, deletionPolicy, termInfosIndexDivisor, SetReaderFinishedListener());
         else
-            return newLucene<DirectoryReader>(directory, segmentInfos, deletionPolicy, false, termInfosIndexDivisor);
+            return newLucene<DirectoryReader>(directory, segmentInfos, deletionPolicy, false, termInfosIndexDivisor, SetReaderFinishedListener());
     }
     
     FindSegmentsReopen::FindSegmentsReopen(DirectoryReaderPtr reader, bool openReadOnly, SegmentInfosPtr infos, DirectoryPtr directory) : FindSegmentsFileT<DirectoryReaderPtr>(infos, directory)
@@ -1305,7 +1361,7 @@ namespace Lucene
         return userData;
     }
     
-    void ReaderCommit::deleteCommit()
+    void ReaderCommit::_delete()
     {
         boost::throw_exception(UnsupportedOperationException(L"This IndexCommit does not support deletions."));
     }

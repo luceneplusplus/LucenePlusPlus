@@ -51,7 +51,7 @@ namespace TestEqualsHashCode
             return HashSet<String>();
         }
         
-        virtual void deleteCommit()
+        virtual void _delete()
         {
         }
         

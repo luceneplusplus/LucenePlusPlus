@@ -30,10 +30,10 @@ namespace Lucene
         virtual int32_t advance(int32_t target);
         virtual int32_t docID();
         
-        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()} 
-        /// is called the first time.
-        /// @return The score of the required scorer, eventually increased by the score of the optional scorer when 
-        /// it also matches the current document.
+        /// Returns the score of the current document matching the query.  Initially invalid, until {@link 
+        /// #nextDoc()} is called the first time.
+        /// @return The score of the required scorer, eventually increased by the score of the optional scorer 
+        /// when it also matches the current document.
         virtual double score();
     };
 }

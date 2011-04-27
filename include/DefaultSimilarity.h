@@ -21,16 +21,13 @@ namespace Lucene
         LUCENE_CLASS(DefaultSimilarity);
     
     protected:
-        bool discountOverlaps; // Default false
+        bool discountOverlaps; // Default true
     
     public:
         /// Implemented as state->getBoost() * lengthNorm(numTerms), where numTerms is {@link 
         /// FieldInvertState#getLength()} if {@link #setDiscountOverlaps} is false, else it's {@link 
         /// FieldInvertState#getLength()} - {@link FieldInvertState#getNumOverlap()}.
         virtual double computeNorm(const String& fieldName, FieldInvertStatePtr state);
-        
-        /// Implemented as 1 / sqrt(numTerms).
-        virtual double lengthNorm(const String& fieldName, int32_t numTokens);
         
         /// Implemented as 1 / sqrt(sumOfSquaredWeights).
         virtual double queryNorm(double sumOfSquaredWeights);
@@ -48,7 +45,7 @@ namespace Lucene
         virtual double coord(int32_t overlap, int32_t maxOverlap);
         
         /// Determines whether overlap tokens (Tokens with 0 position increment) are ignored when computing
-        /// norm.  By default this is false, meaning overlap tokens are counted just like non-overlap tokens.
+        /// norm.  By default this is true, meaning overlap tokens do not count when computing norms.
         /// @see #computeNorm
         void setDiscountOverlaps(bool v);
         

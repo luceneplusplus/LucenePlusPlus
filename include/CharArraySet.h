@@ -11,18 +11,60 @@
 
 namespace Lucene
 {
-    /// A simple class that stores Strings as char[]'s in a hash table.  Note that this is not a general purpose class.  
-    /// For example, it cannot remove items from the set, nor does it resize its hash table to be smaller, etc.  It is 
-    /// designed to be quick to test if a char[] is in the set without the necessity of converting it to a String first.
+    /// A simple class that stores Strings as char[]'s in a hash table.  Note that this 
+    /// is not a general purpose class. For example, it cannot remove items from the set, 
+    /// nor does it resize its hash table to be smaller, etc. It is  designed to be quick
+    /// to test if a char[] is in the set without the necessity of converting it to a 
+    /// String first.
+    ///
+    /// You must specify the required {@link Version} compatibility when creating {@link 
+    /// CharArraySet}:
+    /// <ul>
+    ///    <li> As of 3.1, supplementary characters are properly lowercased.
+    /// </ul>
+    /// Before 3.1 supplementary characters could not be lowercased correctly. To use 
+    /// instances of {@link CharArraySet} with the behaviour before Lucene 3.1 pass a 
+    /// {@link Version} < 3.1 to the constructors.
     class LPPAPI CharArraySet : public LuceneObject
     {
     public:
+        /// Create empty set.
+        /// @param matchVersion compatibility match version.
+        /// @param ignoreCase false if and only if the set should be case sensitive 
+        /// otherwise true.
+        CharArraySet(LuceneVersion::Version matchVersion, bool ignoreCase);
+        
+        /// Create set from a set of strings.
+        /// @param matchVersion compatibility match version.
+        /// @param entries a collection whose elements to be placed into the set
+        /// @param ignoreCase false if and only if the set should be case sensitive 
+        /// otherwise true.
+        CharArraySet(LuceneVersion::Version matchVersion, HashSet<String> entries, bool ignoreCase);
+        
+        /// Creates a set from a Collection of objects. 
+        /// @param matchVersion compatibility match version.
+        /// @param entries a collection whose elements to be placed into the set
+        /// @param ignoreCase false if and only if the set should be case sensitive 
+        /// otherwise true.
+        CharArraySet(LuceneVersion::Version matchVersion, Collection<String> entries, bool ignoreCase);
+        
+        /// Create empty set.
+        /// @param ignoreCase false if and only if the set should be case sensitive 
+        /// otherwise true.
         CharArraySet(bool ignoreCase);
         
         /// Create set from a set of strings.
+        /// @param entries a collection whose elements to be placed into the set
+        /// @param ignoreCase false if and only if the set should be case sensitive 
+        /// otherwise true.
+        /// @deprecated use {@link #CharArraySet(Version, HashSet, bool)} instead
         CharArraySet(HashSet<String> entries, bool ignoreCase);
         
-        /// Create set from a collection of strings.
+        /// Creates a set from a Collection of objects. 
+        /// @param entries a collection whose elements to be placed into the set
+        /// @param ignoreCase false if and only if the set should be case sensitive 
+        /// otherwise true.
+        /// @deprecated use {@link #CharArraySet(Version, Collection, bool)} instead
         CharArraySet(Collection<String> entries, bool ignoreCase);
         
         virtual ~CharArraySet();
@@ -46,10 +88,14 @@ namespace Lucene
         virtual bool add(CharArray text);
         
         virtual int32_t size();
-        virtual bool isEmpty();
         
         HashSet<String>::iterator begin();
         HashSet<String>::iterator end();
+        
+        virtual String toString();
+    
+    protected:
+        void ConstructCharArraySet(bool ignoreCase);
     };
 }
 

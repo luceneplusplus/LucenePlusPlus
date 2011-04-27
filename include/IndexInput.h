@@ -21,9 +21,12 @@ namespace Lucene
         virtual ~IndexInput();
         
         LUCENE_CLASS(IndexInput);
+
+    private:
+        bool preUTF8Strings; // true if we are reading old (modified UTF8) string format
         
     protected:
-        bool preUTF8Strings; // true if we are reading old (modified UTF8) string format
+        ByteArray copyBuffer;
         
     public:
         /// Reads and returns a single byte.
@@ -118,6 +121,15 @@ namespace Lucene
         
         /// Read string map as a series of key/value pairs.
         virtual MapStringString readStringStringMap();
+        
+        /// Copies numBytes bytes to the given {@link IndexOutput}.
+        ///
+        /// NOTE: this method uses an intermediate buffer to copy the bytes.
+        /// Consider overriding it in your implementation, if you can make a better, optimized copy.
+        ///
+        /// NOTE: ensure that there are enough bytes in the input to copy to output. Otherwise, 
+        /// different exceptions may be thrown, depending on the implementation.
+        virtual void copyBytes(IndexOutputPtr out, int64_t numBytes);
     };
 }
 

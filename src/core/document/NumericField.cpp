@@ -17,28 +17,28 @@ namespace Lucene
         : AbstractField(name, Field::STORE_NO, Field::INDEX_ANALYZED_NO_NORMS, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
-        tokenStream = newLucene<NumericTokenStream>(NumericUtils::PRECISION_STEP_DEFAULT);
+        numericTS = newLucene<NumericTokenStream>(NumericUtils::PRECISION_STEP_DEFAULT);
     }
     
     NumericField::NumericField(const String& name, Field::Store store, bool index)
         : AbstractField(name, store, index ? Field::INDEX_ANALYZED_NO_NORMS : Field::INDEX_NO, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
-        tokenStream = newLucene<NumericTokenStream>(NumericUtils::PRECISION_STEP_DEFAULT);
+        numericTS = newLucene<NumericTokenStream>(NumericUtils::PRECISION_STEP_DEFAULT);
     }
     
     NumericField::NumericField(const String& name, int32_t precisionStep)
         : AbstractField(name, Field::STORE_NO, Field::INDEX_ANALYZED_NO_NORMS, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
-        tokenStream = newLucene<NumericTokenStream>(precisionStep);
+        numericTS = newLucene<NumericTokenStream>(precisionStep);
     }
     
     NumericField::NumericField(const String& name, int32_t precisionStep, Field::Store store, bool index)
         : AbstractField(name, store, index ? Field::INDEX_ANALYZED_NO_NORMS : Field::INDEX_NO, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
-        tokenStream = newLucene<NumericTokenStream>(precisionStep);
+        numericTS = newLucene<NumericTokenStream>(precisionStep);
     }
     
     NumericField::~NumericField()
@@ -47,7 +47,7 @@ namespace Lucene
     
     TokenStreamPtr NumericField::tokenStreamValue()
     {
-        return isIndexed() ? boost::static_pointer_cast<TokenStream>(tokenStream) : TokenStreamPtr();
+        return isIndexed() ? boost::static_pointer_cast<TokenStream>(numericTS) : TokenStreamPtr();
     }
     
     ByteArray NumericField::getBinaryValue(ByteArray result)
@@ -72,23 +72,28 @@ namespace Lucene
         return StringUtils::toLong(stringValue());
     }
     
+    int32_t NumericField::getPrecisionStep()
+    {
+        return numericTS->getPrecisionStep();
+    }
+    
     NumericFieldPtr NumericField::setLongValue(int64_t value)
     {
-        tokenStream->setLongValue(value);
+        numericTS->setLongValue(value);
         fieldsData = value;
         return shared_from_this();
     }
     
     NumericFieldPtr NumericField::setIntValue(int32_t value)
     {
-        tokenStream->setIntValue(value);
+        numericTS->setIntValue(value);
         fieldsData = value;
         return shared_from_this();
     }
     
     NumericFieldPtr NumericField::setDoubleValue(double value)
     {
-        tokenStream->setDoubleValue(value);
+        numericTS->setDoubleValue(value);
         fieldsData = value;
         return shared_from_this();
     }

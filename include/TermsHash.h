@@ -26,16 +26,9 @@ namespace Lucene
     public:
         TermsHashConsumerPtr consumer;
         TermsHashPtr nextTermsHash;
-        int32_t bytesPerPosting;
-        int32_t postingsFreeChunk;
         DocumentsWriterWeakPtr _docWriter;
         bool trackAllocations;
         
-    protected:
-        Collection<RawPostingListPtr> postingsFreeList;
-        int32_t postingsFreeCount;
-        int32_t postingsAllocCount;
-            
     public:
         /// Add a new thread
         virtual InvertedDocConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread);
@@ -44,24 +37,13 @@ namespace Lucene
         virtual void setFieldInfos(FieldInfosPtr fieldInfos);
         
         /// Abort (called after hitting AbortException)
-        /// NOTE: do not make this sync'd; it's not necessary (DW ensures all other threads are idle), and it 
-        /// leads to deadlock
         virtual void abort();
-        
-        void shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
-        
-        /// Close doc stores
-        virtual void closeDocStore(SegmentWriteStatePtr state);
         
         /// Flush a new segment
         virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
                 
         /// Attempt to free RAM, returning true if any RAM was freed
         virtual bool freeRAM();
-        
-        void recyclePostings(Collection<RawPostingListPtr> postings, int32_t numPostings);
-        
-        void getPostings(Collection<RawPostingListPtr> postings);
     };
 }
 

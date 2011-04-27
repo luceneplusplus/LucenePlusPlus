@@ -38,7 +38,7 @@ namespace Lucene
         this->expandMultiTermQuery = false;
         this->cachedTokenStream = false;
         this->wrapToCaching = true;
-        this->readers = MapStringIndexReader::newInstance();
+        this->readers = SortedMapStringIndexReader::newInstance();
     }
     
     WeightedSpanTermExtractor::~WeightedSpanTermExtractor()
@@ -47,7 +47,7 @@ namespace Lucene
     
     void WeightedSpanTermExtractor::closeReaders()
     {
-        for (MapStringIndexReader::iterator reader = readers.begin(); reader != readers.end(); ++reader)
+        for (SortedMapStringIndexReader::iterator reader = readers.begin(); reader != readers.end(); ++reader)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace Lucene
     {
         if (MiscUtils::typeOf<BooleanQuery>(query))
         {
-            Collection<BooleanClausePtr> queryClauses(boost::dynamic_pointer_cast<BooleanQuery>(query)->getClauses());
+            Collection<BooleanClausePtr> queryClauses(boost::static_pointer_cast<BooleanQuery>(query)->getClauses());
             for (int32_t i = 0; i < queryClauses.size(); ++i)
             {
                 if (!queryClauses[i]->isProhibited())
@@ -72,7 +72,7 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<PhraseQuery>(query))
         {
-            PhraseQueryPtr phraseQuery(boost::dynamic_pointer_cast<PhraseQuery>(query));
+            PhraseQueryPtr phraseQuery(boost::static_pointer_cast<PhraseQuery>(query));
             Collection<TermPtr> phraseQueryTerms(phraseQuery->getTerms());
             Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(phraseQueryTerms.size()));
             for (int32_t i = 0; i < phraseQueryTerms.size(); ++i)
@@ -106,21 +106,21 @@ namespace Lucene
         else if (MiscUtils::typeOf<TermQuery>(query))
             extractWeightedTerms(terms, query);
         else if (MiscUtils::typeOf<SpanQuery>(query))
-            extractWeightedSpanTerms(terms, boost::dynamic_pointer_cast<SpanQuery>(query));
+            extractWeightedSpanTerms(terms, boost::static_pointer_cast<SpanQuery>(query));
         else if (MiscUtils::typeOf<FilteredQuery>(query))
-            extract(boost::dynamic_pointer_cast<FilteredQuery>(query)->getQuery(), terms);
+            extract(boost::static_pointer_cast<FilteredQuery>(query)->getQuery(), terms);
         else if (MiscUtils::typeOf<DisjunctionMaxQuery>(query))
         {
-            DisjunctionMaxQueryPtr dmq(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(query));
+            DisjunctionMaxQueryPtr dmq(boost::static_pointer_cast<DisjunctionMaxQuery>(query));
             for (Collection<QueryPtr>::iterator q = dmq->begin(); q != dmq->end(); ++q)
                 extract(*q, terms);
         }
         else if (MiscUtils::typeOf<MultiTermQuery>(query) && expandMultiTermQuery)
         {
-            MultiTermQueryPtr mtq(boost::dynamic_pointer_cast<MultiTermQuery>(query));
+            MultiTermQueryPtr mtq(boost::static_pointer_cast<MultiTermQuery>(query));
             if (mtq->getRewriteMethod() != MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE())
             {
-                mtq = boost::dynamic_pointer_cast<MultiTermQuery>(mtq->clone());
+                mtq = boost::static_pointer_cast<MultiTermQuery>(mtq->clone());
                 mtq->setRewriteMethod(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE());
                 query = mtq;
             }
@@ -134,7 +134,7 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<MultiPhraseQuery>(query))
         {
-            MultiPhraseQueryPtr mpq(boost::dynamic_pointer_cast<MultiPhraseQuery>(query));
+            MultiPhraseQueryPtr mpq(boost::static_pointer_cast<MultiPhraseQuery>(query));
             Collection< Collection<TermPtr> > termArrays(mpq->getTermArrays());
             Collection<int32_t> positions(mpq->getPositions());
             if (!positions.empty())
@@ -203,7 +203,7 @@ namespace Lucene
         {
             for (HashSet<String>::iterator field = fieldNames.begin(); field != fieldNames.end(); ++field)
             {
-                SpanQueryPtr rewrittenQuery(boost::dynamic_pointer_cast<SpanQuery>(spanQuery->rewrite(getReaderForField(*field))));
+                SpanQueryPtr rewrittenQuery(boost::static_pointer_cast<SpanQuery>(spanQuery->rewrite(getReaderForField(*field))));
                 queries.put(*field, rewrittenQuery);
                 rewrittenQuery->extractTerms(nonWeightedTerms);
             }
@@ -361,20 +361,20 @@ namespace Lucene
     void WeightedSpanTermExtractor::collectSpanQueryFields(SpanQueryPtr spanQuery, HashSet<String> fieldNames)
     {
         if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery))
-            collectSpanQueryFields(boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery(), fieldNames);
+            collectSpanQueryFields(boost::static_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery(), fieldNames);
         else if (MiscUtils::typeOf<SpanFirstQuery>(spanQuery))
-            collectSpanQueryFields(boost::dynamic_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch(), fieldNames);
+            collectSpanQueryFields(boost::static_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch(), fieldNames);
         else if (MiscUtils::typeOf<SpanNearQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(boost::static_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
                 collectSpanQueryFields(*clause, fieldNames);
         }
         else if (MiscUtils::typeOf<SpanNotQuery>(spanQuery))
-            collectSpanQueryFields(boost::dynamic_pointer_cast<SpanNotQuery>(spanQuery)->getInclude(), fieldNames);
+            collectSpanQueryFields(boost::static_pointer_cast<SpanNotQuery>(spanQuery)->getInclude(), fieldNames);
         else if (MiscUtils::typeOf<SpanOrQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(boost::static_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
                 collectSpanQueryFields(*clause, fieldNames);
         }
@@ -387,12 +387,12 @@ namespace Lucene
         if (!expandMultiTermQuery)
             return false; // Will throw UnsupportedOperationException in case of a SpanRegexQuery.
         else if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery))
-            return mustRewriteQuery(boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery());
+            return mustRewriteQuery(boost::static_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery());
         else if (MiscUtils::typeOf<SpanFirstQuery>(spanQuery))
-            return mustRewriteQuery(boost::dynamic_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch());
+            return mustRewriteQuery(boost::static_pointer_cast<SpanFirstQuery>(spanQuery)->getMatch());
         else if (MiscUtils::typeOf<SpanNearQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(boost::static_pointer_cast<SpanNearQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
             {
                 if (mustRewriteQuery(*clause))
@@ -402,12 +402,12 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<SpanNotQuery>(spanQuery))
         {
-            SpanNotQueryPtr spanNotQuery(boost::dynamic_pointer_cast<SpanNotQuery>(spanQuery));
+            SpanNotQueryPtr spanNotQuery(boost::static_pointer_cast<SpanNotQuery>(spanQuery));
             return mustRewriteQuery(spanNotQuery->getInclude()) || mustRewriteQuery(spanNotQuery->getExclude());
         }
         else if (MiscUtils::typeOf<SpanOrQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(boost::dynamic_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(boost::static_pointer_cast<SpanOrQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
             {
                 if (mustRewriteQuery(*clause))

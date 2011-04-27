@@ -102,7 +102,7 @@ public:
     
     virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
-        return newLucene<FaultyIndexInput>(boost::dynamic_pointer_cast<IndexInput>(delegate->clone()));
+        return newLucene<FaultyIndexInput>(boost::static_pointer_cast<IndexInput>(delegate->clone()));
     }
     
 protected:

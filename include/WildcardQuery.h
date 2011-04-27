@@ -37,6 +37,8 @@ namespace Lucene
         /// Returns the pattern term.
         TermPtr getTerm();
         
+        virtual String getField();
+        
         virtual QueryPtr rewrite(IndexReaderPtr reader);
         
         /// Prints a user-readable version of this query.

@@ -14,7 +14,7 @@ namespace Lucene
     class IntBlockPool : public LuceneObject
     {
     public:
-        IntBlockPool(DocumentsWriterPtr docWriter, bool trackAllocations);
+        IntBlockPool(DocumentsWriterPtr docWriter);
         virtual ~IntBlockPool();
         
         LUCENE_CLASS(IntBlockPool);
@@ -27,7 +27,6 @@ namespace Lucene
         
         IntArray buffer; // Current head buffer
         int32_t intOffset; // Current head offset
-        bool trackAllocations;
         
     protected:
         DocumentsWriterWeakPtr _docWriter;

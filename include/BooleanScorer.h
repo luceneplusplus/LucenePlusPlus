@@ -8,7 +8,6 @@
 #define BOOLEANSCORER_H
 
 #include "Scorer.h"
-#include "Collector.h"
 
 namespace Lucene
 {
@@ -30,7 +29,8 @@ namespace Lucene
     class BooleanScorer : public Scorer
     {
     public:
-        BooleanScorer(SimilarityPtr similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers);
+        BooleanScorer(WeightPtr weight, bool disableCoord, SimilarityPtr similarity, int32_t minNrShouldMatch, 
+                      Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers, int32_t maxCoord);
         virtual ~BooleanScorer();
     
         LUCENE_CLASS(BooleanScorer);
@@ -38,9 +38,7 @@ namespace Lucene
     protected:
         SubScorerPtr scorers;
         BucketTablePtr bucketTable;
-        int32_t maxCoord;
-        Collection<double> coordFactors;
-        int32_t requiredMask;
+        DoubleArray coordFactors;
         int32_t prohibitedMask;
         int32_t nextMask;
         int32_t minNrShouldMatch;
@@ -59,101 +57,7 @@ namespace Lucene
         virtual double score();
         virtual void score(CollectorPtr collector);
         virtual String toString();
-    };
-    
-    class BooleanScorerCollector : public Collector
-    {
-    public:
-        BooleanScorerCollector(int32_t mask, BucketTablePtr bucketTable);
-        virtual ~BooleanScorerCollector();
-    
-        LUCENE_CLASS(BooleanScorerCollector);
-    
-    protected:
-        BucketTableWeakPtr _bucketTable;
-        int32_t mask;
-        ScorerWeakPtr _scorer;
-    
-    public:
-        virtual void collect(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);        
-        virtual void setScorer(ScorerPtr scorer);
-        virtual bool acceptsDocsOutOfOrder();
-    };
-    
-    // An internal class which is used in score(Collector, int32_t) for setting the current score. This is required 
-    // since Collector exposes a setScorer method and implementations that need the score will call scorer->score().
-    // Therefore the only methods that are implemented are score() and doc().
-    class BucketScorer : public Scorer
-    {
-    public:
-        BucketScorer();
-        virtual ~BucketScorer();
-    
-        LUCENE_CLASS(BucketScorer);
-    
-    public:
-        double _score;
-        int32_t doc;
-    
-    public:
-        virtual int32_t advance(int32_t target);
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual double score();
-    };
-    
-    class Bucket : public LuceneObject
-    {
-    public:
-        Bucket();
-        virtual ~Bucket();
-        
-        LUCENE_CLASS(Bucket);
-    
-    public:
-        int32_t doc; // tells if bucket is valid
-        double score; // incremental score
-        int32_t bits; // used for bool constraints
-        int32_t coord; // count of terms in score
-        BucketWeakPtr _next; // next valid bucket
-    };
-    
-    /// A simple hash table of document scores within a range.
-    class BucketTable : public LuceneObject
-    {
-    public:
-        BucketTable();
-        virtual ~BucketTable();
-        
-        LUCENE_CLASS(BucketTable);
-    
-    public:
-        static const int32_t SIZE;
-        static const int32_t MASK;
-        
-        Collection<BucketPtr> buckets;
-        BucketPtr first; // head of valid list
-    
-    public:
-        CollectorPtr newCollector(int32_t mask);
-        int32_t size();
-    };
-    
-    class SubScorer : public LuceneObject
-    {
-    public:
-        SubScorer(ScorerPtr scorer, bool required, bool prohibited, CollectorPtr collector, SubScorerPtr next);
-        virtual ~SubScorer();
-        
-        LUCENE_CLASS(SubScorer);
-    
-    public:
-        ScorerPtr scorer;
-        bool required;
-        bool prohibited;
-        CollectorPtr collector;
-        SubScorerPtr next;
+        virtual void visitSubScorers(QueryPtr parent, BooleanClause::Occur relationship, ScorerVisitorPtr visitor);
     };
 }
 

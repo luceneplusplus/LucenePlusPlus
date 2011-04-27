@@ -26,6 +26,11 @@ namespace Lucene
         return search(createWeight(query), filter, n, sort);
     }
     
+    TopFieldDocsPtr Searcher::search(QueryPtr query, int32_t n, SortPtr sort)
+    {
+        return search(createWeight(query), FilterPtr(), n, sort);
+    }
+    
     void Searcher::search(QueryPtr query, CollectorPtr results)
     {
         search(createWeight(query), FilterPtr(), results);

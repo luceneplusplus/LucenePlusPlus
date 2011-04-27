@@ -6,35 +6,29 @@
 
 #include "LuceneInc.h"
 #include "SpanFirstQuery.h"
-#include "_SpanFirstQuery.h"
 #include "SpanQuery.h"
+#include "Spans.h"
 #include "MiscUtils.h"
 
 namespace Lucene
 {
-    SpanFirstQuery::SpanFirstQuery(SpanQueryPtr match, int32_t end)
+    SpanFirstQuery::SpanFirstQuery(SpanQueryPtr match, int32_t end) : SpanPositionRangeQuery(match, 0, end)
     {
-        this->match = match;
-        this->end = end;
     }
     
     SpanFirstQuery::~SpanFirstQuery()
     {
     }
     
-    SpanQueryPtr SpanFirstQuery::getMatch()
+    SpanPositionCheckQuery::AcceptStatus SpanFirstQuery::acceptPosition(SpansPtr spans)
     {
-        return match;
-    }
-    
-    int32_t SpanFirstQuery::getEnd()
-    {
-        return end;
-    }
-    
-    String SpanFirstQuery::getField()
-    {
-        return match->getField();
+        BOOST_ASSERT(spans->start() != spans->end());
+        if (spans->start() >= end)
+            return NO_AND_ADVANCE;
+        else if (spans->end() <= end)
+            return YES;
+        else
+            return NO;
     }
     
     String SpanFirstQuery::toString(const String& field)
@@ -46,38 +40,10 @@ namespace Lucene
     
     LuceneObjectPtr SpanFirstQuery::clone(LuceneObjectPtr other)
     {
-        LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanFirstQuery>(boost::dynamic_pointer_cast<SpanQuery>(match->clone()), end));
-        SpanFirstQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanFirstQuery>(clone));
-        spanFirstQuery->match = match;
-        spanFirstQuery->end = end;
+        LuceneObjectPtr clone = SpanPositionRangeQuery::clone(other ? other : newLucene<SpanFirstQuery>(boost::static_pointer_cast<SpanQuery>(match->clone()), end));
+        SpanFirstQueryPtr spanFirstQuery(boost::static_pointer_cast<SpanFirstQuery>(clone));
         spanFirstQuery->setBoost(getBoost());
         return spanFirstQuery;
-    }
-    
-    void SpanFirstQuery::extractTerms(SetTerm terms)
-    {
-        match->extractTerms(terms);
-    }
-    
-    SpansPtr SpanFirstQuery::getSpans(IndexReaderPtr reader)
-    {
-        return newLucene<FirstSpans>(shared_from_this(), match->getSpans(reader));
-    }
-    
-    QueryPtr SpanFirstQuery::rewrite(IndexReaderPtr reader)
-    {
-        SpanFirstQueryPtr clone;
-        SpanQueryPtr rewritten(boost::dynamic_pointer_cast<SpanQuery>(match->rewrite(reader)));
-        if (rewritten != match)
-        {
-            clone = boost::dynamic_pointer_cast<SpanFirstQuery>(this->clone());
-            clone->match = rewritten;
-        }
-        
-        if (clone)
-            return clone; // some clauses rewrote
-        else
-            return shared_from_this(); // no clauses rewrote
     }
     
     bool SpanFirstQuery::equals(LuceneObjectPtr other)
@@ -98,63 +64,5 @@ namespace Lucene
         result ^= (result << 8) | MiscUtils::unsignedShift(result, 25); // reversible
         result ^= MiscUtils::doubleToRawIntBits(getBoost()) ^ end;
         return result;
-    }
-    
-    FirstSpans::FirstSpans(SpanFirstQueryPtr query, SpansPtr spans)
-    {
-        this->query = query;
-        this->spans = spans;
-    }
-    
-    FirstSpans::~FirstSpans()
-    {
-    }
-    
-    bool FirstSpans::next()
-    {
-        while (spans->next()) // scan to next match
-        {
-            if (end() <= query->end)
-                return true;
-        }
-        return false;
-    }
-    
-    bool FirstSpans::skipTo(int32_t target)
-    {
-        if (!spans->skipTo(target))
-            return false;
-        return (spans->end() <= query->end || next());
-    }
-    
-    int32_t FirstSpans::doc()
-    {
-        return spans->doc();
-    }
-    
-    int32_t FirstSpans::start()
-    {
-        return spans->start();
-    }
-    
-    int32_t FirstSpans::end()
-    {
-        return spans->end();
-    }
-    
-    Collection<ByteArray> FirstSpans::getPayload()
-    {
-        Collection<ByteArray> result;
-        if (spans->isPayloadAvailable())
-        {
-            Collection<ByteArray> payload(spans->getPayload());
-            result = Collection<ByteArray>::newInstance(payload.begin(), payload.end());
-        }
-        return result;
-    }
-    
-    bool FirstSpans::isPayloadAvailable()
-    {
-        return spans->isPayloadAvailable();
     }
 }

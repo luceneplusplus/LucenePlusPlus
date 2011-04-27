@@ -92,7 +92,7 @@ namespace Lucene
         FieldInfosPtr fis(newLucene<FieldInfos>());
         for (Collection<FieldInfoPtr>::iterator field = byNumber.begin(); field != byNumber.end(); ++field)
         {
-            FieldInfoPtr fi(boost::dynamic_pointer_cast<FieldInfo>((*field)->clone()));
+            FieldInfoPtr fi(boost::static_pointer_cast<FieldInfo>((*field)->clone()));
             fis->byNumber.add(fi);
             fis->byName.put(fi->name, fi);
         }
@@ -166,6 +166,13 @@ namespace Lucene
         else
             fi->update(isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
         return fi;
+    }
+    
+    FieldInfoPtr FieldInfos::add(FieldInfoPtr fi)
+    {
+        SyncLock syncLock(this);
+        return add(fi->name, fi->isIndexed, fi->storeTermVector, fi->storePositionWithTermVector, 
+                   fi->storeOffsetWithTermVector, fi->omitNorms, fi->storePayloads, fi->omitTermFreqAndPositions);
     }
     
     FieldInfoPtr FieldInfos::addInternal(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, 

@@ -16,11 +16,11 @@ namespace Lucene
     class LPPAPI MultiFieldQueryParser : public QueryParser
     {
     public:
-        /// Creates a MultiFieldQueryParser.  Allows passing of a map with term to Boost, and the boost to 
-        /// apply to each term.
+        /// Creates a MultiFieldQueryParser.  Allows passing of a map with term to Boost, and the 
+        /// boost to apply to each term.
         ///
-        /// It will, when parse(String query) is called, construct a query like this (assuming the query 
-        /// consists of two terms and you specify the two fields title and body):
+        /// It will, when parse(String query) is called, construct a query like this (assuming the 
+        /// query consists of two terms and you specify the two fields title and body):
         /// <pre>
         /// (title:term1 body:term1) (title:term2 body:term2)
         /// </pre>
@@ -35,12 +35,12 @@ namespace Lucene
         /// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
         /// </pre>
         ///
-        /// In other words, all the query's terms must appear, but it doesn't matter in what fields they 
-        /// appear.
+        /// In other words, all the query's terms must appear, but it doesn't matter in what 
+        /// fields they appear.
         MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer, MapStringDouble boosts);
         
-        /// Creates a MultiFieldQueryParser.  It will, when parse(String query) is called, construct a 
-        /// query like this (assuming the query consists of two terms and you specify the two fields 
+        /// Creates a MultiFieldQueryParser.  It will, when parse(String query) is called, construct 
+        /// a query like this (assuming the query consists of two terms and you specify the two fields 
         /// title and body):
         /// <pre>
         /// (title:term1 body:term1) (title:term2 body:term2)
@@ -51,8 +51,8 @@ namespace Lucene
         /// +(title:term1 body:term1) +(title:term2 body:term2)
         /// </pre>
         ///
-        /// In other words, all the query's terms must appear, but it doesn't matter in what fields they 
-        /// appear.
+        /// In other words, all the query's terms must appear, but it doesn't matter in what fields
+        /// they appear.
         MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer);
         
         virtual ~MultiFieldQueryParser();
@@ -78,8 +78,8 @@ namespace Lucene
         /// @param analyzer Analyzer to use
         static QueryPtr parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, AnalyzerPtr analyzer);
         
-        /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as 
-        /// required, and others as prohibited.
+        /// Parses a query, searching on the fields specified.  Use this if you need to specify 
+        /// certain fields as required, and others as prohibited.
         ///
         /// <pre>
         /// Usage:
@@ -100,8 +100,8 @@ namespace Lucene
         /// @param analyzer Analyzer to use
         static QueryPtr parse(LuceneVersion::Version matchVersion, const String& query, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer);
         
-        /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as 
-        /// required, and others as prohibited.
+        /// Parses a query, searching on the fields specified.  Use this if you need to specify 
+        /// certain fields as required, and others as prohibited.
         ///
         /// <pre>
         /// Usage:
@@ -125,7 +125,7 @@ namespace Lucene
     
     protected:
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText, int32_t slop);
-        virtual QueryPtr getFieldQuery(const String& field, const String& queryText);
+        virtual QueryPtr getFieldQuery(const String& field, const String& queryText, bool quoted);
         void applySlop(QueryPtr query, int32_t slop);
         
         virtual QueryPtr getFuzzyQuery(const String& field, const String& termStr, double minSimilarity);

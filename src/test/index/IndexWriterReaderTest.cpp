@@ -594,7 +594,7 @@ BOOST_AUTO_TEST_CASE(testMergeWarmer)
     for (int32_t i = 0; i < 100; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
     
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    boost::static_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     BOOST_CHECK(warmer->warmCount > 0);
     int32_t count = warmer->warmCount;
@@ -626,7 +626,7 @@ BOOST_AUTO_TEST_CASE(testAfterCommit)
     for (int32_t i = 0; i < 10; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
     
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    boost::static_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     IndexReaderPtr r2 = r1->reopen();
     if (r2 != r1)

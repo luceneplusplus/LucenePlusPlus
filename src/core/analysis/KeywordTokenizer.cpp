@@ -6,7 +6,7 @@
 
 #include "LuceneInc.h"
 #include "KeywordTokenizer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "OffsetAttribute.h"
 #include "Reader.h"
 
@@ -16,35 +16,35 @@ namespace Lucene
     
     KeywordTokenizer::KeywordTokenizer(ReaderPtr input) : Tokenizer(input)
     {
-        init(DEFAULT_BUFFER_SIZE);
+        ConstructKeywordTokenizer(DEFAULT_BUFFER_SIZE);
     }
     
     KeywordTokenizer::KeywordTokenizer(ReaderPtr input, int32_t bufferSize) : Tokenizer(input)
     {
-        init(bufferSize);
+        ConstructKeywordTokenizer(bufferSize);
     }
     
     KeywordTokenizer::KeywordTokenizer(AttributeSourcePtr source, ReaderPtr input, int32_t bufferSize) : Tokenizer(source, input)
     {
-        init(bufferSize);
+        ConstructKeywordTokenizer(bufferSize);
     }
     
     KeywordTokenizer::KeywordTokenizer(AttributeFactoryPtr factory, ReaderPtr input, int32_t bufferSize) : Tokenizer(factory, input)
     {
-        init(bufferSize);
+        ConstructKeywordTokenizer(bufferSize);
     }
     
     KeywordTokenizer::~KeywordTokenizer()
     {
     }
     
-    void KeywordTokenizer::init(int32_t bufferSize)
+    void KeywordTokenizer::ConstructKeywordTokenizer(int32_t bufferSize)
     {
         this->done = false;
         this->finalOffset = 0;
-        this->termAtt = addAttribute<TermAttribute>();
+        this->termAtt = addAttribute<CharTermAttribute>();
         this->offsetAtt = addAttribute<OffsetAttribute>();
-        this->termAtt->resizeTermBuffer(bufferSize);
+        this->termAtt->resizeBuffer(bufferSize);
     }
     
     bool KeywordTokenizer::incrementToken()
@@ -54,7 +54,7 @@ namespace Lucene
             clearAttributes();
             done = true;
             int32_t upto = 0;
-            CharArray buffer(termAtt->termBuffer());
+            CharArray buffer(termAtt->buffer());
             while (true)
             {
                 int32_t length = input->read(buffer.get(), upto, buffer.size() - upto);
@@ -62,9 +62,9 @@ namespace Lucene
                     break;
                 upto += length;
                 if (upto == buffer.size())
-                    buffer = termAtt->resizeTermBuffer(buffer.size() + 1);
+                    buffer = termAtt->resizeBuffer(buffer.size() + 1);
             }
-            termAtt->setTermLength(upto);
+            termAtt->setLength(upto);
             finalOffset = correctOffset(upto);
             offsetAtt->setOffset(correctOffset(0), finalOffset);
             return true;

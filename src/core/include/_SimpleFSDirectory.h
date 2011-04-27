@@ -64,6 +64,8 @@ namespace Lucene
         /// Method used for testing.
         bool isValid();
         
+        virtual void copyBytes(IndexOutputPtr out, int64_t numBytes);
+        
         /// Returns a clone of this stream.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     };
@@ -89,26 +91,6 @@ namespace Lucene
         void flush();
         bool isValid();
     };
-        
-    class SimpleFSIndexOutput : public BufferedIndexOutput
-    {
-    public:
-        SimpleFSIndexOutput(const String& path);
-        virtual ~SimpleFSIndexOutput();
-        
-        LUCENE_CLASS(SimpleFSIndexOutput);
-                
-    protected:
-        OutputFilePtr file;
-        bool isOpen;
-    
-    public:
-        virtual void flushBuffer(const uint8_t* b, int32_t offset, int32_t length);
-        virtual void close();
-        virtual void seek(int64_t pos);
-        virtual int64_t length();
-        virtual void setLength(int64_t length);
-    };        
 }
 
 #endif

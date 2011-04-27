@@ -80,7 +80,7 @@ namespace Lucene
     LuceneObjectPtr SpanTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanTermQuery>(term));
-        SpanTermQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanTermQuery>(clone));
+        SpanTermQueryPtr spanFirstQuery(boost::static_pointer_cast<SpanTermQuery>(clone));
         spanFirstQuery->term = term;
         return spanFirstQuery;
     }

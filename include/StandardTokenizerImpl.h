@@ -7,11 +7,22 @@
 #ifndef STANDARDTOKENIZERIMPL_H
 #define STANDARDTOKENIZERIMPL_H
 
-#include "LuceneObject.h"
+#include "StandardTokenizerInterface.h"
 
 namespace Lucene
 {
-    class StandardTokenizerImpl : public LuceneObject
+    /// This class implements Word Break rules from the Unicode Text Segmentation algorithm.
+    ///
+    /// Tokens produced are of the following types:
+    /// <ul>
+    ///    <li><ALPHANUM>: A sequence of alphabetic and numeric characters
+    ///    <li><NUM>: A number
+    ///    <li><SOUTHEAST_ASIAN>: A sequence of characters from South and Southeast Asian 
+    ///    languages, including Thai, Lao, Myanmar, and Khmer
+    ///    <li><IDEOGRAPHIC>: A single CJKV ideographic character
+    ///    <li><HIRAGANA>: A single hiragana character
+    /// </ul>
+    class StandardTokenizerImpl : public StandardTokenizerInterface
     {
     public:
         /// Creates a new scanner
@@ -25,6 +36,11 @@ namespace Lucene
     protected:
         /// Initial size of the lookahead buffer
         static const int32_t ZZ_BUFFERSIZE;
+        
+        /// ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
+        /// ZZ_LEXSTATE[l+1] is the state in the DFA for the lexical state l at the beginning 
+        /// of a line l is of the form l = 2*k, k a non negative integer
+        static const int32_t ZZ_LEXSTATE[];
         
         /// Translates characters to character classes
         static const wchar_t ZZ_CMAP_PACKED[];
@@ -82,14 +98,12 @@ namespace Lucene
         /// The current lexical state
         int32_t zzLexicalState;
         
-        /// This buffer contains the current text to be matched and is the source of the yytext() string
+        /// This buffer contains the current text to be matched and is the source 
+        /// of the yytext() string
         CharArray zzBuffer;
         
         /// The text position at the last accepting state
         int32_t zzMarkedPos;
-        
-        /// The text position at the last state to be included in yytext
-        int32_t zzPushbackPos;
         
         /// The current text position in the buffer
         int32_t zzCurrentPos;
@@ -106,7 +120,8 @@ namespace Lucene
         /// The number of characters up to the start of the matched text
         int32_t _yychar;
         
-        /// The number of characters from the last newline up to the start of the matched text
+        /// The number of characters from the last newline up to the start of the
+        /// matched text
         int32_t yycolumn;
         
         /// zzAtBOL == true if the scanner is currently at the beginning of a line
@@ -115,35 +130,32 @@ namespace Lucene
         /// zzAtEOF == true if the scanner is at the EOF
         bool zzAtEOF;
         
-    public:
-        /// This character denotes the end of file
-        static const int32_t YYEOF;
+        /// denotes if the user-EOF-code has already been executed
+        bool zzEOFDone;
         
+    public:
         /// Lexical states
         static const int32_t YYINITIAL;
         
     public:
-        int32_t yychar();
+        virtual int32_t yychar();
         
-        /// Resets the Tokenizer to a new Reader.
-        void reset(ReaderPtr r);
-        
-        /// Fills Lucene token with the current token text.
-        void getText(TokenPtr t);
-        
-        /// Fills TermAttribute with the current token text.
-        void getText(TermAttributePtr t);
+        /// Fills CharTermAttribute with the current token text.
+        virtual void getText(CharTermAttributePtr t);
         
         /// Closes the input stream.
         void yyclose();
         
-        /// Resets the scanner to read from a new input stream.  Does not close the old reader.
+        /// Resets the scanner to read from a new input stream.  Does not close 
+        /// the old reader.
         ///
-        /// All internal variables are reset, the old input stream cannot be reused (internal buffer is discarded and lost).
-        /// Lexical state is set to ZZ_INITIAL.
+        /// All internal variables are reset, the old input stream cannot be reused 
+        /// (internal buffer is discarded and lost). Lexical state is set to ZZ_INITIAL.
+        ///
+        /// Internal scan buffer is resized down to its initial length, if it has grown.
         ///
         /// @param reader the new input stream.
-        void yyreset(ReaderPtr reader);
+        virtual void yyreset(ReaderPtr reader);
         
         /// Returns the current lexical state.
         int32_t yystate();
@@ -158,22 +170,24 @@ namespace Lucene
         /// Returns the character at position pos from the  matched text. 
         ///
         /// It is equivalent to yytext()[pos], but faster
-        /// @param pos the position of the character to fetch.  A value from 0 to yylength() - 1.
+        /// @param pos the position of the character to fetch.  A value from 0 to
+        /// yylength() - 1.
         /// @return the character at position pos.
         wchar_t yycharat(int32_t pos);
         
         /// Returns the length of the matched text region.
-        int32_t yylength();
+        virtual int32_t yylength();
         
         /// Pushes the specified amount of characters back into the input stream.
         ///
         /// They will be read again by then next call of the scanning method
-        /// @param number  the number of characters to be read again.  This number must not be greater than yylength()
+        /// @param number  the number of characters to be read again.  This number
+        /// must not be greater than yylength()
         void yypushback(int32_t number);
         
-        /// Resumes scanning until the next regular expression is matched, the end of input is encountered or an I/O-
-        /// Error occurs.
-        int32_t getNextToken();
+        /// Resumes scanning until the next regular expression is matched, the end 
+        /// of input is encountered or an I/O-Error occurs.
+        virtual int32_t getNextToken();
         
     protected:
         /// Refills the input buffer.
@@ -181,13 +195,15 @@ namespace Lucene
         
         /// Reports an error that occurred while scanning.
         ///
-        /// In a well-formed scanner (no or only correct usage of yypushback(int32_t) and a match-all fallback rule) 
-        /// this method will only be called with things that "Can't Possibly Happen".  If this method is called, 
-        /// something is seriously wrong.
+        /// In a well-formed scanner (no or only correct usage of yypushback(int32_t) 
+        /// and a match-all fallback rule) this method will only be called with things 
+        /// that "Can't Possibly Happen".  If this method is called,  something is 
+        /// seriously wrong.
         ///
-        /// Usual syntax/scanner level error handling should be done in error fallback rules.
+        /// Usual syntax/scanner level error handling should be done in error fallback
+        /// rules.
         ///
-        /// @param errorCode The code of the errormessage to display.
+        /// @param errorCode The code of the error message to display.
         void zzScanError(int32_t errorCode);
     };
 }

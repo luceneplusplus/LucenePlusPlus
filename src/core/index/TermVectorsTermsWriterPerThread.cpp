@@ -8,6 +8,7 @@
 #include "TermVectorsTermsWriterPerThread.h"
 #include "TermVectorsTermsWriterPerField.h"
 #include "TermVectorsTermsWriter.h"
+#include "_TermVectorsTermsWriter.h"
 #include "TermsHashPerThread.h"
 #include "ByteSliceReader.h"
 #include "FieldInfo.h"

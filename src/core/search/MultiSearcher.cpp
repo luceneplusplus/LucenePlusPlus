@@ -93,6 +93,7 @@ namespace Lucene
     
     TopDocsPtr MultiSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n)
     {
+        n = std::min(n, maxDoc());
         HitQueuePtr hq(newLucene<HitQueue>(n, false));
         int32_t totalHits = 0;
         
@@ -113,6 +114,7 @@ namespace Lucene
     
     TopFieldDocsPtr MultiSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
     {
+        n = std::min(n, maxDoc());
         FieldDocSortedHitQueuePtr hq(newLucene<FieldDocSortedHitQueue>(n));
         int32_t totalHits = 0;
         
@@ -165,7 +167,18 @@ namespace Lucene
         SetTerm terms(SetTerm::newInstance());
         rewrittenQuery->extractTerms(terms);
         
-        // step3
+        // step 3
+        MapTermInt dfMap(createDocFrequencyMap(terms));
+
+        // step 4
+        int32_t numDocs = maxDoc();
+        CachedDfSourcePtr cacheSim(newLucene<CachedDfSource>(dfMap, numDocs, getSimilarity()));
+
+        return rewrittenQuery->weight(cacheSim);
+    }
+    
+    MapTermInt MultiSearcher::createDocFrequencyMap(SetTerm terms)
+    {
         Collection<TermPtr> allTermsArray(Collection<TermPtr>::newInstance(terms.begin(), terms.end()));
         Collection<int32_t> aggregatedDfs(Collection<int32_t>::newInstance(terms.size()));
         for (Collection<SearchablePtr>::iterator searchable = searchables.begin(); searchable != searchables.end(); ++searchable)
@@ -179,11 +192,7 @@ namespace Lucene
         for (int32_t i = 0; i < allTermsArray.size(); ++i)
             dfMap.put(allTermsArray[i], aggregatedDfs[i]);
         
-        // step4
-        int32_t numDocs = maxDoc();
-        CachedDfSourcePtr cacheSim(newLucene<CachedDfSource>(dfMap, numDocs, getSimilarity()));
-        
-        return rewrittenQuery->weight(cacheSim);
+        return dfMap;
     }
     
     CachedDfSource::CachedDfSource(MapTermInt dfMap, int32_t maxDoc, SimilarityPtr similarity)
@@ -330,7 +339,7 @@ namespace Lucene
                 // iterate over the score docs and change their fields value
                 for (int32_t j2 = 0; j2 < docs->scoreDocs.size(); ++j2)
                 {
-                    FieldDocPtr fd(boost::dynamic_pointer_cast<FieldDoc>(docs->scoreDocs[j2]));
+                    FieldDocPtr fd(boost::static_pointer_cast<FieldDoc>(docs->scoreDocs[j2]));
                     fd->fields[j] = VariantUtils::get<int32_t>(fd->fields[j]) + starts[i];
                 }
                 break;
@@ -345,7 +354,7 @@ namespace Lucene
         Collection<ScoreDocPtr> scoreDocs(docs->scoreDocs);
         for (int32_t j = 0; j < scoreDocs.size(); ++j) // merge scoreDocs into hq
         {
-            FieldDocPtr fieldDoc(boost::dynamic_pointer_cast<FieldDoc>(scoreDocs[j]));
+            FieldDocPtr fieldDoc(boost::static_pointer_cast<FieldDoc>(scoreDocs[j]));
             fieldDoc->doc += starts[i]; // convert doc 
             
             SyncLock syncLock(lock);

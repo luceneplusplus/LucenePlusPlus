@@ -37,6 +37,8 @@ namespace Lucene
     
     bool ReverseOrdFieldSource::equals(LuceneObjectPtr other)
     {
+        if (LuceneObject::equals(other))
+            return true;
         if (!MiscUtils::equalTypes(shared_from_this(), other))
             return false;
         ReverseOrdFieldSourcePtr otherSource(boost::dynamic_pointer_cast<ReverseOrdFieldSource>(other));

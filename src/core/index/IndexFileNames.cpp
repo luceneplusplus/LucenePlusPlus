@@ -243,14 +243,20 @@ namespace Lucene
         return _VECTOR_EXTENSIONS;
     };
     
-    String IndexFileNames::fileNameFromGeneration(const String& base, const String& extension, int64_t gen)
+    String IndexFileNames::fileNameFromGeneration(const String& base, const String& ext, int64_t gen)
     {
         if (gen == SegmentInfo::NO)
             return L"";
         else if (gen == SegmentInfo::WITHOUT_GEN)
-            return base + extension;
+            return segmentFileName(base, ext);
         else
-            return base + L"_" + StringUtils::toString(gen, StringUtils::CHARACTER_MAX_RADIX) + extension;
+        {
+            StringStream res;
+            res << base << L"_" << StringUtils::toString(gen, StringUtils::CHARACTER_MAX_RADIX);
+            if (!ext.empty())
+                res << L"." << ext;
+            return res.str();
+        }
     }
     
     bool IndexFileNames::isDocStoreFile(const String& fileName)
@@ -267,6 +273,23 @@ namespace Lucene
     
     String IndexFileNames::segmentFileName(const String& segmentName, const String& ext)
     {
-        return segmentName + L"." + ext;
+        return ext.empty() ? segmentName : segmentName + L"." + ext;
+    }
+    
+    bool IndexFileNames::matchesExtension(const String& filename, const String& ext)
+    {
+        return boost::ends_with(filename, L"." + ext);
+    }
+    
+    String IndexFileNames::stripSegmentName(const String& filename)
+    {
+        // If it is a .del file, there's an '_' after the first character
+        String::size_type idx = filename.empty() ? String::npos : filename.find(L"_", 1);
+        if (idx == String::npos)
+        {
+            // If it's not, strip everything that's before the '.'
+            idx = filename.find(L".");
+        }
+        return idx != String::npos ? filename.substr(idx) : filename;
     }
 }

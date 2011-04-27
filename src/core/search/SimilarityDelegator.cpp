@@ -23,11 +23,6 @@ namespace Lucene
         return delegee->computeNorm(fieldName, state);
     }
     
-    double SimilarityDelegator::lengthNorm(const String& fieldName, int32_t numTokens)
-    {
-        return delegee->lengthNorm(fieldName, numTokens);
-    }
-    
     double SimilarityDelegator::queryNorm(double sumOfSquaredWeights)
     {
         return delegee->queryNorm(sumOfSquaredWeights);

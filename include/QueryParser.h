@@ -21,16 +21,17 @@ namespace Lucene
     /// A Query is a series of clauses.
     /// A clause may be prefixed by:
     /// <ul>
-    /// <li> a plus (+) or a minus (-) sign, indicating that the clause is required or prohibited respectively; or
-    /// <li> a term followed by a colon, indicating the field to be searched.  This enables one to construct queries 
-    /// which search multiple fields.
+    ///    <li> a plus (+) or a minus (-) sign, indicating that the clause is required or prohibited 
+    ///    respectively; or
+    ///    <li> a term followed by a colon, indicating the field to be searched.  This enables one 
+    ///    to construct queries which search multiple fields.
     /// </ul>
     ///
     /// A clause may be either:
     /// <ul>
-    /// <li> a term, indicating all the documents that contain this term; or
-    /// <li> a nested query, enclosed in parentheses.  Note that this may be used with a +/- prefix to require any 
-    /// of a set of terms.
+    ///    <li> a term, indicating all the documents that contain this term; or
+    ///    <li> a nested query, enclosed in parentheses.  Note that this may be used with a +/- 
+    ///    prefix to require any of a set of terms.
     /// </ul>
     ///
     /// Thus, in BNF, the query grammar is:
@@ -42,30 +43,34 @@ namespace Lucene
     /// Examples of appropriately formatted queries can be found in the query syntax documentation.
     ///
     /// In {@link TermRangeQuery}s, QueryParser tries to detect date values, eg. 
-    /// <tt>date:[6/1/2005 TO 6/4/2005]</tt> produces a range query that searches for "date" fields between 
-    /// 2005-06-01 and 2005-06-04.  Note that the format of the accepted input depends on {@link #setLocale(Locale) 
-    /// the locale}.
+    /// date:[6/1/2005 TO 6/4/2005] produces a range query that searches for "date" fields between 
+    /// 2005-06-01 and 2005-06-04.  Note that the format of the accepted input depends on {@link 
+    /// #setLocale(Locale) the locale}.
     ///
-    /// By default a date is converted into a search term using the deprecated {@link DateField} for compatibility 
-    /// reasons.  To use the new {@link DateTools} to convert dates, a {@link Resolution} has to be set.
+    /// By default a date is converted into a search term using the deprecated {@link DateField} for 
+    /// compatibility reasons.  To use the new {@link DateTools} to convert dates, a {@link 
+    /// Resolution} has to be set.
     ///
-    /// The date resolution that shall be used for RangeQueries can be set using {@link #setDateResolution(Resolution)}
-    /// or {@link #setDateResolution(const String&, Resolution)}.  The former sets the default date resolution for 
-    /// all fields, whereas the latter can be used to set field specific date resolutions. Field specific date
-    /// resolutions take, if set, precedence over the default date resolution.
+    /// The date resolution that shall be used for RangeQueries can be set using {@link 
+    /// #setDateResolution(Resolution)} or {@link #setDateResolution(const String&, Resolution)}.  
+    /// The former sets the default date resolution for all fields, whereas the latter can be used 
+    /// to set field specific date resolutions. Field specific date resolutions take, if set, 
+    /// precedence over the default date resolution.
     ///
-    /// If you use neither {@link DateField} nor {@link DateTools} in your index, you can create your own query 
-    /// parser that inherits QueryParser and overwrites {@link #getRangeQuery(const String&, const String&, 
-    /// const String&, bool)} to use a different method for date conversion.
+    /// If you use neither {@link DateField} nor {@link DateTools} in your index, you can create 
+    /// your own query parser that inherits QueryParser and overwrites {@link 
+    /// #getRangeQuery(const String&, const String&, const String&, bool)} to use a different method 
+    /// for date conversion.
     ///
     /// Note that QueryParser is not thread-safe.
     ///
-    /// NOTE: there is a new QueryParser in contrib, which matches the same syntax as this class, but is more modular,
-    /// enabling substantial customization to how a query is created.
+    /// NOTE: there is a new QueryParser in contrib, which matches the same syntax as this class, 
+    /// but is more modular, enabling substantial customization to how a query is created.
     ///
     /// NOTE: You must specify the required {@link Version} compatibility when creating QueryParser:
     /// <ul>
-    /// <li> As of 2.9, {@link #setEnablePositionIncrements} is true by default.
+    ///    <li> As of 2.9, {@link #setEnablePositionIncrements} is true by default.
+    ///    <li> As of 3.1, {@link #setAutoGeneratePhraseQueries} is false by default.
     /// </ul>
     class LPPAPI QueryParser : public QueryParserConstants, public LuceneObject
     {
@@ -86,7 +91,8 @@ namespace Lucene
         
         LUCENE_CLASS(QueryParser);
         
-        /// The default operator for parsing queries. Use {@link QueryParser#setDefaultOperator} to change it.
+        /// The default operator for parsing queries. Use {@link QueryParser#setDefaultOperator} 
+        /// to change it.
         enum Operator { OR_OPERATOR, AND_OPERATOR };
     
     protected:
@@ -139,6 +145,9 @@ namespace Lucene
         int32_t jj_kind;
         Collection<int32_t> jj_lasttokens;
         int32_t jj_endpos;
+        
+        bool autoGeneratePhraseQueries;
+        bool hasNewAPI;
     
     public:
         bool lowercaseExpandedTerms;
@@ -179,6 +188,17 @@ namespace Lucene
         /// @return Returns the analyzer.
         AnalyzerPtr getAnalyzer();
         
+        /// @see #setAutoGeneratePhraseQueries(bool)
+        bool getAutoGeneratePhraseQueries();
+        
+        /// Set to true if phrase queries will be automatically generated when the analyzer 
+        /// returns more than one term from whitespace delimited text.
+        /// NOTE: this behavior may not be suitable for all languages.
+        ///
+        /// Set to false if phrase queries should only be generated when surrounded by 
+        /// double quotes.
+        void setAutoGeneratePhraseQueries(bool value);
+        
         /// @return Returns the field.
         String getField();
         
@@ -196,7 +216,8 @@ namespace Lucene
         /// @param fuzzyPrefixLength The fuzzyPrefixLength to set.
         void setFuzzyPrefixLength(int32_t fuzzyPrefixLength);
         
-        /// Sets the default slop for phrases.  If zero, then exact phrase matches are required.  
+        /// Sets the default slop for phrases.  If zero, then exact phrase matches
+        /// are required.  
         /// Default value is zero.
         void setPhraseSlop(int32_t phraseSlop);
         
@@ -205,8 +226,9 @@ namespace Lucene
         
         /// Set to true to allow leading wildcard characters.
         ///
-        /// When set, * or ? are allowed as the first character of a PrefixQuery and WildcardQuery.
-        /// Note that this can produce very slow queries on big indexes.  Default: false.
+        /// When set, * or ? are allowed as the first character of a PrefixQuery and
+        /// WildcardQuery.  Note that this can produce very slow queries on big indexes.  
+        /// Default: false.
         void setAllowLeadingWildcard(bool allowLeadingWildcard);
         
         /// @see #setAllowLeadingWildcard(bool)
@@ -214,37 +236,37 @@ namespace Lucene
         
         /// Set to true to enable position increments in result query.
         ///
-        /// When set, result phrase and multi-phrase queries will be aware of position increments.
-        /// Useful when eg. a StopFilter increases the position increment of the token that follows an 
-        /// omitted token.  Default: false.
+        /// When set, result phrase and multi-phrase queries will be aware of position 
+        /// increments. Useful when eg. a StopFilter increases the position increment of the 
+        /// token that follows an omitted token.  Default: false.
         void setEnablePositionIncrements(bool enable);
         
         /// @see #setEnablePositionIncrements(bool)
         bool getEnablePositionIncrements();
         
-        /// Sets the boolean operator of the QueryParser.  In default mode (OR_OPERATOR) terms without 
-        /// any modifiers are considered optional: for example capital of Hungary is equal to capital 
-        /// OR of OR Hungary.
-        /// In AND_OPERATOR mode terms are considered to be in conjunction: the above mentioned query is 
-        /// parsed as capital AND of AND Hungary
+        /// Sets the boolean operator of the QueryParser.  In default mode (OR_OPERATOR) 
+        /// terms without any modifiers are considered optional: for example capital of 
+        /// Hungary is equal to capital OR of OR Hungary. In AND_OPERATOR mode terms are 
+        /// considered to be in conjunction: the above mentioned query is  parsed as 
+        /// capital AND of AND Hungary
         void setDefaultOperator(Operator op);
         
         /// Gets implicit operator setting, which will be either AND_OPERATOR or OR_OPERATOR.
         Operator getDefaultOperator();
         
-        /// Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically lower-cased 
-        /// or not.  Default is true.
+        /// Whether terms of wildcard, prefix, fuzzy and range queries are to be automatically 
+        /// lower-cased or not.  Default is true.
         void setLowercaseExpandedTerms(bool lowercaseExpandedTerms);
         
         /// @see #setLowercaseExpandedTerms(bool)
         bool getLowercaseExpandedTerms();
         
-        /// By default QueryParser uses {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} when 
-        /// creating a PrefixQuery, WildcardQuery or RangeQuery. This implementation is generally preferable 
-        /// because it a) Runs faster b) Does not have the scarcity of terms unduly influence score c) avoids 
-        /// any "TooManyClauses" exception.  However, if your application really needs to use the old-
-        /// fashioned BooleanQuery expansion rewriting and the above points are not relevant then use this 
-        /// to change the rewrite method.
+        /// By default QueryParser uses {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+        /// when creating a PrefixQuery, WildcardQuery or RangeQuery. This implementation is 
+        /// generally preferable because it a) Runs faster b) Does not have the scarcity of terms 
+        /// unduly influence score c) avoids any "TooManyClauses" exception.  However, if your 
+        /// application really needs to use the old-fashioned BooleanQuery expansion rewriting and 
+        /// the above points are not relevant then use this to change the rewrite method.
         void setMultiTermRewriteMethod(RewriteMethodPtr method);
         
         /// @see #setMultiTermRewriteMethod
@@ -256,9 +278,9 @@ namespace Lucene
         /// Returns current locale, allowing access by subclasses.
         std::locale getLocale();
         
-        /// Sets the default date resolution used by RangeQueries for fields for which no specific date 
-        /// resolutions has been set. Field specific resolutions can be set with {@link 
-        /// #setDateResolution(const String&, DateTools::Resolution)}.
+        /// Sets the default date resolution used by RangeQueries for fields for which no 
+        /// specific date resolutions has been set. Field specific resolutions can be set with
+        /// {@link #setDateResolution(const String&, DateTools::Resolution)}.
         /// @param dateResolution The default date resolution to set
         void setDateResolution(DateTools::Resolution dateResolution);
         
@@ -267,15 +289,17 @@ namespace Lucene
         /// @param dateResolution Date resolution to set
         void setDateResolution(const String& fieldName, DateTools::Resolution dateResolution);
         
-        /// Returns the date resolution that is used by RangeQueries for the given field.  Returns null, if 
-        /// no default or field specific date resolution has been set for the given field.
+        /// Returns the date resolution that is used by RangeQueries for the given field.
+        /// Returns null, if no default or field specific date resolution has been set for the 
+        /// given field.
         DateTools::Resolution getDateResolution(const String& fieldName);
         
         /// Sets the collator used to determine index term inclusion in ranges for RangeQuerys.
         ///
-        /// WARNING: Setting the rangeCollator to a non-null collator using this method will cause every 
-        /// single index Term in the Field referenced by lowerTerm and/or upperTerm to be examined.  Depending 
-        /// on the number of index Terms in this Field, the operation could be very slow.
+        /// WARNING: Setting the rangeCollator to a non-null collator using this method will 
+        /// cause every single index Term in the Field referenced by lowerTerm and/or upperTerm 
+        /// to be examined.  Depending on the number of index Terms in this Field, the operation
+        /// could be very slow.
         /// @param rc The collator to use when constructing RangeQuerys
         void setRangeCollator(CollatorPtr rc);
         
@@ -283,7 +307,7 @@ namespace Lucene
         CollatorPtr getRangeCollator();
         
         /// Command line tool to test QueryParser, using {@link SimpleAnalyzer}.
-        static int main(Collection<String> args);
+        static int32_t main(Collection<String> args);
         
         /// Query  ::= ( Clause )*
         /// Clause ::= ["+", "-"] [<TERM> ":"] ( <TERM> | "(" Query ")" )
@@ -324,11 +348,14 @@ namespace Lucene
         
         virtual void addClause(Collection<BooleanClausePtr> clauses, int32_t conj, int32_t mods, QueryPtr q);
         
-        /// Use the analyzer to get all the tokens, and then build a TermQuery, PhraseQuery, or nothing 
-        /// based on the term count.
+        /// @deprecated Use {@link #getFieldQuery(String,String,bool)} instead.
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText);
         
-        /// Base implementation delegates to {@link #getFieldQuery(const String&, const String&)}.
+        /// Use the analyzer to get all the tokens, and then build a TermQuery, PhraseQuery, or nothing 
+        /// based on the term count.
+        virtual QueryPtr getFieldQuery(const String& field, const String& queryText, bool quoted);
+        
+        /// Base implementation delegates to {@link #getFieldQuery(const String&, const String&, bool)}.
         /// This method may be overridden, for example, to return a SpanNearQuery instead of a PhraseQuery.
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText, int32_t slop);
         
@@ -387,8 +414,8 @@ namespace Lucene
         /// @return new WildcardQuery instance
         QueryPtr newWildcardQuery(TermPtr term);
         
-        /// Factory method for generating query, given a set of clauses.  By default creates a boolean query 
-        /// composed of clauses passed in.
+        /// Factory method for generating query, given a set of clauses.  By default creates 
+        /// a boolean query composed of clauses passed in.
         ///
         /// Can be overridden by extending classes, to modify query being returned.
         ///
@@ -396,8 +423,8 @@ namespace Lucene
         /// @return Resulting {@link Query} object.
         virtual QueryPtr getBooleanQuery(Collection<BooleanClausePtr> clauses);
         
-        /// Factory method for generating query, given a set of clauses.  By default creates a boolean query 
-        /// composed of clauses passed in.
+        /// Factory method for generating query, given a set of clauses.  By default creates 
+        /// a boolean query composed of clauses passed in.
         ///
         /// Can be overridden by extending classes, to modify query being returned.
         ///
@@ -406,62 +433,66 @@ namespace Lucene
         /// @return Resulting {@link Query} object.
         virtual QueryPtr getBooleanQuery(Collection<BooleanClausePtr> clauses, bool disableCoord);
         
-        /// Factory method for generating a query.  Called when parser parses an input term token that contains 
-        /// one or more wildcard characters (? and *), but is not a prefix term token (one that has just a 
-        /// single * character at the end)
+        /// Factory method for generating a query.  Called when parser parses an input term 
+        /// token that contains one or more wildcard characters (? and *), but is not a prefix 
+        /// term token (one that has just a single * character at the end)
         ///
-        /// Depending on settings, prefix term may be lower-cased automatically. It will not go through the 
-        /// default Analyzer, however, since normal Analyzers are unlikely to work properly with wildcard 
-        /// templates.
+        /// Depending on settings, prefix term may be lower-cased automatically. It will not go 
+        /// through the default Analyzer, however, since normal Analyzers are unlikely to work 
+        /// properly with wildcard templates.
         ///
-        /// Can be overridden by extending classes, to provide custom handling for wildcard queries, which may 
-        /// be necessary due to missing analyzer calls.
+        /// Can be overridden by extending classes, to provide custom handling for wildcard 
+        /// queries, which may be necessary due to missing analyzer calls.
         ///
         /// @param field Name of the field query will use.
-        /// @param termStr Term token that contains one or more wild card characters (? or *), but is not simple 
-        /// prefix term
+        /// @param termStr Term token that contains one or more wild card characters (? or *), 
+        /// but is not simple prefix term
         /// @return Resulting {@link Query} built for the term
         virtual QueryPtr getWildcardQuery(const String& field, const String& termStr);
         
-        /// Factory method for generating a query (similar to {@link #getWildcardQuery}).  Called when parser 
-        /// parses an input term token that uses prefix notation; that is, contains a single '*' wildcard 
-        /// character as its last character. Since this is a special case of generic wildcard term, and such 
-        /// a query can be optimized easily, this usually results in a different query object.
+        /// Factory method for generating a query (similar to {@link #getWildcardQuery}).  
+        /// Called when parser parses an input term token that uses prefix notation; that is, 
+        /// contains a single '*' wildcard character as its last character. Since this is a 
+        /// special case of generic wildcard term, and such a query can be optimized easily, this 
+        /// usually results in a different query object.
         ///
-        /// Depending on settings, a prefix term may be lower-cased automatically. It will not go through the 
-        /// default Analyzer, however, since normal Analyzers are unlikely to work properly with wildcard templates.
+        /// Depending on settings, a prefix term may be lower-cased automatically. It will not 
+        /// go through the default Analyzer, however, since normal Analyzers are unlikely to 
+        /// work properly with wildcard templates.
         ///
-        /// Can be overridden by extending classes, to provide custom handling for wild card queries, which may be 
-        /// necessary due to missing analyzer calls.
+        /// Can be overridden by extending classes, to provide custom handling for wild card 
+        /// queries, which may be necessary due to missing analyzer calls.
         ///
         /// @param field Name of the field query will use.
-        /// @param termStr Term token to use for building term for the query (without trailing '*' character)
+        /// @param termStr Term token to use for building term for the query (without trailing 
+        /// '*' character)
         /// @return Resulting {@link Query} built for the term
         virtual QueryPtr getPrefixQuery(const String& field, const String& termStr);
         
-        /// Factory method for generating a query (similar to {@link #getWildcardQuery}). Called when parser 
-        /// parses an input term token that has the fuzzy suffix (~) appended.
+        /// Factory method for generating a query (similar to {@link #getWildcardQuery}). 
+        /// Called when parser parses an input term token that has the fuzzy suffix (~) appended.
         ///
         /// @param field Name of the field query will use.
         /// @param termStr Term token to use for building term for the query
         /// @return Resulting {@link Query} built for the term
         virtual QueryPtr getFuzzyQuery(const String& field, const String& termStr, double minSimilarity);
         
-        /// Returns a String where the escape char has been removed, or kept only once if there was a double 
-        /// escape.  Supports escaped unicode characters, eg. translates \\u0041 to A.
+        /// Returns a String where the escape char has been removed, or kept only once if 
+        /// there was a double escape.  Supports escaped unicode characters, 
+        /// eg. translates \\u0041 to A.
         String discardEscapeChar(const String& input);
         
         /// Returns the numeric value of the hexadecimal character
         static int32_t hexToInt(wchar_t c);
         
-        /// Returns a String where those characters that QueryParser expects to be escaped are escaped by 
-        /// a preceding \.
+        /// Returns a String where those characters that QueryParser expects to be escaped are 
+        /// escaped by a preceding \.
         static String escape(const String& s);
         
         bool jj_2_1(int32_t xla);
+        bool jj_3R_3();
         bool jj_3R_2();
         bool jj_3_1();
-        bool jj_3R_3();
         
         QueryParserTokenPtr jj_consume_token(int32_t kind);
         bool jj_scan_token(int32_t kind);

@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// File used as buffer in RAMDirectory
-    class LPPAPI RAMFile : public LuceneObject
+    class RAMFile : public LuceneObject
     {
     public:
         RAMFile(); // File used as buffer, in no RAMDirectory

@@ -98,7 +98,7 @@ namespace Lucene
         LUCENE_CLASS(NumericField);
     
     protected:
-        NumericTokenStreamPtr tokenStream;
+        NumericTokenStreamPtr numericTS;
     
     public:
         /// Returns a {@link NumericTokenStream} for indexing the numeric value.
@@ -115,6 +115,9 @@ namespace Lucene
         
         /// Returns the current numeric value.
         virtual int64_t getNumericValue();
+        
+        /// Returns the precision step.
+        virtual int32_t getPrecisionStep();
         
         /// Initializes the field with the supplied long value.
         /// @param value the numeric value

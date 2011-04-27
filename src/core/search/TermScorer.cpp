@@ -15,13 +15,13 @@ namespace Lucene
 {
     const int32_t TermScorer::SCORE_CACHE_SIZE = 32;
     
-    TermScorer::TermScorer(WeightPtr weight, TermDocsPtr td, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity)
+    TermScorer::TermScorer(WeightPtr weight, TermDocsPtr td, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity, weight)
     {
-        this->weight = weight;
         this->termDocs = td;
         this->norms = norms;
         this->weightValue = weight->getValue();
         this->doc = -1;
+        this->_freq = 0;
         this->docs = Collection<int32_t>::newInstance(32);
         this->freqs = Collection<int32_t>::newInstance(32);
         this->pointer = 0;
@@ -34,11 +34,6 @@ namespace Lucene
     
     TermScorer::~TermScorer()
     {
-    }
-    
-    const Collection<double> TermScorer::SIM_NORM_DECODER()
-    {
-        return Similarity::getNormDecoder();
     }
     
     void TermScorer::score(CollectorPtr collector)
@@ -67,6 +62,7 @@ namespace Lucene
                 }
             }
             doc = docs[pointer];
+            _freq = freqs[pointer];
         }
         return true;
     }
@@ -74,6 +70,11 @@ namespace Lucene
     int32_t TermScorer::docID()
     {
         return doc;
+    }
+    
+    double TermScorer::freq()
+    {
+        return _freq;
     }
     
     int32_t TermScorer::nextDoc()
@@ -92,15 +93,15 @@ namespace Lucene
             }
         }
         doc = docs[pointer];
+        _freq = freqs[pointer];
         return doc;
     }
     
     double TermScorer::score()
     {
         BOOST_ASSERT(doc != -1);
-        int32_t f = freqs[pointer];
-        double raw = f < SCORE_CACHE_SIZE ? scoreCache[f] : getSimilarity()->tf(f) * weightValue; // compute tf(f) * weight
-        return norms ? raw * SIM_NORM_DECODER()[norms[doc] & 0xff] : raw; // normalize for field
+        double raw = _freq < SCORE_CACHE_SIZE ? scoreCache[_freq] : getSimilarity()->tf(_freq) * weightValue; // compute tf(f) * weight
+        return norms ? raw * getSimilarity()->decodeNormValue(norms[doc]) : raw; // normalize for field
     }
     
     int32_t TermScorer::advance(int32_t target)
@@ -110,6 +111,7 @@ namespace Lucene
         {
             if (docs[pointer] >= target)
             {
+                _freq = freqs[pointer];
                 doc = docs[pointer];
                 return doc;
             }
@@ -123,7 +125,8 @@ namespace Lucene
             pointer = 0;
             doc = termDocs->doc();
             docs[pointer] = doc;
-            freqs[pointer] = termDocs->freq();
+            _freq = termDocs->freq();
+            freqs[pointer] = _freq;
         }
         else
             doc = NO_MORE_DOCS;

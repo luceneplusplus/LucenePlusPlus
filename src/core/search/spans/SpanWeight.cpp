@@ -89,13 +89,13 @@ namespace Lucene
         ComplexExplanationPtr fieldExpl(newLucene<ComplexExplanation>());
         fieldExpl->setDescription(L"fieldWeight(" +    field + L":" + query->toString(field) + L" in " + StringUtils::toString(doc) + L"), product of:");
         
-        ExplanationPtr tfExpl(boost::dynamic_pointer_cast<SpanScorer>(scorer(reader, true, false))->explain(doc));
+        ExplanationPtr tfExpl(boost::static_pointer_cast<SpanScorer>(scorer(reader, true, false))->explain(doc));
         fieldExpl->addDetail(tfExpl);
         fieldExpl->addDetail(idfExpl);
         
         ExplanationPtr fieldNormExpl(newLucene<Explanation>());
         ByteArray fieldNorms(reader->norms(field));
-        double fieldNorm = fieldNorms ? Similarity::decodeNorm(fieldNorms[doc]) : 1.0;
+        double fieldNorm = fieldNorms ? similarity->decodeNormValue(fieldNorms[doc]) : 1.0;
         fieldNormExpl->setValue(fieldNorm);
         fieldNormExpl->setDescription(L"fieldNorm(field=" + field + L", doc=" + StringUtils::toString(doc) + L")");
         fieldExpl->addDetail(fieldNormExpl);

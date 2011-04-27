@@ -24,9 +24,10 @@ namespace Lucene
         FreqProxTermsWriterPerFieldPtr field;
         int32_t numPostings;
         CharBlockPoolPtr charPool;
-        Collection<RawPostingListPtr> postings;
+        IntArray termIDs;
+        FreqProxPostingsArrayPtr postings;
+        int32_t currentTermID;
         
-        FreqProxTermsWriterPostingListPtr p;
         CharArray text;
         int32_t textOffset;
         

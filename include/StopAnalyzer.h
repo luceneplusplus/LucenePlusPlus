@@ -7,15 +7,19 @@
 #ifndef STOPANALYZER_H
 #define STOPANALYZER_H
 
-#include "Analyzer.h"
+#include "StopwordAnalyzerBase.h"
 
 namespace Lucene
 {
     /// Filters {@link LetterTokenizer} with {@link LowerCaseFilter} and {@link StopFilter}.
     ///
-    /// You must specify the required {@link Version} compatibility when creating StopAnalyzer: As of 2.9, position 
-    /// increments are preserved
-    class LPPAPI StopAnalyzer : public Analyzer
+    /// You must specify the required {@link Version} compatibility when creating StopAnalyzer:
+    /// <ul>
+    ///    <li> As of 3.1, StopFilter correctly handles Unicode 4.0 supplementary characters 
+    ///    in stopwords
+    ///    <li> As of 2.9, position increments are preserved
+    /// </ul>
+    class LPPAPI StopAnalyzer : public StopwordAnalyzerBase
     {
     public:
         /// Builds an analyzer which removes words in {@link #ENGLISH_STOP_WORDS_SET}.
@@ -34,18 +38,17 @@ namespace Lucene
         
         LUCENE_CLASS(StopAnalyzer);
     
-    protected:
-        HashSet<String> stopWords;
-        bool enablePositionIncrements;
-    
-        static const wchar_t* _ENGLISH_STOP_WORDS_SET[];
-    
     public:
-        /// An unmodifiable set containing some common English words that are usually not useful for searching.
+        /// An unmodifiable set containing some common English words that are usually not 
+        /// useful for searching.
         static const HashSet<String> ENGLISH_STOP_WORDS_SET();
     
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+    protected:
+        /// Creates {@link TokenStreamComponents} used to tokenize all the text in the 
+        /// provided {@link Reader}.
+        /// @return {@link TokenStreamComponents} built from a {@link LowerCaseTokenizer} 
+        /// filtered with {@link StopFilter}
+        virtual TokenStreamComponentsPtr createComponents(const String& fieldName, ReaderPtr reader);
     };
 }
 

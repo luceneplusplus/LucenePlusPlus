@@ -14,7 +14,7 @@
 #include "IndexReader.h"
 #include "ExactPhraseScorer.h"
 #include "SloppyPhraseScorer.h"
-#include "Explanation.h"
+#include "ComplexExplanation.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -71,6 +71,18 @@ namespace Lucene
     Collection<int32_t> PhraseQuery::getPositions()
     {
         return positions;
+    }
+    
+    QueryPtr PhraseQuery::rewrite(IndexReaderPtr reader)
+    {
+        if (terms.size() == 1)
+        {
+            TermQueryPtr tq(newLucene<TermQuery>(terms[0]));
+            tq->setBoost(getBoost());
+            return tq;
+        }
+        else
+            return Query::rewrite(reader);
     }
     
     WeightPtr PhraseQuery::createWeight(SearcherPtr searcher)
@@ -145,7 +157,7 @@ namespace Lucene
     LuceneObjectPtr PhraseQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<PhraseQuery>();
-        PhraseQueryPtr cloneQuery(boost::dynamic_pointer_cast<PhraseQuery>(Query::clone(clone)));
+        PhraseQueryPtr cloneQuery(boost::static_pointer_cast<PhraseQuery>(Query::clone(clone)));
         cloneQuery->field = field;
         cloneQuery->terms = terms;
         cloneQuery->positions = positions;
@@ -204,24 +216,35 @@ namespace Lucene
         if (query->terms.empty()) // optimize zero-term case
             return ScorerPtr();
         
-        Collection<TermPositionsPtr> tps(Collection<TermPositionsPtr>::newInstance(query->terms.size()));
-        for (int32_t i = 0; i < tps.size(); ++i)
+        Collection<PostingsAndFreqPtr> postingsFreqs(Collection<PostingsAndFreqPtr>::newInstance(query->terms.size()));
+        for (int32_t i = 0; i < query->terms.size(); ++i)
         {
-            TermPositionsPtr p(reader->termPositions(query->terms[i]));
+            TermPtr t(query->terms[i]);
+            TermPositionsPtr p(reader->termPositions(t));
             if (!p)
                 return ScorerPtr();
-            tps[i] = p;
+            postingsFreqs[i] = newLucene<PostingsAndFreq>(p, reader->docFreq(t), query->positions[i]);
         }
         
+        // sort by increasing docFreq order
+        if (query->slop == 0)
+            std::sort(postingsFreqs.begin(), postingsFreqs.end(), luceneCompare<PostingsAndFreqPtr>());
+
         if (query->slop == 0) // optimize exact case
-            return newLucene<ExactPhraseScorer>(shared_from_this(), tps, query->getPositions(), similarity, reader->norms(query->field));
+        {
+            ExactPhraseScorerPtr s(newLucene<ExactPhraseScorer>(shared_from_this(), postingsFreqs, similarity, reader->norms(query->field)));
+            if (s->noDocs)
+                return ScorerPtr();
+            else
+                return s;
+        }
         else
-            return newLucene<SloppyPhraseScorer>(shared_from_this(), tps, query->getPositions(), similarity, query->slop, reader->norms(query->field));
+            return newLucene<SloppyPhraseScorer>(shared_from_this(), postingsFreqs, similarity, query->slop, reader->norms(query->field));
     }
     
     ExplanationPtr PhraseWeight::explain(IndexReaderPtr reader, int32_t doc)
     {
-        ExplanationPtr result(newLucene<Explanation>());
+        ComplexExplanationPtr result(newLucene<ComplexExplanation>());
         result->setDescription(L"weight(" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
         
         StringStream docFreqsBuffer;
@@ -257,13 +280,13 @@ namespace Lucene
         ExplanationPtr fieldExpl(newLucene<Explanation>());
         fieldExpl->setDescription(L"fieldWeight(" +    query->field + L":" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
         
-        PhraseScorerPtr phraseScorer(boost::dynamic_pointer_cast<PhraseScorer>(scorer(reader, true, false)));
+        ScorerPtr phraseScorer(boost::dynamic_pointer_cast<Scorer>(scorer(reader, true, false)));
         if (!phraseScorer)
             return newLucene<Explanation>(0.0, L"no matching docs");
             
         ExplanationPtr tfExplanation(newLucene<Explanation>());
         int32_t d = phraseScorer->advance(doc);
-        double phraseFreq = d == doc ? phraseScorer->currentFreq() : 0.0;
+        double phraseFreq = d == doc ? phraseScorer->freq() : 0.0;
         tfExplanation->setValue(similarity->tf(phraseFreq));
         tfExplanation->setDescription(L"tf(phraseFreq=" + StringUtils::toString(phraseFreq) + L")");
         
@@ -272,7 +295,7 @@ namespace Lucene
         
         ExplanationPtr fieldNormExpl(newLucene<Explanation>());
         ByteArray fieldNorms(reader->norms(query->field));
-        double fieldNorm = fieldNorms ? Similarity::decodeNorm(fieldNorms[doc]) : 1.0;
+        double fieldNorm = fieldNorms ? similarity->decodeNormValue(fieldNorms[doc]) : 1.0;
         fieldNormExpl->setValue(fieldNorm);
         fieldNormExpl->setDescription(L"fieldNorm(field=" + query->field + L", doc=" + StringUtils::toString(doc) + L")");
         fieldExpl->addDetail(fieldNormExpl);
@@ -283,10 +306,24 @@ namespace Lucene
         
         // combine them
         result->setValue(queryExpl->getValue() * fieldExpl->getValue());
-        
-        if (queryExpl->getValue() == 1.0)
-            return fieldExpl;
+        result->setMatch(tfExplanation->isMatch());
         
         return result;
+    }
+    
+    PostingsAndFreq::PostingsAndFreq(TermPositionsPtr postings, int32_t docFreq, int32_t position)
+    {
+        this->postings = postings;
+        this->docFreq = docFreq;
+        this->position = position;
+    }
+    
+    PostingsAndFreq::~PostingsAndFreq()
+    {
+    }
+    
+    int32_t PostingsAndFreq::compareTo(LuceneObjectPtr other)
+    {
+        return docFreq - boost::static_pointer_cast<PostingsAndFreq>(other)->docFreq;
     }
 }

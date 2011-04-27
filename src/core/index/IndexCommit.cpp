@@ -33,4 +33,16 @@ namespace Lucene
     {
         return getDirectory()->fileModified(getSegmentsFileName());
     }
+    
+    int32_t IndexCommit::compareTo(LuceneObjectPtr other)
+    {
+        IndexCommitPtr otherCommit(boost::static_pointer_cast<IndexCommit>(other));
+        int64_t gen = getGeneration();
+        int64_t comgen = otherCommit->getGeneration();
+        if (gen < comgen)
+            return -1;
+        else if (gen > comgen)
+            return 1;
+        return 0;
+    }
 }

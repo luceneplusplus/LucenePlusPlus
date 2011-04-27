@@ -1273,7 +1273,7 @@ BOOST_AUTO_TEST_CASE(testFieldCacheReuseAfterClone)
     BOOST_CHECK_EQUAL(17, ints[0]);
 
     // Clone reader
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r->clone());
+    IndexReaderPtr r2 = boost::static_pointer_cast<IndexReader>(r->clone());
     r->close();
     BOOST_CHECK_NE(r2, r);
     Collection<int32_t> ints2 = FieldCache::DEFAULT()->getInts(r2, L"number");
@@ -1401,8 +1401,8 @@ BOOST_AUTO_TEST_CASE(testNoTermsIndex)
     
     IndexReaderPtr r = IndexReader::open(dir, IndexDeletionPolicyPtr(), true, -1);
     BOOST_CHECK_EXCEPTION(r->docFreq(newLucene<Term>(L"field", L"f")), IllegalStateException, check_exception(LuceneException::IllegalState));
-    BOOST_CHECK(!boost::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());
-    BOOST_CHECK_EQUAL(-1, boost::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->getTermInfosIndexDivisor());
+    BOOST_CHECK(!boost::static_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());
+    BOOST_CHECK_EQUAL(-1, boost::static_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->getTermInfosIndexDivisor());
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     writer->addDocument(doc);
     writer->close();
@@ -1414,7 +1414,7 @@ BOOST_AUTO_TEST_CASE(testNoTermsIndex)
     BOOST_CHECK_EQUAL(2, subReaders.size());
     for (Collection<IndexReaderPtr>::iterator sub = subReaders.begin(); sub != subReaders.end(); ++sub)
     {
-        SegmentReaderPtr subReader = boost::dynamic_pointer_cast<SegmentReader>(*sub);
+        SegmentReaderPtr subReader = boost::static_pointer_cast<SegmentReader>(*sub);
         BOOST_CHECK(!subReader->termsIndexLoaded());
     }
     r2->close();

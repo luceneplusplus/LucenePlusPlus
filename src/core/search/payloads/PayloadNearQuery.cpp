@@ -43,9 +43,9 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
         
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = boost::static_pointer_cast<SpanQuery>(clauses[i]->clone());
         
-        PayloadNearQueryPtr payloadNearQuery(newLucene<PayloadNearQuery>(newClauses, slop, inOrder));
+        PayloadNearQueryPtr payloadNearQuery(newLucene<PayloadNearQuery>(newClauses, slop, inOrder, function));
         payloadNearQuery->setBoost(getBoost());
         return payloadNearQuery;
     }
@@ -160,11 +160,21 @@ namespace Lucene
     {
         if (!more)
             return false;
-        Collection<SpansPtr> spansArr(newCollection<SpansPtr>(spans));
-        payloadScore = 0.0;
+        doc = spans->doc();
+        _freq = 0.0;
+        payloadScore = 0;
         payloadsSeen = 0;
-        getPayloads(spansArr);
-        return SpanScorer::setFreqCurrentDoc();
+        do
+        {
+            int32_t matchLength = spans->end() - spans->start();
+            _freq += getSimilarity()->sloppyFreq(matchLength);
+            Collection<SpansPtr> spansArr(Collection<SpansPtr>::newInstance(1));
+            spansArr[0] = spans;
+            getPayloads(spansArr);            
+            more = spans->next();
+        }
+        while (more && (doc == spans->doc()));
+        return true;
     }
     
     double PayloadNearSpanScorer::score()
@@ -177,15 +187,16 @@ namespace Lucene
     ExplanationPtr PayloadNearSpanScorer::explain(int32_t doc)
     {
         ExplanationPtr result(newLucene<Explanation>());
+        // Add detail about tf/idf...
         ExplanationPtr nonPayloadExpl(SpanScorer::explain(doc));
         result->addDetail(nonPayloadExpl);
-        ExplanationPtr payloadBoost(newLucene<Explanation>());
-        result->addDetail(payloadBoost);
-        double avgPayloadScore = (payloadsSeen > 0 ? (payloadScore / (double)payloadsSeen) : 1.0);
-        payloadBoost->setValue(avgPayloadScore);
-        payloadBoost->setDescription(L"scorePayload(...)");
-        result->setValue(nonPayloadExpl->getValue() * avgPayloadScore);
-        result->setDescription(L"bnq, product of:");
+        // Add detail about payload
+        PayloadNearSpanWeightPtr spanWeight(boost::static_pointer_cast<PayloadNearSpanWeight>(weight));
+        PayloadNearQueryPtr nearQuery(boost::static_pointer_cast<PayloadNearQuery>(spanWeight->query));
+        ExplanationPtr payloadExpl(nearQuery->function->explain(doc, payloadsSeen, payloadScore));
+        result->addDetail(payloadExpl);
+        result->setValue(nonPayloadExpl->getValue() * payloadExpl->getValue());
+        result->setDescription(L"PayloadNearQuery, product of:");
         return result;
     }
 }

@@ -106,6 +106,8 @@ namespace Lucene
         
         /// Returns a clone of this stream.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        
+        virtual void copyBytes(IndexOutputPtr out, int64_t numBytes);
     
     protected:
         /// Implements buffer refill.  Reads bytes from the current position in the input.

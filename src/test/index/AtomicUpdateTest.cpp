@@ -19,6 +19,7 @@
 #include "Random.h"
 #include "MiscUtils.h"
 #include "FileUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -119,7 +120,7 @@ public:
         {
             DocumentPtr d = newLucene<Document>();
             d->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-            d->add(newLucene<Field>(L"contents", intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
+            d->add(newLucene<Field>(L"contents", English::intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
             writer->updateDocument(newLucene<Term>(L"id", StringUtils::toString(i)), d);
         }
     }
@@ -168,7 +169,7 @@ static void runTest(DirectoryPtr directory)
     {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-        d->add(newLucene<Field>(L"contents", intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
+        d->add(newLucene<Field>(L"contents", English::intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
         if ((i - 1) % 7 == 0)
             writer->commit();
         writer->addDocument(d);

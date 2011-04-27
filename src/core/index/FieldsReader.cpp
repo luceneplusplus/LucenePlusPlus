@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FieldsReader.h"
+#include "_FieldsReader.h"
 #include "BufferedIndexInput.h"
 #include "IndexFileNames.h"
 #include "FieldsWriter.h"
@@ -36,8 +37,8 @@ namespace Lucene
         this->docStoreOffset = docStoreOffset;
         this->cloneableFieldsStream = cloneableFieldsStream;
         this->cloneableIndexStream = cloneableIndexStream;
-        fieldsStream = boost::dynamic_pointer_cast<IndexInput>(cloneableFieldsStream->clone());
-        indexStream = boost::dynamic_pointer_cast<IndexInput>(cloneableIndexStream->clone());
+        fieldsStream = boost::static_pointer_cast<IndexInput>(cloneableFieldsStream->clone());
+        indexStream = boost::static_pointer_cast<IndexInput>(cloneableIndexStream->clone());
     }
     
     FieldsReader::FieldsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
@@ -69,9 +70,9 @@ namespace Lucene
         {
             fieldInfos = fn;
             
-            cloneableFieldsStream = d->openInput(segment + L"." + IndexFileNames::FIELDS_EXTENSION(), readBufferSize);
-            cloneableIndexStream = d->openInput(segment + L"." + IndexFileNames::FIELDS_INDEX_EXTENSION(), readBufferSize);
-            
+            cloneableFieldsStream = d->openInput(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_EXTENSION()), readBufferSize);
+            cloneableIndexStream = d->openInput(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_INDEX_EXTENSION()), readBufferSize);
+
             // First version of fdx did not include a format header, but, the first int will always be 0 in that case
             format = cloneableIndexStream->readInt();
             
@@ -87,7 +88,7 @@ namespace Lucene
             if (format < FieldsWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
                 cloneableFieldsStream->setModifiedUTF8StringsMode();
             
-            fieldsStream = boost::dynamic_pointer_cast<IndexInput>(cloneableFieldsStream->clone());
+            fieldsStream = boost::static_pointer_cast<IndexInput>(cloneableFieldsStream->clone());
             
             int64_t indexSize = cloneableIndexStream->length() - formatSize;
             
@@ -106,7 +107,7 @@ namespace Lucene
                 this->_size = (int32_t)(indexSize >> 3);
             }
             
-            indexStream = boost::dynamic_pointer_cast<IndexInput>(cloneableIndexStream->clone());
+            indexStream = boost::static_pointer_cast<IndexInput>(cloneableIndexStream->clone());
             numTotalDocs = (int32_t)(indexSize >> 3);
             success = true;
         }
@@ -119,6 +120,28 @@ namespace Lucene
         if (!success)
             close();
         finally.throwException();
+    }
+    
+    String FieldsReader::detectCodeVersion(DirectoryPtr dir, const String& segment)
+    {
+        IndexInputPtr idxStream(dir->openInput(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_INDEX_EXTENSION()), 1024));
+        String codeVersion;
+        LuceneException finally;
+        try
+        {
+            int32_t format = idxStream->readInt();
+            if (format < FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS)
+                codeVersion = L"2.x";
+            else
+                codeVersion = L"3.0";
+        }
+        catch (LuceneException& e)
+        {
+            finally = e;
+        }
+        idxStream->close();
+        finally.throwException();
+        return codeVersion;
     }
     
     LuceneObjectPtr FieldsReader::clone(LuceneObjectPtr other)
@@ -204,7 +227,9 @@ namespace Lucene
                 break; // Get out of this loop
             }
             else if (acceptField == FieldSelector::SELECTOR_LAZY_LOAD)
-                addFieldLazy(doc, fi, binary, compressed, tokenize);
+                addFieldLazy(doc, fi, binary, compressed, tokenize, true);
+            else if (acceptField == FieldSelector::LATENT)
+                addFieldLazy(doc, fi, binary, compressed, tokenize, false);
             else if (acceptField == FieldSelector::SELECTOR_SIZE)
                 skipField(binary, compressed, addFieldSize(doc, fi, binary, compressed));
             else if (acceptField == FieldSelector::SELECTOR_SIZE_AND_BREAK)
@@ -255,13 +280,21 @@ namespace Lucene
         }
     }
     
-    void FieldsReader::addFieldLazy(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize)
+    void FieldsReader::addFieldLazy(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize, bool cacheResult)
     {
+        uint8_t fieldOptions = 0;
+        if (binary)
+            fieldOptions |= LazyField::IS_BINARY;
+        if (compressed)
+            fieldOptions |= LazyField::IS_COMPRESSED;
+        if (cacheResult)
+            fieldOptions |= LazyField::CACHE_RESULT;
+            
         if (binary)
         {
             int32_t toRead = fieldsStream->readVInt();
             int64_t pointer = fieldsStream->getFilePointer();
-            doc->add(newLucene<LazyField>(shared_from_this(), fi->name, Field::STORE_YES, toRead, pointer, binary, compressed));
+            doc->add(newLucene<LazyField>(shared_from_this(), fi->name, Field::STORE_YES, toRead, pointer, fieldOptions));
             fieldsStream->seek(pointer + toRead);
         }
         else
@@ -275,7 +308,7 @@ namespace Lucene
             {
                 int32_t toRead = fieldsStream->readVInt();
                 int64_t pointer = fieldsStream->getFilePointer();
-                f = newLucene<LazyField>(shared_from_this(), fi->name, store, toRead, pointer, binary, compressed);
+                f = newLucene<LazyField>(shared_from_this(), fi->name, store, toRead, pointer, fieldOptions);
                 // skip over the part that we aren't loading
                 fieldsStream->seek(pointer + toRead);
                 f->setOmitNorms(fi->omitNorms);
@@ -290,7 +323,7 @@ namespace Lucene
                     fieldsStream->seek(pointer + length);
                 else
                     fieldsStream->skipChars(length);
-                f = newLucene<LazyField>(shared_from_this(), fi->name, store, index, termVector, length, pointer, binary, compressed);
+                f = newLucene<LazyField>(shared_from_this(), fi->name, store, index, termVector, length, pointer, fieldOptions);
                 f->setOmitNorms(fi->omitNorms);
                 f->setOmitTermFreqAndPositions(fi->omitTermFreqAndPositions);
             }
@@ -308,9 +341,9 @@ namespace Lucene
             ByteArray b(ByteArray::newInstance(toRead));
             fieldsStream->readBytes(b.get(), 0, b.size());
             if (compressed)
-                doc->add(newLucene<Field>(fi->name, uncompress(b), Field::STORE_YES));
+                doc->add(newLucene<Field>(fi->name, uncompress(b)));
             else
-                doc->add(newLucene<Field>(fi->name, b, Field::STORE_YES));
+                doc->add(newLucene<Field>(fi->name, b));
         }
         else
         {
@@ -349,7 +382,7 @@ namespace Lucene
         sizebytes[1] = (uint8_t)MiscUtils::unsignedShift(bytesize, 16);
         sizebytes[2] = (uint8_t)MiscUtils::unsignedShift(bytesize, 8);
         sizebytes[3] = (uint8_t)(bytesize);
-        doc->add(newLucene<Field>(fi->name, sizebytes, Field::STORE_YES));
+        doc->add(newLucene<Field>(fi->name, sizebytes));
         return size;
     }
     
@@ -379,30 +412,36 @@ namespace Lucene
         return L"";
     }
     
-    LazyField::LazyField(FieldsReaderPtr reader, const String& name, Field::Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) : 
+    const uint8_t LazyField::IS_BINARY = 0x1; // work around for max parameters
+    const uint8_t LazyField::IS_COMPRESSED = 0x2; // work around for max parameters
+    const uint8_t LazyField::CACHE_RESULT = 0x4; // work around for max parameters
+    
+    LazyField::LazyField(FieldsReaderPtr reader, const String& name, Field::Store store, int32_t toRead, int64_t pointer, uint8_t fieldOptions) : 
         AbstractField(name, store, Field::INDEX_NO, Field::TERM_VECTOR_NO)
     {
         this->_reader = reader;
         this->toRead = toRead;
         this->pointer = pointer;
-        this->_isBinary = isBinary;
-        if (isBinary)
+        this->_isBinary = ((fieldOptions & IS_BINARY) != 0);
+        this->cacheResult = ((fieldOptions & CACHE_RESULT) != 0);
+        if (this->_isBinary)
             binaryLength = toRead;
         lazy = true;
-        this->isCompressed = isCompressed;
+        this->isCompressed = ((fieldOptions & IS_COMPRESSED) != 0);
     }
     
-    LazyField::LazyField(FieldsReaderPtr reader, const String& name, Field::Store store, Field::Index index, Field::TermVector termVector, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) :
+    LazyField::LazyField(FieldsReaderPtr reader, const String& name, Field::Store store, Field::Index index, Field::TermVector termVector, int32_t toRead, int64_t pointer, uint8_t fieldOptions) :
         AbstractField(name, store, index, termVector)
     {
         this->_reader = reader;
         this->toRead = toRead;
         this->pointer = pointer;
-        this->_isBinary = isBinary;
-        if (isBinary)
+        this->_isBinary = ((fieldOptions & IS_BINARY) != 0);
+        this->cacheResult = ((fieldOptions & CACHE_RESULT) != 0);
+        if (this->_isBinary)
             binaryLength = toRead;
         lazy = true;
-        this->isCompressed = isCompressed;
+        this->isCompressed = ((fieldOptions & IS_COMPRESSED) != 0);
     }
     
     LazyField::~LazyField()
@@ -444,6 +483,7 @@ namespace Lucene
             if (VariantUtils::isNull(fieldsData))
             {
                 IndexInputPtr localFieldsStream(getFieldStream());
+                String value;
                 try
                 {
                     localFieldsStream->seek(pointer);
@@ -451,7 +491,7 @@ namespace Lucene
                     {
                         ByteArray b(ByteArray::newInstance(toRead));
                         localFieldsStream->readBytes(b.get(), 0, b.size());
-                        fieldsData = reader->uncompressString(b);
+                        value = reader->uncompressString(b);
                     }
                     else
                     {
@@ -459,14 +499,14 @@ namespace Lucene
                         {
                             ByteArray bytes(ByteArray::newInstance(toRead));
                             localFieldsStream->readBytes(bytes.get(), 0, toRead);
-                            fieldsData = StringUtils::toUnicode(bytes.get(), toRead);
+                            value = StringUtils::toUnicode(bytes.get(), toRead);
                         }
                         else
                         {
                             // read in chars because we already know the length we need to read
                             CharArray chars(CharArray::newInstance(toRead));
                             int32_t length = localFieldsStream->readChars(chars.get(), 0, toRead);
-                            fieldsData = String(chars.get(), length);
+                            value = String(chars.get(), length);
                         }
                     }
                 }
@@ -474,6 +514,9 @@ namespace Lucene
                 {
                     boost::throw_exception(FieldReaderException(e.getError()));
                 }
+                if (cacheResult)
+                    fieldsData = value;
+                return value;
             }
             return VariantUtils::get<String>(fieldsData);
         }
@@ -513,6 +556,7 @@ namespace Lucene
             if (VariantUtils::isNull(fieldsData))
             {
                 ByteArray b;
+                ByteArray value;
                 
                 // Allocate new buffer if result is null or too small
                 if (!result || result.size() < toRead)
@@ -529,9 +573,9 @@ namespace Lucene
                     localFieldsStream->seek(pointer);
                     localFieldsStream->readBytes(b.get(), 0, toRead);
                     if (isCompressed)
-                        fieldsData = reader->uncompress(b);
+                        value = reader->uncompress(b);
                     else
-                        fieldsData = b;
+                        value = b;
                 }
                 catch (IOException& e)
                 {
@@ -540,6 +584,9 @@ namespace Lucene
                 
                 binaryOffset = 0;
                 binaryLength = toRead;
+                if (cacheResult)
+                    fieldsData = value;
+                return value;
             }
             return VariantUtils::get<ByteArray>(fieldsData);
         }

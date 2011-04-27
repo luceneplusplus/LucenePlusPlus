@@ -7,14 +7,16 @@
 #include "LuceneInc.h"
 #include "PorterStemFilter.h"
 #include "PorterStemmer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
+#include "KeywordAttribute.h"
 
 namespace Lucene
 {
     PorterStemFilter::PorterStemFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         stemmer = newLucene<PorterStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
+        keywordAttr = addAttribute<KeywordAttribute>();
     }
     
     PorterStemFilter::~PorterStemFilter()
@@ -25,9 +27,8 @@ namespace Lucene
     {
         if (!input->incrementToken())
             return false;
-        
-        if (stemmer->stem(termAtt->termBuffer()))
-            termAtt->setTermBuffer(stemmer->getResultBuffer(), 0, stemmer->getResultLength());
+        if (!keywordAttr->isKeyword() && stemmer->stem(termAtt->buffer()))
+            termAtt->copyBuffer(stemmer->getResultBuffer(), 0, stemmer->getResultLength());
         return true;
     }
 }

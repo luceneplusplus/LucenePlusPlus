@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// A ScorerDocQueue maintains a partial ordering of its Scorers such that the least Scorer can always be 
     /// found in constant time.  Put()'s and pop()'s require log(size) time.  The ordering is by Scorer::doc().
-    class LPPAPI ScorerDocQueue : public LuceneObject
+    class ScorerDocQueue : public LuceneObject
     {
     public:
         ScorerDocQueue(int32_t maxSize);

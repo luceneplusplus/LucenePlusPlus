@@ -39,7 +39,7 @@ namespace Lucene
         Collection<IndexReaderPtr> readers;
         Collection<uint8_t> decrefOnClose; // remember which subreaders to decRef on close
         bool incRefReaders;
-        MapStringIndexReader fieldToReader;
+        SortedMapStringIndexReader fieldToReader;
         MapIndexReaderSetString readerToFields;
         Collection<IndexReaderPtr> storedFieldReaders;
         
@@ -48,6 +48,8 @@ namespace Lucene
         bool _hasDeletions;
     
     public:
+        virtual String toString();
+        
         /// Add an IndexReader.
         void add(IndexReaderPtr reader);
         
@@ -153,6 +155,9 @@ namespace Lucene
         /// Get a list of unique field names that exist in this index and have the specified field option 
         /// information.
         virtual HashSet<String> getFieldNames(FieldOption fieldOption);
+        
+        virtual void addReaderFinishedListener(ReaderFinishedListenerPtr listener);
+        virtual void removeReaderFinishedListener(ReaderFinishedListenerPtr listener);
         
     protected:
         IndexReaderPtr doReopen(bool doClone);

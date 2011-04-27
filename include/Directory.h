@@ -60,7 +60,15 @@ namespace Lucene
         
         /// Ensure that any writes to this file are moved to stable storage.  Lucene uses this to properly commit 
         /// changes to the index, to prevent a machine/OS crash from corrupting the index.
+        /// @deprecated use {@link #sync(HashSet)} instead.
         virtual void sync(const String& name);
+        
+        /// Ensure that any writes to these files are moved to stable storage.  Lucene uses this to properly commit
+        /// changes to the index, to prevent a machine/OS crash from corrupting the index.
+        ///
+        /// NOTE: Clients may call this method for same files over and over again, so some impls might optimize for 
+        /// that.  For other impls the operation can be a noop, for various reasons.
+        virtual void sync(HashSet<String> names);
         
         /// Returns a stream reading an existing file, with the specified read buffer size.  The particular Directory 
         /// implementation may ignore the buffer size.  Currently the only Directory implementations that respect 
@@ -80,7 +88,7 @@ namespace Lucene
         /// of LockFactory should only be used for one directory (ie, do not share a single instance across multiple 
         /// Directories).
         /// @param lockFactory instance of {@link LockFactory}.
-        void setLockFactory(LockFactoryPtr lockFactory);
+        virtual void setLockFactory(LockFactoryPtr lockFactory);
         
         /// Get the LockFactory that this Directory instance is using for its locking implementation.  Note that this 
         /// may be null for Directory implementations that provide their own locking implementation.        
@@ -93,12 +101,36 @@ namespace Lucene
         
         virtual String toString();
         
+        /// Copies the file src to {@link Directory} to under the new file name dest.
+        ///
+        /// If you want to copy the entire source directory to the destination one, you can do so like this:
+        /// <pre>
+        /// DirectoryPtr to; // the directory to copy to
+        /// HashSet<String> files(dir->listAll());
+        /// for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
+        ///     dir->copy(to, *file, newFile); // newFile can be either file, or a new name
+        /// </pre>
+        ///
+        /// NOTE: this method does not check whether dest exist and will overwrite it if it does.
+        virtual void copy(DirectoryPtr to, const String& src, const String& dest);
+        
         /// Copy contents of a directory src to a directory dest. If a file in src already exists in dest then the one 
-        /// in dest will be blindly overwritten.  NOTE: the source directory cannot change while this method is running.
-        /// Otherwise the results are undefined.
+        /// in dest will be blindly overwritten.  
+        /// NOTE: the source directory cannot change while this method is running.  Otherwise the results are undefined.
         /// @param src source directory.
         /// @param dest destination directory.
         /// @param closeDirSrc if true, call {@link #close()} method on source directory.
+        /// @deprecated should be replaced with calls to {@link #copy(DirectoryPtr, String, String)} for every file that
+        /// needs copying. You can use the following code:
+        /// <pre>
+        /// IndexFileNameFilterPtr filter = IndexFileNameFilter::getFilter();
+        /// HashSet<String> files(src->listAll());
+        /// for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
+        /// {
+        ///     if (filter->accept(L"", *file))
+        ///         src->copy(dest, *file, *file);
+        /// }
+        /// </pre>
         static void copy(DirectoryPtr src, DirectoryPtr dest, bool closeDirSrc);
     
     protected:

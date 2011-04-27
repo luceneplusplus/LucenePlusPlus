@@ -33,9 +33,7 @@ namespace Lucene
         if (parentFieldsWriter->fieldInfos->hasProx())
         {
             // At least one field does not omit TF, so create the prox file
-            String fileName(IndexFileNames::segmentFileName(parentFieldsWriter->segment, IndexFileNames::PROX_EXTENSION()));
-            state->flushedFiles.add(fileName);
-            out = parentFieldsWriter->dir->createOutput(fileName);
+            out = parentFieldsWriter->dir->createOutput(IndexFileNames::segmentFileName(parentFieldsWriter->segment, IndexFileNames::PROX_EXTENSION()));
             parent->skipListWriter->setProxOutput(out);
         }
         else

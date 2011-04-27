@@ -20,6 +20,8 @@ namespace Lucene
 {
     const uint8_t FieldsWriter::FIELD_IS_TOKENIZED = 0x1;
     const uint8_t FieldsWriter::FIELD_IS_BINARY = 0x2;
+    
+    /// @deprecated Kept for backwards-compatibility with <3.0 indexes
     const uint8_t FieldsWriter::FIELD_IS_COMPRESSED = 0x4;
 
     const int32_t FieldsWriter::FORMAT = 0; // Original format
@@ -30,43 +32,22 @@ namespace Lucene
     // switch to a new format!
     const int32_t FieldsWriter::FORMAT_CURRENT = FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 
-    FieldsWriter::FieldsWriter(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
+    FieldsWriter::FieldsWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fn)
     {
+        this->directory = directory;
+        this->segment = segment;
         fieldInfos = fn;
-        
+
         bool success = false;
-        String fieldsName(segment + L"." + IndexFileNames::FIELDS_EXTENSION());
         LuceneException finally;
         try
         {
-            fieldsStream = d->createOutput(fieldsName);
+            fieldsStream = directory->createOutput(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_EXTENSION()));
+            indexStream = directory->createOutput(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_INDEX_EXTENSION()));
+
             fieldsStream->writeInt(FORMAT_CURRENT);
-            success = true;
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        if (!success)
-        {
-            try
-            {
-                close();
-                d->deleteFile(fieldsName);
-            }
-            catch (...)
-            {
-                // Suppress so we keep throwing the original exception
-            }
-        }
-        finally.throwException();
-        
-        success = false;
-        String indexName(segment + L"." + IndexFileNames::FIELDS_INDEX_EXTENSION());
-        try
-        {
-            indexStream = d->createOutput(indexName);
             indexStream->writeInt(FORMAT_CURRENT);
+
             success = true;
         }
         catch (LuceneException& e)
@@ -74,21 +55,8 @@ namespace Lucene
             finally = e;
         }
         if (!success)
-        {
-            try
-            {
-                close();
-                d->deleteFile(fieldsName);
-                d->deleteFile(indexName);
-            }
-            catch (...)
-            {
-                // Suppress so we keep throwing the original exception
-            }
-        }
+            abort();
         finally.throwException();
-        
-        doClose = true;
     }
     
     FieldsWriter::FieldsWriter(IndexOutputPtr fdx, IndexOutputPtr fdt, FieldInfosPtr fn)
@@ -96,7 +64,6 @@ namespace Lucene
         fieldInfos = fn;
         fieldsStream = fdt;
         indexStream = fdx;
-        doClose = false;
     }
     
     FieldsWriter::~FieldsWriter()
@@ -122,15 +89,9 @@ namespace Lucene
         fieldsStream->writeVInt(0);
     }
     
-    void FieldsWriter::flush()
-    {
-        indexStream->flush();
-        fieldsStream->flush();
-    }
-
     void FieldsWriter::close()
     {
-        if (doClose)
+        if (directory)
         {
             LuceneException finally;
             if (fieldsStream)
@@ -143,7 +104,6 @@ namespace Lucene
                 {
                     finally = e;
                 }
-                fieldsStream.reset();
             }
             if (indexStream)
             {
@@ -156,9 +116,38 @@ namespace Lucene
                     if (finally.isNull()) // throw first exception hit
                         finally = e;
                 }
-                indexStream.reset();
             }
+            fieldsStream.reset();
+            indexStream.reset();
             finally.throwException();
+        }
+    }
+    
+    void FieldsWriter::abort()
+    {
+        if (directory)
+        {
+            try
+            {
+                close();
+            }
+            catch (LuceneException&)
+            {
+            }
+            try
+            {
+                directory->deleteFile(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_EXTENSION()));
+            }
+            catch (LuceneException&)
+            {
+            }
+            try
+            {
+                directory->deleteFile(IndexFileNames::segmentFileName(segment, IndexFileNames::FIELDS_INDEX_EXTENSION()));
+            }
+            catch (LuceneException&)
+            {
+            }
         }
     }
     

@@ -22,7 +22,7 @@ namespace Lucene
     {
     public:
         /// Create a CustomScoreQuery over input subQuery.
-        /// @param subQuery the sub query whose scored is being customed. Must not be null. 
+        /// @param subQuery the sub query whose scored is being customized. Must not be null. 
         CustomScoreQuery(QueryPtr subQuery);
         
         /// Create a CustomScoreQuery over input subQuery and a {@link ValueSourceQuery}.
@@ -57,46 +57,6 @@ namespace Lucene
         virtual String toString(const String& field);
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
-        
-        /// Compute a custom score by the subQuery score and a number of ValueSourceQuery scores.
-        ///
-        /// Deprecated: Will be removed in Lucene 3.1.
-        ///
-        /// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
-        /// search (since Lucene 2.9).
-        /// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
-        /// for the given {@link IndexReader}.
-        virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
-        
-        /// Compute a custom score by the subQuery score and the ValueSourceQuery score.
-        ///
-        /// Deprecated: Will be removed in Lucene 3.1.
-        ///
-        /// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
-        /// search (since Lucene 2.9).  
-        /// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
-        /// for the given {@link IndexReader}.
-        virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore);
-        
-        /// Explain the custom score.
-        ///
-        /// Deprecated: Will be removed in Lucene 3.1.
-        ///
-        /// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
-        /// search (since Lucene 2.9).
-        /// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
-        /// for the given {@link IndexReader}.
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
-        
-        /// Explain the custom score.
-        ///
-        /// Deprecated Will be removed in Lucene 3.1.
-        ///
-        /// The doc is relative to the current reader, which is unknown to CustomScoreQuery when using per-segment 
-        /// search (since Lucene 2.9).
-        /// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
-        /// for the given {@link IndexReader}.
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl);
         
         virtual WeightPtr createWeight(SearcherPtr searcher);
         

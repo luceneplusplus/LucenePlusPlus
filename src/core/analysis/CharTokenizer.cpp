@@ -7,7 +7,7 @@
 #include "LuceneInc.h"
 #include "CharTokenizer.h"
 #include "OffsetAttribute.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "Reader.h"
 
 namespace Lucene
@@ -15,41 +15,50 @@ namespace Lucene
     const int32_t CharTokenizer::MAX_WORD_LEN = 255;
     const int32_t CharTokenizer::IO_BUFFER_SIZE = 4096;
     
+    CharTokenizer::CharTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input) : Tokenizer(input)
+    {
+        ConstructCharTokenizer();
+    }
+    
+    CharTokenizer::CharTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source, input)
+    {
+        ConstructCharTokenizer();
+    }
+    
+    CharTokenizer::CharTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory, input)
+    {
+        ConstructCharTokenizer();
+    }
+    
     CharTokenizer::CharTokenizer(ReaderPtr input) : Tokenizer(input)
     {
-        offset = 0;
-        bufferIndex = 0;
-        dataLen = 0;
-        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
-        
-        offsetAtt = addAttribute<OffsetAttribute>();
-        termAtt = addAttribute<TermAttribute>();
+        ConstructCharTokenizer();
     }
     
     CharTokenizer::CharTokenizer(AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source, input)
     {
-        offset = 0;
-        bufferIndex = 0;
-        dataLen = 0;
-        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
-        
-        offsetAtt = addAttribute<OffsetAttribute>();
-        termAtt = addAttribute<TermAttribute>();
+        ConstructCharTokenizer();
     }
     
     CharTokenizer::CharTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory, input)
     {
-        offset = 0;
-        bufferIndex = 0;
-        dataLen = 0;
-        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
-        
-        offsetAtt = addAttribute<OffsetAttribute>();
-        termAtt = addAttribute<TermAttribute>();
+        ConstructCharTokenizer();
     }
     
     CharTokenizer::~CharTokenizer()
     {
+    }
+    
+    void CharTokenizer::ConstructCharTokenizer()
+    {
+        offset = 0;
+        bufferIndex = 0;
+        dataLen = 0;
+        finalOffset = 0;
+        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
+        
+        offsetAtt = addAttribute<OffsetAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
     }
     
     wchar_t CharTokenizer::normalize(wchar_t c)
@@ -62,7 +71,7 @@ namespace Lucene
         clearAttributes();
         int32_t length = 0;
         int32_t start = bufferIndex;
-        CharArray buffer(termAtt->termBuffer());
+        CharArray buffer(termAtt->buffer());
         while (true)
         {
             if (bufferIndex >= dataLen)
@@ -75,7 +84,10 @@ namespace Lucene
                     if (length > 0)
                         break;
                     else
+                    {
+                        finalOffset = correctOffset(offset);
                         return false;
+                    }
                 }
                 bufferIndex = 0;
             }
@@ -87,7 +99,7 @@ namespace Lucene
                 if (length == 0)
                     start = offset + bufferIndex - 1;
                 else if (length == buffer.size())
-                    buffer = termAtt->resizeTermBuffer(1 + length);
+                    buffer = termAtt->resizeBuffer(1 + length);
                 
                 buffer[length++] = normalize(c); // buffer it, normalized
                 
@@ -98,7 +110,8 @@ namespace Lucene
                 break; // return them
         }
         
-        termAtt->setTermLength(length);
+        termAtt->setLength(length);
+        BOOST_ASSERT(start != -1);
         offsetAtt->setOffset(correctOffset(start), correctOffset(start + length));
     
         return true;
@@ -107,7 +120,6 @@ namespace Lucene
     void CharTokenizer::end()
     {
         // set final offset
-        int32_t finalOffset = correctOffset(offset);
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
     
@@ -117,5 +129,6 @@ namespace Lucene
         bufferIndex = 0;
         offset = 0;
         dataLen = 0;
+        finalOffset = 0;
     }
 }

@@ -9,6 +9,10 @@
 
 namespace Lucene
 {
+    Searchable::~Searchable()
+    {
+    }
+    
     void Searchable::search(WeightPtr weight, FilterPtr filter, CollectorPtr collector)
     {
         BOOST_ASSERT(false);

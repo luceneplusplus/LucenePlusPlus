@@ -54,6 +54,7 @@ namespace Lucene
     public:
         typedef Array<TYPE> this_type;
         typedef ArrayData<TYPE> array_type;
+        typedef TYPE value_type;
 
         Array()
         {

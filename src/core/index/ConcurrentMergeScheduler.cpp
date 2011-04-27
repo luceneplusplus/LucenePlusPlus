@@ -8,8 +8,10 @@
 #include "ConcurrentMergeScheduler.h"
 #include "_ConcurrentMergeScheduler.h"
 #include "IndexWriter.h"
+#include "LuceneThread.h"
 #include "TestPoint.h"
 #include "StringUtils.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {
@@ -18,8 +20,18 @@ namespace Lucene
     
     ConcurrentMergeScheduler::ConcurrentMergeScheduler()
     {
+        // Max number of merge threads allowed to be running at once.  When there are 
+        // more merges then this, we forcefully pause the larger ones, letting the smaller
+        // ones run, up until maxMergeCount merges at which point we forcefully pause 
+        // incoming threads (that presumably are the ones causing so much merging).  We 
+        // dynamically default this from 1 to 3, depending on how many cores you have
+        maxThreadCount = std::max(1, std::min(3, LuceneThread::availableProcessors() / 2));
+        
+        // Max number of merges we accept before forcefully throttling the incoming threads
+        maxMergeCount = maxThreadCount + 2;
+        
         mergeThreadPriority = -1;
-        mergeThreads = SetMergeThread::newInstance();
+        mergeThreads = Collection<MergeThreadPtr>::newInstance();
         maxThreadCount = 1;
         suppressExceptions = false;
         closed = false;
@@ -40,12 +52,28 @@ namespace Lucene
     {
         if (count < 1)
             boost::throw_exception(IllegalArgumentException(L"count should be at least 1"));
+        if (count > maxMergeCount)
+            boost::throw_exception(IllegalArgumentException(L"count should be <= maxMergeCount (= " + StringUtils::toString(maxMergeCount) + L")"));
         maxThreadCount = count;
     }
     
     int32_t ConcurrentMergeScheduler::getMaxThreadCount()
     {
         return maxThreadCount;
+    }
+    
+    void ConcurrentMergeScheduler::setMaxMergeCount(int32_t count)
+    {
+        if (count < 1)
+            boost::throw_exception(IllegalArgumentException(L"count should be at least 1"));
+        if (count < maxThreadCount)
+            boost::throw_exception(IllegalArgumentException(L"count should be >= maxThreadCount (= " + StringUtils::toString(maxThreadCount) + L")"));
+        maxMergeCount = count;
+    }
+    
+    int32_t ConcurrentMergeScheduler::getMaxMergeCount()
+    {
+        return maxMergeCount;
     }
     
     int32_t ConcurrentMergeScheduler::getMergeThreadPriority()
@@ -64,9 +92,83 @@ namespace Lucene
                                                             L" .. " + StringUtils::toString(LuceneThread::MAX_PRIORITY) + L" inclusive"));
         }
         mergeThreadPriority = pri;
-        
-        for (SetMergeThread::iterator merge = mergeThreads.begin(); merge != mergeThreads.end(); ++merge)
-            (*merge)->setThreadPriority(pri);
+        updateMergeThreads();
+    }
+    
+    struct lessMergeDocCount
+    {
+        inline bool operator()(const MergeThreadPtr& first, const MergeThreadPtr& second) const
+        {
+            OneMergePtr m1(first->getCurrentMerge());
+            OneMergePtr m2(second->getCurrentMerge());
+
+            int32_t c1 = m1 ? m1->segments->totalDocCount() : INT_MAX;
+            int32_t c2 = m2 ? m2->segments->totalDocCount() : INT_MAX;
+            
+            return c1 < c2;
+        }
+    };
+    
+    void ConcurrentMergeScheduler::updateMergeThreads()
+    {
+        // Only look at threads that are alive and not in the process of 
+        // stopping (ie. have an active merge)
+        Collection<MergeThreadPtr> activeMerges(Collection<MergeThreadPtr>::newInstance());
+
+        int32_t threadIdx = 0;
+        while (threadIdx < mergeThreads.size())
+        {
+            MergeThreadPtr mergeThread(mergeThreads[threadIdx]);
+            if (!mergeThread->isAlive())
+            {
+                // Prune any dead threads
+                mergeThreads.remove(mergeThreads.begin() + threadIdx);
+                continue;
+            }
+            if (mergeThread->getCurrentMerge())
+                activeMerges.add(mergeThread);
+            ++threadIdx;
+        }
+
+        // Sort the merge threads in descending order.
+        std::sort(activeMerges.begin(), activeMerges.end(), lessMergeDocCount());
+
+        int32_t pri = mergeThreadPriority;
+        int32_t activeMergeCount = activeMerges.size();
+        for (threadIdx = 0; threadIdx < activeMergeCount; ++threadIdx)
+        {
+            MergeThreadPtr mergeThread(activeMerges[threadIdx]);
+            OneMergePtr merge(mergeThread->getCurrentMerge());
+            if (!merge)
+                continue;
+
+            // pause the thread if maxThreadCount is smaller than the number of merge threads.
+            bool doPause = (threadIdx < activeMergeCount - maxThreadCount);
+
+            if (verbose())
+            {
+                if (doPause != merge->getPause())
+                {
+                    if (doPause)
+                        message(L"pause thread " + StringUtils::toString(mergeThread->threadId()));
+                    else
+                        message(L"unpause thread " + StringUtils::toString(mergeThread->threadId()));
+                }
+            }
+            if (doPause != merge->getPause())
+                merge->setPause(doPause);
+
+            if (!doPause)
+            {
+                if (verbose())
+                {
+                    message(L"set priority of merge thread " + StringUtils::toString(mergeThread->threadId()) + 
+                            L" to " + StringUtils::toString(pri));
+                }
+                mergeThread->setThreadPriority(pri);
+                pri = std::min(LuceneThread::MAX_PRIORITY, 1 + pri);
+            }
+        }
     }
     
     bool ConcurrentMergeScheduler::verbose()
@@ -76,8 +178,7 @@ namespace Lucene
     
     void ConcurrentMergeScheduler::message(const String& message)
     {
-        if (verbose() && !_writer.expired())
-            IndexWriterPtr(_writer)->message(L"CMS: " + message);
+        IndexWriterPtr(_writer)->message(L"CMS: " + message);
     }
     
     void ConcurrentMergeScheduler::initMergeThreadPriority()
@@ -92,28 +193,40 @@ namespace Lucene
     
     void ConcurrentMergeScheduler::close()
     {
-        sync();
         closed = true;
+        sync();
     }
     
     void ConcurrentMergeScheduler::sync()
     {
-        SyncLock syncLock(this);
-        while (mergeThreadCount() > 0)
+        while (true)
         {
-            message(L"now wait for threads; currently " + StringUtils::toString(mergeThreads.size()) + L" still running");
-            wait(1000);
+            MergeThreadPtr toSync;
+            {
+                SyncLock syncLock(this);
+                for (Collection<MergeThreadPtr>::iterator t = mergeThreads.begin(); t != mergeThreads.end(); ++t)
+                {
+                    if ((*t)->isAlive())
+                    {
+                        toSync = *t;
+                        break;
+                    }
+                }
+            }
+            if (toSync)
+                toSync->join();
+            else
+                break;
         }
-        mergeThreads.clear();
     }
     
     int32_t ConcurrentMergeScheduler::mergeThreadCount()
     {
         SyncLock syncLock(this);
         int32_t count = 0;
-        for (SetMergeThread::iterator merge = mergeThreads.begin(); merge != mergeThreads.end(); ++merge)
+        for (Collection<MergeThreadPtr>::iterator mt = mergeThreads.begin(); mt != mergeThreads.end(); ++mt)
         {
-            if ((*merge)->isAlive())
+            if ((*mt)->isAlive() && (*mt)->getCurrentMerge())
                 ++count;
         }
         return count;
@@ -132,16 +245,38 @@ namespace Lucene
         // First, quickly run through the newly proposed merges and add any orthogonal merges (ie a merge not
         // involving segments already pending to be merged) to the queue.  If we are way behind on merging, 
         // many of these newly proposed merges will likely already be registered.
-        message(L"now merge");
-        message(L"  index: " + writer->segString());
+        if (verbose())
+        {
+            message(L"now merge");
+            message(L"  index: " + writer->segString());
+        }
         
         // Iterate, pulling from the IndexWriter's queue of pending merges, until it's empty
         while (true)
         {
+            {
+                SyncLock syncLock(this);
+                int64_t startStallTime = 0;
+                while (mergeThreadCount() >= 1 + maxMergeCount)
+                {
+                    startStallTime = MiscUtils::currentTimeMillis();
+                    if (verbose())
+                        message(L"    too many merges; stalling...");
+                    wait();
+                }
+
+                if (verbose())
+                {
+                    if (startStallTime != 0)
+                        message(L"  stalled for " + StringUtils::toString(MiscUtils::currentTimeMillis() - startStallTime) + L" msec");
+                }
+            }
+            
             OneMergePtr merge(writer->getNextMerge());
             if (!merge)
             {
-                message(L"  no more merges pending; now return");
+                if (verbose())
+                    message(L"  no more merges pending; now return");
                 return;
             }
             
@@ -153,23 +288,22 @@ namespace Lucene
             try
             {
                 SyncLock syncLock(this);
-                MergeThreadPtr merger;
-                while (mergeThreadCount() >= maxThreadCount)
-                {
-                    message(L"    too many merge threads running; stalling...");
-                    wait(1000);
-                }
                 
-                message(L"  consider merge " + merge->segString(dir));
-                
-                BOOST_ASSERT(mergeThreadCount() < maxThreadCount);
+                if (verbose())
+                    message(L"  consider merge " + merge->segString(dir));
                 
                 // OK to spawn a new merge thread to handle this merge
-                merger = getMergeThread(writer, merge);
+                MergeThreadPtr merger(getMergeThread(writer, merge));
                 mergeThreads.add(merger);
-                message(L"    launch new thread");
-                
+                if (verbose())
+                    message(L"    launch new thread [" + StringUtils::toString(merger->threadId()) + L"]");
+
                 merger->start();
+
+                // Must call this after starting the thread else the new thread is removed from 
+                // mergeThreads (since it's not alive yet)
+                updateMergeThreads();
+
                 success = true;
             }
             catch (LuceneException& e)
@@ -260,7 +394,7 @@ namespace Lucene
     MergeThread::MergeThread(ConcurrentMergeSchedulerPtr merger, IndexWriterPtr writer, OneMergePtr startMerge)
     {
         this->_merger = merger;
-        this->_writer = writer;
+        this->_tWriter = writer;
         this->startMerge = startMerge;
     }
     
@@ -270,16 +404,25 @@ namespace Lucene
     
     void MergeThread::setRunningMerge(OneMergePtr merge)
     {
-        ConcurrentMergeSchedulerPtr merger(_merger);
-        SyncLock syncLock(merger);
+        SyncLock syncLock(this);
         runningMerge = merge;
     }
     
     OneMergePtr MergeThread::getRunningMerge()
     {
-        ConcurrentMergeSchedulerPtr merger(_merger);
-        SyncLock syncLock(merger);
+        SyncLock syncLock(this);
         return runningMerge;
+    }
+    
+    OneMergePtr MergeThread::getCurrentMerge()
+    {
+        SyncLock syncLock(this);
+        if (done)
+            return OneMergePtr();
+        else if (runningMerge)
+            return runningMerge;
+        else
+            return startMerge;
     }
     
     void MergeThread::setThreadPriority(int32_t pri)
@@ -302,8 +445,9 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            merger->message(L"  merge thread: start");
-            IndexWriterPtr writer(_writer);
+            if (merger->verbose())
+                merger->message(L"  merge thread: start");
+            IndexWriterPtr tWriter(_tWriter);
             
             while (true)
             {
@@ -311,17 +455,20 @@ namespace Lucene
                 merger->doMerge(merge);
                 
                 // Subsequent times through the loop we do any new merge that writer says is necessary
-                merge = writer->getNextMerge();
+                merge = tWriter->getNextMerge();
                 if (merge)
                 {
-                    writer->mergeInit(merge);
-                    merger->message(L"  merge thread: do another merge " + merge->segString(merger->dir));
+                    tWriter->mergeInit(merge);
+                    merger->updateMergeThreads();
+                    if (merger->verbose())
+                        merger->message(L"  merge thread: do another merge " + merge->segString(merger->dir));
                 }
                 else
                     break;
             }
             
-            merger->message(L"  merge thread: done");
+            if (merger->verbose())
+                merger->message(L"  merge thread: done");
         }
         catch (MergeAbortedException&)
         {
@@ -340,11 +487,10 @@ namespace Lucene
         }
         
         {
+            done = true;
             SyncLock syncLock(merger);
+            merger->updateMergeThreads();
             merger->notifyAll();
-            
-            bool removed = merger->mergeThreads.remove(shared_from_this());
-            BOOST_ASSERT(removed);
         }
         finally.throwException();
     }

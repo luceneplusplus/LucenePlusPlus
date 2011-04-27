@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(testMaxBufferedDocsChange)
     for (int32_t i = 100; i < 1000; ++i)
         addDoc(writer);
     writer->commit();
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    boost::static_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     writer->commit();
     checkInvariants(writer);
 
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE(testMergeDocCount0)
     for (int32_t i = 0; i < 10; ++i)
         addDoc(writer);
     writer->commit();
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    boost::static_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     writer->commit();
     checkInvariants(writer);
     BOOST_CHECK_EQUAL(10, writer->maxDoc());

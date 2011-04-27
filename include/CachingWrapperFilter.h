@@ -13,6 +13,9 @@ namespace Lucene
 {
     /// Wraps another filter's result and caches it.  The purpose is to allow filters to simply filter, and 
     /// then wrap with this class to add caching.
+    ///
+    /// NOTE: if you wrap this filter as a query (eg, using ConstantScoreQuery), you'll likely want to 
+    /// enforce deletions (using either {@link DeletesMode#RECACHE} or {@link DeletesMode#DYNAMIC}).
     class LPPAPI CachingWrapperFilter : public Filter
     {
     public:

@@ -8,8 +8,6 @@
 #define FILTERINDEXREADER_H
 
 #include "IndexReader.h"
-#include "TermPositions.h"
-#include "TermEnum.h"
 
 namespace Lucene
 {
@@ -63,11 +61,16 @@ namespace Lucene
         
         /// If the subclass of FilteredIndexReader modifies the contents of the FieldCache, you must 
         /// override this method to provide a different key
-        virtual LuceneObjectPtr getFieldCacheKey();
+        virtual LuceneObjectPtr getCoreCacheKey();
         
         /// If the subclass of FilteredIndexReader modifies the deleted docs, you must override this 
         /// method to provide a different key
         virtual LuceneObjectPtr getDeletesCacheKey();
+        
+        virtual String toString();
+        
+        virtual void addReaderFinishedListener(ReaderFinishedListenerPtr listener);
+        virtual void removeReaderFinishedListener(ReaderFinishedListenerPtr listener);
         
     protected:
         virtual void doUndeleteAll();
@@ -75,64 +78,6 @@ namespace Lucene
         virtual void doDelete(int32_t docNum);
         virtual void doCommit(MapStringString commitUserData);
         virtual void doClose();
-    };
-    
-    /// Base class for filtering {@link TermDocs} implementations.
-    class LPPAPI FilterTermDocs : public TermPositions, public LuceneObject
-    {
-    public:
-        FilterTermDocs(TermDocsPtr in);
-        virtual ~FilterTermDocs();
-        
-        LUCENE_CLASS(FilterTermDocs);
-    
-    protected:
-        TermDocsPtr in;
-    
-    public:
-        virtual void seek(TermPtr term);
-        virtual void seek(TermEnumPtr termEnum);
-        virtual int32_t doc();
-        virtual int32_t freq();
-        virtual bool next();
-        virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
-        virtual bool skipTo(int32_t target);
-        virtual void close();
-    };
-
-    /// Base class for filtering {@link TermPositions} implementations.
-    class LPPAPI FilterTermPositions : public FilterTermDocs
-    {
-    public:
-        FilterTermPositions(TermPositionsPtr in);
-        virtual ~FilterTermPositions();
-        
-        LUCENE_CLASS(FilterTermPositions);
-    
-    public:
-        virtual int32_t nextPosition();
-        virtual int32_t getPayloadLength();
-        virtual ByteArray getPayload(ByteArray data, int32_t offset);
-        virtual bool isPayloadAvailable();
-    };
-    
-    /// Base class for filtering {@link TermEnum} implementations.
-    class LPPAPI FilterTermEnum : public TermEnum
-    {
-    public:
-        FilterTermEnum(TermEnumPtr in);
-        virtual ~FilterTermEnum();
-        
-        LUCENE_CLASS(FilterTermEnum);
-    
-    protected:
-        TermEnumPtr in;
-    
-    public:
-        virtual bool next();
-        virtual TermPtr term();
-        virtual int32_t docFreq();
-        virtual void close();
     };
 }
 

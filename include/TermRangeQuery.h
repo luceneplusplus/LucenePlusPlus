@@ -59,7 +59,7 @@ namespace Lucene
         using MultiTermQuery::toString;
         
         /// Returns the field name for this query
-        String getField();
+        virtual String getField();
         
         /// Returns the lower value of this range query
         String getLowerTerm();

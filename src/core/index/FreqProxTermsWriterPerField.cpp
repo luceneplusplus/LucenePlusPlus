@@ -6,6 +6,9 @@
 
 #include "LuceneInc.h"
 #include "FreqProxTermsWriterPerField.h"
+#include "_FreqProxTermsWriterPerField.h"
+#include "FreqProxTermsWriterPerField.h"
+#include "_FreqProxTermsWriterPerField.h"
 #include "FreqProxTermsWriter.h"
 #include "FieldInfo.h"
 #include "Fieldable.h"
@@ -15,7 +18,8 @@
 #include "Payload.h"
 #include "PayloadAttribute.h"
 #include "DocumentsWriter.h"
-#include "RawPostingList.h"
+#include "_DocumentsWriter.h"
+#include "MiscUtils.h"
 
 namespace Lucene
 {
@@ -77,7 +81,7 @@ namespace Lucene
             payloadAttribute.reset();
     }
     
-    void FreqProxTermsWriterPerField::writeProx(FreqProxTermsWriterPostingListPtr p, int32_t proxCode)
+    void FreqProxTermsWriterPerField::writeProx(int32_t termID, int32_t proxCode)
     {
         PayloadPtr payload;
         if (payloadAttribute)
@@ -94,74 +98,113 @@ namespace Lucene
         }
         else
             termsHashPerField->writeVInt(1, proxCode << 1);
-        p->lastPosition = fieldState->position;
+        FreqProxPostingsArrayPtr postings(boost::static_pointer_cast<FreqProxPostingsArray>(termsHashPerField->postingsArray));
+        postings->lastPositions[termID] = fieldState->position;
     }
     
-    void FreqProxTermsWriterPerField::newTerm(RawPostingListPtr p)
+    void FreqProxTermsWriterPerField::newTerm(int32_t termID)
     {
         // First time we're seeing this term since the last flush
         BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.newTerm start"));
-        FreqProxTermsWriterPostingListPtr newPostingList(boost::static_pointer_cast<FreqProxTermsWriterPostingList>(p));
-        newPostingList->lastDocID = docState->docID;
+
+        TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
+        FreqProxPostingsArrayPtr postings(boost::static_pointer_cast<FreqProxPostingsArray>(termsHashPerField->postingsArray));
+        postings->lastDocIDs[termID] = docState->docID;
         if (omitTermFreqAndPositions)
-            newPostingList->lastDocCode = docState->docID;
+            postings->lastDocCodes[termID] = docState->docID;
         else
         {
-            newPostingList->lastDocCode = docState->docID << 1;
-            newPostingList->docFreq = 1;
-            writeProx(newPostingList, fieldState->position);
+            postings->lastDocCodes[termID] = docState->docID << 1;
+            postings->docFreqs[termID] = 1;
+            writeProx(termID, fieldState->position);
         }
+        fieldState->maxTermFrequency = std::max(1, fieldState->maxTermFrequency);
     }
     
-    void FreqProxTermsWriterPerField::addTerm(RawPostingListPtr p)
+    void FreqProxTermsWriterPerField::addTerm(int32_t termID)
     {
         BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.addTerm start"));
         
-        FreqProxTermsWriterPostingListPtr addPostingList(boost::static_pointer_cast<FreqProxTermsWriterPostingList>(p));
-        
-        BOOST_ASSERT(omitTermFreqAndPositions || addPostingList->docFreq > 0);
         TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
-        
+        FreqProxPostingsArrayPtr postings(boost::static_pointer_cast<FreqProxPostingsArray>(termsHashPerField->postingsArray));
+
+        BOOST_ASSERT(omitTermFreqAndPositions || postings->docFreqs[termID] > 0);
+
         if (omitTermFreqAndPositions)
         {
-            if (docState->docID != addPostingList->lastDocID)
+            if (docState->docID != postings->lastDocIDs[termID])
             {
-                BOOST_ASSERT(docState->docID > addPostingList->lastDocID);
-                termsHashPerField->writeVInt(0, addPostingList->lastDocCode);
-                addPostingList->lastDocCode = docState->docID - addPostingList->lastDocID;
-                addPostingList->lastDocID = docState->docID;
+                BOOST_ASSERT(docState->docID > postings->lastDocIDs[termID]);
+                termsHashPerField->writeVInt(0, postings->lastDocCodes[termID]);
+                postings->lastDocCodes[termID] = docState->docID - postings->lastDocIDs[termID];
+                postings->lastDocIDs[termID] = docState->docID;
             }
         }
         else
         {
-            if (docState->docID != addPostingList->lastDocID)
+            if (docState->docID != postings->lastDocIDs[termID])
             {
-                BOOST_ASSERT(docState->docID > addPostingList->lastDocID);
-                // Term not yet seen in the current doc but previously seen in other doc(s) since 
-                // the last flush
-                
-                // Now that we know doc freq for previous doc, write it & lastDocCode
-                if (addPostingList->docFreq == 1)
-                    termsHashPerField->writeVInt(0, addPostingList->lastDocCode | 1);
+                BOOST_ASSERT(docState->docID > postings->lastDocIDs[termID]);
+                // Term not yet seen in the current doc but previously seen in other doc(s) since the last flush
+
+                // Now that we know doc freq for previous doc, write it and lastDocCode
+                if (1 == postings->docFreqs[termID])
+                    termsHashPerField->writeVInt(0, postings->lastDocCodes[termID]|1);
                 else
                 {
-                    termsHashPerField->writeVInt(0, addPostingList->lastDocCode);
-                    termsHashPerField->writeVInt(0, addPostingList->docFreq);
+                    termsHashPerField->writeVInt(0, postings->lastDocCodes[termID]);
+                    termsHashPerField->writeVInt(0, postings->docFreqs[termID]);
                 }
-                addPostingList->docFreq = 1;
-                addPostingList->lastDocCode = (docState->docID - addPostingList->lastDocID) << 1;
-                addPostingList->lastDocID = docState->docID;
-                writeProx(addPostingList, fieldState->position);
+                postings->docFreqs[termID] = 1;
+                fieldState->maxTermFrequency = std::max(1, fieldState->maxTermFrequency);
+                postings->lastDocCodes[termID] = ((docState->docID - postings->lastDocIDs[termID]) << 1);
+                postings->lastDocIDs[termID] = docState->docID;
+                writeProx(termID, fieldState->position);
             }
             else
             {
-                ++addPostingList->docFreq;
-                writeProx(addPostingList, fieldState->position - addPostingList->lastPosition);
+                fieldState->maxTermFrequency = std::max(fieldState->maxTermFrequency, ++postings->docFreqs[termID]);
+                writeProx(termID, fieldState->position - postings->lastPositions[termID]);
             }
         }
+    }
+    
+    ParallelPostingsArrayPtr FreqProxTermsWriterPerField::createPostingsArray(int32_t size)
+    {
+        return newLucene<FreqProxPostingsArray>(size);
     }
     
     void FreqProxTermsWriterPerField::abort()
     {
+    }
+    
+    FreqProxPostingsArray::FreqProxPostingsArray(int32_t size) : ParallelPostingsArray(size)
+    {
+        docFreqs = IntArray::newInstance(size);
+        lastDocIDs = IntArray::newInstance(size);
+        lastDocCodes = IntArray::newInstance(size);
+        lastPositions = IntArray::newInstance(size);
+    }
+    
+    FreqProxPostingsArray::~FreqProxPostingsArray()
+    {
+    }
+    
+    ParallelPostingsArrayPtr FreqProxPostingsArray::newInstance(int32_t size)
+    {
+        return newLucene<FreqProxPostingsArray>(size);
+    }
+    
+    void FreqProxPostingsArray::copyTo(ParallelPostingsArrayPtr toArray, int32_t numToCopy)
+    {
+        BOOST_ASSERT(MiscUtils::typeOf<FreqProxPostingsArray>(toArray));
+        FreqProxPostingsArrayPtr to(boost::static_pointer_cast<FreqProxPostingsArray>(toArray));
+
+        ParallelPostingsArray::copyTo(toArray, numToCopy);
+
+        MiscUtils::arrayCopy(docFreqs.get(), 0, to->docFreqs.get(), 0, numToCopy);
+        MiscUtils::arrayCopy(lastDocIDs.get(), 0, to->lastDocIDs.get(), 0, numToCopy);
+        MiscUtils::arrayCopy(lastDocCodes.get(), 0, to->lastDocCodes.get(), 0, numToCopy);
+        MiscUtils::arrayCopy(lastPositions.get(), 0, to->lastPositions.get(), 0, numToCopy);
     }
 }

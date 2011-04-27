@@ -30,15 +30,36 @@ namespace Lucene
         /// Returns the current time in milliseconds.
         static uint64_t currentTimeMillis();
         
-        /// This over-allocates proportional to the list size, making room for additional growth.  
-        /// The over-allocation is mild, but is enough to give linear-time amortized behavior over a long
-        /// sequence of appends().
-        /// The growth pattern is:  0, 4, 8, 16, 25, 35, 46, 58, 72, 88, ...
-        static int32_t getNextSize(int32_t targetSize);
+        /// Returns an array size >= minTargetSize, generally over-allocating exponentially to 
+        /// achieve amortized linear-time cost as the array grows.
+        /// @param minTargetSize Minimum required value to be returned.
+        /// @param bytesPerElement Bytes used by each element of the array.
+        static int32_t oversize(int32_t minTargetSize, int32_t bytesPerElement);
+        
+        template <typename TYPE>
+        static void grow(TYPE array, int32_t minSize)
+        {
+            if (array.size() < minSize)
+                array.resize(oversize(minSize, sizeof(typename TYPE::value_type)));
+        }
+        
+        template <typename TYPE>
+        static void grow(TYPE array)
+        {
+            grow<TYPE>(array, array.size() + 1);
+        }
         
         /// Only reallocate if we are "substantially" smaller.  This saves us from "running hot" (constantly 
         /// making a bit bigger then a bit smaller, over and over)
-        static int32_t getShrinkSize(int32_t currentSize, int32_t targetSize);
+        static int32_t getShrinkSize(int32_t currentSize, int32_t targetSize, int32_t bytesPerElement);
+        
+        template <typename TYPE>
+        static void shrink(TYPE array, int32_t targetSize)
+        {
+            int32_t newSize = getShrinkSize(array.size(), targetSize, sizeof(typename TYPE::value_type));
+            if (newSize != array.size())
+                array.resize(newSize);
+        }
         
         /// Compares two byte[] arrays, element by element, and returns the number of elements common to 
         /// both arrays.

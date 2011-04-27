@@ -44,12 +44,28 @@ namespace Lucene
     
     Field::Field(const String& name, ByteArray value, Store store)
     {
-        ConstructField(name, value, 0, value.size(), store);
+        ConstructField(name, value, 0, value.size());
+        
+        if (store == Field::STORE_NO)
+            boost::throw_exception(IllegalArgumentException(L"binary values can't be unstored"));
+    }
+    
+    Field::Field(const String& name, ByteArray value)
+    {
+        ConstructField(name, value, 0, value.size());
     }
     
     Field::Field(const String& name, ByteArray value, int32_t offset, int32_t length, Store store)
     {
-        ConstructField(name, value, offset, length, store);
+        ConstructField(name, value, offset, length);
+        
+        if (store == Field::STORE_NO)
+            boost::throw_exception(IllegalArgumentException(L"binary values can't be unstored"));
+    }
+    
+    Field::Field(const String& name, ByteArray value, int32_t offset, int32_t length)
+    {
+        ConstructField(name, value, offset, length);
     }
     
     void Field::ConstructField(const String& name, const String& value, Store store, Index index, TermVector termVector)
@@ -100,14 +116,11 @@ namespace Lucene
         setStoreTermVector(termVector);
     }
     
-    void Field::ConstructField(const String& name, ByteArray value, int32_t offset, int32_t length, Store store)
+    void Field::ConstructField(const String& name, ByteArray value, int32_t offset, int32_t length)
     {
-        if (store == STORE_NO)
-            boost::throw_exception(IllegalArgumentException(L"binary values can't be unstored"));
-        
         this->_name = name;
         this->fieldsData = value;
-        this->_isStored = isStored(store);
+        this->_isStored = true;
         this->_isIndexed = false;
         this->_isTokenized = false;
         this->omitTermFreqAndPositions = false;

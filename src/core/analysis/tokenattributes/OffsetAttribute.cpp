@@ -68,14 +68,14 @@ namespace Lucene
     
     void OffsetAttribute::copyTo(AttributePtr target)
     {
-        OffsetAttributePtr targetOffsetAttribute(boost::dynamic_pointer_cast<OffsetAttribute>(target));
+        OffsetAttributePtr targetOffsetAttribute(boost::static_pointer_cast<OffsetAttribute>(target));
         targetOffsetAttribute->setOffset(_startOffset, _endOffset);
     }
     
     LuceneObjectPtr OffsetAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<OffsetAttribute>();
-        OffsetAttributePtr cloneAttribute(boost::dynamic_pointer_cast<OffsetAttribute>(Attribute::clone(clone)));
+        OffsetAttributePtr cloneAttribute(boost::static_pointer_cast<OffsetAttribute>(Attribute::clone(clone)));
         cloneAttribute->_startOffset = _startOffset;
         cloneAttribute->_endOffset = _endOffset;
         return cloneAttribute;

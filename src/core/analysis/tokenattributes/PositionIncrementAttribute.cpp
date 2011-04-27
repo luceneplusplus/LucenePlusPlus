@@ -60,14 +60,14 @@ namespace Lucene
     
     void PositionIncrementAttribute::copyTo(AttributePtr target)
     {
-        PositionIncrementAttributePtr targetPositionIncrementAttribute(boost::dynamic_pointer_cast<PositionIncrementAttribute>(target));
+        PositionIncrementAttributePtr targetPositionIncrementAttribute(boost::static_pointer_cast<PositionIncrementAttribute>(target));
         targetPositionIncrementAttribute->setPositionIncrement(positionIncrement);
     }
     
     LuceneObjectPtr PositionIncrementAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<PositionIncrementAttribute>();
-        PositionIncrementAttributePtr cloneAttribute(boost::dynamic_pointer_cast<PositionIncrementAttribute>(Attribute::clone(clone)));
+        PositionIncrementAttributePtr cloneAttribute(boost::static_pointer_cast<PositionIncrementAttribute>(Attribute::clone(clone)));
         cloneAttribute->positionIncrement = positionIncrement;
         return cloneAttribute;
     }

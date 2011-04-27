@@ -103,7 +103,26 @@ namespace Lucene
     
     void FileSwitchDirectory::sync(const String& name)
     {
-        getDirectory(name)->sync(name);
+        HashSet<String> names(HashSet<String>::newInstance());
+        names.add(name);
+        sync(names);
+    }
+    
+    void FileSwitchDirectory::sync(HashSet<String> names)
+    {
+        HashSet<String> primaryNames(HashSet<String>::newInstance());
+        HashSet<String> secondaryNames(HashSet<String>::newInstance());
+
+        for (HashSet<String>::iterator name = names.begin(); name != names.end(); ++name)
+        {
+            if (primaryExtensions.contains(getExtension(*name)))
+                primaryNames.add(*name);
+            else
+                secondaryNames.add(*name);
+        }
+
+        primaryDir->sync(primaryNames);
+        secondaryDir->sync(secondaryNames);
     }
     
     IndexInputPtr FileSwitchDirectory::openInput(const String& name)

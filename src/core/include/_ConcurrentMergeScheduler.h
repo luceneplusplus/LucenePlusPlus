@@ -21,13 +21,15 @@ namespace Lucene
         
     protected:
         ConcurrentMergeSchedulerWeakPtr _merger;
-        IndexWriterWeakPtr _writer;
+        IndexWriterWeakPtr _tWriter;
         OneMergePtr startMerge;
         OneMergePtr runningMerge;
+        bool done;
     
     public:
         void setRunningMerge(OneMergePtr merge);
         OneMergePtr getRunningMerge();
+        OneMergePtr getCurrentMerge();
         void setThreadPriority(int32_t pri);
         virtual void run();
     };

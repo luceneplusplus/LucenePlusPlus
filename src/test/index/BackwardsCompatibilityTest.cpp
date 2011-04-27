@@ -179,7 +179,7 @@ void checkCompressedFields29(DirectoryPtr dir, bool shouldStillBeCompressed)
         
         for (Collection<IndexReaderPtr>::iterator ir = readers.begin(); ir != readers.end(); ++ir)
         {
-            FieldsReaderPtr fr = boost::dynamic_pointer_cast<SegmentReader>(*ir)->getFieldsReader();
+            FieldsReaderPtr fr = boost::static_pointer_cast<SegmentReader>(*ir)->getFieldsReader();
             // for a 2.9 index, FieldsReader.canReadRawDocs() must be false and other way round for a trunk index
             BOOST_CHECK_NE(shouldStillBeCompressed, fr->canReadRawDocs());
         }
@@ -285,19 +285,19 @@ static void searchIndex(const String& dirName, const String& oldName)
                     int32_t numFields = boost::starts_with(oldName, L"29.") ? 7 : 5;
                     BOOST_CHECK_EQUAL(numFields, fields.size());
                     
-                    FieldPtr f = boost::dynamic_pointer_cast<Field>(d->getField(L"id"));
+                    FieldPtr f = boost::static_pointer_cast<Field>(d->getField(L"id"));
                     BOOST_CHECK_EQUAL(StringUtils::toString(i), f->stringValue());
                     
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(L"utf8"));
+                    f = boost::static_pointer_cast<Field>(d->getField(L"utf8"));
                     BOOST_CHECK_EQUAL(UTF8_TO_STRING(utf8Field), f->stringValue());
                     
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(L"autf8"));
+                    f = boost::static_pointer_cast<Field>(d->getField(L"autf8"));
                     BOOST_CHECK_EQUAL(UTF8_TO_STRING(utf8Field), f->stringValue());
                     
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(L"content2"));
+                    f = boost::static_pointer_cast<Field>(d->getField(L"content2"));
                     BOOST_CHECK_EQUAL(L"here is more content with aaa aaa aaa", f->stringValue());
                     
-                    f = boost::dynamic_pointer_cast<Field>(d->getField(UTF8_TO_STRING(utf8Field2)));
+                    f = boost::static_pointer_cast<Field>(d->getField(UTF8_TO_STRING(utf8Field2)));
                     BOOST_CHECK_EQUAL(L"field with non-ascii name", f->stringValue());
                 }
             }

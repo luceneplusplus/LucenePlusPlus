@@ -34,7 +34,7 @@ namespace Lucene
     ///
     /// This class can also be used, to generate lexicographically sortable (according {@link std::string#compare}) 
     /// representations of numeric data types for other usages (eg. sorting).
-    class LPPAPI NumericUtils : public LuceneObject
+    class NumericUtils : public LuceneObject
     {
     public:
         virtual ~NumericUtils();

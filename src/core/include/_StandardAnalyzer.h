@@ -7,18 +7,26 @@
 #ifndef _STANDARDANALYZER_H
 #define _STANDARDANALYZER_H
 
-#include "LuceneObject.h"
+#include "ReusableAnalyzerBase.h"
 
 namespace Lucene
 {
-    class StandardAnalyzerSavedStreams : public LuceneObject
+    class StandardAnalyzerTokenStreamComponents : public TokenStreamComponents
     {
     public:
-        virtual ~StandardAnalyzerSavedStreams();
+        StandardAnalyzerTokenStreamComponents(StandardAnalyzerPtr analyzer, TokenizerPtr source, TokenStreamPtr result);
+        StandardAnalyzerTokenStreamComponents(StandardAnalyzerPtr analyzer, TokenizerPtr source);
+        
+        virtual ~StandardAnalyzerTokenStreamComponents();
+        
+        LUCENE_CLASS(StandardAnalyzerTokenStreamComponents);
     
-    public:
-        StandardTokenizerPtr tokenStream;
-        TokenStreamPtr filteredTokenStream;
+    protected:
+        StandardAnalyzerWeakPtr _analyzer;
+    
+    protected:
+        virtual bool reset(ReaderPtr reader);
+        
     };
 }
 

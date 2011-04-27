@@ -61,7 +61,7 @@ namespace Lucene
             
     protected:
         AttributeFactoryPtr factory;
-        MapStringAttribute attributes;
+        SortedMapStringAttribute attributes;
         AttributeSourceStatePtr currentState;
     
     public:
@@ -77,7 +77,7 @@ namespace Lucene
             boost::shared_ptr<ATTR> attrImpl(boost::dynamic_pointer_cast<ATTR>(getAttribute(className)));
             if (!attrImpl)
             {
-                attrImpl = boost::dynamic_pointer_cast<ATTR>(factory->createInstance<ATTR>(className));
+                attrImpl = boost::static_pointer_cast<ATTR>(factory->createInstance<ATTR>(className));
                 if (!attrImpl)
                     boost::throw_exception(IllegalArgumentException(L"Could not instantiate implementing class for " + className));
                 addAttribute(className, attrImpl);
@@ -134,13 +134,22 @@ namespace Lucene
         /// Return whether two objects are equal
         virtual bool equals(LuceneObjectPtr other);
         
-        /// Returns a string representation of the object
+        /// Returns a string representation of the object. In general, the {@link #toString} method
+        /// returns a string that "textually represents" this object.
         virtual String toString();
         
         /// Performs a clone of all {@link AttributeImpl} instances returned in a new AttributeSource instance. This 
         /// method can be used to eg. create another TokenStream with exactly the same attributes (using {@link 
         /// #AttributeSource(AttributeSource)})
         AttributeSourcePtr cloneAttributes();
+        
+        /// Copies the contents of this {@code AttributeSource} to the given target {@code AttributeSource}.
+        /// The given instance has to provide all {@link Attribute}s this instance contains.  The actual attribute 
+        /// implementations must be identical in both {@code AttributeSource} instances; ideally both 
+        /// AttributeSource instances should use the same {@link AttributeFactory}.
+        /// You can use this method as a replacement for {@link #restoreState}, if you use {@link #cloneAttributes} 
+        /// instead of {@link #captureState}.
+        void copyTo(AttributeSourcePtr target);
         
         /// Return a vector of attributes based on currentState.
         Collection<AttributePtr> getAttributes();
@@ -178,7 +187,7 @@ namespace Lucene
         
         LUCENE_CLASS(AttributeSourceState);
             
-    protected:
+    private:
         AttributePtr attribute;
         AttributeSourceStatePtr next;
     

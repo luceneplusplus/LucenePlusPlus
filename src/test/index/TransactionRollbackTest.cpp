@@ -72,7 +72,7 @@ public:
                 String lastVal = x.substr(x.find_last_of(L"-") + 1);
                 int32_t last = StringUtils::toInt(lastVal);
                 if (last > rollbackPoint)
-                    (*commit)->deleteCommit();
+                    (*commit)->_delete();
             }
         }
     }
@@ -94,7 +94,7 @@ public:
 public:
     virtual void onInit(Collection<IndexCommitPtr> commits)
     {
-        commits[commits.size() - 1]->deleteCommit();
+        commits[commits.size() - 1]->_delete();
     }
     
     virtual void onCommit(Collection<IndexCommitPtr> commits)

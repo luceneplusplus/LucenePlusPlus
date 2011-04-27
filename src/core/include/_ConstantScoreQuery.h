@@ -8,6 +8,7 @@
 #define _CONSTANTSCOREQUERY_H
 
 #include "Weight.h"
+#include "Collector.h"
 
 namespace Lucene
 {
@@ -20,6 +21,7 @@ namespace Lucene
         LUCENE_CLASS(ConstantWeight);
     
     protected:
+        WeightPtr innerWeight;
         ConstantScoreQueryPtr constantScorer;
         SimilarityPtr similarity;
         double queryNorm;
@@ -31,13 +33,16 @@ namespace Lucene
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
+        virtual bool scoresDocsOutOfOrder();
         virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        
+        friend class ConstantCollector;
     };
     
     class ConstantScorer : public Scorer
     {
     public:
-        ConstantScorer(ConstantScoreQueryPtr constantScorer, SimilarityPtr similarity, IndexReaderPtr reader, WeightPtr w);
+        ConstantScorer(SimilarityPtr similarity, DocIdSetIteratorPtr docIdSetIterator, WeightPtr w);
         virtual ~ConstantScorer();
     
         LUCENE_CLASS(ConstantScorer);
@@ -45,13 +50,42 @@ namespace Lucene
     public:
         DocIdSetIteratorPtr docIdSetIterator;
         double theScore;
-        int32_t doc;
     
     public:
         virtual int32_t nextDoc();
         virtual int32_t docID();
         virtual double score();
         virtual int32_t advance(int32_t target);
+        
+        /// this optimization allows out of order scoring as top scorer
+        virtual void score(CollectorPtr collector);
+
+    protected:
+        CollectorPtr wrapCollector(CollectorPtr collector);
+        
+        /// This optimization allows out of order scoring as top scorer
+        virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
+        
+        friend class ConstantCollector;
+    };
+    
+    class ConstantCollector : public Collector
+    {
+    public:
+        ConstantCollector(ConstantScorerPtr scorer, CollectorPtr collector);
+        virtual ~ConstantCollector();
+        
+        LUCENE_CLASS(ConstantCollector);
+    
+    protected:
+        ConstantScorerWeakPtr _scorer;
+        CollectorPtr collector;
+    
+    public:
+        virtual void setScorer(ScorerPtr scorer);
+        virtual void collect(int32_t doc);
+        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual bool acceptsDocsOutOfOrder();
     };
 }
 

@@ -41,6 +41,8 @@ namespace Lucene
     {
         if (sort->fields.empty())
             boost::throw_exception(IllegalArgumentException(L"Sort must contain at least one field"));
+        if (numHits <= 0)
+            boost::throw_exception(IllegalArgumentException(L"numHits must be > 0; please use TotalHitCountCollector if you just need the total hit count"));
             
         FieldValueHitQueuePtr queue(FieldValueHitQueue::create(sort->fields, numHits));
         if (queue->getComparators().size() == 1)

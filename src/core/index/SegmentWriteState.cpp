@@ -9,26 +9,21 @@
 
 namespace Lucene
 {
-    SegmentWriteState::SegmentWriteState(DocumentsWriterPtr docWriter, DirectoryPtr directory, const String& segmentName, 
-                                         const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore, 
-                                         int32_t termIndexInterval)
+    SegmentWriteState::SegmentWriteState(InfoStreamPtr infoStream, DirectoryPtr directory, const String& segmentName, 
+                                         FieldInfosPtr fieldInfos, int32_t numDocs, int32_t termIndexInterval)
     {
-        this->_docWriter = docWriter;
+        this->infoStream = infoStream;
         this->directory = directory;
         this->segmentName = segmentName;
-        this->docStoreSegmentName = docStoreSegmentName;
+        this->fieldInfos = fieldInfos;
         this->numDocs = numDocs;
-        this->numDocsInStore = numDocsInStore;
+        this->hasVectors = false;
         this->termIndexInterval = termIndexInterval;
-        this->flushedFiles = HashSet<String>::newInstance();
+        this->skipInterval = 16;
+        this->maxSkipLevels = 10;
     }
     
     SegmentWriteState::~SegmentWriteState()
     {
-    }
-    
-    String SegmentWriteState::segmentFileName(const String& ext)
-    {
-        return segmentName + L"." + ext;
     }
 }

@@ -70,7 +70,10 @@ namespace Lucene
         /// Ensure that any writes to this file are moved to stable storage.
         /// Lucene uses this to properly commit changes to the index, to 
         /// prevent a machine/OS crash from corrupting the index.
+        /// @Deprecated
         virtual void sync(const String& name);
+        
+        virtual void sync(HashSet<String> names);
         
         /// Returns a stream reading an existing file, with the specified 
         /// read buffer size.  The particular Directory implementation may 

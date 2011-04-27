@@ -15,6 +15,7 @@ namespace Lucene
         this->length = length;
         this->numOverlap = numOverlap;
         this->offset = offset;
+        this->maxTermFrequency = 0;
         this->boost = boost;
     }
     
@@ -28,6 +29,7 @@ namespace Lucene
         length = 0;
         numOverlap = 0;
         offset = 0;
+        maxTermFrequency = 0;
         boost = docBoost;
         attributeSource.reset();
     }
@@ -42,9 +44,19 @@ namespace Lucene
         return length;
     }
     
+    void FieldInvertState::setLength(int32_t length)
+    {
+        this->length = length;
+    }
+    
     int32_t FieldInvertState::getNumOverlap()
     {
         return numOverlap;
+    }
+    
+    void FieldInvertState::setNumOverlap(int32_t numOverlap)
+    {
+        this->numOverlap = numOverlap;
     }
     
     int32_t FieldInvertState::getOffset()
@@ -55,6 +67,16 @@ namespace Lucene
     double FieldInvertState::getBoost()
     {
         return boost;
+    }
+    
+    void FieldInvertState::setBoost(double boost)
+    {
+        this->boost = boost;
+    }
+    
+    int32_t FieldInvertState::getMaxTermFrequency()
+    {
+        return maxTermFrequency;
     }
     
     AttributeSourcePtr FieldInvertState::getAttributeSource()

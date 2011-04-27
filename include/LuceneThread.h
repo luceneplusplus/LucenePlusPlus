@@ -35,6 +35,7 @@ namespace Lucene
     
     protected:
         threadPtr thread;
+        int64_t _threadId;
         
         /// Flag to indicate running thread.
         /// @see #isAlive
@@ -47,22 +48,26 @@ namespace Lucene
         /// return whether thread is current running.
         virtual bool isAlive();
         
-        /// set running thread priority.
+        /// return this thread id.
+        virtual int64_t threadId();
+        
+        /// set this thread priority.
         virtual void setPriority(int32_t priority);
         
-        /// return running thread priority.
+        /// return this thread priority.
         virtual int32_t getPriority();
         
         /// wait for thread to finish using an optional timeout.
         virtual bool join(int32_t timeout = 0);
         
-        /// causes the currently executing thread object to temporarily pause and allow other threads to execute.
+        /// causes the currently executing thread object to temporarily pause and allow 
+        /// other threads to execute.
         virtual void yield();
                 
         /// override to provide the body of the thread.
         virtual void run() = 0;
         
-        /// Return representation of current execution thread.
+        /// Return current execution thread id.
         static int64_t currentId();
         
         /// Suspends current execution thread for a given time.
@@ -70,6 +75,9 @@ namespace Lucene
         
         /// Yield current execution thread.
         static void threadYield();
+        
+        /// The number of hardware threads available on the current system.
+        static int32_t availableProcessors();
     
     protected:
         /// set thread running state.

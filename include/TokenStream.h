@@ -11,36 +11,47 @@
 
 namespace Lucene
 {
-    /// A TokenStream enumerates the sequence of tokens, either from {@link Field}s of a {@link Document} or from 
-    /// query text.
+    /// A TokenStream enumerates the sequence of tokens, either from {@link Field}s of a {@link 
+    /// Document} or from query text.
     ///
-    /// This is an abstract class; concrete subclasses are: {@link Tokenizer}, a TokenStream whose input is a Reader; 
-    /// and {@link TokenFilter}, a TokenStream whose input is another TokenStream.
+    /// This is an abstract class; concrete subclasses are: {@link Tokenizer}, a TokenStream 
+    /// whose input is a Reader; and {@link TokenFilter}, a TokenStream whose input is another 
+    /// TokenStream.
     ///
-    /// A new TokenStream API has been introduced with Lucene 2.9. This API has moved from being {@link Token}-based 
-    /// to {@link Attribute}-based.  While {@link Token} still exists in 2.9 as a convenience class, the preferred way
-    /// to store the information of a {@link Token} is to use {@link Attribute}s.
+    /// A new TokenStream API has been introduced with Lucene 2.9. This API has moved from being 
+    /// {@link Token}-based to {@link Attribute}-based.  While {@link Token} still exists in 2.9 
+    /// as a convenience class, the preferred way to store the information of a {@link Token} is 
+    /// to use {@link Attribute}s.
     ///
-    /// TokenStream now extends {@link AttributeSource}, which provides access to all of the token {@link Attribute}s 
-    /// for the TokenStream.  Note that only one instance per {@link Attribute} is created and reused for every 
-    /// token. This approach reduces object creation and allows local caching of references to the {@link Attribute}s. 
-    /// See {@link #incrementToken()} for further details.
+    /// TokenStream now extends {@link AttributeSource}, which provides access to all of the token 
+    /// {@link Attribute}s for the TokenStream.  Note that only one instance per {@link Attribute} 
+    /// is created and reused for every token. This approach reduces object creation and allows 
+    /// local caching of references to the {@link Attribute}s. See {@link #incrementToken()} for 
+    /// further details.
     ///
     /// The workflow of the new TokenStream API is as follows:
-    /// - Instantiation of TokenStream/{@link TokenFilter}s which add/get attributes to/from the {@link AttributeSource}.
+    /// - Instantiation of TokenStream/{@link TokenFilter}s which add/get attributes to/from the 
+    ///   {@link AttributeSource}.
     /// - The consumer calls {@link TokenStream#reset()}.
-    /// - The consumer retrieves attributes from the stream and stores local references to all attributes it wants to access.
-    /// - The consumer calls {@link #incrementToken()} until it returns false consuming the attributes after each call.
+    /// - The consumer retrieves attributes from the stream and stores local references to all 
+    ///   attributes it wants to access.
+    /// - The consumer calls {@link #incrementToken()} until it returns false consuming the 
+    ///   attributes after each call.
     /// - The consumer calls {@link #end()} so that any end-of-stream operations can be performed.
-    /// - The consumer calls {@link #close()} to release any resource when finished using the TokenStream.
+    /// - The consumer calls {@link #close()} to release any resource when finished using the 
+    ///   TokenStream.
     ///
-    /// To make sure that filters and consumers know which attributes are available, the attributes must be added during 
-    /// instantiation. Filters and consumers are not required to check for availability of attributes in {@link 
-    /// #incrementToken()}.
+    /// To make sure that filters and consumers know which attributes are available, the attributes 
+    /// must be added during instantiation. Filters and consumers are not required to check for 
+    /// availability of attributes in {@link #incrementToken()}.
     ///
-    /// Sometimes it is desirable to capture a current state of a TokenStream, eg., for buffering purposes (see {@link 
-    /// CachingTokenFilter}, {@link TeeSinkTokenFilter}). For this use case {@link AttributeSource#captureState} and {@link 
-    /// AttributeSource#restoreState} can be used.
+    /// Sometimes it is desirable to capture a current state of a TokenStream, eg., for buffering 
+    /// purposes (see {@link CachingTokenFilter}, {@link TeeSinkTokenFilter}). For this use case 
+    /// {@link AttributeSource#captureState} and {@link AttributeSource#restoreState} can be used.
+    ///
+    /// The {@code TokenStream}-API in Lucene is based on the decorator pattern. Therefore all 
+    /// non-abstract subclasses must be final or have at least a final implementation of {@link 
+    /// #incrementToken}!
     class LPPAPI TokenStream : public AttributeSource
     {
     protected:
@@ -97,6 +108,9 @@ namespace Lucene
         
         /// Releases resources associated with this stream.
         virtual void close();
+    
+    private:
+        bool assertFinal();
     };
 }
 

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MaxPayloadFunction.h"
+#include "Explanation.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -27,6 +28,15 @@ namespace Lucene
     double MaxPayloadFunction::docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore)
     {
         return numPayloadsSeen > 0 ? payloadScore : 1.0;
+    }
+    
+    ExplanationPtr MaxPayloadFunction::explain(int32_t docId, int32_t numPayloadsSeen, double payloadScore)
+    {
+        ExplanationPtr expl(newLucene<Explanation>());
+        double maxPayloadScore = (numPayloadsSeen > 0 ? payloadScore : 1);
+        expl->setValue(maxPayloadScore);
+        expl->setDescription(L"MaxPayloadFunction(...)");
+        return expl;
     }
     
     int32_t MaxPayloadFunction::hashCode()

@@ -62,8 +62,8 @@ namespace Lucene
         }
         else if (size == offsets.size())
         {
-            offsets.resize(MiscUtils::getNextSize(offsets.size()));
-            diffs.resize(MiscUtils::getNextSize(diffs.size()));
+            MiscUtils::grow(offsets);
+            MiscUtils::grow(diffs);
         }
 
         offsets[size] = off;

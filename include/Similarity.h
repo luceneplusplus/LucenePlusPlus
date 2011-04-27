@@ -316,7 +316,7 @@ namespace Lucene
     ///      <br>&nbsp;<br>
     ///
     ///      The sum of squared weights (of the query terms) is computed by the query {@link Weight} object.  For example, 
-    ///      a {@link BooleanQuery boolean query} computes this value as:
+    ///      a {@link BooleanQuery} computes this value as:
     ///
     ///      <br>&nbsp;<br>
     ///      <table cellpadding="1" cellspacing="0" border="0"n align="center">
@@ -370,11 +370,12 @@ namespace Lucene
     ///        {@link Fieldable#setBoost(float) field.setBoost()}
     ///        before adding the field to a document.
     ///        </li>
-    ///        <li>{@link #lengthNorm(String, int) <b>lengthNorm</b>(field)} - computed when the document is added to 
+    ///        <li><b>lengthNorm</b> - computed when the document is added to 
     ///        the index in accordance with the number of tokens of this field in the document, so that shorter fields
     ///        contribute more to the score.  LengthNorm is computed by the Similarity class in effect at indexing.
     ///        </li>
     ///      </ul>
+    ///      The {@link #computeNorm} method is responsible for combining all of these factors into a single float.
     ///
     ///      When a document is added to the index, all the above factors are multiplied.
     ///      If the document has multiple fields with the same name, all their boosts are multiplied together:
@@ -386,7 +387,7 @@ namespace Lucene
     ///            norm(t,d) &nbsp; = &nbsp;
     ///            {@link Document#getBoost() doc.getBoost()}
     ///            &nbsp;&middot;&nbsp;
-    ///            {@link #lengthNorm(String, int) lengthNorm(field)}
+    ///            lengthNorm
     ///            &nbsp;&middot;&nbsp;
     ///          </td>
     ///          <td valign="bottom" align="center" rowspan="1">
@@ -403,11 +404,11 @@ namespace Lucene
     ///        </tr>
     ///      </table>
     ///      <br>&nbsp;<br>
-    ///      However the resulted norm value is {@link #encodeNorm(float) encoded} as a single byte before being stored.
-    ///      At search time, the norm byte value is read from the index {@link Directory directory} and {@link 
-    ///      #decodeNorm(byte) decoded} back to a float norm value.  This encoding/decoding, while reducing index size, 
-    ///      comes with the price of precision loss - it is not guaranteed that decode(encode(x)) = x.  For instance, 
-    ///      decode(encode(0.89)) = 0.75.
+    ///      However the resulted norm value is {@link #encodeNormValue(float) encoded} as a single byte before being 
+    ///      stored. At search time, the norm byte value is read from the index {@link Directory directory} and {@link 
+    ///      #decodeNormValue(byte) decoded} back to a float <i>norm</i> value..  This encoding/decoding, while reducing
+    ///      index size, comes with the price of precision loss - it is not guaranteed that decode(encode(x)) = x.
+    ///      For instance, decode(encode(0.89)) = 0.75.
     ///      <br>&nbsp;<br>
     ///      Compression of norm values to a single byte saves memory at search time, because once a field is referenced 
     ///      at search time, its norms - for all documents - are maintained in memory.
@@ -434,6 +435,8 @@ namespace Lucene
             
     protected:
         static const int32_t NO_DOC_ID_PROVIDED;
+        
+        bool hasIDFExplainWithDocFreqAPI;
     
     protected:
         static const Collection<double> NORM_TABLE();
@@ -446,17 +449,35 @@ namespace Lucene
         static SimilarityPtr getDefault();
         
         /// Decodes a normalization factor stored in an index.
-        /// @see #encodeNorm(double)
+        /// @see #decodeNormValue(byte)
+        /// @deprecated Use {@link #decodeNormValue} instead.
         static double decodeNorm(uint8_t b);
         
+        /// Decodes a normalization factor stored in an index.
+        ///
+        /// WARNING: If you override this method, you should change the default Similarity to your 
+        /// implementation with {@link Similarity#setDefault(Similarity)}. Otherwise, your method 
+        /// may not always be called, especially if you omit norms for some fields.
+        /// @see #encodeNormValue(float)
+        virtual double decodeNormValue(uint8_t b);
+        
         /// Returns a table for decoding normalization bytes.
-        /// @see #encodeNorm(double)
+        /// @see #encodeNormValue(double)
+        /// @see #decodeNormValue(byte)
+        /// @deprecated Use instance methods for encoding/decoding norm values to enable customization.
         static const Collection<double> getNormDecoder();
         
-        /// Compute the normalization value for a field, given the accumulated state of term processing for this 
+        /// Computes the normalization value for a field, given the accumulated state of term processing for this 
         /// field (see {@link FieldInvertState}).
         ///
         /// Implementations should calculate a float value based on the field state and then return that value.
+        ///
+        /// Matches in longer fields are less precise, so implementations of this method usually return smaller 
+        /// values when state.getLength() is large, and larger values when state.getLength() is small.
+        ///
+        /// Note that the return values are computed under {@link IndexWriter#addDocument(Document)} and then 
+        /// stored using {@link #encodeNormValue(double)}. Thus they have limited precision, and documents must 
+        /// be re-indexed if this method is altered.
         ///
         /// For backward compatibility this method by default calls {@link #lengthNorm(String, int32_t)} passing
         /// {@link FieldInvertState#getLength()} as the second argument, and then multiplies this value by {@link 
@@ -465,7 +486,7 @@ namespace Lucene
         /// @param field Field name
         /// @param state Current processing state for this field
         /// @return The calculated float norm
-        virtual double computeNorm(const String& fieldName, FieldInvertStatePtr state);
+        virtual double computeNorm(const String& field, FieldInvertStatePtr state) = 0;
         
         /// Computes the normalization value for a field given the total number of terms contained in a field.  
         /// These values, together with field boosts, are stored in an index and multiplied into scores for hits 
@@ -475,14 +496,16 @@ namespace Lucene
         /// values when numTokens is large, and larger values when numTokens is small.
         ///
         /// Note that the return values are computed under {@link IndexWriter#addDocument(DocumentPtr)} and then 
-        /// stored using {@link #encodeNorm(double)}.  Thus they have limited precision, and documents must be 
+        /// stored using {@link #encodeNormValue(double)}.  Thus they have limited precision, and documents must be 
         /// re-indexed if this method is altered.
         ///
         /// @param fieldName The name of the field
         /// @param numTokens The total number of tokens contained in fields named fieldName of doc.
         /// @return A normalization factor for hits on this field of this document
         /// @see Field#setBoost(double)
-        virtual double lengthNorm(const String& fieldName, int32_t numTokens) = 0;
+        ///
+        /// @deprecated Please override computeNorm instead
+        virtual double lengthNorm(const String& fieldName, int32_t numTokens);
         
         /// Computes the normalization value for a query given the sum of the squared weights of each of the query 
         /// terms.  This value is multiplied into the weight of each query term. While the classic query 
@@ -505,7 +528,17 @@ namespace Lucene
         /// are rounded down to the largest representable value.  Positive values too small to represent are rounded 
         /// up to the smallest positive representable value.
         ///
+        /// WARNING: If you override this method, you should change the default Similarity to your implementation 
+        /// with {@link Similarity#setDefault(Similarity)}. Otherwise, your method may not always be called, 
+        /// especially if you omit norms for some fields.
         /// @see Field#setBoost(double)
+        uint8_t encodeNormValue(double f);
+        
+        /// Static accessor kept for backwards capability reason, use encodeNormValue instead.
+        /// @param f norm-value to encode
+        /// @return byte representing the given float
+        /// @deprecated Use {@link #encodeNormValue} instead.
+        /// @see #encodeNormValue(double)
         static uint8_t encodeNorm(double f);
         
         /// Computes a score factor based on a term or phrase's frequency in a document.  This value is multiplied 
@@ -559,6 +592,13 @@ namespace Lucene
         /// @param term The term in question
         /// @param searcher The document collection being searched
         /// @return An IDFExplain object that includes both an idf score factor and an explanation for the term.
+        virtual IDFExplanationPtr idfExplain(TermPtr term, SearcherPtr searcher, int32_t docFreq);
+        
+        /// This method forwards to {@link #idfExplain(Term,Searcher,int)} by passing searcher.docFreq(term) as the 
+        /// docFreq.
+        ///
+        /// WARNING: if you subclass Similarity and override this method then you may hit a performance hit for 
+        /// certain queries.  Better to override {@link #idfExplain(Term,Searcher,int)} instead.
         virtual IDFExplanationPtr idfExplain(TermPtr term, SearcherPtr searcher);
         
         /// Computes a score factor for a phrase.

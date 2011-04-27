@@ -12,12 +12,13 @@ namespace Lucene
     /// Default minimum segment size.  @see setMinMergeDocs
     const int32_t LogDocMergePolicy::DEFAULT_MIN_MERGE_DOCS = 1000;
     
-    LogDocMergePolicy::LogDocMergePolicy(IndexWriterPtr writer) : LogMergePolicy(writer)
+    LogDocMergePolicy::LogDocMergePolicy()
     {
         minMergeSize = DEFAULT_MIN_MERGE_DOCS;
         
-        // maxMergeSize is never used by LogDocMergePolicy; set it to LLONG_MAX to disable it
+        // maxMergeSize(ForOptimize) are never used by LogDocMergePolicy; set it to Long.MAX_VALUE to disable it
         maxMergeSize = LLONG_MAX;
+        maxMergeSizeForOptimize = LLONG_MAX;
     }
     
     LogDocMergePolicy::~LogDocMergePolicy()

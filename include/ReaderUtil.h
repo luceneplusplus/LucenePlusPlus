@@ -12,8 +12,11 @@
 namespace Lucene
 {
     /// Common util methods for dealing with {@link IndexReader}s.
-    class LPPAPI ReaderUtil : public LuceneObject
+    class ReaderUtil : public LuceneObject
     {
+    private:
+        ReaderUtil();
+        
     public:
         virtual ~ReaderUtil();
         LUCENE_CLASS(ReaderUtil);
@@ -39,6 +42,29 @@ namespace Lucene
         /// Returns index of the searcher/reader for document n in the array used to construct this 
         /// searcher/reader.
         static int32_t subIndex(int32_t n, Collection<int32_t> docStarts);
+    };
+    
+    /// Recursively visits all sub-readers of a reader.  You should subclass this and override 
+    /// the add method to gather what you need.
+    class ReaderGather : public LuceneObject
+    {
+    public:
+        ReaderGather(IndexReaderPtr r);
+        virtual ~ReaderGather();
+        
+        LUCENE_CLASS(ReaderGather);
+    
+    private:
+        IndexReaderPtr topReader;
+
+    private:
+        int32_t run(int32_t base, IndexReaderPtr reader);
+    
+    public:
+        int32_t run(int32_t docBase = 0);
+
+    protected:
+        virtual void add(int32_t base, IndexReaderPtr r) = 0;
     };
 }
 

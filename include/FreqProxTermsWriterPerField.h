@@ -37,9 +37,10 @@ namespace Lucene
         void reset();
         virtual bool start(Collection<FieldablePtr> fields, int32_t count);
         virtual void start(FieldablePtr field);
-        void writeProx(FreqProxTermsWriterPostingListPtr p, int32_t proxCode);
-        virtual void newTerm(RawPostingListPtr p);
-        virtual void addTerm(RawPostingListPtr p);
+        void writeProx(int32_t termID, int32_t proxCode);
+        virtual void newTerm(int32_t termID);
+        virtual void addTerm(int32_t termID);
+        virtual ParallelPostingsArrayPtr createPostingsArray(int32_t size);
         void abort();
     };
 }

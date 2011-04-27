@@ -12,7 +12,7 @@ namespace Lucene
 {
     DefaultSimilarity::DefaultSimilarity()
     {
-        discountOverlaps = false;
+        discountOverlaps = true;
     }
     
     DefaultSimilarity::~DefaultSimilarity()
@@ -26,12 +26,7 @@ namespace Lucene
             numTerms = state->getLength() - state->getNumOverlap();
         else
             numTerms = state->getLength();
-        return (state->getBoost() * lengthNorm(fieldName, numTerms));
-    }
-    
-    double DefaultSimilarity::lengthNorm(const String& fieldName, int32_t numTokens)
-    {
-        return (double)(1.0 / std::sqrt((double)numTokens));
+        return state->getBoost() * ((double)(1.0 / std::sqrt((double)numTerms)));
     }
     
     double DefaultSimilarity::queryNorm(double sumOfSquaredWeights)

@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// A variety of high efficiency bit twiddling routines.
-    class LPPAPI BitUtil : public LuceneObject
+    class BitUtil : public LuceneObject
     {
     public:
         virtual ~BitUtil();        

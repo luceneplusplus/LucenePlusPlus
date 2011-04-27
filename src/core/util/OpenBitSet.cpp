@@ -442,7 +442,7 @@ namespace Lucene
     LuceneObjectPtr OpenBitSet::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<OpenBitSet>();
-        OpenBitSetPtr cloneSet(boost::dynamic_pointer_cast<OpenBitSet>(LuceneObject::clone(clone)));
+        OpenBitSetPtr cloneSet(boost::static_pointer_cast<OpenBitSet>(LuceneObject::clone(clone)));
         cloneSet->wlen = wlen;
         cloneSet->bits = LongArray::newInstance(bits.size());
         MiscUtils::arrayCopy(bits.get(), 0, cloneSet->bits.get(), 0, bits.size());
@@ -538,7 +538,7 @@ namespace Lucene
         int32_t length = bits.size();
         if (length < numWords)
         {
-            bits.resize(MiscUtils::getNextSize(numWords));
+            MiscUtils::grow(bits, numWords);
             MiscUtils::arrayFill(bits.get(), length, bits.size(), 0LL);
         }
     }

@@ -7,13 +7,15 @@
 #ifndef SPANFIRSTQUERY_H
 #define SPANFIRSTQUERY_H
 
-#include "SpanQuery.h"
-#include "Spans.h"
+#include "SpanPositionRangeQuery.h"
 
 namespace Lucene
 {
     /// Matches spans near the beginning of a field.
-    class LPPAPI SpanFirstQuery : public SpanQuery
+    ///
+    /// This class is a simple extension of {@link SpanPositionRangeQuery} in that it assumes the start to 
+    /// be zero and only checks the end boundary.
+    class LPPAPI SpanFirstQuery : public SpanPositionRangeQuery
     {
     public:
         /// Construct a SpanFirstQuery matching spans in match whose end position is less than or equal to end.
@@ -22,30 +24,17 @@ namespace Lucene
         
         LUCENE_CLASS(SpanFirstQuery);
     
-    protected:
-        SpanQueryPtr match;
-        int32_t end;
-    
     public:
-        using SpanQuery::toString;
-        
-        /// Return the SpanQuery whose matches are filtered.
-        SpanQueryPtr getMatch();
-        
-        /// Return the maximum end position permitted in a match.
-        int32_t getEnd();
-        
-        virtual String getField();
+        using SpanPositionRangeQuery::toString;
         virtual String toString(const String& field);
+        
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual void extractTerms(SetTerm terms);
-        virtual SpansPtr getSpans(IndexReaderPtr reader);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
         
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
-        
-        friend class FirstSpans;
+    
+    protected:
+        virtual AcceptStatus acceptPosition(SpansPtr spans);
     };
 }
 

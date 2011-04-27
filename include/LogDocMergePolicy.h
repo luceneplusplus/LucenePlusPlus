@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI LogDocMergePolicy : public LogMergePolicy
     {
     public:
-        LogDocMergePolicy(IndexWriterPtr writer);
+        LogDocMergePolicy();
         virtual ~LogDocMergePolicy();
         
         LUCENE_CLASS(LogDocMergePolicy);

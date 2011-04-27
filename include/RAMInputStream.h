@@ -51,6 +51,8 @@ namespace Lucene
         /// @see IndexOutput#writeBytes(const uint8_t*,int)
         virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
         
+        virtual void copyBytes(IndexOutputPtr out, int64_t numBytes);
+        
         /// Returns the current position in this file, where the next read will occur.
         /// @see #seek(int64_t)
         virtual int64_t getFilePointer();
@@ -62,7 +64,7 @@ namespace Lucene
         /// Returns a clone of this stream.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     
-    protected:
+    private:
         void switchCurrentBuffer(bool enforceEOF);
     };
 }

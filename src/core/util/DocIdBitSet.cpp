@@ -55,8 +55,8 @@ namespace Lucene
     LuceneObjectPtr DocIdBitSet::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<DocIdBitSet>();
-        DocIdBitSetPtr cloneBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(LuceneObject::clone(clone)));
-        cloneBitSet->bitSet = boost::dynamic_pointer_cast<BitSet>(bitSet->clone());
+        DocIdBitSetPtr cloneBitSet(boost::static_pointer_cast<DocIdBitSet>(LuceneObject::clone(clone)));
+        cloneBitSet->bitSet = boost::static_pointer_cast<BitSet>(bitSet->clone());
         return cloneBitSet;
     }
     

@@ -14,7 +14,7 @@ namespace Lucene
     class FieldsWriter : public LuceneObject
     {
     public:
-        FieldsWriter(DirectoryPtr d, const String& segment, FieldInfosPtr fn);
+        FieldsWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fn);
         FieldsWriter(IndexOutputPtr fdx, IndexOutputPtr fdt, FieldInfosPtr fn);
         virtual ~FieldsWriter();
         
@@ -22,13 +22,19 @@ namespace Lucene
             
     protected:
         FieldInfosPtr fieldInfos;
+
+        // If null - we were supplied with streams, if not null - we manage them ourselves
+        DirectoryPtr directory;
+        String segment;
+  
         IndexOutputPtr fieldsStream;
         IndexOutputPtr indexStream;
-        bool doClose;
     
     public:
         static const uint8_t FIELD_IS_TOKENIZED;
         static const uint8_t FIELD_IS_BINARY;
+        
+        /// @deprecated Kept for backwards-compatibility with <3.0 indexes
         static const uint8_t FIELD_IS_COMPRESSED;
         
         static const int32_t FORMAT; // Original format
@@ -47,8 +53,8 @@ namespace Lucene
         void flushDocument(int32_t numStoredFields, RAMOutputStreamPtr buffer);
         
         void skipDocument();
-        void flush();
         void close();
+        void abort();
         void writeField(FieldInfoPtr fi, FieldablePtr field);
         
         /// Bulk write a contiguous series of documents.  The lengths array is the length (in bytes) of each raw document.  

@@ -44,7 +44,19 @@ namespace Lucene
             /// temporary holder for the start of this file's data section
             int64_t dataOffset;
         };
+    
+    public:
+        /// Before versioning started.
+        static const int32_t FORMAT_PRE_VERSION;
         
+        /// Segment name is not written in the file names.
+        static const int32_t FORMAT_NO_SEGMENT_PREFIX;
+        
+        /// NOTE: if you introduce a new format, make it 1 lower than the current one, and always 
+        /// change this if you switch to a new format
+        static const int32_t FORMAT_CURRENT;
+    
+    private:
         DirectoryWeakPtr _directory;
         String fileName;
         HashSet<String> ids;
@@ -69,9 +81,8 @@ namespace Lucene
         void close();
     
     protected:
-        /// Copy the contents of the file with specified extension into the provided output stream. 
-        /// Use the provided buffer for moving data to reduce memory allocation.
-        void copyFile(const FileEntry& source, IndexOutputPtr os, ByteArray buffer);
+        /// Copy the contents of the file with specified extension into the provided output stream.
+        void copyFile(const FileEntry& source, IndexOutputPtr os);
     };
 }
 

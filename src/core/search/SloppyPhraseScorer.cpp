@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    SloppyPhraseScorer::SloppyPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, int32_t slop, ByteArray norms) : PhraseScorer(weight, tps, offsets, similarity, norms)
+    SloppyPhraseScorer::SloppyPhraseScorer(WeightPtr weight, Collection<PostingsAndFreqPtr> postings, SimilarityPtr similarity, int32_t slop, ByteArray norms) : PhraseScorer(weight, postings, similarity, norms)
     {
         this->slop = slop;
         this->checkedRepeats = false;

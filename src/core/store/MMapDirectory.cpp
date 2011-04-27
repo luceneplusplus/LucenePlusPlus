@@ -29,12 +29,6 @@ namespace Lucene
         return newLucene<MMapIndexInput>(FileUtils::joinPath(directory, name));
     }
     
-    IndexOutputPtr MMapDirectory::createOutput(const String& name)
-    {
-        initOutput(name);
-        return newLucene<SimpleFSIndexOutput>(FileUtils::joinPath(directory, name));
-    }
-    
     MMapIndexInput::MMapIndexInput(const String& path)
     {
         _length = path.empty() ? 0 : (int32_t)FileUtils::fileLength(path);
@@ -83,6 +77,20 @@ namespace Lucene
         }
     }
     
+    int32_t MMapIndexInput::readInt()
+    {
+        int32_t readValue;
+        readBytes((uint8_t*)&readValue, 0, sizeof(int32_t));
+        return readValue;
+    }
+    
+    int64_t MMapIndexInput::readLong()
+    {
+        int64_t readValue;
+        readBytes((uint8_t*)&readValue, 0, sizeof(int64_t));
+        return readValue;
+    }
+    
     int64_t MMapIndexInput::getFilePointer()
     {
         return bufferPosition;
@@ -112,7 +120,7 @@ namespace Lucene
         if (!file.is_open())
             boost::throw_exception(AlreadyClosedException(L"MMapIndexInput already closed"));
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<MMapIndexInput>());
-        MMapIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<MMapIndexInput>(clone));
+        MMapIndexInputPtr cloneIndexInput(boost::static_pointer_cast<MMapIndexInput>(clone));
         cloneIndexInput->_length = _length;
         cloneIndexInput->file = file;
         cloneIndexInput->bufferPosition = bufferPosition;

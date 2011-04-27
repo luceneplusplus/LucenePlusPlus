@@ -22,6 +22,7 @@
 #include "MockRAMDirectory.h"
 #include "LuceneThread.h"
 #include "FileUtils.h"
+#include "English.h"
 
 using namespace Lucene;
 
@@ -41,7 +42,7 @@ public:
         for (int32_t i = 0; i < docsToAdd; ++i)
         {
             DocumentPtr doc(newLucene<Document>());
-            doc->add(newLucene<Field>(L"content", intToEnglish(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+            doc->add(newLucene<Field>(L"content", English::intToEnglish(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
         }
         BOOST_CHECK_EQUAL(docsToAdd, writer->maxDoc());
@@ -85,7 +86,7 @@ public:
         for (int32_t j = 1; j < docsPerThread; ++j)
         {
             DocumentPtr doc(newLucene<Document>());
-            doc->add(newLucene<Field>(L"sizeContent", intToEnglish((num * docsPerThread) + j), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+            doc->add(newLucene<Field>(L"sizeContent", English::intToEnglish((num * docsPerThread) + j), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             try
             {
                 writer->addDocument(doc);

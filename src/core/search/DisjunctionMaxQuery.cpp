@@ -69,7 +69,7 @@ namespace Lucene
             if (getBoost() != 1.0)
             {
                 if (result == singleton)
-                    result = boost::dynamic_pointer_cast<Query>(result->clone());
+                    result = boost::static_pointer_cast<Query>(result->clone());
                 result->setBoost(getBoost() * result->getBoost());
             }
             return result;
@@ -82,7 +82,7 @@ namespace Lucene
             if (rewrite != clause)
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<DisjunctionMaxQuery>(this->clone());
+                    clone = boost::static_pointer_cast<DisjunctionMaxQuery>(this->clone());
                 clone->disjuncts[i] = rewrite;
             }
         }
@@ -92,7 +92,7 @@ namespace Lucene
     LuceneObjectPtr DisjunctionMaxQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<DisjunctionMaxQuery>());
-        DisjunctionMaxQueryPtr cloneQuery(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(clone));
+        DisjunctionMaxQueryPtr cloneQuery(boost::static_pointer_cast<DisjunctionMaxQuery>(clone));
         cloneQuery->tieBreakerMultiplier = tieBreakerMultiplier;
         cloneQuery->disjuncts = Collection<QueryPtr>::newInstance(disjuncts.begin(), disjuncts.end());
         return cloneQuery;
@@ -197,7 +197,7 @@ namespace Lucene
         }
         if (idx == 0)
             return ScorerPtr(); // all scorers did not have documents
-        DisjunctionMaxScorerPtr result(newLucene<DisjunctionMaxScorer>(query->tieBreakerMultiplier, similarity, scorers, idx));
+        DisjunctionMaxScorerPtr result(newLucene<DisjunctionMaxScorer>(shared_from_this(), query->tieBreakerMultiplier, similarity, scorers, idx));
         return result;
     }
     

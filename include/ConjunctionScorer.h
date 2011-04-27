@@ -15,7 +15,7 @@ namespace Lucene
     class ConjunctionScorer : public Scorer
     {
     public:
-        ConjunctionScorer(SimilarityPtr similarity, Collection<ScorerPtr> scorers);
+        ConjunctionScorer(WeightPtr weight, double coord, Collection<ScorerPtr> scorers);
         virtual ~ConjunctionScorer();
     
         LUCENE_CLASS(ConjunctionScorer);

@@ -36,7 +36,7 @@ namespace Lucene
     LuceneObjectPtr PayloadTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<PayloadTermQuery>(term, function, includeSpanScore));
-        PayloadTermQueryPtr termQuery(boost::dynamic_pointer_cast<PayloadTermQuery>(clone));
+        PayloadTermQueryPtr termQuery(boost::static_pointer_cast<PayloadTermQuery>(clone));
         termQuery->function = function;
         termQuery->includeSpanScore = includeSpanScore;
         return termQuery;
@@ -84,7 +84,7 @@ namespace Lucene
     
     ScorerPtr PayloadTermWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
-        return newLucene<PayloadTermSpanScorer>(boost::dynamic_pointer_cast<TermSpans>(query->getSpans(reader)), shared_from_this(), similarity, reader->norms(query->getField()));
+        return newLucene<PayloadTermSpanScorer>(boost::static_pointer_cast<TermSpans>(query->getSpans(reader)), shared_from_this(), similarity, reader->norms(query->getField()));
     }
     
     PayloadTermSpanScorer::PayloadTermSpanScorer(TermSpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
@@ -104,7 +104,7 @@ namespace Lucene
         if (!more)
             return false;
         doc = spans->doc();
-        freq = 0.0;
+        _freq = 0.0;
         payloadScore = 0.0;
         payloadsSeen = 0;
         SimilarityPtr similarity1(getSimilarity());
@@ -112,12 +112,12 @@ namespace Lucene
         {
             int32_t matchLength = spans->end() - spans->start();
             
-            freq += similarity1->sloppyFreq(matchLength);
+            _freq += similarity1->sloppyFreq(matchLength);
             processPayload(similarity1);
             
             more = spans->next(); // this moves positions to the next match in this document
         }
-        return more || (freq != 0);
+        return more || (_freq != 0);
     }
     
     void PayloadTermSpanScorer::processPayload(SimilarityPtr similarity)

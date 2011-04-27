@@ -16,7 +16,16 @@ namespace Lucene
     class DisjunctionSumScorer : public Scorer
     {
     public:
-        DisjunctionSumScorer(Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers = 1);
+        /// Construct a DisjunctionScorer.
+        /// @param weight The weight to be used.
+        /// @param subScorers A collection of at least two subscorers.
+        /// @param minimumNrMatchers The positive minimum number of subscorers that should match to match this query.
+        ///
+        /// When minimumNrMatchers is bigger than the number of subScorers, no matches will be produced.
+        ///
+        /// When minimumNrMatchers equals the number of subScorers, it more efficient to use ConjunctionScorer.
+        DisjunctionSumScorer(WeightPtr weight, Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers = 1);
+        
         virtual ~DisjunctionSumScorer();
     
         LUCENE_CLASS(DisjunctionSumScorer);
@@ -54,13 +63,13 @@ namespace Lucene
         virtual void score(CollectorPtr collector);
         virtual int32_t nextDoc();
         
-        /// Returns the score of the current document matching the query. Initially invalid, until {@link #next()} 
+        /// Returns the score of the current document matching the query. Initially invalid, until {@link #nextDoc()} 
         /// is called the first time.
         virtual double score();
         
         virtual int32_t docID();
         
-        /// Returns the number of subscorers matching the current document.  Initially invalid, until {@link #next()} 
+        /// Returns the number of subscorers matching the current document.  Initially invalid, until {@link #nextDoc()} 
         /// is called the first time.
         int32_t nrMatchers();
         

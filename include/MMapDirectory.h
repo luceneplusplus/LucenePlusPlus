@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    /// File-based {@link Directory} implementation that uses mmap for reading, and {@link SimpleFSIndexOutput} for writing.
+    /// File-based {@link Directory} implementation that uses mmap for reading, and {@link FSIndexOutput} for writing.
     ///
     /// NOTE: memory mapping uses up a portion of the virtual memory address space in your process equal to the size of the 
     /// file being mapped.  Before using this class, be sure your have plenty of virtual address space.
@@ -36,9 +36,6 @@ namespace Lucene
         
         /// Creates an IndexInput for the file with the given name.
         virtual IndexInputPtr openInput(const String& name, int32_t bufferSize);
-        
-        /// Creates an IndexOutput for the file with the given name.
-        virtual IndexOutputPtr createOutput(const String& name);
     };
 }
 

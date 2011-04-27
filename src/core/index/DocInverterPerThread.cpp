@@ -6,9 +6,10 @@
 
 #include "LuceneInc.h"
 #include "DocInverterPerThread.h"
+#include "_DocInverterPerThread.h"
 #include "DocInverterPerField.h"
 #include "DocInverter.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "OffsetAttribute.h"
 #include "DocFieldProcessorPerThread.h"
 #include "InvertedDocConsumer.h"
@@ -81,7 +82,7 @@ namespace Lucene
         
     SingleTokenAttributeSource::SingleTokenAttributeSource()
     {
-        termAttribute = addAttribute<TermAttribute>();
+        termAttribute = addAttribute<CharTermAttribute>();
         offsetAttribute = addAttribute<OffsetAttribute>();
     }
     
@@ -91,7 +92,7 @@ namespace Lucene
     
     void SingleTokenAttributeSource::reinit(const String& stringValue, int32_t startOffset, int32_t endOffset)
     {
-        termAttribute->setTermBuffer(stringValue);
+        termAttribute->setEmpty()->append(stringValue);
         offsetAttribute->setOffset(startOffset, endOffset);
     }
 }

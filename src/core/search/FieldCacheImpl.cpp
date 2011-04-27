@@ -6,8 +6,8 @@
 
 #include "LuceneInc.h"
 #include "FieldCacheImpl.h"
+#include "_FieldCacheImpl.h"
 #include "FieldCacheSanityChecker.h"
-#include "IndexReader.h"
 #include "InfoStream.h"
 #include "TermEnum.h"
 #include "TermDocs.h"
@@ -27,7 +27,7 @@ namespace Lucene
     
     void FieldCacheImpl::initialize()
     {
-        caches = MapStringCache::newInstance();
+        caches = MapIntCache::newInstance();
         caches.put(CACHE_BYTE, newLucene<ByteCache>(shared_from_this()));
         caches.put(CACHE_INT, newLucene<IntCache>(shared_from_this()));
         caches.put(CACHE_LONG, newLucene<LongCache>(shared_from_this()));
@@ -38,20 +38,24 @@ namespace Lucene
     
     void FieldCacheImpl::purgeAllCaches()
     {
+        SyncLock syncLock(this);
         initialize();
     }
     
     void FieldCacheImpl::purge(IndexReaderPtr r)
     {
-        for (MapStringCache::iterator cache = caches.begin(); cache != caches.end(); ++cache)
+        SyncLock syncLock(this);
+        for (MapIntCache::iterator cache = caches.begin(); cache != caches.end(); ++cache)
             cache->second->purge(r);
     }
     
     Collection<FieldCacheEntryPtr> FieldCacheImpl::getCacheEntries()
     {
+        SyncLock syncLock(this);
         Collection<FieldCacheEntryPtr> result(Collection<FieldCacheEntryPtr>::newInstance());
-        for (MapStringCache::iterator cache = caches.begin(); cache != caches.end(); ++cache)
+        for (MapIntCache::iterator cache = caches.begin(); cache != caches.end(); ++cache)
         {
+            SyncLock cacheLock(&cache->second->readerCache);
             for (WeakMapLuceneObjectMapEntryAny::iterator key = cache->second->readerCache.begin(); key != cache->second->readerCache.end(); ++key)
             {
                 LuceneObjectPtr readerKey(key->first.lock());
@@ -65,6 +69,17 @@ namespace Lucene
             }
         }
         return result;
+    }
+    
+    ReaderFinishedListenerPtr FieldCacheImpl::purgeReader()
+    {
+        static ReaderFinishedListenerPtr _purgeReader;
+        if (!_purgeReader)
+        {
+            _purgeReader = newLucene<FieldCacheReaderFinishedListener>();
+            CycleCheck::addStatic(_purgeReader);
+        }
+        return _purgeReader;
     }
     
     Collection<uint8_t> FieldCacheImpl::getBytes(IndexReaderPtr reader, const String& field)
@@ -168,7 +183,7 @@ namespace Lucene
     
     void Cache::purge(IndexReaderPtr r)
     {
-        LuceneObjectPtr readerKey(r->getFieldCacheKey());
+        LuceneObjectPtr readerKey(r->getCoreCacheKey());
         SyncLock cacheLock(&readerCache);
         readerCache.remove(readerKey);
     }
@@ -177,14 +192,16 @@ namespace Lucene
     {
         MapEntryAny innerCache;
         boost::any value;
-        LuceneObjectPtr readerKey(reader->getFieldCacheKey());
+        LuceneObjectPtr readerKey(reader->getCoreCacheKey());
         {
             SyncLock cacheLock(&readerCache);
             innerCache = readerCache.get(readerKey);
             if (!innerCache)
             {
+                // First time this reader is using FieldCache
                 innerCache = MapEntryAny::newInstance();
                 readerCache.put(readerKey, innerCache);
+                reader->addReaderFinishedListener(FieldCacheImpl::purgeReader());
             }
             else if (innerCache.contains(key))
                 value = innerCache[key];
@@ -487,11 +504,20 @@ namespace Lucene
         Collection<String> retArray(Collection<String>::newInstance(reader->maxDoc()));
         TermDocsPtr termDocs(reader->termDocs());
         TermEnumPtr termEnum(reader->terms(newLucene<Term>(field)));
+        int32_t termCountHardLimit = reader->maxDoc();
+        int32_t termCount = 0;
         LuceneException finally;
         try
         {
             do
             {
+                if (termCount++ == termCountHardLimit)
+                {
+                    // app is misusing the API (there is more than one term per doc); in this case we make best
+                    // effort to load what we can
+                    break;
+                }
+
                 TermPtr term(termEnum->term());
                 if (!term || term->field() != field)
                     break;
@@ -613,5 +639,14 @@ namespace Lucene
     boost::any FieldCacheEntryImpl::getValue()
     {
         return value;
+    }
+    
+    FieldCacheReaderFinishedListener::~FieldCacheReaderFinishedListener()
+    {
+    }
+    
+    void FieldCacheReaderFinishedListener::finished(IndexReaderPtr reader)
+    {
+        FieldCache::DEFAULT()->purge(reader);
     }
 }

@@ -34,7 +34,7 @@ namespace Lucene
     
     SpanFilterResultPtr CachingSpanFilter::getCachedResult(IndexReaderPtr reader)
     {
-        LuceneObjectPtr coreKey = reader->getFieldCacheKey();
+        LuceneObjectPtr coreKey = reader->getCoreCacheKey();
         LuceneObjectPtr delCoreKey = reader->hasDeletions() ? reader->getDeletesCacheKey() : coreKey;
         
         SpanFilterResultPtr result(boost::dynamic_pointer_cast<SpanFilterResult>(cache->get(reader, coreKey, delCoreKey)));

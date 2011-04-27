@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "MiscUtils.h"
+#include "StringUtils.h"
 #include "LuceneObject.h"
 
 namespace Lucene
@@ -29,14 +30,75 @@ namespace Lucene
         return getTimeMillis(boost::posix_time::microsec_clock::universal_time());
     }
     
-    int32_t MiscUtils::getNextSize(int32_t targetSize)
+    int32_t MiscUtils::oversize(int32_t minTargetSize, int32_t bytesPerElement)
     {
-        return (targetSize >> 3) + (targetSize < 9 ? 3 : 6) + targetSize;
+        // catch usage that accidentally overflows int
+        if (minTargetSize < 0)
+            boost::throw_exception(IllegalArgumentException(L"invalid array size " + StringUtils::toString(minTargetSize)));
+
+        // wait until at least one element is requested
+        if (minTargetSize == 0)
+            return 0;
+    
+        // asymptotic exponential growth by 1/8th, favors spending a bit more CPU to not tie 
+        // up too much wasted RAM
+        int32_t extra = minTargetSize >> 3;
+
+        // for very small arrays, where constant overhead of realloc is presumably relatively high, we grow faster
+        if (extra < 3)
+            extra = 3;
+
+        int32_t newSize = minTargetSize + extra;
+
+        // add 7 to allow for worst case byte alignment addition below
+        if (newSize+7 < 0)
+        {
+            // int overflowed - return max allowed array size
+            return INT_MAX;
+        }
+
+        #ifdef LPP_BUILD_64
+        // round up to 8 byte alignment in 64bit env
+        switch (bytesPerElement)
+        {
+            case 4:
+                // round up to multiple of 2
+                return (newSize + 1) & 0x7ffffffe;
+            case 2:
+                // round up to multiple of 4
+                return (newSize + 3) & 0x7ffffffc;
+            case 1:
+                // round up to multiple of 8
+                return (newSize + 7) & 0x7ffffff8;
+            case 8:
+                // no rounding
+            default:
+                // odd (invalid?) size
+                return newSize;
+        }
+        #else
+        // round up to 4 byte alignment in 32bit env
+        switch (bytesPerElement)
+        {
+            case 2:
+                // round up to multiple of 2
+                return (newSize + 1) & 0x7ffffffe;
+            case 1:
+                // round up to multiple of 4
+                return (newSize + 3) & 0x7ffffffc;
+            case 4:
+            case 8:
+                // no rounding
+            default:
+                // odd (invalid?) size
+                return newSize;
+        }
+        #endif
     }
     
-    int32_t MiscUtils::getShrinkSize(int32_t currentSize, int32_t targetSize)
+    int32_t MiscUtils::getShrinkSize(int32_t currentSize, int32_t targetSize, int32_t bytesPerElement)
     {
-        int32_t newSize = getNextSize(targetSize);
+        int32_t newSize = oversize(targetSize, bytesPerElement);
         return (newSize < currentSize / 2) ? newSize : currentSize;
     }
     

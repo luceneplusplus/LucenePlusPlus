@@ -11,18 +11,26 @@ namespace Lucene
 {
     TokenStream::TokenStream()
     {
+        BOOST_ASSERT(assertFinal());
     }
     
     TokenStream::TokenStream(AttributeSourcePtr input) : AttributeSource(input)
     {
+        BOOST_ASSERT(assertFinal());
     }
     
     TokenStream::TokenStream(AttributeFactoryPtr factory) : AttributeSource(factory)
     {
+        BOOST_ASSERT(assertFinal());
     }
     
     TokenStream::~TokenStream()
     {
+    }
+    
+    bool TokenStream::assertFinal()
+    {
+        return true;
     }
     
     void TokenStream::end()

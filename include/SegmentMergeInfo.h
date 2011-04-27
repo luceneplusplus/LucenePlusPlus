@@ -29,7 +29,8 @@ namespace Lucene
         int32_t ord; // the position of the segment in a MultiReader
         TermEnumPtr termEnum;
         IndexReaderWeakPtr _reader;
-        int32_t delCount;        
+        int32_t delCount;
+        DirPayloadProcessorPtr dirPayloadProcessor;
     
     public:
         Collection<int32_t> getDocMap();

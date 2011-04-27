@@ -26,7 +26,6 @@ namespace Lucene
     
     public:
         virtual double computeNorm(const String& field, FieldInvertStatePtr state);
-        virtual double lengthNorm(const String& fieldName, int32_t numTokens);
         virtual double queryNorm(double sumOfSquaredWeights);
         virtual double tf(double freq);
         virtual double sloppyFreq(int32_t distance);

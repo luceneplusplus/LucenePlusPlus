@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "ByteSliceReader.h"
+#include "ByteBlockPool.h"
 #include "DocumentsWriter.h"
 #include "IndexOutput.h"
 #include "MiscUtils.h"

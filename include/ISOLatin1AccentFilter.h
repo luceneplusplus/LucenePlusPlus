@@ -29,7 +29,7 @@ namespace Lucene
     protected:
         CharArray output;
         int32_t outputPos;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
     
     public:
         virtual bool incrementToken();

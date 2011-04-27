@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "FreqProxFieldMergeState.h"
 #include "FreqProxTermsWriterPerField.h"
+#include "_FreqProxTermsWriterPerField.h"
 #include "FreqProxTermsWriterPerThread.h"
 #include "FreqProxTermsWriter.h"
 #include "TermsHashPerThread.h"
@@ -26,6 +27,7 @@ namespace Lucene
         this->docID = 0;
         this->termFreq = 0;
         this->postingUpto = -1;
+        this->currentTermID = 0;
         this->freq = newLucene<ByteSliceReader>();
         this->prox = newLucene<ByteSliceReader>();
         
@@ -34,7 +36,8 @@ namespace Lucene
         
         TermsHashPerFieldPtr termsHashPerField(field->_termsHashPerField);
         this->numPostings = termsHashPerField->numPostings;
-        this->postings = termsHashPerField->sortPostings();
+        this->termIDs = termsHashPerField->sortPostings();
+        this->postings = boost::static_pointer_cast<FreqProxPostingsArray>(termsHashPerField->postingsArray);
     }
     
     FreqProxFieldMergeState::~FreqProxFieldMergeState()
@@ -47,16 +50,17 @@ namespace Lucene
         if (postingUpto == numPostings)
             return false;
         
-        p = boost::static_pointer_cast<FreqProxTermsWriterPostingList>(postings[postingUpto]);
+        currentTermID = termIDs[postingUpto];
         docID = 0;
-        
-        text = charPool->buffers[p->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
-        textOffset = (p->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-        
+
+        int32_t textStart = postings->textStarts[currentTermID];
+        text = charPool->buffers[textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
+        textOffset = (textStart & DocumentsWriter::CHAR_BLOCK_MASK);
+
         TermsHashPerFieldPtr termsHashPerField(field->_termsHashPerField);
-        termsHashPerField->initReader(freq, p, 0);
+        termsHashPerField->initReader(freq, currentTermID, 0);
         if (!field->fieldInfo->omitTermFreqAndPositions)
-            termsHashPerField->initReader(prox, p, 1);
+            termsHashPerField->initReader(prox, currentTermID, 1);
         
         // Should always be true
         bool result = nextDoc();
@@ -69,13 +73,13 @@ namespace Lucene
     {
         if (freq->eof())
         {
-            if (p->lastDocCode != -1)
+            if (postings->lastDocCodes[currentTermID] != -1)
             {
                 // Return last doc
-                docID = p->lastDocID;
+                docID = postings->lastDocIDs[currentTermID];
                 if (!field->omitTermFreqAndPositions)
-                    termFreq = p->docFreq;
-                p->lastDocCode = -1;
+                    termFreq = postings->docFreqs[currentTermID];
+                postings->lastDocCodes[currentTermID] = -1;
                 return true;
             }
             else
@@ -97,7 +101,7 @@ namespace Lucene
                 termFreq = freq->readVInt();
         }
         
-        BOOST_ASSERT(docID != p->lastDocID);
+        BOOST_ASSERT(docID != postings->lastDocIDs[currentTermID]);
         
         return true;
     }

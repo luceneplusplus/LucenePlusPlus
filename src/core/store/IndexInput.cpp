@@ -6,8 +6,10 @@
 
 #include "LuceneInc.h"
 #include "IndexInput.h"
+#include "IndexOutput.h"
 #include "UTF8Stream.h"
 #include "Reader.h"
+#include "BufferedIndexInput.h"
 #include "StringUtils.h"
 
 namespace Lucene
@@ -146,9 +148,23 @@ namespace Lucene
         return map;
     }
     
+    void IndexInput::copyBytes(IndexOutputPtr out, int64_t numBytes)
+    {
+        BOOST_ASSERT(numBytes >= 0);
+        if (!copyBuffer)
+            copyBuffer = ByteArray::newInstance(BufferedIndexInput::BUFFER_SIZE);
+        while (numBytes > 0)
+        {
+            int32_t toCopy = (int32_t)(numBytes > copyBuffer.size() ? copyBuffer.size() : numBytes);
+            readBytes(copyBuffer.get(), 0, toCopy);
+            out->writeBytes(copyBuffer.get(), 0, toCopy);
+            numBytes -= toCopy;
+        }
+    }
+    
     LuceneObjectPtr IndexInput::clone(LuceneObjectPtr other)
     {
-        IndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<IndexInput>(LuceneObject::clone(other)));
+        IndexInputPtr cloneIndexInput(boost::static_pointer_cast<IndexInput>(LuceneObject::clone(other)));
         cloneIndexInput->preUTF8Strings = preUTF8Strings;
         return cloneIndexInput;
     }

@@ -56,6 +56,8 @@ namespace Lucene
     
     SortField::SortField(const String& field, ParserPtr parser, bool reverse)
     {
+        // todo: these should be MiscUtils::typeof
+        // todo: can we replace more dynamic_pointer_cast's?
         if (boost::dynamic_pointer_cast<IntParser>(parser))
             initFieldType(field, INT);
         else if (boost::dynamic_pointer_cast<ByteParser>(parser))

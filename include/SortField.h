@@ -47,7 +47,7 @@ namespace Lucene
         LUCENE_CLASS(SortField);
     
     public:
-        /// Sort by document score (relevancy).  Sort values are Double and higher values are at the front.
+        /// Sort by document score (relevance).  Sort values are Double and higher values are at the front.
         static const int32_t SCORE;
         
         /// Sort by document number (index order).  Sort values are Integer and lower values are at the front.
@@ -95,7 +95,7 @@ namespace Lucene
         FieldComparatorSourcePtr comparatorSource;
     
     public:
-        /// Represents sorting by document score (relevancy).
+        /// Represents sorting by document score (relevance).
         static SortFieldPtr FIELD_SCORE();
         
         /// Represents sorting by document number (index order).
