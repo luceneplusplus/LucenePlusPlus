@@ -1,0 +1,12 @@
+can almost get this to work:
+
+boost needs to be compiled in, so that we don't need native boost libs (DONE)
+problems with linking with libstdc++: ntv.bc:(.text+0x1742): undefined reference to `std::ctype<char>::_M_widen_init() const'
+ - seems to be a problem with libstdc++ (gcc 4.3 -> 4.4 regression)
+ - a solution is apparently to compile with lower optimisation levels, but that doesn't seem to help
+waf script doesn't work all the way to the end yet... was still playing around with:
+   llvm-ld -native *.so target.bc -o ntv -lsupc++ -lstdc++ -L/usr/lib/llvm-2.8/gcc-4.2/lib64 -lpthread
+ - it worked better when linking to boost native libs
+confused about how to compile c++ based bytecode to a runnable lib, seems kind of strange adding all the pthread, etc, which is native?  
+trying to convert the given code into C code doesn't work yet, due to a bug with large int sizes
+
