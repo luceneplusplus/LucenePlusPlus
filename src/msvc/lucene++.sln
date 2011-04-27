@@ -12,16 +12,19 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "indexfiles", "..\demo\indexfiles\msvc\indexfiles.vcproj", "{688A6720-739F-4EA3-AC5B-AA67A0965103}"
 	ProjectSection(ProjectDependencies) = postProject
 		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
+		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deletefiles", "..\demo\deletefiles\msvc\deletefiles.vcproj", "{688A6720-739F-4EA3-AC5B-AA67A0965105}"
 	ProjectSection(ProjectDependencies) = postProject
 		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
+		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "searchfiles", "..\demo\searchfiles\msvc\searchfiles.vcproj", "{688A6720-739F-4EA3-AC5B-AA67A0965104}"
 	ProjectSection(ProjectDependencies) = postProject
 		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
+		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene_contrib", "..\contrib\msvc\lucene_contrib.vcproj", "{46A95AFD-95FD-4280-B22E-1B56F273144B}"

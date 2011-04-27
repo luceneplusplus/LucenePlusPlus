@@ -896,7 +896,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\main.cpp"
+				RelativePath="..\main\main.cpp"
 				>
 				<FileConfiguration
 					Name="Debug DLL|Win32"
@@ -904,7 +904,6 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						PrecompiledHeaderThrough=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -913,7 +912,6 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						PrecompiledHeaderThrough=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -922,7 +920,6 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						PrecompiledHeaderThrough=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -931,7 +928,6 @@
 					<Tool
 						Name="VCCLCompilerTool"
 						UsePrecompiledHeader="0"
-						PrecompiledHeaderThrough=""
 					/>
 				</FileConfiguration>
 			</File>
