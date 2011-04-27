@@ -4,58 +4,36 @@
 ## or the GNU Lesser General Public License.
 #############################################################################
 
-from TaskGen import feature, after
-from copy import copy
-import Task, ccroot
-import os
+#! /usr/bin/env python
+# encoding: utf-8
+# Thomas Nagy, 2006 (ita)
 
-cmd = '${CXX} ${CXXFLAGS} ${_CXXINCFLAGS} ${_CXXDEFFLAGS} ${SRC} -o ${TGT}'
-cls = Task.simple_task_type('gch', cmd, before='cc cxx', shell = False)
-cls.scan = ccroot.scan
+"""
+for some obscure reason, the precompiled header will not be taken if
+all.h is in the same directory as main.cpp
+we recommend to add the header to compile in a separate directory without any sources
 
-def requires_pch(task, pch_name):
-    """
-    Determines if a task requires a PCH prefix header
-    Assume that missing source files equate to "generated" sources
-    and will require a PCH header.
-    """
-    def is_include_line(line):
-        line = line.strip()
-        return line.startswith("#include") or line.startswith("#import")
-    generated_sources = False
-    for source_file in task.inputs:
-        if not os.path.isfile(source_file.abspath()):
-            generated_sources = True
-            continue
-        source_path = source_file.abspath()
-        if source_file.suffix() not in [".cpp", ".c"]:
-            continue
-        for line in open(source_path):
-            if is_include_line(line):
-                return line.find(pch_name) > 0
-    return generated_sources
+Note: the #warning will come once when the .h is compiled, it will not come when the .cpp is compiled
+Note: do not forget to set the include paths (include=...)
+"""
 
+from waflib.TaskGen import feature, after
+from waflib.Task import Task
+from waflib.Tools import c_preproc
 
-@feature('cxx')
-@after('apply_link', 'apply_incpaths')
+#@feature('cxx') <- python >= 2.4
+#@after('apply_link')
 def process_pch(self):
-    """
-    Routine to add PCH generation if a pch header was specified
-    for a target.
-    """
-    if not getattr(self, 'pch', None):
-        return 
-    node = self.path.find_resource(self.pch)
-    if not node:
-        raise Exception("Invalid PCH specified for %s" % self)
-    output = node.parent.find_or_declare(node.name + '.gch')
-    pch_task = self.create_task('gch')
-    pch_task.set_inputs(node)
-    pch_task.set_outputs(output)
-    altered_envs = []
-    for task in self.compiled_tasks:
-        if not requires_pch(task, self.pch):
-            continue   
-        task.env = task.env.copy()
-        task.env.prepend_value("CXXFLAGS", "-include%s" % node.name)
+    if getattr(self, 'pch', ''):
+        nodes = self.to_nodes(self.pch)
+        for x in nodes:
+            self.create_task('gchx', x, x.change_ext('.gch'))
+feature('cxx')(process_pch)
+after('apply_link')(process_pch)
+
+class gchx(Task):
+    run_str = '${CXX} ${CXXFLAGS} ${FRAMEWORKPATH_ST:FRAMEWORKPATH} ${CPPPATH_ST:INCPATHS} ${DEFINES_ST:DEFINES} ${CXX_SRC_F}${SRC} ${CXX_TGT_F}${TGT}'
+    scan    = c_preproc.scan
+    ext_out = ['.h']
+    color   = 'BLUE'
 

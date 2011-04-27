@@ -96,7 +96,7 @@ To run unit test suite
 
 lucene_tester is built using the `Boost Unit Test Framework <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/index.html>`_ and is launched by the following command::
 
-    $ bin/default/lucene_tester --show_progress=yes
+    $ bin/lucene_tester --show_progress=yes
 
 Other `command options <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide/runtime-config/reference.html>`_ can be supplied.
 
