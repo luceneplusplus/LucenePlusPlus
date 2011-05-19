@@ -7,14 +7,14 @@
 #include "ContribInc.h"
 #include "ArabicNormalizationFilter.h"
 #include "ArabicNormalizer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 
 namespace Lucene
 {
     ArabicNormalizationFilter::ArabicNormalizationFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         normalizer = newLucene<ArabicNormalizer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
     }
     
     ArabicNormalizationFilter::~ArabicNormalizationFilter()
@@ -25,8 +25,8 @@ namespace Lucene
     {
         if (input->incrementToken())
         {
-            int32_t newlen = normalizer->normalize(termAtt->termBuffer().get(), termAtt->termLength());
-            termAtt->setTermLength(newlen);
+            int32_t newlen = normalizer->normalize(termAtt->buffer().get(), termAtt->length());
+            termAtt->setLength(newlen);
             return true;
         }
         else

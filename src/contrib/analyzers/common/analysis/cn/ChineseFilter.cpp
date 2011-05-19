@@ -6,7 +6,7 @@
 
 #include "ContribInc.h"
 #include "ChineseFilter.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
@@ -24,7 +24,7 @@ namespace Lucene
     ChineseFilter::ChineseFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         stopTable = HashSet<String>::newInstance(STOP_WORDS, STOP_WORDS + SIZEOF_ARRAY(STOP_WORDS));
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
     }
     
     ChineseFilter::~ChineseFilter()

@@ -8,7 +8,7 @@
 #define BRAZILIANANALYZER_H
 
 #include "LuceneContrib.h"
-#include "Analyzer.h"
+#include "StopwordAnalyzerBase.h"
 
 namespace Lucene
 {
@@ -18,16 +18,22 @@ namespace Lucene
     /// exclusions (words that will not be stemmed, but indexed).
     ///
     /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPCONTRIBAPI BrazilianAnalyzer : public Analyzer
+    class LPPCONTRIBAPI BrazilianAnalyzer : public StopwordAnalyzerBase
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
+        /// @param matchVersion lucene compatibility version
         BrazilianAnalyzer(LuceneVersion::Version matchVersion);
         
         /// Builds an analyzer with the given stop words.
+        /// @param matchVersion lucene compatibility version
+        /// @param stopwords a stopword set
         BrazilianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords);
         
         /// Builds an analyzer with the given stop words and stemming exclusion words.
+        /// @param matchVersion lucene compatibility version
+        /// @param stopwords a stopword set
+        /// @param exclusions a stemming exclusion set
         BrazilianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> exclusions);
         
         virtual ~BrazilianAnalyzer();
@@ -35,48 +41,27 @@ namespace Lucene
         LUCENE_CLASS(BrazilianAnalyzer);
     
     protected:
-        /// Contains the stopwords used with the {@link StopFilter}.
-        HashSet<String> stoptable;
-        
         /// Contains words that should be indexed but not stemmed.
         HashSet<String> excltable;
         
-        LuceneVersion::Version matchVersion;
-        
         /// List of typical Brazilian Portuguese stopwords.
-        static const wchar_t* _BRAZILIAN_STOP_WORDS[];
+        static const wchar_t* _DEFAULT_STOP_WORDS[];
     
     public:
         /// Returns an unmodifiable instance of the default stop-words set.
         static const HashSet<String> getDefaultStopSet();
         
+        /// Builds an exclusion list from a set of Strings.
+        /// @deprecated use {@link #BrazilianAnalyzer(Version, Set, Set)} instead
         void setStemExclusionTable(HashSet<String> exclusions);
         
-        /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
-        /// {@link LowerCaseFilter}, {@link StandardFilter}, {@link StopFilter}, and {@link BrazilianStemFilter}.
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        
-        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the 
+    protected:
+        /// Creates {@link TokenStreamComponents} used to tokenize all the text in the 
         /// provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from an {@link BrazilianLetterTokenizer} filtered with
-        /// {@link LowerCaseFilter}, {@link StopFilter}, {@link BrazilianNormalizationFilter} and 
-        /// {@link BrazilianStemFilter}.
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
-    };
-    
-    class LPPCONTRIBAPI BrazilianAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~BrazilianAnalyzerSavedStreams();
-        
-        LUCENE_CLASS(BrazilianAnalyzerSavedStreams);
-
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
+        /// @return {@link TokenStreamComponents} built from a {@link StandardTokenizer} 
+        /// filtered with {@link LowerCaseFilter}, {@link StandardFilter}, {@link 
+        /// StopFilter}, and {@link BrazilianStemFilter}.
+        virtual TokenStreamComponentsPtr createComponents(const String& fieldName, ReaderPtr reader);
     };
 }
 

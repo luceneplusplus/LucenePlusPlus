@@ -11,8 +11,8 @@
 
 namespace Lucene
 {
-    /// Subclasses of CharFilter can be chained to filter CharStream.  They can be used as {@link Reader} with 
-    /// additional offset correction. {@link Tokenizer}s will automatically use {@link #correctOffset} if a 
+    /// Subclasses of CharFilter can be chained to filter CharStream.  They can be used as {@link Reader} with
+    /// additional offset correction. {@link Tokenizer}s will automatically use {@link #correctOffset} if a
     /// CharFilter/CharStream subclass is used.
     class LPPAPI CharFilter : public CharStream
     {
@@ -20,21 +20,22 @@ namespace Lucene
         CharFilter(CharStreamPtr in);
     public:
         virtual ~CharFilter();
-        
+
         LUCENE_CLASS(CharFilter);
-    
+
     protected:
         CharStreamPtr input;
-    
+
     protected:
         /// Subclass may want to override to correct the current offset.
         /// @param currentOff current offset
         /// @return corrected offset
         virtual int32_t correct(int32_t currentOff);
-        
+
+    public:
         /// Chains the corrected offset through the input CharFilter.
         virtual int32_t correctOffset(int32_t currentOff);
-        
+
         virtual void close();
         virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
         virtual bool markSupported();
@@ -44,3 +45,4 @@ namespace Lucene
 }
 
 #endif
+

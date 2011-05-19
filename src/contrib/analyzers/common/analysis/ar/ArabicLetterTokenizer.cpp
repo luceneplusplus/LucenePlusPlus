@@ -11,6 +11,18 @@
 
 namespace Lucene
 {
+    ArabicLetterTokenizer::ArabicLetterTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input) : LetterTokenizer(matchVersion, input)
+    {
+    }
+    
+    ArabicLetterTokenizer::ArabicLetterTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : LetterTokenizer(matchVersion, source, input)
+    {
+    }
+    
+    ArabicLetterTokenizer::ArabicLetterTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : LetterTokenizer(matchVersion, factory, input)
+    {
+    }
+    
     ArabicLetterTokenizer::ArabicLetterTokenizer(ReaderPtr input) : LetterTokenizer(input)
     {
     }

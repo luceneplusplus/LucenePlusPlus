@@ -15,29 +15,9 @@ namespace Lucene
     {
     }
     
-    TokenStreamPtr ChineseAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamComponentsPtr ChineseAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        TokenStreamPtr result = newLucene<ChineseTokenizer>(reader);
-        result = newLucene<ChineseFilter>(result);
-        return result;
-    }
-    
-    TokenStreamPtr ChineseAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        ChineseAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ChineseAnalyzerSavedStreams>(getPreviousTokenStream()));
-        if (!streams)
-        {
-            streams = newLucene<ChineseAnalyzerSavedStreams>();
-            streams->source = newLucene<ChineseTokenizer>(reader);
-            streams->result = newLucene<ChineseFilter>(streams->source);
-            setPreviousTokenStream(streams);
-        }
-        else
-            streams->source->reset(reader);
-        return streams->result;
-    }
-    
-    ChineseAnalyzerSavedStreams::~ChineseAnalyzerSavedStreams()
-    {
+        TokenizerPtr source(newLucene<ChineseTokenizer>(reader));
+        return newLucene<TokenStreamComponents>(source, newLucene<ChineseFilter>(source));
     }
 }

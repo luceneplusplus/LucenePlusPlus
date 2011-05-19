@@ -23,6 +23,7 @@
 #include "ScoreDoc.h"
 #include "SortField.h"
 #include "FieldDoc.h"
+#include "StringUtils.h"
 #include "VariantUtils.h"
 
 namespace Lucene

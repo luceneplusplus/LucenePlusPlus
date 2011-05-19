@@ -7,39 +7,42 @@
 #include "ContribInc.h"
 #include "BrazilianStemFilter.h"
 #include "BrazilianStemmer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
+#include "KeywordAttribute.h"
 
 namespace Lucene
 {
     BrazilianStemFilter::BrazilianStemFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         stemmer = newLucene<BrazilianStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
+        keywordAttr = addAttribute<KeywordAttribute>();
     }
-    
+
     BrazilianStemFilter::BrazilianStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<BrazilianStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
+        keywordAttr = addAttribute<KeywordAttribute>();
         exclusions = exclusiontable;
     }
-    
+
     BrazilianStemFilter::~BrazilianStemFilter()
     {
     }
-    
+
     bool BrazilianStemFilter::incrementToken()
     {
         if (input->incrementToken())
         {
-            String term(termAtt->term());
+            String term(termAtt->toString());
             // Check the exclusion table.
-            if (!exclusions || !exclusions.contains(term))
+            if (!keywordAttr->isKeyword() && (!exclusions || !exclusions.contains(term)))
             {
                 String s(stemmer->stem(term));
                 // If not stemmed, don't waste the time adjusting the token.
                 if (!s.empty() && s != term)
-                    termAtt->setTermBuffer(s);
+                    termAtt->setEmpty()->append(s);
             }
             return true;
         }
@@ -47,3 +50,4 @@ namespace Lucene
             return false;
     }
 }
+

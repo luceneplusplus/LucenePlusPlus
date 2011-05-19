@@ -17,17 +17,18 @@ namespace Lucene
     {
     public:
         RussianLowerCaseFilter(TokenStreamPtr input);
-        
+
         virtual ~RussianLowerCaseFilter();
-        
+
         LUCENE_CLASS(RussianLowerCaseFilter);
-    
+
     protected:
-        TermAttributePtr termAtt;
-    
+        CharTermAttributePtr termAtt;
+
     public:
         virtual bool incrementToken();
     };
 }
 
 #endif
+

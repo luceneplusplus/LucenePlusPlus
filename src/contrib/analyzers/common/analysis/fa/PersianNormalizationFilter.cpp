@@ -7,29 +7,30 @@
 #include "ContribInc.h"
 #include "PersianNormalizationFilter.h"
 #include "PersianNormalizer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 
 namespace Lucene
 {
     PersianNormalizationFilter::PersianNormalizationFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         normalizer = newLucene<PersianNormalizer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
     }
-    
+
     PersianNormalizationFilter::~PersianNormalizationFilter()
     {
     }
-    
+
     bool PersianNormalizationFilter::incrementToken()
     {
         if (input->incrementToken())
         {
-            int32_t newlen = normalizer->normalize(termAtt->termBuffer().get(), termAtt->termLength());
-            termAtt->setTermLength(newlen);
+            int32_t newlen = normalizer->normalize(termAtt->buffer().get(), termAtt->length());
+            termAtt->setLength(newlen);
             return true;
         }
         else
             return false;
     }
 }
+

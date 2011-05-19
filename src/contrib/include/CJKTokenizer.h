@@ -81,7 +81,7 @@ namespace Lucene
         /// C1C2 C2C3 "C3C4" ----(set the C3 isTokened) "C1C2 C2C3 C3C4"
         bool preIsTokened;
         
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
         TypeAttributePtr typeAtt;
     

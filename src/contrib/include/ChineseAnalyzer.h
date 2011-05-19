@@ -8,41 +8,28 @@
 #define CHINESEANALYZER_H
 
 #include "LuceneContrib.h"
-#include "Analyzer.h"
+#include "ReusableAnalyzerBase.h"
 
 namespace Lucene
 {
-    /// An {@link Analyzer} that tokenizes text with {@link ChineseTokenizer} and filters with {@link ChineseFilter}
-    class LPPCONTRIBAPI ChineseAnalyzer : public Analyzer
+    /// An {@link Analyzer} that tokenizes text with {@link ChineseTokenizer} and 
+    /// filters with {@link ChineseFilter}
+    ///
+    /// @deprecated Use {@link StandardAnalyzer} instead, which has the same 
+    /// functionality.
+    class LPPCONTRIBAPI ChineseAnalyzer : public ReusableAnalyzerBase
     {
     public:
         virtual ~ChineseAnalyzer();
         
         LUCENE_CLASS(ChineseAnalyzer);
     
-    public:
-        /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        
-        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the 
+    protected:
+        /// Creates {@link TokenStreamComponents} used to tokenize all the text in the 
         /// provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
-    };
-    
-    class LPPCONTRIBAPI ChineseAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~ChineseAnalyzerSavedStreams();
-        
-        LUCENE_CLASS(ChineseAnalyzerSavedStreams);
-
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
+        /// @return {@link TokenStreamComponents} built from a {@link ChineseTokenizer} 
+        /// filtered with {@link ChineseFilter}
+        virtual TokenStreamComponentsPtr createComponents(const String& fieldName, ReaderPtr reader);
     };
 }
 

@@ -18,16 +18,17 @@ namespace Lucene
     public:
         PersianNormalizationFilter(TokenStreamPtr input);
         virtual ~PersianNormalizationFilter();
-        
+
         LUCENE_CLASS(PersianNormalizationFilter);
-    
+
     protected:
         PersianNormalizerPtr normalizer;
-        TermAttributePtr termAtt;
-    
+        CharTermAttributePtr termAtt;
+
     public:
         virtual bool incrementToken();
     };
 }
 
 #endif
+

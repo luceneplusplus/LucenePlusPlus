@@ -6,6 +6,7 @@
 
 #include "ContribInc.h"
 #include "ArabicNormalizer.h"
+#include "StemmerUtil.h"
 #include "MiscUtils.h"
 
 namespace Lucene
@@ -62,19 +63,12 @@ namespace Lucene
                 case KASRA:
                 case SHADDA:
                 case SUKUN:
-                    len = deleteChar(s, i--, len);
+                    len = StemmerUtil::_delete(s, i--, len);
                     break;
                 default:
                     break;
             }
         }
         return len;
-    }
-    
-    int32_t ArabicNormalizer::deleteChar(wchar_t* s, int32_t pos, int32_t len)
-    {
-        if (pos < len)
-            MiscUtils::arrayCopy(s, pos + 1, s, pos, len - pos - 1);
-        return len - 1;
     }
 }

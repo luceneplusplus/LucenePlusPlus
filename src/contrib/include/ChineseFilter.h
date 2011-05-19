@@ -18,6 +18,7 @@ namespace Lucene
     /// <li> English tokens must be larger than 1 character.
     /// <li> One Chinese character as one Chinese word.
     /// </ul>
+    /// @deprecated Use {@link StopFilter} instead, which has the same functionality.
     class LPPCONTRIBAPI ChineseFilter : public TokenFilter
     {
     public:
@@ -32,7 +33,7 @@ namespace Lucene
         
     protected:
         HashSet<String> stopTable;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
             
     public:
         virtual bool incrementToken();

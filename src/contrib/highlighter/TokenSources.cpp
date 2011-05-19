@@ -12,7 +12,7 @@
 #include "TokenStream.h"
 #include "TermFreqVector.h"
 #include "TermPositionVector.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "OffsetAttribute.h"
 #include "TermVectorOffsetInfo.h"
 #include "Token.h"
@@ -24,7 +24,7 @@ namespace Lucene
     TokenSources::~TokenSources()
     {
     }
-    
+
     TokenStreamPtr TokenSources::getAnyTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, DocumentPtr doc, AnalyzerPtr analyzer)
     {
         TokenStreamPtr ts;
@@ -39,7 +39,7 @@ namespace Lucene
             ts = getTokenStream(doc, field, analyzer);
         return ts;
     }
-    
+
     TokenStreamPtr TokenSources::getAnyTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, AnalyzerPtr analyzer)
     {
         TokenStreamPtr ts;
@@ -54,13 +54,13 @@ namespace Lucene
             ts = getTokenStream(reader, docId, field, analyzer);
         return ts;
     }
-    
+
     TokenStreamPtr TokenSources::getTokenStream(TermPositionVectorPtr tpv)
     {
         // assumes the worst and makes no assumptions about token position sequences.
         return getTokenStream(tpv, false);
     }
-    
+
     struct lessTokenOffset
     {
         inline bool operator()(const TokenPtr& first, const TokenPtr& second) const
@@ -70,17 +70,17 @@ namespace Lucene
             return (first->startOffset() > second->endOffset());
         }
     };
-    
+
     TokenStreamPtr TokenSources::getTokenStream(TermPositionVectorPtr tpv, bool tokenPositionsGuaranteedContiguous)
     {
         // code to reconstruct the original sequence of Tokens
-        Collection<String> terms(tpv->getTerms());          
+        Collection<String> terms(tpv->getTerms());
         Collection<int32_t> freq(tpv->getTermFrequencies());
         int32_t totalTokens = 0;
-        
+
         for (int32_t t = 0; t < freq.size(); ++t)
             totalTokens += freq[t];
-        
+
         Collection<TokenPtr> tokensInOriginalOrder(Collection<TokenPtr>::newInstance(totalTokens));
         Collection<TokenPtr> unsortedTokens;
         for (int32_t t = 0; t < freq.size(); ++t)
@@ -129,13 +129,13 @@ namespace Lucene
         }
         return newLucene<StoredTokenStream>(tokensInOriginalOrder);
     }
-    
+
     TokenStreamPtr TokenSources::getTokenStream(IndexReaderPtr reader, int32_t docId, const String& field)
     {
         TermFreqVectorPtr tfv(reader->getTermFreqVector(docId, field));
         if (!tfv)
             boost::throw_exception(IllegalArgumentException(field + L" in doc #" + StringUtils::toString(docId) + L"does not have any term position data stored"));
-            
+
         if (boost::dynamic_pointer_cast<TermPositionVector>(tfv))
         {
             TermPositionVectorPtr tpv(boost::static_pointer_cast<TermPositionVector>(reader->getTermFreqVector(docId, field)));
@@ -144,13 +144,13 @@ namespace Lucene
         boost::throw_exception(IllegalArgumentException(field + L" in doc #" + StringUtils::toString(docId) + L"does not have any term position data stored"));
         return TokenStreamPtr();
     }
-    
+
     TokenStreamPtr TokenSources::getTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, AnalyzerPtr analyzer)
     {
         DocumentPtr doc(reader->document(docId));
         return getTokenStream(doc, field, analyzer);
     }
-    
+
     TokenStreamPtr TokenSources::getTokenStream(DocumentPtr doc, const String& field, AnalyzerPtr analyzer)
     {
         String contents(doc->get(field));
@@ -158,31 +158,32 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"Field " + field + L" in document is not stored and cannot be analyzed"));
         return getTokenStream(field, contents, analyzer);
     }
-    
+
     TokenStreamPtr TokenSources::getTokenStream(const String& field, const String& contents, AnalyzerPtr analyzer)
     {
         return analyzer->tokenStream(field, newLucene<StringReader>(contents));
     }
-    
+
     StoredTokenStream::StoredTokenStream(Collection<TokenPtr> tokens)
     {
         this->tokens = tokens;
-        this->termAtt = addAttribute<TermAttribute>();
+        this->termAtt = addAttribute<CharTermAttribute>();
         this->offsetAtt = addAttribute<OffsetAttribute>();
     }
-    
+
     StoredTokenStream::~StoredTokenStream()
     {
     }
-    
+
     bool StoredTokenStream::incrementToken()
     {
         if (currentToken >= tokens.size())
             return false;
         clearAttributes();
         TokenPtr token(tokens[currentToken++]);
-        termAtt->setTermBuffer(token->term());
+        termAtt->setEmpty()->append(token);
         offsetAtt->setOffset(token->startOffset(), token->endOffset());
         return true;
     }
 }
+

@@ -10,87 +10,114 @@
 #include "StandardFilter.h"
 #include "LowerCaseFilter.h"
 #include "StopFilter.h"
+#include "KeywordMarkerFilter.h"
 #include "GermanStemFilter.h"
+#include "SnowballFilter.h"
 
 namespace Lucene
 {
-    const wchar_t* GermanAnalyzer::_GERMAN_STOP_WORDS[] = 
+    const wchar_t* GermanAnalyzer::_GERMAN_STOP_WORDS_30[] =
     {
-        L"einer", L"eine", L"eines", L"einem", L"einen", L"der", L"die", 
-        L"das", L"dass", L"da\x00df", L"du", L"er", L"sie", L"es", L"was", 
-        L"wer", L"wie", L"wir", L"und", L"oder", L"ohne", L"mit", L"am", 
+        L"einer", L"eine", L"eines", L"einem", L"einen", L"der", L"die",
+        L"das", L"dass", L"da\x00df", L"du", L"er", L"sie", L"es", L"was",
+        L"wer", L"wie", L"wir", L"und", L"oder", L"ohne", L"mit", L"am",
         L"im", L"in", L"aus", L"auf", L"ist", L"sein", L"war", L"wird",
-        L"ihr", L"ihre", L"ihres", L"als", L"f\x00fcr", L"von", L"mit", 
-        L"dich", L"dir", L"mich", L"mir", L"mein", L"sein", L"kein", 
+        L"ihr", L"ihre", L"ihres", L"als", L"f\x00fcr", L"von", L"mit",
+        L"dich", L"dir", L"mich", L"mir", L"mein", L"sein", L"kein",
         L"durch", L"wegen", L"wird"
     };
-    
-    GermanAnalyzer::GermanAnalyzer(LuceneVersion::Version matchVersion)
+
+    /// From svn.tartarus.org/snowball/trunk/website/algorithms/german/stop.txt
+    /// This file is distributed under the BSD License.
+    const wchar_t* GermanAnalyzer::_GERMAN_STOP_WORDS_DEFAULT[] =
     {
-        this->stopSet = getDefaultStopSet();
-        this->matchVersion = matchVersion;
+        L"aber", L"alle", L"allem", L"allen", L"aller", L"alles", L"als",
+        L"also", L"am", L"an", L"ander", L"andere", L"anderem", L"anderen",
+        L"anderer", L"anderes", L"anderm", L"andern", L"anderr", L"anders",
+        L"auch", L"auf", L"aus", L"bei", L"bin", L"bis", L"bist", L"da",
+        L"damit", L"dann", L"der", L"den", L"des", L"dem", L"die", L"das",
+        L"da\x00df", L"derselbe", L"derselben", L"denselben", L"desselben",
+        L"demselben", L"dieselbe", L"dieselben", L"dasselbe", L"dazu", L"dein",
+        L"deine", L"deinem", L"deinen", L"deiner", L"deines", L"denn", L"derer",
+        L"dessen", L"dich", L"dir", L"du", L"dies", L"diese", L"diesem",
+        L"diesen", L"dieser", L"dieses", L"doch", L"dort", L"durch", L"ein",
+        L"eine", L"einem", L"einen", L"einer", L"eines", L"einig", L"einige",
+        L"einigem", L"einigen", L"einiger", L"einiges", L"einmal", L"er",
+        L"ihn", L"ihm", L"es", L"etwas", L"euer", L"eure", L"eurem", L"euren",
+        L"eurer", L"eures", L"f\x00fcr", L"gegen", L"gewesen", L"hab", L"habe",
+        L"haben", L"hat", L"hatte", L"hatten", L"hier", L"hin", L"hinter",
+        L"ich", L"mich", L"mir", L"ihr", L"ihre", L"ihrem", L"ihren", L"ihrer",
+        L"ihres", L"euch", L"im", L"in", L"indem", L"ins", L"ist", L"jede",
+        L"jedem", L"jeden", L"jeder", L"jedes", L"jene", L"jenem", L"jenen",
+        L"jener", L"jenes", L"jetzt", L"kann", L"kein", L"keine", L"keinem",
+        L"keinen", L"keiner", L"keines", L"k\x00f6nnen", L"k\x00f6nnte",
+        L"machen", L"man", L"manche", L"manchem", L"manchen", L"mancher",
+        L"manches", L"mein", L"meine", L"meinem", L"meinen", L"meiner",
+        L"meines", L"mit", L"muss", L"musste", L"nach", L"nicht", L"nichts",
+        L"noch", L"nun", L"nur", L"ob", L"oder", L"ohne", L"sehr", L"sein",
+        L"seine", L"seinem", L"seinen", L"seiner", L"seines", L"selbst", L"sich",
+        L"sie", L"ihnen", L"sind", L"so", L"solche", L"solchem", L"solchen",
+        L"solcher", L"solches", L"soll", L"sollte", L"sondern", L"sonst",
+        L"\x00fcber", L"um", L"und", L"uns", L"unse", L"unsem", L"unsen",
+        L"unser", L"unses", L"unter", L"viel", L"vom", L"von", L"vor",
+        L"w\x00e4hrend", L"war", L"waren", L"warst", L"was", L"weg", L"weil",
+        L"weiter", L"welche", L"welchem", L"welchen", L"welcher", L"welches",
+        L"wenn", L"werde", L"werden", L"wie", L"wieder", L"will", L"wir",
+        L"wird", L"wirst", L"wo", L"wollen", L"wollte", L"w\x00fcrde",
+        L"w\x00fcrden", L"zu", L"zum", L"zur", L"zwar", L"zwischen"
+    };
+
+    GermanAnalyzer::GermanAnalyzer(LuceneVersion::Version matchVersion) : StopwordAnalyzerBase(matchVersion, LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31) ? getDefaultStopSet() : getDefaultStopSet30())
+    {
     }
-    
-    GermanAnalyzer::GermanAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords)
+
+    GermanAnalyzer::GermanAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords) : StopwordAnalyzerBase(matchVersion, stopwords)
     {
-        this->stopSet = stopwords;
-        this->matchVersion = matchVersion;
     }
-    
-    GermanAnalyzer::GermanAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> exclusions)
+
+    GermanAnalyzer::GermanAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> exclusions) : StopwordAnalyzerBase(matchVersion, stopwords)
     {
-        this->stopSet = stopwords;
         this->exclusionSet = exclusions;
-        this->matchVersion = matchVersion;
     }
-    
+
     GermanAnalyzer::~GermanAnalyzer()
     {
     }
-    
+
+    const HashSet<String> GermanAnalyzer::getDefaultStopSet30()
+    {
+        static HashSet<String> stopSet;
+        if (!stopSet)
+            stopSet = HashSet<String>::newInstance(_GERMAN_STOP_WORDS_30, _GERMAN_STOP_WORDS_30 + SIZEOF_ARRAY(_GERMAN_STOP_WORDS_30));
+        return stopSet;
+    }
+
     const HashSet<String> GermanAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)
-            stopSet = HashSet<String>::newInstance(_GERMAN_STOP_WORDS, _GERMAN_STOP_WORDS + SIZEOF_ARRAY(_GERMAN_STOP_WORDS));
+            stopSet = HashSet<String>::newInstance(_GERMAN_STOP_WORDS_DEFAULT, _GERMAN_STOP_WORDS_DEFAULT + SIZEOF_ARRAY(_GERMAN_STOP_WORDS_DEFAULT));
         return stopSet;
     }
-    
+
     void GermanAnalyzer::setStemExclusionTable(HashSet<String> exclusions)
     {
         exclusionSet = exclusions;
         setPreviousTokenStream(LuceneObjectPtr()); // force a new stemmer to be created
     }
-    
-    TokenStreamPtr GermanAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+
+    TokenStreamComponentsPtr GermanAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
-        result = newLucene<StandardFilter>(result);
-        result = newLucene<LowerCaseFilter>(result);        
-        result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), result, stopSet);
-        result = newLucene<GermanStemFilter>(result, exclusionSet);
-        return result;
-    }
-    
-    TokenStreamPtr GermanAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        GermanAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<GermanAnalyzerSavedStreams>(getPreviousTokenStream()));
-        if (!streams)
-        {
-            streams = newLucene<GermanAnalyzerSavedStreams>();
-            streams->source = newLucene<StandardTokenizer>(matchVersion, reader);
-            streams->result = newLucene<StandardFilter>(streams->source);
-            streams->result = newLucene<LowerCaseFilter>(streams->result);
-            streams->result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), streams->result, stopSet);
-            streams->result = newLucene<GermanStemFilter>(streams->result, exclusionSet);
-            setPreviousTokenStream(streams);
-        }
+        TokenizerPtr source(newLucene<StandardTokenizer>(matchVersion, reader));
+        TokenStreamPtr result(newLucene<StandardFilter>(matchVersion, source));
+        result = newLucene<LowerCaseFilter>(matchVersion, result);
+        result = newLucene<StopFilter>(matchVersion, result, stopwords);
+        result = newLucene<KeywordMarkerFilter>(result, exclusionSet);
+        if (LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31))
+            result = newLucene<SnowballFilter>(result, L"german");
         else
-            streams->source->reset(reader);
-        return streams->result;
-    }
-    
-    GermanAnalyzerSavedStreams::~GermanAnalyzerSavedStreams()
-    {
+            result = newLucene<GermanStemFilter>(result);
+        return newLucene<TokenStreamComponents>(source, result);
     }
 }
+

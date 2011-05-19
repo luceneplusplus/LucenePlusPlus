@@ -26,6 +26,8 @@ namespace Lucene
     ///
     /// The problem is that when searching for C1, C1C2, C1C3, C4C2, C1C2C3 ... the 
     /// ChineseTokenizer works, but the ChineseTokenizer will not work.
+    ///
+    /// @deprecated Use {@link StandardTokenizer} instead, which has the same functionality.
     class LPPCONTRIBAPI ChineseTokenizer : public Tokenizer
     {
     public:
@@ -59,7 +61,7 @@ namespace Lucene
         /// I/O buffer, used to store the content of the input (one of the members of Tokenizer)
         CharArray ioBuffer;
         
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
         
         int32_t length;

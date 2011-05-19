@@ -23,7 +23,7 @@ namespace Lucene
     
     protected:
         ArabicNormalizerPtr normalizer;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
     
     public:
         virtual bool incrementToken();

@@ -1,10 +1,12 @@
 Lucene++
 ==========
 
-.. image:: https://github.com/downloads/luceneplusplus/LucenePlusPlus/LuceneSmall.png
-   :align: left
+.. image:: https://github.com/downloads/luceneplusplus/LucenePlusPlus/LuceneSmallT.png
+   :align: right
 
-Welcome to lucene++ version **3.0.3**.
+
+
+Welcome to lucene++ version **3.1.0**.
 
 Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine.
 

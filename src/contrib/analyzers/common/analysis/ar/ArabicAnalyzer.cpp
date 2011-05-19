@@ -11,6 +11,8 @@
 #include "StopFilter.h"
 #include "ArabicNormalizationFilter.h"
 #include "ArabicStemFilter.h"
+#include "StandardTokenizer.h"
+#include "KeywordMarkerFilter.h"
 #include "StringUtils.h"
 
 namespace Lucene
@@ -75,16 +77,17 @@ namespace Lucene
         0xd9, 0x85, 0xd9, 0x8a, 0xd8, 0xb9, 0x0a
     };
     
-    ArabicAnalyzer::ArabicAnalyzer(LuceneVersion::Version matchVersion)
+    ArabicAnalyzer::ArabicAnalyzer(LuceneVersion::Version matchVersion) : StopwordAnalyzerBase(matchVersion, getDefaultStopSet())
     {
-        this->stoptable = getDefaultStopSet();
-        this->matchVersion = matchVersion;
     }
     
-    ArabicAnalyzer::ArabicAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords)
+    ArabicAnalyzer::ArabicAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords) : StopwordAnalyzerBase(matchVersion, stopwords)
     {
-        this->stoptable = stopwords;
-        this->matchVersion = matchVersion;
+    }
+    
+    ArabicAnalyzer::ArabicAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> stemExclusionSet) : StopwordAnalyzerBase(matchVersion, stopwords)
+    {
+        this->stemExclusionSet = stemExclusionSet;
     }
     
     ArabicAnalyzer::~ArabicAnalyzer()
@@ -103,37 +106,19 @@ namespace Lucene
         return stopSet;
     }
     
-    TokenStreamPtr ArabicAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamComponentsPtr ArabicAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        TokenStreamPtr result = newLucene<ArabicLetterTokenizer>(reader);
-        result = newLucene<LowerCaseFilter>(result);
-        // the order here is important: the stopword list is not normalized
-        result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), result, stoptable);
-        result = newLucene<ArabicNormalizationFilter>(result);
-        result = newLucene<ArabicStemFilter>(result);
-        return result;
-    }
-    
-    TokenStreamPtr ArabicAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        ArabicAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ArabicAnalyzerSavedStreams>(getPreviousTokenStream()));
-        if (!streams)
-        {
-            streams = newLucene<ArabicAnalyzerSavedStreams>();
-            streams->source = newLucene<ArabicLetterTokenizer>(reader);
-            streams->result = newLucene<LowerCaseFilter>(streams->source);
-            // the order here is important: the stopword list is not normalized
-            streams->result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), streams->result, stoptable);
-            streams->result = newLucene<ArabicNormalizationFilter>(streams->result);
-            streams->result = newLucene<ArabicStemFilter>(streams->result);
-            setPreviousTokenStream(streams);
-        }
+        TokenizerPtr source;
+        if (LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31))
+            source = newLucene<StandardTokenizer>(matchVersion, reader);
         else
-            streams->source->reset(reader);
-        return streams->result;
-    }
-    
-    ArabicAnalyzerSavedStreams::~ArabicAnalyzerSavedStreams()
-    {
+            source = newLucene<ArabicLetterTokenizer>(matchVersion, reader);
+        TokenStreamPtr result(newLucene<LowerCaseFilter>(matchVersion, source));
+        // the order here is important: the stopword list is not normalized
+        result = newLucene<StopFilter>(matchVersion, result, stopwords);
+        result = newLucene<ArabicNormalizationFilter>(result);
+        if (!stemExclusionSet.empty())
+            result = newLucene<KeywordMarkerFilter>(result, stemExclusionSet);
+        return newLucene<TokenStreamComponents>(source, newLucene<ArabicStemFilter>(result));
     }
 }

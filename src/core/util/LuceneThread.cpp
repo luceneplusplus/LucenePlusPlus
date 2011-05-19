@@ -113,9 +113,9 @@ namespace Lucene
     int64_t LuceneThread::currentId()
     {
         #if defined(_WIN32) || defined(_WIN64)
-        return GetCurrentThreadId();
+        return (int64_t)GetCurrentThreadId();
         #else
-        return pthread_self();
+        return (int64_t)pthread_self();
         #endif
     }
     

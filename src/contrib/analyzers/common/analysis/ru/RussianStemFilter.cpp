@@ -7,37 +7,43 @@
 #include "ContribInc.h"
 #include "RussianStemFilter.h"
 #include "RussianStemmer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
+#include "KeywordAttribute.h"
 
 namespace Lucene
 {
     RussianStemFilter::RussianStemFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         stemmer = newLucene<RussianStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
+        keywordAttr = addAttribute<KeywordAttribute>();
     }
-    
+
     RussianStemFilter::~RussianStemFilter()
     {
     }
-    
+
     bool RussianStemFilter::incrementToken()
     {
         if (input->incrementToken())
         {
-            String term(termAtt->term());
-            String s(stemmer->stem(term));
-            if (!s.empty() && s != term)
-                termAtt->setTermBuffer(s);
+            if (!keywordAttr->isKeyword())
+            {
+                String term(termAtt->toString());
+                String s(stemmer->stem(term));
+                if (!s.empty() && s != term)
+                    termAtt->setEmpty()->append(s);
+            }
             return true;
         }
         else
             return false;
     }
-    
+
     void RussianStemFilter::setStemmer(RussianStemmerPtr stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;
     }
 }
+

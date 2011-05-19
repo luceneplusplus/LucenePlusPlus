@@ -6,26 +6,26 @@
 
 #include "ContribInc.h"
 #include "RussianLowerCaseFilter.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "CharFolder.h"
 
 namespace Lucene
 {
     RussianLowerCaseFilter::RussianLowerCaseFilter(TokenStreamPtr input) : TokenFilter(input)
     {
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
     }
-    
+
     RussianLowerCaseFilter::~RussianLowerCaseFilter()
     {
     }
-    
+
     bool RussianLowerCaseFilter::incrementToken()
     {
         if (input->incrementToken())
         {
-            wchar_t* buffer = termAtt->termBufferArray();
-            int32_t length = termAtt->termLength();
+            wchar_t* buffer = termAtt->bufferArray();
+            int32_t length = termAtt->length();
             for (int32_t i = 0; i < length; ++i)
                 buffer[i] = CharFolder::toLower(buffer[i]);
             return true;
@@ -34,3 +34,4 @@ namespace Lucene
             return false;
     }
 }
+

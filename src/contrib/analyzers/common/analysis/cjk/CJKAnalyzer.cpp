@@ -22,16 +22,12 @@ namespace Lucene
         L"with", L"", L"www"
     };
     
-    CJKAnalyzer::CJKAnalyzer(LuceneVersion::Version matchVersion)
+    CJKAnalyzer::CJKAnalyzer(LuceneVersion::Version matchVersion) : StopwordAnalyzerBase(matchVersion, getDefaultStopSet())
     {
-        this->stoptable = getDefaultStopSet();
-        this->matchVersion = matchVersion;
     }
     
-    CJKAnalyzer::CJKAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords)
+    CJKAnalyzer::CJKAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords) : StopwordAnalyzerBase(matchVersion, stopwords)
     {
-        this->stoptable = stopwords;
-        this->matchVersion = matchVersion;
     }
     
     CJKAnalyzer::~CJKAnalyzer()
@@ -46,27 +42,9 @@ namespace Lucene
         return stopSet;
     }
     
-    TokenStreamPtr CJKAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamComponentsPtr CJKAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        return newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), newLucene<CJKTokenizer>(reader), stoptable);
-    }
-    
-    TokenStreamPtr CJKAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        CJKAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<CJKAnalyzerSavedStreams>(getPreviousTokenStream()));
-        if (!streams)
-        {
-            streams = newLucene<CJKAnalyzerSavedStreams>();
-            streams->source = newLucene<CJKTokenizer>(reader);
-            streams->result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), streams->source, stoptable);
-            setPreviousTokenStream(streams);
-        }
-        else
-            streams->source->reset(reader);
-        return streams->result;
-    }
-    
-    CJKAnalyzerSavedStreams::~CJKAnalyzerSavedStreams()
-    {
+        TokenizerPtr source(newLucene<CJKTokenizer>(reader));
+        return newLucene<TokenStreamComponents>(source, newLucene<StopFilter>(matchVersion, source, stopwords));
     }
 }

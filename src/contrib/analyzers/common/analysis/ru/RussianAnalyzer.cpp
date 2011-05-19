@@ -8,116 +8,158 @@
 #include "RussianAnalyzer.h"
 #include "RussianLetterTokenizer.h"
 #include "LowerCaseFilter.h"
+#include "StandardTokenizer.h"
+#include "StandardFilter.h"
 #include "StopFilter.h"
 #include "RussianStemFilter.h"
+#include "SnowballFilter.h"
+#include "KeywordMarkerFilter.h"
 #include "StringUtils.h"
 
 namespace Lucene
 {
-    /// Default Russian stopwords in UTF-8 format.
-    const uint8_t RussianAnalyzer::DEFAULT_STOPWORD_FILE[] = 
+    const wchar_t* RussianAnalyzer::_RUSSIAN_STOP_WORDS_30[] =
     {
-        0xd0, 0xb0, 0x0a, 0xd0, 0xb1, 0xd0, 0xb5, 0xd0, 0xb7, 0x0a, 0xd0, 0xb1, 0xd0, 0xbe, 0xd0, 0xbb, 
-        0xd0, 0xb5, 0xd0, 0xb5, 0x0a, 0xd0, 0xb1, 0xd1, 0x8b, 0x0a, 0xd0, 0xb1, 0xd1, 0x8b, 0xd0, 0xbb, 
-        0x0a, 0xd0, 0xb1, 0xd1, 0x8b, 0xd0, 0xbb, 0xd0, 0xb0, 0x0a, 0xd0, 0xb1, 0xd1, 0x8b, 0xd0, 0xbb, 
-        0xd0, 0xb8, 0x0a, 0xd0, 0xb1, 0xd1, 0x8b, 0xd0, 0xbb, 0xd0, 0xbe, 0x0a, 0xd0, 0xb1, 0xd1, 0x8b, 
-        0xd1, 0x82, 0xd1, 0x8c, 0x0a, 0xd0, 0xb2, 0x0a, 0xd0, 0xb2, 0xd0, 0xb0, 0xd0, 0xbc, 0x0a, 0xd0, 
-        0xb2, 0xd0, 0xb0, 0xd1, 0x81, 0x0a, 0xd0, 0xb2, 0xd0, 0xb5, 0xd1, 0x81, 0xd1, 0x8c, 0x0a, 0xd0, 
-        0xb2, 0xd0, 0xbe, 0x0a, 0xd0, 0xb2, 0xd0, 0xbe, 0xd1, 0x82, 0x0a, 0xd0, 0xb2, 0xd1, 0x81, 0xd0, 
-        0xb5, 0x0a, 0xd0, 0xb2, 0xd1, 0x81, 0xd0, 0xb5, 0xd0, 0xb3, 0xd0, 0xbe, 0x0a, 0xd0, 0xb2, 0xd1, 
-        0x81, 0xd0, 0xb5, 0xd1, 0x85, 0x0a, 0xd0, 0xb2, 0xd1, 0x8b, 0x0a, 0xd0, 0xb3, 0xd0, 0xb4, 0xd0, 
-        0xb5, 0x0a, 0xd0, 0xb4, 0xd0, 0xb0, 0x0a, 0xd0, 0xb4, 0xd0, 0xb0, 0xd0, 0xb6, 0xd0, 0xb5, 0x0a, 
-        0xd0, 0xb4, 0xd0, 0xbb, 0xd1, 0x8f, 0x0a, 0xd0, 0xb4, 0xd0, 0xbe, 0x0a, 0xd0, 0xb5, 0xd0, 0xb3, 
-        0xd0, 0xbe, 0x0a, 0xd0, 0xb5, 0xd0, 0xb5, 0x0a, 0xd0, 0xb5, 0xd0, 0xb9, 0x0a, 0xd0, 0xb5, 0xd1, 
-        0x8e, 0x0a, 0xd0, 0xb5, 0xd1, 0x81, 0xd0, 0xbb, 0xd0, 0xb8, 0x0a, 0xd0, 0xb5, 0xd1, 0x81, 0xd1, 
-        0x82, 0xd1, 0x8c, 0x0a, 0xd0, 0xb5, 0xd1, 0x89, 0xd0, 0xb5, 0x0a, 0xd0, 0xb6, 0xd0, 0xb5, 0x0a, 
-        0xd0, 0xb7, 0xd0, 0xb0, 0x0a, 0xd0, 0xb7, 0xd0, 0xb4, 0xd0, 0xb5, 0xd1, 0x81, 0xd1, 0x8c, 0x0a, 
-        0xd0, 0xb8, 0x0a, 0xd0, 0xb8, 0xd0, 0xb7, 0x0a, 0xd0, 0xb8, 0xd0, 0xbb, 0xd0, 0xb8, 0x0a, 0xd0, 
-        0xb8, 0xd0, 0xbc, 0x0a, 0xd0, 0xb8, 0xd1, 0x85, 0x0a, 0xd0, 0xba, 0x0a, 0xd0, 0xba, 0xd0, 0xb0, 
-        0xd0, 0xba, 0x0a, 0xd0, 0xba, 0xd0, 0xbe, 0x0a, 0xd0, 0xba, 0xd0, 0xbe, 0xd0, 0xb3, 0xd0, 0xb4, 
-        0xd0, 0xb0, 0x0a, 0xd0, 0xba, 0xd1, 0x82, 0xd0, 0xbe, 0x0a, 0xd0, 0xbb, 0xd0, 0xb8, 0x0a, 0xd0, 
-        0xbb, 0xd0, 0xb8, 0xd0, 0xb1, 0xd0, 0xbe, 0x0a, 0xd0, 0xbc, 0xd0, 0xbd, 0xd0, 0xb5, 0x0a, 0xd0, 
-        0xbc, 0xd0, 0xbe, 0xd0, 0xb6, 0xd0, 0xb5, 0xd1, 0x82, 0x0a, 0xd0, 0xbc, 0xd1, 0x8b, 0x0a, 0xd0, 
-        0xbd, 0xd0, 0xb0, 0x0a, 0xd0, 0xbd, 0xd0, 0xb0, 0xd0, 0xb4, 0xd0, 0xbe, 0x0a, 0xd0, 0xbd, 0xd0, 
-        0xb0, 0xd1, 0x88, 0x0a, 0xd0, 0xbd, 0xd0, 0xb5, 0x0a, 0xd0, 0xbd, 0xd0, 0xb5, 0xd0, 0xb3, 0xd0, 
-        0xbe, 0x0a, 0xd0, 0xbd, 0xd0, 0xb5, 0xd0, 0xb5, 0x0a, 0xd0, 0xbd, 0xd0, 0xb5, 0xd1, 0x82, 0x0a, 
-        0xd0, 0xbd, 0xd0, 0xb8, 0x0a, 0xd0, 0xbd, 0xd0, 0xb8, 0xd1, 0x85, 0x0a, 0xd0, 0xbd, 0xd0, 0xbe, 
-        0x0a, 0xd0, 0xbd, 0xd1, 0x83, 0x0a, 0xd0, 0xbe, 0x0a, 0xd0, 0xbe, 0xd0, 0xb1, 0x0a, 0xd0, 0xbe, 
-        0xd0, 0xb4, 0xd0, 0xbd, 0xd0, 0xb0, 0xd0, 0xba, 0xd0, 0xbe, 0x0a, 0xd0, 0xbe, 0xd0, 0xbd, 0x0a, 
-        0xd0, 0xbe, 0xd0, 0xbd, 0xd0, 0xb0, 0x0a, 0xd0, 0xbe, 0xd0, 0xbd, 0xd0, 0xb8, 0x0a, 0xd0, 0xbe, 
-        0xd0, 0xbd, 0xd0, 0xbe, 0x0a, 0xd0, 0xbe, 0xd1, 0x82, 0x0a, 0xd0, 0xbe, 0xd1, 0x87, 0xd0, 0xb5, 
-        0xd0, 0xbd, 0xd1, 0x8c, 0x0a, 0xd0, 0xbf, 0xd0, 0xbe, 0x0a, 0xd0, 0xbf, 0xd0, 0xbe, 0xd0, 0xb4, 
-        0x0a, 0xd0, 0xbf, 0xd1, 0x80, 0xd0, 0xb8, 0x0a, 0xd1, 0x81, 0x0a, 0xd1, 0x81, 0xd0, 0xbe, 0x0a, 
-        0xd1, 0x82, 0xd0, 0xb0, 0xd0, 0xba, 0x0a, 0xd1, 0x82, 0xd0, 0xb0, 0xd0, 0xba, 0xd0, 0xb6, 0xd0, 
-        0xb5, 0x0a, 0xd1, 0x82, 0xd0, 0xb0, 0xd0, 0xba, 0xd0, 0xbe, 0xd0, 0xb9, 0x0a, 0xd1, 0x82, 0xd0, 
-        0xb0, 0xd0, 0xbc, 0x0a, 0xd1, 0x82, 0xd0, 0xb5, 0x0a, 0xd1, 0x82, 0xd0, 0xb5, 0xd0, 0xbc, 0x0a, 
-        0xd1, 0x82, 0xd0, 0xbe, 0x0a, 0xd1, 0x82, 0xd0, 0xbe, 0xd0, 0xb3, 0xd0, 0xbe, 0x0a, 0xd1, 0x82, 
-        0xd0, 0xbe, 0xd0, 0xb6, 0xd0, 0xb5, 0x0a, 0xd1, 0x82, 0xd0, 0xbe, 0xd0, 0xb9, 0x0a, 0xd1, 0x82, 
-        0xd0, 0xbe, 0xd0, 0xbb, 0xd1, 0x8c, 0xd0, 0xba, 0xd0, 0xbe, 0x0a, 0xd1, 0x82, 0xd0, 0xbe, 0xd0, 
-        0xbc, 0x0a, 0xd1, 0x82, 0xd1, 0x8b, 0x0a, 0xd1, 0x83, 0x0a, 0xd1, 0x83, 0xd0, 0xb6, 0xd0, 0xb5, 
-        0x0a, 0xd1, 0x85, 0xd0, 0xbe, 0xd1, 0x82, 0xd1, 0x8f, 0x0a, 0xd1, 0x87, 0xd0, 0xb5, 0xd0, 0xb3, 
-        0xd0, 0xbe, 0x0a, 0xd1, 0x87, 0xd0, 0xb5, 0xd0, 0xb9, 0x0a, 0xd1, 0x87, 0xd0, 0xb5, 0xd0, 0xbc, 
-        0x0a, 0xd1, 0x87, 0xd1, 0x82, 0xd0, 0xbe, 0x0a, 0xd1, 0x87, 0xd1, 0x82, 0xd0, 0xbe, 0xd0, 0xb1, 
-        0xd1, 0x8b, 0x0a, 0xd1, 0x87, 0xd1, 0x8c, 0xd0, 0xb5, 0x0a, 0xd1, 0x87, 0xd1, 0x8c, 0xd1, 0x8f, 
-        0x0a, 0xd1, 0x8d, 0xd1, 0x82, 0xd0, 0xb0, 0x0a, 0xd1, 0x8d, 0xd1, 0x82, 0xd0, 0xb8, 0x0a, 0xd1, 
-        0x8d, 0xd1, 0x82, 0xd0, 0xbe, 0x0a, 0xd1, 0x8f, 0x0a
+        L"\x0430", L"\x0431\x0435\x0437", L"\x0431\x043e\x043b\x0435\x0435", L"\x0431\x044b",
+        L"\x0431\x044b\x043b", L"\x0431\x044b\x043b\x0430", L"\x0431\x044b\x043b\x0438",
+        L"\x0431\x044b\x043b\x043e", L"\x0431\x044b\x0442\x044c", L"\x0432",
+        L"\x0432\x0430\x043c", L"\x0432\x0430\x0441", L"\x0432\x0435\x0441\x044c",
+        L"\x0432\x043e", L"\x0432\x043e\x0442", L"\x0432\x0441\x0435", L"\x0432\x0441\x0435\x0433\x043e",
+        L"\x0432\x0441\x0435\x0445", L"\x0432\x044b", L"\x0433\x0434\x0435", L"\x0434\x0430",
+        L"\x0434\x0430\x0436\x0435", L"\x0434\x043b\x044f", L"\x0434\x043e", L"\x0435\x0433\x043e",
+        L"\x0435\x0435", L"\x0435\x0439", L"\x0435\x044e", L"\x0435\x0441\x043b\x0438",
+        L"\x0435\x0441\x0442\x044c", L"\x0435\x0449\x0435", L"\x0436\x0435", L"\x0437\x0430",
+        L"\x0437\x0434\x0435\x0441\x044c", L"\x0438", L"\x0438\x0437", L"\x0438\x043b\x0438",
+        L"\x0438\x043c", L"\x0438\x0445", L"\x043a", L"\x043a\x0430\x043a", L"\x043a\x043e",
+        L"\x043a\x043e\x0433\x0434\x0430", L"\x043a\x0442\x043e", L"\x043b\x0438",
+        L"\x043b\x0438\x0431\x043e", L"\x043c\x043d\x0435", L"\x043c\x043e\x0436\x0435\x0442",
+        L"\x043c\x044b", L"\x043d\x0430", L"\x043d\x0430\x0434\x043e", L"\x043d\x0430\x0448",
+        L"\x043d\x0435", L"\x043d\x0435\x0433\x043e", L"\x043d\x0435\x0435", L"\x043d\x0435\x0442",
+        L"\x043d\x0438", L"\x043d\x0438\x0445", L"\x043d\x043e", L"\x043d\x0443", L"\x043e",
+        L"\x043e\x0431", L"\x043e\x0434\x043d\x0430\x043a\x043e", L"\x043e\x043d",
+        L"\x043e\x043d\x0430", L"\x043e\x043d\x0438", L"\x043e\x043d\x043e", L"\x043e\x0442",
+        L"\x043e\x0447\x0435\x043d\x044c", L"\x043f\x043e", L"\x043f\x043e\x0434", L"\x043f\x0440\x0438",
+        L"\x0441", L"\x0441\x043e", L"\x0442\x0430\x043a", L"\x0442\x0430\x043a\x0436\x0435",
+        L"\x0442\x0430\x043a\x043e\x0439", L"\x0442\x0430\x043c", L"\x0442\x0435", L"\x0442\x0435\x043c",
+        L"\x0442\x043e", L"\x0442\x043e\x0433\x043e", L"\x0442\x043e\x0436\x0435", L"\x0442\x043e\x0439",
+        L"\x0442\x043e\x043b\x044c\x043a\x043e", L"\x0442\x043e\x043c", L"\x0442\x044b", L"\x0443",
+        L"\x0443\x0436\x0435", L"\x0445\x043e\x0442\x044f", L"\x0447\x0435\x0433\x043e",
+        L"\x0447\x0435\x0439", L"\x0447\x0435\x043c", L"\x0447\x0442\x043e",
+        L"\x0447\x0442\x043e\x0431\x044b", L"\x0447\x044c\x0435", L"\x0447\x044c\x044f",
+        L"\x044d\x0442\x0430", L"\x044d\x0442\x0438", L"\x044d\x0442\x043e", L"\x044f"
     };
-    
-    RussianAnalyzer::RussianAnalyzer(LuceneVersion::Version matchVersion)
+
+    /// From svn.tartarus.org/snowball/trunk/website/algorithms/russian/stop.txt
+    /// This file is distributed under the BSD License.
+    const wchar_t* RussianAnalyzer::_RUSSIAN_STOP_WORDS_DEFAULT[] =
     {
-        this->stopSet = getDefaultStopSet();
-        this->matchVersion = matchVersion;
-    }
-    
-    RussianAnalyzer::RussianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords)
+        L"\x0438", L"\x0432", L"\x0432\x043e", L"\x043d\x0435", L"\x0447\x0442\x043e", L"\x043e\x043d",
+        L"\x043d\x0430", L"\x044f", L"\x0441", L"\x0441\x043e", L"\x043a\x0430\x043a", L"\x0430",
+        L"\x0442\x043e", L"\x0432\x0441\x0435", L"\x043e\x043d\x0430", L"\x0442\x0430\x043a",
+        L"\x0435\x0433\x043e", L"\x043d\x043e", L"\x0434\x0430", L"\x0442\x044b", L"\x043a", L"\x0443",
+        L"\x0436\x0435", L"\x0432\x044b", L"\x0437\x0430", L"\x0431\x044b", L"\x043f\x043e",
+        L"\x0442\x043e\x043b\x044c", L"\x0435\x0435", L"\x043c\x043d\x0435", L"\x0431\x044b\x043b\x043e",
+        L"\x0432\x043e\x0442", L"\x043e\x0442", L"\x043c\x0435\x043d\x044f", L"\x0435\x0449\x0435",
+        L"\x043d\x0435\x0442", L"\x043e", L"\x0438\x0437", L"\x0435\x043c\x0443",
+        L"\x0442\x0435\x043f\x0435\x0440\x044c", L"\x043a\x043e\x0433\x0434\x0430",
+        L"\x0434\x0430\x0436\x0435", L"\x043d\x0443", L"\x0432\x0434\x0440\x0443\x0433", L"\x043b\x0438",
+        L"\x0435\x0441\x043b\x0438", L"\x0443\x0436\x0435", L"\x0438\x043b\x0438", L"\x043d\x0438",
+        L"\x0431\x044b\x0442\x044c", L"\x0431\x044b\x043b", L"\x043d\x0435\x0433\x043e", L"\x0434\x043e",
+        L"\x0432\x0430\x0441", L"\x043d\x0438\x0431\x0443\x0434\x044c", L"\x043e\x043f\x044f\x0442\x044c",
+        L"\x0443\x0436", L"\x0432\x0430\x043c", L"\x0441\x043a\x0430\x0437\x0430\x043b",
+        L"\x0432\x0435\x0434\x044c", L"\x0442\x0430\x043c", L"\x043f\x043e\x0442\x043e\x043c",
+        L"\x0441\x0435\x0431\x044f", L"\x043d\x0438\x0447\x0435\x0433\x043e", L"\x0435\x0439",
+        L"\x043c\x043e\x0436\x0435\x0442", L"\x043e\x043d\x0438", L"\x0442\x0443\x0442",
+        L"\x0433\x0434\x0435", L"\x0435\x0441\x0442\x044c", L"\x043d\x0430\x0434\x043e",
+        L"\x043d\x0435\x0439", L"\x0434\x043b\x044f", L"\x043c\x044b", L"\x0442\x0435\x0431\x044f",
+        L"\x0438\x0445", L"\x0447\x0435\x043c", L"\x0431\x044b\x043b\x0430", L"\x0441\x0430\x043c",
+        L"\x0447\x0442\x043e\x0431", L"\x0431\x0435\x0437", L"\x0431\x0443\x0434\x0442\x043e",
+        L"\x0447\x0435\x043b\x043e\x0432\x0435\x043a", L"\x0447\x0435\x0433\x043e", L"\x0440\x0430\x0437",
+        L"\x0442\x043e\x0436\x0435", L"\x0441\x0435\x0431\x0435", L"\x043f\x043e\x0434",
+        L"\x0436\x0438\x0437\x043d\x044c", L"\x0431\x0443\x0434\x0435\x0442", L"\x0436",
+        L"\x0442\x043e\x0433\x0434\x0430", L"\x043a\x0442\x043e", L"\x044d\x0442\x043e\x0442",
+        L"\x0433\x043e\x0432\x043e\x0440\x0438\x043b", L"\x0442\x043e\x0433\x043e",
+        L"\x043f\x043e\x0442\x043e\x043c\x0443", L"\x044d\x0442\x043e\x0433\x043e",
+        L"\x043a\x0430\x043a\x043e\x0439", L"\x0441\x043e\x0432\x0441\x0435\x043c", L"\x043d\x0438\x043c",
+        L"\x0437\x0434\x0435\x0441\x044c", L"\x044d\x0442\x043e\x043c", L"\x043e\x0434\x0438\x043d",
+        L"\x043f\x043e\x0447\x0442\x0438", L"\x043c\x043e\x0439", L"\x0442\x0435\x043c",
+        L"\x0447\x0442\x043e\x0431\x044b", L"\x043d\x0435\x0435", L"\x043a\x0430\x0436\x0435\x0442\x0441\x044f",
+        L"\x0441\x0435\x0439\x0447\x0430\x0441", L"\x0431\x044b\x043b\x0438", L"\x043a\x0443\x0434\x0430",
+        L"\x0437\x0430\x0447\x0435\x043c", L"\x0441\x043a\x0430\x0437\x0430\x0442\x044c",
+        L"\x0432\x0441\x0435\x0445", L"\x043d\x0438\x043a\x043e\x0433\x0434\x0430",
+        L"\x0441\x0435\x0433\x043e\x0434\x043d\x044f", L"\x043c\x043e\x0436\x043d\x043e",
+        L"\x043f\x0440\x0438", L"\x043d\x0430\x043a\x043e\x043d\x0435\x0446", L"\x0434\x0432\x0430",
+        L"\x043e\x0431", L"\x0434\x0440\x0443\x0433\x043e\x0439", L"\x0445\x043e\x0442\x044c",
+        L"\x043f\x043e\x0441\x043b\x0435", L"\x043d\x0430\x0434", L"\x0431\x043e\x043b\x044c\x0448\x0435",
+        L"\x0442\x043e\x0442", L"\x0447\x0435\x0440\x0435\x0437", L"\x044d\x0442\x0438",
+        L"\x043d\x0430\x0441", L"\x043f\x0440\x043e", L"\x0432\x0441\x0435\x0433\x043e",
+        L"\x043d\x0438\x0445", L"\x043a\x0430\x043a\x0430\x044f", L"\x043c\x043d\x043e\x0433\x043e",
+        L"\x0440\x0430\x0437\x0432\x0435", L"\x0441\x043a\x0430\x0437\x0430\x043b\x0430",
+        L"\x0442\x0440\x0438", L"\x044d\x0442\x0443", L"\x043c\x043e\x044f",
+        L"\x0432\x043f\x0440\x043e\x0447\x0435\x043c", L"\x0445\x043e\x0440\x043e\x0448\x043e",
+        L"\x0441\x0432\x043e\x044e", L"\x044d\x0442\x043e\x0439", L"\x043f\x0435\x0440\x0435\x0434",
+        L"\x0438\x043d\x043e\x0433\x0434\x0430", L"\x043b\x0443\x0447\x0448\x0435",
+        L"\x0447\x0443\x0442\x044c", L"\x0442\x043e\x043c", L"\x043d\x0435\x043b\x044c\x0437\x044f",
+        L"\x0442\x0430\x043a\x043e\x0439", L"\x0438\x043c", L"\x0431\x043e\x043b\x0435\x0435",
+        L"\x0432\x0441\x0435\x0433\x0434\x0430", L"\x043a\x043e\x043d\x0435\x0447\x043d\x043e",
+        L"\x0432\x0441\x044e", L"\x043c\x0435\x0436\x0434\x0443"
+    };
+
+    RussianAnalyzer::RussianAnalyzer(LuceneVersion::Version matchVersion) : StopwordAnalyzerBase(matchVersion, LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31) ? getDefaultStopSet() : getDefaultStopSet30())
     {
-        this->stopSet = stopwords;
-        this->matchVersion = matchVersion;
     }
-    
+
+    RussianAnalyzer::RussianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords) : StopwordAnalyzerBase(matchVersion, stopwords)
+    {
+    }
+
+    RussianAnalyzer::RussianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> exclusions) : StopwordAnalyzerBase(matchVersion, stopwords)
+    {
+        this->exclusionSet = exclusions;
+    }
+
     RussianAnalyzer::~RussianAnalyzer()
     {
     }
-    
+
+    const HashSet<String> RussianAnalyzer::getDefaultStopSet30()
+    {
+        static HashSet<String> stopSet;
+        if (!stopSet)
+            stopSet = HashSet<String>::newInstance(_RUSSIAN_STOP_WORDS_30, _RUSSIAN_STOP_WORDS_30 + SIZEOF_ARRAY(_RUSSIAN_STOP_WORDS_30));
+        return stopSet;
+    }
+
     const HashSet<String> RussianAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
         if (!stopSet)
-        {
-            String stopWords(UTF8_TO_STRING(DEFAULT_STOPWORD_FILE));
-            Collection<String> words(StringUtils::split(stopWords, L"\n"));
-            stopSet = HashSet<String>::newInstance(words.begin(), words.end());
-        }
+            stopSet = HashSet<String>::newInstance(_RUSSIAN_STOP_WORDS_DEFAULT, _RUSSIAN_STOP_WORDS_DEFAULT + SIZEOF_ARRAY(_RUSSIAN_STOP_WORDS_DEFAULT));
         return stopSet;
     }
-    
-    TokenStreamPtr RussianAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+
+    TokenStreamComponentsPtr RussianAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        TokenStreamPtr result = newLucene<RussianLetterTokenizer>(reader);
-        result = newLucene<LowerCaseFilter>(result);
-        result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), result, stopSet);
-        result = newLucene<RussianStemFilter>(result);
-        return result;
-    }
-    
-    TokenStreamPtr RussianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        RussianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<RussianAnalyzerSavedStreams>(getPreviousTokenStream()));
-        if (!streams)
+        if (LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31))
         {
-            streams = newLucene<RussianAnalyzerSavedStreams>();
-            streams->source = newLucene<RussianLetterTokenizer>(reader);
-            streams->result = newLucene<LowerCaseFilter>(streams->source);
-            streams->result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), streams->result, stopSet);
-            streams->result = newLucene<RussianStemFilter>(streams->result);
-            setPreviousTokenStream(streams);
+            TokenizerPtr source(newLucene<StandardTokenizer>(matchVersion, reader));
+            TokenStreamPtr result(newLucene<StandardFilter>(matchVersion, source));
+            result = newLucene<LowerCaseFilter>(matchVersion, result);
+            result = newLucene<StopFilter>(matchVersion, result, stopwords);
+            if (!exclusionSet.empty())
+                result = newLucene<KeywordMarkerFilter>(result, exclusionSet);
+            result = newLucene<SnowballFilter>(result, L"russian");
+            return newLucene<TokenStreamComponents>(source, result);
         }
         else
-            streams->source->reset(reader);
-        return streams->result;
-    }
-    
-    RussianAnalyzerSavedStreams::~RussianAnalyzerSavedStreams()
-    {
+        {
+            TokenizerPtr source(newLucene<RussianLetterTokenizer>(matchVersion, reader));
+            TokenStreamPtr result(newLucene<LowerCaseFilter>(matchVersion, source));
+            result = newLucene<StopFilter>(matchVersion, result, stopwords);
+            if (!exclusionSet.empty())
+                result = newLucene<KeywordMarkerFilter>(result, exclusionSet);
+            return newLucene<TokenStreamComponents>(source, newLucene<RussianStemFilter>(result));
+      }
     }
 }
+

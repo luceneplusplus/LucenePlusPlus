@@ -7,14 +7,16 @@
 #include "ContribInc.h"
 #include "ArabicStemFilter.h"
 #include "ArabicStemmer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
+#include "KeywordAttribute.h"
 
 namespace Lucene
 {
     ArabicStemFilter::ArabicStemFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         stemmer = newLucene<ArabicStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
+        keywordAttr = addAttribute<KeywordAttribute>();
     }
     
     ArabicStemFilter::~ArabicStemFilter()
@@ -25,8 +27,11 @@ namespace Lucene
     {
         if (input->incrementToken())
         {
-            int32_t newlen = stemmer->stem(termAtt->termBuffer().get(), termAtt->termLength());
-            termAtt->setTermLength(newlen);
+            if (!keywordAttr->isKeyword())
+            {
+                int32_t newlen = stemmer->stem(termAtt->buffer().get(), termAtt->length());
+                termAtt->setLength(newlen);
+            }
             return true;
         }
         else

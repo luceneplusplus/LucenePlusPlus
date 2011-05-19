@@ -12,33 +12,44 @@
 
 namespace Lucene
 {
-    /// A {@link TokenFilter} that stems Russian words. 
+    /// A {@link TokenFilter} that stems Russian words.
     ///
     /// The implementation was inspired by GermanStemFilter.
     ///
-    /// The input should be filtered by {@link LowerCaseFilter} before passing it to RussianStemFilter,
-    /// because RussianStemFilter only works with lowercase characters.
+    /// The input should be filtered by {@link LowerCaseFilter} before passing
+    /// it to RussianStemFilter, because RussianStemFilter only works with lowercase
+    /// characters.
+    ///
+    /// To prevent terms from being stemmed use an instance of {@link
+    /// KeywordMarkerFilter} or a custom {@link TokenFilter} that sets the {@link
+    /// KeywordAttribute} before this {@link TokenStream}.
+    ///
+    /// @see KeywordMarkerFilter
+    /// @deprecated Use {@link SnowballFilter} with {@link RussianStemmer} instead,
+    /// which has the same functionality.
     class LPPCONTRIBAPI RussianStemFilter : public TokenFilter
     {
     public:
         RussianStemFilter(TokenStreamPtr input);
-        
+
         virtual ~RussianStemFilter();
-        
+
         LUCENE_CLASS(RussianStemFilter);
-    
+
     protected:
         /// {@link RussianStemmer} in use by this filter.
         RussianStemmerPtr stemmer;
-        
-        TermAttributePtr termAtt;
-    
+
+        CharTermAttributePtr termAtt;
+        KeywordAttributePtr keywordAttr;
+
     public:
         virtual bool incrementToken();
-        
+
         /// Set a alternative/custom {@link RussianStemmer} for this filter.
         void setStemmer(RussianStemmerPtr stemmer);
     };
 }
 
 #endif
+

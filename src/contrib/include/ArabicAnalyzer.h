@@ -8,7 +8,7 @@
 #define ARABICANALYZER_H
 
 #include "LuceneContrib.h"
-#include "Analyzer.h"
+#include "StopwordAnalyzerBase.h"
 
 namespace Lucene
 {
@@ -25,7 +25,7 @@ namespace Lucene
     /// <li> {@link ArabicStemFilter}: Arabic light stemming.
     /// <li> Arabic stop words file: a set of default Arabic stop words.
     /// </ul>
-    class LPPCONTRIBAPI ArabicAnalyzer : public Analyzer
+    class LPPCONTRIBAPI ArabicAnalyzer : public StopwordAnalyzerBase
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
@@ -33,6 +33,14 @@ namespace Lucene
         
         /// Builds an analyzer with the given stop words.
         ArabicAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords);
+        
+        /// Builds an analyzer with the given stop words. If a none-empty stem exclusion set is
+        /// provided this analyzer will add a {@link KeywordMarkerFilter} before {@link 
+        /// ArabicStemFilter}.
+        /// @param matchVersion lucene compatibility version
+        /// @param stopwords a stopword set
+        /// @param stemExclusionSet a set of terms not to be stemmed
+        ArabicAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> stemExclusionSet);
         
         virtual ~ArabicAnalyzer();
         
@@ -45,42 +53,19 @@ namespace Lucene
         /// The stopword list is BSD-Licensed.
         static const uint8_t DEFAULT_STOPWORD_FILE[];
     
-    protected:
-        /// Contains the stopwords used with the StopFilter.
-        HashSet<String> stoptable;
-        
-        LuceneVersion::Version matchVersion;
+    private:
+        HashSet<String> stemExclusionSet;
     
     public:
         /// Returns an unmodifiable instance of the default stop-words set.
         static const HashSet<String> getDefaultStopSet();
-        
-        /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from an {@link ArabicLetterTokenizer} filtered with
-        /// {@link LowerCaseFilter}, {@link StopFilter}, {@link ArabicNormalizationFilter} and 
-        /// {@link ArabicStemFilter}.
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        
-        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the 
-        /// provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from an {@link ArabicLetterTokenizer} filtered with
-        /// {@link LowerCaseFilter}, {@link StopFilter}, {@link ArabicNormalizationFilter} and 
-        /// {@link ArabicStemFilter}.
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
-    };
     
-    class LPPCONTRIBAPI ArabicAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~ArabicAnalyzerSavedStreams();
-        
-        LUCENE_CLASS(ArabicAnalyzerSavedStreams);
-
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
+    protected:
+        /// Creates {@link TokenStreamComponents} used to tokenize all the text in the provided {@link Reader}.
+        /// @return {@link TokenStreamComponents} built from an {@link StandardTokenizer} filtered with {@link 
+        /// LowerCaseFilter}, {@link StopFilter}, {@link ArabicNormalizationFilter}, {@link KeywordMarkerFilter}
+        /// if a stem exclusion set is provided and {@link ArabicStemFilter}.
+        virtual TokenStreamComponentsPtr createComponents(const String& fieldName, ReaderPtr reader);
     };
 }
 

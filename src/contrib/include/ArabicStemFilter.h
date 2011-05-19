@@ -13,6 +13,12 @@
 namespace Lucene
 {
     /// A {@link TokenFilter} that applies {@link ArabicStemmer} to stem Arabic words.
+    ///
+    /// To prevent terms from being stemmed use an instance of {@link KeywordMarkerFilter} 
+    /// or a custom {@link TokenFilter} that sets the {@link KeywordAttribute} before this 
+    /// {@link TokenStream}.
+    /// 
+    /// @see KeywordMarkerFilter
     class LPPCONTRIBAPI ArabicStemFilter : public TokenFilter
     {
     public:
@@ -23,7 +29,8 @@ namespace Lucene
     
     protected:
         ArabicStemmerPtr stemmer;
-        TermAttributePtr termAtt;
+        CharTermAttributePtr termAtt;
+        KeywordAttributePtr keywordAttr;
     
     public:
         virtual bool incrementToken();

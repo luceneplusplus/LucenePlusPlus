@@ -8,32 +8,48 @@
 #define CZECHANALYZER_H
 
 #include "LuceneContrib.h"
-#include "Analyzer.h"
+#include "ReusableAnalyzerBase.h"
 
 namespace Lucene
 {
-    /// {@link Analyzer} for Czech language. 
+    /// Supports an external list of stopwords (words that will not be indexed at
+    /// all). A default set of stopwords is used unless an alternative list is
+    /// specified.
     ///
-    /// Supports an external list of stopwords (words that will not be indexed at all). 
-    /// A default set of stopwords is used unless an alternative list is specified.
-    ///
-    /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPCONTRIBAPI CzechAnalyzer : public Analyzer
+    /// You must specify the required {@link Version} compatibility when creating
+    /// CzechAnalyzer:
+    /// <ul>
+    ///    <li>As of 3.1, words are stemmed with {@link CzechStemFilter}
+    ///    <li>As of 2.9, StopFilter preserves position increments
+    ///    <li>As of 2.4, Tokens incorrectly identified as acronyms are corrected 
+    /// </ul>
+    class LPPCONTRIBAPI CzechAnalyzer : public ReusableAnalyzerBase
     {
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
+        /// @param matchVersion Lucene version to match
         CzechAnalyzer(LuceneVersion::Version matchVersion);
         
         /// Builds an analyzer with the given stop words.
+        /// @param matchVersion Lucene version to match
+        /// @param stopwords a stopword set
         CzechAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords);
+        
+        /// Builds an analyzer with the given stop words.
+        /// @param matchVersion Lucene version to match
+        /// @param stopwords a stopword set
+        /// @param stemExclusionTable a stemming exclusion set
+        CzechAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> stemExclusionTable);
         
         virtual ~CzechAnalyzer();
         
         LUCENE_CLASS(CzechAnalyzer);
     
-    protected:
+    private:
         /// Contains the stopwords used with the {@link StopFilter}.
         HashSet<String> stoptable;
+        
+        HashSet<String> stemExclusionTable;
         
         LuceneVersion::Version matchVersion;
         
@@ -43,31 +59,17 @@ namespace Lucene
     public:
         /// Returns an unmodifiable instance of the default stop-words set.
         static const HashSet<String> getDefaultStopSet();
-        
-        /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from {@link StandardTokenizer}, filtered with {@link StandardFilter},
-        /// {@link LowerCaseFilter}, and {@link StopFilter}
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        
-        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the 
-        /// provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from {@link StandardTokenizer}, filtered with {@link StandardFilter},
-        /// {@link LowerCaseFilter}, and {@link StopFilter}
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
-    };
     
-    class LPPCONTRIBAPI CzechAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~CzechAnalyzerSavedStreams();
-        
-        LUCENE_CLASS(CzechAnalyzerSavedStreams);
-
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
+    protected:
+        /// Creates {@link TokenStreamComponents} used to tokenize all the text in the 
+        /// provided {@link Reader}.
+        /// @return {@link TokenStreamComponents} built from a {@link StandardTokenizer} 
+        /// filtered with {@link StandardFilter}, {@link LowerCaseFilter}, {@link StopFilter}
+        /// and {@link CzechStemFilter} (only if version is >= LUCENE_31). If a version 
+        /// is >= LUCENE_31 and a stem exclusion set is provided via {@link 
+        /// #CzechAnalyzer(Version, Set, Set)} a {@link KeywordMarkerFilter} is added before
+        /// {@link CzechStemFilter}.
+        virtual TokenStreamComponentsPtr createComponents(const String& fieldName, ReaderPtr reader);
     };
 }
 

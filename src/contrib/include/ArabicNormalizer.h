@@ -60,13 +60,6 @@ namespace Lucene
         /// @param len length of input buffer
         /// @return length of input buffer after normalization
         int32_t normalize(wchar_t* s, int32_t len);
-        
-        /// Delete a character in-place
-        /// @param s Input Buffer
-        /// @param pos Position of character to delete
-        /// @param len length of input buffer
-        /// @return length of input buffer after deletion
-        int32_t deleteChar(wchar_t* s, int32_t pos, int32_t len);
     };
 }
 

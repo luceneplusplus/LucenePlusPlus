@@ -32,20 +32,19 @@ namespace Lucene
     const wchar_t RussianStemmer::AE = L'\x044d';
     const wchar_t RussianStemmer::IU = L'\x044e';
     const wchar_t RussianStemmer::IA = L'\x044f';
-    
+
     const wchar_t RussianStemmer::vowels[] = {A, E, I, O, U, Y, AE, IU, IA};
-    
+
     RussianStemmer::RussianStemmer()
     {
         RV = 0;
-        R1 = 0;
         R2 = 0;
     }
-    
+
     RussianStemmer::~RussianStemmer()
     {
     }
-    
+
     Collection<String> RussianStemmer::perfectiveGerundEndings1()
     {
         static Collection<String> _perfectiveGerundEndings1;
@@ -58,7 +57,7 @@ namespace Lucene
         }
         return _perfectiveGerundEndings1;
     }
-    
+
     Collection<String> RussianStemmer::perfectiveGerund1Predessors()
     {
         static Collection<String> _perfectiveGerund1Predessors;
@@ -70,7 +69,7 @@ namespace Lucene
         }
         return _perfectiveGerund1Predessors;
     }
-    
+
     Collection<String> RussianStemmer::perfectiveGerundEndings2()
     {
         static Collection<String> _perfectiveGerundEndings2;
@@ -86,7 +85,7 @@ namespace Lucene
         }
         return _perfectiveGerundEndings2;
     }
-    
+
     Collection<String> RussianStemmer::adjectiveEndings()
     {
         static Collection<String> _adjectiveEndings;
@@ -137,7 +136,7 @@ namespace Lucene
         }
         return _participleEndings1;
     }
-    
+
     Collection<String> RussianStemmer::participleEndings2()
     {
         static Collection<String> _participleEndings2;
@@ -150,7 +149,7 @@ namespace Lucene
         }
         return _participleEndings2;
     }
-    
+
     Collection<String> RussianStemmer::participle1Predessors()
     {
         static Collection<String> _participle1Predessors;
@@ -162,7 +161,7 @@ namespace Lucene
         }
         return _participle1Predessors;
     }
-    
+
     Collection<String> RussianStemmer::reflexiveEndings()
     {
         static Collection<String> _participle1Predessors;
@@ -174,7 +173,7 @@ namespace Lucene
         }
         return _participle1Predessors;
     }
-    
+
     Collection<String> RussianStemmer::verbEndings1()
     {
         static Collection<String> _verbEndings1;
@@ -201,7 +200,7 @@ namespace Lucene
         }
         return _verbEndings1;
     }
-    
+
     Collection<String> RussianStemmer::verbEndings2()
     {
         static Collection<String> _verbEndings2;
@@ -240,7 +239,7 @@ namespace Lucene
         }
         return _verbEndings2;
     }
-    
+
     Collection<String> RussianStemmer::verb1Predessors()
     {
         static Collection<String> _verb1Predessors;
@@ -252,7 +251,7 @@ namespace Lucene
         }
         return _verb1Predessors;
     }
-    
+
     Collection<String> RussianStemmer::nounEndings()
     {
         static Collection<String> _nounEndings;
@@ -310,7 +309,7 @@ namespace Lucene
         }
         return _superlativeEndings;
     }
-    
+
     Collection<String> RussianStemmer::derivationalEndings()
     {
         static Collection<String> _derivationalEndings;
@@ -322,7 +321,7 @@ namespace Lucene
         }
         return _derivationalEndings;
     }
-    
+
     Collection<String> RussianStemmer::doubleN()
     {
         static Collection<String> _doubleN;
@@ -333,22 +332,22 @@ namespace Lucene
         }
         return _doubleN;
     }
-    
+
     String RussianStemmer::stem(const String& input)
     {
         markPositions(input);
         if (RV == 0)
             return input; // RV wasn't detected, nothing to stem
-        
+
         String stemmingZone(input.substr(RV));
-        
+
         // stemming goes on in RV
 
         // Step 1
         if (!perfectiveGerund(stemmingZone))
         {
             reflexive(stemmingZone);
-            
+
             if (!adjectival(stemmingZone))
             {
                 if (!verb(stemmingZone))
@@ -370,24 +369,24 @@ namespace Lucene
         // return result
         return input.substr(0, RV) + stemmingZone;
     }
-    
+
     String RussianStemmer::stemWord(const String& word)
     {
         return newLucene<RussianStemmer>()->stem(word);
     }
-    
+
     bool RussianStemmer::adjectival(String& stemmingZone)
     {
         // look for adjective ending in a stemming zone
         if (!findAndRemoveEnding(stemmingZone, adjectiveEndings()))
             return false;
-        
+        // if adjective ending was found, try for participle ending
         if (!findAndRemoveEnding(stemmingZone, participleEndings1(), participle1Predessors()))
             findAndRemoveEnding(stemmingZone, participleEndings2());
-        
+
         return true;
     }
-    
+
     bool RussianStemmer::derivational(String& stemmingZone)
     {
         int32_t endingLength = findEnding(stemmingZone, derivationalEndings());
@@ -405,7 +404,7 @@ namespace Lucene
                 return false;
         }
     }
-    
+
     int32_t RussianStemmer::findEnding(String& stemmingZone, int32_t startIndex, Collection<String> theEndingClass)
     {
         bool match = false;
@@ -434,12 +433,12 @@ namespace Lucene
         }
         return 0;
     }
-    
+
     int32_t RussianStemmer::findEnding(String& stemmingZone, Collection<String> theEndingClass)
     {
         return findEnding(stemmingZone, (int32_t)(stemmingZone.length() - 1), theEndingClass);
     }
-    
+
     bool RussianStemmer::findAndRemoveEnding(String& stemmingZone, Collection<String> theEndingClass)
     {
         int32_t endingLength = findEnding(stemmingZone, theEndingClass);
@@ -451,7 +450,7 @@ namespace Lucene
             return true; // cut the ending found
         }
     }
-    
+
     bool RussianStemmer::findAndRemoveEnding(String& stemmingZone, Collection<String> theEndingClass, Collection<String> thePredessors)
     {
         int32_t endingLength = findEnding(stemmingZone, theEndingClass);
@@ -469,11 +468,10 @@ namespace Lucene
             }
         }
     }
-    
+
     void RussianStemmer::markPositions(const String& word)
     {
         RV = 0;
-        R1 = 0;
         R2 = 0;
         int32_t i = 0;
         // find RV
@@ -487,7 +485,6 @@ namespace Lucene
             ++i;
         if ((int32_t)word.length() - 1 < ++i)
             return; // R1 zone is empty
-        R1 = i;
         // find R2
         while ((int32_t)word.length() > i && !isVowel(word[i]))
             ++i;
@@ -499,7 +496,7 @@ namespace Lucene
             return; // R2 zone is empty
         R2 = i;
     }
-    
+
     bool RussianStemmer::isVowel(wchar_t letter)
     {
         for (int32_t i = 0; i < SIZEOF_ARRAY(vowels); ++i)
@@ -509,23 +506,23 @@ namespace Lucene
         }
         return false;
     }
-    
+
     bool RussianStemmer::noun(String& stemmingZone)
     {
         return findAndRemoveEnding(stemmingZone, nounEndings());
     }
-    
+
     bool RussianStemmer::perfectiveGerund(String& stemmingZone)
     {
-        return findAndRemoveEnding(stemmingZone, perfectiveGerundEndings1(), perfectiveGerund1Predessors()) || 
+        return findAndRemoveEnding(stemmingZone, perfectiveGerundEndings1(), perfectiveGerund1Predessors()) ||
                findAndRemoveEnding(stemmingZone, perfectiveGerundEndings2());
     }
-    
+
     bool RussianStemmer::reflexive(String& stemmingZone)
     {
         return findAndRemoveEnding(stemmingZone, reflexiveEndings());
     }
-    
+
     bool RussianStemmer::removeI(String& stemmingZone)
     {
         if ((int32_t)stemmingZone.length() > 0 && stemmingZone[stemmingZone.length() - 1] == I)
@@ -536,7 +533,7 @@ namespace Lucene
         else
             return false;
     }
-    
+
     bool RussianStemmer::removeSoft(String& stemmingZone)
     {
         if ((int32_t)stemmingZone.length() > 0 && stemmingZone[stemmingZone.length() - 1] == SOFT)
@@ -546,12 +543,12 @@ namespace Lucene
         }
             return false;
     }
-    
+
     bool RussianStemmer::superlative(String& stemmingZone)
     {
         return findAndRemoveEnding(stemmingZone, superlativeEndings());
     }
-    
+
     bool RussianStemmer::undoubleN(String& stemmingZone)
     {
         if (findEnding(stemmingZone, doubleN()) != 0)
@@ -562,10 +559,11 @@ namespace Lucene
         else
             return false;
     }
-    
+
     bool RussianStemmer::verb(String& stemmingZone)
     {
-        return findAndRemoveEnding(stemmingZone, verbEndings1(), verb1Predessors()) || 
+        return findAndRemoveEnding(stemmingZone, verbEndings1(), verb1Predessors()) ||
                findAndRemoveEnding(stemmingZone, verbEndings2());
     }
 }
+

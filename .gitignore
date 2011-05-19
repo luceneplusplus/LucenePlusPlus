@@ -21,6 +21,9 @@
 *.manifest
 *.user
 *.bak
+*.lock*
+*.waf*
+.DS_Store
 bin/*
 src/msvc/Debug DLL
 src/msvc/Debug Static

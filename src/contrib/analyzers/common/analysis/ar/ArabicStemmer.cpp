@@ -6,6 +6,7 @@
 
 #include "ContribInc.h"
 #include "ArabicStemmer.h"
+#include "StemmerUtil.h"
 #include "MiscUtils.h"
 
 namespace Lucene
@@ -75,8 +76,8 @@ namespace Lucene
         Collection<String> stemPrefixes(prefixes());
         for (int32_t i = 0; i < stemPrefixes.size(); ++i)
         {
-            if (startsWith(s, len, stemPrefixes[i]))
-                return deleteChars(s, 0, len, (int32_t)stemPrefixes[i].length());
+            if (startsWithCheckLength(s, len, stemPrefixes[i]))
+                return StemmerUtil::_deleteN(s, 0, len, (int32_t)stemPrefixes[i].length());
         }
         return len;
     }
@@ -86,13 +87,13 @@ namespace Lucene
         Collection<String> stemSuffixes(suffixes());
         for (int32_t i = 0; i < stemSuffixes.size(); ++i)
         {
-            if (endsWith(s, len, stemSuffixes[i]))
-                len = (int32_t)deleteChars(s, (int32_t)(len - stemSuffixes[i].length()), len, (int32_t)stemSuffixes[i].length());
+            if (endsWithCheckLength(s, len, stemSuffixes[i]))
+                len = (int32_t)StemmerUtil::_deleteN(s, (int32_t)(len - stemSuffixes[i].length()), len, (int32_t)stemSuffixes[i].length());
         }
         return len;
     }
     
-    bool ArabicStemmer::startsWith(wchar_t* s, int32_t len, const String& prefix)
+    bool ArabicStemmer::startsWithCheckLength(wchar_t* s, int32_t len, const String& prefix)
     {
         if (prefix.length() == 1 && len < 4) // wa- prefix requires at least 3 characters
             return false;
@@ -109,7 +110,7 @@ namespace Lucene
         }
     }
     
-    bool ArabicStemmer::endsWith(wchar_t* s, int32_t len, const String& suffix)
+    bool ArabicStemmer::endsWithCheckLength(wchar_t* s, int32_t len, const String& suffix)
     {
         if (len < (int32_t)suffix.length() + 2) // all suffixes require at least 2 characters after stemming
             return false;
@@ -122,19 +123,5 @@ namespace Lucene
             }
             return true;
         }
-    }
-    
-    int32_t ArabicStemmer::deleteChars(wchar_t* s, int32_t pos, int32_t len, int32_t chars)
-    {
-        for (int32_t i = 0; i < chars; ++i)
-            len = deleteChar(s, pos, len);
-        return len;
-    }
-    
-    int32_t ArabicStemmer::deleteChar(wchar_t* s, int32_t pos, int32_t len)
-    {
-        if (pos < len)
-            MiscUtils::arrayCopy(s, pos + 1, s, pos, len - pos - 1);
-        return len - 1;
     }
 }

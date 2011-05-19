@@ -6,7 +6,7 @@
 
 #include "ContribInc.h"
 #include "CJKTokenizer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "OffsetAttribute.h"
 #include "TypeAttribute.h"
 #include "Reader.h"
@@ -58,7 +58,7 @@ namespace Lucene
         tokenType = WORD_TYPE;
         preIsTokened = false;
         
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
     }
@@ -238,7 +238,7 @@ namespace Lucene
 
             if (length > 0)
             {
-                termAtt->setTermBuffer(buffer.get(), 0, length);
+                termAtt->copyBuffer(buffer.get(), 0, length);
                 offsetAtt->setOffset(correctOffset(start), correctOffset(start + length));
                 typeAtt->setType(TOKEN_TYPE_NAMES[tokenType]);
                 return true;

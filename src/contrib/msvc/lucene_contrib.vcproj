@@ -604,6 +604,22 @@
 							RelativePath="..\include\CzechAnalyzer.h"
 							>
 						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\cz\CzechStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\CzechStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\cz\CzechStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\CzechStemmer.h"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="de"
@@ -786,6 +802,18 @@
 						</File>
 						<File
 							RelativePath="..\include\RussianStemmer.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="util"
+						>
+						<File
+							RelativePath="..\analyzers\common\analysis\util\StemmerUtil.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\StemmerUtil.h"
 							>
 						</File>
 					</Filter>

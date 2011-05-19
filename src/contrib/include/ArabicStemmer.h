@@ -68,30 +68,14 @@ namespace Lucene
         /// @param len length of input buffer
         /// @param prefix prefix to check
         /// @return true if the prefix matches and can be stemmed
-        bool startsWith(wchar_t* s, int32_t len, const String& prefix);
+        bool startsWithCheckLength(wchar_t* s, int32_t len, const String& prefix);
         
         /// Returns true if the suffix matches and can be stemmed
         /// @param s input buffer
         /// @param len length of input buffer
         /// @param suffix suffix to check
         /// @return true if the suffix matches and can be stemmed
-        bool endsWith(wchar_t* s, int32_t len, const String& suffix);
-    
-    protected:
-        /// Delete n characters in-place
-        /// @param s Input Buffer
-        /// @param pos Position of character to delete
-        /// @param len Length of input buffer
-        /// @param chars number of characters to delete
-        /// @return length of input buffer after deletion
-        int32_t deleteChars(wchar_t* s, int32_t pos, int32_t len, int32_t chars);
-        
-        /// Delete a character in-place
-        /// @param s Input Buffer
-        /// @param pos Position of character to delete
-        /// @param len length of input buffer
-        /// @return length of input buffer after deletion
-        int32_t deleteChar(wchar_t* s, int32_t pos, int32_t len);
+        bool endsWithCheckLength(wchar_t* s, int32_t len, const String& suffix);
     };
 }
 

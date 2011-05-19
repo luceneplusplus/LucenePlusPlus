@@ -13,56 +13,63 @@ namespace Lucene
 {
     // analyzers
     DECLARE_SHARED_PTR(ArabicAnalyzer)
-    DECLARE_SHARED_PTR(ArabicAnalyzerSavedStreams)
     DECLARE_SHARED_PTR(ArabicLetterTokenizer)
     DECLARE_SHARED_PTR(ArabicNormalizationFilter)
     DECLARE_SHARED_PTR(ArabicNormalizer)
     DECLARE_SHARED_PTR(ArabicStemFilter)
     DECLARE_SHARED_PTR(ArabicStemmer)
     DECLARE_SHARED_PTR(BrazilianAnalyzer)
-    DECLARE_SHARED_PTR(BrazilianAnalyzerSavedStreams)
     DECLARE_SHARED_PTR(BrazilianStemFilter)
     DECLARE_SHARED_PTR(BrazilianStemmer)
     DECLARE_SHARED_PTR(CJKAnalyzer)
-    DECLARE_SHARED_PTR(CJKAnalyzerSavedStreams)
     DECLARE_SHARED_PTR(CJKTokenizer)
     DECLARE_SHARED_PTR(ChineseAnalyzer)
-    DECLARE_SHARED_PTR(ChineseAnalyzerSavedStreams)
     DECLARE_SHARED_PTR(ChineseFilter)
     DECLARE_SHARED_PTR(ChineseTokenizer)
     DECLARE_SHARED_PTR(CzechAnalyzer)
-    DECLARE_SHARED_PTR(CzechAnalyzerSavedStreams)
+    DECLARE_SHARED_PTR(CzechStemFilter)
+    DECLARE_SHARED_PTR(CzechStemmer)
     DECLARE_SHARED_PTR(DutchAnalyzer)
-    DECLARE_SHARED_PTR(DutchAnalyzerSavedStreams)
     DECLARE_SHARED_PTR(DutchStemFilter)
     DECLARE_SHARED_PTR(DutchStemmer)
     DECLARE_SHARED_PTR(ElisionFilter)
+    DECLARE_SHARED_PTR(EnglishPossessiveFilter)
     DECLARE_SHARED_PTR(FrenchAnalyzer)
-    DECLARE_SHARED_PTR(FrenchAnalyzerSavedStreams)
+    DECLARE_SHARED_PTR(FrenchLightStemFilter)
+    DECLARE_SHARED_PTR(FrenchLightStemmer)
+    DECLARE_SHARED_PTR(FrenchMinimalStemFilter)
+    DECLARE_SHARED_PTR(FrenchMinimalStemmer)
     DECLARE_SHARED_PTR(FrenchStemFilter)
     DECLARE_SHARED_PTR(FrenchStemmer)
     DECLARE_SHARED_PTR(GermanAnalyzer)
-    DECLARE_SHARED_PTR(GermanAnalyzerSavedStreams)
-    DECLARE_SHARED_PTR(GermanStemFilter)
+    DECLARE_SHARED_PTR(GermanLightStemFilter)
+    DECLARE_SHARED_PTR(GermanLightStemmer)
+    DECLARE_SHARED_PTR(GermanMinimalStemFilter)
+    DECLARE_SHARED_PTR(GermanMinimalStemmer)
+	DECLARE_SHARED_PTR(GermanStemFilter)
     DECLARE_SHARED_PTR(GermanStemmer)
-    DECLARE_SHARED_PTR(GreekLowerCaseFilter)
     DECLARE_SHARED_PTR(GreekAnalyzer)
-    DECLARE_SHARED_PTR(GreekAnalyzerSavedStreams)
+    DECLARE_SHARED_PTR(GreekLowerCaseFilter)
+    DECLARE_SHARED_PTR(GreekStemFilter)
+    DECLARE_SHARED_PTR(GreekStemmer)
     DECLARE_SHARED_PTR(PersianAnalyzer)
-    DECLARE_SHARED_PTR(PersianAnalyzerSavedStreams)
+    DECLARE_SHARED_PTR(PersianCharFilter)
     DECLARE_SHARED_PTR(PersianNormalizationFilter)
     DECLARE_SHARED_PTR(PersianNormalizer)
     DECLARE_SHARED_PTR(ReverseStringFilter)
     DECLARE_SHARED_PTR(RussianAnalyzer)
-    DECLARE_SHARED_PTR(RussianAnalyzerSavedStreams)
     DECLARE_SHARED_PTR(RussianLetterTokenizer)
+    DECLARE_SHARED_PTR(RussianLightStemFilter)
+    DECLARE_SHARED_PTR(RussianLightStemmer)
     DECLARE_SHARED_PTR(RussianLowerCaseFilter)
     DECLARE_SHARED_PTR(RussianStemFilter)
     DECLARE_SHARED_PTR(RussianStemmer)
     DECLARE_SHARED_PTR(SnowballFilter)
     DECLARE_SHARED_PTR(SnowballAnalyzer)
     DECLARE_SHARED_PTR(SnowballAnalyzerSavedStreams)
-    
+    DECLARE_SHARED_PTR(TurkishAnalyzer)
+    DECLARE_SHARED_PTR(TurkishLowerCaseFilter)
+
     // highlighter
     DECLARE_SHARED_PTR(DefaultEncoder)
     DECLARE_SHARED_PTR(Encoder)
@@ -89,6 +96,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(TextFragment)
     DECLARE_SHARED_PTR(TokenGroup)
     DECLARE_SHARED_PTR(TokenSources)
+    DECLARE_SHARED_PTR(TokenStreamFromTermPositionVector)
     DECLARE_SHARED_PTR(WeightedSpanTerm)
     DECLARE_SHARED_PTR(WeightedSpanTermExtractor)
     DECLARE_SHARED_PTR(WeightedTerm)
@@ -103,14 +111,15 @@ namespace Lucene
     typedef HashMap< String, SpanQueryPtr > MapStringSpanQuery;
     typedef HashMap< String, Collection<int32_t> > MapStringIntCollection;
     typedef HashMap< String, MemoryIndexInfoPtr > MapStringMemoryIndexInfo;
-    
+
     typedef std::pair< String, Collection<int32_t> > PairStringIntCollection;
     typedef Collection< PairStringIntCollection > CollectionStringIntCollection;
-    
+
     typedef std::pair< String, MemoryIndexInfoPtr > PairStringMemoryIndexInfo;
     typedef Collection< PairStringMemoryIndexInfo > CollectionStringMemoryIndexInfo;
-        
+
     typedef HashSet< WeightedTermPtr, luceneHash<WeightedTermPtr>, luceneEquals<WeightedTermPtr> > SetWeightedTerm;
 }
 
 #endif
+

@@ -6,7 +6,7 @@
 
 #include "ContribInc.h"
 #include "ChineseTokenizer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "OffsetAttribute.h"
 #include "Reader.h"
 #include "CharFolder.h"
@@ -44,7 +44,7 @@ namespace Lucene
         length = 0;
         start = 0;
         
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
     }
     
@@ -59,7 +59,7 @@ namespace Lucene
     {
         if (length > 0)
         {
-            termAtt->setTermBuffer(buffer.get(), 0, length);
+            termAtt->copyBuffer(buffer.get(), 0, length);
             offsetAtt->setOffset(correctOffset(start), correctOffset(start + length));
             return true;
         }

@@ -7,20 +7,23 @@
 #include "ContribInc.h"
 #include "GermanStemFilter.h"
 #include "GermanStemmer.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
+#include "KeywordAttribute.h"
 
 namespace Lucene
 {
     GermanStemFilter::GermanStemFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         stemmer = newLucene<GermanStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
+        keywordAttr = addAttribute<KeywordAttribute>();
     }
     
     GermanStemFilter::GermanStemFilter(TokenStreamPtr input, HashSet<String> exclusionSet) : TokenFilter(input)
     {
         stemmer = newLucene<GermanStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+        termAtt = addAttribute<CharTermAttribute>();
+        keywordAttr = addAttribute<KeywordAttribute>();
         this->exclusionSet = exclusionSet;
     }
     
@@ -32,14 +35,14 @@ namespace Lucene
     {
         if (input->incrementToken())
         {
-            String term(termAtt->term());
+            String term(termAtt->toString());
             // Check the exclusion table.
-            if (!exclusionSet || !exclusionSet.contains(term))
+            if (!keywordAttr->isKeyword() && (!exclusionSet || !exclusionSet.contains(term)))
             {
                 String s(stemmer->stem(term));
                 // If not stemmed, don't waste the time adjusting the token.
                 if (!s.empty() && s != term)
-                    termAtt->setTermBuffer(s);
+                    termAtt->setEmpty()->append(s);
             }
             return true;
         }

@@ -6,10 +6,12 @@
 
 #include "ContribInc.h"
 #include "CzechAnalyzer.h"
+#include "CzechStemFilter.h"
 #include "StandardTokenizer.h"
 #include "StandardFilter.h"
 #include "LowerCaseFilter.h"
 #include "StopFilter.h"
+#include "KeywordMarkerFilter.h"
 #include "StringUtils.h"
 
 namespace Lucene
@@ -84,6 +86,13 @@ namespace Lucene
         this->matchVersion = matchVersion;
     }
     
+    CzechAnalyzer::CzechAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> stemExclusionTable)
+    {
+        this->stoptable = stopwords;
+        this->matchVersion = matchVersion;
+        this->stemExclusionTable = stemExclusionTable;
+    }
+    
     CzechAnalyzer::~CzechAnalyzer()
     {
     }
@@ -100,33 +109,18 @@ namespace Lucene
         return stopSet;
     }
     
-    TokenStreamPtr CzechAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamComponentsPtr CzechAnalyzer::createComponents(const String& fieldName, ReaderPtr reader)
     {
-        TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
-        result = newLucene<LowerCaseFilter>(result);
-        result = newLucene<StandardFilter>(result);
-        result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), result, stoptable);
-        return result;
-    }
-    
-    TokenStreamPtr CzechAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
-    {
-        CzechAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<CzechAnalyzerSavedStreams>(getPreviousTokenStream()));
-        if (!streams)
+        TokenizerPtr source(newLucene<StandardTokenizer>(matchVersion, reader));
+        TokenStreamPtr result(newLucene<StandardFilter>(matchVersion, source));
+        result = newLucene<LowerCaseFilter>(matchVersion, result);
+        result = newLucene<StopFilter>(matchVersion, result, stoptable);
+        if (LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31))
         {
-            streams = newLucene<CzechAnalyzerSavedStreams>();
-            streams->source = newLucene<StandardTokenizer>(matchVersion, reader);
-            streams->result = newLucene<StandardFilter>(streams->source);
-            streams->result = newLucene<LowerCaseFilter>(streams->result);            
-            streams->result = newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), streams->result, stoptable);
-            setPreviousTokenStream(streams);
+            if (!stemExclusionTable.empty())
+                result = newLucene<KeywordMarkerFilter>(result, stemExclusionTable);
+            result = newLucene<CzechStemFilter>(result);
         }
-        else
-            streams->source->reset(reader);
-        return streams->result;
-    }
-    
-    CzechAnalyzerSavedStreams::~CzechAnalyzerSavedStreams()
-    {
+        return newLucene<TokenStreamComponents>(source, result);
     }
 }
