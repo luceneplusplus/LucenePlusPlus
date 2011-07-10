@@ -7,7 +7,7 @@
 #include "TestInc.h"
 #include "LuceneTestFixture.h"
 #include "AttributeSource.h"
-#include "TermAttribute.h"
+#include "CharTermAttribute.h"
 #include "TypeAttribute.h"
 #include "FlagsAttribute.h"
 #include "OffsetAttribute.h"
@@ -23,27 +23,27 @@ BOOST_AUTO_TEST_CASE(testCaptureState)
 {
     // init a first instance
     AttributeSourcePtr src = newLucene<AttributeSource>();
-    TermAttributePtr termAtt = src->addAttribute<TermAttribute>();
+    CharTermAttributePtr termAtt = src->addAttribute<CharTermAttribute>();
     TypeAttributePtr typeAtt = src->addAttribute<TypeAttribute>();
-    termAtt->setTermBuffer(L"TestTerm");
+    termAtt->append(L"TestTerm");
     typeAtt->setType(L"TestType");
     int32_t hashCode = src->hashCode();
 
     AttributeSourceStatePtr state = src->captureState();
 
     // modify the attributes
-    termAtt->setTermBuffer(L"AnotherTestTerm");
+    termAtt->setEmpty()->append(L"AnotherTestTerm");
     typeAtt->setType(L"AnotherTestType");
     BOOST_CHECK_NE(hashCode, src->hashCode());
 
     src->restoreState(state);
-    BOOST_CHECK_EQUAL(L"TestTerm", termAtt->term());
+    BOOST_CHECK_EQUAL(L"TestTerm", termAtt->toString());
     BOOST_CHECK_EQUAL(L"TestType", typeAtt->type());
     BOOST_CHECK_EQUAL(hashCode, src->hashCode());
 
     // restore into an exact configured copy
     AttributeSourcePtr copy = newLucene<AttributeSource>();
-    copy->addAttribute<TermAttribute>();
+    copy->addAttribute<CharTermAttribute>();
     copy->addAttribute<TypeAttribute>();
     copy->restoreState(state);
     BOOST_CHECK_EQUAL(src->hashCode(), copy->hashCode());
@@ -53,50 +53,62 @@ BOOST_AUTO_TEST_CASE(testCaptureState)
     AttributeSourcePtr src2 = newLucene<AttributeSource>();
     typeAtt = src2->addAttribute<TypeAttribute>();
     FlagsAttributePtr flagsAtt = src2->addAttribute<FlagsAttribute>();
-    termAtt = src2->addAttribute<TermAttribute>();
+    termAtt = src2->addAttribute<CharTermAttribute>();
     flagsAtt->setFlags(12345);
 
     src2->restoreState(state);
-    BOOST_CHECK_EQUAL(L"TestTerm", termAtt->term());
+    BOOST_CHECK_EQUAL(L"TestTerm", termAtt->toString());
     BOOST_CHECK_EQUAL(L"TestType", typeAtt->type());
     BOOST_CHECK_EQUAL(12345, flagsAtt->getFlags());
 
     // init a third instance missing one Attribute
     AttributeSourcePtr src3 = newLucene<AttributeSource>();
-    termAtt = src3->addAttribute<TermAttribute>();
+    termAtt = src3->addAttribute<CharTermAttribute>();
     BOOST_CHECK_EXCEPTION(src3->restoreState(state), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 }
 
 BOOST_AUTO_TEST_CASE(testCloneAttributes)
 {
     AttributeSourcePtr src = newLucene<AttributeSource>();
-    TermAttributePtr termAtt = src->addAttribute<TermAttribute>();
+    FlagsAttributePtr flagsAtt = src->addAttribute<FlagsAttribute>();
     TypeAttributePtr typeAtt = src->addAttribute<TypeAttribute>();
-    termAtt->setTermBuffer(L"TestTerm");
+    flagsAtt->setFlags(1234);
     typeAtt->setType(L"TestType");
 
     AttributeSourcePtr clone = src->cloneAttributes();
     Collection<AttributePtr> attributes = clone->getAttributes();
     BOOST_CHECK_EQUAL(2, attributes.size());
-    BOOST_CHECK(MiscUtils::typeOf<TermAttribute>(attributes[0]));
+    BOOST_CHECK(MiscUtils::typeOf<FlagsAttribute>(attributes[0]));
     BOOST_CHECK(MiscUtils::typeOf<TypeAttribute>(attributes[1]));
-    
-    TermAttributePtr termAtt2 = clone->getAttribute<TermAttribute>();
+
+    FlagsAttributePtr flagsAtt2 = clone->getAttribute<FlagsAttribute>();
     TypeAttributePtr typeAtt2 = clone->getAttribute<TypeAttribute>();
-    BOOST_CHECK(termAtt2 != termAtt);
+    BOOST_CHECK(flagsAtt2 != flagsAtt);
     BOOST_CHECK(typeAtt2 != typeAtt);
-    BOOST_CHECK(termAtt2->equals(termAtt));
+    BOOST_CHECK(flagsAtt2->equals(flagsAtt));
+    BOOST_CHECK(typeAtt2->equals(typeAtt));
+
+    // test copy back
+    flagsAtt2->setFlags(4711);
+    typeAtt2->setType(L"OtherType");
+    clone->copyTo(src);
+    BOOST_CHECK_EQUAL(4711, flagsAtt->getFlags());
+    BOOST_CHECK_EQUAL(L"OtherType", typeAtt->type());
+    // verify again
+    BOOST_CHECK(flagsAtt2 != flagsAtt);
+    BOOST_CHECK(typeAtt2 != typeAtt);
+    BOOST_CHECK(flagsAtt2->equals(flagsAtt));
     BOOST_CHECK(typeAtt2->equals(typeAtt));
 }
 
 BOOST_AUTO_TEST_CASE(testToStringAndMultiAttributeImplementations)
 {
     AttributeSourcePtr src = newLucene<AttributeSource>();
-    TermAttributePtr termAtt = src->addAttribute<TermAttribute>();
+    CharTermAttributePtr termAtt = src->addAttribute<CharTermAttribute>();
     TypeAttributePtr typeAtt = src->addAttribute<TypeAttribute>();
-    termAtt->setTermBuffer(L"TestTerm");
+    termAtt->append(L"TestTerm");
     typeAtt->setType(L"TestType");
-    
+
     BOOST_CHECK_EQUAL(L"(" + termAtt->toString() + L"," + typeAtt->toString() + L")", src->toString());
     Collection<AttributePtr> attributes = src->getAttributes();
     BOOST_CHECK_EQUAL(2, attributes.size());
@@ -107,7 +119,7 @@ BOOST_AUTO_TEST_CASE(testToStringAndMultiAttributeImplementations)
 BOOST_AUTO_TEST_CASE(testDefaultAttributeFactory)
 {
     AttributeSourcePtr src = newLucene<AttributeSource>();
-    BOOST_CHECK(MiscUtils::typeOf<TermAttribute>(src->addAttribute<TermAttribute>()));
+    BOOST_CHECK(MiscUtils::typeOf<CharTermAttribute>(src->addAttribute<CharTermAttribute>()));
     BOOST_CHECK(MiscUtils::typeOf<OffsetAttribute>(src->addAttribute<OffsetAttribute>()));
     BOOST_CHECK(MiscUtils::typeOf<FlagsAttribute>(src->addAttribute<FlagsAttribute>()));
     BOOST_CHECK(MiscUtils::typeOf<PayloadAttribute>(src->addAttribute<PayloadAttribute>()));
@@ -116,3 +128,4 @@ BOOST_AUTO_TEST_CASE(testDefaultAttributeFactory)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+

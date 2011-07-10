@@ -24,16 +24,16 @@ namespace Lucene
         typedef typename key_list::const_iterator const_iterator;
         typedef boost::unordered_map< KEY, typename key_list::iterator, HASH, EQUAL, Allocator< std::pair<KEY, typename key_list::iterator> > > map_type;
         typedef typename map_type::const_iterator map_iterator;
-        
+
         SimpleLRUCache(int32_t cacheSize)
         {
             this->cacheSize = cacheSize;
         }
-        
+
         virtual ~SimpleLRUCache()
         {
         }
-        
+
     protected:
         int32_t cacheSize;
         key_list cacheList;
@@ -45,41 +45,41 @@ namespace Lucene
             SyncLock syncLock(this);
             cacheList.push_front(std::make_pair(key, value));
             cacheMap[key] = cacheList.begin();
-            
+
             if ((int32_t)cacheList.size() > cacheSize)
             {
                 cacheMap.erase(cacheList.back().first);
                 cacheList.pop_back();
             }
         }
-        
+
         VALUE get(const KEY& key)
         {
             SyncLock syncLock(this);
             map_iterator find = cacheMap.find(key);
             if (find == cacheMap.end())
                 return VALUE();
-            
+
             VALUE value(find->second->second);
             cacheList.erase(find->second);
             cacheList.push_front(std::make_pair(key, value));
             cacheMap[key] = cacheList.begin();
-            
+
             return value;
         }
-        
-        bool contains(const KEY& key) const
+
+        bool contains(const KEY& key)
         {
             SyncLock syncLock(this);
             return (cacheMap.find(key) != cacheMap.end());
         }
-        
-        int32_t size() const
+
+        int32_t size()
         {
             SyncLock syncLock(this);
             return (int32_t)cacheList.size();
         }
-        
+
         const_iterator begin() const
         {
             return cacheList.begin();
@@ -93,3 +93,4 @@ namespace Lucene
 };
 
 #endif
+
