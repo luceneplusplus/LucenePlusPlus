@@ -91,7 +91,7 @@ namespace Lucene
     double QueryScorer::getTokenScore()
     {
         position += posIncAtt->getPositionIncrement();
-        String termText(termAtt->term());
+        String termText(termAtt->toString());
 
         WeightedSpanTermPtr weightedSpanTerm(fieldWeightedSpanTerms->get(termText));
 
