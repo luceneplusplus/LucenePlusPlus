@@ -50,13 +50,13 @@ lucene_include_dirs = [
 ]
 
 tester_source_dirs = [
-    'src/test/analysis',
-    'src/test/contrib',
-    'src/test/document',
-    'src/test/index',
-    'src/test/queryparser',
-    'src/test/search',
-    'src/test/store',
+    #'src/test/analysis',
+    #'src/test/contrib',
+    #'src/test/document',
+    #'src/test/index',
+    #'src/test/queryparser',
+    #'src/test/search',
+    #'src/test/store',
     'src/test/util',
     'src/test/main'
 ]

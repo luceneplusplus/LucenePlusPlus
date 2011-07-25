@@ -15,27 +15,27 @@ namespace Lucene
     {
     public:
         virtual ~TermCollectingRewrite();
-    
+
         LUCENE_CLASS(TermCollectingRewrite);
-    
+
     protected:
         /// Return a suitable top-level Query for holding all expanded terms.
         virtual QueryPtr getTopLevelQuery() = 0;
-        
+
         /// Add a MultiTermQuery term to the top-level query
         virtual void addClause(QueryPtr topLevel, TermPtr term, double boost) = 0;
-        
+
         virtual void collectTerms(IndexReaderPtr reader, MultiTermQueryPtr query, TermCollectorPtr collector);
-        
+
         friend class ScoringRewriteTermCollector;
     };
-    
+
     class LPPAPI TermCollector : public LuceneObject
     {
     public:
         virtual ~TermCollector();
         LUCENE_CLASS(TermCollector);
-    
+
     public:
         /// return false to stop collecting
         virtual bool collect(TermPtr t, double boost) = 0;

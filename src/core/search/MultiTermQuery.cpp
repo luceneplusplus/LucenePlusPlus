@@ -6,7 +6,6 @@
 
 #include "LuceneInc.h"
 #include "MultiTermQuery.h"
-#include "_MultiTermQuery.h"
 #include "TopTermsRewrite.h"
 #include "ScoringRewrite.h"
 #include "ConstantScoreQuery.h"
@@ -28,11 +27,11 @@ namespace Lucene
         numberOfTerms = 0;
         rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT();
     }
-    
+
     MultiTermQuery::~MultiTermQuery()
     {
     }
-    
+
     RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE()
     {
         static RewriteMethodPtr _CONSTANT_SCORE_FILTER_REWRITE;
@@ -43,7 +42,7 @@ namespace Lucene
         }
         return _CONSTANT_SCORE_FILTER_REWRITE;
     }
-    
+
     RewriteMethodPtr MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE()
     {
         static RewriteMethodPtr _SCORING_BOOLEAN_QUERY_REWRITE;
@@ -54,7 +53,7 @@ namespace Lucene
         }
         return _SCORING_BOOLEAN_QUERY_REWRITE;
     }
-    
+
     RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE()
     {
         static RewriteMethodPtr _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
@@ -65,7 +64,7 @@ namespace Lucene
         }
         return _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
     }
-    
+
     RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT()
     {
         static RewriteMethodPtr _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
@@ -76,37 +75,37 @@ namespace Lucene
         }
         return _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
     }
-    
+
     int32_t MultiTermQuery::getTotalNumberOfTerms()
     {
         return numberOfTerms;
     }
-    
+
     void MultiTermQuery::clearTotalNumberOfTerms()
     {
         numberOfTerms = 0;
     }
-    
+
     void MultiTermQuery::incTotalNumberOfTerms(int32_t inc)
     {
         numberOfTerms += inc;
     }
-    
+
     QueryPtr MultiTermQuery::rewrite(IndexReaderPtr reader)
     {
         return rewriteMethod->rewrite(reader, shared_from_this());
     }
-    
+
     RewriteMethodPtr MultiTermQuery::getRewriteMethod()
     {
         return rewriteMethod;
     }
-    
+
     void MultiTermQuery::setRewriteMethod(RewriteMethodPtr method)
     {
         rewriteMethod = method;
     }
-    
+
     LuceneObjectPtr MultiTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other);
@@ -115,7 +114,7 @@ namespace Lucene
         cloneQuery->numberOfTerms = numberOfTerms;
         return cloneQuery;
     }
-    
+
     int32_t MultiTermQuery::hashCode()
     {
         int32_t prime = 31;
@@ -125,7 +124,7 @@ namespace Lucene
         result += rewriteMethod->hashCode();
         return result;
     }
-    
+
     bool MultiTermQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -143,8 +142,19 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     RewriteMethod::~RewriteMethod()
     {
+    }
+
+    ConstantScoreFilterRewrite::~ConstantScoreFilterRewrite()
+    {
+    }
+
+    QueryPtr ConstantScoreFilterRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
+    {
+        QueryPtr result(newLucene<ConstantScoreQuery>(newLucene<MultiTermQueryWrapperFilter>(query)));
+        result->setBoost(query->getBoost());
+        return result;
     }
 }

@@ -14,7 +14,7 @@ namespace Lucene
     TermCollectingRewrite::~TermCollectingRewrite()
     {
     }
-    
+
     void TermCollectingRewrite::collectTerms(IndexReaderPtr reader, MultiTermQueryPtr query, TermCollectorPtr collector)
     {
         FilteredTermEnumPtr enumerator(query->getEnum(reader));
@@ -27,7 +27,7 @@ namespace Lucene
                 if (!t || !collector->collect(t, enumerator->difference()))
                     break;
             }
-            while (enumerator->next());    
+            while (enumerator->next());
         }
         catch (LuceneException& e)
         {
@@ -35,5 +35,9 @@ namespace Lucene
         }
         enumerator->close();
         finally.throwException();
+    }
+
+    TermCollector::~TermCollector()
+    {
     }
 }
