@@ -6,10 +6,10 @@
 *.cmd
 *.suo
 *.ncb
-*.idb 
-*.obj 
-*.opt 
-*.pch 
+*.idb
+*.obj
+*.opt
+*.pch
 *.pyc
 *.log
 *.exe
@@ -21,6 +21,9 @@
 *.manifest
 *.user
 *.bak
+*.lock*
+*.waf*
+.DS_Store
 bin/*
 src/msvc/Debug DLL
 src/msvc/Debug Static

@@ -24,18 +24,18 @@ namespace Lucene
     {
         running = false;
     }
-    
+
     LuceneThread::~LuceneThread()
     {
     }
-    
+
     void LuceneThread::start()
     {
         setRunning(false);
         thread = newInstance<boost::thread>(LuceneThread::runThread, this);
         setRunning(true);
     }
-    
+
     void LuceneThread::runThread(LuceneThread* thread)
     {
         LuceneThreadPtr threadObject(thread->shared_from_this());
@@ -56,18 +56,18 @@ namespace Lucene
         SyncLock syncLock(this);
         this->running = running;
     }
-    
+
     bool LuceneThread::isRunning()
     {
         SyncLock syncLock(this);
         return running;
     }
-    
+
     bool LuceneThread::isAlive()
     {
         return (thread && isRunning());
     }
-    
+
     void LuceneThread::setPriority(int32_t priority)
     {
         #if defined(_WIN32) || defined(_WIN64)
@@ -75,7 +75,7 @@ namespace Lucene
             SetThreadPriority(thread->native_handle(), priority);
         #endif
     }
-    
+
     int32_t LuceneThread::getPriority()
     {
         #if defined(_WIN32) || defined(_WIN64)
@@ -84,13 +84,13 @@ namespace Lucene
         return NORM_PRIORITY;
         #endif
     }
-    
+
     void LuceneThread::yield()
     {
         if (thread)
             thread->yield();
     }
-    
+
     bool LuceneThread::join(int32_t timeout)
     {
         while (isAlive() && !thread->timed_join(boost::posix_time::milliseconds(timeout)))
@@ -102,21 +102,21 @@ namespace Lucene
         }
         return true;
     }
-    
+
     int64_t LuceneThread::currentId()
     {
         #if defined(_WIN32) || defined(_WIN64)
-        return GetCurrentThreadId();
+        return (int64_t)GetCurrentThreadId();
         #else
-        return pthread_self();
+        return (int64_t)pthread_self();
         #endif
     }
-    
+
     void LuceneThread::threadSleep(int32_t time)
     {
         boost::this_thread::sleep(boost::posix_time::milliseconds(time));
     }
-    
+
     void LuceneThread::threadYield()
     {
         boost::this_thread::yield();

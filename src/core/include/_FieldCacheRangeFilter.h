@@ -111,11 +111,11 @@ namespace Lucene
         {
             if (!includeLower && lowerVal == maxVal)
                 return DocIdSet::EMPTY_DOCIDSET();
-            TYPE inclusiveLowerPoint = (TYPE)(includeLower ? lowerVal : (lowerVal + 1));
+            int64_t inclusiveLowerPoint = (int64_t)(includeLower ? lowerVal : (lowerVal + 1));
             
             if (!includeUpper && upperVal == 0)
                 return DocIdSet::EMPTY_DOCIDSET();
-            TYPE inclusiveUpperPoint = (TYPE)(includeUpper ? upperVal : (upperVal - 1));
+            int64_t inclusiveUpperPoint = (int64_t)(includeUpper ? upperVal : (upperVal - 1));
             
             if (inclusiveLowerPoint > inclusiveUpperPoint)
                 return DocIdSet::EMPTY_DOCIDSET();
