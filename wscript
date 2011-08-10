@@ -73,7 +73,7 @@ tester_include_dirs = [
 def options(opt):
     opt.tool_options("boost")
     opt.tool_options('compiler_cxx')
-    opt.tool_options('clang', tooldir = 'build')
+    #opt.tool_options('clang', tooldir = 'build')
     opt.tool_options('gch', tooldir = 'build')
     opt.add_option(
         '--debug', 
@@ -96,7 +96,7 @@ def configure(conf):
     conf.check_cc(lib = 'z', mandatory = True)
     conf.check_cc(lib = 'pthread', mandatory = True)
     conf.check_tool('boost')
-    conf.check_tool('clang', 'build')
+    #conf.check_tool('clang', 'build')
     conf.check_tool('gch', 'build')
     conf.check_boost(
         static = 'onlystatic',
