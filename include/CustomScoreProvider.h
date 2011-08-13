@@ -50,7 +50,7 @@ namespace Lucene
         /// @param subQueryScore score of that doc by the subQuery.
         /// @param valSrcScores scores of that doc by the ValueSourceQuery.
         /// @return custom score.
-        virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
+        virtual double customScore(int32_t doc, double subQueryScore, const Collection<double>& valSrcScores);
         
         /// Compute a custom score by the subQuery score and the ValueSourceQuery score.
         ///

@@ -20,16 +20,16 @@ namespace Lucene
         LUCENE_CLASS(HitQueueBase);
     
     public:
-        virtual ScoreDocPtr add(ScoreDocPtr scoreDoc);
-        virtual ScoreDocPtr addOverflow(ScoreDocPtr scoreDoc);
-        virtual ScoreDocPtr top();
+        virtual const ScoreDocPtr& add(const ScoreDocPtr& scoreDoc);
+        virtual bool addOverflow(const ScoreDocPtr& scoreDoc);
+        virtual const ScoreDocPtr& top();
         virtual ScoreDocPtr pop();
-        virtual ScoreDocPtr updateTop();
+        virtual const ScoreDocPtr& updateTop();
         virtual int32_t size();
         virtual bool empty();
         virtual void clear();
         
-    protected:
+    private:
         PriorityQueueScoreDocsPtr queue;
         int32_t queueSize;
     
@@ -52,7 +52,7 @@ namespace Lucene
         LUCENE_CLASS(PriorityQueueScoreDocs);
     
     protected:
-        HitQueueBaseWeakPtr _hitQueue;
+        HitQueueBase* _hitQueue;
     
     protected:
         virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);

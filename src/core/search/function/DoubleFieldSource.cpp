@@ -47,7 +47,7 @@ namespace Lucene
         return StringUtils::hashCode(parser ? DoubleParser::_getClassName() : DoubleFieldSource::_getClassName());
     }
     
-    DoubleDocValues::DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr)
+    DoubleDocValues::DoubleDocValues(DoubleFieldSourcePtr source, const Collection<double>& arr)
     {
         this->_source = source;
         this->arr = arr;

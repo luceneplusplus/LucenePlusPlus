@@ -68,7 +68,7 @@ namespace Lucene
         return max[0] + (sum[0] - max[0]) * tieBreakerMultiplier;
     }
     
-    void DisjunctionMaxScorer::scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double> sum, Collection<double> max)
+    void DisjunctionMaxScorer::scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double>& sum, Collection<double>& max)
     {
         if (root < size && subScorers[root]->docID() == doc)
         {

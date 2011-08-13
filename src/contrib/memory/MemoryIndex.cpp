@@ -558,7 +558,7 @@ namespace Lucene
         return _template->createTerm(text);
     }
     
-    MemoryIndexCollector::MemoryIndexCollector(Collection<double> scores)
+    MemoryIndexCollector::MemoryIndexCollector(const Collection<double>& scores)
     {
         this->scores = scores;
     }

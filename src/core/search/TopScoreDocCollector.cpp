@@ -15,7 +15,7 @@
 
 namespace Lucene
 {
-    TopScoreDocCollector::TopScoreDocCollector(int32_t numHits) : TopDocsCollector(newLucene<HitQueue>(numHits, true))
+    TopScoreDocCollector::TopScoreDocCollector(int32_t numHits) : TopDocsCollector(newLucene<HitQueue>(numHits, true)), _scorer(NULL)
     {
         // HitQueue implements getSentinelObject to return a ScoreDoc, so we know that at this point top() 
         // is already initialized.
@@ -63,7 +63,7 @@ namespace Lucene
     
     void TopScoreDocCollector::setScorer(ScorerPtr scorer)
     {
-        this->_scorer = scorer;
+        this->_scorer = scorer.get();
     }
     
     InOrderTopScoreDocCollector::InOrderTopScoreDocCollector(int32_t numHits) : TopScoreDocCollector(numHits)
@@ -76,7 +76,7 @@ namespace Lucene
     
     void InOrderTopScoreDocCollector::collect(int32_t doc)
     {
-        double score = ScorerPtr(_scorer)->score();
+        double score = _scorer->score();
         
         // This collector cannot handle these scores
         BOOST_ASSERT(score != -std::numeric_limits<double>::infinity());
@@ -110,7 +110,7 @@ namespace Lucene
     
     void OutOfOrderTopScoreDocCollector::collect(int32_t doc)
     {
-        double score = ScorerPtr(_scorer)->score();
+        double score = _scorer->score();
         
         // This collector cannot handle NaN
         BOOST_ASSERT(!MiscUtils::isNaN(score));

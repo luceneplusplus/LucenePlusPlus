@@ -122,14 +122,14 @@ namespace Lucene
         return newLucene<DefaultCustomScoreProvider>(shared_from_this(), reader);
     }
     
-    double CustomScoreQuery::customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
+    double CustomScoreQuery::customScore(int32_t doc, double subQueryScore, const Collection<double>& valSrcScores)
     {
         if (valSrcScores.size() == 1)
             return customScore(doc, subQueryScore, valSrcScores[0]);
         if (valSrcScores.empty())
             return customScore(doc, subQueryScore, 1);
         double score = subQueryScore;
-        for (Collection<double>::iterator srcScore = valSrcScores.begin(); srcScore != valSrcScores.end(); ++srcScore)
+        for (Collection<double>::const_iterator srcScore = valSrcScores.begin(); srcScore != valSrcScores.end(); ++srcScore)
             score *= *srcScore;
         return score;
     }
@@ -195,7 +195,7 @@ namespace Lucene
     {
     }
     
-    double DefaultCustomScoreProvider::customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
+    double DefaultCustomScoreProvider::customScore(int32_t doc, double subQueryScore, const Collection<double>& valSrcScores)
     {
         return CustomScoreQueryPtr(_customQuery)->customScore(doc, subQueryScore, valSrcScores);
     }

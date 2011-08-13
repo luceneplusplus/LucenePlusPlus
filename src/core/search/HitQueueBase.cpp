@@ -24,17 +24,17 @@ namespace Lucene
         queue = newLucene<PriorityQueueScoreDocs>(shared_from_this(), queueSize);
     }
     
-    ScoreDocPtr HitQueueBase::add(ScoreDocPtr scoreDoc)
+    const ScoreDocPtr& HitQueueBase::add(const ScoreDocPtr& scoreDoc)
     {
         return queue->add(scoreDoc);
     }
     
-    ScoreDocPtr HitQueueBase::addOverflow(ScoreDocPtr scoreDoc)
+    bool HitQueueBase::addOverflow(const ScoreDocPtr& scoreDoc)
     {
         return queue->addOverflow(scoreDoc);
     }
     
-    ScoreDocPtr HitQueueBase::top()
+    const ScoreDocPtr& HitQueueBase::top()
     {
         return queue->top();
     }
@@ -44,7 +44,7 @@ namespace Lucene
         return queue->pop();
     }
     
-    ScoreDocPtr HitQueueBase::updateTop()
+    const ScoreDocPtr& HitQueueBase::updateTop()
     {
         return queue->updateTop();
     }
@@ -71,7 +71,7 @@ namespace Lucene
     
     PriorityQueueScoreDocs::PriorityQueueScoreDocs(HitQueueBasePtr hitQueue, int32_t size) : PriorityQueue<ScoreDocPtr>(size)
     {
-        _hitQueue = hitQueue;
+        _hitQueue = hitQueue.get();
     }
     
     PriorityQueueScoreDocs::~PriorityQueueScoreDocs()
@@ -80,11 +80,11 @@ namespace Lucene
     
     bool PriorityQueueScoreDocs::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second)
     {
-        return HitQueueBasePtr(_hitQueue)->lessThan(first, second);
+        return _hitQueue->lessThan(first, second);
     }
     
     ScoreDocPtr PriorityQueueScoreDocs::getSentinelObject()
     {
-        return HitQueueBasePtr(_hitQueue)->getSentinelObject();
+        return _hitQueue->getSentinelObject();
     }
 }

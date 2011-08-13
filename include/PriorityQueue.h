@@ -85,7 +85,7 @@ namespace Lucene
         
         /// Adds an Object to a PriorityQueue in log(size) time.  If one tries to add more objects 
         /// than maxSize from initialize an {@link IndexOutOfBoundsException} is thrown.
-        TYPE add(const TYPE& type)
+        const TYPE& add(const TYPE& type)
         {
             ++_size;
             if (_size < 0 || _size >= (int32_t)heap.size())
@@ -100,26 +100,25 @@ namespace Lucene
         /// smaller than the full heap's minimum, and couldn't be added), or another object that was 
         /// previously the smallest value in the heap and now has been replaced by a larger one, or null
         /// if the queue wasn't yet full with maxSize elements.
-        TYPE addOverflow(const TYPE& type)
+        bool addOverflow(const TYPE& type)
         {
             if (_size < _maxSize)
             {
                 add(type);
-                return TYPE();
+                return false;
             }
             else if (_size > 0 && !lessThan(type, heap[1]))
             {
-                TYPE result = heap[1];
                 heap[1] = type;
                 updateTop();
-                return result;
+                return false;
             }
             else
-                return type;
+                return false;
         }
         
         /// Returns the least element of the PriorityQueue.
-        TYPE top()
+        const TYPE& top()
         {
             // We don't need to check size here: if maxSize is 0, then heap is length 2 array with both 
             // entries null.  If size is 0 then heap[1] is already null.
@@ -142,7 +141,7 @@ namespace Lucene
         }
         
         /// Should be called when the Object at top changes values.
-        TYPE updateTop()
+        const TYPE& updateTop()
         {
             downHeap();
             return heap[1];

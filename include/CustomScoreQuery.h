@@ -66,7 +66,7 @@ namespace Lucene
         /// search (since Lucene 2.9).
         /// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider} 
         /// for the given {@link IndexReader}.
-        virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
+        virtual double customScore(int32_t doc, double subQueryScore, const Collection<double>& valSrcScores);
         
         /// Compute a custom score by the subQuery score and the ValueSourceQuery score.
         ///

@@ -63,7 +63,7 @@ namespace Lucene
         virtual String toString();
         
     protected:
-        static const Collection<double> SIM_NORM_DECODER();
+        static const Collection<double>& SIM_NORM_DECODER();
         
         virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
     };

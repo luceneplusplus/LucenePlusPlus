@@ -44,7 +44,7 @@ namespace Lucene
     class DoubleDocValues : public DocValues
     {
     public:
-        DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr);
+        DoubleDocValues(DoubleFieldSourcePtr source, const Collection<double>& arr);
         virtual ~DoubleDocValues();
     
         LUCENE_CLASS(DoubleDocValues);

@@ -45,7 +45,7 @@ namespace Lucene
     
     protected:
         /// Recursively iterate all subScorers that generated last doc computing sum and max
-        void scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double> sum, Collection<double> max);
+        void scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double>& sum, Collection<double>& max);
         
         /// Organize subScorers into a min heap with scorers generating the earliest document on top.
         void heapify();

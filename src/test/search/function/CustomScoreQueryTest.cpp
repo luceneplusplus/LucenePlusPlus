@@ -86,7 +86,7 @@ public:
     }
 
 public:
-    virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
+    virtual double customScore(int32_t doc, double subQueryScore, const Collection<double>& valSrcScores)
     {
         if (valSrcScores.empty())
             return subQueryScore;
@@ -142,7 +142,7 @@ protected:
 class CustomExternalScoreProvider : public CustomScoreProvider
 {
 public:
-    CustomExternalScoreProvider(IndexReaderPtr reader, Collection<int32_t> values) : CustomScoreProvider(reader)
+    CustomExternalScoreProvider(IndexReaderPtr reader, const Collection<int32_t>& values) : CustomScoreProvider(reader)
     {
         this->values = values;
     }

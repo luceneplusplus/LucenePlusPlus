@@ -292,7 +292,7 @@ namespace Lucene
     class LPPCONTRIBAPI MemoryIndexCollector : public Collector
     {
     public:
-        MemoryIndexCollector(Collection<double> scores);
+        MemoryIndexCollector(const Collection<double>& scores);
         virtual ~MemoryIndexCollector();
         
         LUCENE_CLASS(MemoryIndexCollector);

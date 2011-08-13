@@ -36,7 +36,7 @@ namespace Lucene
     {
     }
     
-    const Collection<double> TermScorer::SIM_NORM_DECODER()
+    const Collection<double>& TermScorer::SIM_NORM_DECODER()
     {
         return Similarity::getNormDecoder();
     }

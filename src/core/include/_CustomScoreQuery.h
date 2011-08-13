@@ -26,7 +26,7 @@ namespace Lucene
         CustomScoreQueryWeakPtr _customQuery;
     
     public:
-        virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
+        virtual double customScore(int32_t doc, double subQueryScore, const Collection<double>& valSrcScores);
         virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore);
         virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
         virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl);
