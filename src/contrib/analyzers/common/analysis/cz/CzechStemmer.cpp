@@ -29,50 +29,50 @@ namespace Lucene
             return len - 5;
 
         if (len > 6 && 
-            (StemmerUtil::endsWith(s, len, L"\x0011btem") ||
+            (StemmerUtil::endsWith(s, len, L"\x0011"L"btem") ||
              StemmerUtil::endsWith(s, len, L"etem") ||
-             StemmerUtil::endsWith(s, len, L"at\x0016fm")))
+             StemmerUtil::endsWith(s, len, L"at\x0016"L"fm")))
             return len - 4;
 
         if (len > 5 && 
             (StemmerUtil::endsWith(s, len, L"ech") ||
              StemmerUtil::endsWith(s, len, L"ich") ||
-             StemmerUtil::endsWith(s, len, L"\x00edch") ||
-             StemmerUtil::endsWith(s, len, L"\x00e9ho") ||
-             StemmerUtil::endsWith(s, len, L"\x011bmi") ||
+             StemmerUtil::endsWith(s, len, L"\x00ed"L"ch") ||
+             StemmerUtil::endsWith(s, len, L"\x00e9"L"ho") ||
+             StemmerUtil::endsWith(s, len, L"\x011b"L"mi") ||
              StemmerUtil::endsWith(s, len, L"emi") ||
-             StemmerUtil::endsWith(s, len, L"\x00e9mu") ||
-             StemmerUtil::endsWith(s, len, L"\x011bte") ||
+             StemmerUtil::endsWith(s, len, L"\x00e9"L"mu") ||
+             StemmerUtil::endsWith(s, len, L"\x011b"L"te") ||
              StemmerUtil::endsWith(s, len, L"ete") ||
-             StemmerUtil::endsWith(s, len, L"\x011bti") ||
+             StemmerUtil::endsWith(s, len, L"\x011b"L"ti") ||
              StemmerUtil::endsWith(s, len, L"eti") ||
-             StemmerUtil::endsWith(s, len, L"\x00edho") ||
+             StemmerUtil::endsWith(s, len, L"\x00ed"L"ho") ||
              StemmerUtil::endsWith(s, len, L"iho") ||
-             StemmerUtil::endsWith(s, len, L"\x00edmi") ||
-             StemmerUtil::endsWith(s, len, L"\x00edmu") ||
+             StemmerUtil::endsWith(s, len, L"\x00ed"L"mi") ||
+             StemmerUtil::endsWith(s, len, L"\x00ed"L"mu") ||
              StemmerUtil::endsWith(s, len, L"imu") ||
-             StemmerUtil::endsWith(s, len, L"\x00e1ch") ||
+             StemmerUtil::endsWith(s, len, L"\x00e1"L"ch") ||
              StemmerUtil::endsWith(s, len, L"ata") ||
              StemmerUtil::endsWith(s, len, L"aty") ||
-             StemmerUtil::endsWith(s, len, L"\x00fdch") ||
+             StemmerUtil::endsWith(s, len, L"\x00fd"L"ch") ||
              StemmerUtil::endsWith(s, len, L"ama") ||
              StemmerUtil::endsWith(s, len, L"ami") ||
-             StemmerUtil::endsWith(s, len, L"ov\x00e9") ||
+             StemmerUtil::endsWith(s, len, L"ov\x00e9"L"") ||
              StemmerUtil::endsWith(s, len, L"ovi") ||
-             StemmerUtil::endsWith(s, len, L"\x00fdmi")))
+             StemmerUtil::endsWith(s, len, L"\x00fd"L"mi")))
             return len - 3;
 
         if (len > 4 && 
             (StemmerUtil::endsWith(s, len, L"em") ||
              StemmerUtil::endsWith(s, len, L"es") ||
-             StemmerUtil::endsWith(s, len, L"\x00e9m") ||
-             StemmerUtil::endsWith(s, len, L"\x00edm") ||
-             StemmerUtil::endsWith(s, len, L"\x016fm") ||
+             StemmerUtil::endsWith(s, len, L"\x00e9"L"m") ||
+             StemmerUtil::endsWith(s, len, L"\x00ed"L"m") ||
+             StemmerUtil::endsWith(s, len, L"\x016f"L"m") ||
              StemmerUtil::endsWith(s, len, L"at") ||
-             StemmerUtil::endsWith(s, len, L"\x00e1m") ||
+             StemmerUtil::endsWith(s, len, L"\x00e1"L"m") ||
              StemmerUtil::endsWith(s, len, L"os") ||
              StemmerUtil::endsWith(s, len, L"us") ||
-             StemmerUtil::endsWith(s, len, L"\x00fdm") ||
+             StemmerUtil::endsWith(s, len, L"\x00fd"L"m") ||
              StemmerUtil::endsWith(s, len, L"mi") ||
              StemmerUtil::endsWith(s, len, L"ou")))
             return len - 2;
@@ -105,21 +105,21 @@ namespace Lucene
         if (len > 5 &&
             (StemmerUtil::endsWith(s, len, L"ov") ||
              StemmerUtil::endsWith(s, len, L"in") ||
-             StemmerUtil::endsWith(s, len, L"\x016fv")))
+             StemmerUtil::endsWith(s, len, L"\x016f"L"v")))
             return len - 2;
         return len;
     }
     
     int32_t CzechStemmer::normalize(wchar_t* s, int32_t len)
     {
-        if (StemmerUtil::endsWith(s, len, L"\x010dt"))
+        if (StemmerUtil::endsWith(s, len, L"\x010d"L"t"))
         {
             s[len - 2] = L'c';
             s[len - 1] = L'k';
             return len;
         }
 
-        if (StemmerUtil::endsWith(s, len, L"\x0161t"))
+        if (StemmerUtil::endsWith(s, len, L"\x0161"L"t"))
         {
             s[len - 2] = L's';
             s[len - 1] = L'k';

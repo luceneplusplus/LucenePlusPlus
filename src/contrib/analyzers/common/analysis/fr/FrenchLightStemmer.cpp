@@ -115,7 +115,7 @@ namespace Lucene
             s[len - 1] = L'r';
         }
 
-        if (len > 5 && StemmerUtil::endsWith(s, len, L"i\x00e8me"))
+        if (len > 5 && StemmerUtil::endsWith(s, len, L"i\x00e8"L"me"))
             return norm(s, len - 4);
 
         if (len > 7 && StemmerUtil::endsWith(s, len, L"teuse"))
@@ -135,7 +135,7 @@ namespace Lucene
         if (len > 5 && StemmerUtil::endsWith(s, len, L"euse"))
             return norm(s, len - 2);
 
-        if (len > 8 && StemmerUtil::endsWith(s, len, L"\x00e8re"))
+        if (len > 8 && StemmerUtil::endsWith(s, len, L"\x00e8"L"re"))
         {
             --len;
             s[len - 2] = L'e';
@@ -163,7 +163,7 @@ namespace Lucene
         if (len > 9 && StemmerUtil::endsWith(s, len, L"nnel"))
             return norm(s, len - 3);
 
-        if (len > 4 && StemmerUtil::endsWith(s, len, L"\x00e8te"))
+        if (len > 4 && StemmerUtil::endsWith(s, len, L"\x00e8"L"te"))
         {
             --len;
             s[len - 2] = L'e';

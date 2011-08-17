@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Utility class for folding character case.
-    class CharFolder : public LuceneObject
+    class LPPAPI CharFolder : public LuceneObject
     {
     public:
         virtual ~CharFolder();

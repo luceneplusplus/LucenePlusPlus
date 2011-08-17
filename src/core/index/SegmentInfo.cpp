@@ -561,13 +561,13 @@ namespace Lucene
         }
         else if (!useCompoundFile)
         {
-            _files.add(IndexFileNames::segmentFileName(docStoreSegment, IndexFileNames::FIELDS_INDEX_EXTENSION()));
-            _files.add(IndexFileNames::segmentFileName(docStoreSegment, IndexFileNames::FIELDS_EXTENSION()));
+            _files.add(IndexFileNames::segmentFileName(name, IndexFileNames::FIELDS_INDEX_EXTENSION()));
+            _files.add(IndexFileNames::segmentFileName(name, IndexFileNames::FIELDS_EXTENSION()));
             if (hasVectors)
             {
-                _files.add(IndexFileNames::segmentFileName(docStoreSegment, IndexFileNames::VECTORS_INDEX_EXTENSION()));
-                _files.add(IndexFileNames::segmentFileName(docStoreSegment, IndexFileNames::VECTORS_DOCUMENTS_EXTENSION()));
-                _files.add(IndexFileNames::segmentFileName(docStoreSegment, IndexFileNames::VECTORS_FIELDS_EXTENSION()));
+                _files.add(IndexFileNames::segmentFileName(name, IndexFileNames::VECTORS_INDEX_EXTENSION()));
+                _files.add(IndexFileNames::segmentFileName(name, IndexFileNames::VECTORS_DOCUMENTS_EXTENSION()));
+                _files.add(IndexFileNames::segmentFileName(name, IndexFileNames::VECTORS_FIELDS_EXTENSION()));
             }
         }
         

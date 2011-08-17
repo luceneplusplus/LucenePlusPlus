@@ -53,73 +53,73 @@ namespace Lucene
 
     int32_t GreekStemmer::rule0(wchar_t* s, int32_t len)
     {
-        if (len > 9 && (endsWith(s, len, L"\x03ba\x03b1\x03b8\x03b5\x03c3\x03c4\x03c9\x03c4\x03bf\x03c3") ||
-            endsWith(s, len, L"\x03ba\x03b1\x03b8\x03b5\x03c3\x03c4\x03c9\x03c4\x03c9\x03bd")))
+        if (len > 9 && (endsWith(s, len, L"\x03ba"L"\x03b1"L"\x03b8"L"\x03b5"L"\x03c3"L"\x03c4"L"\x03c9"L"\x03c4"L"\x03bf"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03ba"L"\x03b1"L"\x03b8"L"\x03b5"L"\x03c3"L"\x03c4"L"\x03c9"L"\x03c4"L"\x03c9"L"\x03bd"L"")))
             return len - 4;
 
-        if (len > 8 && (endsWith(s, len, L"\x03b3\x03b5\x03b3\x03bf\x03bd\x03bf\x03c4\x03bf\x03c3") ||
-            endsWith(s, len, L"\x03b3\x03b5\x03b3\x03bf\x03bd\x03bf\x03c4\x03c9\x03bd")))
+        if (len > 8 && (endsWith(s, len, L"\x03b3"L"\x03b5"L"\x03b3"L"\x03bf"L"\x03bd"L"\x03bf"L"\x03c4"L"\x03bf"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03b3"L"\x03b5"L"\x03b3"L"\x03bf"L"\x03bd"L"\x03bf"L"\x03c4"L"\x03c9"L"\x03bd"L"")))
             return len - 4;
 
-        if (len > 8 && endsWith(s, len, L"\x03ba\x03b1\x03b8\x03b5\x03c3\x03c4\x03c9\x03c4\x03b1"))
+        if (len > 8 && endsWith(s, len, L"\x03ba"L"\x03b1"L"\x03b8"L"\x03b5"L"\x03c3"L"\x03c4"L"\x03c9"L"\x03c4"L"\x03b1"L""))
             return len - 3;
 
-        if (len > 7 && (endsWith(s, len, L"\x03c4\x03b1\x03c4\x03bf\x03b3\x03b9\x03bf\x03c5") ||
-            endsWith(s, len, L"\x03c4\x03b1\x03c4\x03bf\x03b3\x03b9\x03c9\x03bd")))
+        if (len > 7 && (endsWith(s, len, L"\x03c4"L"\x03b1"L"\x03c4"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03bf"L"\x03c5"L"") ||
+            endsWith(s, len, L"\x03c4"L"\x03b1"L"\x03c4"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03c9"L"\x03bd"L"")))
             return len - 4;
 
-        if (len > 7 && endsWith(s, len, L"\x03b3\x03b5\x03b3\x03bf\x03bd\x03bf\x03c4\x03b1"))
+        if (len > 7 && endsWith(s, len, L"\x03b3"L"\x03b5"L"\x03b3"L"\x03bf"L"\x03bd"L"\x03bf"L"\x03c4"L"\x03b1"L""))
             return len - 3;
 
-        if (len > 7 && endsWith(s, len, L"\x03ba\x03b1\x03b8\x03b5\x03c3\x03c4\x03c9\x03c3"))
+        if (len > 7 && endsWith(s, len, L"\x03ba"L"\x03b1"L"\x03b8"L"\x03b5"L"\x03c3"L"\x03c4"L"\x03c9"L"\x03c3"L""))
             return len - 2;
 
-        if (len > 6 && (endsWith(s, len, L"\x03c3\x03ba\x03b1\x03b3\x03b9\x03bf\x03c5")) ||
-            endsWith(s, len, L"\x03c3\x03ba\x03b1\x03b3\x03b9\x03c9\x03bd") ||
-            endsWith(s, len, L"\x03bf\x03bb\x03bf\x03b3\x03b9\x03bf\x03c5") ||
-            endsWith(s, len, L"\x03bf\x03bb\x03bf\x03b3\x03b9\x03c9\x03bd") ||
-            endsWith(s, len, L"\x03ba\x03c1\x03b5\x03b1\x03c4\x03bf\x03c3") ||
-            endsWith(s, len, L"\x03ba\x03c1\x03b5\x03b1\x03c4\x03c9\x03bd") ||
-            endsWith(s, len, L"\x03c0\x03b5\x03c1\x03b1\x03c4\x03bf\x03c3") ||
-            endsWith(s, len, L"\x03c0\x03b5\x03c1\x03b1\x03c4\x03c9\x03bd") ||
-            endsWith(s, len, L"\x03c4\x03b5\x03c1\x03b1\x03c4\x03bf\x03c3") ||
-            endsWith(s, len, L"\x03c4\x03b5\x03c1\x03b1\x03c4\x03c9\x03bd"))
+        if (len > 6 && (endsWith(s, len, L"\x03c3"L"\x03ba"L"\x03b1"L"\x03b3"L"\x03b9"L"\x03bf"L"\x03c5"L"")) ||
+            endsWith(s, len, L"\x03c3"L"\x03ba"L"\x03b1"L"\x03b3"L"\x03b9"L"\x03c9"L"\x03bd"L"") ||
+            endsWith(s, len, L"\x03bf"L"\x03bb"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03bf"L"\x03c5"L"") ||
+            endsWith(s, len, L"\x03bf"L"\x03bb"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03c9"L"\x03bd"L"") ||
+            endsWith(s, len, L"\x03ba"L"\x03c1"L"\x03b5"L"\x03b1"L"\x03c4"L"\x03bf"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03ba"L"\x03c1"L"\x03b5"L"\x03b1"L"\x03c4"L"\x03c9"L"\x03bd"L"") ||
+            endsWith(s, len, L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c4"L"\x03bf"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c4"L"\x03c9"L"\x03bd"L"") ||
+            endsWith(s, len, L"\x03c4"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c4"L"\x03bf"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03c4"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c4"L"\x03c9"L"\x03bd"L""))
             return len - 4;
 
-        if (len > 6 && endsWith(s, len, L"\x03c4\x03b1\x03c4\x03bf\x03b3\x03b9\x03b1"))
+        if (len > 6 && endsWith(s, len, L"\x03c4"L"\x03b1"L"\x03c4"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03b1"L""))
             return len - 3;
 
-        if (len > 6 && endsWith(s, len, L"\x03b3\x03b5\x03b3\x03bf\x03bd\x03bf\x03c3"))
+        if (len > 6 && endsWith(s, len, L"\x03b3"L"\x03b5"L"\x03b3"L"\x03bf"L"\x03bd"L"\x03bf"L"\x03c3"L""))
             return len - 2;
 
-        if (len > 5 && (endsWith(s, len, L"\x03c6\x03b1\x03b3\x03b9\x03bf\x03c5") ||
-            endsWith(s, len, L"\x03c6\x03b1\x03b3\x03b9\x03c9\x03bd") ||
-            endsWith(s, len, L"\x03c3\x03bf\x03b3\x03b9\x03bf\x03c5") ||
-            endsWith(s, len, L"\x03c3\x03bf\x03b3\x03b9\x03bf\x03c5")))
+        if (len > 5 && (endsWith(s, len, L"\x03c6"L"\x03b1"L"\x03b3"L"\x03b9"L"\x03bf"L"\x03c5"L"") ||
+            endsWith(s, len, L"\x03c6"L"\x03b1"L"\x03b3"L"\x03b9"L"\x03c9"L"\x03bd"L"") ||
+            endsWith(s, len, L"\x03c3"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03bf"L"\x03c5"L"") ||
+            endsWith(s, len, L"\x03c3"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03bf"L"\x03c5"L"")))
             return len - 4;
 
-        if (len > 5 && (endsWith(s, len, L"\x03c3\x03ba\x03b1\x03b3\x03b9\x03b1") ||
-            endsWith(s, len, L"\x03bf\x03bb\x03bf\x03b3\x03b9\x03b1") ||
-            endsWith(s, len, L"\x03ba\x03c1\x03b5\x03b1\x03c4\x03b1") ||
-            endsWith(s, len, L"\x03c0\x03b5\x03c1\x03b1\x03c4\x03b1") ||
-            endsWith(s, len, L"\x03c4\x03b5\x03c1\x03b1\x03c4\x03b1")))
+        if (len > 5 && (endsWith(s, len, L"\x03c3"L"\x03ba"L"\x03b1"L"\x03b3"L"\x03b9"L"\x03b1"L"") ||
+            endsWith(s, len, L"\x03bf"L"\x03bb"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03b1"L"") ||
+            endsWith(s, len, L"\x03ba"L"\x03c1"L"\x03b5"L"\x03b1"L"\x03c4"L"\x03b1"L"") ||
+            endsWith(s, len, L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c4"L"\x03b1"L"") ||
+            endsWith(s, len, L"\x03c4"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c4"L"\x03b1"L"")))
             return len - 3;
 
-        if (len > 4 && (endsWith(s, len, L"\x03c6\x03b1\x03b3\x03b9\x03b1") ||
-            endsWith(s, len, L"\x03c3\x03bf\x03b3\x03b9\x03b1") ||
-            endsWith(s, len, L"\x03c6\x03c9\x03c4\x03bf\x03c3") ||
-            endsWith(s, len, L"\x03c6\x03c9\x03c4\x03c9\x03bd")))
+        if (len > 4 && (endsWith(s, len, L"\x03c6"L"\x03b1"L"\x03b3"L"\x03b9"L"\x03b1"L"") ||
+            endsWith(s, len, L"\x03c3"L"\x03bf"L"\x03b3"L"\x03b9"L"\x03b1"L"") ||
+            endsWith(s, len, L"\x03c6"L"\x03c9"L"\x03c4"L"\x03bf"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03c6"L"\x03c9"L"\x03c4"L"\x03c9"L"\x03bd"L"")))
             return len - 3;
 
-        if (len > 4 && (endsWith(s, len, L"\x03ba\x03c1\x03b5\x03b1\x03c3") ||
-            endsWith(s, len, L"\x03c0\x03b5\x03c1\x03b1\x03c3") ||
-            endsWith(s, len, L"\x03c4\x03b5\x03c1\x03b1\x03c3")))
+        if (len > 4 && (endsWith(s, len, L"\x03ba"L"\x03c1"L"\x03b5"L"\x03b1"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03c4"L"\x03b5"L"\x03c1"L"\x03b1"L"\x03c3"L"")))
             return len - 2;
 
-        if (len > 3 && endsWith(s, len, L"\x03c6\x03c9\x03c4\x03b1"))
+        if (len > 3 && endsWith(s, len, L"\x03c6"L"\x03c9"L"\x03c4"L"\x03b1"L""))
             return len - 2;
 
-        if (len > 2 && endsWith(s, len, L"\x03c6\x03c9\x03c3"))
+        if (len > 2 && endsWith(s, len, L"\x03c6"L"\x03c9"L"\x03c3"L""))
             return len - 1;
 
         return len;
@@ -127,20 +127,20 @@ namespace Lucene
 
     int32_t GreekStemmer::rule1(wchar_t* s, int32_t len)
     {
-        if (len > 4 && (endsWith(s, len, L"\x03b1\x03b4\x03b5\x03c3") ||
-            endsWith(s, len, L"\x03b1\x03b4\x03c9\x03bd")))
+        if (len > 4 && (endsWith(s, len, L"\x03b1"L"\x03b4"L"\x03b5"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03b1"L"\x03b4"L"\x03c9"L"\x03bd"L"")))
         {
             len -= 4;
-            if (!(endsWith(s, len, L"\x03bf\x03ba") ||
-                endsWith(s, len, L"\x03bc\x03b1\x03bc") ||
-                endsWith(s, len, L"\x03bc\x03b1\x03bd") ||
-                endsWith(s, len, L"\x03bc\x03c0\x03b1\x03bc\x03c0") ||
-                endsWith(s, len, L"\x03c0\x03b1\x03c4\x03b5\x03c1") ||
-                endsWith(s, len, L"\x03b3\x03b9\x03b1\x03b3\x03b9") ||
-                endsWith(s, len, L"\x03bd\x03c4\x03b1\x03bd\x03c4") ||
-                endsWith(s, len, L"\x03ba\x03c5\x03c1") ||
-                endsWith(s, len, L"\x03b8\x03b5\x03b9") ||
-                endsWith(s, len, L"\x03c0\x03b5\x03b8\x03b5\x03c1")))
+            if (!(endsWith(s, len, L"\x03bf"L"\x03ba"L"") ||
+                endsWith(s, len, L"\x03bc"L"\x03b1"L"\x03bc"L"") ||
+                endsWith(s, len, L"\x03bc"L"\x03b1"L"\x03bd"L"") ||
+                endsWith(s, len, L"\x03bc"L"\x03c0"L"\x03b1"L"\x03bc"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03c0"L"\x03b1"L"\x03c4"L"\x03b5"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03b3"L"\x03b9"L"\x03b1"L"\x03b3"L"\x03b9"L"") ||
+                endsWith(s, len, L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"\x03c4"L"") ||
+                endsWith(s, len, L"\x03ba"L"\x03c5"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03b8"L"\x03b5"L"\x03b9"L"") ||
+                endsWith(s, len, L"\x03c0"L"\x03b5"L"\x03b8"L"\x03b5"L"\x03c1"L"")))
                 len += 2; // add back
         }
         return len;
@@ -148,18 +148,18 @@ namespace Lucene
 
     int32_t GreekStemmer::rule2(wchar_t* s, int32_t len)
     {
-        if (len > 4 && (endsWith(s, len, L"\x03b5\x03b4\x03b5\x03c3") ||
-            endsWith(s, len, L"\x03b5\x03b4\x03c9\x03bd")))
+        if (len > 4 && (endsWith(s, len, L"\x03b5"L"\x03b4"L"\x03b5"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03b5"L"\x03b4"L"\x03c9"L"\x03bd"L"")))
         {
             len -= 4;
-            if (endsWith(s, len, L"\x03bf\x03c0") ||
-                endsWith(s, len, L"\x03b9\x03c0") ||
-                endsWith(s, len, L"\x03b5\x03bc\x03c0") ||
-                endsWith(s, len, L"\x03c5\x03c0") ||
-                endsWith(s, len, L"\x03b3\x03b7\x03c0") ||
-                endsWith(s, len, L"\x03b4\x03b1\x03c0") ||
-                endsWith(s, len, L"\x03ba\x03c1\x03b1\x03c3\x03c0") ||
-                endsWith(s, len, L"\x03bc\x03b9\x03bb"))
+            if (endsWith(s, len, L"\x03bf"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03b9"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03b5"L"\x03bc"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03c5"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03b3"L"\x03b7"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03b4"L"\x03b1"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03ba"L"\x03c1"L"\x03b1"L"\x03c3"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03bc"L"\x03b9"L"\x03bb"L""))
                 len += 2; // add back
         }
         return len;
@@ -167,25 +167,25 @@ namespace Lucene
 
     int32_t GreekStemmer::rule3(wchar_t* s, int32_t len)
     {
-        if (len > 5 && (endsWith(s, len, L"\x03bf\x03c5\x03b4\x03b5\x03c3") ||
-            endsWith(s, len, L"\x03bf\x03c5\x03b4\x03c9\x03bd")))
+        if (len > 5 && (endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03b4"L"\x03b5"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03b4"L"\x03c9"L"\x03bd"L"")))
         {
             len -= 5;
-            if (endsWith(s, len, L"\x03b1\x03c1\x03ba") ||
-                endsWith(s, len, L"\x03ba\x03b1\x03bb\x03b9\x03b1\x03ba") ||
-                endsWith(s, len, L"\x03c0\x03b5\x03c4\x03b1\x03bb") ||
-                endsWith(s, len, L"\x03bb\x03b9\x03c7") ||
-                endsWith(s, len, L"\x03c0\x03bb\x03b5\x03be") ||
-                endsWith(s, len, L"\x03c3\x03ba") ||
-                endsWith(s, len, L"\x03c3") ||
-                endsWith(s, len, L"\x03c6\x03bb") ||
-                endsWith(s, len, L"\x03c6\x03c1") ||
-                endsWith(s, len, L"\x03b2\x03b5\x03bb") ||
-                endsWith(s, len, L"\x03bb\x03bf\x03c5\x03bb") ||
-                endsWith(s, len, L"\x03c7\x03bd") ||
-                endsWith(s, len, L"\x03c3\x03c0") ||
-                endsWith(s, len, L"\x03c4\x03c1\x03b1\x03b3") ||
-                endsWith(s, len, L"\x03c6\x03b5"))
+            if (endsWith(s, len, L"\x03b1"L"\x03c1"L"\x03ba"L"") ||
+                endsWith(s, len, L"\x03ba"L"\x03b1"L"\x03bb"L"\x03b9"L"\x03b1"L"\x03ba"L"") ||
+                endsWith(s, len, L"\x03c0"L"\x03b5"L"\x03c4"L"\x03b1"L"\x03bb"L"") ||
+                endsWith(s, len, L"\x03bb"L"\x03b9"L"\x03c7"L"") ||
+                endsWith(s, len, L"\x03c0"L"\x03bb"L"\x03b5"L"\x03be"L"") ||
+                endsWith(s, len, L"\x03c3"L"\x03ba"L"") ||
+                endsWith(s, len, L"\x03c3"L"") ||
+                endsWith(s, len, L"\x03c6"L"\x03bb"L"") ||
+                endsWith(s, len, L"\x03c6"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03b2"L"\x03b5"L"\x03bb"L"") ||
+                endsWith(s, len, L"\x03bb"L"\x03bf"L"\x03c5"L"\x03bb"L"") ||
+                endsWith(s, len, L"\x03c7"L"\x03bd"L"") ||
+                endsWith(s, len, L"\x03c3"L"\x03c0"L"") ||
+                endsWith(s, len, L"\x03c4"L"\x03c1"L"\x03b1"L"\x03b3"L"") ||
+                endsWith(s, len, L"\x03c6"L"\x03b5"L""))
                 len += 3; // add back
         }
         return len;
@@ -197,18 +197,18 @@ namespace Lucene
         if (!exc4)
         {
             exc4 = HashSet<String>::newInstance();
-            exc4.add(L"\x03b8");
-            exc4.add(L"\x03b4");
-            exc4.add(L"\x03b5\x03bb");
-            exc4.add(L"\x03b3\x03b1\x03bb");
-            exc4.add(L"\x03bd");
-            exc4.add(L"\x03c0");
-            exc4.add(L"\x03b9\x03b4");
-            exc4.add(L"\x03c0\x03b1\x03c1");
+            exc4.add(L"\x03b8"L"");
+            exc4.add(L"\x03b4"L"");
+            exc4.add(L"\x03b5"L"\x03bb"L"");
+            exc4.add(L"\x03b3"L"\x03b1"L"\x03bb"L"");
+            exc4.add(L"\x03bd"L"");
+            exc4.add(L"\x03c0"L"");
+            exc4.add(L"\x03b9"L"\x03b4"L"");
+            exc4.add(L"\x03c0"L"\x03b1"L"\x03c1"L"");
         }
 
-        if (len > 3 && (endsWith(s, len, L"\x03b5\x03c9\x03c3") ||
-            endsWith(s, len, L"\x03b5\x03c9\x03bd")))
+        if (len > 3 && (endsWith(s, len, L"\x03b5"L"\x03c9"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03b5"L"\x03c9"L"\x03bd"L"")))
         {
             len -= 3;
             if (exc4.contains(String(s, len)))
@@ -219,14 +219,14 @@ namespace Lucene
 
     int32_t GreekStemmer::rule5(wchar_t* s, int32_t len)
     {
-        if (len > 2 && endsWith(s, len, L"\x03b9\x03b1"))
+        if (len > 2 && endsWith(s, len, L"\x03b9"L"\x03b1"L""))
         {
             len -= 2;
             if (endsWithVowel(s, len))
                 ++len; // add back
         }
-        else if (len > 3 && (endsWith(s, len, L"\x03b9\x03bf\x03c5") ||
-                 endsWith(s, len, L"\x03b9\x03c9\x03bd")))
+        else if (len > 3 && (endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c5"L"") ||
+                 endsWith(s, len, L"\x03b9"L"\x03c9"L"\x03bd"L"")))
         {
             len -= 3;
             if (endsWithVowel(s, len))
@@ -241,53 +241,53 @@ namespace Lucene
         if (!exc6)
         {
             exc6 = HashSet<String>::newInstance();
-            exc6.add(L"\x03b1\x03bb");
-            exc6.add(L"\x03b1\x03b4");
-            exc6.add(L"\x03b5\x03bd\x03b4");
-            exc6.add(L"\x03b1\x03bc\x03b1\x03bd");
-            exc6.add(L"\x03b1\x03bc\x03bc\x03bf\x03c7\x03b1\x03bb");
-            exc6.add(L"\x03b7\x03b8");
-            exc6.add(L"\x03b1\x03bd\x03b7\x03b8");
-            exc6.add(L"\x03b1\x03bd\x03c4\x03b9\x03b4");
-            exc6.add(L"\x03c6\x03c5\x03c3");
-            exc6.add(L"\x03b2\x03c1\x03c9\x03bc");
-            exc6.add(L"\x03b3\x03b5\x03c1");
-            exc6.add(L"\x03b5\x03be\x03c9\x03b4");
-            exc6.add(L"\x03ba\x03b1\x03bb\x03c0");
-            exc6.add(L"\x03ba\x03b1\x03bb\x03bb\x03b9\x03bd");
-            exc6.add(L"\x03ba\x03b1\x03c4\x03b1\x03b4");
-            exc6.add(L"\x03bc\x03bf\x03c5\x03bb");
-            exc6.add(L"\x03bc\x03c0\x03b1\x03bd");
-            exc6.add(L"\x03bc\x03c0\x03b1\x03b3\x03b9\x03b1\x03c4");
-            exc6.add(L"\x03bc\x03c0\x03bf\x03bb");
-            exc6.add(L"\x03bc\x03c0\x03bf\x03c3");
-            exc6.add(L"\x03bd\x03b9\x03c4");
-            exc6.add(L"\x03be\x03b9\x03ba");
-            exc6.add(L"\x03c3\x03c5\x03bd\x03bf\x03bc\x03b7\x03bb");
-            exc6.add(L"\x03c0\x03b5\x03c4\x03c3");
-            exc6.add(L"\x03c0\x03b9\x03c4\x03c3");
-            exc6.add(L"\x03c0\x03b9\x03ba\x03b1\x03bd\x03c4");
-            exc6.add(L"\x03c0\x03bb\x03b9\x03b1\x03c4\x03c3");
-            exc6.add(L"\x03c0\x03bf\x03c3\x03c4\x03b5\x03bb\x03bd");
-            exc6.add(L"\x03c0\x03c1\x03c9\x03c4\x03bf\x03b4");
-            exc6.add(L"\x03c3\x03b5\x03c1\x03c4");
-            exc6.add(L"\x03c3\x03c5\x03bd\x03b1\x03b4");
-            exc6.add(L"\x03c4\x03c3\x03b1\x03bc");
-            exc6.add(L"\x03c5\x03c0\x03bf\x03b4");
-            exc6.add(L"\x03c6\x03b9\x03bb\x03bf\x03bd");
-            exc6.add(L"\x03c6\x03c5\x03bb\x03bf\x03b4");
-            exc6.add(L"\x03c7\x03b1\x03c3");
+            exc6.add(L"\x03b1"L"\x03bb"L"");
+            exc6.add(L"\x03b1"L"\x03b4"L"");
+            exc6.add(L"\x03b5"L"\x03bd"L"\x03b4"L"");
+            exc6.add(L"\x03b1"L"\x03bc"L"\x03b1"L"\x03bd"L"");
+            exc6.add(L"\x03b1"L"\x03bc"L"\x03bc"L"\x03bf"L"\x03c7"L"\x03b1"L"\x03bb"L"");
+            exc6.add(L"\x03b7"L"\x03b8"L"");
+            exc6.add(L"\x03b1"L"\x03bd"L"\x03b7"L"\x03b8"L"");
+            exc6.add(L"\x03b1"L"\x03bd"L"\x03c4"L"\x03b9"L"\x03b4"L"");
+            exc6.add(L"\x03c6"L"\x03c5"L"\x03c3"L"");
+            exc6.add(L"\x03b2"L"\x03c1"L"\x03c9"L"\x03bc"L"");
+            exc6.add(L"\x03b3"L"\x03b5"L"\x03c1"L"");
+            exc6.add(L"\x03b5"L"\x03be"L"\x03c9"L"\x03b4"L"");
+            exc6.add(L"\x03ba"L"\x03b1"L"\x03bb"L"\x03c0"L"");
+            exc6.add(L"\x03ba"L"\x03b1"L"\x03bb"L"\x03bb"L"\x03b9"L"\x03bd"L"");
+            exc6.add(L"\x03ba"L"\x03b1"L"\x03c4"L"\x03b1"L"\x03b4"L"");
+            exc6.add(L"\x03bc"L"\x03bf"L"\x03c5"L"\x03bb"L"");
+            exc6.add(L"\x03bc"L"\x03c0"L"\x03b1"L"\x03bd"L"");
+            exc6.add(L"\x03bc"L"\x03c0"L"\x03b1"L"\x03b3"L"\x03b9"L"\x03b1"L"\x03c4"L"");
+            exc6.add(L"\x03bc"L"\x03c0"L"\x03bf"L"\x03bb"L"");
+            exc6.add(L"\x03bc"L"\x03c0"L"\x03bf"L"\x03c3"L"");
+            exc6.add(L"\x03bd"L"\x03b9"L"\x03c4"L"");
+            exc6.add(L"\x03be"L"\x03b9"L"\x03ba"L"");
+            exc6.add(L"\x03c3"L"\x03c5"L"\x03bd"L"\x03bf"L"\x03bc"L"\x03b7"L"\x03bb"L"");
+            exc6.add(L"\x03c0"L"\x03b5"L"\x03c4"L"\x03c3"L"");
+            exc6.add(L"\x03c0"L"\x03b9"L"\x03c4"L"\x03c3"L"");
+            exc6.add(L"\x03c0"L"\x03b9"L"\x03ba"L"\x03b1"L"\x03bd"L"\x03c4"L"");
+            exc6.add(L"\x03c0"L"\x03bb"L"\x03b9"L"\x03b1"L"\x03c4"L"\x03c3"L"");
+            exc6.add(L"\x03c0"L"\x03bf"L"\x03c3"L"\x03c4"L"\x03b5"L"\x03bb"L"\x03bd"L"");
+            exc6.add(L"\x03c0"L"\x03c1"L"\x03c9"L"\x03c4"L"\x03bf"L"\x03b4"L"");
+            exc6.add(L"\x03c3"L"\x03b5"L"\x03c1"L"\x03c4"L"");
+            exc6.add(L"\x03c3"L"\x03c5"L"\x03bd"L"\x03b1"L"\x03b4"L"");
+            exc6.add(L"\x03c4"L"\x03c3"L"\x03b1"L"\x03bc"L"");
+            exc6.add(L"\x03c5"L"\x03c0"L"\x03bf"L"\x03b4"L"");
+            exc6.add(L"\x03c6"L"\x03b9"L"\x03bb"L"\x03bf"L"\x03bd"L"");
+            exc6.add(L"\x03c6"L"\x03c5"L"\x03bb"L"\x03bf"L"\x03b4"L"");
+            exc6.add(L"\x03c7"L"\x03b1"L"\x03c3"L"");
         }
 
         bool removed = false;
-        if (len > 3 && (endsWith(s, len, L"\x03b9\x03ba\x03b1") ||
-            endsWith(s, len, L"\x03b9\x03ba\x03bf")))
+        if (len > 3 && (endsWith(s, len, L"\x03b9"L"\x03ba"L"\x03b1"L"") ||
+            endsWith(s, len, L"\x03b9"L"\x03ba"L"\x03bf"L"")))
         {
             len -= 3;
             removed = true;
         }
-        else if (len > 4 && (endsWith(s, len, L"\x03b9\x03ba\x03bf\x03c5") ||
-                 endsWith(s, len, L"\x03b9\x03ba\x03c9\x03bd")))
+        else if (len > 4 && (endsWith(s, len, L"\x03b9"L"\x03ba"L"\x03bf"L"\x03c5"L"") ||
+                 endsWith(s, len, L"\x03b9"L"\x03ba"L"\x03c9"L"\x03bd"L"")))
         {
             len -= 4;
             removed = true;
@@ -307,33 +307,33 @@ namespace Lucene
         if (!exc7)
         {
             exc7 = HashSet<String>::newInstance();
-            exc7.add(L"\x03b1\x03bd\x03b1\x03c0");
-            exc7.add(L"\x03b1\x03c0\x03bf\x03b8");
-            exc7.add(L"\x03b1\x03c0\x03bf\x03ba");
-            exc7.add(L"\x03b1\x03c0\x03bf\x03c3\x03c4");
-            exc7.add(L"\x03b2\x03bf\x03c5\x03b2");
-            exc7.add(L"\x03be\x03b5\x03b8");
-            exc7.add(L"\x03bf\x03c5\x03bb");
-            exc7.add(L"\x03c0\x03b5\x03b8");
-            exc7.add(L"\x03c0\x03b9\x03ba\x03c1");
-            exc7.add(L"\x03c0\x03bf\x03c4");
-            exc7.add(L"\x03c3\x03b9\x03c7");
-            exc7.add(L"\x03c7");
+            exc7.add(L"\x03b1"L"\x03bd"L"\x03b1"L"\x03c0"L"");
+            exc7.add(L"\x03b1"L"\x03c0"L"\x03bf"L"\x03b8"L"");
+            exc7.add(L"\x03b1"L"\x03c0"L"\x03bf"L"\x03ba"L"");
+            exc7.add(L"\x03b1"L"\x03c0"L"\x03bf"L"\x03c3"L"\x03c4"L"");
+            exc7.add(L"\x03b2"L"\x03bf"L"\x03c5"L"\x03b2"L"");
+            exc7.add(L"\x03be"L"\x03b5"L"\x03b8"L"");
+            exc7.add(L"\x03bf"L"\x03c5"L"\x03bb"L"");
+            exc7.add(L"\x03c0"L"\x03b5"L"\x03b8"L"");
+            exc7.add(L"\x03c0"L"\x03b9"L"\x03ba"L"\x03c1"L"");
+            exc7.add(L"\x03c0"L"\x03bf"L"\x03c4"L"");
+            exc7.add(L"\x03c3"L"\x03b9"L"\x03c7"L"");
+            exc7.add(L"\x03c7"L"");
         }
 
-        if (len == 5 && endsWith(s, len, L"\x03b1\x03b3\x03b1\x03bc\x03b5"))
+        if (len == 5 && endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b1"L"\x03bc"L"\x03b5"L""))
             return len - 1;
 
-        if (len > 7 && endsWith(s, len, L"\x03b7\x03b8\x03b7\x03ba\x03b1\x03bc\x03b5"))
+        if (len > 7 && endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b7"L"\x03ba"L"\x03b1"L"\x03bc"L"\x03b5"L""))
             len -= 7;
-        else if (len > 6 && endsWith(s, len, L"\x03bf\x03c5\x03c3\x03b1\x03bc\x03b5"))
+        else if (len > 6 && endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b1"L"\x03bc"L"\x03b5"L""))
             len -= 6;
-        else if (len > 5 && (endsWith(s, len, L"\x03b1\x03b3\x03b1\x03bc\x03b5") ||
-                 endsWith(s, len, L"\x03b7\x03c3\x03b1\x03bc\x03b5") ||
-                 endsWith(s, len, L"\x03b7\x03ba\x03b1\x03bc\x03b5")))
+        else if (len > 5 && (endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b1"L"\x03bc"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b1"L"\x03bc"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03ba"L"\x03b1"L"\x03bc"L"\x03b5"L"")))
         len -= 5;
 
-        if (len > 3 && endsWith(s, len, L"\x03b1\x03bc\x03b5"))
+        if (len > 3 && endsWith(s, len, L"\x03b1"L"\x03bc"L"\x03b5"L""))
         {
             len -= 3;
             if (exc7.contains(String(s, len)))
@@ -349,137 +349,137 @@ namespace Lucene
         if (!exc8a)
         {
             exc8a = HashSet<String>::newInstance();
-            exc8a.add(L"\x03c4\x03c1");
-            exc8a.add(L"\x03c4\x03c3");
+            exc8a.add(L"\x03c4"L"\x03c1"L"");
+            exc8a.add(L"\x03c4"L"\x03c3"L"");
         }
 
         static HashSet<String> exc8b;
         if (!exc8b)
         {
             exc8b = HashSet<String>::newInstance();
-            exc8b.add(L"\x03b2\x03b5\x03c4\x03b5\x03c1");
-            exc8b.add(L"\x03b2\x03bf\x03c5\x03bb\x03ba");
-            exc8b.add(L"\x03b2\x03c1\x03b1\x03c7\x03bc");
-            exc8b.add(L"\x03b3");
-            exc8b.add(L"\x03b4\x03c1\x03b1\x03b4\x03bf\x03c5\x03bc");
-            exc8b.add(L"\x03b8");
-            exc8b.add(L"\x03ba\x03b1\x03bb\x03c0\x03bf\x03c5\x03b6");
-            exc8b.add(L"\x03ba\x03b1\x03c3\x03c4\x03b5\x03bb");
-            exc8b.add(L"\x03ba\x03bf\x03c1\x03bc\x03bf\x03c1");
-            exc8b.add(L"\x03bb\x03b1\x03bf\x03c0\x03bb");
-            exc8b.add(L"\x03bc\x03c9\x03b1\x03bc\x03b5\x03b8");
-            exc8b.add(L"\x03bc");
-            exc8b.add(L"\x03bc\x03bf\x03c5\x03c3\x03bf\x03c5\x03bb\x03bc");
-            exc8b.add(L"\x03bd");
-            exc8b.add(L"\x03bf\x03c5\x03bb");
-            exc8b.add(L"\x03c0");
-            exc8b.add(L"\x03c0\x03b5\x03bb\x03b5\x03ba");
-            exc8b.add(L"\x03c0\x03bb");
-            exc8b.add(L"\x03c0\x03bf\x03bb\x03b9\x03c3");
-            exc8b.add(L"\x03c0\x03bf\x03c1\x03c4\x03bf\x03bb");
-            exc8b.add(L"\x03c3\x03b1\x03c1\x03b1\x03ba\x03b1\x03c4\x03c3");
-            exc8b.add(L"\x03c3\x03bf\x03c5\x03bb\x03c4");
-            exc8b.add(L"\x03c4\x03c3\x03b1\x03c1\x03bb\x03b1\x03c4");
-            exc8b.add(L"\x03bf\x03c1\x03c6");
-            exc8b.add(L"\x03c4\x03c3\x03b9\x03b3\x03b3");
-            exc8b.add(L"\x03c4\x03c3\x03bf\x03c0");
-            exc8b.add(L"\x03c6\x03c9\x03c4\x03bf\x03c3\x03c4\x03b5\x03c6");
-            exc8b.add(L"\x03c7");
-            exc8b.add(L"\x03c8\x03c5\x03c7\x03bf\x03c0\x03bb");
-            exc8b.add(L"\x03b1\x03b3");
-            exc8b.add(L"\x03bf\x03c1\x03c6");
-            exc8b.add(L"\x03b3\x03b1\x03bb");
-            exc8b.add(L"\x03b3\x03b5\x03c1");
-            exc8b.add(L"\x03b4\x03b5\x03ba");
-            exc8b.add(L"\x03b4\x03b9\x03c0\x03bb");
-            exc8b.add(L"\x03b1\x03bc\x03b5\x03c1\x03b9\x03ba\x03b1\x03bd");
-            exc8b.add(L"\x03bf\x03c5\x03c1");
-            exc8b.add(L"\x03c0\x03b9\x03b8");
-            exc8b.add(L"\x03c0\x03bf\x03c5\x03c1\x03b9\x03c4");
-            exc8b.add(L"\x03c3");
-            exc8b.add(L"\x03b6\x03c9\x03bd\x03c4");
-            exc8b.add(L"\x03b9\x03ba");
-            exc8b.add(L"\x03ba\x03b1\x03c3\x03c4");
-            exc8b.add(L"\x03ba\x03bf\x03c0");
-            exc8b.add(L"\x03bb\x03b9\x03c7");
-            exc8b.add(L"\x03bb\x03bf\x03c5\x03b8\x03b7\x03c1");
-            exc8b.add(L"\x03bc\x03b1\x03b9\x03bd\x03c4");
-            exc8b.add(L"\x03bc\x03b5\x03bb");
-            exc8b.add(L"\x03c3\x03b9\x03b3");
-            exc8b.add(L"\x03c3\x03c0");
-            exc8b.add(L"\x03c3\x03c4\x03b5\x03b3");
-            exc8b.add(L"\x03c4\x03c1\x03b1\x03b3");
-            exc8b.add(L"\x03c4\x03c3\x03b1\x03b3");
-            exc8b.add(L"\x03c6");
-            exc8b.add(L"\x03b5\x03c1");
-            exc8b.add(L"\x03b1\x03b4\x03b1\x03c0");
-            exc8b.add(L"\x03b1\x03b8\x03b9\x03b3\x03b3");
-            exc8b.add(L"\x03b1\x03bc\x03b7\x03c7");
-            exc8b.add(L"\x03b1\x03bd\x03b9\x03ba");
-            exc8b.add(L"\x03b1\x03bd\x03bf\x03c1\x03b3");
-            exc8b.add(L"\x03b1\x03c0\x03b7\x03b3");
-            exc8b.add(L"\x03b1\x03c0\x03b9\x03b8");
-            exc8b.add(L"\x03b1\x03c4\x03c3\x03b9\x03b3\x03b3");
-            exc8b.add(L"\x03b2\x03b1\x03c3");
-            exc8b.add(L"\x03b2\x03b1\x03c3\x03ba");
-            exc8b.add(L"\x03b2\x03b1\x03b8\x03c5\x03b3\x03b1\x03bb");
-            exc8b.add(L"\x03b2\x03b9\x03bf\x03bc\x03b7\x03c7");
-            exc8b.add(L"\x03b2\x03c1\x03b1\x03c7\x03c5\x03ba");
-            exc8b.add(L"\x03b4\x03b9\x03b1\x03c4");
-            exc8b.add(L"\x03b4\x03b9\x03b1\x03c6");
-            exc8b.add(L"\x03b5\x03bd\x03bf\x03c1\x03b3");
-            exc8b.add(L"\x03b8\x03c5\x03c3");
-            exc8b.add(L"\x03ba\x03b1\x03c0\x03bd\x03bf\x03b2\x03b9\x03bf\x03bc\x03b7\x03c7");
-            exc8b.add(L"\x03ba\x03b1\x03c4\x03b1\x03b3\x03b1\x03bb");
-            exc8b.add(L"\x03ba\x03bb\x03b9\x03b2");
-            exc8b.add(L"\x03ba\x03bf\x03b9\x03bb\x03b1\x03c1\x03c6");
-            exc8b.add(L"\x03bb\x03b9\x03b2");
-            exc8b.add(L"\x03bc\x03b5\x03b3\x03bb\x03bf\x03b2\x03b9\x03bf\x03bc\x03b7\x03c7");
-            exc8b.add(L"\x03bc\x03b9\x03ba\x03c1\x03bf\x03b2\x03b9\x03bf\x03bc\x03b7\x03c7");
-            exc8b.add(L"\x03bd\x03c4\x03b1\x03b2");
-            exc8b.add(L"\x03be\x03b7\x03c1\x03bf\x03ba\x03bb\x03b9\x03b2");
-            exc8b.add(L"\x03bf\x03bb\x03b9\x03b3\x03bf\x03b4\x03b1\x03bc");
-            exc8b.add(L"\x03bf\x03bb\x03bf\x03b3\x03b1\x03bb");
-            exc8b.add(L"\x03c0\x03b5\x03bd\x03c4\x03b1\x03c1\x03c6");
-            exc8b.add(L"\x03c0\x03b5\x03c1\x03b7\x03c6");
-            exc8b.add(L"\x03c0\x03b5\x03c1\x03b9\x03c4\x03c1");
-            exc8b.add(L"\x03c0\x03bb\x03b1\x03c4");
-            exc8b.add(L"\x03c0\x03bf\x03bb\x03c5\x03b4\x03b1\x03c0");
-            exc8b.add(L"\x03c0\x03bf\x03bb\x03c5\x03bc\x03b7\x03c7");
-            exc8b.add(L"\x03c3\x03c4\x03b5\x03c6");
-            exc8b.add(L"\x03c4\x03b1\x03b2");
-            exc8b.add(L"\x03c4\x03b5\x03c4");
-            exc8b.add(L"\x03c5\x03c0\x03b5\x03c1\x03b7\x03c6");
-            exc8b.add(L"\x03c5\x03c0\x03bf\x03ba\x03bf\x03c0");
-            exc8b.add(L"\x03c7\x03b1\x03bc\x03b7\x03bb\x03bf\x03b4\x03b1\x03c0");
-            exc8b.add(L"\x03c8\x03b7\x03bb\x03bf\x03c4\x03b1\x03b2");
+            exc8b.add(L"\x03b2"L"\x03b5"L"\x03c4"L"\x03b5"L"\x03c1"L"");
+            exc8b.add(L"\x03b2"L"\x03bf"L"\x03c5"L"\x03bb"L"\x03ba"L"");
+            exc8b.add(L"\x03b2"L"\x03c1"L"\x03b1"L"\x03c7"L"\x03bc"L"");
+            exc8b.add(L"\x03b3"L"");
+            exc8b.add(L"\x03b4"L"\x03c1"L"\x03b1"L"\x03b4"L"\x03bf"L"\x03c5"L"\x03bc"L"");
+            exc8b.add(L"\x03b8"L"");
+            exc8b.add(L"\x03ba"L"\x03b1"L"\x03bb"L"\x03c0"L"\x03bf"L"\x03c5"L"\x03b6"L"");
+            exc8b.add(L"\x03ba"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L"\x03bb"L"");
+            exc8b.add(L"\x03ba"L"\x03bf"L"\x03c1"L"\x03bc"L"\x03bf"L"\x03c1"L"");
+            exc8b.add(L"\x03bb"L"\x03b1"L"\x03bf"L"\x03c0"L"\x03bb"L"");
+            exc8b.add(L"\x03bc"L"\x03c9"L"\x03b1"L"\x03bc"L"\x03b5"L"\x03b8"L"");
+            exc8b.add(L"\x03bc"L"");
+            exc8b.add(L"\x03bc"L"\x03bf"L"\x03c5"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bb"L"\x03bc"L"");
+            exc8b.add(L"\x03bd"L"");
+            exc8b.add(L"\x03bf"L"\x03c5"L"\x03bb"L"");
+            exc8b.add(L"\x03c0"L"");
+            exc8b.add(L"\x03c0"L"\x03b5"L"\x03bb"L"\x03b5"L"\x03ba"L"");
+            exc8b.add(L"\x03c0"L"\x03bb"L"");
+            exc8b.add(L"\x03c0"L"\x03bf"L"\x03bb"L"\x03b9"L"\x03c3"L"");
+            exc8b.add(L"\x03c0"L"\x03bf"L"\x03c1"L"\x03c4"L"\x03bf"L"\x03bb"L"");
+            exc8b.add(L"\x03c3"L"\x03b1"L"\x03c1"L"\x03b1"L"\x03ba"L"\x03b1"L"\x03c4"L"\x03c3"L"");
+            exc8b.add(L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bb"L"\x03c4"L"");
+            exc8b.add(L"\x03c4"L"\x03c3"L"\x03b1"L"\x03c1"L"\x03bb"L"\x03b1"L"\x03c4"L"");
+            exc8b.add(L"\x03bf"L"\x03c1"L"\x03c6"L"");
+            exc8b.add(L"\x03c4"L"\x03c3"L"\x03b9"L"\x03b3"L"\x03b3"L"");
+            exc8b.add(L"\x03c4"L"\x03c3"L"\x03bf"L"\x03c0"L"");
+            exc8b.add(L"\x03c6"L"\x03c9"L"\x03c4"L"\x03bf"L"\x03c3"L"\x03c4"L"\x03b5"L"\x03c6"L"");
+            exc8b.add(L"\x03c7"L"");
+            exc8b.add(L"\x03c8"L"\x03c5"L"\x03c7"L"\x03bf"L"\x03c0"L"\x03bb"L"");
+            exc8b.add(L"\x03b1"L"\x03b3"L"");
+            exc8b.add(L"\x03bf"L"\x03c1"L"\x03c6"L"");
+            exc8b.add(L"\x03b3"L"\x03b1"L"\x03bb"L"");
+            exc8b.add(L"\x03b3"L"\x03b5"L"\x03c1"L"");
+            exc8b.add(L"\x03b4"L"\x03b5"L"\x03ba"L"");
+            exc8b.add(L"\x03b4"L"\x03b9"L"\x03c0"L"\x03bb"L"");
+            exc8b.add(L"\x03b1"L"\x03bc"L"\x03b5"L"\x03c1"L"\x03b9"L"\x03ba"L"\x03b1"L"\x03bd"L"");
+            exc8b.add(L"\x03bf"L"\x03c5"L"\x03c1"L"");
+            exc8b.add(L"\x03c0"L"\x03b9"L"\x03b8"L"");
+            exc8b.add(L"\x03c0"L"\x03bf"L"\x03c5"L"\x03c1"L"\x03b9"L"\x03c4"L"");
+            exc8b.add(L"\x03c3"L"");
+            exc8b.add(L"\x03b6"L"\x03c9"L"\x03bd"L"\x03c4"L"");
+            exc8b.add(L"\x03b9"L"\x03ba"L"");
+            exc8b.add(L"\x03ba"L"\x03b1"L"\x03c3"L"\x03c4"L"");
+            exc8b.add(L"\x03ba"L"\x03bf"L"\x03c0"L"");
+            exc8b.add(L"\x03bb"L"\x03b9"L"\x03c7"L"");
+            exc8b.add(L"\x03bb"L"\x03bf"L"\x03c5"L"\x03b8"L"\x03b7"L"\x03c1"L"");
+            exc8b.add(L"\x03bc"L"\x03b1"L"\x03b9"L"\x03bd"L"\x03c4"L"");
+            exc8b.add(L"\x03bc"L"\x03b5"L"\x03bb"L"");
+            exc8b.add(L"\x03c3"L"\x03b9"L"\x03b3"L"");
+            exc8b.add(L"\x03c3"L"\x03c0"L"");
+            exc8b.add(L"\x03c3"L"\x03c4"L"\x03b5"L"\x03b3"L"");
+            exc8b.add(L"\x03c4"L"\x03c1"L"\x03b1"L"\x03b3"L"");
+            exc8b.add(L"\x03c4"L"\x03c3"L"\x03b1"L"\x03b3"L"");
+            exc8b.add(L"\x03c6"L"");
+            exc8b.add(L"\x03b5"L"\x03c1"L"");
+            exc8b.add(L"\x03b1"L"\x03b4"L"\x03b1"L"\x03c0"L"");
+            exc8b.add(L"\x03b1"L"\x03b8"L"\x03b9"L"\x03b3"L"\x03b3"L"");
+            exc8b.add(L"\x03b1"L"\x03bc"L"\x03b7"L"\x03c7"L"");
+            exc8b.add(L"\x03b1"L"\x03bd"L"\x03b9"L"\x03ba"L"");
+            exc8b.add(L"\x03b1"L"\x03bd"L"\x03bf"L"\x03c1"L"\x03b3"L"");
+            exc8b.add(L"\x03b1"L"\x03c0"L"\x03b7"L"\x03b3"L"");
+            exc8b.add(L"\x03b1"L"\x03c0"L"\x03b9"L"\x03b8"L"");
+            exc8b.add(L"\x03b1"L"\x03c4"L"\x03c3"L"\x03b9"L"\x03b3"L"\x03b3"L"");
+            exc8b.add(L"\x03b2"L"\x03b1"L"\x03c3"L"");
+            exc8b.add(L"\x03b2"L"\x03b1"L"\x03c3"L"\x03ba"L"");
+            exc8b.add(L"\x03b2"L"\x03b1"L"\x03b8"L"\x03c5"L"\x03b3"L"\x03b1"L"\x03bb"L"");
+            exc8b.add(L"\x03b2"L"\x03b9"L"\x03bf"L"\x03bc"L"\x03b7"L"\x03c7"L"");
+            exc8b.add(L"\x03b2"L"\x03c1"L"\x03b1"L"\x03c7"L"\x03c5"L"\x03ba"L"");
+            exc8b.add(L"\x03b4"L"\x03b9"L"\x03b1"L"\x03c4"L"");
+            exc8b.add(L"\x03b4"L"\x03b9"L"\x03b1"L"\x03c6"L"");
+            exc8b.add(L"\x03b5"L"\x03bd"L"\x03bf"L"\x03c1"L"\x03b3"L"");
+            exc8b.add(L"\x03b8"L"\x03c5"L"\x03c3"L"");
+            exc8b.add(L"\x03ba"L"\x03b1"L"\x03c0"L"\x03bd"L"\x03bf"L"\x03b2"L"\x03b9"L"\x03bf"L"\x03bc"L"\x03b7"L"\x03c7"L"");
+            exc8b.add(L"\x03ba"L"\x03b1"L"\x03c4"L"\x03b1"L"\x03b3"L"\x03b1"L"\x03bb"L"");
+            exc8b.add(L"\x03ba"L"\x03bb"L"\x03b9"L"\x03b2"L"");
+            exc8b.add(L"\x03ba"L"\x03bf"L"\x03b9"L"\x03bb"L"\x03b1"L"\x03c1"L"\x03c6"L"");
+            exc8b.add(L"\x03bb"L"\x03b9"L"\x03b2"L"");
+            exc8b.add(L"\x03bc"L"\x03b5"L"\x03b3"L"\x03bb"L"\x03bf"L"\x03b2"L"\x03b9"L"\x03bf"L"\x03bc"L"\x03b7"L"\x03c7"L"");
+            exc8b.add(L"\x03bc"L"\x03b9"L"\x03ba"L"\x03c1"L"\x03bf"L"\x03b2"L"\x03b9"L"\x03bf"L"\x03bc"L"\x03b7"L"\x03c7"L"");
+            exc8b.add(L"\x03bd"L"\x03c4"L"\x03b1"L"\x03b2"L"");
+            exc8b.add(L"\x03be"L"\x03b7"L"\x03c1"L"\x03bf"L"\x03ba"L"\x03bb"L"\x03b9"L"\x03b2"L"");
+            exc8b.add(L"\x03bf"L"\x03bb"L"\x03b9"L"\x03b3"L"\x03bf"L"\x03b4"L"\x03b1"L"\x03bc"L"");
+            exc8b.add(L"\x03bf"L"\x03bb"L"\x03bf"L"\x03b3"L"\x03b1"L"\x03bb"L"");
+            exc8b.add(L"\x03c0"L"\x03b5"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03c1"L"\x03c6"L"");
+            exc8b.add(L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b7"L"\x03c6"L"");
+            exc8b.add(L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b9"L"\x03c4"L"\x03c1"L"");
+            exc8b.add(L"\x03c0"L"\x03bb"L"\x03b1"L"\x03c4"L"");
+            exc8b.add(L"\x03c0"L"\x03bf"L"\x03bb"L"\x03c5"L"\x03b4"L"\x03b1"L"\x03c0"L"");
+            exc8b.add(L"\x03c0"L"\x03bf"L"\x03bb"L"\x03c5"L"\x03bc"L"\x03b7"L"\x03c7"L"");
+            exc8b.add(L"\x03c3"L"\x03c4"L"\x03b5"L"\x03c6"L"");
+            exc8b.add(L"\x03c4"L"\x03b1"L"\x03b2"L"");
+            exc8b.add(L"\x03c4"L"\x03b5"L"\x03c4"L"");
+            exc8b.add(L"\x03c5"L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b7"L"\x03c6"L"");
+            exc8b.add(L"\x03c5"L"\x03c0"L"\x03bf"L"\x03ba"L"\x03bf"L"\x03c0"L"");
+            exc8b.add(L"\x03c7"L"\x03b1"L"\x03bc"L"\x03b7"L"\x03bb"L"\x03bf"L"\x03b4"L"\x03b1"L"\x03c0"L"");
+            exc8b.add(L"\x03c8"L"\x03b7"L"\x03bb"L"\x03bf"L"\x03c4"L"\x03b1"L"\x03b2"L"");
         }
 
         bool removed = false;
 
-        if (len > 8 && endsWith(s, len, L"\x03b9\x03bf\x03c5\x03bd\x03c4\x03b1\x03bd\x03b5"))
+        if (len > 8 && endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"\x03b5"L""))
         {
             len -= 8;
             removed = true;
         }
-        else if (len > 7 && endsWith(s, len, L"\x03b9\x03bf\x03bd\x03c4\x03b1\x03bd\x03b5") ||
-                 endsWith(s, len, L"\x03bf\x03c5\x03bd\x03c4\x03b1\x03bd\x03b5") ||
-                 endsWith(s, len, L"\x03b7\x03b8\x03b7\x03ba\x03b1\x03bd\x03b5"))
+        else if (len > 7 && endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b7"L"\x03ba"L"\x03b1"L"\x03bd"L"\x03b5"L""))
         {
             len -= 7;
             removed = true;
         }
-        else if (len > 6 && endsWith(s, len, L"\x03b9\x03bf\x03c4\x03b1\x03bd\x03b5") ||
-                 endsWith(s, len, L"\x03bf\x03bd\x03c4\x03b1\x03bd\x03b5") ||
-                 endsWith(s, len, L"\x03bf\x03c5\x03c3\x03b1\x03bd\x03b5"))
+        else if (len > 6 && endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c4"L"\x03b1"L"\x03bd"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03bf"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b1"L"\x03bd"L"\x03b5"L""))
         {
             len -= 6;
             removed = true;
         }
-        else if (len > 5 && endsWith(s, len, L"\x03b1\x03b3\x03b1\x03bd\x03b5") ||
-                 endsWith(s, len, L"\x03b7\x03c3\x03b1\x03bd\x03b5") ||
-                 endsWith(s, len, L"\x03bf\x03c4\x03b1\x03bd\x03b5") ||
-                 endsWith(s, len, L"\x03b7\x03ba\x03b1\x03bd\x03b5"))
+        else if (len > 5 && endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b1"L"\x03bd"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b1"L"\x03bd"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03bf"L"\x03c4"L"\x03b1"L"\x03bd"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03ba"L"\x03b1"L"\x03bd"L"\x03b5"L""))
         {
             len -= 5;
             removed = true;
@@ -494,7 +494,7 @@ namespace Lucene
             s[len - 1] = L'\x03bd';
         }
 
-        if (len > 3 && endsWith(s, len, L"\x03b1\x03bd\x03b5"))
+        if (len > 3 && endsWith(s, len, L"\x03b1"L"\x03bd"L"\x03b5"L""))
         {
             len -= 3;
             if (endsWithVowelNoY(s, len) || exc8b.contains(String(s, len)))
@@ -510,72 +510,72 @@ namespace Lucene
         if (!exc9)
         {
             exc9 = HashSet<String>::newInstance();
-            exc9.add(L"\x03b1\x03b2\x03b1\x03c1");
-            exc9.add(L"\x03b2\x03b5\x03bd");
-            exc9.add(L"\x03b5\x03bd\x03b1\x03c1");
-            exc9.add(L"\x03b1\x03b2\x03c1");
-            exc9.add(L"\x03b1\x03b4");
-            exc9.add(L"\x03b1\x03b8");
-            exc9.add(L"\x03b1\x03bd");
-            exc9.add(L"\x03b1\x03c0\x03bb");
-            exc9.add(L"\x03b2\x03b1\x03c1\x03bf\x03bd");
-            exc9.add(L"\x03bd\x03c4\x03c1");
-            exc9.add(L"\x03c3\x03ba");
-            exc9.add(L"\x03ba\x03bf\x03c0");
-            exc9.add(L"\x03bc\x03c0\x03bf\x03c1");
-            exc9.add(L"\x03bd\x03b9\x03c6");
-            exc9.add(L"\x03c0\x03b1\x03b3");
-            exc9.add(L"\x03c0\x03b1\x03c1\x03b1\x03ba\x03b1\x03bb");
-            exc9.add(L"\x03c3\x03b5\x03c1\x03c0");
-            exc9.add(L"\x03c3\x03ba\x03b5\x03bb");
-            exc9.add(L"\x03c3\x03c5\x03c1\x03c6");
-            exc9.add(L"\x03c4\x03bf\x03ba");
-            exc9.add(L"\x03c5");
-            exc9.add(L"\x03b4");
-            exc9.add(L"\x03b5\x03bc");
-            exc9.add(L"\x03b8\x03b1\x03c1\x03c1");
-            exc9.add(L"\x03b8");
+            exc9.add(L"\x03b1"L"\x03b2"L"\x03b1"L"\x03c1"L"");
+            exc9.add(L"\x03b2"L"\x03b5"L"\x03bd"L"");
+            exc9.add(L"\x03b5"L"\x03bd"L"\x03b1"L"\x03c1"L"");
+            exc9.add(L"\x03b1"L"\x03b2"L"\x03c1"L"");
+            exc9.add(L"\x03b1"L"\x03b4"L"");
+            exc9.add(L"\x03b1"L"\x03b8"L"");
+            exc9.add(L"\x03b1"L"\x03bd"L"");
+            exc9.add(L"\x03b1"L"\x03c0"L"\x03bb"L"");
+            exc9.add(L"\x03b2"L"\x03b1"L"\x03c1"L"\x03bf"L"\x03bd"L"");
+            exc9.add(L"\x03bd"L"\x03c4"L"\x03c1"L"");
+            exc9.add(L"\x03c3"L"\x03ba"L"");
+            exc9.add(L"\x03ba"L"\x03bf"L"\x03c0"L"");
+            exc9.add(L"\x03bc"L"\x03c0"L"\x03bf"L"\x03c1"L"");
+            exc9.add(L"\x03bd"L"\x03b9"L"\x03c6"L"");
+            exc9.add(L"\x03c0"L"\x03b1"L"\x03b3"L"");
+            exc9.add(L"\x03c0"L"\x03b1"L"\x03c1"L"\x03b1"L"\x03ba"L"\x03b1"L"\x03bb"L"");
+            exc9.add(L"\x03c3"L"\x03b5"L"\x03c1"L"\x03c0"L"");
+            exc9.add(L"\x03c3"L"\x03ba"L"\x03b5"L"\x03bb"L"");
+            exc9.add(L"\x03c3"L"\x03c5"L"\x03c1"L"\x03c6"L"");
+            exc9.add(L"\x03c4"L"\x03bf"L"\x03ba"L"");
+            exc9.add(L"\x03c5"L"");
+            exc9.add(L"\x03b4"L"");
+            exc9.add(L"\x03b5"L"\x03bc"L"");
+            exc9.add(L"\x03b8"L"\x03b1"L"\x03c1"L"\x03c1"L"");
+            exc9.add(L"\x03b8"L"");
         }
 
-        if (len > 5 && endsWith(s, len, L"\x03b7\x03c3\x03b5\x03c4\x03b5"))
+        if (len > 5 && endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b5"L"\x03c4"L"\x03b5"L""))
             len -= 5;
 
-        if (len > 3 && endsWith(s, len, L"\x03b5\x03c4\x03b5"))
+        if (len > 3 && endsWith(s, len, L"\x03b5"L"\x03c4"L"\x03b5"L""))
         {
             len -= 3;
             if (exc9.contains(String(s, len)) ||
                 endsWithVowelNoY(s, len) ||
-                endsWith(s, len, L"\x03bf\x03b4") ||
-                endsWith(s, len, L"\x03b1\x03b9\x03c1") ||
-                endsWith(s, len, L"\x03c6\x03bf\x03c1") ||
-                endsWith(s, len, L"\x03c4\x03b1\x03b8") ||
-                endsWith(s, len, L"\x03b4\x03b9\x03b1\x03b8") ||
-                endsWith(s, len, L"\x03c3\x03c7") ||
-                endsWith(s, len, L"\x03b5\x03bd\x03b4") ||
-                endsWith(s, len, L"\x03b5\x03c5\x03c1") ||
-                endsWith(s, len, L"\x03c4\x03b9\x03b8") ||
-                endsWith(s, len, L"\x03c5\x03c0\x03b5\x03c1\x03b8") ||
-                endsWith(s, len, L"\x03c1\x03b1\x03b8") ||
-                endsWith(s, len, L"\x03b5\x03bd\x03b8") ||
-                endsWith(s, len, L"\x03c1\x03bf\x03b8") ||
-                endsWith(s, len, L"\x03c3\x03b8") ||
-                endsWith(s, len, L"\x03c0\x03c5\x03c1") ||
-                endsWith(s, len, L"\x03b1\x03b9\x03bd") ||
-                endsWith(s, len, L"\x03c3\x03c5\x03bd\x03b4") ||
-                endsWith(s, len, L"\x03c3\x03c5\x03bd") ||
-                endsWith(s, len, L"\x03c3\x03c5\x03bd\x03b8") ||
-                endsWith(s, len, L"\x03c7\x03c9\x03c1") ||
-                endsWith(s, len, L"\x03c0\x03bf\x03bd") ||
-                endsWith(s, len, L"\x03b2\x03c1") ||
-                endsWith(s, len, L"\x03ba\x03b1\x03b8") ||
-                endsWith(s, len, L"\x03b5\x03c5\x03b8") ||
-                endsWith(s, len, L"\x03b5\x03ba\x03b8") ||
-                endsWith(s, len, L"\x03bd\x03b5\x03c4") ||
-                endsWith(s, len, L"\x03c1\x03bf\x03bd") ||
-                endsWith(s, len, L"\x03b1\x03c1\x03ba") ||
-                endsWith(s, len, L"\x03b2\x03b1\x03c1") ||
-                endsWith(s, len, L"\x03b2\x03bf\x03bb") ||
-                endsWith(s, len, L"\x03c9\x03c6\x03b5\x03bb"))
+                endsWith(s, len, L"\x03bf"L"\x03b4"L"") ||
+                endsWith(s, len, L"\x03b1"L"\x03b9"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03c6"L"\x03bf"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03c4"L"\x03b1"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03b4"L"\x03b9"L"\x03b1"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03c3"L"\x03c7"L"") ||
+                endsWith(s, len, L"\x03b5"L"\x03bd"L"\x03b4"L"") ||
+                endsWith(s, len, L"\x03b5"L"\x03c5"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03c4"L"\x03b9"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03c5"L"\x03c0"L"\x03b5"L"\x03c1"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03c1"L"\x03b1"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03b5"L"\x03bd"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03c1"L"\x03bf"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03c3"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03c0"L"\x03c5"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03b1"L"\x03b9"L"\x03bd"L"") ||
+                endsWith(s, len, L"\x03c3"L"\x03c5"L"\x03bd"L"\x03b4"L"") ||
+                endsWith(s, len, L"\x03c3"L"\x03c5"L"\x03bd"L"") ||
+                endsWith(s, len, L"\x03c3"L"\x03c5"L"\x03bd"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03c7"L"\x03c9"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03c0"L"\x03bf"L"\x03bd"L"") ||
+                endsWith(s, len, L"\x03b2"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03ba"L"\x03b1"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03b5"L"\x03c5"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03b5"L"\x03ba"L"\x03b8"L"") ||
+                endsWith(s, len, L"\x03bd"L"\x03b5"L"\x03c4"L"") ||
+                endsWith(s, len, L"\x03c1"L"\x03bf"L"\x03bd"L"") ||
+                endsWith(s, len, L"\x03b1"L"\x03c1"L"\x03ba"L"") ||
+                endsWith(s, len, L"\x03b2"L"\x03b1"L"\x03c1"L"") ||
+                endsWith(s, len, L"\x03b2"L"\x03bf"L"\x03bb"L"") ||
+                endsWith(s, len, L"\x03c9"L"\x03c6"L"\x03b5"L"\x03bb"L""))
                 len += 2; // add back
         }
 
@@ -584,16 +584,16 @@ namespace Lucene
 
     int32_t GreekStemmer::rule10(wchar_t* s, int32_t len)
     {
-        if (len > 5 && (endsWith(s, len, L"\x03bf\x03bd\x03c4\x03b1\x03c3") ||
-            endsWith(s, len, L"\x03c9\x03bd\x03c4\x03b1\x03c3")))
+        if (len > 5 && (endsWith(s, len, L"\x03bf"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03c3"L"") ||
+            endsWith(s, len, L"\x03c9"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03c3"L"")))
         {
             len -= 5;
-            if (len == 3 && endsWith(s, len, L"\x03b1\x03c1\x03c7"))
+            if (len == 3 && endsWith(s, len, L"\x03b1"L"\x03c1"L"\x03c7"L""))
             {
                 len += 3; // add back
                 s[len - 3] = L'\x03bf';
             }
-            if (endsWith(s, len, L"\x03ba\x03c1\x03b5"))
+            if (endsWith(s, len, L"\x03ba"L"\x03c1"L"\x03b5"L""))
             {
                 len += 3; // add back
                 s[len - 3] = L'\x03c9';
@@ -605,16 +605,16 @@ namespace Lucene
 
     int32_t GreekStemmer::rule11(wchar_t* s, int32_t len)
     {
-        if (len > 6 && endsWith(s, len, L"\x03bf\x03bc\x03b1\x03c3\x03c4\x03b5"))
+        if (len > 6 && endsWith(s, len, L"\x03bf"L"\x03bc"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L""))
         {
             len -= 6;
-            if (len == 2 && endsWith(s, len, L"\x03bf\x03bd"))
+            if (len == 2 && endsWith(s, len, L"\x03bf"L"\x03bd"L""))
                 len += 5; // add back
         }
-        else if (len > 7 && endsWith(s, len, L"\x03b9\x03bf\x03bc\x03b1\x03c3\x03c4\x03b5"))
+        else if (len > 7 && endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03bc"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L""))
         {
             len -= 7;
-            if (len == 2 && endsWith(s, len, L"\x03bf\x03bd"))
+            if (len == 2 && endsWith(s, len, L"\x03bf"L"\x03bd"L""))
             {
                 len += 5;
                 s[len - 5] = L'\x03bf';
@@ -633,38 +633,38 @@ namespace Lucene
         if (!exc12a)
         {
             exc12a = HashSet<String>::newInstance();
-            exc12a.add(L"\x03c0");
-            exc12a.add(L"\x03b1\x03c0");
-            exc12a.add(L"\x03c3\x03c5\x03bc\x03c0");
-            exc12a.add(L"\x03b1\x03c3\x03c5\x03bc\x03c0");
-            exc12a.add(L"\x03b1\x03ba\x03b1\x03c4\x03b1\x03c0");
-            exc12a.add(L"\x03b1\x03bc\x03b5\x03c4\x03b1\x03bc\x03c6");
+            exc12a.add(L"\x03c0"L"");
+            exc12a.add(L"\x03b1"L"\x03c0"L"");
+            exc12a.add(L"\x03c3"L"\x03c5"L"\x03bc"L"\x03c0"L"");
+            exc12a.add(L"\x03b1"L"\x03c3"L"\x03c5"L"\x03bc"L"\x03c0"L"");
+            exc12a.add(L"\x03b1"L"\x03ba"L"\x03b1"L"\x03c4"L"\x03b1"L"\x03c0"L"");
+            exc12a.add(L"\x03b1"L"\x03bc"L"\x03b5"L"\x03c4"L"\x03b1"L"\x03bc"L"\x03c6"L"");
         }
 
         static HashSet<String> exc12b;
         if (!exc12b)
         {
             exc12b = HashSet<String>::newInstance();
-            exc12b.add(L"\x03b1\x03bb");
-            exc12b.add(L"\x03b1\x03c1");
-            exc12b.add(L"\x03b5\x03ba\x03c4\x03b5\x03bb");
-            exc12b.add(L"\x03b6");
-            exc12b.add(L"\x03bc");
-            exc12b.add(L"\x03be");
-            exc12b.add(L"\x03c0\x03b1\x03c1\x03b1\x03ba\x03b1\x03bb");
-            exc12b.add(L"\x03b1\x03c1");
-            exc12b.add(L"\x03c0\x03c1\x03bf");
-            exc12b.add(L"\x03bd\x03b9\x03c3");
+            exc12b.add(L"\x03b1"L"\x03bb"L"");
+            exc12b.add(L"\x03b1"L"\x03c1"L"");
+            exc12b.add(L"\x03b5"L"\x03ba"L"\x03c4"L"\x03b5"L"\x03bb"L"");
+            exc12b.add(L"\x03b6"L"");
+            exc12b.add(L"\x03bc"L"");
+            exc12b.add(L"\x03be"L"");
+            exc12b.add(L"\x03c0"L"\x03b1"L"\x03c1"L"\x03b1"L"\x03ba"L"\x03b1"L"\x03bb"L"");
+            exc12b.add(L"\x03b1"L"\x03c1"L"");
+            exc12b.add(L"\x03c0"L"\x03c1"L"\x03bf"L"");
+            exc12b.add(L"\x03bd"L"\x03b9"L"\x03c3"L"");
         }
 
-        if (len > 5 && endsWith(s, len, L"\x03b9\x03b5\x03c3\x03c4\x03b5"))
+        if (len > 5 && endsWith(s, len, L"\x03b9"L"\x03b5"L"\x03c3"L"\x03c4"L"\x03b5"L""))
         {
             len -= 5;
             if (exc12a.contains(String(s, len)))
                 len += 4; // add back
         }
 
-        if (len > 4 && endsWith(s, len, L"\x03b5\x03c3\x03c4\x03b5"))
+        if (len > 4 && endsWith(s, len, L"\x03b5"L"\x03c3"L"\x03c4"L"\x03b5"L""))
         {
             len -= 4;
             if (exc12b.contains(String(s, len)))
@@ -680,40 +680,40 @@ namespace Lucene
         if (!exc13)
         {
             exc13 = HashSet<String>::newInstance();
-            exc13.add(L"\x03b4\x03b9\x03b1\x03b8");
-            exc13.add(L"\x03b8");
-            exc13.add(L"\x03c0\x03b1\x03c1\x03b1\x03ba\x03b1\x03c4\x03b1\x03b8");
-            exc13.add(L"\x03c0\x03c1\x03bf\x03c3\x03b8");
-            exc13.add(L"\x03c3\x03c5\x03bd\x03b8");
+            exc13.add(L"\x03b4"L"\x03b9"L"\x03b1"L"\x03b8"L"");
+            exc13.add(L"\x03b8"L"");
+            exc13.add(L"\x03c0"L"\x03b1"L"\x03c1"L"\x03b1"L"\x03ba"L"\x03b1"L"\x03c4"L"\x03b1"L"\x03b8"L"");
+            exc13.add(L"\x03c0"L"\x03c1"L"\x03bf"L"\x03c3"L"\x03b8"L"");
+            exc13.add(L"\x03c3"L"\x03c5"L"\x03bd"L"\x03b8"L"");
         }
 
-        if (len > 6 && endsWith(s, len, L"\x03b7\x03b8\x03b7\x03ba\x03b5\x03c3"))
+        if (len > 6 && endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b7"L"\x03ba"L"\x03b5"L"\x03c3"L""))
             len -= 6;
-        else if (len > 5 && (endsWith(s, len, L"\x03b7\x03b8\x03b7\x03ba\x03b1") ||
-                 endsWith(s, len, L"\x03b7\x03b8\x03b7\x03ba\x03b5")))
+        else if (len > 5 && (endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b7"L"\x03ba"L"\x03b1"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b7"L"\x03ba"L"\x03b5"L"")))
             len -= 5;
 
         bool removed = false;
 
-        if (len > 4 && endsWith(s, len, L"\x03b7\x03ba\x03b5\x03c3"))
+        if (len > 4 && endsWith(s, len, L"\x03b7"L"\x03ba"L"\x03b5"L"\x03c3"L""))
         {
             len -= 4;
             removed = true;
         }
-        else if (len > 3 && (endsWith(s, len, L"\x03b7\x03ba\x03b1") ||
-                 endsWith(s, len, L"\x03b7\x03ba\x03b5")))
+        else if (len > 3 && (endsWith(s, len, L"\x03b7"L"\x03ba"L"\x03b1"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03ba"L"\x03b5"L"")))
         {
             len -= 3;
             removed = true;
         }
 
         if (removed && (exc13.contains(String(s, len)) ||
-            endsWith(s, len, L"\x03c3\x03ba\x03c9\x03bb") ||
-            endsWith(s, len, L"\x03c3\x03ba\x03bf\x03c5\x03bb") ||
-            endsWith(s, len, L"\x03bd\x03b1\x03c1\x03b8") ||
-            endsWith(s, len, L"\x03c3\x03c6") ||
-            endsWith(s, len, L"\x03bf\x03b8") ||
-            endsWith(s, len, L"\x03c0\x03b9\x03b8")))
+            endsWith(s, len, L"\x03c3"L"\x03ba"L"\x03c9"L"\x03bb"L"") ||
+            endsWith(s, len, L"\x03c3"L"\x03ba"L"\x03bf"L"\x03c5"L"\x03bb"L"") ||
+            endsWith(s, len, L"\x03bd"L"\x03b1"L"\x03c1"L"\x03b8"L"") ||
+            endsWith(s, len, L"\x03c3"L"\x03c6"L"") ||
+            endsWith(s, len, L"\x03bf"L"\x03b8"L"") ||
+            endsWith(s, len, L"\x03c0"L"\x03b9"L"\x03b8"L"")))
             len += 2;
 
         return len;
@@ -725,60 +725,60 @@ namespace Lucene
         if (!exc14)
         {
             exc14 = HashSet<String>::newInstance();
-            exc14.add(L"\x03c6\x03b1\x03c1\x03bc\x03b1\x03ba");
-            exc14.add(L"\x03c7\x03b1\x03b4");
-            exc14.add(L"\x03b1\x03b3\x03ba");
-            exc14.add(L"\x03b1\x03bd\x03b1\x03c1\x03c1");
-            exc14.add(L"\x03b2\x03c1\x03bf\x03bc");
-            exc14.add(L"\x03b5\x03ba\x03bb\x03b9\x03c0");
-            exc14.add(L"\x03bb\x03b1\x03bc\x03c0\x03b9\x03b4");
-            exc14.add(L"\x03bb\x03b5\x03c7");
-            exc14.add(L"\x03bc");
-            exc14.add(L"\x03c0\x03b1\x03c4");
-            exc14.add(L"\x03c1");
-            exc14.add(L"\x03bb");
-            exc14.add(L"\x03bc\x03b5\x03b4");
-            exc14.add(L"\x03bc\x03b5\x03c3\x03b1\x03b6");
-            exc14.add(L"\x03c5\x03c0\x03bf\x03c4\x03b5\x03b9\x03bd");
-            exc14.add(L"\x03b1\x03bc");
-            exc14.add(L"\x03b1\x03b9\x03b8");
-            exc14.add(L"\x03b1\x03bd\x03b7\x03ba");
-            exc14.add(L"\x03b4\x03b5\x03c3\x03c0\x03bf\x03b6");
-            exc14.add(L"\x03b5\x03bd\x03b4\x03b9\x03b1\x03c6\x03b5\x03c1");
-            exc14.add(L"\x03b4\x03b5");
-            exc14.add(L"\x03b4\x03b5\x03c5\x03c4\x03b5\x03c1\x03b5\x03c5");
-            exc14.add(L"\x03ba\x03b1\x03b8\x03b1\x03c1\x03b5\x03c5");
-            exc14.add(L"\x03c0\x03bb\x03b5");
-            exc14.add(L"\x03c4\x03c3\x03b1");
+            exc14.add(L"\x03c6"L"\x03b1"L"\x03c1"L"\x03bc"L"\x03b1"L"\x03ba"L"");
+            exc14.add(L"\x03c7"L"\x03b1"L"\x03b4"L"");
+            exc14.add(L"\x03b1"L"\x03b3"L"\x03ba"L"");
+            exc14.add(L"\x03b1"L"\x03bd"L"\x03b1"L"\x03c1"L"\x03c1"L"");
+            exc14.add(L"\x03b2"L"\x03c1"L"\x03bf"L"\x03bc"L"");
+            exc14.add(L"\x03b5"L"\x03ba"L"\x03bb"L"\x03b9"L"\x03c0"L"");
+            exc14.add(L"\x03bb"L"\x03b1"L"\x03bc"L"\x03c0"L"\x03b9"L"\x03b4"L"");
+            exc14.add(L"\x03bb"L"\x03b5"L"\x03c7"L"");
+            exc14.add(L"\x03bc"L"");
+            exc14.add(L"\x03c0"L"\x03b1"L"\x03c4"L"");
+            exc14.add(L"\x03c1"L"");
+            exc14.add(L"\x03bb"L"");
+            exc14.add(L"\x03bc"L"\x03b5"L"\x03b4"L"");
+            exc14.add(L"\x03bc"L"\x03b5"L"\x03c3"L"\x03b1"L"\x03b6"L"");
+            exc14.add(L"\x03c5"L"\x03c0"L"\x03bf"L"\x03c4"L"\x03b5"L"\x03b9"L"\x03bd"L"");
+            exc14.add(L"\x03b1"L"\x03bc"L"");
+            exc14.add(L"\x03b1"L"\x03b9"L"\x03b8"L"");
+            exc14.add(L"\x03b1"L"\x03bd"L"\x03b7"L"\x03ba"L"");
+            exc14.add(L"\x03b4"L"\x03b5"L"\x03c3"L"\x03c0"L"\x03bf"L"\x03b6"L"");
+            exc14.add(L"\x03b5"L"\x03bd"L"\x03b4"L"\x03b9"L"\x03b1"L"\x03c6"L"\x03b5"L"\x03c1"L"");
+            exc14.add(L"\x03b4"L"\x03b5"L"");
+            exc14.add(L"\x03b4"L"\x03b5"L"\x03c5"L"\x03c4"L"\x03b5"L"\x03c1"L"\x03b5"L"\x03c5"L"");
+            exc14.add(L"\x03ba"L"\x03b1"L"\x03b8"L"\x03b1"L"\x03c1"L"\x03b5"L"\x03c5"L"");
+            exc14.add(L"\x03c0"L"\x03bb"L"\x03b5"L"");
+            exc14.add(L"\x03c4"L"\x03c3"L"\x03b1"L"");
         }
 
         bool removed = false;
 
-        if (len > 5 && endsWith(s, len, L"\x03bf\x03c5\x03c3\x03b5\x03c3"))
+        if (len > 5 && endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b5"L"\x03c3"L""))
         {
             len -= 5;
             removed = true;
         }
-        else if (len > 4 && (endsWith(s, len, L"\x03bf\x03c5\x03c3\x03b1") ||
-                 endsWith(s, len, L"\x03bf\x03c5\x03c3\x03b5")))
+        else if (len > 4 && (endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b1"L"") ||
+                 endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b5"L"")))
         {
             len -= 4;
             removed = true;
         }
 
         if (removed && (exc14.contains(String(s, len)) || endsWithVowel(s, len) ||
-                        endsWith(s, len, L"\x03c0\x03bf\x03b4\x03b1\x03c1") ||
-                        endsWith(s, len, L"\x03b2\x03bb\x03b5\x03c0") ||
-                        endsWith(s, len, L"\x03c0\x03b1\x03bd\x03c4\x03b1\x03c7") ||
-                        endsWith(s, len, L"\x03c6\x03c1\x03c5\x03b4") ||
-                        endsWith(s, len, L"\x03bc\x03b1\x03bd\x03c4\x03b9\x03bb") ||
-                        endsWith(s, len, L"\x03bc\x03b1\x03bb\x03bb") ||
-                        endsWith(s, len, L"\x03ba\x03c5\x03bc\x03b1\x03c4") ||
-                        endsWith(s, len, L"\x03bb\x03b1\x03c7") ||
-                        endsWith(s, len, L"\x03bb\x03b7\x03b3") ||
-                        endsWith(s, len, L"\x03c6\x03b1\x03b3") ||
-                        endsWith(s, len, L"\x03bf\x03bc") ||
-                        endsWith(s, len, L"\x03c0\x03c1\x03c9\x03c4")))
+                        endsWith(s, len, L"\x03c0"L"\x03bf"L"\x03b4"L"\x03b1"L"\x03c1"L"") ||
+                        endsWith(s, len, L"\x03b2"L"\x03bb"L"\x03b5"L"\x03c0"L"") ||
+                        endsWith(s, len, L"\x03c0"L"\x03b1"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03c7"L"") ||
+                        endsWith(s, len, L"\x03c6"L"\x03c1"L"\x03c5"L"\x03b4"L"") ||
+                        endsWith(s, len, L"\x03bc"L"\x03b1"L"\x03bd"L"\x03c4"L"\x03b9"L"\x03bb"L"") ||
+                        endsWith(s, len, L"\x03bc"L"\x03b1"L"\x03bb"L"\x03bb"L"") ||
+                        endsWith(s, len, L"\x03ba"L"\x03c5"L"\x03bc"L"\x03b1"L"\x03c4"L"") ||
+                        endsWith(s, len, L"\x03bb"L"\x03b1"L"\x03c7"L"") ||
+                        endsWith(s, len, L"\x03bb"L"\x03b7"L"\x03b3"L"") ||
+                        endsWith(s, len, L"\x03c6"L"\x03b1"L"\x03b3"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bc"L"") ||
+                        endsWith(s, len, L"\x03c0"L"\x03c1"L"\x03c9"L"\x03c4"L"")))
             len += 3; // add back
 
         return len;
@@ -790,68 +790,68 @@ namespace Lucene
         if (!exc15a)
         {
             exc15a = HashSet<String>::newInstance();
-            exc15a.add(L"\x03b1\x03b2\x03b1\x03c3\x03c4");
-            exc15a.add(L"\x03c0\x03bf\x03bb\x03c5\x03c6");
-            exc15a.add(L"\x03b1\x03b4\x03b7\x03c6");
-            exc15a.add(L"\x03c0\x03b1\x03bc\x03c6");
-            exc15a.add(L"\x03c1");
-            exc15a.add(L"\x03b1\x03c3\x03c0");
-            exc15a.add(L"\x03b1\x03c6");
-            exc15a.add(L"\x03b1\x03bc\x03b1\x03bb");
-            exc15a.add(L"\x03b1\x03bc\x03b1\x03bb\x03bb\x03b9");
-            exc15a.add(L"\x03b1\x03bd\x03c5\x03c3\x03c4");
-            exc15a.add(L"\x03b1\x03c0\x03b5\x03c1");
-            exc15a.add(L"\x03b1\x03c3\x03c0\x03b1\x03c1");
-            exc15a.add(L"\x03b1\x03c7\x03b1\x03c1");
-            exc15a.add(L"\x03b4\x03b5\x03c1\x03b2\x03b5\x03bd");
-            exc15a.add(L"\x03b4\x03c1\x03bf\x03c3\x03bf\x03c0");
-            exc15a.add(L"\x03be\x03b5\x03c6");
-            exc15a.add(L"\x03bd\x03b5\x03bf\x03c0");
-            exc15a.add(L"\x03bd\x03bf\x03bc\x03bf\x03c4");
-            exc15a.add(L"\x03bf\x03bb\x03bf\x03c0");
-            exc15a.add(L"\x03bf\x03bc\x03bf\x03c4");
-            exc15a.add(L"\x03c0\x03c1\x03bf\x03c3\x03c4");
-            exc15a.add(L"\x03c0\x03c1\x03bf\x03c3\x03c9\x03c0\x03bf\x03c0");
-            exc15a.add(L"\x03c3\x03c5\x03bc\x03c0");
-            exc15a.add(L"\x03c3\x03c5\x03bd\x03c4");
-            exc15a.add(L"\x03c4");
-            exc15a.add(L"\x03c5\x03c0\x03bf\x03c4");
-            exc15a.add(L"\x03c7\x03b1\x03c1");
-            exc15a.add(L"\x03b1\x03b5\x03b9\x03c0");
-            exc15a.add(L"\x03b1\x03b9\x03bc\x03bf\x03c3\x03c4");
-            exc15a.add(L"\x03b1\x03bd\x03c5\x03c0");
-            exc15a.add(L"\x03b1\x03c0\x03bf\x03c4");
-            exc15a.add(L"\x03b1\x03c1\x03c4\x03b9\x03c0");
-            exc15a.add(L"\x03b4\x03b9\x03b1\x03c4");
-            exc15a.add(L"\x03b5\x03bd");
-            exc15a.add(L"\x03b5\x03c0\x03b9\x03c4");
-            exc15a.add(L"\x03ba\x03c1\x03bf\x03ba\x03b1\x03bb\x03bf\x03c0");
-            exc15a.add(L"\x03c3\x03b9\x03b4\x03b7\x03c1\x03bf\x03c0");
-            exc15a.add(L"\x03bb");
-            exc15a.add(L"\x03bd\x03b1\x03c5");
-            exc15a.add(L"\x03bf\x03c5\x03bb\x03b1\x03bc");
-            exc15a.add(L"\x03bf\x03c5\x03c1");
-            exc15a.add(L"\x03c0");
-            exc15a.add(L"\x03c4\x03c1");
-            exc15a.add(L"\x03bc");
+            exc15a.add(L"\x03b1"L"\x03b2"L"\x03b1"L"\x03c3"L"\x03c4"L"");
+            exc15a.add(L"\x03c0"L"\x03bf"L"\x03bb"L"\x03c5"L"\x03c6"L"");
+            exc15a.add(L"\x03b1"L"\x03b4"L"\x03b7"L"\x03c6"L"");
+            exc15a.add(L"\x03c0"L"\x03b1"L"\x03bc"L"\x03c6"L"");
+            exc15a.add(L"\x03c1"L"");
+            exc15a.add(L"\x03b1"L"\x03c3"L"\x03c0"L"");
+            exc15a.add(L"\x03b1"L"\x03c6"L"");
+            exc15a.add(L"\x03b1"L"\x03bc"L"\x03b1"L"\x03bb"L"");
+            exc15a.add(L"\x03b1"L"\x03bc"L"\x03b1"L"\x03bb"L"\x03bb"L"\x03b9"L"");
+            exc15a.add(L"\x03b1"L"\x03bd"L"\x03c5"L"\x03c3"L"\x03c4"L"");
+            exc15a.add(L"\x03b1"L"\x03c0"L"\x03b5"L"\x03c1"L"");
+            exc15a.add(L"\x03b1"L"\x03c3"L"\x03c0"L"\x03b1"L"\x03c1"L"");
+            exc15a.add(L"\x03b1"L"\x03c7"L"\x03b1"L"\x03c1"L"");
+            exc15a.add(L"\x03b4"L"\x03b5"L"\x03c1"L"\x03b2"L"\x03b5"L"\x03bd"L"");
+            exc15a.add(L"\x03b4"L"\x03c1"L"\x03bf"L"\x03c3"L"\x03bf"L"\x03c0"L"");
+            exc15a.add(L"\x03be"L"\x03b5"L"\x03c6"L"");
+            exc15a.add(L"\x03bd"L"\x03b5"L"\x03bf"L"\x03c0"L"");
+            exc15a.add(L"\x03bd"L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c4"L"");
+            exc15a.add(L"\x03bf"L"\x03bb"L"\x03bf"L"\x03c0"L"");
+            exc15a.add(L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c4"L"");
+            exc15a.add(L"\x03c0"L"\x03c1"L"\x03bf"L"\x03c3"L"\x03c4"L"");
+            exc15a.add(L"\x03c0"L"\x03c1"L"\x03bf"L"\x03c3"L"\x03c9"L"\x03c0"L"\x03bf"L"\x03c0"L"");
+            exc15a.add(L"\x03c3"L"\x03c5"L"\x03bc"L"\x03c0"L"");
+            exc15a.add(L"\x03c3"L"\x03c5"L"\x03bd"L"\x03c4"L"");
+            exc15a.add(L"\x03c4"L"");
+            exc15a.add(L"\x03c5"L"\x03c0"L"\x03bf"L"\x03c4"L"");
+            exc15a.add(L"\x03c7"L"\x03b1"L"\x03c1"L"");
+            exc15a.add(L"\x03b1"L"\x03b5"L"\x03b9"L"\x03c0"L"");
+            exc15a.add(L"\x03b1"L"\x03b9"L"\x03bc"L"\x03bf"L"\x03c3"L"\x03c4"L"");
+            exc15a.add(L"\x03b1"L"\x03bd"L"\x03c5"L"\x03c0"L"");
+            exc15a.add(L"\x03b1"L"\x03c0"L"\x03bf"L"\x03c4"L"");
+            exc15a.add(L"\x03b1"L"\x03c1"L"\x03c4"L"\x03b9"L"\x03c0"L"");
+            exc15a.add(L"\x03b4"L"\x03b9"L"\x03b1"L"\x03c4"L"");
+            exc15a.add(L"\x03b5"L"\x03bd"L"");
+            exc15a.add(L"\x03b5"L"\x03c0"L"\x03b9"L"\x03c4"L"");
+            exc15a.add(L"\x03ba"L"\x03c1"L"\x03bf"L"\x03ba"L"\x03b1"L"\x03bb"L"\x03bf"L"\x03c0"L"");
+            exc15a.add(L"\x03c3"L"\x03b9"L"\x03b4"L"\x03b7"L"\x03c1"L"\x03bf"L"\x03c0"L"");
+            exc15a.add(L"\x03bb"L"");
+            exc15a.add(L"\x03bd"L"\x03b1"L"\x03c5"L"");
+            exc15a.add(L"\x03bf"L"\x03c5"L"\x03bb"L"\x03b1"L"\x03bc"L"");
+            exc15a.add(L"\x03bf"L"\x03c5"L"\x03c1"L"");
+            exc15a.add(L"\x03c0"L"");
+            exc15a.add(L"\x03c4"L"\x03c1"L"");
+            exc15a.add(L"\x03bc"L"");
         }
 
         static HashSet<String> exc15b;
         if (!exc15b)
         {
             exc15b = HashSet<String>::newInstance();
-            exc15b.add(L"\x03c8\x03bf\x03c6");
-            exc15b.add(L"\x03bd\x03b1\x03c5\x03bb\x03bf\x03c7");
+            exc15b.add(L"\x03c8"L"\x03bf"L"\x03c6"L"");
+            exc15b.add(L"\x03bd"L"\x03b1"L"\x03c5"L"\x03bb"L"\x03bf"L"\x03c7"L"");
         }
 
         bool removed = false;
-        if (len > 4 && endsWith(s, len, L"\x03b1\x03b3\x03b5\x03c3"))
+        if (len > 4 && endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b5"L"\x03c3"L""))
         {
             len -= 4;
             removed = true;
         }
-        else if (len > 3 && (endsWith(s, len, L"\x03b1\x03b3\x03b1") ||
-                 endsWith(s, len, L"\x03b1\x03b3\x03b5")))
+        else if (len > 3 && (endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b1"L"") ||
+                 endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b5"L"")))
         {
             len -= 3;
             removed = true;
@@ -860,19 +860,19 @@ namespace Lucene
         if (removed)
         {
             bool cond1 = exc15a.contains(String(s, len)) ||
-                         endsWith(s, len, L"\x03bf\x03c6") ||
-                         endsWith(s, len, L"\x03c0\x03b5\x03bb") ||
-                         endsWith(s, len, L"\x03c7\x03bf\x03c1\x03c4") ||
-                         endsWith(s, len, L"\x03bb\x03bb") ||
-                         endsWith(s, len, L"\x03c3\x03c6") ||
-                         endsWith(s, len, L"\x03c1\x03c0") ||
-                         endsWith(s, len, L"\x03c6\x03c1") ||
-                         endsWith(s, len, L"\x03c0\x03c1") ||
-                         endsWith(s, len, L"\x03bb\x03bf\x03c7") ||
-                         endsWith(s, len, L"\x03c3\x03bc\x03b7\x03bd");
+                         endsWith(s, len, L"\x03bf"L"\x03c6"L"") ||
+                         endsWith(s, len, L"\x03c0"L"\x03b5"L"\x03bb"L"") ||
+                         endsWith(s, len, L"\x03c7"L"\x03bf"L"\x03c1"L"\x03c4"L"") ||
+                         endsWith(s, len, L"\x03bb"L"\x03bb"L"") ||
+                         endsWith(s, len, L"\x03c3"L"\x03c6"L"") ||
+                         endsWith(s, len, L"\x03c1"L"\x03c0"L"") ||
+                         endsWith(s, len, L"\x03c6"L"\x03c1"L"") ||
+                         endsWith(s, len, L"\x03c0"L"\x03c1"L"") ||
+                         endsWith(s, len, L"\x03bb"L"\x03bf"L"\x03c7"L"") ||
+                         endsWith(s, len, L"\x03c3"L"\x03bc"L"\x03b7"L"\x03bd"L"");
 
             bool cond2 = exc15b.contains(String(s, len)) ||
-                         endsWith(s, len, L"\x03ba\x03bf\x03bb\x03bb");
+                         endsWith(s, len, L"\x03ba"L"\x03bf"L"\x03bb"L"\x03bb"L"");
 
             if (cond1 && !cond2)
                 len += 2; // add back
@@ -887,22 +887,22 @@ namespace Lucene
         if (!exc16)
         {
             exc16 = HashSet<String>::newInstance();
-            exc16.add(L"\x03bd");
-            exc16.add(L"\x03c7\x03b5\x03c1\x03c3\x03bf\x03bd");
-            exc16.add(L"\x03b4\x03c9\x03b4\x03b5\x03ba\x03b1\x03bd");
-            exc16.add(L"\x03b5\x03c1\x03b7\x03bc\x03bf\x03bd");
-            exc16.add(L"\x03bc\x03b5\x03b3\x03b1\x03bb\x03bf\x03bd");
-            exc16.add(L"\x03b5\x03c0\x03c4\x03b1\x03bd");
+            exc16.add(L"\x03bd"L"");
+            exc16.add(L"\x03c7"L"\x03b5"L"\x03c1"L"\x03c3"L"\x03bf"L"\x03bd"L"");
+            exc16.add(L"\x03b4"L"\x03c9"L"\x03b4"L"\x03b5"L"\x03ba"L"\x03b1"L"\x03bd"L"");
+            exc16.add(L"\x03b5"L"\x03c1"L"\x03b7"L"\x03bc"L"\x03bf"L"\x03bd"L"");
+            exc16.add(L"\x03bc"L"\x03b5"L"\x03b3"L"\x03b1"L"\x03bb"L"\x03bf"L"\x03bd"L"");
+            exc16.add(L"\x03b5"L"\x03c0"L"\x03c4"L"\x03b1"L"\x03bd"L"");
         }
 
         bool removed = false;
-        if (len > 4 && endsWith(s, len, L"\x03b7\x03c3\x03bf\x03c5"))
+        if (len > 4 && endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03bf"L"\x03c5"L""))
         {
             len -= 4;
             removed = true;
         }
-        else if (len > 3 && (endsWith(s, len, L"\x03b7\x03c3\x03b5") ||
-                 endsWith(s, len, L"\x03b7\x03c3\x03b1")))
+        else if (len > 3 && (endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b5"L"") ||
+                 endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b1"L"")))
         {
             len -= 3;
             removed = true;
@@ -920,19 +920,19 @@ namespace Lucene
         if (!exc17)
         {
             exc17 = HashSet<String>::newInstance();
-            exc17.add(L"\x03b1\x03c3\x03b2");
-            exc17.add(L"\x03c3\x03b2");
-            exc17.add(L"\x03b1\x03c7\x03c1");
-            exc17.add(L"\x03c7\x03c1");
-            exc17.add(L"\x03b1\x03c0\x03bb");
-            exc17.add(L"\x03b1\x03b5\x03b9\x03bc\x03bd");
-            exc17.add(L"\x03b4\x03c5\x03c3\x03c7\x03c1");
-            exc17.add(L"\x03b5\x03c5\x03c7\x03c1");
-            exc17.add(L"\x03ba\x03bf\x03b9\x03bd\x03bf\x03c7\x03c1");
-            exc17.add(L"\x03c0\x03b1\x03bb\x03b9\x03bc\x03c8");
+            exc17.add(L"\x03b1"L"\x03c3"L"\x03b2"L"");
+            exc17.add(L"\x03c3"L"\x03b2"L"");
+            exc17.add(L"\x03b1"L"\x03c7"L"\x03c1"L"");
+            exc17.add(L"\x03c7"L"\x03c1"L"");
+            exc17.add(L"\x03b1"L"\x03c0"L"\x03bb"L"");
+            exc17.add(L"\x03b1"L"\x03b5"L"\x03b9"L"\x03bc"L"\x03bd"L"");
+            exc17.add(L"\x03b4"L"\x03c5"L"\x03c3"L"\x03c7"L"\x03c1"L"");
+            exc17.add(L"\x03b5"L"\x03c5"L"\x03c7"L"\x03c1"L"");
+            exc17.add(L"\x03ba"L"\x03bf"L"\x03b9"L"\x03bd"L"\x03bf"L"\x03c7"L"\x03c1"L"");
+            exc17.add(L"\x03c0"L"\x03b1"L"\x03bb"L"\x03b9"L"\x03bc"L"\x03c8"L"");
         }
 
-        if (len > 4 && endsWith(s, len, L"\x03b7\x03c3\x03c4\x03b5"))
+        if (len > 4 && endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03c4"L"\x03b5"L""))
         {
             len -= 4;
             if (exc17.contains(String(s, len)))
@@ -948,23 +948,23 @@ namespace Lucene
         if (!exc18)
         {
             exc18 = HashSet<String>::newInstance();
-            exc18.add(L"\x03bd");
-            exc18.add(L"\x03c1");
-            exc18.add(L"\x03c3\x03c0\x03b9");
-            exc18.add(L"\x03c3\x03c4\x03c1\x03b1\x03b2\x03bf\x03bc\x03bf\x03c5\x03c4\x03c3");
-            exc18.add(L"\x03ba\x03b1\x03ba\x03bf\x03bc\x03bf\x03c5\x03c4\x03c3");
-            exc18.add(L"\x03b5\x03be\x03c9\x03bd");
+            exc18.add(L"\x03bd"L"");
+            exc18.add(L"\x03c1"L"");
+            exc18.add(L"\x03c3"L"\x03c0"L"\x03b9"L"");
+            exc18.add(L"\x03c3"L"\x03c4"L"\x03c1"L"\x03b1"L"\x03b2"L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c5"L"\x03c4"L"\x03c3"L"");
+            exc18.add(L"\x03ba"L"\x03b1"L"\x03ba"L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c5"L"\x03c4"L"\x03c3"L"");
+            exc18.add(L"\x03b5"L"\x03be"L"\x03c9"L"\x03bd"L"");
         }
 
         bool removed = false;
 
-        if (len > 6 && (endsWith(s, len, L"\x03b7\x03c3\x03bf\x03c5\x03bd\x03b5") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03bf\x03c5\x03bd\x03b5")))
+        if (len > 6 && (endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03b5"L"")))
         {
             len -= 6;
             removed = true;
         }
-        else if (len > 4 && endsWith(s, len, L"\x03bf\x03c5\x03bd\x03b5"))
+        else if (len > 4 && endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bd"L"\x03b5"L""))
         {
             len -= 4;
             removed = true;
@@ -987,24 +987,24 @@ namespace Lucene
         if (!exc19)
         {
             exc19 = HashSet<String>::newInstance();
-            exc19.add(L"\x03c0\x03b1\x03c1\x03b1\x03c3\x03bf\x03c5\x03c3");
-            exc19.add(L"\x03c6");
-            exc19.add(L"\x03c7");
-            exc19.add(L"\x03c9\x03c1\x03b9\x03bf\x03c0\x03bb");
-            exc19.add(L"\x03b1\x03b6");
-            exc19.add(L"\x03b1\x03bb\x03bb\x03bf\x03c3\x03bf\x03c5\x03c3");
-            exc19.add(L"\x03b1\x03c3\x03bf\x03c5\x03c3");
+            exc19.add(L"\x03c0"L"\x03b1"L"\x03c1"L"\x03b1"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03c3"L"");
+            exc19.add(L"\x03c6"L"");
+            exc19.add(L"\x03c7"L"");
+            exc19.add(L"\x03c9"L"\x03c1"L"\x03b9"L"\x03bf"L"\x03c0"L"\x03bb"L"");
+            exc19.add(L"\x03b1"L"\x03b6"L"");
+            exc19.add(L"\x03b1"L"\x03bb"L"\x03bb"L"\x03bf"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03c3"L"");
+            exc19.add(L"\x03b1"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03c3"L"");
         }
 
         bool removed = false;
 
-        if (len > 6 && (endsWith(s, len, L"\x03b7\x03c3\x03bf\x03c5\x03bc\x03b5") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03bf\x03c5\x03bc\x03b5")))
+        if (len > 6 && (endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bc"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03bf"L"\x03c5"L"\x03bc"L"\x03b5"L"")))
         {
             len -= 6;
             removed = true;
         }
-        else if (len > 4 && endsWith(s, len, L"\x03bf\x03c5\x03bc\x03b5"))
+        else if (len > 4 && endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bc"L"\x03b5"L""))
         {
             len -= 4;
             removed = true;
@@ -1023,107 +1023,107 @@ namespace Lucene
 
     int32_t GreekStemmer::rule20(wchar_t* s, int32_t len)
     {
-        if (len > 5 && (endsWith(s, len, L"\x03bc\x03b1\x03c4\x03c9\x03bd") ||
-                        endsWith(s, len, L"\x03bc\x03b1\x03c4\x03bf\x03c3")))
+        if (len > 5 && (endsWith(s, len, L"\x03bc"L"\x03b1"L"\x03c4"L"\x03c9"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bc"L"\x03b1"L"\x03c4"L"\x03bf"L"\x03c3"L"")))
             len -= 3;
-        else if (len > 4 && endsWith(s, len, L"\x03bc\x03b1\x03c4\x03b1"))
+        else if (len > 4 && endsWith(s, len, L"\x03bc"L"\x03b1"L"\x03c4"L"\x03b1"L""))
             len -= 2;
         return len;
     }
 
     int32_t GreekStemmer::rule21(wchar_t* s, int32_t len)
     {
-        if (len > 9 && endsWith(s, len, L"\x03b9\x03bf\x03bd\x03c4\x03bf\x03c5\x03c3\x03b1\x03bd"))
+        if (len > 9 && endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03bd"L"\x03c4"L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b1"L"\x03bd"L""))
             return len - 9;
 
-        if (len > 8 && (endsWith(s, len, L"\x03b9\x03bf\x03bc\x03b1\x03c3\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c3\x03b1\x03c3\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c5\x03bc\x03b1\x03c3\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03bf\x03bd\x03c4\x03bf\x03c5\x03c3\x03b1\x03bd")))
+        if (len > 8 && (endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03bc"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c3"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c5"L"\x03bc"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bd"L"\x03c4"L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b1"L"\x03bd"L"")))
             return len - 8;
 
-        if (len > 7 && (endsWith(s, len, L"\x03b9\x03b5\x03bc\x03b1\x03c3\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b9\x03b5\x03c3\x03b1\x03c3\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03bc\x03bf\x03c5\x03bd\x03b1") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c3\x03b1\x03c3\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c3\x03bf\x03c5\x03bd\x03b1") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c5\x03bd\x03c4\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c5\x03bd\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03b7\x03ba\x03b1\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03bf\x03bc\x03b1\x03c3\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03c3\x03b1\x03c3\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03bc\x03b1\x03c3\x03c4\x03b5")))
+        if (len > 7 && (endsWith(s, len, L"\x03b9"L"\x03b5"L"\x03bc"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03b5"L"\x03c3"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03b1"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c3"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03b1"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b7"L"\x03ba"L"\x03b1"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bc"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c3"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bc"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L"")))
             return len - 7;
 
-        if (len > 6 && (endsWith(s, len, L"\x03b9\x03bf\x03bc\x03bf\x03c5\x03bd") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03bd\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c3\x03bf\x03c5\x03bd") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03b5\x03b9\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03b7\x03ba\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03bc\x03bf\x03c5\x03bd\x03b1") ||
-                        endsWith(s, len, L"\x03bf\x03c3\x03b1\x03c3\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03bf\x03c3\x03bf\x03c5\x03bd\x03b1") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03bd\x03c4\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03bd\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03c3\x03b1\x03c4\x03b5")))
+        if (len > 6 && (endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c5"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b5"L"\x03b9"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b7"L"\x03ba"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03b1"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c3"L"\x03b1"L"\x03c3"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bd"L"\x03b1"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b1"L"\x03c4"L"\x03b5"L"")))
             return len - 6;
 
-        if (len > 5 && (endsWith(s, len, L"\x03b1\x03b3\x03b1\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b9\x03b5\x03bc\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b9\x03b5\x03c4\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b9\x03b5\x03c3\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b9\x03bf\x03c5\x03bc\x03b1") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03b5\x03b9\x03c3") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03bf\x03c5\x03bd") ||
-                        endsWith(s, len, L"\x03b7\x03ba\x03b1\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b7\x03c3\x03b1\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b7\x03c3\x03bf\x03c5\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03bc\x03bf\x03c5\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03bd\x03c4\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03bf\x03bd\x03c4\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03c3\x03bf\x03c5\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03bc\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03c3\x03b1\x03bd")))
+        if (len > 5 && (endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b1"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03b5"L"\x03bc"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03b5"L"\x03c4"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03b5"L"\x03c3"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b9"L"\x03bf"L"\x03c5"L"\x03bc"L"\x03b1"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b5"L"\x03b9"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03bf"L"\x03c5"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03ba"L"\x03b1"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b1"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bc"L"\x03bf"L"\x03c5"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bd"L"\x03c4"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c3"L"\x03bf"L"\x03c5"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bc"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"\x03b1"L"\x03bd"L"")))
             return len - 5;
 
-        if (len > 4 && (endsWith(s, len, L"\x03b1\x03b3\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b1\x03bc\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b1\x03c3\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b1\x03c4\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b5\x03b9\x03c4\x03b5") ||
-                        endsWith(s, len, L"\x03b5\x03c3\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b5\x03c4\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03b7\x03b4\x03b5\x03c3") ||
-                        endsWith(s, len, L"\x03b7\x03b4\x03c9\x03bd") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03b5\x03b9") ||
-                        endsWith(s, len, L"\x03b7\x03ba\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b7\x03c3\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b7\x03c3\x03b5\x03b9") ||
-                        endsWith(s, len, L"\x03b7\x03c3\x03b5\x03c3") ||
-                        endsWith(s, len, L"\x03bf\x03bc\x03b1\x03b9") ||
-                        endsWith(s, len, L"\x03bf\x03c4\x03b1\x03bd")))
+        if (len > 4 && (endsWith(s, len, L"\x03b1"L"\x03b3"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b1"L"\x03bc"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b1"L"\x03c3"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b1"L"\x03c4"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b5"L"\x03b9"L"\x03c4"L"\x03b5"L"") ||
+                        endsWith(s, len, L"\x03b5"L"\x03c3"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b5"L"\x03c4"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b4"L"\x03b5"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b4"L"\x03c9"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03b5"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03ba"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b5"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03b5"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03bc"L"\x03b1"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c4"L"\x03b1"L"\x03bd"L"")))
             return len - 4;
 
-        if (len > 3 && (endsWith(s, len, L"\x03b1\x03b5\x03b9") ||
-                        endsWith(s, len, L"\x03b5\x03b9\x03c3") ||
-                        endsWith(s, len, L"\x03b7\x03b8\x03c9") ||
-                        endsWith(s, len, L"\x03b7\x03c3\x03c9") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03bd") ||
-                        endsWith(s, len, L"\x03bf\x03c5\x03c3")))
+        if (len > 3 && (endsWith(s, len, L"\x03b1"L"\x03b5"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b5"L"\x03b9"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03b8"L"\x03c9"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03c3"L"\x03c9"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"\x03c3"L"")))
             return len - 3;
 
-        if (len > 2 && (endsWith(s, len, L"\x03b1\x03bd") ||
-                        endsWith(s, len, L"\x03b1\x03c3") ||
-                        endsWith(s, len, L"\x03b1\x03c9") ||
-                        endsWith(s, len, L"\x03b5\x03b9") ||
-                        endsWith(s, len, L"\x03b5\x03c3") ||
-                        endsWith(s, len, L"\x03b7\x03c3") ||
-                        endsWith(s, len, L"\x03bf\x03b9") ||
-                        endsWith(s, len, L"\x03bf\x03c3") ||
-                        endsWith(s, len, L"\x03bf\x03c5") ||
-                        endsWith(s, len, L"\x03c5\x03c3") ||
-                        endsWith(s, len, L"\x03c9\x03bd")))
+        if (len > 2 && (endsWith(s, len, L"\x03b1"L"\x03bd"L"") ||
+                        endsWith(s, len, L"\x03b1"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03b1"L"\x03c9"L"") ||
+                        endsWith(s, len, L"\x03b5"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03b5"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03b7"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03b9"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03bf"L"\x03c5"L"") ||
+                        endsWith(s, len, L"\x03c5"L"\x03c3"L"") ||
+                        endsWith(s, len, L"\x03c9"L"\x03bd"L"")))
             return len - 2;
 
         if (len > 1 && endsWithVowel(s, len))
@@ -1134,16 +1134,16 @@ namespace Lucene
 
     int32_t GreekStemmer::rule22(wchar_t* s, int32_t len)
     {
-        if (endsWith(s, len, L"\x03b5\x03c3\x03c4\x03b5\x03c1") ||
-            endsWith(s, len, L"\x03b5\x03c3\x03c4\x03b1\x03c4"))
+        if (endsWith(s, len, L"\x03b5"L"\x03c3"L"\x03c4"L"\x03b5"L"\x03c1"L"") ||
+            endsWith(s, len, L"\x03b5"L"\x03c3"L"\x03c4"L"\x03b1"L"\x03c4"L""))
             return len - 5;
 
-        if (endsWith(s, len, L"\x03bf\x03c4\x03b5\x03c1") ||
-            endsWith(s, len, L"\x03bf\x03c4\x03b1\x03c4") ||
-            endsWith(s, len, L"\x03c5\x03c4\x03b5\x03c1") ||
-            endsWith(s, len, L"\x03c5\x03c4\x03b1\x03c4") ||
-            endsWith(s, len, L"\x03c9\x03c4\x03b5\x03c1") ||
-            endsWith(s, len, L"\x03c9\x03c4\x03b1\x03c4"))
+        if (endsWith(s, len, L"\x03bf"L"\x03c4"L"\x03b5"L"\x03c1"L"") ||
+            endsWith(s, len, L"\x03bf"L"\x03c4"L"\x03b1"L"\x03c4"L"") ||
+            endsWith(s, len, L"\x03c5"L"\x03c4"L"\x03b5"L"\x03c1"L"") ||
+            endsWith(s, len, L"\x03c5"L"\x03c4"L"\x03b1"L"\x03c4"L"") ||
+            endsWith(s, len, L"\x03c9"L"\x03c4"L"\x03b5"L"\x03c1"L"") ||
+            endsWith(s, len, L"\x03c9"L"\x03c4"L"\x03b1"L"\x03c4"L""))
             return len - 4;
 
         return len;

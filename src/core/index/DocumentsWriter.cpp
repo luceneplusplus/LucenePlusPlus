@@ -489,7 +489,7 @@ namespace Lucene
         
         int64_t currentThread = LuceneThread::currentId();
         IndexWriterPtr writer(_writer);
-        BOOST_ASSERT(writer->holdsLock());
+        BOOST_ASSERT(!writer->holdsLock());
         
         // First, find a thread state.  If this thread already has affinity to a specific ThreadState, use that one again.
         DocumentsWriterThreadStatePtr state(threadBindings.get(currentThread));

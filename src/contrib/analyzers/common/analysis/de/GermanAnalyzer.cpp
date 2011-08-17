@@ -22,7 +22,7 @@ namespace Lucene
         L"das", L"dass", L"da\x00df", L"du", L"er", L"sie", L"es", L"was",
         L"wer", L"wie", L"wir", L"und", L"oder", L"ohne", L"mit", L"am",
         L"im", L"in", L"aus", L"auf", L"ist", L"sein", L"war", L"wird",
-        L"ihr", L"ihre", L"ihres", L"als", L"f\x00fcr", L"von", L"mit",
+        L"ihr", L"ihre", L"ihres", L"als", L"f\x00fc"L"r", L"von", L"mit",
         L"dich", L"dir", L"mich", L"mir", L"mein", L"sein", L"kein",
         L"durch", L"wegen", L"wird"
     };
@@ -44,13 +44,13 @@ namespace Lucene
         L"eine", L"einem", L"einen", L"einer", L"eines", L"einig", L"einige",
         L"einigem", L"einigen", L"einiger", L"einiges", L"einmal", L"er",
         L"ihn", L"ihm", L"es", L"etwas", L"euer", L"eure", L"eurem", L"euren",
-        L"eurer", L"eures", L"f\x00fcr", L"gegen", L"gewesen", L"hab", L"habe",
+        L"eurer", L"eures", L"f\x00fc"L"r", L"gegen", L"gewesen", L"hab", L"habe",
         L"haben", L"hat", L"hatte", L"hatten", L"hier", L"hin", L"hinter",
         L"ich", L"mich", L"mir", L"ihr", L"ihre", L"ihrem", L"ihren", L"ihrer",
         L"ihres", L"euch", L"im", L"in", L"indem", L"ins", L"ist", L"jede",
         L"jedem", L"jeden", L"jeder", L"jedes", L"jene", L"jenem", L"jenen",
         L"jener", L"jenes", L"jetzt", L"kann", L"kein", L"keine", L"keinem",
-        L"keinen", L"keiner", L"keines", L"k\x00f6nnen", L"k\x00f6nnte",
+        L"keinen", L"keiner", L"keines", L"k\x00f6"L"nnen", L"k\x00f6"L"nnte",
         L"machen", L"man", L"manche", L"manchem", L"manchen", L"mancher",
         L"manches", L"mein", L"meine", L"meinem", L"meinen", L"meiner",
         L"meines", L"mit", L"muss", L"musste", L"nach", L"nicht", L"nichts",
@@ -58,13 +58,13 @@ namespace Lucene
         L"seine", L"seinem", L"seinen", L"seiner", L"seines", L"selbst", L"sich",
         L"sie", L"ihnen", L"sind", L"so", L"solche", L"solchem", L"solchen",
         L"solcher", L"solches", L"soll", L"sollte", L"sondern", L"sonst",
-        L"\x00fcber", L"um", L"und", L"uns", L"unse", L"unsem", L"unsen",
+        L"\x00fc"L"ber", L"um", L"und", L"uns", L"unse", L"unsem", L"unsen",
         L"unser", L"unses", L"unter", L"viel", L"vom", L"von", L"vor",
-        L"w\x00e4hrend", L"war", L"waren", L"warst", L"was", L"weg", L"weil",
+        L"w\x00e4"L"hrend", L"war", L"waren", L"warst", L"was", L"weg", L"weil",
         L"weiter", L"welche", L"welchem", L"welchen", L"welcher", L"welches",
         L"wenn", L"werde", L"werden", L"wie", L"wieder", L"will", L"wir",
-        L"wird", L"wirst", L"wo", L"wollen", L"wollte", L"w\x00fcrde",
-        L"w\x00fcrden", L"zu", L"zum", L"zur", L"zwar", L"zwischen"
+        L"wird", L"wirst", L"wo", L"wollen", L"wollte", L"w\x00fc"L"rde",
+        L"w\x00fc"L"rden", L"zu", L"zum", L"zur", L"zwar", L"zwischen"
     };
 
     GermanAnalyzer::GermanAnalyzer(LuceneVersion::Version matchVersion) : StopwordAnalyzerBase(matchVersion, LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_31) ? getDefaultStopSet() : getDefaultStopSet30())

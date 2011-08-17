@@ -106,7 +106,7 @@ namespace Lucene
         cloneConfig->readerPooling = readerPooling;
         cloneConfig->readerTermsIndexDivisor = readerTermsIndexDivisor;
         cloneConfig->matchVersion = matchVersion;
-        return other;
+        return cloneConfig;
     }
 
     AnalyzerPtr IndexWriterConfig::getAnalyzer()

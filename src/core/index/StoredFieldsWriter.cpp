@@ -98,9 +98,12 @@ namespace Lucene
     void StoredFieldsWriter::abort()
     {
         SyncLock syncLock(this);
-        fieldsWriter->abort();
-        fieldsWriter.reset();
-        lastDocID = 0;
+        if (fieldsWriter)
+        {
+            fieldsWriter->abort();
+            fieldsWriter.reset();
+            lastDocID = 0;
+        }
     }
     
     void StoredFieldsWriter::fill(int32_t docID)

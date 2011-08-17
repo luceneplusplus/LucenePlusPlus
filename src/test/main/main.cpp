@@ -70,13 +70,9 @@ int main(int argc, char* argv[])
 
     setTestDir(testDir);
 
-    int testMain = 0;
+    int testMain = boost::unit_test::unit_test_main(init_unit_test_suite, argc, argv);
 
-    std::wcout << L"hello!\n" << testDir;
-
-    //int testMain = boost::unit_test::unit_test_main(init_unit_test_suite, argc, argv);
-
-    //std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
+    std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
 
     return testMain;
 }

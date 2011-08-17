@@ -99,9 +99,9 @@ namespace Lucene
         deleteFromIfTestVowelBeforeIn(R1, newCollection<String>(L"issements", L"issement"), false, R0);
         deleteFrom(RV, newCollection<String>(L"ements", L"ement"));
 
-        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\x00e9s", L"it\x00e9"), L"abil", false, R0, L"abl");
-        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\x00e9s", L"it\x00e9"), L"ic", false, R0, L"iqU");
-        deleteButSuffixFrom(R2, newCollection<String>(L"it\x00e9s", L"it\x00e9"), L"iv", true);
+        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\x00e9"L"s", L"it\x00e9"L""), L"abil", false, R0, L"abl");
+        deleteButSuffixFromElseReplace(R2, newCollection<String>(L"it\x00e9"L"s", L"it\x00e9"L""), L"ic", false, R0, L"iqU");
+        deleteButSuffixFrom(R2, newCollection<String>(L"it\x00e9"L"s", L"it\x00e9"L""), L"iv", true);
 
         Collection<String> autre = newCollection<String>(L"ifs", L"ives", L"if", L"ive");
         deleteButSuffixFromElseReplace(R2, autre, L"icat", false, R0, L"iqU");
@@ -131,11 +131,11 @@ namespace Lucene
         {
             static const wchar_t* _search[] = 
             {
-                L"\x00eemes", L"\x00eetes", L"iraIent", L"irait", L"irais", L"irai", L"iras", L"ira",
+                L"\x00ee"L"mes", L"\x00ee"L"tes", L"iraIent", L"irait", L"irais", L"irai", L"iras", L"ira",
                 L"irent", L"iriez", L"irez", L"irions", L"irons", L"iront", L"issaIent", 
                 L"issais", L"issantes", L"issante", L"issants", L"issant", L"issait", 
                 L"issais", L"issions", L"issons", L"issiez", L"issez", L"issent", L"isses", 
-                L"isse", L"ir", L"is", L"\x00eet", L"it", L"ies", L"ie", L"i"
+                L"isse", L"ir", L"is", L"\x00ee"L"t", L"it", L"ies", L"ie", L"i"
             };
             search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
         }
@@ -150,8 +150,8 @@ namespace Lucene
             static const wchar_t* _suffix[] = 
             {
                 L"eraIent", L"erais", L"erait", L"erai", L"eras", L"erions", L"eriez", 
-                L"erons", L"eront", L"erez", L"\x00e8rent", L"era", L"\x00e9es", L"iez", L"\x00e9e", L"\x00e9s", 
-                L"er", L"ez", L"\x00e9"
+                L"erons", L"eront", L"erez", L"\x00e8"L"rent", L"era", L"\x00e9"L"es", L"iez", L"\x00e9"L"e", L"\x00e9"L"s", 
+                L"er", L"ez", L"\x00e9"L""
             };
             suffix = Collection<String>::newInstance(_suffix, _suffix + SIZEOF_ARRAY(_suffix));
         }
@@ -163,8 +163,8 @@ namespace Lucene
             static const wchar_t* _search[] = 
             {
                 L"assions", L"assiez", L"assent", L"asses", L"asse", L"aIent", L"antes", 
-                L"aIent", L"Aient", L"ante", L"\x00e2mes", L"\x00e2tes", L"ants", L"ant", L"ait", 
-                L"a\x00eet", L"ais", L"Ait", L"A\x00eet", L"Ais", L"\x00e2t", L"as", L"ai", L"Ai", L"a"
+                L"aIent", L"Aient", L"ante", L"\x00e2"L"mes", L"\x00e2"L"tes", L"ants", L"ant", L"ait", 
+                L"a\x00ee"L"t", L"ais", L"Ait", L"A\x00ee"L"t", L"Ais", L"\x00e2"L"t", L"as", L"ai", L"Ai", L"a"
             };
             search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
         }
@@ -209,9 +209,9 @@ namespace Lucene
         if (!deleteFromIfPrecededIn(R2, newCollection<String>(L"ion"), RV, L"s"))
             deleteFromIfPrecededIn(R2, newCollection<String>(L"ion"), RV, L"t");
 
-        replaceFrom(RV, newCollection<String>(L"I\x00e8re", L"i\x00e8re", L"Ier", L"ier"), L"i");
+        replaceFrom(RV, newCollection<String>(L"I\x00e8"L"re", L"i\x00e8"L"re", L"Ier", L"ier"), L"i");
         deleteFrom(RV, newCollection<String>(L"e"));
-        deleteFromIfPrecededIn(RV, newCollection<String>(L"\x00eb"), R0, L"gu");
+        deleteFromIfPrecededIn(RV, newCollection<String>(L"\x00eb"L""), R0, L"gu");
     }
     
     void FrenchStemmer::step5()

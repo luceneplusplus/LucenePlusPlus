@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm120"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\analyzers\common\analysis\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB;"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -68,7 +68,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="lucene++.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\stage\lib&quot;;..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(BOOST_LIB)&quot;;..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -127,7 +127,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\analyzers\common\analysis\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -152,7 +152,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="lucene++.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(BOOST_ROOT)\stage\lib&quot;;..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(BOOST_LIB)&quot;;..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -208,7 +208,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm120"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\analyzers\common\analysis\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LPP_BUILDING_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -232,7 +232,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
+				AdditionalLibraryDirectories="$(BOOST_LIB)"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -282,7 +282,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\include;..\..\..\include;..\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\include;..\..\..\include;..\analyzers\common\analysis\snowball\libstemmer_c\include;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;LPP_BUILDING_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -305,7 +305,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
+				AdditionalLibraryDirectories="$(BOOST_LIB)"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -633,6 +633,38 @@
 							>
 						</File>
 						<File
+							RelativePath="..\analyzers\common\analysis\de\GermanLightStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\GermanLightStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\de\GermanLightStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\GermanLightStemmer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\de\GermanMinimalStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\GermanMinimalStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\de\GermanMinimalStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\GermanMinimalStemmer.h"
+							>
+						</File>
+						<File
 							RelativePath="..\analyzers\common\analysis\de\GermanStemFilter.cpp"
 							>
 						</File>
@@ -666,6 +698,22 @@
 						</File>
 						<File
 							RelativePath="..\include\GreekLowerCaseFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\el\GreekStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\GreekStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\el\GreekStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\GreekStemmer.h"
 							>
 						</File>
 					</Filter>
@@ -714,6 +762,38 @@
 						</File>
 						<File
 							RelativePath="..\include\FrenchAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\FrenchLightStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\FrenchLightStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\FrenchLightStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\FrenchLightStemmer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\FrenchMinimalStemFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\FrenchMinimalStemFilter.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\fr\FrenchMinimalStemmer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\FrenchMinimalStemmer.h"
 							>
 						</File>
 						<File
@@ -817,882 +897,914 @@
 							>
 						</File>
 					</Filter>
-				</Filter>
-			</Filter>
-		</Filter>
-		<Filter
-			Name="snowball"
-			>
-			<File
-				RelativePath="..\snowball\SnowballAnalyzer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\include\SnowballAnalyzer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\snowball\SnowballFilter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\include\SnowballFilter.h"
-				>
-			</File>
-			<Filter
-				Name="libstemmer"
-				>
-				<Filter
-					Name="runtime"
-					>
-					<File
-						RelativePath="..\snowball\libstemmer_c\runtime\api.c"
+					<Filter
+						Name="en"
 						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
+						<File
+							RelativePath="..\analyzers\common\analysis\en\EnglishPossessiveFilter.cpp"
 							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
+						</File>
+						<File
+							RelativePath="..\include\EnglishPossessiveFilter.h"
 							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\runtime\api.h"
+						</File>
+					</Filter>
+					<Filter
+						Name="snowball"
 						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\runtime\header.h"
+						<File
+							RelativePath="..\analyzers\common\analysis\snowball\SnowballAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\SnowballAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\snowball\SnowballFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\SnowballFilter.h"
+							>
+						</File>
+						<Filter
+							Name="libstemmer"
+							>
+							<Filter
+								Name="runtime"
+								>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\runtime\api.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\runtime\api.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\runtime\header.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\runtime\utilities.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+							</Filter>
+							<Filter
+								Name="libstemmer"
+								>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\include\libstemmer.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\libstemmer\libstemmer_utf8.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\libstemmer\modules_utf8.h"
+									>
+								</File>
+							</Filter>
+							<Filter
+								Name="src"
+								>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_danish.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_danish.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_dutch.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_dutch.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_english.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_english.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_finnish.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_finnish.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_french.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_french.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_german.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_german.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_hungarian.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_hungarian.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_italian.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_italian.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_norwegian.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_norwegian.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_porter.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_porter.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_portuguese.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_portuguese.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_romanian.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_romanian.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_russian.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_russian.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_spanish.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_spanish.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_swedish.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_swedish.h"
+									>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_turkish.c"
+									>
+									<FileConfiguration
+										Name="Debug DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release DLL|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Debug Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+									<FileConfiguration
+										Name="Release Static|Win32"
+										>
+										<Tool
+											Name="VCCLCompilerTool"
+											UsePrecompiledHeader="0"
+											ForcedIncludeFiles="Config.h"
+										/>
+									</FileConfiguration>
+								</File>
+								<File
+									RelativePath="..\analyzers\common\analysis\snowball\libstemmer_c\src_c\stem_UTF_8_turkish.h"
+									>
+								</File>
+							</Filter>
+						</Filter>
+					</Filter>
+					<Filter
+						Name="tr"
 						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\runtime\utilities.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-				</Filter>
-				<Filter
-					Name="libstemmer"
-					>
-					<File
-						RelativePath="..\snowball\libstemmer_c\include\libstemmer.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\libstemmer\libstemmer_utf8.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\libstemmer\modules_utf8.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="src"
-					>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_danish.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_danish.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_dutch.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_dutch.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_english.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_english.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_finnish.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_finnish.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_french.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_french.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_german.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_german.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_hungarian.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_hungarian.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_italian.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_italian.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_norwegian.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_norwegian.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_porter.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_porter.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_portuguese.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_portuguese.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_romanian.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_romanian.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_russian.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_russian.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_spanish.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_spanish.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_swedish.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_swedish.h"
-						>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_turkish.c"
-						>
-						<FileConfiguration
-							Name="Debug DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release DLL|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release Static|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								ForcedIncludeFiles="Config.h"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\snowball\libstemmer_c\src_c\stem_UTF_8_turkish.h"
-						>
-					</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\tr\TurkishAnalyzer.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\TurkishAnalyzer.h"
+							>
+						</File>
+						<File
+							RelativePath="..\analyzers\common\analysis\tr\TurkishLowerCaseFilter.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\include\TurkishLowerCaseFilter.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>
@@ -1857,6 +1969,10 @@
 			</File>
 			<File
 				RelativePath="..\include\TokenSources.h"
+				>
+			</File>
+			<File
+				RelativePath="..\highlighter\TokenStreamFromTermPositionVector.cpp"
 				>
 			</File>
 			<File

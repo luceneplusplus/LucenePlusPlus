@@ -84,31 +84,31 @@ namespace Lucene
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl)
     {
         ConstructIndexWriter(d, newLucene<IndexWriterConfig>(LuceneVersion::LUCENE_31, a)->setOpenMode(create ? IndexWriterConfig::CREATE : IndexWriterConfig::APPEND));
-        setMaxFieldLength(mfl);
+        maxFieldLength = mfl;
     }
     
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl)
     {
         ConstructIndexWriter(d, newLucene<IndexWriterConfig>(LuceneVersion::LUCENE_31, a));
-        setMaxFieldLength(mfl);
+        maxFieldLength = mfl;
     }
     
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl)
     {
         ConstructIndexWriter(d, newLucene<IndexWriterConfig>(LuceneVersion::LUCENE_31, a)->setIndexDeletionPolicy(deletionPolicy));
-        setMaxFieldLength(mfl);
+        maxFieldLength = mfl;
     }
     
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl)
     {
         ConstructIndexWriter(d, newLucene<IndexWriterConfig>(LuceneVersion::LUCENE_31, a)->setOpenMode(create ? IndexWriterConfig::CREATE : IndexWriterConfig::APPEND)->setIndexDeletionPolicy(deletionPolicy));
-        setMaxFieldLength(mfl);
+        maxFieldLength = mfl;
     }
     
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexCommitPtr commit)
     {
         ConstructIndexWriter(d, newLucene<IndexWriterConfig>(LuceneVersion::LUCENE_31, a)->setOpenMode(IndexWriterConfig::APPEND)->setIndexDeletionPolicy(deletionPolicy)->setIndexCommit(commit));
-        setMaxFieldLength(mfl);
+        maxFieldLength = mfl;
     }
     
     IndexWriter::IndexWriter(DirectoryPtr d, IndexWriterConfigPtr conf)
@@ -273,6 +273,9 @@ namespace Lucene
         }
         
         finally.throwException();
+        
+        // must be set after initialise and not in the constructor because we create docWriter in here
+        setMaxFieldLength(this->maxFieldLength);
     }
     
     AtomicLongPtr IndexWriter::MESSAGE_ID()
