@@ -26,6 +26,9 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
+#include "Config.h"
+#ifdef LPP_USE_NEDMALLOC
+
 #ifndef NEDMALLOC_H
 #define NEDMALLOC_H
 
@@ -176,5 +179,7 @@ EXTSPEC MALLOCATTR void **nedpindependent_comalloc(nedpool *p, size_t elems, siz
 
 #undef MALLOCATTR
 #undef EXTSPEC
+
+#endif
 
 #endif

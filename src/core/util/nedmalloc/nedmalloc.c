@@ -26,6 +26,9 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
+#include "Config.h"
+#ifdef LPP_USE_NEDMALLOC
+
 #ifdef _MSC_VER
 /* Enable full aliasing on MSVC */
 /*#pragma optimize("a", on)*/
@@ -947,4 +950,6 @@ void **nedpindependent_comalloc(nedpool *p, size_t elems, size_t *sizes, void **
 
 #if defined(__cplusplus)
 }
+#endif
+
 #endif
