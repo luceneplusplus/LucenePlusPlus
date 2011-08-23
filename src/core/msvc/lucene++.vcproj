@@ -66,7 +66,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
+				AdditionalLibraryDirectories="$(BOOST_LIB)"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -148,7 +148,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
+				AdditionalLibraryDirectories="$(BOOST_LIB)"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -227,7 +227,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
+				AdditionalLibraryDirectories="$(BOOST_LIB)"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -299,7 +299,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalOptions="/IGNORE:4221"
-				AdditionalLibraryDirectories="$(BOOST_ROOT)\stage\lib"
+				AdditionalLibraryDirectories="$(BOOST_LIB)"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -3873,6 +3873,54 @@
 				<File
 					RelativePath="..\util\unicode\guniprop.h"
 					>
+				</File>
+			</Filter>
+			<Filter
+				Name="gc"
+				>
+				<File
+					RelativePath="..\util\smieciuch\fastvec.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\util\smieciuch\gc.hpp"
+					>
+				</File>
+				<File
+					RelativePath="..\util\smieciuch\gcpp.cpp"
+					>
+					<FileConfiguration
+						Name="Debug DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release DLL|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Static|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>
