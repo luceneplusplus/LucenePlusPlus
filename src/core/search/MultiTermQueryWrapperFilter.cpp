@@ -39,9 +39,9 @@ namespace Lucene
             return true;
         if (!other)
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        MultiTermQueryWrapperFilterPtr otherMultiTermQueryWrapperFilter(boost::dynamic_pointer_cast<MultiTermQueryWrapperFilter>(other));
+        MultiTermQueryWrapperFilterPtr otherMultiTermQueryWrapperFilter(LuceneDynamicCast<MultiTermQueryWrapperFilter>(other));
         if (otherMultiTermQueryWrapperFilter)
             return query->equals(otherMultiTermQueryWrapperFilter->query);
         return false;

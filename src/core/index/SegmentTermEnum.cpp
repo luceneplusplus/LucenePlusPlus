@@ -114,7 +114,7 @@ namespace Lucene
     LuceneObjectPtr SegmentTermEnum::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<SegmentTermEnum>();
-        SegmentTermEnumPtr cloneEnum(boost::dynamic_pointer_cast<SegmentTermEnum>(TermEnum::clone(clone)));
+        SegmentTermEnumPtr cloneEnum(LuceneDynamicCast<SegmentTermEnum>(TermEnum::clone(clone)));
         cloneEnum->format = format;
         cloneEnum->isIndex = isIndex;
         cloneEnum->formatM1SkipInterval = formatM1SkipInterval;
@@ -126,11 +126,11 @@ namespace Lucene
         cloneEnum->skipInterval = skipInterval;
         cloneEnum->maxSkipLevels = maxSkipLevels;
         
-        cloneEnum->input = boost::dynamic_pointer_cast<IndexInput>(input->clone());
+        cloneEnum->input = LuceneDynamicCast<IndexInput>(input->clone());
         cloneEnum->_termInfo = newLucene<TermInfo>(_termInfo);
         
-        cloneEnum->termBuffer = boost::dynamic_pointer_cast<TermBuffer>(termBuffer->clone());
-        cloneEnum->prevBuffer = boost::dynamic_pointer_cast<TermBuffer>(prevBuffer->clone());
+        cloneEnum->termBuffer = LuceneDynamicCast<TermBuffer>(termBuffer->clone());
+        cloneEnum->prevBuffer = LuceneDynamicCast<TermBuffer>(prevBuffer->clone());
         cloneEnum->scanBuffer = newLucene<TermBuffer>();
         
         return cloneEnum;

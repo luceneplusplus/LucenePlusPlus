@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FieldInvertState.h"
+#include "AttributeSource.h"
 
 namespace Lucene
 {

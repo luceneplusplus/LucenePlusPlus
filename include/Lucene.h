@@ -20,8 +20,6 @@
 
 #include <boost/cstdint.hpp>
 #include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 using boost::int8_t;
 using boost::uint8_t;
@@ -34,6 +32,7 @@ using boost::uint64_t;
 
 #define SIZEOF_ARRAY(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+#include "LucenePtr.h"
 #include "LuceneTypes.h"
 #include "Allocator.h"
 
@@ -62,12 +61,12 @@ namespace Lucene
     
     const std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > EmptyString;
     
-    typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
-    typedef boost::shared_ptr<boost::thread> threadPtr;
+    typedef LucenePtr<boost::interprocess::file_lock> filelockPtr;
+    typedef LucenePtr<boost::thread> threadPtr;
             
-    typedef boost::shared_ptr<std::ofstream> ofstreamPtr;
-    typedef boost::shared_ptr<std::ifstream> ifstreamPtr;
-    typedef boost::shared_ptr<std::locale> localePtr;
+    typedef LucenePtr<std::ofstream> ofstreamPtr;
+    typedef LucenePtr<std::ifstream> ifstreamPtr;
+    typedef LucenePtr<std::locale> localePtr;
 }
 
 #include "LuceneFactory.h"
@@ -213,7 +212,7 @@ namespace Lucene
     
     template < class KEY, class VALUE, class HASH = boost::hash<KEY>, class EQUAL = std::equal_to<KEY> > class SimpleLRUCache;
     typedef SimpleLRUCache< TermPtr, TermInfoPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > TermInfoCache;
-    typedef boost::shared_ptr<TermInfoCache> TermInfoCachePtr;
+    typedef LucenePtr<TermInfoCache> TermInfoCachePtr;
 }
 
 #include "Synchronize.h"

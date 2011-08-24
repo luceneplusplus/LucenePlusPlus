@@ -139,7 +139,7 @@ namespace Lucene
     LuceneObjectPtr FuzzyQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<FuzzyQuery>(term));
-        FuzzyQueryPtr cloneQuery(boost::dynamic_pointer_cast<FuzzyQuery>(clone));
+        FuzzyQueryPtr cloneQuery(LuceneDynamicCast<FuzzyQuery>(clone));
         cloneQuery->minimumSimilarity = minimumSimilarity;
         cloneQuery->prefixLength = prefixLength;
         cloneQuery->termLongEnough = termLongEnough;
@@ -172,9 +172,9 @@ namespace Lucene
             return true;
         if (!MultiTermQuery::equals(other))
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        FuzzyQueryPtr otherFuzzyQuery(boost::dynamic_pointer_cast<FuzzyQuery>(other));
+        FuzzyQueryPtr otherFuzzyQuery(LuceneDynamicCast<FuzzyQuery>(other));
         if (!otherFuzzyQuery)
             return false;
         if (MiscUtils::doubleToIntBits(minimumSimilarity) != MiscUtils::doubleToIntBits(otherFuzzyQuery->minimumSimilarity))

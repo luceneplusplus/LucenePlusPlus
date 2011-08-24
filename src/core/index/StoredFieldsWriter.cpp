@@ -35,7 +35,7 @@ namespace Lucene
     
     StoredFieldsWriterPerThreadPtr StoredFieldsWriter::addThread(DocStatePtr docState)
     {
-        return newLucene<StoredFieldsWriterPerThread>(docState, shared_from_this());
+        return newLucene<StoredFieldsWriterPerThread>(docState, LuceneThis());
     }
     
     void StoredFieldsWriter::flush(SegmentWriteStatePtr state)
@@ -120,7 +120,7 @@ namespace Lucene
                 BOOST_ASSERT(allocCount == docFreeList.size() + 1);
                 docFreeList.resize(MiscUtils::getNextSize(allocCount));
             }
-            return newLucene<StoredFieldsWriterPerDoc>(shared_from_this());
+            return newLucene<StoredFieldsWriterPerDoc>(LuceneThis());
         }
         else
             return docFreeList[--freeCount];
@@ -210,7 +210,7 @@ namespace Lucene
     void StoredFieldsWriterPerDoc::abort()
     {
         reset();
-        StoredFieldsWriterPtr(_fieldsWriter)->free(shared_from_this());
+        StoredFieldsWriterPtr(_fieldsWriter)->free(LuceneThis());
     }
     
     int64_t StoredFieldsWriterPerDoc::sizeInBytes()
@@ -220,6 +220,6 @@ namespace Lucene
     
     void StoredFieldsWriterPerDoc::finish()
     {
-        StoredFieldsWriterPtr(_fieldsWriter)->finishDocument(shared_from_this());
+        StoredFieldsWriterPtr(_fieldsWriter)->finishDocument(LuceneThis());
     }
 }

@@ -54,39 +54,39 @@ namespace Lucene
     
     LuceneObjectPtr SpanNotQuery::clone(LuceneObjectPtr other)
     {
-        SpanNotQueryPtr spanNotQuery(newLucene<SpanNotQuery>(boost::dynamic_pointer_cast<SpanQuery>(include->clone()),
-                                     boost::dynamic_pointer_cast<SpanQuery>(exclude->clone())));
+        SpanNotQueryPtr spanNotQuery(newLucene<SpanNotQuery>(LuceneDynamicCast<SpanQuery>(include->clone()),
+                                     LuceneDynamicCast<SpanQuery>(exclude->clone())));
         spanNotQuery->setBoost(getBoost());
         return spanNotQuery;
     }
     
     SpansPtr SpanNotQuery::getSpans(IndexReaderPtr reader)
     {
-        return newLucene<NotSpans>(shared_from_this(), include->getSpans(reader), exclude->getSpans(reader));
+        return newLucene<NotSpans>(LuceneThis(), include->getSpans(reader), exclude->getSpans(reader));
     }
     
     QueryPtr SpanNotQuery::rewrite(IndexReaderPtr reader)
     {
         SpanNotQueryPtr clone;
-        SpanQueryPtr rewrittenInclude(boost::dynamic_pointer_cast<SpanQuery>(include->rewrite(reader)));
+        SpanQueryPtr rewrittenInclude(LuceneDynamicCast<SpanQuery>(include->rewrite(reader)));
         if (rewrittenInclude != include)
         {
-            clone = boost::dynamic_pointer_cast<SpanNotQuery>(this->clone());
+            clone = LuceneDynamicCast<SpanNotQuery>(this->clone());
             clone->include = rewrittenInclude;
         }
         
-        SpanQueryPtr rewrittenExclude(boost::dynamic_pointer_cast<SpanQuery>(exclude->rewrite(reader)));
+        SpanQueryPtr rewrittenExclude(LuceneDynamicCast<SpanQuery>(exclude->rewrite(reader)));
         if (rewrittenExclude != exclude)
         {
             if (!clone)
-                clone = boost::dynamic_pointer_cast<SpanNotQuery>(this->clone());
+                clone = LuceneDynamicCast<SpanNotQuery>(this->clone());
             clone->exclude = rewrittenExclude;
         }
         
         if (clone)
             return clone; // some clauses rewrote
         else
-            return shared_from_this(); // no clauses rewrote
+            return LuceneThis(); // no clauses rewrote
     }
     
     bool SpanNotQuery::equals(LuceneObjectPtr other)
@@ -94,7 +94,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        SpanNotQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanNotQuery>(other));
+        SpanNotQueryPtr otherQuery(LuceneDynamicCast<SpanNotQuery>(other));
         if (!otherQuery)
             return false;
         

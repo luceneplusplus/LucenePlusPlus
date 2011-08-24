@@ -30,14 +30,14 @@ namespace Lucene
     DocValuesPtr IntFieldSource::getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader)
     {
         Collection<int32_t> arr(cache->getInts(reader, field, parser));
-        return newLucene<IntDocValues>(shared_from_this(), arr);
+        return newLucene<IntDocValues>(LuceneThis(), arr);
     }
     
     bool IntFieldSource::cachedFieldSourceEquals(FieldCacheSourcePtr other)
     {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        IntFieldSourcePtr otherSource(boost::dynamic_pointer_cast<IntFieldSource>(other));
+        IntFieldSourcePtr otherSource(LuceneDynamicCast<IntFieldSource>(other));
         if (!otherSource)
             return false;
         return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;

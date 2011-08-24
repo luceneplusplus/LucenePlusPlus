@@ -92,7 +92,7 @@ namespace Lucene
     
     WeightPtr BooleanQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<BooleanWeight>(shared_from_this(), searcher);
+        return newLucene<BooleanWeight>(LuceneThis(), searcher);
     }
     
     QueryPtr BooleanQuery::rewrite(IndexReaderPtr reader)
@@ -107,7 +107,7 @@ namespace Lucene
                 if (getBoost() != 1.0) // incorporate boost
                 {
                     if (query == c->getQuery()) // if rewrite was no-op
-                        query = boost::dynamic_pointer_cast<Query>(query->clone()); // then clone before boost
+                        query = LuceneDynamicCast<Query>(query->clone()); // then clone before boost
                     query->setBoost(getBoost() * query->getBoost());
                 }
                 
@@ -123,7 +123,7 @@ namespace Lucene
             if (query != c->getQuery()) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<BooleanQuery>(this->clone());
+                    clone = LuceneDynamicCast<BooleanQuery>(this->clone());
                 clone->clauses[i] = newLucene<BooleanClause>(query, c->getOccur());
             }
         }
@@ -131,7 +131,7 @@ namespace Lucene
         if (clone)
             return clone; // some clauses rewrote
         else
-            return shared_from_this(); // no clauses rewrote
+            return LuceneThis(); // no clauses rewrote
     }
     
     void BooleanQuery::extractTerms(SetTerm terms)
@@ -143,7 +143,7 @@ namespace Lucene
     LuceneObjectPtr BooleanQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<BooleanQuery>());
-        BooleanQueryPtr cloneQuery(boost::dynamic_pointer_cast<BooleanQuery>(clone));
+        BooleanQueryPtr cloneQuery(LuceneDynamicCast<BooleanQuery>(clone));
         cloneQuery->disableCoord = disableCoord;
         cloneQuery->minNrShouldMatch = minNrShouldMatch;
         cloneQuery->clauses = Collection<BooleanClausePtr>::newInstance(clauses.begin(), clauses.end());
@@ -170,7 +170,7 @@ namespace Lucene
             QueryPtr subQuery((*clause)->getQuery());
             if (subQuery)
             {
-                if (boost::dynamic_pointer_cast<BooleanQuery>(subQuery)) // wrap sub-bools in parens
+                if (LuceneDynamicCast<BooleanQuery>(subQuery)) // wrap sub-bools in parens
                 {
                     buffer += L"(";
                     buffer += subQuery->toString(field);
@@ -200,7 +200,7 @@ namespace Lucene
     
     bool BooleanQuery::equals(LuceneObjectPtr other)
     {
-        BooleanQueryPtr otherQuery(boost::dynamic_pointer_cast<BooleanQuery>(other));
+        BooleanQueryPtr otherQuery(LuceneDynamicCast<BooleanQuery>(other));
         if (!otherQuery)
             return false;
         return (getBoost() == otherQuery->getBoost() && 

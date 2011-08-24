@@ -27,7 +27,7 @@ namespace Lucene
         this->maxNumberOfSkipLevels = maxSkipLevels;
         this->skipInterval = Collection<int32_t>::newInstance(maxSkipLevels);
         this->skipStream[0] = skipStream;
-        this->inputIsBuffered = boost::dynamic_pointer_cast<BufferedIndexInput>(skipStream);
+        this->inputIsBuffered = LuceneDynamicCast<BufferedIndexInput>(skipStream);
         this->skipInterval[0] = skipInterval;
         this->skipDoc = Collection<int32_t>::newInstance(maxSkipLevels);
         
@@ -171,9 +171,9 @@ namespace Lucene
             else
             {
                 // clone this stream, it is already at the start of the current level
-                skipStream[i] = boost::dynamic_pointer_cast<IndexInput>(skipStream[0]->clone());
+                skipStream[i] = LuceneDynamicCast<IndexInput>(skipStream[0]->clone());
                 if (inputIsBuffered && length < BufferedIndexInput::BUFFER_SIZE)
-                    boost::dynamic_pointer_cast<BufferedIndexInput>(skipStream[i])->setBufferSize((int32_t)length);
+                    LuceneDynamicCast<BufferedIndexInput>(skipStream[i])->setBufferSize((int32_t)length);
                 
                 // move base stream beyond the current level
                 skipStream[0]->seek(skipStream[0]->getFilePointer() + length);

@@ -113,7 +113,7 @@ namespace Lucene
             {
                 IndexReaderPtr newReader;
                 if (doClone)
-                    newReader = boost::dynamic_pointer_cast<IndexReader>((*oldReader)->clone());
+                    newReader = LuceneDynamicCast<IndexReader>((*oldReader)->clone());
                 else
                     newReader = (*oldReader)->reopen();
                 newReaders.add(newReader);
@@ -174,7 +174,7 @@ namespace Lucene
         else
         {
             // No subreader was refreshed
-            return shared_from_this();
+            return LuceneThis();
         }
     }
     
@@ -321,13 +321,13 @@ namespace Lucene
     TermEnumPtr ParallelReader::terms()
     {
         ensureOpen();
-        return newLucene<ParallelTermEnum>(shared_from_this());
+        return newLucene<ParallelTermEnum>(LuceneThis());
     }
     
     TermEnumPtr ParallelReader::terms(TermPtr t)
     {
         ensureOpen();
-        return newLucene<ParallelTermEnum>(shared_from_this(), t);
+        return newLucene<ParallelTermEnum>(LuceneThis(), t);
     }
     
     int32_t ParallelReader::docFreq(TermPtr t)
@@ -340,25 +340,25 @@ namespace Lucene
     TermDocsPtr ParallelReader::termDocs(TermPtr term)
     {
         ensureOpen();
-        return newLucene<ParallelTermDocs>(shared_from_this(), term);
+        return newLucene<ParallelTermDocs>(LuceneThis(), term);
     }
     
     TermDocsPtr ParallelReader::termDocs()
     {
         ensureOpen();
-        return newLucene<ParallelTermDocs>(shared_from_this());
+        return newLucene<ParallelTermDocs>(LuceneThis());
     }
     
     TermPositionsPtr ParallelReader::termPositions(TermPtr term)
     {
         ensureOpen();
-        return newLucene<ParallelTermPositions>(shared_from_this(), term);
+        return newLucene<ParallelTermPositions>(LuceneThis(), term);
     }
     
     TermPositionsPtr ParallelReader::termPositions()
     {
         ensureOpen();
-        return newLucene<ParallelTermPositions>(shared_from_this());
+        return newLucene<ParallelTermPositions>(LuceneThis());
     }
     
     bool ParallelReader::isCurrent()
@@ -413,7 +413,7 @@ namespace Lucene
                 readers[i]->close();
         }
         
-        FieldCache::DEFAULT()->purge(shared_from_this());
+        FieldCache::DEFAULT()->purge(LuceneThis());
     }
     
     HashSet<String> ParallelReader::getFieldNames(FieldOption fieldOption)
@@ -582,30 +582,30 @@ namespace Lucene
     {
         ParallelReaderPtr reader(_reader);
         MapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());
-        termDocs = indexReader != reader->fieldToReader.end() ? indexReader->second->termPositions(term) : TermDocsPtr();
+        termDocs = indexReader != reader->fieldToReader.end() ? LuceneStaticCast<TermDocs>(indexReader->second->termPositions(term)) : TermDocsPtr();
     }
     
     int32_t ParallelTermPositions::nextPosition()
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return boost::static_pointer_cast<TermPositions>(termDocs)->nextPosition();
+        return LuceneStaticCast<TermPositions>(termDocs)->nextPosition();
     }
     
     int32_t ParallelTermPositions::getPayloadLength()
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return boost::static_pointer_cast<TermPositions>(termDocs)->getPayloadLength();
+        return LuceneStaticCast<TermPositions>(termDocs)->getPayloadLength();
     }
     
     ByteArray ParallelTermPositions::getPayload(ByteArray data, int32_t offset)
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return boost::static_pointer_cast<TermPositions>(termDocs)->getPayload(data, offset);
+        return LuceneStaticCast<TermPositions>(termDocs)->getPayload(data, offset);
     }
     
     bool ParallelTermPositions::isPayloadAvailable()
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return boost::static_pointer_cast<TermPositions>(termDocs)->isPayloadAvailable();
+        return LuceneStaticCast<TermPositions>(termDocs)->isPayloadAvailable();
     }
 }

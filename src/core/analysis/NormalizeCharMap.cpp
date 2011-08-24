@@ -20,7 +20,7 @@ namespace Lucene
     
     void NormalizeCharMap::add(const String& singleMatch, const String& replacement)
     {
-        NormalizeCharMapPtr currMap(shared_from_this());
+        NormalizeCharMapPtr currMap(LuceneThis());
         for (String::const_iterator c = singleMatch.begin(); c != singleMatch.end(); ++c)
         {
             if (!currMap->submap)

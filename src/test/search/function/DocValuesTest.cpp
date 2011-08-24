@@ -14,7 +14,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(DocValuesTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(TestableDocValues)
+DECLARE_LUCENE_PTR(TestableDocValues)
 
 class TestableDocValues : public DocValues
 {

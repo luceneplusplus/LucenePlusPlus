@@ -22,7 +22,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(TestHit)
+DECLARE_LUCENE_PTR(TestHit)
 
 class TestHit : public LuceneObject
 {

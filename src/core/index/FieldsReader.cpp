@@ -36,8 +36,8 @@ namespace Lucene
         this->docStoreOffset = docStoreOffset;
         this->cloneableFieldsStream = cloneableFieldsStream;
         this->cloneableIndexStream = cloneableIndexStream;
-        fieldsStream = boost::dynamic_pointer_cast<IndexInput>(cloneableFieldsStream->clone());
-        indexStream = boost::dynamic_pointer_cast<IndexInput>(cloneableIndexStream->clone());
+        fieldsStream = LuceneDynamicCast<IndexInput>(cloneableFieldsStream->clone());
+        indexStream = LuceneDynamicCast<IndexInput>(cloneableIndexStream->clone());
     }
     
     FieldsReader::FieldsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
@@ -87,7 +87,7 @@ namespace Lucene
             if (format < FieldsWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
                 cloneableFieldsStream->setModifiedUTF8StringsMode();
             
-            fieldsStream = boost::dynamic_pointer_cast<IndexInput>(cloneableFieldsStream->clone());
+            fieldsStream = LuceneDynamicCast<IndexInput>(cloneableFieldsStream->clone());
             
             int64_t indexSize = cloneableIndexStream->length() - formatSize;
             
@@ -106,7 +106,7 @@ namespace Lucene
                 this->_size = (int32_t)(indexSize >> 3);
             }
             
-            indexStream = boost::dynamic_pointer_cast<IndexInput>(cloneableIndexStream->clone());
+            indexStream = LuceneDynamicCast<IndexInput>(cloneableIndexStream->clone());
             numTotalDocs = (int32_t)(indexSize >> 3);
             success = true;
         }
@@ -261,7 +261,7 @@ namespace Lucene
         {
             int32_t toRead = fieldsStream->readVInt();
             int64_t pointer = fieldsStream->getFilePointer();
-            doc->add(newLucene<LazyField>(shared_from_this(), fi->name, Field::STORE_YES, toRead, pointer, binary, compressed));
+            doc->add(newLucene<LazyField>(LuceneThis(), fi->name, Field::STORE_YES, toRead, pointer, binary, compressed));
             fieldsStream->seek(pointer + toRead);
         }
         else
@@ -275,7 +275,7 @@ namespace Lucene
             {
                 int32_t toRead = fieldsStream->readVInt();
                 int64_t pointer = fieldsStream->getFilePointer();
-                f = newLucene<LazyField>(shared_from_this(), fi->name, store, toRead, pointer, binary, compressed);
+                f = newLucene<LazyField>(LuceneThis(), fi->name, store, toRead, pointer, binary, compressed);
                 // skip over the part that we aren't loading
                 fieldsStream->seek(pointer + toRead);
                 f->setOmitNorms(fi->omitNorms);
@@ -290,7 +290,7 @@ namespace Lucene
                     fieldsStream->seek(pointer + length);
                 else
                     fieldsStream->skipChars(length);
-                f = newLucene<LazyField>(shared_from_this(), fi->name, store, index, termVector, length, pointer, binary, compressed);
+                f = newLucene<LazyField>(LuceneThis(), fi->name, store, index, termVector, length, pointer, binary, compressed);
                 f->setOmitNorms(fi->omitNorms);
                 f->setOmitTermFreqAndPositions(fi->omitTermFreqAndPositions);
             }
@@ -415,7 +415,7 @@ namespace Lucene
         IndexInputPtr localFieldsStream = reader->fieldsStreamTL.get();
         if (!localFieldsStream)
         {
-            localFieldsStream = boost::static_pointer_cast<IndexInput>(reader->cloneableFieldsStream->clone());
+            localFieldsStream = LuceneStaticCast<IndexInput>(reader->cloneableFieldsStream->clone());
             reader->fieldsStreamTL.set(localFieldsStream);
         }
         return localFieldsStream;

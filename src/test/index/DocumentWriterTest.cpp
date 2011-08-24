@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(testAddDocument)
 
 namespace TestPositionIncrementGap
 {
-    DECLARE_SHARED_PTR(TestableAnalyzer)
+    DECLARE_LUCENE_PTR(TestableAnalyzer)
     
     class TestableAnalyzer : public Analyzer
     {
@@ -147,8 +147,8 @@ BOOST_AUTO_TEST_CASE(testPositionIncrementGap)
 
 namespace TestTokenReuse
 {
-    DECLARE_SHARED_PTR(TestableTokenFilter)
-    DECLARE_SHARED_PTR(TestableAnalyzer)
+    DECLARE_LUCENE_PTR(TestableTokenFilter)
+    DECLARE_LUCENE_PTR(TestableAnalyzer)
     
     class TestableTokenFilter : public TokenFilter
     {
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(testTokenReuse)
 
 namespace TestPreAnalyzedField
 {
-    DECLARE_SHARED_PTR(TestableTokenStream)
+    DECLARE_LUCENE_PTR(TestableTokenStream)
     
     class TestableTokenStream : public TokenStream
     {

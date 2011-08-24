@@ -34,7 +34,7 @@ namespace Lucene
     
     WeightPtr TermQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<TermWeight>(shared_from_this(), searcher);
+        return newLucene<TermWeight>(LuceneThis(), searcher);
     }
     
     void TermQuery::extractTerms(SetTerm terms)
@@ -56,7 +56,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        TermQueryPtr otherTermQuery(boost::dynamic_pointer_cast<TermQuery>(other));
+        TermQueryPtr otherTermQuery(LuceneDynamicCast<TermQuery>(other));
         if (!otherTermQuery)
             return false;
             
@@ -71,7 +71,7 @@ namespace Lucene
     LuceneObjectPtr TermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermQuery>(term);
-        TermQueryPtr cloneQuery(boost::dynamic_pointer_cast<TermQuery>(Query::clone(clone)));
+        TermQueryPtr cloneQuery(LuceneDynamicCast<TermQuery>(Query::clone(clone)));
         cloneQuery->term = term;
         return cloneQuery;
     }
@@ -124,7 +124,7 @@ namespace Lucene
     ScorerPtr TermWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
         TermDocsPtr termDocs(reader->termDocs(query->term));
-        return termDocs ? newLucene<TermScorer>(shared_from_this(), termDocs, similarity, reader->norms(query->term->field())) : ScorerPtr();
+        return termDocs ? newLucene<TermScorer>(LuceneThis(), termDocs, similarity, reader->norms(query->term->field())) : ScorerPtr();
     }
     
     ExplanationPtr TermWeight::explain(IndexReaderPtr reader, int32_t doc)

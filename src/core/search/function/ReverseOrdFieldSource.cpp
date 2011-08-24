@@ -32,14 +32,14 @@ namespace Lucene
         StringIndexPtr sindex(FieldCache::DEFAULT()->getStringIndex(reader, field));
         Collection<int32_t> arr(sindex->order);
         int32_t end = sindex->lookup.size();
-        return newLucene<ReverseOrdDocValues>(shared_from_this(), arr, end);
+        return newLucene<ReverseOrdDocValues>(LuceneThis(), arr, end);
     }
     
     bool ReverseOrdFieldSource::equals(LuceneObjectPtr other)
     {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        ReverseOrdFieldSourcePtr otherSource(boost::dynamic_pointer_cast<ReverseOrdFieldSource>(other));
+        ReverseOrdFieldSourcePtr otherSource(LuceneDynamicCast<ReverseOrdFieldSource>(other));
         if (!otherSource)
             return false;
         return field == otherSource->field;

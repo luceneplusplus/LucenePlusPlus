@@ -67,7 +67,7 @@ namespace Lucene
     LuceneObjectPtr WildcardQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<WildcardQuery>(term));
-        WildcardQueryPtr cloneQuery(boost::dynamic_pointer_cast<WildcardQuery>(clone));
+        WildcardQueryPtr cloneQuery(LuceneDynamicCast<WildcardQuery>(clone));
         cloneQuery->termContainsWildcard = termContainsWildcard;
         cloneQuery->termIsPrefix = termIsPrefix;
         cloneQuery->term = term;
@@ -88,9 +88,9 @@ namespace Lucene
             return true;
         if (!MultiTermQuery::equals(other))
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        WildcardQueryPtr otherWildcardQuery(boost::dynamic_pointer_cast<WildcardQuery>(other));
+        WildcardQueryPtr otherWildcardQuery(LuceneDynamicCast<WildcardQuery>(other));
         if (!otherWildcardQuery)
             return false;
         if (!term)

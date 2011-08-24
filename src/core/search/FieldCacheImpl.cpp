@@ -28,12 +28,12 @@ namespace Lucene
     void FieldCacheImpl::initialize()
     {
         caches = MapStringCache::newInstance();
-        caches.put(CACHE_BYTE, newLucene<ByteCache>(shared_from_this()));
-        caches.put(CACHE_INT, newLucene<IntCache>(shared_from_this()));
-        caches.put(CACHE_LONG, newLucene<LongCache>(shared_from_this()));
-        caches.put(CACHE_DOUBLE, newLucene<DoubleCache>(shared_from_this()));
-        caches.put(CACHE_STRING, newLucene<StringCache>(shared_from_this()));
-        caches.put(CACHE_STRING_INDEX, newLucene<StringIndexCache>(shared_from_this()));
+        caches.put(CACHE_BYTE, newLucene<ByteCache>(LuceneThis()));
+        caches.put(CACHE_INT, newLucene<IntCache>(LuceneThis()));
+        caches.put(CACHE_LONG, newLucene<LongCache>(LuceneThis()));
+        caches.put(CACHE_DOUBLE, newLucene<DoubleCache>(LuceneThis()));
+        caches.put(CACHE_STRING, newLucene<StringCache>(LuceneThis()));
+        caches.put(CACHE_STRING_INDEX, newLucene<StringIndexCache>(LuceneThis()));
     }
     
     void FieldCacheImpl::purgeAllCaches()
@@ -142,7 +142,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        EntryPtr otherEntry(boost::dynamic_pointer_cast<Entry>(other));
+        EntryPtr otherEntry(LuceneDynamicCast<Entry>(other));
         if (otherEntry)
         {
             if (otherEntry->field == field)

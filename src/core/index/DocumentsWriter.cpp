@@ -36,6 +36,8 @@
 #include "Query.h"
 #include "Weight.h"
 #include "Scorer.h"
+#include "Analyzer.h"
+#include "Document.h"
 #include "TestPoint.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
@@ -141,24 +143,24 @@ namespace Lucene
         maxBufferedDocs = IndexWriter::DEFAULT_MAX_BUFFERED_DOCS;
         flushedDocCount = 0;
         closed = false;
-        waitQueue = newLucene<WaitQueue>(shared_from_this());
+        waitQueue = newLucene<WaitQueue>(LuceneThis());
         skipDocWriter = newLucene<SkipDocWriter>();
         numBytesAlloc = 0;
         numBytesUsed = 0;
-        byteBlockAllocator = newLucene<ByteBlockAllocator>(shared_from_this(), BYTE_BLOCK_SIZE);
-        perDocAllocator = newLucene<ByteBlockAllocator>(shared_from_this(), PER_DOC_BLOCK_SIZE);
+        byteBlockAllocator = newLucene<ByteBlockAllocator>(LuceneThis(), BYTE_BLOCK_SIZE);
+        perDocAllocator = newLucene<ByteBlockAllocator>(LuceneThis(), PER_DOC_BLOCK_SIZE);
         
         IndexWriterPtr writer(_writer);
         this->similarity = writer->getSimilarity();
         flushedDocCount = writer->maxDoc();
         
-        consumer = indexingChain->getChain(shared_from_this());
-        docFieldProcessor = boost::dynamic_pointer_cast<DocFieldProcessor>(consumer);
+        consumer = indexingChain->getChain(LuceneThis());
+        docFieldProcessor = LuceneDynamicCast<DocFieldProcessor>(consumer);
     }
     
     PerDocBufferPtr DocumentsWriter::newPerDocBuffer()
     {
-        return newLucene<PerDocBuffer>(shared_from_this());
+        return newLucene<PerDocBuffer>(LuceneThis());
     }
     
     IndexingChainPtr DocumentsWriter::getDefaultIndexingChain()
@@ -495,7 +497,7 @@ namespace Lucene
     {
         SyncLock syncLock(this);
         initSegmentName(onlyDocStore);
-        flushState = newLucene<SegmentWriteState>(shared_from_this(), directory, segment, docStoreSegment, numDocsInRAM, numDocsInStore, IndexWriterPtr(_writer)->getTermIndexInterval());
+        flushState = newLucene<SegmentWriteState>(LuceneThis(), directory, segment, docStoreSegment, numDocsInRAM, numDocsInStore, IndexWriterPtr(_writer)->getTermIndexInterval());
     }
     
     int32_t DocumentsWriter::flush(bool _closeDocStore)
@@ -651,7 +653,7 @@ namespace Lucene
             {
                 // Just create a new "private" thread state
                 threadStates.resize(threadStates.size() + 1);
-                state = newLucene<DocumentsWriterThreadState>(shared_from_this());
+                state = newLucene<DocumentsWriterThreadState>(LuceneThis());
                 threadStates[threadStates.size() - 1] = state;
             }
             threadBindings.put(LuceneThread::currentId(), state);

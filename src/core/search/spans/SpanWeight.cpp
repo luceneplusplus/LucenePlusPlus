@@ -59,7 +59,7 @@ namespace Lucene
     
     ScorerPtr SpanWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
-        return newLucene<SpanScorer>(query->getSpans(reader), shared_from_this(), similarity, reader->norms(query->getField()));
+        return newLucene<SpanScorer>(query->getSpans(reader), LuceneThis(), similarity, reader->norms(query->getField()));
     }
     
     ExplanationPtr SpanWeight::explain(IndexReaderPtr reader, int32_t doc)
@@ -89,7 +89,7 @@ namespace Lucene
         ComplexExplanationPtr fieldExpl(newLucene<ComplexExplanation>());
         fieldExpl->setDescription(L"fieldWeight(" +    field + L":" + query->toString(field) + L" in " + StringUtils::toString(doc) + L"), product of:");
         
-        ExplanationPtr tfExpl(boost::dynamic_pointer_cast<SpanScorer>(scorer(reader, true, false))->explain(doc));
+        ExplanationPtr tfExpl(LuceneDynamicCast<SpanScorer>(scorer(reader, true, false))->explain(doc));
         fieldExpl->addDetail(tfExpl);
         fieldExpl->addDetail(idfExpl);
         

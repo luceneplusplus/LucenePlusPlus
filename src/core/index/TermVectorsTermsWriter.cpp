@@ -36,7 +36,7 @@ namespace Lucene
     
     TermsHashConsumerPerThreadPtr TermVectorsTermsWriter::addThread(TermsHashPerThreadPtr perThread)
     {
-        return newLucene<TermVectorsTermsWriterPerThread>(perThread, shared_from_this());
+        return newLucene<TermVectorsTermsWriterPerThread>(perThread, LuceneThis());
     }
     
     void TermVectorsTermsWriter::createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count)
@@ -71,12 +71,12 @@ namespace Lucene
         {
             for (Collection<TermsHashConsumerPerFieldPtr>::iterator field = entry->second.begin(); field != entry->second.end(); ++field)
             {
-                TermVectorsTermsWriterPerFieldPtr perField(boost::static_pointer_cast<TermVectorsTermsWriterPerField>(*field));
+                TermVectorsTermsWriterPerFieldPtr perField(LuceneStaticCast<TermVectorsTermsWriterPerField>(*field));
                 TermsHashPerFieldPtr(perField->_termsHashPerField)->reset();
                 perField->shrinkHash();
             }
             
-            TermVectorsTermsWriterPerThreadPtr perThread(boost::static_pointer_cast<TermVectorsTermsWriterPerThread>(entry->first));
+            TermVectorsTermsWriterPerThreadPtr perThread(LuceneStaticCast<TermVectorsTermsWriterPerThread>(entry->first));
             TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(true);
         }
     }
@@ -128,7 +128,7 @@ namespace Lucene
                 BOOST_ASSERT(allocCount == 1 + docFreeList.size());
                 docFreeList.resize(MiscUtils::getNextSize(allocCount));
             }
-            return newLucene<TermVectorsTermsWriterPerDoc>(shared_from_this());
+            return newLucene<TermVectorsTermsWriterPerDoc>(LuceneThis());
         }
         else
             return docFreeList[--freeCount];
@@ -301,7 +301,7 @@ namespace Lucene
     void TermVectorsTermsWriterPerDoc::abort()
     {
         reset();
-        TermVectorsTermsWriterPtr(_termsWriter)->free(shared_from_this());
+        TermVectorsTermsWriterPtr(_termsWriter)->free(LuceneThis());
     }
     
     void TermVectorsTermsWriterPerDoc::addField(int32_t fieldNumber)
@@ -323,7 +323,7 @@ namespace Lucene
     
     void TermVectorsTermsWriterPerDoc::finish()
     {
-        TermVectorsTermsWriterPtr(_termsWriter)->finishDocument(shared_from_this());
+        TermVectorsTermsWriterPtr(_termsWriter)->finishDocument(LuceneThis());
     }
     
     TermVectorsTermsWriterPostingList::TermVectorsTermsWriterPostingList()

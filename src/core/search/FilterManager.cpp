@@ -32,7 +32,7 @@ namespace Lucene
         cacheCleanSize = DEFAULT_CACHE_CLEAN_SIZE; // Let the cache get to 100 items
         cleanSleepTime = DEFAULT_CACHE_SLEEP_TIME; // 10 minutes between cleanings
         
-        filterCleaner = newLucene<FilterCleaner>(shared_from_this());
+        filterCleaner = newLucene<FilterCleaner>(LuceneThis());
         filterCleaner->start();
     }
     

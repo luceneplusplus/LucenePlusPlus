@@ -40,9 +40,9 @@ namespace Lucene
             return true;
         if (!other)
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        TermPtr otherTerm(boost::dynamic_pointer_cast<Term>(other));
+        TermPtr otherTerm(LuceneDynamicCast<Term>(other));
         if (!otherTerm)
             return false;
         return (_field == otherTerm->_field && _text == otherTerm->_text);
@@ -59,7 +59,7 @@ namespace Lucene
     
     int32_t Term::compareTo(LuceneObjectPtr other)
     {
-        TermPtr otherTerm(boost::static_pointer_cast<Term>(other));
+        TermPtr otherTerm(LuceneStaticCast<Term>(other));
         if (_field == otherTerm->_field)
             return _text.compare(otherTerm->_text);
         else

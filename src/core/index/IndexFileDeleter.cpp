@@ -188,7 +188,7 @@ namespace Lucene
             int32_t writeTo = 0;
             while (readFrom < size)
             {
-                CommitPointPtr commit(boost::dynamic_pointer_cast<CommitPoint>(commits[readFrom]));
+                CommitPointPtr commit(LuceneDynamicCast<CommitPoint>(commits[readFrom]));
                 if (!commit->deleted)
                 {
                     if (writeTo != readFrom)
@@ -512,7 +512,7 @@ namespace Lucene
         if (!deleted)
         {
             deleted = true;
-            commitsToDelete.add(shared_from_this());
+            commitsToDelete.add(LuceneThis());
         }
     }
     
@@ -523,7 +523,7 @@ namespace Lucene
     
     int32_t CommitPoint::compareTo(LuceneObjectPtr other)
     {
-        CommitPointPtr otherCommit(boost::static_pointer_cast<CommitPoint>(other));
+        CommitPointPtr otherCommit(LuceneStaticCast<CommitPoint>(other));
         if (gen < otherCommit->gen)
             return -1;
         if (gen > otherCommit->gen)

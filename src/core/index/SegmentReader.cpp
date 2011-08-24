@@ -53,7 +53,7 @@ namespace Lucene
     
     void SegmentReader::initialize()
     {
-        fieldsReaderLocal = newLucene<FieldsReaderLocal>(shared_from_this());
+        fieldsReaderLocal = newLucene<FieldsReaderLocal>(LuceneThis());
     }
     
     SegmentReaderPtr SegmentReader::get(bool readOnly, SegmentInfoPtr si, int32_t termInfosIndexDivisor)
@@ -133,7 +133,7 @@ namespace Lucene
     
     BitVectorPtr SegmentReader::cloneDeletedDocs(BitVectorPtr bv)
     {
-        return boost::dynamic_pointer_cast<BitVector>(bv->clone());
+        return LuceneDynamicCast<BitVector>(bv->clone());
     }
     
     LuceneObjectPtr SegmentReader::clone(LuceneObjectPtr other)
@@ -177,7 +177,7 @@ namespace Lucene
         // if we're cloning we need to run through the reopenSegment logic also if both old and new readers 
         // aren't readonly, we clone to avoid sharing modifications
         if (normsUpToDate && deletionsUpToDate && !doClone && openReadOnly && readOnly)
-            return shared_from_this();
+            return LuceneThis();
         
         // When cloning, the incoming SegmentInfos should not have any changes in it
         BOOST_ASSERT(!doClone || (normsUpToDate && deletionsUpToDate));
@@ -242,7 +242,7 @@ namespace Lucene
                     NormPtr norm(this->_norms.get(curField));
                     if (norm)
                     {
-                        NormPtr cloneNorm(boost::dynamic_pointer_cast<Norm>(norm->clone()));
+                        NormPtr cloneNorm(LuceneDynamicCast<Norm>(norm->clone()));
                         cloneNorm->_reader = clone;
                         clone->_norms.put(curField, cloneNorm);
                     }
@@ -467,7 +467,7 @@ namespace Lucene
     TermDocsPtr SegmentReader::termDocs(TermPtr term)
     {
         if (!term)
-            return newLucene<AllTermDocs>(shared_from_this());
+            return newLucene<AllTermDocs>(LuceneThis());
         else
             return IndexReader::termDocs(term);
     }
@@ -475,13 +475,13 @@ namespace Lucene
     TermDocsPtr SegmentReader::termDocs()
     {
         ensureOpen();
-        return newLucene<SegmentTermDocs>(shared_from_this());
+        return newLucene<SegmentTermDocs>(LuceneThis());
     }
     
     TermPositionsPtr SegmentReader::termPositions()
     {
         ensureOpen();
-        return newLucene<SegmentTermPositions>(shared_from_this());
+        return newLucene<SegmentTermPositions>(LuceneThis());
     }
     
     int32_t SegmentReader::docFreq(TermPtr t)
@@ -633,7 +633,7 @@ namespace Lucene
                     normInput = d->openInput(fileName);
                 }
                 
-                _norms.put(fi->name, newLucene<Norm>(shared_from_this(), normInput, fi->number, normSeek));
+                _norms.put(fi->name, newLucene<Norm>(LuceneThis(), normInput, fi->number, normSeek));
                 nextNormSeek += _maxDoc; // increment also if some norms are separate
             }
         }
@@ -678,7 +678,7 @@ namespace Lucene
             {
                 try
                 {
-                    tvReader = boost::dynamic_pointer_cast<TermVectorsReader>(orig->clone());
+                    tvReader = LuceneDynamicCast<TermVectorsReader>(orig->clone());
                 }
                 catch (...)
                 {
@@ -763,7 +763,7 @@ namespace Lucene
     
     void SegmentReader::startCommit()
     {
-        rollbackSegmentInfo = boost::dynamic_pointer_cast<SegmentInfo>(si->clone());
+        rollbackSegmentInfo = LuceneDynamicCast<SegmentInfo>(si->clone());
         rollbackHasChanges = _hasChanges;
         rollbackDeletedDocsDirty = deletedDocsDirty;
         rollbackNormsDirty = normsDirty;
@@ -812,17 +812,17 @@ namespace Lucene
     
     SegmentReaderPtr SegmentReader::getOnlySegmentReader(IndexReaderPtr reader)
     {
-        SegmentReaderPtr segmentReader(boost::dynamic_pointer_cast<SegmentReader>(reader));
+        SegmentReaderPtr segmentReader(LuceneDynamicCast<SegmentReader>(reader));
         if (segmentReader)
             return segmentReader;
         
-        DirectoryReaderPtr directoryReader(boost::dynamic_pointer_cast<DirectoryReader>(reader));
+        DirectoryReaderPtr directoryReader(LuceneDynamicCast<DirectoryReader>(reader));
         if (directoryReader)
         {
             Collection<IndexReaderPtr> subReaders(directoryReader->getSequentialSubReaders());
             if (subReaders.size() != 1)
                 boost::throw_exception(IllegalArgumentException(L"reader has " + StringUtils::toString(subReaders.size()) + L" segments instead of exactly one"));
-            return boost::dynamic_pointer_cast<SegmentReader>(subReaders[0]);
+            return LuceneDynamicCast<SegmentReader>(subReaders[0]);
         }
         
         boost::throw_exception(IllegalArgumentException(L"reader is not a SegmentReader or a single-segment DirectoryReader"));
@@ -1043,7 +1043,7 @@ namespace Lucene
     
     FieldsReaderPtr FieldsReaderLocal::initialValue()
     {
-        return boost::dynamic_pointer_cast<FieldsReader>(SegmentReaderPtr(_reader)->core->getFieldsReaderOrig()->clone());
+        return LuceneDynamicCast<FieldsReader>(SegmentReaderPtr(_reader)->core->getFieldsReaderOrig()->clone());
     }
     
     SegmentReaderRef::SegmentReaderRef()
@@ -1272,7 +1272,7 @@ namespace Lucene
         
         BOOST_ASSERT(refCount > 0 && (!origNorm || origNorm->refCount > 0));
         LuceneObjectPtr clone = other ? other : newLucene<Norm>();
-        NormPtr cloneNorm(boost::dynamic_pointer_cast<Norm>(clone));
+        NormPtr cloneNorm(LuceneDynamicCast<Norm>(clone));
         cloneNorm->_reader = _reader;
         cloneNorm->origNorm = origNorm;
         cloneNorm->origReader = origReader;
@@ -1299,7 +1299,7 @@ namespace Lucene
             if (!origNorm)
             {
                 // I become the origNorm for the clone
-                cloneNorm->origNorm = shared_from_this();
+                cloneNorm->origNorm = LuceneThis();
                 cloneNorm->origReader = SegmentReaderPtr(_reader);
             }
             cloneNorm->origNorm->incRef();

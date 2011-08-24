@@ -118,8 +118,8 @@ BOOST_AUTO_TEST_CASE(testSimpleFSLockFactory)
 
 namespace LockFactoryTest
 {
-    DECLARE_SHARED_PTR(WriterThread)
-    DECLARE_SHARED_PTR(SearcherThread)
+    DECLARE_LUCENE_PTR(WriterThread)
+    DECLARE_LUCENE_PTR(SearcherThread)
     
     class WriterThread : public LuceneThread
     {

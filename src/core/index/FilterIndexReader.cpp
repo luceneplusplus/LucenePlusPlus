@@ -158,7 +158,7 @@ namespace Lucene
         
         // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
         // generally not a good idea)
-        FieldCache::DEFAULT()->purge(shared_from_this());
+        FieldCache::DEFAULT()->purge(LuceneThis());
     }
     
     HashSet<String> FilterIndexReader::getFieldNames(FieldOption fieldOption)
@@ -259,22 +259,22 @@ namespace Lucene
     
     int32_t FilterTermPositions::nextPosition()
     {
-        return boost::static_pointer_cast<TermPositions>(in)->nextPosition();
+        return LuceneStaticCast<TermPositions>(in)->nextPosition();
     }
     
     int32_t FilterTermPositions::getPayloadLength()
     {
-        return boost::static_pointer_cast<TermPositions>(in)->getPayloadLength();
+        return LuceneStaticCast<TermPositions>(in)->getPayloadLength();
     }
     
     ByteArray FilterTermPositions::getPayload(ByteArray data, int32_t offset)
     {
-        return boost::static_pointer_cast<TermPositions>(in)->getPayload(data, offset);
+        return LuceneStaticCast<TermPositions>(in)->getPayload(data, offset);
     }
     
     bool FilterTermPositions::isPayloadAvailable()
     {
-        return boost::static_pointer_cast<TermPositions>(in)->isPayloadAvailable();
+        return LuceneStaticCast<TermPositions>(in)->isPayloadAvailable();
     }
     
     FilterTermEnum::FilterTermEnum(TermEnumPtr in)

@@ -84,7 +84,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        SortPtr otherSort(boost::dynamic_pointer_cast<Sort>(other));
+        SortPtr otherSort(LuceneDynamicCast<Sort>(other));
         if (!otherSort)
             return false;
         return fields.equals(otherSort->fields);

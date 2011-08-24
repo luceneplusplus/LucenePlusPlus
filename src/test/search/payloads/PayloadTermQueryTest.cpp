@@ -35,8 +35,8 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(BoostingTermSimilarity)
-DECLARE_SHARED_PTR(PayloadTermAnalyzer)
+DECLARE_LUCENE_PTR(BoostingTermSimilarity)
+DECLARE_LUCENE_PTR(PayloadTermAnalyzer)
 
 class BoostingTermSimilarity : public DefaultSimilarity
 {

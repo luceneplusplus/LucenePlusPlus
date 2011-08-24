@@ -19,7 +19,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(MultiThreadTermVectorsReader)
+DECLARE_LUCENE_PTR(MultiThreadTermVectorsReader)
 
 class MultiThreadTermVectorsReader : public LuceneThread
 {

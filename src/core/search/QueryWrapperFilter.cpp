@@ -36,7 +36,7 @@ namespace Lucene
     
     bool QueryWrapperFilter::equals(LuceneObjectPtr other)
     {
-        QueryWrapperFilterPtr otherQueryWrapperFilter(boost::dynamic_pointer_cast<QueryWrapperFilter>(other));
+        QueryWrapperFilterPtr otherQueryWrapperFilter(LuceneDynamicCast<QueryWrapperFilter>(other));
         if (!otherQueryWrapperFilter)
             return false;
         return this->query->equals(otherQueryWrapperFilter->query);

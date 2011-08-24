@@ -20,7 +20,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(MyHitCollector)
+DECLARE_LUCENE_PTR(MyHitCollector)
 
 /// counting collector that can slow down at collect().
 class MyHitCollector : public Collector

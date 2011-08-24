@@ -28,7 +28,7 @@ namespace Lucene
     {
         WeightPtr weight(query->createWeight(searcher));
         SimilarityPtr similarity(query->getSimilarity(searcher));
-        return newLucene<FilteredQueryWeight>(shared_from_this(), weight, similarity);
+        return newLucene<FilteredQueryWeight>(LuceneThis(), weight, similarity);
     }
     
     QueryPtr FilteredQuery::rewrite(IndexReaderPtr reader)
@@ -36,12 +36,12 @@ namespace Lucene
         QueryPtr rewritten(query->rewrite(reader));
         if (rewritten != query)
         {
-            FilteredQueryPtr cloneQuery(boost::dynamic_pointer_cast<FilteredQuery>(clone()));
+            FilteredQueryPtr cloneQuery(LuceneDynamicCast<FilteredQuery>(clone()));
             cloneQuery->query = rewritten;
             return cloneQuery;
         }
         else
-            return shared_from_this();
+            return LuceneThis();
     }
     
     QueryPtr FilteredQuery::getQuery()
@@ -68,7 +68,7 @@ namespace Lucene
     
     bool FilteredQuery::equals(LuceneObjectPtr other)
     {
-        FilteredQueryPtr otherFilteredQuery(boost::dynamic_pointer_cast<FilteredQuery>(other));
+        FilteredQueryPtr otherFilteredQuery(LuceneDynamicCast<FilteredQuery>(other));
         if (!otherFilteredQuery)
             return false;
         return (Query::equals(other) && query->equals(otherFilteredQuery->query) && filter->equals(otherFilteredQuery->filter));
@@ -82,7 +82,7 @@ namespace Lucene
     LuceneObjectPtr FilteredQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<FilteredQuery>(query, filter);
-        FilteredQueryPtr cloneQuery(boost::dynamic_pointer_cast<FilteredQuery>(Query::clone(clone)));
+        FilteredQueryPtr cloneQuery(LuceneDynamicCast<FilteredQuery>(Query::clone(clone)));
         cloneQuery->query = query;
         cloneQuery->filter = filter;
         return cloneQuery;
@@ -157,7 +157,7 @@ namespace Lucene
         DocIdSetIteratorPtr docIdSetIterator(docIdSet->iterator());
         if (!docIdSetIterator)
             return ScorerPtr();
-        return newLucene<FilteredQueryWeightScorer>(shared_from_this(), scorer, docIdSetIterator, similarity);
+        return newLucene<FilteredQueryWeightScorer>(LuceneThis(), scorer, docIdSetIterator, similarity);
     }
     
     FilteredQueryWeightScorer::FilteredQueryWeightScorer(FilteredQueryWeightPtr weight, ScorerPtr scorer, DocIdSetIteratorPtr docIdSetIterator, SimilarityPtr similarity) : Scorer(similarity)

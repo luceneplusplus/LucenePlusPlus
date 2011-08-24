@@ -81,7 +81,7 @@ namespace Lucene
             termQuery->setBoost(getBoost());
             return termQuery->createWeight(searcher);
         }
-        return newLucene<PhraseWeight>(shared_from_this(), searcher);
+        return newLucene<PhraseWeight>(LuceneThis(), searcher);
     }
     
     void PhraseQuery::extractTerms(SetTerm terms)
@@ -127,7 +127,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        PhraseQueryPtr otherPhraseQuery(boost::dynamic_pointer_cast<PhraseQuery>(other));
+        PhraseQueryPtr otherPhraseQuery(LuceneDynamicCast<PhraseQuery>(other));
         if (!otherPhraseQuery)
             return false;
             
@@ -145,7 +145,7 @@ namespace Lucene
     LuceneObjectPtr PhraseQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<PhraseQuery>();
-        PhraseQueryPtr cloneQuery(boost::dynamic_pointer_cast<PhraseQuery>(Query::clone(clone)));
+        PhraseQueryPtr cloneQuery(LuceneDynamicCast<PhraseQuery>(Query::clone(clone)));
         cloneQuery->field = field;
         cloneQuery->terms = terms;
         cloneQuery->positions = positions;
@@ -214,9 +214,9 @@ namespace Lucene
         }
         
         if (query->slop == 0) // optimize exact case
-            return newLucene<ExactPhraseScorer>(shared_from_this(), tps, query->getPositions(), similarity, reader->norms(query->field));
+            return newLucene<ExactPhraseScorer>(LuceneThis(), tps, query->getPositions(), similarity, reader->norms(query->field));
         else
-            return newLucene<SloppyPhraseScorer>(shared_from_this(), tps, query->getPositions(), similarity, query->slop, reader->norms(query->field));
+            return newLucene<SloppyPhraseScorer>(LuceneThis(), tps, query->getPositions(), similarity, query->slop, reader->norms(query->field));
     }
     
     ExplanationPtr PhraseWeight::explain(IndexReaderPtr reader, int32_t doc)
@@ -257,7 +257,7 @@ namespace Lucene
         ExplanationPtr fieldExpl(newLucene<Explanation>());
         fieldExpl->setDescription(L"fieldWeight(" +    query->field + L":" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
         
-        PhraseScorerPtr phraseScorer(boost::dynamic_pointer_cast<PhraseScorer>(scorer(reader, true, false)));
+        PhraseScorerPtr phraseScorer(LuceneDynamicCast<PhraseScorer>(scorer(reader, true, false)));
         if (!phraseScorer)
             return newLucene<Explanation>(0.0, L"no matching docs");
             

@@ -125,7 +125,7 @@ namespace Lucene
     LuceneObjectPtr RAMInputStream::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<RAMInputStream>());
-        RAMInputStreamPtr cloneInputStream(boost::dynamic_pointer_cast<RAMInputStream>(clone));
+        RAMInputStreamPtr cloneInputStream(LuceneDynamicCast<RAMInputStream>(clone));
         cloneInputStream->file = file;
         cloneInputStream->_length = _length;
         cloneInputStream->currentBuffer = currentBuffer;

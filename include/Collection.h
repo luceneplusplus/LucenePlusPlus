@@ -18,7 +18,7 @@ namespace Lucene
     {
     public:
         typedef Collection<TYPE> this_type;
-        typedef boost::shared_ptr<this_type> shared_ptr;
+        typedef LucenePtr<this_type> shared_ptr;
         typedef std::vector< TYPE, Allocator<TYPE> > collection_type;
         typedef typename collection_type::iterator iterator;
         typedef typename collection_type::const_iterator const_iterator;
@@ -29,7 +29,7 @@ namespace Lucene
         }
     
     protected:
-        boost::shared_ptr<collection_type> container;
+        LucenePtr<collection_type> container;
         
     public:
         static this_type newInstance(int32_t size = 0)

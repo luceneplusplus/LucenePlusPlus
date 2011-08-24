@@ -30,7 +30,7 @@ namespace Lucene
         }
     
     protected:
-        boost::shared_ptr<map_type> mapContainer;
+        LucenePtr<map_type> mapContainer;
         
     public:
         static this_type newInstance()

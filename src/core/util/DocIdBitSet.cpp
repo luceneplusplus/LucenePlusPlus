@@ -43,7 +43,7 @@ namespace Lucene
     {
         if (DocIdSet::equals(other))
             return true;
-        DocIdBitSetPtr otherBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(other));
+        DocIdBitSetPtr otherBitSet(LuceneDynamicCast<DocIdBitSet>(other));
         return bitSet->equals(otherBitSet->bitSet);
     }
     
@@ -55,8 +55,8 @@ namespace Lucene
     LuceneObjectPtr DocIdBitSet::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<DocIdBitSet>();
-        DocIdBitSetPtr cloneBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(LuceneObject::clone(clone)));
-        cloneBitSet->bitSet = boost::dynamic_pointer_cast<BitSet>(bitSet->clone());
+        DocIdBitSetPtr cloneBitSet(LuceneDynamicCast<DocIdBitSet>(LuceneObject::clone(clone)));
+        cloneBitSet->bitSet = LuceneDynamicCast<BitSet>(bitSet->clone());
         return cloneBitSet;
     }
     

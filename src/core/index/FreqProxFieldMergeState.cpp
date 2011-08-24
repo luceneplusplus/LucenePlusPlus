@@ -47,7 +47,7 @@ namespace Lucene
         if (postingUpto == numPostings)
             return false;
         
-        p = boost::static_pointer_cast<FreqProxTermsWriterPostingList>(postings[postingUpto]);
+        p = LuceneStaticCast<FreqProxTermsWriterPostingList>(postings[postingUpto]);
         docID = 0;
         
         text = charPool->buffers[p->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];

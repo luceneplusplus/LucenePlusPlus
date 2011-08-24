@@ -150,7 +150,7 @@ namespace Lucene
         writeThread = 0;
         upgradeCount = 0;
         readerTermsIndexDivisor = IndexReader::DEFAULT_TERMS_INDEX_DIVISOR;
-        readerPool = newLucene<ReaderPool>(shared_from_this());
+        readerPool = newLucene<ReaderPool>(LuceneThis());
         closed = false;
         closing = false;
         hitOOM = false;
@@ -160,7 +160,7 @@ namespace Lucene
         flushDeletesCount = 0;
         localFlushedDocCount = 0;
         pendingCommitChangeCount = 0;
-        mergePolicy = newLucene<LogByteSizeMergePolicy>(shared_from_this());
+        mergePolicy = newLucene<LogByteSizeMergePolicy>(LuceneThis());
         mergeScheduler = newLucene<ConcurrentMergeScheduler>();
         similarity = Similarity::getDefault();
         termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
@@ -238,7 +238,7 @@ namespace Lucene
             
             setRollbackSegmentInfos(segmentInfos);
             
-            docWriter = newLucene<DocumentsWriter>(directory, shared_from_this(), indexingChain);
+            docWriter = newLucene<DocumentsWriter>(directory, LuceneThis(), indexingChain);
             docWriter->setInfoStream(infoStream);
             docWriter->setMaxFieldLength(maxFieldLength);
             
@@ -313,7 +313,7 @@ namespace Lucene
         {
             SyncLock syncLock(this);
             flush(false, true, true);
-            r = newLucene<ReadOnlyDirectoryReader>(shared_from_this(), segmentInfos, termInfosIndexDivisor);
+            r = newLucene<ReadOnlyDirectoryReader>(LuceneThis(), segmentInfos, termInfosIndexDivisor);
         }
         maybeMerge();
         return r;
@@ -429,7 +429,7 @@ namespace Lucene
     
     LogMergePolicyPtr IndexWriter::getLogMergePolicy()
     {
-        LogMergePolicyPtr logMergePolicy(boost::dynamic_pointer_cast<LogMergePolicy>(mergePolicy));
+        LogMergePolicyPtr logMergePolicy(LuceneDynamicCast<LogMergePolicy>(mergePolicy));
         if (logMergePolicy)
             return logMergePolicy;
         boost::throw_exception(IllegalArgumentException(L"This method can only be called when the merge policy is the default LogMergePolicy"));
@@ -476,7 +476,7 @@ namespace Lucene
     void IndexWriter::setRollbackSegmentInfos(SegmentInfosPtr infos)
     {
         SyncLock syncLock(this);
-        rollbackSegmentInfos = boost::dynamic_pointer_cast<SegmentInfos>(infos->clone());
+        rollbackSegmentInfos = LuceneDynamicCast<SegmentInfos>(infos->clone());
         BOOST_ASSERT(!rollbackSegmentInfos->hasExternalSegments(directory));
         rollbackSegments = MapSegmentInfoInt::newInstance();
         int32_t size = rollbackSegmentInfos->size();
@@ -584,7 +584,7 @@ namespace Lucene
     {
         if (docWriter->getMaxBufferedDocs() != DISABLE_AUTO_FLUSH)
         {
-            LogDocMergePolicyPtr lmp(boost::dynamic_pointer_cast<LogDocMergePolicy>(mergePolicy));
+            LogDocMergePolicyPtr lmp(LuceneDynamicCast<LogDocMergePolicy>(mergePolicy));
             if (lmp)
             {
                 int32_t maxBufferedDocs = docWriter->getMaxBufferedDocs();
@@ -773,7 +773,7 @@ namespace Lucene
             
             // Give merge scheduler last chance to run, in case any pending merges are waiting
             if (waitForMerges)
-                mergeScheduler->merge(shared_from_this());
+                mergeScheduler->merge(LuceneThis());
             
             mergePolicy->close();
             
@@ -1276,7 +1276,7 @@ namespace Lucene
                 registerMerge(*merge);
         }
         
-        mergeScheduler->merge(shared_from_this());
+        mergeScheduler->merge(LuceneThis());
         
         if (doWait)
         {
@@ -1329,7 +1329,7 @@ namespace Lucene
     void IndexWriter::maybeMerge(int32_t maxNumSegmentsOptimize, bool optimize)
     {
         updatePendingMerges(maxNumSegmentsOptimize, optimize);
-        mergeScheduler->merge(shared_from_this());
+        mergeScheduler->merge(LuceneThis());
     }
     
     void IndexWriter::updatePendingMerges(int32_t maxNumSegmentsOptimize, bool optimize)
@@ -1447,7 +1447,7 @@ namespace Lucene
         
         try
         {
-            localRollbackSegmentInfos = boost::dynamic_pointer_cast<SegmentInfos>(segmentInfos->clone());
+            localRollbackSegmentInfos = LuceneDynamicCast<SegmentInfos>(segmentInfos->clone());
             
             BOOST_ASSERT(!hasExternalSegments());
             
@@ -1911,7 +1911,7 @@ namespace Lucene
                     if (info->dir != directory)
                     {
                         done = false;
-                        OneMergePtr newMerge(newLucene<OneMerge>(segmentInfos->range(i, i + 1), boost::dynamic_pointer_cast<LogMergePolicy>(mergePolicy) && getUseCompoundFile()));
+                        OneMergePtr newMerge(newLucene<OneMerge>(segmentInfos->range(i, i + 1), LuceneDynamicCast<LogMergePolicy>(mergePolicy) && getUseCompoundFile()));
                         
                         // Returns true if no running merge conflicts with this one (and, records this merge as
                         // pending), ie, this segment is not currently being merged
@@ -1954,7 +1954,7 @@ namespace Lucene
         if (any)
         {
             // Sometimes, on copying an external segment over, more merges may become necessary
-            mergeScheduler->merge(shared_from_this());
+            mergeScheduler->merge(LuceneThis());
         }
     }
     
@@ -2001,7 +2001,7 @@ namespace Lucene
             try
             {
                 mergedName = newSegmentName();
-                merger = newLucene<SegmentMerger>(shared_from_this(), mergedName, OneMergePtr());
+                merger = newLucene<SegmentMerger>(LuceneThis(), mergedName, OneMergePtr());
                 
                 SegmentReaderPtr sReader;
                 
@@ -2060,7 +2060,7 @@ namespace Lucene
             
             finally.throwException();
             
-            if (boost::dynamic_pointer_cast<LogMergePolicy>(mergePolicy) && getUseCompoundFile())
+            if (LuceneDynamicCast<LogMergePolicy>(mergePolicy) && getUseCompoundFile())
             {
                 HashSet<String> files;
                 
@@ -3026,7 +3026,7 @@ namespace Lucene
         if (infoStream)
             message(L"merging " + merge->segString(directory));
         
-        SegmentMergerPtr merger(newLucene<SegmentMerger>(shared_from_this(), mergedName, merge));
+        SegmentMergerPtr merger(newLucene<SegmentMerger>(LuceneThis(), mergedName, merge));
         
         merge->readers = Collection<SegmentReaderPtr>::newInstance(numSegments);
         merge->readersClone = Collection<SegmentReaderPtr>::newInstance(numSegments);
@@ -3056,7 +3056,7 @@ namespace Lucene
                 SegmentReaderPtr reader(merge->readers[i]);
                 
                 // We clone the segment readers because other deletes may come in while we're merging so we need readers that will not change
-                merge->readersClone[i] = boost::dynamic_pointer_cast<SegmentReader>(reader->clone(true));
+                merge->readersClone[i] = LuceneDynamicCast<SegmentReader>(reader->clone(true));
                 SegmentReaderPtr clone(merge->readersClone[i]);
                 merger->add(clone);
 
@@ -3407,7 +3407,7 @@ namespace Lucene
                     // It's possible another flush (that did not close the open do stores) snook in after the flush we
                     // just did, so we remove any tail segments referencing the open doc store from the SegmentInfos 
                     // we are about to sync (the main SegmentInfos will keep them)                    
-                    toSync = boost::dynamic_pointer_cast<SegmentInfos>(segmentInfos->clone());
+                    toSync = LuceneDynamicCast<SegmentInfos>(segmentInfos->clone());
                     
                     String dss(docWriter->getDocStoreSegment());
                     if (!dss.empty())
@@ -3786,7 +3786,7 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            clone = boost::dynamic_pointer_cast<IndexReader>(sr->clone(true));
+            clone = LuceneDynamicCast<IndexReader>(sr->clone(true));
         }
         catch (LuceneException& e)
         {

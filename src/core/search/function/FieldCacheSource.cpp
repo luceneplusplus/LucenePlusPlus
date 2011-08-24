@@ -32,7 +32,7 @@ namespace Lucene
     
     bool FieldCacheSource::equals(LuceneObjectPtr other)
     {
-        FieldCacheSourcePtr otherSource(boost::dynamic_pointer_cast<FieldCacheSource>(other));
+        FieldCacheSourcePtr otherSource(LuceneDynamicCast<FieldCacheSource>(other));
         if (!otherSource)
             return false;
         return field == otherSource->field && cachedFieldSourceEquals(otherSource);

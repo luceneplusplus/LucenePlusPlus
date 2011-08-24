@@ -225,11 +225,11 @@ namespace Lucene
     {
         if (LuceneObject::equals(other))
             return true;
-        BitSetPtr otherBitSet(boost::dynamic_pointer_cast<BitSet>(other));
+        BitSetPtr otherBitSet(LuceneDynamicCast<BitSet>(other));
         if (!otherBitSet)
             return false;
-        BitSetPtr first = bitSet.num_blocks() < otherBitSet->bitSet.num_blocks() ? otherBitSet : shared_from_this();
-        BitSetPtr second = bitSet.num_blocks() < otherBitSet->bitSet.num_blocks() ? shared_from_this() : otherBitSet;
+        BitSetPtr first = bitSet.num_blocks() < otherBitSet->bitSet.num_blocks() ? otherBitSet : LuceneThis();
+        BitSetPtr second = bitSet.num_blocks() < otherBitSet->bitSet.num_blocks() ? LuceneThis() : otherBitSet;
         bitset_type::size_type firstLength = first->bitSet.num_blocks();
         bitset_type::size_type secondLength = second->bitSet.num_blocks();
         for (bitset_type::size_type i = secondLength; i < firstLength; ++i)
@@ -265,7 +265,7 @@ namespace Lucene
     LuceneObjectPtr BitSet::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<BitSet>();
-        BitSetPtr cloneBitSet(boost::dynamic_pointer_cast<BitSet>(LuceneObject::clone(clone)));
+        BitSetPtr cloneBitSet(LuceneDynamicCast<BitSet>(LuceneObject::clone(clone)));
         cloneBitSet->bitSet = bitSet;
         return cloneBitSet;
     }

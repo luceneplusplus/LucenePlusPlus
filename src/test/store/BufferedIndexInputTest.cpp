@@ -351,7 +351,7 @@ protected:
     int64_t len;
 };
 
-DECLARE_SHARED_PTR(MyBufferedIndexInput)
+DECLARE_LUCENE_PTR(MyBufferedIndexInput)
 
 // Call readByte() repeatedly, past the buffer boundary, and see that it is working as expected.
 // Our input comes from a dynamically generated/ "file" - see MyBufferedIndexInput.

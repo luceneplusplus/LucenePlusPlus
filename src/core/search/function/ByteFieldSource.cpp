@@ -30,14 +30,14 @@ namespace Lucene
     DocValuesPtr ByteFieldSource::getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader)
     {
         Collection<uint8_t> arr(cache->getBytes(reader, field, parser));
-        return newLucene<ByteDocValues>(shared_from_this(), arr);
+        return newLucene<ByteDocValues>(LuceneThis(), arr);
     }
     
     bool ByteFieldSource::cachedFieldSourceEquals(FieldCacheSourcePtr other)
     {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        ByteFieldSourcePtr otherSource(boost::dynamic_pointer_cast<ByteFieldSource>(other));
+        ByteFieldSourcePtr otherSource(LuceneDynamicCast<ByteFieldSource>(other));
         if (!otherSource)
             return false;
         return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;

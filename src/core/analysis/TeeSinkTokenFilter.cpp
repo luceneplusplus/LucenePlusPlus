@@ -66,7 +66,7 @@ namespace Lucene
             {
                 if (*ref)
                 {
-                    if ((*ref)->accept(shared_from_this()))
+                    if ((*ref)->accept(LuceneThis()))
                     {
                         if (!state)
                             state = this->captureState();

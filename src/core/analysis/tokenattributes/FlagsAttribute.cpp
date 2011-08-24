@@ -44,7 +44,7 @@ namespace Lucene
         if (Attribute::equals(other))
             return true;
         
-        FlagsAttributePtr otherFlagsAttribute(boost::dynamic_pointer_cast<FlagsAttribute>(other));
+        FlagsAttributePtr otherFlagsAttribute(LuceneDynamicCast<FlagsAttribute>(other));
         if (otherFlagsAttribute)
             return (otherFlagsAttribute->flags == flags);
         
@@ -58,13 +58,13 @@ namespace Lucene
     
     void FlagsAttribute::copyTo(AttributePtr target)
     {
-        boost::dynamic_pointer_cast<FlagsAttribute>(target)->setFlags(flags);
+        LuceneDynamicCast<FlagsAttribute>(target)->setFlags(flags);
     }
     
     LuceneObjectPtr FlagsAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<FlagsAttribute>();
-        FlagsAttributePtr cloneAttribute(boost::dynamic_pointer_cast<FlagsAttribute>(Attribute::clone(clone)));
+        FlagsAttributePtr cloneAttribute(LuceneDynamicCast<FlagsAttribute>(Attribute::clone(clone)));
         cloneAttribute->flags = flags;
         return cloneAttribute;
     }

@@ -48,7 +48,7 @@ namespace Lucene
     
     TermsHashConsumerPerFieldPtr TermVectorsTermsWriterPerThread::addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo)
     {
-        return newLucene<TermVectorsTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
+        return newLucene<TermVectorsTermsWriterPerField>(termsHashPerField, LuceneThis(), fieldInfo);
     }
     
     void TermVectorsTermsWriterPerThread::abort()

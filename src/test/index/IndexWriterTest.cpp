@@ -91,12 +91,12 @@ static void checkNoUnreferencedFiles(DirectoryPtr dir)
     BOOST_CHECK(startFiles.equals(endFiles));
 }
 
-DECLARE_SHARED_PTR(FailOnlyOnFlush)
-DECLARE_SHARED_PTR(FailOnlyOnAbortOrFlush)
-DECLARE_SHARED_PTR(FailOnlyInCloseDocStore)
-DECLARE_SHARED_PTR(FailOnlyInWriteSegment)
-DECLARE_SHARED_PTR(FailOnlyInSync)
-DECLARE_SHARED_PTR(FailOnlyInCommit)
+DECLARE_LUCENE_PTR(FailOnlyOnFlush)
+DECLARE_LUCENE_PTR(FailOnlyOnAbortOrFlush)
+DECLARE_LUCENE_PTR(FailOnlyInCloseDocStore)
+DECLARE_LUCENE_PTR(FailOnlyInWriteSegment)
+DECLARE_LUCENE_PTR(FailOnlyInSync)
+DECLARE_LUCENE_PTR(FailOnlyInCommit)
 
 class FailOnlyOnFlush : public MockDirectoryFailure
 {
@@ -325,7 +325,7 @@ public:
     }
 };
 
-DECLARE_SHARED_PTR(IndexerThread)
+DECLARE_LUCENE_PTR(IndexerThread)
 
 class IndexerThread : public LuceneThread
 {
@@ -390,8 +390,8 @@ public:
     }
 };
 
-DECLARE_SHARED_PTR(RunAddIndexesThreads)
-DECLARE_SHARED_PTR(RunAddThread)
+DECLARE_LUCENE_PTR(RunAddIndexesThreads)
+DECLARE_LUCENE_PTR(RunAddThread)
 
 class RunAddIndexesThreads : public LuceneObject
 {
@@ -1829,7 +1829,7 @@ BOOST_AUTO_TEST_CASE(testNullLockFactory)
 
 namespace TestFlushWithNoMerging
 {
-    DECLARE_SHARED_PTR(TestableIndexWriter)
+    DECLARE_LUCENE_PTR(TestableIndexWriter)
     
     class TestableIndexWriter : public IndexWriter
     {
@@ -3277,7 +3277,7 @@ BOOST_AUTO_TEST_CASE(testEmptyFieldName)
 
 namespace TestExceptionDocumentsWriterInit
 {
-    DECLARE_SHARED_PTR(MockIndexWriter)
+    DECLARE_LUCENE_PTR(MockIndexWriter)
     
     class MockIndexWriter : public IndexWriter
     {
@@ -3322,7 +3322,7 @@ BOOST_AUTO_TEST_CASE(testExceptionDocumentsWriterInit)
 
 namespace TestExceptionJustBeforeFlush
 {
-    DECLARE_SHARED_PTR(MockIndexWriter)
+    DECLARE_LUCENE_PTR(MockIndexWriter)
     
     class MockIndexWriter : public IndexWriter
     {
@@ -3389,7 +3389,7 @@ BOOST_AUTO_TEST_CASE(testExceptionJustBeforeFlush)
 
 namespace TestExceptionOnMergeInit
 {
-    DECLARE_SHARED_PTR(MockIndexWriter)
+    DECLARE_LUCENE_PTR(MockIndexWriter)
     
     class MockIndexWriter : public IndexWriter
     {
@@ -3452,7 +3452,7 @@ BOOST_AUTO_TEST_CASE(testExceptionOnMergeInit)
 
 namespace TestDoBeforeAfterFlush
 {
-    DECLARE_SHARED_PTR(MockIndexWriter)
+    DECLARE_LUCENE_PTR(MockIndexWriter)
     
     class MockIndexWriter : public IndexWriter
     {
@@ -3718,7 +3718,7 @@ BOOST_AUTO_TEST_CASE(testPrepareCommitNoChanges)
 
 namespace TestAddIndexesWithThreads
 {
-    DECLARE_SHARED_PTR(CommitAndAddIndexes)
+    DECLARE_LUCENE_PTR(CommitAndAddIndexes)
     
     class CommitAndAddIndexes : public RunAddIndexesThreads
     {
@@ -3787,7 +3787,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexesWithThreads)
 
 namespace TestAddIndexesWithClose
 {
-    DECLARE_SHARED_PTR(CommitAndAddIndexes)
+    DECLARE_LUCENE_PTR(CommitAndAddIndexes)
     
     class CommitAndAddIndexes : public RunAddIndexesThreads
     {
@@ -3848,7 +3848,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexesWithClose)
 
 namespace TestAddIndexesWithCloseNoWait
 {
-    DECLARE_SHARED_PTR(CommitAndAddIndexes)
+    DECLARE_LUCENE_PTR(CommitAndAddIndexes)
     
     class CommitAndAddIndexes : public RunAddIndexesThreads
     {
@@ -3918,7 +3918,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexesWithCloseNoWait)
 
 namespace TestAddIndexesWithRollback
 {
-    DECLARE_SHARED_PTR(CommitAndAddIndexes)
+    DECLARE_LUCENE_PTR(CommitAndAddIndexes)
     
     class CommitAndAddIndexes : public RunAddIndexesThreads
     {
@@ -3989,7 +3989,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexesWithRollback)
 
 namespace TestRollbackExceptionHang
 {
-    DECLARE_SHARED_PTR(MockIndexWriter)
+    DECLARE_LUCENE_PTR(MockIndexWriter)
     
     class MockIndexWriter : public IndexWriter
     {
@@ -4673,7 +4673,7 @@ BOOST_AUTO_TEST_CASE(testCommitThreadSafety)
 
 namespace TestCorruptionAfterDiskFullDuringMerge
 {
-    DECLARE_SHARED_PTR(FailTwiceDuringMerge)
+    DECLARE_LUCENE_PTR(FailTwiceDuringMerge)
     
     class FailTwiceDuringMerge : public MockDirectoryFailure
     {

@@ -46,12 +46,12 @@ namespace Lucene
             
             for (Collection<DocFieldConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
             {
-                childFields.add(boost::static_pointer_cast<DocInverterPerField>(*perField)->consumer);
-                endChildFields.add(boost::static_pointer_cast<DocInverterPerField>(*perField)->endConsumer);
+                childFields.add(LuceneStaticCast<DocInverterPerField>(*perField)->consumer);
+                endChildFields.add(LuceneStaticCast<DocInverterPerField>(*perField)->endConsumer);
             }
             
-            childThreadsAndFields.put(boost::static_pointer_cast<DocInverterPerThread>(entry->first)->consumer, childFields);
-            endChildThreadsAndFields.put(boost::static_pointer_cast<DocInverterPerThread>(entry->first)->endConsumer, endChildFields);
+            childThreadsAndFields.put(LuceneStaticCast<DocInverterPerThread>(entry->first)->consumer, childFields);
+            endChildThreadsAndFields.put(LuceneStaticCast<DocInverterPerThread>(entry->first)->endConsumer, endChildFields);
         }
         
         consumer->flush(childThreadsAndFields, state);
@@ -77,6 +77,6 @@ namespace Lucene
     
     DocFieldConsumerPerThreadPtr DocInverter::addThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread)
     {
-        return newLucene<DocInverterPerThread>(docFieldProcessorPerThread, shared_from_this());
+        return newLucene<DocInverterPerThread>(docFieldProcessorPerThread, LuceneThis());
     }
 }

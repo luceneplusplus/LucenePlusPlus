@@ -26,7 +26,7 @@ namespace Lucene
     
     void Scorer::score(CollectorPtr collector)
     {
-        collector->setScorer(shared_from_this());
+        collector->setScorer(LuceneThis());
         int32_t doc;
         while ((doc = nextDoc()) != NO_MORE_DOCS)
             collector->collect(doc);
@@ -34,7 +34,7 @@ namespace Lucene
     
     bool Scorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
-        collector->setScorer(shared_from_this());
+        collector->setScorer(LuceneThis());
         int32_t doc = firstDocID;
         while (doc < max)
         {

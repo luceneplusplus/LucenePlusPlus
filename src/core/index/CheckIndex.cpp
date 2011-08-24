@@ -159,7 +159,7 @@ namespace Lucene
             return result;
         }
         
-        result->newSegments = boost::dynamic_pointer_cast<SegmentInfos>(sis->clone());
+        result->newSegments = LuceneDynamicCast<SegmentInfos>(sis->clone());
         result->newSegments->clear();
         
         for (int32_t i = 0; i < numSegments; ++i)
@@ -302,7 +302,7 @@ namespace Lucene
                 reader->close();
             
             // Keeper
-            result->newSegments->add(boost::dynamic_pointer_cast<SegmentInfo>(info->clone()));
+            result->newSegments->add(LuceneDynamicCast<SegmentInfo>(info->clone()));
         }
         
         if (result->numBadSegments == 0)

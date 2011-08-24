@@ -25,7 +25,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(SeeksCountingStream)
+DECLARE_LUCENE_PTR(SeeksCountingStream)
 
 /// Simply extends IndexInput in a way that we are able to count the number of invocations of seek()
 class SeeksCountingStream : public IndexInput

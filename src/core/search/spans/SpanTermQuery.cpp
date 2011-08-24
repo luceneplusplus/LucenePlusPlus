@@ -62,9 +62,9 @@ namespace Lucene
             return true;
         if (!SpanQuery::equals(other))
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        SpanTermQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanTermQuery>(other));
+        SpanTermQueryPtr otherQuery(LuceneDynamicCast<SpanTermQuery>(other));
         if (!otherQuery)
             return false;
         if (!term)
@@ -80,7 +80,7 @@ namespace Lucene
     LuceneObjectPtr SpanTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanTermQuery>(term));
-        SpanTermQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanTermQuery>(clone));
+        SpanTermQueryPtr spanFirstQuery(LuceneDynamicCast<SpanTermQuery>(clone));
         spanFirstQuery->term = term;
         return spanFirstQuery;
     }

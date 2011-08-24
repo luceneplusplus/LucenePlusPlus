@@ -299,7 +299,7 @@ namespace Lucene
     
     CollectorPtr BucketTable::newCollector(int32_t mask)
     {
-        return newLucene<BooleanScorerCollector>(mask, shared_from_this());
+        return newLucene<BooleanScorerCollector>(mask, LuceneThis());
     }
     
     int32_t BucketTable::size()

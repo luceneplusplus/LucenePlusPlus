@@ -58,17 +58,17 @@ namespace Lucene
     {
         FieldMaskingSpanQueryPtr clone;
         
-        SpanQueryPtr rewritten(boost::dynamic_pointer_cast<SpanQuery>(maskedQuery->rewrite(reader)));
+        SpanQueryPtr rewritten(LuceneDynamicCast<SpanQuery>(maskedQuery->rewrite(reader)));
         if (rewritten != maskedQuery)
         {
-            clone = boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(this->clone());
+            clone = LuceneDynamicCast<FieldMaskingSpanQuery>(this->clone());
             clone->maskedQuery = rewritten;
         }
         
         if (clone)
             return clone;
         else
-            return shared_from_this();
+            return LuceneThis();
     }
     
     String FieldMaskingSpanQuery::toString(const String& field)
@@ -84,7 +84,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        FieldMaskingSpanQueryPtr otherQuery(boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(other));
+        FieldMaskingSpanQueryPtr otherQuery(LuceneDynamicCast<FieldMaskingSpanQuery>(other));
         if (!otherQuery)
             return false;
         
@@ -100,7 +100,7 @@ namespace Lucene
     LuceneObjectPtr FieldMaskingSpanQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<FieldMaskingSpanQuery>(maskedQuery, field));
-        FieldMaskingSpanQueryPtr cloneQuery(boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(clone));
+        FieldMaskingSpanQueryPtr cloneQuery(LuceneDynamicCast<FieldMaskingSpanQuery>(clone));
         cloneQuery->maskedQuery = maskedQuery;
         cloneQuery->field = field;
         return cloneQuery;

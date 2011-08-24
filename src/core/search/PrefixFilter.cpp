@@ -21,7 +21,7 @@ namespace Lucene
     
     TermPtr PrefixFilter::getPrefix()
     {
-        return boost::static_pointer_cast<PrefixQuery>(query)->getPrefix();
+        return LuceneStaticCast<PrefixQuery>(query)->getPrefix();
     }
     
     String PrefixFilter::toString()

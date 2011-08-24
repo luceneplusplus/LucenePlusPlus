@@ -20,7 +20,7 @@ namespace Lucene
     
     CharStreamPtr CharReader::get(ReaderPtr input)
     {
-        CharStreamPtr charStream(boost::dynamic_pointer_cast<CharStream>(input));
+        CharStreamPtr charStream(LuceneDynamicCast<CharStream>(input));
         return charStream ? charStream : newLucene<CharReader>(input);
     }
     

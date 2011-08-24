@@ -81,7 +81,7 @@ namespace Lucene
         this->value = value;
         valSize = 64;
         shift = 0;
-        return shared_from_this();
+        return LuceneThis();
     }
     
     NumericTokenStreamPtr NumericTokenStream::setIntValue(int32_t value)
@@ -89,7 +89,7 @@ namespace Lucene
         this->value = (int64_t)value;
         valSize = 32;
         shift = 0;
-        return shared_from_this();
+        return LuceneThis();
     }
     
     NumericTokenStreamPtr NumericTokenStream::setDoubleValue(double value)
@@ -97,7 +97,7 @@ namespace Lucene
         this->value = (int64_t)value;
         valSize = 64;
         shift = 0;
-        return shared_from_this();
+        return LuceneThis();
     }
     
     void NumericTokenStream::reset()

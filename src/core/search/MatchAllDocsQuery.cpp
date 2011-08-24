@@ -27,7 +27,7 @@ namespace Lucene
     
     WeightPtr MatchAllDocsQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<MatchAllDocsWeight>(shared_from_this(), searcher);
+        return newLucene<MatchAllDocsWeight>(LuceneThis(), searcher);
     }
     
     void MatchAllDocsQuery::extractTerms(SetTerm terms)
@@ -54,7 +54,7 @@ namespace Lucene
     LuceneObjectPtr MatchAllDocsQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<MatchAllDocsQuery>();
-        MatchAllDocsQueryPtr cloneQuery(boost::dynamic_pointer_cast<MatchAllDocsQuery>(Query::clone(clone)));
+        MatchAllDocsQueryPtr cloneQuery(LuceneDynamicCast<MatchAllDocsQuery>(Query::clone(clone)));
         cloneQuery->normsField = normsField;
         return cloneQuery;
     }
@@ -102,7 +102,7 @@ namespace Lucene
     
     ScorerPtr MatchAllDocsWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
-        return newLucene<MatchAllScorer>(query, reader, similarity, shared_from_this(), !query->normsField.empty() ? reader->norms(query->normsField) : ByteArray());
+        return newLucene<MatchAllScorer>(query, reader, similarity, LuceneThis(), !query->normsField.empty() ? reader->norms(query->normsField) : ByteArray());
     }
     
     ExplanationPtr MatchAllDocsWeight::explain(IndexReaderPtr reader, int32_t doc)

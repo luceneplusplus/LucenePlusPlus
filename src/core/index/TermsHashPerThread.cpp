@@ -37,7 +37,7 @@ namespace Lucene
         DocInverterPerThreadPtr docInverterPerThread(_docInverterPerThread);
         TermsHashPtr termsHash(_termsHash);
         docState = docInverterPerThread->docState;
-        consumer = termsHash->consumer->addThread(shared_from_this());
+        consumer = termsHash->consumer->addThread(LuceneThis());
         
         if (nextTermsHash)
         {
@@ -55,12 +55,12 @@ namespace Lucene
         bytePool = newLucene<ByteBlockPool>(DocumentsWriterPtr(termsHash->_docWriter)->byteBlockAllocator, termsHash->trackAllocations);
         
         if (nextTermsHash)
-            nextPerThread = nextTermsHash->addThread(docInverterPerThread, shared_from_this());
+            nextPerThread = nextTermsHash->addThread(docInverterPerThread, LuceneThis());
     }
     
     InvertedDocConsumerPerFieldPtr TermsHashPerThread::addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo)
     {
-        return newLucene<TermsHashPerField>(docInverterPerField, shared_from_this(), nextPerThread, fieldInfo);
+        return newLucene<TermsHashPerField>(docInverterPerField, LuceneThis(), nextPerThread, fieldInfo);
     }
     
     void TermsHashPerThread::abort()

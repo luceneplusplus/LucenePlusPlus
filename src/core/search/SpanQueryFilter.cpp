@@ -66,7 +66,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        SpanQueryFilterPtr otherSpanQueryFilter(boost::dynamic_pointer_cast<SpanQueryFilter>(other));
+        SpanQueryFilterPtr otherSpanQueryFilter(LuceneDynamicCast<SpanQueryFilter>(other));
         if (!otherSpanQueryFilter)
             return false;
         return query->equals(otherSpanQueryFilter->query);

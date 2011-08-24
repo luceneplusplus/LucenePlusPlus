@@ -42,8 +42,8 @@ namespace Lucene
     void DocInverterPerField::initialize()
     {
         DocInverterPerThreadPtr perThread(_perThread);
-        consumer = perThread->consumer->addField(shared_from_this(), fieldInfo);
-        endConsumer = perThread->endConsumer->addField(shared_from_this(), fieldInfo);
+        consumer = perThread->consumer->addField(LuceneThis(), fieldInfo);
+        endConsumer = perThread->endConsumer->addField(LuceneThis(), fieldInfo);
     }
     
     void DocInverterPerField::abort()

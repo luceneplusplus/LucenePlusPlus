@@ -428,12 +428,12 @@ namespace Lucene
     
     LuceneObjectPtr IndexReader::getFieldCacheKey()
     {
-        return shared_from_this();
+        return LuceneThis();
     }
     
     LuceneObjectPtr IndexReader::getDeletesCacheKey()
     {
-        return shared_from_this();
+        return LuceneThis();
     }
     
     int64_t IndexReader::getUniqueTermCount()

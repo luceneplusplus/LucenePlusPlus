@@ -30,8 +30,8 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(BoostingNearSimilarity)
-DECLARE_SHARED_PTR(PayloadNearAnalyzer)
+DECLARE_LUCENE_PTR(BoostingNearSimilarity)
+DECLARE_LUCENE_PTR(PayloadNearAnalyzer)
 
 class BoostingNearIDFExplanation : public IDFExplanation
 {

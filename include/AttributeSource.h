@@ -71,13 +71,13 @@ namespace Lucene
         /// This method first checks if an instance of that class is already in this AttributeSource and returns it. 
         /// Otherwise a new instance is created, added to this AttributeSource and returned.
         template <class ATTR>
-        boost::shared_ptr<ATTR> addAttribute()
+        LucenePtr<ATTR> addAttribute()
         {
             String className(ATTR::_getClassName());            
-            boost::shared_ptr<ATTR> attrImpl(boost::dynamic_pointer_cast<ATTR>(getAttribute(className)));
+            LucenePtr<ATTR> attrImpl(LuceneDynamicCast<ATTR>(getAttribute(className)));
             if (!attrImpl)
             {
-                attrImpl = boost::dynamic_pointer_cast<ATTR>(factory->createInstance<ATTR>(className));
+                attrImpl = LuceneDynamicCast<ATTR>(factory->createInstance<ATTR>(className));
                 if (!attrImpl)
                     boost::throw_exception(IllegalArgumentException(L"Could not instantiate implementing class for " + className));
                 addAttribute(className, attrImpl);
@@ -100,10 +100,10 @@ namespace Lucene
         
         /// Returns the instance of the passed in Attribute contained in this AttributeSource.
         template <class ATTR>
-        boost::shared_ptr<ATTR> getAttribute()
+        LucenePtr<ATTR> getAttribute()
         {
             String className(ATTR::_getClassName());
-            boost::shared_ptr<ATTR> attr(boost::dynamic_pointer_cast<ATTR>(getAttribute(className)));
+            LucenePtr<ATTR> attr(LuceneDynamicCast<ATTR>(getAttribute(className)));
             if (!attr)
                 boost::throw_exception(IllegalArgumentException(L"This AttributeSource does not have the attribute '" + className + L"'."));
             return attr;

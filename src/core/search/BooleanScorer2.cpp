@@ -31,7 +31,7 @@ namespace Lucene
         if (minNrShouldMatch < 0)
             boost::throw_exception(IllegalArgumentException(L"Minimum number of optional scorers should not be negative"));
 
-        coordinator = newLucene<Coordinator>(shared_from_this());
+        coordinator = newLucene<Coordinator>(LuceneThis());
         coordinator->maxCoord += optionalScorers.size();
         coordinator->maxCoord += requiredScorers.size();
         
@@ -42,13 +42,13 @@ namespace Lucene
     ScorerPtr BooleanScorer2::countingDisjunctionSumScorer(Collection<ScorerPtr> scorers, int32_t minNrShouldMatch)
     {
         // each scorer from the list counted as a single matcher
-        return newLucene<CountingDisjunctionSumScorer>(shared_from_this(), scorers, minNrShouldMatch);
+        return newLucene<CountingDisjunctionSumScorer>(LuceneThis(), scorers, minNrShouldMatch);
     }
     
     ScorerPtr BooleanScorer2::countingConjunctionSumScorer(Collection<ScorerPtr> requiredScorers)
     {
         // each scorer from the list counted as a single matcher
-        return newLucene<CountingConjunctionSumScorer>(shared_from_this(), Similarity::getDefault(), requiredScorers);
+        return newLucene<CountingConjunctionSumScorer>(LuceneThis(), Similarity::getDefault(), requiredScorers);
     }
     
     ScorerPtr BooleanScorer2::dualConjunctionSumScorer(ScorerPtr req1, ScorerPtr req2)
@@ -104,7 +104,7 @@ namespace Lucene
     
     void BooleanScorer2::score(CollectorPtr collector)
     {
-        collector->setScorer(shared_from_this());
+        collector->setScorer(LuceneThis());
         while ((doc = countingSumScorer->nextDoc()) != NO_MORE_DOCS)
             collector->collect(doc);
     }
@@ -112,7 +112,7 @@ namespace Lucene
     bool BooleanScorer2::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
         doc = firstDocID;
-        collector->setScorer(shared_from_this());
+        collector->setScorer(LuceneThis());
         while (doc < max)
         {
             collector->collect(doc);

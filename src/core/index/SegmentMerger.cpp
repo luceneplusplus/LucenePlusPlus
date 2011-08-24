@@ -191,7 +191,7 @@ namespace Lucene
         for (int32_t i = 0; i < numReaders; ++i)
         {
             IndexReaderPtr reader(readers[i]);
-            SegmentReaderPtr segmentReader(boost::dynamic_pointer_cast<SegmentReader>(reader));
+            SegmentReaderPtr segmentReader(LuceneDynamicCast<SegmentReader>(reader));
             if (segmentReader)
             {
                 bool same = true;
@@ -215,14 +215,14 @@ namespace Lucene
         {
             // When we are not merging by doc stores, their field name -> number mapping are the same.  
             // So, we start with the fieldInfos of the last segment in this case, to keep that numbering
-            fieldInfos = boost::dynamic_pointer_cast<FieldInfos>(boost::dynamic_pointer_cast<SegmentReader>(readers[readers.size() - 1])->core->fieldInfos->clone());
+            fieldInfos = LuceneDynamicCast<FieldInfos>(LuceneDynamicCast<SegmentReader>(readers[readers.size() - 1])->core->fieldInfos->clone());
         }
         else
             fieldInfos = newLucene<FieldInfos>();          // merge field names
         
         for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
         {
-            SegmentReaderPtr segmentReader(boost::dynamic_pointer_cast<SegmentReader>(*reader));
+            SegmentReaderPtr segmentReader(LuceneDynamicCast<SegmentReader>(*reader));
             if (segmentReader)
             {
                 FieldInfosPtr readerFieldInfos(segmentReader->fieldInfos());

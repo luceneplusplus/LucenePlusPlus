@@ -46,7 +46,7 @@ namespace Lucene
         if (otherWriter)
         {
             _other = otherWriter;
-            otherWriter->_other = shared_from_this();
+            otherWriter->_other = LuceneThis();
         }
     }
     

@@ -89,7 +89,7 @@ namespace Lucene
     {
         // Start with a shallow copy of data
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Payload>());
-        PayloadPtr clonePayload(boost::dynamic_pointer_cast<Payload>(clone));
+        PayloadPtr clonePayload(LuceneDynamicCast<Payload>(clone));
         clonePayload->offset = offset;
         clonePayload->_length = _length;
         
@@ -114,7 +114,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        PayloadPtr otherPayload(boost::dynamic_pointer_cast<Payload>(other));
+        PayloadPtr otherPayload(LuceneDynamicCast<Payload>(other));
         if (otherPayload)
         {
             if (_length == otherPayload->_length)

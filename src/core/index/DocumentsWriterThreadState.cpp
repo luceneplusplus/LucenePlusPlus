@@ -31,7 +31,7 @@ namespace Lucene
         docState->infoStream = docWriter->infoStream;
         docState->similarity = docWriter->similarity;
         docState->_docWriter = docWriter;
-        consumer = docWriter->consumer->addThread(shared_from_this());
+        consumer = docWriter->consumer->addThread(LuceneThis());
     }
     
     void DocumentsWriterThreadState::doAfterFlush()

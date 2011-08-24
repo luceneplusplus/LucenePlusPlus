@@ -112,7 +112,7 @@ namespace Lucene
         if (!file.is_open())
             boost::throw_exception(AlreadyClosedException(L"MMapIndexInput already closed"));
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<MMapIndexInput>());
-        MMapIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<MMapIndexInput>(clone));
+        MMapIndexInputPtr cloneIndexInput(LuceneDynamicCast<MMapIndexInput>(clone));
         cloneIndexInput->_length = _length;
         cloneIndexInput->file = file;
         cloneIndexInput->bufferPosition = bufferPosition;

@@ -23,7 +23,7 @@ namespace Lucene
     
     InvertedDocEndConsumerPerFieldPtr NormsWriterPerThread::addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo)
     {
-        return newLucene<NormsWriterPerField>(docInverterPerField, shared_from_this(), fieldInfo);
+        return newLucene<NormsWriterPerField>(docInverterPerField, LuceneThis(), fieldInfo);
     }
     
     void NormsWriterPerThread::abort()

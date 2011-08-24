@@ -49,7 +49,7 @@ namespace Lucene
     
     int32_t FreqProxTermsWriterPerField::compareTo(LuceneObjectPtr other)
     {
-        return fieldInfo->name.compare(boost::static_pointer_cast<FreqProxTermsWriterPerField>(other)->fieldInfo->name);
+        return fieldInfo->name.compare(LuceneStaticCast<FreqProxTermsWriterPerField>(other)->fieldInfo->name);
     }
     
     void FreqProxTermsWriterPerField::reset()
@@ -101,7 +101,7 @@ namespace Lucene
     {
         // First time we're seeing this term since the last flush
         BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.newTerm start"));
-        FreqProxTermsWriterPostingListPtr newPostingList(boost::static_pointer_cast<FreqProxTermsWriterPostingList>(p));
+        FreqProxTermsWriterPostingListPtr newPostingList(LuceneStaticCast<FreqProxTermsWriterPostingList>(p));
         newPostingList->lastDocID = docState->docID;
         if (omitTermFreqAndPositions)
             newPostingList->lastDocCode = docState->docID;
@@ -117,7 +117,7 @@ namespace Lucene
     {
         BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.addTerm start"));
         
-        FreqProxTermsWriterPostingListPtr addPostingList(boost::static_pointer_cast<FreqProxTermsWriterPostingList>(p));
+        FreqProxTermsWriterPostingListPtr addPostingList(LuceneStaticCast<FreqProxTermsWriterPostingList>(p));
         
         BOOST_ASSERT(omitTermFreqAndPositions || addPostingList->docFreq > 0);
         TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);

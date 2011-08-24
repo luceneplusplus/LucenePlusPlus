@@ -74,7 +74,7 @@ namespace Lucene
     
     TokenStreamPtr StandardAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        StandardAnalyzerSavedStreamsPtr streams = boost::dynamic_pointer_cast<StandardAnalyzerSavedStreams>(getPreviousTokenStream());
+        StandardAnalyzerSavedStreamsPtr streams = LuceneDynamicCast<StandardAnalyzerSavedStreams>(getPreviousTokenStream());
         if (!streams)
         {
             streams = newLucene<StandardAnalyzerSavedStreams>();

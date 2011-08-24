@@ -40,12 +40,12 @@ namespace Lucene
     
     InvertedDocConsumerPerThreadPtr TermsHash::addThread(DocInverterPerThreadPtr docInverterPerThread)
     {
-        return newLucene<TermsHashPerThread>(docInverterPerThread, shared_from_this(), nextTermsHash, TermsHashPerThreadPtr());
+        return newLucene<TermsHashPerThread>(docInverterPerThread, LuceneThis(), nextTermsHash, TermsHashPerThreadPtr());
     }
     
     TermsHashPerThreadPtr TermsHash::addThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPerThreadPtr primaryPerThread)
     {
-        return newLucene<TermsHashPerThread>(docInverterPerThread, shared_from_this(), nextTermsHash, primaryPerThread);
+        return newLucene<TermsHashPerThread>(docInverterPerThread, LuceneThis(), nextTermsHash, primaryPerThread);
     }
     
     void TermsHash::setFieldInfos(FieldInfosPtr fieldInfos)
@@ -104,14 +104,14 @@ namespace Lucene
             
             for (Collection<InvertedDocConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
             {
-                childFields.add(boost::static_pointer_cast<TermsHashPerField>(*perField)->consumer);
+                childFields.add(LuceneStaticCast<TermsHashPerField>(*perField)->consumer);
                 if (nextTermsHash)
-                    nextChildFields.add(boost::static_pointer_cast<TermsHashPerField>(*perField)->nextPerField);
+                    nextChildFields.add(LuceneStaticCast<TermsHashPerField>(*perField)->nextPerField);
             }
             
-            childThreadsAndFields.put(boost::static_pointer_cast<TermsHashPerThread>(entry->first)->consumer, childFields);
+            childThreadsAndFields.put(LuceneStaticCast<TermsHashPerThread>(entry->first)->consumer, childFields);
             if (nextTermsHash)
-                nextThreadsAndFields.put(boost::static_pointer_cast<TermsHashPerThread>(entry->first)->nextPerThread, nextChildFields);
+                nextThreadsAndFields.put(LuceneStaticCast<TermsHashPerThread>(entry->first)->nextPerThread, nextChildFields);
         }
         
         consumer->flush(childThreadsAndFields, state);

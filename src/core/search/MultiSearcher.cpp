@@ -330,7 +330,7 @@ namespace Lucene
                 // iterate over the score docs and change their fields value
                 for (int32_t j2 = 0; j2 < docs->scoreDocs.size(); ++j2)
                 {
-                    FieldDocPtr fd(boost::dynamic_pointer_cast<FieldDoc>(docs->scoreDocs[j2]));
+                    FieldDocPtr fd(LuceneDynamicCast<FieldDoc>(docs->scoreDocs[j2]));
                     fd->fields[j] = VariantUtils::get<int32_t>(fd->fields[j]) + starts[i];
                 }
                 break;
@@ -345,7 +345,7 @@ namespace Lucene
         Collection<ScoreDocPtr> scoreDocs(docs->scoreDocs);
         for (int32_t j = 0; j < scoreDocs.size(); ++j) // merge scoreDocs into hq
         {
-            FieldDocPtr fieldDoc(boost::dynamic_pointer_cast<FieldDoc>(scoreDocs[j]));
+            FieldDocPtr fieldDoc(LuceneDynamicCast<FieldDoc>(scoreDocs[j]));
             fieldDoc->doc += starts[i]; // convert doc 
             
             SyncLock syncLock(lock);

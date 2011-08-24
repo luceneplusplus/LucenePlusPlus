@@ -62,7 +62,7 @@ namespace Lucene
                 int32_t numTerms = vectors[i]->size();
                 tvf->writeVInt(numTerms);
                 
-                TermPositionVectorPtr tpVector(boost::dynamic_pointer_cast<TermPositionVector>(vectors[i]));
+                TermPositionVectorPtr tpVector(LuceneDynamicCast<TermPositionVector>(vectors[i]));
                 
                 uint8_t bits;
                 bool storePositions;

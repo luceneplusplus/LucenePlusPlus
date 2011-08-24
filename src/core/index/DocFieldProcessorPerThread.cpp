@@ -52,7 +52,7 @@ namespace Lucene
     void DocFieldProcessorPerThread::initialize()
     {
         DocFieldProcessorPtr docFieldProcessor(_docFieldProcessor);
-        consumer = docFieldProcessor->consumer->addThread(shared_from_this());
+        consumer = docFieldProcessor->consumer->addThread(LuceneThis());
         fieldsWriter = docFieldProcessor->fieldsWriter->addThread(docState);
     }
     
@@ -196,7 +196,7 @@ namespace Lucene
                                                 (*field)->isStorePositionWithTermVector(), (*field)->isStoreOffsetWithTermVector(),
                                                 (*field)->getOmitNorms(), false, (*field)->getOmitTermFreqAndPositions()));
             
-                fp = newLucene<DocFieldProcessorPerField>(shared_from_this(), fi);
+                fp = newLucene<DocFieldProcessorPerField>(LuceneThis(), fi);
                 fp->next = fieldHash[hashPos];
                 fieldHash[hashPos] = fp;
                 ++totalFieldCount;
@@ -278,7 +278,7 @@ namespace Lucene
                 BOOST_ASSERT(allocCount == docFreeList.size() + 1);
                 docFreeList.resize(MiscUtils::getNextSize(allocCount));
             }
-            return newLucene<DocFieldProcessorPerThreadPerDoc>(shared_from_this());
+            return newLucene<DocFieldProcessorPerThreadPerDoc>(LuceneThis());
         }
         else
             return docFreeList[--freeCount];
@@ -324,7 +324,7 @@ namespace Lucene
         {
             finally = e;
         }
-        DocFieldProcessorPerThreadPtr(_docProcessor)->freePerDoc(shared_from_this());
+        DocFieldProcessorPerThreadPtr(_docProcessor)->freePerDoc(LuceneThis());
         finally.throwException();
     }
     
@@ -347,7 +347,7 @@ namespace Lucene
         {
             finally = e;
         }
-        DocFieldProcessorPerThreadPtr(_docProcessor)->freePerDoc(shared_from_this());
+        DocFieldProcessorPerThreadPtr(_docProcessor)->freePerDoc(LuceneThis());
         finally.throwException();
     }
 }

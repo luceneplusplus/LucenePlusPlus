@@ -35,7 +35,7 @@ namespace Lucene
             int64_t offset;
             int64_t length;
         };
-        typedef boost::shared_ptr<FileEntry> FileEntryPtr;
+        typedef LucenePtr<FileEntry> FileEntryPtr;
         typedef HashMap<String, FileEntryPtr> MapStringFileEntryPtr;
         
         DirectoryPtr directory;

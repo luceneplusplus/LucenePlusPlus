@@ -43,7 +43,7 @@ namespace Lucene
             return true;
         if (!other)
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
         return true;
     }

@@ -220,7 +220,7 @@ namespace Lucene
     {
         lastGeneration = -1;
         generation = lastGeneration;
-        newLucene<FindSegmentsRead>(shared_from_this(), directory)->run();
+        newLucene<FindSegmentsRead>(LuceneThis(), directory)->run();
     }
     
     void SegmentInfos::write(DirectoryPtr directory)
@@ -284,14 +284,14 @@ namespace Lucene
     LuceneObjectPtr SegmentInfos::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SegmentInfoCollection::clone(other ? other : newLucene<SegmentInfos>());
-        SegmentInfosPtr cloneInfos(boost::dynamic_pointer_cast<SegmentInfos>(clone));
+        SegmentInfosPtr cloneInfos(LuceneDynamicCast<SegmentInfos>(clone));
         cloneInfos->counter = counter;
         cloneInfos->generation = generation;
         cloneInfos->lastGeneration = lastGeneration;
         cloneInfos->version = version;
         cloneInfos->pendingSegnOutput = pendingSegnOutput;
         for (int32_t i = 0; i < cloneInfos->size(); ++i)
-            cloneInfos->segmentInfos[i] = boost::dynamic_pointer_cast<SegmentInfo>(cloneInfos->info(i)->clone());
+            cloneInfos->segmentInfos[i] = LuceneDynamicCast<SegmentInfo>(cloneInfos->info(i)->clone());
         cloneInfos->userData = MapStringString::newInstance();
         cloneInfos->userData.putAll(userData.begin(), userData.end());
         return cloneInfos;

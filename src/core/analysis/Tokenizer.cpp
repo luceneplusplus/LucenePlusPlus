@@ -17,7 +17,7 @@ namespace Lucene
     Tokenizer::Tokenizer(ReaderPtr input)
     {
         this->input = CharReader::get(input);
-        this->charStream = boost::dynamic_pointer_cast<CharStream>(this->input);
+        this->charStream = LuceneDynamicCast<CharStream>(this->input);
     }
     
     Tokenizer::Tokenizer(AttributeFactoryPtr factory) : TokenStream(factory)
@@ -27,7 +27,7 @@ namespace Lucene
     Tokenizer::Tokenizer(AttributeFactoryPtr factory, ReaderPtr input) : TokenStream(factory)
     {
         this->input = CharReader::get(input);
-        this->charStream = boost::dynamic_pointer_cast<CharStream>(this->input);
+        this->charStream = LuceneDynamicCast<CharStream>(this->input);
     }
     
     Tokenizer::Tokenizer(AttributeSourcePtr source) : TokenStream(source)
@@ -37,7 +37,7 @@ namespace Lucene
     Tokenizer::Tokenizer(AttributeSourcePtr source, ReaderPtr input) : TokenStream(source)
     {
         this->input = CharReader::get(input);
-        this->charStream = boost::dynamic_pointer_cast<CharStream>(this->input);
+        this->charStream = LuceneDynamicCast<CharStream>(this->input);
     }
     
     Tokenizer::~Tokenizer()

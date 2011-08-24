@@ -116,7 +116,7 @@ namespace Lucene
     {
         TopFieldCollectorPtr collector(TopFieldCollector::create(sort, std::min(n, reader->maxDoc()), fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight->scoresDocsOutOfOrder()));
         search(weight, filter, collector);
-        return boost::dynamic_pointer_cast<TopFieldDocs>(collector->topDocs());
+        return LuceneDynamicCast<TopFieldDocs>(collector->topDocs());
     }
     
     void IndexSearcher::search(WeightPtr weight, FilterPtr filter, CollectorPtr results)

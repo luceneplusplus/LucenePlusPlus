@@ -60,26 +60,26 @@ namespace Lucene
     
     String NumericRangeFilter::getField()
     {
-        return boost::static_pointer_cast<NumericRangeQuery>(query)->field;
+        return LuceneStaticCast<NumericRangeQuery>(query)->field;
     }
     
     bool NumericRangeFilter::includesMin()
     {
-        return boost::static_pointer_cast<NumericRangeQuery>(query)->minInclusive;
+        return LuceneStaticCast<NumericRangeQuery>(query)->minInclusive;
     }
     
     bool NumericRangeFilter::includesMax()
     {
-        return boost::static_pointer_cast<NumericRangeQuery>(query)->maxInclusive;
+        return LuceneStaticCast<NumericRangeQuery>(query)->maxInclusive;
     }
     
     NumericValue NumericRangeFilter::getMin()
     {
-        return boost::static_pointer_cast<NumericRangeQuery>(query)->min;
+        return LuceneStaticCast<NumericRangeQuery>(query)->min;
     }
     
     NumericValue NumericRangeFilter::getMax()
     {
-        return boost::static_pointer_cast<NumericRangeQuery>(query)->min;
+        return LuceneStaticCast<NumericRangeQuery>(query)->min;
     }
 }

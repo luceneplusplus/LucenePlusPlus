@@ -84,8 +84,8 @@ namespace Lucene
             return clauses[0]->getSpans(reader);
         
         return inOrder
-                ? boost::static_pointer_cast<Spans>(newLucene<NearSpansOrdered>(shared_from_this(), reader, collectPayloads))
-                : boost::static_pointer_cast<Spans>(newLucene<NearSpansUnordered>(shared_from_this(), reader));
+                ? LuceneStaticCast<Spans>(newLucene<NearSpansOrdered>(LuceneThis(), reader, collectPayloads))
+                : LuceneStaticCast<Spans>(newLucene<NearSpansUnordered>(LuceneThis(), reader));
     }
     
     QueryPtr SpanNearQuery::rewrite(IndexReaderPtr reader)
@@ -94,18 +94,18 @@ namespace Lucene
         for (int32_t i = 0; i < clauses.size(); ++i)
         {
             SpanQueryPtr clause(clauses[i]);
-            SpanQueryPtr query(boost::dynamic_pointer_cast<SpanQuery>(clause->rewrite(reader)));
+            SpanQueryPtr query(LuceneDynamicCast<SpanQuery>(clause->rewrite(reader)));
             if (query != clause) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<SpanNearQuery>(this->clone());
+                    clone = LuceneDynamicCast<SpanNearQuery>(this->clone());
                 clone->clauses[i] = query;
             }
         }
         if (clone)
             return clone; // some clauses rewrote
         else
-            return shared_from_this(); // no clauses rewrote
+            return LuceneThis(); // no clauses rewrote
     }
     
     LuceneObjectPtr SpanNearQuery::clone(LuceneObjectPtr other)
@@ -114,7 +114,7 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
         
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = LuceneDynamicCast<SpanQuery>(clauses[i]->clone());
         
         SpanNearQueryPtr spanNearQuery(newLucene<SpanNearQuery>(newClauses, slop, inOrder));
         spanNearQuery->setBoost(getBoost());
@@ -126,7 +126,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        SpanNearQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanNearQuery>(other));
+        SpanNearQueryPtr otherQuery(LuceneDynamicCast<SpanNearQuery>(other));
         if (!otherQuery)
             return false;
         

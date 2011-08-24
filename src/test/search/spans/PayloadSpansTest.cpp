@@ -34,7 +34,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(PayloadSpansAnalyzer)
+DECLARE_LUCENE_PTR(PayloadSpansAnalyzer)
 
 class PayloadSpansFilter : public TokenFilter
 {

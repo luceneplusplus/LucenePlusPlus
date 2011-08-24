@@ -50,7 +50,7 @@ static void checkNoUnreferencedFiles(DirectoryPtr dir)
 
 namespace TestFlushException
 {
-    DECLARE_SHARED_PTR(FailOnlyOnFlush)
+    DECLARE_LUCENE_PTR(FailOnlyOnFlush)
 
     class FailOnlyOnFlush : public MockDirectoryFailure
     {
@@ -93,7 +93,7 @@ namespace TestFlushException
         }
     };
     
-    DECLARE_SHARED_PTR(TestableIndexWriter)
+    DECLARE_LUCENE_PTR(TestableIndexWriter)
 
     class TestableIndexWriter : public IndexWriter
     {
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(testNoWaitClose)
 
 namespace TestSubclassConcurrentMergeScheduler
 {
-    DECLARE_SHARED_PTR(MyMergeScheduler)
+    DECLARE_LUCENE_PTR(MyMergeScheduler)
     
     class FailOnlyOnMerge : public MockDirectoryFailure
     {

@@ -58,7 +58,7 @@ namespace Lucene
     {
         Collection<IndexCommitPtr> myCommits(Collection<IndexCommitPtr>::newInstance());
         for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
-            myCommits.add(newLucene<MyCommitPoint>(shared_from_this(), *commit));
+            myCommits.add(newLucene<MyCommitPoint>(LuceneThis(), *commit));
         return myCommits;
     }
     

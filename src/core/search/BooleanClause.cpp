@@ -52,7 +52,7 @@ namespace Lucene
     
     bool BooleanClause::equals(LuceneObjectPtr other)
     {
-        BooleanClausePtr otherBooleanClause(boost::dynamic_pointer_cast<BooleanClause>(other));
+        BooleanClausePtr otherBooleanClause(LuceneDynamicCast<BooleanClause>(other));
         if (!otherBooleanClause)
             return false;
         return (this->query->equals(otherBooleanClause->query) && this->occur == otherBooleanClause->occur);

@@ -25,7 +25,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(TermDocsPerfTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(RepeatingTokenStream)
+DECLARE_LUCENE_PTR(RepeatingTokenStream)
 
 class RepeatingTokenStream : public TokenStream
 {

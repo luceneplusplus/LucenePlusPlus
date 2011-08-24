@@ -29,7 +29,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(OmitTfTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(CountingHitCollector)
+DECLARE_LUCENE_PTR(CountingHitCollector)
 
 class SimpleIDFExplanation : public IDFExplanation
 {

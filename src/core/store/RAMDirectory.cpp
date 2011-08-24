@@ -51,7 +51,7 @@ namespace Lucene
     void RAMDirectory::initialize()
     {
         if (copyDirectory)
-            Directory::copy(DirectoryPtr(_dirSource), shared_from_this(), closeDir);
+            Directory::copy(DirectoryPtr(_dirSource), LuceneThis(), closeDir);
     }
     
     HashSet<String> RAMDirectory::listAll()
@@ -129,7 +129,7 @@ namespace Lucene
     IndexOutputPtr RAMDirectory::createOutput(const String& name)
     {
         ensureOpen();
-        RAMFilePtr file(newLucene<RAMFile>(shared_from_this()));
+        RAMFilePtr file(newLucene<RAMFile>(LuceneThis()));
         {
             SyncLock syncLock(this);
             MapStringRAMFile::iterator existing = fileMap.find(name);

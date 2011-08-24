@@ -40,7 +40,7 @@ namespace Lucene
     {
         HashSet<String> result(HashSet<String>::newInstance());
         LuceneException finally;
-        BufferedReaderPtr bufferedReader(boost::dynamic_pointer_cast<BufferedReader>(reader));
+        BufferedReaderPtr bufferedReader(LuceneDynamicCast<BufferedReader>(reader));
         try
         {
             if (!bufferedReader)

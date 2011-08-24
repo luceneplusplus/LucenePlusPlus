@@ -52,22 +52,22 @@ namespace Lucene
         QueryPtr sq = subQuery->rewrite(reader);
         if (sq != subQuery)
         {
-            cloneQuery = boost::static_pointer_cast<CustomScoreQuery>(clone());
+            cloneQuery = LuceneStaticCast<CustomScoreQuery>(clone());
             cloneQuery->subQuery = sq;
         }
         
         for (int32_t i = 0; i < valSrcQueries.size(); ++i)
         {
-            ValueSourceQueryPtr v = boost::dynamic_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->rewrite(reader));
+            ValueSourceQueryPtr v = LuceneDynamicCast<ValueSourceQuery>(valSrcQueries[i]->rewrite(reader));
             if (v != valSrcQueries[i])
             {
                 if (!cloneQuery)
-                    cloneQuery = boost::static_pointer_cast<CustomScoreQuery>(clone());
+                    cloneQuery = LuceneStaticCast<CustomScoreQuery>(clone());
                 cloneQuery->valSrcQueries[i] = v;
             }
         }
         
-        return cloneQuery ? cloneQuery : shared_from_this();
+        return cloneQuery ? cloneQuery : LuceneThis();
     }
     
     void CustomScoreQuery::extractTerms(SetTerm terms)
@@ -80,12 +80,12 @@ namespace Lucene
     LuceneObjectPtr CustomScoreQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<CustomScoreQuery>(subQuery));
-        CustomScoreQueryPtr cloneQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(clone));
+        CustomScoreQueryPtr cloneQuery(LuceneDynamicCast<CustomScoreQuery>(clone));
         cloneQuery->strict = strict;
-        cloneQuery->subQuery = boost::dynamic_pointer_cast<Query>(subQuery->clone());
+        cloneQuery->subQuery = LuceneDynamicCast<Query>(subQuery->clone());
         cloneQuery->valSrcQueries = Collection<ValueSourceQueryPtr>::newInstance(valSrcQueries.size());
         for (int32_t i = 0; i < valSrcQueries.size(); ++i)
-            cloneQuery->valSrcQueries[i] = boost::dynamic_pointer_cast<ValueSourceQuery>(valSrcQueries[i]->clone());
+            cloneQuery->valSrcQueries[i] = LuceneDynamicCast<ValueSourceQuery>(valSrcQueries[i]->clone());
         return cloneQuery;
     }
     
@@ -101,7 +101,7 @@ namespace Lucene
     
     bool CustomScoreQuery::equals(LuceneObjectPtr other)
     {
-        CustomScoreQueryPtr otherQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(other));
+        CustomScoreQueryPtr otherQuery(LuceneDynamicCast<CustomScoreQuery>(other));
         if (!otherQuery)
             return false;
         if (getBoost() != otherQuery->getBoost() || !subQuery->equals(otherQuery->subQuery) || strict != otherQuery->strict)
@@ -119,7 +119,7 @@ namespace Lucene
     CustomScoreProviderPtr CustomScoreQuery::getCustomScoreProvider(IndexReaderPtr reader)
     {
         // when deprecated methods are removed, do not extend class here, just return new default CustomScoreProvider
-        return newLucene<DefaultCustomScoreProvider>(shared_from_this(), reader);
+        return newLucene<DefaultCustomScoreProvider>(LuceneThis(), reader);
     }
     
     double CustomScoreQuery::customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores)
@@ -168,7 +168,7 @@ namespace Lucene
     
     WeightPtr CustomScoreQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<CustomWeight>(shared_from_this(), searcher);
+        return newLucene<CustomWeight>(LuceneThis(), searcher);
     }
     
     bool CustomScoreQuery::isStrict()
@@ -278,7 +278,7 @@ namespace Lucene
         Collection<ScorerPtr> valSrcScorers(Collection<ScorerPtr>::newInstance(valSrcWeights.size()));
         for (int32_t i = 0; i < valSrcScorers.size(); ++i)
             valSrcScorers[i] = valSrcWeights[i]->scorer(reader, true, topScorer);
-        return newLucene<CustomScorer>(similarity, reader, shared_from_this(), subQueryScorer, valSrcScorers);
+        return newLucene<CustomScorer>(similarity, reader, LuceneThis(), subQueryScorer, valSrcScorers);
     }
     
     ExplanationPtr CustomWeight::explain(IndexReaderPtr reader, int32_t doc)

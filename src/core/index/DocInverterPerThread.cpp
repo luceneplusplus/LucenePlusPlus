@@ -36,8 +36,8 @@ namespace Lucene
     void DocInverterPerThread::initialize()
     {
         DocInverterPtr docInverter(_docInverter);
-        consumer = docInverter->consumer->addThread(shared_from_this());
-        endConsumer = docInverter->endConsumer->addThread(shared_from_this());
+        consumer = docInverter->consumer->addThread(LuceneThis());
+        endConsumer = docInverter->endConsumer->addThread(LuceneThis());
     }
     
     void DocInverterPerThread::startDocument()
@@ -76,7 +76,7 @@ namespace Lucene
     
     DocFieldConsumerPerFieldPtr DocInverterPerThread::addField(FieldInfoPtr fi)
     {
-        return newLucene<DocInverterPerField>(shared_from_this(), fi);
+        return newLucene<DocInverterPerField>(LuceneThis(), fi);
     }
         
     SingleTokenAttributeSource::SingleTokenAttributeSource()

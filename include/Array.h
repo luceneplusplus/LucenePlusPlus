@@ -61,7 +61,7 @@ namespace Lucene
         }
         
     protected:
-        boost::shared_ptr<array_type> container;
+        LucenePtr<array_type> container;
         array_type* array;
         
     public:

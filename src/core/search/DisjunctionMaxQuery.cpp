@@ -56,7 +56,7 @@ namespace Lucene
     
     WeightPtr DisjunctionMaxQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<DisjunctionMaxWeight>(shared_from_this(), searcher);
+        return newLucene<DisjunctionMaxWeight>(LuceneThis(), searcher);
     }
     
     QueryPtr DisjunctionMaxQuery::rewrite(IndexReaderPtr reader)
@@ -69,7 +69,7 @@ namespace Lucene
             if (getBoost() != 1.0)
             {
                 if (result == singleton)
-                    result = boost::dynamic_pointer_cast<Query>(result->clone());
+                    result = LuceneDynamicCast<Query>(result->clone());
                 result->setBoost(getBoost() * result->getBoost());
             }
             return result;
@@ -82,17 +82,17 @@ namespace Lucene
             if (rewrite != clause)
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<DisjunctionMaxQuery>(this->clone());
+                    clone = LuceneDynamicCast<DisjunctionMaxQuery>(this->clone());
                 clone->disjuncts[i] = rewrite;
             }
         }
-        return clone ? clone : shared_from_this();
+        return clone ? clone : LuceneThis();
     }
     
     LuceneObjectPtr DisjunctionMaxQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<DisjunctionMaxQuery>());
-        DisjunctionMaxQueryPtr cloneQuery(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(clone));
+        DisjunctionMaxQueryPtr cloneQuery(LuceneDynamicCast<DisjunctionMaxQuery>(clone));
         cloneQuery->tieBreakerMultiplier = tieBreakerMultiplier;
         cloneQuery->disjuncts = Collection<QueryPtr>::newInstance(disjuncts.begin(), disjuncts.end());
         return cloneQuery;
@@ -111,7 +111,7 @@ namespace Lucene
         {
             if (query != disjuncts.begin())
                 buffer += L" | ";
-            if (boost::dynamic_pointer_cast<BooleanQuery>(*query)) // wrap sub-bools in parens
+            if (LuceneDynamicCast<BooleanQuery>(*query)) // wrap sub-bools in parens
                 buffer += L"(" + (*query)->toString(field) + L")";
             else
                 buffer += (*query)->toString(field);
@@ -129,7 +129,7 @@ namespace Lucene
         if (!Query::equals(other))
             return false;
         
-        DisjunctionMaxQueryPtr otherDisjunctionMaxQuery(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(other));
+        DisjunctionMaxQueryPtr otherDisjunctionMaxQuery(LuceneDynamicCast<DisjunctionMaxQuery>(other));
         if (!otherDisjunctionMaxQuery)
             return false;
             

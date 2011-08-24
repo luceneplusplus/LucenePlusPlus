@@ -62,7 +62,7 @@ namespace Lucene
     
     FieldPtr Document::getField(const String& name)
     {
-        return boost::static_pointer_cast<Field>(getFieldable(name));
+        return LuceneStaticCast<Field>(getFieldable(name));
     }
     
     FieldablePtr Document::getFieldable(const String& name)
@@ -92,7 +92,7 @@ namespace Lucene
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
         {
             if ((*field)->name() == name)
-                result.add(boost::static_pointer_cast<Field>(*field));
+                result.add(LuceneStaticCast<Field>(*field));
         }
         return result;
     }

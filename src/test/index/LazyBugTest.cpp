@@ -63,7 +63,7 @@ public:
         return L"f" + StringUtils::toString((double)NUM_FIELDS / 3);
     }
     
-    DECLARE_SHARED_PTR(LazyBugSelector)
+    DECLARE_LUCENE_PTR(LazyBugSelector)
     
     class LazyBugSelector : public FieldSelector
     {

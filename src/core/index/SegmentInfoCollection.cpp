@@ -80,7 +80,7 @@ namespace Lucene
     LuceneObjectPtr SegmentInfoCollection::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<SegmentInfoCollection>());
-        SegmentInfoCollectionPtr cloneInfos(boost::dynamic_pointer_cast<SegmentInfoCollection>(clone));
+        SegmentInfoCollectionPtr cloneInfos(LuceneDynamicCast<SegmentInfoCollection>(clone));
         for (Collection<SegmentInfoPtr>::iterator info = segmentInfos.begin(); info != segmentInfos.end(); ++info)
             cloneInfos->segmentInfos.add(*info);
         return cloneInfos;

@@ -18,7 +18,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(TestByteBlockAllocator)
+DECLARE_LUCENE_PTR(TestByteBlockAllocator)
 
 class TestByteBlockAllocator : public ByteBlockPoolAllocatorBase
 {

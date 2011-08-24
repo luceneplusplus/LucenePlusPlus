@@ -34,7 +34,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(StressIndexingTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(DocsAndWriter)
+DECLARE_LUCENE_PTR(DocsAndWriter)
 
 class DocsAndWriter : public LuceneObject
 {
@@ -83,7 +83,7 @@ static int32_t mergeFactor = 3;
 static int32_t maxBufferedDocs = 3;
 static int32_t seed = 0;
 
-DECLARE_SHARED_PTR(IndexingThread)
+DECLARE_LUCENE_PTR(IndexingThread)
 
 struct lessFieldName
 {
@@ -633,9 +633,9 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
 
 namespace RunStressTest
 {
-    DECLARE_SHARED_PTR(TimedThread)
-    DECLARE_SHARED_PTR(IndexerThread)
-    DECLARE_SHARED_PTR(SearcherThread)
+    DECLARE_LUCENE_PTR(TimedThread)
+    DECLARE_LUCENE_PTR(IndexerThread)
+    DECLARE_LUCENE_PTR(SearcherThread)
 
     class TimedThread : public LuceneThread
     {

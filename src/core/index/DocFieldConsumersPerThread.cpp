@@ -76,6 +76,6 @@ namespace Lucene
     
     DocFieldConsumerPerFieldPtr DocFieldConsumersPerThread::addField(FieldInfoPtr fi)
     {
-        return newLucene<DocFieldConsumersPerField>(shared_from_this(), one->addField(fi), two->addField(fi));
+        return newLucene<DocFieldConsumersPerField>(LuceneThis(), one->addField(fi), two->addField(fi));
     }
 }

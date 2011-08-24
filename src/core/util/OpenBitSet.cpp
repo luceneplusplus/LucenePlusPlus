@@ -442,7 +442,7 @@ namespace Lucene
     LuceneObjectPtr OpenBitSet::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<OpenBitSet>();
-        OpenBitSetPtr cloneSet(boost::dynamic_pointer_cast<OpenBitSet>(LuceneObject::clone(clone)));
+        OpenBitSetPtr cloneSet(LuceneDynamicCast<OpenBitSet>(LuceneObject::clone(clone)));
         cloneSet->wlen = wlen;
         cloneSet->bits = LongArray::newInstance(bits.size());
         MiscUtils::arrayCopy(bits.get(), 0, cloneSet->bits.get(), 0, bits.size());
@@ -565,7 +565,7 @@ namespace Lucene
     {
         if (LuceneObject::equals(other))
             return true;
-        OpenBitSetPtr otherBitSet(boost::dynamic_pointer_cast<OpenBitSet>(other));
+        OpenBitSetPtr otherBitSet(LuceneDynamicCast<OpenBitSet>(other));
         if (!otherBitSet)
             return false;
         OpenBitSetPtr a;
@@ -574,10 +574,10 @@ namespace Lucene
         if (b->wlen > this->wlen)
         {
             a = b;
-            b = shared_from_this();
+            b = LuceneThis();
         }
         else
-            a = shared_from_this();
+            a = LuceneThis();
         
         // check for any set bits out of the range of b
         for (int32_t i = a->wlen - 1; i >= b->wlen; --i)

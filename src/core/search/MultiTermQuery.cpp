@@ -91,7 +91,7 @@ namespace Lucene
     
     QueryPtr MultiTermQuery::rewrite(IndexReaderPtr reader)
     {
-        return rewriteMethod->rewrite(reader, shared_from_this());
+        return rewriteMethod->rewrite(reader, LuceneThis());
     }
     
     RewriteMethodPtr MultiTermQuery::getRewriteMethod()
@@ -107,7 +107,7 @@ namespace Lucene
     LuceneObjectPtr MultiTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other);
-        MultiTermQueryPtr cloneQuery(boost::dynamic_pointer_cast<MultiTermQuery>(clone));
+        MultiTermQueryPtr cloneQuery(LuceneDynamicCast<MultiTermQuery>(clone));
         cloneQuery->rewriteMethod = rewriteMethod;
         cloneQuery->numberOfTerms = numberOfTerms;
         return cloneQuery;
@@ -129,9 +129,9 @@ namespace Lucene
             return true;
         if (!other)
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        MultiTermQueryPtr otherMultiTermQuery(boost::dynamic_pointer_cast<MultiTermQuery>(other));
+        MultiTermQueryPtr otherMultiTermQuery(LuceneDynamicCast<MultiTermQuery>(other));
         if (!otherMultiTermQuery)
             return false;
         if (MiscUtils::doubleToIntBits(getBoost()) != MiscUtils::doubleToIntBits(otherMultiTermQuery->getBoost()))
@@ -311,10 +311,10 @@ namespace Lucene
             return true;
         if (!other)
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
         
-        ConstantScoreAutoRewritePtr otherConstantScoreAutoRewrite(boost::dynamic_pointer_cast<ConstantScoreAutoRewrite>(other));
+        ConstantScoreAutoRewritePtr otherConstantScoreAutoRewrite(LuceneDynamicCast<ConstantScoreAutoRewrite>(other));
         if (!otherConstantScoreAutoRewrite)
             return false;
         

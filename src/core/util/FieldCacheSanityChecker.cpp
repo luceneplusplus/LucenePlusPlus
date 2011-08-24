@@ -184,7 +184,7 @@ namespace Lucene
         all.add(seed);
         for (int32_t i = 0; i < all.size(); ++i)
         {
-            IndexReaderPtr indexReader(boost::dynamic_pointer_cast<IndexReader>(all[i]));
+            IndexReaderPtr indexReader(LuceneDynamicCast<IndexReader>(all[i]));
             if (indexReader)
             {
                 Collection<IndexReaderPtr> subs(indexReader->getSequentialSubReaders());
@@ -215,7 +215,7 @@ namespace Lucene
     
     bool ReaderField::equals(LuceneObjectPtr other)
     {
-        ReaderFieldPtr otherReaderField(boost::dynamic_pointer_cast<ReaderField>(other));
+        ReaderFieldPtr otherReaderField(LuceneDynamicCast<ReaderField>(other));
         if (!otherReaderField)
             return false;
         return (readerKey->equals(otherReaderField->readerKey) && fieldName == otherReaderField->fieldName);

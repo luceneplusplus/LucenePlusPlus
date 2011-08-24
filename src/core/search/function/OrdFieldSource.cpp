@@ -30,14 +30,14 @@ namespace Lucene
     DocValuesPtr OrdFieldSource::getValues(IndexReaderPtr reader)
     {
         Collection<int32_t> arr(FieldCache::DEFAULT()->getStringIndex(reader, field)->order);
-        return newLucene<OrdDocValues>(shared_from_this(), arr);
+        return newLucene<OrdDocValues>(LuceneThis(), arr);
     }
     
     bool OrdFieldSource::equals(LuceneObjectPtr other)
     {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        OrdFieldSourcePtr otherSource(boost::dynamic_pointer_cast<OrdFieldSource>(other));
+        OrdFieldSourcePtr otherSource(LuceneDynamicCast<OrdFieldSource>(other));
         if (!otherSource)
             return false;
         return field == otherSource->field;

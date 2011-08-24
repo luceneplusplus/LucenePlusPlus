@@ -63,7 +63,7 @@ namespace TestGetScores
         }
     };
     
-    DECLARE_SHARED_PTR(ScoreCachingCollector)
+    DECLARE_LUCENE_PTR(ScoreCachingCollector)
     
     class ScoreCachingCollector : public Collector
     {

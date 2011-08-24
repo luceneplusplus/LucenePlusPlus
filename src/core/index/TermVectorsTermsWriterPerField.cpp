@@ -145,7 +145,7 @@ namespace Lucene
         
         for (int32_t j = 0; j < numPostings; ++j)
         {
-            TermVectorsTermsWriterPostingListPtr posting(boost::static_pointer_cast<TermVectorsTermsWriterPostingList>(postings[j]));
+            TermVectorsTermsWriterPostingListPtr posting(LuceneStaticCast<TermVectorsTermsWriterPostingList>(postings[j]));
             int32_t freq = posting->freq;
             
             CharArray text2(charBuffers[posting->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT]);
@@ -218,7 +218,7 @@ namespace Lucene
     {
         BOOST_ASSERT(DocStatePtr(_docState)->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
         
-        TermVectorsTermsWriterPostingListPtr p(boost::static_pointer_cast<TermVectorsTermsWriterPostingList>(p0));
+        TermVectorsTermsWriterPostingListPtr p(LuceneStaticCast<TermVectorsTermsWriterPostingList>(p0));
         
         p->freq = 1;
         
@@ -246,7 +246,7 @@ namespace Lucene
     {
         BOOST_ASSERT(DocStatePtr(_docState)->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
         
-        TermVectorsTermsWriterPostingListPtr p(boost::static_pointer_cast<TermVectorsTermsWriterPostingList>(p0));
+        TermVectorsTermsWriterPostingListPtr p(LuceneStaticCast<TermVectorsTermsWriterPostingList>(p0));
         
         ++p->freq;
         

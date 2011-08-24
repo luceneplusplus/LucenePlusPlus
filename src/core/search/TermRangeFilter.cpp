@@ -35,31 +35,31 @@ namespace Lucene
     
     String TermRangeFilter::getField()
     {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getField();
+        return LuceneStaticCast<TermRangeQuery>(query)->getField();
     }
     
     String TermRangeFilter::getLowerTerm()
     {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getLowerTerm();
+        return LuceneStaticCast<TermRangeQuery>(query)->getLowerTerm();
     }
     
     String TermRangeFilter::getUpperTerm()
     {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getUpperTerm();
+        return LuceneStaticCast<TermRangeQuery>(query)->getUpperTerm();
     }
     
     bool TermRangeFilter::includesLower()
     {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->includesLower();
+        return LuceneStaticCast<TermRangeQuery>(query)->includesLower();
     }
     
     bool TermRangeFilter::includesUpper()
     {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->includesUpper();
+        return LuceneStaticCast<TermRangeQuery>(query)->includesUpper();
     }
     
     CollatorPtr TermRangeFilter::getCollator()
     {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getCollator();
+        return LuceneStaticCast<TermRangeQuery>(query)->getCollator();
     }
 }

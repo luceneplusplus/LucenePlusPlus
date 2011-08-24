@@ -37,7 +37,7 @@ namespace Lucene
         LuceneObjectPtr coreKey = reader->getFieldCacheKey();
         LuceneObjectPtr delCoreKey = reader->hasDeletions() ? reader->getDeletesCacheKey() : coreKey;
         
-        SpanFilterResultPtr result(boost::dynamic_pointer_cast<SpanFilterResult>(cache->get(reader, coreKey, delCoreKey)));
+        SpanFilterResultPtr result(LuceneDynamicCast<SpanFilterResult>(cache->get(reader, coreKey, delCoreKey)));
         if (result)
         {
             ++hitCount;
@@ -67,7 +67,7 @@ namespace Lucene
         if (SpanFilter::equals(other))
             return true;
         
-        CachingSpanFilterPtr otherCachingSpanFilter(boost::dynamic_pointer_cast<CachingSpanFilter>(other));
+        CachingSpanFilterPtr otherCachingSpanFilter(LuceneDynamicCast<CachingSpanFilter>(other));
         if (!otherCachingSpanFilter)
             return false;
         

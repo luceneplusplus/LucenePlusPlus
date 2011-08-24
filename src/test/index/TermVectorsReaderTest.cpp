@@ -33,7 +33,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(TestToken)
+DECLARE_LUCENE_PTR(TestToken)
 
 class TestToken : public LuceneObject
 {
@@ -137,7 +137,7 @@ public:
     }
 };
 
-DECLARE_SHARED_PTR(DocNumAwareMapper)
+DECLARE_LUCENE_PTR(DocNumAwareMapper)
 
 class DocNumAwareMapper : public TermVectorMapper
 {

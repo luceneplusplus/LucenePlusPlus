@@ -127,7 +127,7 @@ namespace Lucene
     
     DocIdSetIteratorPtr SortedVIntList::iterator()
     {
-        return newLucene<SortedDocIdSetIterator>(shared_from_this());
+        return newLucene<SortedDocIdSetIterator>(LuceneThis());
     }
     
     SortedDocIdSetIterator::SortedDocIdSetIterator(SortedVIntListPtr list)

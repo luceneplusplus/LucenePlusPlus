@@ -52,7 +52,7 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
         
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = LuceneDynamicCast<SpanQuery>(clauses[i]->clone());
         
         SpanOrQueryPtr spanOrQuery(newLucene<SpanOrQuery>(newClauses));
         spanOrQuery->setBoost(getBoost());
@@ -65,18 +65,18 @@ namespace Lucene
         for (int32_t i = 0; i < clauses.size(); ++i)
         {
             SpanQueryPtr clause(clauses[i]);
-            SpanQueryPtr query(boost::dynamic_pointer_cast<SpanQuery>(clause->rewrite(reader)));
+            SpanQueryPtr query(LuceneDynamicCast<SpanQuery>(clause->rewrite(reader)));
             if (query != clause) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = boost::dynamic_pointer_cast<SpanOrQuery>(this->clone());
+                    clone = LuceneDynamicCast<SpanOrQuery>(this->clone());
                 clone->clauses[i] = query;
             }
         }
         if (clone)
             return clone; // some clauses rewrote
         else
-            return shared_from_this(); // no clauses rewrote
+            return LuceneThis(); // no clauses rewrote
     }
     
     String SpanOrQuery::toString(const String& field)
@@ -98,7 +98,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        SpanOrQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanOrQuery>(other));
+        SpanOrQueryPtr otherQuery(LuceneDynamicCast<SpanOrQuery>(other));
         if (!otherQuery)
             return false;
         
@@ -122,7 +122,7 @@ namespace Lucene
     {
         if (clauses.size() == 1) // optimize 1-clause case
             return clauses[0]->getSpans(reader);
-        return newLucene<OrSpans>(shared_from_this(), reader);
+        return newLucene<OrSpans>(LuceneThis(), reader);
     }
     
     SpanQueue::SpanQueue(int32_t size) : PriorityQueue<SpansPtr>(size)

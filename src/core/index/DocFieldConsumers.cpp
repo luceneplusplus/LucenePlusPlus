@@ -45,12 +45,12 @@ namespace Lucene
             
             for (Collection<DocFieldConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
             {
-                oneFields.add(boost::static_pointer_cast<DocFieldConsumersPerField>(*perField)->one);
-                twoFields.add(boost::static_pointer_cast<DocFieldConsumersPerField>(*perField)->two);
+                oneFields.add(LuceneStaticCast<DocFieldConsumersPerField>(*perField)->one);
+                twoFields.add(LuceneStaticCast<DocFieldConsumersPerField>(*perField)->two);
             }
             
-            oneThreadsAndFields.put(boost::static_pointer_cast<DocFieldConsumersPerThread>(entry->first)->one, oneFields);
-            twoThreadsAndFields.put(boost::static_pointer_cast<DocFieldConsumersPerThread>(entry->first)->two, oneFields);
+            oneThreadsAndFields.put(LuceneStaticCast<DocFieldConsumersPerThread>(entry->first)->one, oneFields);
+            twoThreadsAndFields.put(LuceneStaticCast<DocFieldConsumersPerThread>(entry->first)->two, oneFields);
         }
 
         one->flush(oneThreadsAndFields, state);
@@ -86,7 +86,7 @@ namespace Lucene
     
     DocFieldConsumerPerThreadPtr DocFieldConsumers::addThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread)
     {
-        return newLucene<DocFieldConsumersPerThread>(docFieldProcessorPerThread, shared_from_this(), one->addThread(docFieldProcessorPerThread), two->addThread(docFieldProcessorPerThread));
+        return newLucene<DocFieldConsumersPerThread>(docFieldProcessorPerThread, LuceneThis(), one->addThread(docFieldProcessorPerThread), two->addThread(docFieldProcessorPerThread));
     }
     
     DocFieldConsumersPerDocPtr DocFieldConsumers::getPerDoc()
@@ -102,7 +102,7 @@ namespace Lucene
                 BOOST_ASSERT(allocCount == 1 + docFreeList.size());
                 docFreeList.resize(MiscUtils::getNextSize(allocCount));
             }
-            return newLucene<DocFieldConsumersPerDoc>(shared_from_this());
+            return newLucene<DocFieldConsumersPerDoc>(LuceneThis());
         }
         else
             return docFreeList[--freeCount];
@@ -148,7 +148,7 @@ namespace Lucene
         {
             finally = e;
         }
-        DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(shared_from_this());
+        DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(LuceneThis());
         finally.throwException();
     }
     
@@ -171,7 +171,7 @@ namespace Lucene
         {
             finally = e;
         }
-        DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(shared_from_this());
+        DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(LuceneThis());
         finally.throwException();
     }
 }

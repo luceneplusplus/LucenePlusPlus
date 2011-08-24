@@ -19,9 +19,9 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(TestReader)
-DECLARE_SHARED_PTR(TestTermEnum)
-DECLARE_SHARED_PTR(TestTermPositions)
+DECLARE_LUCENE_PTR(TestReader)
+DECLARE_LUCENE_PTR(TestTermEnum)
+DECLARE_LUCENE_PTR(TestTermPositions)
 
 /// Filter that only permits terms containing 'e'
 class TestTermEnum : public FilterTermEnum

@@ -21,8 +21,8 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(CountingHitCollector)
-DECLARE_SHARED_PTR(MatchingHitCollector)
+DECLARE_LUCENE_PTR(CountingHitCollector)
+DECLARE_LUCENE_PTR(MatchingHitCollector)
 
 class CountingHitCollector : public Collector
 {

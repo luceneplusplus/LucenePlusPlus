@@ -532,9 +532,9 @@ namespace Lucene
     {
         QueryPtr query(getFieldQuery(field, queryText));
         if (MiscUtils::typeOf<PhraseQuery>(query))
-            boost::dynamic_pointer_cast<PhraseQuery>(query)->setSlop(slop);
+            LuceneDynamicCast<PhraseQuery>(query)->setSlop(slop);
         if (MiscUtils::typeOf<MultiPhraseQuery>(query))
-            boost::dynamic_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
+            LuceneDynamicCast<MultiPhraseQuery>(query)->setSlop(slop);
         return query;
     }
     

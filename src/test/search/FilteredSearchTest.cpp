@@ -23,7 +23,7 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(SimpleDocIdSetFilter)
+DECLARE_LUCENE_PTR(SimpleDocIdSetFilter)
 
 class SimpleDocIdSetFilter : public Filter
 {

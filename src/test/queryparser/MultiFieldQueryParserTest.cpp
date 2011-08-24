@@ -26,8 +26,8 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(MultiFieldQueryParserTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(TestAnalyzer)
-DECLARE_SHARED_PTR(TestFilter)
+DECLARE_LUCENE_PTR(TestAnalyzer)
+DECLARE_LUCENE_PTR(TestFilter)
 
 /// Filter which discards the token 'stop' and which expands the token 'phrase' into 'phrase1 phrase2'
 class TestFilter : public TokenFilter

@@ -34,7 +34,7 @@ namespace Lucene
     
     WeightPtr PayloadNearQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<PayloadNearSpanWeight>(shared_from_this(), searcher);
+        return newLucene<PayloadNearSpanWeight>(LuceneThis(), searcher);
     }
     
     LuceneObjectPtr PayloadNearQuery::clone(LuceneObjectPtr other)
@@ -43,7 +43,7 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
         
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = LuceneDynamicCast<SpanQuery>(clauses[i]->clone());
         
         PayloadNearQueryPtr payloadNearQuery(newLucene<PayloadNearQuery>(newClauses, slop, inOrder));
         payloadNearQuery->setBoost(getBoost());
@@ -70,9 +70,9 @@ namespace Lucene
             return true;
         if (!SpanNearQuery::equals(other))
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        PayloadNearQueryPtr otherQuery(boost::dynamic_pointer_cast<PayloadNearQuery>(other));
+        PayloadNearQueryPtr otherQuery(LuceneDynamicCast<PayloadNearQuery>(other));
         if (!otherQuery)
             return false;
         if (fieldName != otherQuery->fieldName)
@@ -106,7 +106,7 @@ namespace Lucene
     
     ScorerPtr PayloadNearSpanWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
-        return newLucene<PayloadNearSpanScorer>(query->getSpans(reader), shared_from_this(), similarity, reader->norms(query->getField()));
+        return newLucene<PayloadNearSpanScorer>(query->getSpans(reader), LuceneThis(), similarity, reader->norms(query->getField()));
     }
     
     PayloadNearSpanScorer::PayloadNearSpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
@@ -127,14 +127,14 @@ namespace Lucene
         {
             if (MiscUtils::typeOf<NearSpansOrdered>(*span))
             {
-                NearSpansOrderedPtr ordered(boost::static_pointer_cast<NearSpansOrdered>(*span));
+                NearSpansOrderedPtr ordered(LuceneStaticCast<NearSpansOrdered>(*span));
                 if (ordered->isPayloadAvailable())
                     processPayloads(ordered->getPayload(), ordered->start(), ordered->end());
                 getPayloads(ordered->getSubSpans());
             }
             else if (MiscUtils::typeOf<NearSpansUnordered>(*span))
             {
-                NearSpansUnorderedPtr unordered(boost::static_pointer_cast<NearSpansUnordered>(*span));
+                NearSpansUnorderedPtr unordered(LuceneStaticCast<NearSpansUnordered>(*span));
                 if (unordered->isPayloadAvailable())
                     processPayloads(unordered->getPayload(), unordered->start(), unordered->end());
                 getPayloads(unordered->getSubSpans());
@@ -144,8 +144,8 @@ namespace Lucene
     
     void PayloadNearSpanScorer::processPayloads(Collection<ByteArray> payLoads, int32_t start, int32_t end)
     {
-        PayloadNearSpanWeightPtr spanWeight(boost::static_pointer_cast<PayloadNearSpanWeight>(weight));
-        PayloadNearQueryPtr nearQuery(boost::static_pointer_cast<PayloadNearQuery>(spanWeight->query));
+        PayloadNearSpanWeightPtr spanWeight(LuceneStaticCast<PayloadNearSpanWeight>(weight));
+        PayloadNearQueryPtr nearQuery(LuceneStaticCast<PayloadNearQuery>(spanWeight->query));
         
         for (Collection<ByteArray>::iterator payload = payLoads.begin(); payload != payLoads.end(); ++payload)
         {
@@ -169,8 +169,8 @@ namespace Lucene
     
     double PayloadNearSpanScorer::score()
     {
-        PayloadNearSpanWeightPtr spanWeight(boost::static_pointer_cast<PayloadNearSpanWeight>(weight));
-        PayloadNearQueryPtr nearQuery(boost::static_pointer_cast<PayloadNearQuery>(spanWeight->query));
+        PayloadNearSpanWeightPtr spanWeight(LuceneStaticCast<PayloadNearSpanWeight>(weight));
+        PayloadNearQueryPtr nearQuery(LuceneStaticCast<PayloadNearQuery>(spanWeight->query));
         return SpanScorer::score() * nearQuery->function->docScore(doc, nearQuery->fieldName, payloadsSeen, payloadScore);
     }
     

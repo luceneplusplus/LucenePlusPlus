@@ -53,7 +53,7 @@ BOOST_FIXTURE_TEST_SUITE(IndexWriterExceptionsTest, IndexWriterExceptionsTestFix
 
 static CloseableThreadLocal<LuceneThread> doFail;
 
-DECLARE_SHARED_PTR(IndexerThread)
+DECLARE_LUCENE_PTR(IndexerThread)
 
 class IndexerThread : public LuceneThread
 {

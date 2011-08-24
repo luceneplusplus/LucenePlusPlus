@@ -21,7 +21,7 @@ namespace Lucene
     
     void HitQueueBase::initialize()
     {
-        queue = newLucene<PriorityQueueScoreDocs>(shared_from_this(), queueSize);
+        queue = newLucene<PriorityQueueScoreDocs>(LuceneThis(), queueSize);
     }
     
     ScoreDocPtr HitQueueBase::add(ScoreDocPtr scoreDoc)

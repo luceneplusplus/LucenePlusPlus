@@ -164,7 +164,7 @@ namespace Lucene
     LuceneObjectPtr SimpleFSIndexInput::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = BufferedIndexInput::clone(other ? other : newLucene<SimpleFSIndexInput>());
-        SimpleFSIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<SimpleFSIndexInput>(clone));
+        SimpleFSIndexInputPtr cloneIndexInput(LuceneDynamicCast<SimpleFSIndexInput>(clone));
         cloneIndexInput->path = path;
         cloneIndexInput->file = file;
         cloneIndexInput->chunkSize = chunkSize;

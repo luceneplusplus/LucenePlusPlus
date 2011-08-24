@@ -99,8 +99,8 @@ namespace Lucene
     
     bool OneComparatorFieldValueHitQueue::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second)
     {
-        FieldValueHitQueueEntryPtr firstEntry(boost::static_pointer_cast<FieldValueHitQueueEntry>(first));
-        FieldValueHitQueueEntryPtr secondEntry(boost::static_pointer_cast<FieldValueHitQueueEntry>(second));
+        FieldValueHitQueueEntryPtr firstEntry(LuceneStaticCast<FieldValueHitQueueEntry>(first));
+        FieldValueHitQueueEntryPtr secondEntry(LuceneStaticCast<FieldValueHitQueueEntry>(second));
         
         BOOST_ASSERT(firstEntry != secondEntry);
         BOOST_ASSERT(firstEntry->slot != secondEntry->slot);
@@ -128,8 +128,8 @@ namespace Lucene
     
     bool MultiComparatorsFieldValueHitQueue::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second)
     {
-        FieldValueHitQueueEntryPtr firstEntry(boost::static_pointer_cast<FieldValueHitQueueEntry>(first));
-        FieldValueHitQueueEntryPtr secondEntry(boost::static_pointer_cast<FieldValueHitQueueEntry>(second));
+        FieldValueHitQueueEntryPtr firstEntry(LuceneStaticCast<FieldValueHitQueueEntry>(first));
+        FieldValueHitQueueEntryPtr secondEntry(LuceneStaticCast<FieldValueHitQueueEntry>(second));
         
         BOOST_ASSERT(firstEntry != secondEntry);
         BOOST_ASSERT(firstEntry->slot != secondEntry->slot);

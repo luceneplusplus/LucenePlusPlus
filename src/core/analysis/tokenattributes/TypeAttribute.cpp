@@ -55,7 +55,7 @@ namespace Lucene
         if (Attribute::equals(other))
             return true;
         
-        TypeAttributePtr otherTypeAttribute(boost::dynamic_pointer_cast<TypeAttribute>(other));
+        TypeAttributePtr otherTypeAttribute(LuceneDynamicCast<TypeAttribute>(other));
         if (otherTypeAttribute)
             return (otherTypeAttribute->_type == _type);
         
@@ -69,13 +69,13 @@ namespace Lucene
     
     void TypeAttribute::copyTo(AttributePtr target)
     {
-        boost::dynamic_pointer_cast<TypeAttribute>(target)->setType(_type);
+        LuceneDynamicCast<TypeAttribute>(target)->setType(_type);
     }
     
     LuceneObjectPtr TypeAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TypeAttribute>();
-        TypeAttributePtr cloneAttribute(boost::dynamic_pointer_cast<TypeAttribute>(Attribute::clone(clone)));
+        TypeAttributePtr cloneAttribute(LuceneDynamicCast<TypeAttribute>(Attribute::clone(clone)));
         cloneAttribute->_type = _type;
         return cloneAttribute;
     }

@@ -232,14 +232,14 @@ namespace Lucene
     
     SegmentTermEnumPtr TermInfosReader::terms()
     {
-        return boost::static_pointer_cast<SegmentTermEnum>(origEnum->clone());
+        return LuceneStaticCast<SegmentTermEnum>(origEnum->clone());
     }
     
     SegmentTermEnumPtr TermInfosReader::terms(TermPtr term)
     {
         // don't use the cache in this call because we want to reposition the enumeration
         get(term, false);
-        return boost::static_pointer_cast<SegmentTermEnum>(getThreadResources()->termEnum->clone());
+        return LuceneStaticCast<SegmentTermEnum>(getThreadResources()->termEnum->clone());
     }
     
     TermInfosReaderThreadResources::~TermInfosReaderThreadResources()

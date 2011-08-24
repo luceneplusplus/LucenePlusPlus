@@ -18,7 +18,7 @@ namespace Lucene
     {
         if (LuceneObject::equals(other))
             return true;
-        IndexCommitPtr otherCommit(boost::dynamic_pointer_cast<IndexCommit>(other));
+        IndexCommitPtr otherCommit(LuceneDynamicCast<IndexCommit>(other));
         if (!otherCommit)
             return false;
         return (otherCommit->getDirectory()->equals(getDirectory()) && otherCommit->getVersion() == getVersion());

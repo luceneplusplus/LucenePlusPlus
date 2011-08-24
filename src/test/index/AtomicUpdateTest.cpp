@@ -48,9 +48,9 @@ public:
     }
 };
 
-DECLARE_SHARED_PTR(TimedThread)
-DECLARE_SHARED_PTR(IndexerThread)
-DECLARE_SHARED_PTR(SearcherThread)
+DECLARE_LUCENE_PTR(TimedThread)
+DECLARE_LUCENE_PTR(IndexerThread)
+DECLARE_LUCENE_PTR(SearcherThread)
 
 class TimedThread : public LuceneThread
 {

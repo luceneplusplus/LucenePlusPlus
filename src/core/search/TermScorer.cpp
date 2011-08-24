@@ -49,7 +49,7 @@ namespace Lucene
     bool TermScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
         // firstDocID is ignored since nextDoc() sets 'doc'
-        collector->setScorer(shared_from_this());
+        collector->setScorer(LuceneThis());
         while (doc < max) // for docs in window
         {
             collector->collect(doc);

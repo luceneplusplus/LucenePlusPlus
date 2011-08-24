@@ -49,7 +49,7 @@ namespace Lucene
     
     void DisjunctionSumScorer::score(CollectorPtr collector)
     {
-        collector->setScorer(shared_from_this());
+        collector->setScorer(LuceneThis());
         while (nextDoc() != NO_MORE_DOCS)
             collector->collect(currentDoc);
     }
@@ -57,7 +57,7 @@ namespace Lucene
     bool DisjunctionSumScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
         // firstDocID is ignored since nextDoc() sets 'currentDoc'
-        collector->setScorer(shared_from_this());
+        collector->setScorer(LuceneThis());
         while (currentDoc < max)
         {
             collector->collect(currentDoc);

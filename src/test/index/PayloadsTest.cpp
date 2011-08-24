@@ -35,9 +35,9 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(PayloadsTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(PayloadData)
-DECLARE_SHARED_PTR(PayloadFilter)
-DECLARE_SHARED_PTR(PayloadAnalyzer)
+DECLARE_LUCENE_PTR(PayloadData)
+DECLARE_LUCENE_PTR(PayloadFilter)
+DECLARE_LUCENE_PTR(PayloadAnalyzer)
 
 class PayloadData : public LuceneObject
 {
@@ -447,7 +447,7 @@ BOOST_AUTO_TEST_CASE(testPayloadsEncoding)
 
 namespace TestThreadSafety
 {
-    DECLARE_SHARED_PTR(ByteArrayPool)
+    DECLARE_LUCENE_PTR(ByteArrayPool)
     
     class ByteArrayPool : public LuceneObject
     {

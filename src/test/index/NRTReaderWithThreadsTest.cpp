@@ -23,8 +23,8 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(NRTReaderWithThreadsTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(RunThread)
-DECLARE_SHARED_PTR(HeavyAtomicInt)
+DECLARE_LUCENE_PTR(RunThread)
+DECLARE_LUCENE_PTR(HeavyAtomicInt)
 
 static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t numFields)
 {

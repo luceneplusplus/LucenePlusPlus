@@ -77,6 +77,9 @@
 // Define to enable cyclic checking in debug builds
 // #define LPP_USE_CYCLIC_CHECK
 
+// Define to use garbage collection for object allocation instead of boost::shared_ptr
+#define LPP_USE_GC
+
 // Define to use nedmalloc memory allocator
 // #define LPP_USE_NEDMALLOC
 

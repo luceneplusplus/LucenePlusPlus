@@ -43,9 +43,9 @@ using namespace Lucene;
 using namespace boost::posix_time;
 using namespace boost::gregorian;
 
-DECLARE_SHARED_PTR(TestAnalyzer)
-DECLARE_SHARED_PTR(TestFilter)
-DECLARE_SHARED_PTR(TestParser)
+DECLARE_LUCENE_PTR(TestAnalyzer)
+DECLARE_LUCENE_PTR(TestFilter)
+DECLARE_LUCENE_PTR(TestParser)
 
 /// Filter which discards the token 'stop' and which expands the token 'phrase' into 'phrase1 phrase2'
 class TestFilter : public TokenFilter
@@ -751,7 +751,7 @@ BOOST_AUTO_TEST_CASE(testLocalDateFormat)
 
 namespace TestStarParsing
 {
-    DECLARE_SHARED_PTR(StarParser)
+    DECLARE_LUCENE_PTR(StarParser)
     
     class StarParser : public QueryParser
     {

@@ -63,7 +63,7 @@ namespace Lucene
     
     WeightPtr Searcher::createWeight(QueryPtr query)
     {
-        return query->weight(shared_from_this());
+        return query->weight(LuceneThis());
     }
     
     Collection<int32_t> Searcher::docFreqs(Collection<TermPtr> terms)

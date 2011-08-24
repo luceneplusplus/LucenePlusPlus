@@ -544,7 +544,7 @@ namespace Lucene
     LuceneObjectPtr TermVectorsReader::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermVectorsReader>();
-        TermVectorsReaderPtr cloneReader(boost::dynamic_pointer_cast<TermVectorsReader>(LuceneObject::clone(clone)));
+        TermVectorsReaderPtr cloneReader(LuceneDynamicCast<TermVectorsReader>(LuceneObject::clone(clone)));
         cloneReader->fieldInfos = fieldInfos;
         cloneReader->_size = _size;
         cloneReader->numTotalDocs = numTotalDocs;
@@ -554,9 +554,9 @@ namespace Lucene
         // These are null when a TermVectorsReader was created on a segment that did not have term vectors saved
         if (tvx && tvd && tvf)
         {
-            cloneReader->tvx = boost::dynamic_pointer_cast<IndexInput>(tvx->clone());
-            cloneReader->tvd = boost::dynamic_pointer_cast<IndexInput>(tvd->clone());
-            cloneReader->tvf = boost::dynamic_pointer_cast<IndexInput>(tvf->clone());
+            cloneReader->tvx = LuceneDynamicCast<IndexInput>(tvx->clone());
+            cloneReader->tvd = LuceneDynamicCast<IndexInput>(tvd->clone());
+            cloneReader->tvf = LuceneDynamicCast<IndexInput>(tvf->clone());
         }
         
         return cloneReader;

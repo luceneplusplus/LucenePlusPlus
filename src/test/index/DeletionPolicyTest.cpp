@@ -60,10 +60,10 @@ static void addDoc(IndexWriterPtr writer)
     writer->addDocument(doc);
 }
 
-DECLARE_SHARED_PTR(KeepAllDeletionPolicy)
-DECLARE_SHARED_PTR(KeepNoneOnInitDeletionPolicy)
-DECLARE_SHARED_PTR(KeepLastNDeletionPolicy)
-DECLARE_SHARED_PTR(ExpirationTimeDeletionPolicy)
+DECLARE_LUCENE_PTR(KeepAllDeletionPolicy)
+DECLARE_LUCENE_PTR(KeepNoneOnInitDeletionPolicy)
+DECLARE_LUCENE_PTR(KeepLastNDeletionPolicy)
+DECLARE_LUCENE_PTR(ExpirationTimeDeletionPolicy)
 
 class KeepAllDeletionPolicy : public IndexDeletionPolicy
 {

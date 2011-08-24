@@ -25,11 +25,11 @@ BOOST_FIXTURE_TEST_SUITE(MultiAnalyzerTest, BaseTokenStreamFixture)
 
 static int32_t multiToken = 0;
 
-DECLARE_SHARED_PTR(MultiAnalyzer)
-DECLARE_SHARED_PTR(TestFilter)
-DECLARE_SHARED_PTR(DumbQueryWrapper)
-DECLARE_SHARED_PTR(DumbQueryParser)
-DECLARE_SHARED_PTR(TestPosIncrementFilter)
+DECLARE_LUCENE_PTR(MultiAnalyzer)
+DECLARE_LUCENE_PTR(TestFilter)
+DECLARE_LUCENE_PTR(DumbQueryWrapper)
+DECLARE_LUCENE_PTR(DumbQueryParser)
+DECLARE_LUCENE_PTR(TestPosIncrementFilter)
 
 class TestFilter : public TokenFilter
 {

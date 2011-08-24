@@ -79,7 +79,7 @@ namespace Lucene
             for (int32_t i = 0; i < subReaders.size(); ++i)
             {
                 if (doClone)
-                    newSubReaders[i] = boost::dynamic_pointer_cast<IndexReader>(subReaders[i]->clone());
+                    newSubReaders[i] = LuceneDynamicCast<IndexReader>(subReaders[i]->clone());
                 else
                     newSubReaders[i] = subReaders[i]->reopen();
                 // if at least one of the subreaders was updated we remember that and return a new MultiReader
@@ -129,7 +129,7 @@ namespace Lucene
             return mr;
         }
         else
-            return shared_from_this();
+            return LuceneThis();
     }
     
     Collection<TermFreqVectorPtr> MultiReader::getTermFreqVectors(int32_t docNumber)
@@ -288,13 +288,13 @@ namespace Lucene
     TermEnumPtr MultiReader::terms()
     {
         ensureOpen();
-        return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, TermPtr());
+        return newLucene<MultiTermEnum>(LuceneThis(), subReaders, starts, TermPtr());
     }
     
     TermEnumPtr MultiReader::terms(TermPtr t)
     {
         ensureOpen();
-        return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, t);
+        return newLucene<MultiTermEnum>(LuceneThis(), subReaders, starts, t);
     }
     
     int32_t MultiReader::docFreq(TermPtr t)
@@ -309,13 +309,13 @@ namespace Lucene
     TermDocsPtr MultiReader::termDocs()
     {
         ensureOpen();
-        return newLucene<MultiTermDocs>(shared_from_this(), subReaders, starts);
+        return newLucene<MultiTermDocs>(LuceneThis(), subReaders, starts);
     }
     
     TermPositionsPtr MultiReader::termPositions()
     {
         ensureOpen();
-        return newLucene<MultiTermPositions>(shared_from_this(), subReaders, starts);
+        return newLucene<MultiTermPositions>(LuceneThis(), subReaders, starts);
     }
     
     void MultiReader::doCommit(MapStringString commitUserData)
@@ -337,7 +337,7 @@ namespace Lucene
         
         // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
         // generally not a good idea)
-        FieldCache::DEFAULT()->purge(shared_from_this());
+        FieldCache::DEFAULT()->purge(LuceneThis());
     }
     
     HashSet<String> MultiReader::getFieldNames(FieldOption fieldOption)

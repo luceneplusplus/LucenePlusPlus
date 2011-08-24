@@ -46,8 +46,8 @@ namespace Lucene
     
     LuceneObjectPtr SpanFirstQuery::clone(LuceneObjectPtr other)
     {
-        LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanFirstQuery>(boost::dynamic_pointer_cast<SpanQuery>(match->clone()), end));
-        SpanFirstQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanFirstQuery>(clone));
+        LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanFirstQuery>(LuceneDynamicCast<SpanQuery>(match->clone()), end));
+        SpanFirstQueryPtr spanFirstQuery(LuceneDynamicCast<SpanFirstQuery>(clone));
         spanFirstQuery->match = match;
         spanFirstQuery->end = end;
         spanFirstQuery->setBoost(getBoost());
@@ -61,23 +61,23 @@ namespace Lucene
     
     SpansPtr SpanFirstQuery::getSpans(IndexReaderPtr reader)
     {
-        return newLucene<FirstSpans>(shared_from_this(), match->getSpans(reader));
+        return newLucene<FirstSpans>(LuceneThis(), match->getSpans(reader));
     }
     
     QueryPtr SpanFirstQuery::rewrite(IndexReaderPtr reader)
     {
         SpanFirstQueryPtr clone;
-        SpanQueryPtr rewritten(boost::dynamic_pointer_cast<SpanQuery>(match->rewrite(reader)));
+        SpanQueryPtr rewritten(LuceneDynamicCast<SpanQuery>(match->rewrite(reader)));
         if (rewritten != match)
         {
-            clone = boost::dynamic_pointer_cast<SpanFirstQuery>(this->clone());
+            clone = LuceneDynamicCast<SpanFirstQuery>(this->clone());
             clone->match = rewritten;
         }
         
         if (clone)
             return clone; // some clauses rewrote
         else
-            return shared_from_this(); // no clauses rewrote
+            return LuceneThis(); // no clauses rewrote
     }
     
     bool SpanFirstQuery::equals(LuceneObjectPtr other)
@@ -85,7 +85,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        SpanFirstQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanFirstQuery>(other));
+        SpanFirstQueryPtr otherQuery(LuceneDynamicCast<SpanFirstQuery>(other));
         if (!otherQuery)
             return false;
         

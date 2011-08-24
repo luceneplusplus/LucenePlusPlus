@@ -25,7 +25,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(IndexWriterDeleteTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(FailOnlyOnDeleteFlush)
+DECLARE_LUCENE_PTR(FailOnlyOnDeleteFlush)
 
 class FailOnlyOnDeleteFlush : public MockDirectoryFailure
 {
@@ -71,7 +71,7 @@ public:
     }
 };
 
-DECLARE_SHARED_PTR(FailOnlyOnAdd)
+DECLARE_LUCENE_PTR(FailOnlyOnAdd)
 
 class FailOnlyOnAdd : public MockDirectoryFailure
 {

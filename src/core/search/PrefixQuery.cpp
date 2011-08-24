@@ -43,7 +43,7 @@ namespace Lucene
     LuceneObjectPtr PrefixQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<PrefixQuery>(prefix));
-        PrefixQueryPtr cloneQuery(boost::dynamic_pointer_cast<PrefixQuery>(clone));
+        PrefixQueryPtr cloneQuery(LuceneDynamicCast<PrefixQuery>(clone));
         cloneQuery->prefix = prefix;
         return cloneQuery;
     }
@@ -62,9 +62,9 @@ namespace Lucene
             return true;
         if (!MultiTermQuery::equals(other))
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        PrefixQueryPtr otherPrefixQuery(boost::dynamic_pointer_cast<PrefixQuery>(other));
+        PrefixQueryPtr otherPrefixQuery(LuceneDynamicCast<PrefixQuery>(other));
         if (!otherPrefixQuery)
             return false;
         if (!prefix)

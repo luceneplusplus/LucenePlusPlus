@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    DECLARE_SHARED_PTR(CheckClearAttributesAttribute)
+    DECLARE_LUCENE_PTR(CheckClearAttributesAttribute)
     
     class CheckClearAttributesAttribute : public Attribute
     {

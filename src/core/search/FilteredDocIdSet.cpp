@@ -26,7 +26,7 @@ namespace Lucene
     
     DocIdSetIteratorPtr FilteredDocIdSet::iterator()
     {
-        return newLucene<DefaultFilteredDocIdSetIterator>(shared_from_this(), innerSet->iterator());
+        return newLucene<DefaultFilteredDocIdSetIterator>(LuceneThis(), innerSet->iterator());
     }
     
     DefaultFilteredDocIdSetIterator::DefaultFilteredDocIdSetIterator(FilteredDocIdSetPtr filtered, DocIdSetIteratorPtr innerIter) : FilteredDocIdSetIterator(innerIter)

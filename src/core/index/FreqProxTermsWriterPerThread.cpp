@@ -23,7 +23,7 @@ namespace Lucene
     
     TermsHashConsumerPerFieldPtr FreqProxTermsWriterPerThread::addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo)
     {
-        return newLucene<FreqProxTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
+        return newLucene<FreqProxTermsWriterPerField>(termsHashPerField, LuceneThis(), fieldInfo);
     }
     
     void FreqProxTermsWriterPerThread::startDocument()

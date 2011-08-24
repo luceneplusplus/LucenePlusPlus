@@ -47,7 +47,7 @@ namespace Lucene
     
     TokenStreamPtr NumericField::tokenStreamValue()
     {
-        return isIndexed() ? boost::static_pointer_cast<TokenStream>(tokenStream) : TokenStreamPtr();
+        return isIndexed() ? LuceneStaticCast<TokenStream>(tokenStream) : TokenStreamPtr();
     }
     
     ByteArray NumericField::getBinaryValue(ByteArray result)
@@ -76,20 +76,20 @@ namespace Lucene
     {
         tokenStream->setLongValue(value);
         fieldsData = value;
-        return shared_from_this();
+        return LuceneThis();
     }
     
     NumericFieldPtr NumericField::setIntValue(int32_t value)
     {
         tokenStream->setIntValue(value);
         fieldsData = value;
-        return shared_from_this();
+        return LuceneThis();
     }
     
     NumericFieldPtr NumericField::setDoubleValue(double value)
     {
         tokenStream->setDoubleValue(value);
         fieldsData = value;
-        return shared_from_this();
+        return LuceneThis();
     }
 }

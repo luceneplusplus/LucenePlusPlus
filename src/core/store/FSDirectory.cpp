@@ -45,7 +45,7 @@ namespace Lucene
         
         // for filesystem based LockFactory, delete the lockPrefix if the locks are placed
         // in index dir. if no index dir is given, set ourselves
-        FSLockFactoryPtr lf(boost::dynamic_pointer_cast<FSLockFactory>(lockFactory));
+        FSLockFactoryPtr lf(LuceneDynamicCast<FSLockFactory>(lockFactory));
         
         if (lf)
         {

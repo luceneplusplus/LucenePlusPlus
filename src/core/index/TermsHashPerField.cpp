@@ -55,11 +55,11 @@ namespace Lucene
         docState = perThread->docState;
         DocInverterPerFieldPtr docInverterPerField(_docInverterPerField);
         fieldState = docInverterPerField->fieldState;
-        this->consumer = perThread->consumer->addField(shared_from_this(), fieldInfo);
+        this->consumer = perThread->consumer->addField(LuceneThis(), fieldInfo);
         streamCount = consumer->getStreamCount();
         numPostingInt = 2 * streamCount;
         if (nextPerThread)
-            nextPerField = boost::dynamic_pointer_cast<TermsHashPerField>(nextPerThread->addField(docInverterPerField, fieldInfo));
+            nextPerField = LuceneDynamicCast<TermsHashPerField>(nextPerThread->addField(docInverterPerField, fieldInfo));
     }
     
     void TermsHashPerField::shrinkHash(int32_t targetSize)

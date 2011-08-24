@@ -27,10 +27,10 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(IndexWriterReaderTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(TestableIndexWriter)
-DECLARE_SHARED_PTR(AddDirectoriesThread)
-DECLARE_SHARED_PTR(AddDirectoriesThreads)
-DECLARE_SHARED_PTR(HeavyAtomicInt)
+DECLARE_LUCENE_PTR(TestableIndexWriter)
+DECLARE_LUCENE_PTR(AddDirectoriesThread)
+DECLARE_LUCENE_PTR(AddDirectoriesThreads)
+DECLARE_LUCENE_PTR(HeavyAtomicInt)
 
 static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t numFields)
 {
@@ -547,7 +547,7 @@ BOOST_AUTO_TEST_CASE(testIndexWriterReopenSegment)
 
 namespace TestMergeWarmer
 {
-    DECLARE_SHARED_PTR(MyWarmer)
+    DECLARE_LUCENE_PTR(MyWarmer)
     
     class MyWarmer : public IndexReaderWarmer
     {
@@ -920,7 +920,7 @@ BOOST_AUTO_TEST_CASE(testDeletesNumDocs)
 
 namespace TestSegmentWarmer
 {
-    DECLARE_SHARED_PTR(SegmentWarmer)
+    DECLARE_LUCENE_PTR(SegmentWarmer)
     
     class SegmentWarmer : public IndexReaderWarmer
     {

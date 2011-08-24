@@ -191,7 +191,7 @@ namespace Lucene
     MergeThreadPtr ConcurrentMergeScheduler::getMergeThread(IndexWriterPtr writer, OneMergePtr merge)
     {
         SyncLock syncLock(this);
-        MergeThreadPtr thread(newLucene<MergeThread>(shared_from_this(), writer, merge));
+        MergeThreadPtr thread(newLucene<MergeThread>(LuceneThis(), writer, merge));
         thread->setThreadPriority(mergeThreadPriority);
         return thread;
     }
@@ -238,7 +238,7 @@ namespace Lucene
             }
             
             allInstances.remove(allInstances.begin() + upto, allInstances.end());
-            allInstances.add(shared_from_this());
+            allInstances.add(LuceneThis());
         }
     }
     
@@ -343,7 +343,7 @@ namespace Lucene
             SyncLock syncLock(merger);
             merger->notifyAll();
             
-            bool removed = merger->mergeThreads.remove(shared_from_this());
+            bool removed = merger->mergeThreads.remove(LuceneThis());
             BOOST_ASSERT(removed);
         }
         finally.throwException();

@@ -24,7 +24,7 @@ namespace Lucene
     
     ByteComparator::ByteComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<uint8_t>(numHits, field)
     {
-        this->parser = boost::static_pointer_cast<ByteParser>(parser);
+        this->parser = LuceneStaticCast<ByteParser>(parser);
     }
     
     ByteComparator::~ByteComparator()
@@ -63,7 +63,7 @@ namespace Lucene
     
     DoubleComparator::DoubleComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<double>(numHits, field)
     {
-        this->parser = boost::static_pointer_cast<DoubleParser>(parser);
+        this->parser = LuceneStaticCast<DoubleParser>(parser);
     }
     
     DoubleComparator::~DoubleComparator()
@@ -90,7 +90,7 @@ namespace Lucene
     
     IntComparator::IntComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<int32_t>(numHits, field)
     {
-        this->parser = boost::static_pointer_cast<IntParser>(parser);
+        this->parser = LuceneStaticCast<IntParser>(parser);
     }
     
     IntComparator::~IntComparator()
@@ -117,7 +117,7 @@ namespace Lucene
     
     LongComparator::LongComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<int64_t>(numHits, field)
     {
-        this->parser = boost::static_pointer_cast<LongParser>(parser);
+        this->parser = LuceneStaticCast<LongParser>(parser);
     }
     
     LongComparator::~LongComparator()

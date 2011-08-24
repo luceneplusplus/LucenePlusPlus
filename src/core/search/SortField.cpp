@@ -56,13 +56,13 @@ namespace Lucene
     
     SortField::SortField(const String& field, ParserPtr parser, bool reverse)
     {
-        if (boost::dynamic_pointer_cast<IntParser>(parser))
+        if (LuceneDynamicCast<IntParser>(parser))
             initFieldType(field, INT);
-        else if (boost::dynamic_pointer_cast<ByteParser>(parser))
+        else if (LuceneDynamicCast<ByteParser>(parser))
             initFieldType(field, BYTE);
-        else if (boost::dynamic_pointer_cast<LongParser>(parser))
+        else if (LuceneDynamicCast<LongParser>(parser))
             initFieldType(field, LONG);
-        else if (boost::dynamic_pointer_cast<DoubleParser>(parser))
+        else if (LuceneDynamicCast<DoubleParser>(parser))
             initFieldType(field, DOUBLE);
         else
             boost::throw_exception(IllegalArgumentException(L"Parser instance does not subclass existing numeric parser from FieldCache"));
@@ -204,7 +204,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        SortFieldPtr otherSortField(boost::dynamic_pointer_cast<SortField>(other));
+        SortFieldPtr otherSortField(LuceneDynamicCast<SortField>(other));
         if (!otherSortField)
             return false;
         

@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    DECLARE_SHARED_PTR(TestIndex)
+    DECLARE_LUCENE_PTR(TestIndex)
     
     /// Collation interacts badly with hyphens -- collation produces different ordering than Unicode code-point ordering,
     /// so two indexes are created:

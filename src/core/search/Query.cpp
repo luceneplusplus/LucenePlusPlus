@@ -50,7 +50,7 @@ namespace Lucene
     
     WeightPtr Query::weight(SearcherPtr searcher)
     {
-        QueryPtr query(searcher->rewrite(shared_from_this()));
+        QueryPtr query(searcher->rewrite(LuceneThis()));
         WeightPtr weight(query->createWeight(searcher));
         double sum = weight->sumOfSquaredWeights();
         double norm = getSimilarity(searcher)->queryNorm(sum);
@@ -62,7 +62,7 @@ namespace Lucene
     
     QueryPtr Query::rewrite(IndexReaderPtr reader)
     {
-        return shared_from_this();
+        return LuceneThis();
     }
     
     QueryPtr Query::combine(Collection<QueryPtr> queries)
@@ -71,7 +71,7 @@ namespace Lucene
         for (Collection<QueryPtr>::iterator query = queries.begin(); query != queries.end(); ++query)
         {
             Collection<BooleanClausePtr> clauses;
-            BooleanQueryPtr bq(boost::dynamic_pointer_cast<BooleanQuery>(*query));
+            BooleanQueryPtr bq(LuceneDynamicCast<BooleanQuery>(*query));
             // check if we can split the query into clauses
             bool splittable = bq;
             if (splittable)
@@ -128,7 +128,7 @@ namespace Lucene
     LuceneObjectPtr Query::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Query>());
-        QueryPtr cloneQuery(boost::dynamic_pointer_cast<Query>(clone));
+        QueryPtr cloneQuery(LuceneDynamicCast<Query>(clone));
         cloneQuery->boost = boost;
         return cloneQuery;
     }
@@ -147,9 +147,9 @@ namespace Lucene
             return true;
         if (!other)
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        QueryPtr otherQuery(boost::dynamic_pointer_cast<Query>(other));
+        QueryPtr otherQuery(LuceneDynamicCast<Query>(other));
         if (!otherQuery)
             return false;
         return (boost == otherQuery->boost);

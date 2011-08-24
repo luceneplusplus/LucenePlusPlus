@@ -21,14 +21,24 @@
     virtual String getClassName() { return L###Name; }
 #endif
 
+#ifdef LPP_USE_GC
 #define LUCENE_CLASS(Name) \
     LUCENE_INTERFACE(Name); \
-    boost::shared_ptr<Name> shared_from_this() { return boost::static_pointer_cast<Name>(LuceneObject::shared_from_this()); } \
+    LucenePtr<Name> LuceneThis() { return LucenePtr<Name>(this); }
+#else
+#define LUCENE_CLASS(Name) \
+    LUCENE_INTERFACE(Name); \
+    LucenePtr<Name> LuceneThis() { return LuceneStaticCast<Name>(LuceneObject::LuceneThis()); }
+#endif
 
 namespace Lucene
 {
     /// Base class for all Lucene classes
+    #ifdef LPP_USE_GC
+    class LPPAPI LuceneObject : public LuceneSync
+    #else
     class LPPAPI LuceneObject : public LuceneSync, public boost::enable_shared_from_this<LuceneObject>
+    #endif
     {
     public:
         virtual ~LuceneObject();

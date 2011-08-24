@@ -29,14 +29,14 @@ namespace Lucene
     DocValuesPtr DoubleFieldSource::getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader)
     {
         Collection<double> arr(cache->getDoubles(reader, field, parser));
-        return newLucene<DoubleDocValues>(shared_from_this(), arr);
+        return newLucene<DoubleDocValues>(LuceneThis(), arr);
     }
     
     bool DoubleFieldSource::cachedFieldSourceEquals(FieldCacheSourcePtr other)
     {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        DoubleFieldSourcePtr otherSource(boost::dynamic_pointer_cast<DoubleFieldSource>(other));
+        DoubleFieldSourcePtr otherSource(LuceneDynamicCast<DoubleFieldSource>(other));
         if (!otherSource)
             return false;
         return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;

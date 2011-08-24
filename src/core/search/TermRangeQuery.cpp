@@ -66,7 +66,7 @@ namespace Lucene
     LuceneObjectPtr TermRangeQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<TermRangeQuery>(field, lowerTerm, upperTerm, includeLower, includeUpper, collator));
-        TermRangeQueryPtr cloneQuery(boost::dynamic_pointer_cast<TermRangeQuery>(clone));
+        TermRangeQueryPtr cloneQuery(LuceneDynamicCast<TermRangeQuery>(clone));
         cloneQuery->lowerTerm = lowerTerm;
         cloneQuery->upperTerm = upperTerm;
         cloneQuery->collator = collator;
@@ -102,9 +102,9 @@ namespace Lucene
             return true;
         if (!MultiTermQuery::equals(other))
             return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
+        if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        TermRangeQueryPtr otherQuery(boost::dynamic_pointer_cast<TermRangeQuery>(other));
+        TermRangeQueryPtr otherQuery(LuceneDynamicCast<TermRangeQuery>(other));
         if (!otherQuery)
             return false;
         if (!collator)

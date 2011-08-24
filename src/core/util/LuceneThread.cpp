@@ -38,7 +38,7 @@ namespace Lucene
 
     void LuceneThread::runThread(LuceneThread* thread)
     {
-        LuceneThreadPtr threadObject(thread->shared_from_this());
+        LuceneThreadPtr threadObject(thread->LuceneThis());
         try
         {
             threadObject->run();

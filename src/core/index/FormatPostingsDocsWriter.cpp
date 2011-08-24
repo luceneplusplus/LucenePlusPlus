@@ -53,7 +53,7 @@ namespace Lucene
     
     void FormatPostingsDocsWriter::initialize()
     {
-        posWriter = newLucene<FormatPostingsPositionsWriter>(state, shared_from_this());
+        posWriter = newLucene<FormatPostingsPositionsWriter>(state, LuceneThis());
     }
     
     void FormatPostingsDocsWriter::setField(FieldInfoPtr fieldInfo)

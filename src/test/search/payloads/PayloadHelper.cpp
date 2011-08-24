@@ -24,7 +24,7 @@ namespace Lucene
     const String PayloadHelper::MULTI_FIELD = L"multiField";
     const String PayloadHelper::FIELD = L"field";
     
-    DECLARE_SHARED_PTR(PayloadHelperAnalyzer)
+    DECLARE_LUCENE_PTR(PayloadHelperAnalyzer)
         
     class PayloadHelperFilter : public TokenFilter
     {

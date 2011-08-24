@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(testStop)
 
 namespace TestPayloadCopy
 {
-    DECLARE_SHARED_PTR(PayloadSetter)
+    DECLARE_LUCENE_PTR(PayloadSetter)
         
     class PayloadSetter : public TokenFilter
     {

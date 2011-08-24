@@ -68,9 +68,9 @@ namespace Lucene
     void MultiFieldQueryParser::applySlop(QueryPtr query, int32_t slop)
     {
         if (MiscUtils::typeOf<PhraseQuery>(query))
-            boost::dynamic_pointer_cast<PhraseQuery>(query)->setSlop(slop);
+            LuceneDynamicCast<PhraseQuery>(query)->setSlop(slop);
         if (MiscUtils::typeOf<MultiPhraseQuery>(query))
-            boost::dynamic_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
+            LuceneDynamicCast<MultiPhraseQuery>(query)->setSlop(slop);
     }
     
     QueryPtr MultiFieldQueryParser::getFuzzyQuery(const String& field, const String& termStr, double minSimilarity)
@@ -130,7 +130,7 @@ namespace Lucene
         {
             QueryParserPtr queryParser(newLucene<QueryParser>(matchVersion, fields[i], analyzer));
             QueryPtr query(queryParser->parse(queries[i]));
-            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !boost::dynamic_pointer_cast<BooleanQuery>(query)->getClauses().empty()))
+            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !LuceneDynamicCast<BooleanQuery>(query)->getClauses().empty()))
                 booleanQuery->add(query, BooleanClause::SHOULD);
         }
         return booleanQuery;
@@ -145,7 +145,7 @@ namespace Lucene
         {
             QueryParserPtr queryParser(newLucene<QueryParser>(matchVersion, fields[i], analyzer));
             QueryPtr q(queryParser->parse(query));
-            if (q && (!MiscUtils::typeOf<BooleanQuery>(q) || !boost::dynamic_pointer_cast<BooleanQuery>(q)->getClauses().empty()))
+            if (q && (!MiscUtils::typeOf<BooleanQuery>(q) || !LuceneDynamicCast<BooleanQuery>(q)->getClauses().empty()))
                 booleanQuery->add(q, flags[i]);
         }
         return booleanQuery;
@@ -160,7 +160,7 @@ namespace Lucene
         {
             QueryParserPtr queryParser(newLucene<QueryParser>(matchVersion, fields[i], analyzer));
             QueryPtr query(queryParser->parse(queries[i]));
-            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !boost::dynamic_pointer_cast<BooleanQuery>(query)->getClauses().empty()))
+            if (query && (!MiscUtils::typeOf<BooleanQuery>(query) || !LuceneDynamicCast<BooleanQuery>(query)->getClauses().empty()))
                 booleanQuery->add(query, flags[i]);
         }
         return booleanQuery;

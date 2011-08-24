@@ -37,7 +37,7 @@ namespace Lucene
         
         for (int32_t i = 0; i < clauses.size(); ++i)
         {
-            SpansCellPtr cell(newLucene<SpansCell>(shared_from_this(), clauses[i]->getSpans(reader), i));
+            SpansCellPtr cell(newLucene<SpansCell>(LuceneThis(), clauses[i]->getSpans(reader), i));
             ordered.add(cell);
             subSpans[i] = cell->spans;
         }
@@ -272,7 +272,7 @@ namespace Lucene
             unordered->totalLength += length; // add new length
             
             if (!unordered->max || doc() > unordered->max->doc() || (doc() == unordered->max->doc()) && (end() > unordered->max->end()))
-                unordered->max = shared_from_this();
+                unordered->max = LuceneThis();
         }
         unordered->more = condition;
         return condition;

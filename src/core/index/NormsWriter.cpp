@@ -38,7 +38,7 @@ namespace Lucene
     
     InvertedDocEndConsumerPerThreadPtr NormsWriter::addThread(DocInverterPerThreadPtr docInverterPerThread)
     {
-        return newLucene<NormsWriterPerThread>(docInverterPerThread, shared_from_this());
+        return newLucene<NormsWriterPerThread>(docInverterPerThread, LuceneThis());
     }
     
     void NormsWriter::abort()
@@ -64,7 +64,7 @@ namespace Lucene
         {
             for (Collection<InvertedDocEndConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end();)
             {
-                NormsWriterPerFieldPtr normsPerField(boost::static_pointer_cast<NormsWriterPerField>(*perField));
+                NormsWriterPerFieldPtr normsPerField(LuceneStaticCast<NormsWriterPerField>(*perField));
                 if (normsPerField->upto > 0)
                 {
                     // It has some norms

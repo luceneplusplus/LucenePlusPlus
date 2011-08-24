@@ -280,7 +280,7 @@ namespace HighlighterTest
         return L"<B>" + originalText + L"</B>";
     }
 
-    DECLARE_SHARED_PTR(TestHighlightRunner)
+    DECLARE_LUCENE_PTR(TestHighlightRunner)
     
     class TestHighlightRunner : public LuceneObject
     {

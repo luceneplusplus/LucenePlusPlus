@@ -13,7 +13,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(PriorityQueueTest, LuceneTestFixture)
 
-DECLARE_SHARED_PTR(IntegerQueue)
+DECLARE_LUCENE_PTR(IntegerQueue)
 
 class IntegerQueue : public PriorityQueue<int32_t>
 {
@@ -27,8 +27,8 @@ public:
     }
 };
 
-DECLARE_SHARED_PTR(IntegerPtrQueue)
-typedef boost::shared_ptr<int32_t> IntPtr;
+DECLARE_LUCENE_PTR(IntegerPtrQueue)
+typedef LucenePtr<int32_t> IntPtr;
 
 class IntegerPtrQueue : public PriorityQueue<IntPtr>
 {

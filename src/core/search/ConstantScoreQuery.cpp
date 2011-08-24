@@ -31,7 +31,7 @@ namespace Lucene
     
     QueryPtr ConstantScoreQuery::rewrite(IndexReaderPtr reader)
     {
-        return shared_from_this();
+        return LuceneThis();
     }
     
     void ConstantScoreQuery::extractTerms(SetTerm terms)
@@ -41,7 +41,7 @@ namespace Lucene
     
     WeightPtr ConstantScoreQuery::createWeight(SearcherPtr searcher)
     {
-        return newLucene<ConstantWeight>(shared_from_this(), searcher);
+        return newLucene<ConstantWeight>(LuceneThis(), searcher);
     }
     
     String ConstantScoreQuery::toString(const String& field)
@@ -54,7 +54,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
         
-        ConstantScoreQueryPtr otherConstantScoreQuery(boost::dynamic_pointer_cast<ConstantScoreQuery>(other));
+        ConstantScoreQueryPtr otherConstantScoreQuery(LuceneDynamicCast<ConstantScoreQuery>(other));
         if (!otherConstantScoreQuery)
             return false;
         
@@ -70,7 +70,7 @@ namespace Lucene
     LuceneObjectPtr ConstantScoreQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<ConstantScoreQuery>(filter);
-        ConstantScoreQueryPtr cloneQuery(boost::dynamic_pointer_cast<ConstantScoreQuery>(Query::clone(clone)));
+        ConstantScoreQueryPtr cloneQuery(LuceneDynamicCast<ConstantScoreQuery>(Query::clone(clone)));
         cloneQuery->filter = filter;
         return cloneQuery;
     }
@@ -111,12 +111,12 @@ namespace Lucene
     
     ScorerPtr ConstantWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
-        return newLucene<ConstantScorer>(constantScorer, similarity, reader, shared_from_this());
+        return newLucene<ConstantScorer>(constantScorer, similarity, reader, LuceneThis());
     }
     
     ExplanationPtr ConstantWeight::explain(IndexReaderPtr reader, int32_t doc)
     {
-        ConstantScorerPtr cs(newLucene<ConstantScorer>(constantScorer, similarity, reader, shared_from_this()));
+        ConstantScorerPtr cs(newLucene<ConstantScorer>(constantScorer, similarity, reader, LuceneThis()));
         bool exists = (cs->docIdSetIterator->advance(doc) == doc);
         
         ComplexExplanationPtr result(newLucene<ComplexExplanation>());

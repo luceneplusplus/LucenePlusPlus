@@ -55,8 +55,8 @@ protected:
 
 String FieldsReaderTestFixture::TEST_SEGMENT_NAME = L"_0";
 
-DECLARE_SHARED_PTR(FaultyFSDirectory)
-DECLARE_SHARED_PTR(FaultyIndexInput)
+DECLARE_LUCENE_PTR(FaultyFSDirectory)
+DECLARE_LUCENE_PTR(FaultyIndexInput)
 
 class FaultyIndexInput : public BufferedIndexInput
 {
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE(testLazyPerformance)
 
 namespace TestLoadSize
 {
-    DECLARE_SHARED_PTR(TestableFieldSelector)
+    DECLARE_LUCENE_PTR(TestableFieldSelector)
     
     class TestableFieldSelector : public FieldSelector
     {
