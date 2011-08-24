@@ -27,7 +27,7 @@ static IndexWriterPtr initIndex(MockRAMDirectoryPtr dir)
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);      
 
     writer->setMaxBufferedDocs(10);
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
+    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
 
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -45,8 +45,8 @@ static IndexWriterPtr initIndex()
 
 static void crash(IndexWriterPtr writer)
 {
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
-    ConcurrentMergeSchedulerPtr cms = boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
+    ConcurrentMergeSchedulerPtr cms = LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler());
     dir->crash();
     cms->sync();
     dir->clearCrash();
@@ -55,7 +55,7 @@ static void crash(IndexWriterPtr writer)
 BOOST_AUTO_TEST_CASE(testCrashWhileIndexing)
 {
     IndexWriterPtr writer = initIndex();
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
     crash(writer);
     IndexReaderPtr reader = IndexReader::open(dir, false);
     BOOST_CHECK(reader->numDocs() < 157);
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(testCrashWhileIndexing)
 BOOST_AUTO_TEST_CASE(testWriterAfterCrash)
 {
     IndexWriterPtr writer = initIndex();
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
     dir->setPreventDoubleWrite(false);
     crash(writer);
     writer = initIndex();
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(testWriterAfterCrash)
 BOOST_AUTO_TEST_CASE(testCrashAfterReopen)
 {
     IndexWriterPtr writer = initIndex();
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
     writer->close();
     writer = initIndex(dir);
     BOOST_CHECK_EQUAL(314, writer->maxDoc());
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(testCrashAfterReopen)
 BOOST_AUTO_TEST_CASE(testCrashAfterClose)
 {
     IndexWriterPtr writer = initIndex();
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
     writer->close();
     dir->crash();
     
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(testCrashAfterClose)
 BOOST_AUTO_TEST_CASE(testCrashAfterCloseNoWait)
 {
     IndexWriterPtr writer = initIndex();
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
     dir->crash();
     
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(testCrashAfterCloseNoWait)
 BOOST_AUTO_TEST_CASE(testCrashReaderDeletes)
 {
     IndexWriterPtr writer = initIndex();
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
     
     IndexReaderPtr reader = IndexReader::open(dir, false);
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(testCrashReaderDeletes)
 BOOST_AUTO_TEST_CASE(testCrashReaderDeletesAfterClose)
 {
     IndexWriterPtr writer = initIndex();
-    MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
+    MockRAMDirectoryPtr dir = LuceneDynamicCast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
     
     IndexReaderPtr reader = IndexReader::open(dir, false);

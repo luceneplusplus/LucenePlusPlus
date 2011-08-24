@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(testMerge)
     Collection<int32_t> freqs = vector->getTermFrequencies();
     BOOST_CHECK(freqs);
     
-    BOOST_CHECK(boost::dynamic_pointer_cast<TermPositionVector>(vector));
+    BOOST_CHECK(LuceneDynamicCast<TermPositionVector>(vector));
     
     for (int32_t i = 0; i < terms.size(); ++i)
     {

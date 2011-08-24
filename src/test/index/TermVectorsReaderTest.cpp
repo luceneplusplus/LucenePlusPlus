@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(testPositionReader)
 {
     TermVectorsReaderPtr reader = newLucene<TermVectorsReader>(dir, seg, fieldInfos);
     BOOST_CHECK(reader);
-    TermPositionVectorPtr vector = boost::dynamic_pointer_cast<TermPositionVector>(reader->get(0, testFields[0]));
+    TermPositionVectorPtr vector = LuceneDynamicCast<TermPositionVector>(reader->get(0, testFields[0]));
     BOOST_CHECK(vector);
     Collection<String> terms = vector->getTerms();
     BOOST_CHECK(terms);
@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE(testPositionReader)
 
     TermFreqVectorPtr freqVector = reader->get(0, testFields[1]); // no pos, no offset
     BOOST_CHECK(freqVector);
-    BOOST_CHECK(boost::dynamic_pointer_cast<SegmentTermVector>(freqVector));
+    BOOST_CHECK(LuceneDynamicCast<SegmentTermVector>(freqVector));
     terms = freqVector->getTerms();
     BOOST_CHECK(terms);
     BOOST_CHECK_EQUAL(terms.size(), testTerms.size());
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(testOffsetReader)
 {
     TermVectorsReaderPtr reader = newLucene<TermVectorsReader>(dir, seg, fieldInfos);
     BOOST_CHECK(reader);
-    TermPositionVectorPtr vector = boost::dynamic_pointer_cast<TermPositionVector>(reader->get(0, testFields[0]));
+    TermPositionVectorPtr vector = LuceneDynamicCast<TermPositionVector>(reader->get(0, testFields[0]));
     BOOST_CHECK(vector);
     Collection<String> terms = vector->getTerms();
     BOOST_CHECK(terms);

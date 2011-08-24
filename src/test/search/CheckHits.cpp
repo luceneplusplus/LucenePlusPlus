@@ -169,7 +169,7 @@ namespace Lucene
         for (int32_t i = -1; i < 2; ++i)
         {
             actual.clear();
-            QueryUtils::wrapUnderlyingReader(boost::dynamic_pointer_cast<IndexSearcher>(searcher), i)->search(query, c);
+            QueryUtils::wrapUnderlyingReader(LuceneDynamicCast<IndexSearcher>(searcher), i)->search(query, c);
             BOOST_CHECK(correct.equals(actual));
         }
     }

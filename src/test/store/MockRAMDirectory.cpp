@@ -205,7 +205,7 @@ namespace Lucene
             boost::throw_exception(IOException(L"file \"" + name + L"\" was already written to"));
         if (noDeleteOpenFile && openFiles.contains(name))
             boost::throw_exception(IOException(L"MockRAMDirectory: file \"" + name + L"\" is still open: cannot overwrite"));
-        RAMFilePtr file(newLucene<RAMFile>(shared_from_this()));
+        RAMFilePtr file(newLucene<RAMFile>(LuceneThis()));
         if (crashed)
             boost::throw_exception(IOException(L"cannot createOutput after crash"));
         unSyncedFiles.add(name);
@@ -224,7 +224,7 @@ namespace Lucene
             fileMap.put(name, file);
         }
         
-        return newLucene<MockRAMOutputStream>(shared_from_this(), file, name);
+        return newLucene<MockRAMOutputStream>(LuceneThis(), file, name);
     }
     
     IndexInputPtr MockRAMDirectory::openInput(const String& name)
@@ -241,7 +241,7 @@ namespace Lucene
             else
                 openFiles.put(name, 1);
         }
-        return newLucene<MockRAMInputStream>(shared_from_this(), name, file->second);
+        return newLucene<MockRAMInputStream>(LuceneThis(), name, file->second);
     }
     
     int64_t MockRAMDirectory::getRecomputedSizeInBytes()
@@ -291,7 +291,7 @@ namespace Lucene
         if (failures)
         {
             for (Collection<MockDirectoryFailurePtr>::iterator failure = failures.begin(); failure != failures.end(); ++failure)
-                (*failure)->eval(shared_from_this());
+                (*failure)->eval(LuceneThis());
         }
     }
     
@@ -310,7 +310,7 @@ namespace Lucene
     
     MockDirectoryFailurePtr MockDirectoryFailure::reset()
     {
-        return shared_from_this();
+        return LuceneThis();
     }
     
     void MockDirectoryFailure::setDoFail()

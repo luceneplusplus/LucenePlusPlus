@@ -218,7 +218,7 @@ public:
         QueryPtr q = newLucene<ConstantScoreQuery>(newLucene<AddClauseFilter>(rnd));
         bq->add(q, BooleanClause::MUST);
         if (!result)
-            result = boost::dynamic_pointer_cast<BitSet>(rnd->clone());
+            result = LuceneDynamicCast<BitSet>(rnd->clone());
         else
             result->_and(rnd);
         return result;

@@ -132,7 +132,7 @@ namespace Lucene
     
     IndexSearcherPtr MemoryIndex::createSearcher()
     {
-        MemoryIndexReaderPtr reader(newLucene<MemoryIndexReader>(shared_from_this()));
+        MemoryIndexReaderPtr reader(newLucene<MemoryIndexReader>(LuceneThis()));
         IndexSearcherPtr searcher(newLucene<IndexSearcher>(reader)); // ensures no auto-close
         reader->setSearcher(searcher); // to later get hold of searcher.getSimilarity()
         return searcher;
@@ -317,12 +317,12 @@ namespace Lucene
             }
         }
         
-        return newLucene<MemoryIndexTermEnum>(shared_from_this(), i, j);
+        return newLucene<MemoryIndexTermEnum>(LuceneThis(), i, j);
     }
     
     TermPositionsPtr MemoryIndexReader::termPositions()
     {
-        return newLucene<MemoryIndexTermPositions>(shared_from_this());
+        return newLucene<MemoryIndexTermPositions>(LuceneThis());
     }
     
     TermDocsPtr MemoryIndexReader::termDocs()
@@ -372,7 +372,7 @@ namespace Lucene
         if (!info)
             return TermFreqVectorPtr();
         info->sortTerms();
-        return newLucene<MemoryIndexTermPositionVector>(shared_from_this(), info, field);
+        return newLucene<MemoryIndexTermPositionVector>(LuceneThis(), info, field);
     }
     
     SimilarityPtr MemoryIndexReader::getSimilarity()

@@ -44,7 +44,7 @@ namespace Lucene
     
     TokenStreamPtr SnowballAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        SnowballAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<SnowballAnalyzerSavedStreams>(getPreviousTokenStream()));
+        SnowballAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<SnowballAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<SnowballAnalyzerSavedStreams>();

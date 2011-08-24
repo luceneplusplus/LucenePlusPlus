@@ -98,7 +98,7 @@ public:
         
         while ((int64_t)MiscUtils::currentTimeMillis() < stopTime)
         {
-            doFail.set(shared_from_this());
+            doFail.set(LuceneThis());
             String id = StringUtils::toString(r->nextInt(50));
             idField->setValue(id);
             TermPtr idTerm = newLucene<Term>(L"id", id);
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(testRandomExceptions)
 {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
+    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
         
     writer->setRAMBufferSizeMB(0.1);
     
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(testRandomExceptionsThreads)
 {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
+    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
         
     writer->setRAMBufferSizeMB(0.2);
     

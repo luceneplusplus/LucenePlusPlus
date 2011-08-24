@@ -86,7 +86,7 @@ namespace Lucene
     
     TokenStreamPtr DutchAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        DutchAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<DutchAnalyzerSavedStreams>(getPreviousTokenStream()));
+        DutchAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<DutchAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<DutchAnalyzerSavedStreams>();

@@ -88,7 +88,7 @@ namespace Lucene
     
     TokenStreamPtr BrazilianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        BrazilianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<BrazilianAnalyzerSavedStreams>(getPreviousTokenStream()));
+        BrazilianAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<BrazilianAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<BrazilianAnalyzerSavedStreams>();

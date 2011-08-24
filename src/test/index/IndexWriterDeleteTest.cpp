@@ -49,7 +49,7 @@ public:
     {
         sawMaybe = false;
         failed = false;
-        return shared_from_this();
+        return LuceneThis();
     }
     
     virtual void eval(MockRAMDirectoryPtr dir)
@@ -92,7 +92,7 @@ public:
     virtual MockDirectoryFailurePtr reset()
     {
         failed = false;
-        return shared_from_this();
+        return LuceneThis();
     }
     
     virtual void eval(MockRAMDirectoryPtr dir)

@@ -340,7 +340,7 @@ namespace TestSubclassConcurrentMergeScheduler
     protected:
         virtual MergeThreadPtr getMergeThread(IndexWriterPtr writer, OneMergePtr merge)
         {
-            MergeThreadPtr thread = newLucene<MyMergeThread>(shared_from_this(), writer, merge);
+            MergeThreadPtr thread = newLucene<MyMergeThread>(LuceneThis(), writer, merge);
             thread->setThreadPriority(getMergeThreadPriority());
             return thread;
         }

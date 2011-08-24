@@ -122,12 +122,12 @@ public:
         IndexReaderPtr ir = IndexReader::open(dir, false);
         verifyIndex(ir);
         modifyNormsForF1(ir);
-        IndexReaderPtr irc = boost::dynamic_pointer_cast<IndexReader>(ir->clone());
+        IndexReaderPtr irc = LuceneDynamicCast<IndexReader>(ir->clone());
         verifyIndex(irc);
 
         modifyNormsForF1(irc);
 
-        IndexReaderPtr irc3 = boost::dynamic_pointer_cast<IndexReader>(irc->clone());
+        IndexReaderPtr irc3 = LuceneDynamicCast<IndexReader>(irc->clone());
         verifyIndex(irc3);
         modifyNormsForF1(irc3);
         verifyIndex(irc3);
@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE(testNormsClose)
     reader1->norms(L"field1");
     NormPtr r1norm = reader1->_norms.get(L"field1");
     SegmentReaderRefPtr r1BytesRef = r1norm->bytesRef();
-    SegmentReaderPtr reader2 = boost::dynamic_pointer_cast<SegmentReader>(reader1->clone());
+    SegmentReaderPtr reader2 = LuceneDynamicCast<SegmentReader>(reader1->clone());
     BOOST_CHECK_EQUAL(2, r1norm->bytesRef()->refCount());
     reader1->close();
     BOOST_CHECK_EQUAL(1, r1BytesRef->refCount());
@@ -322,19 +322,19 @@ BOOST_AUTO_TEST_CASE(testNormsRefCounting)
 
     IndexReaderPtr reader1 = IndexReader::open(dir1, false);
 
-    IndexReaderPtr reader2C = boost::dynamic_pointer_cast<IndexReader>(reader1->clone());
+    IndexReaderPtr reader2C = LuceneDynamicCast<IndexReader>(reader1->clone());
     SegmentReaderPtr segmentReader2C = SegmentReader::getOnlySegmentReader(reader2C);
     segmentReader2C->norms(L"field1"); // load the norms for the field
     NormPtr reader2CNorm = segmentReader2C->_norms.get(L"field1");
     BOOST_CHECK_EQUAL(2, reader2CNorm->bytesRef()->refCount());
 
-    IndexReaderPtr reader3C = boost::dynamic_pointer_cast<IndexReader>(reader2C->clone());
+    IndexReaderPtr reader3C = LuceneDynamicCast<IndexReader>(reader2C->clone());
     SegmentReaderPtr segmentReader3C = SegmentReader::getOnlySegmentReader(reader3C);
     NormPtr reader3CCNorm = segmentReader3C->_norms.get(L"field1");
     BOOST_CHECK_EQUAL(3, reader3CCNorm->bytesRef()->refCount());
 
     // edit a norm and the refcount should be 1
-    IndexReaderPtr reader4C = boost::dynamic_pointer_cast<IndexReader>(reader3C->clone());
+    IndexReaderPtr reader4C = LuceneDynamicCast<IndexReader>(reader3C->clone());
     SegmentReaderPtr segmentReader4C = SegmentReader::getOnlySegmentReader(reader4C);
     BOOST_CHECK_EQUAL(4, reader3CCNorm->bytesRef()->refCount());
     reader4C->setNorm(5, L"field1", 0.33);
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(testNormsRefCounting)
     BOOST_CHECK_EQUAL(3, reader3CCNorm->bytesRef()->refCount());
     BOOST_CHECK_EQUAL(1, reader4CCNorm->bytesRef()->refCount());
 
-    IndexReaderPtr reader5C = boost::dynamic_pointer_cast<IndexReader>(reader4C->clone());
+    IndexReaderPtr reader5C = LuceneDynamicCast<IndexReader>(reader4C->clone());
     SegmentReaderPtr segmentReader5C = SegmentReader::getOnlySegmentReader(reader5C);
     NormPtr reader5CCNorm = segmentReader5C->_norms.get(L"field1");
     reader5C->setNorm(5, L"field1", 0.7);

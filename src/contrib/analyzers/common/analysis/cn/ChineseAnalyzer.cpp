@@ -24,7 +24,7 @@ namespace Lucene
     
     TokenStreamPtr ChineseAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        ChineseAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ChineseAnalyzerSavedStreams>(getPreviousTokenStream()));
+        ChineseAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<ChineseAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<ChineseAnalyzerSavedStreams>();

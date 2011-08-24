@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(testCustomLockFactory)
     
     for (MapStringLock::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName)
     {
-        MockLockPtr lock(boost::dynamic_pointer_cast<MockLock>(lockName->second));
+        MockLockPtr lock(LuceneDynamicCast<MockLock>(lockName->second));
         BOOST_CHECK(lock->lockAttempts > 0); // # calls to Lock.obtain is 0 (after instantiating IndexWriter)
     }
     
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(testDefaultRAMDirectory)
 {
     DirectoryPtr dir(newLucene<RAMDirectory>());
     LockFactoryPtr lockFactory(dir->getLockFactory());
-    BOOST_CHECK(boost::dynamic_pointer_cast<SingleInstanceLockFactory>(lockFactory));
+    BOOST_CHECK(LuceneDynamicCast<SingleInstanceLockFactory>(lockFactory));
     
     IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
     

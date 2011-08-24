@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(testPrevTermAtEnd)
     addDoc(writer, L"aaa bbb");
     writer->close();
     SegmentReaderPtr reader = SegmentReader::getOnlySegmentReader(dir);
-    SegmentTermEnumPtr termEnum = boost::dynamic_pointer_cast<SegmentTermEnum>(reader->terms());
+    SegmentTermEnumPtr termEnum = LuceneDynamicCast<SegmentTermEnum>(reader->terms());
     BOOST_CHECK(termEnum->next());
     BOOST_CHECK_EQUAL(L"aaa", termEnum->term()->text());
     BOOST_CHECK(termEnum->next());

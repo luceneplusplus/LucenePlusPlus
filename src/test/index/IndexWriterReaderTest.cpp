@@ -222,7 +222,7 @@ public:
     void launchThreads(int32_t numIter)
     {
         for (int32_t i = 0; i < NUM_THREADS; ++i)
-            threads[i] = newLucene<AddDirectoriesThread>(shared_from_this(), numIter);
+            threads[i] = newLucene<AddDirectoriesThread>(LuceneThis(), numIter);
         for (int32_t i = 0; i < NUM_THREADS; ++i)
             threads[i]->start();
     }
@@ -594,7 +594,7 @@ BOOST_AUTO_TEST_CASE(testMergeWarmer)
     for (int32_t i = 0; i < 100; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
     
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     BOOST_CHECK(warmer->warmCount > 0);
     int32_t count = warmer->warmCount;
@@ -626,7 +626,7 @@ BOOST_AUTO_TEST_CASE(testAfterCommit)
     for (int32_t i = 0; i < 10; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
     
-    boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     IndexReaderPtr r2 = r1->reopen();
     if (r2 != r1)

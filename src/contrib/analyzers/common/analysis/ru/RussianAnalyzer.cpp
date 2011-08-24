@@ -102,7 +102,7 @@ namespace Lucene
     
     TokenStreamPtr RussianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        RussianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<RussianAnalyzerSavedStreams>(getPreviousTokenStream()));
+        RussianAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<RussianAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<RussianAnalyzerSavedStreams>();

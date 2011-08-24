@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "FilteredTermEnum.h"
+#include "Term.h"
 
 namespace Lucene
 {

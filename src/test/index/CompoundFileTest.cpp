@@ -147,7 +147,7 @@ public:
     {
         if (MiscUtils::typeOf<CSIndexInput>(is))
         {
-            CSIndexInputPtr cis = boost::dynamic_pointer_cast<CSIndexInput>(is);
+            CSIndexInputPtr cis = LuceneDynamicCast<CSIndexInput>(is);
             return isSimpleFSIndexInputOpen(cis->base);
         }
         else
@@ -158,7 +158,7 @@ public:
     {
         if (MiscUtils::typeOf<SimpleFSIndexInput>(is))
         {
-            SimpleFSIndexInputPtr fis = boost::dynamic_pointer_cast<SimpleFSIndexInput>(is);
+            SimpleFSIndexInputPtr fis = LuceneDynamicCast<SimpleFSIndexInput>(is);
             return fis->isValid();
         }
         else
@@ -315,7 +315,7 @@ BOOST_AUTO_TEST_CASE(testClonedStreamsClosing)
     IndexInputPtr one = cr->openInput(L"f11");
     BOOST_CHECK(isCSIndexInputOpen(one));
 
-    IndexInputPtr two = boost::dynamic_pointer_cast<IndexInput>(one->clone());
+    IndexInputPtr two = LuceneDynamicCast<IndexInput>(one->clone());
     BOOST_CHECK(isCSIndexInputOpen(two));
 
     checkSameStreams(expected, one);
@@ -439,8 +439,8 @@ BOOST_AUTO_TEST_CASE(testRandomAccessClones)
     IndexInputPtr e1 = cr->openInput(L"f11");
     IndexInputPtr e2 = cr->openInput(L"f3");
 
-    IndexInputPtr a1 = boost::dynamic_pointer_cast<IndexInput>(e1->clone());
-    IndexInputPtr a2 = boost::dynamic_pointer_cast<IndexInput>(e2->clone());
+    IndexInputPtr a1 = LuceneDynamicCast<IndexInput>(e1->clone());
+    IndexInputPtr a2 = LuceneDynamicCast<IndexInput>(e2->clone());
     
     // Seek the first pair
     e1->seek(100);

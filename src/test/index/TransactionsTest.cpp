@@ -96,13 +96,13 @@ public:
         IndexWriterPtr writer1 = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
         writer1->setMaxBufferedDocs(3);
         writer1->setMergeFactor(2);
-        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer1->getMergeScheduler())->setSuppressExceptions();
+        LuceneDynamicCast<ConcurrentMergeScheduler>(writer1->getMergeScheduler())->setSuppressExceptions();
 
         IndexWriterPtr writer2 = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
         // Intentionally use different params so flush/merge happen at different times
         writer2->setMaxBufferedDocs(2);
         writer2->setMergeFactor(3);
-        boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer2->getMergeScheduler())->setSuppressExceptions();
+        LuceneDynamicCast<ConcurrentMergeScheduler>(writer2->getMergeScheduler())->setSuppressExceptions();
 
         update(writer1);
         update(writer2);

@@ -601,11 +601,11 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
             BOOST_CHECK_EQUAL(terms1[j], terms2[j]);
             BOOST_CHECK_EQUAL(freq1[j], freq2[j]);
         }
-        if (boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1))
+        if (LuceneDynamicCast<SegmentTermPositionVector>(v1))
         {
-            BOOST_CHECK(boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2));
-            SegmentTermPositionVectorPtr tpv1 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1);
-            SegmentTermPositionVectorPtr tpv2 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2);
+            BOOST_CHECK(LuceneDynamicCast<SegmentTermPositionVector>(v2));
+            SegmentTermPositionVectorPtr tpv1 = LuceneDynamicCast<SegmentTermPositionVector>(v1);
+            SegmentTermPositionVectorPtr tpv2 = LuceneDynamicCast<SegmentTermPositionVector>(v2);
             for (int32_t j = 0; j < numTerms; ++j)
             {
                 Collection<int32_t> pos1 = tpv1->getTermPositions(j);

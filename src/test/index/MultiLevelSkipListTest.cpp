@@ -139,7 +139,7 @@ public:
     
     LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
-        return newLucene<CountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
+        return newLucene<CountingStream>(LuceneDynamicCast<IndexInput>(input->clone()));
     }
 };
 
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(testSimpleSkip)
     writer->close();
 
     IndexReaderPtr reader = SegmentReader::getOnlySegmentReader(dir);
-    SegmentTermPositionsPtr tp = boost::dynamic_pointer_cast<SegmentTermPositions>(reader->termPositions());
+    SegmentTermPositionsPtr tp = LuceneDynamicCast<SegmentTermPositions>(reader->termPositions());
     tp->freqStream(newLucene<CountingStream>(tp->freqStream()));
 
     for (int32_t i = 0; i < 2; ++i)

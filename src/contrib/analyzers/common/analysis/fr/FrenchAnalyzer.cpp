@@ -91,7 +91,7 @@ namespace Lucene
     
     TokenStreamPtr FrenchAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        FrenchAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<FrenchAnalyzerSavedStreams>(getPreviousTokenStream()));
+        FrenchAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<FrenchAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<FrenchAnalyzerSavedStreams>();

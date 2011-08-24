@@ -9,6 +9,7 @@
 #include "SegmentTermEnum.h"
 #include "Directory.h"
 #include "IndexFileNames.h"
+#include "TermInfo.h"
 #include "Term.h"
 #include "StringUtils.h"
 

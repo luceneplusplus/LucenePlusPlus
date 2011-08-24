@@ -80,7 +80,7 @@ public:
 public:
     virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        TokenizerPtr tokenizer = boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream());
+        TokenizerPtr tokenizer = LuceneDynamicCast<Tokenizer>(getPreviousTokenStream());
         if (!tokenizer)
         {
             tokenizer = newLucene<SingleCharTokenizer>(reader);

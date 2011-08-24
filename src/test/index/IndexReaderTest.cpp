@@ -1273,7 +1273,7 @@ BOOST_AUTO_TEST_CASE(testFieldCacheReuseAfterClone)
     BOOST_CHECK_EQUAL(17, ints[0]);
 
     // Clone reader
-    IndexReaderPtr r2 = boost::dynamic_pointer_cast<IndexReader>(r->clone());
+    IndexReaderPtr r2 = LuceneDynamicCast<IndexReader>(r->clone());
     r->close();
     BOOST_CHECK_NE(r2, r);
     Collection<int32_t> ints2 = FieldCache::DEFAULT()->getInts(r2, L"number");
@@ -1330,7 +1330,7 @@ BOOST_AUTO_TEST_CASE(testReopenChangeReadonly)
     
     // Open reader1
     IndexReaderPtr r = IndexReader::open(dir, false);
-    BOOST_CHECK(boost::dynamic_pointer_cast<DirectoryReader>(r));
+    BOOST_CHECK(LuceneDynamicCast<DirectoryReader>(r));
     IndexReaderPtr r1 = SegmentReader::getOnlySegmentReader(r);
     Collection<int32_t> ints = FieldCache::DEFAULT()->getInts(r1, L"number");
     BOOST_CHECK_EQUAL(1, ints.size());
@@ -1338,7 +1338,7 @@ BOOST_AUTO_TEST_CASE(testReopenChangeReadonly)
 
     // Reopen to readonly with no chnages
     IndexReaderPtr r3 = r->reopen(true);
-    BOOST_CHECK(boost::dynamic_pointer_cast<ReadOnlyDirectoryReader>(r3));
+    BOOST_CHECK(LuceneDynamicCast<ReadOnlyDirectoryReader>(r3));
     r3->close();
 
     // Add new segment
@@ -1348,13 +1348,13 @@ BOOST_AUTO_TEST_CASE(testReopenChangeReadonly)
     // Reopen reader1 --> reader2
     IndexReaderPtr r2 = r->reopen(true);
     r->close();
-    BOOST_CHECK(boost::dynamic_pointer_cast<ReadOnlyDirectoryReader>(r2));
+    BOOST_CHECK(LuceneDynamicCast<ReadOnlyDirectoryReader>(r2));
     Collection<IndexReaderPtr> subs = r2->getSequentialSubReaders();
     Collection<int32_t> ints2 = FieldCache::DEFAULT()->getInts(subs[0], L"number");
     r2->close();
 
-    BOOST_CHECK(boost::dynamic_pointer_cast<ReadOnlySegmentReader>(subs[0]));
-    BOOST_CHECK(boost::dynamic_pointer_cast<ReadOnlySegmentReader>(subs[1]));
+    BOOST_CHECK(LuceneDynamicCast<ReadOnlySegmentReader>(subs[0]));
+    BOOST_CHECK(LuceneDynamicCast<ReadOnlySegmentReader>(subs[1]));
     BOOST_CHECK(ints.equals(ints2));
 
     dir->close();
@@ -1401,8 +1401,8 @@ BOOST_AUTO_TEST_CASE(testNoTermsIndex)
     
     IndexReaderPtr r = IndexReader::open(dir, IndexDeletionPolicyPtr(), true, -1);
     BOOST_CHECK_EXCEPTION(r->docFreq(newLucene<Term>(L"field", L"f")), IllegalStateException, check_exception(LuceneException::IllegalState));
-    BOOST_CHECK(!boost::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());
-    BOOST_CHECK_EQUAL(-1, boost::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->getTermInfosIndexDivisor());
+    BOOST_CHECK(!LuceneDynamicCast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());
+    BOOST_CHECK_EQUAL(-1, LuceneDynamicCast<SegmentReader>(r->getSequentialSubReaders()[0])->getTermInfosIndexDivisor());
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     writer->addDocument(doc);
     writer->close();
@@ -1414,7 +1414,7 @@ BOOST_AUTO_TEST_CASE(testNoTermsIndex)
     BOOST_CHECK_EQUAL(2, subReaders.size());
     for (Collection<IndexReaderPtr>::iterator sub = subReaders.begin(); sub != subReaders.end(); ++sub)
     {
-        SegmentReaderPtr subReader = boost::dynamic_pointer_cast<SegmentReader>(*sub);
+        SegmentReaderPtr subReader = LuceneDynamicCast<SegmentReader>(*sub);
         BOOST_CHECK(!subReader->termsIndexLoaded());
     }
     r2->close();

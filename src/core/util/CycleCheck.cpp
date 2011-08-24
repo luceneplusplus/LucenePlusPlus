@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include <iostream>
 #include "CycleCheck.h"
+#include "LuceneObject.h"
 
 namespace Lucene
 {

@@ -58,7 +58,7 @@ namespace Lucene
     void syncConcurrentMerges(MergeSchedulerPtr ms)
     {
         if (MiscUtils::typeOf<ConcurrentMergeScheduler>(ms))
-            boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->sync();
+            LuceneDynamicCast<ConcurrentMergeScheduler>(ms)->sync();
     }
     
     String intToEnglish(int32_t i)

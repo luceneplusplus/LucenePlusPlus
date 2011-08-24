@@ -85,7 +85,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
         
-        if (boost::dynamic_pointer_cast<MultiReader>(reader))
+        if (LuceneDynamicCast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
@@ -100,7 +100,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
         
-        if (boost::dynamic_pointer_cast<MultiReader>(reader))
+        if (LuceneDynamicCast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
@@ -115,7 +115,7 @@ protected:
     IndexReaderPtr openReader()
     {
         IndexReaderPtr reader = IndexReader::open(dir, false);
-        BOOST_CHECK(boost::dynamic_pointer_cast<DirectoryReader>(reader));
+        BOOST_CHECK(LuceneDynamicCast<DirectoryReader>(reader));
         BOOST_CHECK(dir);
         BOOST_CHECK(sis);
         BOOST_CHECK(reader);

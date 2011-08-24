@@ -20,7 +20,7 @@ BOOST_FIXTURE_TEST_SUITE(SimpleAttributeTest, LuceneTestFixture)
 
 static AttributePtr checkCloneIsEqual(AttributePtr att)
 {
-    AttributePtr clone = boost::dynamic_pointer_cast<Attribute>(att->clone());
+    AttributePtr clone = LuceneDynamicCast<Attribute>(att->clone());
     BOOST_CHECK(att->equals(clone));
     BOOST_CHECK_EQUAL(att->hashCode(), clone->hashCode());
     return clone;
@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(testFlagsAttribute)
     att->setFlags(1234);
     BOOST_CHECK_EQUAL(L"flags=1234", att->toString());
 
-    FlagsAttributePtr att2 = boost::dynamic_pointer_cast<FlagsAttribute>(checkCloneIsEqual(att));
+    FlagsAttributePtr att2 = LuceneDynamicCast<FlagsAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(1234, att2->getFlags());
 
-    att2 = boost::dynamic_pointer_cast<FlagsAttribute>(checkCopyIsEqual<FlagsAttribute>(att));
+    att2 = LuceneDynamicCast<FlagsAttribute>(checkCopyIsEqual<FlagsAttribute>(att));
     BOOST_CHECK_EQUAL(1234, att2->getFlags());
 
     att->clear();
@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(testPositionIncrementAttribute)
     att->setPositionIncrement(1234);
     BOOST_CHECK_EQUAL(L"positionIncrement=1234", att->toString());
 
-    PositionIncrementAttributePtr att2 = boost::dynamic_pointer_cast<PositionIncrementAttribute>(checkCloneIsEqual(att));
+    PositionIncrementAttributePtr att2 = LuceneDynamicCast<PositionIncrementAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(1234, att2->getPositionIncrement());
 
-    att2 = boost::dynamic_pointer_cast<PositionIncrementAttribute>(checkCopyIsEqual<PositionIncrementAttribute>(att));
+    att2 = LuceneDynamicCast<PositionIncrementAttribute>(checkCopyIsEqual<PositionIncrementAttribute>(att));
     BOOST_CHECK_EQUAL(1234, att2->getPositionIncrement());
 
     att->clear();
@@ -96,10 +96,10 @@ BOOST_AUTO_TEST_CASE(testTypeAttribute)
     att->setType(L"hello");
     BOOST_CHECK_EQUAL(L"type=hello", att->toString());
 
-    TypeAttributePtr att2 = boost::dynamic_pointer_cast<TypeAttribute>(checkCloneIsEqual(att));
+    TypeAttributePtr att2 = LuceneDynamicCast<TypeAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(L"hello", att2->type());
 
-    att2 = boost::dynamic_pointer_cast<TypeAttribute>(checkCopyIsEqual<TypeAttribute>(att));
+    att2 = LuceneDynamicCast<TypeAttribute>(checkCopyIsEqual<TypeAttribute>(att));
     BOOST_CHECK_EQUAL(L"hello", att2->type());
 
     att->clear();
@@ -120,11 +120,11 @@ BOOST_AUTO_TEST_CASE(testPayloadAttribute)
     PayloadPtr pl = newLucene<Payload>(payload);
     att->setPayload(pl);
 
-    PayloadAttributePtr att2 = boost::dynamic_pointer_cast<PayloadAttribute>(checkCloneIsEqual(att));
+    PayloadAttributePtr att2 = LuceneDynamicCast<PayloadAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK(pl->equals(att2->getPayload()));
     BOOST_CHECK_NE(pl, att2->getPayload());
 
-    att2 = boost::dynamic_pointer_cast<PayloadAttribute>(checkCopyIsEqual<PayloadAttribute>(att));
+    att2 = LuceneDynamicCast<PayloadAttribute>(checkCopyIsEqual<PayloadAttribute>(att));
     BOOST_CHECK(pl->equals(att2->getPayload()));
     BOOST_CHECK_NE(pl, att2->getPayload());
 
@@ -141,11 +141,11 @@ BOOST_AUTO_TEST_CASE(testOffsetAttribute)
     att->setOffset(12, 34);
     // no string test here, because order unknown
     
-    OffsetAttributePtr att2 = boost::dynamic_pointer_cast<OffsetAttribute>(checkCloneIsEqual(att));
+    OffsetAttributePtr att2 = LuceneDynamicCast<OffsetAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(12, att2->startOffset());
     BOOST_CHECK_EQUAL(34, att2->endOffset());
 
-    att2 = boost::dynamic_pointer_cast<OffsetAttribute>(checkCopyIsEqual<OffsetAttribute>(att));
+    att2 = LuceneDynamicCast<OffsetAttribute>(checkCopyIsEqual<OffsetAttribute>(att));
     BOOST_CHECK_EQUAL(12, att2->startOffset());
     BOOST_CHECK_EQUAL(34, att2->endOffset());
 

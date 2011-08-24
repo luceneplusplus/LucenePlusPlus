@@ -233,7 +233,7 @@ namespace Lucene
     
     TokenStreamPtr PersianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        PersianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<PersianAnalyzerSavedStreams>(getPreviousTokenStream()));
+        PersianAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<PersianAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<PersianAnalyzerSavedStreams>();

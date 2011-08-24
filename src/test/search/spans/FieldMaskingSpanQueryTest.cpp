@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(testRewrite0)
 {
     SpanQueryPtr q = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
     q->setBoost(8.7654321);
-    SpanQueryPtr qr = boost::dynamic_pointer_cast<SpanQuery>(searcher->rewrite(q));
+    SpanQueryPtr qr = LuceneDynamicCast<SpanQuery>(searcher->rewrite(q));
 
     QueryUtils::checkEqual(q, qr);
 
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(testRewrite1)
 {
     // mask an anon SpanQuery class that rewrites to something else.
     SpanQueryPtr q = newLucene<TestRewrite::TestableFieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
-    SpanQueryPtr qr = boost::dynamic_pointer_cast<SpanQuery>(searcher->rewrite(q));
+    SpanQueryPtr qr = LuceneDynamicCast<SpanQuery>(searcher->rewrite(q));
 
     QueryUtils::checkUnequal(q, qr);
 
