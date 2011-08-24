@@ -327,7 +327,7 @@ namespace Lucene
         StringValComparator(int32_t numHits, const String& field);
         virtual ~StringValComparator();    
         
-        LUCENE_CLASS(StringOrdValComparator);
+        LUCENE_CLASS(StringValComparator);
     
     protected:
         Collection<String> values;
