@@ -36,6 +36,9 @@
  * exception statement from your version.
  */
 
+#include "Config.h"
+#ifdef LPP_USE_GC
+
 #ifndef GC_H
 #define GC_H
 
@@ -320,6 +323,8 @@ extern char GC_DATAENDSYM2;
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

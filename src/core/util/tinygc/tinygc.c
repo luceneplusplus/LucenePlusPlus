@@ -57,6 +57,9 @@
  * MARK_DESCR_OFFSET.
  */
 
+#include "Config.h"
+#ifdef LPP_USE_GC
+
 #ifndef _SETJMP_H
 #include <setjmp.h>
 /* int setjmp(jmp_buf); */
@@ -3929,3 +3932,5 @@ GC_API void GC_CALL GC_finalize_all(void)
 }
 
 #endif /* ! JAVA_FINALIZATION_NOT_NEEDED */
+
+#endif

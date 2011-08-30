@@ -34,6 +34,9 @@
  * exception statement from your version.
  */
 
+#include "Config.h"
+#ifdef LPP_USE_GC
+
 #ifndef GC_GCJ_H
 #define GC_GCJ_H
 
@@ -61,6 +64,8 @@ GC_API void GC_NEAR *GC_CALL GC_gcj_malloc(size_t, void GC_NEAR *);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

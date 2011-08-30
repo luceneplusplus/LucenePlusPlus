@@ -34,6 +34,9 @@
  * exception statement from your version.
  */
 
+#include "Config.h"
+#ifdef LPP_USE_GC
+
 #ifndef GC_MARK_H
 #define GC_MARK_H
 
@@ -59,6 +62,8 @@ GC_API GC_start_callback_proc GC_CALL GC_get_start_callback(void);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

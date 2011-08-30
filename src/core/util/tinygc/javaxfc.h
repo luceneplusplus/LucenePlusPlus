@@ -36,6 +36,9 @@
 
 /* TinyGC API is a subset of Boehm-Demers-Weiser Conservative GC API */
 
+#include "Config.h"
+#ifdef LPP_USE_GC
+
 #ifndef GC_H
 #include "gc.h"
 #endif
@@ -49,4 +52,6 @@ GC_API void GC_CALL GC_finalize_all(void);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
