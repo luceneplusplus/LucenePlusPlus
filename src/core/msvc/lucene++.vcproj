@@ -3875,54 +3875,6 @@
 					>
 				</File>
 			</Filter>
-			<Filter
-				Name="gc"
-				>
-				<File
-					RelativePath="..\util\smieciuch\fastvec.hpp"
-					>
-				</File>
-				<File
-					RelativePath="..\util\smieciuch\gc.hpp"
-					>
-				</File>
-				<File
-					RelativePath="..\util\smieciuch\gcpp.cpp"
-					>
-					<FileConfiguration
-						Name="Debug DLL|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release DLL|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug Static|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release Static|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
