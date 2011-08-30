@@ -8,8 +8,11 @@
 #define LUCENEFACTORY_H
 
 #include "LucenePtr.h"
+
+#ifndef LPP_USE_GC
 #include <boost/make_shared.hpp>
 #include <boost/version.hpp>
+#endif
 
 namespace Lucene
 {
@@ -17,7 +20,7 @@ namespace Lucene
     LucenePtr<T> newInstance()
     {
         #ifdef LPP_USE_GC
-        return new(GC) T;
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T());
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T);
@@ -31,7 +34,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1));
@@ -45,7 +48,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2));
@@ -59,7 +62,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2, a3);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2, a3));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3));
@@ -73,7 +76,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2, a3, a4);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2, a3, a4));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4));
@@ -87,7 +90,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2, a3, a4, a5);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2, a3, a4, a5));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5));
@@ -101,7 +104,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5, A6 const& a6)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2, a3, a4, a5, a6);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2, a3, a4, a5, a6));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6));
@@ -115,7 +118,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5, A6 const& a6, A7 const& a7)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2, a3, a4, a5, a6, a7);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2, a3, a4, a5, a6, a7));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6, a7));
@@ -129,7 +132,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5, A6 const& a6, A7 const& a7, A8 const& a8)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2, a3, a4, a5, a6, a7, a8);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2, a3, a4, a5, a6, a7, a8));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6, a7, a8));
@@ -143,7 +146,7 @@ namespace Lucene
     LucenePtr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5, A6 const& a6, A7 const& a7, A8 const& a8, A9 const& a9)
     {
         #ifdef LPP_USE_GC
-        return new(GC) T(a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        return Lucene::gc_ptr<T>(new(Allocator<T>().allocate(1)) T(a1, a2, a3, a4, a5, a6, a7, a8, a9));
         #else
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6, a7, a8, a9));

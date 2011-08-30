@@ -14,11 +14,17 @@ extern "C"
 }
 #endif
 
+#ifdef LPP_USE_GC
+#include "gc.h"
+#endif
+
 namespace Lucene
 {
     void* AllocMemory(size_t size)
     {
-        #if defined(LPP_USE_NEDMALLOC)
+        #if defined(LPP_USE_GC)
+        return GC_MALLOC(size);
+        #elif defined(LPP_USE_NEDMALLOC)
         return nedalloc::nedmalloc(size);
         #elif (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG) 
         return _malloc_dbg(size, _NORMAL_BLOCK, __FILE__, __LINE__);
@@ -36,7 +42,9 @@ namespace Lucene
             FreeMemory(memory);
             return NULL;
         }
-        #if defined(LPP_USE_NEDMALLOC)
+        #if defined(LPP_USE_GC)
+        return GC_MALLOC(size); // todo: can we port GC_REALLOC?
+        #elif defined(LPP_USE_NEDMALLOC)
         return nedalloc::nedrealloc(memory, size);
         #elif defined(_WIN32) && !defined(NDEBUG)
         return _realloc_dbg(memory, size, _NORMAL_BLOCK, __FILE__, __LINE__);
@@ -49,7 +57,9 @@ namespace Lucene
     {
         if (memory == NULL)
             return;
-        #if defined(LPP_USE_NEDMALLOC)
+        #if defined(LPP_USE_GC)
+        return;
+        #elif defined(LPP_USE_NEDMALLOC)
         nedalloc::nedfree(memory);
         #elif defined(_WIN32) && !defined(NDEBUG)
         _free_dbg(memory, _NORMAL_BLOCK);
