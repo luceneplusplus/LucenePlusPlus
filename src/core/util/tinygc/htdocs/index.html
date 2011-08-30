@@ -1,0 +1,473 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML lang=en-us>
+<HEAD>
+<META http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<META http-equiv="content-language" content="en-us">
+
+<meta name="google-site-verification" content="euF_Ds6ls67K5HQAK1QLmLN-9T0UpvF2SdDOK_qBUIs" />
+<TITLE>TinyGC - Tiny Garbage Collector</TITLE>
+<LINK rev=made href="mailto:ivmai@mail.ru">
+<META name="author" content="Ivan Maidanski">
+
+<STYLE type="text/css"><!--
+
+HTML {
+ font-size: 100%;
+}
+
+BODY {
+ margin: 0.8em;
+ font-family: helvetica, sans-serif;
+ color: black;
+ background: #eff;
+}
+
+H1 {
+ clear: both;
+ margin-top: 0.8em;
+ text-align: center;
+ word-spacing: 0.3em;
+ font-weight: bold;
+ text-decoration: underline;
+}
+
+H3 {
+ clear: both;
+ text-align: left;
+ margin-left: 0.3em;
+ margin-bottom: 0.1em;
+}
+
+P {
+ text-align: justify;
+ text-indent: 1.3em;
+ margin-top: 0.2em;
+ margin-bottom: 0;
+}
+
+OL, UL {
+ text-align: left;
+ text-indent: 1.1em;
+ margin: 0;
+ list-style-position: inside;
+ padding: 0;
+}
+
+ACRONYM {
+ font-weight: bolder;
+ white-space: nowrap;
+}
+
+CODE {
+ font-family: monospace;
+ font-size: 130%;
+}
+
+PRE {
+ padding: 0;
+ margin: 0 0 0.7em 1.3em;
+}
+
+A:link { color: blue; }
+
+A:visited { color: purple; }
+
+A:hover { color: red; }
+
+A:active { color: green; }
+
+A {
+ white-space: nowrap;
+}
+
+A.external { }
+
+A.mailto {
+ color: teal;
+ font-style: oblique;
+}
+
+DIV {
+ min-width: 35em;
+ margin-top: 1em;
+}
+
+DIV.subsection {
+ margin-bottom: 0.9em;
+}
+
+DIV.download {
+ margin-bottom: 0.9em;
+ border-top: 1pt dashed blue;
+}
+
+DIV.license {
+ border-top: thin solid blue;
+ text-align: center;
+ font-size: 110%;
+ font-family: monospace;
+}
+
+DIV.page-footer {
+ border-top: thin solid blue;
+ margin-top: 1.2em;
+ text-align: center;
+}
+
+.copyright {
+ text-align: right;
+ white-space: nowrap;
+ font-size: x-small;
+ font-weight: lighter;
+}
+
+--></STYLE>
+
+</HEAD>
+<BODY>
+
+<A href="http://sourceforge.net/projects/tinygc/">
+<IMG src="http://sflogo.sourceforge.net/sflogo.php?group_id=294566&type=14"
+alt="get TinyGC at SourceForge.net" width=150 height=40 border=0></A>
+
+<H1 align=center>TinyGC</H1>
+
+<DIV class=subsection>
+<H3>Preface</H3>
+<P>TinyGC is an independent implementation of the API of the well-known
+Boehm-Demers-Weiser Conservative GC ("BDWGC" or "BoehmGC" for short).
+<P>TinyGC has been initially developed as a part of the JCGO project to be
+used as a BoehmGC replacement. At present, TinyGC is a standalone project.
+</DIV>
+
+<DIV class=download>
+<H3>Download</H3>
+<P>To get the latest <ACRONYM>TinyGC</ACRONYM> stable release source code,
+please visit
+<A href="http://sourceforge.net/projects/tinygc/files/">"Browse files for
+TinyGC"</A>.
+</DIV>
+
+<DIV class=subsection>
+<H3>Target environments</H3>
+<P><ACRONYM>TinyGC</ACRONYM> is designed to be used primary in projects
+requiring Java-like memory garbage collection functionality for:
+<UL>
+<LI>memory constrained environments;
+<LI>8/16-bit systems;
+<LI>BoehmGC temporal replacement (for application debugging, testing and
+benchmarking purposes);
+<LI>targets where <ACRONYM>BoehmGC</ACRONYM> is still not ported to.
+</UL>
+<P><ACRONYM>TinyGC</ACRONYM> is NOT designed for speed.
+</DIV>
+
+<DIV class=subsection>
+<H3>Design principles</H3>
+<P>The major principles are:
+<UL>
+<LI>source and binary compatibility with <ACRONYM>BoehmGC</ACRONYM>;
+<LI>implements only the minimal subset of the <ACRONYM>BoehmGC</ACRONYM>
+<ACRONYM>API</ACRONYM> (v7.2) sufficient for the
+Java/<ACRONYM>GCJ</ACRONYM>-like functionality;
+<LI>highly portable (contains no assembler, no
+machine/<ACRONYM>OS</ACRONYM>-specific code portions) and tunable;
+<LI>supports 16/32/64-bit architectures ("flat" data models only);
+<LI>compact code and small initial internal data size;
+<LI>simple collection World-stopped Mark-and-Sweep algorithm implementation;
+<LI>malloc-based allocation (i.e. every object is allocated using
+<CODE>malloc()</CODE>);
+<LI>objects finalization and memory recycling (reclaiming to the underlaying
+malloc implementation) is done lazily (between collections).
+</UL></DIV>
+
+<DIV class=subsection>
+<H3>Advantages and drawbacks</H3>
+<P>The major <ACRONYM>TinyGC</ACRONYM> advantages over
+<ACRONYM>BoehmGC</ACRONYM> are:
+<UL>
+<LI>small code size (it could be as small as 3800 bytes);
+<LI>16-bit architectures are supported;
+<LI>small initial internal data size;
+<LI>less source code (to verify);
+<LI>minimal set of the underlaying
+<ACRONYM>clib</ACRONYM>/<ACRONYM>pthread</ACRONYM>/<ACRONYM>Win32</ACRONYM>
+functions used.
+</UL>
+<P>The drawbacks of <ACRONYM>TinyGC</ACRONYM> are:
+<UL>
+<LI>lower allocation speed and larger world-stopped collection delays
+(typically);
+<LI>only a small subset of the <ACRONYM>BoehmGC</ACRONYM>
+<ACRONYM>API</ACRONYM> is implemented;
+<LI>no support for <ACRONYM>C++</ACRONYM>;
+<LI>no support for architectures with a separate registers stack (like
+<ACRONYM>IA-64</ACRONYM>);
+<LI>no find-leak and pointer back-trace modes;
+<LI>no automatic registration of static data roots, stack bottom and threads;
+<LI>no "advanced" allocation and collection technologies (no blacklisting,
+memory unmapping, thread-local allocation, parallel marking, generation and
+incremental collections);
+<LI>relies on the underlaying malloc/free() implementation (which may be
+broken for large heaps, like, e.g., in some versions of msvcrt);
+<LI>"all-interior-pointers" mode is limited by the offset of 256
+<CODE>(1 &lt;&lt; GC_LOG2_OFFIGNORE)</CODE> bytes (this also means that
+disappearing links must not be placed at this or higher offsets of an
+allocated object);
+<LI>only the length-based descriptor for the <ACRONYM>GCJ</ACRONYM>-style
+allocation is supported;
+<LI>only Java-like "no-order" finalization policy is implemented.
+</UL></DIV>
+
+<DIV class=subsection>
+<H3>Notes</H3>
+<P>Release notes:
+<UL>
+<LI>no binary distribution is offered on the official site;
+<LI>no make file (or other building script) is provided.
+</UL>
+<P>Implementation notes:
+<UL>
+<LI>the same environment variables are recognized as in
+<ACRONYM>BoehmGC</ACRONYM>;
+<LI>the finalization and disappearing links implementations are generally the
+same as in <ACRONYM>BoehmGC</ACRONYM>;
+<LI>full <ACRONYM>TinyGC</ACRONYM> implementation resides in a single file
+(all the internal symbols are not visible outside);
+<LI>both <ACRONYM>pthreads</ACRONYM> and <ACRONYM>Win32</ACRONYM> threads are
+supported;
+<LI>no thread-safety of the underlaying malloc/free is required;
+<LI>the stack direction is detected at <ACRONYM>TinyGC</ACRONYM>
+initialization;
+<LI>no warnings are printed;
+<LI>the thread "suspend" handler does not use <ACRONYM>pthread</ACRONYM>
+synchronization primitives (yielding and sleeping are used instead for better
+portability);
+<LI><ACRONYM>CPU</ACRONYM> state is saved by <CODE>setjmp()</CODE>;
+<LI>there is no object "header" (i.e. the original object size is passed to
+the underlaying <CODE>malloc()</CODE>).
+</UL>
+<P>Usage notes:
+<UL>
+<LI>all pointers must be word-aligned;
+<LI>it is assumed that the compiler performs only <ACRONYM>GC</ACRONYM>-safe
+pointer transformations;
+<LI>static data roots must be manually registered;
+<LI>application threads must be manually registered and unregistered;
+<LI>it would be good to use <CODE>GC_call_with_gc_active()</CODE> to record
+the correct main stack base (after <CODE>GC_INIT()</CODE>).
+</UL></DIV>
+
+<DIV class=subsection>
+<H3>Tuning macros</H3>
+<P>Useful macros for tuning (same as in <ACRONYM>BoehmGC</ACRONYM>):
+<UL>
+<LI>GC_DLL - compile to produce a <ACRONYM>DLL</ACRONYM> (gc.dll);
+<LI>ALL_INTERIOR_POINTERS - turn on "all-interior-pointers" mode by default;
+<LI>GC_GCJ_SUPPORT - compile with <ACRONYM>GCJ</ACRONYM>-style allocation
+support;
+<LI>GC_THREADS - compile with thread support (<ACRONYM>pthread</ACRONYM>-based
+by default);
+<LI>GC_WIN32_THREADS - compile with <ACRONYM>Win32</ACRONYM>-based thread
+support;
+<LI>JAVA_FINALIZATION_NOT_NEEDED - exclude <CODE>GC_finalize_all()</CODE> from
+the <ACRONYM>API</ACRONYM>;
+<LI>DONT_ADD_BYTE_AT_END - do not pad objects even if "all-interior-pointers"
+mode is on;
+<LI>FINALIZE_ON_DEMAND - causes finalizers to be run only in response to
+explicit <CODE>GC_invoke_finalizers()</CODE> calls by default (unless
+overridden at run-time);
+<LI>GC_IGNORE_GCJ_INFO - disable <ACRONYM>GCJ</ACRONYM>-style type information
+(useful for debugging);
+<LI>GC_DONT_EXPAND - do not implicitly expand the heap by default (unless
+overridden at run-time);
+<LI>GC_INITIAL_HEAP_SIZE=&lt;value> - set the desired default initial heap
+size (in bytes);
+<LI>GC_FREE_SPACE_DIVISOR=&lt;value> - the default trade-off between garbage
+collection and heap growth;
+<LI>GC_MAX_RETRIES=&lt;value> - the default maximum number of garbage
+collections attempted before reporting out of memory after a heap expansion
+failure.
+</UL>
+<P>Major <ACRONYM>TinyGC</ACRONYM>-specific macros:
+<UL>
+<LI>GC_PRINT_MSGS - compile with statistic and error printing capabilities;
+<LI>GC_GETENV_SKIP - do not recognize any environment variable (for smaller
+code size or for <ACRONYM>WinCE</ACRONYM> targets);
+<LI>GC_WIN32_WCE - compile for <ACRONYM>WinCE</ACRONYM> (use thread Id instead
+of thread handle, and retry on <CODE>SuspendThread()</CODE> failures);
+<LI>GC_NO_INACTIVE, GC_MISC_EXCLUDE - exclude the corresponding parts of the
+<ACRONYM>TinyGC</ACRONYM> <ACRONYM>API</ACRONYM> (for smaller code size);
+<LI>GC_NO_GCBASE, GC_NO_FNLZ, GC_NO_DLINKS, GC_NO_REGISTER_DLINK - exclude the
+support (i.e. expose dummy support) for the corresponding
+<ACRONYM>TinyGC</ACRONYM> capabilities (for smaller code size);
+<LI>GC_USE_WIN32_SYSTEMTIME - use <ACRONYM>Win32</ACRONYM>
+<CODE>GetSystemTime()</CODE> <ACRONYM>API</ACRONYM> call instead of
+<CODE>ftime()</CODE> or <CODE>gettimeofday()</CODE> ones (useful for
+<ACRONYM>WinCE</ACRONYM>);
+<LI>GC_USE_GETTIMEOFDAY - use Unix <CODE>gettimeofday()</CODE>
+<ACRONYM>API</ACRONYM> call instead of <CODE>ftime()</CODE> one;
+<LI>GC_OMIT_REGISTER_KEYWORD - ignore <ACRONYM>C</ACRONYM> "register" keyword;
+<LI>CONST=/**/ - ignore <ACRONYM>C</ACRONYM> "const" keyword;
+<LI>INLINE=/**/ - ignore <ACRONYM>C</ACRONYM> "__inline" keyword;
+<LI>GC_FASTCALL=/**/ - ignore <ACRONYM>C</ACRONYM>
+<ACRONYM>x86</ACRONYM>-specific "__fastcall" keyword;
+<LI>GC_CLIBDECL=/**/ - ignore <ACRONYM>C</ACRONYM>
+<ACRONYM>x86</ACRONYM>-specific "__cdecl" keyword;
+<LI>GC_DATASTATIC=/**/ - do not use <ACRONYM>C</ACRONYM> static storage class
+for global data;
+<LI>GC_STATIC=/**/ - do not use <ACRONYM>C</ACRONYM> static linkage for
+<ACRONYM>GC</ACRONYM> internal functions;
+<LI>GC_DATASTARTSYM=&lt;id> - specify the external symbol which is the first
+one in the program data section;
+<LI>GC_DATAENDSYM=&lt;id> - specify the external symbol which is the last one
+in the program data section;
+<LI>GC_DATASTARTSYM2=&lt;id> - specify the external symbol which is the first
+one in the program ".bss" section;
+<LI>GC_DATAENDSYM2=&lt;id> - specify the external symbol which is the last one
+in the program ".bss" section;
+<LI>GC_STACKBOTTOMVAR=&lt;id> - specify the external symbol pointing to the
+program main thread stack bottom (or top if GC_STACKLEN is 0);
+<LI>GC_STACKLENVAR=&lt;id> - specify the external symbol pointing to the
+program main thread stack size;
+<LI>GC_SIG_SUSPEND=&lt;sig_id> - use specific signal to suspend Posix threads;
+<LI>GC_WIN32_CONTEXT_SP_NAME=&lt;sp_id> - use specific stack pointer register
+name (defined in <ACRONYM>Win32</ACRONYM> "winnt.h");
+<LI>GC_LOG2_OFFIGNORE=&lt;value> - explicitly specify the number of address
+lowest bits ignored for object address hash computations.
+</UL>
+<P>Useful macros for client application tuning (same as in
+<ACRONYM>BoehmGC</ACRONYM>):
+<UL>
+<LI>GC_DONT_EXPAND - do not implicitly expand the heap (unless overridden at
+run-time);
+<LI>GC_DLL - use <ACRONYM>TinyGC</ACRONYM> residing in a
+<ACRONYM>DLL</ACRONYM>;
+<LI>GC_THREADS - declare the prototypes for the collector multi-threading
+support;
+<LI>GC_CALL=&lt;calling_conv> - explicitly specify calling convention for the
+<ACRONYM>GC</ACRONYM> <ACRONYM>API</ACRONYM> functions;
+<LI>GC_CALLBACK=&lt;calling_conv> - explicitly specify an alternate calling
+convention for the <ACRONYM>GC</ACRONYM> <ACRONYM>API</ACRONYM> user
+callbacks;
+<LI>GC_INITIAL_HEAP_SIZE=&lt;value> - set the desired initial heap size (in
+bytes);
+<LI>GC_MAXIMUM_HEAP_SIZE=&lt;value> - set the desired maximum heap size (in
+bytes);
+<LI>GC_FREE_SPACE_DIVISOR=&lt;value> - set the desired trade-off between
+garbage collection and heap growth;
+<LI>GC_MAX_RETRIES=&lt;value> - set the desired maximum number of garbage
+collections attempted before reporting out of memory after a heap expansion
+failure.
+</UL>
+<P>Note 1: if GC_NO_DLINKS is used without GC_NO_REGISTER_DLINK then all the
+disappearing links are treated as normal pointers.
+<P>Note 2: for Unix use the command-line options:
+<PRE><CODE>
+ -DGC_FASTCALL= -DGC_CLIBDECL=
+</CODE></PRE>
+<P>Note 3: for Solaris <ACRONYM>SunOS</ACRONYM> "cc" use the command-line
+options:
+<PRE><CODE>
+ -DGC_FASTCALL= -DGC_CLIBDECL= -DINLINE=inline -erroff=E_WHITE_SPACE_IN_DIRECTIVE
+</CODE></PRE></DIV>
+
+<DIV class=subsection>
+<H3>Environment variables</H3>
+<P>Environment variables recognized (if supported, same as in
+<ACRONYM>BoehmGC</ACRONYM>):
+<UL>
+<LI>GC_DONT_GC - turn off garbage collection;
+<LI>GC_PRINT_STATS - turn on statistic printing on every garbage collection
+(if supported);
+<LI>GC_ALL_INTERIOR_POINTERS - turn on "all-interior-pointers" collector mode;
+<LI>GC_IGNORE_GCJ_INFO - ignore the <ACRONYM>GCJ</ACRONYM>-style type
+descriptors (if supported);
+<LI>GC_INITIAL_HEAP_SIZE=&lt;value> - set the initial heap size (in bytes);
+<LI>GC_MAXIMUM_HEAP_SIZE=&lt;value> - set the maximum heap size (in bytes);
+<LI>GC_FREE_SPACE_DIVISOR=&lt;value> - change the default trade-off between
+garbage collection and heap growth.
+</UL>
+<P>Note: the values assigned to the specified environment variables override
+the similar default (or the preset at the compilation time) values.
+</DIV>
+
+<DIV class=subsection>
+<H3>Files list</H3>
+<P>The <ACRONYM>TinyGC</ACRONYM> distribution consists of:
+<UL>
+<LI>ChangeLog - the standard changes log file;
+<LI>GNU_GPL.txt - the <ACRONYM>GNU</ACRONYM> <ACRONYM>GPLv2</ACRONYM> license;
+<LI>README.txt - this file;
+<LI>gc.h - the main include file (the subset of that in
+<ACRONYM>BoehmGC</ACRONYM>);
+<LI>gc_gcj.h - <ACRONYM>GCJ</ACRONYM>-style allocation <ACRONYM>API</ACRONYM>
+(the subset of that in <ACRONYM>BoehmGC</ACRONYM>);
+<LI>gc_mark.h - contains only the constants for the
+<ACRONYM>GCJ</ACRONYM>-style length-based descriptors and the collections
+notifier prototypes;
+<LI>javaxfc.h - same as in <ACRONYM>BoehmGC</ACRONYM>;
+<LI>tinygc.c - the <ACRONYM>TinyGC</ACRONYM> implementation itself.
+</UL></DIV>
+
+<DIV class=subsection>
+<H3>User's feedback</H3>
+<P>Any questions, suggestions, bug reports and patches are welcomed at the
+<ACRONYM>TinyGC</ACRONYM>
+<A href="http://sourceforge.net/projects/tinygc/develop/">site tracker</A>
+(hosted at SourceForge.net).
+</DIV>
+
+<DIV class=subsection>
+<H3>External resources</H3>
+<P>Links to the 3rd-party projects:
+<UL>
+<LI><A class=external target="_blank" href="http://www.hpl.hp.com/personal/Hans_Boehm/gc/">BoehmGC</A>
+(A garbage collector for C and C++)
+<LI><A class=external target="_blank" href="http://gcc.gnu.org/java/">GNU GCJ</A>
+(a portable optimizing ahead-of-time compiler for Java)
+</UL>
+<P>For more links, please visit
+"<A href="http://www.ivmaisoft.com/jcgo/links.htm">Java and C/C++ developer web resources</A>"
+hosted on the <ACRONYM>JCGO</ACRONYM> project (a
+<A href="http://www.ivmaisoft.com/jcgo/">java2c/java2exe</A> solution) site.
+</DIV>
+
+<DIV class=license>
+<H3>License</H3>
+<P>This is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+<P>This software is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License (GPL) for more details.
+<P>You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+<P>Linking this library statically or dynamically with other modules is
+making a combined work based on this library. Thus, the terms and
+conditions of the GNU General Public License cover the whole
+combination.
+<P>As a special exception, the copyright holders of this library give you
+permission to link this library with independent modules to produce an
+executable, regardless of the license terms of these independent
+modules, and to copy and distribute the resulting executable under
+terms of your choice, provided that you also meet, for each linked
+independent module, the terms and conditions of the license of that
+module. An independent module is a module which is not derived from
+or based on this library. If you modify this library, you may extend
+this exception to your version of the library, but you are not
+obligated to do so. If you do not wish to do so, delete this
+exception statement from your version.
+</DIV>
+
+<DIV class=page-footer>
+<P class=copyright>&copy; 2006-2010
+<A class=mailto href="mailto:ivmai@mail.ru">Ivan Maidanski</A>
+</DIV>
+
+<a href="http://www3.clustrmaps.com/counter/maps.php?url=http://tinygc.sourceforge.net" id="clustrMapsLink"><img src="http://www3.clustrmaps.com/counter/index2.php?url=http://tinygc.sourceforge.net" style="border:0px;" alt="Locations of visitors to this page" title="Locations of visitors to this page" id="clustrMapsImg" onerror="this.onerror=null; this.src='http://www2.clustrmaps.com/images/clustrmaps-back-soon.jpg'; document.getElementById('clustrMapsLink').href='http://www2.clustrmaps.com';" />
+</a>
+</BODY></HTML>

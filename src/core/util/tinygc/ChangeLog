@@ -1,0 +1,40 @@
+[2.6 release]
+
+2010-12-04  Ivan Maidanski <ivmai@mail.ru>
+
+	* htdocs/index.html: Update (according to the changes in README).
+	* README.txt: Update "Tuning macros" section (add GC_THREADS
+	macro description); update "Files list" section (for gc_mark.h).
+	* gc.h (GC_TINYGC_VER): Update the value.
+	* gc.h (GC_NO_THREAD_REDIRECTS, GC_allow_register_threads,
+	GC_register_my_thread, GC_unregister_my_thread): Declare only if
+	GC_THREADS.
+	* gc_mark.h (GC_start_callback_proc, GC_set_start_callback,
+	GC_get_start_callback): New API prototype.
+	* tinygc.c (GC_start_call_back): New static global variable.
+	* tinygc.c (GC_collect_unreachable): Call GC_start_call_back if
+	non-zero.
+	* tinygc.c (GC_set_start_callback, GC_get_start_callback): New API
+	function.
+
+[2.5 release]
+
+2009-12-20  Ivan Maidanski <ivmai@mail.ru>
+
+	* htdocs/index.html: New file (also put to sftp:web.sf.net/htdocs).
+
+2009-12-20  Ivan Maidanski <ivmai@mail.ru>
+
+	* ChangeLog: New file.
+	* GNU_GPL.txt: New file (GNU GPLv2 license).
+	* tinygc.c: Set version to 2.5.
+	* README.txt: Ditto.
+	* gc.h (GC_TINYGC_VER): Ditto.
+	* gc_gcj.h: Initial SVN import.
+	* gc_mark.h: Ditto.
+	* javaxfc.h: Ditto.
+	* README.txt: Update.
+
+Local Variables:
+version-control: never
+End:
