@@ -7,7 +7,9 @@
 #ifndef LUCENEOBJECT_H
 #define LUCENEOBJECT_H
 
+#ifndef LPP_USE_GC
 #include <boost/enable_shared_from_this.hpp>
+#endif
 #include "LuceneSync.h"
 
 #ifdef LPP_USE_CYCLIC_CHECK
@@ -28,7 +30,7 @@
 #else
 #define LUCENE_CLASS(Name) \
     LUCENE_INTERFACE(Name); \
-    LucenePtr<Name> LuceneThis() { return LuceneStaticCast<Name>(LuceneObject::LuceneThis()); }
+    LucenePtr<Name> LuceneThis() { return LuceneStaticCast<Name>(LuceneObject::shared_from_this()); }
 #endif
 
 namespace Lucene
