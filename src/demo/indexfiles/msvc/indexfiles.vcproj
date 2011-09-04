@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm180"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;LPP_HAVE_DLL"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -64,9 +64,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lucene++.lib"
+				AdditionalDependencies="lucene++.lib gc-lib.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(GC_LIB)&quot;;&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -125,7 +125,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -146,9 +146,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lucene++.lib"
+				AdditionalDependencies="lucene++.lib gc-lib.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(GC_LIB)&quot;;&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -204,7 +204,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm180"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -226,9 +226,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lucene++.lib"
+				AdditionalDependencies="lucene++.lib gc-lib.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(GC_LIB)&quot;;&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -287,7 +287,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;LPP_HAVE_DLL"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -308,9 +308,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lucene++.lib"
+				AdditionalDependencies="lucene++.lib gc-lib.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
+				AdditionalLibraryDirectories="&quot;$(GC_LIB)&quot;;&quot;$(BOOST_LIB)&quot;;..\..\..\..\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

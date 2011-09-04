@@ -13,7 +13,8 @@
 #include <boost/weak_ptr.hpp>
 
 #ifdef LPP_USE_GC
-#include "gc.h"
+#define GC_NOT_DLL
+#include "gc_cpp.h"
 
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
@@ -74,17 +75,17 @@ namespace Lucene
         {
         }
         
-        // todo #if !defined(BOOST_NO_MEMBER_TEMPLATES) || defined(BOOST_MSVC6_MEMBER_TEMPLATES)
+        #if !defined(BOOST_NO_MEMBER_TEMPLATES) || defined(BOOST_MSVC6_MEMBER_TEMPLATES)
         template<class U>
-        // #if !defined(BOOST_SP_NO_SP_CONVERTIBLE)
+        #if !defined(BOOST_SP_NO_SP_CONVERTIBLE)
         gc_ptr(gc_ptr<U> const& rhs, typename Lucene::detail::sp_enable_if_convertible<U, T>::type = Lucene::detail::sp_empty())
-        // #else
-        // gc_ptr(gc_ptr<U> const& rhs)
-        // #endif
+        #else
+        gc_ptr(gc_ptr<U> const& rhs)
+        #endif
         : px(rhs.get())
         {
         }
-        // todo #endif
+        #endif
 
         gc_ptr(gc_ptr const& rhs) : px(rhs.px)
         {

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\tinygc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB;"
 				MinimalRebuild="true"
 				ExceptionHandling="2"
@@ -65,8 +65,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gc-lib.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(BOOST_LIB)"
+				AdditionalLibraryDirectories="&quot;$(GC_LIB)&quot;;&quot;$(BOOST_LIB)&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -124,7 +125,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\tinygc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LPP_HAVE_DLL;LPP_BUILDING_LIB"
 				ExceptionHandling="2"
 				RuntimeLibrary="2"
@@ -147,8 +148,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gc-lib.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(BOOST_LIB)"
+				AdditionalLibraryDirectories="&quot;$(GC_LIB)&quot;;&quot;$(BOOST_LIB)&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -203,7 +205,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\tinygc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;LPP_BUILDING_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -276,7 +278,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\..\..\include;..\include;..\util\tinygc;&quot;$(BOOST_ROOT)&quot;"
+				AdditionalIncludeDirectories="..\..\..\include;..\include;&quot;$(GC_INCLUDE)&quot;;&quot;$(BOOST_ROOT)&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;LPP_BUILDING_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -415,6 +417,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\include\Lucene.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\include\LuceneFactory.h"
 				>
 			</File>
 			<File
@@ -3636,10 +3642,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\LuceneFactory.h"
-				>
-			</File>
-			<File
 				RelativePath="..\util\LuceneObject.cpp"
 				>
 			</File>
@@ -3877,62 +3879,6 @@
 				<File
 					RelativePath="..\util\unicode\guniprop.h"
 					>
-				</File>
-			</Filter>
-			<Filter
-				Name="tinygc"
-				>
-				<File
-					RelativePath="..\util\tinygc\gc.h"
-					>
-				</File>
-				<File
-					RelativePath="..\util\tinygc\gc_gcj.h"
-					>
-				</File>
-				<File
-					RelativePath="..\util\tinygc\gc_mark.h"
-					>
-				</File>
-				<File
-					RelativePath="..\util\tinygc\javaxfc.h"
-					>
-				</File>
-				<File
-					RelativePath="..\util\tinygc\tinygc.c"
-					>
-					<FileConfiguration
-						Name="Debug DLL|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release DLL|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug Static|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release Static|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>
