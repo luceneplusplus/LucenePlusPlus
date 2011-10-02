@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    namespace FileUtils
+    namespace FileUtils // todo: this really needs to be a class
     {
         /// Return true if given file or directory exists.
         LPPAPI bool fileExists(const String& path);

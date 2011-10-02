@@ -8,7 +8,7 @@
 #define ARRAY_H
 
 #include <cstring>
-#include "Lucene.h"
+#include "LuceneSync.h"
 
 namespace Lucene
 {
@@ -49,7 +49,7 @@ namespace Lucene
     
     /// Utility template class to handle sharable arrays of simple data types
     template <typename TYPE>
-    class Array
+    class Array : public LuceneSync
     {
     public:
         typedef Array<TYPE> this_type;
@@ -61,15 +61,19 @@ namespace Lucene
         }
         
     protected:
-        LucenePtr<array_type> container;
-        array_type* array;
+        //LucenePtr<array_type> container;
+        //array_type* array;
+        TYPE* array;
+        int32_t arraySize;
         
     public:
         static this_type newInstance(int32_t size)
         {
             this_type instance;
-            instance.container = Lucene::newInstance<array_type>(size);
-            instance.array = instance.container.get();
+            //instance.container = Lucene::newInstance<array_type>(size);
+            //instance.array = instance.container.get();
+            instance.array = (TYPE*)GC_MALLOC(size * sizeof(TYPE));
+            instance.arraySize = size;
             return instance;
         }
         
@@ -80,30 +84,37 @@ namespace Lucene
         
         void resize(int32_t size)
         {
-            if (size == 0)
+            /*if (size == 0)
                 container.reset();
             else if (!container)
                 container = Lucene::newInstance<array_type>(size);
             else
                 container->resize(size);
-            array = container.get();
+            array = container.get();*/
+            array = (TYPE*)GC_REALLOC(array, size * sizeof(TYPE));
+            arraySize = size;
         }
                 
         TYPE* get() const
         {
-            return array->data;
+            //return array->data;
+            return array;
         }
         
         int32_t size() const
         {
-            return array->size;
+            //return array->size;
+            return arraySize;
         }
         
         bool equals(const this_type& other) const
         {
-            if (array->size != other.array->size)
+            //if (array->size != other.array->size)
+            //    return false;
+            //return (std::memcmp(array->data, other.array->data, array->size) == 0);
+            if (arraySize != other.arraySize)
                 return false;
-            return (std::memcmp(array->data, other.array->data, array->size) == 0);
+            return (std::memcmp(array, other.array, arraySize) == 0);
         }
         
         int32_t hashCode() const
@@ -113,28 +124,34 @@ namespace Lucene
         
         TYPE& operator[] (int32_t i) const
         {
-            BOOST_ASSERT(i >= 0 && i < array->size);
-            return array->data[i];
+            //BOOST_ASSERT(i >= 0 && i < array->size);
+            //return array->data[i];
+            BOOST_ASSERT(i >= 0 && i < arraySize);
+            return array[i];
         }
         
         operator bool () const
         {
-            return container;
+            //return container;
+            return array != NULL;
         }
         
         bool operator! () const
         {
-            return !container;
+            //return !container;
+            return array == NULL;
         }
         
         bool operator== (const Array<TYPE>& other)
         {
-            return (container == other.container);
+            //return (container == other.container);
+            return array == other.array;
         }
         
         bool operator!= (const Array<TYPE>& other)
         {
-            return (container != other.container);
+            //return (container != other.container);
+            return array != other.array;
         }
     };
     

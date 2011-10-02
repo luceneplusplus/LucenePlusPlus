@@ -21,7 +21,8 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(MMapDirectoryTest, LuceneTestFixture)
 
-static RandomPtr rndToken = newLucene<Random>();
+// todo static RandomPtr rndToken = newLucene<Random>();
+static RandomPtr rndToken;
 
 String randomToken()
 {

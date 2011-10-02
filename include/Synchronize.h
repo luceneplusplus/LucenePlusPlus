@@ -13,7 +13,11 @@
 namespace Lucene
 {
     /// Utility class to support locking via a mutex.
+    #ifdef LPP_USE_GC
+    class LPPAPI Synchronize : public gc_cleanup // todo: can we tidy this up (super base class?)
+    #else
     class LPPAPI Synchronize
+    #endif
     {
     public:
         Synchronize();

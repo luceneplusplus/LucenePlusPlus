@@ -62,7 +62,6 @@ namespace Lucene
     const std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > EmptyString;
     
     typedef LucenePtr<boost::interprocess::file_lock> filelockPtr;
-    typedef LucenePtr<boost::thread> threadPtr;
             
     typedef LucenePtr<std::ofstream> ofstreamPtr;
     typedef LucenePtr<std::ifstream> ifstreamPtr;

@@ -13,7 +13,11 @@
 
 namespace Lucene
 {
+    #ifdef LPP_USE_GC
+    class LPPAPI VariantUtils : public gc_cleanup // todo: can we tidy this up (super base class?)
+    #else
     class LPPAPI VariantUtils
+    #endif
     {
     public:
         template <typename TYPE>

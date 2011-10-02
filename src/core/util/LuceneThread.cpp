@@ -23,6 +23,8 @@ namespace Lucene
     LuceneThread::LuceneThread()
     {
         running = false;
+        thread = 0;
+        threadPriority = NORM_PRIORITY;
     }
 
     LuceneThread::~LuceneThread()
@@ -31,76 +33,76 @@ namespace Lucene
 
     void LuceneThread::start()
     {
-        setRunning(false);
-        thread = newInstance<boost::thread>(LuceneThread::runThread, this);
-        setRunning(true);
+        #if defined(_WIN32) || defined(_WIN64)
+        DWORD threadId;
+        #if defined(LPP_USE_GC)
+        thread = GC_CreateThread(NULL, 0, LuceneThread::runThread, (void*)this, 0, &threadId);
+        #else
+        thread = CreateThread(NULL, 0, LuceneThread::runThread, (void*)this, 0, &threadId);
+        #endif
+        running = true;
+        #else
+        // todo
+        // todo: what to call if GC or not GC?
+        // GC_pthread_create
+        // pthread_create
+        #endif
+        setPriority(threadPriority);
     }
 
-    void LuceneThread::runThread(LuceneThread* thread)
+    #if defined(_WIN32) || defined(_WIN64)
+    DWORD __stdcall LuceneThread::runThread(void* threadPtr)
+    #else
+    void* LuceneThread::runThread(void* threadPtr)
+    #endif
     {
-        LuceneThreadPtr threadObject(thread->LuceneThis());
+        LuceneThread* thread = reinterpret_cast<LuceneThread*>(threadPtr);
         try
         {
-            threadObject->run();
+            thread->run();
         }
         catch (...)
         {
         }
-        threadObject->setRunning(false);
-        threadObject.reset();
+        thread->running = false;
         ReleaseThreadCache();
-    }
-
-    void LuceneThread::setRunning(bool running)
-    {
-        SyncLock syncLock(this);
-        this->running = running;
-    }
-
-    bool LuceneThread::isRunning()
-    {
-        SyncLock syncLock(this);
-        return running;
+        return 0;
     }
 
     bool LuceneThread::isAlive()
     {
-        return (thread && isRunning());
+        return (thread && running);
     }
 
     void LuceneThread::setPriority(int32_t priority)
     {
+        threadPriority = priority;
         #if defined(_WIN32) || defined(_WIN64)
         if (thread)
-            SetThreadPriority(thread->native_handle(), priority);
+            SetThreadPriority(thread, threadPriority);
         #endif
     }
 
     int32_t LuceneThread::getPriority()
     {
-        #if defined(_WIN32) || defined(_WIN64)
-        return thread ? GetThreadPriority(thread->native_handle()) : NORM_PRIORITY;
-        #else
-        return NORM_PRIORITY;
-        #endif
-    }
-
-    void LuceneThread::yield()
-    {
-        if (thread)
-            thread->yield();
+        return threadPriority;
     }
 
     bool LuceneThread::join(int32_t timeout)
     {
-        while (isAlive() && !thread->timed_join(boost::posix_time::milliseconds(timeout)))
-        {
-            if (timeout != 0)
-                return false;
-            if (thread->timed_join(boost::posix_time::milliseconds(10)))
-                return true;
-        }
+        #if defined(_WIN32) || defined(_WIN64)
+        if (!thread)
+            return true;
+        if (WaitForSingleObject(thread, timeout == 0 ? INFINITE : timeout) != WAIT_OBJECT_0)
+            return false;
+        CloseHandle(thread);
+        thread = 0;
         return true;
+        #else
+        // todo
+        // todo: see http://www.linuxquestions.org/questions/programming-9/pthread_join-with-timeout-365304/
+        // todo: see http://pubs.opengroup.org/onlinepubs/000095399/xrat/xsh_chap02.html#tag_03_02_08_21
+        #endif
     }
 
     int64_t LuceneThread::currentId()

@@ -11,7 +11,11 @@
 
 namespace Lucene
 {
+    #ifdef LPP_USE_GC
+    class LPPAPI UnicodeUtil : public gc_cleanup // todo: can we tidy this up (super base class?)
+    #else
     class LPPAPI UnicodeUtil
+    #endif
     {
     public:
         virtual ~UnicodeUtil();

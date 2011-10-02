@@ -12,6 +12,8 @@
 #include <boost/thread/thread.hpp>
 #include "LuceneObject.h"
 
+// todo: this needs looking at next!!! (should not use boost::thread_group)
+
 namespace Lucene
 {
     typedef LucenePtr<boost::asio::io_service::work> workPtr;

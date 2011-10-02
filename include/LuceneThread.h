@@ -12,14 +12,6 @@
 namespace Lucene
 {
     /// Lucene thread container.
-    ///
-    /// It seems there are major issues with using boost::thread::id under Windows.
-    /// After many hours of debugging and trying various strategies, I was unable to fix an
-    /// occasional crash whereby boost::thread::thread_data was being deleted prematurely.
-    ///
-    /// This problem is most visible when running the AtomicUpdateTest test suite.
-    ///
-    /// Therefore, I now uniquely identify threads by their native id.
     class LPPAPI LuceneThread : public LuceneObject
     {
     public:
@@ -34,11 +26,17 @@ namespace Lucene
         static const int32_t MIN_PRIORITY;
     
     protected:
-        threadPtr thread;
+        #ifdef _WIN32
+        HANDLE thread;
+        #else
+        pthread_t thread;
+        #endif
         
         /// Flag to indicate running thread.
         /// @see #isAlive
         bool running;
+        
+        int32_t threadPriority;
                 
     public:
         /// start thread see {@link #run}.
@@ -56,9 +54,6 @@ namespace Lucene
         /// wait for thread to finish using an optional timeout.
         virtual bool join(int32_t timeout = 0);
         
-        /// causes the currently executing thread object to temporarily pause and allow other threads to execute.
-        virtual void yield();
-                
         /// override to provide the body of the thread.
         virtual void run() = 0;
         
@@ -72,14 +67,12 @@ namespace Lucene
         static void threadYield();
     
     protected:
-        /// set thread running state.
-        void setRunning(bool running);
-        
-        /// return thread running state.
-        bool isRunning();
-        
         /// function that controls the lifetime of the running thread.
-        static void runThread(LuceneThread* thread);
+        #ifdef _WIN32
+        static DWORD __stdcall runThread(void* thread);
+        #else
+        static void* runThread(void* thread);
+        #endif
     };
 }
 

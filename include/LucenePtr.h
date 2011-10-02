@@ -13,7 +13,9 @@
 #include <boost/weak_ptr.hpp>
 
 #ifdef LPP_USE_GC
-#define GC_NOT_DLL
+#define GC_NOT_DLL // todo: this should probably go inside Config.h
+#define GC_WIN32_THREADS
+#define GC_DEBUG // todo: need this in release builds?
 #include "gc_cpp.h"
 
 #include <boost/config.hpp>

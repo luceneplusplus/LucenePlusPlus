@@ -9,7 +9,8 @@
 
 namespace Lucene
 {
-    MapStringInt TestPoint::testMethods = MapStringInt::newInstance();
+    // todo MapStringInt TestPoint::testMethods = MapStringInt::newInstance();
+    MapStringInt TestPoint::testMethods;
     bool TestPoint::enable = false;
     
     TestPoint::~TestPoint()

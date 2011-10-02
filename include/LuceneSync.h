@@ -12,7 +12,11 @@
 namespace Lucene
 {
     /// Base class for all Lucene synchronised classes
+    #ifdef LPP_USE_GC
+    class LPPAPI LuceneSync : public gc_cleanup
+    #else
     class LPPAPI LuceneSync
+    #endif
     {
     public:
         virtual ~LuceneSync();

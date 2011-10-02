@@ -12,7 +12,11 @@
 namespace Lucene
 {
     /// Used for unit testing as a substitute for stack trace
-    class TestPoint
+    #ifdef LPP_USE_GC
+    class LPPAPI TestPoint : public gc_cleanup // todo: can we tidy this up (super base class?)
+    #else
+    class LPPAPI TestPoint
+    #endif
     {
     public:
         virtual ~TestPoint();

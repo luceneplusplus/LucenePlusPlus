@@ -22,6 +22,16 @@ namespace Lucene
 {
     void* AllocMemory(size_t size)
     {
+        // todo...
+        /*
+        #if defined(LPP_USE_NEDMALLOC)
+        return nedalloc::nedmalloc(size);
+        #elif (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG) 
+        return _malloc_dbg(size, _NORMAL_BLOCK, __FILE__, __LINE__);
+        #else
+        return malloc(size);
+        #endif
+        */
         #if defined(LPP_USE_GC)
         return GC_MALLOC(size);
         #elif defined(LPP_USE_NEDMALLOC)
@@ -43,7 +53,7 @@ namespace Lucene
             return NULL;
         }
         #if defined(LPP_USE_GC)
-        return GC_MALLOC(size); // todo: can we port GC_REALLOC?
+        return GC_REALLOC(memory, size);
         #elif defined(LPP_USE_NEDMALLOC)
         return nedalloc::nedrealloc(memory, size);
         #elif defined(_WIN32) && !defined(NDEBUG)
@@ -51,6 +61,16 @@ namespace Lucene
         #else
         return realloc(memory, size);
         #endif
+
+        /*
+        todo
+        #if defined(LPP_USE_NEDMALLOC)
+        return nedalloc::nedrealloc(memory, size);
+        #elif defined(_WIN32) && !defined(NDEBUG)
+        return _realloc_dbg(memory, size, _NORMAL_BLOCK, __FILE__, __LINE__);
+        #else
+        return realloc(memory, size);
+        #endif*/
     }
     
     void FreeMemory(void* memory)
@@ -58,8 +78,9 @@ namespace Lucene
         if (memory == NULL)
             return;
         #if defined(LPP_USE_GC)
-        return;
+            return;
         #elif defined(LPP_USE_NEDMALLOC)
+        // todo #if defined(LPP_USE_NEDMALLOC)
         nedalloc::nedfree(memory);
         #elif defined(_WIN32) && !defined(NDEBUG)
         _free_dbg(memory, _NORMAL_BLOCK);

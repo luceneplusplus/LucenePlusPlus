@@ -13,7 +13,11 @@
 namespace Lucene
 {
     /// Utility class to support signaling notifications.
+    #ifdef LPP_USE_GC
+    class LPPAPI LuceneSignal : public gc_cleanup // todo: can we tidy this up (super base class?)
+    #else
     class LPPAPI LuceneSignal
+    #endif
     {
     public:
         LuceneSignal(SynchronizePtr objectLock = SynchronizePtr());

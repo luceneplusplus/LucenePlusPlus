@@ -23,7 +23,8 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(CachingTokenFilterTest, BaseTokenStreamFixture)
 
-static Collection<String> tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
+// todo static Collection<String> tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
+static Collection<String> tokens;
 
 static void checkTokens(TokenStreamPtr stream)
 {

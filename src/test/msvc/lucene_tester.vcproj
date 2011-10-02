@@ -530,6 +530,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\util\ThreadTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\util\VersionTest.cpp"
 				>
 			</File>

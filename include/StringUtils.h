@@ -11,7 +11,11 @@
 
 namespace Lucene
 {
+    #ifdef LPP_USE_GC
+    class LPPAPI StringUtils : public gc_cleanup // todo: can we tidy this up (super base class?)
+    #else
     class LPPAPI StringUtils
+    #endif
     {
     public:
         /// Maximum length of UTF encoding.

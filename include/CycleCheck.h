@@ -12,7 +12,7 @@
 namespace Lucene
 {
     /// Debug utility to track shared_ptr utilization.
-    class LPPAPI CycleCheck
+    class LPPAPI CycleCheck // todo: gc_cleanup required?
     {
     public:
         virtual ~CycleCheck();
