@@ -9,14 +9,11 @@
 
 #include <boost/asio.hpp>
 #include <boost/any.hpp>
-#include <boost/thread/thread.hpp>
-#include "LuceneObject.h"
-
-// todo: this needs looking at next!!! (should not use boost::thread_group)
+#include "LuceneThread.h"
 
 namespace Lucene
 {
-    typedef LucenePtr<boost::asio::io_service::work> workPtr;
+    typedef boost::shared_ptr<boost::asio::io_service::work> workPtr;
     
     /// A Future represents the result of an asynchronous computation. Methods are provided to check if the computation 
     /// is complete, to wait for its completion, and to retrieve the result of the computation. The result can only be 
@@ -46,6 +43,21 @@ namespace Lucene
         }
     };
     
+    class ThreadFunction : public LuceneThread
+    {
+    public:
+        ThreadFunction(const boost::asio::io_service& io_service);
+        virtual ~ThreadFunction();
+        
+        LUCENE_CLASS(ThreadFunction);
+    
+    protected:
+        const boost::asio::io_service& service;
+        
+    public:
+        virtual void run();
+    };
+    
     /// Utility class to handle a pool of threads.
     class ThreadPool : public LuceneObject
     {
@@ -58,7 +70,7 @@ namespace Lucene
     protected:
         boost::asio::io_service io_service;
         workPtr work;
-        boost::thread_group threadGroup;
+        Collection<LuceneThreadPtr> threads;
         
         static const int32_t THREADPOOL_SIZE;
     
@@ -73,7 +85,7 @@ namespace Lucene
             io_service.post(boost::bind(&ThreadPool::execute<FUNC>, this, func, future));
             return future;
         }
-    
+        
     protected:
         // this will be executed when one of the threads is available
         template <typename FUNC>

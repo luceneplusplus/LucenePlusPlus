@@ -51,7 +51,7 @@ public:
 
 BOOST_FIXTURE_TEST_SUITE(IndexWriterExceptionsTest, IndexWriterExceptionsTestFixture)
 
-// todo static CloseableThreadLocal<LuceneThread> doFail;
+static CloseableThreadLocal<LuceneThread> doFail;
 
 DECLARE_LUCENE_PTR(IndexerThread)
 
@@ -98,7 +98,7 @@ public:
         
         while ((int64_t)MiscUtils::currentTimeMillis() < stopTime)
         {
-            // todo doFail.set(LuceneThis());
+            doFail.set(LuceneThis());
             String id = StringUtils::toString(r->nextInt(50));
             idField->setValue(id);
             TermPtr idTerm = newLucene<Term>(L"id", id);
@@ -124,7 +124,7 @@ public:
                 break;
             }
             
-            // todo doFail.set(LuceneThreadPtr());
+            doFail.set(LuceneThreadPtr());
             
             // After a possible exception (above) I should be able to add a new document 
             // without hitting an exception
@@ -159,8 +159,8 @@ protected:
 public:
     virtual bool testPoint(const String& name)
     {
-        // todo if (doFail.get() && name != L"startDoFlush" && r->nextInt(20) == 17)
-            // todo boost::throw_exception(RuntimeException(L"intentionally failing at " + name));
+        if (doFail.get() && name != L"startDoFlush" && r->nextInt(20) == 17)
+            boost::throw_exception(RuntimeException(L"intentionally failing at " + name));
         return true;
     }
 };

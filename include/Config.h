@@ -80,6 +80,14 @@
 // Define to use garbage collection for object allocation instead of boost::shared_ptr
 #define LPP_USE_GC
 
+#ifdef LPP_USE_GC
+#define GC_NOT_DLL
+#define GC_WIN32_THREADS
+#ifdef _DEBUG
+#define GC_DEBUG
+#endif
+#endif
+
 // Define to use nedmalloc memory allocator
 // #define LPP_USE_NEDMALLOC
 

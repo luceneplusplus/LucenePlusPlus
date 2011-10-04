@@ -116,6 +116,8 @@ namespace Lucene
 
     void LuceneThread::threadSleep(int32_t time)
     {
+        // todo: it might be nice if we could eventually remove all references
+        // to boost::thread - one more dependency we can get rid of!
         boost::this_thread::sleep(boost::posix_time::milliseconds(time));
     }
 

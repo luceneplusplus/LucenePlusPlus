@@ -17,8 +17,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(OpenBitSetTest, LuceneTestFixture)
 
-// todo static RandomPtr randBitSet = newLucene<Random>(123);
-static RandomPtr randBitSet;
+static RandomPtr randBitSet = newLucene<Random>(123);
 
 static void doGet(BitSetPtr a, OpenBitSetPtr b)
 {

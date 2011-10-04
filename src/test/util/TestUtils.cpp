@@ -17,8 +17,7 @@
 
 namespace Lucene
 {
-    // todo static RandomPtr randomTest = newLucene<Random>();
-    static RandomPtr randomTest;
+    static RandomPtr randomTest = newLucene<Random>();
     static String testDir;
     
     void setTestDir(const String& dir)

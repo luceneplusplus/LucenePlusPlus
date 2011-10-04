@@ -33,6 +33,9 @@
     LucenePtr<Name> LuceneThis() { return LuceneStaticCast<Name>(LuceneObject::shared_from_this()); }
 #endif
 
+// todo: to tidy up the code we could define LuceneObject as: class LPPAPI LuceneObject : public LuceneSync, gc_cleanup
+// and remove this from LuceneLync (probably not too bothered about calling the destructor for LuceneSync)
+
 namespace Lucene
 {
     /// Base class for all Lucene classes

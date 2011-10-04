@@ -28,229 +28,17 @@
 #define BOOST_TEST_NO_MAIN
 
 #include <boost/test/included/unit_test.hpp>
+#include <boost/test/debug.hpp>
 #include <boost/algorithm/string.hpp>
-
-void freelast();
-
-namespace Lucene
-{
-    template <typename TYPE> 
-    class ArrayTTData
-    {
-    public:
-        ArrayTTData(int32_t size)
-        {
-            data = NULL;
-            resize(size);
-        }
-        
-        ~ArrayTTData()
-        {
-            resize(0);
-        }
-    
-    public:
-        TYPE* data;
-        int32_t size;
-    
-    public:
-        void resize(int32_t size)
-        {
-            if (size == 0)
-            {
-                FreeMemory(data);
-                data = NULL;
-            }
-            else if (data == NULL)
-                data = (TYPE*)AllocMemory(size * sizeof(TYPE));
-            else
-                data = (TYPE*)ReallocMemory(data, size * sizeof(TYPE));
-            this->size = size;
-        }
-    };
-    
-    /// Utility template class to handle sharable arrays of simple data types
-    template <typename TYPE>
-    class ArrayTT : public LuceneSync
-    {
-    public:
-        typedef ArrayTT<TYPE> this_type;
-        typedef ArrayTTData<TYPE> array_type;
-
-        ArrayTT()
-        {
-            array = NULL;
-        }
-        
-        ~ArrayTT()
-        {
-            array = NULL;
-        }
-        
-    protected:
-        LucenePtr<array_type> container;
-        array_type* array;
-        
-    public:
-        static this_type newInstance(int32_t size)
-        {
-            this_type instance;
-            instance.container = Lucene::newInstance<array_type>(size);
-            instance.array = instance.container.get();
-            return instance;
-        }
-        
-        void reset()
-        {
-            resize(0);
-        }
-        
-        void resize(int32_t size)
-        {
-            if (size == 0)
-                container.reset();
-            else if (!container)
-                container = Lucene::newInstance<array_type>(size);
-            else
-                container->resize(size);
-            array = container.get();
-        }
-                
-        TYPE* get() const
-        {
-            return array->data;
-        }
-        
-        int32_t size() const
-        {
-            return array->size;
-        }
-        
-        bool equals(const this_type& other) const
-        {
-            if (array->size != other.array->size)
-                return false;
-            return (std::memcmp(array->data, other.array->data, array->size) == 0);
-        }
-        
-        int32_t hashCode() const
-        {
-            return (int32_t)(int64_t)array;
-        }
-        
-        TYPE& operator[] (int32_t i) const
-        {
-            BOOST_ASSERT(i >= 0 && i < array->size);
-            return array->data[i];
-        }
-        
-        operator bool () const
-        {
-            return container;
-        }
-        
-        bool operator! () const
-        {
-            return !container;
-        }
-        
-        bool operator== (const ArrayTT<TYPE>& other)
-        {
-            return (container == other.container);
-        }
-        
-        bool operator!= (const ArrayTT<TYPE>& other)
-        {
-            return (container != other.container);
-        }
-    };
-    
-    template <class TYPE>
-    inline std::size_t hash_value(const ArrayTT<TYPE>& value)
-    {
-        return (std::size_t)value.hashCode();
-    }
-
-    template <class TYPE>
-    inline bool operator== (const ArrayTT<TYPE>& value1, const ArrayTT<TYPE>& value2)
-    {
-        return (value1.hashCode() == value2.hashCode());
-    }
-    
-    typedef ArrayTT<uint8_t> ByteArrayTT;
-}
-
 
 using namespace Lucene;
 
-static int count =0;
-
-class Tester : public LuceneObject
-{
-public:
-    Tester(int hh)
-    {
-        gibble = "hello";
-        pp = new uint8_t[4096];
-        count++;
-    }
-    
-    virtual ~Tester()
-    {
-        gibble = "boo";
-        delete [] pp;
-        count--;
-    }
-    
-    LUCENE_CLASS(Tester);
-
-    uint8_t* pp;
-    std::string gibble;
-};
-
-DECLARE_LUCENE_PTR(Tester)
-
-template < class A >
-class TesterTT : public LuceneSync
-{
-public:
-    TesterTT(A hh)
-    {
-        gibble = "hello";
-        pp = new uint8_t[4096];
-        count++;
-    }
-    
-    ~TesterTT()
-    {
-        gibble = "boo";
-        delete [] pp;
-        count--;
-    }
-    
-    uint8_t* pp;
-    std::string gibble;
-};
-
 int main(int argc, char* argv[])
 {
-    //GC_set_dont_precollect(1);
-    GC_INIT(); // todo: required?
+    #ifdef LPP_USE_GC
+    // GC_INIT(); // todo: required?
+    #endif
     
-    for (int i = 0; i < 100; ++i)
-    {
-        //TesterPtr tt = newLucene<Tester>(123);
-        //Tester* tt = new(GC) Tester(1);
-        
-        //TesterTT<int>* tt = new(GC) TesterTT<int>(1);
-        
-        ByteArrayTT utf8(ByteArrayTT::newInstance(4096));
-        
-        int hh =3;
-    }
-    int hhw =3;
-    
- 
     String testDir;
     uint64_t startTime = MiscUtils::currentTimeMillis();
 
@@ -293,18 +81,11 @@ int main(int argc, char* argv[])
     
     std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
     
-    // GC_gcollect(); // todo
-    /* todo while (GC_collect_a_little()) { }
-      for (int i = 0; i < 16; i++) {
-        GC_gcollect();
-        GC_invoke_finalizers();
-      }*/
-    
+    #ifdef LPP_USE_GC
     GC_gcollect();
     GC_invoke_finalizers();
-        
-    //return testMain; todo
-    freelast();
+    boost::debug::detect_memory_leaks(false);
+    #endif
     
     return 0;
 }

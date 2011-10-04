@@ -46,8 +46,8 @@ namespace Lucene
         L"<RANGEEX_QUOTED>",
         L"<RANGEEX_GOOP>"
     };
-    // todo Collection<String> QueryParserConstants::tokenImage = Collection<String>::newInstance(_tokenImage, _tokenImage + SIZEOF_ARRAY(_tokenImage));
-    Collection<String> QueryParserConstants::tokenImage;
+    
+    Collection<String> QueryParserConstants::tokenImage = Collection<String>::newInstance(_tokenImage, _tokenImage + SIZEOF_ARRAY(_tokenImage));
     
     QueryParserConstants::QueryParserConstants()
     {
