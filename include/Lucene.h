@@ -55,12 +55,12 @@ namespace boost
 
 namespace Lucene
 {
-    typedef std::basic_string< char, std::char_traits<char>, Allocator<char> > SingleString;
-    typedef std::basic_ostringstream< char, std::char_traits<char>, Allocator<char> > SingleStringStream;
-    typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > String;
-    typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > StringStream;
-    
-    const std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > EmptyString;
+	typedef std::string SingleString;
+	typedef std::ostringstream SingleStringStream;
+	typedef std::wstring String;
+	typedef std::wostringstream StringStream;
+
+	const String EmptyString;
     
     typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
     typedef boost::shared_ptr<boost::thread> threadPtr;
