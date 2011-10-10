@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
 #include "SimpleFSDirectory.h"
 #include "_SimpleFSDirectory.h"
 #include "IndexOutput.h"
@@ -43,10 +42,9 @@ namespace Lucene
     const int32_t InputFile::FILE_EOF = FileReader::FILE_EOF;
     const int32_t InputFile::FILE_ERROR = FileReader::FILE_ERROR;
     
-    InputFile::InputFile(const String& path)
+    InputFile::InputFile(const String& path) : file(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::in)
     {
-        file = newInstance<std::ifstream>(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::in);
-        if (!file->is_open())
+        if (!file.is_open())
             boost::throw_exception(FileNotFoundException(path));
         position = 0;
         length = FileUtils::fileLength(path);
@@ -59,8 +57,8 @@ namespace Lucene
     void InputFile::setPosition(int64_t position)
     {
         this->position = position;
-        file->seekg((std::streamoff)position);
-        if (!file->good())
+        file.seekg((std::streamoff)position);
+        if (!file.good())
             boost::throw_exception(IOException());
     }
     
@@ -78,10 +76,10 @@ namespace Lucene
     {
         try
         {
-            if (file->eof())
+            if (file.eof())
                 return FILE_EOF;
-            file->read((char*)b + offset, length);
-            int32_t readCount = file->gcount();
+            file.read((char*)b + offset, length);
+            int32_t readCount = file.gcount();
             position += readCount;
             return readCount;
         }
@@ -93,13 +91,13 @@ namespace Lucene
     
     void InputFile::close()
     {
-        if (file->is_open())
-            file->close();
+        if (file.is_open())
+            file.close();
     }
     
     bool InputFile::isValid()
     {
-        return (file && file->is_open() && file->good());
+        return (file && file.is_open() && file.good());
     }
     
     SimpleFSIndexInput::SimpleFSIndexInput()
@@ -172,10 +170,9 @@ namespace Lucene
         return cloneIndexInput;
     }
     
-    OutputFile::OutputFile(const String& path)
+    OutputFile::OutputFile(const String& path) : file(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::out)
     {
         this->path = path;
-        file = newInstance<std::ofstream>(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::out);
     }
     
     OutputFile::~OutputFile()
@@ -184,12 +181,12 @@ namespace Lucene
     
     bool OutputFile::write(const uint8_t* b, int32_t offset, int32_t length)
     {
-        if (!file->is_open())
+        if (!file.is_open())
             return false;
         try
         {
-            file->write((char*)b + offset, length);
-            return file->good();
+            file.write((char*)b + offset, length);
+            return file.good();
         }
         catch (...)
         {
@@ -199,13 +196,13 @@ namespace Lucene
     
     void OutputFile::close()
     {
-        file.reset();
+        file.close();
     }
     
     void OutputFile::setPosition(int64_t position)
     {
-        file->seekp((std::streamoff)position);
-        if (!file->good())
+        file.seekp((std::streamoff)position);
+        if (!file.good())
             boost::throw_exception(IOException());
     }
     
@@ -221,13 +218,13 @@ namespace Lucene
     
     void OutputFile::flush()
     {
-        if (file->is_open())
-            file->flush();
+        if (file.is_open())
+            file.flush();
     }
     
     bool OutputFile::isValid()
     {
-        return (file && file->is_open() && file->good());
+        return (file && file.is_open() && file.good());
     }
     
     SimpleFSIndexOutput::SimpleFSIndexOutput(const String& path)
@@ -251,6 +248,7 @@ namespace Lucene
         if (isOpen)
         {
             BufferedIndexOutput::close();
+            file->close();
             file.reset();
             isOpen = false;
         }

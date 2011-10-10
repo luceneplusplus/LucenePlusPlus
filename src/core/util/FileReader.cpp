@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
 #include "FileReader.h"
 #include "MiscUtils.h"
 #include "FileUtils.h"
@@ -16,10 +15,9 @@ namespace Lucene
     const int32_t FileReader::FILE_EOF = Reader::READER_EOF;
     const int32_t FileReader::FILE_ERROR = -1;
     
-    FileReader::FileReader(const String& fileName)
+    FileReader::FileReader(const String& fileName) : file(StringUtils::toUTF8(fileName).c_str(), std::ios::binary | std::ios::in)
     {
-        this->file = newInstance<std::ifstream>(StringUtils::toUTF8(fileName).c_str(), std::ios::binary | std::ios::in);
-        if (!file->is_open())
+        if (!file.is_open())
             boost::throw_exception(FileNotFoundException(fileName));
         _length = FileUtils::fileLength(fileName);
     }
@@ -38,14 +36,14 @@ namespace Lucene
     {
         try
         {
-            if (file->eof())
+            if (file.eof())
                 return FILE_EOF;
             if (!fileBuffer)
                 fileBuffer = ByteArray::newInstance(length);
             if (length > fileBuffer.size())
                 fileBuffer.resize(length);
-            file->read((char*)fileBuffer.get(), length);
-            int32_t readLength = file->gcount();
+            file.read((char*)fileBuffer.get(), length);
+            int32_t readLength = file.gcount();
             MiscUtils::arrayCopy(fileBuffer.get(), 0, buffer, offset, readLength);
             return readLength == 0 ? FILE_EOF : readLength;
         }
@@ -57,7 +55,7 @@ namespace Lucene
     
     void FileReader::close()
     {
-        file->close();
+        file.close();
     }
     
     bool FileReader::markSupported()
@@ -67,8 +65,8 @@ namespace Lucene
     
     void FileReader::reset()
     {
-        file->clear();
-        file->seekg((std::streamoff)0);
+        file.clear();
+        file.seekg((std::streamoff)0);
     }
     
     int64_t FileReader::length()

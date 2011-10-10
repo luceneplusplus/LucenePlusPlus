@@ -57,7 +57,7 @@ namespace Lucene
     {
         if (memory == NULL)
             return;
-        #ifdef(LPP_USE_GC)
+        #if defined(LPP_USE_GC)
             return;
         #elif defined(LPP_USE_NEDMALLOC)
         nedalloc::nedfree(memory);

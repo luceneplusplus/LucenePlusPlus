@@ -83,7 +83,7 @@
 #ifdef LPP_USE_GC
 #define GC_NOT_DLL
 #define GC_WIN32_THREADS
-#ifdef _DEBUG
+#ifndef NDEBUG
 #define GC_DEBUG
 #endif
 #endif

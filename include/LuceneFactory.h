@@ -8,11 +8,8 @@
 #define LUCENEFACTORY_H
 
 #include "LucenePtr.h"
-
-#ifndef LPP_USE_GC
 #include <boost/make_shared.hpp>
 #include <boost/version.hpp>
-#endif
 
 namespace Lucene
 {

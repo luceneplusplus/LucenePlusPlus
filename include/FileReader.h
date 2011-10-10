@@ -7,6 +7,7 @@
 #ifndef FILEREADER_H
 #define FILEREADER_H
 
+#include <fstream>
 #include "Reader.h"
 
 namespace Lucene
@@ -22,7 +23,7 @@ namespace Lucene
         LUCENE_CLASS(FileReader);
     
     protected:
-        ifstreamPtr file;
+        std::ifstream file;
         int64_t _length;
         ByteArray fileBuffer;
     

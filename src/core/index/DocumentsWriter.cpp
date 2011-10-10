@@ -505,6 +505,12 @@ namespace Lucene
         SyncLock syncLock(this);
         BOOST_ASSERT(allThreadsIdle());
         
+        // todo:
+        if (numDocsInRAM == 0)
+        {
+            int hh =3;
+        }
+        
         BOOST_ASSERT(numDocsInRAM > 0);
         
         BOOST_ASSERT(nextDocID == numDocsInRAM);

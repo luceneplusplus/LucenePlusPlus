@@ -22,6 +22,8 @@ namespace Lucene
     protected:
         String lockDir;
         String path;
+        
+        typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
         filelockPtr lock;
         
         static SynchronizePtr LOCK_HELD_LOCK();

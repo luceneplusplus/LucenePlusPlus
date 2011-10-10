@@ -7,6 +7,7 @@
 #ifndef _SIMPLEFSDIRECTORY_H
 #define _SIMPLEFSDIRECTORY_H
 
+#include <fstream>
 #include "BufferedIndexInput.h"
 #include "BufferedIndexOutput.h"
 
@@ -25,7 +26,7 @@ namespace Lucene
         static const int32_t FILE_ERROR;
     
     protected:
-        ifstreamPtr file;
+        std::ifstream file;
         int64_t position;
         int64_t length;
     
@@ -77,7 +78,7 @@ namespace Lucene
         LUCENE_CLASS(OutputFile);
                 
     protected:
-        ofstreamPtr file;
+        std::ofstream file;
         String path;
     
     public:
