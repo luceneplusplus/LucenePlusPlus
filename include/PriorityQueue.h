@@ -20,7 +20,7 @@ namespace Lucene
     class PriorityQueue : public LuceneObject
     {
     public:
-        typedef typename std::vector< TYPE, Allocator<TYPE> > heap_type;
+        typedef typename std::vector< TYPE, std::allocator<TYPE> > heap_type; // todo?
         
         PriorityQueue(int32_t maxSize)
         {

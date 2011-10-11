@@ -18,7 +18,7 @@ namespace Lucene
     {
     public:
         typedef HashSet<TYPE, HASH, EQUAL> this_type;
-        typedef boost::unordered_set< TYPE, HASH, EQUAL, Allocator<TYPE> > set_type;
+        typedef boost::unordered_set< TYPE, HASH, EQUAL, std::allocator<TYPE> > set_type; // todo?
         typedef typename set_type::iterator iterator;
         typedef typename set_type::const_iterator const_iterator;
         typedef TYPE value_type;

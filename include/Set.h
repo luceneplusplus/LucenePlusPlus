@@ -18,7 +18,7 @@ namespace Lucene
     {
     public:
         typedef Set<TYPE, LESS> this_type;
-        typedef std::set< TYPE, LESS, Allocator<TYPE> > set_type;
+        typedef std::set< TYPE, LESS, std::allocator<TYPE> > set_type; // todo?
         typedef typename set_type::iterator iterator;
         typedef typename set_type::const_iterator const_iterator;
         typedef TYPE value_type;

@@ -19,7 +19,7 @@ namespace Lucene
     public:
         typedef Collection<TYPE> this_type;
         typedef LucenePtr<this_type> shared_ptr;
-        typedef std::vector< TYPE, Allocator<TYPE> > collection_type;
+        typedef std::vector< TYPE, std::allocator<TYPE> > collection_type; // todo?
         typedef typename collection_type::iterator iterator;
         typedef typename collection_type::const_iterator const_iterator;
         typedef TYPE value_type;

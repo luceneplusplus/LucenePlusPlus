@@ -269,4 +269,10 @@ BOOST_AUTO_TEST_CASE(testHugeFile)
     }
 }
 
+BOOST_AUTO_TEST_CASE(testFree)
+{
+    // todo:
+    
+}
+
 BOOST_AUTO_TEST_SUITE_END()

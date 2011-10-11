@@ -19,7 +19,7 @@ namespace Lucene
     public:
         typedef HashMap<KEY, VALUE, HASH, EQUAL> this_type;
         typedef std::pair<KEY, VALUE> key_value;
-        typedef boost::unordered_map< KEY, VALUE, HASH, EQUAL, Allocator<key_value> > map_type;
+        typedef boost::unordered_map< KEY, VALUE, HASH, EQUAL, std::allocator<key_value> > map_type; // todo?
         typedef typename map_type::iterator iterator;
         typedef typename map_type::const_iterator const_iterator;
         typedef KEY key_type;
@@ -154,7 +154,7 @@ namespace Lucene
     public:
         typedef WeakHashMap<KEY, VALUE, HASH, EQUAL> this_type;
         typedef std::pair<KEY, VALUE> key_value;
-        typedef typename boost::unordered_map< KEY, VALUE, HASH, EQUAL, Allocator<key_value> > map_type;
+        typedef typename boost::unordered_map< KEY, VALUE, HASH, EQUAL, std::allocator<key_value> > map_type; // todo?
         typedef typename map_type::iterator iterator;
         
         static this_type newInstance()

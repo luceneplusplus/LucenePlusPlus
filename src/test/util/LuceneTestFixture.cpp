@@ -26,5 +26,10 @@ namespace Lucene
             ConcurrentMergeScheduler::clearUnhandledExceptions();
             BOOST_FAIL("ConcurrentMergeScheduler hit unhandled exceptions");
         }
+        
+        #ifdef LPP_USE_GC
+        GC_gcollect();
+        GC_invoke_finalizers();
+        #endif
     }
 }

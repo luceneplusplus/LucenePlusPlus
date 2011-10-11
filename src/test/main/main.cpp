@@ -36,7 +36,7 @@ using namespace Lucene;
 int main(int argc, char* argv[])
 {
     #ifdef LPP_USE_GC
-    // GC_INIT(); // todo: required?
+    GC_INIT(); // todo: required?
     #endif
     
     String testDir;

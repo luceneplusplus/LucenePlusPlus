@@ -22,7 +22,7 @@ namespace Lucene
         typedef std::pair<KEY, VALUE> key_value;
         typedef std::list< key_value > key_list;
         typedef typename key_list::const_iterator const_iterator;
-        typedef boost::unordered_map< KEY, typename key_list::iterator, HASH, EQUAL, Allocator< std::pair<KEY, typename key_list::iterator> > > map_type;
+        typedef boost::unordered_map< KEY, typename key_list::iterator, HASH, EQUAL, std::allocator< std::pair<KEY, typename key_list::iterator> > > map_type; // todo?
         typedef typename map_type::const_iterator map_iterator;
         
         SimpleLRUCache(int32_t cacheSize)

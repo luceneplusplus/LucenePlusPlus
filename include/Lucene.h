@@ -54,12 +54,13 @@ namespace boost
 
 namespace Lucene
 {
-    typedef std::basic_string< char, std::char_traits<char>, Allocator<char> > SingleString;
-    typedef std::basic_ostringstream< char, std::char_traits<char>, Allocator<char> > SingleStringStream;
-    typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > String;
-    typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > StringStream;
+    // todo: changed the allocator...
+    typedef std::basic_string< char, std::char_traits<char>, std::allocator<char> > SingleString;
+    typedef std::basic_ostringstream< char, std::char_traits<char>, std::allocator<char> > SingleStringStream;
+    typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > String;
+    typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > StringStream;
     
-    const std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > EmptyString;
+    const std::basic_string< wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> > EmptyString;
     
     typedef LucenePtr<std::locale> localePtr;
 }
