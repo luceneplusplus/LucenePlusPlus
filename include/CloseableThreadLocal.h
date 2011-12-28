@@ -12,19 +12,22 @@
 namespace Lucene
 {
     /// General purpose thread-local map.
-    template <typename TYPE>
+
+    // todo: could this be replaced by boost::tss?
+
+    template <typename T>
     class CloseableThreadLocal : public LuceneObject
     {
     public:
-        typedef LucenePtr<TYPE> localDataPtr;
+        typedef LucenePtr<T> localDataPtr;
         typedef Map<int64_t, localDataPtr> MapLocalData;
-        
+
         CloseableThreadLocal()
         {
             localData = MapLocalData::newInstance();
         }
-    
-    public:        
+
+    public:
         localDataPtr get()
         {
             SyncLock syncLock(this);
@@ -36,22 +39,22 @@ namespace Lucene
                 localData.put(LuceneThread::currentId(), initial);
             return initial;
         }
-        
+
         void set(localDataPtr data)
         {
             SyncLock syncLock(this);
             localData.put(LuceneThread::currentId(), data);
         }
-        
+
         void close()
         {
             SyncLock syncLock(this);
             localData.remove(LuceneThread::currentId());
         }
-        
+
     protected:
         MapLocalData localData;
-        
+
         virtual localDataPtr initialValue()
         {
             return localDataPtr(); // override

@@ -11,9 +11,8 @@
 
 #define DECLARE_LUCENE_PTR(Type) \
     class Type; \
-    typedef LucenePtr<Type> Type##Ptr; \
-    typedef LuceneWeakPtr<Type> Type##WeakPtr;
-    
+    typedef gc_ptr<Type> Type##Ptr;
+
 namespace Lucene
 {
     // analysis
@@ -42,7 +41,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(PerFieldAnalyzerWrapper)
     DECLARE_LUCENE_PTR(PorterStemFilter)
     DECLARE_LUCENE_PTR(PorterStemmer)
-    DECLARE_LUCENE_PTR(PositionIncrementAttribute)    
+    DECLARE_LUCENE_PTR(PositionIncrementAttribute)
     DECLARE_LUCENE_PTR(SimpleAnalyzer)
     DECLARE_LUCENE_PTR(SinkFilter)
     DECLARE_LUCENE_PTR(SinkTokenStream)
@@ -65,7 +64,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(WhitespaceAnalyzer)
     DECLARE_LUCENE_PTR(WhitespaceTokenizer)
     DECLARE_LUCENE_PTR(WordlistLoader)
-    
+
     // document
     DECLARE_LUCENE_PTR(AbstractField)
     DECLARE_LUCENE_PTR(CompressionTools)
@@ -263,7 +262,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(TermVectorsWriter)
     DECLARE_LUCENE_PTR(TermVectorsPositionInfo)
     DECLARE_LUCENE_PTR(WaitQueue)
-    
+
     // query parser
     DECLARE_LUCENE_PTR(FastCharStream)
     DECLARE_LUCENE_PTR(MultiFieldQueryParser)
@@ -272,7 +271,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(QueryParserConstants)
     DECLARE_LUCENE_PTR(QueryParserToken)
     DECLARE_LUCENE_PTR(QueryParserTokenManager)
-            
+
     // search
     DECLARE_LUCENE_PTR(AveragePayloadFunction)
     DECLARE_LUCENE_PTR(BooleanClause)
@@ -286,7 +285,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(BucketTable)
     DECLARE_LUCENE_PTR(ByteCache)
     DECLARE_LUCENE_PTR(ByteFieldSource)
-    DECLARE_LUCENE_PTR(ByteParser)    
+    DECLARE_LUCENE_PTR(ByteParser)
     DECLARE_LUCENE_PTR(Cache)
     DECLARE_LUCENE_PTR(CachedDfSource)
     DECLARE_LUCENE_PTR(CachingSpanFilter)
@@ -480,7 +479,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(Weight)
     DECLARE_LUCENE_PTR(WildcardQuery)
     DECLARE_LUCENE_PTR(WildcardTermEnum)
-        
+
     // store
     DECLARE_LUCENE_PTR(BufferedIndexInput)
     DECLARE_LUCENE_PTR(BufferedIndexOutput)
@@ -513,7 +512,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(SimpleFSLockFactory)
     DECLARE_LUCENE_PTR(SingleInstanceLock)
     DECLARE_LUCENE_PTR(SingleInstanceLockFactory)
-    
+
     // util
     DECLARE_LUCENE_PTR(Attribute)
     DECLARE_LUCENE_PTR(AttributeFactory)

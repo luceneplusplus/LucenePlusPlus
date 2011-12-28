@@ -12,302 +12,243 @@
 
 namespace Lucene
 {
-    /// Utility template class to handle collections that can be safely copied and shared
-    template <class TYPE>
-    class Collection : public LuceneSync
+    template <class T>
+    class Collection : public vector_container<T>, public LuceneSync
     {
     public:
-        typedef Collection<TYPE> this_type;
-        typedef LucenePtr<this_type> shared_ptr;
-        typedef std::vector< TYPE, std::allocator<TYPE> > collection_type; // todo?
-        typedef typename collection_type::iterator iterator;
-        typedef typename collection_type::const_iterator const_iterator;
-        typedef TYPE value_type;
-    
-        virtual ~Collection()
+        typedef typename T::value_type value_type;
+        typedef typename vector_container::iterator iterator;
+        typedef typename vector_container::const_iterator const_iterator;
+
+        Collection(gc_container<T, value_type>* p = 0) : vector_container<T>(p)
         {
         }
-    
-    protected:
-        LucenePtr<collection_type> container;
-        
-    public:
-        static this_type newInstance(int32_t size = 0)
+
+        Collection(const Collection& rhs) : vector_container<T>(rhs)
         {
-            this_type instance;
-            instance.container = Lucene::newInstance<collection_type>(size);
-            return instance;
         }
-        
+
+        void add(const value_type& x)
+        {
+            this->push_back(type);
+        }
+
+        void add(int32_t pos, const value_type& x)
+        {
+            this->insert(container->begin() + pos, x);
+        }
+
         template <class ITER>
-        static this_type newInstance(ITER first, ITER last)
+        void add(ITER first, ITER last)
         {
-            this_type instance;
-            instance.container = Lucene::newInstance<collection_type>(first, last);
-            return instance;
+            this->insert(this->end(), first, last);
         }
-        
-        void reset()
+
+        iterator remove(iterator pos)
         {
-            resize(0);
+            return this->erase(pos);
         }
-        
-        void resize(int32_t size)
+
+        iterator remove(iterator first, iterator last)
         {
-            if (size == 0)
-                container.reset();
-            else
-                container->resize(size);
+            return this->erase(first, last);
         }
-        
-        int32_t size() const
+
+        void remove(const value_type& x)
         {
-            return (int32_t)container->size();
+            this->erase(std::remove(this->begin(), this->end(), x), this->end());
         }
-        
-        bool empty() const
-        {
-            return container->empty();
-        }
-        
-        void clear()
-        {
-            container->clear();
-        }
-        
-        iterator begin()
-        {
-            return container->begin();
-        }
-        
-        iterator end()
-        {
-            return container->end();
-        }
-        
-        const_iterator begin() const
-        {
-            return container->begin();
-        }
-        
-        const_iterator end() const
-        {
-            return container->end();
-        }
-        
-        void add(const TYPE& type)
-        {
-            container->push_back(type);
-        }
-        
-        void add(int32_t pos, const TYPE& type)
-        {
-            container->insert(container->begin() + pos, type);
-        }
-        
-        template <class ITER>
-        void addAll(ITER first, ITER last)
-        {
-            container->insert(container->end(), first, last);
-        }
-        
-        template <class ITER>
-        void insert(ITER pos, const TYPE& type)
-        {
-            container->insert(pos, type);
-        }
-        
-        template <class ITER>
-        ITER remove(ITER pos)
-        {
-            return container->erase(pos);
-        }
-        
-        template <class ITER>
-        ITER remove(ITER first, ITER last)
-        {
-            return container->erase(first, last);
-        }
-        
-        void remove(const TYPE& type)
-        {
-            container->erase(std::remove(container->begin(), container->end(), type), container->end());
-        }
-        
+
         template <class PRED>
-        void remove_if(PRED comp)
+        void removeIf(PRED comp)
         {
-            container->erase(std::remove_if(container->begin(), container->end(), comp), container->end());
+            this->erase(std::remove_if(this->begin(), this->end(), comp), this->end());
         }
-        
-        TYPE removeFirst()
+
+        value_type removeFirst()
         {
-            TYPE front = container->front();
-            container->erase(container->begin());
+            value_type front = this->front();
+            this->erase(this->begin());
             return front;
         }
-        
-        TYPE removeLast()
+
+        value_type removeLast()
         {
-            TYPE back = container->back();
-            container->pop_back();
+            value_type back = this->back();
+            this->pop_back();
             return back;
         }
-        
-        iterator find(const TYPE& type)
+
+        iterator find(const value_type& x)
         {
-            return std::find(container->begin(), container->end(), type);
+            return std::find(this->begin(), this->end(), x);
         }
-        
+
+        const_iterator find(const value_type& x) const
+        {
+            return std::find(this->begin(), this->end(), x);
+        }
+
         template <class PRED>
-        iterator find_if(PRED comp)
+        iterator findIf(PRED comp)
         {
-            return std::find_if(container->begin(), container->end(), comp);
+            return std::find_if(this->begin(), this->end(), comp);
         }
-        
-        bool contains(const TYPE& type) const
+
+        bool contains(const value_type& x) const
         {
-            return (std::find(container->begin(), container->end(), type) != container->end());
+            return std::find(this->begin(), this->end(), x) != this->end();
         }
-        
+
         template <class PRED>
-        bool contains_if(PRED comp) const
+        bool containsIf(PRED comp) const
         {
-            return (std::find_if(container->begin(), container->end(), comp) != container->end());
+            return std::find_if(this->begin(), this->end(), comp) != this->end();
         }
-        
-        bool equals(const this_type& other) const
+
+        bool equals(const Collection& other) const
         {
-            return equals(other, std::equal_to<TYPE>());
+            return equals(other, std::equal_to<value_type>());
         }
-        
+
         template <class PRED>
-        bool equals(const this_type& other, PRED comp) const
+        bool equals(const Collection& other, PRED comp) const
         {
-            if (container->size() != other.container->size())
+            if (size() != other.size())
                 return false;
-            return std::equal(container->begin(), container->end(), other.container->begin(), comp);
+            return std::equal(this->begin(), this->end(), other.begin(), comp);
         }
-        
+
         int32_t hashCode()
         {
-            return (int32_t)(int64_t)container.get();
+            return (int32_t)(int64_t)get();
         }
-        
-        void swap(this_type& other)
+
+        int32_t size() const
         {
-            container.swap(other->container);
-        }
-        
-        TYPE& operator[] (int32_t pos)
-        {
-            return (*container)[pos];
-        }
-        
-        const TYPE& operator[] (int32_t pos) const
-        {
-            return (*container)[pos];
-        }
-        
-        operator bool() const
-        {
-            return container;
-        }
-        
-        bool operator! () const
-        {
-            return !container;
-        }
-        
-        bool operator== (const this_type& other)
-        {
-            return (container == other.container);
-        }
-        
-        bool operator!= (const this_type& other)
-        {
-            return (container != other.container);
+            return (int32_t)vector_container<T>::size();
         }
     };
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1)
+
+    template <class T>
+    Collection<T> newCollectionPlaceholder(gc& gc, typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
     {
-        Collection<TYPE> result = Collection<TYPE>::newInstance();
-        result.add(a1);
-        return result;
+        Collection<T> container(Collection<T>(new(gc) gc_container<T, typename T::value_type>()));
+        container.resize(n, x);
+        return container;
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2)
+
+    template <class T>
+    Collection<T> newCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
     {
-        Collection<TYPE> result = newCollection(a1);
-        result.add(a2);
-        return result;
+        return newCollectionPlaceholder<T>(get_gc(), n, x);
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3)
+
+    template <class T>
+    Collection<T> newStaticCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
     {
-        Collection<TYPE> result = newCollection(a1, a2);
-        result.add(a3);
-        return result;
+        return newCollectionPlaceholder<T>(get_static_gc(), n, x);
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3, const TYPE& a4)
+
+    template <class T, class Iter>
+    Collection<T> newCollectionPlaceholder(gc& gc, Iter first, Iter last)
     {
-        Collection<TYPE> result = newCollection(a1, a2, a3);
-        result.add(a4);
-        return result;
+        Collection<T> container(Collection<T>(new(gc) gc_container<T, typename T::value_type>()));
+        container.assign(first, last);
+        return container;
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3, const TYPE& a4, const TYPE& a5)
+
+    template <class T, class Iter>
+    Collection<T> newCollection(Iter first, Iter last)
     {
-        Collection<TYPE> result = newCollection(a1, a2, a3, a4);
-        result.add(a5);
-        return result;
+        return newCollectionPlaceholder<T>(get_gc(), first, last);
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3, const TYPE& a4, const TYPE& a5, const TYPE& a6)
+
+    template <class T, class Iter>
+    Collection<T> newStaticCollection(Iter first, Iter last)
     {
-        Collection<TYPE> result = newCollection(a1, a2, a3, a4, a5);
-        result.add(a6);
-        return result;
+        return newCollectionPlaceholder<T>(get_static_gc(), first, last);
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3, const TYPE& a4, const TYPE& a5, const TYPE& a6, const TYPE& a7)
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1)
     {
-        Collection<TYPE> result = newCollection(a1, a2, a3, a4, a5, a6);
-        result.add(a7);
-        return result;
+        Collection<T> collection(newCollection<Collection<T>::vector_type>());
+        collection.push_back(a1);
+        return collection;
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3, const TYPE& a4, const TYPE& a5, const TYPE& a6, const TYPE& a7, const TYPE& a8)
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2)
     {
-        Collection<TYPE> result = newCollection(a1, a2, a3, a4, a5, a6, a7);
-        result.add(a8);
-        return result;
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1));
+        collection.push_back(a2);
+        return collection;
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3, const TYPE& a4, const TYPE& a5, const TYPE& a6, const TYPE& a7, const TYPE& a8, const TYPE& a9)
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3)
     {
-        Collection<TYPE> result = newCollection(a1, a2, a3, a4, a5, a6, a7, a8);
-        result.add(a9);
-        return result;
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2));
+        collection.push_back(a3);
+        return collection;
     }
-    
-    template <typename TYPE>
-    Collection<TYPE> newCollection(const TYPE& a1, const TYPE& a2, const TYPE& a3, const TYPE& a4, const TYPE& a5, const TYPE& a6, const TYPE& a7, const TYPE& a8, const TYPE& a9, const TYPE& a10)
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                      const typename T::value_type& a4)
     {
-        Collection<TYPE> result = newCollection(a1, a2, a3, a4, a5, a6, a7, a8, a9);
-        result.add(a10);
-        return result;
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3));
+        collection.push_back(a4);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                      const typename T::value_type& a4, const typename T::value_type& a5)
+    {
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4));
+        collection.push_back(a5);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6)
+    {
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5));
+        collection.push_back(a6);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
+                                      const typename T::value_type& a7)
+    {
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5, a6));
+        collection.push_back(a7);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
+                                      const typename T::value_type& a7, const typename T::value_type& a8)
+    {
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5, a6, a7));
+        collection.push_back(a8);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
+                                      const typename T::value_type& a7, const typename T::value_type& a8, const typename T::value_type& a9)
+    {
+        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5, a6, a7, a8));
+        collection.push_back(a9);
+        return collection;
     }
 }
 

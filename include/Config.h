@@ -74,27 +74,6 @@
 #define LPP_UNICODE_CHAR_SIZE_4
 #endif
 
-// Define to enable cyclic checking in debug builds
-// #define LPP_USE_CYCLIC_CHECK
-
-// Define to use garbage collection for object allocation instead of boost::shared_ptr
-#define LPP_USE_GC
-
-#ifdef LPP_USE_GC
-#define GC_NOT_DLL
-#define GC_WIN32_THREADS
-#ifndef NDEBUG
-#define GC_DEBUG
-#endif
-#endif
-
-// Define to use nedmalloc memory allocator
-// #define LPP_USE_NEDMALLOC
-
-#ifdef LPP_USE_NEDMALLOC
-#define EXTSPEC LPPAPI
-#endif
-
 // Make internal bitset storage public
 #define BOOST_DYNAMIC_BITSET_DONT_USE_FRIENDS
 

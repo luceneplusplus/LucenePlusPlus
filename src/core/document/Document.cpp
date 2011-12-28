@@ -16,26 +16,26 @@ namespace Lucene
         fields = Collection<FieldablePtr>::newInstance();
         boost = 1.0;
     }
-    
+
     Document::~Document()
     {
     }
-    
+
     void Document::setBoost(double boost)
     {
         this->boost = boost;
     }
-    
+
     double Document::getBoost()
     {
         return boost;
     }
-    
+
     void Document::add(FieldablePtr field)
     {
         fields.add(field);
     }
-    
+
     /// Utility functor for comparing fieldable names.
     /// see {@link Document}.
     struct equalFieldableName
@@ -47,30 +47,30 @@ namespace Lucene
         }
         const String& equalName;
     };
-    
+
     void Document::removeField(const String& name)
     {
-        Collection<FieldablePtr>::iterator field = fields.find_if(equalFieldableName(name));
+        Collection<FieldablePtr>::iterator field = fields.findIf(equalFieldableName(name));
         if (field != fields.end())
             fields.remove(field);
     }
-    
+
     void Document::removeFields(const String& name)
     {
         fields.remove_if(equalFieldableName(name));
     }
-    
+
     FieldPtr Document::getField(const String& name)
     {
         return LuceneStaticCast<Field>(getFieldable(name));
     }
-    
+
     FieldablePtr Document::getFieldable(const String& name)
     {
-        Collection<FieldablePtr>::iterator field = fields.find_if(equalFieldableName(name));
+        Collection<FieldablePtr>::iterator field = fields.findIf(equalFieldableName(name));
         return field == fields.end() ? FieldablePtr() : *field;
     }
-    
+
     String Document::get(const String& name)
     {
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
@@ -80,12 +80,12 @@ namespace Lucene
         }
         return L"";
     }
-    
+
     Collection<FieldablePtr> Document::getFields()
     {
         return fields;
     }
-    
+
     Collection<FieldPtr> Document::getFields(const String& name)
     {
         Collection<FieldPtr> result(Collection<FieldPtr>::newInstance());
@@ -96,7 +96,7 @@ namespace Lucene
         }
         return result;
     }
-    
+
     Collection<FieldablePtr> Document::getFieldables(const String& name)
     {
         Collection<FieldablePtr> result(Collection<FieldablePtr>::newInstance());
@@ -107,7 +107,7 @@ namespace Lucene
         }
         return result;
     }
-    
+
     Collection<String> Document::getValues(const String& name)
     {
         Collection<String> result(Collection<String>::newInstance());
@@ -118,7 +118,7 @@ namespace Lucene
         }
         return result;
     }
-    
+
     Collection<ByteArray> Document::getBinaryValues(const String& name)
     {
         Collection<ByteArray> result(Collection<ByteArray>::newInstance());
@@ -129,7 +129,7 @@ namespace Lucene
         }
         return result;
     }
-    
+
     ByteArray Document::getBinaryValue(const String& name)
     {
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
@@ -139,7 +139,7 @@ namespace Lucene
         }
         return ByteArray();
     }
-    
+
     String Document::toString()
     {
         StringStream buffer;

@@ -19,21 +19,24 @@ namespace Lucene
     class SimpleLRUCache : public LuceneObject
     {
     public:
+        continue here!
+
+
         typedef std::pair<KEY, VALUE> key_value;
         typedef std::list< key_value > key_list;
         typedef typename key_list::const_iterator const_iterator;
-        typedef boost::unordered_map< KEY, typename key_list::iterator, HASH, EQUAL, std::allocator< std::pair<KEY, typename key_list::iterator> > > map_type; // todo?
+        typedef boost::unordered_map<KEY, typename key_list::iterator, HASH, EQUAL> map_type;
         typedef typename map_type::const_iterator map_iterator;
-        
+
         SimpleLRUCache(int32_t cacheSize)
         {
             this->cacheSize = cacheSize;
         }
-        
+
         virtual ~SimpleLRUCache()
         {
         }
-        
+
     protected:
         int32_t cacheSize;
         key_list cacheList;
@@ -44,38 +47,38 @@ namespace Lucene
         {
             cacheList.push_front(std::make_pair(key, value));
             cacheMap[key] = cacheList.begin();
-            
+
             if ((int32_t)cacheList.size() > cacheSize)
             {
                 cacheMap.erase(cacheList.back().first);
                 cacheList.pop_back();
             }
         }
-        
+
         VALUE get(const KEY& key)
         {
             map_iterator find = cacheMap.find(key);
             if (find == cacheMap.end())
                 return VALUE();
-            
+
             VALUE value(find->second->second);
             cacheList.erase(find->second);
             cacheList.push_front(std::make_pair(key, value));
             cacheMap[key] = cacheList.begin();
-            
+
             return value;
         }
-        
+
         bool contains(const KEY& key) const
         {
             return (cacheMap.find(key) != cacheMap.end());
         }
-        
+
         int32_t size() const
         {
             return (int32_t)cacheList.size();
         }
-        
+
         const_iterator begin() const
         {
             return cacheList.begin();

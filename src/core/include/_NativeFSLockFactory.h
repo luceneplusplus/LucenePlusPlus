@@ -7,6 +7,7 @@
 #ifndef _NATIVEFSLOCKFACTORY_H
 #define _NATIVEFSLOCKFACTORY_H
 
+#include <boost/shared_ptr.hpp>
 #include "Lock.h"
 
 namespace Lucene
@@ -16,25 +17,25 @@ namespace Lucene
     public:
         NativeFSLock(const String& lockDir, const String& lockFileName);
         virtual ~NativeFSLock();
-        
+
         LUCENE_CLASS(NativeFSLock);
-                
+
     protected:
         String lockDir;
         String path;
-        
+
         typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
         filelockPtr lock;
-        
+
         static SynchronizePtr LOCK_HELD_LOCK();
         static HashSet<String> LOCK_HELD();
-    
+
     public:
         virtual bool obtain();
         virtual void release();
         virtual bool isLocked();
         virtual String toString();
-    
+
     protected:
         bool lockExists();
     };

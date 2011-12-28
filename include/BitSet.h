@@ -17,13 +17,13 @@ namespace Lucene
     public:
         BitSet(uint32_t size = 0);
         virtual ~BitSet();
-        
+
         LUCENE_CLASS(BitSet);
-    
+
     protected:
-        typedef boost::dynamic_bitset< uint64_t, std::allocator<uint64_t> > bitset_type; // todo?
+        typedef boost::dynamic_bitset<uint64_t> bitset_type;
         bitset_type bitSet;
-    
+
     public:
         const uint64_t* getBits();
         void clear();
@@ -56,7 +56,7 @@ namespace Lucene
         bool intersectsBitSet(BitSetPtr set) const;
         uint32_t cardinality();
         void resize(uint32_t size);
-        
+
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());

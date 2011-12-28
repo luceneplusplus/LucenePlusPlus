@@ -8,148 +8,107 @@
 #define SET_H
 
 #include <set>
+#include <boost/unordered_set.hpp>
 #include "LuceneSync.h"
 
 namespace Lucene
 {
-    /// Utility template class to handle set based collections that can be safely copied and shared
-    template < class TYPE, class LESS = std::less<TYPE> >
-    class Set : public LuceneSync
+    template <class T>
+    class Set : public set_container<T>, public LuceneSync
     {
     public:
-        typedef Set<TYPE, LESS> this_type;
-        typedef std::set< TYPE, LESS, std::allocator<TYPE> > set_type; // todo?
-        typedef typename set_type::iterator iterator;
-        typedef typename set_type::const_iterator const_iterator;
-        typedef TYPE value_type;
-    
-        virtual ~Set()
+        typedef typename T::value_type value_type;
+
+        Set(gc_container<T, value_type>* p = 0) : set_container<T>(p)
         {
         }
-    
-    protected:
-        LucenePtr<set_type> setContainer;
-        
-    public:
-        static this_type newInstance()
+
+        Set(const Set& rhs) : set_container<T>(rhs)
         {
-            this_type instance;
-            instance.setContainer = Lucene::newInstance<set_type>();
-            return instance;
         }
-        
+
+        bool add(const value_type& x)
+        {
+            return this->insert(x).second;
+        }
+
         template <class ITER>
-        static this_type newInstance(ITER first, ITER last)
+        void add(ITER first, ITER last)
         {
-            this_type instance;
-            instance.setContainer = Lucene::newInstance<set_type>(first, last);
-            return instance;
+            this->insert(first, last);
         }
-        
-        void reset()
+
+        bool remove(const value_type& x)
         {
-            setContainer.reset();
+            return this->erase(x) > 0;
         }
-        
+
+        bool contains(const value_type& x) const
+        {
+            return this->find(x) != this->end();
+        }
+
+        bool equals(const Set& other) const
+        {
+            return equals(other, std::equal_to<value_type>());
+        }
+
+        template <class PRED>
+        bool equals(const Set& other, PRED comp) const
+        {
+            if (size() != other.size())
+                return false;
+            return std::equal(this->begin(), this->end(), other.begin(), comp);
+        }
+
+        int32_t hashCode()
+        {
+            return (int32_t)(int64_t)get();
+        }
+
         int32_t size() const
         {
-            return (int32_t)setContainer->size();
-        }
-        
-        bool empty() const
-        {
-            return setContainer->empty();
-        }
-        
-        void clear()
-        {
-            setContainer->clear();
-        }
-        
-        iterator begin()
-        {
-            return setContainer->begin();
-        }
-        
-        iterator end()
-        {
-            return setContainer->end();
-        }
-        
-        const_iterator begin() const
-        {
-            return setContainer->begin();
-        }
-        
-        const_iterator end() const
-        {
-            return setContainer->end();
-        }
-        
-        bool add(const TYPE& type)
-        {
-            return setContainer->insert(type).second;
-        }
-        
-        template <class ITER>
-        void addAll(ITER first, ITER last)
-        {
-            setContainer->insert(first, last);
-        }
-        
-        bool remove(const TYPE& type)
-        {
-            return (setContainer->erase(type) > 0);
-        }
-        
-        iterator find(const TYPE& type)
-        {
-            return setContainer->find(type);
-        }
-        
-        bool contains(const TYPE& type) const
-        {
-            return (setContainer->find(type) != setContainer->end());
-        }
-        
-        bool equals(const this_type& other) const
-        {
-            return equals(other, std::equal_to<TYPE>());
-        }
-        
-        template <class PRED>
-        bool equals(const this_type& other, PRED comp) const
-        {
-            if (setContainer->size() != other.setContainer->size())
-                return false;
-            return std::equal(setContainer->begin(), setContainer->end(), other.setContainer->begin(), comp);
-        }
-        
-        void swap(this_type& other)
-        {
-            setContainer.swap(other->setContainer);
-        }
-        
-        operator bool() const
-        {
-            return setContainer;
-        }
-        
-        bool operator! () const
-        {
-            return !setContainer;
-        }
-        
-        bool operator== (const this_type& other)
-        {
-            return (setContainer == other.setContainer);
-        }
-        
-        bool operator!= (const this_type& other)
-        {
-            return (setContainer != other.setContainer);
+            return (int32_t)set_container<T>::size();
         }
     };
+
+    template <class T>
+    Set<T> newSetPlaceholder(gc& gc)
+    {
+        return Set<T>(new(gc) gc_container<T, typename T::value_type>());
+    }
+
+    template <class T>
+    Set<T> newSet()
+    {
+        return newSetPlaceholder<T>(get_gc());
+    }
+
+    template <class T>
+    Set<T> newStaticSet()
+    {
+        return newSetPlaceholder<T>(get_static_gc());
+    }
+
+    template <class T, class Iter>
+    Set<T> newSetPlaceholder(gc& gc, Iter first, Iter last)
+    {
+        Set<T> container(Set<T>(new(gc) gc_container<T, typename T::value_type>()));
+        container.insert(first, last);
+        return container;
+    }
+
+    template <class T, class Iter>
+    Set<T> newSet(Iter first, Iter last)
+    {
+        return newSetPlaceholder<T>(get_gc(), first, last);
+    }
+
+    template <class T, class Iter>
+    Set<T> newStaticSet(Iter first, Iter last)
+    {
+        return newSetPlaceholder<T>(get_static_gc(), first, last);
+    }
 }
 
 #endif

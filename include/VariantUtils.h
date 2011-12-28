@@ -4,8 +4,8 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef VARIANTUTILS_H
-#define VARIANTUTILS_H
+#ifndef VIANTUTILS_H
+#define VIANTUTILS_H
 
 #include <boost/any.hpp>
 #include "Lucene.h"
@@ -20,42 +20,42 @@ namespace Lucene
     #endif
     {
     public:
-        template <typename TYPE>
-        static TYPE get(boost::any var)
+        template <typename T>
+        static T get(boost::any var)
         {
-            return var.type() == typeid(TYPE) ? boost::any_cast<TYPE>(var) : TYPE();
+            return var.type() == typeid(T) ? boost::any_cast<T>(var) : T();
         }
-        
-        template <typename TYPE, typename VAR>
-        static TYPE get(VAR var)
+
+        template <typename T, typename V>
+        static T get(V var)
         {
-            return var.type() == typeid(TYPE) ? boost::get<TYPE>(var) : TYPE();
+            return var.type() == typeid(T) ? boost::get<T>(var) : T();
         }
-        
-        template <typename TYPE, typename VAR>
-        static bool typeOf(VAR var)
+
+        template <typename T, typename V>
+        static bool typeOf(V var)
         {
-            return (var.type() == typeid(TYPE));
+            return (var.type() == typeid(T));
         }
-        
+
         static VariantNull null()
         {
             return VariantNull();
         }
-        
+
         static bool isNull(boost::any var)
         {
             return var.empty();
         }
-        
-        template <typename VAR>
-        static bool isNull(VAR var)
+
+        template <typename V>
+        static bool isNull(V var)
         {
             return typeOf<VariantNull>(var);
         }
-        
-        template <typename VAR>
-        static int32_t hashCode(VAR var)
+
+        template <typename V>
+        static int32_t hashCode(V var)
         {
             if (typeOf<String>(var))
                 return StringUtils::hashCode(get<String>(var));
@@ -82,21 +82,21 @@ namespace Lucene
                 return get<LuceneObjectPtr>(var)->hashCode();
             return 0;
         }
-        
+
         template <typename FIRST, typename SECOND>
         static bool equalsType(FIRST first, SECOND second)
         {
             return (first.type() == second.type());
         }
-        
+
         template <typename FIRST, typename SECOND>
         static bool equals(FIRST first, SECOND second)
         {
             return first.type() == second.type() ? (first == second) : false;
         }
-        
-        template <typename VAR>
-        static int32_t compareTo(VAR first, VAR second)
+
+        template <typename V>
+        static int32_t compareTo(V first, V second)
         {
             return first < second ? -1 : (first == second ? 0 : 1);
         }

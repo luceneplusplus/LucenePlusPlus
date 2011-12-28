@@ -12,38 +12,34 @@
 namespace Lucene
 {
     /// Base class for all Lucene synchronised classes
-    #ifdef LPP_USE_GC
-    class LPPAPI LuceneSync : public gc_cleanup
-    #else
-    class LPPAPI LuceneSync
-    #endif
+    class LPPAPI LuceneSync : public gc_object
     {
     public:
         virtual ~LuceneSync();
-    
+
     protected:
         SynchronizePtr objectLock;
         LuceneSignalPtr objectSignal;
-    
+
     public:
         /// Return this object synchronize lock.
         virtual SynchronizePtr getSync();
-        
+
         /// Return this object signal.
         virtual LuceneSignalPtr getSignal();
-        
+
         /// Lock this object using an optional timeout.
         virtual void lock(int32_t timeout = 0);
-        
+
         /// Unlock this object.
         virtual void unlock();
-        
+
         /// Returns true if this object is currently locked by current thread.
         virtual bool holdsLock();
-        
+
         /// Wait for signal using an optional timeout.
         virtual void wait(int32_t timeout = 0);
-        
+
         /// Notify all threads waiting for signal.
         virtual void notifyAll();
     };
