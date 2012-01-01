@@ -20,30 +20,30 @@ DocumentPtr fileDocument(const String& docFile)
 {
     DocumentPtr doc = newLucene<Document>();
 
-    // Add the path of the file as a field named "path".  Use a field that is indexed (ie. searchable), but 
+    // Add the path of the file as a field named "path".  Use a field that is indexed (ie. searchable), but
     // don't tokenize the field into words.
     doc->add(newLucene<Field>(L"path", docFile, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-    
-    // Add the last modified date of the file a field named "modified".  Use a field that is indexed (ie. searchable), 
+
+    // Add the last modified date of the file a field named "modified".  Use a field that is indexed (ie. searchable),
     // but don't tokenize the field into words.
     doc->add(newLucene<Field>(L"modified", DateTools::timeToString(FileUtils::fileModified(docFile), DateTools::RESOLUTION_MINUTE),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
-    // Add the contents of the file to a field named "contents".  Specify a Reader, so that the text of the file is 
-    // tokenized and indexed, but not stored.  Note that FileReader expects the file to be in the system's default 
+    // Add the contents of the file to a field named "contents".  Specify a Reader, so that the text of the file is
+    // tokenized and indexed, but not stored.  Note that FileReader expects the file to be in the system's default
     // encoding.  If that's not the case searching for special characters will fail.
     doc->add(newLucene<Field>(L"contents", newLucene<FileReader>(docFile)));
-    
+
     return doc;
 }
 
 void indexDocs(IndexWriterPtr writer, const String& sourceDir)
 {
-    HashSet<String> dirList(HashSet<String>::newInstance());
+    SetString dirList(SetString::newInstance());
     if (!FileUtils::listDirectory(sourceDir, false, dirList))
         return;
 
-    for (HashSet<String>::iterator dirFile = dirList.begin(); dirFile != dirList.end(); ++dirFile)
+    for (SetString::iterator dirFile = dirList.begin(); dirFile != dirList.end(); ++dirFile)
     {
         String docFile(FileUtils::joinPath(sourceDir, *dirFile));
         if (FileUtils::isDirectory(docFile))

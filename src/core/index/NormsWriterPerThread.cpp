@@ -13,31 +13,31 @@ namespace Lucene
 {
     NormsWriterPerThread::NormsWriterPerThread(DocInverterPerThreadPtr docInverterPerThread, NormsWriterPtr normsWriter)
     {
-        this->_normsWriter = normsWriter;
+        this->normsWriter = normsWriter;
         docState = docInverterPerThread->docState;
     }
-    
+
     NormsWriterPerThread::~NormsWriterPerThread()
     {
     }
-    
+
     InvertedDocEndConsumerPerFieldPtr NormsWriterPerThread::addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo)
     {
         return newLucene<NormsWriterPerField>(docInverterPerField, LuceneThis(), fieldInfo);
     }
-    
+
     void NormsWriterPerThread::abort()
     {
     }
-    
+
     void NormsWriterPerThread::startDocument()
     {
     }
-    
+
     void NormsWriterPerThread::finishDocument()
     {
     }
-    
+
     bool NormsWriterPerThread::freeRAM()
     {
         return false;

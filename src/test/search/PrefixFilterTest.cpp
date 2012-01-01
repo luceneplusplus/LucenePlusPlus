@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(testPrefixFilter)
         doc->add(newLucene<Field>(L"category", categories[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);
     }
-    
+
     writer->close();
 
     // PrefixFilter combined with ConstantScoreQuery

@@ -25,7 +25,7 @@ static void checkGold(Collection<String> terms, Collection<String> gold, Collect
 BOOST_AUTO_TEST_CASE(testConstructor)
 {
     Collection<String> queryTerm = newCollection<String>(L"foo", L"bar", L"foo", L"again", L"foo", L"bar", L"go", L"go", L"go");
-    
+
     // Items are sorted lexicographically
     Collection<String> gold = newCollection<String>(L"again", L"bar", L"foo", L"go");
     Collection<int32_t> goldFreqs = newCollection<int32_t>(1, 2, 3, 3);

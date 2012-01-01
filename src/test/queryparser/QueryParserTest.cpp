@@ -59,11 +59,11 @@ public:
         savedStart = 0;
         savedEnd = 0;
     }
-    
+
     virtual ~TestFilter()
     {
     }
-    
+
     LUCENE_CLASS(TestFilter);
 
 public:
@@ -111,7 +111,7 @@ public:
     virtual ~TestAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(TestAnalyzer);
 
 public:
@@ -128,11 +128,11 @@ public:
     TestParser(const String& f, AnalyzerPtr a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
     {
     }
-    
+
     virtual ~TestParser()
     {
     }
-    
+
     LUCENE_CLASS(TestParser);
 
 public:
@@ -141,7 +141,7 @@ public:
         boost::throw_exception(QueryParserError(L"Fuzzy queries not allowed"));
         return QueryPtr();
     }
-    
+
     virtual QueryPtr getWildcardQuery(const String& field, const String& termStr)
     {
         boost::throw_exception(QueryParserError(L"Wildcard queries not allowed"));
@@ -157,7 +157,7 @@ public:
         originalMaxClauses = BooleanQuery::getMaxClauseCount();
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
     }
-    
+
     virtual ~QueryParserTestFixture()
     {
         BooleanQuery::setMaxClauseCount(originalMaxClauses);
@@ -165,7 +165,7 @@ public:
 
 protected:
     int32_t originalMaxClauses;
-    
+
     QueryParserPtr getParser(AnalyzerPtr a)
     {
         if (!a)
@@ -174,12 +174,12 @@ protected:
         qp->setDefaultOperator(QueryParser::OR_OPERATOR);
         return qp;
     }
-    
+
     QueryPtr getQuery(const String& query, AnalyzerPtr a)
     {
         return getParser(a)->parse(query);
     }
-    
+
     void checkQueryEquals(const String& query, AnalyzerPtr a, const String& result)
     {
         QueryPtr q = getQuery(query, a);
@@ -187,7 +187,7 @@ protected:
         if (s != result)
             BOOST_FAIL("Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"");
     }
-    
+
     void checkQueryEquals(QueryParserPtr qp, const String& field, const String& query, const String& result)
     {
         QueryPtr q = qp->parse(query);
@@ -195,12 +195,12 @@ protected:
         if (s != result)
             BOOST_FAIL("Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"");
     }
-    
+
     void checkParseException(const String& queryString)
     {
         BOOST_CHECK_EXCEPTION(getQuery(queryString, AnalyzerPtr()), QueryParserError, check_exception(LuceneException::QueryParser));
     }
-    
+
     void checkWildcardQueryEquals(const String& query, bool lowercase, const String& result, bool allowLeadingWildcard = false)
     {
         QueryParserPtr qp = getParser(AnalyzerPtr());
@@ -211,7 +211,7 @@ protected:
         if (s != result)
             BOOST_FAIL("WildcardQuery \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"");
     }
-    
+
     void checkWildcardQueryEquals(const String& query, const String& result)
     {
         QueryParserPtr qp = getParser(AnalyzerPtr());
@@ -220,7 +220,7 @@ protected:
         if (s != result)
             BOOST_FAIL("WildcardQuery \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"");
     }
-    
+
     void checkEscapedQueryEquals(const String& query, AnalyzerPtr a, const String& result)
     {
         class TestableQueryParser : public QueryParser
@@ -228,12 +228,12 @@ protected:
         public:
             using QueryParser::escape;
         };
-        
+
         String escapedQuery = TestableQueryParser::escape(query);
         if (escapedQuery != result)
             BOOST_FAIL("Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(escapedQuery) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"");
     }
-    
+
     QueryPtr getQueryDOA(const String& query, AnalyzerPtr a)
     {
         if (!a)
@@ -242,7 +242,7 @@ protected:
         qp->setDefaultOperator(QueryParser::AND_OPERATOR);
         return qp->parse(query);
     }
-    
+
     void checkQueryEqualsDOA(const String& query, AnalyzerPtr a, const String& result)
     {
         QueryPtr q = getQueryDOA(query, a);
@@ -250,7 +250,7 @@ protected:
         if (s != result)
             BOOST_FAIL("Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"");
     }
-    
+
     void addDateDoc(const String& content, boost::posix_time::ptime date, IndexWriterPtr iw)
     {
         DocumentPtr d = newLucene<Document>();
@@ -258,7 +258,7 @@ protected:
         d->add(newLucene<Field>(L"date", DateField::dateToString(date), Field::STORE_YES, Field::INDEX_ANALYZED));
         iw->addDocument(d);
     }
-    
+
     void checkHits(int32_t expected, const String& query, IndexSearcherPtr is)
     {
         QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"date", newLucene<WhitespaceAnalyzer>());
@@ -274,11 +274,11 @@ BOOST_FIXTURE_TEST_SUITE(QueryParserTest, QueryParserTestFixture)
 BOOST_AUTO_TEST_CASE(testSimple)
 {
     checkQueryEquals(L"term term term", AnalyzerPtr(), L"term term term");
-    
+
     const uint8_t term[] = {0x74, 0xc3, 0xbc, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d};
     String termText = UTF8_TO_STRING(term);
     checkQueryEquals(termText, newLucene<WhitespaceAnalyzer>(), termText);
-    
+
     const uint8_t umlaut[] = {0xc3, 0xbc, 0x6d, 0x6c, 0x61, 0x75, 0x74};
     String umlautText = UTF8_TO_STRING(umlaut);
     checkQueryEquals(umlautText, newLucene<WhitespaceAnalyzer>(), umlautText);
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(testSimple)
     checkQueryEquals(L"+title:(dog OR cat) -author:\"bob dole\"", AnalyzerPtr(), L"+(title:dog title:cat) -author:\"bob dole\"");
 
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
-    
+
     // make sure OR is the default
     BOOST_CHECK_EQUAL(QueryParser::OR_OPERATOR, qp->getDefaultOperator());
     qp->setDefaultOperator(QueryParser::AND_OPERATOR);
@@ -443,7 +443,7 @@ BOOST_AUTO_TEST_CASE(testLeadingWildcardType)
 BOOST_AUTO_TEST_CASE(testQPA)
 {
     AnalyzerPtr qpAnalyzer = newLucene<TestAnalyzer>();
-    
+
     checkQueryEquals(L"term term^3.0 term", qpAnalyzer, L"term term^3.0 term");
     checkQueryEquals(L"term stop^3.0 term", qpAnalyzer, L"term term");
 
@@ -511,11 +511,11 @@ BOOST_AUTO_TEST_CASE(testDateRange)
     // DateField should still be used for defaultField
     checkQueryEquals(qp, L"default", L"default:[01/02/02 TO 04/02/02]", L"[0cx597uo0 TO 0cxayz9bz]");
     checkQueryEquals(qp, L"default", L"default:{01/02/02 TO 04/02/02}", L"{0cx597uo0 TO 0cx9jjeo0}");
-    
+
     // set default date resolution to MILLISECOND
     qp->setDateResolution(DateTools::RESOLUTION_MILLISECOND);
 
-    // set second field specific date resolution    
+    // set second field specific date resolution
     qp->setDateResolution(L"hour", DateTools::RESOLUTION_HOUR);
 
     // for this field no field specific date resolution has been set, so verify if the default resolution is used
@@ -525,7 +525,7 @@ BOOST_AUTO_TEST_CASE(testDateRange)
     // verify if field specific date resolutions are used for these two fields
     checkQueryEquals(qp, L"month", L"month:[01/02/02 TO 04/02/02]", L"[200202 TO 200202]");
     checkQueryEquals(qp, L"month", L"month:{01/02/02 TO 04/02/02}", L"{200202 TO 200202}");
-    
+
     checkQueryEquals(qp, L"hour", L"hour:[01/02/02 TO 04/02/02]", L"[2002020100 TO 2002020423]");
     checkQueryEquals(qp, L"hour", L"hour:{01/02/02 TO 04/02/02}", L"{2002020100 TO 2002020400}");
 }
@@ -589,7 +589,7 @@ BOOST_AUTO_TEST_CASE(testEscaped)
     checkParseException(L"XY\\u005"); // test incomplete escaped unicode sequence
 
     checkQueryEquals(L"(item:\\\\ item:ABCD\\\\)", a, L"item:\\ item:ABCD\\");
-    checkParseException(L"(item:\\\\ item:ABCD\\\\))"); // unmatched closing parenthesis 
+    checkParseException(L"(item:\\\\ item:ABCD\\\\))"); // unmatched closing parenthesis
     checkQueryEquals(L"\\*", a, L"*");
     checkQueryEquals(L"\\\\", a, L"\\"); // escaped backslash
 
@@ -670,7 +670,7 @@ BOOST_AUTO_TEST_CASE(testSimpleDAO)
 
 BOOST_AUTO_TEST_CASE(testBoost)
 {
-    HashSet<String> stopWords = HashSet<String>::newInstance();
+    SetString stopWords = SetString::newInstance();
     stopWords.add(L"on");
     StandardAnalyzerPtr oneStopAnalyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, stopWords);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", oneStopAnalyzer);
@@ -687,7 +687,7 @@ BOOST_AUTO_TEST_CASE(testBoost)
 
     QueryParserPtr qp2 = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
     q = qp2->parse(L"the^3");
-    
+
     // "the" is a stop word so the result is an empty query
     BOOST_CHECK(q);
     BOOST_CHECK(q->toString().empty());
@@ -718,7 +718,7 @@ BOOST_AUTO_TEST_CASE(testBooleanQuery)
 {
     BooleanQuery::setMaxClauseCount(2);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<WhitespaceAnalyzer>());
-    
+
     // too many boolean clauses, so ParseException is expected
     BOOST_CHECK_EXCEPTION(qp->parse(L"one two three"), QueryParserError, check_exception(LuceneException::QueryParser));
 }
@@ -752,7 +752,7 @@ BOOST_AUTO_TEST_CASE(testLocalDateFormat)
 namespace TestStarParsing
 {
     DECLARE_LUCENE_PTR(StarParser)
-    
+
     class StarParser : public QueryParser
     {
     public:
@@ -760,13 +760,13 @@ namespace TestStarParsing
         {
             type = Collection<int32_t>::newInstance(1);
         }
-        
+
         virtual ~StarParser()
         {
         }
-        
+
         LUCENE_CLASS(StarParser);
-    
+
     public:
         Collection<int32_t> type;
 
@@ -777,14 +777,14 @@ namespace TestStarParsing
             type[0] = 1;
             return newLucene<TermQuery>(newLucene<Term>(field, termStr));
         }
-        
+
         virtual QueryPtr getPrefixQuery(const String& field, const String& termStr)
         {
             // override error checking of superclass
             type[0] = 2;
             return newLucene<TermQuery>(newLucene<Term>(field, termStr));
         }
-        
+
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText)
         {
             type[0] = 3;
@@ -813,7 +813,7 @@ BOOST_AUTO_TEST_CASE(testStarParsing)
     tq = LuceneDynamicCast<TermQuery>(qp->parse(L"foo:*^2"));
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(1, qp->type[0]);
-    BOOST_CHECK_EQUAL(tq->getBoost(), 2);    
+    BOOST_CHECK_EQUAL(tq->getBoost(), 2);
 
     tq = LuceneDynamicCast<TermQuery>(qp->parse(L"*:foo"));
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->field());

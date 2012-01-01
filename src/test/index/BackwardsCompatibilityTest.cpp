@@ -50,17 +50,17 @@ static void addDoc(IndexWriterPtr writer, int32_t id)
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
     doc->add(newLucene<Field>(L"id", StringUtils::toString(id), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-    
+
     const uint8_t utf8Field[] = {0x4c, 0x75, 0xf0, 0x9d, 0x84, 0x9e, 0x63, 0x65, 0xf0, 0x9d, 0x85, 0xa0, 0x6e, 0x65,
                                  0x20, 0x00, 0x20, 0xe2, 0x98, 0xa0, 0x20, 0x61, 0x62, 0xf1, 0x95, 0xb0, 0x97, 0x63, 0x64};
-    
+
     const uint8_t utf8Field2[] = {0x66, 0x69, 0x65, 0xe2, 0xb1, 0xb7, 0x6c, 0x64};
-    
+
     doc->add(newLucene<Field>(L"autf8", UTF8_TO_STRING(utf8Field), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     doc->add(newLucene<Field>(L"utf8", UTF8_TO_STRING(utf8Field), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     doc->add(newLucene<Field>(L"content2", L"here is more content with aaa aaa aaa", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     doc->add(newLucene<Field>(UTF8_TO_STRING(utf8Field2), L"field with non-ascii name", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-    
+
     // add numeric fields, to test if flex preserves encoding
     doc->add(newLucene<NumericField>(L"trieInt", 4)->setIntValue(id));
     doc->add(newLucene<NumericField>(L"trieLong", 4)->setLongValue(id));
@@ -121,7 +121,7 @@ static void copyIndex(const String& dirName)
     FileUtils::copyDirectory(dirSource, dirDest);
 }
 
-static const wchar_t* oldNames[] = 
+static const wchar_t* oldNames[] =
 {
     L"19.cfs",
     L"19.nocfs",
@@ -148,9 +148,9 @@ namespace CheckCompressedFields
         virtual ~CompressedFieldSelector()
         {
         };
-        
+
         LUCENE_CLASS(CompressedFieldSelector);
-    
+
     public:
         virtual FieldSelectorResult accept(const String& fieldName)
         {
@@ -169,21 +169,21 @@ void checkCompressedFields29(DirectoryPtr dir, bool shouldStillBeCompressed)
     int32_t BINARY_PLAIN_LENGTH = SIZEOF_ARRAY(BINARY_TO_COMPRESS);
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    
+
     LuceneException finally;
     try
     {
         // look into sub readers and check if raw merge is on/off
         Collection<IndexReaderPtr> readers = Collection<IndexReaderPtr>::newInstance();
         ReaderUtil::gatherSubReaders(readers, reader);
-        
+
         for (Collection<IndexReaderPtr>::iterator ir = readers.begin(); ir != readers.end(); ++ir)
         {
             FieldsReaderPtr fr = LuceneDynamicCast<SegmentReader>(*ir)->getFieldsReader();
             // for a 2.9 index, FieldsReader.canReadRawDocs() must be false and other way round for a trunk index
             BOOST_CHECK_NE(shouldStillBeCompressed, fr->canReadRawDocs());
         }
-        
+
         // test that decompression works correctly
         for (int32_t i = 0; i < reader->maxDoc(); ++i)
         {
@@ -206,7 +206,7 @@ void checkCompressedFields29(DirectoryPtr dir, bool shouldStillBeCompressed)
                 }
             }
         }
-        
+
         // check if field was decompressed after optimize
         for (int32_t i = 0; i < reader->maxDoc(); ++i)
         {
@@ -225,7 +225,7 @@ void checkCompressedFields29(DirectoryPtr dir, bool shouldStillBeCompressed)
                 BOOST_CHECK_EQUAL(shouldSize, actualSize);
                 if (!shouldStillBeCompressed)
                     BOOST_CHECK_NE(compressedSize, actualSize);
-                    
+
             }
         }
         BOOST_CHECK_EQUAL(34 * 2, count); // correct number of tests
@@ -258,45 +258,45 @@ static void searchIndex(const String& dirName, const String& oldName)
     IndexReaderPtr reader = searcher->getIndexReader();
 
     checkIndex(dir);
-    
+
     const uint8_t utf8Field[] = {0x4c, 0x75, 0xf0, 0x9d, 0x84, 0x9e, 0x63, 0x65, 0xf0, 0x9d, 0x85, 0xa0, 0x6e, 0x65,
                                  0x20, 0x00, 0x20, 0xe2, 0x98, 0xa0, 0x20, 0x61, 0x62, 0xf1, 0x95, 0xb0, 0x97, 0x63, 0x64};
-                                 
+
     const uint8_t utf8Field2[] = {0x66, 0x69, 0x65, 0xe2, 0xb1, 0xb7, 0x6c, 0x64};
-    
+
     const uint8_t utf8Lucene[] = {0x4c, 0x75, 0xf0, 0x9d, 0x84, 0x9e, 0x63, 0x65, 0xf0, 0x9d, 0x85, 0xa0, 0x6e, 0x65};
-    
+
     const uint8_t utf8Abcd[] = {0x61, 0x62, 0xf1, 0x95, 0xb0, 0x97, 0x63, 0x64};
 
     const wchar_t _zeroField[] = {0x0000};
     String zeroField(_zeroField, SIZEOF_ARRAY(_zeroField));
-    
+
     for (int32_t i = 0; i < 35; ++i)
     {
         if (!reader->isDeleted(i))
         {
             DocumentPtr d = reader->document(i);
             Collection<FieldablePtr> fields = d->getFields();
-            if (!boost::starts_with(oldName, L"19.") && !boost::starts_with(oldName, L"20.") && 
+            if (!boost::starts_with(oldName, L"19.") && !boost::starts_with(oldName, L"20.") &&
                 !boost::starts_with(oldName, L"21.") && !boost::starts_with(oldName, L"22."))
             {
                 if (!d->getField(L"content3"))
                 {
                     int32_t numFields = boost::starts_with(oldName, L"29.") ? 7 : 5;
                     BOOST_CHECK_EQUAL(numFields, fields.size());
-                    
+
                     FieldPtr f = LuceneDynamicCast<Field>(d->getField(L"id"));
                     BOOST_CHECK_EQUAL(StringUtils::toString(i), f->stringValue());
-                    
+
                     f = LuceneDynamicCast<Field>(d->getField(L"utf8"));
                     BOOST_CHECK_EQUAL(UTF8_TO_STRING(utf8Field), f->stringValue());
-                    
+
                     f = LuceneDynamicCast<Field>(d->getField(L"autf8"));
                     BOOST_CHECK_EQUAL(UTF8_TO_STRING(utf8Field), f->stringValue());
-                    
+
                     f = LuceneDynamicCast<Field>(d->getField(L"content2"));
                     BOOST_CHECK_EQUAL(L"here is more content with aaa aaa aaa", f->stringValue());
-                    
+
                     f = LuceneDynamicCast<Field>(d->getField(UTF8_TO_STRING(utf8Field2)));
                     BOOST_CHECK_EQUAL(L"field with non-ascii name", f->stringValue());
                 }
@@ -308,16 +308,16 @@ static void searchIndex(const String& dirName, const String& oldName)
             BOOST_CHECK_EQUAL(7, i);
         }
     }
-    
+
     Collection<ScoreDocPtr> hits = searcher->search(newLucene<TermQuery>(newLucene<Term>(L"content", L"aaa")), FilterPtr(), 1000)->scoreDocs;
-    
+
     // First document should be #21 since it's norm was increased
     DocumentPtr d = searcher->doc(hits[0]->doc);
     BOOST_CHECK_EQUAL(L"21", d->get(L"id")); // get the right document first
 
     testHits(hits, 34, searcher->getIndexReader());
-    
-    if (!boost::starts_with(oldName, L"19.") && !boost::starts_with(oldName, L"20.") && 
+
+    if (!boost::starts_with(oldName, L"19.") && !boost::starts_with(oldName, L"20.") &&
         !boost::starts_with(oldName, L"21.") && !boost::starts_with(oldName, L"22."))
     {
         // Test on indices >= 2.3
@@ -461,19 +461,19 @@ BOOST_AUTO_TEST_CASE(testCreateNoCFS)
 BOOST_AUTO_TEST_CASE(testOptimizeOldIndex)
 {
     int32_t hasTested29 = 0;
-    
+
     for (int32_t i = 0; i < oldNamesLength; ++i)
     {
         copyIndex(oldNames[i]);
         String dirName(fullDir(oldNames[i]));
         DirectoryPtr dir = FSDirectory::open(dirName);
-        
+
         if (boost::starts_with(oldNames[i], L"29."))
         {
             checkCompressedFields29(dir, true);
             ++hasTested29;
         }
-        
+
         IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
         w->optimize();
         w->close();
@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE(testOptimizeOldIndex)
         dir->close();
         rmDir(oldNames[i]);
     }
-    
+
     BOOST_CHECK_EQUAL(4, hasTested29); // test for compressed field should have run 4 times
 }
 
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(testExactFileNames)
 {
     String outputDir = L"lucene.backwardscompat0.index";
     rmDir(outputDir);
-    
+
     LuceneException finally;
     try
     {
@@ -539,13 +539,13 @@ BOOST_AUTO_TEST_CASE(testExactFileNames)
 
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
         writer->setRAMBufferSizeMB(16.0);
-        
+
         for (int32_t i = 0; i < 35; ++i)
             addDoc(writer, i);
-        
+
         BOOST_CHECK_EQUAL(35, writer->maxDoc()); // doc count
         writer->close();
-        
+
         // Delete one doc so we get a .del file
         IndexReaderPtr reader = IndexReader::open(dir, false);
         TermPtr searchTerm = newLucene<Term>(L"id", L"7");
@@ -559,7 +559,7 @@ BOOST_AUTO_TEST_CASE(testExactFileNames)
         CompoundFileReaderPtr cfsReader = newLucene<CompoundFileReader>(dir, L"_0.cfs");
         FieldInfosPtr fieldInfos = newLucene<FieldInfos>(cfsReader, L"_0.fnm");
         int32_t contentFieldIndex = -1;
-        
+
         for (int32_t i = 0; i < fieldInfos->size(); ++i)
         {
             FieldInfoPtr fi = fieldInfos->fieldInfo(i);
@@ -569,22 +569,22 @@ BOOST_AUTO_TEST_CASE(testExactFileNames)
                 break;
             }
         }
-        
+
         cfsReader->close();
         BOOST_CHECK_NE(contentFieldIndex, -1); // locate the 'content' field number in the _2.cfs segment
 
         // Now verify file names
-        HashSet<String> expected = HashSet<String>::newInstance();
+        SetString expected = SetString::newInstance();
         expected.add(L"_0.cfs");
         expected.add(L"_0_1.del");
         expected.add(L"_0_1.s" + StringUtils::toString(contentFieldIndex));
         expected.add(L"segments_3");
         expected.add(L"segments.gen");
-        
-        HashSet<String> actual = dir->listAll();
-        
+
+        SetString actual = dir->listAll();
+
         BOOST_CHECK_EQUAL(expected, actual);
-        
+
         dir->close();
     }
     catch (LuceneException& e)

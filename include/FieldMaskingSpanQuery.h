@@ -11,14 +11,14 @@
 
 namespace Lucene
 {
-    /// Wrapper to allow {@link SpanQuery} objects participate in composite single-field SpanQueries by 
-    /// 'lying' about their search field.  That is, the masked SpanQuery will function as normal, but 
+    /// Wrapper to allow {@link SpanQuery} objects participate in composite single-field SpanQueries by
+    /// 'lying' about their search field.  That is, the masked SpanQuery will function as normal, but
     /// {@link SpanQuery#getField()} simply hands back the value supplied in this class's constructor.
     ///
-    /// This can be used to support Queries like {@link SpanNearQuery} or {@link SpanOrQuery} across 
+    /// This can be used to support Queries like {@link SpanNearQuery} or {@link SpanOrQuery} across
     /// different fields, which is not ordinarily permitted.
     ///
-    /// This can be useful for denormalized relational data: for example, when indexing a document with 
+    /// This can be useful for denormalized relational data: for example, when indexing a document with
     /// conceptually many 'children':
     ///
     /// <pre>
@@ -44,26 +44,26 @@ namespace Lucene
     ///
     /// QueryPtr q = newLucene<SpanNearQuery>(span, -1, false);
     /// </pre>
-    /// to search for 'studentfirstname:james studentsurname:jones' and find teacherid 1 without matching 
+    /// to search for 'studentfirstname:james studentsurname:jones' and find teacherid 1 without matching
     /// teacherid 2 (which has a 'james' in position 0 and 'jones' in position 1).
     ///
-    /// Note: as {@link #getField()} returns the masked field, scoring will be done using the norms of the 
+    /// Note: as {@link #getField()} returns the masked field, scoring will be done using the norms of the
     /// field name supplied. This may lead to unexpected scoring behaviour.
     class LPPAPI FieldMaskingSpanQuery : public SpanQuery
     {
     public:
         FieldMaskingSpanQuery(SpanQueryPtr maskedQuery, const String& maskedField);
         virtual ~FieldMaskingSpanQuery();
-        
+
         LUCENE_CLASS(FieldMaskingSpanQuery);
-    
+
     protected:
         SpanQueryPtr maskedQuery;
         String field;
-    
+
     public:
         using SpanQuery::toString;
-        
+
         virtual String getField();
         SpanQueryPtr getMaskedQuery();
         virtual SpansPtr getSpans(IndexReaderPtr reader);
@@ -71,11 +71,11 @@ namespace Lucene
         virtual WeightPtr createWeight(SearcherPtr searcher);
         virtual SimilarityPtr getSimilarity(SearcherPtr searcher);
         virtual QueryPtr rewrite(IndexReaderPtr reader);
-        
+
         virtual String toString(const String& field);
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
-        
+
         /// Returns a clone of this query.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     };

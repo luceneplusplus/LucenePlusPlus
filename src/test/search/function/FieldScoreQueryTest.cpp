@@ -19,20 +19,20 @@
 
 using namespace Lucene;
 
-/// Tests here create an index with a few documents, each having an int value indexed 
-/// field and a double value indexed field.  The values of these fields are later used 
+/// Tests here create an index with a few documents, each having an int value indexed
+/// field and a double value indexed field.  The values of these fields are later used
 /// for scoring.
 ///
 /// The rank tests use Hits to verify that docs are ordered (by score) as expected.
 ///
-/// The exact score tests use TopDocs top to verify the exact score.  
+/// The exact score tests use TopDocs top to verify the exact score.
 class FieldScoreQueryFixture : public FunctionFixture
 {
 public:
     FieldScoreQueryFixture() : FunctionFixture(true)
     {
     }
-    
+
     virtual ~FieldScoreQueryFixture()
     {
     }
@@ -43,7 +43,7 @@ public:
     {
         IndexSearcherPtr s = newLucene<IndexSearcher>(dir, true);
         QueryPtr q = newLucene<FieldScoreQuery>(field,tp);
-        
+
         QueryUtils::check(q, s);
         Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
         BOOST_CHECK_EQUAL(N_DOCS, h.size());
@@ -55,7 +55,7 @@ public:
             prevID = resID;
         }
     }
-    
+
     /// Test that FieldScoreQuery returns docs with expected score.
     void doTestExactScore(const String& field, FieldScoreQuery::Type tp)
     {
@@ -72,8 +72,8 @@ public:
             BOOST_CHECK_CLOSE_FRACTION(expectedScore, score, TEST_SCORE_TOLERANCE_DELTA);
         }
     }
-    
-    /// Test that values loaded for FieldScoreQuery are cached properly and consumes 
+
+    /// Test that values loaded for FieldScoreQuery are cached properly and consumes
     /// the proper RAM resources.
     void doTestCaching(const String& field, FieldScoreQuery::Type tp)
     {
@@ -85,7 +85,7 @@ public:
 
         IndexSearcherPtr s = newLucene<IndexSearcher>(dir, true);
         Collection<CollectionValue> innerArray = Collection<CollectionValue>::newInstance(s->getIndexReader()->getSequentialSubReaders().size());
-        
+
         bool warned = false; // print warning once.
         for (int32_t i = 0; i < 10; ++i)
         {
@@ -116,7 +116,7 @@ public:
                 }
             }
         }
-        
+
         // verify new values are reloaded (not reused) for a new reader
         s = newLucene<IndexSearcher>(dir, true);
         FieldScoreQueryPtr q = newLucene<FieldScoreQuery>(field, tp);
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(testExactScoreDouble)
     doTestExactScore(DOUBLE_FIELD, FieldScoreQuery::DOUBLE);
 }
 
-/// Test that FieldScoreQuery of Type.BYTE caches/reuses loaded values and consumes 
+/// Test that FieldScoreQuery of Type.BYTE caches/reuses loaded values and consumes
 /// the proper RAM resources.
 BOOST_AUTO_TEST_CASE(testCachingByte)
 {
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(testCachingByte)
     doTestCaching(INT_FIELD, FieldScoreQuery::BYTE);
 }
 
-/// Test that FieldScoreQuery of Type.INT caches/reuses loaded values and consumes 
+/// Test that FieldScoreQuery of Type.INT caches/reuses loaded values and consumes
 /// the proper RAM resources.
 BOOST_AUTO_TEST_CASE(testCachingInt)
 {
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(testCachingInt)
     doTestCaching(INT_FIELD, FieldScoreQuery::INT);
 }
 
-/// Test that FieldScoreQuery of Type.DOUBLE caches/reuses loaded values and consumes 
+/// Test that FieldScoreQuery of Type.DOUBLE caches/reuses loaded values and consumes
 /// the proper RAM resources.
 BOOST_AUTO_TEST_CASE(testCachingDouble)
 {

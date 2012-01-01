@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(testMaxTermLength)
 BOOST_AUTO_TEST_CASE(testMaxTermLength2)
 {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-        
+
     checkAnalyzesTo(sa, L"ab cd toolong xy z", newCollection<String>(L"ab", L"cd", L"toolong", L"xy", L"z"));
     sa->setMaxTokenLength(5);
     checkAnalyzesTo(sa, L"ab cd toolong xy z", newCollection<String>(L"ab", L"cd", L"xy", L"z"), newCollection<int32_t>(1, 1, 2, 1));
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(testApostrophes)
 {
     // internal apostrophes: O'Reilly, you're, O'Reilly's possessives are actually removed by StardardFilter, not the tokenizer
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     checkAnalyzesTo(sa, L"O'Reilly", newCollection<String>(L"o'reilly"));
     checkAnalyzesTo(sa, L"you're", newCollection<String>(L"you're"));
     checkAnalyzesTo(sa, L"she's", newCollection<String>(L"she"));
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(testTSADash)
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"s-class", newCollection<String>(L"s", L"class"));
     checkAnalyzesTo(sa, L"t-com", newCollection<String>(L"t", L"com"));
-    
+
     // 'a' is still a stopword
     checkAnalyzesTo(sa, L"a-class", newCollection<String>(L"class"));
 }
@@ -96,17 +96,17 @@ BOOST_AUTO_TEST_CASE(testCompanyNames)
 BOOST_AUTO_TEST_CASE(testDomainNames)
 {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     // domain names
     checkAnalyzesTo(sa, L"www.nutch.org", newCollection<String>(L"www.nutch.org"));
-    
+
     // the following should be recognized as HOST
     BOOST_CHECK_NO_THROW(checkAnalyzesTo(sa, L"www.nutch.org.", newCollection<String>(L"www.nutch.org"), newCollection<String>(L"<HOST>")));
-    
+
     // 2.3 should show the bug
     sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_23);
     BOOST_CHECK_NO_THROW(checkAnalyzesTo(sa, L"www.nutch.org.", newCollection<String>(L"wwwnutchorg"), newCollection<String>(L"<ACRONYM>")));
-    
+
     // 2.4 should not show the bug
     sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_24);
     BOOST_CHECK_NO_THROW(checkAnalyzesTo(sa, L"www.nutch.org.", newCollection<String>(L"www.nutch.org"), newCollection<String>(L"<HOST>")));
@@ -202,8 +202,8 @@ BOOST_AUTO_TEST_CASE(testComplianceNumericWithDash)
 BOOST_AUTO_TEST_CASE(testComplianceManyTokens)
 {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    checkAnalyzesTo(sa, L"/money.cnn.com/magazines/fortune/fortune_archive/2007/03/19/8402357/index.htm safari-0-sheikh-zayed-grand-mosque.jpg", 
-                    newCollection<String>(L"money.cnn.com", L"magazines", L"fortune", L"fortune", L"archive/2007/03/19/8402357", 
+    checkAnalyzesTo(sa, L"/money.cnn.com/magazines/fortune/fortune_archive/2007/03/19/8402357/index.htm safari-0-sheikh-zayed-grand-mosque.jpg",
+                    newCollection<String>(L"money.cnn.com", L"magazines", L"fortune", L"fortune", L"archive/2007/03/19/8402357",
                                           L"index.htm", L"safari-0-sheikh", L"zayed", L"grand", L"mosque.jpg"),
                     newCollection<String>(L"<HOST>", L"<ALPHANUM>", L"<ALPHANUM>", L"<ALPHANUM>", L"<NUM>", L"<HOST>", L"<NUM>",
                     L"<ALPHANUM>", L"<ALPHANUM>", L"<HOST>"));

@@ -14,27 +14,27 @@ namespace Lucene
     FreqProxTermsWriterPerThread::FreqProxTermsWriterPerThread(TermsHashPerThreadPtr perThread)
     {
         docState = perThread->docState;
-        _termsHashPerThread = perThread;
+        termsHashPerThread = perThread;
     }
-    
+
     FreqProxTermsWriterPerThread::~FreqProxTermsWriterPerThread()
     {
     }
-    
+
     TermsHashConsumerPerFieldPtr FreqProxTermsWriterPerThread::addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo)
     {
         return newLucene<FreqProxTermsWriterPerField>(termsHashPerField, LuceneThis(), fieldInfo);
     }
-    
+
     void FreqProxTermsWriterPerThread::startDocument()
     {
     }
-    
+
     DocWriterPtr FreqProxTermsWriterPerThread::finishDocument()
     {
         return DocWriterPtr();
     }
-    
+
     void FreqProxTermsWriterPerThread::abort()
     {
     }

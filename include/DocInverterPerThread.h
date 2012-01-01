@@ -19,41 +19,41 @@ namespace Lucene
     public:
         DocInverterPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, DocInverterPtr docInverter);
         virtual ~DocInverterPerThread();
-        
+
         LUCENE_CLASS(DocInverterPerThread);
-            
+
     public:
-        DocInverterWeakPtr _docInverter;
+        DocInverterPtr docInverter;
         InvertedDocConsumerPerThreadPtr consumer;
         InvertedDocEndConsumerPerThreadPtr endConsumer;
         SingleTokenAttributeSourcePtr singleToken;
-        
+
         DocStatePtr docState;
         FieldInvertStatePtr fieldState;
-        
+
         /// Used to read a string value for a field
         ReusableStringReaderPtr stringReader;
-    
+
     public:
         virtual void initialize();
         virtual void startDocument();
         virtual DocWriterPtr finishDocument();
         virtual void abort();
-        virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi);        
+        virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi);
     };
-    
+
     class SingleTokenAttributeSource : public AttributeSource
     {
     public:
         SingleTokenAttributeSource();
         virtual ~SingleTokenAttributeSource();
-        
+
         LUCENE_CLASS(SingleTokenAttributeSource);
-                
+
     public:
         TermAttributePtr termAttribute;
         OffsetAttributePtr offsetAttribute;
-    
+
     public:
         void reinit(const String& stringValue, int32_t startOffset, int32_t endOffset);
     };

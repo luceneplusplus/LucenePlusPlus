@@ -26,14 +26,14 @@ namespace Lucene
     const int32_t FieldsWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES = 1; // Changed strings to UTF8
     const int32_t FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS = 2; // Lucene 3.0: Removal of compressed fields
 
-    // NOTE: if you introduce a new format, make it 1 higher than the current one, and always change this if you 
+    // NOTE: if you introduce a new format, make it 1 higher than the current one, and always change this if you
     // switch to a new format!
     const int32_t FieldsWriter::FORMAT_CURRENT = FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 
     FieldsWriter::FieldsWriter(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
     {
         fieldInfos = fn;
-        
+
         bool success = false;
         String fieldsName(segment + L"." + IndexFileNames::FIELDS_EXTENSION());
         LuceneException finally;
@@ -60,7 +60,7 @@ namespace Lucene
             }
         }
         finally.throwException();
-        
+
         success = false;
         String indexName(segment + L"." + IndexFileNames::FIELDS_INDEX_EXTENSION());
         try
@@ -87,10 +87,10 @@ namespace Lucene
             }
         }
         finally.throwException();
-        
+
         doClose = true;
     }
-    
+
     FieldsWriter::FieldsWriter(IndexOutputPtr fdx, IndexOutputPtr fdt, FieldInfosPtr fn)
     {
         fieldInfos = fn;
@@ -98,16 +98,16 @@ namespace Lucene
         indexStream = fdx;
         doClose = false;
     }
-    
+
     FieldsWriter::~FieldsWriter()
     {
     }
-    
+
     void FieldsWriter::setFieldsStream(IndexOutputPtr stream)
     {
         this->fieldsStream = stream;
     }
-    
+
     void FieldsWriter::flushDocument(int32_t numStoredFields, RAMOutputStreamPtr buffer)
     {
         TestScope testScope(L"FieldsWriter", L"flushDocument");
@@ -121,7 +121,7 @@ namespace Lucene
         indexStream->writeLong(fieldsStream->getFilePointer());
         fieldsStream->writeVInt(0);
     }
-    
+
     void FieldsWriter::flush()
     {
         indexStream->flush();
@@ -161,7 +161,7 @@ namespace Lucene
             finally.throwException();
         }
     }
-    
+
     void FieldsWriter::writeField(FieldInfoPtr fi, FieldablePtr field)
     {
         fieldsStream->writeVInt(fi->number);
@@ -170,22 +170,22 @@ namespace Lucene
             bits |= FIELD_IS_TOKENIZED;
         if (field->isBinary())
             bits |= FIELD_IS_BINARY;
-        
+
         fieldsStream->writeByte(bits);
-        
+
         if (field->isBinary())
         {
             ByteArray data(field->getBinaryValue());
             int32_t len = field->getBinaryLength();
             int32_t offset = field->getBinaryOffset();
-            
+
             fieldsStream->writeVInt(len);
             fieldsStream->writeBytes(data.get(), offset, len);
         }
         else
             fieldsStream->writeString(field->stringValue());
     }
-    
+
     void FieldsWriter::addRawDocuments(IndexInputPtr stream, Collection<int32_t> lengths, int32_t numDocs)
     {
         int64_t position = fieldsStream->getFilePointer();
@@ -198,11 +198,11 @@ namespace Lucene
         fieldsStream->copyBytes(stream, position - start);
         BOOST_ASSERT(fieldsStream->getFilePointer() == position);
     }
-    
+
     void FieldsWriter::addDocument(DocumentPtr doc)
     {
         indexStream->writeLong(fieldsStream->getFilePointer());
-        
+
         int32_t storedCount = 0;
         Collection<FieldablePtr> fields(doc->getFields());
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
@@ -211,7 +211,7 @@ namespace Lucene
                 ++storedCount;
         }
         fieldsStream->writeVInt(storedCount);
-        
+
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
         {
             if ((*field)->isStored())

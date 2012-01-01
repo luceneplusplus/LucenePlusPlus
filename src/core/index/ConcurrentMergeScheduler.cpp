@@ -15,7 +15,7 @@ namespace Lucene
 {
     Collection<ConcurrentMergeSchedulerPtr> ConcurrentMergeScheduler::allInstances;
     bool ConcurrentMergeScheduler::anyExceptions = false;
-    
+
     ConcurrentMergeScheduler::ConcurrentMergeScheduler()
     {
         mergeThreadPriority = -1;
@@ -24,62 +24,62 @@ namespace Lucene
         suppressExceptions = false;
         closed = false;
     }
-    
+
     ConcurrentMergeScheduler::~ConcurrentMergeScheduler()
     {
     }
-    
+
     void ConcurrentMergeScheduler::initialize()
     {
         // Only for testing
         if (allInstances)
             addMyself();
     }
-    
+
     void ConcurrentMergeScheduler::setMaxThreadCount(int32_t count)
     {
         if (count < 1)
             boost::throw_exception(IllegalArgumentException(L"count should be at least 1"));
         maxThreadCount = count;
     }
-    
+
     int32_t ConcurrentMergeScheduler::getMaxThreadCount()
     {
         return maxThreadCount;
     }
-    
+
     int32_t ConcurrentMergeScheduler::getMergeThreadPriority()
     {
         SyncLock syncLock(this);
         initMergeThreadPriority();
         return mergeThreadPriority;
     }
-    
+
     void ConcurrentMergeScheduler::setMergeThreadPriority(int32_t pri)
     {
         SyncLock syncLock(this);
         if (pri > LuceneThread::MAX_PRIORITY || pri < LuceneThread::MIN_PRIORITY)
         {
-            boost::throw_exception(IllegalArgumentException(L"priority must be in range " + StringUtils::toString(LuceneThread::MIN_PRIORITY) + 
+            boost::throw_exception(IllegalArgumentException(L"priority must be in range " + StringUtils::toString(LuceneThread::MIN_PRIORITY) +
                                                             L" .. " + StringUtils::toString(LuceneThread::MAX_PRIORITY) + L" inclusive"));
         }
         mergeThreadPriority = pri;
-        
+
         for (SetMergeThread::iterator merge = mergeThreads.begin(); merge != mergeThreads.end(); ++merge)
             (*merge)->setThreadPriority(pri);
     }
-    
+
     bool ConcurrentMergeScheduler::verbose()
     {
-        return (!_writer.expired() && IndexWriterPtr(_writer)->verbose());
+        return (!writer && writer->verbose());
     }
-    
+
     void ConcurrentMergeScheduler::message(const String& message)
     {
-        if (verbose() && !_writer.expired())
-            IndexWriterPtr(_writer)->message(L"CMS: " + message);
+        if (verbose() && !writer)
+            writer->message(L"CMS: " + message);
     }
-    
+
     void ConcurrentMergeScheduler::initMergeThreadPriority()
     {
         SyncLock syncLock(this);
@@ -89,13 +89,13 @@ namespace Lucene
             mergeThreadPriority = std::min(LuceneThread::NORM_PRIORITY + 1, LuceneThread::MAX_PRIORITY);
         }
     }
-    
+
     void ConcurrentMergeScheduler::close()
     {
         sync();
         closed = true;
     }
-    
+
     void ConcurrentMergeScheduler::sync()
     {
         SyncLock syncLock(this);
@@ -106,7 +106,7 @@ namespace Lucene
         }
         mergeThreads.clear();
     }
-    
+
     int32_t ConcurrentMergeScheduler::mergeThreadCount()
     {
         SyncLock syncLock(this);
@@ -118,23 +118,23 @@ namespace Lucene
         }
         return count;
     }
-    
+
     void ConcurrentMergeScheduler::merge(IndexWriterPtr writer)
     {
         BOOST_ASSERT(!writer->holdsLock());
-        
-        this->_writer = writer;
-        
+
+        this->writer = writer;
+
         initMergeThreadPriority();
-        
+
         dir = writer->getDirectory();
-        
+
         // First, quickly run through the newly proposed merges and add any orthogonal merges (ie a merge not
-        // involving segments already pending to be merged) to the queue.  If we are way behind on merging, 
+        // involving segments already pending to be merged) to the queue.  If we are way behind on merging,
         // many of these newly proposed merges will likely already be registered.
         message(L"now merge");
         message(L"  index: " + writer->segString());
-        
+
         // Iterate, pulling from the IndexWriter's queue of pending merges, until it's empty
         while (true)
         {
@@ -144,10 +144,10 @@ namespace Lucene
                 message(L"  no more merges pending; now return");
                 return;
             }
-            
+
             // We do this with the primary thread to keep deterministic assignment of segment names
             writer->mergeInit(merge);
-            
+
             bool success = false;
             LuceneException finally;
             try
@@ -159,16 +159,16 @@ namespace Lucene
                     message(L"    too many merge threads running; stalling...");
                     wait(1000);
                 }
-                
+
                 message(L"  consider merge " + merge->segString(dir));
-                
+
                 BOOST_ASSERT(mergeThreadCount() < maxThreadCount);
-                
+
                 // OK to spawn a new merge thread to handle this merge
                 merger = getMergeThread(writer, merge);
                 mergeThreads.add(merger);
                 message(L"    launch new thread");
-                
+
                 merger->start();
                 success = true;
             }
@@ -181,13 +181,13 @@ namespace Lucene
             finally.throwException();
         }
     }
-    
+
     void ConcurrentMergeScheduler::doMerge(OneMergePtr merge)
     {
         TestScope testScope(L"ConcurrentMergeScheduler", L"doMerge");
-        IndexWriterPtr(_writer)->merge(merge);
+        writer->merge(merge);
     }
-    
+
     MergeThreadPtr ConcurrentMergeScheduler::getMergeThread(IndexWriterPtr writer, OneMergePtr merge)
     {
         SyncLock syncLock(this);
@@ -195,16 +195,16 @@ namespace Lucene
         thread->setThreadPriority(mergeThreadPriority);
         return thread;
     }
-    
+
     void ConcurrentMergeScheduler::handleMergeException(const LuceneException& exc)
     {
-        // When an exception is hit during merge, IndexWriter removes any partial files and then 
-        // allows another merge to run.  If whatever caused the error is not transient then the 
+        // When an exception is hit during merge, IndexWriter removes any partial files and then
+        // allows another merge to run.  If whatever caused the error is not transient then the
         // exception will keep happening, so, we sleep here to avoid saturating CPU in such cases
         LuceneThread::threadSleep(250); // pause 250 msec
         boost::throw_exception(MergeException());
     }
-    
+
     bool ConcurrentMergeScheduler::anyUnhandledExceptions()
     {
         if (!allInstances)
@@ -216,13 +216,13 @@ namespace Lucene
         anyExceptions = false;
         return v;
     }
-    
+
     void ConcurrentMergeScheduler::clearUnhandledExceptions()
     {
         SyncLock instancesLock(&allInstances);
         anyExceptions = false;
     }
-    
+
     void ConcurrentMergeScheduler::addMyself()
     {
         SyncLock instancesLock(&allInstances);
@@ -236,52 +236,50 @@ namespace Lucene
                 // Keep this one for now: it still has threads or may spawn new threads
                 allInstances[upto++] = other;
             }
-            
+
             allInstances.remove(allInstances.begin() + upto, allInstances.end());
             allInstances.add(LuceneThis());
         }
     }
-    
+
     void ConcurrentMergeScheduler::setSuppressExceptions()
     {
         suppressExceptions = true;
     }
-    
+
     void ConcurrentMergeScheduler::clearSuppressExceptions()
     {
         suppressExceptions = false;
     }
-    
+
     void ConcurrentMergeScheduler::setTestMode()
     {
         allInstances = Collection<ConcurrentMergeSchedulerPtr>::newInstance();
     }
-    
+
     MergeThread::MergeThread(ConcurrentMergeSchedulerPtr merger, IndexWriterPtr writer, OneMergePtr startMerge)
     {
-        this->_merger = merger;
-        this->_writer = writer;
+        this->merger = merger;
+        this->writer = writer;
         this->startMerge = startMerge;
     }
-    
+
     MergeThread::~MergeThread()
     {
     }
-    
+
     void MergeThread::setRunningMerge(OneMergePtr merge)
     {
-        ConcurrentMergeSchedulerPtr merger(_merger);
         SyncLock syncLock(merger);
         runningMerge = merge;
     }
-    
+
     OneMergePtr MergeThread::getRunningMerge()
     {
-        ConcurrentMergeSchedulerPtr merger(_merger);
         SyncLock syncLock(merger);
         return runningMerge;
     }
-    
+
     void MergeThread::setThreadPriority(int32_t pri)
     {
         try
@@ -292,24 +290,22 @@ namespace Lucene
         {
         }
     }
-    
+
     void MergeThread::run()
     {
         // First time through the while loop we do the merge that we were started with
         OneMergePtr merge(this->startMerge);
-        ConcurrentMergeSchedulerPtr merger(_merger);
-        
+
         LuceneException finally;
         try
         {
             merger->message(L"  merge thread: start");
-            IndexWriterPtr writer(_writer);
-            
+
             while (true)
             {
                 setRunningMerge(merge);
                 merger->doMerge(merge);
-                
+
                 // Subsequent times through the loop we do any new merge that writer says is necessary
                 merge = writer->getNextMerge();
                 if (merge)
@@ -320,7 +316,7 @@ namespace Lucene
                 else
                     break;
             }
-            
+
             merger->message(L"  merge thread: done");
         }
         catch (MergeAbortedException&)
@@ -338,11 +334,11 @@ namespace Lucene
             else
                 finally = e;
         }
-        
+
         {
             SyncLock syncLock(merger);
             merger->notifyAll();
-            
+
             bool removed = merger->mergeThreads.remove(LuceneThis());
             BOOST_ASSERT(removed);
         }

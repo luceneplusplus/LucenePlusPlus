@@ -29,16 +29,16 @@ public:
     SingleCharTokenizer(ReaderPtr r) : Tokenizer(r)
     {
         termAtt = addAttribute<TermAttribute>();
-        buffer = CharArray::newInstance(1);
+        buffer = Collection<CharArray>::newInstance(1);
         done = false;
     }
-    
+
     virtual ~SingleCharTokenizer()
     {
     }
 
 public:
-    CharArray buffer;
+    Collection<CharArray> buffer;
     bool done;
     TermAttributePtr termAtt;
 
@@ -62,7 +62,7 @@ public:
             return true;
         }
     }
-    
+
     virtual void reset(ReaderPtr input)
     {
         Tokenizer::reset(input);
@@ -90,7 +90,7 @@ public:
             tokenizer->reset(reader);
         return tokenizer;
     }
-    
+
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
         return newLucene<SingleCharTokenizer>(reader);
@@ -105,7 +105,7 @@ public:
         docCount = 0;
         dir = newLucene<RAMDirectory>();
     }
-    
+
     virtual ~TermRangeQueryFixture()
     {
     }
@@ -119,7 +119,7 @@ public:
     {
         initializeIndex(values, newLucene<WhitespaceAnalyzer>());
     }
-    
+
     void initializeIndex(Collection<String> values, AnalyzerPtr analyzer)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -127,14 +127,14 @@ public:
             insertDoc(writer, values[i]);
         writer->close();
     }
-    
+
     void addDoc(const String& content)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
         insertDoc(writer, content);
         writer->close();
     }
-    
+
     void insertDoc(IndexWriterPtr writer, const String& content)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -292,13 +292,13 @@ BOOST_AUTO_TEST_CASE(testExclusiveLowerNull)
     int32_t numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
     BOOST_CHECK_EQUAL(3, numHits);
     searcher->close();
-    
+
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"D"), analyzer);
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
     BOOST_CHECK_EQUAL(3, numHits);
     searcher->close();
-    
+
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
@@ -315,13 +315,13 @@ BOOST_AUTO_TEST_CASE(testInclusiveLowerNull)
     int32_t numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
     BOOST_CHECK_EQUAL(4, numHits);
     searcher->close();
-    
+
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"D"), analyzer);
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
     BOOST_CHECK_EQUAL(3, numHits);
     searcher->close();
-    
+
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;

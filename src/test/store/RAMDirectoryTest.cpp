@@ -33,10 +33,10 @@ public:
         indexDir = FileUtils::joinPath(getTempDir(), L"RAMDirIndex");
         DirectoryPtr dir(FSDirectory::open(indexDir));
         IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
-        
+
         // add enough document so that the index will be larger than RAMDirectory::READ_BUFFER_SIZE
         docsToAdd = 500;
-        
+
         // add some documents
         for (int32_t i = 0; i < docsToAdd; ++i)
         {
@@ -45,11 +45,11 @@ public:
             writer->addDocument(doc);
         }
         BOOST_CHECK_EQUAL(docsToAdd, writer->maxDoc());
-        
+
         writer->close();
         dir->close();
     }
-    
+
     virtual ~RAMDirectoryTestFixture()
     {
         FileUtils::removeDirectory(indexDir);
@@ -68,7 +68,7 @@ public:
         this->writer = writer;
         this->num = num;
     }
-    
+
     LUCENE_CLASS(TestRAMDirectoryThread);
 
 public:
@@ -78,7 +78,7 @@ public:
 protected:
     IndexWriterPtr writer;
     int32_t num;
-    
+
 public:
     virtual void run()
     {
@@ -101,7 +101,7 @@ public:
 const int32_t TestRAMDirectoryThread::numThreads = 10;
 const int32_t TestRAMDirectoryThread::docsPerThread = 40;
 
-typedef LucenePtr<TestRAMDirectoryThread> TestRAMDirectoryThreadPtr;
+typedef gc_ptr<TestRAMDirectoryThread> TestRAMDirectoryThreadPtr;
 
 /// Fake a huge ram file by using the same byte buffer for all buffers under INT_MAX.
 class DenseRAMFile : public RAMFile
@@ -112,7 +112,7 @@ public:
         capacity = 0;
         singleBuffers = MapIntByteArray::newInstance();
     }
-    
+
     LUCENE_CLASS(DenseRAMFile);
 
 public:
@@ -143,7 +143,7 @@ protected:
 
 const int64_t DenseRAMFile::MAX_VALUE = 2 * (int64_t)INT_MAX;
 
-typedef LucenePtr<DenseRAMFile> DenseRAMFilePtr;
+typedef gc_ptr<DenseRAMFile> DenseRAMFilePtr;
 
 BOOST_FIXTURE_TEST_SUITE(RAMDirectoryTest, RAMDirectoryTestFixture)
 
@@ -151,20 +151,20 @@ BOOST_AUTO_TEST_CASE(testRAMDirectory)
 {
     DirectoryPtr dir(FSDirectory::open(indexDir));
     MockRAMDirectoryPtr ramDir(newLucene<MockRAMDirectory>(dir));
-    
+
     // close the underlaying directory
     dir->close();
-    
+
     // Check size
     BOOST_CHECK_EQUAL(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
-    
+
     // open reader to test document count
     IndexReaderPtr reader(IndexReader::open(ramDir, true));
     BOOST_CHECK_EQUAL(docsToAdd, reader->numDocs());
-    
+
     // open search to check if all doc's are there
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);
-    
+
     // search for all documents
     for (int32_t i = 0; i < docsToAdd; ++i)
     {
@@ -182,24 +182,24 @@ BOOST_AUTO_TEST_CASE(testRAMDirectorySize)
     DirectoryPtr dir(FSDirectory::open(indexDir));
     MockRAMDirectoryPtr ramDir(newLucene<MockRAMDirectory>(dir));
     dir->close();
-    
+
     IndexWriterPtr writer(newLucene<IndexWriter>(ramDir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED));
     writer->optimize();
-    
+
     BOOST_CHECK_EQUAL(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
-    
+
     Collection<TestRAMDirectoryThreadPtr> threads(Collection<TestRAMDirectoryThreadPtr>::newInstance(TestRAMDirectoryThread::numThreads));
     for (int32_t i = 0; i < TestRAMDirectoryThread::numThreads; ++i)
         threads[i] = newLucene<TestRAMDirectoryThread>(writer, i);
-    
+
     for (int32_t i = 0; i < TestRAMDirectoryThread::numThreads; ++i)
         threads[i]->start();
     for (int32_t i = 0; i < TestRAMDirectoryThread::numThreads; ++i)
         threads[i]->join();
-    
+
     writer->optimize();
     BOOST_CHECK_EQUAL(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
-    
+
     writer->close();
 }
 
@@ -220,12 +220,12 @@ BOOST_AUTO_TEST_CASE(testIllegalEOF)
 BOOST_AUTO_TEST_CASE(testHugeFile)
 {
     DenseRAMFilePtr f(newLucene<DenseRAMFile>());
-    
+
     // output part
     RAMOutputStreamPtr out(newLucene<RAMOutputStream>(f));
     ByteArray b1(ByteArray::newInstance(RAMOutputStream::BUFFER_SIZE));
     ByteArray b2(ByteArray::newInstance(RAMOutputStream::BUFFER_SIZE / 3));
-    
+
     for (int32_t i = 0; i < b1.size(); ++i)
         b1[i] = (uint8_t)(i & 0x0007f);
     for (int32_t i = 0; i < b2.size(); ++i)
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(testHugeFile)
     {
         for (int32_t i = 0; i < b2.size(); ++i)
             b2[i]++;
-        
+
         out->writeBytes(b2.get(), 0, m);
         out->flush();
         n += m;
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(testHugeFile)
 BOOST_AUTO_TEST_CASE(testFree)
 {
     // todo:
-    
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()

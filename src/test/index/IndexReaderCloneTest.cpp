@@ -27,7 +27,7 @@
 
 using namespace Lucene;
 
-/// Tests cloning multiple types of readers, modifying the deletedDocs and norms and verifies copy on write semantics 
+/// Tests cloning multiple types of readers, modifying the deletedDocs and norms and verifies copy on write semantics
 /// of the deletedDocs and norms is implemented properly
 BOOST_FIXTURE_TEST_SUITE(IndexReaderCloneTest, LuceneTestFixture)
 
@@ -45,7 +45,7 @@ static DocumentPtr createDocument(int32_t n, int32_t numFields)
     return doc;
 }
 
-static void createIndex(DirectoryPtr dir, bool multiSegment) 
+static void createIndex(DirectoryPtr dir, bool multiSegment)
 {
     IndexWriter::unlock(dir);
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
@@ -92,11 +92,11 @@ static bool deleteWorked(int32_t doc, IndexReaderPtr r)
     return !exception;
 }
 
-/// 1. Get a norm from the original reader 
-/// 2. Clone the original reader 
-/// 3. Delete a document and set the norm of the cloned reader 
-/// 4. Verify the norms are not the same on each reader 
-/// 5. Verify the doc deleted is only in the cloned reader 
+/// 1. Get a norm from the original reader
+/// 2. Clone the original reader
+/// 3. Delete a document and set the norm of the cloned reader
+/// 4. Verify the norms are not the same on each reader
+/// 5. Verify the doc deleted is only in the cloned reader
 /// 6. Try to delete a document in the original reader, an exception should be thrown
 static void performDefaultTests(IndexReaderPtr r1)
 {
@@ -110,7 +110,7 @@ static void performDefaultTests(IndexReaderPtr r1)
 
     BOOST_CHECK(!r1->isDeleted(10));
     BOOST_CHECK(pr1Clone->isDeleted(10));
-    
+
     // try to update the original reader, which should throw an exception
     BOOST_CHECK_EXCEPTION(r1->deleteDocument(11), LuceneException, check_exception(LuceneException::Null));
     pr1Clone->close();
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(testReopenSegmentReaderToMultiReader)
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr reader1 = IndexReader::open(dir1, false);
-    
+
     modifyIndex(5, dir1);
 
     IndexReaderPtr reader2 = reader1->reopen();
@@ -264,11 +264,11 @@ BOOST_AUTO_TEST_CASE(testCloneWriteableToReadOnly)
     createIndex(dir1, true);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
     IndexReaderPtr readOnlyReader = LuceneDynamicCast<IndexReader>(reader->clone(true));
-    
+
     BOOST_CHECK(isReadOnly(readOnlyReader));
     BOOST_CHECK(!deleteWorked(1, readOnlyReader));
     BOOST_CHECK(!readOnlyReader->hasChanges());
-    
+
     reader->close();
     readOnlyReader->close();
     dir1->close();
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(testReopenWriteableToReadOnly)
     int32_t docCount = reader->numDocs();
     BOOST_CHECK(deleteWorked(1, reader));
     BOOST_CHECK_EQUAL(docCount - 1, reader->numDocs());
-    
+
     IndexReaderPtr readOnlyReader = reader->reopen(true);
     BOOST_CHECK(isReadOnly(readOnlyReader));
     BOOST_CHECK(!deleteWorked(1, readOnlyReader));
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(testCloneReadOnlyToWriteable)
     createIndex(dir1, true);
     IndexReaderPtr reader1 = IndexReader::open(dir1, true);
     IndexReaderPtr reader2 = LuceneDynamicCast<IndexReader>(reader1->clone(false));
-    
+
     BOOST_CHECK(!isReadOnly(reader2));
     BOOST_CHECK(!deleteWorked(1, reader1));
     // this readonly reader shouldn't yet have a write lock
@@ -345,7 +345,7 @@ BOOST_AUTO_TEST_CASE(testParallelReader)
     createIndex(dir1, true);
     DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
     createIndex(dir2, true);
-    
+
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
     IndexReaderPtr r2 = IndexReader::open(dir2, false);
 
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(testMixedReaders)
 
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
     IndexReaderPtr r2 = IndexReader::open(dir2, false);
-    
+
     Collection<IndexReaderPtr> multiReaders = newCollection<IndexReaderPtr>(r1, r2);
     MultiReaderPtr multiReader = newLucene<MultiReader>(multiReaders);
     performDefaultTests(multiReader);
@@ -500,7 +500,7 @@ BOOST_AUTO_TEST_CASE(testCloneSubreaders)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
-    
+
     IndexReaderPtr reader = IndexReader::open(dir1, false);
     reader->deleteDocument(1); // acquire write lock
     Collection<IndexReaderPtr> subs = reader->getSequentialSubReaders();

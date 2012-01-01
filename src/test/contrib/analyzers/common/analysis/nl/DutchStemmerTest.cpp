@@ -23,7 +23,7 @@ public:
     {
         checkOneTerm(newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
-    
+
     void checkReuse(AnalyzerPtr a, const String& input, const String& expected)
     {
         checkOneTermReuse(a, input, expected);
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(testWithSnowballExamples)
 
 BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 {
-    AnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT); 
+    AnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"lichaamsziek", L"lichaamsziek");
     checkReuse(a, L"lichamelijk", L"licham");
     checkReuse(a, L"lichamelijke", L"licham");
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
 {
     DutchAnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"lichamelijk", L"licham");
-    HashSet<String> exclusions = HashSet<String>::newInstance();
+    SetString exclusions = SetString::newInstance();
     exclusions.add(L"lichamelijk");
     a->setStemExclusionTable(exclusions);
     checkReuse(a, L"lichamelijk", L"lichamelijk");

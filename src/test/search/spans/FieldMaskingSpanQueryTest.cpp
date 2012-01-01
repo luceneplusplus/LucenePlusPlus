@@ -47,7 +47,7 @@ public:
             field(L"first", L"sally"),
             field(L"last", L"jones")))
         );
-        
+
         writer->addDocument(doc(newCollection<FieldPtr>(
             field(L"id", L"2"),
             field(L"gender", L"female"),
@@ -87,7 +87,7 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
+
     virtual ~FieldMaskingSpanQueryFixture()
     {
         searcher->close();
@@ -104,22 +104,22 @@ public:
             doc->add(fields[i]);
         return doc;
     }
-    
+
     FieldPtr field(const String& name, const String& value)
     {
         return newLucene<Field>(name, value, Field::STORE_NO, Field::INDEX_ANALYZED);
     }
-    
+
     void check(SpanQueryPtr q, Collection<int32_t> docs)
     {
         CheckHits::checkHitCollector(q, L"", searcher, docs);
     }
-    
+
     String str(SpansPtr span)
     {
         return str(span->doc(), span->start(), span->end());
     }
-    
+
     String str(int32_t doc, int32_t start, int32_t end)
     {
         return L"s(" + StringUtils::toString(doc) + L"," + StringUtils::toString(start) + L"," + StringUtils::toString(end) + L")";
@@ -149,16 +149,16 @@ namespace TestRewrite
         TestableFieldMaskingSpanQuery(SpanQueryPtr maskedQuery, const String& maskedField) : FieldMaskingSpanQuery(maskedQuery, maskedField)
         {
         }
-        
+
         virtual ~TestableFieldMaskingSpanQuery()
         {
         }
-    
+
     public:
         virtual QueryPtr rewrite(IndexReaderPtr reader)
         {
             return newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(
-                newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally")), 
+                newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally")),
                 newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james")))
             );
         }
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(testSpans1)
 
     SpansPtr spanA = qA->getSpans(searcher->getIndexReader());
     SpansPtr spanB = qB->getSpans(searcher->getIndexReader());
-    
+
     while (spanA->next())
     {
         BOOST_CHECK(spanB->next());

@@ -31,14 +31,14 @@ namespace Lucene
     const uint8_t FieldInfos::OMIT_NORMS = 0x10;
     const uint8_t FieldInfos::STORE_PAYLOADS = 0x20;
     const uint8_t FieldInfos::OMIT_TERM_FREQ_AND_POSITIONS = 0x40;
-    
+
     FieldInfos::FieldInfos()
     {
         format = 0;
         byNumber = Collection<FieldInfoPtr>::newInstance();
         byName = MapStringFieldInfo::newInstance();
     }
-    
+
     FieldInfos::FieldInfos(DirectoryPtr d, const String& name)
     {
         format = 0;
@@ -81,11 +81,11 @@ namespace Lucene
         input->close();
         finally.throwException();
     }
-    
+
     FieldInfos::~FieldInfos()
     {
     }
-    
+
     LuceneObjectPtr FieldInfos::clone(LuceneObjectPtr other)
     {
         SyncLock syncLock(this);
@@ -98,19 +98,19 @@ namespace Lucene
         }
         return fis;
     }
-    
+
     void FieldInfos::add(DocumentPtr doc)
     {
         SyncLock syncLock(this);
         Collection<FieldablePtr> fields(doc->getFields());
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
         {
-            add((*field)->name(), (*field)->isIndexed(), (*field)->isTermVectorStored(), 
-                (*field)->isStorePositionWithTermVector(), (*field)->isStoreOffsetWithTermVector(), 
+            add((*field)->name(), (*field)->isIndexed(), (*field)->isTermVectorStored(),
+                (*field)->isStorePositionWithTermVector(), (*field)->isStoreOffsetWithTermVector(),
                 (*field)->getOmitNorms(), false, (*field)->getOmitTermFreqAndPositions());
         }
     }
-    
+
     bool FieldInfos::hasProx()
     {
         for (Collection<FieldInfoPtr>::iterator fi = byNumber.begin(); fi != byNumber.end(); ++fi)
@@ -120,43 +120,43 @@ namespace Lucene
         }
         return false;
     }
-    
-    void FieldInfos::addIndexed(HashSet<String> names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
+
+    void FieldInfos::addIndexed(SetString names, bool storeTermVectors, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
     {
         SyncLock syncLock(this);
-        for (HashSet<String>::iterator name = names.begin(); name != names.end(); ++name)
+        for (SetString::iterator name = names.begin(); name != names.end(); ++name)
             add(*name, true, storeTermVectors, storePositionWithTermVector, storeOffsetWithTermVector);
     }
-    
-    void FieldInfos::add(HashSet<String> names, bool isIndexed)
+
+    void FieldInfos::add(SetString names, bool isIndexed)
     {
         SyncLock syncLock(this);
-        for (HashSet<String>::iterator name = names.begin(); name != names.end(); ++name)
+        for (SetString::iterator name = names.begin(); name != names.end(); ++name)
             add(*name, isIndexed);
     }
-    
+
     void FieldInfos::add(const String& name, bool isIndexed)
     {
         add(name, isIndexed, false, false, false, false);
     }
-    
+
     void FieldInfos::add(const String& name, bool isIndexed, bool storeTermVector)
     {
         add(name, isIndexed, storeTermVector, false, false, false);
     }
-    
+
     void FieldInfos::add(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector)
     {
         add(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, false);
     }
-    
+
     void FieldInfos::add(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector,
                          bool storeOffsetWithTermVector, bool omitNorms)
     {
         add(name, isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, false, false);
     }
-    
-    FieldInfoPtr FieldInfos::add(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, 
+
+    FieldInfoPtr FieldInfos::add(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector,
                                  bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
     {
         SyncLock syncLock(this);
@@ -167,45 +167,45 @@ namespace Lucene
             fi->update(isIndexed, storeTermVector, storePositionWithTermVector, storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);
         return fi;
     }
-    
-    FieldInfoPtr FieldInfos::addInternal(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, 
+
+    FieldInfoPtr FieldInfos::addInternal(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector,
                                          bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions)
     {
-        FieldInfoPtr fi(newLucene<FieldInfo>(name, isIndexed, byNumber.size(), storeTermVector, 
-                                                storePositionWithTermVector, storeOffsetWithTermVector, 
+        FieldInfoPtr fi(newLucene<FieldInfo>(name, isIndexed, byNumber.size(), storeTermVector,
+                                                storePositionWithTermVector, storeOffsetWithTermVector,
                                                 omitNorms, storePayloads, omitTermFreqAndPositions));
         byNumber.add(fi);
         byName.put(name, fi);
         return fi;
     }
-    
+
     int32_t FieldInfos::fieldNumber(const String& fieldName)
     {
         FieldInfoPtr fi(fieldInfo(fieldName));
         return fi ? fi->number : -1;
     }
-    
+
     FieldInfoPtr FieldInfos::fieldInfo(const String& fieldName)
     {
         return byName.get(fieldName);
     }
-    
+
     String FieldInfos::fieldName(int32_t fieldNumber)
     {
         FieldInfoPtr fi(fieldInfo(fieldNumber));
         return fi ? fi->name : L"";
     }
-    
+
     FieldInfoPtr FieldInfos::fieldInfo(int32_t fieldNumber)
     {
         return (fieldNumber >= 0 && fieldNumber < byNumber.size()) ? byNumber[fieldNumber] : FieldInfoPtr();
     }
-    
+
     int32_t FieldInfos::size()
     {
         return byNumber.size();
     }
-    
+
     bool FieldInfos::hasVectors()
     {
         for (Collection<FieldInfoPtr>::iterator fi = byNumber.begin(); fi != byNumber.end(); ++fi)
@@ -215,7 +215,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void FieldInfos::write(DirectoryPtr d, const String& name)
     {
         IndexOutputPtr output(d->createOutput(name));
@@ -231,7 +231,7 @@ namespace Lucene
         output->close();
         finally.throwException();
     }
-    
+
     void FieldInfos::write(IndexOutputPtr output)
     {
         output->writeVInt(CURRENT_FORMAT);
@@ -253,35 +253,35 @@ namespace Lucene
                 bits |= STORE_PAYLOADS;
             if ((*fi)->omitTermFreqAndPositions)
                 bits |= OMIT_TERM_FREQ_AND_POSITIONS;
-            
+
             output->writeString((*fi)->name);
             output->writeByte(bits);
         }
     }
-    
+
     void FieldInfos::read(IndexInputPtr input, const String& fileName)
     {
         int32_t firstInt = input->readVInt();
         format = firstInt < 0 ? firstInt : FORMAT_PRE; // This is a real format?
-        
+
         if (format != FORMAT_PRE && format != FORMAT_START)
             boost::throw_exception(CorruptIndexException(L"unrecognized format " + StringUtils::toString(format) + L" in file \"" + fileName + L"\""));
-        
+
         int32_t size = format == FORMAT_PRE ? firstInt : input->readVInt(); // read in the size if required
         for (int32_t i = 0; i < size; ++i)
         {
             String name(input->readString());
             uint8_t bits = input->readByte();
-            
+
             addInternal(name, (bits & IS_INDEXED) != 0, (bits & STORE_TERMVECTOR) != 0, (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0,
                         (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0, (bits & OMIT_NORMS) != 0, (bits & STORE_PAYLOADS) != 0,
                         (bits & OMIT_TERM_FREQ_AND_POSITIONS) != 0);
         }
-        
+
         if (input->getFilePointer() != input->length())
         {
-            boost::throw_exception(CorruptIndexException(L"did not read all bytes from file \"" + fileName + L"\": read " + 
-                                                         StringUtils::toString(input->getFilePointer()) + L" vs size " + 
+            boost::throw_exception(CorruptIndexException(L"did not read all bytes from file \"" + fileName + L"\": read " +
+                                                         StringUtils::toString(input->getFilePointer()) + L" vs size " +
                                                          StringUtils::toString(input->length())));
         }
     }

@@ -14,14 +14,14 @@
 
 namespace Lucene
 {
-    /// When a BitSet has fewer than 1 in BITS2VINTLIST_SIZE bits set, a SortedVIntList representing the 
+    /// When a BitSet has fewer than 1 in BITS2VINTLIST_SIZE bits set, a SortedVIntList representing the
     /// index numbers of the set bits will be smaller than that BitSet.
     const int32_t SortedVIntList::BITS2VINTLIST_SIZE = 8;
-    
+
     const int32_t SortedVIntList::VB1 = 0x7f;
     const int32_t SortedVIntList::BIT_SHIFT = 7;
     const int32_t SortedVIntList::MAX_BYTES_PER_INT = (31 / SortedVIntList::BIT_SHIFT) + 1;
-    
+
     SortedVIntList::SortedVIntList(Collection<int32_t> sortedInts)
     {
         lastInt = 0;
@@ -30,7 +30,7 @@ namespace Lucene
             addInt(sortedInts[i]);
         bytes.resize(lastBytePos);
     }
-    
+
     SortedVIntList::SortedVIntList(Collection<int32_t> sortedInts, int32_t inputSize)
     {
         lastInt = 0;
@@ -39,7 +39,7 @@ namespace Lucene
             addInt(sortedInts[i]);
         bytes.resize(lastBytePos);
     }
-    
+
     SortedVIntList::SortedVIntList(BitSetPtr bits)
     {
         lastInt = 0;
@@ -52,7 +52,7 @@ namespace Lucene
         }
         bytes.resize(lastBytePos);
     }
-    
+
     SortedVIntList::SortedVIntList(OpenBitSetPtr bits)
     {
         lastInt = 0;
@@ -65,7 +65,7 @@ namespace Lucene
         }
         bytes.resize(lastBytePos);
     }
-    
+
     SortedVIntList::SortedVIntList(DocIdSetIteratorPtr docIdSetIterator)
     {
         lastInt = 0;
@@ -75,30 +75,30 @@ namespace Lucene
             addInt(doc);
         bytes.resize(lastBytePos);
     }
-    
+
     SortedVIntList::~SortedVIntList()
     {
     }
-    
+
     void SortedVIntList::initBytes()
     {
         _size = 0;
         bytes = ByteArray::newInstance(128); // initial byte size
         lastBytePos = 0;
     }
-    
+
     void SortedVIntList::addInt(int32_t nextInt)
     {
         int32_t diff = nextInt - lastInt;
         if (diff < 0)
             boost::throw_exception(IllegalArgumentException(L"Input not sorted or first element negative."));
-        
+
         if (!bytes || (lastBytePos + MAX_BYTES_PER_INT) > bytes.size())
         {
             // biggest possible int does not fit
             bytes.resize((bytes.size() * 2) + MAX_BYTES_PER_INT);
         }
-        
+
         // See IndexOutput.writeVInt()
         while ((diff & ~VB1) != 0) // The high bit of the next byte needs to be set.
         {
@@ -109,43 +109,41 @@ namespace Lucene
         ++_size;
         lastInt = nextInt;
     }
-    
+
     int32_t SortedVIntList::size()
     {
         return _size;
     }
-    
+
     int32_t SortedVIntList::getByteSize()
     {
         return bytes ? bytes.size() : 0;
     }
-    
+
     bool SortedVIntList::isCacheable()
     {
         return true;
     }
-    
+
     DocIdSetIteratorPtr SortedVIntList::iterator()
     {
         return newLucene<SortedDocIdSetIterator>(LuceneThis());
     }
-    
+
     SortedDocIdSetIterator::SortedDocIdSetIterator(SortedVIntListPtr list)
     {
-        _list = list;
+        this->list = list;
         bytePos = 0;
         lastInt = 0;
         doc = -1;
     }
-    
+
     SortedDocIdSetIterator::~SortedDocIdSetIterator()
     {
     }
-    
+
     void SortedDocIdSetIterator::advance()
     {
-        SortedVIntListPtr list(_list);
-        
         // See IndexInput.readVInt()
         uint8_t b = list->bytes[bytePos++];
         lastInt += b & list->VB1;
@@ -155,15 +153,14 @@ namespace Lucene
             lastInt += (b & list->VB1) << s;
         }
     }
-    
+
     int32_t SortedDocIdSetIterator::docID()
     {
         return doc;
     }
-    
+
     int32_t SortedDocIdSetIterator::nextDoc()
     {
-        SortedVIntListPtr list(_list);
         if (bytePos >= list->lastBytePos)
             doc = NO_MORE_DOCS;
         else
@@ -173,10 +170,9 @@ namespace Lucene
         }
         return doc;
     }
-    
+
     int32_t SortedDocIdSetIterator::advance(int32_t target)
     {
-        SortedVIntListPtr list(_list);
         while (bytePos < list->lastBytePos)
         {
             advance();

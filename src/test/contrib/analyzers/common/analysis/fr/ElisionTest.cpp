@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(testElision)
 {
     String test = L"Plop, juste pour voir l'embrouille avec O'brian. M'enfin.";
     TokenizerPtr tokenizer = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(test));
-    HashSet<String> articles = HashSet<String>::newInstance();
+    SetString articles = SetString::newInstance();
     articles.add(L"l");
     articles.add(L"M");
     TokenFilterPtr filter = newLucene<ElisionFilter>(tokenizer, articles);

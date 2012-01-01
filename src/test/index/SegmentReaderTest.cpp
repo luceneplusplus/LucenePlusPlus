@@ -33,7 +33,7 @@ public:
         SegmentInfoPtr info = DocHelper::writeDoc(dir, testDoc);
         reader = SegmentReader::get(true, info, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
     }
-    
+
     virtual ~SegmentReaderTestFixture()
     {
     }
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(testDocument)
     BOOST_CHECK(reader->maxDoc() >= 1);
     DocumentPtr result = reader->document(0);
     BOOST_CHECK(result);
-    
+
     // There are 2 unstored fields on the document that are not preserved across writing
     BOOST_CHECK_EQUAL(DocHelper::numFields(result), DocHelper::numFields(testDoc) - DocHelper::unstored.size());
 
@@ -88,20 +88,20 @@ BOOST_AUTO_TEST_CASE(testDelete)
 
 BOOST_AUTO_TEST_CASE(testGetFieldNameVariations)
 {
-    HashSet<String> result = reader->getFieldNames(IndexReader::FIELD_OPTION_ALL);
+    SetString result = reader->getFieldNames(IndexReader::FIELD_OPTION_ALL);
     BOOST_CHECK(result);
     BOOST_CHECK_EQUAL(result.size(), DocHelper::all.size());
-    for (HashSet<String>::iterator field = result.begin(); field != result.end(); ++field)
+    for (SetString::iterator field = result.begin(); field != result.end(); ++field)
         BOOST_CHECK(DocHelper::nameValues.contains(*field) || field->empty());
     result = reader->getFieldNames(IndexReader::FIELD_OPTION_INDEXED);
     BOOST_CHECK(result);
     BOOST_CHECK_EQUAL(result.size(), DocHelper::indexed.size());
-    for (HashSet<String>::iterator field = result.begin(); field != result.end(); ++field)
+    for (SetString::iterator field = result.begin(); field != result.end(); ++field)
         BOOST_CHECK(DocHelper::indexed.contains(*field) || field->empty());
     result = reader->getFieldNames(IndexReader::FIELD_OPTION_UNINDEXED);
     BOOST_CHECK(result);
     BOOST_CHECK_EQUAL(result.size(), DocHelper::unindexed.size());
-    
+
     // Get all indexed fields that are storing term vectors
     result = reader->getFieldNames(IndexReader::FIELD_OPTION_INDEXED_WITH_TERMVECTOR);
     BOOST_CHECK(result);
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(testNorms)
 
             BOOST_CHECK_EQUAL(reader->hasNorms(f->name()), !f->getOmitNorms());
             BOOST_CHECK_EQUAL(reader->hasNorms(f->name()), !DocHelper::noNorms.contains(f->name()));
-            
+
             if (!reader->hasNorms(f->name()))
             {
                 // test for fake norms of 1.0 or null depending on the flag
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(testTermVectors)
 
     Collection<TermFreqVectorPtr> results = reader->getTermFreqVectors(0);
     BOOST_CHECK(results);
-    BOOST_CHECK_EQUAL(results.size(), 3);      
+    BOOST_CHECK_EQUAL(results.size(), 3);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

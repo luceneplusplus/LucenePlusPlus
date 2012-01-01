@@ -13,9 +13,9 @@ namespace Lucene
 {
     /// Default timer resolution.
     const int32_t TimeLimitingCollector::DEFAULT_RESOLUTION = 20;
-    
+
     int64_t TimeLimitingCollector::resolution = TimeLimitingCollector::DEFAULT_RESOLUTION;
-    
+
     TimeLimitingCollector::TimeLimitingCollector(CollectorPtr collector, int64_t timeAllowed)
     {
         this->DEFAULT_GREEDY = false;
@@ -25,34 +25,31 @@ namespace Lucene
         this->timeout = t0 + timeAllowed;
         this->docBase = 0;
     }
-    
+
     TimeLimitingCollector::~TimeLimitingCollector()
     {
     }
-    
+
     TimerThreadPtr TimeLimitingCollector::TIMER_THREAD()
     {
         static TimerThreadPtr _TIMER_THREAD;
         if (!_TIMER_THREAD)
-        {
-            _TIMER_THREAD = newLucene<TimerThread>();
-            CycleCheck::addStatic(_TIMER_THREAD);
-        }
+            _TIMER_THREAD = newStaticLucene<TimerThread>();
         if (!_TIMER_THREAD->isAlive())
             _TIMER_THREAD->start(); // start single thread instance
         return _TIMER_THREAD;
     }
-    
+
     int64_t TimeLimitingCollector::getResolution()
     {
         return resolution;
     }
-    
+
     void TimeLimitingCollector::setResolution(int64_t newResolution)
     {
         resolution = std::max(newResolution, (int64_t)5); // 5 milliseconds is about the minimum reasonable time for a wait call.
     }
-    
+
     void TimeLimitingCollector::stopTimer()
     {
         if (TIMER_THREAD()->isAlive())
@@ -61,17 +58,17 @@ namespace Lucene
             TIMER_THREAD()->join();
         }
     }
-    
+
     bool TimeLimitingCollector::isGreedy()
     {
         return greedy;
     }
-    
+
     void TimeLimitingCollector::setGreedy(bool greedy)
     {
         this->greedy = greedy;
     }
-    
+
     void TimeLimitingCollector::collect(int32_t doc)
     {
         int64_t time = TIMER_THREAD()->getMilliseconds();
@@ -85,39 +82,39 @@ namespace Lucene
         }
         collector->collect(doc);
     }
-    
+
     void TimeLimitingCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
         collector->setNextReader(reader, docBase);
         this->docBase = docBase;
     }
-    
+
     void TimeLimitingCollector::setScorer(ScorerPtr scorer)
     {
         collector->setScorer(scorer);
     }
-    
+
     bool TimeLimitingCollector::acceptsDocsOutOfOrder()
     {
         return collector->acceptsDocsOutOfOrder();
     }
-    
+
     TimerThread::TimerThread()
     {
         time = 0;
         _stopThread = false;
     }
-    
+
     TimerThread::~TimerThread()
     {
     }
-    
+
     void TimerThread::start()
     {
         _stopThread = false;
         LuceneThread::start();
     }
-    
+
     void TimerThread::run()
     {
         while (!_stopThread)
@@ -131,13 +128,13 @@ namespace Lucene
             LuceneThread::threadSleep(resolution);
         }
     }
-    
+
     int64_t TimerThread::getMilliseconds()
     {
         SyncLock syncLock(this);
         return time;
     }
-    
+
     void TimerThread::stopThread()
     {
         _stopThread = true;

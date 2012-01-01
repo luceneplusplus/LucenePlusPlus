@@ -28,7 +28,7 @@ public:
         this->idx = 0;
         this->base = 0;
     }
-    
+
     virtual ~MyTopsDocCollector()
     {
     }
@@ -43,7 +43,7 @@ protected:
     {
         if (!results)
             return EMPTY_TOPDOCS();
-        
+
         double maxScore = std::numeric_limits<double>::quiet_NaN();
         if (start == 0)
             maxScore = results[0]->score;
@@ -55,23 +55,23 @@ protected:
         }
         return newLucene<TopDocs>(totalHits, results, maxScore);
     }
-    
+
     virtual void collect(int32_t doc)
     {
         ++totalHits;
         pq->addOverflow(newLucene<ScoreDoc>(doc + base, scores[idx++]));
     }
-    
+
     virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
         base = docBase;
     }
-    
+
     virtual void setScorer(ScorerPtr scorer)
     {
         // Don't do anything. Assign scores in random
     }
-    
+
     virtual bool acceptsDocsOutOfOrder()
     {
         return true;
@@ -84,19 +84,19 @@ public:
     TopDocsCollectorFixture()
     {
         MAX_SCORE = 9.17561;
-        
+
         // Scores array to be used by MyTopDocsCollector. If it is changed, MAX_SCORE must also change.
         const double _scores[] = {
-            0.7767749, 1.7839992, 8.9925785, 7.9608946, 0.07948637, 2.6356435, 
-            7.4950366, 7.1490803, 8.108544, 4.961808, 2.2423935, 7.285586, 
-            4.6699767, 2.9655676, 6.953706, 5.383931, 6.9916306, 8.365894, 
-            7.888485, 8.723962, 3.1796896, 0.39971232, 1.3077754, 6.8489285, 
+            0.7767749, 1.7839992, 8.9925785, 7.9608946, 0.07948637, 2.6356435,
+            7.4950366, 7.1490803, 8.108544, 4.961808, 2.2423935, 7.285586,
+            4.6699767, 2.9655676, 6.953706, 5.383931, 6.9916306, 8.365894,
+            7.888485, 8.723962, 3.1796896, 0.39971232, 1.3077754, 6.8489285,
             9.17561, 5.060466, 7.9793315, 8.601509, 4.1858315, 0.28146625
         };
         scores = Collection<double>::newInstance(_scores, _scores + SIZEOF_ARRAY(_scores));
-        
+
         dir = newLucene<RAMDirectory>();
-        
+
         // populate an index with 30 documents, this should be enough for the test.
         // The documents have no content - the test uses MatchAllDocsQuery().
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
@@ -104,7 +104,7 @@ public:
             writer->addDocument(newLucene<Document>());
         writer->close();
     }
-    
+
     virtual ~TopDocsCollectorFixture()
     {
         dir->close();
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(testFirstResultsPage)
 BOOST_AUTO_TEST_CASE(testSecondResultsPages)
 {
     TopDocsCollectorPtr tdc = doSearch(15);
-    
+
     // ask for more results than are available
     BOOST_CHECK_EQUAL(5, tdc->topDocs(10, 10)->scoreDocs.size());
 
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(testMaxScore)
     BOOST_CHECK_EQUAL(MAX_SCORE, td->maxScore);
 }
 
-/// This does not test the PQ's correctness, but whether topDocs() implementations 
+/// This does not test the PQ's correctness, but whether topDocs() implementations
 /// return the results in decreasing score order.
 BOOST_AUTO_TEST_CASE(testResultsOrder)
 {

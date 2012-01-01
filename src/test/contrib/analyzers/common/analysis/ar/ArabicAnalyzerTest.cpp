@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(testEnglishInput)
 BOOST_AUTO_TEST_CASE(testCustomStopwords)
 {
     Collection<String> stopWords = newCollection<String>(L"the", L"and", L"a");
-    ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT, HashSet<String>::newInstance(stopWords.begin(), stopWords.end()));
+    ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT, SetString::newInstance(stopWords.begin(), stopWords.end()));
     checkAnalyzesTo(a, L"The quick brown fox.", newCollection<String>(L"quick", L"brown", L"fox"));
 }
 

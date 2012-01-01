@@ -19,7 +19,7 @@ namespace Lucene
         this->haveSkipped = false;
         this->lastDoc = 0;
         this->lastChildPointer = 0;
-        
+
         this->skipStream = Collection<IndexInputPtr>::newInstance(maxSkipLevels);
         this->skipPointer = Collection<int64_t>::newInstance(maxSkipLevels);
         this->childPointer = Collection<int64_t>::newInstance(maxSkipLevels);
@@ -30,28 +30,28 @@ namespace Lucene
         this->inputIsBuffered = LuceneDynamicCast<BufferedIndexInput>(skipStream);
         this->skipInterval[0] = skipInterval;
         this->skipDoc = Collection<int32_t>::newInstance(maxSkipLevels);
-        
+
         MiscUtils::arrayFill(this->skipPointer.begin(), 0, this->skipPointer.size(), 0);
         MiscUtils::arrayFill(this->childPointer.begin(), 0, this->childPointer.size(), 0);
         MiscUtils::arrayFill(this->numSkipped.begin(), 0, this->numSkipped.size(), 0);
         MiscUtils::arrayFill(this->skipDoc.begin(), 0, this->skipDoc.size(), 0);
-        
+
         for (int32_t i = 1; i < maxSkipLevels; ++i)
         {
             // cache skip intervals
             this->skipInterval[i] = this->skipInterval[i - 1] * skipInterval;
         }
     }
-    
+
     MultiLevelSkipListReader::~MultiLevelSkipListReader()
     {
     }
-    
+
     int32_t MultiLevelSkipListReader::getDoc()
     {
         return lastDoc;
     }
-    
+
     int32_t MultiLevelSkipListReader::skipTo(int32_t target)
     {
         if (!haveSkipped)
@@ -60,12 +60,12 @@ namespace Lucene
             loadSkipLevels();
             haveSkipped = true;
         }
-        
+
         // walk up the levels until highest level is found that has a skip for this target
         int32_t level = 0;
         while (level < numberOfSkipLevels - 1 && target > skipDoc[level + 1])
             ++level;
-        
+
         while (level >= 0)
         {
             if (target > skipDoc[level])
@@ -81,17 +81,17 @@ namespace Lucene
                 --level;
             }
         }
-        
+
         return numSkipped[0] - skipInterval[0] - 1;
     }
-    
+
     bool MultiLevelSkipListReader::loadNextSkip(int32_t level)
     {
         // we have to skip, the target document is greater than the current skip list entry
         setLastSkipData(level);
-        
+
         numSkipped[level] += skipInterval[level];
-        
+
         if (numSkipped[level] > docCount)
         {
             // this skip list is exhausted
@@ -100,19 +100,19 @@ namespace Lucene
                 numberOfSkipLevels = level;
             return false;
         }
-        
+
         // read next skip entry
         skipDoc[level] += readSkipData(level, skipStream[level]);
-        
+
         if (level != 0)
         {
             // read the child pointer if we are not on the leaf level
             childPointer[level] = skipStream[level]->readVLong() + skipPointer[level - 1];
         }
-        
+
         return true;
     }
-    
+
     void MultiLevelSkipListReader::seekChild(int32_t level)
     {
         skipStream[level]->seek(lastChildPointer);
@@ -121,7 +121,7 @@ namespace Lucene
         if (level > 0)
             childPointer[level] = skipStream[level]->readVLong() + skipPointer[level - 1];
     }
-    
+
     void MultiLevelSkipListReader::close()
     {
         for (Collection<IndexInputPtr>::iterator skip = skipStream.begin(); skip != skipStream.end(); ++skip)
@@ -130,7 +130,7 @@ namespace Lucene
                 (*skip)->close();
         }
     }
-    
+
     void MultiLevelSkipListReader::init(int64_t skipPointer, int32_t df)
     {
         this->skipPointer[0] = skipPointer;
@@ -138,30 +138,30 @@ namespace Lucene
         MiscUtils::arrayFill(skipDoc.begin(), 0, skipDoc.size(), 0);
         MiscUtils::arrayFill(numSkipped.begin(), 0, numSkipped.size(), 0);
         MiscUtils::arrayFill(childPointer.begin(), 0, childPointer.size(), 0);
-        
+
         haveSkipped = false;
         for (int32_t i = 1; i < numberOfSkipLevels; ++i)
             skipStream[i].reset();
     }
-    
+
     void MultiLevelSkipListReader::loadSkipLevels()
     {
         numberOfSkipLevels = docCount == 0 ? 0 : (int32_t)std::floor(std::log((double)docCount) / std::log((double)skipInterval[0]));
         if (numberOfSkipLevels > maxNumberOfSkipLevels)
             numberOfSkipLevels = maxNumberOfSkipLevels;
-        
+
         skipStream[0]->seek(skipPointer[0]);
-        
+
         int32_t toBuffer = numberOfLevelsToBuffer;
-        
+
         for (int32_t i = numberOfSkipLevels - 1; i > 0; --i)
         {
             // the length of the current level
             int64_t length = skipStream[0]->readVLong();
-            
+
             // the start pointer of the current level
             skipPointer[i] = skipStream[0]->getFilePointer();
-            
+
             if (toBuffer > 0)
             {
                 // buffer this level
@@ -174,22 +174,22 @@ namespace Lucene
                 skipStream[i] = LuceneDynamicCast<IndexInput>(skipStream[0]->clone());
                 if (inputIsBuffered && length < BufferedIndexInput::BUFFER_SIZE)
                     LuceneDynamicCast<BufferedIndexInput>(skipStream[i])->setBufferSize((int32_t)length);
-                
+
                 // move base stream beyond the current level
                 skipStream[0]->seek(skipStream[0]->getFilePointer() + length);
             }
         }
-        
+
         // use base stream for the lowest level
         skipPointer[0] = skipStream[0]->getFilePointer();
     }
-    
+
     void MultiLevelSkipListReader::setLastSkipData(int32_t level)
     {
         lastDoc = skipDoc[level];
         lastChildPointer = childPointer[level];
     }
-    
+
     SkipBuffer::SkipBuffer(IndexInputPtr input, int32_t length)
     {
         pos = 0;
@@ -197,37 +197,37 @@ namespace Lucene
         pointer = input->getFilePointer();
         input->readBytes(data.get(), 0, length);
     }
-    
+
     SkipBuffer::~SkipBuffer()
     {
     }
-    
+
     void SkipBuffer::close()
     {
         data.reset();
     }
-    
+
     int64_t SkipBuffer::getFilePointer()
     {
         return (pointer + pos);
     }
-    
+
     int64_t SkipBuffer::length()
     {
         return data.size();
     }
-    
+
     uint8_t SkipBuffer::readByte()
     {
         return data[pos++];
     }
-    
+
     void SkipBuffer::readBytes(uint8_t* b, int32_t offset, int32_t length)
     {
         MiscUtils::arrayCopy(data.get(), pos, b, offset, length);
         pos += length;
     }
-    
+
     void SkipBuffer::seek(int64_t pos)
     {
         this->pos = (int32_t)(pos - pointer);

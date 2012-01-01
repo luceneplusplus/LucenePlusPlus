@@ -16,13 +16,13 @@ namespace Lucene
     public:
         FreqProxTermsWriterPerThread(TermsHashPerThreadPtr perThread);
         virtual ~FreqProxTermsWriterPerThread();
-        
+
         LUCENE_CLASS(FreqProxTermsWriterPerThread);
-            
+
     public:
-        TermsHashPerThreadWeakPtr _termsHashPerThread;
+        TermsHashPerThreadPtr termsHashPerThread;
         DocStatePtr docState;
-    
+
     public:
         virtual TermsHashConsumerPerFieldPtr addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo);
         virtual void startDocument();

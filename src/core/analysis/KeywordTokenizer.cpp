@@ -13,31 +13,31 @@
 namespace Lucene
 {
     const int32_t KeywordTokenizer::DEFAULT_BUFFER_SIZE = 256;
-    
+
     KeywordTokenizer::KeywordTokenizer(ReaderPtr input) : Tokenizer(input)
     {
         init(DEFAULT_BUFFER_SIZE);
     }
-    
+
     KeywordTokenizer::KeywordTokenizer(ReaderPtr input, int32_t bufferSize) : Tokenizer(input)
     {
         init(bufferSize);
     }
-    
+
     KeywordTokenizer::KeywordTokenizer(AttributeSourcePtr source, ReaderPtr input, int32_t bufferSize) : Tokenizer(source, input)
     {
         init(bufferSize);
     }
-    
+
     KeywordTokenizer::KeywordTokenizer(AttributeFactoryPtr factory, ReaderPtr input, int32_t bufferSize) : Tokenizer(factory, input)
     {
         init(bufferSize);
     }
-    
+
     KeywordTokenizer::~KeywordTokenizer()
     {
     }
-    
+
     void KeywordTokenizer::init(int32_t bufferSize)
     {
         this->done = false;
@@ -46,7 +46,7 @@ namespace Lucene
         this->offsetAtt = addAttribute<OffsetAttribute>();
         this->termAtt->resizeTermBuffer(bufferSize);
     }
-    
+
     bool KeywordTokenizer::incrementToken()
     {
         if (!done)
@@ -54,7 +54,7 @@ namespace Lucene
             clearAttributes();
             done = true;
             int32_t upto = 0;
-            CharArray buffer(termAtt->termBuffer());
+            Collection<CharArray> buffer(termAtt->termBuffer());
             while (true)
             {
                 int32_t length = input->read(buffer.get(), upto, buffer.size() - upto);
@@ -71,13 +71,13 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void KeywordTokenizer::end()
     {
         // set final offset
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
-    
+
     void KeywordTokenizer::reset()
     {
         Tokenizer::reset(input);

@@ -28,7 +28,7 @@ namespace Lucene
         filelockPtr lock;
 
         static SynchronizePtr LOCK_HELD_LOCK();
-        static HashSet<String> LOCK_HELD();
+        static SetString LOCK_HELD();
 
     public:
         virtual bool obtain();

@@ -113,7 +113,7 @@ static DocumentPtr createDocument(const String& id)
     doc->add(newLucene<Field>(L"id", id, Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
     return doc;
 }
-  
+
 BOOST_AUTO_TEST_CASE(testCommitUserData)
 {
     RAMDirectoryPtr d = newLucene<MockRAMDirectory>();
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(testCommitUserData)
     IndexReaderPtr r2 = IndexReader::open(d, false);
     IndexCommitPtr c = r->getIndexCommit();
     MapStringString expectedData = c->getUserData();
-    
+
     BOOST_CHECK_EQUAL(expectedData.size(), commitUserData.size());
     for (MapStringString::iterator expected = expectedData.begin(); expected != expectedData.end(); ++expected)
         BOOST_CHECK(commitUserData.find(expected->first) != commitUserData.end());
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(testGetFieldNames)
     // set up reader
     IndexReaderPtr reader = IndexReader::open(d, false);
     BOOST_CHECK(reader->isCurrent());
-    HashSet<String> fieldNames = reader->getFieldNames(IndexReader::FIELD_OPTION_ALL);
+    SetString fieldNames = reader->getFieldNames(IndexReader::FIELD_OPTION_ALL);
     BOOST_CHECK(fieldNames.contains(L"keyword"));
     BOOST_CHECK(fieldNames.contains(L"text"));
     BOOST_CHECK(fieldNames.contains(L"unindexed"));
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(testGetFieldNames)
     // new termvector fields
     for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i)
         addDocumentWithTermVectorFields(writer);
-    
+
     writer->close();
     // verify fields again
     reader = IndexReader::open(d, false);
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE(testGetFieldNames)
 
     // verify that only indexed fields were returned
     fieldNames = reader->getFieldNames(IndexReader::FIELD_OPTION_INDEXED);
-    BOOST_CHECK_EQUAL(11, fieldNames.size()); // 6 original + the 5 termvector fields 
+    BOOST_CHECK_EQUAL(11, fieldNames.size()); // 6 original + the 5 termvector fields
     BOOST_CHECK(fieldNames.contains(L"keyword"));
     BOOST_CHECK(fieldNames.contains(L"text"));
     BOOST_CHECK(fieldNames.contains(L"unstored"));
@@ -263,7 +263,7 @@ BOOST_AUTO_TEST_CASE(testGetFieldNames)
     BOOST_CHECK(fieldNames.contains(L"unindexed"));
     BOOST_CHECK(fieldNames.contains(L"unindexed2"));
 
-    // verify index term vector fields  
+    // verify index term vector fields
     fieldNames = reader->getFieldNames(IndexReader::FIELD_OPTION_TERMVECTOR);
     BOOST_CHECK_EQUAL(1, fieldNames.size()); // 1 field has term vector only
     BOOST_CHECK(fieldNames.contains(L"termvector"));
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(testBasicDelete)
     for (int32_t i = 0; i < 100; ++i)
         addDoc(writer, searchTerm->text());
     writer->close();
-    
+
     // open reader at this point - this should fix the view of the
     // index at the point of having 100 "aaa" documents and 0 "bbb"
     IndexReaderPtr reader = IndexReader::open(dir, false);
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(testBasicDelete)
     BOOST_CHECK_EQUAL(100, reader->docFreq(searchTerm));
     checkTermDocsCount(reader, searchTerm, 0);
 
-    // open a 2nd reader to make sure first reader can commit its changes (.del) 
+    // open a 2nd reader to make sure first reader can commit its changes (.del)
     // while second reader is open
     IndexReaderPtr reader2 = IndexReader::open(dir, false);
     reader->close();
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE(testBinaryFields)
     uint8_t _bin[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     ByteArray bin(ByteArray::newInstance(10));
     std::memcpy(bin.get(), _bin, 10);
-    
+
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
     for (int32_t i = 0; i < 10; ++i)
     {
@@ -384,9 +384,9 @@ BOOST_AUTO_TEST_CASE(testBinaryFields)
     ByteArray data1 = b1->getBinaryValue();
     BOOST_CHECK_EQUAL(bin.size(), b1->getBinaryLength());
     BOOST_CHECK(std::memcmp(bin.get(), data1.get() + b1->getBinaryOffset(), bin.size()) == 0);
-    HashSet<String> lazyFields = HashSet<String>::newInstance();
+    SetString lazyFields = SetString::newInstance();
     lazyFields.add(L"bin1");
-    FieldSelectorPtr sel = newLucene<SetBasedFieldSelector>(HashSet<String>::newInstance(), lazyFields);
+    FieldSelectorPtr sel = newLucene<SetBasedFieldSelector>(SetString::newInstance(), lazyFields);
     doc = reader->document(reader->maxDoc() - 1, sel);
     Collection<FieldablePtr> fieldables = doc->getFieldables(L"bin1");
     BOOST_CHECK(fieldables);
@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE(testBinaryFields)
     BOOST_CHECK_EQUAL(bin.size(), fb1->getBinaryLength());
     BOOST_CHECK(std::memcmp(bin.get(), data1.get() + fb1->getBinaryOffset(), bin.size()) == 0);
     reader->close();
-    
+
     // force optimize
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
     writer->optimize();
@@ -421,18 +421,18 @@ BOOST_AUTO_TEST_CASE(testChangesAfterClose)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
-    
+
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     // add 11 documents with term : aaa
     for (int32_t i = 0; i < 11; ++i)
         addDoc(writer, searchTerm->text());
     writer->close();
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
 
     // Close reader
     reader->close();
-    
+
     // Then, try to make changes
     BOOST_CHECK_EXCEPTION(reader->deleteDocument(4), AlreadyClosedException, check_exception(LuceneException::AlreadyClosed));
     BOOST_CHECK_EXCEPTION(reader->setNorm(5, L"aaa", 2.0), AlreadyClosedException, check_exception(LuceneException::AlreadyClosed));
@@ -444,14 +444,14 @@ BOOST_AUTO_TEST_CASE(testLockObtainFailed)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
-    
+
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     // add 11 documents with term : aaa
     for (int32_t i = 0; i < 11; ++i)
         addDoc(writer, searchTerm->text());
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    
+
     // Try to make changes
     BOOST_CHECK_EXCEPTION(reader->deleteDocument(4), LockObtainFailedException, check_exception(LuceneException::LockObtainFailed));
     BOOST_CHECK_EXCEPTION(reader->setNorm(5, L"aaa", 2.0), LockObtainFailedException, check_exception(LuceneException::LockObtainFailed));
@@ -466,11 +466,11 @@ BOOST_AUTO_TEST_CASE(testWritingNorms)
     String indexDir(FileUtils::joinPath(getTempDir(), L"lucenetestnormwriter"));
     DirectoryPtr dir = FSDirectory::open(indexDir);
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
-    
+
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(writer, searchTerm->text());
     writer->close();
-    
+
     //  now open reader & set norm for doc 0
     IndexReaderPtr reader = IndexReader::open(dir, false);
     reader->setNorm(0, L"content", 2.0);
@@ -505,11 +505,11 @@ BOOST_AUTO_TEST_CASE(testWritingNorms)
 BOOST_AUTO_TEST_CASE(testWritingNormsNoReader)
 {
     RAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
-    
+
     // add 1 documents with term : aaa
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
-    
+
     writer->setUseCompoundFile(false);
     addDoc(writer, searchTerm->text());
     writer->close();
@@ -541,7 +541,7 @@ static void deleteReaderWriterConflict(bool optimize)
         addDoc(writer, searchTerm->text());
     writer->close();
 
-    // open reader at this point - this should fix the view of the index at the point of 
+    // open reader at this point - this should fix the view of the index at the point of
     // having 100 "aaa" documents and 0 "bbb"
     IndexReaderPtr reader = IndexReader::open(dir, false);
     BOOST_CHECK_EQUAL(100, reader->docFreq(searchTerm));
@@ -553,7 +553,7 @@ static void deleteReaderWriterConflict(bool optimize)
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
     for (int32_t i = 0; i < 100; ++i)
         addDoc(writer, searchTerm2->text());
-    
+
     // request optimization
     // This causes a new segment to become current for all subsequent
     // searchers. Because of this, deletions made via a previously open
@@ -568,7 +568,7 @@ static void deleteReaderWriterConflict(bool optimize)
     BOOST_CHECK_EQUAL(0, reader->docFreq(searchTerm2));
     checkTermDocsCount(reader, searchTerm, 100);
     checkTermDocsCount(reader, searchTerm2, 0);
-    
+
     // delete documents containing term: aaa
     // NOTE: the reader was created when only "aaa" documents were in
     int32_t deleted = 0;
@@ -663,7 +663,7 @@ BOOST_AUTO_TEST_CASE(testLastModified)
                 BOOST_CHECK_EQUAL(version, version2);
             }
             reader->close();
-            
+
             // modify index and check version has been incremented
             LuceneThread::threadSleep(1000);
 
@@ -717,7 +717,7 @@ BOOST_AUTO_TEST_CASE(testLock)
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
     IndexReaderPtr reader = IndexReader::open(dir, false);
     BOOST_CHECK_EXCEPTION(reader->deleteDocument(0), LockObtainFailedException, check_exception(LuceneException::LockObtainFailed));
-    IndexWriter::unlock(dir); // this should not be done in the real world! 
+    IndexWriter::unlock(dir); // this should not be done in the real world!
     reader->deleteDocument(0);
     reader->close();
     writer->close();
@@ -787,7 +787,7 @@ static void deleteReaderReaderConflict(bool optimize)
     TermPtr searchTerm1 = newLucene<Term>(L"content", L"aaa");
     TermPtr searchTerm2 = newLucene<Term>(L"content", L"bbb");
     TermPtr searchTerm3 = newLucene<Term>(L"content", L"ccc");
-    
+
     //  add 100 documents with term : aaa
     //  add 100 documents with term : bbb
     //  add 100 documents with term : ccc
@@ -840,7 +840,7 @@ static void deleteReaderReaderConflict(bool optimize)
     checkTermDocsCount(reader1, searchTerm1, 100);
     checkTermDocsCount(reader1, searchTerm2, 100);
     checkTermDocsCount(reader1, searchTerm3, 100);
-    
+
     // attempt to delete from stale reader
     // delete documents containing term: bbb
     BOOST_CHECK_EXCEPTION(reader1->deleteDocuments(searchTerm2), StaleReaderException, check_exception(LuceneException::StaleReader));
@@ -893,7 +893,7 @@ BOOST_AUTO_TEST_CASE(testDiskFull)
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
     int32_t START_COUNT = 157;
     int32_t END_COUNT = 144;
-    
+
     // First build up a starting index
     RAMDirectoryPtr startDir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(startDir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -905,19 +905,19 @@ BOOST_AUTO_TEST_CASE(testDiskFull)
         writer->addDocument(doc);
     }
     writer->close();
-    
+
     int64_t diskUsage = startDir->sizeInBytes();
-    int64_t diskFree = diskUsage + 100;      
+    int64_t diskFree = diskUsage + 100;
 
     LuceneException err;
 
     bool done = false;
-    
+
     // Iterate with ever increasing free disk space
     while (!done)
     {
         MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>(startDir);
-        
+
         // If IndexReader hits disk full, it can write to the same files again.
         dir->setPreventDoubleWrite(false);
 
@@ -927,14 +927,14 @@ BOOST_AUTO_TEST_CASE(testDiskFull)
         // disk full; after, give it infinite disk space and turn off random IOExceptions and
         // retry with same reader
         bool success = false;
-        
+
         for (int32_t x = 0; x < 2; ++x)
         {
             double rate = 0.05;
             double diskRatio = ((double)diskFree) / (double)diskUsage;
             int64_t thisDiskFree = 0;
             String testName;
-            
+
             if (x == 0)
             {
                 thisDiskFree = diskFree;
@@ -952,10 +952,10 @@ BOOST_AUTO_TEST_CASE(testDiskFull)
                 rate = 0.0;
                 testName = L"reader re-use after disk full";
             }
-            
+
             dir->setMaxSizeInBytes(thisDiskFree);
             dir->setRandomIOExceptionRate(rate, diskFree);
-            
+
             try
             {
                 if (x == 0)
@@ -979,33 +979,33 @@ BOOST_AUTO_TEST_CASE(testDiskFull)
                 if (x == 1)
                     BOOST_FAIL(testName << " hit IOException after disk space was freed up");
             }
-            
+
             // Whether we succeeded or failed, check that all un-referenced files were in fact deleted (ie,
-            // we did not create garbage).  Just create a new IndexFileDeleter, have it delete unreferenced 
+            // we did not create garbage).  Just create a new IndexFileDeleter, have it delete unreferenced
             // files, then verify that in fact no files were deleted
-            HashSet<String> _startFiles = dir->listAll();
+            SetString _startFiles = dir->listAll();
             SegmentInfosPtr infos = newLucene<SegmentInfos>();
             infos->read(dir);
-            IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr(), HashSet<String>());
-            HashSet<String> _endFiles = dir->listAll();
+            IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr(), SetString());
+            SetString _endFiles = dir->listAll();
 
             Collection<String> startFiles = Collection<String>::newInstance(_startFiles.begin(), _startFiles.end());
             Collection<String> endFiles = Collection<String>::newInstance(_endFiles.begin(), _endFiles.end());
 
             std::sort(startFiles.begin(), startFiles.end());
             std::sort(endFiles.begin(), endFiles.end());
-            
+
             if (!startFiles.equals(endFiles))
             {
                 String successStr = success ? L"success" : L"IOException";
                 BOOST_FAIL("reader.close() failed to delete unreferenced files after " << successStr << " (" << diskFree << " bytes)");
             }
-            
+
             // Finally, verify index is not corrupt, and, if we succeeded, we see all docs changed, and if
             // we failed, we see either all docs or no docs changed (transactional semantics)
             IndexReaderPtr newReader;
             BOOST_CHECK_NO_THROW(newReader = IndexReader::open(dir, false));
-            
+
             IndexSearcherPtr searcher = newLucene<IndexSearcher>(newReader);
             Collection<ScoreDocPtr> hits;
             BOOST_CHECK_NO_THROW(hits = searcher->search(newLucene<TermQuery>(searchTerm), FilterPtr(), 1000)->scoreDocs);
@@ -1021,20 +1021,20 @@ BOOST_AUTO_TEST_CASE(testDiskFull)
                 if (result2 != START_COUNT && result2 != END_COUNT)
                     BOOST_FAIL(testName << ": method did throw exception but hits.size() for search on term 'aaa' is " << result2 << " instead of expected " << END_COUNT);
             }
-            
+
             searcher->close();
             newReader->close();
 
             if (result2 == END_COUNT)
                 break;
         }
-        
+
         dir->close();
-        
+
         // Try again with 10 more bytes of free space
         diskFree += 10;
     }
-    
+
     startDir->close();
 }
 
@@ -1046,18 +1046,18 @@ BOOST_AUTO_TEST_CASE(testDocsOutOfOrder)
         addDoc(writer, L"aaa");
     writer->close();
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    
+
     // Try to delete an invalid docId, yet, within range of the final bits of the BitVector
     BOOST_CHECK_EXCEPTION(reader->deleteDocument(11), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
-    
+
     reader->close();
-    
+
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
-    
+
     // We must add more docs to get a new segment written
     for (int32_t i = 0; i < 11; ++i)
         addDoc(writer, L"aaa");
-    
+
     BOOST_CHECK_NO_THROW(writer->optimize());
     writer->close();
     dir->close();
@@ -1069,23 +1069,23 @@ BOOST_AUTO_TEST_CASE(testExceptionReleaseWriteLock)
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(writer, L"aaa");
     writer->close();
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    
+
     BOOST_CHECK_EXCEPTION(reader->deleteDocument(1), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
-    
+
     reader->close();
-    
+
     BOOST_CHECK(!IndexWriter::isLocked(dir));
-    
+
     reader = IndexReader::open(dir, false);
-    
+
     BOOST_CHECK_EXCEPTION(reader->setNorm(1, L"content", 2.0), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
-    
+
     reader->close();
-    
+
     BOOST_CHECK(!IndexWriter::isLocked(dir));
-    
+
     dir->close();
 }
 
@@ -1094,11 +1094,11 @@ BOOST_AUTO_TEST_CASE(testOpenReaderAfterDelete)
     String indexDir(FileUtils::joinPath(getTempDir(), L"deletetest"));
     DirectoryPtr dir = FSDirectory::open(indexDir);
     BOOST_CHECK_EXCEPTION(IndexReader::open(dir, false), NoSuchDirectoryException, check_exception(LuceneException::NoSuchDirectory));
-    
+
     FileUtils::removeDirectory(indexDir);
-    
+
     BOOST_CHECK_EXCEPTION(IndexReader::open(dir, false), NoSuchDirectoryException, check_exception(LuceneException::NoSuchDirectory));
-    
+
     dir->close();
 }
 
@@ -1156,29 +1156,29 @@ BOOST_AUTO_TEST_CASE(testReadOnly)
 
     IndexReaderPtr r = IndexReader::open(d, true);
     BOOST_CHECK_EXCEPTION(r->deleteDocument(0), UnsupportedOperationException, check_exception(LuceneException::UnsupportedOperation));
-    
+
     writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     addDocumentWithFields(writer);
     writer->close();
-    
+
     // Make sure reopen is still readonly
     IndexReaderPtr r2 = r->reopen();
     r->close();
 
     BOOST_CHECK_NE(r, r2);
     BOOST_CHECK_EXCEPTION(r2->deleteDocument(0), UnsupportedOperationException, check_exception(LuceneException::UnsupportedOperation));
-    
+
     writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     writer->optimize();
     writer->close();
-    
+
     // Make sure reopen to a single segment is still readonly
     IndexReaderPtr r3 = r2->reopen();
     r2->close();
 
     BOOST_CHECK_NE(r, r2);
     BOOST_CHECK_EXCEPTION(r3->deleteDocument(0), UnsupportedOperationException, check_exception(LuceneException::UnsupportedOperation));
-    
+
     // Make sure write lock isn't held
     writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
@@ -1240,19 +1240,19 @@ BOOST_AUTO_TEST_CASE(testNoDupCommitFileNames)
     writer->addDocument(createDocument(L"a"));
     writer->addDocument(createDocument(L"a"));
     writer->close();
-    
+
     Collection<IndexCommitPtr> commits = IndexReader::listCommits(dir);
     for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
     {
-        HashSet<String> files = (*commit)->getFileNames();
-        HashSet<String> seen = HashSet<String>::newInstance();
-        for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
+        SetString files = (*commit)->getFileNames();
+        SetString seen = SetString::newInstance();
+        for (SetString::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
         {
             BOOST_CHECK(!seen.contains(*fileName));
             seen.add(*fileName);
         }
     }
-    
+
     dir->close();
 }
 
@@ -1295,7 +1295,7 @@ BOOST_AUTO_TEST_CASE(testFieldCacheReuseAfterReopen)
     doc->add(newLucene<Field>(L"number", L"17", Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
     writer->addDocument(doc);
     writer->commit();
-    
+
     // Open reader1
     IndexReaderPtr r = IndexReader::open(dir, false);
     IndexReaderPtr r1 = SegmentReader::getOnlySegmentReader(r);
@@ -1327,7 +1327,7 @@ BOOST_AUTO_TEST_CASE(testReopenChangeReadonly)
     doc->add(newLucene<Field>(L"number", L"17", Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
     writer->addDocument(doc);
     writer->commit();
-    
+
     // Open reader1
     IndexReaderPtr r = IndexReader::open(dir, false);
     BOOST_CHECK(LuceneDynamicCast<DirectoryReader>(r));
@@ -1370,7 +1370,7 @@ BOOST_AUTO_TEST_CASE(testUniqueTermCount)
     writer->addDocument(doc);
     writer->addDocument(doc);
     writer->commit();
-    
+
     IndexReaderPtr r = IndexReader::open(dir, false);
     IndexReaderPtr r1 = SegmentReader::getOnlySegmentReader(r);
     BOOST_CHECK_EQUAL(36, r1->getUniqueTermCount());
@@ -1398,7 +1398,7 @@ BOOST_AUTO_TEST_CASE(testNoTermsIndex)
     writer->addDocument(doc);
     writer->addDocument(doc);
     writer->close();
-    
+
     IndexReaderPtr r = IndexReader::open(dir, IndexDeletionPolicyPtr(), true, -1);
     BOOST_CHECK_EXCEPTION(r->docFreq(newLucene<Term>(L"field", L"f")), IllegalStateException, check_exception(LuceneException::IllegalState));
     BOOST_CHECK(!LuceneDynamicCast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());

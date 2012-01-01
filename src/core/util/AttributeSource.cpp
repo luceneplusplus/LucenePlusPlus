@@ -17,29 +17,26 @@ namespace Lucene
     AttributeFactory::~AttributeFactory()
     {
     }
-    
+
     AttributePtr AttributeFactory::createAttributeInstance(const String& className)
     {
         return AttributePtr(); // override
     }
-    
+
     AttributeFactoryPtr AttributeFactory::DEFAULT_ATTRIBUTE_FACTORY()
     {
         static AttributeFactoryPtr _DEFAULT_ATTRIBUTE_FACTORY;
         if (!_DEFAULT_ATTRIBUTE_FACTORY)
-        {
-            _DEFAULT_ATTRIBUTE_FACTORY = newLucene<DefaultAttributeFactory>();
-            CycleCheck::addStatic(_DEFAULT_ATTRIBUTE_FACTORY);
-        }
+            _DEFAULT_ATTRIBUTE_FACTORY = newStaticLucene<DefaultAttributeFactory>();
         return _DEFAULT_ATTRIBUTE_FACTORY;
     }
-    
+
     AttributeSource::AttributeSource()
     {
         this->attributes = MapStringAttribute::newInstance();
         this->factory = AttributeFactory::DEFAULT_ATTRIBUTE_FACTORY();
     }
-    
+
     AttributeSource::AttributeSource(AttributeSourcePtr input)
     {
         if (!input)
@@ -47,44 +44,44 @@ namespace Lucene
         this->attributes = input->attributes;
         this->factory = input->factory;
     }
-    
+
     AttributeSource::AttributeSource(AttributeFactoryPtr factory)
     {
         this->attributes = MapStringAttribute::newInstance();
         this->factory = factory;
     }
-    
+
     AttributeSource::~AttributeSource()
     {
     }
-    
+
     AttributeFactoryPtr AttributeSource::getAttributeFactory()
     {
         return this->factory;
     }
-    
+
     void AttributeSource::addAttribute(const String& className, AttributePtr attrImpl)
     {
         // invalidate state to force recomputation in captureState()
         currentState.reset();
         attributes.put(className, attrImpl);
     }
-    
+
     bool AttributeSource::hasAttributes()
     {
         return !attributes.empty();
     }
-    
+
     AttributePtr AttributeSource::getAttribute(const String& className)
     {
         return attributes.get(className);
     }
-    
+
     bool AttributeSource::hasAttribute(const String& className)
     {
         return attributes.contains(className);
     }
-    
+
     void AttributeSource::computeCurrentState()
     {
         currentState = newLucene<AttributeSourceState>();
@@ -100,7 +97,7 @@ namespace Lucene
             ++attrImpl;
         }
     }
-    
+
     void AttributeSource::clearAttributes()
     {
         if (hasAttributes())
@@ -111,23 +108,23 @@ namespace Lucene
                 attrImpl->second->clear();
         }
     }
-    
+
     AttributeSourceStatePtr AttributeSource::captureState()
     {
         if (!hasAttributes())
             return AttributeSourceStatePtr();
-        
+
         if (!currentState)
             computeCurrentState();
-        
+
         return LuceneDynamicCast<AttributeSourceState>(currentState->clone());
     }
-    
+
     void AttributeSource::restoreState(AttributeSourceStatePtr state)
     {
         if (!state)
             return;
-        
+
         do
         {
             MapStringAttribute::iterator attrImpl = attributes.find(state->attribute->getClassName());
@@ -138,7 +135,7 @@ namespace Lucene
         }
         while (state);
     }
-    
+
     int32_t AttributeSource::hashCode()
     {
         int32_t code = 0;
@@ -146,12 +143,12 @@ namespace Lucene
             code = code * 31 + attrImpl->second->hashCode();
         return code;
     }
-    
+
     bool AttributeSource::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
+
         AttributeSourcePtr otherAttributeSource = LuceneDynamicCast<AttributeSource>(other);
         if (otherAttributeSource)
         {
@@ -159,18 +156,18 @@ namespace Lucene
             {
                 if (!otherAttributeSource->hasAttributes())
                     return false;
-                
+
                 if (attributes.size() != otherAttributeSource->attributes.size())
                     return false;
-                
+
                 // it is only equal if all attribute impls are the same in the same order
                 if (!currentState)
                     computeCurrentState();
-                
+
                 AttributeSourceStatePtr thisState(currentState);
                 if (!otherAttributeSource->currentState)
                     otherAttributeSource->computeCurrentState();
-                
+
                 AttributeSourceStatePtr otherState(otherAttributeSource->currentState);
                 while (thisState && otherState)
                 {
@@ -187,7 +184,7 @@ namespace Lucene
         else
             return false;
     }
-    
+
     String AttributeSource::toString()
     {
         StringStream buf;
@@ -206,11 +203,11 @@ namespace Lucene
         buf << ")";
         return buf.str();
     }
-    
+
     AttributeSourcePtr AttributeSource::cloneAttributes()
     {
         AttributeSourcePtr clone(newLucene<AttributeSource>(this->factory));
-        
+
         if (hasAttributes())
         {
             if (!currentState)
@@ -218,10 +215,10 @@ namespace Lucene
             for (AttributeSourceStatePtr state(currentState); state; state = state->next)
                 clone->attributes.put(state->attribute->getClassName(), LuceneDynamicCast<Attribute>(state->attribute->clone()));
         }
-        
+
         return clone;
     }
-    
+
     Collection<AttributePtr> AttributeSource::getAttributes()
     {
         Collection<AttributePtr> attrImpls(Collection<AttributePtr>::newInstance());
@@ -234,28 +231,28 @@ namespace Lucene
         }
         return attrImpls;
     }
-    
+
     DefaultAttributeFactory::~DefaultAttributeFactory()
     {
     }
-    
+
     AttributePtr DefaultAttributeFactory::createAttributeInstance(const String& className)
     {
         return AttributePtr();
     }
-    
+
     AttributeSourceState::~AttributeSourceState()
     {
     }
-    
+
     LuceneObjectPtr AttributeSourceState::clone(LuceneObjectPtr other)
     {
         AttributeSourceStatePtr clone(newLucene<AttributeSourceState>());
         clone->attribute = LuceneDynamicCast<Attribute>(attribute->clone());
-        
+
         if (next)
             clone->next = LuceneDynamicCast<AttributeSourceState>(next->clone());
-        
+
         return clone;
     }
 }

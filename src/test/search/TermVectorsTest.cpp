@@ -58,7 +58,7 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
+
     virtual ~TermVectorsFixture()
     {
     }
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(testTermPositionVectors)
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"zero"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
-    
+
     for (int32_t i = 0; i < hits.size(); ++i)
     {
         Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[i]->doc);
@@ -141,18 +141,18 @@ BOOST_AUTO_TEST_CASE(testTermPositionVectors)
 
         bool shouldBeOffVector = (hits[i]->doc % 3 == 0);
         BOOST_CHECK(!shouldBeOffVector || (shouldBeOffVector && LuceneDynamicCast<TermPositionVector>(vector[0])));
-        
+
         if (shouldBePosVector || shouldBeOffVector)
         {
             TermPositionVectorPtr posVec = LuceneDynamicCast<TermPositionVector>(vector[0]);
             Collection<String> terms = posVec->getTerms();
             BOOST_CHECK(terms && !terms.empty());
-            
+
             for (int32_t j = 0; j < terms.size(); ++j)
             {
                 Collection<int32_t> positions = posVec->getTermPositions(j);
                 Collection<TermVectorOffsetInfoPtr> offsets = posVec->getOffsets(j);
-                
+
                 if (shouldBePosVector)
                 {
                     BOOST_CHECK(positions);
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(testTermPositionVectors)
                 }
                 else
                     BOOST_CHECK(!positions);
-                
+
                 if (shouldBeOffVector)
                 {
                     BOOST_CHECK(offsets);
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(testTermOffsetVectors)
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"fifty"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(100, hits.size());
-    
+
     for (int32_t i = 0; i < hits.size(); ++i)
     {
         Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[i]->doc);
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE(testKnownSetOfDocuments)
     setupDoc(testDoc4, test4);
 
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
-    
+
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     BOOST_CHECK(writer);
     writer->addDocument(testDoc1);
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(testKnownSetOfDocuments)
     writer->addDocument(testDoc3);
     writer->addDocument(testDoc4);
     writer->close();
-    
+
     IndexSearcherPtr knownSearcher = newLucene<IndexSearcher>(dir, true);
     TermEnumPtr termEnum = knownSearcher->reader->terms();
     TermDocsPtr termDocs = knownSearcher->reader->termDocs();
@@ -311,7 +311,7 @@ BOOST_AUTO_TEST_CASE(testKnownSetOfDocuments)
 BOOST_AUTO_TEST_CASE(testRareVectors)
 {
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    
+
     for (int32_t i = 0; i < 100; ++i)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(testRareVectors)
         doc->add(newLucene<Field>(L"field", intToEnglish(100 + i), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
         writer->addDocument(doc);
     }
-    
+
     writer->close();
     searcher = newLucene<IndexSearcher>(directory, true);
 
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE(testMixedVectrosVectors)
     doc->add(newLucene<Field>(L"field", L"one", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     writer->addDocument(doc);
     writer->close();
-    
+
     searcher = newLucene<IndexSearcher>(directory, true);
 
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"one"));

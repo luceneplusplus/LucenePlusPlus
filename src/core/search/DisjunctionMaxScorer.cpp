@@ -13,19 +13,19 @@ namespace Lucene
     {
         this->doc = -1;
         this->tieBreakerMultiplier = tieBreakerMultiplier;
-        
-        // The passed subScorers array includes only scorers which have documents (DisjunctionMaxQuery takes care 
+
+        // The passed subScorers array includes only scorers which have documents (DisjunctionMaxQuery takes care
         // of that), and their nextDoc() was already called.
         this->subScorers = subScorers;
         this->numScorers = numScorers;
-        
+
         heapify();
     }
-    
+
     DisjunctionMaxScorer::~DisjunctionMaxScorer()
     {
     }
-    
+
     int32_t DisjunctionMaxScorer::nextDoc()
     {
         if (numScorers == 0)
@@ -47,27 +47,27 @@ namespace Lucene
                 }
             }
         }
-        
+
         doc = subScorers[0]->docID();
         return doc;
     }
-    
+
     int32_t DisjunctionMaxScorer::docID()
     {
         return doc;
     }
-    
+
     double DisjunctionMaxScorer::score()
     {
         int32_t doc = subScorers[0]->docID();
-        Collection<double> sum(newCollection<double>(subScorers[0]->score()));
+        Collection<double> sum(newCollectionDouble(subScorers[0]->score()));
         Collection<double> max(Collection<double>::newInstance(sum.begin(), sum.end()));
         int32_t size = numScorers;
         scoreAll(1, size, doc, sum, max);
         scoreAll(2, size, doc, sum, max);
         return max[0] + (sum[0] - max[0]) * tieBreakerMultiplier;
     }
-    
+
     void DisjunctionMaxScorer::scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double> sum, Collection<double> max)
     {
         if (root < size && subScorers[root]->docID() == doc)
@@ -79,7 +79,7 @@ namespace Lucene
             scoreAll((root << 1) + 2, size, doc, sum, max);
         }
     }
-    
+
     int32_t DisjunctionMaxScorer::advance(int32_t target)
     {
         if (numScorers == 0)
@@ -104,13 +104,13 @@ namespace Lucene
         doc = subScorers[0]->docID();
         return doc;
     }
-    
+
     void DisjunctionMaxScorer::heapify()
     {
         for (int32_t i = (numScorers >> 1) - 1; i >= 0; --i)
             heapAdjust(i);
     }
-    
+
     void DisjunctionMaxScorer::heapAdjust(int32_t root)
     {
         ScorerPtr scorer(subScorers[root]);
@@ -154,7 +154,7 @@ namespace Lucene
                 return;
         }
     }
-    
+
     void DisjunctionMaxScorer::heapRemoveRoot()
     {
         if (numScorers == 1)

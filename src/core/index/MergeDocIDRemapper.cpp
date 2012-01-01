@@ -26,7 +26,7 @@ namespace Lucene
             minDocID += info->docCount;
             ++i;
         }
-        
+
         int32_t numDocs = 0;
         for (int32_t j = 0; j < docMaps.size(); ++i, ++j)
         {
@@ -34,10 +34,10 @@ namespace Lucene
             BOOST_ASSERT(infos->info(i)->equals(merge->segments->info(j)));
         }
         this->maxDocID = minDocID + numDocs;
-        
+
         starts = Collection<int32_t>::newInstance(docMaps.size());
         newStarts = Collection<int32_t>::newInstance(docMaps.size());
-        
+
         starts[0] = minDocID;
         newStarts[0] = minDocID;
         for (i = 1; i < docMaps.size(); ++i)
@@ -47,19 +47,19 @@ namespace Lucene
             newStarts[i] = newStarts[i - 1] + lastDocCount - delCounts[i - 1];
         }
         this->docShift = numDocs - mergedDocCount;
-        
-        // There are rare cases when docShift is 0.  It happens if you try to delete a docID that's 
-        // out of bounds, because the SegmentReader still allocates deletedDocs and pretends it has 
+
+        // There are rare cases when docShift is 0.  It happens if you try to delete a docID that's
+        // out of bounds, because the SegmentReader still allocates deletedDocs and pretends it has
         // deletions ... so we can't make this assert here: BOOST_ASSERT(docShift > 0);
-        
+
         // Make sure it all adds up
         BOOST_ASSERT(docShift == maxDocID - (newStarts[docMaps.size() - 1] + merge->segments->info(docMaps.size() - 1)->docCount - delCounts[docMaps.size() - 1]));
     }
-    
+
     MergeDocIDRemapper::~MergeDocIDRemapper()
     {
     }
-    
+
     int32_t MergeDocIDRemapper::remap(int32_t oldDocID)
     {
         if (oldDocID < minDocID)
@@ -77,7 +77,7 @@ namespace Lucene
             // Binary search to locate this document & find its new docID
             Collection<int32_t>::iterator doc = std::upper_bound(starts.begin(), starts.begin() + docMaps.size(), oldDocID);
             int32_t docMap = std::distance(starts.begin(), doc) - 1;
-            
+
             if (docMaps[docMap])
                 return newStarts[docMap] + docMaps[docMap][oldDocID - starts[docMap]];
             else

@@ -13,18 +13,19 @@
 namespace Lucene
 {
     template <class T>
-    class Collection : public vector_container<T>, public LuceneSync
+    class Collection : public vector_container< std::vector<T> >, public LuceneSync
     {
     public:
-        typedef typename T::value_type value_type;
-        typedef typename vector_container::iterator iterator;
-        typedef typename vector_container::const_iterator const_iterator;
+        typedef std::vector<T> vector_type;
+        typedef T value_type;
+        typedef typename vector_type::iterator iterator;
+        typedef typename vector_type::const_iterator const_iterator;
 
-        Collection(gc_container<T, value_type>* p = 0) : vector_container<T>(p)
+        Collection(gc_container<vector_type, value_type>* p = 0) : vector_container<vector_type>(p)
         {
         }
 
-        Collection(const Collection& rhs) : vector_container<T>(rhs)
+        Collection(const Collection& rhs) : vector_container<vector_type>(rhs)
         {
         }
 
@@ -128,125 +129,156 @@ namespace Lucene
         {
             return (int32_t)vector_container<T>::size();
         }
+
+        static Collection<T> newInstance(typename std::vector<T>::size_type n = 0, const T& x = T())
+        {
+            Collection<T> container(new(get_gc()) gc_container<std::vector<T>, T>());
+            container.resize(n, x);
+            return container;
+        }
+
+        static Collection<T> newStaticInstance(typename std::vector<T>::size_type n = 0, const T& x = T())
+        {
+            Collection<T> container(new(get_static_gc()) gc_container<std::vector<T>, T>());
+            container.resize(n, x);
+            return container;
+        }
+
+        template <class ITER>
+        static Collection<T> newInstance(ITER first, ITER last)
+        {
+            Collection<T> container(new(get_gc()) gc_container<std::vector<T>, T>());
+            container.insert(first, last);
+            return container;
+        }
+
+        template <class ITER>
+        static Collection<T> newStaticInstance(ITER first, ITER last)
+        {
+            Collection<T> container(new(get_static_gc()) gc_container<std::vector<T>, T>());
+            container.insert(first, last);
+            return container;
+        }
     };
 
-    template <class T>
-    Collection<T> newCollectionPlaceholder(gc& gc, typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
-    {
-        Collection<T> container(Collection<T>(new(gc) gc_container<T, typename T::value_type>()));
-        container.resize(n, x);
-        return container;
-    }
+    // todo
+    // template <class T>
+    // Collection<T> newCollectionPlaceholder(gc& gc, typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
+    // {
+    //     Collection<T> container(new(gc) gc_container<std::vector<T>, T>());
+    //     container.resize(n, x);
+    //     return container;
+    // }
+
+    // template <class T>
+    // Collection<typename T::value_type> newCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
+    // {
+    //     return newCollectionPlaceholder<typename T::value_type>(get_gc(), n, x);
+    // }
+
+    // template <class T>
+    // Collection<typename T::value_type> newStaticCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
+    // {
+    //     return newCollectionPlaceholder<typename T::value_type>(get_static_gc(), n, x);
+    // }
+
+    // template <class T, class ITER>
+    // Collection<T> newCollectionPlaceholder(gc& gc, ITER first, ITER last)
+    // {
+    //     Collection<T> container(new(gc) gc_container<std::vector<T>, T>());
+    //     container.assign(first, last);
+    //     return container;
+    // }
+
+    // template <class T, class ITER>
+    // Collection<typename T::value_type> newCollection(ITER first, ITER last)
+    // {
+    //     return newCollectionPlaceholder<typename T::value_type>(get_gc(), first, last);
+    // }
+
+    // template <class T, class ITER>
+    // Collection<typename T::value_type> newStaticCollection(ITER first, ITER last)
+    // {
+    //     return newCollectionPlaceholder<typename T::value_type>(get_static_gc(), first, last);
+    // }
 
     template <class T>
-    Collection<T> newCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1)
     {
-        return newCollectionPlaceholder<T>(get_gc(), n, x);
-    }
-
-    template <class T>
-    Collection<T> newStaticCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
-    {
-        return newCollectionPlaceholder<T>(get_static_gc(), n, x);
-    }
-
-    template <class T, class Iter>
-    Collection<T> newCollectionPlaceholder(gc& gc, Iter first, Iter last)
-    {
-        Collection<T> container(Collection<T>(new(gc) gc_container<T, typename T::value_type>()));
-        container.assign(first, last);
-        return container;
-    }
-
-    template <class T, class Iter>
-    Collection<T> newCollection(Iter first, Iter last)
-    {
-        return newCollectionPlaceholder<T>(get_gc(), first, last);
-    }
-
-    template <class T, class Iter>
-    Collection<T> newStaticCollection(Iter first, Iter last)
-    {
-        return newCollectionPlaceholder<T>(get_static_gc(), first, last);
-    }
-
-    template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1)
-    {
-        Collection<T> collection(newCollection<Collection<T>::vector_type>());
+        Collection<typename T::value_type> collection(newCollection<T>());
         collection.push_back(a1);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1));
+        Collection<T> collection(newCollection<T>(a1));
         collection.push_back(a2);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2));
+        Collection<T> collection(newCollection<T>(a1, a2));
         collection.push_back(a3);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                      const typename T::value_type& a4)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                                           const typename T::value_type& a4)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3));
+        Collection<T> collection(newCollection<T>(a1, a2, a3));
         collection.push_back(a4);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                      const typename T::value_type& a4, const typename T::value_type& a5)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                                           const typename T::value_type& a4, const typename T::value_type& a5)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4));
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4));
         collection.push_back(a5);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5));
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5));
         collection.push_back(a6);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
-                                      const typename T::value_type& a7)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
+                                                           const typename T::value_type& a7)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5, a6));
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6));
         collection.push_back(a7);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
-                                      const typename T::value_type& a7, const typename T::value_type& a8)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
+                                                           const typename T::value_type& a7, const typename T::value_type& a8)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5, a6, a7));
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6, a7));
         collection.push_back(a8);
         return collection;
     }
 
     template <class T>
-    Collection<T> newCollectionAssign(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                      const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
-                                      const typename T::value_type& a7, const typename T::value_type& a8, const typename T::value_type& a9)
+    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
+                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
+                                                           const typename T::value_type& a7, const typename T::value_type& a8, const typename T::value_type& a9)
     {
-        Collection<T> collection(newCollectionAssign<Collection<T>::vector_type>(a1, a2, a3, a4, a5, a6, a7, a8));
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6, a7, a8));
         collection.push_back(a9);
         return collection;
     }

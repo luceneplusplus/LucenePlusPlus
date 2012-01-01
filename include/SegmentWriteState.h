@@ -14,23 +14,23 @@ namespace Lucene
     class SegmentWriteState : public LuceneObject
     {
     public:
-        SegmentWriteState(DocumentsWriterPtr docWriter, DirectoryPtr directory, const String& segmentName, 
-                          const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore, 
+        SegmentWriteState(DocumentsWriterPtr docWriter, DirectoryPtr directory, const String& segmentName,
+                          const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore,
                           int32_t termIndexInterval);
         virtual ~SegmentWriteState();
-        
+
         LUCENE_CLASS(SegmentWriteState);
-            
+
     public:
-        DocumentsWriterWeakPtr _docWriter;
+        DocumentsWriterPtr docWriter;
         DirectoryPtr directory;
         String segmentName;
         String docStoreSegmentName;
         int32_t numDocs;
         int32_t termIndexInterval;
         int32_t numDocsInStore;
-        HashSet<String> flushedFiles;
-    
+        SetString flushedFiles;
+
     public:
         String segmentFileName(const String& ext);
     };

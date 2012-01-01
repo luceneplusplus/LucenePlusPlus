@@ -29,7 +29,7 @@ public:
         this->reader = reader;
         timeElapsed = 0;
     }
-    
+
     virtual ~MultiThreadTermVectorsReader()
     {
     }
@@ -41,7 +41,7 @@ protected:
     int64_t timeElapsed;
 
     static const int32_t runsToDo;
-                
+
 public:
     virtual void run()
     {
@@ -79,7 +79,7 @@ protected:
             verifyVectors(vectors, docId);
         }
     }
-    
+
     void verifyVectors(Collection<TermFreqVectorPtr> vectors, int32_t num)
     {
         StringStream temp;
@@ -90,7 +90,7 @@ protected:
             for (int32_t z = 0; z < terms.size(); ++z)
                 temp << terms[z];
         }
-        
+
         if (intToEnglish(num) != temp.str())
             BOOST_FAIL(intToEnglish(num) << "!=" << temp.str());
     }
@@ -106,7 +106,7 @@ public:
         directory = newLucene<RAMDirectory>();
         numDocs = 100;
         numThreads = 3;
-        
+
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         for (int32_t i = 0; i < numDocs; ++i)
         {
@@ -117,7 +117,7 @@ public:
         }
         writer->close();
     }
-    
+
     virtual ~MultiThreadTermVectorsFixture()
     {
     }
@@ -136,7 +136,7 @@ public:
             mtr[i] = newLucene<MultiThreadTermVectorsReader>(reader);
             mtr[i]->start();
         }
-        
+
         for (int32_t i = 0; i < threadCount; ++i)
             mtr[i]->join();
     }
@@ -147,7 +147,7 @@ BOOST_FIXTURE_TEST_SUITE(MultiThreadTermVectorsTest, MultiThreadTermVectorsFixtu
 BOOST_AUTO_TEST_CASE(testMultiThreadTermVectors)
 {
     IndexReaderPtr reader;
-    
+
     try
     {
         reader = IndexReader::open(directory, true);

@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    /// A {@link TokenFilter} with a stop word table.  
+    /// A {@link TokenFilter} with a stop word table.
     /// <ul>
     /// <li> Numeric tokens are removed.
     /// <li> English tokens must be larger than 1 character.
@@ -23,17 +23,17 @@ namespace Lucene
     public:
         ChineseFilter(TokenStreamPtr input);
         virtual ~ChineseFilter();
-        
+
         LUCENE_CLASS(ChineseFilter);
-    
+
     public:
         /// Only English now, Chinese to be added later.
         static const wchar_t* STOP_WORDS[];
-        
+
     protected:
-        HashSet<String> stopTable;
+        SetString stopTable;
         TermAttributePtr termAtt;
-            
+
     public:
         virtual bool incrementToken();
     };

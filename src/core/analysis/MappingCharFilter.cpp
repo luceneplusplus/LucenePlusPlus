@@ -17,25 +17,25 @@ namespace Lucene
         this->charPointer = 0;
         this->nextCharCounter = 0;
     }
-    
+
     MappingCharFilter::MappingCharFilter(NormalizeCharMapPtr normMap, ReaderPtr in) : BaseCharFilter(CharReader::get(in))
     {
         this->normMap = normMap;
         this->charPointer = 0;
         this->nextCharCounter = 0;
     }
-    
+
     MappingCharFilter::~MappingCharFilter()
     {
     }
-    
+
     int32_t MappingCharFilter::read()
     {
         while (true)
         {
             if (charPointer < (int32_t)replacement.length())
                 return (int32_t)replacement[charPointer++];
-            
+
             int32_t firstChar = nextChar();
             if (firstChar == -1)
                 return -1;
@@ -58,10 +58,10 @@ namespace Lucene
                 else
                     addOffCorrectMap(nextCharCounter - result->diff - prevCumulativeDiff, prevCumulativeDiff + result->diff);
             }
-            
+
         }
     }
-    
+
     int32_t MappingCharFilter::nextChar()
     {
         ++nextCharCounter;
@@ -69,7 +69,7 @@ namespace Lucene
             return buffer.removeFirst();
         return input->read();
     }
-    
+
     void MappingCharFilter::pushChar(int32_t c)
     {
         --nextCharCounter;
@@ -77,14 +77,14 @@ namespace Lucene
             buffer = Collection<wchar_t>::newInstance();
         buffer.add(0, (wchar_t)c);
     }
-    
+
     void MappingCharFilter::pushLastChar(int32_t c)
     {
         if (!buffer)
             buffer = Collection<wchar_t>::newInstance();
         buffer.add((wchar_t)c);
     }
-    
+
     NormalizeCharMapPtr MappingCharFilter::match(NormalizeCharMapPtr map)
     {
         NormalizeCharMapPtr result;
@@ -104,10 +104,10 @@ namespace Lucene
             result = map;
         return result;
     }
-    
+
     int32_t MappingCharFilter::read(wchar_t* buffer, int32_t offset, int32_t length)
     {
-        CharArray tmp(CharArray::newInstance(length));
+        Collection<CharArray> tmp(Collection<CharArray>::newInstance(length));
         int32_t l = input->read(tmp.get(), 0, length);
         if (l != -1)
         {

@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(testMethod)
         writer->addDocument(doc);
     }
     writer->close();
-                                           
+
     IndexReaderPtr reader = IndexReader::open(directory, true);
     PrefixQueryPtr query = newLucene<PrefixQuery>(newLucene<Term>(L"category", L"foo"));
     QueryPtr rw1 = query->rewrite(reader);
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(testMethod)
     bq->add(query, BooleanClause::MUST);
 
     QueryPtr rw2 = bq->rewrite(reader);
-    
+
     BOOST_CHECK_EQUAL(getCount(reader, rw1), getCount(reader, rw2));
 }
 

@@ -21,7 +21,7 @@ namespace Lucene
         LUCENE_CLASS(FindSegmentsFile);
 
     protected:
-        SegmentInfosWeakPtr _segmentInfos;
+        SegmentInfosPtr segmentInfos;
         DirectoryPtr directory;
 
     public:

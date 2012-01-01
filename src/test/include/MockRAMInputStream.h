@@ -16,21 +16,21 @@ namespace Lucene
     class MockRAMInputStream : public RAMInputStream
     {
     public:
-        /// Construct an empty output buffer. 
+        /// Construct an empty output buffer.
         MockRAMInputStream();
         MockRAMInputStream(MockRAMDirectoryPtr dir, const String& name, RAMFilePtr f);
         virtual ~MockRAMInputStream();
-        
+
         LUCENE_CLASS(MockRAMInputStream);
-    
+
     protected:
-        MockRAMDirectoryWeakPtr _dir;
+        MockRAMDirectoryPtr dir;
         String name;
         bool isClone;
-    
+
     public:
         virtual void close();
-        
+
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     };
 }

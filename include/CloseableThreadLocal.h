@@ -19,8 +19,8 @@ namespace Lucene
     class CloseableThreadLocal : public LuceneObject
     {
     public:
-        typedef LucenePtr<T> localDataPtr;
-        typedef Map<int64_t, localDataPtr> MapLocalData;
+        typedef gc_ptr<T> localDataPtr;
+        typedef SortedMap<int64_t, localDataPtr> MapLocalData;
 
         CloseableThreadLocal()
         {

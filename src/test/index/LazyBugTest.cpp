@@ -35,7 +35,7 @@ public:
         static Collection<String> _data;
         if (!_data)
         {
-            _data = Collection<String>::newInstance();
+            _data = Collection<String>::newStaticInstance();
             _data.add(L"now");
             _data.add(L"is the time");
             _data.add(L"for all good men");
@@ -46,25 +46,25 @@ public:
         }
         return _data;
     }
-    
-    HashSet<String> dataset()
+
+    SetString dataset()
     {
-        static HashSet<String> _dataset;
+        static SetString _dataset;
         if (!_dataset)
         {
             Collection<String> _data = data();
-            _dataset = HashSet<String>::newInstance(_data.begin(), _data.end());
+            _dataset = SetString::newStaticInstance(_data.begin(), _data.end());
         }
         return _dataset;
     }
-    
+
     String MAGIC_FIELD()
     {
         return L"f" + StringUtils::toString((double)NUM_FIELDS / 3);
     }
-    
+
     DECLARE_LUCENE_PTR(LazyBugSelector)
-    
+
     class LazyBugSelector : public FieldSelector
     {
     public:
@@ -72,16 +72,16 @@ public:
         {
             this->magicField = magicField;
         }
-        
+
         virtual ~LazyBugSelector()
         {
         }
-        
+
         LUCENE_CLASS(LazyBugSelector);
-    
+
     protected:
         String magicField;
-        
+
     public:
         virtual FieldSelectorResult accept(const String& fieldName)
         {
@@ -91,25 +91,25 @@ public:
                 return FieldSelector::SELECTOR_LAZY_LOAD;
         }
     };
-    
+
     FieldSelectorPtr SELECTOR()
     {
         return newLucene<LazyBugSelector>(MAGIC_FIELD());
     }
-    
+
     DirectoryPtr makeIndex()
     {
         DirectoryPtr dir = newLucene<RAMDirectory>();
         RandomPtr rand = newLucene<Random>();
-        
+
         try
         {
             AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
             IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
-            
+
             writer->setUseCompoundFile(false);
             Collection<String> _data = data();
-            
+
             for (int32_t d = 1; d <= NUM_DOCS; ++d)
             {
                 DocumentPtr doc = newLucene<Document>();
@@ -125,18 +125,18 @@ public:
         }
         return dir;
     }
-    
+
     void doTest(Collection<int32_t> docs)
     {
         DirectoryPtr dir = makeIndex();
         IndexReaderPtr reader = IndexReader::open(dir, true);
-        HashSet<String> _dataset = dataset();
-        
+        SetString _dataset = dataset();
+
         for (int32_t i = 0; i < docs.size(); ++i)
         {
             DocumentPtr d = reader->document(docs[i], SELECTOR());
             d->get(MAGIC_FIELD());
-            
+
             Collection<FieldablePtr> fields = d->getFields();
             for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
             {
@@ -145,7 +145,7 @@ public:
                     String fname = (*field)->name();
                     String fval = (*field)->stringValue();
                     BOOST_CHECK(!fval.empty());
-                    
+
                     Collection<String> vals = StringUtils::split(fval, L"#");
                     BOOST_CHECK_EQUAL(vals.size(), 2);
                     if (!_dataset.contains(vals[0]) || !_dataset.contains(vals[1]))

@@ -41,11 +41,11 @@ public:
         savedStart = 0;
         savedEnd = 0;
     }
-    
+
     virtual ~TestFilter()
     {
     }
-    
+
     LUCENE_CLASS(TestFilter);
 
 public:
@@ -92,7 +92,7 @@ public:
     virtual ~TestAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(TestAnalyzer);
 
 public:
@@ -109,7 +109,7 @@ public:
     virtual ~EmptyTokenStream()
     {
     }
-    
+
     LUCENE_CLASS(EmptyTokenStream);
 
 public:
@@ -127,11 +127,11 @@ public:
     {
         standardAnalyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     }
-    
+
     virtual ~AnalyzerReturningNull()
     {
     }
-    
+
     LUCENE_CLASS(AnalyzerReturningNull);
 
 protected:
@@ -165,13 +165,13 @@ static void checkStopQueryEquals(const String& qtxt, const String& expectedRes)
 /// test stop words arising for both the non static form, and for the corresponding static form (qtxt, fields[]).
 BOOST_AUTO_TEST_CASE(testStopwordsParsing)
 {
-    checkStopQueryEquals(L"one", L"b:one t:one");  
-    checkStopQueryEquals(L"one stop", L"b:one t:one");  
-    checkStopQueryEquals(L"one (stop)", L"b:one t:one");  
-    checkStopQueryEquals(L"one ((stop))", L"b:one t:one");  
-    checkStopQueryEquals(L"stop", L"");  
-    checkStopQueryEquals(L"(stop)", L"");  
-    checkStopQueryEquals(L"((stop))", L"");  
+    checkStopQueryEquals(L"one", L"b:one t:one");
+    checkStopQueryEquals(L"one stop", L"b:one t:one");
+    checkStopQueryEquals(L"one (stop)", L"b:one t:one");
+    checkStopQueryEquals(L"one ((stop))", L"b:one t:one");
+    checkStopQueryEquals(L"stop", L"");
+    checkStopQueryEquals(L"(stop)", L"");
+    checkStopQueryEquals(L"((stop))", L"");
 }
 
 BOOST_AUTO_TEST_CASE(testSimple)
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(testSimple)
     q = mfqp->parse(L"\"foo bar\"~4");
     BOOST_CHECK_EQUAL(L"b:\"foo bar\"~4 t:\"foo bar\"~4", q->toString());
 
-    q = mfqp->parse(L"b:\"foo bar\"~4"); 
+    q = mfqp->parse(L"b:\"foo bar\"~4");
     BOOST_CHECK_EQUAL(L"b:\"foo bar\"~4", q->toString());
 
     // make sure that terms which have a field are not touched
@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(testStaticMethod1)
     BOOST_CHECK_EQUAL(L"(b:one +b:more) (+t:two)", q->toString());
 
     Collection<String> queries5 = newCollection<String>(L"blah");
-    
+
     // expected exception, array length differs
     BOOST_CHECK_EXCEPTION(q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, queries5, fields, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT)), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(testStaticMethod2)
     BOOST_CHECK_EQUAL(L"+(b:one b:two) -(t:one t:two)", q->toString());
 
     Collection<BooleanClause::Occur> flags2 = newCollection<BooleanClause::Occur>(BooleanClause::MUST);
-    
+
     // expected exception, array length differs
     BOOST_CHECK_EXCEPTION(q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, L"blah", fields, flags2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT)), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 }
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE(testStaticMethod3)
     BOOST_CHECK_EQUAL(L"+f1:one -f2:two f3:three", q->toString());
 
     Collection<BooleanClause::Occur> flags2 = newCollection<BooleanClause::Occur>(BooleanClause::MUST);
-    
+
     // expected exception, array length differs
     BOOST_CHECK_EXCEPTION(q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, queries, fields, flags2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT)), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 }
@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE(testStaticMethod3Old)
     BOOST_CHECK_EQUAL(L"+b:one -t:two", q->toString());
 
     Collection<BooleanClause::Occur> flags2 = newCollection<BooleanClause::Occur>(BooleanClause::MUST);
-    
+
     // expected exception, array length differs
     BOOST_CHECK_EXCEPTION(q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, queries, fields, flags2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT)), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 }
@@ -347,7 +347,7 @@ BOOST_AUTO_TEST_CASE(testAnalyzerReturningNull)
     MultiFieldQueryParserPtr parser = newLucene<MultiFieldQueryParser>(LuceneVersion::LUCENE_CURRENT, fields, newLucene<AnalyzerReturningNull>());
     QueryPtr q = parser->parse(L"bla AND blo");
     BOOST_CHECK_EQUAL(L"+(f2:bla f3:bla) +(f2:blo f3:blo)", q->toString());
-    
+
     // the following queries are not affected as their terms are not analyzed anyway
     q = parser->parse(L"bla*");
     BOOST_CHECK_EQUAL(L"f1:bla* f2:bla* f3:bla*", q->toString());

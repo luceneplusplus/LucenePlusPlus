@@ -20,37 +20,37 @@ namespace Lucene
     {
         utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
         this->vectorSliceReader = newLucene<ByteSliceReader>();
-        this->_termsWriter = termsWriter;
-        this->_termsHashPerThread = termsHashPerThread;
-        _docState = termsHashPerThread->docState;
+        this->termsWriter = termsWriter;
+        this->termsHashPerThread = termsHashPerThread;
+        this->docState = termsHashPerThread->docState;
     }
-    
+
     TermVectorsTermsWriterPerThread::~TermVectorsTermsWriterPerThread()
     {
     }
-    
+
     void TermVectorsTermsWriterPerThread::startDocument()
     {
         BOOST_ASSERT(clearLastVectorFieldName());
         if (doc)
         {
             doc->reset();
-            doc->docID = DocStatePtr(_docState)->docID;
+            doc->docID = docState->docID;
         }
     }
-    
+
     DocWriterPtr TermVectorsTermsWriterPerThread::finishDocument()
     {
         DocWriterPtr returnDoc(doc);
         doc.reset();
         return returnDoc;
     }
-    
+
     TermsHashConsumerPerFieldPtr TermVectorsTermsWriterPerThread::addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo)
     {
         return newLucene<TermVectorsTermsWriterPerField>(termsHashPerField, LuceneThis(), fieldInfo);
     }
-    
+
     void TermVectorsTermsWriterPerThread::abort()
     {
         if (doc)
@@ -59,13 +59,13 @@ namespace Lucene
             doc.reset();
         }
     }
-    
+
     bool TermVectorsTermsWriterPerThread::clearLastVectorFieldName()
     {
         lastVectorFieldName.clear();
         return true;
     }
-    
+
     bool TermVectorsTermsWriterPerThread::vectorFieldsInOrder(FieldInfoPtr fi)
     {
         bool inOrder = lastVectorFieldName.empty() ? true : (lastVectorFieldName < fi->name);

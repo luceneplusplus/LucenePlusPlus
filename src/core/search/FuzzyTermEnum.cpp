@@ -17,21 +17,21 @@ namespace Lucene
     {
         ConstructTermEnum(reader, term, minSimilarity, prefixLength);
     }
-    
+
     FuzzyTermEnum::FuzzyTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity)
     {
         ConstructTermEnum(reader, term, minSimilarity, FuzzyQuery::defaultPrefixLength);
     }
-    
+
     FuzzyTermEnum::FuzzyTermEnum(IndexReaderPtr reader, TermPtr term)
     {
         ConstructTermEnum(reader, term, FuzzyQuery::defaultMinSimilarity(), FuzzyQuery::defaultPrefixLength);
     }
-    
+
     FuzzyTermEnum::~FuzzyTermEnum()
     {
     }
-    
+
     void FuzzyTermEnum::ConstructTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity, int32_t prefixLength)
     {
         if (minSimilarity >= 1.0)
@@ -40,28 +40,28 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"minimumSimilarity cannot be less than 0"));
         if (prefixLength < 0)
             boost::throw_exception(IllegalArgumentException(L"prefixLength cannot be less than 0"));
-        
+
         this->minimumSimilarity = minSimilarity;
         this->scale_factor = 1.0 / (1.0 - minimumSimilarity);
         this->searchTerm = term;
         this->field = searchTerm->field();
         this->_endEnum = false;
         this->_similarity = 0.0;
-        
-        // The prefix could be longer than the word. 
+
+        // The prefix could be longer than the word.
         // It's kind of silly though.  It means we must match the entire word.
         int32_t fullSearchTermLength = searchTerm->text().length();
         int32_t realPrefixLength = prefixLength > fullSearchTermLength ? fullSearchTermLength : prefixLength;
-        
+
         this->text = searchTerm->text().substr(realPrefixLength);
         this->prefix = searchTerm->text().substr(0, realPrefixLength);
-        
+
         this->p = Collection<int32_t>::newInstance(this->text.length() + 1);
         this->d = Collection<int32_t>::newInstance(this->text.length() + 1);
-        
+
         setEnum(reader->terms(newLucene<Term>(searchTerm->field(), prefix)));
     }
-    
+
     bool FuzzyTermEnum::termCompare(TermPtr term)
     {
         if (field == term->field() && boost::starts_with(term->text(), prefix))
@@ -73,17 +73,17 @@ namespace Lucene
         _endEnum = true;
         return false;
     }
-    
+
     double FuzzyTermEnum::difference()
     {
         return (_similarity - minimumSimilarity) * scale_factor;
     }
-    
+
     bool FuzzyTermEnum::endEnum()
     {
         return _endEnum;
     }
-    
+
     double FuzzyTermEnum::similarity(const String& target)
     {
         int32_t m = target.length();
@@ -95,29 +95,29 @@ namespace Lucene
         }
         if (m == 0)
             return prefix.empty() ? 0.0 : 1.0 - ((double)n / (double)prefix.length());
-        
+
         int32_t maxDistance = calculateMaxDistance(m);
-        
+
         if (maxDistance < std::abs(m - n))
         {
-            // Just adding the characters of m to n or vice-versa results in too many edits for example "pre" length 
-            // is 3 and "prefixes" length is 8.  We can see that given this optimal circumstance, the edit distance 
-            // cannot be less than 5.  which is 8-3 or more precisely std::abs(3 - 8). if our maximum edit distance 
+            // Just adding the characters of m to n or vice-versa results in too many edits for example "pre" length
+            // is 3 and "prefixes" length is 8.  We can see that given this optimal circumstance, the edit distance
+            // cannot be less than 5.  which is 8-3 or more precisely std::abs(3 - 8). if our maximum edit distance
             // is 4, then we can discard this word without looking at it.
             return 0.0;
         }
-        
+
         // init matrix d
         for (int32_t i = 0; i <= n; ++i)
             p[i] = i;
-        
+
         // start computing edit distance
         for (int32_t j = 1; j <= m; ++j) // iterates through target
         {
             int32_t bestPossibleEditDistance = m;
             wchar_t t_j = target[j - 1]; // jth character of t
             d[0] = j;
-            
+
             for (int32_t i = 1; i <= n; ++i) // iterates through text
             {
                 // minimum of cell to the left+1, to the top+1, diagonally left and up +(0|1)
@@ -127,34 +127,34 @@ namespace Lucene
                     d[i] = std::min(std::min(d[i - 1] + 1, p[i] + 1), p[i - 1]);
                 bestPossibleEditDistance = std::min(bestPossibleEditDistance, d[i]);
             }
-            
-            // After calculating row i, the best possible edit distance can be found by found by finding the smallest 
+
+            // After calculating row i, the best possible edit distance can be found by found by finding the smallest
             // value in a given column.  If the bestPossibleEditDistance is greater than the max distance, abort.
-            
+
             if (j > maxDistance && bestPossibleEditDistance > maxDistance) // equal is okay, but not greater
             {
                 // The closest the target can be to the text is just too far away.
                 // This target is leaving the party early.
                 return 0.0;
             }
-            
+
             // copy current distance counts to 'previous row' distance counts: swap p and d
             std::swap(p, d);
         }
-        
+
         // Our last action in the above loop was to switch d and p, so p now actually has the most recent cost counts
-        
-        // This will return less than 0.0 when the edit distance is greater than the number of characters in the shorter 
-        // word. But this was the formula that was previously used in FuzzyTermEnum, so it has not been changed (even 
+
+        // This will return less than 0.0 when the edit distance is greater than the number of characters in the shorter
+        // word. But this was the formula that was previously used in FuzzyTermEnum, so it has not been changed (even
         // though minimumSimilarity must be greater than 0.0)
         return 1.0 - ((double)p[n] / (double)(prefix.length() + std::min(n, m)));
     }
-    
+
     int32_t FuzzyTermEnum::calculateMaxDistance(int32_t m)
     {
         return (int32_t)((1.0 - minimumSimilarity) * (double)(std::min((int32_t)text.length(), m) + prefix.length()));
     }
-    
+
     void FuzzyTermEnum::close()
     {
         p.reset();

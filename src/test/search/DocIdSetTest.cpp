@@ -34,25 +34,25 @@ namespace TestFilteredDocIdSet
         {
             docid = -1;
         }
-        
+
         virtual ~TestDocIdSetIterator()
         {
         }
-    
+
     public:
         int32_t docid;
-    
+
     public:
         virtual int32_t docID()
         {
             return docid;
         }
-        
+
         virtual int32_t nextDoc()
         {
             return ++docid < maxdoc ? docid : (docid = NO_MORE_DOCS);
         }
-        
+
         virtual int32_t advance(int32_t target)
         {
             while (nextDoc() < target)
@@ -61,32 +61,32 @@ namespace TestFilteredDocIdSet
             return docid;
         }
     };
-    
+
     class TestDocIdSet : public DocIdSet
     {
     public:
         virtual ~TestDocIdSet()
         {
         }
-    
+
     public:
         virtual DocIdSetIteratorPtr iterator()
         {
             return newLucene<TestDocIdSetIterator>();
         }
     };
-    
+
     class TestFilteredDocIdSet : public FilteredDocIdSet
     {
     public:
         TestFilteredDocIdSet(DocIdSetPtr innerSet) : FilteredDocIdSet(innerSet)
         {
         }
-        
+
         virtual ~TestFilteredDocIdSet()
         {
         }
-    
+
     protected:
         virtual bool match(int32_t docid)
         {
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(testFilteredDocIdSet)
 {
     DocIdSetPtr innerSet = newLucene<TestFilteredDocIdSet::TestDocIdSet>();
     DocIdSetPtr filteredSet = newLucene<TestFilteredDocIdSet::TestFilteredDocIdSet>(innerSet);
-    
+
     DocIdSetIteratorPtr iter = filteredSet->iterator();
     Collection<int32_t> docs = Collection<int32_t>::newInstance();
     int32_t doc = iter->advance(3);
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(testFilteredDocIdSet)
         while((doc = iter->nextDoc()) != DocIdSetIterator::NO_MORE_DOCS)
             docs.add(doc);
     }
-    
+
     Collection<int32_t> answer = newCollection<int32_t>(4, 6, 8);
     BOOST_CHECK(docs.equals(answer));
 }
@@ -122,7 +122,7 @@ namespace TestNullDocIdSet
         virtual ~TestFilter()
         {
         }
-    
+
     public:
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
         {
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(testNullDocIdSet)
     // First verify the document is searchable.
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     BOOST_CHECK_EQUAL(1, searcher->search(newLucene<MatchAllDocsQuery>(), 10)->totalHits);
-    
+
     // Now search with a Filter which returns a null DocIdSet
     FilterPtr f = newLucene<TestNullDocIdSet::TestFilter>();
     BOOST_CHECK_EQUAL(0, searcher->search(newLucene<MatchAllDocsQuery>(), f, 10)->totalHits);

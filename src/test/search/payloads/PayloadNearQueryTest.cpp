@@ -45,7 +45,7 @@ public:
     {
         return 1.0;
     }
-    
+
     virtual String explain()
     {
         return L"Inexplicable";
@@ -65,32 +65,32 @@ public:
         // we know it is size 4 here, so ignore the offset/length
         return (double)payload[0];
     }
-    
+
     virtual double lengthNorm(const String& fieldName, int32_t numTokens)
     {
         return 1.0;
     }
-    
+
     virtual double queryNorm(double sumOfSquaredWeights)
     {
         return 1.0;
     }
-    
+
     virtual double sloppyFreq(int32_t distance)
     {
         return 1.0;
     }
-    
+
     virtual double coord(int32_t overlap, int32_t maxOverlap)
     {
         return 1.0;
     }
-    
+
     virtual double tf(double freq)
     {
         return 1.0;
     }
-    
+
     virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, SearcherPtr searcher)
     {
         return newLucene<BoostingNearIDFExplanation>();
@@ -108,11 +108,11 @@ public:
         this->fieldName = fieldName;
         this->payAtt = addAttribute<PayloadAttribute>();
     }
-    
+
     virtual ~PayloadNearFilter()
     {
     }
-    
+
     LUCENE_CLASS(PayloadNearFilter);
 
 public:
@@ -147,11 +147,11 @@ public:
         this->payload2 = payload2;
         this->payload4 = payload4;
     }
-    
+
     virtual ~PayloadNearAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(PayloadNearAnalyzer);
 
 protected:
@@ -177,7 +177,7 @@ public:
         payload2[0] = 2;
         payload4 = ByteArray::newInstance(1);
         payload4[0] = 4;
-        
+
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         PayloadNearAnalyzerPtr analyzer = newLucene<PayloadNearAnalyzer>(payload2, payload4);
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -196,7 +196,7 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
         searcher->setSimilarity(similarity);
     }
-    
+
     virtual ~PayloadNearQueryFixture()
     {
     }
@@ -221,7 +221,7 @@ public:
         }
         return newLucene<PayloadNearQuery>(clauses, 0, inOrder);
     }
-    
+
     SpanNearQueryPtr spanNearQuery(const String& fieldName, const String& words)
     {
         std::wstring phraseClauses(words.c_str());
@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_CASE(testPayloadNear)
     SpanNearQueryPtr q1 = spanNearQuery(L"field2", L"twenty two");
     SpanNearQueryPtr q2 = spanNearQuery(L"field2", L"twenty three");
     Collection<SpanQueryPtr> clauses = newCollection<SpanQueryPtr>(q1, q2);
-    PayloadNearQueryPtr query = newLucene<PayloadNearQuery>(clauses, 10, false); 
+    PayloadNearQueryPtr query = newLucene<PayloadNearQuery>(clauses, 10, false);
     BOOST_CHECK_EQUAL(12, searcher->search(query, FilterPtr(), 100)->totalHits);
 }
 
@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(testLongerSpan)
     ScoreDocPtr doc = hits->scoreDocs[0];
     BOOST_CHECK_EQUAL(hits->totalHits, 1);
     // should have score = 3 because adjacent terms have payloads of 2,4
-    BOOST_CHECK_EQUAL(doc->score, 3); 
+    BOOST_CHECK_EQUAL(doc->score, 3);
 }
 
 BOOST_AUTO_TEST_CASE(testComplexNested)

@@ -33,41 +33,41 @@ namespace Lucene
         }
         this->query = spanNearQuery; // kept for toString() only.
     }
-    
+
     NearSpansOrdered::~NearSpansOrdered()
     {
     }
-    
+
     int32_t NearSpansOrdered::doc()
     {
         return matchDoc;
     }
-    
+
     int32_t NearSpansOrdered::start()
     {
         return matchStart;
     }
-    
+
     int32_t NearSpansOrdered::end()
     {
         return matchEnd;
     }
-    
+
     Collection<SpansPtr> NearSpansOrdered::getSubSpans()
     {
         return subSpans;
     }
-    
+
     Collection<ByteArray> NearSpansOrdered::getPayload()
     {
         return matchPayload;
     }
-    
+
     bool NearSpansOrdered::isPayloadAvailable()
     {
         return !matchPayload.empty();
     }
-    
+
     bool NearSpansOrdered::next()
     {
         if (firstTime)
@@ -87,7 +87,7 @@ namespace Lucene
             matchPayload.clear();
         return advanceAfterOrdered();
     }
-    
+
     bool NearSpansOrdered::skipTo(int32_t target)
     {
         if (firstTime)
@@ -117,7 +117,7 @@ namespace Lucene
             matchPayload.clear();
         return advanceAfterOrdered();
     }
-    
+
     bool NearSpansOrdered::advanceAfterOrdered()
     {
         while (more && (inSameDoc || toSameDoc()))
@@ -127,7 +127,7 @@ namespace Lucene
         }
         return false; // no more matches
     }
-    
+
     struct lessSpanDoc
     {
         inline bool operator()(const SpansPtr& first, const SpansPtr& second) const
@@ -135,7 +135,7 @@ namespace Lucene
             return ((first->doc() - second->doc()) < 0);
         }
     };
-    
+
     bool NearSpansOrdered::toSameDoc()
     {
         std::sort(subSpansByDoc.begin(), subSpansByDoc.end(), lessSpanDoc());
@@ -160,7 +160,7 @@ namespace Lucene
         inSameDoc = true;
         return true;
     }
-    
+
     bool NearSpansOrdered::docSpansOrdered(SpansPtr spans1, SpansPtr spans2)
     {
         BOOST_ASSERT(spans1->doc() == spans2->doc());
@@ -169,12 +169,12 @@ namespace Lucene
         // Do not call docSpansOrdered(int,int,int,int) to avoid invoking .end()
         return start1 == start2 ? (spans1->end() < spans2->end()) : (start1 < start2);
     }
-    
+
     bool NearSpansOrdered::docSpansOrdered(int32_t start1, int32_t end1, int32_t start2, int32_t end2)
     {
         return start1 == start2 ? (end1 < end2) : (start1 < start2);
     }
-    
+
     bool NearSpansOrdered::stretchToOrder()
     {
         matchDoc = subSpans[0]->doc();
@@ -197,7 +197,7 @@ namespace Lucene
         }
         return inSameDoc;
     }
-    
+
     bool NearSpansOrdered::shrinkToAfterShortestMatch()
     {
         SpansPtr subSpan(subSpans[subSpans.size() - 1]);
@@ -209,9 +209,9 @@ namespace Lucene
             Collection<ByteArray> payload(subSpan->getPayload());
             possibleMatchPayloads.addAll(payload.begin(), payload.end());
         }
-        
+
         Collection<ByteArray> possiblePayload;
-        
+
         int32_t matchSlop = 0;
         int32_t lastStart = matchStart;
         int32_t lastEnd = matchEnd;
@@ -223,7 +223,7 @@ namespace Lucene
                 Collection<ByteArray> payload(prevSpans->getPayload());
                 possiblePayload = Collection<ByteArray>::newInstance(payload.begin(), payload.end());
             }
-            
+
             int32_t prevStart = prevSpans->start();
             int32_t prevEnd = prevSpans->end();
             while (true) // Advance prevSpans until after (lastStart, lastEnd)
@@ -257,29 +257,29 @@ namespace Lucene
                     }
                 }
             }
-            
+
             if (collectPayloads && possiblePayload)
                 possibleMatchPayloads.addAll(possiblePayload.begin(), possiblePayload.end());
-            
+
             BOOST_ASSERT(prevStart <= matchStart);
             if (matchStart > prevEnd) // Only non overlapping spans add to slop.
                 matchSlop += (matchStart - prevEnd);
-            
-            // Do not break on (matchSlop > allowedSlop) here to make sure that subSpans[0] is 
+
+            // Do not break on (matchSlop > allowedSlop) here to make sure that subSpans[0] is
             // advanced after the match, if any.
             matchStart = prevStart;
             lastStart = prevStart;
             lastEnd = prevEnd;
         }
-        
+
         bool match = (matchSlop <= allowedSlop);
-        
+
         if (collectPayloads && match && !possibleMatchPayloads.empty())
             matchPayload.addAll(possibleMatchPayloads.begin(), possibleMatchPayloads.end());
-        
+
         return match; // ordered and allowed slop
     }
-    
+
     String NearSpansOrdered::toString()
     {
         StringStream buffer;

@@ -14,12 +14,12 @@
 namespace Lucene
 {
     const int32_t TokenGroup::MAX_NUM_TOKENS_PER_GROUP = 50;
-    
+
     TokenGroup::TokenGroup(TokenStreamPtr tokenStream)
     {
         offsetAtt = tokenStream->addAttribute<OffsetAttribute>();
         termAtt = tokenStream->addAttribute<TermAttribute>();
-        
+
         tokens = Collection<TokenPtr>::newInstance(MAX_NUM_TOKENS_PER_GROUP);
         scores = Collection<double>::newInstance(MAX_NUM_TOKENS_PER_GROUP);
         numTokens = 0;
@@ -29,11 +29,11 @@ namespace Lucene
         matchStartOffset = 0;
         matchEndOffset = 0;
     }
-    
+
     TokenGroup::~TokenGroup()
     {
     }
-    
+
     void TokenGroup::addToken(double score)
     {
         if (numTokens < MAX_NUM_TOKENS_PER_GROUP)
@@ -74,43 +74,43 @@ namespace Lucene
             ++numTokens;
         }
     }
-    
+
     bool TokenGroup::isDistinct()
     {
         return (offsetAtt->startOffset() >= endOffset);
     }
-    
+
     void TokenGroup::clear()
     {
         numTokens = 0;
         tot = 0;
     }
-    
+
     TokenPtr TokenGroup::getToken(int32_t index)
     {
         return tokens[index];
     }
-    
+
     double TokenGroup::getScore(int32_t index)
     {
         return scores[index];
     }
-    
+
     int32_t TokenGroup::getEndOffset()
     {
         return endOffset;
     }
-    
+
     int32_t TokenGroup::getNumTokens()
     {
         return numTokens;
     }
-    
+
     int32_t TokenGroup::getStartOffset()
     {
         return startOffset;
     }
-    
+
     double TokenGroup::getTotalScore()
     {
         return tot;

@@ -16,14 +16,14 @@ namespace Lucene
     public:
         ReverseOrdDocValues(ReverseOrdFieldSourcePtr source, Collection<int32_t> arr, int32_t end);
         virtual ~ReverseOrdDocValues();
-    
+
         LUCENE_CLASS(ReverseOrdDocValues);
-    
+
     protected:
-        ReverseOrdFieldSourceWeakPtr _source;
+        ReverseOrdFieldSourcePtr source;
         Collection<int32_t> arr;
         int32_t end;
-    
+
     public:
         virtual double doubleVal(int32_t doc);
         virtual int32_t intVal(int32_t doc);

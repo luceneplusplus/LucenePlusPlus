@@ -17,7 +17,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(OpenBitSetTest, LuceneTestFixture)
 
-static RandomPtr randBitSet = newLucene<Random>(123);
+static RandomPtr randBitSet = newStaticLucene<Random>(123);
 
 static void doGet(BitSetPtr a, OpenBitSetPtr b)
 {
@@ -79,13 +79,13 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
 {
     BitSetPtr a0;
     OpenBitSetPtr b0;
-    
+
     for (int32_t i = 0; i < iter; ++i)
     {
         int32_t sz = randBitSet->nextInt(maxSize);
         BitSetPtr a = newLucene<BitSet>(sz);
         OpenBitSetPtr b = newLucene<OpenBitSet>(sz);
-        
+
         // test the various ways of setting bits
         if (sz > 0)
         {
@@ -109,7 +109,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
                 val = b->getAndSet(idx);
                 BOOST_CHECK_EQUAL(val2, val);
                 BOOST_CHECK(b->get(idx));
-                
+
                 if (!val)
                     b->fastClear(idx);
                 BOOST_CHECK_EQUAL(b->get(idx), val);
@@ -118,7 +118,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
 
         // test that the various ways of accessing the bits are equivalent
         doGet(a, b);
-        
+
         // test ranges, including possible extension
         int32_t fromIndex = randBitSet->nextInt(sz + 80);
         int32_t toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
@@ -126,7 +126,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
         aa->flip(fromIndex, toIndex);
         OpenBitSetPtr bb = LuceneDynamicCast<OpenBitSet>(b->clone());
         bb->flip(fromIndex, toIndex);
-        
+
         doIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
         fromIndex = randBitSet->nextInt(sz + 80);
@@ -146,7 +146,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
         bb->set(fromIndex, toIndex);
 
         doNextSetBit(aa, bb); // a problem here is from set() or nextSetBit
-        
+
         if (a0)
         {
             BOOST_CHECK_EQUAL(a->equals(a0), b->equals(b0));
@@ -175,19 +175,19 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
             doIterate(a_or, b_or, mode);
             doIterate(a_xor, b_xor, mode);
             doIterate(a_andn, b_andn, mode);
-            
+
             BOOST_CHECK_EQUAL(a_and->cardinality(), b_and->cardinality());
             BOOST_CHECK_EQUAL(a_or->cardinality(), b_or->cardinality());
             BOOST_CHECK_EQUAL(a_xor->cardinality(), b_xor->cardinality());
             BOOST_CHECK_EQUAL(a_andn->cardinality(), b_andn->cardinality());
-            
+
             // test non-mutating popcounts
             BOOST_CHECK_EQUAL(b_and->cardinality(), OpenBitSet::intersectionCount(b, b0));
             BOOST_CHECK_EQUAL(b_or->cardinality(), OpenBitSet::unionCount(b, b0));
             BOOST_CHECK_EQUAL(b_xor->cardinality(), OpenBitSet::xorCount(b, b0));
             BOOST_CHECK_EQUAL(b_andn->cardinality(), OpenBitSet::andNotCount(b, b0));
         }
-        
+
         a0=a;
         b0=b;
     }
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE(testBitUtils)
     BOOST_CHECK_EQUAL(1, BitUtil::ntz(num));
     BOOST_CHECK_EQUAL(1, BitUtil::ntz2(num));
     BOOST_CHECK_EQUAL(1, BitUtil::ntz3(num));
-    
+
     for (int32_t i = 0; i < 64; ++i)
     {
         num = (int64_t)1 << i;
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(testHashCodeEquals)
     OpenBitSetPtr bs1 = newLucene<OpenBitSet>(200);
     OpenBitSetPtr bs2 = newLucene<OpenBitSet>(64);
     bs1->set(3);
-    bs2->set(3);       
+    bs2->set(3);
     BOOST_CHECK(bs1->equals(bs2));
     BOOST_CHECK_EQUAL(bs1->hashCode(), bs2->hashCode());
 }

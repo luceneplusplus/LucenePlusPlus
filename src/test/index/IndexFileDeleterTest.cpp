@@ -50,21 +50,21 @@ static void copyFile(DirectoryPtr dir, const String& src, const String& dest)
     out->close();
 }
 
-static HashSet<String> difFiles(Collection<String> files1, Collection<String> files2)
+static SetString difFiles(Collection<String> files1, Collection<String> files2)
 {
-    HashSet<String> set1 = HashSet<String>::newInstance();
-    HashSet<String> set2 = HashSet<String>::newInstance();
-    HashSet<String> extra = HashSet<String>::newInstance();
+    SetString set1 = SetString::newInstance();
+    SetString set2 = SetString::newInstance();
+    SetString extra = SetString::newInstance();
     for (Collection<String>::iterator file = files1.begin(); file != files1.end(); ++file)
         set1.add(*file);
     for (Collection<String>::iterator file = files2.begin(); file != files2.end(); ++file)
         set2.add(*file);
-    for (HashSet<String>::iterator file = set1.begin(); file != set1.end(); ++file)
+    for (SetString::iterator file = set1.begin(); file != set1.end(); ++file)
     {
         if (!set2.contains(*file))
             extra.add(*file);
     }
-    for (HashSet<String>::iterator file = set2.begin(); file != set2.end(); ++file)
+    for (SetString::iterator file = set2.begin(); file != set2.end(); ++file)
     {
         if (!set1.contains(*file))
             extra.add(*file);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     for (; i < 45; ++i)
         addDoc(writer, i);
     writer->close();
-    
+
     // Delete one doc so we get a .del file
     IndexReaderPtr reader = IndexReader::open(dir, false);
     TermPtr searchTerm = newLucene<Term>(L"id", L"7");
@@ -97,9 +97,9 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     reader->close();
 
     // Now, artificially create an extra .del file and extra .s0 file
-    HashSet<String> _files = dir->listAll();
-    
-    // Here we have to figure out which field number corresponds to "content", and then 
+    SetString _files = dir->listAll();
+
+    // Here we have to figure out which field number corresponds to "content", and then
     // set our expected file names below accordingly.
     CompoundFileReaderPtr cfsReader = newLucene<CompoundFileReader>(dir, L"_2.cfs");
     FieldInfosPtr fieldInfos = newLucene<FieldInfos>(cfsReader, L"_2.fnm");
@@ -119,27 +119,27 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
 
     String normSuffix = L"s" + StringUtils::toString(contentFieldIndex);
 
-    // Create a bogus separate norms file for a segment/field that actually has a 
+    // Create a bogus separate norms file for a segment/field that actually has a
     // separate norms file already
     copyFile(dir, L"_2_1." + normSuffix, L"_2_2." + normSuffix);
 
-    // Create a bogus separate norms file for a segment/field that actually has a 
+    // Create a bogus separate norms file for a segment/field that actually has a
     // separate norms file already, using the "not compound file" extension
     copyFile(dir, L"_2_1." + normSuffix, L"_2_2.f" + StringUtils::toString(contentFieldIndex));
 
-    // Create a bogus separate norms file for a segment/field that does not have a 
+    // Create a bogus separate norms file for a segment/field that does not have a
     // separate norms file already
     copyFile(dir, L"_2_1." + normSuffix, L"_1_1." + normSuffix);
 
-    // Create a bogus separate norms file for a segment/field that does not have a 
+    // Create a bogus separate norms file for a segment/field that does not have a
     // separate norms file already using the "not compound file" extension
     copyFile(dir, L"_2_1." + normSuffix, L"_1_1.f" + StringUtils::toString(contentFieldIndex));
 
-    // Create a bogus separate del file for a segment that already has a separate 
+    // Create a bogus separate del file for a segment that already has a separate
     // del file
     copyFile(dir, L"_0_1.del", L"_0_2.del");
 
-    // Create a bogus separate del file for a segment that does not yet have a 
+    // Create a bogus separate del file for a segment that does not yet have a
     // separate del file
     copyFile(dir, L"_0_1.del", L"_1_1.del");
 
@@ -162,13 +162,13 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     // Create a bogus cfs file shadowing a non-cfs segment
     copyFile(dir, L"_2.cfs", L"_3.cfs");
 
-    HashSet<String> filesPre = dir->listAll();
-    
+    SetString filesPre = dir->listAll();
+
     // Open and close a writer: it should delete the above 4 files and nothing more
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
 
-    HashSet<String> _files2 = dir->listAll();
+    SetString _files2 = dir->listAll();
     dir->close();
 
     Collection<String> files = Collection<String>::newInstance(_files.begin(), _files.end());
@@ -177,8 +177,8 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     std::sort(files.begin(), files.end());
     std::sort(files2.begin(), files2.end());
 
-    HashSet<String> dif = difFiles(files, files2);
-    
+    SetString dif = difFiles(files, files2);
+
     BOOST_CHECK(dif.empty());
 }
 

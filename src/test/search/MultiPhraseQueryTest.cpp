@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(testPhrasePrefix)
     MultiPhraseQueryPtr query4 = newLucene<MultiPhraseQuery>();
     query4->add(newLucene<Term>(L"field1", L"foo"));
     BOOST_CHECK_EXCEPTION(query4->add(newLucene<Term>(L"field2", L"foobar")), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
-    
+
     searcher->close();
     indexStore->close();
 }
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(testBooleanQueryContainingSingleTermPrefixQuery)
 BOOST_AUTO_TEST_CASE(testPhrasePrefixWithBooleanQuery)
 {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
-    IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, HashSet<String>::newInstance()), true, IndexWriter::MaxFieldLengthLIMITED);
+    IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, SetString::newInstance()), true, IndexWriter::MaxFieldLengthLIMITED);
     add(L"This is a test", L"object", writer);
     add(L"a note", L"note", writer);
     writer->close();
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(testPhrasePrefixWithBooleanQuery)
     q->add(mpq, BooleanClause::MUST);
 
     Collection<ScoreDocPtr> hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
-    
+
     BOOST_CHECK_EQUAL(0, hits.size());
     searcher->close();
 }

@@ -13,18 +13,19 @@
 namespace Lucene
 {
     template <class T>
-    class Array : public vector_container<T>, public LuceneSync
+    class Array : public vector_container< std::vector<T> >, public LuceneSync
     {
     public:
-        typedef typename T::value_type value_type;
-        typedef typename vector_container::iterator iterator;
-        typedef typename vector_container::const_iterator const_iterator;
+        typedef std::vector<T> vector_type;
+        typedef T value_type;
+        typedef typename vector_type::iterator iterator;
+        typedef typename vector_type::const_iterator const_iterator;
 
-        Array(gc_container<T, value_type>* p = 0) : vector_container<T>(p)
+        Array(gc_container<vector_type, value_type>* p = 0) : vector_container<vector_type>(p)
         {
         }
 
-        Array(const Array& rhs) : vector_container<T>(rhs)
+        Array(const Array& rhs) : vector_container<vector_type>(rhs)
         {
         }
 
@@ -38,7 +39,7 @@ namespace Lucene
             return (int32_t)vector_container<T>::size();
         }
 
-        bool equals(const Collection& other) const
+        bool equals(const Array& other) const
         {
             if (size() != other.size())
                 return false;
@@ -49,27 +50,42 @@ namespace Lucene
         {
             return (int32_t)(int64_t)vector_container<T>::get();
         }
+
+        static Array<T> newInstance(typename std::vector<T>::size_type n = 0)
+        {
+            Array<T> container(new(get_gc()) gc_container<std::vector<T>, T>());
+            container.resize(n);
+            return container;
+        }
+
+        static Array<T> newStaticInstance(typename std::vector<T>::size_type n = 0)
+        {
+            Array<T> container(new(get_static_gc()) gc_container<std::vector<T>, T>());
+            container.resize(n);
+            return container;
+        }
     };
 
-    template <class T>
-    Array<T> newArrayPlaceholder(gc& gc, typename T::size_type n = 0)
-    {
-        Array<T> container(Array<T>(new(gc) gc_container<T, typename T::value_type>()));
-        container.resize(n);
-        return container;
-    }
+    // todo
+    // template <class T>
+    // Array<T> newArrayPlaceholder(gc& gc, typename T::size_type n = 0)
+    // {
+    //     Array<T> container(Array<T>(new(gc) gc_container<T, typename T::value_type>()));
+    //     container.resize(n);
+    //     return container;
+    // }
 
-    template <class T>
-    Array<T> newArray(typename T::size_type n = 0)
-    {
-        return newArrayPlaceholder<T>(get_gc(), n);
-    }
+    // template <class T>
+    // Array<T> newArray(typename T::size_type n = 0)
+    // {
+    //     return newArrayPlaceholder<T>(get_gc(), n);
+    // }
 
-    template <class T>
-    Array<T> newStaticArray(typename T::size_type n = 0)
-    {
-        return newArrayPlaceholder<T>(get_static_gc(), n);
-    }
+    // template <class T>
+    // Array<T> newStaticArray(typename T::size_type n = 0)
+    // {
+    //     return newArrayPlaceholder<T>(get_static_gc(), n);
+    // }
 
     template <class T>
     inline std::size_t hash_value(const Array<T>& value)

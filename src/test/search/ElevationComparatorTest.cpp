@@ -38,7 +38,7 @@ public:
         this->values = Collection<int32_t>::newInstance(numHits);
         this->bottomVal = 0;
     }
-    
+
     virtual ~ElevationFieldComparator()
     {
     }
@@ -55,27 +55,27 @@ public:
     {
         return values[slot2] - values[slot1]; // values will be small enough that there is no overflow concern
     }
-    
+
     virtual void setBottom(int32_t slot)
     {
         bottomVal = values[slot];
     }
-    
+
     virtual int32_t compareBottom(int32_t doc)
     {
         return docVal(doc) - bottomVal;
     }
-    
+
     virtual void copy(int32_t slot, int32_t doc)
     {
         values[slot] = docVal(doc);
     }
-    
+
     virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
         idIndex = FieldCache::DEFAULT()->getStringIndex(reader, fieldname);
     }
-    
+
     virtual ComparableValue value(int32_t slot)
     {
         return values[slot];
@@ -96,7 +96,7 @@ public:
     {
         this->priority = priority;
     }
-    
+
     virtual ~ElevationComparatorSource()
     {
     }
@@ -118,7 +118,7 @@ public:
     {
         priority = MapStringInt::newInstance();
     }
-    
+
     virtual ~ElevationComparatorFixture()
     {
     }
@@ -134,7 +134,7 @@ public:
             doc->add(newLucene<Field>(vals[i], vals[i + 1], Field::STORE_YES, Field::INDEX_ANALYZED));
         return doc;
     }
-    
+
     void runTest(IndexSearcherPtr searcher, bool reversed)
     {
         BooleanQueryPtr newq = newLucene<BooleanQuery>(false);
@@ -159,7 +159,7 @@ public:
         // 0 and 3 were elevated
         BOOST_CHECK_EQUAL(0, topDocs->scoreDocs[0]->doc);
         BOOST_CHECK_EQUAL(3, topDocs->scoreDocs[1]->doc);
-        
+
         if (reversed)
         {
             BOOST_CHECK_EQUAL(2, topDocs->scoreDocs[2]->doc);
@@ -171,7 +171,7 @@ public:
             BOOST_CHECK_EQUAL(2, topDocs->scoreDocs[3]->doc);
         }
     }
-    
+
     QueryPtr getElevatedQuery(Collection<String> vals)
     {
         BooleanQueryPtr q = newLucene<BooleanQuery>(false);

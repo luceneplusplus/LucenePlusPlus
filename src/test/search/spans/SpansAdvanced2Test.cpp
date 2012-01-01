@@ -41,11 +41,11 @@ public:
         addDocument(writer, L"D", L"Should we, should we, should we.");
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
-        
+
         // re-open the searcher since we added more docs
         searcher2 = newLucene<IndexSearcher>(directory, true);
     }
-    
+
     virtual ~SpansAdvanced2Fixture()
     {
         searcher->close();
@@ -61,7 +61,7 @@ protected:
     DirectoryPtr directory;
     IndexSearcherPtr searcher;
     IndexSearcherPtr searcher2;
-    
+
     void addDocument(IndexWriterPtr writer, const String& id, const String& text)
     {
         DocumentPtr document = newLucene<Document>();
@@ -69,7 +69,7 @@ protected:
         document->add(newLucene<Field>(FIELD_TEXT, text, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(document);
     }
-    
+
     void checkHits(SearcherPtr s, QueryPtr query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores)
     {
         QueryUtils::check(query, s);
@@ -81,7 +81,7 @@ protected:
 
         // did we get the hits we expected
         BOOST_CHECK_EQUAL(expectedIds.size(), topdocs->totalHits);
-        
+
         for (int32_t i = 0; i < topdocs->totalHits; ++i)
         {
             int32_t id = topdocs->scoreDocs[i]->doc;
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(testSingleSpanQuery)
 {
     QueryPtr spanQuery = newLucene<SpanTermQuery>(newLucene<Term>(FIELD_TEXT, L"should"));
     Collection<String> expectedIds = newCollection<String>(L"B", L"D", L"1", L"2", L"3", L"4", L"A");
-    Collection<double> expectedScores = newCollection<double>(0.625, 0.45927936, 0.35355338, 0.35355338, 0.35355338, 0.35355338, 0.26516503);
+    Collection<double> expectedScores = newCollectionDouble(0.625, 0.45927936, 0.35355338, 0.35355338, 0.35355338, 0.35355338, 0.26516503);
     checkHits(searcher2, spanQuery, L"single span query", expectedIds, expectedScores);
 }
 
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(testMultipleDifferentSpanQueries)
     query->add(spanQuery1, BooleanClause::MUST);
     query->add(spanQuery2, BooleanClause::MUST);
     Collection<String> expectedIds = newCollection<String>(L"D", L"A");
-    Collection<double> expectedScores = newCollection<double>(1.0191123, 0.93163157);
+    Collection<double> expectedScores = newCollectionDouble(1.0191123, 0.93163157);
     checkHits(searcher2, query, L"multiple different span queries", expectedIds, expectedScores);
 }
 
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(testBooleanQueryWithSpanQueries)
     query->add(spanQuery, BooleanClause::MUST);
     query->add(spanQuery, BooleanClause::MUST);
     Collection<String> expectedIds = newCollection<String>(L"1", L"2", L"3", L"4");
-    Collection<double> expectedScores = newCollection<double>(expectedScore, expectedScore, expectedScore, expectedScore);
+    Collection<double> expectedScores = newCollectionDouble(expectedScore, expectedScore, expectedScore, expectedScore);
     checkHits(searcher2, query, L"two span queries", expectedIds, expectedScores);
 }
 

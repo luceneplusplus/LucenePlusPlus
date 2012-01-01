@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(testCloneAttributes)
     BOOST_CHECK_EQUAL(2, attributes.size());
     BOOST_CHECK(MiscUtils::typeOf<TermAttribute>(attributes[0]));
     BOOST_CHECK(MiscUtils::typeOf<TypeAttribute>(attributes[1]));
-    
+
     TermAttributePtr termAtt2 = clone->getAttribute<TermAttribute>();
     TypeAttributePtr typeAtt2 = clone->getAttribute<TypeAttribute>();
     BOOST_CHECK(termAtt2 != termAtt);
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(testToStringAndMultiAttributeImplementations)
     TypeAttributePtr typeAtt = src->addAttribute<TypeAttribute>();
     termAtt->setTermBuffer(L"TestTerm");
     typeAtt->setType(L"TestType");
-    
+
     BOOST_CHECK_EQUAL(L"(" + termAtt->toString() + L"," + typeAtt->toString() + L")", src->toString());
     Collection<AttributePtr> attributes = src->getAttributes();
     BOOST_CHECK_EQUAL(2, attributes.size());

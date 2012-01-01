@@ -16,31 +16,31 @@ namespace Lucene
     public:
         FindSegmentsOpen(bool readOnly, IndexDeletionPolicyPtr deletionPolicy, int32_t termInfosIndexDivisor, SegmentInfosPtr infos, DirectoryPtr directory);
         virtual ~FindSegmentsOpen();
-        
+
         LUCENE_CLASS(FindSegmentsOpen);
-        
+
     protected:
         bool readOnly;
         IndexDeletionPolicyPtr deletionPolicy;
         int32_t termInfosIndexDivisor;
-    
+
     public:
         virtual IndexReaderPtr doBody(const String& segmentFileName);
     };
-    
+
     class FindSegmentsReopen : public FindSegmentsFileT<DirectoryReaderPtr>
     {
     public:
         FindSegmentsReopen(DirectoryReaderPtr reader, bool openReadOnly, SegmentInfosPtr infos, DirectoryPtr directory);
         virtual ~FindSegmentsReopen();
-        
+
         LUCENE_CLASS(FindSegmentsReopen);
-        
+
     protected:
-        DirectoryReaderWeakPtr _reader;
+        DirectoryReaderPtr reader;
         bool openReadOnly;
-    
-    public:    
+
+    public:
         virtual DirectoryReaderPtr doBody(const String& segmentFileName);
     };
 }

@@ -16,16 +16,16 @@ namespace Lucene
     public:
         StoredFieldsWriterPerThread(DocStatePtr docState, StoredFieldsWriterPtr storedFieldsWriter);
         virtual ~StoredFieldsWriterPerThread();
-        
+
         LUCENE_CLASS(StoredFieldsWriterPerThread);
-                
+
     public:
         FieldsWriterPtr localFieldsWriter;
-        StoredFieldsWriterWeakPtr _storedFieldsWriter;
+        StoredFieldsWriterPtr storedFieldsWriter;
         DocStatePtr docState;
 
         StoredFieldsWriterPerDocPtr doc;
-        
+
     public:
         void startDocument();
         void addField(FieldablePtr field, FieldInfoPtr fieldInfo);

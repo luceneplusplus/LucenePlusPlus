@@ -21,14 +21,14 @@ BOOST_AUTO_TEST_CASE(testPayload)
     Collection< Collection<int32_t> > thePositions = Collection< Collection<int32_t> >::newInstance(tokens.size());
     Collection< Collection<TermVectorOffsetInfoPtr> > offsets = Collection< Collection<TermVectorOffsetInfoPtr> >::newInstance(tokens.size());
     int32_t numPositions = 0;
-    
+
     // save off the last one so we can add it with the same positions as some of the others, but in a predictable way
     for (int32_t i = 0; i < tokens.size() - 1; ++i)
     {
         thePositions[i] = Collection<int32_t>::newInstance(2 * i + 1); // give 'em all some positions
         for (int32_t j = 0; j < thePositions[i].size(); ++j)
             thePositions[i][j] = numPositions++;
-        
+
         offsets[i] = Collection<TermVectorOffsetInfoPtr>::newInstance(thePositions[i].size());
         for (int32_t j = 0; j < offsets[i].size(); ++j)
             offsets[i][j] = newLucene<TermVectorOffsetInfo>(j, j + 1); // the actual value here doesn't much matter
@@ -38,10 +38,10 @@ BOOST_AUTO_TEST_CASE(testPayload)
     thePositions[tokens.size() - 1][0] = 0; // put this at the same position as "here"
     offsets[tokens.size() - 1] = Collection<TermVectorOffsetInfoPtr>::newInstance(1);
     offsets[tokens.size() - 1][0] = newLucene<TermVectorOffsetInfo>(0, 1);
-    
+
     PositionBasedTermVectorMapperPtr mapper = newLucene<PositionBasedTermVectorMapper>();
     mapper->setExpectations(L"test", tokens.size(), true, true);
-    
+
     // Test single position
     for (int32_t i = 0; i < tokens.size(); ++i)
     {

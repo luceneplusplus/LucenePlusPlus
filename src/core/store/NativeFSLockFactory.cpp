@@ -19,22 +19,22 @@ namespace Lucene
     {
         setLockDir(lockDirName);
     }
-    
+
     NativeFSLockFactory::~NativeFSLockFactory()
     {
     }
-    
+
     LockPtr NativeFSLockFactory::makeLock(const String& lockName)
     {
         SyncLock syncLock(this);
         return newLucene<NativeFSLock>(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName);
     }
-    
+
     void NativeFSLockFactory::clearLock(const String& lockName)
     {
         // note that this isn't strictly required anymore because the existence of these files does not mean
         // they are locked, but still do this in case people really want to see the files go away
-        
+
         if (FileUtils::isDirectory(lockDir))
         {
             String lockPath(FileUtils::joinPath(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName));
@@ -42,47 +42,47 @@ namespace Lucene
                 boost::throw_exception(IOException(L"Failed to delete: " + lockPath));
         }
     }
-    
+
     NativeFSLock::NativeFSLock(const String& lockDir, const String& lockFileName)
     {
         this->lockDir = lockDir;
         path = FileUtils::joinPath(lockDir, lockFileName);
     }
-    
+
     NativeFSLock::~NativeFSLock()
     {
     }
-    
+
     SynchronizePtr NativeFSLock::LOCK_HELD_LOCK()
     {
         static SynchronizePtr _LOCK_HELD_LOCK;
         if (!_LOCK_HELD_LOCK)
-            _LOCK_HELD_LOCK = newInstance<Synchronize>();
+            _LOCK_HELD_LOCK = newStaticInstance<Synchronize>();
         return _LOCK_HELD_LOCK;
     }
-    
-    HashSet<String> NativeFSLock::LOCK_HELD()
+
+    SetString NativeFSLock::LOCK_HELD()
     {
-        static HashSet<String> _LOCK_HELD;
+        static SetString _LOCK_HELD;
         if (!_LOCK_HELD)
-            _LOCK_HELD = HashSet<String>::newInstance();
+            _LOCK_HELD = SetString::newStaticInstance();
         return _LOCK_HELD;
     }
-    
+
     bool NativeFSLock::lockExists()
     {
         SyncLock syncLock(this);
         return lock;
     }
-    
+
     bool NativeFSLock::obtain()
     {
         SyncLock syncLock(this);
-        
+
         if (lockExists())
             // our instance is already locked
             return false;
-        
+
         // ensure that lockdir exists and is a directory
         if (!FileUtils::fileExists(lockDir))
         {
@@ -91,12 +91,12 @@ namespace Lucene
         }
         else if (!FileUtils::isDirectory(lockDir))
             boost::throw_exception(IOException(L"Found regular file where directory expected: " + lockDir));
-        
+
         bool markedHeld = false;
-        
+
         // todo: can we not simple lock LOCK_HELD() directly, instead of creating a separate lock object?
         // todo: ie. in newer code HashMap is lockable directly
-        
+
         // make sure nobody else in-process has this lock held already and mark it held if not
         {
             SyncLock heldLock(LOCK_HELD_LOCK());
@@ -105,18 +105,18 @@ namespace Lucene
                 return false;
             else
             {
-                // this "reserves" the fact that we are the one thread trying to obtain this lock, so we own the 
+                // this "reserves" the fact that we are the one thread trying to obtain this lock, so we own the
                 // only instance of a channel against this file
                 LOCK_HELD().add(path);
                 markedHeld = true;
             }
         }
-        
+
         try
         {
             // we can get intermittent "access denied" here, so we treat this as failure to acquire the lock
             std::ofstream f(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::out);
-            
+
             if (f.is_open())
             {
                 lock = boost::make_shared<boost::interprocess::file_lock>(StringUtils::toUTF8(path).c_str());
@@ -127,20 +127,20 @@ namespace Lucene
         {
             lock.reset();
         }
-            
+
         if (markedHeld && !lockExists())
         {
             SyncLock heldLock(LOCK_HELD_LOCK());
             LOCK_HELD().remove(path);
         }
-            
+
         return lockExists();
     }
-    
+
     void NativeFSLock::release()
     {
         SyncLock syncLock(this);
-        
+
         if (lockExists())
         {
             try
@@ -151,21 +151,21 @@ namespace Lucene
             catch (...)
             {
             }
-            
+
             {
                 SyncLock heldLock(LOCK_HELD_LOCK());
                 LOCK_HELD().remove(path);
             }
-                
-            // we don't care anymore if the file cannot be deleted because it's held up by another process 
+
+            // we don't care anymore if the file cannot be deleted because it's held up by another process
             // (eg. AntiVirus). NativeFSLock does not depend on the existence/absence of the lock file
             FileUtils::removeFile(path);
         }
         else
         {
-            // if we don't hold the lock, and somebody still called release(), for example as a result of 
-            // calling IndexWriter.unlock(), we should attempt to obtain the lock and release it.  If the 
-            // obtain fails, it means the lock cannot be released, and we should throw a proper exception 
+            // if we don't hold the lock, and somebody still called release(), for example as a result of
+            // calling IndexWriter.unlock(), we should attempt to obtain the lock and release it.  If the
+            // obtain fails, it means the lock cannot be released, and we should throw a proper exception
             // rather than silently failing/not doing anything.
             bool obtained = false;
             LuceneException finally;
@@ -184,21 +184,21 @@ namespace Lucene
             finally.throwException();
         }
     }
-    
+
     bool NativeFSLock::isLocked()
     {
         SyncLock syncLock(this);
-        
+
         // the test for is islocked is not directly possible with native file locks
-        
+
         // first a shortcut, if a lock reference in this instance is available
         if (lockExists())
             return true;
-        
+
         // look if lock file is present; if not, there can definitely be no lock!
         if (!FileUtils::fileExists(path))
             return false;
-        
+
         // try to obtain and release (if was locked) the lock
         try
         {
@@ -212,7 +212,7 @@ namespace Lucene
             return false;
         }
     }
-    
+
     String NativeFSLock::toString()
     {
         return getClassName() + L"@" + path;

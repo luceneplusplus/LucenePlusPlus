@@ -33,7 +33,7 @@ public:
         single = createSingle();
         parallel = createParallel();
     }
-    
+
     virtual ~ParallelReaderTestFixture()
     {
     }
@@ -63,7 +63,7 @@ public:
         w->close();
         return newLucene<IndexSearcher>(dir, false);
     }
-    
+
     /// Fields 1 & 2 in one index, 3 & 4 in other, with ParallelReader
     SearcherPtr createParallel()
     {
@@ -74,7 +74,7 @@ public:
         pr->add(IndexReader::open(dir2, false));
         return newLucene<IndexSearcher>(pr);
     }
-    
+
     DirectoryPtr getDir1()
     {
         DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
@@ -90,7 +90,7 @@ public:
         w1->close();
         return dir1;
     }
-    
+
     DirectoryPtr getDir2()
     {
         DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
@@ -106,7 +106,7 @@ public:
         w2->close();
         return dir2;
     }
-    
+
     void queryTest(QueryPtr query)
     {
         Collection<ScoreDocPtr> parallelHits = parallel->search(query, FilterPtr(), 1000)->scoreDocs;
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(testFieldNames)
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
-    HashSet<String> fieldNames = pr->getFieldNames(IndexReader::FIELD_OPTION_ALL);
+    SetString fieldNames = pr->getFieldNames(IndexReader::FIELD_OPTION_ALL);
     BOOST_CHECK_EQUAL(4, fieldNames.size());
     BOOST_CHECK(fieldNames.contains(L"f1"));
     BOOST_CHECK(fieldNames.contains(L"f2"));
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(testIncompatibleIndexes)
 
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(dir1, false));
-    
+
     BOOST_CHECK_EXCEPTION(pr->add(IndexReader::open(dir2, false)), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 }
 
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(testAllTermDocs)
 {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
-    
+
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));

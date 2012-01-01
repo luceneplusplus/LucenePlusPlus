@@ -42,7 +42,7 @@ public:
         sis = newLucene<SegmentInfos>();
         sis->read(dir);
     }
-    
+
     virtual ~MultiReaderTestFixture()
     {
     }
@@ -53,7 +53,7 @@ protected:
     DocumentPtr doc2;
     Collection<IndexReaderPtr> readers;
     SegmentInfosPtr sis;
-  
+
 public:
     void doTestDocument()
     {
@@ -70,7 +70,7 @@ public:
         BOOST_CHECK(vector);
         checkNorms(reader);
     }
-    
+
     void doTestUndeleteAll()
     {
         sis->read(dir);
@@ -85,13 +85,13 @@ public:
         // Ensure undeleteAll survives commit/close/reopen
         reader->commit(MapStringString());
         reader->close();
-        
+
         if (LuceneDynamicCast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }
-        
+
         sis->read(dir);
         reader = openReader();
         BOOST_CHECK_EQUAL(2, reader->numDocs());
@@ -100,13 +100,13 @@ public:
         BOOST_CHECK_EQUAL(1, reader->numDocs());
         reader->commit(MapStringString());
         reader->close();
-        
+
         if (LuceneDynamicCast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }
-        
+
         sis->read(dir);
         reader = openReader();
         BOOST_CHECK_EQUAL(1, reader->numDocs());
@@ -122,7 +122,7 @@ protected:
         readers[1] = reader2;
         BOOST_CHECK(reader1);
         BOOST_CHECK(reader2);
-        
+
         IndexReaderPtr reader = newLucene<MultiReader>(readers);
 
         BOOST_CHECK(dir);
@@ -131,7 +131,7 @@ protected:
 
         return reader;
     }
-    
+
     void checkNorms(IndexReaderPtr reader)
     {
         for (Collection<FieldPtr>::iterator field = DocHelper::fields.begin(); field != DocHelper::fields.end(); ++field)
@@ -154,7 +154,7 @@ protected:
             }
         }
     }
-    
+
     void addDoc(RAMDirectoryPtr ramDir1, const String& s, bool create)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(ramDir1, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), create, IndexWriter::MaxFieldLengthLIMITED);

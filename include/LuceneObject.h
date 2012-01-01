@@ -32,6 +32,7 @@ namespace Lucene
     public:
         /// Called directly after instantiation to create objects that depend on this object being
         /// fully constructed.
+        // todo: is this required now (restriction on shared_ptr gone!)
         virtual void initialize();
 
         /// Return clone of this object

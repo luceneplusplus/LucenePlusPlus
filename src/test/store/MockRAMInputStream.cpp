@@ -14,24 +14,23 @@ namespace Lucene
     {
         this->isClone = false;
     }
-    
+
     MockRAMInputStream::MockRAMInputStream(MockRAMDirectoryPtr dir, const String& name, RAMFilePtr f) : RAMInputStream(f)
     {
         this->isClone = false;
         this->name = name;
-        this->_dir = dir;
+        this->dir = dir;
     }
-    
+
     MockRAMInputStream::~MockRAMInputStream()
     {
     }
-    
+
     void MockRAMInputStream::close()
     {
         RAMInputStream::close();
         if (!isClone)
         {
-            MockRAMDirectoryPtr dir(_dir);
             SyncLock dirLock(dir);
             MapStringInt::iterator openFile = dir->openFiles.find(name);
             // Could be null when MockRAMDirectory.crash() was called
@@ -47,12 +46,12 @@ namespace Lucene
             }
         }
     }
-    
+
     LuceneObjectPtr MockRAMInputStream::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = RAMInputStream::clone(other ? other : newLucene<MockRAMInputStream>());
         MockRAMInputStreamPtr cloneInputStream(LuceneDynamicCast<MockRAMInputStream>(clone));
-        cloneInputStream->_dir = _dir;
+        cloneInputStream->dir = dir;
         cloneInputStream->name = name;
         cloneInputStream->isClone = true;
         return cloneInputStream;

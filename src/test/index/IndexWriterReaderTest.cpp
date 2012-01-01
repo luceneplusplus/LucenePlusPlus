@@ -66,20 +66,20 @@ static int32_t count(TermPtr t, IndexReaderPtr r)
     td->close();
     return count;
 }
-    
+
 class TestableIndexWriter : public IndexWriter
 {
 public:
     TestableIndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl) : IndexWriter(d, a, mfl)
     {
     }
-    
+
     virtual ~TestableIndexWriter()
     {
     }
-    
+
     LUCENE_CLASS(TestableIndexWriter);
-    
+
 public:
     using IndexWriter::flush;
 };
@@ -91,10 +91,10 @@ public:
     {
         value = start;
     }
-    
+
     virtual ~HeavyAtomicInt()
     {
-    
+
     }
 
 protected:
@@ -107,13 +107,13 @@ public:
         value += inc;
         return value;
     }
-    
+
     int32_t incrementAndGet()
     {
         SyncLock syncLock(this);
         return ++value;
     }
-    
+
     int32_t intValue()
     {
         SyncLock syncLock(this);
@@ -126,20 +126,20 @@ class AddDirectoriesThread : public LuceneThread
 public:
     AddDirectoriesThread(AddDirectoriesThreadsPtr addDirectories, int32_t numIter)
     {
-        this->_addDirectories = addDirectories;
+        this->addDirectories = addDirectories;
         this->numIter = numIter;
     }
-    
+
     virtual ~AddDirectoriesThread()
     {
     }
-    
+
     LUCENE_CLASS(AddDirectoriesThread);
-    
+
 protected:
-    AddDirectoriesThreadsWeakPtr _addDirectories;
+    AddDirectoriesThreadsPtr addDirectories;
     int32_t numIter;
-        
+
 public:
     virtual void run();
 };
@@ -164,24 +164,24 @@ public:
             DocumentPtr doc = createDocument(i, L"addindex", 4);
             writer->addDocument(doc);
         }
-        
+
         writer->close();
-        
+
         readers = Collection<IndexReaderPtr>::newInstance(numDirs);
         for (int32_t i = 0; i < numDirs; ++i)
             readers[i] = IndexReader::open(addDir, false);
     }
-    
+
     virtual ~AddDirectoriesThreads()
     {
     }
-    
+
     LUCENE_CLASS(AddDirectoriesThreads);
 
 public:
     static const int32_t NUM_THREADS;
     static const int32_t NUM_INIT_DOCS;
-    
+
     DirectoryPtr addDir;
     int32_t numDirs;
     Collection<LuceneThreadPtr> threads;
@@ -198,27 +198,27 @@ public:
         for (int32_t i = 0; i < NUM_THREADS; ++i)
             threads[i]->join();
     }
-    
+
     void close(bool doWait)
     {
         didClose = true;
         mainWriter->close(doWait);
     }
-    
+
     void closeDir()
     {
         for (int32_t i = 0; i < numDirs; ++i)
             readers[i]->close();
         addDir->close();
     }
-    
+
     void handle(const LuceneException& t)
     {
         BOOST_FAIL(t.getError());
         SyncLock syncLock(&failures);
         failures.add(t);
     }
-    
+
     void launchThreads(int32_t numIter)
     {
         for (int32_t i = 0; i < NUM_THREADS; ++i)
@@ -226,7 +226,7 @@ public:
         for (int32_t i = 0; i < NUM_THREADS; ++i)
             threads[i]->start();
     }
-    
+
     void doBody(int32_t j, Collection<DirectoryPtr> dirs)
     {
         switch (j % 4)
@@ -255,8 +255,6 @@ const int32_t AddDirectoriesThreads::NUM_INIT_DOCS = 100;
 
 void AddDirectoriesThread::run()
 {
-    AddDirectoriesThreadsPtr addDirectories(_addDirectories);
-    
     try
     {
         Collection<DirectoryPtr> dirs = Collection<DirectoryPtr>::newInstance(addDirectories->numDirs);
@@ -339,7 +337,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexes)
     // create the index
     createIndexNoClose(!optimize, L"index1", writer);
     writer->flush(false, true, true);
-    
+
     // create a 2nd index
     DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
     TestableIndexWriterPtr writer2 = newLucene<TestableIndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
@@ -348,7 +346,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexes)
 
     IndexReaderPtr r0 = writer->getReader();
     BOOST_CHECK(r0->isCurrent());
-    
+
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(dir2));
     BOOST_CHECK(!r0->isCurrent());
     r0->close();
@@ -386,9 +384,9 @@ BOOST_AUTO_TEST_CASE(testAddIndexes2)
     IndexWriterPtr writer2 = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     createIndexNoClose(!optimize, L"index2", writer2);
     writer2->close();
-    
+
     Collection<DirectoryPtr> dirs = newCollection<DirectoryPtr>(dir2);
-    
+
     writer->addIndexesNoOptimize(dirs);
     writer->addIndexesNoOptimize(dirs);
     writer->addIndexesNoOptimize(dirs);
@@ -414,10 +412,10 @@ BOOST_AUTO_TEST_CASE(testDeleteFromIndexWriter)
     // create the index
     createIndexNoClose(!optimize, L"index1", writer);
     writer->flush(false, true, true);
-    
+
     // get a reader
     IndexReaderPtr r1 = writer->getReader();
-    
+
     String id10 = r1->document(10)->getField(L"id")->stringValue();
 
     // deleted IW docs should not show up in the next getReader
@@ -460,7 +458,7 @@ BOOST_AUTO_TEST_CASE(testAddIndexesAndDoDeletesThreads)
 {
     int32_t numIter = 5;
     int32_t numDirs = 3;
-    
+
     DirectoryPtr mainDir = newLucene<MockRAMDirectory>();
     IndexWriterPtr mainWriter = newLucene<IndexWriter>(mainDir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     AddDirectoriesThreadsPtr addDirThreads = newLucene<AddDirectoriesThreads>(numIter, mainWriter);
@@ -488,7 +486,7 @@ static void doTestIndexWriterReopenSegment(bool optimize)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     TestableIndexWriterPtr writer = newLucene<TestableIndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    
+
     IndexReaderPtr r1 = writer->getReader();
     BOOST_CHECK_EQUAL(0, r1->maxDoc());
     createIndexNoClose(false, L"index1", writer);
@@ -499,7 +497,7 @@ static void doTestIndexWriterReopenSegment(bool optimize)
 
     IndexReaderPtr r2 = writer->getReader();
     BOOST_CHECK_EQUAL(100, r2->maxDoc());
-    
+
     // add 100 documents
     for (int32_t x = 10000; x < 10000 + 100; ++x)
     {
@@ -548,7 +546,7 @@ BOOST_AUTO_TEST_CASE(testIndexWriterReopenSegment)
 namespace TestMergeWarmer
 {
     DECLARE_LUCENE_PTR(MyWarmer)
-    
+
     class MyWarmer : public IndexReaderWarmer
     {
     public:
@@ -556,16 +554,16 @@ namespace TestMergeWarmer
         {
             warmCount = 0;
         }
-        
+
         virtual ~MyWarmer()
         {
         }
-        
+
         LUCENE_CLASS(MyWarmer);
-    
+
     public:
         int32_t warmCount;
-    
+
     public:
         virtual void warm(IndexReaderPtr reader)
         {
@@ -578,7 +576,7 @@ BOOST_AUTO_TEST_CASE(testMergeWarmer)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    
+
     // create the index
     createIndexNoClose(false, L"test", writer);
 
@@ -590,10 +588,10 @@ BOOST_AUTO_TEST_CASE(testMergeWarmer)
     writer->setMergedSegmentWarmer(warmer);
     writer->setMergeFactor(2);
     writer->setMaxBufferedDocs(2);
-    
+
     for (int32_t i = 0; i < 100; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
-    
+
     LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     BOOST_CHECK(warmer->warmCount > 0);
@@ -612,7 +610,7 @@ BOOST_AUTO_TEST_CASE(testAfterCommit)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    
+
     // create the index
     createIndexNoClose(false, L"test", writer);
 
@@ -622,10 +620,10 @@ BOOST_AUTO_TEST_CASE(testAfterCommit)
     writer->commit();
     checkIndex(dir1);
     BOOST_CHECK_EQUAL(100, r1->numDocs());
-    
+
     for (int32_t i = 0; i < 10; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
-    
+
     LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     IndexReaderPtr r2 = r1->reopen();
@@ -634,7 +632,7 @@ BOOST_AUTO_TEST_CASE(testAfterCommit)
         r1->close();
         r1 = r2;
     }
-    
+
     BOOST_CHECK_EQUAL(110, r1->numDocs());
     writer->close();
     r1->close();
@@ -646,7 +644,7 @@ BOOST_AUTO_TEST_CASE(testAfterClose)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    
+
     // create the index
     createIndexNoClose(false, L"test", writer);
 
@@ -677,18 +675,18 @@ namespace TestDuringAddIndexes
             this->writer = writer;
             this->dirs = dirs;
         }
-        
+
         virtual ~AddIndexesThread()
         {
         }
-        
+
         LUCENE_CLASS(AddIndexesThread);
-        
+
     protected:
         int64_t endTime;
         IndexWriterPtr writer;
         Collection<DirectoryPtr> dirs;
-        
+
     public:
         virtual void run()
         {
@@ -713,29 +711,29 @@ BOOST_AUTO_TEST_CASE(testDuringAddIndexes)
     MockRAMDirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergeFactor(2);
-    
+
     // create the index
     createIndexNoClose(false, L"test", writer);
     writer->commit();
-    
+
     Collection<DirectoryPtr> dirs = Collection<DirectoryPtr>::newInstance(10);
     for (int32_t i = 0; i < 10; ++i)
         dirs[i] = newLucene<MockRAMDirectory>(dir1);
-    
+
     IndexReaderPtr r = writer->getReader();
 
     int32_t NUM_THREAD = 5;
     int32_t SECONDS = 3;
 
     int64_t endTime = MiscUtils::currentTimeMillis() + 1000 * SECONDS;
-    
+
     Collection<LuceneThreadPtr> threads = Collection<LuceneThreadPtr>::newInstance(NUM_THREAD);
     for (int32_t i = 0; i < NUM_THREAD; ++i)
     {
         threads[i] = newLucene<TestDuringAddIndexes::AddIndexesThread>(endTime, writer, dirs);
         threads[i]->start();
     }
-    
+
     int32_t lastCount = 0;
     while ((int64_t)MiscUtils::currentTimeMillis() < endTime)
     {
@@ -750,7 +748,7 @@ BOOST_AUTO_TEST_CASE(testDuringAddIndexes)
         BOOST_CHECK(count >= lastCount);
         lastCount = count;
     }
-    
+
     for (int32_t i = 0; i < NUM_THREAD; ++i)
         threads[i]->join();
 
@@ -773,18 +771,18 @@ namespace TestDuringAddDelete
             this->writer = writer;
             this->random = newLucene<Random>();
         }
-        
+
         virtual ~AddDeleteThread()
         {
         }
-        
+
         LUCENE_CLASS(AddDeleteThread);
-        
+
     protected:
         int64_t endTime;
         IndexWriterPtr writer;
         RandomPtr random;
-        
+
     public:
         virtual void run()
         {
@@ -818,25 +816,25 @@ BOOST_AUTO_TEST_CASE(testDuringAddDelete)
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergeFactor(2);
-    
+
     // create the index
     createIndexNoClose(false, L"test", writer);
     writer->commit();
-    
+
     IndexReaderPtr r = writer->getReader();
 
     int32_t NUM_THREAD = 5;
     int32_t SECONDS = 3;
 
     int64_t endTime = MiscUtils::currentTimeMillis() + 1000 * SECONDS;
-    
+
     Collection<LuceneThreadPtr> threads = Collection<LuceneThreadPtr>::newInstance(NUM_THREAD);
     for (int32_t i = 0; i < NUM_THREAD; ++i)
     {
         threads[i] = newLucene<TestDuringAddDelete::AddDeleteThread>(endTime, writer);
         threads[i]->start();
     }
-    
+
     int32_t sum = 0;
     while ((int64_t)MiscUtils::currentTimeMillis() < endTime)
     {
@@ -849,7 +847,7 @@ BOOST_AUTO_TEST_CASE(testDuringAddDelete)
         QueryPtr q = newLucene<TermQuery>(newLucene<Term>(L"indexname", L"test"));
         sum += newLucene<IndexSearcher>(r)->search(q, 10)->totalHits;
     }
-    
+
     for (int32_t i = 0; i < NUM_THREAD; ++i)
         threads[i]->join();
 
@@ -866,7 +864,7 @@ BOOST_AUTO_TEST_CASE(testExpungeDeletes)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    
+
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", L"a b c", Field::STORE_NO, Field::INDEX_ANALYZED));
     FieldPtr id = newLucene<Field>(L"id", L"", Field::STORE_NO, Field::INDEX_ANALYZED);
@@ -921,16 +919,16 @@ BOOST_AUTO_TEST_CASE(testDeletesNumDocs)
 namespace TestSegmentWarmer
 {
     DECLARE_LUCENE_PTR(SegmentWarmer)
-    
+
     class SegmentWarmer : public IndexReaderWarmer
     {
     public:
         virtual ~SegmentWarmer()
         {
         }
-        
+
         LUCENE_CLASS(SegmentWarmer);
-    
+
     public:
         virtual void warm(IndexReaderPtr reader)
         {
@@ -947,9 +945,9 @@ BOOST_AUTO_TEST_CASE(testSegmentWarmer)
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     w->setMaxBufferedDocs(2);
     w->getReader()->close();
-    
+
     w->setMergedSegmentWarmer(newLucene<TestSegmentWarmer::SegmentWarmer>());
-    
+
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"foo", L"bar", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     for (int32_t i = 0; i < 20; ++i)

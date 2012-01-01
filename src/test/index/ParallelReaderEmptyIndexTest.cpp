@@ -19,7 +19,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(ParallelReaderEmptyIndexTest, LuceneTestFixture)
 
-/// Creates two empty indexes and wraps a ParallelReader around. 
+/// Creates two empty indexes and wraps a ParallelReader around.
 /// Adding this reader to a new index should not throw any exception.
 BOOST_AUTO_TEST_CASE(testEmptyIndex)
 {
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(testEmptyIndex)
     rd2->close();
 }
 
-/// This method creates an empty index (numFields=0, numDocs=0) but is marked to have TermVectors. 
+/// This method creates an empty index (numFields=0, numDocs=0) but is marked to have TermVectors.
 /// Adding this index to another index should not throw any exception.
 BOOST_AUTO_TEST_CASE(testEmptyIndexWithVectors)
 {
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(testEmptyIndexWithVectors)
         iw->optimize();
         iw->close();
     }
-    
+
     RAMDirectoryPtr rd2 = newLucene<MockRAMDirectory>();
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(rd2, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(testEmptyIndexWithVectors)
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(rd1, true));
     pr->add(IndexReader::open(rd2, true));
-    
+
     iwOut->addIndexes(newCollection<IndexReaderPtr>(pr));
 
     // ParallelReader closes any IndexReader you added to it

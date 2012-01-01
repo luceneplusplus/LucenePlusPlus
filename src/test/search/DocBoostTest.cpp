@@ -31,32 +31,32 @@ namespace TestDocBoost
             this->scores = scores;
             this->base = 0;
         }
-        
+
         virtual ~BoostCollector()
         {
         }
-    
+
     public:
         Collection<double> scores;
         int32_t base;
         ScorerPtr scorer;
-    
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
             this->scorer = scorer;
         }
-        
+
         virtual void collect(int32_t doc)
         {
             scores[doc + base] = scorer->score();
         }
-        
+
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
         {
             base = docBase;
         }
-        
+
         virtual bool acceptsDocsOutOfOrder()
         {
             return true;
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(testDocBoost)
     Collection<double> scores = Collection<double>::newInstance(4);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(store, true);
     searcher->search(newLucene<TermQuery>(newLucene<Term>(L"field", L"word")), newLucene<TestDocBoost::BoostCollector>(scores));
-    
+
     double lastScore = 0.0;
     for (int32_t i = 0; i < 4; ++i)
     {

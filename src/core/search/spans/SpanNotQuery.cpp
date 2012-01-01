@@ -15,35 +15,35 @@ namespace Lucene
     {
         this->include = include;
         this->exclude = exclude;
-        
+
         if (include->getField() != exclude->getField())
             boost::throw_exception(IllegalArgumentException(L"Clauses must have same field."));
     }
-    
+
     SpanNotQuery::~SpanNotQuery()
     {
     }
-    
+
     SpanQueryPtr SpanNotQuery::getInclude()
     {
         return include;
     }
-    
+
     SpanQueryPtr SpanNotQuery::getExclude()
     {
         return exclude;
     }
-    
+
     String SpanNotQuery::getField()
     {
         return include->getField();
     }
-    
+
     void SpanNotQuery::extractTerms(SetTerm terms)
     {
         include->extractTerms(terms);
     }
-    
+
     String SpanNotQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -51,7 +51,7 @@ namespace Lucene
         buffer << boostString();
         return buffer.str();
     }
-    
+
     LuceneObjectPtr SpanNotQuery::clone(LuceneObjectPtr other)
     {
         SpanNotQueryPtr spanNotQuery(newLucene<SpanNotQuery>(LuceneDynamicCast<SpanQuery>(include->clone()),
@@ -59,12 +59,12 @@ namespace Lucene
         spanNotQuery->setBoost(getBoost());
         return spanNotQuery;
     }
-    
+
     SpansPtr SpanNotQuery::getSpans(IndexReaderPtr reader)
     {
         return newLucene<NotSpans>(LuceneThis(), include->getSpans(reader), exclude->getSpans(reader));
     }
-    
+
     QueryPtr SpanNotQuery::rewrite(IndexReaderPtr reader)
     {
         SpanNotQueryPtr clone;
@@ -74,7 +74,7 @@ namespace Lucene
             clone = LuceneDynamicCast<SpanNotQuery>(this->clone());
             clone->include = rewrittenInclude;
         }
-        
+
         SpanQueryPtr rewrittenExclude(LuceneDynamicCast<SpanQuery>(exclude->rewrite(reader)));
         if (rewrittenExclude != exclude)
         {
@@ -82,25 +82,25 @@ namespace Lucene
                 clone = LuceneDynamicCast<SpanNotQuery>(this->clone());
             clone->exclude = rewrittenExclude;
         }
-        
+
         if (clone)
             return clone; // some clauses rewrote
         else
             return LuceneThis(); // no clauses rewrote
     }
-    
+
     bool SpanNotQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
+
         SpanNotQueryPtr otherQuery(LuceneDynamicCast<SpanNotQuery>(other));
         if (!otherQuery)
             return false;
-        
+
         return (include->equals(otherQuery->include) && exclude->equals(otherQuery->exclude) && getBoost() == otherQuery->getBoost());
     }
-    
+
     int32_t SpanNotQuery::hashCode()
     {
         int32_t result = include->hashCode();
@@ -110,7 +110,7 @@ namespace Lucene
         result ^= MiscUtils::doubleToRawIntBits(getBoost());
         return result;
     }
-    
+
     NotSpans::NotSpans(SpanNotQueryPtr query, SpansPtr includeSpans, SpansPtr excludeSpans)
     {
         this->query = query;
@@ -119,72 +119,72 @@ namespace Lucene
         this->excludeSpans = excludeSpans;
         this->moreExclude = excludeSpans->next();
     }
-    
+
     NotSpans::~NotSpans()
     {
     }
-    
+
     bool NotSpans::next()
     {
         if (moreInclude) // move to next include
             moreInclude = includeSpans->next();
-        
+
         while (moreInclude && moreExclude)
         {
             if (includeSpans->doc() > excludeSpans->doc()) // skip exclude
                 moreExclude = excludeSpans->skipTo(includeSpans->doc());
-            
+
             // while exclude is before
             while (moreExclude && includeSpans->doc() == excludeSpans->doc() && excludeSpans->end() <= includeSpans->start())
                 moreExclude = excludeSpans->next(); // increment exclude
-            
+
             // if no intersection
             if (!moreExclude || includeSpans->doc() != excludeSpans->doc() || includeSpans->end() <= excludeSpans->start())
                 break; // we found a match
-            
+
             moreInclude = includeSpans->next(); // intersected: keep scanning
         }
         return moreInclude;
     }
-    
+
     bool NotSpans::skipTo(int32_t target)
     {
         if (moreInclude) // skip include
             moreInclude = includeSpans->skipTo(target);
-        
+
         if (!moreInclude)
             return false;
-        
+
         // skip exclude
         if (moreExclude && includeSpans->doc() > excludeSpans->doc())
             moreExclude = excludeSpans->skipTo(includeSpans->doc());
-        
+
         // while exclude is before
         while (moreExclude && includeSpans->doc() == excludeSpans->doc() && excludeSpans->end() <= includeSpans->start())
             moreExclude = excludeSpans->next(); // increment exclude
-        
+
         // if no intersection
         if (!moreExclude || includeSpans->doc() != excludeSpans->doc() || includeSpans->end() <= excludeSpans->start())
             return true; // we found a match
-        
+
         return next(); // scan to next match
     }
-    
+
     int32_t NotSpans::doc()
     {
         return includeSpans->doc();
     }
-    
+
     int32_t NotSpans::start()
     {
         return includeSpans->start();
     }
-    
+
     int32_t NotSpans::end()
     {
         return includeSpans->end();
     }
-    
+
     Collection<ByteArray> NotSpans::getPayload()
     {
         Collection<ByteArray> result;
@@ -195,12 +195,12 @@ namespace Lucene
         }
         return result;
     }
-    
+
     bool NotSpans::isPayloadAvailable()
     {
         return includeSpans->isPayloadAvailable();
     }
-    
+
     String NotSpans::toString()
     {
         return L"spans(" + query->toString() + L")";

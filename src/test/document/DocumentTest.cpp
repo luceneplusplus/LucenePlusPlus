@@ -65,7 +65,7 @@ static void checkDocument(DocumentPtr doc, bool fromIndex)
         BOOST_CHECK_EQUAL(unstoredFieldValues[1], L"test2");
     }
 }
-    
+
 BOOST_AUTO_TEST_CASE(testBinaryField)
 {
     DocumentPtr doc = newLucene<Document>();
@@ -106,10 +106,10 @@ BOOST_AUTO_TEST_CASE(testBinaryField)
 
     bytesTest = binaryTests[0];
     binaryTest = String((wchar_t*)bytesTest.get(), bytesTest.size() / sizeof(wchar_t));
-    
+
     ByteArray bytesTest2 = binaryTests[1];
     String binaryTest2((wchar_t*)bytesTest2.get(), bytesTest2.size() / sizeof(wchar_t));
-    
+
     BOOST_CHECK_NE(binaryTest, binaryTest2);
 
     BOOST_CHECK_EQUAL(binaryTest, binaryVal);
@@ -152,11 +152,11 @@ BOOST_AUTO_TEST_CASE(testConstructorExceptions)
 {
     newLucene<Field>(L"name", L"value", Field::STORE_YES, Field::INDEX_NO); // ok
     newLucene<Field>(L"name", L"value", Field::STORE_NO, Field::INDEX_NOT_ANALYZED); // ok
-    
+
     BOOST_CHECK_EXCEPTION(newLucene<Field>(L"name", L"value", Field::STORE_NO, Field::INDEX_NO), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
-    
+
     newLucene<Field>(L"name", L"value", Field::STORE_YES, Field::INDEX_NO, Field::TERM_VECTOR_NO); // ok
-    
+
     BOOST_CHECK_EXCEPTION(newLucene<Field>(L"name", L"value", Field::STORE_YES, Field::INDEX_NO, Field::TERM_VECTOR_YES), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 }
 
@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(testFieldSetValue)
     writer->close();
 
     SearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
-    
+
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"keyword", L"test"));
 
     // ensure that queries return expected results without DateFilter first

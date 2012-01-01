@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(testFieldSelector)
 {
     RAMDirectoryPtr ramDirectory1 = newLucene<RAMDirectory>();
     RAMDirectoryPtr ramDirectory2 = newLucene<RAMDirectory>();
-    
+
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", L"doc0"));
 
     // Now put the documents in a different index
@@ -207,9 +207,9 @@ BOOST_AUTO_TEST_CASE(testFieldSelector)
     BOOST_CHECK(document);
     BOOST_CHECK_EQUAL(document->getFields().size(), 2);
     // Should be one document from each directory they both have two fields, contents and other
-    HashSet<String> ftl = HashSet<String>::newInstance();
+    SetString ftl = SetString::newInstance();
     ftl.add(L"other");
-    SetBasedFieldSelectorPtr fs = newLucene<SetBasedFieldSelector>(ftl, HashSet<String>::newInstance());
+    SetBasedFieldSelectorPtr fs = newLucene<SetBasedFieldSelector>(ftl, SetString::newInstance());
     document = searcher->doc(hits[0]->doc, fs);
     BOOST_CHECK(document);
     BOOST_CHECK_EQUAL(document->getFields().size(), 1);
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(testFieldSelector)
     BOOST_CHECK(!value.empty());
     ftl.clear();
     ftl.add(L"contents");
-    fs = newLucene<SetBasedFieldSelector>(ftl, HashSet<String>::newInstance());
+    fs = newLucene<SetBasedFieldSelector>(ftl, SetString::newInstance());
     document = searcher->doc(hits[1]->doc, fs);
     value = document->get(L"contents");
     BOOST_CHECK(!value.empty());
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_CASE(testNormalization)
     BOOST_CHECK_EQUAL(2, hits.size());
 
     // Store the scores for use later
-    Collection<double> scores = newCollection<double>(hits[0]->score, hits[1]->score);
+    Collection<double> scores = newCollectionDouble(hits[0]->score, hits[1]->score);
     BOOST_CHECK(scores[0] > scores[1]);
 
     indexSearcher1->close();
@@ -296,33 +296,33 @@ namespace TestCustomSimilarity
         virtual ~CustomSimilarity()
         {
         }
-    
+
     public:
         virtual double idf(int32_t docFreq, int32_t numDocs)
         {
             return 100.0;
         }
-        
+
         virtual double coord(int32_t overlap, int32_t maxOverlap)
         {
             return 1.0;
         }
-        
+
         virtual double lengthNorm(const String& fieldName, int32_t numTokens)
         {
             return 1.0;
         }
-        
+
         virtual double queryNorm(double sumOfSquaredWeights)
         {
             return 1.0;
         }
-        
+
         virtual double sloppyFreq(int32_t distance)
         {
             return 1.0;
         }
-        
+
         virtual double tf(double freq)
         {
             return 1.0;

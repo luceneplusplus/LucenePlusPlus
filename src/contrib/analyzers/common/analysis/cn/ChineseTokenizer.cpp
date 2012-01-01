@@ -17,44 +17,44 @@ namespace Lucene
 {
     const int32_t ChineseTokenizer::MAX_WORD_LEN = 255;
     const int32_t ChineseTokenizer::IO_BUFFER_SIZE = 1024;
-    
+
     ChineseTokenizer::ChineseTokenizer(ReaderPtr input) : Tokenizer(input)
     {
     }
-    
+
     ChineseTokenizer::ChineseTokenizer(AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source, input)
     {
     }
-    
+
     ChineseTokenizer::ChineseTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory, input)
     {
     }
-    
+
     ChineseTokenizer::~ChineseTokenizer()
     {
     }
-    
+
     void ChineseTokenizer::initialize()
     {
         offset = 0;
         bufferIndex = 0;
         dataLen = 0;
-        buffer = CharArray::newInstance(MAX_WORD_LEN);
-        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
+        buffer = Collection<CharArray>::newInstance(MAX_WORD_LEN);
+        ioBuffer = Collection<CharArray>::newInstance(IO_BUFFER_SIZE);
         length = 0;
         start = 0;
-        
+
         termAtt = addAttribute<TermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
     }
-    
+
     void ChineseTokenizer::push(wchar_t c)
     {
         if (length == 0)
             start = offset - 1; // start of token
         buffer[length++] = CharFolder::toLower(c); // buffer it
     }
-    
+
     bool ChineseTokenizer::flush()
     {
         if (length > 0)
@@ -66,7 +66,7 @@ namespace Lucene
         else
             return false;
     }
-    
+
     bool ChineseTokenizer::incrementToken()
     {
         clearAttributes();
@@ -78,13 +78,13 @@ namespace Lucene
         {
             wchar_t c;
             ++offset;
-        
+
             if (bufferIndex >= dataLen)
             {
                 dataLen = input->read(ioBuffer.get(), 0, ioBuffer.size());
                 bufferIndex = 0;
             }
-            
+
             if (dataLen == -1)
             {
                 --offset;
@@ -92,7 +92,7 @@ namespace Lucene
             }
             else
                 c = ioBuffer[bufferIndex++];
-            
+
             if (UnicodeUtil::isDigit(c) || UnicodeUtil::isLower(c) || UnicodeUtil::isUpper(c))
             {
                 push(c);
@@ -114,14 +114,14 @@ namespace Lucene
                 return flush();
         }
     }
-    
+
     void ChineseTokenizer::end()
     {
         // set final offset
         int32_t finalOffset = correctOffset(offset);
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
-    
+
     void ChineseTokenizer::reset()
     {
         Tokenizer::reset();
@@ -129,7 +129,7 @@ namespace Lucene
         bufferIndex = 0;
         dataLen = 0;
     }
-    
+
     void ChineseTokenizer::reset(ReaderPtr input)
     {
         Tokenizer::reset(input);

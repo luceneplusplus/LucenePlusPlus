@@ -17,17 +17,17 @@ namespace Lucene
     public:
         CoreReaders(SegmentReaderPtr origInstance, DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, int32_t termsIndexDivisor);
         virtual ~CoreReaders();
-        
+
         LUCENE_CLASS(CoreReaders);
-            
+
     protected:
         /// Counts how many other reader share the core objects (freqStream, proxStream, tis, etc.) of this reader;
         /// when coreRef drops to 0, these core objects may be closed.  A given instance of SegmentReader may be
         /// closed, even those it shares core objects with other SegmentReaders
         SegmentReaderRefPtr ref;
-        
-        SegmentReaderWeakPtr _origInstance;
-    
+
+        SegmentReaderPtr origInstance;
+
     public:
         String segment;
         FieldInfosPtr fieldInfos;
@@ -45,7 +45,7 @@ namespace Lucene
         TermVectorsReaderPtr termVectorsReaderOrig;
         CompoundFileReaderPtr cfsReader;
         CompoundFileReaderPtr storeCFSReader;
-    
+
     public:
         TermVectorsReaderPtr getTermVectorsReaderOrig();
         FieldsReaderPtr getFieldsReaderOrig();
@@ -53,55 +53,55 @@ namespace Lucene
         DirectoryPtr getCFSReader();
         TermInfosReaderPtr getTermsReader();
         bool termsIndexIsLoaded();
-        
+
         /// NOTE: only called from IndexWriter when a near real-time reader is opened, or applyDeletes is run,
         /// sharing a segment that's still being merged.  This method is not fully thread safe, and relies on the
         /// synchronization in IndexWriter
         void loadTermsIndex(SegmentInfoPtr si, int32_t termsIndexDivisor);
-        
+
         void openDocStores(SegmentInfoPtr si);
-        
+
         void decRef();
-        
+
         friend class SegmentReader;
     };
-    
+
     /// Sets the initial value
     class FieldsReaderLocal : public CloseableThreadLocal<FieldsReader>
     {
     public:
         FieldsReaderLocal(SegmentReaderPtr reader);
-    
+
     protected:
-        SegmentReaderWeakPtr _reader;
-    
+        SegmentReaderPtr reader;
+
     protected:
         virtual FieldsReaderPtr initialValue();
     };
-    
+
     class SegmentReaderRef : public LuceneObject
     {
     public:
         SegmentReaderRef();
         virtual ~SegmentReaderRef();
-        
+
         LUCENE_CLASS(SegmentReaderRef);
-            
+
     protected:
         int32_t _refCount;
-    
+
     public:
         virtual String toString();
         int32_t refCount();
         int32_t incRef();
         int32_t decRef();
-        
+
         friend class SegmentReader;
     };
-    
-    /// Byte[] referencing is used because a new norm object needs to be created for each clone, and the byte 
-    /// array is all that is needed for sharing between cloned readers.  The current norm referencing is for 
-    /// sharing between readers whereas the byte[] referencing is for copy on write which is independent of 
+
+    /// Byte[] referencing is used because a new norm object needs to be created for each clone, and the byte
+    /// array is all that is needed for sharing between cloned readers.  The current norm referencing is for
+    /// sharing between readers whereas the byte[] referencing is for copy on write which is independent of
     /// reader references (i.e. incRef, decRef).
     class Norm : public LuceneObject
     {
@@ -109,52 +109,52 @@ namespace Lucene
         Norm();
         Norm(SegmentReaderPtr reader, IndexInputPtr in, int32_t number, int64_t normSeek);
         virtual ~Norm();
-        
+
         LUCENE_CLASS(Norm);
-                
+
     protected:
-        SegmentReaderWeakPtr _reader;
+        SegmentReaderPtr reader;
         int32_t refCount;
-        
+
         /// If this instance is a clone, the originalNorm references the Norm that has a real open IndexInput
         NormPtr origNorm;
         SegmentReaderPtr origReader;
-        
+
         IndexInputPtr in;
         int64_t normSeek;
-        
+
         SegmentReaderRefPtr _bytesRef;
         ByteArray _bytes;
         bool dirty;
         int32_t number;
         bool rollbackDirty;
-    
+
     public:
         void incRef();
         void decRef();
-        
+
         /// Load bytes but do not cache them if they were not already cached
         void bytes(uint8_t* bytesOut, int32_t offset, int32_t length);
-        
+
         /// Load & cache full bytes array.  Returns bytes.
         ByteArray bytes();
-        
+
         /// Only for testing
         SegmentReaderRefPtr bytesRef();
-        
-        /// Called if we intend to change a norm value.  We make a private copy of bytes if it's shared 
+
+        /// Called if we intend to change a norm value.  We make a private copy of bytes if it's shared
         // with others
         ByteArray copyOnWrite();
-        
+
         /// Returns a copy of this Norm instance that shares IndexInput & bytes with the original one
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        
+
         /// Flush all pending changes to the next generation separate norms file.
         void reWrite(SegmentInfoPtr si);
-        
+
     protected:
         void closeInput();
-        
+
         friend class SegmentReader;
     };
 }

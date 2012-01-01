@@ -16,18 +16,18 @@ namespace Lucene
         stemmer = newLucene<GermanStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
-    
-    GermanStemFilter::GermanStemFilter(TokenStreamPtr input, HashSet<String> exclusionSet) : TokenFilter(input)
+
+    GermanStemFilter::GermanStemFilter(TokenStreamPtr input, SetString exclusionSet) : TokenFilter(input)
     {
         stemmer = newLucene<GermanStemmer>();
         termAtt = addAttribute<TermAttribute>();
         this->exclusionSet = exclusionSet;
     }
-    
+
     GermanStemFilter::~GermanStemFilter()
     {
     }
-    
+
     bool GermanStemFilter::incrementToken()
     {
         if (input->incrementToken())
@@ -46,14 +46,14 @@ namespace Lucene
         else
             return false;
     }
-    
+
     void GermanStemFilter::setStemmer(GermanStemmerPtr stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;
     }
-    
-    void GermanStemFilter::setExclusionSet(HashSet<String> exclusionSet)
+
+    void GermanStemFilter::setExclusionSet(SetString exclusionSet)
     {
         this->exclusionSet = exclusionSet;
     }

@@ -14,7 +14,7 @@
 namespace Lucene
 {
     const int32_t TermScorer::SCORE_CACHE_SIZE = 32;
-    
+
     TermScorer::TermScorer(WeightPtr weight, TermDocsPtr td, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity)
     {
         this->weight = weight;
@@ -27,25 +27,25 @@ namespace Lucene
         this->pointer = 0;
         this->pointerMax = 0;
         this->scoreCache = Collection<double>::newInstance(SCORE_CACHE_SIZE);
-        
+
         for (int32_t i = 0; i < SCORE_CACHE_SIZE; ++i)
             scoreCache[i] = getSimilarity()->tf(i) * weightValue;
     }
-    
+
     TermScorer::~TermScorer()
     {
     }
-    
+
     const Collection<double> TermScorer::SIM_NORM_DECODER()
     {
         return Similarity::getNormDecoder();
     }
-    
+
     void TermScorer::score(CollectorPtr collector)
     {
         score(collector, INT_MAX, nextDoc());
     }
-    
+
     bool TermScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
         // firstDocID is ignored since nextDoc() sets 'doc'
@@ -53,7 +53,7 @@ namespace Lucene
         while (doc < max) // for docs in window
         {
             collector->collect(doc);
-            
+
             if (++pointer >= pointerMax)
             {
                 pointerMax = termDocs->read(docs, freqs); // refill buffers
@@ -70,12 +70,12 @@ namespace Lucene
         }
         return true;
     }
-    
+
     int32_t TermScorer::docID()
     {
         return doc;
     }
-    
+
     int32_t TermScorer::nextDoc()
     {
         ++pointer;
@@ -94,7 +94,7 @@ namespace Lucene
         doc = docs[pointer];
         return doc;
     }
-    
+
     double TermScorer::score()
     {
         BOOST_ASSERT(doc != -1);
@@ -102,7 +102,7 @@ namespace Lucene
         double raw = f < SCORE_CACHE_SIZE ? scoreCache[f] : getSimilarity()->tf(f) * weightValue; // compute tf(f) * weight
         return norms ? raw * SIM_NORM_DECODER()[norms[doc] & 0xff] : raw; // normalize for field
     }
-    
+
     int32_t TermScorer::advance(int32_t target)
     {
         // first scan in cache
@@ -114,7 +114,7 @@ namespace Lucene
                 return doc;
             }
         }
-        
+
         // not found in cache, seek underlying stream
         bool result = termDocs->skipTo(target);
         if (result)
@@ -129,7 +129,7 @@ namespace Lucene
             doc = NO_MORE_DOCS;
         return doc;
     }
-    
+
     String TermScorer::toString()
     {
         return L"scorer(" + weight->toString() + L")";

@@ -11,10 +11,10 @@
 
 namespace Lucene
 {
-    /// This class converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127 ASCII 
+    /// This class converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127 ASCII
     /// characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if one exists.
     ///
-    /// Characters from the following Unicode blocks are converted; however, only those characters with reasonable ASCII 
+    /// Characters from the following Unicode blocks are converted; however, only those characters with reasonable ASCII
     /// alternatives are converted:
     ///
     ///    C1 Controls and Latin-1 Supplement: <a href="http://www.unicode.org/charts/PDF/U0080.pdf">http://www.unicode.org/charts/PDF/U0080.pdf</a>
@@ -36,7 +36,7 @@ namespace Lucene
     ///
     /// See: <a href="http://en.wikipedia.org/wiki/Latin_characters_in_Unicode">http://en.wikipedia.org/wiki/Latin_characters_in_Unicode</a>
     ///
-    /// The set of character conversions supported by this class is a superset of those supported by Lucene's {@link 
+    /// The set of character conversions supported by this class is a superset of those supported by Lucene's {@link
     /// ISOLatin1AccentFilter} which strips accents from Latin1 characters.  For example, '&agrave;' will be replaced by 'a'.
     ///
     class LPPAPI ASCIIFoldingFilter : public TokenFilter
@@ -44,18 +44,18 @@ namespace Lucene
     public:
         ASCIIFoldingFilter(TokenStreamPtr input);
         virtual ~ASCIIFoldingFilter();
-        
+
         LUCENE_CLASS(ASCIIFoldingFilter);
-    
+
     protected:
-        CharArray output;
+        Collection<CharArray> output;
         int32_t outputPos;
         TermAttributePtr termAtt;
-    
+
     public:
         virtual bool incrementToken();
-        
-        /// Converts characters above ASCII to their ASCII equivalents.  For example, accents are removed from 
+
+        /// Converts characters above ASCII to their ASCII equivalents.  For example, accents are removed from
         /// accented characters.
         /// @param input The string to fold
         /// @param length The number of characters in the input string

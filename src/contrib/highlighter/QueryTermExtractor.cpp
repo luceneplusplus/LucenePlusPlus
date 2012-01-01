@@ -19,12 +19,12 @@ namespace Lucene
     QueryTermExtractor::~QueryTermExtractor()
     {
     }
-    
+
     Collection<WeightedTermPtr> QueryTermExtractor::getTerms(QueryPtr query)
     {
         return getTerms(query, false);
     }
-    
+
     Collection<WeightedTermPtr> QueryTermExtractor::getIdfWeightedTerms(QueryPtr query, IndexReaderPtr reader, const String& fieldName)
     {
         Collection<WeightedTermPtr> terms(getTerms(query, false, fieldName));
@@ -48,21 +48,21 @@ namespace Lucene
         }
         return terms;
     }
-    
+
     Collection<WeightedTermPtr> QueryTermExtractor::getTerms(QueryPtr query, bool prohibited, const String& fieldName)
     {
         SetWeightedTerm terms(SetWeightedTerm::newInstance());
         getTerms(query, terms, prohibited, fieldName);
         return Collection<WeightedTermPtr>::newInstance(terms.begin(), terms.end());
     }
-    
+
     Collection<WeightedTermPtr> QueryTermExtractor::getTerms(QueryPtr query, bool prohibited)
     {
         SetWeightedTerm terms(SetWeightedTerm::newInstance());
         getTerms(query, terms, prohibited, L"");
         return Collection<WeightedTermPtr>::newInstance(terms.begin(), terms.end());
     }
-    
+
     void QueryTermExtractor::getTerms(QueryPtr query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
     {
         try
@@ -87,7 +87,7 @@ namespace Lucene
             // this is non-fatal for our purposes
         }
     }
-    
+
     void QueryTermExtractor::getTermsFromBooleanQuery(BooleanQueryPtr query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
     {
         Collection<BooleanClausePtr> queryClauses(query->getClauses());
@@ -97,7 +97,7 @@ namespace Lucene
                 getTerms(queryClauses[i]->getQuery(), terms, prohibited, fieldName);
         }
     }
-    
+
     void QueryTermExtractor::getTermsFromFilteredQuery(FilteredQueryPtr query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
     {
         getTerms(query->getQuery(), terms, prohibited, fieldName);

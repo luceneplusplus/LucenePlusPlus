@@ -70,9 +70,9 @@ BOOST_AUTO_TEST_CASE(testFuzziness)
     query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaa"), FuzzyQuery::defaultMinSimilarity(), 6);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
-    
+
     // test scoring
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"bbbbb"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"bbbbb"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(3, hits.size());
     Collection<String> order = newCollection<String>(L"bbbbb", L"abbbb", L"aabbb");
@@ -84,20 +84,20 @@ BOOST_AUTO_TEST_CASE(testFuzziness)
 
     // test BooleanQuery.maxClauseCount
     int32_t savedClauseCount = BooleanQuery::getMaxClauseCount();
-    
+
     BooleanQuery::setMaxClauseCount(2);
     // This query would normally return 3 documents, because 3 terms match (see above)
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"bbbbb"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"bbbbb"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(2, hits.size());
     order = newCollection<String>(L"bbbbb", L"abbbb");
-    
+
     for (int32_t i = 0; i < hits.size(); ++i)
     {
         String term = searcher->doc(hits[i]->doc)->get(L"field");
         BOOST_CHECK_EQUAL(order[i], term);
     }
-    
+
     BooleanQuery::setMaxClauseCount(savedClauseCount);
 
     // not similar enough
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(testFuzziness)
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // query identical to a word in the index
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaa"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaa"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(3, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaa");
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(testFuzziness)
     BOOST_CHECK_EQUAL(searcher->doc(hits[2]->doc)->get(L"field"), L"aaabb");
 
     // query similar to a word in the index
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(3, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaa");
@@ -126,61 +126,61 @@ BOOST_AUTO_TEST_CASE(testFuzziness)
     BOOST_CHECK_EQUAL(searcher->doc(hits[2]->doc)->get(L"field"), L"aaabb");
 
     // now with prefix
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 1);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 1);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(3, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaa");
     BOOST_CHECK_EQUAL(searcher->doc(hits[1]->doc)->get(L"field"), L"aaaab");
     BOOST_CHECK_EQUAL(searcher->doc(hits[2]->doc)->get(L"field"), L"aaabb");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 2);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 2);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(3, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaa");
     BOOST_CHECK_EQUAL(searcher->doc(hits[1]->doc)->get(L"field"), L"aaaab");
     BOOST_CHECK_EQUAL(searcher->doc(hits[2]->doc)->get(L"field"), L"aaabb");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 3);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 3);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(3, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaa");
     BOOST_CHECK_EQUAL(searcher->doc(hits[1]->doc)->get(L"field"), L"aaaab");
     BOOST_CHECK_EQUAL(searcher->doc(hits[2]->doc)->get(L"field"), L"aaabb");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 4);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 4);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(2, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaa");
     BOOST_CHECK_EQUAL(searcher->doc(hits[1]->doc)->get(L"field"), L"aaaab");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 5);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaac"), FuzzyQuery::defaultMinSimilarity(), 5);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"ddddd");
 
     // now with prefix
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 1);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 1);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"ddddd");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 2);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 2);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"ddddd");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 3);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 3);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"ddddd");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 4);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 4);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"ddddd");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 5);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 5);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // different field = no match
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"anotherfield", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"anotherfield", L"ddddX"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
@@ -199,66 +199,66 @@ BOOST_AUTO_TEST_CASE(testFuzzinessLong)
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
 
     // not similar enough
-    FuzzyQueryPtr query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"xxxxx"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    FuzzyQueryPtr query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"xxxxx"), FuzzyQuery::defaultMinSimilarity(), 0);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
     // edit distance to "aaaaaaa" = 3, this matches because the string is longer than
     // in testDefaultFuzziness so a bigger difference is allowed
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaaaa");
 
     // now with prefix
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 1);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 1);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaaaa");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 4);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 4);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     BOOST_CHECK_EQUAL(searcher->doc(hits[0]->doc)->get(L"field"), L"aaaaaaa");
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 5);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaaaccc"), FuzzyQuery::defaultMinSimilarity(), 5);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // no match, more than half of the characters is wrong
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaacccc"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaacccc"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // now with prefix
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaacccc"), FuzzyQuery::defaultMinSimilarity(), 2);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"aaacccc"), FuzzyQuery::defaultMinSimilarity(), 2);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // "student" and "stellent" are indeed similar to "segment" by default
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"stellent"), FuzzyQuery::defaultMinSimilarity(), 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"stellent"), FuzzyQuery::defaultMinSimilarity(), 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
 
     // now with prefix
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), FuzzyQuery::defaultMinSimilarity(), 1);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), FuzzyQuery::defaultMinSimilarity(), 1);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"stellent"), FuzzyQuery::defaultMinSimilarity(), 1);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"stellent"), FuzzyQuery::defaultMinSimilarity(), 1);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), FuzzyQuery::defaultMinSimilarity(), 2);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), FuzzyQuery::defaultMinSimilarity(), 2);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"stellent"), FuzzyQuery::defaultMinSimilarity(), 2);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"stellent"), FuzzyQuery::defaultMinSimilarity(), 2);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // "student" doesn't match anymore thanks to increased minimum similarity
-    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), 0.6, 0);   
+    query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), 0.6, 0);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
-    
+
     BOOST_CHECK_EXCEPTION(query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), 1.1), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
     BOOST_CHECK_EXCEPTION(query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), -0.1), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
 
@@ -280,17 +280,17 @@ BOOST_AUTO_TEST_CASE(testTokenLengthOpt)
     FuzzyQueryPtr query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"1234569"), 0.9);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
-    
+
     // 10 chars, so no optimization
     query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"1234567891"), 0.9);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
-    
+
     // over 10 chars, so no optimization
     query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"12345678911"), 0.9);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
-    
+
     // over 10 chars, no match
     query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"sdfsdfsdfsdf"), 0.9);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
@@ -300,7 +300,7 @@ BOOST_AUTO_TEST_CASE(testTokenLengthOpt)
 BOOST_AUTO_TEST_CASE(testGiga)
 {
     StandardAnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     DirectoryPtr index = newLucene<MockRAMDirectory>();
     IndexWriterPtr w = newLucene<IndexWriter>(index, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
 

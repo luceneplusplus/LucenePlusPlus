@@ -15,7 +15,7 @@ BOOST_FIXTURE_TEST_SUITE(FrenchAnalyzerTest, BaseTokenStreamFixture)
 BOOST_AUTO_TEST_CASE(testAnalyzer)
 {
     AnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     checkAnalyzesTo(fa, L"", Collection<String>::newInstance());
 
     checkAnalyzesTo(fa, L"chien chat cheval", newCollection<String>(L"chien", L"chat", L"cheval"));
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(testAnalyzer)
     checkAnalyzesTo(fa, L"le la chien les aux chat du des \u00e0 cheval", newCollection<String>(L"chien", L"chat", L"cheval"));
 
     // some nouns and adjectives
-    checkAnalyzesTo(fa, L"lances chismes habitable chiste \u00e9l\u00e9ments captifs", 
+    checkAnalyzesTo(fa, L"lances chismes habitable chiste \u00e9l\u00e9ments captifs",
                     newCollection<String>( L"lanc", L"chism", L"habit", L"chist", L"\u00e9l\u00e9ment", L"captif"));
 
     // some verbs
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(testAnalyzer)
 BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 {
     AnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     // stopwords
     checkAnalyzesToReuse(fa, L"le la chien les aux chat du des \u00e0 cheval",
                          newCollection<String>(L"chien", L"chat", L"cheval"));
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
 {
     FrenchAnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesToReuse(fa, L"habitable", newCollection<String>(L"habit"));
-    HashSet<String> exclusions = HashSet<String>::newInstance();
+    SetString exclusions = SetString::newInstance();
     exclusions.add(L"habitable");
     fa->setStemExclusionTable(exclusions);
     checkAnalyzesToReuse(fa, L"habitable", newCollection<String>(L"habitable"));

@@ -35,7 +35,7 @@ public:
         sawMaybe = false;
         failed = false;
     }
-    
+
     virtual ~FailOnlyOnDeleteFlush()
     {
     }
@@ -51,7 +51,7 @@ public:
         failed = false;
         return LuceneThis();
     }
-    
+
     virtual void eval(MockRAMDirectoryPtr dir)
     {
         if (sawMaybe && !failed)
@@ -80,7 +80,7 @@ public:
     {
         failed = false;
     }
-    
+
     virtual ~FailOnlyOnAdd()
     {
     }
@@ -94,7 +94,7 @@ public:
         failed = false;
         return LuceneThis();
     }
-    
+
     virtual void eval(MockRAMDirectoryPtr dir)
     {
         if (!failed)
@@ -133,18 +133,18 @@ static void updateDoc(IndexWriterPtr modifier, int32_t id, int32_t value)
 
 static void checkNoUnreferencedFiles(DirectoryPtr dir)
 {
-    HashSet<String> _startFiles = dir->listAll();
+    SetString _startFiles = dir->listAll();
     SegmentInfosPtr infos = newLucene<SegmentInfos>();
     infos->read(dir);
-    IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr(), HashSet<String>());
-    HashSet<String> _endFiles = dir->listAll();
-    
+    IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr(), SetString());
+    SetString _endFiles = dir->listAll();
+
     Collection<String> startFiles = Collection<String>::newInstance(_startFiles.begin(), _startFiles.end());
     Collection<String> endFiles = Collection<String>::newInstance(_endFiles.begin(), _endFiles.end());
-    
+
     std::sort(startFiles.begin(), startFiles.end());
     std::sort(endFiles.begin(), endFiles.end());
-    
+
     BOOST_CHECK(startFiles.equals(endFiles));
 }
 
@@ -154,13 +154,13 @@ BOOST_AUTO_TEST_CASE(testSimpleCase)
     Collection<String> unindexed = newCollection<String>(L"Netherlands", L"Italy");
     Collection<String> unstored = newCollection<String>(L"Amsterdam has lots of bridges", L"Venice has lots of canals");
     Collection<String> text = newCollection<String>(L"Amsterdam", L"Venice");
-    
+
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     modifier->setUseCompoundFile(true);
     modifier->setMaxBufferedDeleteTerms(1);
-    
+
     for (int32_t i = 0; i < keywords.size(); ++i)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -190,13 +190,13 @@ BOOST_AUTO_TEST_CASE(testNonRAMDelete)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     modifier->setMaxBufferedDocs(2);
     modifier->setMaxBufferedDeleteTerms(2);
 
     int32_t id = 0;
     int32_t value = 100;
-    
+
     for (int32_t i = 0; i < 7; ++i)
         addDoc(modifier, ++id, value);
     modifier->commit();
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(testRAMDeletes)
     {
         DirectoryPtr dir = newLucene<MockRAMDirectory>();
         IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-        
+
         modifier->setMaxBufferedDocs(4);
         modifier->setMaxBufferedDeleteTerms(4);
 
@@ -293,16 +293,16 @@ BOOST_AUTO_TEST_CASE(testBothDeletes)
     int32_t value = 100;
     for (int32_t i = 0; i < 5; ++i)
         addDoc(modifier, ++id, value);
-    
+
     value = 200;
     for (int32_t i = 0; i < 5; ++i)
         addDoc(modifier, ++id, value);
-    
+
     modifier->commit();
-    
+
     for (int32_t i = 0; i < 5; ++i)
         addDoc(modifier, ++id, value);
-    
+
     modifier->deleteDocuments(newLucene<Term>(L"value", StringUtils::toString(value)));
 
     modifier->commit();
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(testBatchDeletes)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     modifier->setMaxBufferedDocs(100);
     modifier->setMaxBufferedDeleteTerms(100);
 
@@ -327,21 +327,21 @@ BOOST_AUTO_TEST_CASE(testBatchDeletes)
     for (int32_t i = 0; i < 7; ++i)
         addDoc(modifier, ++id, value);
     modifier->commit();
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, true);
     BOOST_CHECK_EQUAL(7, reader->numDocs());
     reader->close();
-    
+
     id = 0;
     modifier->deleteDocuments(newLucene<Term>(L"id", StringUtils::toString(++id)));
     modifier->deleteDocuments(newLucene<Term>(L"id", StringUtils::toString(++id)));
-    
+
     modifier->commit();
 
     reader = IndexReader::open(dir, true);
     BOOST_CHECK_EQUAL(5, reader->numDocs());
     reader->close();
-    
+
     Collection<TermPtr> terms = Collection<TermPtr>::newInstance(3);
     for (int32_t i = 0; i < terms.size(); ++i)
         terms[i] = newLucene<Term>(L"id", StringUtils::toString(++id));
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(testDeleteAll)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     modifier->setMaxBufferedDocs(2);
     modifier->setMaxBufferedDeleteTerms(2);
 
@@ -405,7 +405,7 @@ BOOST_AUTO_TEST_CASE(testDeleteAllRollback)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     modifier->setMaxBufferedDocs(2);
     modifier->setMaxBufferedDeleteTerms(2);
 
@@ -441,7 +441,7 @@ BOOST_AUTO_TEST_CASE(testDeleteAllNRT)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     modifier->setMaxBufferedDocs(2);
     modifier->setMaxBufferedDeleteTerms(2);
 
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE(testDeleteAllNRT)
     addDoc(modifier, ++id, value);
 
     // Delete all
-    modifier->deleteAll(); 
+    modifier->deleteAll();
 
     reader = modifier->getReader();
     BOOST_CHECK_EQUAL(0, reader->numDocs());
@@ -478,13 +478,13 @@ BOOST_AUTO_TEST_CASE(testDeleteAllNRT)
 }
 
 /// Make sure if modifier tries to commit but hits disk full that modifier
-/// remains consistent and usable. 
+/// remains consistent and usable.
 static void testOperationsOnDiskFull(bool updates)
 {
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
     int32_t START_COUNT = 157;
     int32_t END_COUNT = 144;
-    
+
     // First build up a starting index
     RAMDirectoryPtr startDir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(startDir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
@@ -496,19 +496,19 @@ static void testOperationsOnDiskFull(bool updates)
         writer->addDocument(doc);
     }
     writer->close();
-    
+
     int64_t diskUsage = startDir->sizeInBytes();
     int64_t diskFree = diskUsage + 10;
 
     LuceneException err;
 
     bool done = false;
-    
+
     // Iterate with ever increasing free disk space
     while (!done)
     {
         MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>(startDir);
-        
+
         // If IndexReader hits disk full, it can write to the same files again.
         dir->setPreventDoubleWrite(false);
 
@@ -521,14 +521,14 @@ static void testOperationsOnDiskFull(bool updates)
         // disk full; after, give it infinite disk space and turn off random IOExceptions and
         // retry with same reader
         bool success = false;
-        
+
         for (int32_t x = 0; x < 2; ++x)
         {
             double rate = 0.1;
             double diskRatio = ((double)diskFree) / (double)diskUsage;
             int64_t thisDiskFree = 0;
             String testName;
-            
+
             if (x == 0)
             {
                 thisDiskFree = diskFree;
@@ -546,10 +546,10 @@ static void testOperationsOnDiskFull(bool updates)
                 rate = 0.0;
                 testName = L"reader re-use after disk full";
             }
-            
+
             dir->setMaxSizeInBytes(thisDiskFree);
             dir->setRandomIOExceptionRate(rate, diskFree);
-            
+
             try
             {
                 if (x == 0)
@@ -580,7 +580,7 @@ static void testOperationsOnDiskFull(bool updates)
                 if (x == 1)
                     BOOST_FAIL(testName << " hit IOException after disk space was freed up");
             }
-            
+
             // If the close() succeeded, make sure there are no unreferenced files.
             if (success)
             {
@@ -591,7 +591,7 @@ static void testOperationsOnDiskFull(bool updates)
             // Finally, verify index is not corrupt, and, if we succeeded, we see all docs changed, and if
             // we failed, we see either all docs or no docs changed (transactional semantics):
             IndexReaderPtr newReader;
-            
+
             try
             {
                 newReader = IndexReader::open(dir, true);
@@ -600,7 +600,7 @@ static void testOperationsOnDiskFull(bool updates)
             {
                 BOOST_FAIL(testName << ":exception when creating IndexReader after disk full during close:" << e.getError());
             }
-            
+
             IndexSearcherPtr searcher = newLucene<IndexSearcher>(newReader);
             Collection<ScoreDocPtr> hits;
             BOOST_CHECK_NO_THROW(hits = searcher->search(newLucene<TermQuery>(searchTerm), FilterPtr(), 1000)->scoreDocs);
@@ -623,20 +623,20 @@ static void testOperationsOnDiskFull(bool updates)
                 if (result2 != START_COUNT && result2 != END_COUNT)
                     BOOST_FAIL(testName << ": method did throw exception but hits.size() for search on term 'aaa' is " << result2 << " instead of expected " << START_COUNT << " or " << END_COUNT);
             }
-            
+
             searcher->close();
             newReader->close();
 
             if (result2 == END_COUNT)
                 break;
         }
-        
+
         dir->close();
-        
+
         // Try again with 10 more bytes of free space
         diskFree += 10;
     }
-    
+
     startDir->close();
 }
 
@@ -657,16 +657,16 @@ BOOST_AUTO_TEST_CASE(testErrorAfterApplyDeletes)
     Collection<String> unindexed = newCollection<String>(L"Netherlands", L"Italy");
     Collection<String> unstored = newCollection<String>(L"Amsterdam has lots of bridges", L"Venice has lots of canals");
     Collection<String> text = newCollection<String>(L"Amsterdam", L"Venice");
-    
+
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
 
     modifier->setUseCompoundFile(true);
     modifier->setMaxBufferedDeleteTerms(2);
-    
+
     FailOnlyOnDeleteFlushPtr failure = newLucene<FailOnlyOnDeleteFlush>();
     dir->failOn(failure->reset());
-    
+
     for (int32_t i = 0; i < keywords.size(); ++i)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -676,37 +676,37 @@ BOOST_AUTO_TEST_CASE(testErrorAfterApplyDeletes)
         doc->add(newLucene<Field>(L"city", text[i], Field::STORE_YES, Field::INDEX_ANALYZED));
         modifier->addDocument(doc);
     }
-    
+
     modifier->optimize();
     modifier->commit();
 
     TermPtr term = newLucene<Term>(L"city", L"Amsterdam");
     int32_t hitCount = getHitCount(dir, term);
     BOOST_CHECK_EQUAL(1, hitCount);
-    
+
     modifier->deleteDocuments(term);
-    
+
     DocumentPtr doc = newLucene<Document>();
     modifier->addDocument(doc);
-    
-    // The failure object will fail on the first write after the del file gets created when 
+
+    // The failure object will fail on the first write after the del file gets created when
     // processing the buffered delete
-    
-    // In the ac case, this will be when writing the new segments files so we really don't 
+
+    // In the ac case, this will be when writing the new segments files so we really don't
     // need the new doc, but it's harmless
 
-    // In the !ac case, a new segments file won't be created but in this case, creation of 
-    // the cfs file happens next so we need the doc (to test that it's okay that we don't 
+    // In the !ac case, a new segments file won't be created but in this case, creation of
+    // the cfs file happens next so we need the doc (to test that it's okay that we don't
     // lose deletes if failing while creating the cfs file)
-    
+
     BOOST_CHECK_EXCEPTION(modifier->commit(), IOException, check_exception(LuceneException::IO));
-    
-    // The commit above failed, so we need to retry it (which will succeed, because the 
+
+    // The commit above failed, so we need to retry it (which will succeed, because the
     // failure is a one-shot)
-    
+
     modifier->commit();
     hitCount = getHitCount(dir, term);
-    
+
     // Make sure the delete was successfully flushed
     BOOST_CHECK_EQUAL(0, hitCount);
 
@@ -714,7 +714,7 @@ BOOST_AUTO_TEST_CASE(testErrorAfterApplyDeletes)
     dir->close();
 }
 
-/// This test tests that the files created by the docs writer before a segment is written are 
+/// This test tests that the files created by the docs writer before a segment is written are
 /// cleaned up if there's an i/o error
 BOOST_AUTO_TEST_CASE(testErrorInDocsWriterAdd)
 {
@@ -722,13 +722,13 @@ BOOST_AUTO_TEST_CASE(testErrorInDocsWriterAdd)
     Collection<String> unindexed = newCollection<String>(L"Netherlands", L"Italy");
     Collection<String> unstored = newCollection<String>(L"Amsterdam has lots of bridges", L"Venice has lots of canals");
     Collection<String> text = newCollection<String>(L"Amsterdam", L"Venice");
-    
+
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
 
     FailOnlyOnAddPtr failure = newLucene<FailOnlyOnAdd>();
     dir->failOn(failure->reset());
-    
+
     for (int32_t i = 0; i < keywords.size(); ++i)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -736,7 +736,7 @@ BOOST_AUTO_TEST_CASE(testErrorInDocsWriterAdd)
         doc->add(newLucene<Field>(L"country", unindexed[i], Field::STORE_YES, Field::INDEX_NO));
         doc->add(newLucene<Field>(L"contents", unstored[i], Field::STORE_NO, Field::INDEX_ANALYZED));
         doc->add(newLucene<Field>(L"city", text[i], Field::STORE_YES, Field::INDEX_ANALYZED));
-        
+
         try
         {
             modifier->addDocument(doc);
@@ -746,7 +746,7 @@ BOOST_AUTO_TEST_CASE(testErrorInDocsWriterAdd)
             break;
         }
     }
-    
+
     checkNoUnreferencedFiles(dir);
 
     modifier->close();

@@ -16,13 +16,13 @@ namespace Lucene
     public:
         IntDocValues(IntFieldSourcePtr source, Collection<int32_t> arr);
         virtual ~IntDocValues();
-    
+
         LUCENE_CLASS(IntDocValues);
-    
+
     protected:
-        IntFieldSourceWeakPtr _source;
+        IntFieldSourcePtr source;
         Collection<int32_t> arr;
-    
+
     public:
         virtual double doubleVal(int32_t doc);
         virtual int32_t intVal(int32_t doc);

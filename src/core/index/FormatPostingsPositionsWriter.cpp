@@ -24,18 +24,17 @@ namespace Lucene
         lastPosition = 0;
         storePayloads = false;
         lastPayloadLength = -1;
-        
-        this->_parent = parent;
-        FormatPostingsFieldsWriterPtr parentFieldsWriter(FormatPostingsTermsWriterPtr(parent->_parent)->_parent);
-        
+
+        this->parent = parent;
+
         omitTermFreqAndPositions = parent->omitTermFreqAndPositions;
-        
-        if (parentFieldsWriter->fieldInfos->hasProx())
+
+        if (parent->parent->parent->fieldInfos->hasProx())
         {
             // At least one field does not omit TF, so create the prox file
-            String fileName(IndexFileNames::segmentFileName(parentFieldsWriter->segment, IndexFileNames::PROX_EXTENSION()));
+            String fileName(IndexFileNames::segmentFileName(parent->parent->parent->segment, IndexFileNames::PROX_EXTENSION()));
             state->flushedFiles.add(fileName);
-            out = parentFieldsWriter->dir->createOutput(fileName);
+            out = parent->parent->parent->dir->createOutput(fileName);
             parent->skipListWriter->setProxOutput(out);
         }
         else
@@ -43,19 +42,19 @@ namespace Lucene
             // Every field omits TF so we will write no prox file
         }
     }
-    
+
     FormatPostingsPositionsWriter::~FormatPostingsPositionsWriter()
     {
     }
-    
+
     void FormatPostingsPositionsWriter::addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength)
     {
         BOOST_ASSERT(!omitTermFreqAndPositions);
         BOOST_ASSERT(out);
-        
+
         int32_t delta = position - lastPosition;
         lastPosition = position;
-        
+
         if (storePayloads)
         {
             if (payloadLength != lastPayloadLength)
@@ -72,19 +71,19 @@ namespace Lucene
         else
             out->writeVInt(delta);
     }
-    
+
     void FormatPostingsPositionsWriter::setField(FieldInfoPtr fieldInfo)
     {
         omitTermFreqAndPositions = fieldInfo->omitTermFreqAndPositions;
         storePayloads = omitTermFreqAndPositions ? false : fieldInfo->storePayloads;
     }
-    
+
     void FormatPostingsPositionsWriter::finish()
     {
         lastPosition = 0;
         lastPayloadLength = -1;
     }
-    
+
     void FormatPostingsPositionsWriter::close()
     {
         if (out)

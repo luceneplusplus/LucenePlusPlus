@@ -17,16 +17,16 @@ namespace Lucene
     {
         this->field = field;
     }
-    
+
     ReverseOrdFieldSource::~ReverseOrdFieldSource()
     {
     }
-    
+
     String ReverseOrdFieldSource::description()
     {
         return L"rord(" + field + L")";
     }
-    
+
     DocValuesPtr ReverseOrdFieldSource::getValues(IndexReaderPtr reader)
     {
         StringIndexPtr sindex(FieldCache::DEFAULT()->getStringIndex(reader, field));
@@ -34,7 +34,7 @@ namespace Lucene
         int32_t end = sindex->lookup.size();
         return newLucene<ReverseOrdDocValues>(LuceneThis(), arr, end);
     }
-    
+
     bool ReverseOrdFieldSource::equals(LuceneObjectPtr other)
     {
         if (!MiscUtils::equalTypes(LuceneThis(), other))
@@ -44,48 +44,48 @@ namespace Lucene
             return false;
         return field == otherSource->field;
     }
-    
+
     int32_t ReverseOrdFieldSource::hashCode()
     {
         return StringUtils::hashCode(ReverseOrdFieldSource::_getClassName()) + StringUtils::hashCode(field);
     }
-    
+
     ReverseOrdDocValues::ReverseOrdDocValues(ReverseOrdFieldSourcePtr source, Collection<int32_t> arr, int32_t end)
     {
-        this->_source = source;
+        this->source = source;
         this->arr = arr;
         this->end = end;
     }
-    
+
     ReverseOrdDocValues::~ReverseOrdDocValues()
     {
     }
-        
+
     double ReverseOrdDocValues::doubleVal(int32_t doc)
     {
         if (doc < 0 || doc >= arr.size())
             boost::throw_exception(IndexOutOfBoundsException());
         return (double)(end - arr[doc]);
     }
-    
+
     int32_t ReverseOrdDocValues::intVal(int32_t doc)
     {
         if (doc < 0 || doc >= arr.size())
             boost::throw_exception(IndexOutOfBoundsException());
         return (end - arr[doc]);
     }
-    
+
     String ReverseOrdDocValues::strVal(int32_t doc)
     {
         // the string value of the ordinal, not the string itself
         return StringUtils::toString(intVal(doc));
     }
-    
+
     String ReverseOrdDocValues::toString(int32_t doc)
     {
-        return ReverseOrdFieldSourcePtr(_source)->description() + L"=" + strVal(doc);
+        return source->description() + L"=" + strVal(doc);
     }
-    
+
     CollectionValue ReverseOrdDocValues::getInnerArray()
     {
         return arr;

@@ -37,10 +37,10 @@ static SegmentInfoPtr indexDoc(IndexWriterPtr writer, const String& fileName)
 static void printSegment(StringStream& out, SegmentInfoPtr si)
 {
     SegmentReaderPtr reader = SegmentReader::get(true, si, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
-    
+
     for (int32_t i = 0; i < reader->numDocs(); ++i)
         out << reader->document(i)->toString() << L"\n";
-    
+
     TermEnumPtr tis = reader->terms();
     while (tis->next())
     {
@@ -83,32 +83,32 @@ static SegmentInfoPtr merge(SegmentInfoPtr si1, SegmentInfoPtr si2, const String
     merger->add(r2);
     merger->merge();
     merger->closeReaders();
-    
+
     if (useCompoundFile)
     {
-        HashSet<String> filesToDelete = merger->createCompoundFile(merged + L".cfs");
-        for (HashSet<String>::iterator file = filesToDelete.begin(); file != filesToDelete.end(); ++file)
+        SetString filesToDelete = merger->createCompoundFile(merged + L".cfs");
+        for (SetString::iterator file = filesToDelete.begin(); file != filesToDelete.end(); ++file)
             si1->dir->deleteFile(*file);
     }
-    
+
     return newLucene<SegmentInfo>(merged, si1->docCount + si2->docCount, si1->dir, useCompoundFile, true);
 }
 
 BOOST_AUTO_TEST_CASE(testIndexAndMerge)
 {
     String indexDir(FileUtils::joinPath(getTempDir(), L"testDoc"));
-    
+
     DirectoryPtr directory = FSDirectory::open(indexDir);
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
     SegmentInfoPtr si1 = indexDoc(writer, L"testdoc1.txt");
     StringStream out;
     printSegment(out, si1);
-    
+
     SegmentInfoPtr si2 = indexDoc(writer, L"testdoc2.txt");
     printSegment(out, si2);
     writer->close();
-    
+
     SegmentInfoPtr siMerge = merge(si1, si2, L"merge", false);
     printSegment(out, siMerge);
 
@@ -120,9 +120,9 @@ BOOST_AUTO_TEST_CASE(testIndexAndMerge)
 
     directory->close();
     String multiFileOutput = out.str();
-    
+
     out.str(L"");
-    
+
     directory = FSDirectory::open(indexDir);
     writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(testIndexAndMerge)
     directory->close();
 
     String singleFileOutput = out.str();
-    
+
     BOOST_CHECK_EQUAL(multiFileOutput, singleFileOutput);
 }
 

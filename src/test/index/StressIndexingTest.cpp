@@ -42,9 +42,9 @@ public:
     virtual ~DocsAndWriter()
     {
     }
-    
+
     LUCENE_CLASS(DocsAndWriter);
-    
+
 public:
     HashMap<String, DocumentPtr> docs;
     IndexWriterPtr writer;
@@ -57,11 +57,11 @@ public:
     {
         rand = newLucene<Random>();
     }
-    
+
     virtual ~MockIndexWriter()
     {
     }
-    
+
     LUCENE_CLASS(MockIndexWriter);
 
 protected:
@@ -105,20 +105,20 @@ public:
         buffer.resize(100);
         r = newLucene<Random>();
     }
-    
+
     virtual ~IndexingThread()
     {
     }
-    
+
     LUCENE_CLASS(IndexingThread);
-    
+
 public:
     IndexWriterPtr w;
     int32_t base;
     int32_t range;
     int32_t iterations;
     HashMap<String, DocumentPtr> docs;
-    CharArray buffer;
+    Collection<CharArray> buffer;
     RandomPtr r;
 
 public:
@@ -126,19 +126,19 @@ public:
     {
         return r->nextInt(limit);
     }
-    
+
     /// start is inclusive and end is exclusive
     int32_t nextInt(int32_t start, int32_t end)
     {
         return start + r->nextInt(end - start);
     }
-    
+
     int32_t addUTF8Token(int32_t start)
     {
         int32_t end = start + nextInt(20);
         if (buffer.size() < 1 + end)
             buffer.resize((int32_t)((double)(1 + end) * 1.25));
-        
+
         for (int32_t i = start; i < end; ++i)
         {
             int32_t t = nextInt(5);
@@ -163,20 +163,20 @@ public:
             else if (t == 4)
                 buffer[i] = (wchar_t)nextInt(0xe000, 0xfff0);
         }
-        
+
         buffer[end] = L' ';
         return 1 + end;
     }
-    
+
     String getString(int32_t tokens)
     {
         tokens = tokens != 0 ? tokens : r->nextInt(4) + 1;
-        
+
         // Half the time make a random UTF8 string
         if (nextInt() % 2 == 1)
             return getUTF8String(tokens);
-        
-        CharArray arr(CharArray::newInstance(tokens * 2));
+
+        Collection<CharArray> arr(Collection<CharArray>::newInstance(tokens * 2));
         for (int32_t i = 0; i < tokens; ++i)
         {
             arr[i * 2] = (wchar_t)(L'A' + r->nextInt(10));
@@ -184,7 +184,7 @@ public:
         }
         return String(arr.get(), arr.size());
     }
-    
+
     String getUTF8String(int32_t tokens)
     {
         int32_t upto = 0;
@@ -193,19 +193,19 @@ public:
             upto = addUTF8Token(upto);
         return String(buffer.get(), upto);
     }
-    
+
     String getIdString()
     {
         return StringUtils::toString(base + nextInt(range));
     }
-    
+
     void indexDoc()
     {
         DocumentPtr d = newLucene<Document>();
 
-        Collection<FieldPtr> fields = Collection<FieldPtr>::newInstance();      
+        Collection<FieldPtr> fields = Collection<FieldPtr>::newInstance();
         String idString = getIdString();
-        
+
         FieldPtr idField =  newLucene<Field>(newLucene<Term>(L"id", L"")->field(), idString, Field::STORE_YES, Field::INDEX_ANALYZED_NO_NORMS);
         fields.add(idField);
 
@@ -256,25 +256,25 @@ public:
 
         for (int32_t i = 0; i < fields.size(); ++i)
             d->add(fields[i]);
-        
+
         w->updateDocument(newLucene<Term>(L"id", L"")->createTerm(idString), d);
         docs.put(idString, d);
     }
-    
+
     void deleteDoc()
     {
         String idString = getIdString();
         w->deleteDocuments(newLucene<Term>(L"id", L"")->createTerm(idString));
         docs.remove(idString);
     }
-    
+
     void deleteByQuery()
     {
         String idString = getIdString();
         w->deleteDocuments(newLucene<TermQuery>(newLucene<Term>(L"id", L"")->createTerm(idString)));
         docs.remove(idString);
     }
-    
+
     virtual void run()
     {
         try
@@ -314,7 +314,7 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
     w->setMergeFactor(mergeFactor);
     w->setRAMBufferSizeMB(0.1);
     w->setMaxBufferedDocs(maxBufferedDocs);
-    
+
     Collection<IndexingThreadPtr> threads = Collection<IndexingThreadPtr>::newInstance(numThreads);
     for (int32_t i = 0; i < threads.size(); ++i)
     {
@@ -325,19 +325,19 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
         th->iterations = iterations;
         threads[i] = th;
     }
-    
+
     for (int32_t i = 0; i < threads.size(); ++i)
         threads[i]->start();
     for (int32_t i = 0; i < threads.size(); ++i)
         threads[i]->join();
-    
+
     for (int32_t i = 0; i < threads.size(); ++i)
     {
         IndexingThreadPtr th = threads[i];
         SyncLock syncLock(th);
         docs.putAll(th->docs.begin(), th->docs.end());
     }
-    
+
     checkIndex(dir);
     DocsAndWriterPtr dw = newLucene<DocsAndWriter>();
     dw->docs = docs;
@@ -348,7 +348,7 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
 static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iterations, int32_t range, DirectoryPtr dir)
 {
     HashMap<String, DocumentPtr> docs = HashMap<String, DocumentPtr>::newInstance();
-    
+
     for (int32_t iter = 0; iter < 3; ++iter)
     {
         IndexWriterPtr w = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
@@ -374,9 +374,9 @@ static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iter
             threads[i]->start();
         for (int32_t i = 0; i < threads.size(); ++i)
             threads[i]->join();
-        
+
         w->close();
-        
+
         for (int32_t i = 0; i < threads.size(); ++i)
         {
             IndexingThreadPtr th = threads[i];
@@ -384,9 +384,9 @@ static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iter
             docs.putAll(th->docs.begin(), th->docs.end());
         }
     }
-    
+
     checkIndex(dir);
-    
+
     return docs;
 }
 
@@ -399,10 +399,10 @@ static void indexSerial(HashMap<String, DocumentPtr> docs, DirectoryPtr dir)
     {
         DocumentPtr d = iter->second;
         Collection<FieldablePtr> fields = d->getFields();
-        
+
         // put fields in same order each time
         std::sort(fields.begin(), fields.end(), lessFieldName());
-        
+
         DocumentPtr d1 = newLucene<Document>();
         d1->setBoost(d->getBoost());
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
@@ -446,7 +446,7 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
         TermPtr term = termEnum->term();
         if (!term || term->field() != idField)
             break;
-        
+
         termDocs1->seek(termEnum);
         if (!termDocs1->next())
         {
@@ -455,7 +455,7 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
             BOOST_CHECK(!termDocs2->next());
             continue;
         }
-        
+
         int32_t id1 = termDocs1->doc();
         BOOST_CHECK(!termDocs1->next());
 
@@ -465,15 +465,15 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
         BOOST_CHECK(!termDocs2->next());
 
         r2r1[id2] = id1;
-        
+
         // verify stored fields are equivalent
         BOOST_CHECK_NO_THROW(verifyEquals(r1->document(id1), r2->document(id2)));
-        
+
         // verify term vectors are equivalent
         BOOST_CHECK_NO_THROW(verifyEquals(r1->getTermFreqVectors(id1), r2->getTermFreqVectors(id2)));
     }
     while (termEnum->next());
-    
+
     termEnum->close();
 
     // Verify postings
@@ -488,7 +488,7 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
     {
         TermPtr term1;
         TermPtr term2;
-        
+
         // iterate until we get some docs
         int32_t len1 = 0;
         while (true)
@@ -510,7 +510,7 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
             if (!termEnum1->next())
                 break;
         }
-        
+
         // iterate until we get some docs
         int32_t len2 = 0;
         while (true)
@@ -532,10 +532,10 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
             if (!termEnum2->next())
                 break;
         }
-        
+
         if (!hasDeletes)
             BOOST_CHECK_EQUAL(termEnum1->docFreq(), termEnum2->docFreq());
-        
+
         BOOST_CHECK_EQUAL(len1, len2);
         if (len1 == 0)
             break; // no more terms
@@ -558,12 +558,12 @@ static void verifyEquals(DocumentPtr d1, DocumentPtr d2)
 {
     Collection<FieldablePtr> ff1 = d1->getFields();
     Collection<FieldablePtr> ff2 = d2->getFields();
-    
+
     std::sort(ff1.begin(), ff1.end(), lessFieldName());
     std::sort(ff2.begin(), ff2.end(), lessFieldName());
 
     BOOST_CHECK_EQUAL(ff1.size(), ff2.size());
-    
+
     for (int32_t i = 0; i < ff1.size(); ++i)
     {
         FieldablePtr f1 = ff1[i];
@@ -582,9 +582,9 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
         BOOST_CHECK(!d2);
         return;
     }
-    
+
     BOOST_CHECK(d2);
-    
+
     BOOST_CHECK_EQUAL(d1.size(), d2.size());
     for (int32_t i = 0; i < d1.size(); ++i)
     {
@@ -646,27 +646,27 @@ namespace RunStressTest
             this->RUN_TIME_SEC = 6;
             this->rand = newLucene<Random>();
         }
-        
+
         virtual ~TimedThread()
         {
         }
-        
+
         LUCENE_CLASS(TimedThread);
-        
+
     public:
         bool failed;
 
     protected:
         int32_t RUN_TIME_SEC;
         RandomPtr rand;
-        
+
     public:
         virtual void doWork() = 0;
-        
+
         virtual void run()
         {
             int64_t stopTime = MiscUtils::currentTimeMillis() + 1000 * RUN_TIME_SEC;
-            
+
             try
             {
                 while ((int64_t)MiscUtils::currentTimeMillis() < stopTime && !failed)
@@ -688,17 +688,17 @@ namespace RunStressTest
             this->writer = writer;
             this->nextID = 0;
         }
-        
+
         virtual ~IndexerThread()
         {
         }
-        
+
         LUCENE_CLASS(IndexerThread);
-        
+
     public:
         IndexWriterPtr writer;
         int32_t nextID;
-        
+
     public:
         virtual void doWork()
         {
@@ -710,7 +710,7 @@ namespace RunStressTest
                 d->add(newLucene<Field>(L"contents", intToEnglish(rand->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
                 writer->addDocument(d);
             }
-            
+
             // Delete 5 docs
             int32_t deleteID = nextID - 1;
             for (int32_t i = 0; i < 5; ++i)
@@ -728,16 +728,16 @@ namespace RunStressTest
         {
             this->directory = directory;
         }
-        
+
         virtual ~SearcherThread()
         {
         }
-        
+
         LUCENE_CLASS(SearcherThread);
-        
+
     protected:
         DirectoryPtr directory;
-        
+
     public:
         virtual void doWork()
         {
@@ -754,13 +754,13 @@ static void runStressTest(DirectoryPtr directory, MergeSchedulerPtr mergeSchedul
     IndexWriterPtr modifier = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
 
     modifier->setMaxBufferedDocs(10);
-    
+
     Collection<RunStressTest::TimedThreadPtr> threads = Collection<RunStressTest::TimedThreadPtr>::newInstance(4);
     int32_t numThread = 0;
-    
+
     if (mergeScheduler)
         modifier->setMergeScheduler(mergeScheduler);
-    
+
     // One modifier that writes 10 docs then removes 5, over and over
     RunStressTest::IndexerThreadPtr indexerThread1 = newLucene<RunStressTest::IndexerThread>(modifier);
     threads[numThread++] = indexerThread1;
@@ -778,12 +778,12 @@ static void runStressTest(DirectoryPtr directory, MergeSchedulerPtr mergeSchedul
     RunStressTest::SearcherThreadPtr searcherThread2 = newLucene<RunStressTest::SearcherThread>(directory);
     threads[numThread++] = searcherThread2;
     searcherThread2->start();
-    
+
     for (int32_t i = 0; i < numThread; ++i)
         threads[i]->join();
-    
+
     modifier->close();
-    
+
     BOOST_CHECK(!indexerThread1->failed); // hit unexpected exception in indexer1
     BOOST_CHECK(!indexerThread2->failed); // hit unexpected exception in indexer2
     BOOST_CHECK(!searcherThread1->failed); // hit unexpected exception in search1
@@ -800,7 +800,7 @@ BOOST_AUTO_TEST_CASE(testStressIndexAndSearching)
     // With ConcurrentMergeScheduler, in FSDir
     String dirPath(FileUtils::joinPath(getTempDir(), L"lucene.test.stress"));
     directory = FSDirectory::open(dirPath);
-    
+
     runStressTest(directory, newLucene<ConcurrentMergeScheduler>());
     directory->close();
 

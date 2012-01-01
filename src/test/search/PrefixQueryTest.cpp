@@ -37,9 +37,9 @@ BOOST_AUTO_TEST_CASE(testPrefixQuery)
         doc->add(newLucene<Field>(L"category", categories[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);
     }
-    
+
     writer->close();
-    
+
     PrefixQueryPtr query = newLucene<PrefixQuery>(newLucene<Term>(L"category", L"/Computers"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;

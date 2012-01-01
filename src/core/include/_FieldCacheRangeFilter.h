@@ -139,7 +139,7 @@ namespace Lucene
         {
             if (Filter::equals(other))
                 return true;
-            LucenePtr< FieldCacheRangeFilterNumeric<T> > otherFilter(LuceneDynamicCast< FieldCacheRangeFilterNumeric<T> >(other));
+            gc_ptr< FieldCacheRangeFilterNumeric<T> > otherFilter(LuceneDynamicCast< FieldCacheRangeFilterNumeric<T> >(other));
             if (!otherFilter)
                 return false;
             if (field != otherFilter->field || includeLower != otherFilter->includeLower || includeUpper != otherFilter->includeUpper)
@@ -239,7 +239,7 @@ namespace Lucene
         LUCENE_CLASS(FieldDocIdSetIteratorTermDocs);
 
     protected:
-        FieldCacheDocIdSetWeakPtr _cacheDocIdSet;
+        FieldCacheDocIdSetPtr cacheDocIdSet;
         TermDocsPtr termDocs;
         int32_t doc;
 
@@ -260,7 +260,7 @@ namespace Lucene
         LUCENE_CLASS(FieldDocIdSetIteratorIncrement);
 
     protected:
-        FieldCacheDocIdSetWeakPtr _cacheDocIdSet;
+        FieldCacheDocIdSetPtr cacheDocIdSet;
         int32_t doc;
 
     public:

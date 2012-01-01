@@ -22,47 +22,45 @@ namespace Lucene
         this->freePostings = Collection<RawPostingListPtr>::newInstance(256);
         this->freePostingsCount = 0;
         this->primary = false;
-        this->_docInverterPerThread = docInverterPerThread;
-        this->_termsHash = termsHash;
+        this->docInverterPerThread = docInverterPerThread;
+        this->termsHash = termsHash;
         this->nextTermsHash = nextTermsHash;
-        this->_primaryPerThread = primaryPerThread;
+        this->primaryPerThread = primaryPerThread;
     }
-    
+
     TermsHashPerThread::~TermsHashPerThread()
     {
     }
-    
+
     void TermsHashPerThread::initialize()
     {
-        DocInverterPerThreadPtr docInverterPerThread(_docInverterPerThread);
-        TermsHashPtr termsHash(_termsHash);
         docState = docInverterPerThread->docState;
         consumer = termsHash->consumer->addThread(LuceneThis());
-        
+
         if (nextTermsHash)
         {
             // We are primary
-            charPool = newLucene<CharBlockPool>(DocumentsWriterPtr(termsHash->_docWriter));
+            charPool = newLucene<CharBlockPool>(termsHash->docWriter);
             primary = true;
         }
         else
         {
-            charPool = TermsHashPerThreadPtr(_primaryPerThread)->charPool;
+            charPool = primaryPerThread->charPool;
             primary = false;
         }
-        
-        intPool = newLucene<IntBlockPool>(DocumentsWriterPtr(termsHash->_docWriter), termsHash->trackAllocations);
-        bytePool = newLucene<ByteBlockPool>(DocumentsWriterPtr(termsHash->_docWriter)->byteBlockAllocator, termsHash->trackAllocations);
-        
+
+        intPool = newLucene<IntBlockPool>(termsHash->docWriter, termsHash->trackAllocations);
+        bytePool = newLucene<ByteBlockPool>(termsHash->docWriter->byteBlockAllocator, termsHash->trackAllocations);
+
         if (nextTermsHash)
             nextPerThread = nextTermsHash->addThread(docInverterPerThread, LuceneThis());
     }
-    
+
     InvertedDocConsumerPerFieldPtr TermsHashPerThread::addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo)
     {
         return newLucene<TermsHashPerField>(docInverterPerField, LuceneThis(), nextPerThread, fieldInfo);
     }
-    
+
     void TermsHashPerThread::abort()
     {
         SyncLock syncLock(this);
@@ -71,15 +69,15 @@ namespace Lucene
         if (nextPerThread)
             nextPerThread->abort();
     }
-    
+
     void TermsHashPerThread::morePostings()
     {
         BOOST_ASSERT(freePostingsCount == 0);
-        TermsHashPtr(_termsHash)->getPostings(freePostings);
+        termsHash->getPostings(freePostings);
         freePostingsCount = freePostings.size();
         BOOST_ASSERT(noNullPostings(freePostings, freePostingsCount, L"consumer=" + consumer->toString()));
     }
-    
+
     bool TermsHashPerThread::noNullPostings(Collection<RawPostingListPtr> postings, int32_t count, const String& details)
     {
         for (int32_t i = 0; i < count; ++i)
@@ -88,14 +86,14 @@ namespace Lucene
         }
         return true;
     }
-    
+
     void TermsHashPerThread::startDocument()
     {
         consumer->startDocument();
         if (nextPerThread)
             nextPerThread->consumer->startDocument();
     }
-    
+
     DocWriterPtr TermsHashPerThread::finishDocument()
     {
         DocWriterPtr doc(consumer->finishDocument());
@@ -113,13 +111,13 @@ namespace Lucene
     {
         intPool->reset();
         bytePool->reset();
-        
+
         if (primary)
             charPool->reset();
-        
+
         if (recyclePostings)
         {
-            TermsHashPtr(_termsHash)->recyclePostings(freePostings, freePostingsCount);
+            termsHash->recyclePostings(freePostings, freePostingsCount);
             freePostingsCount = 0;
         }
     }

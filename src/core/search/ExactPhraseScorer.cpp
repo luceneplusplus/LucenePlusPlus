@@ -14,11 +14,11 @@ namespace Lucene
     ExactPhraseScorer::ExactPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms) : PhraseScorer(weight, tps, offsets, similarity, norms)
     {
     }
-    
+
     ExactPhraseScorer::~ExactPhraseScorer()
     {
     }
-    
+
     double ExactPhraseScorer::phraseFreq()
     {
         // sort list with pq
@@ -29,8 +29,8 @@ namespace Lucene
             pq->add(pp); // build pq from list
         }
         pqToList(); // rebuild list from pq
-        
-        // For counting how many times the exact phrase is found in current document, just count how many 
+
+        // For counting how many times the exact phrase is found in current document, just count how many
         // times all PhrasePosition's have exactly the same position.
         int32_t freq = 0;
         do
@@ -48,7 +48,7 @@ namespace Lucene
             ++freq; // all equal: a match
         }
         while (last->nextPosition());
-        
+
         return freq;
     }
 }

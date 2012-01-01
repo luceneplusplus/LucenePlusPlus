@@ -28,25 +28,25 @@ namespace Lucene
     QueryUtils::~QueryUtils()
     {
     }
-    
+
     void QueryUtils::check(QueryPtr q)
     {
         checkHashEquals(q);
     }
-    
+
     class WhackyQuery : public Query
     {
     public:
         virtual ~WhackyQuery()
         {
         }
-    
+
     public:
         virtual String toString(const String& field)
         {
             return L"My Whacky Query";
         }
-        
+
         virtual bool equals(LuceneObjectPtr other)
         {
             if (!MiscUtils::typeOf<WhackyQuery>(other))
@@ -54,7 +54,7 @@ namespace Lucene
             return Query::equals(other);
         }
     };
-    
+
     void QueryUtils::checkHashEquals(QueryPtr q)
     {
         QueryPtr q2 = LuceneDynamicCast<Query>(q->clone());
@@ -69,33 +69,33 @@ namespace Lucene
         whacky->setBoost(q->getBoost());
         checkUnequal(q, whacky);
     }
-    
+
     void QueryUtils::checkEqual(QueryPtr q1, QueryPtr q2)
     {
         BOOST_CHECK(q1->equals(q2));
         BOOST_CHECK_EQUAL(q1->hashCode(), q2->hashCode());
     }
-    
+
     void QueryUtils::checkUnequal(QueryPtr q1, QueryPtr q2)
     {
         BOOST_CHECK(!q1->equals(q2));
         BOOST_CHECK(!q2->equals(q1));
-        
-        // possible this test can fail on a hash collision... if that happens, please change 
+
+        // possible this test can fail on a hash collision... if that happens, please change
         // test to use a different example.
         BOOST_CHECK_NE(q1->hashCode(), q2->hashCode());
     }
-    
+
     void QueryUtils::checkExplanations(QueryPtr q, SearcherPtr s)
     {
         CheckHits::checkExplanations(q, L"", s, true);
     }
-    
+
     void QueryUtils::check(QueryPtr q1, SearcherPtr s)
     {
         check(q1, s, true);
     }
-    
+
     void QueryUtils::check(QueryPtr q1, SearcherPtr s, bool wrap)
     {
         check(q1);
@@ -125,7 +125,7 @@ namespace Lucene
             checkEqual(s->rewrite(q1), s->rewrite(q2));
         }
     }
-    
+
     IndexSearcherPtr QueryUtils::wrapUnderlyingReader(IndexSearcherPtr s, int32_t edge)
     {
         IndexReaderPtr r = s->getIndexReader();
@@ -151,7 +151,7 @@ namespace Lucene
         out->setSimilarity(s->getSimilarity());
         return out;
     }
-    
+
     MultiSearcherPtr QueryUtils::wrapSearcher(SearcherPtr s, int32_t edge)
     {
         // we can't put deleted docs before the nested reader, because it will through off the docIds
@@ -174,7 +174,7 @@ namespace Lucene
         out->setSimilarity(s->getSimilarity());
         return out;
     }
-    
+
     RAMDirectoryPtr QueryUtils::makeEmptyIndex(int32_t numDeletedDocs)
     {
         RAMDirectoryPtr d = newLucene<RAMDirectory>();
@@ -196,7 +196,7 @@ namespace Lucene
         r->close();
         return d;
     }
-    
+
     namespace CheckSkipTo
     {
         class SkipCollector : public Collector
@@ -211,29 +211,29 @@ namespace Lucene
                 this->opidx = opidx;
                 this->lastReader = lastReader;
             }
-            
+
             virtual ~SkipCollector()
             {
             }
-        
+
         protected:
             QueryPtr q;
             IndexSearcherPtr s;
             Collection<int32_t> lastDoc;
             Collection<int32_t> order;
             Collection<int32_t> opidx;
-            
+
             ScorerPtr sc;
             IndexReaderPtr reader;
             ScorerPtr scorer;
             Collection<IndexReaderPtr> lastReader;
-        
+
         public:
             virtual void setScorer(ScorerPtr scorer)
             {
                 this->sc = scorer;
             }
-            
+
             virtual void collect(int32_t doc)
             {
                 double score = sc->score();
@@ -243,14 +243,14 @@ namespace Lucene
                     WeightPtr w = q->weight(s);
                     scorer = w->scorer(reader, true, false);
                 }
-                
+
                 int32_t skip_op = 0;
                 int32_t next_op = 1;
                 double maxDiff = 1e-5;
-                
+
                 int32_t op = order[(opidx[0]++) % order.size()];
-                bool more = op == skip_op ? 
-                    (scorer->advance(scorer->docID() + 1) != DocIdSetIterator::NO_MORE_DOCS) : 
+                bool more = op == skip_op ?
+                    (scorer->advance(scorer->docID() + 1) != DocIdSetIterator::NO_MORE_DOCS) :
                     (scorer->nextDoc() != DocIdSetIterator::NO_MORE_DOCS);
                 int32_t scorerDoc = scorer->docID();
                 double scorerScore = scorer->score();
@@ -264,15 +264,15 @@ namespace Lucene
                         sbord << (order[i] == skip_op ? L" skip()" : L" next()");
                     StringStream message;
                     message << L"ERROR matching docs:\n\t"
-                            << (doc != scorerDoc ? L"--> " : L"") 
+                            << (doc != scorerDoc ? L"--> " : L"")
                             << L"doc=" << doc << L", scorerDoc=" << scorerDoc
-                            << L"\n\t" << (!more ? L"--> " : L"") << L"tscorer.more=" 
+                            << L"\n\t" << (!more ? L"--> " : L"") << L"tscorer.more="
                             << more << L"\n\t" << (scoreDiff > maxDiff ? L"--> " : L"")
-                            << L"scorerScore=" << scorerScore << L" scoreDiff=" 
+                            << L"scorerScore=" << scorerScore << L" scoreDiff="
                             << scoreDiff << L" maxDiff=" << maxDiff << L"\n\t"
                             << (scorerDiff > maxDiff ? L"--> " : L"") << L"scorerScore2="
                             << scorerScore2 << L" scorerDiff=" << scorerDiff
-                            << L"\n\thitCollector.doc=" << doc << L" score=" 
+                            << L"\n\thitCollector.doc=" << doc << L" score="
                             << score << L"\n\t Scorer=" << scorer << L"\n\t Query="
                             << q->toString() + L"  " << L"\n\t Searcher=" + s->toString()
                             << L"\n\t Order=" << sbord.str() << L"\n\t Op="
@@ -280,7 +280,7 @@ namespace Lucene
                     BOOST_FAIL(StringUtils::toUTF8(message.str()));
                 }
             }
-            
+
             virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
             {
                 // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
@@ -299,22 +299,22 @@ namespace Lucene
                 this->scorer.reset();
                 lastDoc[0] = -1;
             }
-            
+
             virtual bool acceptsDocsOutOfOrder()
             {
                 return true;
             }
         };
     }
-    
+
     void QueryUtils::checkSkipTo(QueryPtr q, IndexSearcherPtr s)
     {
         if (q->weight(s)->scoresDocsOutOfOrder())
             return; // in this case order of skipTo() might differ from that of next().
-        
+
         int32_t skip_op = 0;
         int32_t next_op = 1;
-        Collection< Collection<int32_t> > orders = newCollection< Collection<int32_t> >(
+        Collection< Collection<int32_t> > orders = newCollectionCollection<int32_t>(
             newCollection<int32_t>(next_op),
             newCollection<int32_t>(skip_op),
             newCollection<int32_t>(skip_op, next_op),
@@ -323,17 +323,17 @@ namespace Lucene
             newCollection<int32_t>(next_op, next_op, skip_op, skip_op),
             newCollection<int32_t>(skip_op, skip_op, skip_op, next_op, next_op)
         );
-        
+
         Collection<IndexReaderPtr> lastReader = Collection<IndexReaderPtr>::newInstance(1);
-        
+
         for (int32_t k = 0; k < orders.size(); ++k)
         {
             Collection<int32_t> order = orders[k];
             Collection<int32_t> opidx = newCollection<int32_t>(0);
             Collection<int32_t> lastDoc = newCollection<int32_t>(-1);
-            
+
             s->search(q, newLucene<CheckSkipTo::SkipCollector>(q, s, lastDoc, order, opidx, lastReader));
-            
+
             if (lastReader[0])
             {
                 // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
@@ -348,7 +348,7 @@ namespace Lucene
             }
         }
     }
-    
+
     namespace CheckFirstSkipTo
     {
         class SkipCollector : public Collector
@@ -361,26 +361,26 @@ namespace Lucene
                 this->lastDoc = lastDoc;
                 this->lastReader = lastReader;
             }
-            
+
             virtual ~SkipCollector()
             {
             }
-        
+
         protected:
             QueryPtr q;
             IndexSearcherPtr s;
             Collection<int32_t> lastDoc;
             Collection<IndexReaderPtr> lastReader;
-            
+
             ScorerPtr scorer;
             IndexReaderPtr reader;
-        
+
         public:
             virtual void setScorer(ScorerPtr scorer)
             {
                 this->scorer = scorer;
             }
-            
+
             virtual void collect(int32_t doc)
             {
                 double score = scorer->score();
@@ -397,7 +397,7 @@ namespace Lucene
                 }
                 lastDoc[0] = doc;
             }
-            
+
             virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
             {
                 // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
@@ -417,21 +417,21 @@ namespace Lucene
                 this->reader = reader;
                 lastDoc[0] = -1;
             }
-            
+
             virtual bool acceptsDocsOutOfOrder()
             {
                 return false;
             }
         };
     }
-    
+
     void QueryUtils::checkFirstSkipTo(QueryPtr q, IndexSearcherPtr s)
     {
         Collection<int32_t> lastDoc = newCollection<int32_t>(-1);
         Collection<IndexReaderPtr> lastReader = Collection<IndexReaderPtr>::newInstance(1);
-        
+
         s->search(q, newLucene<CheckFirstSkipTo::SkipCollector>(q, s, lastDoc, lastReader));
-        
+
         if (lastReader[0])
         {
             // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS

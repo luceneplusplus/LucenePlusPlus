@@ -20,10 +20,11 @@ namespace Lucene
     class PriorityQueue : public LuceneObject
     {
     public:
-        typedef typename std::vector<T> heap_type;
+        typedef vector_container< std::vector<T> > heap_type;
 
         PriorityQueue(int32_t maxSize)
         {
+            this->heap = new_vector<heap_type::vector_type>();
             this->_size = 0;
             this->_maxSize = maxSize;
         }
@@ -38,6 +39,11 @@ namespace Lucene
         int32_t _maxSize;
 
     public:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(heap);
+        }
+
         virtual void initialize()
         {
             bool empty = heap.empty();

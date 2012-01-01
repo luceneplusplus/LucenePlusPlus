@@ -23,12 +23,12 @@ namespace Lucene
     {
         ConstructSearcher(IndexReader::open(path, readOnly), true);
     }
-    
+
     IndexSearcher::IndexSearcher(IndexReaderPtr reader)
     {
         ConstructSearcher(reader, false);
     }
-    
+
     IndexSearcher::IndexSearcher(IndexReaderPtr reader, Collection<IndexReaderPtr> subReaders, Collection<int32_t> docStarts)
     {
         this->fieldSortDoTrackScores = false;
@@ -38,18 +38,18 @@ namespace Lucene
         this->docStarts = docStarts;
         closeReader = false;
     }
-    
+
     IndexSearcher::~IndexSearcher()
     {
     }
-    
+
     void IndexSearcher::ConstructSearcher(IndexReaderPtr reader, bool closeReader)
     {
         this->fieldSortDoTrackScores = false;
         this->fieldSortDoMaxScore = false;
         this->reader = reader;
         this->closeReader = closeReader;
-        
+
         Collection<IndexReaderPtr> subReadersList(Collection<IndexReaderPtr>::newInstance());
         gatherSubReaders(subReadersList, reader);
         subReaders = subReadersList;
@@ -61,43 +61,43 @@ namespace Lucene
             maxDoc += subReaders[i]->maxDoc();
         }
     }
-    
+
     void IndexSearcher::gatherSubReaders(Collection<IndexReaderPtr> allSubReaders, IndexReaderPtr reader)
     {
         ReaderUtil::gatherSubReaders(allSubReaders, reader);
     }
-    
+
     IndexReaderPtr IndexSearcher::getIndexReader()
     {
         return reader;
     }
-    
+
     void IndexSearcher::close()
     {
         if (closeReader)
             reader->close();
     }
-    
+
     int32_t IndexSearcher::docFreq(TermPtr term)
     {
         return reader->docFreq(term);
     }
-    
+
     DocumentPtr IndexSearcher::doc(int32_t n)
     {
         return reader->document(n);
     }
-    
+
     DocumentPtr IndexSearcher::doc(int32_t n, FieldSelectorPtr fieldSelector)
     {
         return reader->document(n, fieldSelector);
     }
-    
+
     int32_t IndexSearcher::maxDoc()
     {
         return reader->maxDoc();
     }
-    
+
     TopDocsPtr IndexSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n)
     {
         if (n <= 0)
@@ -106,19 +106,19 @@ namespace Lucene
         search(weight, filter, collector);
         return collector->topDocs();
     }
-    
+
     TopFieldDocsPtr IndexSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
     {
         return search(weight, filter, n, sort, true);
     }
-    
+
     TopFieldDocsPtr IndexSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort, bool fillFields)
     {
         TopFieldCollectorPtr collector(TopFieldCollector::create(sort, std::min(n, reader->maxDoc()), fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight->scoresDocsOutOfOrder()));
         search(weight, filter, collector);
         return LuceneDynamicCast<TopFieldDocs>(collector->topDocs());
     }
-    
+
     void IndexSearcher::search(WeightPtr weight, FilterPtr filter, CollectorPtr results)
     {
         if (!filter)
@@ -140,35 +140,35 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexSearcher::searchWithFilter(IndexReaderPtr reader, WeightPtr weight, FilterPtr filter, CollectorPtr collector)
     {
         BOOST_ASSERT(filter);
-        
+
         ScorerPtr scorer(weight->scorer(reader, true, false));
         if (!scorer)
             return;
-        
+
         int32_t docID = scorer->docID();
         BOOST_ASSERT(docID == -1 || docID == DocIdSetIterator::NO_MORE_DOCS);
-        
+
         DocIdSetPtr filterDocIdSet(filter->getDocIdSet(reader));
         if (!filterDocIdSet)
         {
             // this means the filter does not accept any documents.
             return;
         }
-        
+
         DocIdSetIteratorPtr filterIter(filterDocIdSet->iterator());
         if (!filterIter)
         {
             // this means the filter does not accept any documents.
             return;
         }
-        
+
         int32_t filterDoc = filterIter->nextDoc();
         int32_t scorerDoc = scorer->advance(filterDoc);
-        
+
         collector->setScorer(scorer);
         while (true)
         {
@@ -187,7 +187,7 @@ namespace Lucene
                 scorerDoc = scorer->advance(filterDoc);
         }
     }
-    
+
     QueryPtr IndexSearcher::rewrite(QueryPtr original)
     {
         QueryPtr query(original);
@@ -195,14 +195,14 @@ namespace Lucene
             query = rewrittenQuery;
         return query;
     }
-    
+
     ExplanationPtr IndexSearcher::explain(WeightPtr weight, int32_t doc)
     {
         int32_t n = ReaderUtil::subIndex(doc, docStarts);
         int32_t deBasedDoc = doc - docStarts[n];
         return weight->explain(subReaders[n], deBasedDoc);
     }
-    
+
     void IndexSearcher::setDefaultFieldSortScoring(bool doTrackScores, bool doMaxScore)
     {
         fieldSortDoTrackScores = doTrackScores;

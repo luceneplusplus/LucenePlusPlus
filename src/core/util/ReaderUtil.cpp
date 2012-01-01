@@ -13,7 +13,7 @@ namespace Lucene
     ReaderUtil::~ReaderUtil()
     {
     }
-    
+
     void ReaderUtil::gatherSubReaders(Collection<IndexReaderPtr> allSubReaders, IndexReaderPtr reader)
     {
         Collection<IndexReaderPtr> subReaders(reader->getSequentialSubReaders());
@@ -28,7 +28,7 @@ namespace Lucene
                 gatherSubReaders(allSubReaders, *subReader);
         }
     }
-    
+
     IndexReaderPtr ReaderUtil::subReader(int32_t doc, IndexReaderPtr reader)
     {
         Collection<IndexReaderPtr> subReaders(Collection<IndexReaderPtr>::newInstance());
@@ -42,14 +42,14 @@ namespace Lucene
         }
         return subReaders[ReaderUtil::subIndex(doc, docStarts)];
     }
-    
+
     IndexReaderPtr ReaderUtil::subReader(IndexReaderPtr reader, int32_t subIndex)
     {
         Collection<IndexReaderPtr> subReaders(Collection<IndexReaderPtr>::newInstance());
         ReaderUtil::gatherSubReaders(subReaders, reader);
         return subReaders[subIndex];
     }
-    
+
     int32_t ReaderUtil::subIndex(int32_t n, Collection<int32_t> docStarts)
     {
         // Binary search to locate reader

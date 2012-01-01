@@ -27,13 +27,13 @@ public:
     {
         this->freeByteBlocks = Collection<ByteArray>::newInstance();
     }
-    
+
     virtual ~TestByteBlockAllocator()
     {
     }
-    
+
     LUCENE_CLASS(TestByteBlockAllocator);
-        
+
 public:
     Collection<ByteArray> freeByteBlocks;
 
@@ -52,14 +52,14 @@ public:
             b = freeByteBlocks.removeLast();
         return b;
     }
-    
+
     virtual void recycleByteBlocks(Collection<ByteArray> blocks, int32_t start, int32_t end)
     {
         SyncLock syncLock(this);
         for (int32_t i = start; i < end; ++i)
             freeByteBlocks.add(blocks[i]);
     }
-    
+
     virtual void recycleByteBlocks(Collection<ByteArray> blocks)
     {
         SyncLock syncLock(this);
@@ -74,9 +74,9 @@ BOOST_FIXTURE_TEST_SUITE(ByteSlicesTest, LuceneTestFixture)
 BOOST_AUTO_TEST_CASE(testBasic)
 {
     ByteBlockPoolPtr pool = newLucene<ByteBlockPool>(newLucene<TestByteBlockAllocator>(), false);
-    
+
     int32_t NUM_STREAM = 25;
-    
+
     ByteSliceWriterPtr writer = newLucene<ByteSliceWriter>(pool);
 
     Collection<int32_t> starts = Collection<int32_t>::newInstance(NUM_STREAM);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(testBasic)
 
     RandomPtr r = newLucene<Random>();
     ByteSliceReaderPtr reader = newLucene<ByteSliceReader>();
-    
+
     for (int32_t ti = 0; ti < 100; ++ti)
     {
         for (int32_t stream = 0; stream < NUM_STREAM; ++stream)
@@ -93,15 +93,15 @@ BOOST_AUTO_TEST_CASE(testBasic)
             starts[stream] = -1;
             counters[stream] = 0;
         }
-        
+
         bool debug = false;
-        
+
         for (int32_t iter = 0; iter < 10000; ++iter)
         {
             int32_t stream = r->nextInt(NUM_STREAM);
             if (debug)
                 std::wcout << L"write stream=" << stream << L"\n";
-            
+
             if (starts[stream] == -1)
             {
                 int32_t spot = pool->newSlice(ByteBlockPool::FIRST_LEVEL_SIZE());
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(testBasic)
                 if (debug)
                     std::wcout << L"  init to " << starts[stream] << L"\n";
             }
-                        
+
             writer->init(uptos[stream]);
             int32_t numValue = r->nextInt(20);
             for (int32_t j = 0; j < numValue; ++j)
@@ -124,12 +124,12 @@ BOOST_AUTO_TEST_CASE(testBasic)
             if (debug)
                 std::wcout << L"    addr now " << uptos[stream] << L"\n";
         }
-        
+
         for (int32_t stream = 0; stream < NUM_STREAM; ++stream)
         {
             if (debug)
                 std::wcout << L"  stream=" << stream << L" count=" << counters[stream] << L"\n";
-            
+
             if (starts[stream] != uptos[stream])
             {
                 reader->init(pool, starts[stream], uptos[stream]);
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(testBasic)
                     BOOST_CHECK_EQUAL(j, reader->readVInt());
             }
         }
-        
+
         pool->reset();
     }
 }

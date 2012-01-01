@@ -34,7 +34,7 @@ public:
         this->docBase = 0;
         this->index = 0;
     }
-    
+
     virtual ~SimpleDocIdSetFilter()
     {
     }
@@ -59,7 +59,7 @@ public:
         docBase = limit;
         return set->isEmpty() ? DocIdSetPtr() : set;
     }
-    
+
     void reset()
     {
         index = 0;

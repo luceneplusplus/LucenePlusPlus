@@ -12,10 +12,10 @@
 
 namespace Lucene
 {
-    /// This TokenFilter provides the ability to set aside attribute states that have already been analyzed.  This is 
+    /// This TokenFilter provides the ability to set aside attribute states that have already been analyzed.  This is
     /// useful in situations where multiple fields share many common analysis steps and then go their separate ways.
     ///
-    /// It is also useful for doing things like entity extraction or proper noun analysis as part of the analysis workflow 
+    /// It is also useful for doing things like entity extraction or proper noun analysis as part of the analysis workflow
     /// and saving off those tokens for use in another field.
     ///
     /// <pre>
@@ -40,8 +40,8 @@ namespace Lucene
     ///
     /// In this example, sink1 and sink2 will both get tokens from both reader1 and reader2 after whitespace tokenizer
     /// and now we can further wrap any of these in extra analysis, and more "sources" can be inserted if desired.
-    /// It is important, that tees are consumed before sinks (in the above example, the field names must be less the 
-    /// sink's field names). If you are not sure, which stream is consumed first, you can simply add another sink and 
+    /// It is important, that tees are consumed before sinks (in the above example, the field names must be less the
+    /// sink's field names). If you are not sure, which stream is consumed first, you can simply add another sink and
     /// then pass all tokens to the sinks at once using {@link #consumeAllTokens}.
     ///
     /// This TokenFilter is exhausted after this. In the above example, change the example above to:
@@ -55,7 +55,7 @@ namespace Lucene
     /// ...
     /// </pre>
     ///
-    /// In this case, the fields can be added in any order, because the sources are not used anymore and all sinks are 
+    /// In this case, the fields can be added in any order, because the sources are not used anymore and all sinks are
     /// ready.
     ///
     /// Note, the EntityDetect and URLDetect TokenStreams are for the example and do not currently exist in Lucene.
@@ -65,86 +65,86 @@ namespace Lucene
         /// Instantiates a new TeeSinkTokenFilter.
         TeeSinkTokenFilter(TokenStreamPtr input);
         virtual ~TeeSinkTokenFilter();
-        
+
         LUCENE_CLASS(TeeSinkTokenFilter);
-    
+
     protected:
         Collection<SinkTokenStreamPtr> sinks;
-            
+
     public:
         /// Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream.
         SinkTokenStreamPtr newSinkTokenStream();
-        
-        /// Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream that pass 
+
+        /// Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream that pass
         /// the supplied filter.
         /// @see SinkFilter
         SinkTokenStreamPtr newSinkTokenStream(SinkFilterPtr filter);
-        
-        /// Adds a {@link SinkTokenStream} created by another TeeSinkTokenFilter to this one. The supplied stream will 
+
+        /// Adds a {@link SinkTokenStream} created by another TeeSinkTokenFilter to this one. The supplied stream will
         /// also receive all consumed tokens.  This method can be used to pass tokens from two different tees to one sink.
         void addSinkTokenStream(SinkTokenStreamPtr sink);
-        
-        /// TeeSinkTokenFilter passes all tokens to the added sinks when itself is consumed. To be sure, that all tokens 
-        /// from the input stream are passed to the sinks, you can call this methods.  This instance is exhausted after this, 
+
+        /// TeeSinkTokenFilter passes all tokens to the added sinks when itself is consumed. To be sure, that all tokens
+        /// from the input stream are passed to the sinks, you can call this methods.  This instance is exhausted after this,
         /// but all sinks are instant available.
         void consumeAllTokens();
-        
+
         virtual bool incrementToken();
         virtual void end();
     };
-    
+
     class LPPAPI SinkFilter : public LuceneObject
     {
     public:
         virtual ~SinkFilter();
-        
+
         LUCENE_CLASS(SinkFilter);
-    
+
     public:
-        /// Returns true, if the current state of the passed-in {@link AttributeSource} shall be stored in the sink. 
+        /// Returns true, if the current state of the passed-in {@link AttributeSource} shall be stored in the sink.
         virtual bool accept(AttributeSourcePtr source) = 0;
-        
+
         /// Called by {@link SinkTokenStream#reset()}. This method does nothing by default and can optionally be overridden.
         virtual void reset();
     };
-    
+
     class LPPAPI AcceptAllSinkFilter : public SinkFilter
     {
     public:
         virtual ~AcceptAllSinkFilter();
-        
+
         LUCENE_CLASS(AcceptAllSinkFilter);
-    
+
     public:
-        virtual bool accept(AttributeSourcePtr source);         
+        virtual bool accept(AttributeSourcePtr source);
     };
-    
+
     /// A filter that decides which {@link AttributeSource} states to store in the sink.
     class LPPAPI SinkTokenStream : public TokenStream
     {
     public:
         SinkTokenStream(AttributeSourcePtr source, SinkFilterPtr filter);
         virtual ~SinkTokenStream();
-        
+
         LUCENE_CLASS(SinkTokenStream);
-    
+
     protected:
         Collection<AttributeSourceStatePtr> cachedStates;
         AttributeSourceStatePtr finalState;
-        bool initIterator;        
+        bool initIterator;
         Collection<AttributeSourceStatePtr>::iterator it;
         SinkFilterPtr filter;
-    
+
     protected:
         bool accept(AttributeSourcePtr source);
         void addState(AttributeSourceStatePtr state);
         void setFinalState(AttributeSourceStatePtr finalState);
-    
+
     public:
         virtual bool incrementToken();
         virtual void end();
         virtual void reset();
-        
+
         friend class TeeSinkTokenFilter;
     };
 }

@@ -17,33 +17,33 @@ namespace Lucene
         this->match = match;
         this->end = end;
     }
-    
+
     SpanFirstQuery::~SpanFirstQuery()
     {
     }
-    
+
     SpanQueryPtr SpanFirstQuery::getMatch()
     {
         return match;
     }
-    
+
     int32_t SpanFirstQuery::getEnd()
     {
         return end;
     }
-    
+
     String SpanFirstQuery::getField()
     {
         return match->getField();
     }
-    
+
     String SpanFirstQuery::toString(const String& field)
     {
         StringStream buffer;
         buffer << L"spanFirst(" << match->toString(field) << L", " << end << L")" << boostString();
         return buffer.str();
     }
-    
+
     LuceneObjectPtr SpanFirstQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanFirstQuery>(LuceneDynamicCast<SpanQuery>(match->clone()), end));
@@ -53,17 +53,17 @@ namespace Lucene
         spanFirstQuery->setBoost(getBoost());
         return spanFirstQuery;
     }
-    
+
     void SpanFirstQuery::extractTerms(SetTerm terms)
     {
         match->extractTerms(terms);
     }
-    
+
     SpansPtr SpanFirstQuery::getSpans(IndexReaderPtr reader)
     {
         return newLucene<FirstSpans>(LuceneThis(), match->getSpans(reader));
     }
-    
+
     QueryPtr SpanFirstQuery::rewrite(IndexReaderPtr reader)
     {
         SpanFirstQueryPtr clone;
@@ -73,25 +73,25 @@ namespace Lucene
             clone = LuceneDynamicCast<SpanFirstQuery>(this->clone());
             clone->match = rewritten;
         }
-        
+
         if (clone)
             return clone; // some clauses rewrote
         else
             return LuceneThis(); // no clauses rewrote
     }
-    
+
     bool SpanFirstQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
+
         SpanFirstQueryPtr otherQuery(LuceneDynamicCast<SpanFirstQuery>(other));
         if (!otherQuery)
             return false;
-        
+
         return (end == otherQuery->end && match->equals(otherQuery->match) && getBoost() == otherQuery->getBoost());
     }
-    
+
     int32_t SpanFirstQuery::hashCode()
     {
         int32_t result = match->hashCode();
@@ -99,17 +99,17 @@ namespace Lucene
         result ^= MiscUtils::doubleToRawIntBits(getBoost()) ^ end;
         return result;
     }
-    
+
     FirstSpans::FirstSpans(SpanFirstQueryPtr query, SpansPtr spans)
     {
         this->query = query;
         this->spans = spans;
     }
-    
+
     FirstSpans::~FirstSpans()
     {
     }
-    
+
     bool FirstSpans::next()
     {
         while (spans->next()) // scan to next match
@@ -119,29 +119,29 @@ namespace Lucene
         }
         return false;
     }
-    
+
     bool FirstSpans::skipTo(int32_t target)
     {
         if (!spans->skipTo(target))
             return false;
         return (spans->end() <= query->end || next());
     }
-    
+
     int32_t FirstSpans::doc()
     {
         return spans->doc();
     }
-    
+
     int32_t FirstSpans::start()
     {
         return spans->start();
     }
-    
+
     int32_t FirstSpans::end()
     {
         return spans->end();
     }
-    
+
     Collection<ByteArray> FirstSpans::getPayload()
     {
         Collection<ByteArray> result;
@@ -152,7 +152,7 @@ namespace Lucene
         }
         return result;
     }
-    
+
     bool FirstSpans::isPayloadAvailable()
     {
         return spans->isPayloadAvailable();

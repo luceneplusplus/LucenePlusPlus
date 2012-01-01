@@ -69,10 +69,10 @@ BOOST_AUTO_TEST_CASE(testOtherLetterOffset)
 BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
 {
     AnalyzerPtr a = newLucene<ChineseAnalyzer>();
-    
+
     const uint8_t input[] = {0xe4, 0xb8, 0xad, 0xe5, 0x8d, 0x8e, 0xe4, 0xba, 0xba, 0xe6, 0xb0,
                              0x91, 0xe5, 0x85, 0xb1, 0xe5, 0x92, 0x8c, 0xe5, 0x9b, 0xbd};
-    
+
     const uint8_t token1[] = {0xe4, 0xb8, 0xad};
     const uint8_t token2[] = {0xe5, 0x8d, 0x8e};
     const uint8_t token3[] = {0xe4, 0xba, 0xba};
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
     const uint8_t token5[] = {0xe5, 0x85, 0xb1};
     const uint8_t token6[] = {0xe5, 0x92, 0x8c};
     const uint8_t token7[] = {0xe5, 0x9b, 0xbd};
-    
+
     checkAnalyzesToReuse(a, UTF8_TO_STRING(input),
                             newCollection<String>(
                                 UTF8_TO_STRING(token1),
@@ -98,13 +98,13 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
 BOOST_AUTO_TEST_CASE(testReusableTokenStream2)
 {
     AnalyzerPtr a = newLucene<ChineseAnalyzer>();
-    
+
     const uint8_t input[] = {0xe5, 0x8c, 0x97, 0xe4, 0xba, 0xac, 0xe5, 0xb8, 0x82};
 
     const uint8_t token1[] = {0xe5, 0x8c, 0x97};
     const uint8_t token2[] = {0xe4, 0xba, 0xac};
     const uint8_t token3[] = {0xe5, 0xb8, 0x82};
-    
+
     checkAnalyzesToReuse(a, UTF8_TO_STRING(input),
                             newCollection<String>(
                                 UTF8_TO_STRING(token1),
@@ -119,10 +119,10 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream2)
 BOOST_AUTO_TEST_CASE(testNumerics)
 {
     AnalyzerPtr justTokenizer = newLucene<JustChineseTokenizerAnalyzer>();
-    
+
     const uint8_t input[] = {0xe4, 0xb8, 0xad, 0x31, 0x32, 0x33, 0x34};
     const uint8_t token1[] = {0xe4, 0xb8, 0xad};
-    
+
     checkAnalyzesTo(justTokenizer, UTF8_TO_STRING(input), newCollection<String>(UTF8_TO_STRING(token1), L"1234"));
 
     // in this case the ChineseAnalyzer (which applies ChineseFilter) will remove the numeric token.

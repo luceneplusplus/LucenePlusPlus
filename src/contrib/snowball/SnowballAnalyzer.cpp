@@ -19,18 +19,18 @@ namespace Lucene
         this->matchVersion = matchVersion;
         this->name = name;
     }
-    
-    SnowballAnalyzer::SnowballAnalyzer(LuceneVersion::Version matchVersion, const String& name, HashSet<String> stopwords)
+
+    SnowballAnalyzer::SnowballAnalyzer(LuceneVersion::Version matchVersion, const String& name, SetString stopwords)
     {
         this->stopSet = stopwords;
         this->matchVersion = matchVersion;
         this->name = name;
     }
-    
+
     SnowballAnalyzer::~SnowballAnalyzer()
     {
     }
-    
+
     TokenStreamPtr SnowballAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
@@ -41,7 +41,7 @@ namespace Lucene
         result = newLucene<SnowballFilter>(result, name);
         return result;
     }
-    
+
     TokenStreamPtr SnowballAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
         SnowballAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<SnowballAnalyzerSavedStreams>(getPreviousTokenStream()));
@@ -60,7 +60,7 @@ namespace Lucene
             streams->source->reset(reader);
         return streams->result;
     }
-    
+
     SnowballAnalyzerSavedStreams::~SnowballAnalyzerSavedStreams()
     {
     }

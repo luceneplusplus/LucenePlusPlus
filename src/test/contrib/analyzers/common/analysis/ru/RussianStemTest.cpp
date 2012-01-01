@@ -22,23 +22,23 @@ public:
     {
         words = Collection<String>::newInstance();
         stems = Collection<String>::newInstance();
-        
+
         String wordsFile(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"russian"), L"wordsUTF8.txt"));
         String stemsFile(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"russian"), L"stemsUTF8.txt"));
-        
+
         BufferedReaderPtr inWords = newLucene<BufferedReader>(newLucene<InputStreamReader>(newLucene<FileReader>(wordsFile)));
         String word;
         while (inWords->readLine(word))
             words.add(word);
         inWords->close();
-        
+
         BufferedReaderPtr inStems = newLucene<BufferedReader>(newLucene<InputStreamReader>(newLucene<FileReader>(stemsFile)));
         String stem;
         while (inStems->readLine(stem))
             stems.add(stem);
         inStems->close();
     }
-    
+
     virtual ~RussianStemmerFixture()
     {
     }

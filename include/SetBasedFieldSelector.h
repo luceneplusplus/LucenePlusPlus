@@ -15,22 +15,22 @@ namespace Lucene
     class LPPAPI SetBasedFieldSelector : public FieldSelector
     {
     public:
-        /// Pass in the Set of {@link Field} names to load and the Set of {@link Field} names to load lazily.  
-        /// If both are null, the Document will not have any {@link Field} on it.  
+        /// Pass in the Set of {@link Field} names to load and the Set of {@link Field} names to load lazily.
+        /// If both are null, the Document will not have any {@link Field} on it.
         /// @param fieldsToLoad A Set of {@link String} field names to load.  May be empty, but not null
         /// @param lazyFieldsToLoad A Set of {@link String} field names to load lazily.  May be empty, but not null
-        SetBasedFieldSelector(HashSet<String> fieldsToLoad, HashSet<String> lazyFieldsToLoad);
-        
+        SetBasedFieldSelector(SetString fieldsToLoad, SetString lazyFieldsToLoad);
+
         virtual ~SetBasedFieldSelector();
-        
+
         LUCENE_CLASS(SetBasedFieldSelector);
-    
+
     protected:
-        HashSet<String> fieldsToLoad;
-        HashSet<String> lazyFieldsToLoad;
-    
+        SetString fieldsToLoad;
+        SetString lazyFieldsToLoad;
+
     public:
-        /// Indicate whether to load the field with the given name or not. If the {@link Field#name()} is not in 
+        /// Indicate whether to load the field with the given name or not. If the {@link Field#name()} is not in
         /// either of the  initializing Sets, then {@link FieldSelectorResult#NO_LOAD} is returned.  If a Field name
         /// is in both fieldsToLoad and lazyFieldsToLoad, lazy has precedence.
         /// @param fieldName The {@link Field} name to check

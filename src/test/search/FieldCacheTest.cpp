@@ -40,14 +40,14 @@ public:
         writer->close();
         reader = IndexReader::open(directory, true);
     }
-    
+
     virtual ~FieldCacheFixture()
     {
     }
 
 protected:
     IndexReaderPtr reader;
-    
+
 public:
     static const int32_t NUM_DOCS;
 };
@@ -65,21 +65,21 @@ BOOST_AUTO_TEST_CASE(testFieldCache)
     BOOST_CHECK_EQUAL(doubles.size(), NUM_DOCS);
     for (int32_t i = 0; i < doubles.size(); ++i)
         BOOST_CHECK_CLOSE_FRACTION(doubles[i], (DBL_MAX - i), 0.00001);
-    
+
     Collection<int64_t> longs = cache->getLongs(reader, L"theLong");
     BOOST_CHECK_EQUAL(longs.hashCode(), cache->getLongs(reader, L"theLong").hashCode());
     BOOST_CHECK_EQUAL(longs.hashCode(), cache->getLongs(reader, L"theLong", FieldCache::DEFAULT_LONG_PARSER()).hashCode());
     BOOST_CHECK_EQUAL(longs.size(), NUM_DOCS);
     for (int32_t i = 0; i < longs.size(); ++i)
         BOOST_CHECK_EQUAL(longs[i], (LLONG_MAX - i));
-    
+
     Collection<uint8_t> bytes = cache->getBytes(reader, L"theByte");
     BOOST_CHECK_EQUAL(bytes.hashCode(), cache->getBytes(reader, L"theByte").hashCode());
     BOOST_CHECK_EQUAL(bytes.hashCode(), cache->getBytes(reader, L"theByte", FieldCache::DEFAULT_BYTE_PARSER()).hashCode());
     BOOST_CHECK_EQUAL(bytes.size(), NUM_DOCS);
     for (int32_t i = 0; i < bytes.size(); ++i)
         BOOST_CHECK_EQUAL(bytes[i], (uint8_t)(UCHAR_MAX - i));
-    
+
     Collection<int32_t> ints = cache->getInts(reader, L"theInt");
     BOOST_CHECK_EQUAL(ints.hashCode(), cache->getInts(reader, L"theInt").hashCode());
     BOOST_CHECK_EQUAL(ints.hashCode(), cache->getInts(reader, L"theInt", FieldCache::DEFAULT_INT_PARSER()).hashCode());

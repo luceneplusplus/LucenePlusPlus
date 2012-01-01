@@ -14,23 +14,23 @@ namespace Lucene
     class DocFieldConsumersPerThread : public DocFieldConsumerPerThread
     {
     public:
-        DocFieldConsumersPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, DocFieldConsumersPtr parent, 
+        DocFieldConsumersPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, DocFieldConsumersPtr parent,
                                    DocFieldConsumerPerThreadPtr one, DocFieldConsumerPerThreadPtr two);
         virtual ~DocFieldConsumersPerThread();
-        
+
         LUCENE_CLASS(DocFieldConsumersPerThread);
-            
+
     public:
         DocFieldConsumerPerThreadPtr one;
         DocFieldConsumerPerThreadPtr two;
-        DocFieldConsumersWeakPtr _parent;
+        DocFieldConsumersPtr parent;
         DocStatePtr docState;
-    
+
     public:
         virtual void startDocument();
         virtual void abort();
         virtual DocWriterPtr finishDocument();
-        virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi);        
+        virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi);
     };
 }
 

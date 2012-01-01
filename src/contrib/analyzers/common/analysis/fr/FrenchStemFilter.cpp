@@ -16,18 +16,18 @@ namespace Lucene
         stemmer = newLucene<FrenchStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
-    
-    FrenchStemFilter::FrenchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
+
+    FrenchStemFilter::FrenchStemFilter(TokenStreamPtr input, SetString exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<FrenchStemmer>();
         termAtt = addAttribute<TermAttribute>();
         this->exclusions = exclusiontable;
     }
-    
+
     FrenchStemFilter::~FrenchStemFilter()
     {
     }
-    
+
     bool FrenchStemFilter::incrementToken()
     {
         if (input->incrementToken())
@@ -46,14 +46,14 @@ namespace Lucene
         else
             return false;
     }
-    
+
     void FrenchStemFilter::setStemmer(FrenchStemmerPtr stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;
     }
-    
-    void FrenchStemFilter::setExclusionSet(HashSet<String> exclusiontable)
+
+    void FrenchStemFilter::setExclusionSet(SetString exclusiontable)
     {
         this->exclusions = exclusiontable;
     }

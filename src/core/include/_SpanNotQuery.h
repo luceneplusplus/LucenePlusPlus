@@ -16,16 +16,16 @@ namespace Lucene
     public:
         NotSpans(SpanNotQueryPtr query, SpansPtr includeSpans, SpansPtr excludeSpans);
         virtual ~NotSpans();
-        
+
         LUCENE_CLASS(NotSpans);
-    
+
     protected:
         SpanNotQueryPtr query;
         SpansPtr includeSpans;
         bool moreInclude;
         SpansPtr excludeSpans;
         bool moreExclude;
-    
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);

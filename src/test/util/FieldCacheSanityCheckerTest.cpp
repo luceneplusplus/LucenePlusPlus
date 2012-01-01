@@ -52,7 +52,7 @@ public:
         readerB = IndexReader::open(dirB, true);
         readerX = newLucene<MultiReader>(newCollection<IndexReaderPtr>(readerA, readerB));
     }
-    
+
     virtual ~FieldCacheSanityCheckerTestFixture()
     {
         readerA->close();
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(testSanity)
     ints = cache->getInts(readerX, L"theInt", FieldCache::DEFAULT_INT_PARSER());
 
     Collection<InsanityPtr> insanity = FieldCacheSanityChecker::checkSanity(cache->getCacheEntries());
-    
+
     BOOST_CHECK_EQUAL(0, insanity.size());
     cache->purgeAllCaches();
 }
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(testInsanity2)
     Collection<String> strings = cache->getStrings(readerA, L"theString");
     strings = cache->getStrings(readerB, L"theString");
     strings = cache->getStrings(readerX, L"theString");
-    
+
     // this one is ok
     Collection<uint8_t> bytes = cache->getBytes(readerX, L"theByte");
 

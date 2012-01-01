@@ -20,17 +20,17 @@ namespace Lucene
         docIDs = Collection<int32_t>::newInstance(1);
         norms = ByteArray::newInstance(1);
         upto = 0;
-        
-        this->_perThread = perThread;
+
+        this->perThread = perThread;
         this->fieldInfo = fieldInfo;
         docState = perThread->docState;
         fieldState = docInverterPerField->fieldState;
     }
-    
+
     NormsWriterPerField::~NormsWriterPerField()
     {
     }
-    
+
     void NormsWriterPerField::reset()
     {
         // Shrink back if we are over allocated now
@@ -38,17 +38,17 @@ namespace Lucene
         norms.resize(MiscUtils::getShrinkSize(norms.size(), upto));
         upto = 0;
     }
-    
+
     void NormsWriterPerField::abort()
     {
         upto = 0;
     }
-    
+
     int32_t NormsWriterPerField::compareTo(LuceneObjectPtr other)
     {
         return fieldInfo->name.compare(LuceneStaticCast<NormsWriterPerField>(other)->fieldInfo->name);
     }
-    
+
     void NormsWriterPerField::finish()
     {
         BOOST_ASSERT(docIDs.size() == norms.size());

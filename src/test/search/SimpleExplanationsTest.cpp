@@ -37,11 +37,11 @@ public:
     ItemizedFilter(const String& field, Collection<int32_t> terms) : FieldCacheTermsFilter(field, int2str(terms))
     {
     }
-    
+
     ItemizedFilter(Collection<int32_t> terms) : FieldCacheTermsFilter(L"KEY", int2str(terms))
     {
     }
-    
+
     virtual ~ItemizedFilter()
     {
     }
@@ -63,7 +63,7 @@ public:
     SimpleExplanationsFixture()
     {
     }
-    
+
     virtual ~SimpleExplanationsFixture()
     {
     }

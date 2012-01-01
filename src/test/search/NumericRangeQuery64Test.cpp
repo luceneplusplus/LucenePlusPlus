@@ -44,7 +44,7 @@ public:
             setupRequired = false;
         }
     }
-    
+
     virtual ~NumericRangeQuery64Fixture()
     {
     }
@@ -52,13 +52,13 @@ public:
 protected:
     // distance of entries
     static const int64_t distance;
-    
+
     // shift the starting of the values to the left, to also have negative values
     static const int64_t startOffset;
-    
+
     // number of docs to generate for testing
     static const int32_t noDocs;
-    
+
     static RAMDirectoryPtr directory;
     static IndexSearcherPtr searcher;
 
@@ -69,7 +69,7 @@ protected:
         // set the theoretical maximum term count for 8bit (see docs for the number)
         BooleanQuery::setMaxClauseCount(7 * 255 * 2 + 255);
 
-        directory = newLucene<RAMDirectory>();
+        directory = newStaticLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
 
         NumericFieldPtr field8 = newLucene<NumericField>(L"field8", 8, Field::STORE_YES, true);
@@ -83,20 +83,20 @@ protected:
         NumericFieldPtr ascfield2 = newLucene<NumericField>(L"ascfield2", 2, Field::STORE_NO, true);
 
         DocumentPtr doc = newLucene<Document>();
-        
+
         // add fields, that have a distance to test general functionality
         doc->add(field8);
         doc->add(field6);
         doc->add(field4);
-        doc->add(field2); 
+        doc->add(field2);
         doc->add(fieldNoTrie);
-        
+
         // add ascending fields with a distance of 1, beginning at -noDocs/2 to test the correct splitting of range and inclusive/exclusive
         doc->add(ascfield8);
         doc->add(ascfield6);
         doc->add(ascfield4);
         doc->add(ascfield2);
-        
+
         // Add a series of noDocs docs with increasing int values
         for (int32_t l = 0; l < noDocs; ++l)
         {
@@ -114,12 +114,12 @@ protected:
             ascfield2->setLongValue(val);
             writer->addDocument(doc);
         }
-        
+
         writer->optimize();
         writer->close();
-        searcher = newLucene<IndexSearcher>(directory, true);
+        searcher = newStaticLucene<IndexSearcher>(directory, true);
     }
-    
+
 public:
     /// test for both constant score and boolean query, the other tests only use the constant score mode
     void testRange(int32_t precisionStep)
@@ -128,7 +128,7 @@ public:
         int32_t count = 3000;
         int64_t lower = (distance * 3 / 2) + startOffset;
         int64_t upper = lower + count * distance + (distance / 3);
-        
+
         NumericRangeQueryPtr q = NumericRangeQuery::newLongRange(field, precisionStep, lower, upper, true, true);
         NumericRangeFilterPtr f = NumericRangeFilter::newLongRange(field, precisionStep, lower, upper, true, true);
         int32_t lastTerms = 0;
@@ -174,7 +174,7 @@ public:
             lastTerms = terms;
         }
     }
-    
+
     void testLeftOpenRange(int32_t precisionStep)
     {
         String field = L"field" + StringUtils::toString(precisionStep);
@@ -191,7 +191,7 @@ public:
         doc = searcher->doc(sd[sd.size() - 1]->doc);
         BOOST_CHECK_EQUAL(StringUtils::toString((count - 1) * distance + startOffset), doc->get(field));
     }
-    
+
     void testRightOpenRange(int32_t precisionStep)
     {
         String field = L"field" + StringUtils::toString(precisionStep);
@@ -207,7 +207,7 @@ public:
         doc = searcher->doc(sd[sd.size() - 1]->doc);
         BOOST_CHECK_EQUAL(StringUtils::toString((noDocs - 1) * distance + startOffset), doc->get(field));
     }
-    
+
     void testRandomTrieAndClassicRangeQuery(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -256,7 +256,7 @@ public:
         if (precisionStep == INT_MAX)
             BOOST_CHECK_EQUAL(termCountT, termCountC);
     }
-    
+
     void testRangeSplit(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -286,7 +286,7 @@ public:
             BOOST_CHECK_EQUAL(upper - lower, tTopDocs->totalHits);
         }
     }
-    
+
     void testDoubleRange(int32_t precisionStep)
     {
         String field = L"ascfield" + StringUtils::toString(precisionStep);
@@ -301,7 +301,7 @@ public:
         tTopDocs = searcher->search(newLucene<MatchAllDocsQuery>(), tf, 1);
         BOOST_CHECK_EQUAL(upper - lower + 1, tTopDocs->totalHits);
     }
-    
+
     void testSorting(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();

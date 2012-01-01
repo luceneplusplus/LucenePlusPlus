@@ -24,7 +24,7 @@ public:
     virtual ~SimilarityOne()
     {
     }
-    
+
     LUCENE_CLASS(SimilarityOne);
 
 public:
@@ -45,22 +45,22 @@ public:
         normDelta = 0.001;
         numDocNorms = 0;
     }
-    
+
     virtual ~NormTestFixture()
     {
     }
 
 protected:
     static const int32_t NUM_FIELDS;
-    
+
     SimilarityPtr similarityOne;
     int32_t numDocNorms;
-    Collection<double> norms; 
+    Collection<double> norms;
     Collection<double> modifiedNorms;
-    
+
     double lastNorm;
     double normDelta;
-    
+
 public:
     /// return unique norm values that are unchanged by encoding/decoding
     double nextNorm()
@@ -97,7 +97,7 @@ public:
         }
         return d;
     }
-    
+
     void verifyIndex(DirectoryPtr dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
@@ -127,7 +127,7 @@ public:
             iw->addDocument(newDoc());
         iw->close();
     }
-    
+
     void modifyNormsForF1(DirectoryPtr dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
@@ -139,8 +139,8 @@ public:
             double newNorm = modifiedNorms[k];
             modifiedNorms[i] = newNorm;
             modifiedNorms[k] = origNorm;
-            ir->setNorm(i, L"f1", newNorm); 
-            ir->setNorm(k, L"f1", origNorm); 
+            ir->setNorm(i, L"f1", newNorm);
+            ir->setNorm(k, L"f1", origNorm);
         }
         ir->close();
     }
@@ -177,8 +177,8 @@ BOOST_FIXTURE_TEST_SUITE(NormsTest, NormTestFixture)
 
 /// Test that norms values are preserved as the index is maintained.
 /// Including separate norms.
-/// Including merging indexes with separate norms. 
-/// Including optimize. 
+/// Including merging indexes with separate norms.
+/// Including optimize.
 BOOST_AUTO_TEST_CASE(testNorms)
 {
     // test with a single index: index1
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(testNorms)
     IndexWriterPtr iw = newLucene<IndexWriter>(dir3, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     iw->setMaxBufferedDocs(5);
     iw->setMergeFactor(3);
-    
+
     iw->addIndexesNoOptimize(newCollection<DirectoryPtr>(dir1, dir2));
     iw->optimize();
     iw->close();

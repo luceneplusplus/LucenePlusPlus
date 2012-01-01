@@ -17,19 +17,19 @@ namespace Lucene
 {
     /// Actual score computation order is slightly different than assumptions this allows for a small amount of variation
     const double FunctionFixture::TEST_SCORE_TOLERANCE_DELTA = 0.001;
-    
+
     const int32_t FunctionFixture::N_DOCS = 17;
-    
+
     const String FunctionFixture::ID_FIELD = L"id";
     const String FunctionFixture::TEXT_FIELD = L"text";
     const String FunctionFixture::INT_FIELD = L"iii";
     const String FunctionFixture::DOUBLE_FIELD = L"fff";
-    
+
     FunctionFixture::FunctionFixture(bool doMultiSegment)
     {
         this->doMultiSegment = doMultiSegment;
-        
-        // prepare a small index with just a few documents.  
+
+        // prepare a small index with just a few documents.
         dir = newLucene<RAMDirectory>();
         anlzr = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, anlzr, IndexWriter::MaxFieldLengthLIMITED);
@@ -50,17 +50,17 @@ namespace Lucene
         }
         iw->close();
     }
-    
+
     FunctionFixture::~FunctionFixture()
     {
     }
-    
+
     const Collection<String> FunctionFixture::DOC_TEXT_LINES()
     {
         static Collection<String> _DOC_TEXT_LINES;
         if (!_DOC_TEXT_LINES)
         {
-            _DOC_TEXT_LINES = Collection<String>::newInstance();
+            _DOC_TEXT_LINES = Collection<String>::newStaticInstance();
             _DOC_TEXT_LINES.add(L"Well, this is just some plain text we use for creating the ");
             _DOC_TEXT_LINES.add(L"test documents. It used to be a text from an online collection ");
             _DOC_TEXT_LINES.add(L"devoted to first aid, but if there was there an (online) lawyers ");
@@ -78,7 +78,7 @@ namespace Lucene
         }
         return _DOC_TEXT_LINES;
     }
-    
+
     void FunctionFixture::addDoc(IndexWriterPtr iw, int32_t i)
     {
         DocumentPtr d = newLucene<Document>();
@@ -102,27 +102,27 @@ namespace Lucene
 
         iw->addDocument(d);
     }
-    
+
     String FunctionFixture::id2String(int32_t scoreAndID)
     {
         String s = L"000000000" + StringUtils::toString(scoreAndID); // 17 --> ID00017
         int32_t n = StringUtils::toString(N_DOCS).length() + 3;
-        int32_t k = s.length() - n; 
+        int32_t k = s.length() - n;
         return L"ID" + s.substr(k);
     }
-    
+
     String FunctionFixture::textLine(int32_t docNum)
     {
         // some text line for regular search
         return DOC_TEXT_LINES()[docNum % DOC_TEXT_LINES().size()];
     }
-    
+
     double FunctionFixture::expectedFieldScore(const String& docIDFieldVal)
     {
         // extract expected doc score from its ID Field: "ID7" --> 7.0
         return StringUtils::toDouble(docIDFieldVal.substr(2));
     }
-    
+
     bool FunctionFixture::equalCollectionValues(CollectionValue first, CollectionValue second)
     {
         if (!VariantUtils::equalsType(first, second))

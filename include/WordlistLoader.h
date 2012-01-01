@@ -16,28 +16,28 @@ namespace Lucene
     {
     public:
         virtual ~WordlistLoader();
-        
+
         LUCENE_CLASS(WordlistLoader);
-    
+
     public:
-        /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace). 
+        /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace).
         /// Every line of the file should contain only one word. The words need to be in lowercase if you make use of an
         /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
         ///
         /// @param wordfile File name containing the wordlist
         /// @param comment The comment string to ignore
         /// @return A set with the file's words
-        static HashSet<String> getWordSet(const String& wordfile, const String& comment = EmptyString);
-        
-        /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace). 
+        static SetString getWordSet(const String& wordfile, const String& comment = EmptyString);
+
+        /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace).
         /// Every line of the file should contain only one word. The words need to be in lowercase if you make use of an
         /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
         ///
         /// @param reader Reader containing the wordlist
         /// @param comment The comment string to ignore
         /// @return A set with the file's words
-        static HashSet<String> getWordSet(ReaderPtr reader, const String& comment = EmptyString);
-        
+        static SetString getWordSet(ReaderPtr reader, const String& comment = EmptyString);
+
         /// Reads a stem dictionary. Each line contains:
         /// <pre>word\tstem</pre>
         /// (ie. two tab separated words)

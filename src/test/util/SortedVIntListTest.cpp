@@ -85,7 +85,7 @@ static void tstViaBitSet(Collection<int32_t> ints, int32_t expectedByteSize)
     tstVIntList(svil, ints, expectedByteSize);
     tstVIntList(newLucene<SortedVIntList>(svil->iterator()), ints, expectedByteSize);
 }
-          
+
 static void tstInts(Collection<int32_t> ints)
 {
     int32_t expectedByteSize = vIntListByteSize(ints);

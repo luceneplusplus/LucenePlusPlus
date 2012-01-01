@@ -43,31 +43,31 @@ public:
     {
         this->fieldName = fieldName;
         this->pos = 0;
-        this->entities = HashSet<String>::newInstance();
+        this->entities = SetString::newInstance();
         this->entities.add(L"xx");
         this->entities.add(L"one");
-        this->nopayload = HashSet<String>::newInstance();
+        this->nopayload = SetString::newInstance();
         this->nopayload.add(L"nopayload");
         this->nopayload.add(L"np");
         this->termAtt = addAttribute<TermAttribute>();
         this->posIncrAtt = addAttribute<PositionIncrementAttribute>();
         this->payloadAtt = addAttribute<PayloadAttribute>();
     }
-    
+
     virtual ~PayloadSpansFilter()
     {
     }
-    
+
     LUCENE_CLASS(PayloadSpansFilter);
 
 public:
     String fieldName;
-    HashSet<String> entities;
-    HashSet<String> nopayload;
+    SetString entities;
+    SetString nopayload;
     int32_t pos;
     PayloadAttributePtr payloadAtt;
     TermAttributePtr termAtt;
-    PositionIncrementAttributePtr posIncrAtt;    
+    PositionIncrementAttributePtr posIncrAtt;
 
 public:
     virtual bool incrementToken()
@@ -75,7 +75,7 @@ public:
         if (input->incrementToken())
         {
             String token(termAtt->termBuffer().get(), termAtt->termLength());
-            
+
             if (!nopayload.contains(token))
             {
                 StringStream buf;
@@ -103,7 +103,7 @@ public:
     virtual ~PayloadSpansAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(PayloadSpansAnalyzer);
 
 public:
@@ -124,7 +124,7 @@ public:
         searcher = PayloadHelper::setUp(similarity, 1000);
         indexReader = searcher->getIndexReader();
     }
-    
+
     virtual ~PayloadSpansFixture()
     {
     }
@@ -161,7 +161,7 @@ public:
         }
         BOOST_CHECK_EQUAL(seen, expectedNumSpans);
     }
-    
+
     void checkSpans(SpansPtr spans, int32_t numSpans, Collection<int32_t> numPayloads)
     {
         int32_t cnt = 0;
@@ -177,7 +177,7 @@ public:
         }
         ++cnt;
     }
-    
+
     IndexSearcherPtr getSpanNotSearcher()
     {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
@@ -194,19 +194,19 @@ public:
         searcher->setSimilarity(similarity);
         return searcher;
     }
-    
+
     IndexSearcherPtr getSearcher()
     {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         PayloadSpansAnalyzerPtr analyzer = newLucene<PayloadSpansAnalyzer>();
         Collection<String> docs = newCollection<String>(
-            L"xx rr yy mm  pp", L"xx yy mm rr pp", L"nopayload qq ss pp np", 
-            L"one two three four five six seven eight nine ten eleven", 
+            L"xx rr yy mm  pp", L"xx yy mm rr pp", L"nopayload qq ss pp np",
+            L"one two three four five six seven eight nine ten eleven",
             L"nine one two three four five six seven eight eleven ten"
         );
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
         writer->setSimilarity(similarity);
-        
+
         for (int32_t i = 0; i < docs.size(); ++i)
         {
             DocumentPtr doc = newLucene<Document>();
@@ -230,7 +230,7 @@ BOOST_AUTO_TEST_CASE(testSpanTermQuery)
     BOOST_CHECK(spans);
     checkSpans(spans, 100, 1, 1, 1);
 
-    stq = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::NO_PAYLOAD_FIELD, L"seventy"));  
+    stq = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::NO_PAYLOAD_FIELD, L"seventy"));
     spans = stq->getSpans(indexReader);
     BOOST_CHECK(spans);
     checkSpans(spans, 100, 0, 0, 0);
@@ -289,18 +289,18 @@ BOOST_AUTO_TEST_CASE(testNestedSpans)
     clauses[0] = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"xx"));
     clauses[1] = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"rr"));
     clauses[2] = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"yy"));
-    
+
     spanNearQuery = newLucene<SpanNearQuery>(clauses, 6, true);
 
     spans = spanNearQuery->getSpans(searcher->getIndexReader());
     BOOST_CHECK(spans);
     checkSpans(spans, 1, newCollection<int32_t>(3));
-    
+
     clauses = newCollection<SpanQueryPtr>(
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"xx")),
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"rr"))
     );
-    
+
     spanNearQuery = newLucene<SpanNearQuery>(clauses, 6, true);
 
     // xx within 6 of rr
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(testNestedSpans)
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"yy")),
         spanNearQuery
     );
-    
+
     SpanNearQueryPtr nestedSpanNearQuery = newLucene<SpanNearQuery>(clauses2, 6, false);
 
     // yy within 6 of xx within 6 of rr
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(testFirstClauseWithoutPayload)
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"np")),
         snq
     );
-    
+
     SpanNearQueryPtr nestedSpanNearQuery = newLucene<SpanNearQuery>(clauses3, 6, false);
 
     SpansPtr spans = nestedSpanNearQuery->getSpans(searcher->getIndexReader());
@@ -355,26 +355,26 @@ BOOST_AUTO_TEST_CASE(testHeavilyNestedSpanQuery)
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"three"))
     );
     SpanNearQueryPtr spanNearQuery = newLucene<SpanNearQuery>(clauses, 5, true);
-    
+
     clauses[0] = spanNearQuery;
     clauses[1] = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"five"));
     clauses[2] = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"six"));
-    
+
     SpanNearQueryPtr spanNearQuery2 = newLucene<SpanNearQuery>(clauses, 6, true);
-    
+
     Collection<SpanQueryPtr> clauses2 = newCollection<SpanQueryPtr>(
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"eleven")),
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"ten"))
     );
     SpanNearQueryPtr spanNearQuery3 = newLucene<SpanNearQuery>(clauses2, 2, false);
-    
+
     Collection<SpanQueryPtr> clauses3 = newCollection<SpanQueryPtr>(
         newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"nine")),
         spanNearQuery2,
         spanNearQuery3
     );
     SpanNearQueryPtr nestedSpanNearQuery = newLucene<SpanNearQuery>(clauses3, 6, false);
-    
+
     SpansPtr spans = nestedSpanNearQuery->getSpans(searcher->getIndexReader());
     BOOST_CHECK(spans);
     checkSpans(spans, 2, newCollection<int32_t>(8, 8));
@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE(testShrinkToAfterShortestMatch)
     SpansPtr spans = snq->getSpans(is->getIndexReader());
 
     TopDocsPtr topDocs = is->search(snq, 1);
-    HashSet<String> payloadSet = HashSet<String>::newInstance();
+    SetString payloadSet = SetString::newInstance();
     for (int32_t i = 0; i < topDocs->scoreDocs.size(); ++i)
     {
         while (spans->next())
@@ -431,7 +431,7 @@ BOOST_AUTO_TEST_CASE(testShrinkToAfterShortestMatch2)
     SpansPtr spans = snq->getSpans(is->getIndexReader());
 
     TopDocsPtr topDocs = is->search(snq, 1);
-    HashSet<String> payloadSet = HashSet<String>::newInstance();
+    SetString payloadSet = SetString::newInstance();
     for (int32_t i = 0; i < topDocs->scoreDocs.size(); ++i)
     {
         while (spans->next())
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE(testShrinkToAfterShortestMatch3)
     SpansPtr spans = snq->getSpans(is->getIndexReader());
 
     TopDocsPtr topDocs = is->search(snq, 1);
-    HashSet<String> payloadSet = HashSet<String>::newInstance();
+    SetString payloadSet = SetString::newInstance();
     for (int32_t i = 0; i < topDocs->scoreDocs.size(); ++i)
     {
         while (spans->next())

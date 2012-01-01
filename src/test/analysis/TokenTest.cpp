@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(testGrow)
     }
     BOOST_CHECK_EQUAL(1048576, t->termLength());
     BOOST_CHECK_EQUAL(1179654, t->termBuffer().size());
-    
+
     // Test for slow growth to a long term
     t = newLucene<Token>();
     buf.str(L"");
@@ -135,19 +135,19 @@ BOOST_AUTO_TEST_CASE(testMixedStringArray)
     t->setTermBuffer(L"hello2");
     BOOST_CHECK_EQUAL(t->termLength(), 6);
     BOOST_CHECK_EQUAL(t->term(), L"hello2");
-    
-    CharArray test = CharArray::newInstance(6);
+
+    Collection<CharArray> test = Collection<CharArray>::newInstance(6);
     test[0] = L'h';
     test[1] = L'e';
     test[2] = L'l';
     test[3] = L'l';
     test[4] = L'o';
     test[5] = L'3';
-    
+
     t->setTermBuffer(test.get(), 0, 6);
     BOOST_CHECK_EQUAL(t->term(), L"hello3");
-    
-    CharArray buffer = t->termBuffer();
+
+    Collection<CharArray> buffer = t->termBuffer();
     buffer[1] = L'o';
     BOOST_CHECK_EQUAL(t->term(), L"hollo3");
 }
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE(testClone)
 {
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
-    CharArray buf = t->termBuffer();
+    Collection<CharArray> buf = t->termBuffer();
     TokenPtr clone = LuceneDynamicCast<Token>(checkCloneIsEqual(t));
     BOOST_CHECK_EQUAL(t->term(), clone->term());
     BOOST_CHECK(buf != clone->termBuffer());
@@ -180,14 +180,14 @@ BOOST_AUTO_TEST_CASE(testCopyTo)
     TokenPtr copy = LuceneDynamicCast<Token>(checkCopyIsEqual<Token>(t));
     BOOST_CHECK_EQUAL(L"", t->term());
     BOOST_CHECK_EQUAL(L"", copy->term());
-    
+
     t = newLucene<Token>();
     t->setTermBuffer(L"hello");
-    CharArray buf = t->termBuffer();
+    Collection<CharArray> buf = t->termBuffer();
     copy = LuceneDynamicCast<Token>(checkCopyIsEqual<Token>(t));
     BOOST_CHECK_EQUAL(t->term(), copy->term());
     BOOST_CHECK(buf != copy->termBuffer());
-    
+
     ByteArray payload = ByteArray::newInstance(4);
     payload[0] = 1;
     payload[1] = 2;

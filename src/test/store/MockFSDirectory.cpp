@@ -20,16 +20,16 @@ namespace Lucene
         dir = newLucene<SimpleFSDirectory>(path);
         rand = newLucene<Random>();
     }
-    
+
     MockFSDirectory::~MockFSDirectory()
     {
     }
-    
+
     IndexInputPtr MockFSDirectory::openInput(const String& name)
     {
         return openInput(name, BufferedIndexInput::BUFFER_SIZE);
     }
-    
+
     void MockFSDirectory::tweakBufferSizes()
     {
         for (Collection<IndexInputPtr>::iterator ii = allIndexInputs.begin(); ii != allIndexInputs.end(); ++ii)
@@ -39,7 +39,7 @@ namespace Lucene
             bii->setBufferSize(bufferSize);
         }
     }
-    
+
     IndexInputPtr MockFSDirectory::openInput(const String& name, int32_t bufferSize)
     {
         // Make random changes to buffer size
@@ -48,42 +48,42 @@ namespace Lucene
         allIndexInputs.add(f);
         return f;
     }
-    
+
     IndexOutputPtr MockFSDirectory::createOutput(const String& name)
     {
         return dir->createOutput(name);
     }
-    
+
     void MockFSDirectory::close()
     {
         dir->close();
     }
-    
+
     void MockFSDirectory::deleteFile(const String& name)
     {
         dir->deleteFile(name);
     }
-    
+
     void MockFSDirectory::touchFile(const String& name)
     {
         dir->touchFile(name);
     }
-    
+
     uint64_t MockFSDirectory::fileModified(const String& name)
     {
         return dir->fileModified(name);
     }
-    
+
     bool MockFSDirectory::fileExists(const String& name)
     {
         return dir->fileExists(name);
     }
-    
-    HashSet<String> MockFSDirectory::listAll()
+
+    SetString MockFSDirectory::listAll()
     {
         return dir->listAll();
     }
-    
+
     int64_t MockFSDirectory::fileLength(const String& name)
     {
         return dir->fileLength(name);

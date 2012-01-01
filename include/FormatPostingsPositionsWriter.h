@@ -16,28 +16,28 @@ namespace Lucene
     public:
         FormatPostingsPositionsWriter(SegmentWriteStatePtr state, FormatPostingsDocsWriterPtr parent);
         virtual ~FormatPostingsPositionsWriter();
-        
+
         LUCENE_CLASS(FormatPostingsPositionsWriter);
-            
+
     public:
-        FormatPostingsDocsWriterWeakPtr _parent;
+        FormatPostingsDocsWriterPtr parent;
         IndexOutputPtr out;
-        
+
         bool omitTermFreqAndPositions;
         bool storePayloads;
         int32_t lastPayloadLength;
-        
+
         int32_t lastPosition;
-    
+
     public:
         /// Add a new position & payload
         virtual void addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength);
-        
+
         void setField(FieldInfoPtr fieldInfo);
-        
+
         /// Called when we are done adding positions & payloads
         virtual void finish();
-        
+
         void close();
     };
 }

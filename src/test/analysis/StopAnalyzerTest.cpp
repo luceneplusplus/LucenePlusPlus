@@ -20,18 +20,18 @@ public:
     StopAnalyzerTestFixture()
     {
         stop = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-        inValidTokens = HashSet<String>::newInstance();
-        for (HashSet<String>::iterator word = StopAnalyzer::ENGLISH_STOP_WORDS_SET().begin(); word != StopAnalyzer::ENGLISH_STOP_WORDS_SET().end(); ++word)
+        inValidTokens = SetString::newInstance();
+        for (SetString::iterator word = StopAnalyzer::ENGLISH_STOP_WORDS_SET().begin(); word != StopAnalyzer::ENGLISH_STOP_WORDS_SET().end(); ++word)
             inValidTokens.add(*word);
     }
-    
+
     virtual ~StopAnalyzerTestFixture()
     {
     }
 
 protected:
     StopAnalyzerPtr stop;
-    HashSet<String> inValidTokens;
+    SetString inValidTokens;
 };
 
 BOOST_FIXTURE_TEST_SUITE(StopAnalyzerTest, StopAnalyzerTestFixture)
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(testDefaults)
 
 BOOST_AUTO_TEST_CASE(testStopList)
 {
-    HashSet<String> stopWordsSet = HashSet<String>::newInstance();
+    SetString stopWordsSet = SetString::newInstance();
     stopWordsSet.add(L"good");
     stopWordsSet.add(L"test");
     stopWordsSet.add(L"analyzer");
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(testStopList)
 
 BOOST_AUTO_TEST_CASE(testStopListPositions)
 {
-    HashSet<String> stopWordsSet = HashSet<String>::newInstance();
+    SetString stopWordsSet = SetString::newInstance();
     stopWordsSet.add(L"good");
     stopWordsSet.add(L"test");
     stopWordsSet.add(L"analyzer");

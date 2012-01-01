@@ -37,7 +37,7 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
+
     virtual ~SpansAdvancedFixture()
     {
         searcher->close();
@@ -51,7 +51,7 @@ public:
 protected:
     DirectoryPtr directory;
     IndexSearcherPtr searcher;
-    
+
     void addDocument(IndexWriterPtr writer, const String& id, const String& text)
     {
         DocumentPtr document = newLucene<Document>();
@@ -59,7 +59,7 @@ protected:
         document->add(newLucene<Field>(FIELD_TEXT, text, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(document);
     }
-    
+
     void checkHits(SearcherPtr s, QueryPtr query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores)
     {
         QueryUtils::check(query, s);
@@ -71,7 +71,7 @@ protected:
 
         // did we get the hits we expected
         BOOST_CHECK_EQUAL(expectedIds.size(), topdocs->totalHits);
-        
+
         for (int32_t i = 0; i < topdocs->totalHits; ++i)
         {
             int32_t id = topdocs->scoreDocs[i]->doc;
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(testBooleanQueryWithSpanQueries)
     query->add(spanQuery, BooleanClause::MUST);
     query->add(spanQuery, BooleanClause::MUST);
     Collection<String> expectedIds = newCollection<String>(L"1", L"2", L"3", L"4");
-    Collection<double> expectedScores = newCollection<double>(expectedScore, expectedScore, expectedScore, expectedScore);
+    Collection<double> expectedScores = newCollectionDouble(expectedScore, expectedScore, expectedScore, expectedScore);
     checkHits(searcher, query, L"two span queries", expectedIds, expectedScores);
 }
 

@@ -14,16 +14,15 @@ namespace Lucene
     AllTermDocs::AllTermDocs(SegmentReaderPtr parent) : AbstractAllTermDocs(parent->maxDoc())
     {
         SyncLock parentLock(parent);
-        this->_deletedDocs = parent->deletedDocs;
+        this->deletedDocs = parent->deletedDocs;
     }
-    
+
     AllTermDocs::~AllTermDocs()
     {
     }
-    
+
     bool AllTermDocs::isDeleted(int32_t doc)
     {
-        BitVectorPtr deletedDocs(_deletedDocs.lock());
         return (deletedDocs && deletedDocs->get(_doc));
     }
 }

@@ -20,17 +20,17 @@ namespace Lucene
         /// Construct an empty output buffer.
         MockRAMOutputStream(MockRAMDirectoryPtr dir, RAMFilePtr f, const String& name);
         virtual ~MockRAMOutputStream();
-        
+
         LUCENE_CLASS(MockRAMOutputStream);
-    
+
     protected:
-        MockRAMDirectoryWeakPtr _dir;
+        MockRAMDirectoryPtr dir;
         bool first;
         String name;
-    
+
     public:
         ByteArray singleByte;
-        
+
     public:
         virtual void close();
         virtual void flush();

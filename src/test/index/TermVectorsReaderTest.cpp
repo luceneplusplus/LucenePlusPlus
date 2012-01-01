@@ -44,11 +44,11 @@ public:
         startOffset = 0;
         endOffset = 0;
     }
-    
+
     virtual ~TestToken()
     {
     }
-    
+
     LUCENE_CLASS(TestToken);
 
 public:
@@ -70,17 +70,17 @@ public:
     MyTokenStream(Collection<TestTokenPtr> tokens)
     {
         this->tokens = tokens;
-        
+
         tokenUpto = 0;
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
     }
-    
+
     virtual ~MyTokenStream()
     {
     }
-    
+
     LUCENE_CLASS(MyTokenStream);
 
 protected:
@@ -120,16 +120,16 @@ public:
     {
         this->tokens = tokens;
     }
-    
+
     virtual ~MyAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(MyAnalyzer);
 
 protected:
     Collection<TestTokenPtr> tokens;
-    
+
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
@@ -146,34 +146,34 @@ public:
     {
         documentNumber = -1;
     }
-    
+
     virtual ~DocNumAwareMapper()
     {
     }
-    
+
     LUCENE_CLASS(DocNumAwareMapper);
 
 protected:
     int32_t documentNumber;
-    
+
 public:
     virtual void setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions)
     {
         if (documentNumber == -1)
             BOOST_FAIL("Documentnumber should be set at this point!");
     }
-    
+
     virtual void map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions)
     {
         if (documentNumber == -1)
             BOOST_FAIL("Documentnumber should be set at this point!");
     }
-    
+
     virtual int32_t getDocumentNumber()
     {
         return documentNumber;
     }
-    
+
     virtual void setDocumentNumber(int32_t documentNumber)
     {
         this->documentNumber = documentNumber;
@@ -190,13 +190,13 @@ public:
         testFieldsStorePos = newCollection<uint8_t>(true, false, true, false);
         testFieldsStoreOff = newCollection<uint8_t>(true, false, false, true);
         testTerms = newCollection<String>(L"this", L"is", L"a", L"test");
-        
+
         positions = Collection< Collection<int32_t> >::newInstance(testTerms.size());
         offsets = Collection< Collection<TermVectorOffsetInfoPtr> >::newInstance(testTerms.size());
         dir = newLucene<MockRAMDirectory>();
         tokens = Collection<TestTokenPtr>::newInstance(testTerms.size() * TERM_FREQ);
         RandomPtr random = newLucene<Random>();
-        
+
         std::sort(testTerms.begin(), testTerms.end());
         int32_t tokenUpto = 0;
         for (int32_t i = 0; i < testTerms.size(); ++i)
@@ -219,7 +219,7 @@ public:
             }
         }
         std::sort(tokens.begin(), tokens.end(), luceneCompare<TestTokenPtr>());
-        
+
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<MyAnalyzer>(tokens), true, IndexWriter::MaxFieldLengthLIMITED);
         writer->setUseCompoundFile(false);
         DocumentPtr doc = newLucene<Document>();
@@ -234,18 +234,18 @@ public:
                 tv = Field::TERM_VECTOR_WITH_OFFSETS;
             doc->add(newLucene<Field>(testFields[i], L"", Field::STORE_NO, Field::INDEX_ANALYZED, tv));
         }
-        
+
         // Create 5 documents for testing, they all have the same terms
         for (int32_t j = 0; j < 5; ++j)
             writer->addDocument(doc);
-        
+
         writer->commit();
         seg = writer->newestSegment()->name;
         writer->close();
 
         fieldInfos = newLucene<FieldInfos>(dir, seg + L"." + IndexFileNames::FIELD_INFOS_EXTENSION());
     }
-    
+
     virtual ~TermVectorsReaderTestFixture()
     {
     }
@@ -261,7 +261,7 @@ protected:
     String seg;
     FieldInfosPtr fieldInfos;
     Collection<TestTokenPtr> tokens;
-    
+
     static const int32_t TERM_FREQ;
 };
 
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(testReader)
 
     TermVectorsReaderPtr reader = newLucene<TermVectorsReader>(dir, seg, fieldInfos);
     BOOST_CHECK(reader);
-    
+
     for (int32_t j = 0; j < 5; ++j)
     {
         TermFreqVectorPtr vector = reader->get(j, testFields[0]);
@@ -374,7 +374,7 @@ BOOST_AUTO_TEST_CASE(testMapper)
         BOOST_CHECK((*tve)->getOffsets());
         BOOST_CHECK((*tve)->getPositions());
     }
-    
+
     mapper = newLucene<SortedTermVectorMapper>(TermVectorEntryFreqSortedComparator::compare);
     reader->get(1, mapper);
     entrySet = mapper->getTermVectorEntrySet();
@@ -388,7 +388,7 @@ BOOST_AUTO_TEST_CASE(testMapper)
         BOOST_CHECK((*tve)->getOffsets());
         BOOST_CHECK((*tve)->getPositions());
     }
-    
+
     FieldSortedTermVectorMapperPtr fsMapper = newLucene<FieldSortedTermVectorMapper>(TermVectorEntryFreqSortedComparator::compare);
     reader->get(0, fsMapper);
     MapStringCollectionTermVectorEntry map = fsMapper->getFieldToTerms();
@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE(testMapper)
             }
         }
     }
-    
+
     // Try mapper that ignores offs and positions
     fsMapper = newLucene<FieldSortedTermVectorMapper>(true, true, TermVectorEntryFreqSortedComparator::compare);
     reader->get(0, fsMapper);
@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(testMapper)
             }
         }
     }
-    
+
     // test setDocumentNumber()
     IndexReaderPtr ir = IndexReader::open(dir, true);
     DocNumAwareMapperPtr docNumAwareMapper = newLucene<DocNumAwareMapper>();
@@ -482,18 +482,18 @@ BOOST_AUTO_TEST_CASE(testBadParams)
         // Bad document number, good field number
         BOOST_CHECK_EXCEPTION(reader->get(50, testFields[0]), IOException, check_exception(LuceneException::IO));
     }
-    
+
     {
         TermVectorsReaderPtr reader = newLucene<TermVectorsReader>(dir, seg, fieldInfos);
         BOOST_CHECK(reader);
         // Bad document number, no field
         BOOST_CHECK_EXCEPTION(reader->get(50), IOException, check_exception(LuceneException::IO));
     }
-    
+
     {
         TermVectorsReaderPtr reader = newLucene<TermVectorsReader>(dir, seg, fieldInfos);
         BOOST_CHECK(reader);
-        
+
         // Good document number, bad field number
         TermFreqVectorPtr vector;
         BOOST_CHECK_NO_THROW(vector = reader->get(0, L"f50"));

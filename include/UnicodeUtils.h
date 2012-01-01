@@ -83,7 +83,7 @@ namespace Lucene
             MiscUtils::arrayCopy(other.result.get(), 0, result.get(), 0, other.length);
         }
 
-        void copyText(LucenePtr< TranslationResult<T> > other)
+        void copyText(gc_ptr< TranslationResult<T> > other)
         {
             copyText(*other);
         }

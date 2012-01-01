@@ -16,27 +16,27 @@ namespace Lucene
         this->currentDoc = -1;
         this->_nrMatchers = -1;
         this->currentScore = std::numeric_limits<double>::quiet_NaN();
-        
+
         this->nrScorers = subScorers.size();
-        
+
         if (minimumNrMatchers <= 0)
             boost::throw_exception(IllegalArgumentException(L"Minimum nr of matchers must be positive"));
         if (nrScorers <= 1)
             boost::throw_exception(IllegalArgumentException(L"There must be at least 2 subScorers"));
-        
+
         this->minimumNrMatchers = minimumNrMatchers;
         this->subScorers = subScorers;
     }
-    
+
     DisjunctionSumScorer::~DisjunctionSumScorer()
     {
     }
-    
+
     void DisjunctionSumScorer::initialize()
     {
         initScorerDocQueue();
     }
-    
+
     void DisjunctionSumScorer::initScorerDocQueue()
     {
         scorerDocQueue = newLucene<ScorerDocQueue>(nrScorers);
@@ -46,14 +46,14 @@ namespace Lucene
                 scorerDocQueue->insert(*se);
         }
     }
-    
+
     void DisjunctionSumScorer::score(CollectorPtr collector)
     {
         collector->setScorer(LuceneThis());
         while (nextDoc() != NO_MORE_DOCS)
             collector->collect(currentDoc);
     }
-    
+
     bool DisjunctionSumScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
         // firstDocID is ignored since nextDoc() sets 'currentDoc'
@@ -66,14 +66,14 @@ namespace Lucene
         }
         return true;
     }
-    
+
     int32_t DisjunctionSumScorer::nextDoc()
     {
         if (scorerDocQueue->size() < minimumNrMatchers || !advanceAfterCurrent())
             currentDoc = NO_MORE_DOCS;
         return currentDoc;
     }
-    
+
     bool DisjunctionSumScorer::advanceAfterCurrent()
     {
         do // repeat until minimum nr of matchers
@@ -94,7 +94,7 @@ namespace Lucene
                 ++_nrMatchers;
             }
             while (true);
-            
+
             if (_nrMatchers >= minimumNrMatchers)
                 return true;
             else if (scorerDocQueue->size() < minimumNrMatchers)
@@ -102,22 +102,22 @@ namespace Lucene
         }
         while (true);
     }
-    
+
     double DisjunctionSumScorer::score()
     {
         return currentScore;
     }
-    
+
     int32_t DisjunctionSumScorer::docID()
     {
         return currentDoc;
     }
-    
+
     int32_t DisjunctionSumScorer::nrMatchers()
     {
         return _nrMatchers;
     }
-    
+
     int32_t DisjunctionSumScorer::advance(int32_t target)
     {
         if (scorerDocQueue->size() < minimumNrMatchers)

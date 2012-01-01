@@ -25,85 +25,73 @@ namespace Lucene
         numberOfTerms = 0;
         rewriteMethod = CONSTANT_SCORE_AUTO_REWRITE_DEFAULT();
     }
-    
+
     MultiTermQuery::~MultiTermQuery()
     {
     }
-    
+
     RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE()
     {
         static RewriteMethodPtr _CONSTANT_SCORE_FILTER_REWRITE;
         if (!_CONSTANT_SCORE_FILTER_REWRITE)
-        {
-            _CONSTANT_SCORE_FILTER_REWRITE = newLucene<ConstantScoreFilterRewrite>();
-            CycleCheck::addStatic(_CONSTANT_SCORE_FILTER_REWRITE);
-        }
+            _CONSTANT_SCORE_FILTER_REWRITE = newStaticLucene<ConstantScoreFilterRewrite>();
         return _CONSTANT_SCORE_FILTER_REWRITE;
     }
-    
+
     RewriteMethodPtr MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE()
     {
         static RewriteMethodPtr _SCORING_BOOLEAN_QUERY_REWRITE;
         if (!_SCORING_BOOLEAN_QUERY_REWRITE)
-        {
-            _SCORING_BOOLEAN_QUERY_REWRITE = newLucene<ScoringBooleanQueryRewrite>();
-            CycleCheck::addStatic(_SCORING_BOOLEAN_QUERY_REWRITE);
-        }
+            _SCORING_BOOLEAN_QUERY_REWRITE = newStaticLucene<ScoringBooleanQueryRewrite>();
         return _SCORING_BOOLEAN_QUERY_REWRITE;
     }
-    
+
     RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE()
     {
         static RewriteMethodPtr _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
         if (!_CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE)
-        {
-            _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = newLucene<ConstantScoreBooleanQueryRewrite>();
-            CycleCheck::addStatic(_CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
-        }
+            _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = newStaticLucene<ConstantScoreBooleanQueryRewrite>();
         return _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
     }
-    
+
     RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT()
     {
         static RewriteMethodPtr _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
         if (!_CONSTANT_SCORE_AUTO_REWRITE_DEFAULT)
-        {
-            _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = newLucene<ConstantScoreAutoRewriteDefault>();
-            CycleCheck::addStatic(_CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
-        }
+            _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = newStaticLucene<ConstantScoreAutoRewriteDefault>();
         return _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
     }
-    
+
     int32_t MultiTermQuery::getTotalNumberOfTerms()
     {
         return numberOfTerms;
     }
-    
+
     void MultiTermQuery::clearTotalNumberOfTerms()
     {
         numberOfTerms = 0;
     }
-    
+
     void MultiTermQuery::incTotalNumberOfTerms(int32_t inc)
     {
         numberOfTerms += inc;
     }
-    
+
     QueryPtr MultiTermQuery::rewrite(IndexReaderPtr reader)
     {
         return rewriteMethod->rewrite(reader, LuceneThis());
     }
-    
+
     RewriteMethodPtr MultiTermQuery::getRewriteMethod()
     {
         return rewriteMethod;
     }
-    
+
     void MultiTermQuery::setRewriteMethod(RewriteMethodPtr method)
     {
         rewriteMethod = method;
     }
-    
+
     LuceneObjectPtr MultiTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other);
@@ -112,7 +100,7 @@ namespace Lucene
         cloneQuery->numberOfTerms = numberOfTerms;
         return cloneQuery;
     }
-    
+
     int32_t MultiTermQuery::hashCode()
     {
         int32_t prime = 31;
@@ -122,7 +110,7 @@ namespace Lucene
         result += rewriteMethod->hashCode();
         return result;
     }
-    
+
     bool MultiTermQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -140,26 +128,26 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     RewriteMethod::~RewriteMethod()
     {
     }
-    
+
     ConstantScoreFilterRewrite::~ConstantScoreFilterRewrite()
     {
     }
-    
+
     QueryPtr ConstantScoreFilterRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
     {
         QueryPtr result(newLucene<ConstantScoreQuery>(newLucene<MultiTermQueryWrapperFilter>(query)));
         result->setBoost(query->getBoost());
         return result;
     }
-    
+
     ScoringBooleanQueryRewrite::~ScoringBooleanQueryRewrite()
     {
     }
-    
+
     QueryPtr ScoringBooleanQueryRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
     {
         FilteredTermEnumPtr enumerator(query->getEnum(reader));
@@ -190,11 +178,11 @@ namespace Lucene
         query->incTotalNumberOfTerms(count);
         return result;
     }
-    
+
     ConstantScoreBooleanQueryRewrite::~ConstantScoreBooleanQueryRewrite()
     {
     }
-    
+
     QueryPtr ConstantScoreBooleanQueryRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
     {
         // strip the scores off
@@ -202,44 +190,44 @@ namespace Lucene
         result->setBoost(query->getBoost());
         return result;
     }
-    
-    // Defaults derived from rough tests with a 20.0 million doc Wikipedia index.  With more than 350 terms 
+
+    // Defaults derived from rough tests with a 20.0 million doc Wikipedia index.  With more than 350 terms
     // in the query, the filter method is fastest
     const int32_t ConstantScoreAutoRewrite::DEFAULT_TERM_COUNT_CUTOFF = 350;
-    
+
     // If the query will hit more than 1 in 1000 of the docs in the index (0.1%), the filter method is fastest
     const double ConstantScoreAutoRewrite::DEFAULT_DOC_COUNT_PERCENT = 0.1;
-    
+
     ConstantScoreAutoRewrite::ConstantScoreAutoRewrite()
     {
         termCountCutoff = DEFAULT_TERM_COUNT_CUTOFF;
         docCountPercent = DEFAULT_DOC_COUNT_PERCENT;
     }
-    
+
     ConstantScoreAutoRewrite::~ConstantScoreAutoRewrite()
     {
     }
-    
+
     void ConstantScoreAutoRewrite::setTermCountCutoff(int32_t count)
     {
         termCountCutoff = count;
     }
-    
+
     int32_t ConstantScoreAutoRewrite::getTermCountCutoff()
     {
         return termCountCutoff;
     }
-    
+
     void ConstantScoreAutoRewrite::setDocCountPercent(double percent)
     {
         docCountPercent = percent;
     }
-    
+
     double ConstantScoreAutoRewrite::getDocCountPercent()
     {
         return docCountPercent;
     }
-    
+
     QueryPtr ConstantScoreAutoRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
     {
         // Get the enum and start visiting terms.  If we exhaust the enum before hitting either of the
@@ -248,7 +236,7 @@ namespace Lucene
         int32_t docCountCutoff = (int32_t)((docCountPercent / 100.0) * (double)reader->maxDoc());
         int32_t termCountLimit = std::min(BooleanQuery::getMaxClauseCount(), termCountCutoff);
         int32_t docVisitCount = 0;
-        
+
         FilteredTermEnumPtr enumerator(query->getEnum(reader));
         QueryPtr result;
         LuceneException finally;
@@ -264,7 +252,7 @@ namespace Lucene
                     // query/filter will load the TermInfo when it runs, and 2) the terms dict has a cache
                     docVisitCount += reader->docFreq(t);
                 }
-                
+
                 if (pendingTerms.size() >= termCountLimit || docVisitCount >= docCountCutoff)
                 {
                     // Too many terms -- make a filter.
@@ -274,7 +262,7 @@ namespace Lucene
                 }
                 else if (!enumerator->next())
                 {
-                    // Enumeration is done, and we hit a small enough number of terms and docs - 
+                    // Enumeration is done, and we hit a small enough number of terms and docs -
                     // just make a BooleanQuery, now
                     BooleanQueryPtr bq(newLucene<BooleanQuery>(true));
                     for (Collection<TermPtr>::iterator term = pendingTerms.begin(); term != pendingTerms.end(); ++ term)
@@ -298,13 +286,13 @@ namespace Lucene
         finally.throwException();
         return result;
     }
-    
+
     int32_t ConstantScoreAutoRewrite::hashCode()
     {
         int32_t prime = 1279;
         return (int32_t)(prime * termCountCutoff + MiscUtils::doubleToLongBits(docCountPercent));
     }
-    
+
     bool ConstantScoreAutoRewrite::equals(LuceneObjectPtr other)
     {
         if (RewriteMethod::equals(other))
@@ -313,29 +301,29 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        
+
         ConstantScoreAutoRewritePtr otherConstantScoreAutoRewrite(LuceneDynamicCast<ConstantScoreAutoRewrite>(other));
         if (!otherConstantScoreAutoRewrite)
             return false;
-        
+
         if (termCountCutoff != otherConstantScoreAutoRewrite->termCountCutoff)
             return false;
-        
+
         if (MiscUtils::doubleToLongBits(docCountPercent) != MiscUtils::doubleToLongBits(otherConstantScoreAutoRewrite->docCountPercent))
             return false;
-        
+
         return true;
     }
-    
+
     ConstantScoreAutoRewriteDefault::~ConstantScoreAutoRewriteDefault()
     {
     }
-    
+
     void ConstantScoreAutoRewriteDefault::setTermCountCutoff(int32_t count)
     {
         boost::throw_exception(UnsupportedOperationException(L"Please create a private instance"));
     }
-    
+
     void ConstantScoreAutoRewriteDefault::setDocCountPercent(double percent)
     {
         boost::throw_exception(UnsupportedOperationException(L"Please create a private instance"));

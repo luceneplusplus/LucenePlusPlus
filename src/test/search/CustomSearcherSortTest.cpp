@@ -35,12 +35,12 @@ public:
     {
         this->switcher = switcher;
     }
-    
+
     CustomSearcher(IndexReaderPtr r, int32_t switcher) : IndexSearcher(r)
     {
         this->switcher = switcher;
     }
-    
+
     virtual ~CustomSearcher()
     {
     }
@@ -56,7 +56,7 @@ public:
         bq->add(newLucene<TermQuery>(newLucene<Term>(L"mandant", StringUtils::toString(switcher))), BooleanClause::MUST);
         return IndexSearcher::search(bq, filter, n, sort);
     }
-    
+
     virtual TopDocsPtr search(QueryPtr query, FilterPtr filter, int32_t n)
     {
         BooleanQueryPtr bq = newLucene<BooleanQuery>();
@@ -75,7 +75,7 @@ public:
         index = getIndex();
         query = newLucene<TermQuery>(newLucene<Term>(L"content", L"test"));
     }
-    
+
     virtual ~CustomSearcherSortFixture()
     {
     }
@@ -84,7 +84,7 @@ protected:
     DirectoryPtr index;
     QueryPtr query;
     RandomPtr random;
-    
+
     static const int32_t INDEX_SIZE;
 
 public:
@@ -107,21 +107,21 @@ public:
         writer->close();
         return indexStore;
     }
-    
+
     String getLuceneDate()
     {
         DateTools::setDateOrder(DateTools::DATEORDER_DMY);
         boost::posix_time::ptime base = DateTools::parseDate(L"01/01/1980");
         return DateTools::timeToString(MiscUtils::getTimeMillis(base) + random->nextInt() - INT_MIN, DateTools::RESOLUTION_DAY);
     }
-    
+
     /// make sure the documents returned by the search match the expected list
     void matchHits(SearcherPtr searcher, SortPtr sort)
     {
         // make a query without sorting first
         Collection<ScoreDocPtr> hitsByRank = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
         checkHits(hitsByRank); // check for duplicates
-        Map<int32_t, int32_t> resultMap = Map<int32_t, int32_t>::newInstance();
+        SortedMap<int32_t, int32_t> resultMap = SortedMap<int32_t, int32_t>::newInstance();
         // store hits in Map - Map does not allow duplicates; existing entries are silently overwritten
         for (int32_t hitid = 0; hitid < hitsByRank.size(); ++hitid)
             resultMap.put(hitsByRank[hitid]->doc, hitid);
@@ -129,7 +129,7 @@ public:
         // now make a query using the sort criteria
         Collection<ScoreDocPtr> resultSort = searcher->search (query, FilterPtr(), 1000, sort)->scoreDocs;
         checkHits(resultSort); // check for duplicates
-        
+
         // besides the sorting both sets of hits must be identical
         for (int32_t hitid = 0; hitid < resultSort.size(); ++hitid)
         {
@@ -141,12 +141,12 @@ public:
         }
         BOOST_CHECK(resultMap.empty());
     }
-    
+
     void checkHits(Collection<ScoreDocPtr> hits)
     {
         if (hits)
         {
-            Map<int32_t, int32_t> idMap = Map<int32_t, int32_t>::newInstance();
+            SortedMap<int32_t, int32_t> idMap = SortedMap<int32_t, int32_t>::newInstance();
             for (int32_t docnum = 0; docnum < hits.size(); ++docnum)
             {
                 int32_t luceneId = hits[docnum]->doc;
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(testFieldSortCustomSearcher)
     matchHits(searcher, custSort);
 }
 
-/// Run the test using one CustomSearcher wrapped by a MultiSearcher. 
+/// Run the test using one CustomSearcher wrapped by a MultiSearcher.
 BOOST_AUTO_TEST_CASE(testFieldSortSingleSearcher)
 {
     SortPtr custSort = newLucene<Sort>(newCollection<SortFieldPtr>(newLucene<SortField>(L"publicationDate_", SortField::STRING), SortField::FIELD_SCORE()));
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(testFieldSortSingleSearcher)
     matchHits(searcher, custSort);
 }
 
-/// Run the test using two CustomSearcher instances. 
+/// Run the test using two CustomSearcher instances.
 BOOST_AUTO_TEST_CASE(testFieldSortMultiCustomSearcher)
 {
     SortPtr custSort = newLucene<Sort>(newCollection<SortFieldPtr>(newLucene<SortField>(L"publicationDate_", SortField::STRING), SortField::FIELD_SCORE()));

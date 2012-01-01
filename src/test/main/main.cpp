@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
     #ifdef LPP_USE_GC
     GC_INIT(); // todo: required?
     #endif
-    
+
     String testDir;
     uint64_t startTime = MiscUtils::currentTimeMillis();
 
@@ -57,9 +57,9 @@ int main(int argc, char* argv[])
             }
         }
     }
-    
+
     if (testDir.empty())
-    {  
+    {
         testDir = L"../../src/test/testfiles";
         if (!FileUtils::isDirectory(testDir))
         {
@@ -68,24 +68,24 @@ int main(int argc, char* argv[])
                 testDir = L"./src/test/testfiles";
         }
     }
-    
+
     if (!FileUtils::isDirectory(testDir))
     {
         std::wcout << L"Test directory not found. (override default by using --test_dir=\"./src/test/testfiles\")\n";
         return 1;
     }
-    
+
     setTestDir(testDir);
 
     int testMain = boost::unit_test::unit_test_main(init_unit_test_suite, argc, argv);
-    
+
     std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
-    
+
     #ifdef LPP_USE_GC
     GC_gcollect();
     GC_invoke_finalizers();
     boost::debug::detect_memory_leaks(false);
     #endif
-    
+
     return 0;
 }

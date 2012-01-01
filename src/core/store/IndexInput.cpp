@@ -87,7 +87,7 @@ namespace Lucene
     String IndexInput::readModifiedUTF8String()
     {
         int32_t length = readVInt();
-        CharArray chars(CharArray::newInstance(length));
+        Collection<CharArray> chars(Collection<CharArray>::newInstance(length));
         return String(chars.get(), readChars(chars.get(), 0, length));
     }
 

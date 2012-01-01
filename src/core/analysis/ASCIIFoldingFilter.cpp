@@ -13,22 +13,22 @@ namespace Lucene
 {
     ASCIIFoldingFilter::ASCIIFoldingFilter(TokenStreamPtr input) : TokenFilter(input)
     {
-        output = CharArray::newInstance(512);
+        output = Collection<CharArray>::newInstance(512);
         outputPos = 0;
         termAtt = addAttribute<TermAttribute>();
     }
-    
+
     ASCIIFoldingFilter::~ASCIIFoldingFilter()
     {
     }
-    
+
     bool ASCIIFoldingFilter::incrementToken()
     {
         if (input->incrementToken())
         {
             wchar_t* buffer = termAtt->termBufferArray();
             int32_t length = termAtt->termLength();
-            
+
             // If no characters actually require rewriting then we just return token as-is
             for (int32_t i = 0; i < length; ++i)
             {
@@ -45,21 +45,21 @@ namespace Lucene
         else
             return false;
     }
-    
+
     void ASCIIFoldingFilter::foldToASCII(const wchar_t* input, int32_t length)
     {
         // Worst-case length required
         int32_t maxSizeNeeded = 4 * length;
         if (output.size() < maxSizeNeeded)
             output.resize(MiscUtils::getNextSize(maxSizeNeeded));
-        
+
         outputPos = 0;
         wchar_t* output = this->output.get();
-        
+
         for (int32_t pos = 0; pos < length; ++pos)
         {
             wchar_t c = input[pos];
-            
+
             // Quick test: if it's not in range then just keep current character
             if (c < 0x0080)
                 output[outputPos++] = c;
@@ -158,7 +158,7 @@ namespace Lucene
                         output[outputPos++] = L'E';
                         break;
                     case 0xA734: // [LATIN CAPITAL LETTER AO]
-                        output[outputPos++] = L'A';                    
+                        output[outputPos++] = L'A';
                         output[outputPos++] = L'O';
                         break;
                     case 0xA736: // [LATIN CAPITAL LETTER AU]
@@ -232,7 +232,7 @@ namespace Lucene
                         output[outputPos++] = L'b';
                         break;
                     case 0x249D: // [PARENTHESIZED LATIN SMALL LETTER B]
-                        output[outputPos++] = L'(';                    
+                        output[outputPos++] = L'(';
                         output[outputPos++] = L'b';
                         output[outputPos++] = L')';
                         break;

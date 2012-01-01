@@ -39,15 +39,15 @@ template < class FSDirectory1, class FSDirectory2 >
 void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const String& fileName, const String& lockName)
 {
     BOOST_CHECK_NO_THROW(first.ensureOpen());
-    
+
     IndexOutputPtr out = first.createOutput(fileName);
     BOOST_CHECK_NO_THROW(out->writeByte(123));
     BOOST_CHECK_NO_THROW(out->close());
-    
+
     BOOST_CHECK_NO_THROW(first.ensureOpen());
     BOOST_CHECK(first.fileExists(fileName));
     BOOST_CHECK_EQUAL(first.fileLength(fileName), 1);
-    
+
     // don't test read on MMapDirectory, since it can't really be closed and will cause a failure to delete the file.
     if (!first.isMMapDirectory())
     {
@@ -55,32 +55,32 @@ void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const Stri
         BOOST_CHECK_EQUAL(input->readByte(), 123);
         BOOST_CHECK_NO_THROW(input->close());
     }
-    
+
     BOOST_CHECK_NO_THROW(second.ensureOpen());
     BOOST_CHECK(second.fileExists(fileName));
     BOOST_CHECK_EQUAL(second.fileLength(fileName), 1);
-    
+
     if (!second.isMMapDirectory())
     {
         IndexInputPtr input = second.openInput(fileName);
         BOOST_CHECK_EQUAL(input->readByte(), 123);
         BOOST_CHECK_NO_THROW(input->close());
     }
-    
+
     // delete with a different dir
     second.deleteFile(fileName);
-    
+
     BOOST_CHECK(!first.fileExists(fileName));
     BOOST_CHECK(!second.fileExists(fileName));
-    
+
     LockPtr lock = first.makeLock(lockName);
     BOOST_CHECK(lock->obtain());
-    
+
     LockPtr lock2 = first.makeLock(lockName);
     BOOST_CHECK_EXCEPTION(lock2->obtain(1), LuceneException, check_exception(LuceneException::LockObtainFailed));
-    
+
     lock->release();
-    
+
     lock = second.makeLock(lockName);
     BOOST_CHECK(lock->obtain());
     lock->release();
@@ -141,7 +141,7 @@ void checkDirectoryFilter(DirectoryPtr dir)
     String name(L"file");
     dir->createOutput(name)->close();
     BOOST_CHECK(dir->fileExists(name));
-    HashSet<String> dirFiles(dir->listAll());
+    SetString dirFiles(dir->listAll());
     BOOST_CHECK(dirFiles.contains(name));
 }
 

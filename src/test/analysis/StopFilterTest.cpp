@@ -36,7 +36,7 @@ static void doTestStopPositons(StopFilterPtr stpf, bool enableIcrements)
 BOOST_AUTO_TEST_CASE(testExactCase)
 {
     StringReaderPtr reader = newLucene<StringReader>(L"Now is The Time");
-    HashSet<String> stopWords = HashSet<String>::newInstance();
+    SetString stopWords = SetString::newInstance();
     stopWords.add(L"is");
     stopWords.add(L"the");
     stopWords.add(L"Time");
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(testExactCase)
 BOOST_AUTO_TEST_CASE(testIgnoreCase)
 {
     StringReaderPtr reader = newLucene<StringReader>(L"Now is The Time");
-    HashSet<String> stopWords = HashSet<String>::newInstance();
+    SetString stopWords = SetString::newInstance();
     stopWords.add(L"is");
     stopWords.add(L"the");
     stopWords.add(L"Time");
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(testStopPositons)
         if (i % 3 != 0)
             stopWords.add(w);
     }
-    HashSet<String> stopSet = HashSet<String>::newInstance(stopWords.begin(), stopWords.end());
+    SetString stopSet = SetString::newInstance(stopWords.begin(), stopWords.end());
     // with increments
     StringReaderPtr reader = newLucene<StringReader>(buf.str());
     StopFilterPtr stpf = newLucene<StopFilter>(false, newLucene<WhitespaceTokenizer>(reader), stopSet);
@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(testStopPositons)
         else
             stopWords1.add(stopWords[i]);
     }
-    HashSet<String> stopSet0 = HashSet<String>::newInstance(stopWords0.begin(), stopWords0.end());
-    HashSet<String> stopSet1 = HashSet<String>::newInstance(stopWords1.begin(), stopWords1.end());
+    SetString stopSet0 = SetString::newInstance(stopWords0.begin(), stopWords0.end());
+    SetString stopSet1 = SetString::newInstance(stopWords1.begin(), stopWords1.end());
     reader = newLucene<StringReader>(buf.str());
     StopFilterPtr stpf0 = newLucene<StopFilter>(false, newLucene<WhitespaceTokenizer>(reader), stopSet0); // first part of the set
     stpf0->setEnablePositionIncrements(true);

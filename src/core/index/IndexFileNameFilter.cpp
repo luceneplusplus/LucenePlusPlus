@@ -37,7 +37,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     bool IndexFileNameFilter::isCFSFile(const String& name)
     {
         String::size_type i = name.find_last_of(L'.');
@@ -51,15 +51,12 @@ namespace Lucene
         }
         return false;
     }
-    
+
     IndexFileNameFilterPtr IndexFileNameFilter::getFilter()
     {
         static IndexFileNameFilterPtr singleton;
         if (!singleton)
-        {
-            singleton = newLucene<IndexFileNameFilter>();
-            CycleCheck::addStatic(singleton);
-        }
+            singleton = newStaticLucene<IndexFileNameFilter>();
         return singleton;
     }
 }

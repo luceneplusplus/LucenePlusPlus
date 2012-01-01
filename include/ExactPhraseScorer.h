@@ -16,9 +16,9 @@ namespace Lucene
     public:
         ExactPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms);
         virtual ~ExactPhraseScorer();
-    
+
         LUCENE_CLASS(ExactPhraseScorer);
-    
+
     protected:
         virtual double phraseFreq();
     };

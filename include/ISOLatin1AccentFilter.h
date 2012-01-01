@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    /// A filter that replaces accented characters in the ISO Latin 1 character set (ISO-8859-1) by their unaccented 
+    /// A filter that replaces accented characters in the ISO Latin 1 character set (ISO-8859-1) by their unaccented
     /// equivalent. The case will not be altered.
     ///
     /// For instance, '&agrave;' will be replaced by 'a'.
@@ -23,17 +23,17 @@ namespace Lucene
     public:
         ISOLatin1AccentFilter(TokenStreamPtr input);
         virtual ~ISOLatin1AccentFilter();
-        
+
         LUCENE_CLASS(ISOLatin1AccentFilter);
-    
+
     protected:
-        CharArray output;
+        Collection<CharArray> output;
         int32_t outputPos;
         TermAttributePtr termAtt;
-    
+
     public:
         virtual bool incrementToken();
-        
+
         /// To replace accented characters in a String by unaccented equivalents.
         void removeAccents(const wchar_t* input, int32_t length);
     };

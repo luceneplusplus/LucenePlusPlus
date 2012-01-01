@@ -17,19 +17,19 @@ namespace Lucene
     {
     public:
         BrazilianStemFilter(TokenStreamPtr input);
-        BrazilianStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable);
-        
+        BrazilianStemFilter(TokenStreamPtr input, SetString exclusiontable);
+
         virtual ~BrazilianStemFilter();
-        
+
         LUCENE_CLASS(BrazilianStemFilter);
-    
+
     protected:
         /// {@link BrazilianStemmer} in use by this filter.
         BrazilianStemmerPtr stemmer;
-        
-        HashSet<String> exclusions;
+
+        SetString exclusions;
         TermAttributePtr termAtt;
-    
+
     public:
         virtual bool incrementToken();
     };

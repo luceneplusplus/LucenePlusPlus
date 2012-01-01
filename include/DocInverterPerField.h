@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    /// Holds state for inverting all occurrences of a single field in the document.  This class doesn't do 
+    /// Holds state for inverting all occurrences of a single field in the document.  This class doesn't do
     /// anything itself; instead, it forwards the tokens produced by analysis to its own consumer
     /// (InvertedDocConsumerPerField).  It also interacts with an endConsumer (InvertedDocEndConsumerPerField).
     class DocInverterPerField : public DocFieldConsumerPerField
@@ -19,23 +19,23 @@ namespace Lucene
     public:
         DocInverterPerField(DocInverterPerThreadPtr perThread, FieldInfoPtr fieldInfo);
         virtual ~DocInverterPerField();
-        
+
         LUCENE_CLASS(DocInverterPerField);
-            
+
     protected:
-        DocInverterPerThreadWeakPtr _perThread;
+        DocInverterPerThreadPtr perThread;
         FieldInfoPtr fieldInfo;
-        
+
     public:
         InvertedDocConsumerPerFieldPtr consumer;
         InvertedDocEndConsumerPerFieldPtr endConsumer;
         DocStatePtr docState;
         FieldInvertStatePtr fieldState;
-            
+
     public:
         virtual void initialize();
         virtual void abort();
-        
+
         /// Processes all occurrences of a single field
         virtual void processFields(Collection<FieldablePtr> fields, int32_t count);
     };

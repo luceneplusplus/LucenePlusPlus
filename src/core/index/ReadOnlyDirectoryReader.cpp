@@ -10,29 +10,29 @@
 
 namespace Lucene
 {
-    ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis, 
-                                                     IndexDeletionPolicyPtr deletionPolicy, int32_t termInfosIndexDivisor) : 
+    ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis,
+                                                     IndexDeletionPolicyPtr deletionPolicy, int32_t termInfosIndexDivisor) :
         DirectoryReader(directory, sis, deletionPolicy, true, termInfosIndexDivisor)
     {
     }
-    
-    ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(DirectoryPtr directory, SegmentInfosPtr infos, 
-                                                     Collection<SegmentReaderPtr> oldReaders, Collection<int32_t> oldStarts, 
-                                                     MapStringByteArray oldNormsCache, bool doClone, 
+
+    ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(DirectoryPtr directory, SegmentInfosPtr infos,
+                                                     Collection<SegmentReaderPtr> oldReaders, Collection<int32_t> oldStarts,
+                                                     MapStringByteArray oldNormsCache, bool doClone,
                                                      int32_t termInfosIndexDivisor) :
         DirectoryReader(directory, infos, oldReaders, oldStarts, oldNormsCache, true, doClone, termInfosIndexDivisor)
     {
     }
-    
+
     ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(IndexWriterPtr writer, SegmentInfosPtr infos, int32_t termInfosIndexDivisor) :
         DirectoryReader(writer, infos, termInfosIndexDivisor)
     {
     }
-    
+
     ReadOnlyDirectoryReader::~ReadOnlyDirectoryReader()
     {
     }
-    
+
     void ReadOnlyDirectoryReader::acquireWriteLock()
     {
         ReadOnlySegmentReader::noWrite();

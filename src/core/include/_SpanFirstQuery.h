@@ -16,13 +16,13 @@ namespace Lucene
     public:
         FirstSpans(SpanFirstQueryPtr query, SpansPtr spans);
         virtual ~FirstSpans();
-        
+
         LUCENE_CLASS(FirstSpans);
-    
+
     protected:
         SpanFirstQueryPtr query;
         SpansPtr spans;
-    
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);

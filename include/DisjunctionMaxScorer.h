@@ -20,40 +20,40 @@ namespace Lucene
     public:
         DisjunctionMaxScorer(double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers);
         virtual ~DisjunctionMaxScorer();
-    
+
         LUCENE_CLASS(DisjunctionMaxScorer);
-    
+
     protected:
         /// The scorers for subqueries that have remaining docs, kept as a min heap by number of next doc.
         Collection<ScorerPtr> subScorers;
         int32_t numScorers;
-        
+
         /// Multiplier applied to non-maximum-scoring subqueries for a document as they are summed into the result.
         double tieBreakerMultiplier;
-        
+
         int32_t doc;
-    
+
     public:
         virtual int32_t nextDoc();
         virtual int32_t docID();
-        
+
         /// Determine the current document score.  Initially invalid, until {@link #next()} is called the first time.
         /// @return the score of the current generated document
         virtual double score();
-        
+
         virtual int32_t advance(int32_t target);
-    
+
     protected:
         /// Recursively iterate all subScorers that generated last doc computing sum and max
         void scoreAll(int32_t root, int32_t size, int32_t doc, Collection<double> sum, Collection<double> max);
-        
+
         /// Organize subScorers into a min heap with scorers generating the earliest document on top.
         void heapify();
-        
-        /// The subtree of subScorers at root is a min heap except possibly for its root element.  Bubble the root 
+
+        /// The subtree of subScorers at root is a min heap except possibly for its root element.  Bubble the root
         /// down as required to make the subtree a heap.
         void heapAdjust(int32_t root);
-        
+
         /// Remove the root Scorer from subScorers and re-establish it as a heap
         void heapRemoveRoot();
     };

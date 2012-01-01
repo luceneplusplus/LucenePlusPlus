@@ -12,9 +12,9 @@
 
 namespace Lucene
 {
-    /// {@link Analyzer} for Brazilian Portuguese language. 
+    /// {@link Analyzer} for Brazilian Portuguese language.
     ///
-    /// Supports an external list of stopwords (words that will not be indexed at all) and an external list of 
+    /// Supports an external list of stopwords (words that will not be indexed at all) and an external list of
     /// exclusions (words that will not be stemmed, but indexed).
     ///
     /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
@@ -23,55 +23,55 @@ namespace Lucene
     public:
         /// Builds an analyzer with the default stop words: {@link #getDefaultStopSet}.
         BrazilianAnalyzer(LuceneVersion::Version matchVersion);
-        
+
         /// Builds an analyzer with the given stop words.
-        BrazilianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords);
-        
+        BrazilianAnalyzer(LuceneVersion::Version matchVersion, SetString stopwords);
+
         /// Builds an analyzer with the given stop words and stemming exclusion words.
-        BrazilianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> exclusions);
-        
+        BrazilianAnalyzer(LuceneVersion::Version matchVersion, SetString stopwords, SetString exclusions);
+
         virtual ~BrazilianAnalyzer();
-        
+
         LUCENE_CLASS(BrazilianAnalyzer);
-    
+
     protected:
         /// Contains the stopwords used with the {@link StopFilter}.
-        HashSet<String> stoptable;
-        
+        SetString stoptable;
+
         /// Contains words that should be indexed but not stemmed.
-        HashSet<String> excltable;
-        
+        SetString excltable;
+
         LuceneVersion::Version matchVersion;
-        
+
         /// List of typical Brazilian Portuguese stopwords.
         static const wchar_t* _BRAZILIAN_STOP_WORDS[];
-    
+
     public:
         /// Returns an unmodifiable instance of the default stop-words set.
-        static const HashSet<String> getDefaultStopSet();
-        
-        void setStemExclusionTable(HashSet<String> exclusions);
-        
+        static const SetString getDefaultStopSet();
+
+        void setStemExclusionTable(SetString exclusions);
+
         /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
         ///
         /// @return A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
         /// {@link LowerCaseFilter}, {@link StandardFilter}, {@link StopFilter}, and {@link BrazilianStemFilter}.
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        
-        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the 
+
+        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the
         /// provided {@link Reader}.
         ///
         /// @return A {@link TokenStream} built from an {@link BrazilianLetterTokenizer} filtered with
-        /// {@link LowerCaseFilter}, {@link StopFilter}, {@link BrazilianNormalizationFilter} and 
+        /// {@link LowerCaseFilter}, {@link StopFilter}, {@link BrazilianNormalizationFilter} and
         /// {@link BrazilianStemFilter}.
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
-    
+
     class LPPCONTRIBAPI BrazilianAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~BrazilianAnalyzerSavedStreams();
-        
+
         LUCENE_CLASS(BrazilianAnalyzerSavedStreams);
 
     public:

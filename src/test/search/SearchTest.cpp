@@ -45,9 +45,9 @@ static void doTestSearch(StringStream& out, bool useCompoundFile)
         writer->addDocument(doc);
     }
     writer->close();
-    
+
     SearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
-    
+
     Collection<String> queries = newCollection<String>(
         L"a b",
         L"\"a b\"",
@@ -63,9 +63,9 @@ static void doTestSearch(StringStream& out, bool useCompoundFile)
     {
         QueryPtr query = parser->parse(queries[j]);
         out << L"Query: " << query->toString(L"contents") << L"\n";
-        
+
         Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-        
+
         out << hits.size() << L" total results\n";
         for (int32_t i = 0; i < hits.size() && i < 10; ++i)
         {
@@ -80,10 +80,10 @@ BOOST_AUTO_TEST_CASE(testSearch)
 {
     StringStream multiFileOutput;
     doTestSearch(multiFileOutput, false);
-    
+
     StringStream singleFileOutput;
     doTestSearch(singleFileOutput, true);
-    
+
     BOOST_CHECK_EQUAL(multiFileOutput.str(), singleFileOutput.str());
 }
 

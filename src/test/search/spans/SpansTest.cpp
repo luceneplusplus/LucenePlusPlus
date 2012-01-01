@@ -59,7 +59,7 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
+
     virtual ~SpansFixture()
     {
         searcher->close();
@@ -68,7 +68,7 @@ public:
 protected:
     IndexSearcherPtr searcher;
     Collection<String> docFields;
-    
+
 public:
     static const String field;
 
@@ -77,34 +77,34 @@ public:
     {
         return newLucene<SpanTermQuery>(newLucene<Term>(field, text));
     }
-    
+
     void checkHits(QueryPtr query, Collection<int32_t> results)
     {
         CheckHits::checkHits(query, field, searcher, results);
     }
-    
+
     void orderedSlopTest3SQ(SpanQueryPtr q1, SpanQueryPtr q2, SpanQueryPtr q3, int32_t slop, Collection<int32_t> expectedDocs)
     {
         bool ordered = true;
         SpanNearQueryPtr snq = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(q1, q2, q3), slop, ordered);
         checkHits(snq, expectedDocs);
     }
-    
+
     void orderedSlopTest3(int32_t slop, Collection<int32_t> expectedDocs)
     {
         orderedSlopTest3SQ(makeSpanTermQuery(L"w1"), makeSpanTermQuery(L"w2"), makeSpanTermQuery(L"w3"), slop, expectedDocs);
     }
-    
+
     void orderedSlopTest3Equal(int32_t slop, Collection<int32_t> expectedDocs)
     {
         orderedSlopTest3SQ(makeSpanTermQuery(L"w1"), makeSpanTermQuery(L"w3"), makeSpanTermQuery(L"w3"), slop, expectedDocs);
     }
-    
+
     void orderedSlopTest1Equal(int32_t slop, Collection<int32_t> expectedDocs)
     {
         orderedSlopTest3SQ(makeSpanTermQuery(L"u2"), makeSpanTermQuery(L"u2"), makeSpanTermQuery(L"u1"), slop, expectedDocs);
     }
-    
+
     SpansPtr orSpans(Collection<String> terms)
     {
         Collection<SpanQueryPtr> sqa = Collection<SpanQueryPtr>::newInstance(terms.size());
@@ -112,7 +112,7 @@ public:
             sqa[i] = makeSpanTermQuery(terms[i]);
         return newLucene<SpanOrQuery>(sqa)->getSpans(searcher->getIndexReader());
     }
-    
+
     void checkNextSpans(SpansPtr spans, int32_t doc, int32_t start, int32_t end)
     {
         BOOST_CHECK(spans->next());
@@ -120,7 +120,7 @@ public:
         BOOST_CHECK_EQUAL(start, spans->start());
         BOOST_CHECK_EQUAL(end, spans->end());
     }
-    
+
     void addDoc(IndexWriterPtr writer, const String& id, const String& text)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -128,22 +128,22 @@ public:
         doc->add(newLucene<Field>(L"text", text, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
     }
-    
+
     int32_t hitCount(SearcherPtr searcher, const String& word)
     {
         return searcher->search(newLucene<TermQuery>(newLucene<Term>(L"text", word)), 10)->totalHits;
     }
-    
+
     SpanQueryPtr createSpan(const String& value)
     {
         return newLucene<SpanTermQuery>(newLucene<Term>(L"text", value));
     }
-    
+
     SpanQueryPtr createSpan(int32_t slop, bool ordered, Collection<SpanQueryPtr> clauses)
     {
         return newLucene<SpanNearQuery>(clauses, slop, ordered);
     }
-    
+
     SpanQueryPtr createSpan(int32_t slop, bool ordered, const String& term1, const String& term2)
     {
         return createSpan(slop, ordered, newCollection<SpanQueryPtr>(createSpan(term1), createSpan(term2)));
@@ -258,17 +258,17 @@ BOOST_AUTO_TEST_CASE(testSpanNearUnOrdered)
     BOOST_CHECK_EQUAL(5, spans->doc());
     BOOST_CHECK_EQUAL(2, spans->start());
     BOOST_CHECK_EQUAL(4, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(8, spans->doc());
     BOOST_CHECK_EQUAL(2, spans->start());
     BOOST_CHECK_EQUAL(4, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(9, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
     BOOST_CHECK_EQUAL(2, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(10, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(testSpanNearUnOrdered)
     SpanNearQueryPtr u1u2 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(makeSpanTermQuery(L"u1"), makeSpanTermQuery(L"u2")), 0, false);
     snq = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(u1u2, makeSpanTermQuery(L"u2")), 1, false);
     spans = snq->getSpans(searcher->getIndexReader());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(4, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
@@ -288,42 +288,42 @@ BOOST_AUTO_TEST_CASE(testSpanNearUnOrdered)
     BOOST_CHECK_EQUAL(4, spans->doc());
     BOOST_CHECK_EQUAL(1, spans->start());
     BOOST_CHECK_EQUAL(3, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(5, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
     BOOST_CHECK_EQUAL(4, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(5, spans->doc());
     BOOST_CHECK_EQUAL(2, spans->start());
     BOOST_CHECK_EQUAL(4, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(8, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
     BOOST_CHECK_EQUAL(4, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(8, spans->doc());
     BOOST_CHECK_EQUAL(2, spans->start());
     BOOST_CHECK_EQUAL(4, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(9, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
     BOOST_CHECK_EQUAL(2, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(9, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
     BOOST_CHECK_EQUAL(4, spans->end());
-    
+
     BOOST_CHECK(spans->next());
     BOOST_CHECK_EQUAL(10, spans->doc());
     BOOST_CHECK_EQUAL(0, spans->start());
     BOOST_CHECK_EQUAL(2, spans->end());
-    
+
     BOOST_CHECK(!spans->next());
 }
 
@@ -409,14 +409,14 @@ namespace TestSpanScorerZeroSloppyFreq
         virtual ~SloppyFreqSimilarity()
         {
         }
-    
+
     public:
         virtual double sloppyFreq(int32_t distance)
         {
             return 0.0;
         }
     };
-    
+
     class SloppyFreqSpanNearQuery : public SpanNearQuery
     {
     public:
@@ -424,14 +424,14 @@ namespace TestSpanScorerZeroSloppyFreq
         {
             this->sim = sim;
         }
-        
+
         virtual ~SloppyFreqSpanNearQuery()
         {
         }
-    
+
     protected:
         SimilarityPtr sim;
-        
+
     public:
         virtual SimilarityPtr getSimilarity(SearcherPtr searcher)
         {
@@ -444,7 +444,7 @@ BOOST_AUTO_TEST_CASE(testSpanScorerZeroSloppyFreq)
 {
     bool ordered = true;
     int32_t slop = 1;
-    
+
     SimilarityPtr sim = newLucene<TestSpanScorerZeroSloppyFreq::SloppyFreqSimilarity>();
     SpanNearQueryPtr snq = newLucene<TestSpanScorerZeroSloppyFreq::SloppyFreqSpanNearQuery>(sim, newCollection<SpanQueryPtr>(makeSpanTermQuery(L"t1"), makeSpanTermQuery(L"t2")), slop, ordered);
     ScorerPtr spanScorer = snq->weight(searcher)->scorer(searcher->getIndexReader(), true, false);
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE(testSpanScorerZeroSloppyFreq)
 BOOST_AUTO_TEST_CASE(testNPESpanQuery)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
-    IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, HashSet<String>::newInstance()), IndexWriter::MaxFieldLengthLIMITED);
+    IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, SetString::newInstance()), IndexWriter::MaxFieldLengthLIMITED);
 
     // Add documents
     addDoc(writer, L"1", L"the big dogs went running to the market");

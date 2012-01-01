@@ -26,11 +26,11 @@ public:
     {
         indexDir = FileUtils::joinPath(getTempDir(), L"testIndex");
         FileUtils::removeDirectory(indexDir);
-        
+
         // use a simple FSDir here, to be sure to have SimpleFSInputs
         dir = newLucene<SimpleFSDirectory>(indexDir);
     }
-    
+
     virtual ~CompoundFileTestFixture()
     {
         dir->close();
@@ -51,7 +51,7 @@ public:
             os->writeByte((uint8_t)r->nextInt(256));
         os->close();
     }
-    
+
     void createSequenceFile(DirectoryPtr dir, const String& name, uint8_t start, int32_t size)
     {
         IndexOutputPtr os = dir->createOutput(name);
@@ -62,14 +62,14 @@ public:
         }
         os->close();
     }
-    
+
     void checkSameStreams(IndexInputPtr expected, IndexInputPtr test)
     {
         BOOST_CHECK(expected);
         BOOST_CHECK(test);
         BOOST_CHECK_EQUAL(expected->length(), test->length());
         BOOST_CHECK_EQUAL(expected->getFilePointer(), test->getFilePointer());
-        
+
         ByteArray expectedBuffer(ByteArray::newInstance(512));
         ByteArray testBuffer(ByteArray::newInstance(expectedBuffer.size()));
 
@@ -83,7 +83,7 @@ public:
             remainder -= readLen;
         }
     }
-    
+
     void checkSameStreams(IndexInputPtr expected, IndexInputPtr actual, int64_t seekTo)
     {
         if (seekTo >= 0 && seekTo < (int64_t)expected->length())
@@ -93,7 +93,7 @@ public:
             checkSameStreams(expected, actual);
         }
     }
-    
+
     void checkSameSeekBehavior(IndexInputPtr expected, IndexInputPtr actual)
     {
         // seek to 0
@@ -120,7 +120,7 @@ public:
         point = expected->length() + 1;
         checkSameStreams(expected, actual, point);
     }
-    
+
     void checkEqualArrays(ByteArray expected, ByteArray test, int32_t start, int32_t length)
     {
         BOOST_CHECK(expected);
@@ -128,9 +128,9 @@ public:
         for (int32_t i = start; i < length; ++i)
             BOOST_CHECK_EQUAL(expected[i], test[i]);
     }
-    
-    /// Setup a larger compound file with a number of components, each of which is a sequential file (so that we can 
-    /// easily tell that we are reading in the right byte). The methods sets up 20 files - f0 to f19, the size of each 
+
+    /// Setup a larger compound file with a number of components, each of which is a sequential file (so that we can
+    /// easily tell that we are reading in the right byte). The methods sets up 20 files - f0 to f19, the size of each
     /// file is 1000 bytes.
     void setUpLarger()
     {
@@ -142,7 +142,7 @@ public:
         }
         cw->close();
     }
-    
+
     bool isCSIndexInputOpen(IndexInputPtr is)
     {
         if (MiscUtils::typeOf<CSIndexInput>(is))
@@ -153,7 +153,7 @@ public:
         else
             return false;
     }
-    
+
     bool isSimpleFSIndexInputOpen(IndexInputPtr is)
     {
         if (MiscUtils::typeOf<SimpleFSIndexInput>(is))
@@ -223,8 +223,8 @@ BOOST_AUTO_TEST_CASE(testTwoFiles)
     csr->close();
 }
 
-/// This test creates a compound file based on a large number of files of various length. The file content is generated randomly. 
-/// The sizes range from 0 to 1Mb.  Some of the sizes are selected to test the buffering logic in the file reading code. 
+/// This test creates a compound file based on a large number of files of various length. The file content is generated randomly.
+/// The sizes range from 0 to 1Mb.  Some of the sizes are selected to test the buffering logic in the file reading code.
 /// For this the chunk variable is set to the length of the buffer used internally by the compound file logic.
 BOOST_AUTO_TEST_CASE(testRandomFiles)
 {
@@ -250,17 +250,17 @@ BOOST_AUTO_TEST_CASE(testRandomFiles)
 
     // Now test
     CompoundFileWriterPtr csw = newLucene<CompoundFileWriter>(dir, L"test.cfs");
-    
+
     Collection<String> data(Collection<String>::newInstance());
     data.add(L".zero");    data.add(L".one"); data.add(L".ten");
     data.add(L".hundred"); data.add(L".big1"); data.add(L".big2");
     data.add(L".big3"); data.add(L".big4"); data.add(L".big5");
     data.add(L".big6"); data.add(L".big7");
-    
+
     for (Collection<String>::iterator name = data.begin(); name != data.end(); ++name)
         csw->addFile(segment + *name);
     csw->close();
-    
+
     CompoundFileReaderPtr csr = newLucene<CompoundFileReader>(dir, L"test.cfs");
     for (Collection<String>::iterator name = data.begin(); name != data.end(); ++name)
     {
@@ -295,14 +295,14 @@ BOOST_AUTO_TEST_CASE(testReadAfterClose)
 
     // ERROR: this call should fail, but succeeds for some reason as well
     in->seek(1099);
-    
+
     BOOST_CHECK_EXCEPTION(in->readByte(), LuceneException, check_exception(LuceneException::IO));
 }
 
 BOOST_AUTO_TEST_CASE(testClonedStreamsClosing)
 {
     setUpLarger();
-    
+
     CompoundFileReaderPtr cr = newLucene<CompoundFileReader>(dir, L"f.comp");
 
     // basic clone
@@ -326,7 +326,7 @@ BOOST_AUTO_TEST_CASE(testClonedStreamsClosing)
     one->close();
     BOOST_CHECK(isCSIndexInputOpen(one)); // Only close when cr is closed
 
-    // The following should really fail since we couldn't expect to access a file once close has been called 
+    // The following should really fail since we couldn't expect to access a file once close has been called
     // on it (regardless of buffering and/or clone magic)
     expected->seek(0);
     two->seek(0);
@@ -441,7 +441,7 @@ BOOST_AUTO_TEST_CASE(testRandomAccessClones)
 
     IndexInputPtr a1 = LuceneDynamicCast<IndexInput>(e1->clone());
     IndexInputPtr a2 = LuceneDynamicCast<IndexInput>(e2->clone());
-    
+
     // Seek the first pair
     e1->seek(100);
     a1->seek(100);
@@ -513,10 +513,10 @@ BOOST_AUTO_TEST_CASE(testFileNotFound)
 
     CompoundFileReaderPtr cr = newLucene<CompoundFileReader>(dir, L"f.comp");
     IndexInputPtr e1;
-    
+
     // Open two files
     BOOST_CHECK_EXCEPTION(e1 = cr->openInput(L"bogus"), LuceneException, check_exception(LuceneException::IO));
-    
+
     cr->close();
 }
 
@@ -530,13 +530,13 @@ BOOST_AUTO_TEST_CASE(testReadPastEOF)
     ByteArray b(ByteArray::newInstance(100));
     is->readBytes(b.get(), 0, 10);
     uint8_t test = 0;
-    
+
     BOOST_CHECK_EXCEPTION(test = is->readByte(), LuceneException, check_exception(LuceneException::IO));
-    
+
     is->seek(is->length() - 10);
-    
+
     BOOST_CHECK_EXCEPTION(is->readBytes(b.get(), 0, 50), LuceneException, check_exception(LuceneException::IO));
-    
+
     is->close();
     cr->close();
 }
@@ -546,16 +546,16 @@ BOOST_AUTO_TEST_CASE(testLargeWrites)
 {
     IndexOutputPtr os = dir->createOutput(L"testBufferStart.txt");
     RandomPtr r = newLucene<Random>();
-    
+
     ByteArray largeBuf(ByteArray::newInstance(2048));
     for (int32_t i = 0; i < largeBuf.size(); ++i)
         largeBuf[i] = (uint8_t)r->nextInt(256);
-    
+
     int64_t currentPos = os->getFilePointer();
     os->writeBytes(largeBuf.get(), largeBuf.size());
-    
+
     BOOST_CHECK_EQUAL(currentPos + largeBuf.size(), os->getFilePointer());
-    
+
     os->close();
 }
 

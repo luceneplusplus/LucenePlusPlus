@@ -12,26 +12,26 @@
 
 namespace Lucene
 {
-    DocFieldConsumersPerThread::DocFieldConsumersPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, 
-                                                           DocFieldConsumersPtr parent, 
+    DocFieldConsumersPerThread::DocFieldConsumersPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread,
+                                                           DocFieldConsumersPtr parent,
                                                            DocFieldConsumerPerThreadPtr one, DocFieldConsumerPerThreadPtr two)
     {
-        this->_parent = parent;
+        this->parent = parent;
         this->one = one;
         this->two = two;
         docState = docFieldProcessorPerThread->docState;
     }
-    
+
     DocFieldConsumersPerThread::~DocFieldConsumersPerThread()
     {
     }
-    
+
     void DocFieldConsumersPerThread::startDocument()
     {
         one->startDocument();
         two->startDocument();
     }
-    
+
     void DocFieldConsumersPerThread::abort()
     {
         LuceneException finally;
@@ -53,7 +53,7 @@ namespace Lucene
         }
         finally.throwException();
     }
-    
+
     DocWriterPtr DocFieldConsumersPerThread::finishDocument()
     {
         DocWriterPtr oneDoc(one->finishDocument());
@@ -64,7 +64,7 @@ namespace Lucene
             return oneDoc;
         else
         {
-            DocFieldConsumersPerDocPtr both(DocFieldConsumersPtr(_parent)->getPerDoc());
+            DocFieldConsumersPerDocPtr both(parent->getPerDoc());
             both->docID = docState->docID;
             BOOST_ASSERT(oneDoc->docID == docState->docID);
             BOOST_ASSERT(twoDoc->docID == docState->docID);
@@ -73,7 +73,7 @@ namespace Lucene
             return both;
         }
     }
-    
+
     DocFieldConsumerPerFieldPtr DocFieldConsumersPerThread::addField(FieldInfoPtr fi)
     {
         return newLucene<DocFieldConsumersPerField>(LuceneThis(), one->addField(fi), two->addField(fi));

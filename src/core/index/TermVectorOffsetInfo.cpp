@@ -14,39 +14,39 @@ namespace Lucene
         this->endOffset = endOffset;
         this->startOffset = startOffset;
     }
-    
+
     TermVectorOffsetInfo::~TermVectorOffsetInfo()
     {
     }
-    
+
     const Collection<TermVectorOffsetInfoPtr> TermVectorOffsetInfo::EMPTY_OFFSET_INFO()
     {
         static Collection<TermVectorOffsetInfoPtr> _EMPTY_OFFSET_INFO;
         if (!_EMPTY_OFFSET_INFO)
-            _EMPTY_OFFSET_INFO = Collection<TermVectorOffsetInfoPtr>::newInstance();
+            _EMPTY_OFFSET_INFO = Collection<TermVectorOffsetInfoPtr>::newStaticInstance();
         return _EMPTY_OFFSET_INFO;
     }
-    
+
     int32_t TermVectorOffsetInfo::getEndOffset()
     {
         return endOffset;
     }
-    
+
     void TermVectorOffsetInfo::setEndOffset(int32_t endOffset)
     {
         this->endOffset = endOffset;
     }
-    
+
     int32_t TermVectorOffsetInfo::getStartOffset()
     {
         return startOffset;
     }
-    
+
     void TermVectorOffsetInfo::setStartOffset(int32_t endOffset)
     {
         this->startOffset = startOffset;
     }
-    
+
     bool TermVectorOffsetInfo::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -56,7 +56,7 @@ namespace Lucene
             return false;
         return (endOffset == otherTermVector->endOffset && startOffset == otherTermVector->startOffset);
     }
-    
+
     int32_t TermVectorOffsetInfo::hashCode()
     {
         int32_t result = startOffset;

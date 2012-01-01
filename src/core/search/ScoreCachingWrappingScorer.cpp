@@ -13,26 +13,25 @@ namespace Lucene
     {
         this->curDoc = -1;
         this->curScore = 0.0;
-        this->_scorer = scorer;
+        this->scorer = scorer;
     }
-    
+
     ScoreCachingWrappingScorer::~ScoreCachingWrappingScorer()
     {
     }
-    
+
     bool ScoreCachingWrappingScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
-        return ScorerPtr(_scorer)->score(collector, max, firstDocID);
+        return scorer->score(collector, max, firstDocID);
     }
-    
+
     SimilarityPtr ScoreCachingWrappingScorer::getSimilarity()
     {
-        return ScorerPtr(_scorer)->getSimilarity();
+        return scorer->getSimilarity();
     }
-        
+
     double ScoreCachingWrappingScorer::score()
     {
-        ScorerPtr scorer(_scorer);
         int32_t doc = scorer->docID();
         if (doc != curDoc)
         {
@@ -41,24 +40,24 @@ namespace Lucene
         }
         return curScore;
     }
-        
+
     int32_t ScoreCachingWrappingScorer::docID()
     {
-        return ScorerPtr(_scorer)->docID();
+        return scorer->docID();
     }
-    
+
     int32_t ScoreCachingWrappingScorer::nextDoc()
     {
-        return ScorerPtr(_scorer)->nextDoc();
+        return scorer->nextDoc();
     }
-    
+
     void ScoreCachingWrappingScorer::score(CollectorPtr collector)
     {
-        ScorerPtr(_scorer)->score(collector);
+        scorer->score(collector);
     }
-    
+
     int32_t ScoreCachingWrappingScorer::advance(int32_t target)
     {
-        return ScorerPtr(_scorer)->advance(target);
+        return scorer->advance(target);
     }
 }

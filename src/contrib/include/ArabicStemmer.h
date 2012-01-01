@@ -25,9 +25,9 @@ namespace Lucene
     {
     public:
         virtual ~ArabicStemmer();
-        
+
         LUCENE_CLASS(ArabicStemmer);
-    
+
     public:
         static const wchar_t ALEF;
         static const wchar_t BEH;
@@ -40,43 +40,43 @@ namespace Lucene
         static const wchar_t HEH;
         static const wchar_t WAW;
         static const wchar_t YEH;
-    
+
     public:
         static const Collection<String> prefixes();
         static const Collection<String> suffixes();
-        
+
         /// Stem an input buffer of Arabic text.
         /// @param s input buffer
         /// @param len length of input buffer
         /// @return length of input buffer after normalization
         int32_t stem(wchar_t* s, int32_t len);
-        
+
         /// Stem a prefix off an Arabic word.
         /// @param s input buffer
         /// @param len length of input buffer
         /// @return new length of input buffer after stemming.
         int32_t stemPrefix(wchar_t* s, int32_t len);
-        
+
         /// Stem suffix(es) off an Arabic word.
         /// @param s input buffer
         /// @param len length of input buffer
         /// @return new length of input buffer after stemming
         int32_t stemSuffix(wchar_t* s, int32_t len);
-        
+
         /// Returns true if the prefix matches and can be stemmed
         /// @param s input buffer
         /// @param len length of input buffer
         /// @param prefix prefix to check
         /// @return true if the prefix matches and can be stemmed
         bool startsWith(wchar_t* s, int32_t len, const String& prefix);
-        
+
         /// Returns true if the suffix matches and can be stemmed
         /// @param s input buffer
         /// @param len length of input buffer
         /// @param suffix suffix to check
         /// @return true if the suffix matches and can be stemmed
         bool endsWith(wchar_t* s, int32_t len, const String& suffix);
-    
+
     protected:
         /// Delete n characters in-place
         /// @param s Input Buffer
@@ -85,7 +85,7 @@ namespace Lucene
         /// @param chars number of characters to delete
         /// @return length of input buffer after deletion
         int32_t deleteChars(wchar_t* s, int32_t pos, int32_t len, int32_t chars);
-        
+
         /// Delete a character in-place
         /// @param s Input Buffer
         /// @param pos Position of character to delete

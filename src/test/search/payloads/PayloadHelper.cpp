@@ -23,9 +23,9 @@ namespace Lucene
     const String PayloadHelper::NO_PAYLOAD_FIELD = L"noPayloadField";
     const String PayloadHelper::MULTI_FIELD = L"multiField";
     const String PayloadHelper::FIELD = L"field";
-    
+
     DECLARE_LUCENE_PTR(PayloadHelperAnalyzer)
-        
+
     class PayloadHelperFilter : public TokenFilter
     {
     public:
@@ -35,11 +35,11 @@ namespace Lucene
             this->fieldName = fieldName;
             this->payloadAtt = addAttribute<PayloadAttribute>();
         }
-        
+
         virtual ~PayloadHelperFilter()
         {
         }
-        
+
         LUCENE_CLASS(PayloadHelperFilter);
 
     public:
@@ -74,7 +74,7 @@ namespace Lucene
         virtual ~PayloadHelperAnalyzer()
         {
         }
-        
+
         LUCENE_CLASS(PayloadHelperAnalyzer);
 
     public:
@@ -85,44 +85,44 @@ namespace Lucene
             return result;
         }
     };
-    
+
     PayloadHelper::~PayloadHelper()
     {
     }
-    
+
     const ByteArray PayloadHelper::payloadField()
     {
         static ByteArray _payloadField;
         if (!_payloadField)
         {
-            _payloadField = ByteArray::newInstance(1);
+            _payloadField = ByteArray::newStaticInstance(1);
             _payloadField[0] = 1;
         }
         return _payloadField;
     }
-    
+
     const ByteArray PayloadHelper::payloadMultiField1()
     {
         static ByteArray _payloadMultiField1;
         if (!_payloadMultiField1)
         {
-            _payloadMultiField1 = ByteArray::newInstance(1);
+            _payloadMultiField1 = ByteArray::newStaticInstance(1);
             _payloadMultiField1[0] = 2;
         }
         return _payloadMultiField1;
     }
-    
+
     const ByteArray PayloadHelper::payloadMultiField2()
     {
         static ByteArray _payloadMultiField2;
         if (!_payloadMultiField2)
         {
-            _payloadMultiField2 = ByteArray::newInstance(1);
+            _payloadMultiField2 = ByteArray::newStaticInstance(1);
             _payloadMultiField2[0] = 4;
         }
         return _payloadMultiField2;
     }
-    
+
     IndexSearcherPtr PayloadHelper::setUp(SimilarityPtr similarity, int32_t numDocs)
     {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();

@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(testStopwords)
 BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 {
     AnalyzerPtr a = newLucene<SnowballAnalyzer>(LuceneVersion::LUCENE_CURRENT, L"english");
-    
+
     checkAnalyzesToReuse(a, L"he abhorred accents", newCollection<String>(L"he", L"abhor", L"accent"));
     checkAnalyzesToReuse(a, L"she abhorred him", newCollection<String>(L"she", L"abhor", L"him"));
 }

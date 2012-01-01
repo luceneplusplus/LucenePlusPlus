@@ -11,21 +11,21 @@ namespace Lucene
 {
     DocFieldConsumersPerField::DocFieldConsumersPerField(DocFieldConsumersPerThreadPtr perThread, DocFieldConsumerPerFieldPtr one, DocFieldConsumerPerFieldPtr two)
     {
-        this->_perThread = perThread;
+        this->perThread = perThread;
         this->one = one;
         this->two = two;
     }
-    
+
     DocFieldConsumersPerField::~DocFieldConsumersPerField()
     {
     }
-    
+
     void DocFieldConsumersPerField::processFields(Collection<FieldablePtr> fields, int32_t count)
     {
         one->processFields(fields, count);
         two->processFields(fields, count);
     }
-    
+
     void DocFieldConsumersPerField::abort()
     {
         LuceneException finally;

@@ -23,54 +23,54 @@ namespace Lucene
         this->closeDir = false;
         setLockFactory(newLucene<SingleInstanceLockFactory>());
     }
-    
+
     RAMDirectory::RAMDirectory(DirectoryPtr dir)
     {
         this->fileMap = MapStringRAMFile::newInstance();
         this->_sizeInBytes = 0;
         this->copyDirectory = true;
-        this->_dirSource = dir;
+        this->dirSource = dir;
         this->closeDir = false;
         setLockFactory(newLucene<SingleInstanceLockFactory>());
     }
-    
+
     RAMDirectory::RAMDirectory(DirectoryPtr dir, bool closeDir)
     {
         this->fileMap = MapStringRAMFile::newInstance();
         this->_sizeInBytes = 0;
         this->copyDirectory = true;
-        this->_dirSource = dir;
+        this->dirSource = dir;
         this->closeDir = closeDir;
         setLockFactory(newLucene<SingleInstanceLockFactory>());
     }
-    
+
     RAMDirectory::~RAMDirectory()
     {
     }
-    
+
     void RAMDirectory::initialize()
     {
         if (copyDirectory)
-            Directory::copy(DirectoryPtr(_dirSource), LuceneThis(), closeDir);
+            Directory::copy(dirSource, LuceneThis(), closeDir);
     }
-    
-    HashSet<String> RAMDirectory::listAll()
+
+    SetString RAMDirectory::listAll()
     {
         SyncLock syncLock(this);
         ensureOpen();
-        HashSet<String> result(HashSet<String>::newInstance());
+        SetString result(SetString::newInstance());
         for (MapStringRAMFile::iterator fileName = fileMap.begin(); fileName != fileMap.end(); ++fileName)
             result.add(fileName->first);
         return result;
     }
-    
+
     bool RAMDirectory::fileExists(const String& name)
     {
         ensureOpen();
         SyncLock syncLock(this);
         return fileMap.contains(name);
     }
-    
+
     uint64_t RAMDirectory::fileModified(const String& name)
     {
         ensureOpen();
@@ -80,7 +80,7 @@ namespace Lucene
             boost::throw_exception(FileNotFoundException(name));
         return ramFile->second->getLastModified();
     }
-    
+
     void RAMDirectory::touchFile(const String& name)
     {
         ensureOpen();
@@ -97,7 +97,7 @@ namespace Lucene
             LuceneThread::threadSleep(1);
         file->setLastModified(MiscUtils::currentTimeMillis());
     }
-    
+
     int64_t RAMDirectory::fileLength(const String& name)
     {
         ensureOpen();
@@ -107,14 +107,14 @@ namespace Lucene
             boost::throw_exception(FileNotFoundException(name));
         return ramFile->second->getLength();
     }
-    
+
     int64_t RAMDirectory::sizeInBytes()
     {
         SyncLock syncLock(this);
         ensureOpen();
         return _sizeInBytes;
     }
-    
+
     void RAMDirectory::deleteFile(const String& name)
     {
         SyncLock syncLock(this);
@@ -123,9 +123,9 @@ namespace Lucene
         if (ramFile == fileMap.end())
             boost::throw_exception(FileNotFoundException(name));
         _sizeInBytes -= ramFile->second->getSizeInBytes();
-        fileMap.remove(name);        
+        fileMap.remove(name);
     }
-    
+
     IndexOutputPtr RAMDirectory::createOutput(const String& name)
     {
         ensureOpen();
@@ -142,7 +142,7 @@ namespace Lucene
         }
         return newLucene<RAMOutputStream>(file);
     }
-    
+
     IndexInputPtr RAMDirectory::openInput(const String& name)
     {
         ensureOpen();
@@ -156,7 +156,7 @@ namespace Lucene
         }
         return newLucene<RAMInputStream>(file);
     }
-    
+
     void RAMDirectory::close()
     {
         isOpen = false;

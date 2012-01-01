@@ -26,17 +26,17 @@
 namespace Lucene
 {
     const double MemoryIndex::docBoost = 1.0;
-    
+
     MemoryIndex::MemoryIndex(bool storeOffsets)
     {
         stride = storeOffsets ? 3 : 1;
         fields = MapStringMemoryIndexInfo::newInstance();
     }
-    
+
     MemoryIndex::~MemoryIndex()
     {
     }
-    
+
     void MemoryIndex::addField(const String& fieldName, const String& text, AnalyzerPtr analyzer)
     {
         if (fieldName.empty())
@@ -45,11 +45,11 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"text must not be empty"));
         if (!analyzer)
             boost::throw_exception(IllegalArgumentException(L"analyzer must not be null"));
-        
+
         TokenStreamPtr stream(analyzer->tokenStream(fieldName, newLucene<StringReader>(text)));
         addField(fieldName, stream);
     }
-    
+
     void MemoryIndex::addField(const String& fieldName, TokenStreamPtr stream, double boost)
     {
         LuceneException finally;
@@ -63,7 +63,7 @@ namespace Lucene
                 boost::throw_exception(IllegalArgumentException(L"boost factor must be greater than 0.0"));
             if (fields.contains(fieldName))
                 boost::throw_exception(IllegalArgumentException(L"field must not be added more than once"));
-            
+
             MapStringIntCollection terms(MapStringIntCollection::newInstance());
             int32_t numTokens = 0;
             int32_t numOverlapTokens = 0;
@@ -72,7 +72,7 @@ namespace Lucene
             TermAttributePtr termAtt(stream->addAttribute<TermAttribute>());
             PositionIncrementAttributePtr posIncrAttribute(stream->addAttribute<PositionIncrementAttribute>());
             OffsetAttributePtr offsetAtt(stream->addAttribute<OffsetAttribute>());
-            
+
             stream->reset();
             while (stream->incrementToken())
             {
@@ -100,7 +100,7 @@ namespace Lucene
                 }
             }
             stream->end();
-            
+
             // ensure infos.numTokens > 0 invariant; needed for correct operation of terms()
             if (numTokens > 0)
             {
@@ -129,7 +129,7 @@ namespace Lucene
         }
         finally.throwException();
     }
-    
+
     IndexSearcherPtr MemoryIndex::createSearcher()
     {
         MemoryIndexReaderPtr reader(newLucene<MemoryIndexReader>(LuceneThis()));
@@ -137,12 +137,12 @@ namespace Lucene
         reader->setSearcher(searcher); // to later get hold of searcher.getSimilarity()
         return searcher;
     }
-    
+
     double MemoryIndex::search(QueryPtr query)
     {
         if (!query)
             boost::throw_exception(IllegalArgumentException(L"query must not be null"));
-        
+
         SearcherPtr searcher(createSearcher());
         LuceneException finally;
         try
@@ -164,12 +164,12 @@ namespace Lucene
         finally.throwException();
         return 0; // silence static analyzers
     }
-    
+
     int32_t MemoryIndex::numPositions(Collection<int32_t> positions)
     {
         return (positions.size() / stride);
     }
-    
+
     struct lessField
     {
         inline bool operator()(const PairStringMemoryIndexInfo& first, const PairStringMemoryIndexInfo& second) const
@@ -177,16 +177,16 @@ namespace Lucene
             return (first.first < second.first);
         }
     };
-    
+
     void MemoryIndex::sortFields()
     {
         if (!sortedFields)
         {
-            sortedFields = CollectionStringMemoryIndexInfo::newInstance(fields.begin(), fields.end());
+            sortedFields = Collection<String>MemoryIndexInfo::newInstance(fields.begin(), fields.end());
             std::sort(sortedFields.begin(), sortedFields.end(), lessField());
         }
-    }    
-    
+    }
+
     MemoryIndexInfo::MemoryIndexInfo(MapStringIntCollection terms, int32_t numTokens, int32_t numOverlapTokens, double boost)
     {
         this->terms = terms;
@@ -194,11 +194,11 @@ namespace Lucene
         this->numOverlapTokens = numOverlapTokens;
         this->boost = boost;
     }
-    
+
     MemoryIndexInfo::~MemoryIndexInfo()
     {
     }
-    
+
     struct lessTerm
     {
         inline bool operator()(const PairStringIntCollection& first, const PairStringIntCollection& second) const
@@ -206,61 +206,58 @@ namespace Lucene
             return (first.first < second.first);
         }
     };
-    
+
     void MemoryIndexInfo::sortTerms()
     {
         if (!sortedTerms)
         {
-            sortedTerms = CollectionStringIntCollection::newInstance(terms.begin(), terms.end());
+            sortedTerms = Collection<String>IntCollection::newInstance(terms.begin(), terms.end());
             std::sort(sortedTerms.begin(), sortedTerms.end(), lessTerm());
         }
     }
-    
+
     Collection<int32_t> MemoryIndexInfo::getPositions(const String& term)
     {
         return terms.get(term);
     }
-    
+
     Collection<int32_t> MemoryIndexInfo::getPositions(int32_t pos)
     {
         return sortedTerms[pos].second;
     }
-    
+
     double MemoryIndexInfo::getBoost()
     {
         return boost;
     }
-    
+
     MemoryIndexReader::MemoryIndexReader(MemoryIndexPtr memoryIndex)
     {
         this->memoryIndex = memoryIndex;
     }
-    
+
     MemoryIndexReader::~MemoryIndexReader()
     {
     }
-    
+
     TermPtr MemoryIndexReader::MATCH_ALL_TERM()
     {
         static TermPtr _MATCH_ALL_TERM;
         if (!_MATCH_ALL_TERM)
-        {
-            _MATCH_ALL_TERM = newLucene<Term>(L"");
-            CycleCheck::addStatic(_MATCH_ALL_TERM);
-        }
+            _MATCH_ALL_TERM = newStaticLucene<Term>(L"");
         return _MATCH_ALL_TERM;
     }
-    
+
     MemoryIndexInfoPtr MemoryIndexReader::getInfo(const String& fieldName)
     {
         return memoryIndex->fields.get(fieldName);
     }
-    
+
     MemoryIndexInfoPtr MemoryIndexReader::getInfo(int32_t pos)
     {
         return memoryIndex->sortedFields[pos].second;
     }
-    
+
     int32_t MemoryIndexReader::docFreq(TermPtr t)
     {
         MemoryIndexInfoPtr info(getInfo(t->field()));
@@ -269,30 +266,30 @@ namespace Lucene
             freq = info->getPositions(t->text()) ? 1 : 0;
         return freq;
     }
-    
+
     TermEnumPtr MemoryIndexReader::terms()
     {
         return terms(MATCH_ALL_TERM());
     }
-    
+
     TermEnumPtr MemoryIndexReader::terms(TermPtr t)
     {
         int32_t i = 0; // index into info.sortedTerms
         int32_t j = 0; // index into sortedFields
-        
+
         memoryIndex->sortFields();
         if (memoryIndex->sortedFields.size() == 1 && memoryIndex->sortedFields[0].first == t->field())
             j = 0; // fast path
         else
         {
-            CollectionStringMemoryIndexInfo::iterator search = std::lower_bound(memoryIndex->sortedFields.begin(), memoryIndex->sortedFields.end(), std::make_pair(t->field(), MemoryIndexInfoPtr()), lessField());
+            Collection<String>MemoryIndexInfo::iterator search = std::lower_bound(memoryIndex->sortedFields.begin(), memoryIndex->sortedFields.end(), std::make_pair(t->field(), MemoryIndexInfoPtr()), lessField());
             int32_t keyPos = std::distance(memoryIndex->sortedFields.begin(), search);
             j = (search == memoryIndex->sortedFields.end() || t->field() < search->first) ? -(keyPos + 1) : keyPos;
         }
-        
+
         if (j < 0) // not found; choose successor
         {
-            j = -j - 1; 
+            j = -j - 1;
             i = 0;
             if (j < memoryIndex->sortedFields.size())
                 getInfo(j)->sortTerms();
@@ -301,7 +298,7 @@ namespace Lucene
         {
             MemoryIndexInfoPtr info(getInfo(j));
             info->sortTerms();
-            CollectionStringIntCollection::iterator search = std::lower_bound(info->sortedTerms.begin(), info->sortedTerms.end(), std::make_pair(t->text(), Collection<int32_t>()), lessTerm());
+            Collection<String>IntCollection::iterator search = std::lower_bound(info->sortedTerms.begin(), info->sortedTerms.end(), std::make_pair(t->text(), Collection<int32_t>()), lessTerm());
             int32_t keyPos = std::distance(info->sortedTerms.begin(), search);
             i = (search == info->sortedTerms.end() || t->text() < search->first) ? -(keyPos + 1) : keyPos;
             if (i < 0) // not found; choose successor
@@ -316,20 +313,20 @@ namespace Lucene
                 }
             }
         }
-        
+
         return newLucene<MemoryIndexTermEnum>(LuceneThis(), i, j);
     }
-    
+
     TermPositionsPtr MemoryIndexReader::termPositions()
     {
         return newLucene<MemoryIndexTermPositions>(LuceneThis());
     }
-    
+
     TermDocsPtr MemoryIndexReader::termDocs()
     {
         return termPositions();
     }
-    
+
     Collection<TermFreqVectorPtr> MemoryIndexReader::getTermFreqVectors(int32_t docNumber)
     {
         Collection<TermFreqVectorPtr> vectors(Collection<TermFreqVectorPtr>::newInstance());
@@ -337,13 +334,13 @@ namespace Lucene
             vectors.add(getTermFreqVector(docNumber, fieldName->first));
         return vectors;
     }
-    
+
     void MemoryIndexReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
     {
         for (MapStringMemoryIndexInfo::iterator fieldName = memoryIndex->fields.begin(); fieldName != memoryIndex->fields.end(); ++fieldName)
             getTermFreqVector(docNumber, fieldName->first, mapper);
     }
-    
+
     void MemoryIndexReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
     {
         MemoryIndexInfoPtr info(getInfo(field));
@@ -365,7 +362,7 @@ namespace Lucene
             mapper->map(info->sortedTerms[i].first, memoryIndex->numPositions(info->sortedTerms[i].second), offsets, info->sortedTerms[i].second);
         }
     }
-    
+
     TermFreqVectorPtr MemoryIndexReader::getTermFreqVector(int32_t docNumber, const String& field)
     {
         MemoryIndexInfoPtr info(getInfo(field));
@@ -374,20 +371,19 @@ namespace Lucene
         info->sortTerms();
         return newLucene<MemoryIndexTermPositionVector>(LuceneThis(), info, field);
     }
-    
+
     SimilarityPtr MemoryIndexReader::getSimilarity()
     {
-        SearcherPtr searcher(_searcher.lock());
         if (searcher)
             return searcher->getSimilarity();
         return Similarity::getDefault();
     }
-    
+
     void MemoryIndexReader::setSearcher(SearcherPtr searcher)
     {
-        _searcher = searcher;
+        this->searcher = searcher;
     }
-    
+
     ByteArray MemoryIndexReader::norms(const String& field)
     {
         ByteArray norms(cachedNorms);
@@ -411,71 +407,71 @@ namespace Lucene
         }
         return norms;
     }
-    
+
     void MemoryIndexReader::norms(const String& field, ByteArray norms, int32_t offset)
     {
         ByteArray _norms(this->norms(field));
         MiscUtils::arrayCopy(_norms.get(), 0, norms.get(), offset, _norms.size());
     }
-    
+
     void MemoryIndexReader::doSetNorm(int32_t doc, const String& field, uint8_t value)
     {
         boost::throw_exception(UnsupportedOperationException());
     }
-    
+
     int32_t MemoryIndexReader::numDocs()
     {
         return memoryIndex->fields.empty() ? 0 : 1;
     }
-    
+
     int32_t MemoryIndexReader::maxDoc()
     {
-        return 1;    
+        return 1;
     }
-    
+
     DocumentPtr MemoryIndexReader::document(int32_t n)
     {
         return newLucene<Document>(); // there are no stored fields
     }
-    
+
     DocumentPtr MemoryIndexReader::document(int32_t n, FieldSelectorPtr fieldSelector)
     {
         return newLucene<Document>(); // there are no stored fields
     }
-    
+
     bool MemoryIndexReader::isDeleted(int32_t n)
     {
         return false;
     }
-    
+
     bool MemoryIndexReader::hasDeletions()
     {
         return false;
     }
-    
+
     void MemoryIndexReader::doDelete(int32_t docNum)
     {
         boost::throw_exception(UnsupportedOperationException());
     }
-    
+
     void MemoryIndexReader::doUndeleteAll()
     {
         boost::throw_exception(UnsupportedOperationException());
     }
-    
+
     void MemoryIndexReader::doCommit(MapStringString commitUserData)
     {
     }
-    
+
     void MemoryIndexReader::doClose()
     {
     }
-    
-    HashSet<String> MemoryIndexReader::getFieldNames(FieldOption fieldOption)
+
+    SetString MemoryIndexReader::getFieldNames(FieldOption fieldOption)
     {
-        static HashSet<String> emptySet;
+        static SetString emptySet;
         if (!emptySet)
-            emptySet = HashSet<String>::newInstance();
+            emptySet = SetString::newStaticInstance();
         if (fieldOption == FIELD_OPTION_UNINDEXED)
             return emptySet;
         if (fieldOption == FIELD_OPTION_INDEXED_NO_TERMVECTOR)
@@ -484,32 +480,31 @@ namespace Lucene
             return emptySet;
         if (fieldOption == FIELD_OPTION_TERMVECTOR_WITH_POSITION_OFFSET && memoryIndex->stride == 1)
             return emptySet;
-        HashSet<String> fieldSet(HashSet<String>::newInstance());
+        SetString fieldSet(SetString::newInstance());
         for (MapStringMemoryIndexInfo::iterator field = memoryIndex->fields.begin(); field != memoryIndex->fields.end(); ++field)
             fieldSet.add(field->first);
         return fieldSet;
     }
-    
+
     MemoryIndexTermEnum::MemoryIndexTermEnum(MemoryIndexReaderPtr reader, int32_t ix, int32_t jx)
     {
-        _reader = reader;
+        this->reader = reader;
         i = ix;
         j = jx;
     }
-    
+
     MemoryIndexTermEnum::~MemoryIndexTermEnum()
     {
     }
-    
+
     bool MemoryIndexTermEnum::next()
     {
-        MemoryIndexReaderPtr reader(_reader);
         if (j >= reader->memoryIndex->sortedFields.size())
             return false;
         MemoryIndexInfoPtr info(reader->getInfo(j));
         if (++i < info->sortedTerms.size())
             return true;
-        
+
         // move to successor
         ++j;
         i = 0;
@@ -518,10 +513,9 @@ namespace Lucene
         reader->getInfo(j)->sortTerms();
         return true;
     }
-    
+
     TermPtr MemoryIndexTermEnum::term()
     {
-        MemoryIndexReaderPtr reader(_reader);
         if (j >= reader->memoryIndex->sortedFields.size())
             return TermPtr();
         MemoryIndexInfoPtr info(reader->getInfo(j));
@@ -529,10 +523,9 @@ namespace Lucene
             return TermPtr();
         return createTerm(info, j, info->sortedTerms[i].first);
     }
-    
+
     int32_t MemoryIndexTermEnum::docFreq()
     {
-        MemoryIndexReaderPtr reader(_reader);
         if (j >= reader->memoryIndex->sortedFields.size())
             return 0;
         MemoryIndexInfoPtr info(reader->getInfo(j));
@@ -540,63 +533,62 @@ namespace Lucene
             return 0;
         return reader->memoryIndex->numPositions(info->getPositions(i));
     }
-    
+
     void MemoryIndexTermEnum::close()
     {
     }
-    
+
     TermPtr MemoryIndexTermEnum::createTerm(MemoryIndexInfoPtr info, int32_t pos, const String& text)
     {
         TermPtr _template(info->_template);
         if (!_template) // not yet cached?
         {
-            MemoryIndexReaderPtr reader(_reader);
             String fieldName(reader->memoryIndex->sortedFields[pos].first);
             _template = newLucene<Term>(fieldName);
             info->_template = _template;
         }
         return _template->createTerm(text);
     }
-    
+
     MemoryIndexCollector::MemoryIndexCollector(Collection<double> scores)
     {
         this->scores = scores;
     }
-    
+
     MemoryIndexCollector::~MemoryIndexCollector()
     {
     }
-    
+
     void MemoryIndexCollector::collect(int32_t doc)
     {
         scores[0] = scorer->score();
     }
-    
+
     void MemoryIndexCollector::setScorer(ScorerPtr scorer)
     {
         this->scorer = scorer;
     }
-    
+
     bool MemoryIndexCollector::acceptsDocsOutOfOrder()
     {
         return true;
     }
-    
+
     void MemoryIndexCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
     }
-    
+
     MemoryIndexTermPositions::MemoryIndexTermPositions(MemoryIndexReaderPtr reader)
     {
-        _reader = reader;
+        this->reader = reader;
         hasNext = false;
         cursor = 0;
     }
-    
+
     MemoryIndexTermPositions::~MemoryIndexTermPositions()
     {
     }
-    
+
     void MemoryIndexTermPositions::seek(TermPtr term)
     {
         this->term = term;
@@ -604,38 +596,36 @@ namespace Lucene
             hasNext = true;  // term == null means match all docs
         else
         {
-            MemoryIndexReaderPtr reader(_reader);
             MemoryIndexInfoPtr info(reader->getInfo(term->field()));
             current = info ? info->getPositions(term->text()) : Collection<int32_t>();
             hasNext = current;
             cursor = 0;
         }
     }
-    
+
     void MemoryIndexTermPositions::seek(TermEnumPtr termEnum)
     {
         seek(termEnum->term());
     }
-    
+
     int32_t MemoryIndexTermPositions::doc()
     {
         return 0;
     }
-    
+
     int32_t MemoryIndexTermPositions::freq()
     {
-        MemoryIndexReaderPtr reader(_reader);
         int32_t freq = current ? reader->memoryIndex->numPositions(current) : (term ? 0 : 1);
         return freq;
     }
-    
+
     bool MemoryIndexTermPositions::next()
     {
         bool _next = hasNext;
         hasNext = false;
         return _next;
     }
-    
+
     int32_t MemoryIndexTermPositions::read(Collection<int32_t> docs, Collection<int32_t> freqs)
     {
         if (!hasNext)
@@ -645,62 +635,61 @@ namespace Lucene
         freqs[0] = freq();
         return 1;
     }
-    
+
     bool MemoryIndexTermPositions::skipTo(int32_t target)
     {
         return next();
     }
-    
+
     void MemoryIndexTermPositions::close()
     {
     }
-    
+
     int32_t MemoryIndexTermPositions::nextPosition()
     {
         // implements TermPositions
-        MemoryIndexReaderPtr reader(_reader);
         int32_t pos = current[cursor];
         cursor += reader->memoryIndex->stride;
         return pos;
     }
-    
+
     int32_t MemoryIndexTermPositions::getPayloadLength()
     {
         boost::throw_exception(UnsupportedOperationException());
     }
-    
+
     ByteArray MemoryIndexTermPositions::getPayload(ByteArray data, int32_t offset)
     {
         boost::throw_exception(UnsupportedOperationException());
         return ByteArray();
     }
-    
+
     bool MemoryIndexTermPositions::isPayloadAvailable()
     {
         return false; // unsupported
     }
-    
+
     MemoryIndexTermPositionVector::MemoryIndexTermPositionVector(MemoryIndexReaderPtr reader, MemoryIndexInfoPtr info, const String& fieldName)
     {
-        this->_reader = reader;
+        this->reader = reader;
         this->sortedTerms = info->sortedTerms;
         this->fieldName = fieldName;
     }
-    
+
     MemoryIndexTermPositionVector::~MemoryIndexTermPositionVector()
     {
     }
-    
+
     String MemoryIndexTermPositionVector::getField()
     {
         return fieldName;
     }
-    
+
     int32_t MemoryIndexTermPositionVector::size()
     {
         return sortedTerms.size();
     }
-    
+
     Collection<String> MemoryIndexTermPositionVector::getTerms()
     {
         Collection<String> terms(Collection<String>::newInstance(sortedTerms.size()));
@@ -708,22 +697,21 @@ namespace Lucene
             terms[i] = sortedTerms[i].first;
         return terms;
     }
-    
+
     Collection<int32_t> MemoryIndexTermPositionVector::getTermFrequencies()
     {
-        MemoryIndexReaderPtr reader(_reader);
         Collection<int32_t> freqs(Collection<int32_t>::newInstance(sortedTerms.size()));
         for (int32_t i = sortedTerms.size(); --i >= 0;)
             freqs[i] = reader->memoryIndex->numPositions(sortedTerms[i].second);
         return freqs;
     }
-    
+
     int32_t MemoryIndexTermPositionVector::indexOf(const String& term)
     {
-        CollectionStringIntCollection::iterator search = std::lower_bound(sortedTerms.begin(), sortedTerms.end(), std::make_pair(term, Collection<int32_t>()), lessTerm());
+        Collection<String>IntCollection::iterator search = std::lower_bound(sortedTerms.begin(), sortedTerms.end(), std::make_pair(term, Collection<int32_t>()), lessTerm());
         return (search == sortedTerms.end() || term < search->first) ? -1 : std::distance(sortedTerms.begin(), search);
     }
-    
+
     Collection<int32_t> MemoryIndexTermPositionVector::indexesOf(Collection<String> terms, int32_t start, int32_t length)
     {
         Collection<int32_t> indexes(Collection<int32_t>::newInstance(length));
@@ -731,18 +719,17 @@ namespace Lucene
             indexes[i] = indexOf(terms[start++]);
         return indexes;
     }
-    
+
     Collection<int32_t> MemoryIndexTermPositionVector::getTermPositions(int32_t index)
     {
         return sortedTerms[index].second;
     }
-    
+
     Collection<TermVectorOffsetInfoPtr> MemoryIndexTermPositionVector::getOffsets(int32_t index)
     {
-        MemoryIndexReaderPtr reader(_reader);
         if (reader->memoryIndex->stride == 1)
             return Collection<TermVectorOffsetInfoPtr>(); // no offsets stored
-        
+
         Collection<int32_t> positions(sortedTerms[index].second);
         int32_t size = positions.size();
         Collection<TermVectorOffsetInfoPtr> offsets(Collection<TermVectorOffsetInfoPtr>::newInstance(size / reader->memoryIndex->stride));

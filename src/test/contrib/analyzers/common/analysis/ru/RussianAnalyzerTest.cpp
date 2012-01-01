@@ -22,19 +22,19 @@ BOOST_FIXTURE_TEST_SUITE(RussianAnalyzerTest, BaseTokenStreamFixture)
 BOOST_AUTO_TEST_CASE(testUnicode)
 {
     RussianAnalyzerPtr ra = newLucene<RussianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     String testFile(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"russian"), L"testUTF8.txt"));
     InputStreamReaderPtr inWords = newLucene<InputStreamReader>(newLucene<FileReader>(testFile));
-    
+
     String sampleFile(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"russian"), L"resUTF8.htm"));
     InputStreamReaderPtr sampleUnicode = newLucene<InputStreamReader>(newLucene<FileReader>(sampleFile));
-    
+
     TokenStreamPtr in = ra->tokenStream(L"all", inWords);
     RussianLetterTokenizerPtr sample = newLucene<RussianLetterTokenizer>(sampleUnicode);
 
     TermAttributePtr text = in->getAttribute<TermAttribute>();
     TermAttributePtr sampleText = sample->getAttribute<TermAttribute>();
-    
+
     while (true)
     {
         if (!in->incrementToken())
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(testDigitsInRussianCharset)
 BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
 {
     AnalyzerPtr a = newLucene<RussianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     const uint8_t input[] =
     {
         0xd0, 0x92, 0xd0, 0xbc, 0xd0, 0xb5, 0xd1, 0x81, 0xd1, 0x82, 0xd0, 0xb5, 0x20, 0xd1, 0x81, 0x20,
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
         0xd1, 0x80, 0xd0, 0xb5, 0xd0, 0xb4, 0xd1, 0x81, 0xd1, 0x82, 0xd0, 0xb0, 0xd0, 0xb2, 0xd0, 0xbb,
         0xd0, 0xb5, 0xd0, 0xbd, 0xd0, 0xb8, 0xd0, 0xb5, 0x20, 0xd0, 0xb5, 0xd1, 0x89, 0xd0, 0xb5
     };
-    
+
     const uint8_t token1[] = {0xd0, 0xb2, 0xd0, 0xbc, 0xd0, 0xb5, 0xd1, 0x81, 0xd1, 0x82};
     const uint8_t token2[] = {0xd1, 0x81, 0xd0, 0xb8, 0xd0, 0xbb};
     const uint8_t token3[] = {0xd1, 0x8d, 0xd0, 0xbb, 0xd0, 0xb5, 0xd0, 0xba, 0xd1, 0x82, 0xd1, 0x80, 0xd0,
@@ -86,21 +86,21 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
     const uint8_t token5[] = {0xd0, 0xb8, 0xd0, 0xbc, 0xd0, 0xb5, 0xd0, 0xbb};
     const uint8_t token6[] = {0xd0, 0xbf, 0xd1, 0x80, 0xd0, 0xb5, 0xd0, 0xb4, 0xd1, 0x81, 0xd1, 0x82, 0xd0,
                               0xb0, 0xd0, 0xb2, 0xd0, 0xbb, 0xd0, 0xb5, 0xd0, 0xbd};
-    
+
     checkAnalyzesToReuse(a, UTF8_TO_STRING(input), newCollection<String>(
-                            UTF8_TO_STRING(token1), 
-                            UTF8_TO_STRING(token2), 
+                            UTF8_TO_STRING(token1),
+                            UTF8_TO_STRING(token2),
                             UTF8_TO_STRING(token3),
                             UTF8_TO_STRING(token4),
                             UTF8_TO_STRING(token5),
                             UTF8_TO_STRING(token6)
-                         )); 
+                         ));
 }
 
 BOOST_AUTO_TEST_CASE(testReusableTokenStream2)
 {
     AnalyzerPtr a = newLucene<RussianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     const uint8_t input[] =
     {
         0xd0, 0x9d, 0xd0, 0xbe, 0x20, 0xd0, 0xb7, 0xd0, 0xbd, 0xd0, 0xb0, 0xd0, 0xbd, 0xd0, 0xb8, 0xd0,
@@ -108,16 +108,16 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream2)
         0xbd, 0xd0, 0xb8, 0xd0, 0xbb, 0xd0, 0xbe, 0xd1, 0x81, 0xd1, 0x8c, 0x20, 0xd0, 0xb2, 0x20, 0xd1,
         0x82, 0xd0, 0xb0, 0xd0, 0xb9, 0xd0, 0xbd, 0xd0, 0xb5
     };
-    
+
     const uint8_t token1[] = {0xd0, 0xb7, 0xd0, 0xbd, 0xd0, 0xb0, 0xd0, 0xbd};
     const uint8_t token2[] = {0xd1, 0x85, 0xd1, 0x80, 0xd0, 0xb0, 0xd0, 0xbd};
     const uint8_t token3[] = {0xd1, 0x82, 0xd0, 0xb0, 0xd0, 0xb9, 0xd0, 0xbd};
 
     checkAnalyzesToReuse(a, UTF8_TO_STRING(input), newCollection<String>(
-                            UTF8_TO_STRING(token1), 
-                            UTF8_TO_STRING(token2), 
+                            UTF8_TO_STRING(token1),
+                            UTF8_TO_STRING(token2),
                             UTF8_TO_STRING(token3)
-                         )); 
+                         ));
 }
 
 BOOST_AUTO_TEST_SUITE_END()

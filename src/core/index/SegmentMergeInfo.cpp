@@ -15,25 +15,24 @@ namespace Lucene
     SegmentMergeInfo::SegmentMergeInfo(int32_t b, TermEnumPtr te, IndexReaderPtr r)
     {
         base = b;
-        _reader = r;
+        reader = r;
         termEnum = te;
         term = te->term();
         ord = 0;
         delCount = 0;
     }
-    
+
     SegmentMergeInfo::~SegmentMergeInfo()
     {
     }
-    
+
     Collection<int32_t> SegmentMergeInfo::getDocMap()
     {
         if (!docMap)
         {
             delCount = 0;
-            IndexReaderPtr reader(_reader);
-            
-            // build array which maps document numbers around deletions 
+
+            // build array which maps document numbers around deletions
             if (reader->hasDeletions())
             {
                 int32_t maxDoc = reader->maxDoc();
@@ -53,14 +52,14 @@ namespace Lucene
         }
         return docMap;
     }
-    
+
     TermPositionsPtr SegmentMergeInfo::getPositions()
     {
         if (!postings)
-            postings = IndexReaderPtr(_reader)->termPositions();
+            postings = reader->termPositions();
         return postings;
     }
-    
+
     bool SegmentMergeInfo::next()
     {
         if (termEnum->next())
@@ -74,7 +73,7 @@ namespace Lucene
             return false;
         }
     }
-    
+
     void SegmentMergeInfo::close()
     {
         termEnum->close();

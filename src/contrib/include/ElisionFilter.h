@@ -22,23 +22,23 @@ namespace Lucene
     public:
         /// Constructs an elision filter with standard stop words.
         ElisionFilter(TokenStreamPtr input);
-        
+
         /// Constructs an elision filter with a Set of stop words
-        ElisionFilter(TokenStreamPtr input, HashSet<String> articles);
-        
+        ElisionFilter(TokenStreamPtr input, SetString articles);
+
         virtual ~ElisionFilter();
-        
+
         LUCENE_CLASS(ElisionFilter);
-    
+
     protected:
         static const wchar_t apostrophes[];
-        
-        CharArraySetPtr articles;
+
+        Collection<CharArray>SetPtr articles;
         TermAttributePtr termAtt;
-    
+
     public:
-        void setArticles(HashSet<String> articles);
-        
+        void setArticles(SetString articles);
+
         virtual bool incrementToken();
     };
 }

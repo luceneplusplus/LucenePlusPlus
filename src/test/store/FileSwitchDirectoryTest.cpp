@@ -43,13 +43,13 @@ static void createIndexNoClose(bool multiSegment, const String& indexName, Index
 // Test if writing doc stores to disk and everything else to ram works.
 BOOST_AUTO_TEST_CASE(testBasic)
 {
-    HashSet<String> fileExtensions(HashSet<String>::newInstance());
+    SetString fileExtensions(SetString::newInstance());
     fileExtensions.add(L"fdt");
     fileExtensions.add(L"fdx");
 
     DirectoryPtr primaryDir(newLucene<MockRAMDirectory>());
     RAMDirectoryPtr secondaryDir(newLucene<MockRAMDirectory>());
-    
+
     FileSwitchDirectoryPtr fsd(newLucene<FileSwitchDirectory>(fileExtensions, primaryDir, secondaryDir, true));
     IndexWriterPtr writer(newLucene<IndexWriter>(fsd, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED));
     writer->setUseCompoundFile(false);
@@ -58,9 +58,9 @@ BOOST_AUTO_TEST_CASE(testBasic)
     BOOST_CHECK_EQUAL(reader->maxDoc(), 100);
     writer->commit();
     // we should see only fdx,fdt files here
-    HashSet<String> files = primaryDir->listAll();
+    SetString files = primaryDir->listAll();
     BOOST_CHECK(!files.empty());
-    for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
+    for (SetString::iterator file = files.begin(); file != files.end(); ++file)
     {
         String ext = FileSwitchDirectory::getExtension(*file);
         BOOST_CHECK(fileExtensions.contains(ext));
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(testBasic)
     files = secondaryDir->listAll();
     BOOST_CHECK(!files.empty());
     // we should not see fdx,fdt files here
-    for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
+    for (SetString::iterator file = files.begin(); file != files.end(); ++file)
     {
         String ext = FileSwitchDirectory::getExtension(*file);
         BOOST_CHECK(!fileExtensions.contains(ext));
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(testBasic)
     writer->close();
 
     files = fsd->listAll();
-    for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
+    for (SetString::iterator file = files.begin(); file != files.end(); ++file)
         BOOST_CHECK(!file->empty());
     fsd->close();
 }

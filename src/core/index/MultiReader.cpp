@@ -26,7 +26,7 @@ namespace Lucene
         {
             starts[i] = _maxDoc;
             _maxDoc += subReaders[i]->maxDoc(); // compute maxDocs
-            
+
             if (!closeSubReaders)
             {
                 subReaders[i]->incRef();
@@ -34,23 +34,23 @@ namespace Lucene
             }
             else
                 decrefOnClose[i] = false;
-            
+
             if (subReaders[i]->hasDeletions())
                 _hasDeletions = true;
         }
         starts[subReaders.size()] = _maxDoc;
     }
-    
+
     MultiReader::~MultiReader()
     {
     }
-    
+
     IndexReaderPtr MultiReader::reopen()
     {
         SyncLock syncLock(this);
         return doReopen(false);
     }
-    
+
     LuceneObjectPtr MultiReader::clone(LuceneObjectPtr other)
     {
         SyncLock syncLock(this);
@@ -64,14 +64,14 @@ namespace Lucene
         }
         return LuceneObjectPtr();
     }
-    
+
     IndexReaderPtr MultiReader::doReopen(bool doClone)
     {
         ensureOpen();
-        
+
         bool reopened = false;
         Collection<IndexReaderPtr> newSubReaders(Collection<IndexReaderPtr>::newInstance(subReaders.size()));
-        
+
         bool success = false;
         LuceneException finally;
         try
@@ -111,7 +111,7 @@ namespace Lucene
             }
         }
         finally.throwException();
-        
+
         if (reopened)
         {
             Collection<uint8_t> newDecrefOnClose(Collection<uint8_t>::newInstance(subReaders.size()));
@@ -123,7 +123,7 @@ namespace Lucene
                     newDecrefOnClose[i] = true;
                 }
             }
-            
+
             MultiReaderPtr mr(newLucene<MultiReader>(newSubReaders));
             mr->decrefOnClose = newDecrefOnClose;
             return mr;
@@ -131,44 +131,44 @@ namespace Lucene
         else
             return LuceneThis();
     }
-    
+
     Collection<TermFreqVectorPtr> MultiReader::getTermFreqVectors(int32_t docNumber)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
         return subReaders[i]->getTermFreqVectors(docNumber - starts[i]); // dispatch to segment
     }
-    
+
     TermFreqVectorPtr MultiReader::getTermFreqVector(int32_t docNumber, const String& field)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
         return subReaders[i]->getTermFreqVector(docNumber - starts[i], field);
     }
-    
+
     void MultiReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
         subReaders[i]->getTermFreqVector(docNumber - starts[i], field, mapper);
     }
-    
+
     void MultiReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
         subReaders[i]->getTermFreqVector(docNumber - starts[i], mapper);
     }
-    
+
     bool MultiReader::isOptimized()
     {
         return false;
     }
-    
+
     int32_t MultiReader::numDocs()
     {
         // Don't call ensureOpen() here (it could affect performance)
-        
+
         // NOTE: multiple threads may wind up init'ing numDocs... but that's harmless
         if (_numDocs == -1)
         {
@@ -180,33 +180,33 @@ namespace Lucene
         }
         return _numDocs;
     }
-    
+
     int32_t MultiReader::maxDoc()
     {
         // Don't call ensureOpen() here (it could affect performance)
         return _maxDoc;
     }
-    
+
     DocumentPtr MultiReader::document(int32_t n, FieldSelectorPtr fieldSelector)
     {
         ensureOpen();
         int32_t i = readerIndex(n); // find segment num
         return subReaders[i]->document(n - starts[i], fieldSelector); // dispatch to segment reader
     }
-    
+
     bool MultiReader::isDeleted(int32_t n)
     {
         // Don't call ensureOpen() here (it could affect performance)
         int32_t i = readerIndex(n); // find segment num
         return subReaders[i]->isDeleted(n - starts[i]); // dispatch to segment reader
     }
-    
+
     bool MultiReader::hasDeletions()
     {
         // Don't call ensureOpen() here (it could affect performance)
         return _hasDeletions;
     }
-    
+
     void MultiReader::doDelete(int32_t docNum)
     {
         _numDocs = -1; // invalidate cache
@@ -214,7 +214,7 @@ namespace Lucene
         subReaders[i]->deleteDocument(docNum - starts[i]); // dispatch to segment reader
         _hasDeletions = true;
     }
-    
+
     void MultiReader::doUndeleteAll()
     {
         for (Collection<IndexReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
@@ -222,12 +222,12 @@ namespace Lucene
         _hasDeletions = false;
         _numDocs = -1; // invalidate cache
     }
-    
+
     int32_t MultiReader::readerIndex(int32_t n)
     {
         return DirectoryReader::readerIndex(n, this->starts, this->subReaders.size());
     }
-    
+
     bool MultiReader::hasNorms(const String& field)
     {
         ensureOpen();
@@ -238,7 +238,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     ByteArray MultiReader::norms(const String& field)
     {
         SyncLock syncLock(this);
@@ -248,14 +248,14 @@ namespace Lucene
             return bytes; // cache hit
         if (!hasNorms(field))
             return ByteArray();
-        
+
         bytes = ByteArray::newInstance(maxDoc());
         for (int32_t i = 0; i < subReaders.size(); ++i)
             subReaders[i]->norms(field, bytes, starts[i]);
         normsCache.put(field, bytes); // update cache
         return bytes;
     }
-    
+
     void MultiReader::norms(const String& field, ByteArray norms, int32_t offset)
     {
         SyncLock syncLock(this);
@@ -263,7 +263,7 @@ namespace Lucene
         ByteArray bytes(normsCache.get(field));
         for (int32_t i = 0; i < subReaders.size(); ++i) // read from segments
             subReaders[i]->norms(field, norms, offset + starts[i]);
-        
+
         if (!bytes && !hasNorms(field))
             MiscUtils::arrayFill(norms.get(), offset, norms.size(), DefaultSimilarity::encodeNorm(1.0));
         else if (bytes)    // cache hit
@@ -274,7 +274,7 @@ namespace Lucene
                 subReaders[i]->norms(field, norms, offset + starts[i]);
         }
     }
-    
+
     void MultiReader::doSetNorm(int32_t doc, const String& field, uint8_t value)
     {
         {
@@ -284,19 +284,19 @@ namespace Lucene
         int32_t i = readerIndex(doc); // find segment num
         subReaders[i]->setNorm(doc - starts[i], field, value); // dispatch
     }
-    
+
     TermEnumPtr MultiReader::terms()
     {
         ensureOpen();
         return newLucene<MultiTermEnum>(LuceneThis(), subReaders, starts, TermPtr());
     }
-    
+
     TermEnumPtr MultiReader::terms(TermPtr t)
     {
         ensureOpen();
         return newLucene<MultiTermEnum>(LuceneThis(), subReaders, starts, t);
     }
-    
+
     int32_t MultiReader::docFreq(TermPtr t)
     {
         ensureOpen();
@@ -305,25 +305,25 @@ namespace Lucene
             total += (*reader)->docFreq(t);
         return total;
     }
-    
+
     TermDocsPtr MultiReader::termDocs()
     {
         ensureOpen();
         return newLucene<MultiTermDocs>(LuceneThis(), subReaders, starts);
     }
-    
+
     TermPositionsPtr MultiReader::termPositions()
     {
         ensureOpen();
         return newLucene<MultiTermPositions>(LuceneThis(), subReaders, starts);
     }
-    
+
     void MultiReader::doCommit(MapStringString commitUserData)
     {
         for (Collection<IndexReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
             (*reader)->commit(commitUserData);
     }
-    
+
     void MultiReader::doClose()
     {
         SyncLock syncLock(this);
@@ -334,18 +334,18 @@ namespace Lucene
             else
                 subReaders[i]->close();
         }
-        
-        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is 
+
+        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is
         // generally not a good idea)
         FieldCache::DEFAULT()->purge(LuceneThis());
     }
-    
-    HashSet<String> MultiReader::getFieldNames(FieldOption fieldOption)
+
+    SetString MultiReader::getFieldNames(FieldOption fieldOption)
     {
         ensureOpen();
         return DirectoryReader::getFieldNames(fieldOption, this->subReaders);
     }
-    
+
     bool MultiReader::isCurrent()
     {
         for (Collection<IndexReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
@@ -356,13 +356,13 @@ namespace Lucene
         // all subreaders are up to date
         return true;
     }
-    
+
     int64_t MultiReader::getVersion()
     {
         boost::throw_exception(UnsupportedOperationException());
         return 0;
     }
-    
+
     Collection<IndexReaderPtr> MultiReader::getSequentialSubReaders()
     {
         return subReaders;

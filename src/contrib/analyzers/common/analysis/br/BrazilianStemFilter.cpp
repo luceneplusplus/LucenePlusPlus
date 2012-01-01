@@ -16,18 +16,18 @@ namespace Lucene
         stemmer = newLucene<BrazilianStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
-    
-    BrazilianStemFilter::BrazilianStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
+
+    BrazilianStemFilter::BrazilianStemFilter(TokenStreamPtr input, SetString exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<BrazilianStemmer>();
         termAtt = addAttribute<TermAttribute>();
         exclusions = exclusiontable;
     }
-    
+
     BrazilianStemFilter::~BrazilianStemFilter()
     {
     }
-    
+
     bool BrazilianStemFilter::incrementToken()
     {
         if (input->incrementToken())

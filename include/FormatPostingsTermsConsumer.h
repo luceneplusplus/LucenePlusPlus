@@ -15,17 +15,17 @@ namespace Lucene
     {
     public:
         virtual ~FormatPostingsTermsConsumer();
-        
+
         LUCENE_CLASS(FormatPostingsTermsConsumer);
-    
+
     public:
-        CharArray termBuffer;
-    
+        Collection<CharArray> termBuffer;
+
     public:
         /// Adds a new term in this field
-        virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start) = 0;
+        virtual FormatPostingsDocsConsumerPtr addTerm(Collection<CharArray> text, int32_t start) = 0;
         virtual FormatPostingsDocsConsumerPtr addTerm(const String& text);
-        
+
         /// Called when we are done adding terms to this field
         virtual void finish() = 0;
     };

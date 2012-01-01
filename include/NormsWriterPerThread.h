@@ -16,19 +16,19 @@ namespace Lucene
     public:
         NormsWriterPerThread(DocInverterPerThreadPtr docInverterPerThread, NormsWriterPtr normsWriter);
         virtual ~NormsWriterPerThread();
-        
+
         LUCENE_CLASS(NormsWriterPerThread);
-            
+
     public:
-        NormsWriterWeakPtr _normsWriter;
+        NormsWriterPtr normsWriter;
         DocStatePtr docState;
-    
+
     public:
         virtual InvertedDocEndConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo);
         virtual void abort();
         virtual void startDocument();
         virtual void finishDocument();
-        
+
         bool freeRAM();
     };
 }

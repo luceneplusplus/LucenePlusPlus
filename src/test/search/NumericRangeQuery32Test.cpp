@@ -45,7 +45,7 @@ public:
             setupRequired = false;
         }
     }
-    
+
     virtual ~NumericRangeQuery32Fixture()
     {
     }
@@ -53,13 +53,13 @@ public:
 protected:
     // distance of entries
     static const int32_t distance;
-    
+
     // shift the starting of the values to the left, to also have negative values
     static const int32_t startOffset;
-    
+
     // number of docs to generate for testing
     static const int32_t noDocs;
-    
+
     static RAMDirectoryPtr directory;
     static IndexSearcherPtr searcher;
 
@@ -70,7 +70,7 @@ protected:
         // set the theoretical maximum term count for 8bit (see docs for the number)
         BooleanQuery::setMaxClauseCount(3 * 255 * 2 + 255);
 
-        directory = newLucene<RAMDirectory>();
+        directory = newStaticLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
 
         NumericFieldPtr field8 = newLucene<NumericField>(L"field8", 8, Field::STORE_YES, true);
@@ -82,18 +82,18 @@ protected:
         NumericFieldPtr ascfield2 = newLucene<NumericField>(L"ascfield2", 2, Field::STORE_NO, true);
 
         DocumentPtr doc = newLucene<Document>();
-        
+
         // add fields, that have a distance to test general functionality
         doc->add(field8);
-        doc->add(field4); 
-        doc->add(field2); 
+        doc->add(field4);
+        doc->add(field2);
         doc->add(fieldNoTrie);
-        
+
         // add ascending fields with a distance of 1, beginning at -noDocs/2 to test the correct splitting of range and inclusive/exclusive
         doc->add(ascfield8);
         doc->add(ascfield4);
         doc->add(ascfield2);
-        
+
         // Add a series of noDocs docs with increasing int values
         for (int32_t l = 0; l < noDocs; ++l)
         {
@@ -109,12 +109,12 @@ protected:
             ascfield2->setIntValue(val);
             writer->addDocument(doc);
         }
-        
+
         writer->optimize();
         writer->close();
-        searcher = newLucene<IndexSearcher>(directory, true);
+        searcher = newStaticLucene<IndexSearcher>(directory, true);
     }
-        
+
 public:
     /// test for both constant score and boolean query, the other tests only use the constant score mode
     void testRange(int32_t precisionStep)
@@ -123,7 +123,7 @@ public:
         int32_t count = 3000;
         int32_t lower = (distance * 3 / 2) + startOffset;
         int32_t upper = lower + count * distance + (distance / 3);
-        
+
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, true);
         NumericRangeFilterPtr f = NumericRangeFilter::newIntRange(field, precisionStep, lower, upper, true, true);
         int32_t lastTerms = 0;
@@ -169,7 +169,7 @@ public:
             lastTerms = terms;
         }
     }
-    
+
     void testLeftOpenRange(int32_t precisionStep)
     {
         String field = L"field" + StringUtils::toString(precisionStep);
@@ -185,7 +185,7 @@ public:
         doc = searcher->doc(sd[sd.size() - 1]->doc);
         BOOST_CHECK_EQUAL(StringUtils::toString((count - 1) * distance + startOffset), doc->get(field));
     }
-    
+
     void testRightOpenRange(int32_t precisionStep)
     {
         String field = L"field" + StringUtils::toString(precisionStep);
@@ -201,7 +201,7 @@ public:
         doc = searcher->doc(sd[sd.size() - 1]->doc);
         BOOST_CHECK_EQUAL(StringUtils::toString((noDocs - 1) * distance + startOffset), doc->get(field));
     }
-    
+
     void testRandomTrieAndClassicRangeQuery(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -250,7 +250,7 @@ public:
         if (precisionStep == INT_MAX)
             BOOST_CHECK_EQUAL(termCountT, termCountC);
     }
-    
+
     void testRangeSplit(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -280,7 +280,7 @@ public:
             BOOST_CHECK_EQUAL(upper - lower, tTopDocs->totalHits);
         }
     }
-    
+
     void testSorting(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -307,7 +307,7 @@ public:
             }
         }
     }
-    
+
     void testEnumRange(int32_t lower, int32_t upper)
     {
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(L"field4", 4, lower, upper, true, true);
@@ -331,7 +331,7 @@ public:
 
 // distance of entries
 const int32_t NumericRangeQuery32Fixture::distance = 6666;
-    
+
 // shift the starting of the values to the left, to also have negative values
 const int32_t NumericRangeQuery32Fixture::startOffset = -1 << 15;
 
@@ -473,7 +473,7 @@ BOOST_AUTO_TEST_CASE(testEqualsAndHash)
     QueryUtils::checkUnequal(NumericRangeQuery::newIntRange(L"test11", 4, 10, 20, true, true), NumericRangeQuery::newIntRange(L"test11", 4, 20, 10, true, true));
     QueryUtils::checkUnequal(NumericRangeQuery::newIntRange(L"test12", 4, 10, 20, true, true), NumericRangeQuery::newIntRange(L"test12", 4, 10, 20, false, true));
     QueryUtils::checkUnequal(NumericRangeQuery::newIntRange(L"test13", 4, 10, 20, true, true), NumericRangeQuery::newDoubleRange(L"test13", 4, 10.0, 20.0, true, true));
-    
+
     // the following produces a hash collision, because Long and Integer have the same hashcode, so only test equality
     QueryPtr q1 = NumericRangeQuery::newIntRange(L"test14", 4, 10, 20, true, true);
     QueryPtr q2 = NumericRangeQuery::newLongRange(L"test14", 4, 10, 20, true, true);
@@ -486,13 +486,13 @@ BOOST_AUTO_TEST_CASE(testEnum)
     int32_t count = 3000;
     int32_t lower= (distance * 3 / 2) + startOffset;
     int32_t upper = lower + count * distance + (distance / 3);
-    
+
     // test enum with values
     testEnumRange(lower, upper);
-    
+
     // test empty enum
     testEnumRange(upper, lower);
-    
+
     // test empty enum outside of bounds
     lower = distance * noDocs + startOffset;
     upper = 2 * lower;

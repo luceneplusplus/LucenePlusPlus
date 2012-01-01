@@ -21,7 +21,7 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(MMapDirectoryTest, LuceneTestFixture)
 
-static RandomPtr rndToken = newLucene<Random>();
+static RandomPtr rndToken = newStaticLucene<Random>();
 
 String randomToken()
 {
@@ -45,15 +45,15 @@ String randomField()
 BOOST_AUTO_TEST_CASE(testMmapIndex)
 {
     String storePathname(FileUtils::joinPath(getTempDir(), L"testLuceneMmap"));
-    
+
     FSDirectoryPtr storeDirectory(newLucene<MMapDirectory>(storePathname));
-    
+
     // plan to add a set of useful stopwords, consider changing some of the interior filters.
-    StandardAnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, HashSet<String>());
-    
+    StandardAnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, SetString());
+
     IndexWriterPtr writer = newLucene<IndexWriter>(storeDirectory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(storeDirectory, true);
-    
+
     for (int32_t dx = 0; dx < 1000; ++dx)
     {
         String f(randomField());
@@ -61,10 +61,10 @@ BOOST_AUTO_TEST_CASE(testMmapIndex)
         doc->add(newLucene<Field>(L"data", f, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
     }
-    
+
     searcher->close();
     writer->close();
-    
+
     FileUtils::removeDirectory(storePathname);
 }
 

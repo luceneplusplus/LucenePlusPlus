@@ -16,19 +16,19 @@ namespace Lucene
     public:
         FreqProxTermsWriterPerField(TermsHashPerFieldPtr termsHashPerField, FreqProxTermsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo);
         virtual ~FreqProxTermsWriterPerField();
-        
+
         LUCENE_CLASS(FreqProxTermsWriterPerField);
-            
+
     public:
-        FreqProxTermsWriterPerThreadWeakPtr _perThread;
-        TermsHashPerFieldWeakPtr _termsHashPerField;
+        FreqProxTermsWriterPerThreadPtr perThread;
+        TermsHashPerFieldPtr termsHashPerField;
         FieldInfoPtr fieldInfo;
         DocStatePtr docState;
         FieldInvertStatePtr fieldState;
         bool omitTermFreqAndPositions;
         PayloadAttributePtr payloadAttribute;
         bool hasPayloads;
-    
+
     public:
         virtual int32_t getStreamCount();
         virtual void finish();

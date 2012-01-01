@@ -19,8 +19,8 @@ namespace Lucene
     public:
         typedef typename T::key_type key_type;
         typedef typename T::mapped_type mapped_type;
-        typedef typename map_container<T>::iterator iterator;
-        typedef typename map_container<T>::const_iterator const_iterator;
+        typedef typename T::iterator iterator;
+        typedef typename T::const_iterator const_iterator;
 
         Map(gc_container<T, key_type, mapped_type>* p = 0) : map_container<T>(p)
         {
@@ -79,43 +79,172 @@ namespace Lucene
         }
     };
 
-    template <class T>
-    Map<T> newMapPlaceholder(gc& gc)
+    template < class KEY, class VALUE, class HASH = boost::hash<KEY>, class EQUAL = std::equal_to<KEY> >
+    class HashMap : public Map < boost::unordered_map<KEY, VALUE, HASH, EQUAL> >
     {
-        return Map<T>(new(gc) gc_container<T, typename T::key_type, typename T::mapped_type>());
-    }
+    public:
+        typedef boost::unordered_map<KEY, VALUE, HASH, EQUAL> map_type;
+        typedef typename map_type::key_type key_type;
+        typedef typename map_type::mapped_type mapped_type;
+        typedef typename map_type::hasher hasher;
+        typedef typename map_type::key_equal key_equal;
 
-    template <class T>
-    Map<T> newMap()
-    {
-        return newMapPlaceholder<T>(get_gc());
-    }
+        HashMap(gc_container<map_type, key_type, mapped_type>* p = 0) : Map<map_type>(p)
+        {
+        }
 
-    template <class T>
-    Map<T> newStaticMap()
-    {
-        return newMapPlaceholder<T>(get_static_gc());
-    }
+        HashMap(const HashMap& rhs) : Map<map_type>(rhs)
+        {
+        }
 
-    template <class T, class Iter>
-    Map<T> newMapPlaceholder(gc& gc, Iter first, Iter last)
-    {
-        Map<T> container(Map<T>(new(gc) gc_container<T, typename T::key_type, typename T::mapped_type>()));
-        container.insert(first, last);
-        return container;
-    }
+        static HashMap<KEY, VALUE, HASH, EQUAL> newInstance()
+        {
+            return HashMap<KEY, VALUE, HASH, EQUAL>(new(get_gc()) gc_container<boost::unordered_map<KEY, VALUE, HASH, EQUAL>, KEY, VALUE>());
+        }
 
-    template <class T, class Iter>
-    Map<T> newMap(Iter first, Iter last)
-    {
-        return newMapPlaceholder<T>(get_gc(), first, last);
-    }
+        static HashMap<KEY, VALUE, HASH, EQUAL> newStaticInstance()
+        {
+            return HashMap<KEY, VALUE, HASH, EQUAL>(new(get_static_gc()) gc_container<boost::unordered_map<KEY, VALUE, HASH, EQUAL>, KEY, VALUE>());
+        }
 
-    template <class T, class Iter>
-    Map<T> newStaticMap(Iter first, Iter last)
+        template <class ITER>
+        static HashMap<KEY, VALUE, HASH, EQUAL> newInstance(ITER first, ITER last)
+        {
+            HashMap<KEY, VALUE, HASH, EQUAL> container(new(get_gc()) gc_container<boost::unordered_map<KEY, VALUE, HASH, EQUAL>, KEY, VALUE>());
+            container.insert(first, last);
+            return container;
+        }
+
+        template <class ITER>
+        static HashMap<KEY, VALUE, HASH, EQUAL> newStaticInstance(ITER first, ITER last)
+        {
+            HashMap<KEY, VALUE, HASH, EQUAL> container(new(get_static_gc()) gc_container<boost::unordered_map<KEY, VALUE, HASH, EQUAL>, KEY, VALUE>());
+            container.insert(first, last);
+            return container;
+        }
+    };
+
+    // todo
+    // template <class KEY, class VALUE, class HASH, class EQUAL>
+    // HashMap<KEY, VALUE, HASH, EQUAL> newHashMapPlaceholder(gc& gc)
+    // {
+    //     return HashMap<KEY, VALUE, HASH, EQUAL>(new(gc) gc_container<boost::unordered_map<KEY, VALUE, HASH, EQUAL>, KEY, VALUE>());
+    // }
+
+    // template <class T>
+    // HashMap<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal> newHashMap()
+    // {
+    //     return newHashMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal>(get_gc());
+    // }
+
+    // template <class T>
+    // HashMap<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal> newStaticHashMap()
+    // {
+    //     return newHashMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal>(get_static_gc());
+    // }
+
+    // template <class KEY, class VALUE, class HASH, class EQUAL, class ITER>
+    // HashMap<KEY, VALUE, HASH, EQUAL> newHashMapPlaceholder(gc& gc, ITER first, ITER last)
+    // {
+    //     HashMap<KEY, VALUE, HASH, EQUAL> container(new(gc) gc_container<boost::unordered_map<KEY, VALUE, HASH, EQUAL>, KEY, VALUE>());
+    //     container.insert(first, last);
+    //     return container;
+    // }
+
+    // template <class T, class ITER>
+    // HashMap<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal> newHashMap(ITER first, ITER last)
+    // {
+    //     return newHashMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal>(get_gc(), first, last);
+    // }
+
+    // template <class T, class ITER>
+    // HashMap<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal> newStaticHashMap(ITER first, ITER last)
+    // {
+    //     return newHashMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::hasher, typename T::key_equal>(get_static_gc(), first, last);
+    // }
+
+    template < class KEY, class VALUE, class COMPARE = std::less<KEY> >
+    class SortedMap : public Map < std::map<KEY, VALUE, COMPARE> >
     {
-        return newMapPlaceholder<T>(get_static_gc(), first, last);
-    }
+    public:
+        typedef std::map<KEY, VALUE, COMPARE> map_type;
+        typedef typename map_type::key_type key_type;
+        typedef typename map_type::mapped_type mapped_type;
+        typedef typename map_type::key_compare key_compare;
+
+        SortedMap(gc_container<map_type, key_type, mapped_type>* p = 0) : Map<map_type>(p)
+        {
+        }
+
+        SortedMap(const SortedMap& rhs) : Map<map_type>(rhs)
+        {
+        }
+
+        static SortedMap<KEY, VALUE, COMPARE> newInstance()
+        {
+            return SortedMap<KEY, VALUE, COMPARE>(new(get_gc()) gc_container<std::map<KEY, VALUE, COMPARE>, KEY, VALUE>());
+        }
+
+        static SortedMap<KEY, VALUE, COMPARE> newStaticInstance()
+        {
+            return SortedMap<KEY, VALUE, COMPARE>(new(get_static_gc()) gc_container<std::map<KEY, VALUE, COMPARE>, KEY, VALUE>());
+        }
+
+        template <class ITER>
+        static SortedMap<KEY, VALUE, COMPARE> newInstance(ITER first, ITER last)
+        {
+            SortedMap<KEY, VALUE, COMPARE> container(new(get_gc()) gc_container<std::map<KEY, VALUE, COMPARE>, KEY, VALUE>());
+            container.insert(first, last);
+            return container;
+        }
+
+        template <class ITER>
+        static SortedMap<KEY, VALUE, COMPARE> newStaticInstance(ITER first, ITER last)
+        {
+            SortedMap<KEY, VALUE, COMPARE> container(new(get_static_gc()) gc_container<std::map<KEY, VALUE, COMPARE>, KEY, VALUE>());
+            container.insert(first, last);
+            return container;
+        }
+    };
+
+    // todo
+    // template <class KEY, class VALUE, class COMPARE>
+    // SortedMap<KEY, VALUE, COMPARE> newSortedMapPlaceholder(gc& gc)
+    // {
+    //     return SortedMap<KEY, VALUE, COMPARE>(new(gc) gc_container<std::map<KEY, VALUE, COMPARE>, KEY, VALUE>());
+    // }
+
+    // template <class T>
+    // SortedMap<typename T::key_type, typename T::mapped_type, typename T::key_compare> newSortedMap()
+    // {
+    //     return newSortedMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::key_compare>(get_gc());
+    // }
+
+    // template <class T>
+    // SortedMap<typename T::key_type, typename T::mapped_type, typename T::key_compare> newStaticSortedMap()
+    // {
+    //     return newSortedMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::key_compare>(get_static_gc());
+    // }
+
+    // template <class KEY, class VALUE, class COMPARE, class ITER>
+    // HashMap<KEY, VALUE, COMPARE> newSortedMapPlaceholder(gc& gc, ITER first, ITER last)
+    // {
+    //     SortedMap<KEY, VALUE, COMPARE> container(new(gc) gc_container<std::map<KEY, VALUE, COMPARE>, KEY, VALUE>());
+    //     container.insert(first, last);
+    //     return container;
+    // }
+
+    // template <class T, class ITER>
+    // SortedMap<typename T::key_type, typename T::mapped_type, typename T::key_compare> newSortedMap(ITER first, ITER last)
+    // {
+    //     return newSortedMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::key_compare>(get_gc(), first, last);
+    // }
+
+    // template <class T, class ITER>
+    // SortedMap<typename T::key_type, typename T::mapped_type, typename T::key_compare > newStaticSortedMap(ITER first, ITER last)
+    // {
+    //     return newSortedMapPlaceholder<typename T::key_type, typename T::mapped_type, typename T::key_compare>(get_static_gc(), first, last);
+    // }
 }
 
 #endif

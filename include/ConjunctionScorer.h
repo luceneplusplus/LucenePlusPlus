@@ -17,20 +17,20 @@ namespace Lucene
     public:
         ConjunctionScorer(SimilarityPtr similarity, Collection<ScorerPtr> scorers);
         virtual ~ConjunctionScorer();
-    
+
         LUCENE_CLASS(ConjunctionScorer);
-    
+
     protected:
         Collection<ScorerPtr> scorers;
         double coord;
         int32_t lastDoc;
-    
+
     public:
         virtual int32_t advance(int32_t target);
         virtual int32_t docID();
         virtual int32_t nextDoc();
         virtual double score();
-    
+
     protected:
         int32_t doNext();
     };

@@ -16,12 +16,12 @@ namespace Lucene
     public:
         AllTermDocs(SegmentReaderPtr parent);
         virtual ~AllTermDocs();
-        
+
         LUCENE_CLASS(AllTermDocs);
-    
+
     protected:
-        BitVectorWeakPtr _deletedDocs;
-        
+        BitVectorPtr deletedDocs;
+
     public:
         virtual bool isDeleted(int32_t doc);
     };

@@ -16,32 +16,32 @@ namespace Lucene
         stemmer = newLucene<DutchStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
-    
-    DutchStemFilter::DutchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
+
+    DutchStemFilter::DutchStemFilter(TokenStreamPtr input, SetString exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<DutchStemmer>();
         termAtt = addAttribute<TermAttribute>();
         this->exclusions = exclusiontable;
     }
-    
-    DutchStemFilter::DutchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable, MapStringString stemdictionary) : TokenFilter(input)
+
+    DutchStemFilter::DutchStemFilter(TokenStreamPtr input, SetString exclusiontable, MapStringString stemdictionary) : TokenFilter(input)
     {
         stemmer = newLucene<DutchStemmer>();
         termAtt = addAttribute<TermAttribute>();
         this->exclusions = exclusiontable;
         this->stemmer->setStemDictionary(stemdictionary);
     }
-    
+
     DutchStemFilter::~DutchStemFilter()
     {
     }
-    
+
     bool DutchStemFilter::incrementToken()
     {
         if (input->incrementToken())
         {
             String term(termAtt->term());
-            
+
             // Check the exclusion table.
             if (!exclusions || !exclusions.contains(term))
             {
@@ -55,18 +55,18 @@ namespace Lucene
         else
             return false;
     }
-    
+
     void DutchStemFilter::setStemmer(DutchStemmerPtr stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;
     }
-    
-    void DutchStemFilter::setExclusionSet(HashSet<String> exclusiontable)
+
+    void DutchStemFilter::setExclusionSet(SetString exclusiontable)
     {
         this->exclusions = exclusiontable;
     }
-    
+
     void DutchStemFilter::setStemDictionary(MapStringString dict)
     {
         if (stemmer)

@@ -40,7 +40,7 @@ public:
         writer->addDocument(testDoc);
         writer->close();
     }
-    
+
     virtual ~FieldsReaderTestFixture()
     {
     }
@@ -49,7 +49,7 @@ protected:
     RAMDirectoryPtr dir;
     DocumentPtr testDoc;
     FieldInfosPtr fieldInfos;
-    
+
     static String TEST_SEGMENT_NAME;
 };
 
@@ -66,45 +66,45 @@ public:
         this->delegate = delegate;
         count = 0;
     }
-    
+
     virtual ~FaultyIndexInput()
     {
     }
-    
+
     LUCENE_CLASS(FaultyIndexInput);
 
 public:
     IndexInputPtr delegate;
     static bool doFail;
     int32_t count;
-    
+
 public:
     virtual void readInternal(uint8_t* b, int32_t offset, int32_t length)
     {
         simOutage();
         delegate->readBytes(b, offset, length);
     }
-    
+
     virtual void seekInternal(int64_t pos)
     {
         delegate->seek(pos);
     }
-    
+
     virtual int64_t length()
     {
         return delegate->length();
     }
-    
+
     virtual void close()
     {
         delegate->close();
     }
-    
+
     virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
         return newLucene<FaultyIndexInput>(LuceneDynamicCast<IndexInput>(delegate->clone()));
     }
-    
+
 protected:
     void simOutage()
     {
@@ -123,57 +123,57 @@ public:
         fsDir = FSDirectory::open(dir);
         lockFactory = fsDir->getLockFactory();
     }
-    
+
     virtual ~FaultyFSDirectory()
     {
     }
-    
+
     LUCENE_CLASS(FaultyFSDirectory);
 
 public:
     FSDirectoryPtr fsDir;
-    
+
 public:
     virtual IndexInputPtr openInput(const String& name)
     {
         return newLucene<FaultyIndexInput>(fsDir->openInput(name));
     }
-    
-    virtual HashSet<String> listAll()
+
+    virtual SetString listAll()
     {
         return fsDir->listAll();
     }
-    
+
     virtual bool fileExists(const String& name)
     {
         return fsDir->fileExists(name);
     }
-    
+
     virtual uint64_t fileModified(const String& name)
     {
         return fsDir->fileModified(name);
     }
-    
+
     virtual void touchFile(const String& name)
     {
         fsDir->touchFile(name);
     }
-    
+
     virtual void deleteFile(const String& name)
     {
         fsDir->deleteFile(name);
     }
-    
+
     virtual int64_t fileLength(const String& name)
     {
         return fsDir->fileLength(name);
     }
-    
+
     virtual IndexOutputPtr createOutput(const String& name)
     {
         return fsDir->createOutput(name);
     }
-    
+
     virtual void close()
     {
         fsDir->close();
@@ -235,10 +235,10 @@ BOOST_AUTO_TEST_CASE(testLazyFields)
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
     BOOST_CHECK(reader);
     BOOST_CHECK(reader->size() == 1);
-    HashSet<String> loadFieldNames = HashSet<String>::newInstance();
+    SetString loadFieldNames = SetString::newInstance();
     loadFieldNames.add(DocHelper::TEXT_FIELD_1_KEY);
     loadFieldNames.add(DocHelper::TEXT_FIELD_UTF1_KEY);
-    HashSet<String> lazyFieldNames = HashSet<String>::newInstance();
+    SetString lazyFieldNames = SetString::newInstance();
     lazyFieldNames.add(DocHelper::LARGE_LAZY_FIELD_KEY);
     lazyFieldNames.add(DocHelper::LAZY_FIELD_KEY);
     lazyFieldNames.add(DocHelper::LAZY_FIELD_BINARY_KEY);
@@ -283,10 +283,10 @@ BOOST_AUTO_TEST_CASE(testLazyFieldsAfterClose)
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
     BOOST_CHECK(reader);
     BOOST_CHECK(reader->size() == 1);
-    HashSet<String> loadFieldNames = HashSet<String>::newInstance();
+    SetString loadFieldNames = SetString::newInstance();
     loadFieldNames.add(DocHelper::TEXT_FIELD_1_KEY);
     loadFieldNames.add(DocHelper::TEXT_FIELD_UTF1_KEY);
-    HashSet<String> lazyFieldNames = HashSet<String>::newInstance();
+    SetString lazyFieldNames = SetString::newInstance();
     lazyFieldNames.add(DocHelper::LARGE_LAZY_FIELD_KEY);
     lazyFieldNames.add(DocHelper::LAZY_FIELD_KEY);
     lazyFieldNames.add(DocHelper::LAZY_FIELD_BINARY_KEY);
@@ -341,10 +341,10 @@ BOOST_AUTO_TEST_CASE(testLazyPerformance)
     int64_t lazyTime = 0;
     int64_t regularTime = 0;
     int32_t length = 50;
-    HashSet<String> lazyFieldNames = HashSet<String>::newInstance();
+    SetString lazyFieldNames = SetString::newInstance();
     lazyFieldNames.add(DocHelper::LARGE_LAZY_FIELD_KEY);
-    SetBasedFieldSelectorPtr fieldSelector = newLucene<SetBasedFieldSelector>(HashSet<String>::newInstance(), lazyFieldNames);
-    
+    SetBasedFieldSelectorPtr fieldSelector = newLucene<SetBasedFieldSelector>(SetString::newInstance(), lazyFieldNames);
+
     for (int32_t i = 0; i < length; ++i)
     {
         reader = newLucene<FieldsReader>(tmpDir, TEST_SEGMENT_NAME, fieldInfos);
@@ -375,7 +375,7 @@ BOOST_AUTO_TEST_CASE(testLazyPerformance)
         lazyTime += (finish - start);
         reader->close();
     }
-    
+
     BOOST_TEST_MESSAGE("Average Non-lazy time (should be very close to zero): " << (regularTime / length) << " ms for " << length << " reads");
     BOOST_TEST_MESSAGE("Average Lazy Time (should be greater than zero): " << (lazyTime / length) << " ms for " << length << " reads");
 
@@ -385,16 +385,16 @@ BOOST_AUTO_TEST_CASE(testLazyPerformance)
 namespace TestLoadSize
 {
     DECLARE_LUCENE_PTR(TestableFieldSelector)
-    
+
     class TestableFieldSelector : public FieldSelector
     {
     public:
         virtual ~TestableFieldSelector()
         {
         }
-        
+
         LUCENE_CLASS(TestableFieldSelector);
-        
+
     public:
         virtual FieldSelectorResult accept(const String& fieldName)
         {
@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_CASE(testExceptions)
         FaultyIndexInput::doFail = true;
 
         bool exc = false;
-        
+
         for (int32_t i = 0; i < 2; ++i)
         {
             try

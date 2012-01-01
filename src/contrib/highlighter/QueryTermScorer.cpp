@@ -17,31 +17,31 @@ namespace Lucene
     {
         ConstructQueryTermScorer(QueryTermExtractor::getTerms(query));
     }
-    
+
     QueryTermScorer::QueryTermScorer(QueryPtr query, const String& fieldName)
     {
         ConstructQueryTermScorer(QueryTermExtractor::getTerms(query, false, fieldName));
     }
-    
+
     QueryTermScorer::QueryTermScorer(QueryPtr query, IndexReaderPtr reader, const String& fieldName)
     {
         ConstructQueryTermScorer(QueryTermExtractor::getIdfWeightedTerms(query, reader, fieldName));
     }
-    
+
     QueryTermScorer::QueryTermScorer(Collection<WeightedTermPtr> weightedTerms)
     {
         ConstructQueryTermScorer(weightedTerms);
     }
-    
+
     QueryTermScorer::~QueryTermScorer()
     {
     }
-    
+
     void QueryTermScorer::ConstructQueryTermScorer(Collection<WeightedTermPtr> weightedTerms)
     {
         totalScore = 0;
         maxTermWeight = 0;
-        
+
         termsToFind = MapStringWeightedTerm::newInstance();
         for (int32_t i = 0; i < weightedTerms.size(); ++i)
         {
@@ -54,20 +54,20 @@ namespace Lucene
             }
         }
     }
-    
+
     TokenStreamPtr QueryTermScorer::init(TokenStreamPtr tokenStream)
     {
         termAtt = tokenStream->addAttribute<TermAttribute>();
         return TokenStreamPtr();
     }
-    
+
     void QueryTermScorer::startFragment(TextFragmentPtr newFragment)
     {
-        uniqueTermsInFragment = HashSet<String>::newInstance();
+        uniqueTermsInFragment = SetString::newInstance();
         currentTextFragment = newFragment;
         totalScore = 0;
     }
-    
+
     double QueryTermScorer::getTokenScore()
     {
         String termText(termAtt->term());
@@ -85,17 +85,17 @@ namespace Lucene
 
         return queryTerm->getWeight();
     }
-    
+
     double QueryTermScorer::getFragmentScore()
     {
         return totalScore;
     }
-    
+
     void QueryTermScorer::allFragmentsProcessed()
     {
         // this class has no special operations to perform at end of processing
-    }    
-    
+    }
+
     double QueryTermScorer::getMaxTermWeight()
     {
         return maxTermWeight;

@@ -23,7 +23,19 @@ using namespace Lucene;
 
 BOOST_FIXTURE_TEST_SUITE(CachingTokenFilterTest, BaseTokenStreamFixture)
 
-static Collection<String> tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
+static Collection<String> tokens()
+{
+    static Collection<String> _tokens;
+    if (!_tokens)
+    {
+        _tokens = Collection<String>::newStaticInstance();
+        _tokens.add(L"term1");
+        _tokens.add(L"term2");
+        _tokens.add(L"term3");
+        _tokens.add(L"term2");
+    }
+    return _tokens;
+}
 
 static void checkTokens(TokenStreamPtr stream)
 {
@@ -33,11 +45,11 @@ static void checkTokens(TokenStreamPtr stream)
     BOOST_CHECK(termAtt);
     while (stream->incrementToken())
     {
-        BOOST_CHECK(count < tokens.size());
-        BOOST_CHECK_EQUAL(tokens[count], termAtt->term());
+        BOOST_CHECK(count < tokens().size());
+        BOOST_CHECK_EQUAL(tokens()[count], termAtt->term());
         ++count;
     }
-    BOOST_CHECK_EQUAL(tokens.size(), count);
+    BOOST_CHECK_EQUAL(tokens().size(), count);
 }
 
 namespace TestCaching
@@ -51,25 +63,25 @@ namespace TestCaching
             termAtt = addAttribute<TermAttribute>();
             offsetAtt = addAttribute<OffsetAttribute>();
         }
-        
+
         virtual ~TestableTokenStream()
         {
         }
-    
+
     protected:
         int32_t index;
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
-    
+
     public:
         virtual bool incrementToken()
         {
-            if (index == tokens.size())
+            if (index == tokens().size())
                 return false;
             else
             {
                 clearAttributes();
-                termAtt->setTermBuffer(tokens[index++]);
+                termAtt->setTermBuffer(tokens()[index++]);
                 offsetAtt->setOffset(0, 0);
                 return true;
             }
@@ -88,10 +100,10 @@ BOOST_AUTO_TEST_CASE(testCaching)
 
     // 1) we consume all tokens twice before we add the doc to the index
     checkTokens(stream);
-    stream->reset();  
+    stream->reset();
     checkTokens(stream);
 
-    // 2) now add the document to the index and verify if all tokens are indexed don't reset the stream here, the 
+    // 2) now add the document to the index and verify if all tokens are indexed don't reset the stream here, the
     // DocumentWriter should do that implicitly
     writer->addDocument(doc);
     writer->close();

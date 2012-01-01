@@ -16,18 +16,18 @@ namespace Lucene
     public:
         DocFieldConsumersPerField(DocFieldConsumersPerThreadPtr perThread, DocFieldConsumerPerFieldPtr one, DocFieldConsumerPerFieldPtr two);
         virtual ~DocFieldConsumersPerField();
-        
+
         LUCENE_CLASS(DocFieldConsumersPerField);
-            
+
     public:
         DocFieldConsumerPerFieldPtr one;
         DocFieldConsumerPerFieldPtr two;
-        DocFieldConsumersPerThreadWeakPtr _perThread;
-    
+        DocFieldConsumersPerThreadPtr perThread;
+
     public:
         /// Processes all occurrences of a single field
         virtual void processFields(Collection<FieldablePtr> fields, int32_t count);
-        
+
         virtual void abort();
     };
 }

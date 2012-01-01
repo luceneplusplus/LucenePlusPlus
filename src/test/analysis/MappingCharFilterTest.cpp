@@ -33,7 +33,7 @@ public:
 
         normMap->add(L"empty", L"");
     }
-    
+
     virtual ~MappingCharFilterTestFixture()
     {
     }
@@ -47,7 +47,7 @@ BOOST_FIXTURE_TEST_SUITE(MappingCharFilterTest, MappingCharFilterTestFixture)
 BOOST_AUTO_TEST_CASE(testReaderReset)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"x"));
-    CharArray buf = CharArray::newInstance(10);
+    Collection<CharArray> buf = Collection<CharArray>::newInstance(10);
     int32_t len = cs->read(buf.get(), 0, 10);
     BOOST_CHECK_EQUAL(1, len);
     BOOST_CHECK_EQUAL(L'x', buf[0]) ;
@@ -145,8 +145,8 @@ BOOST_AUTO_TEST_CASE(testTokenStream)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, CharReader::get(newLucene<StringReader>(L"h i j k ll cccc bbb aa")));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
-    checkTokenStreamContents(ts, newCollection<String>(L"i", L"i", L"jj", L"kkk", L"llll", L"cc", L"b", L"a"), 
-                             newCollection<int32_t>(0, 2, 4, 6, 8, 11, 16, 20), 
+    checkTokenStreamContents(ts, newCollection<String>(L"i", L"i", L"jj", L"kkk", L"llll", L"cc", L"b", L"a"),
+                             newCollection<int32_t>(0, 2, 4, 6, 8, 11, 16, 20),
                              newCollection<int32_t>(1, 3, 5, 7, 10, 15, 19, 22));
 }
 

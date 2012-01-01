@@ -32,7 +32,7 @@ public:
         this->doc = doc;
         this->score = score;
     }
-    
+
     virtual ~TestHit()
     {
     }
@@ -66,14 +66,14 @@ public:
         indexSearcher = newLucene<IndexSearcher>(directory, false);
         indexReader = indexSearcher->getIndexReader();
     }
-    
+
     virtual ~TermScorerFixture()
     {
     }
 
 protected:
     static const String FIELD;
-    
+
     RAMDirectoryPtr directory;
     Collection<String> values;
     IndexSearcherPtr indexSearcher;
@@ -94,22 +94,22 @@ namespace TestTermScorer
             this->docs = docs;
             this->base = 0;
         }
-        
+
         virtual ~TestCollector()
         {
         }
-    
+
     protected:
         int32_t base;
         ScorerPtr scorer;
         Collection<TestHitPtr> docs;
-    
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
-            this->scorer = scorer; 
+            this->scorer = scorer;
         }
-        
+
         virtual void collect(int32_t doc)
         {
             double score = scorer->score();
@@ -118,12 +118,12 @@ namespace TestTermScorer
             BOOST_CHECK(score > 0);
             BOOST_CHECK(doc == 0 || doc == 5);
         }
-        
+
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
         {
             base = docBase;
         }
-        
+
         virtual bool acceptsDocsOutOfOrder()
         {
             return true;
@@ -139,12 +139,12 @@ BOOST_AUTO_TEST_CASE(testTermScorer)
     WeightPtr weight = termQuery->weight(indexSearcher);
 
     TermScorerPtr ts = newLucene<TermScorer>(weight, indexReader->termDocs(allTerm), indexSearcher->getSimilarity(), indexReader->norms(FIELD));
-    
+
     // we have 2 documents with the term all in them, one document for all the other values
     Collection<TestHitPtr> docs = Collection<TestHitPtr>::newInstance();
 
     ts->score(newLucene<TestTermScorer::TestCollector>(docs));
-    
+
     BOOST_CHECK_EQUAL(docs.size(), 2);
     BOOST_CHECK_EQUAL(docs[0]->score, docs[1]->score);
     BOOST_CHECK_CLOSE_FRACTION(docs[0]->score, 1.6931472, 0.000001);

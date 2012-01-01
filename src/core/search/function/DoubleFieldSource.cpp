@@ -16,22 +16,22 @@ namespace Lucene
     {
         this->parser = parser;
     }
-    
+
     DoubleFieldSource::~DoubleFieldSource()
     {
     }
-    
+
     String DoubleFieldSource::description()
     {
         return L"double(" + FieldCacheSource::description() + L")";
     }
-    
+
     DocValuesPtr DoubleFieldSource::getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader)
     {
         Collection<double> arr(cache->getDoubles(reader, field, parser));
         return newLucene<DoubleDocValues>(LuceneThis(), arr);
     }
-    
+
     bool DoubleFieldSource::cachedFieldSourceEquals(FieldCacheSourcePtr other)
     {
         if (!MiscUtils::equalTypes(LuceneThis(), other))
@@ -41,34 +41,34 @@ namespace Lucene
             return false;
         return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;
     }
-    
+
     int32_t DoubleFieldSource::cachedFieldSourceHashCode()
     {
         return StringUtils::hashCode(parser ? DoubleParser::_getClassName() : DoubleFieldSource::_getClassName());
     }
-    
+
     DoubleDocValues::DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr)
     {
-        this->_source = source;
+        this->source = source;
         this->arr = arr;
     }
-    
+
     DoubleDocValues::~DoubleDocValues()
     {
     }
-        
+
     double DoubleDocValues::doubleVal(int32_t doc)
     {
         if (doc < 0 || doc >= arr.size())
             boost::throw_exception(IndexOutOfBoundsException());
         return arr[doc];
     }
-    
+
     String DoubleDocValues::toString(int32_t doc)
     {
-        return DoubleFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(doubleVal(doc));
+        return source->description() + L"=" + StringUtils::toString(doubleVal(doc));
     }
-    
+
     CollectionValue DoubleDocValues::getInnerArray()
     {
         return arr;

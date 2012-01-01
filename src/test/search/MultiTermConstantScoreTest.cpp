@@ -37,8 +37,8 @@ public:
             L"A 1 2 3 4 5 6",
             L"Z       4 5 6",
             L"",
-            L"B   2   4 5 6", 
-            L"Y     3   5 6", 
+            L"B   2   4 5 6",
+            L"Y     3   5 6",
             L"",
             L"C     3     6",
             L"X       4 5 6"
@@ -46,7 +46,7 @@ public:
 
         small = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(small, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        
+
         for (int32_t i = 0; i < data.size(); ++i)
         {
             DocumentPtr doc = newLucene<Document>();
@@ -56,18 +56,18 @@ public:
                 doc->add(newLucene<Field>(L"data", data[i], Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
         }
-                
+
         writer->optimize();
         writer->close();
     }
-    
+
     virtual ~MultiTermConstantScoreFixture()
     {
     }
 
 public:
     static const double SCORE_COMP_THRESH;
-    
+
     DirectoryPtr small;
 
 public:
@@ -77,28 +77,28 @@ public:
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
-    
+
     QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, RewriteMethodPtr method)
     {
         TermRangeQueryPtr query = newLucene<TermRangeQuery>(f, l, h, il, ih);
         query->setRewriteMethod(method);
         return query;
     }
-    
+
     QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, CollatorPtr c)
     {
         TermRangeQueryPtr query = newLucene<TermRangeQuery>(f, l, h, il, ih, c);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
-    
+
     QueryPtr cspq(TermPtr prefix)
     {
         PrefixQueryPtr query = newLucene<PrefixQuery>(prefix);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
-    
+
     QueryPtr cswcq(TermPtr wild)
     {
         WildcardQueryPtr query = newLucene<WildcardQuery>(wild);
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(testEqualScores)
     double score = result[0]->score;
     for (int32_t i = 1; i < numHits; ++i)
         BOOST_CHECK_EQUAL(score, result[i]->score);
-    
+
     result = search->search(csrq(L"data", L"1", L"6", true, true, MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE()), FilterPtr(), 1000)->scoreDocs;
     numHits = result.size();
     BOOST_CHECK_EQUAL(6, numHits);
@@ -162,31 +162,31 @@ namespace TestBoost
         {
             base = 0;
         }
-        
+
         virtual ~TestCollector()
         {
         }
-    
+
     protected:
         int32_t base;
         ScorerPtr scorer;
-        
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
             this->scorer = scorer;
         }
-        
+
         virtual void collect(int32_t doc)
         {
             BOOST_CHECK_EQUAL(1.0, scorer->score());
         }
-        
+
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
         {
             base = docBase;
         }
-        
+
         virtual bool acceptsDocsOutOfOrder()
         {
             return true;
@@ -203,9 +203,9 @@ BOOST_AUTO_TEST_CASE(testBoost)
     // must use a non score normalizing method for this.
     QueryPtr q = csrq(L"data", L"1", L"6", true, true);
     q->setBoost(100);
-    
+
     search->search(q, FilterPtr(), newLucene<TestBoost::TestCollector>());
-    
+
     // Ensure that boosting works to score one clause of a query higher than another.
     QueryPtr q1 = csrq(L"data", L"A", L"A", true, true); // matches document #0
     q1->setBoost(0.1);
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(testBooleanOrderUnAffected)
 {
     IndexReaderPtr reader = IndexReader::open(small, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
-    
+
     // first do a regular TermRangeQuery which uses term expansion so docs with more terms in range get higher scores
 
     QueryPtr rq = newLucene<TermRangeQuery>(L"data", L"1", L"4", true, true);
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(testRangeQueryId)
 
     String nullMin = StringUtils::toString(INT_MIN);
     String nullMax = StringUtils::toString(INT_MAX);
-    
+
     String minIP = pad(minId);
     String maxIP = pad(maxId);
     String medIP = pad(medId);
@@ -404,7 +404,7 @@ BOOST_AUTO_TEST_CASE(testRangeQueryIdCollating)
 
     String nullMin = StringUtils::toString(INT_MIN);
     String nullMax = StringUtils::toString(INT_MAX);
-    
+
     String minIP = pad(minId);
     String maxIP = pad(maxId);
     String medIP = pad(medId);
@@ -485,7 +485,7 @@ BOOST_AUTO_TEST_CASE(testRangeQueryRand)
 
     String nullMin = StringUtils::toString(INT_MIN);
     String nullMax = StringUtils::toString(INT_MAX);
-    
+
     String minRP = pad(signedIndex->minR);
     String maxRP = pad(signedIndex->maxR);
 
@@ -547,7 +547,7 @@ BOOST_AUTO_TEST_CASE(testRangeQueryRandCollating)
 
     String nullMin = StringUtils::toString(INT_MIN);
     String nullMax = StringUtils::toString(INT_MAX);
-    
+
     String minRP = pad(unsignedIndex->minR);
     String maxRP = pad(unsignedIndex->maxR);
 

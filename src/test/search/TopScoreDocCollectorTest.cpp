@@ -29,16 +29,16 @@ BOOST_AUTO_TEST_CASE(testOutOfOrderCollection)
         writer->addDocument(newLucene<Document>());
     writer->commit();
     writer->close();
-    
+
     Collection<uint8_t> inOrder = newCollection<uint8_t>(false, true);
     Collection<String> actualTSDCClass = newCollection<String>(L"OutOfOrderTopScoreDocCollector", L"InOrderTopScoreDocCollector");
 
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
-    
+
     // Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2
     // which delegates to BS if there are no mandatory clauses.
     bq->add(newLucene<MatchAllDocsQuery>(), BooleanClause::SHOULD);
-    
+
     // Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return the clause instead of BQ.
     bq->setMinimumNumberShouldMatch(1);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);

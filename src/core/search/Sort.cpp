@@ -15,58 +15,52 @@ namespace Lucene
     {
         setSort(SortField::FIELD_SCORE());
     }
-    
+
     Sort::Sort(SortFieldPtr field)
     {
         setSort(field);
     }
-    
+
     Sort::Sort(Collection<SortFieldPtr> fields)
     {
         setSort(fields);
     }
-    
+
     Sort::~Sort()
     {
     }
-    
+
     SortPtr Sort::RELEVANCE()
     {
         static SortPtr _RELEVANCE;
         if (!_RELEVANCE)
-        {
-            _RELEVANCE = newLucene<Sort>();
-            CycleCheck::addStatic(_RELEVANCE);
-        }
+            _RELEVANCE = newStaticLucene<Sort>();
         return _RELEVANCE;
     }
-    
+
     SortPtr Sort::INDEXORDER()
     {
         static SortPtr _INDEXORDER;
         if (!_INDEXORDER)
-        {
-            _INDEXORDER = newLucene<Sort>(SortField::FIELD_DOC());
-            CycleCheck::addStatic(_INDEXORDER);
-        }
+            _INDEXORDER = newStaticLucene<Sort>(SortField::FIELD_DOC());
         return _INDEXORDER;
     }
-    
+
     void Sort::setSort(SortFieldPtr field)
     {
         this->fields = newCollection<SortFieldPtr>(field);
     }
-    
+
     void Sort::setSort(Collection<SortFieldPtr> fields)
     {
         this->fields = fields;
     }
-    
+
     Collection<SortFieldPtr> Sort::getSort()
     {
         return fields;
     }
-    
+
     String Sort::toString()
     {
         StringStream buffer;
@@ -78,18 +72,18 @@ namespace Lucene
         }
         return buffer.str();
     }
-    
+
     bool Sort::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
+
         SortPtr otherSort(LuceneDynamicCast<Sort>(other));
         if (!otherSort)
             return false;
         return fields.equals(otherSort->fields);
     }
-    
+
     int32_t Sort::hashCode()
     {
         return 0x45aaf665 + MiscUtils::hashCode(fields.begin(), fields.end(), MiscUtils::hashLucene<SortFieldPtr>);

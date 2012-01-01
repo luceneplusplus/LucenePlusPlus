@@ -19,7 +19,7 @@ namespace std
        out << Lucene::StringUtils::toUTF8(s);
        return out;
     }
-} 
+}
 
 namespace Lucene
 {
@@ -31,9 +31,9 @@ namespace Lucene
     DECLARE_LUCENE_PTR(MockRAMInputStream)
     DECLARE_LUCENE_PTR(MockRAMOutputStream)
     DECLARE_LUCENE_PTR(MockFilter)
-    
+
     typedef HashMap<String, FieldPtr> MapStringField;
-        
+
     struct check_exception
     {
         check_exception(LuceneException::ExceptionType type) : checkType(type) {}

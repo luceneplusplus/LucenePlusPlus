@@ -15,16 +15,16 @@ namespace Lucene
     /// Defines the allowed range of log(size) for each level.  A level is computed by taking the max segment
     /// log size, minus LEVEL_LOG_SPAN, and finding all segments falling within that range.
     const double LogMergePolicy::LEVEL_LOG_SPAN = 0.75;
-    
+
     /// Default merge factor, which is how many segments are merged at a time.
     const int32_t LogMergePolicy::DEFAULT_MERGE_FACTOR = 10;
-    
+
     /// Default maximum segment size.  A segment of this size or larger will never be merged.
     const int32_t LogMergePolicy::DEFAULT_MAX_MERGE_DOCS = INT_MAX;
-    
+
     /// Default noCFSRatio.  If a merge's size is >= 10% of the index, then we disable compound file for it.
     const double LogMergePolicy::DEFAULT_NO_CFS_RATIO = 0.1;
-    
+
     LogMergePolicy::LogMergePolicy(IndexWriterPtr writer) : MergePolicy(writer)
     {
         mergeFactor = DEFAULT_MERGE_FACTOR;
@@ -36,86 +36,86 @@ namespace Lucene
         _useCompoundFile = true;
         _useCompoundDocStore = true;
     }
-    
+
     LogMergePolicy::~LogMergePolicy()
     {
     }
-    
+
     double LogMergePolicy::getNoCFSRatio()
     {
         return noCFSRatio;
     }
-    
+
     void LogMergePolicy::setNoCFSRatio(double noCFSRatio)
     {
         if (noCFSRatio < 0.0 || noCFSRatio > 1.0)
             boost::throw_exception(IllegalArgumentException(L"noCFSRatio must be 0.0 to 1.0 inclusive; got " + StringUtils::toString(noCFSRatio)));
         this->noCFSRatio = noCFSRatio;
     }
-    
+
     bool LogMergePolicy::verbose()
     {
         return (!_writer.expired() && IndexWriterPtr(_writer)->verbose());
     }
-    
+
     void LogMergePolicy::message(const String& message)
     {
         if (verbose())
             IndexWriterPtr(_writer)->message(L"LMP: " + message);
     }
-    
+
     int32_t LogMergePolicy::getMergeFactor()
     {
         return mergeFactor;
     }
-    
+
     void LogMergePolicy::setMergeFactor(int32_t mergeFactor)
     {
         if (mergeFactor < 2)
             boost::throw_exception(IllegalArgumentException(L"mergeFactor cannot be less than 2"));
         this->mergeFactor = mergeFactor;
     }
-    
+
     bool LogMergePolicy::getUseCompoundFile()
     {
         return _useCompoundFile;
     }
-    
+
     void LogMergePolicy::setUseCompoundFile(bool useCompoundFile)
     {
         _useCompoundFile = useCompoundFile;
     }
-    
+
     bool LogMergePolicy::useCompoundFile(SegmentInfosPtr segments, SegmentInfoPtr newSegment)
     {
         return _useCompoundFile;
     }
-    
+
     bool LogMergePolicy::useCompoundDocStore(SegmentInfosPtr segments)
     {
         return _useCompoundDocStore;
     }
-    
+
     void LogMergePolicy::setUseCompoundDocStore(bool useCompoundDocStore)
     {
         _useCompoundDocStore = useCompoundDocStore;
     }
-    
+
     bool LogMergePolicy::getUseCompoundDocStore()
     {
         return _useCompoundDocStore;
     }
-    
+
     void LogMergePolicy::setCalibrateSizeByDeletes(bool calibrateSizeByDeletes)
     {
         this->calibrateSizeByDeletes = calibrateSizeByDeletes;
     }
-    
+
     bool LogMergePolicy::getCalibrateSizeByDeletes()
     {
         return calibrateSizeByDeletes;
     }
-    
+
     void LogMergePolicy::close()
     {
     }
@@ -130,7 +130,7 @@ namespace Lucene
         else
             return info->docCount;
     }
-    
+
     int64_t LogMergePolicy::sizeBytes(SegmentInfoPtr info)
     {
         int64_t byteSize = info->sizeInBytes();
@@ -143,7 +143,7 @@ namespace Lucene
         else
             return byteSize;
     }
-    
+
     bool LogMergePolicy::isOptimized(SegmentInfosPtr infos, int32_t maxNumSegments, SetSegmentInfo segmentsToOptimize)
     {
         int32_t numSegments = infos->size();
@@ -160,23 +160,23 @@ namespace Lucene
         }
         return (numToOptimize <= maxNumSegments && (numToOptimize != 1 || isOptimized(optimizeInfo)));
     }
-    
+
     bool LogMergePolicy::isOptimized(SegmentInfoPtr info)
     {
         IndexWriterPtr writer(_writer);
         bool hasDeletions = (writer->numDeletedDocs(info) > 0);
         return (!hasDeletions && !info->hasSeparateNorms() && info->dir == writer->getDirectory() && (info->getUseCompoundFile() == _useCompoundFile || noCFSRatio < 1.0));
     }
-    
+
     MergeSpecificationPtr LogMergePolicy::findMergesForOptimize(SegmentInfosPtr segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize)
     {
         MergeSpecificationPtr spec;
-    
+
         BOOST_ASSERT(maxSegmentCount > 0);
-        
+
         if (!isOptimized(segmentInfos, maxSegmentCount, segmentsToOptimize))
         {
-            // Find the newest (rightmost) segment that needs to be optimized (other segments may have been 
+            // Find the newest (rightmost) segment that needs to be optimized (other segments may have been
             // flushed since optimize started)
             int32_t last = segmentInfos->size();
             while (last > 0)
@@ -187,18 +187,18 @@ namespace Lucene
                     break;
                 }
             }
-            
+
             if (last > 0)
             {
                 spec = newLucene<MergeSpecification>();
-                
+
                 // First, enroll all "full" merges (size mergeFactor) to potentially be run concurrently
                 while (last - maxSegmentCount + 1 >= mergeFactor)
                 {
                     spec->add(makeOneMerge(segmentInfos, segmentInfos->range(last - mergeFactor, last)));
                     last -= mergeFactor;
                 }
-                
+
                 // Only if there are no full merges pending do we add a final partial (< mergeFactor segments) merge
                 if (spec->merges.empty())
                 {
@@ -213,15 +213,15 @@ namespace Lucene
                         // Take care to pick a partial merge that is least cost, but does not make the index too
                         // lopsided.  If we always just picked the partial tail then we could produce a highly
                         // lopsided index over time
-                        
+
                         // We must merge this many segments to leave maxNumSegments in the index (from when
                         // optimize was first kicked off)
                         int32_t finalMergeSize = last - maxSegmentCount + 1;
-                        
+
                         // Consider all possible starting points
                         int64_t bestSize = 0;
                         int32_t bestStart = 0;
-                        
+
                         for (int32_t i = 0; i < last - finalMergeSize + 1; ++i)
                         {
                             int64_t sumSize = 0;
@@ -233,7 +233,7 @@ namespace Lucene
                                 bestSize = sumSize;
                             }
                         }
-                        
+
                         spec->add(makeOneMerge(segmentInfos, segmentInfos->range(bestStart, bestStart + finalMergeSize)));
                     }
                 }
@@ -243,16 +243,16 @@ namespace Lucene
         }
         else
             spec.reset();
-        
+
         return spec;
     }
-    
+
     MergeSpecificationPtr LogMergePolicy::findMergesToExpungeDeletes(SegmentInfosPtr segmentInfos)
     {
         int32_t numSegments = segmentInfos->size();
-        
+
         message(L"findMergesToExpungeDeletes: " + StringUtils::toString(numSegments) + L" segments");
-        
+
         MergeSpecificationPtr spec(newLucene<MergeSpecification>());
         int32_t firstSegmentWithDeletions = -1;
         for (int32_t i = 0; i < numSegments; ++i)
@@ -274,50 +274,50 @@ namespace Lucene
             }
             else if (firstSegmentWithDeletions != -1)
             {
-                // End of a sequence of segments with deletions, so merge those past segments even if 
+                // End of a sequence of segments with deletions, so merge those past segments even if
                 // it's fewer than mergeFactor segments
                 message(L"  add merge " + StringUtils::toString(firstSegmentWithDeletions) + L" to " + StringUtils::toString(i - 1) + L" inclusive");
                 spec->add(makeOneMerge(segmentInfos, segmentInfos->range(firstSegmentWithDeletions, i)));
                 firstSegmentWithDeletions = -1;
             }
         }
-        
+
         if (firstSegmentWithDeletions != -1)
         {
             message(L"  add merge " + StringUtils::toString(firstSegmentWithDeletions) + L" to " + StringUtils::toString(numSegments - 1) + L" inclusive");
             spec->add(makeOneMerge(segmentInfos, segmentInfos->range(firstSegmentWithDeletions, numSegments)));
         }
-        
+
         return spec;
     }
-    
+
     MergeSpecificationPtr LogMergePolicy::findMerges(SegmentInfosPtr segmentInfos)
     {
         int32_t numSegments = segmentInfos->size();
         message(L"findMerges: " + StringUtils::toString(numSegments) + L" segments");
-        
+
         // Compute levels, which is just log (base mergeFactor) of the size of each segment
         Collection<double> levels(Collection<double>::newInstance(numSegments));
         double norm = std::log((double)mergeFactor);
-        
+
         for (int32_t i = 0; i < numSegments; ++i)
         {
             SegmentInfoPtr info(segmentInfos->info(i));
             int64_t _size = size(info);
-            
+
             // Floor tiny segments
             _size = std::max(_size, (int64_t)1);
             levels[i] = std::log((double)_size) / norm;
         }
-        
+
         double levelFloor = minMergeSize <= 0 ? 0 : (std::log((double)minMergeSize) / norm);
-        
-        // Now, we quantize the log values into levels.  The first level is any segment whose log 
+
+        // Now, we quantize the log values into levels.  The first level is any segment whose log
         // size is within LEVEL_LOG_SPAN of the max size, or, who has such as segment "to the right".
         // Then, we find the max of all other segments and use that to define the next level segment, etc.
-        
+
         MergeSpecificationPtr spec;
-        
+
         int32_t start = 0;
         while (start < numSegments)
         {
@@ -325,7 +325,7 @@ namespace Lucene
             double maxLevel = levels[start];
             for (int32_t i = 1 + start; i < numSegments; ++i)
                 maxLevel = std::max(maxLevel, levels[i]);
-        
+
             // Now search backwards for the rightmost segment that falls into this level
             double levelBottom;
             if (maxLevel < levelFloor)
@@ -333,12 +333,12 @@ namespace Lucene
             else
             {
                 levelBottom = (double)(maxLevel - LEVEL_LOG_SPAN);
-                
+
                 // Force a boundary at the level floor
                 if (levelBottom < levelFloor && maxLevel >= levelFloor)
                     levelBottom = levelFloor;
             }
-            
+
             int32_t upto = numSegments - 1;
             while (upto >= start)
             {
@@ -347,7 +347,7 @@ namespace Lucene
                 --upto;
             }
             message(L"  level " + StringUtils::toString(levelBottom) + L" to " + StringUtils::toString(maxLevel) + L": " + StringUtils::toString(1 + upto - start) + L" segments");
-            
+
             // Finally, record all merges that are viable at this level
             int32_t end = start + mergeFactor;
             while (end <= 1 + upto)
@@ -362,7 +362,7 @@ namespace Lucene
                         break;
                     }
                 }
-                
+
                 if (!anyTooLarge)
                 {
                     if (!spec)
@@ -372,17 +372,17 @@ namespace Lucene
                 }
                 else
                     message(L"    " + StringUtils::toString(start) + L" to " + StringUtils::toString(end) + L": contains segment over maxMergeSize or maxMergeDocs; skipping");
-                
+
                 start = end;
                 end = start + mergeFactor;
             }
-        
+
             start = 1 + upto;
         }
-        
+
         return spec;
     }
-    
+
     OneMergePtr LogMergePolicy::makeOneMerge(SegmentInfosPtr infos, SegmentInfosPtr infosToMerge)
     {
         bool doCFS;
@@ -410,12 +410,12 @@ namespace Lucene
         }
         return newLucene<OneMerge>(infosToMerge, doCFS);
     }
-    
+
     void LogMergePolicy::setMaxMergeDocs(int32_t maxMergeDocs)
     {
         this->maxMergeDocs = maxMergeDocs;
     }
-    
+
     int32_t LogMergePolicy::getMaxMergeDocs()
     {
         return maxMergeDocs;

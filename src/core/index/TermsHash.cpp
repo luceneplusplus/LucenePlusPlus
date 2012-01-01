@@ -24,61 +24,61 @@ namespace Lucene
         this->postingsAllocCount = 0;
         this->trackAllocations = false;
         this->postingsFreeList = Collection<RawPostingListPtr>::newInstance(1);
-        
-        this->_docWriter = docWriter;
+
+        this->docWriter = docWriter;
         this->consumer = consumer;
         this->nextTermsHash = nextTermsHash;
         this->trackAllocations = trackAllocations;
-        
+
         bytesPerPosting = consumer->bytesPerPosting() + 4 * DocumentsWriter::POINTER_NUM_BYTE;
         postingsFreeChunk = (int32_t)((double)DocumentsWriter::BYTE_BLOCK_SIZE / (double)bytesPerPosting);
     }
-    
+
     TermsHash::~TermsHash()
     {
     }
-    
+
     InvertedDocConsumerPerThreadPtr TermsHash::addThread(DocInverterPerThreadPtr docInverterPerThread)
     {
         return newLucene<TermsHashPerThread>(docInverterPerThread, LuceneThis(), nextTermsHash, TermsHashPerThreadPtr());
     }
-    
+
     TermsHashPerThreadPtr TermsHash::addThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPerThreadPtr primaryPerThread)
     {
         return newLucene<TermsHashPerThread>(docInverterPerThread, LuceneThis(), nextTermsHash, primaryPerThread);
     }
-    
+
     void TermsHash::setFieldInfos(FieldInfosPtr fieldInfos)
     {
         this->fieldInfos = fieldInfos;
         consumer->setFieldInfos(fieldInfos);
     }
-    
+
     void TermsHash::abort()
     {
         consumer->abort();
         if (nextTermsHash)
             nextTermsHash->abort();
     }
-    
+
     void TermsHash::shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
     {
         BOOST_ASSERT(postingsFreeCount == postingsAllocCount);
-        
+
         int32_t newSize = 1;
         if (newSize != postingsFreeList.size())
         {
             if (postingsFreeCount > newSize)
             {
                 if (trackAllocations)
-                    DocumentsWriterPtr(_docWriter)->bytesAllocated(-(postingsFreeCount - newSize) * bytesPerPosting);
+                    docWriter->bytesAllocated(-(postingsFreeCount - newSize) * bytesPerPosting);
                 postingsFreeCount = newSize;
                 postingsAllocCount = newSize;
             }
             postingsFreeList.resize(newSize);
         }
     }
-    
+
     void TermsHash::closeDocStore(SegmentWriteStatePtr state)
     {
         SyncLock syncLock(this);
@@ -86,7 +86,7 @@ namespace Lucene
         if (nextTermsHash)
             nextTermsHash->closeDocStore(state);
     }
-    
+
     void TermsHash::flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
     {
         SyncLock syncLock(this);
@@ -94,39 +94,39 @@ namespace Lucene
         MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField nextThreadsAndFields;
         if (nextTermsHash)
             nextThreadsAndFields = MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField::newInstance();
-        
+
         for (MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry)
         {
             Collection<TermsHashConsumerPerFieldPtr> childFields(Collection<TermsHashConsumerPerFieldPtr>::newInstance());
             Collection<InvertedDocConsumerPerFieldPtr> nextChildFields;
             if (nextTermsHash)
                 nextChildFields = Collection<InvertedDocConsumerPerFieldPtr>::newInstance();
-            
+
             for (Collection<InvertedDocConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
             {
                 childFields.add(LuceneStaticCast<TermsHashPerField>(*perField)->consumer);
                 if (nextTermsHash)
                     nextChildFields.add(LuceneStaticCast<TermsHashPerField>(*perField)->nextPerField);
             }
-            
+
             childThreadsAndFields.put(LuceneStaticCast<TermsHashPerThread>(entry->first)->consumer, childFields);
             if (nextTermsHash)
                 nextThreadsAndFields.put(LuceneStaticCast<TermsHashPerThread>(entry->first)->nextPerThread, nextChildFields);
         }
-        
+
         consumer->flush(childThreadsAndFields, state);
-        
+
         shrinkFreePostings(threadsAndFields, state);
-        
+
         if (nextTermsHash)
             nextTermsHash->flush(nextThreadsAndFields, state);
     }
-    
+
     bool TermsHash::freeRAM()
     {
         if (!trackAllocations)
             return false;
-        
+
         bool any = false;
         int64_t bytesFreed = 0;
         {
@@ -142,68 +142,66 @@ namespace Lucene
                 any = true;
             }
         }
-        
+
         if (any)
-            DocumentsWriterPtr(_docWriter)->bytesAllocated(bytesFreed);
+            docWriter->bytesAllocated(bytesFreed);
 
         if (nextTermsHash && nextTermsHash->freeRAM())
             any = true;
-        
+
         return any;
     }
-    
+
     void TermsHash::recyclePostings(Collection<RawPostingListPtr> postings, int32_t numPostings)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(postings.size() >= numPostings);
-        
-        // Move all Postings from this ThreadState back to our free list.  We pre-allocated this array while we 
+
+        // Move all Postings from this ThreadState back to our free list.  We pre-allocated this array while we
         // were creating Postings to make sure it's large enough
         BOOST_ASSERT(postingsFreeCount + numPostings <= postingsFreeList.size());
         MiscUtils::arrayCopy(postings.begin(), 0, postingsFreeList.begin(), postingsFreeCount, numPostings);
         postingsFreeCount += numPostings;
     }
-    
+
     void TermsHash::getPostings(Collection<RawPostingListPtr> postings)
     {
         SyncLock syncLock(this);
-        DocumentsWriterPtr docWriter(_docWriter);
-        IndexWriterPtr writer(docWriter->_writer);
-        
-        BOOST_ASSERT(writer->testPoint(L"TermsHash.getPostings start"));
-        
+
+        BOOST_ASSERT(docWriter->writer->testPoint(L"TermsHash.getPostings start"));
+
         BOOST_ASSERT(postingsFreeCount <= postingsFreeList.size());
         BOOST_ASSERT(postingsFreeCount <= postingsAllocCount);
-        
+
         int32_t numToCopy = postingsFreeCount < postings.size() ? postingsFreeCount : postings.size();
         int32_t start = postingsFreeCount - numToCopy;
         BOOST_ASSERT(start >= 0);
         BOOST_ASSERT(start + numToCopy <= postingsFreeList.size());
         BOOST_ASSERT(numToCopy <= postings.size());
         MiscUtils::arrayCopy(postingsFreeList.begin(), start, postings.begin(), 0, numToCopy);
-        
+
         // Directly allocate the remainder if any
         if (numToCopy != postings.size())
         {
             int32_t extra = postings.size() - numToCopy;
             int32_t newPostingsAllocCount = postingsAllocCount + extra;
-            
+
             consumer->createPostings(postings, numToCopy, extra);
-            BOOST_ASSERT(writer->testPoint(L"TermsHash.getPostings after create"));
+            BOOST_ASSERT(docWriter->writer->testPoint(L"TermsHash.getPostings after create"));
             postingsAllocCount += extra;
-            
+
             if (trackAllocations)
                 docWriter->bytesAllocated(extra * bytesPerPosting);
-            
+
             if (newPostingsAllocCount > postingsFreeList.size())
             {
                 // Pre-allocate the postingsFreeList so it's large enough to hold all postings we've given out
                 postingsFreeList = Collection<RawPostingListPtr>::newInstance(MiscUtils::getNextSize(newPostingsAllocCount));
             }
         }
-        
+
         postingsFreeCount -= numToCopy;
-        
+
         if (trackAllocations)
             docWriter->bytesUsed(postings.size() * bytesPerPosting);
     }

@@ -42,7 +42,7 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
+
     virtual ~NearSpansOrderedFixture()
     {
         searcher->close();
@@ -52,7 +52,7 @@ protected:
     IndexSearcherPtr searcher;
     QueryParserPtr qp;
     Collection<String> docFields;
-    
+
 public:
     static const String FIELD;
 
@@ -65,17 +65,17 @@ public:
             newLucene<SpanTermQuery>(newLucene<Term>(FIELD, s3))
         ), slop, inOrder);
     }
-                                    
+
     SpanNearQueryPtr makeQuery()
     {
         return makeQuery(L"w1", L"w2", L"w3", 1, true);
     }
-    
+
     String str(SpansPtr span)
     {
         return str(span->doc(), span->start(), span->end());
     }
-    
+
     String str(int32_t doc, int32_t start, int32_t end)
     {
         return L"s(" + StringUtils::toString(doc) + L"," + StringUtils::toString(start) + L"," + StringUtils::toString(end) + L")";
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(testNearSpansNext)
     BOOST_CHECK(!span->next());
 }
 
-/// test does not imply that skipTo(doc+1) should work exactly the same as next -- it's only applicable in this case 
+/// test does not imply that skipTo(doc+1) should work exactly the same as next -- it's only applicable in this case
 /// since we know doc does not contain more than one span
 BOOST_AUTO_TEST_CASE(testNearSpansSkipToLikeNext)
 {

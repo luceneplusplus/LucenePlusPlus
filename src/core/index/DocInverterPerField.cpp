@@ -29,48 +29,46 @@ namespace Lucene
 {
     DocInverterPerField::DocInverterPerField(DocInverterPerThreadPtr perThread, FieldInfoPtr fieldInfo)
     {
-        this->_perThread = perThread;
+        this->perThread = perThread;
         this->fieldInfo = fieldInfo;
         docState = perThread->docState;
         fieldState = perThread->fieldState;
     }
-    
+
     DocInverterPerField::~DocInverterPerField()
     {
     }
-    
+
     void DocInverterPerField::initialize()
     {
-        DocInverterPerThreadPtr perThread(_perThread);
         consumer = perThread->consumer->addField(LuceneThis(), fieldInfo);
         endConsumer = perThread->endConsumer->addField(LuceneThis(), fieldInfo);
     }
-    
+
     void DocInverterPerField::abort()
     {
         consumer->abort();
         endConsumer->abort();
     }
-    
+
     void DocInverterPerField::processFields(Collection<FieldablePtr> fields, int32_t count)
     {
         fieldState->reset(docState->doc->getBoost());
-        
+
         int32_t maxFieldLength = docState->maxFieldLength;
         bool doInvert = consumer->start(fields, count);
         DocumentsWriterPtr docWriter(docState->_docWriter);
-        DocInverterPerThreadPtr perThread(_perThread);
-        
+
         for (int32_t i = 0; i < count; ++i)
         {
             FieldablePtr field = fields[i];
             if (field->isIndexed() && doInvert)
             {
                 bool anyToken;
-                
+
                 if (fieldState->length > 0)
                     fieldState->position += docState->analyzer->getPositionIncrementGap(fieldInfo->name);
-                
+
                 if (!field->isTokenized())
                 {
                     // un-tokenized field
@@ -104,7 +102,7 @@ namespace Lucene
                     // tokenized field
                     TokenStreamPtr stream;
                     TokenStreamPtr streamValue(field->tokenStreamValue());
-                    
+
                     if (streamValue)
                         stream = streamValue;
                     else
@@ -112,7 +110,7 @@ namespace Lucene
                         // the field does not have a TokenStream, so we have to obtain one from the analyzer
                         ReaderPtr reader; // find or make Reader
                         ReaderPtr readerValue(field->readerValue());
-                        
+
                         if (readerValue)
                             reader = readerValue;
                         else
@@ -121,30 +119,30 @@ namespace Lucene
                             perThread->stringReader->init(stringValue);
                             reader = perThread->stringReader;
                         }
-                        
+
                         // Tokenize field and add to postingTable
                         stream = docState->analyzer->reusableTokenStream(fieldInfo->name, reader);
                     }
-                    
+
                     // reset the TokenStream to the first token
                     stream->reset();
-                    
+
                     int32_t startLength = fieldState->length;
-                    
+
                     LuceneException finally;
                     try
                     {
                         int32_t offsetEnd = fieldState->offset - 1;
-                        
+
                         bool hasMoreTokens = stream->incrementToken();
-                        
+
                         fieldState->attributeSource = stream;
-                        
+
                         OffsetAttributePtr offsetAttribute(fieldState->attributeSource->addAttribute<OffsetAttribute>());
                         PositionIncrementAttributePtr posIncrAttribute(fieldState->attributeSource->addAttribute<PositionIncrementAttribute>());
-                        
+
                         consumer->start(field);
-                    
+
                         while (true)
                         {
                             // If we hit an exception in stream.next below (which is fairly common, eg if analyzer
@@ -152,20 +150,20 @@ namespace Lucene
                             // will be marked as deleted, but still consume a docID
                             if (!hasMoreTokens)
                                 break;
-                            
+
                             int32_t posIncr = posIncrAttribute->getPositionIncrement();
                             fieldState->position += posIncr;
                             if (fieldState->position > 0)
                                 --fieldState->position;
-                            
+
                             if (posIncr == 0)
                                 ++fieldState->numOverlap;
-                            
+
                             bool success = false;
                             try
                             {
                                 // If we hit an exception in here, we abort all buffered documents since the last
-                                // flush, on the likelihood that the internal state of the consumer is now corrupt 
+                                // flush, on the likelihood that the internal state of the consumer is now corrupt
                                 // and should not be flushed to a new segment
                                 consumer->add();
                                 success = true;
@@ -185,13 +183,13 @@ namespace Lucene
                                     *docState->infoStream << L"maxFieldLength " << StringUtils::toString(maxFieldLength) << L" reached for field " << fieldInfo->name << L", ignoring following tokens\n";
                                 break;
                             }
-                            
+
                             hasMoreTokens = stream->incrementToken();
                         }
-                        
+
                         // trigger streams to perform end-of-stream operations
                         stream->end();
-                        
+
                         fieldState->offset += offsetAttribute->endOffset();
                         anyToken = (fieldState->length > startLength);
                     }
@@ -202,16 +200,16 @@ namespace Lucene
                     stream->close();
                     finally.throwException();
                 }
-                
+
                 if (anyToken)
                     fieldState->offset += docState->analyzer->getOffsetGap(field);
                 fieldState->boost *= field->getBoost();
             }
-            
+
             // don't hang onto the field
             fields[i].reset();
         }
-        
+
         consumer->finish();
         endConsumer->finish();
     }

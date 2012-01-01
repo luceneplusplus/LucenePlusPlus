@@ -22,7 +22,7 @@ public:
     {
         checkOneTerm(newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
-    
+
     void checkReuse(AnalyzerPtr a, const String& input, const String& expected)
     {
         checkOneTermReuse(a, input, expected);
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 BOOST_AUTO_TEST_CASE(testStemExclusionTable)
 {
     BrazilianAnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    HashSet<String> exclusions = HashSet<String>::newInstance();
+    SetString exclusions = SetString::newInstance();
     const uint8_t quintessencia[] = {0x71, 0x75, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x73, 0xc3, 0xaa, 0x6e, 0x63, 0x69, 0x61};
     exclusions.add(UTF8_TO_STRING(quintessencia));
     a->setStemExclusionTable(exclusions);
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
     BrazilianAnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t quintessencia[] = {0x71, 0x75, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x73, 0xc3, 0xaa, 0x6e, 0x63, 0x69, 0x61};
     checkReuse(a, UTF8_TO_STRING(quintessencia), L"quintessente");
-    HashSet<String> exclusions = HashSet<String>::newInstance();
+    SetString exclusions = SetString::newInstance();
     exclusions.add(UTF8_TO_STRING(quintessencia));
     a->setStemExclusionTable(exclusions);
     checkReuse(a, UTF8_TO_STRING(quintessencia), UTF8_TO_STRING(quintessencia));

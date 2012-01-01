@@ -18,32 +18,32 @@ namespace Lucene
 {
     /// Construct an analyzer with the given stop words.
     const int32_t StandardAnalyzer::DEFAULT_MAX_TOKEN_LENGTH = 255;
-    
+
     StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion)
     {
         ConstructAnalyser(matchVersion, StopAnalyzer::ENGLISH_STOP_WORDS_SET());
     }
-    
-    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopWords)
+
+    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, SetString stopWords)
     {
         ConstructAnalyser(matchVersion, stopWords);
     }
-    
+
     StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, const String& stopwords)
     {
         ConstructAnalyser(matchVersion, WordlistLoader::getWordSet(stopwords));
     }
-    
+
     StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, ReaderPtr stopwords)
     {
         ConstructAnalyser(matchVersion, WordlistLoader::getWordSet(stopwords));
     }
-    
+
     StandardAnalyzer::~StandardAnalyzer()
     {
     }
-    
-    void StandardAnalyzer::ConstructAnalyser(LuceneVersion::Version matchVersion, HashSet<String> stopWords)
+
+    void StandardAnalyzer::ConstructAnalyser(LuceneVersion::Version matchVersion, SetString stopWords)
     {
         stopSet = stopWords;
         enableStopPositionIncrements = StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion);
@@ -51,7 +51,7 @@ namespace Lucene
         this->matchVersion = matchVersion;
         this->maxTokenLength = DEFAULT_MAX_TOKEN_LENGTH;
     }
-    
+
     TokenStreamPtr StandardAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
     {
         StandardTokenizerPtr tokenStream(newLucene<StandardTokenizer>(matchVersion, reader));
@@ -61,17 +61,17 @@ namespace Lucene
         result = newLucene<StopFilter>(enableStopPositionIncrements, result, stopSet);
         return result;
     }
-    
+
     void StandardAnalyzer::setMaxTokenLength(int32_t length)
     {
         maxTokenLength = length;
     }
-    
+
     int32_t StandardAnalyzer::getMaxTokenLength()
     {
         return maxTokenLength;
     }
-    
+
     TokenStreamPtr StandardAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
         StandardAnalyzerSavedStreamsPtr streams = LuceneDynamicCast<StandardAnalyzerSavedStreams>(getPreviousTokenStream());
@@ -87,12 +87,12 @@ namespace Lucene
         else
             streams->tokenStream->reset(reader);
         streams->tokenStream->setMaxTokenLength(maxTokenLength);
-        
+
         streams->tokenStream->setReplaceInvalidAcronym(replaceInvalidAcronym);
-        
+
         return streams->filteredTokenStream;
     }
-    
+
     StandardAnalyzerSavedStreams::~StandardAnalyzerSavedStreams()
     {
     }

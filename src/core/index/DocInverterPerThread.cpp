@@ -25,33 +25,32 @@ namespace Lucene
         this->fieldState = newLucene<FieldInvertState>();
         this->stringReader = newLucene<ReusableStringReader>();
         this->singleToken = newLucene<SingleTokenAttributeSource>();
-        this->_docInverter = docInverter;
+        this->docInverter = docInverter;
         this->docState = docFieldProcessorPerThread->docState;
     }
-    
+
     DocInverterPerThread::~DocInverterPerThread()
     {
     }
-    
+
     void DocInverterPerThread::initialize()
     {
-        DocInverterPtr docInverter(_docInverter);
         consumer = docInverter->consumer->addThread(LuceneThis());
         endConsumer = docInverter->endConsumer->addThread(LuceneThis());
     }
-    
+
     void DocInverterPerThread::startDocument()
     {
         consumer->startDocument();
         endConsumer->startDocument();
     }
-    
+
     DocWriterPtr DocInverterPerThread::finishDocument()
     {
         endConsumer->finishDocument();
         return consumer->finishDocument();
     }
-    
+
     void DocInverterPerThread::abort()
     {
         LuceneException finally;
@@ -73,22 +72,22 @@ namespace Lucene
         }
         finally.throwException();
     }
-    
+
     DocFieldConsumerPerFieldPtr DocInverterPerThread::addField(FieldInfoPtr fi)
     {
         return newLucene<DocInverterPerField>(LuceneThis(), fi);
     }
-        
+
     SingleTokenAttributeSource::SingleTokenAttributeSource()
     {
         termAttribute = addAttribute<TermAttribute>();
         offsetAttribute = addAttribute<OffsetAttribute>();
     }
-    
+
     SingleTokenAttributeSource::~SingleTokenAttributeSource()
     {
     }
-    
+
     void SingleTokenAttributeSource::reinit(const String& stringValue, int32_t startOffset, int32_t endOffset)
     {
         termAttribute->setTermBuffer(stringValue);

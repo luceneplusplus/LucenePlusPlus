@@ -45,11 +45,11 @@ public:
     ItemizedFilter(const String& field, Collection<int32_t> terms) : FieldCacheTermsFilter(field, int2str(terms))
     {
     }
-    
+
     ItemizedFilter(Collection<int32_t> terms) : FieldCacheTermsFilter(L"KEY", int2str(terms))
     {
     }
-    
+
     virtual ~ItemizedFilter()
     {
     }
@@ -64,7 +64,7 @@ public:
     }
 };
 
-/// TestExplanations subclass that builds up super crazy complex queries on the assumption that 
+/// TestExplanations subclass that builds up super crazy complex queries on the assumption that
 /// if the explanations work out right for them, they should work for anything.
 class ComplexExplanationsOfNonMatchesFixture : public ExplanationsFixture
 {
@@ -73,7 +73,7 @@ public:
     {
         searcher->setSimilarity(createQnorm1Similarity());
     }
-    
+
     virtual ~ComplexExplanationsOfNonMatchesFixture()
     {
     }
@@ -86,7 +86,7 @@ protected:
 
 public:
     using ExplanationsFixture::qtest;
-    
+
     /// ignore matches and focus on non-matches
     virtual void qtest(QueryPtr q, Collection<int32_t> expDocNrs)
     {

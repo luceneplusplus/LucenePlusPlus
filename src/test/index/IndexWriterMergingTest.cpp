@@ -39,7 +39,7 @@ static void fillIndex(DirectoryPtr dir, int32_t start, int32_t numDocs)
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergeFactor(2);
     writer->setMaxBufferedDocs(2);
-    
+
     for (int32_t i = start; i < (start + numDocs); ++i)
     {
         DocumentPtr temp = newLucene<Document>();
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(testIndexWriterMerging)
 
     fillIndex(indexA, 0, num);
     BOOST_CHECK(!verifyIndex(indexA, 0));
-    
+
     fillIndex(indexB, num, num);
     BOOST_CHECK(!verifyIndex(indexB, num));
 

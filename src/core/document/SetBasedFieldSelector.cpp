@@ -9,16 +9,16 @@
 
 namespace Lucene
 {
-    SetBasedFieldSelector::SetBasedFieldSelector(HashSet<String> fieldsToLoad, HashSet<String> lazyFieldsToLoad)
+    SetBasedFieldSelector::SetBasedFieldSelector(SetString fieldsToLoad, SetString lazyFieldsToLoad)
     {
         this->fieldsToLoad = fieldsToLoad;
         this->lazyFieldsToLoad = lazyFieldsToLoad;
     }
-    
+
     SetBasedFieldSelector::~SetBasedFieldSelector()
     {
     }
-    
+
     FieldSelector::FieldSelectorResult SetBasedFieldSelector::accept(const String& fieldName)
     {
         FieldSelector::FieldSelectorResult result = FieldSelector::SELECTOR_NO_LOAD;

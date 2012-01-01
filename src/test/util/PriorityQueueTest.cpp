@@ -21,14 +21,14 @@ public:
     IntegerQueue(int32_t maxSize) : PriorityQueue<int32_t>(maxSize)
     {
     }
-    
+
     virtual ~IntegerQueue()
     {
     }
 };
 
 DECLARE_LUCENE_PTR(IntegerPtrQueue)
-typedef LucenePtr<int32_t> IntPtr;
+typedef gc_ptr<int32_t> IntPtr;
 
 class IntegerPtrQueue : public PriorityQueue<IntPtr>
 {
@@ -36,7 +36,7 @@ public:
     IntegerPtrQueue(int32_t maxSize) : PriorityQueue<IntPtr>(maxSize)
     {
     }
-    
+
     virtual ~IntegerPtrQueue()
     {
     }
@@ -53,17 +53,17 @@ BOOST_AUTO_TEST_CASE(testPriorityQueue)
     IntegerQueuePtr testQueue = newLucene<IntegerQueue>(10000);
     int64_t sum = 0;
     RandomPtr random = newLucene<Random>();
-    
+
     for (int32_t i = 0; i < 10000; ++i)
     {
         int32_t next = random->nextInt();
         sum += next;
         testQueue->add(next);
     }
-    
+
     int32_t last = INT_MIN;
     int64_t sum2 = 0;
-    
+
     for (int32_t i = 0; i < 10000; ++i)
     {
         int32_t next = testQueue->pop();
@@ -108,13 +108,13 @@ BOOST_AUTO_TEST_CASE(testPriorityQueueUpdate)
     testQueue->add(newInstance<int32_t>(4));
     testQueue->add(newInstance<int32_t>(5));
     BOOST_CHECK_EQUAL(testQueue->size(), 5);
-    
+
     IntPtr top = testQueue->top();
     BOOST_CHECK_EQUAL(*top, 1);
-    
+
     *top = 6;
     testQueue->updateTop();
-    
+
     BOOST_CHECK_EQUAL(*testQueue->pop(), 2);
     BOOST_CHECK_EQUAL(*testQueue->pop(), 3);
     BOOST_CHECK_EQUAL(*testQueue->pop(), 4);

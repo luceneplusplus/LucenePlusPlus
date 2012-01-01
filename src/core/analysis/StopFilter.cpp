@@ -6,37 +6,37 @@
 
 #include "LuceneInc.h"
 #include "StopFilter.h"
-#include "CharArraySet.h"
+#include "Collection<CharArray>Set.h"
 #include "TermAttribute.h"
 #include "PositionIncrementAttribute.h"
 
 namespace Lucene
 {
-    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, HashSet<String> stopWords, bool ignoreCase) : TokenFilter(input)
+    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, SetString stopWords, bool ignoreCase) : TokenFilter(input)
     {
-        this->stopWords = newLucene<CharArraySet>(stopWords, ignoreCase);
+        this->stopWords = newLucene<Collection<CharArray>Set>(stopWords, ignoreCase);
         this->enablePositionIncrements = enablePositionIncrements;
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
-    
-    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords, bool ignoreCase) : TokenFilter(input)
+
+    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, Collection<CharArray>SetPtr stopWords, bool ignoreCase) : TokenFilter(input)
     {
         this->stopWords = stopWords;
         this->enablePositionIncrements = enablePositionIncrements;
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
-    
+
     StopFilter::~StopFilter()
     {
     }
-    
-    HashSet<String> StopFilter::makeStopSet(Collection<String> stopWords)
+
+    SetString StopFilter::makeStopSet(Collection<String> stopWords)
     {
-        return HashSet<String>::newInstance(stopWords.begin(), stopWords.end());
+        return SetString::newInstance(stopWords.begin(), stopWords.end());
     }
-    
+
     bool StopFilter::incrementToken()
     {
         // return the first non-stop word found
@@ -54,17 +54,17 @@ namespace Lucene
         // reached EOS -- return false
         return false;
     }
-    
+
     bool StopFilter::getEnablePositionIncrementsVersionDefault(LuceneVersion::Version matchVersion)
     {
         return LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
     }
-    
+
     bool StopFilter::getEnablePositionIncrements()
     {
         return enablePositionIncrements;
     }
-    
+
     void StopFilter::setEnablePositionIncrements(bool enable)
     {
         this->enablePositionIncrements = enable;

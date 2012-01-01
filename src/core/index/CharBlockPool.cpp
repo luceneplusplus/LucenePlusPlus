@@ -16,30 +16,30 @@ namespace Lucene
         bufferUpto = -1;
         charUpto = DocumentsWriter::CHAR_BLOCK_SIZE;
         charOffset = -DocumentsWriter::CHAR_BLOCK_SIZE;
-        buffers = Collection<CharArray>::newInstance(10);
-        this->_docWriter = docWriter;
+        buffers = CollectionCollection<CharArray>::newInstance(10);
+        this->docWriter = docWriter;
     }
-    
+
     CharBlockPool::~CharBlockPool()
     {
     }
-    
+
     void CharBlockPool::reset()
     {
-        DocumentsWriterPtr(_docWriter)->recycleCharBlocks(buffers, 1 + bufferUpto);
+        docWriter->recycleCharBlocks(buffers, 1 + bufferUpto);
         bufferUpto = -1;
         charUpto = DocumentsWriter::CHAR_BLOCK_SIZE;
         charOffset = -DocumentsWriter::CHAR_BLOCK_SIZE;
     }
-    
+
     void CharBlockPool::nextBuffer()
     {
         if (1 + bufferUpto == buffers.size())
             buffers.resize((int32_t)((double)buffers.size() * 1.5));
-        buffers[1 + bufferUpto] = DocumentsWriterPtr(_docWriter)->getCharBlock();
+        docWriter->getCharBlock();
         buffer = buffers[1 + bufferUpto];
         ++bufferUpto;
-        
+
         charUpto = 0;
         charOffset += DocumentsWriter::CHAR_BLOCK_SIZE;
     }

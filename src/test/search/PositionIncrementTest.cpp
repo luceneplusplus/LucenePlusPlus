@@ -25,7 +25,7 @@
 #include "QueryParser.h"
 #include "WhitespaceAnalyzer.h"
 #include "StopFilter.h"
-#include "CharArraySet.h"
+#include "Collection<CharArray>Set.h"
 #include "LowerCaseTokenizer.h"
 #include "PayloadAttribute.h"
 #include "Payload.h"
@@ -51,25 +51,25 @@ namespace TestSetPosition
             TOKENS = newCollection<String>(L"1", L"2", L"3", L"4", L"5");
             INCREMENTS = newCollection<int32_t>(0, 2, 1, 0, 1);
             i = 0;
-            
+
             posIncrAtt = addAttribute<PositionIncrementAttribute>();
             termAtt = addAttribute<TermAttribute>();
             offsetAtt = addAttribute<OffsetAttribute>();
         }
-        
+
         virtual ~SetPositionTokenStream()
         {
         }
-    
+
     protected:
         Collection<String> TOKENS;
         Collection<int32_t> INCREMENTS;
         int32_t i;
-        
+
         PositionIncrementAttributePtr posIncrAtt;
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
-        
+
     public:
         virtual bool incrementToken()
         {
@@ -83,7 +83,7 @@ namespace TestSetPosition
             return true;
         }
     };
-    
+
     class SetPositionAnalyzer : public Analyzer
     {
     public:
@@ -97,7 +97,7 @@ namespace TestSetPosition
             return newLucene<SetPositionTokenStream>();
         }
     };
-    
+
     class StopWhitespaceAnalyzer : public Analyzer
     {
     public:
@@ -106,11 +106,11 @@ namespace TestSetPosition
             this->enablePositionIncrements = enablePositionIncrements;
             this->a = newLucene<WhitespaceAnalyzer>();
         }
-        
+
         virtual ~StopWhitespaceAnalyzer()
         {
         }
-    
+
     public:
         bool enablePositionIncrements;
         WhitespaceAnalyzerPtr a;
@@ -119,7 +119,7 @@ namespace TestSetPosition
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
         {
             TokenStreamPtr ts = a->tokenStream(fieldName, reader);
-            return newLucene<StopFilter>(enablePositionIncrements, ts, newLucene<CharArraySet>(newCollection<String>(L"stop"), true));
+            return newLucene<StopFilter>(enablePositionIncrements, ts, newLucene<Collection<CharArray>Set>(newCollection<String>(L"stop"), true));
         }
     };
 }
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(testSetPosition)
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // same as previous, just specify positions explicitely.
-    q = newLucene<PhraseQuery>(); 
+    q = newLucene<PhraseQuery>();
     q->add(newLucene<Term>(L"field", L"1"), 0);
     q->add(newLucene<Term>(L"field", L"2"), 1);
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
@@ -179,15 +179,15 @@ BOOST_AUTO_TEST_CASE(testSetPosition)
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
-    // phrase query would find it when correct positions are specified. 
+    // phrase query would find it when correct positions are specified.
     q = newLucene<PhraseQuery>();
     q->add(newLucene<Term>(L"field", L"3"), 0);
     q->add(newLucene<Term>(L"field", L"4"), 0);
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
 
-    // phrase query should fail for non existing searched term 
-    // even if there exist another searched terms in the same searched position. 
+    // phrase query should fail for non existing searched term
+    // even if there exist another searched terms in the same searched position.
     q = newLucene<PhraseQuery>();
     q->add(newLucene<Term>(L"field", L"3"), 0);
     q->add(newLucene<Term>(L"field", L"9"), 0);
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(testSetPosition)
     BOOST_CHECK_EQUAL(0, hits.size());
 
     // multi-phrase query should succeed for non existing searched term
-    // because there exist another searched terms in the same searched position. 
+    // because there exist another searched terms in the same searched position.
     MultiPhraseQueryPtr mq = newLucene<MultiPhraseQuery>();
     mq->add(newCollection<TermPtr>(newLucene<Term>(L"field", L"3"), newLucene<Term>(L"field", L"9")), 0);
     hits = searcher->search(mq, FilterPtr(), 1000)->scoreDocs;
@@ -231,18 +231,18 @@ BOOST_AUTO_TEST_CASE(testSetPosition)
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
-    // omitted stop word cannot help because stop filter swallows the increments. 
+    // omitted stop word cannot help because stop filter swallows the increments.
     q = LuceneDynamicCast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
-    // query parser alone won't help, because stop filter swallows the increments. 
+    // query parser alone won't help, because stop filter swallows the increments.
     qp->setEnablePositionIncrements(true);
     q = LuceneDynamicCast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
 
-    // stop filter alone won't help, because query parser swallows the increments. 
+    // stop filter alone won't help, because query parser swallows the increments.
     qp->setEnablePositionIncrements(false);
     q = LuceneDynamicCast<PhraseQuery>(qp->parse(L"\"1 stop 2\""));
     hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
@@ -270,11 +270,11 @@ namespace TestPayloadsPos0
             this->payloadAttr = input->addAttribute<PayloadAttribute>();
             this->termAttr = input->addAttribute<TermAttribute>();
         }
-        
+
         virtual ~TestPayloadFilter()
         {
         }
-    
+
     public:
         String fieldName;
         int32_t pos;
@@ -283,7 +283,7 @@ namespace TestPayloadsPos0
         PositionIncrementAttributePtr posIncrAttr;
         PayloadAttributePtr payloadAttr;
         TermAttributePtr termAttr;
-    
+
     public:
         virtual bool incrementToken()
         {
@@ -303,7 +303,7 @@ namespace TestPayloadsPos0
                 return false;
         }
     };
-    
+
     class TestPayloadAnalyzer : public Analyzer
     {
     public:
@@ -348,7 +348,7 @@ BOOST_AUTO_TEST_CASE(testPayloadsPos0)
 
     SpanTermQueryPtr stq1 = newLucene<SpanTermQuery>(newLucene<Term>(L"content", L"a"));
     SpanTermQueryPtr stq2 = newLucene<SpanTermQuery>(newLucene<Term>(L"content", L"k"));
-    
+
     Collection<SpanQueryPtr> sqs = newCollection<SpanQueryPtr>(stq1, stq2);
     SpanNearQueryPtr snq = newLucene<SpanNearQuery>(sqs, 30, false);
 
@@ -375,10 +375,10 @@ BOOST_AUTO_TEST_CASE(testPayloadsPos0)
         if (spans->start() == 0)
             sawZero = true;
     }
-    
+
     BOOST_CHECK_EQUAL(4, count);
     BOOST_CHECK(sawZero);
-    
+
     sawZero = false;
     PayloadSpanUtilPtr psu = newLucene<PayloadSpanUtil>(is->getIndexReader());
     Collection<ByteArray> pls = psu->getPayloadsForQuery(snq);
@@ -389,10 +389,10 @@ BOOST_AUTO_TEST_CASE(testPayloadsPos0)
         if (s == L"pos: 0")
             sawZero = true;
     }
-    
+
     BOOST_CHECK_EQUAL(5, count);
     BOOST_CHECK(sawZero);
-    
+
     writer->close();
     is->getIndexReader()->close();
     dir->close();

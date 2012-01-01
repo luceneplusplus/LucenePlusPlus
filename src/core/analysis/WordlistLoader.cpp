@@ -15,10 +15,10 @@ namespace Lucene
     WordlistLoader::~WordlistLoader()
     {
     }
-    
-    HashSet<String> WordlistLoader::getWordSet(const String& wordfile, const String& comment)
+
+    SetString WordlistLoader::getWordSet(const String& wordfile, const String& comment)
     {
-        HashSet<String> result(HashSet<String>::newInstance());
+        SetString result(SetString::newInstance());
         FileReaderPtr reader;
         LuceneException finally;
         try
@@ -35,10 +35,10 @@ namespace Lucene
         finally.throwException();
         return result;
     }
-    
-    HashSet<String> WordlistLoader::getWordSet(ReaderPtr reader, const String& comment)
+
+    SetString WordlistLoader::getWordSet(ReaderPtr reader, const String& comment)
     {
-        HashSet<String> result(HashSet<String>::newInstance());
+        SetString result(SetString::newInstance());
         LuceneException finally;
         BufferedReaderPtr bufferedReader(LuceneDynamicCast<BufferedReader>(reader));
         try
@@ -64,7 +64,7 @@ namespace Lucene
         finally.throwException();
         return result;
     }
-    
+
     MapStringString WordlistLoader::getStemDict(const String& wordstemfile)
     {
         MapStringString result(MapStringString::newInstance());

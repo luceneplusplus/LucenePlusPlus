@@ -46,7 +46,7 @@ public:
         iw->close();
         singleSearcher = newLucene<IndexSearcher>(d, true);
     }
-    
+
     virtual ~MultiSearcherRankingFixture()
     {
     }
@@ -66,7 +66,7 @@ public:
         add(L"blueberry strudel", iw);
         add(L"blueberry pizza", iw);
     }
-    
+
     void addCollection2(IndexWriterPtr iw)
     {
         add(L"two blah three", iw);
@@ -77,15 +77,15 @@ public:
         add(L"bluebird foobar pizza", iw);
         add(L"piccadilly circus", iw);
     }
-    
+
     void add(const String& value, IndexWriterPtr iw)
     {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(FIELD_NAME, value, Field::STORE_YES, Field::INDEX_ANALYZED));
         iw->addDocument(d);
     }
-    
-    /// checks if a query yields the same result when executed on a single IndexSearcher containing all 
+
+    /// checks if a query yields the same result when executed on a single IndexSearcher containing all
     /// documents and on MultiSearcher aggregating sub-searchers
     /// @param queryStr  the query to check.
     void checkQuery(const String& queryStr)

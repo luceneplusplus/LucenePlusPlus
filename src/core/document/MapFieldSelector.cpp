@@ -13,18 +13,18 @@ namespace Lucene
     {
         this->fieldSelections = fieldSelections;
     }
-    
+
     MapFieldSelector::MapFieldSelector(Collection<String> fields)
     {
         fieldSelections = MapStringFieldSelectorResult::newInstance();
         for (Collection<String>::iterator field = fields.begin(); field != fields.end(); ++field)
             fieldSelections.put(*field, FieldSelector::SELECTOR_LOAD);
     }
-    
+
     MapFieldSelector::~MapFieldSelector()
     {
     }
-    
+
     FieldSelector::FieldSelectorResult MapFieldSelector::accept(const String& fieldName)
     {
         MapStringFieldSelectorResult::iterator selection = fieldSelections.find(fieldName);

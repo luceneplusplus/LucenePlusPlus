@@ -11,23 +11,23 @@
 
 namespace Lucene
 {
-    /// This is a DocConsumer that gathers all fields under the same name, and calls per-field consumers to process 
-    /// field by field.  This class doesn't doesn't do any "real" work of its own: it just forwards the fields to a 
+    /// This is a DocConsumer that gathers all fields under the same name, and calls per-field consumers to process
+    /// field by field.  This class doesn't doesn't do any "real" work of its own: it just forwards the fields to a
     /// DocFieldConsumer.
     class DocFieldProcessor : public DocConsumer
     {
     public:
         DocFieldProcessor(DocumentsWriterPtr docWriter, DocFieldConsumerPtr consumer);
         virtual ~DocFieldProcessor();
-        
+
         LUCENE_CLASS(DocFieldProcessor);
-            
+
     public:
-        DocumentsWriterWeakPtr _docWriter;
+        DocumentsWriterPtr docWriter;
         FieldInfosPtr fieldInfos;
         DocFieldConsumerPtr consumer;
         StoredFieldsWriterPtr fieldsWriter;
-    
+
     public:
         virtual void closeDocStore(SegmentWriteStatePtr state);
         virtual void flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state);

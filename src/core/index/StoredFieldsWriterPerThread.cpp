@@ -14,43 +14,43 @@ namespace Lucene
 {
     StoredFieldsWriterPerThread::StoredFieldsWriterPerThread(DocStatePtr docState, StoredFieldsWriterPtr storedFieldsWriter)
     {
-        this->_storedFieldsWriter = storedFieldsWriter;
+        this->storedFieldsWriter = storedFieldsWriter;
         this->docState = docState;
         localFieldsWriter = newLucene<FieldsWriter>(IndexOutputPtr(), IndexOutputPtr(), storedFieldsWriter->fieldInfos);
     }
-    
+
     StoredFieldsWriterPerThread::~StoredFieldsWriterPerThread()
     {
     }
-    
+
     void StoredFieldsWriterPerThread::startDocument()
     {
         if (doc)
         {
-            // Only happens if previous document hit non-aborting exception while writing stored fields 
+            // Only happens if previous document hit non-aborting exception while writing stored fields
             // into localFieldsWriter
             doc->reset();
             doc->docID = docState->docID;
         }
     }
-    
+
     void StoredFieldsWriterPerThread::addField(FieldablePtr field, FieldInfoPtr fieldInfo)
     {
         if (!doc)
         {
-            doc = StoredFieldsWriterPtr(_storedFieldsWriter)->getPerDoc();
+            doc = storedFieldsWriter->getPerDoc();
             doc->docID = docState->docID;
             localFieldsWriter->setFieldsStream(doc->fdt);
             BOOST_ASSERT(doc->numStoredFields == 0);
             BOOST_ASSERT(doc->fdt->length() == 0);
             BOOST_ASSERT(doc->fdt->getFilePointer() == 0);
         }
-        
+
         localFieldsWriter->writeField(fieldInfo, field);
         BOOST_ASSERT(docState->testPoint(L"StoredFieldsWriterPerThread.processFields.writeField"));
         ++doc->numStoredFields;
     }
-    
+
     DocWriterPtr StoredFieldsWriterPerThread::finishDocument()
     {
         // If there were any stored fields in this doc, doc will be non-null; else it's null.
@@ -58,7 +58,7 @@ namespace Lucene
         doc.reset();
         return finishDoc;
     }
-    
+
     void StoredFieldsWriterPerThread::abort()
     {
         if (doc)

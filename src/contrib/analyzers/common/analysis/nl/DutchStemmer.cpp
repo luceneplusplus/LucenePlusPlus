@@ -19,18 +19,18 @@ namespace Lucene
         R1 = 0;
         R2 = 0;
     }
-    
+
     DutchStemmer::~DutchStemmer()
     {
     }
-    
+
     String DutchStemmer::stem(const String& term)
     {
         // Use lowercase for medium stemming.
         buffer = StringUtils::toLower(term);
         if (!isStemmable())
             return buffer;
-        
+
         if (stemDict && stemDict.contains(term))
             return stemDict.get(term);
 
@@ -65,7 +65,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void DutchStemmer::step1()
     {
         if (R1 >= (int32_t)buffer.length())
@@ -82,19 +82,19 @@ namespace Lucene
 
         if (enEnding())
             return;
-        
+
         index = (int32_t)buffer.length() - 2;
         if (boost::ends_with(buffer, L"se") && index >= R1 && isValidSEnding(index - 1))
         {
             buffer.erase(index, 2);
             return;
         }
-        
+
         index = (int32_t)(buffer.length() - 1);
         if (boost::ends_with(buffer, L"s") && index >= R1 && isValidSEnding(index - 1))
             buffer.erase(index, 1);
     }
-    
+
     void DutchStemmer::step2()
     {
         removedE = false;
@@ -108,7 +108,7 @@ namespace Lucene
             removedE = true;
         }
     }
-    
+
     void DutchStemmer::step3a()
     {
         if (R2 >= (int32_t)buffer.length())
@@ -120,12 +120,12 @@ namespace Lucene
             enEnding();
         }
     }
-    
+
     void DutchStemmer::step3b()
     {
         if (R2 >= (int32_t)buffer.length())
             return;
-        
+
         int32_t index = (int32_t)(buffer.length() - 3);
         if ((boost::ends_with(buffer, L"end") || boost::ends_with(buffer, L"ing")) && index >= R2)
         {
@@ -170,7 +170,7 @@ namespace Lucene
             return;
         }
     }
-    
+
     void DutchStemmer::step4()
     {
         if (buffer.length() < 4)
@@ -179,7 +179,7 @@ namespace Lucene
         if (end[1] == end[2] && end[3] != L'I' && end[1] != L'i' && isVowel(end[1]) && !isVowel(end[3]) && !isVowel(end[0]))
             buffer.erase(buffer.length() - 2, 1);
     }
-    
+
     bool DutchStemmer::isStemmable()
     {
         for (int32_t c = 0; c < (int32_t)buffer.length(); ++c)
@@ -189,7 +189,7 @@ namespace Lucene
         }
         return true;
     }
-    
+
     void DutchStemmer::substitute()
     {
         for (int32_t i = 0; i < (int32_t)buffer.length(); ++i)
@@ -219,7 +219,7 @@ namespace Lucene
             }
         }
     }
-    
+
     bool DutchStemmer::isValidSEnding(int32_t index)
     {
         wchar_t c = buffer[index];
@@ -227,7 +227,7 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     bool DutchStemmer::isValidEnEnding(int32_t index)
     {
         wchar_t c = buffer[index];
@@ -240,20 +240,20 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     void DutchStemmer::unDouble()
     {
         unDouble((int32_t)buffer.length());
     }
-    
+
     void DutchStemmer::unDouble(int32_t endIndex)
     {
         String s = buffer.substr(0, endIndex);
-        if (boost::ends_with(s, L"kk") || boost::ends_with(s, L"tt") || boost::ends_with(s, L"dd") || 
+        if (boost::ends_with(s, L"kk") || boost::ends_with(s, L"tt") || boost::ends_with(s, L"dd") ||
             boost::ends_with(s, L"nn") || boost::ends_with(s, L"mm") || boost::ends_with(s, L"ff"))
             buffer.resize(endIndex - 1);
     }
-    
+
     int32_t DutchStemmer::getRIndex(int32_t start)
     {
         if (start == 0)
@@ -267,7 +267,7 @@ namespace Lucene
         }
         return i + 1;
     }
-    
+
     void DutchStemmer::storeYandI()
     {
         if (buffer[0] == L'y')
@@ -292,13 +292,13 @@ namespace Lucene
         if (last > 0 && buffer[last] == L'y' && isVowel(buffer[last - 1]))
             buffer[last] = L'Y';
     }
-    
+
     void DutchStemmer::reStoreYandI()
     {
         boost::replace_all(buffer, L"I", L"i");
         boost::replace_all(buffer, L"Y", L"y");
     }
-    
+
     bool DutchStemmer::isVowel(wchar_t c)
     {
         switch (c)
@@ -315,7 +315,7 @@ namespace Lucene
                 return false;
         }
     }
-    
+
     void DutchStemmer::setStemDictionary(MapStringString dict)
     {
         stemDict = dict;

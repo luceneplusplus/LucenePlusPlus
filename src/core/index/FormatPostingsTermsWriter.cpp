@@ -19,45 +19,45 @@ namespace Lucene
         currentTermStart = 0;
         freqStart = 0;
         proxStart = 0;
-        
-        this->_parent = parent;
+
+        this->parent = parent;
         this->state = state;
         termsOut = parent->termsOut;
     }
-    
+
     FormatPostingsTermsWriter::~FormatPostingsTermsWriter()
     {
     }
-    
+
     void FormatPostingsTermsWriter::initialize()
     {
         docsWriter = newLucene<FormatPostingsDocsWriter>(state, LuceneThis());
     }
-    
+
     void FormatPostingsTermsWriter::setField(FieldInfoPtr fieldInfo)
     {
         this->fieldInfo = fieldInfo;
         docsWriter->setField(fieldInfo);
     }
-    
-    FormatPostingsDocsConsumerPtr FormatPostingsTermsWriter::addTerm(CharArray text, int32_t start)
+
+    FormatPostingsDocsConsumerPtr FormatPostingsTermsWriter::addTerm(Collection<CharArray> text, int32_t start)
     {
         currentTerm = text;
         currentTermStart = start;
-        
+
         freqStart = docsWriter->out->getFilePointer();
         if (docsWriter->posWriter->out)
             proxStart = docsWriter->posWriter->out->getFilePointer();
-        
-        FormatPostingsFieldsWriterPtr(_parent)->skipListWriter->resetSkip();
-        
+
+        parent->skipListWriter->resetSkip();
+
         return docsWriter;
     }
-    
+
     void FormatPostingsTermsWriter::finish()
     {
     }
-    
+
     void FormatPostingsTermsWriter::close()
     {
         docsWriter->close();

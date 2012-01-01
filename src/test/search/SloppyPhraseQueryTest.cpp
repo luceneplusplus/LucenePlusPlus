@@ -25,7 +25,7 @@ public:
     {
         S_1 = L"A A A";
         S_2 = L"A 1 2 3 A 4 5 6 A";
-        
+
         DOC_1 = makeDocument(L"X " + S_1 + L" Y");
         DOC_2 = makeDocument(L"X " + S_2 + L" Y");
         DOC_3 = makeDocument(L"X " + S_1 + L" A Y");
@@ -33,12 +33,12 @@ public:
         DOC_2_B = makeDocument(L"X " + S_2 + L" Y N N N N " + S_2 + L" Z");
         DOC_3_B = makeDocument(L"X " + S_1 + L" A Y N N N N " + S_1 + L" A Y");
         DOC_4 = makeDocument(L"A A X A X B A X B B A A X B A A");
-        
+
         QUERY_1 = makePhraseQuery(S_1);
         QUERY_2 = makePhraseQuery(S_2);
         QUERY_4 = makePhraseQuery(L"X A A");
     }
-    
+
     virtual ~SloppyPhraseQueryFixture()
     {
     }
@@ -54,7 +54,7 @@ protected:
     DocumentPtr DOC_2_B;
     DocumentPtr DOC_3_B;
     DocumentPtr DOC_4;
-    
+
     PhraseQueryPtr QUERY_1;
     PhraseQueryPtr QUERY_2;
     PhraseQueryPtr QUERY_4;
@@ -68,7 +68,7 @@ public:
         doc->add(f);
         return doc;
     }
-    
+
     PhraseQueryPtr makePhraseQuery(const String& terms)
     {
         PhraseQueryPtr query = newLucene<PhraseQuery>();
@@ -77,7 +77,7 @@ public:
             query->add(newLucene<Term>(L"f", tokens[i]));
         return query;
     }
-    
+
     double checkPhraseQuery(DocumentPtr doc, PhraseQueryPtr query, int32_t slop, int32_t expectedNumResults)
     {
         query->setSlop(slop);

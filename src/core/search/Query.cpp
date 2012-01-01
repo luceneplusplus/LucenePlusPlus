@@ -17,37 +17,37 @@ namespace Lucene
     {
         boost = 1.0;
     }
-    
+
     Query::~Query()
     {
     }
-    
+
     void Query::setBoost(double boost)
     {
         this->boost = boost;
     }
-    
+
     double Query::getBoost()
     {
         return boost;
     }
-    
+
     String Query::toString(const String& field)
     {
         return L""; // override
     }
-    
+
     String Query::toString()
     {
         return toString(L"");
     }
-    
+
     WeightPtr Query::createWeight(SearcherPtr searcher)
     {
         boost::throw_exception(UnsupportedOperationException());
         return WeightPtr();
     }
-    
+
     WeightPtr Query::weight(SearcherPtr searcher)
     {
         QueryPtr query(searcher->rewrite(LuceneThis()));
@@ -59,12 +59,12 @@ namespace Lucene
         weight->normalize(norm);
         return weight;
     }
-    
+
     QueryPtr Query::rewrite(IndexReaderPtr reader)
     {
         return LuceneThis();
     }
-    
+
     QueryPtr Query::combine(Collection<QueryPtr> queries)
     {
         SetQuery uniques(SetQuery::newInstance());
@@ -97,13 +97,13 @@ namespace Lucene
             result->add(*query, BooleanClause::SHOULD);
         return result;
     }
-    
+
     void Query::extractTerms(SetTerm terms)
     {
         // needs to be implemented by query subclasses
         boost::throw_exception(UnsupportedOperationException());
     }
-    
+
     QueryPtr Query::mergeBooleanQueries(Collection<BooleanQueryPtr> queries)
     {
         SetBooleanClause allClauses(SetBooleanClause::newInstance());
@@ -112,19 +112,19 @@ namespace Lucene
             for (Collection<BooleanClausePtr>::iterator clause = (*booleanQuery)->begin(); clause != (*booleanQuery)->end(); ++clause)
                 allClauses.add(*clause);
         }
-        
+
         bool coordDisabled = queries.empty() ? false : queries[0]->isCoordDisabled();
         BooleanQueryPtr result(newLucene<BooleanQuery>(coordDisabled));
         for (SetBooleanClause::iterator clause2 = allClauses.begin(); clause2 != allClauses.end(); ++clause2)
             result->add(*clause2);
         return result;
     }
-    
+
     SimilarityPtr Query::getSimilarity(SearcherPtr searcher)
     {
         return searcher->getSimilarity();
     }
-    
+
     LuceneObjectPtr Query::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Query>());
@@ -132,7 +132,7 @@ namespace Lucene
         cloneQuery->boost = boost;
         return cloneQuery;
     }
-    
+
     int32_t Query::hashCode()
     {
         int32_t prime = 31;
@@ -140,7 +140,7 @@ namespace Lucene
         result = prime * result + MiscUtils::doubleToIntBits(boost);
         return result;
     }
-    
+
     bool Query::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -154,7 +154,7 @@ namespace Lucene
             return false;
         return (boost == otherQuery->boost);
     }
-    
+
     String Query::boostString()
     {
         double boost = getBoost();

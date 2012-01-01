@@ -14,11 +14,11 @@ namespace Lucene
         this->maxDoc = maxDoc;
         this->_doc = -1;
     }
-    
+
     AbstractAllTermDocs::~AbstractAllTermDocs()
     {
     }
-    
+
     void AbstractAllTermDocs::seek(TermPtr term)
     {
         if (!term)
@@ -26,27 +26,27 @@ namespace Lucene
         else
             boost::throw_exception(UnsupportedOperationException());
     }
-    
+
     void AbstractAllTermDocs::seek(TermEnumPtr termEnum)
     {
         boost::throw_exception(UnsupportedOperationException());
     }
-    
+
     int32_t AbstractAllTermDocs::doc()
     {
         return _doc;
     }
-    
+
     int32_t AbstractAllTermDocs::freq()
     {
         return 1;
     }
-    
+
     bool AbstractAllTermDocs::next()
     {
         return skipTo(_doc + 1);
     }
-    
+
     int32_t AbstractAllTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs)
     {
         int32_t length = docs.size();
@@ -63,7 +63,7 @@ namespace Lucene
         }
         return i;
     }
-    
+
     bool AbstractAllTermDocs::skipTo(int32_t target)
     {
         _doc = target;
@@ -75,7 +75,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void AbstractAllTermDocs::close()
     {
     }

@@ -65,10 +65,10 @@ namespace Lucene
 }
 
 #include "LuceneException.h"
-#include "Array.h"
 #include "Collection.h"
 #include "Map.h"
 #include "Set.h"
+#include "Array.h"
 #include "Constants.h"
 
 namespace Lucene
@@ -77,7 +77,7 @@ namespace Lucene
     typedef Array<uint16_t> ShortArray;
     typedef Array<int32_t> IntArray;
     typedef Array<int64_t> LongArray;
-    typedef Array<wchar_t> CharArray;
+    typedef Array<wchar_t> Collection<CharArray>;
     typedef Array<double> DoubleArray;
 
     template <class T>
@@ -144,13 +144,8 @@ namespace Lucene
         }
     };
 
-    typedef boost::blank VariantNull;
-    typedef boost::variant<String, int32_t, int64_t, double, ReaderPtr, ByteArray, VariantNull> FieldsData;
-    typedef boost::variant<String, uint8_t, int32_t, int64_t, double, VariantNull> ComparableValue;
-    typedef boost::variant<int32_t, int64_t, double, VariantNull> NumericValue;
-    typedef boost::variant<String, VariantNull> StringValue;
-    typedef boost::variant<Collection<uint8_t>, Collection<int32_t>, Collection<double>, VariantNull> CollectionValue;
-
+    typedef SortedSet< int32_t > SetInt;
+    typedef HashSet< String > SetString;
     typedef HashSet< SegmentInfoPtr, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > SetSegmentInfo;
     typedef HashSet< MergeThreadPtr, luceneHash<MergeThreadPtr>, luceneEquals<MergeThreadPtr> > SetMergeThread;
     typedef HashSet< OneMergePtr, luceneHash<OneMergePtr>, luceneEquals<OneMergePtr> > SetOneMerge;
@@ -158,7 +153,7 @@ namespace Lucene
     typedef HashSet< TermPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > SetTerm;
     typedef HashSet< BooleanClausePtr, luceneHash<BooleanClausePtr>, luceneEquals<BooleanClausePtr> > SetBooleanClause;
     typedef HashSet< ReaderFieldPtr, luceneHash<ReaderFieldPtr>, luceneEquals<ReaderFieldPtr> > SetReaderField;
-    typedef HashSet<ByteArray> SetByteArray;
+    typedef HashSet< ByteArray > SetByteArray;
 
     typedef HashMap< String, String > MapStringString;
     typedef HashMap< wchar_t, NormalizeCharMapPtr > MapCharNormalizeCharMap;
@@ -202,16 +197,23 @@ namespace Lucene
     typedef HashMap< LuceneObjectPtr, LuceneObjectPtr, luceneHash<LuceneObjectPtr>, luceneEquals<LuceneObjectPtr> > WeakMapObjectObject;
     typedef HashMap< LuceneObjectPtr, MapEntryAny, luceneHash<LuceneObjectPtr>, luceneEquals<LuceneObjectPtr> > WeakMapLuceneObjectMapEntryAny;
 
-    typedef Map< String, AttributePtr > MapStringAttribute;
-    typedef Map< int64_t, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
-    typedef Map< String, IndexReaderPtr > MapStringIndexReader;
-    typedef Map< TermPtr, NumPtr, luceneCompare<TermPtr> > MapTermNum;
+    typedef SortedMap< String, AttributePtr > MapStringAttribute;
+    typedef SortedMap< int64_t, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
+    typedef SortedMap< String, IndexReaderPtr > MapStringIndexReader;
+    typedef SortedMap< TermPtr, NumPtr, luceneCompare<TermPtr> > MapTermNum;
 
     typedef boost::function<bool (const TermVectorEntryPtr&, const TermVectorEntryPtr&)> TermVectorEntryComparator;
 
     template < class KEY, class VALUE, class HASH = boost::hash<KEY>, class EQUAL = std::equal_to<KEY> > class SimpleLRUCache;
     typedef SimpleLRUCache< TermPtr, TermInfoPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > TermInfoCache;
     typedef gc_ptr<TermInfoCache> TermInfoCachePtr;
+
+    typedef boost::blank VariantNull;
+    typedef boost::variant<String, int32_t, int64_t, double, ReaderPtr, ByteArray, VariantNull> FieldsData;
+    typedef boost::variant<String, uint8_t, int32_t, int64_t, double, VariantNull> ComparableValue;
+    typedef boost::variant<int32_t, int64_t, double, VariantNull> NumericValue;
+    typedef boost::variant<String, VariantNull> StringValue;
+    typedef boost::variant<Collection<uint8_t>, Collection<int32_t>, Collection<double>, VariantNull> CollectionValue;
 }
 
 #include "Synchronize.h"

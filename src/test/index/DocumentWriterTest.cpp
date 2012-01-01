@@ -48,7 +48,7 @@ BOOST_FIXTURE_TEST_SUITE(DocumentWriterTest, DocumentWriterTestFixture)
 BOOST_AUTO_TEST_CASE(testAddDocument)
 {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
-    
+
     DocumentPtr testDoc = newLucene<Document>();
     DocHelper::setupDoc(testDoc);
     AnalyzerPtr analyzer = newLucene<WhitespaceAnalyzer>();
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(testAddDocument)
     fields = doc->getFields(DocHelper::TEXT_FIELD_3_KEY);
     BOOST_CHECK(fields && fields.size() == 1);
     BOOST_CHECK_EQUAL(fields[0]->stringValue(), DocHelper::FIELD_3_TEXT);
-    
+
     // test that the norms are not present in the segment if omitNorms is true
     for (int32_t i = 0; i < reader->core->fieldInfos->size(); ++i)
     {
@@ -97,22 +97,22 @@ BOOST_AUTO_TEST_CASE(testAddDocument)
 namespace TestPositionIncrementGap
 {
     DECLARE_LUCENE_PTR(TestableAnalyzer)
-    
+
     class TestableAnalyzer : public Analyzer
     {
     public:
         virtual ~TestableAnalyzer()
         {
         }
-        
+
         LUCENE_CLASS(TestableAnalyzer);
-        
+
     public:
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
         {
             return newLucene<WhitespaceTokenizer>(reader);
         }
-        
+
         virtual int32_t getPositionIncrementGap(const String& fieldName)
         {
             return 500;
@@ -123,7 +123,7 @@ namespace TestPositionIncrementGap
 BOOST_AUTO_TEST_CASE(testPositionIncrementGap)
 {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
-    
+
     AnalyzerPtr analyzer = newLucene<TestPositionIncrementGap::TestableAnalyzer>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -149,7 +149,7 @@ namespace TestTokenReuse
 {
     DECLARE_LUCENE_PTR(TestableTokenFilter)
     DECLARE_LUCENE_PTR(TestableAnalyzer)
-    
+
     class TestableTokenFilter : public TokenFilter
     {
     public:
@@ -160,20 +160,20 @@ namespace TestTokenReuse
             payloadAtt = addAttribute<PayloadAttribute>();
             posIncrAtt = addAttribute<PositionIncrementAttribute>();
         }
-        
+
         virtual ~TestableTokenFilter()
         {
         }
-        
+
         LUCENE_CLASS(TestableTokenFilter);
-    
+
     public:
         bool first;
         AttributeSourceStatePtr state;
         TermAttributePtr termAtt;
         PayloadAttributePtr payloadAtt;
         PositionIncrementAttributePtr posIncrAtt;
-    
+
     public:
         virtual bool incrementToken()
         {
@@ -183,12 +183,12 @@ namespace TestTokenReuse
                 payloadAtt->setPayload(PayloadPtr());
                 posIncrAtt->setPositionIncrement(0);
                 static const wchar_t buffer[] = L"b";
-                
+
                 termAtt->setTermBuffer(buffer, 0, 1);
                 state.reset();
                 return true;
             }
-            
+
             bool hasNext = input->incrementToken();
             if (!hasNext)
                 return false;
@@ -198,7 +198,7 @@ namespace TestTokenReuse
             {
                 ByteArray payload = ByteArray::newInstance(1);
                 payload.get()[0] = 100;
-                
+
                 // set payload on first position only
                 payloadAtt->setPayload(newLucene<Payload>(payload));
                 first = false;
@@ -208,16 +208,16 @@ namespace TestTokenReuse
             return true;
         }
     };
-    
+
     class TestableAnalyzer : public Analyzer
     {
     public:
         virtual ~TestableAnalyzer()
         {
         }
-        
+
         LUCENE_CLASS(TestableAnalyzer);
-        
+
     public:
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
         {
@@ -229,7 +229,7 @@ namespace TestTokenReuse
 BOOST_AUTO_TEST_CASE(testTokenReuse)
 {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
-    
+
     AnalyzerPtr analyzer = newLucene<TestTokenReuse::TestableAnalyzer>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(testTokenReuse)
 namespace TestPreAnalyzedField
 {
     DECLARE_LUCENE_PTR(TestableTokenStream)
-    
+
     class TestableTokenStream : public TokenStream
     {
     public:
@@ -267,18 +267,18 @@ namespace TestPreAnalyzedField
             index = 0;
             termAtt = addAttribute<TermAttribute>();
         }
-        
+
         virtual ~TestableTokenStream()
         {
         }
-        
+
         LUCENE_CLASS(TestableTokenStream);
-    
+
     protected:
         Collection<String> tokens;
         int32_t index;
         TermAttributePtr termAtt;
-    
+
     public:
         virtual bool incrementToken()
         {
@@ -297,10 +297,10 @@ namespace TestPreAnalyzedField
 BOOST_AUTO_TEST_CASE(testPreAnalyzedField)
 {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
-    
+
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
-    
+
     doc->add(newLucene<Field>(L"preanalyzed", newLucene<TestPreAnalyzedField::TestableTokenStream>(), Field::TERM_VECTOR_NO));
 
     writer->addDocument(doc);
@@ -319,7 +319,7 @@ BOOST_AUTO_TEST_CASE(testPreAnalyzedField)
     BOOST_CHECK_EQUAL(2, termPositions->freq());
     BOOST_CHECK_EQUAL(1, termPositions->nextPosition());
     BOOST_CHECK_EQUAL(3, termPositions->nextPosition());
-    
+
     termPositions->seek(newLucene<Term>(L"preanalyzed", L"term3"));
     BOOST_CHECK(termPositions->next());
     BOOST_CHECK_EQUAL(1, termPositions->freq());
@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(testMixedTermVectorSettingsSameField)
     BOOST_CHECK_EQUAL(2, tfv2->getTerms().size());
 }
 
-/// Test adding two fields with the same name, one indexed the other stored only. The omitNorms and 
+/// Test adding two fields with the same name, one indexed the other stored only. The omitNorms and
 /// omitTermFreqAndPositions setting of the stored field should not affect the indexed one
 BOOST_AUTO_TEST_CASE(testMixedTermVectorSettingsSameField2)
 {

@@ -13,27 +13,26 @@ namespace Lucene
 {
     DocumentsWriterThreadState::DocumentsWriterThreadState(DocumentsWriterPtr docWriter)
     {
-        this->_docWriter = docWriter;
+        this->docWriter = docWriter;
     }
-    
+
     DocumentsWriterThreadState::~DocumentsWriterThreadState()
     {
     }
-    
+
     void DocumentsWriterThreadState::initialize()
     {
         isIdle = true;
         doFlushAfter = false;
         numThreads = 1;
-        DocumentsWriterPtr docWriter(_docWriter);
         docState = newLucene<DocState>();
         docState->maxFieldLength = docWriter->maxFieldLength;
         docState->infoStream = docWriter->infoStream;
         docState->similarity = docWriter->similarity;
-        docState->_docWriter = docWriter;
+        docState->docWriter = docWriter;
         consumer = docWriter->consumer->addThread(LuceneThis());
     }
-    
+
     void DocumentsWriterThreadState::doAfterFlush()
     {
         numThreads = 0;

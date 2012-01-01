@@ -20,7 +20,7 @@ namespace Lucene
     public:
         virtual ~QueryParserConstants();
         LUCENE_INTERFACE(QueryParserConstants);
-    
+
     public:
         enum RegularExpressionId
         {
@@ -58,7 +58,7 @@ namespace Lucene
             RANGEEX_QUOTED = 32,
             RANGEEX_GOOP = 33
         };
-        
+
         enum LexicalState
         {
             Boost = 0,
@@ -66,10 +66,10 @@ namespace Lucene
             RangeIn = 2,
             DEFAULT = 3
         };
-    
+
         /// Literal token values.
         static Collection<String> tokenImage;
-    
+
     protected:
         /// Literal token values.
         static const wchar_t* _tokenImage[];

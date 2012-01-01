@@ -68,7 +68,7 @@ public:
             mulFactor *= 2;
         }
         while (docCount < 3000);
-        
+
         IndexWriterPtr w = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"field2", L"xxx", Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -84,7 +84,7 @@ public:
         w->close();
         bigSearcher = newLucene<IndexSearcher>(reader);
     }
-    
+
     virtual ~Boolean2Fixture()
     {
         reader->close();
@@ -98,7 +98,7 @@ protected:
     DirectoryPtr dir2;
     int32_t mulFactor;
     Collection<String> docFields;
-  
+
 public:
     static const int32_t NUM_EXTRA_DOCS;
     static const String field;
@@ -108,7 +108,7 @@ public:
     {
         return newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, field, newLucene<WhitespaceAnalyzer>())->parse(queryText);
     }
-    
+
     void queriesTest(const String& queryText, Collection<int32_t> expDocNrs)
     {
         QueryPtr query1 = makeQuery(queryText);
@@ -125,7 +125,7 @@ public:
 
         CheckHits::checkHitsQuery(query2, hits1, hits2, expDocNrs);
     }
-    
+
     /// Random rnd is passed in so that the exact same random query may be created more than once.
     BooleanQueryPtr randBoolQuery(RandomPtr rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
     {
@@ -142,7 +142,7 @@ public:
                 q = newLucene<WildcardQuery>(newLucene<Term>(field, L"w*"));
             else
                 q = randBoolQuery(rnd, allowMust, level - 1, field, vals);
-            
+
             int32_t r = rnd->nextInt(10);
             BooleanClause::Occur occur = BooleanClause::SHOULD;
             if (r < 2)
@@ -154,7 +154,7 @@ public:
                 else
                     occur = BooleanClause::SHOULD;
             }
-            
+
             current->add(q, occur);
         }
         return current;
@@ -237,7 +237,7 @@ namespace TestQueries10
         virtual ~OverlapSimilarity()
         {
         }
-    
+
     public:
         virtual double coord(int32_t overlap, int32_t maxOverlap)
         {
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE(testQueries10)
     String queryText = L"+w3 +xx +w2 zz";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3);
     searcher->setSimilarity(newLucene<TestQueries10::OverlapSimilarity>());
-    
+
     queriesTest(queryText, expDocNrs);
 }
 

@@ -29,11 +29,11 @@ public:
     {
         random = newLucene<Random>();
         tvSettings = newCollection<Field::TermVector>(
-            Field::TERM_VECTOR_NO, Field::TERM_VECTOR_YES, Field::TERM_VECTOR_WITH_OFFSETS, 
-            Field::TERM_VECTOR_WITH_POSITIONS, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS 
+            Field::TERM_VECTOR_NO, Field::TERM_VECTOR_YES, Field::TERM_VECTOR_WITH_OFFSETS,
+            Field::TERM_VECTOR_WITH_POSITIONS, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS
         );
     }
-    
+
     virtual ~IndexWriterExceptionsTestFixture()
     {
     }
@@ -64,13 +64,13 @@ public:
         this->fixture = fixture;
         this->r = newLucene<Random>(47);
     }
-    
+
     virtual ~IndexerThread()
     {
     }
-    
+
     LUCENE_CLASS(IndexerThread);
-    
+
 public:
     IndexWriterPtr writer;
     IndexWriterExceptionsTestFixture* fixture;
@@ -85,17 +85,17 @@ public:
         doc->add(newLucene<Field>(L"content6", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_ANALYZED, fixture->randomTVSetting()));
         doc->add(newLucene<Field>(L"content2", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting()));
         doc->add(newLucene<Field>(L"content3", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_NO));
-        
+
         doc->add(newLucene<Field>(L"content4", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_ANALYZED, fixture->randomTVSetting()));
         doc->add(newLucene<Field>(L"content5", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting()));
-        
+
         doc->add(newLucene<Field>(L"content7", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting()));
-        
+
         FieldPtr idField = newLucene<Field>(L"id", L"", Field::STORE_YES, Field::INDEX_NOT_ANALYZED, fixture->randomTVSetting());
         doc->add(idField);
-        
+
         int64_t stopTime = MiscUtils::currentTimeMillis() + 3000;
-        
+
         while ((int64_t)MiscUtils::currentTimeMillis() < stopTime)
         {
             doFail.set(LuceneThis());
@@ -123,10 +123,10 @@ public:
                 failure = e;
                 break;
             }
-            
+
             doFail.set(LuceneThreadPtr());
-            
-            // After a possible exception (above) I should be able to add a new document 
+
+            // After a possible exception (above) I should be able to add a new document
             // without hitting an exception
             try
             {
@@ -148,7 +148,7 @@ public:
     {
         this->r = newLucene<Random>(17);
     }
-    
+
     virtual ~MockIndexWriter()
     {
     }
@@ -170,17 +170,17 @@ BOOST_AUTO_TEST_CASE(testRandomExceptions)
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
-        
+
     writer->setRAMBufferSizeMB(0.1);
-    
+
     IndexerThreadPtr thread = newLucene<IndexerThread>(writer, this);
     thread->run();
-    
+
     if (!thread->failure.isNull())
         BOOST_FAIL("thread hit unexpected failure");
-    
+
     writer->commit();
-    
+
     try
     {
         writer->close();
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(testRandomExceptions)
     {
         writer->rollback();
     }
-    
+
     // Confirm that when doc hits exception partway through tokenization, it's deleted
     IndexReaderPtr r2 = IndexReader::open(dir, true);
     int32_t count = r2->docFreq(newLucene<Term>(L"content4", L"aaa"));
@@ -205,27 +205,27 @@ BOOST_AUTO_TEST_CASE(testRandomExceptionsThreads)
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
-        
+
     writer->setRAMBufferSizeMB(0.2);
-    
+
     int32_t NUM_THREADS = 4;
-    
+
     Collection<IndexerThreadPtr> threads = Collection<IndexerThreadPtr>::newInstance(NUM_THREADS);
     for (int32_t i = 0; i < NUM_THREADS; ++i)
     {
         threads[i] = newLucene<IndexerThread>(writer, this);
         threads[i]->start();
     }
-    
+
     for (int32_t i = 0; i < NUM_THREADS; ++i)
         threads[i]->join();
-    
+
     for (int32_t i = 0; i < NUM_THREADS; ++i)
     {
         if (!threads[i]->failure.isNull())
             BOOST_FAIL("thread hit unexpected failure: " << threads[i]->failure.getError());
     }
-    
+
     writer->commit();
 
     try
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(testRandomExceptionsThreads)
     {
         writer->rollback();
     }
-    
+
     // Confirm that when doc hits exception partway through tokenization, it's deleted
     IndexReaderPtr r2 = IndexReader::open(dir, true);
     int32_t count = r2->docFreq(newLucene<Term>(L"content4", L"aaa"));

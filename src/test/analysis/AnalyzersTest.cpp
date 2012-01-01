@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(testStop)
 namespace TestPayloadCopy
 {
     DECLARE_LUCENE_PTR(PayloadSetter)
-        
+
     class PayloadSetter : public TokenFilter
     {
     public:
@@ -78,7 +78,7 @@ namespace TestPayloadCopy
             data[0] = 0;
             p = newLucene<Payload>(data, 0, 1);
         }
-        
+
         virtual ~PayloadSetter()
         {
         }

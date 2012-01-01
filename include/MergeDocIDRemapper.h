@@ -11,17 +11,17 @@
 
 namespace Lucene
 {
-    /// Remaps docIDs after a merge has completed, where the merged segments had at least one deletion.  
-    /// This is used to renumber the buffered deletes in IndexWriter when a merge of segments with deletions 
+    /// Remaps docIDs after a merge has completed, where the merged segments had at least one deletion.
+    /// This is used to renumber the buffered deletes in IndexWriter when a merge of segments with deletions
     /// commits.
     class MergeDocIDRemapper : public LuceneObject
     {
     public:
         MergeDocIDRemapper(SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergedDocCount);
         virtual ~MergeDocIDRemapper();
-        
+
         LUCENE_CLASS(MergeDocIDRemapper);
-            
+
     public:
         Collection<int32_t> starts; // used for binary search of mapped docID
         Collection<int32_t> newStarts; // starts, minus the deletes
@@ -29,8 +29,8 @@ namespace Lucene
         int32_t minDocID; // minimum docID that needs renumbering
         int32_t maxDocID; // 1+ the max docID that needs renumbering
         int32_t docShift; // total # deleted docs that were compacted by this merge
-    
-    public:    
+
+    public:
         int32_t remap(int32_t oldDocID);
     };
 }

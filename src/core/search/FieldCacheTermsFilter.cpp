@@ -17,21 +17,21 @@ namespace Lucene
         this->field = field;
         this->terms = terms;
     }
-    
+
     FieldCacheTermsFilter::~FieldCacheTermsFilter()
     {
     }
-    
+
     FieldCachePtr FieldCacheTermsFilter::getFieldCache()
     {
         return FieldCache::DEFAULT();
     }
-    
+
     DocIdSetPtr FieldCacheTermsFilter::getDocIdSet(IndexReaderPtr reader)
     {
         return newLucene<FieldCacheTermsFilterDocIdSet>(terms, getFieldCache()->getStringIndex(reader, field));
     }
-    
+
     FieldCacheTermsFilterDocIdSet::FieldCacheTermsFilterDocIdSet(Collection<String> terms, StringIndexPtr fcsi)
     {
         this->fcsi = fcsi;
@@ -43,37 +43,37 @@ namespace Lucene
                 openBitSet->set(termNumber);
         }
     }
-    
+
     FieldCacheTermsFilterDocIdSet::~FieldCacheTermsFilterDocIdSet()
     {
     }
-    
+
     DocIdSetIteratorPtr FieldCacheTermsFilterDocIdSet::iterator()
     {
         return newLucene<FieldCacheTermsFilterDocIdSetIterator>(fcsi, openBitSet);
     }
-    
+
     bool FieldCacheTermsFilterDocIdSet::isCacheable()
     {
         return true;
     }
-    
+
     FieldCacheTermsFilterDocIdSetIterator::FieldCacheTermsFilterDocIdSetIterator(StringIndexPtr fcsi, OpenBitSetPtr openBitSet)
     {
         this->fcsi = fcsi;
         this->openBitSet = openBitSet;
         this->doc = -1;
     }
-    
+
     FieldCacheTermsFilterDocIdSetIterator::~FieldCacheTermsFilterDocIdSetIterator()
     {
     }
-    
+
     int32_t FieldCacheTermsFilterDocIdSetIterator::docID()
     {
         return doc;
     }
-    
+
     int32_t FieldCacheTermsFilterDocIdSetIterator::nextDoc()
     {
         try
@@ -92,7 +92,7 @@ namespace Lucene
         }
         return doc;
     }
-    
+
     int32_t FieldCacheTermsFilterDocIdSetIterator::advance(int32_t target)
     {
         try
