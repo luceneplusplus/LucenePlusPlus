@@ -7,7 +7,8 @@
 #ifndef LUCENETYPES_H
 #define LUCENETYPES_H
 
-#include "Lucene.h"
+#include "gc.h"
+#include "gc_ptr.h"
 
 #define DECLARE_LUCENE_PTR(Type) \
     class Type; \

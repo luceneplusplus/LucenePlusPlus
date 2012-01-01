@@ -32,9 +32,9 @@ using boost::uint64_t;
 
 #define SIZEOF_ARRAY(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-#include "gc.h"
 #include "LuceneTypes.h"
 #include "LuceneFactory.h"
+#include "gc_container.h"
 
 namespace boost
 {

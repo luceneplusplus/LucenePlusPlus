@@ -22,23 +22,16 @@
 #include "FileUtils.h"
 #include "StringUtils.h"
 
-#include "LuceneObject.h"
-
 #define BOOST_TEST_MODULE "Lucene"
 #define BOOST_TEST_NO_MAIN
 
 #include <boost/test/included/unit_test.hpp>
-#include <boost/test/debug.hpp>
 #include <boost/algorithm/string.hpp>
 
 using namespace Lucene;
 
 int main(int argc, char* argv[])
 {
-    #ifdef LPP_USE_GC
-    GC_INIT(); // todo: required?
-    #endif
-
     String testDir;
     uint64_t startTime = MiscUtils::currentTimeMillis();
 
@@ -81,11 +74,5 @@ int main(int argc, char* argv[])
 
     std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
 
-    #ifdef LPP_USE_GC
-    GC_gcollect();
-    GC_invoke_finalizers();
-    boost::debug::detect_memory_leaks(false);
-    #endif
-
-    return 0;
+    return testMain;
 }

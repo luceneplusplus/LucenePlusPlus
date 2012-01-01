@@ -12,19 +12,15 @@
 namespace Lucene
 {
     /// Used for unit testing as a substitute for stack trace
-    #ifdef LPP_USE_GC
-    class LPPAPI TestPoint : public gc_cleanup // todo: can we tidy this up (super base class?)
-    #else
-    class LPPAPI TestPoint
-    #endif
+    class TestPoint : public gc_object
     {
     public:
         virtual ~TestPoint();
-    
+
     protected:
         static MapStringInt testMethods;
         static bool enable;
-        
+
     public:
         static void enableTestPoints();
         static void clear();
@@ -32,13 +28,13 @@ namespace Lucene
         static bool getTestPoint(const String& object, const String& method);
         static bool getTestPoint(const String& method);
     };
-    
+
     class TestScope
     {
     public:
         TestScope(const String& object, const String& method);
         virtual ~TestScope();
-    
+
     protected:
         String object;
         String method;

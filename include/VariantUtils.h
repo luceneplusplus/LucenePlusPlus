@@ -13,11 +13,10 @@
 
 namespace Lucene
 {
-    #ifdef LPP_USE_GC
-    class LPPAPI VariantUtils : public gc_cleanup // todo: can we tidy this up (super base class?)
-    #else
-    class LPPAPI VariantUtils
-    #endif
+    // todo: go through these "static" classes (UnicodeUtils, StringUtils, TestPoint, FileUtils, VariableUtils)
+    // todo: do they really need to be derived from gc_object?
+    // todo: instead we could make the destructors private
+    class LPPAPI VariantUtils : public gc_object
     {
     public:
         template <typename T>

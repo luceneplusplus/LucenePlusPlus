@@ -11,11 +11,7 @@
 
 namespace Lucene
 {
-    #ifdef LPP_USE_GC
-    class LPPAPI UnicodeUtil : public gc_cleanup // todo: can we tidy this up (super base class?)
-    #else
-    class LPPAPI UnicodeUtil
-    #endif
+    class LPPAPI UnicodeUtil : public gc_object
     {
     public:
         virtual ~UnicodeUtil();
@@ -83,7 +79,7 @@ namespace Lucene
             MiscUtils::arrayCopy(other.result.get(), 0, result.get(), 0, other.length);
         }
 
-        void copyText(gc_ptr< TranslationResult<T> > other)
+        void copyText(boost::shared_ptr< TranslationResult<T> > other)
         {
             copyText(*other);
         }

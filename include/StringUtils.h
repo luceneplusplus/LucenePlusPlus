@@ -11,11 +11,7 @@
 
 namespace Lucene
 {
-    #ifdef LPP_USE_GC
-    class LPPAPI StringUtils : public gc_cleanup // todo: can we tidy this up (super base class?)
-    #else
-    class LPPAPI StringUtils
-    #endif
+    class LPPAPI StringUtils : public gc_object
     {
     public:
         /// Maximum length of UTF encoding.
@@ -26,7 +22,7 @@ namespace Lucene
 
     public:
         /// Convert uft8 buffer into unicode.
-        static int32_t toUnicode(const uint8_t* utf8, int32_t length, Collection<CharArray> unicode);
+        static int32_t toUnicode(const uint8_t* utf8, int32_t length, CharArray unicode);
 
         /// Convert uft8 buffer into unicode.
         static int32_t toUnicode(const uint8_t* utf8, int32_t length, UnicodeResultPtr unicodeResult);

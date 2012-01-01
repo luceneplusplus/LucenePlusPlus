@@ -94,7 +94,7 @@ namespace Lucene
 
         bool markedHeld = false;
 
-        // todo: can we not simple lock LOCK_HELD() directly, instead of creating a separate lock object?
+        // todo: can we not simply lock LOCK_HELD() directly, instead of creating a separate lock object?
         // todo: ie. in newer code HashMap is lockable directly
 
         // make sure nobody else in-process has this lock held already and mark it held if not

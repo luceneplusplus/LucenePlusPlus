@@ -11,11 +11,7 @@
 
 namespace Lucene
 {
-    #ifdef LPP_USE_GC
-    class LPPAPI MiscUtils : public gc_cleanup // todo: can we tidy this up (super base class?)
-    #else
-    class LPPAPI MiscUtils
-    #endif
+    class LPPAPI MiscUtils : public gc_object
     {
     protected:
         static const uint32_t SINGLE_EXPONENT_MASK;
