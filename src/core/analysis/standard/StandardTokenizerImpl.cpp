@@ -185,7 +185,7 @@ namespace Lucene
     {
         this->zzState = 0;
         this->zzLexicalState = YYINITIAL;
-        this->zzBuffer = Collection<CharArray>::newInstance(ZZ_BUFFERSIZE);
+        this->zzBuffer = CharArray::newInstance(ZZ_BUFFERSIZE);
         this->zzMarkedPos = 0;
         this->zzPushbackPos = 0;
         this->zzCurrentPos = 0;
@@ -205,10 +205,10 @@ namespace Lucene
 
     const wchar_t* StandardTokenizerImpl::ZZ_CMAP()
     {
-        static Collection<CharArray> _ZZ_CMAP;
+        static CharArray _ZZ_CMAP;
         if (!_ZZ_CMAP)
         {
-            _ZZ_CMAP = Collection<CharArray>::newStaticInstance(ZZ_CMAP_LENGTH);
+            _ZZ_CMAP = CharArray::newStaticInstance(ZZ_CMAP_LENGTH);
             wchar_t* result = _ZZ_CMAP.get();
 
             int32_t i = 0; // index in packed string

@@ -21,7 +21,7 @@ namespace Lucene
     DECLARE_LUCENE_PTR(ASCIIFoldingFilter)
     DECLARE_LUCENE_PTR(BaseCharFilter)
     DECLARE_LUCENE_PTR(CachingTokenFilter)
-    DECLARE_LUCENE_PTR(Collection<CharArray>Set)
+    DECLARE_LUCENE_PTR(CharArraySet)
     DECLARE_LUCENE_PTR(CharFilter)
     DECLARE_LUCENE_PTR(CharReader)
     DECLARE_LUCENE_PTR(CharStream)

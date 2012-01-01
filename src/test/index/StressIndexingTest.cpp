@@ -118,7 +118,7 @@ public:
     int32_t range;
     int32_t iterations;
     HashMap<String, DocumentPtr> docs;
-    Collection<CharArray> buffer;
+    CharArray buffer;
     RandomPtr r;
 
 public:
@@ -176,7 +176,7 @@ public:
         if (nextInt() % 2 == 1)
             return getUTF8String(tokens);
 
-        Collection<CharArray> arr(Collection<CharArray>::newInstance(tokens * 2));
+        CharArray arr(CharArray::newInstance(tokens * 2));
         for (int32_t i = 0; i < tokens; ++i)
         {
             arr[i * 2] = (wchar_t)(L'A' + r->nextInt(10));

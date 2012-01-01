@@ -20,12 +20,12 @@ namespace Lucene
         LUCENE_CLASS(CharBlockPool);
 
     public:
-        CollectionCollection<CharArray> buffers;
+        Collection<CharArray> buffers;
         int32_t numBuffer;
         int32_t bufferUpto; // Which buffer we are up to
         int32_t charUpto; // Where we are in head buffer
 
-        Collection<CharArray> buffer; // Current head buffer
+        CharArray buffer; // Current head buffer
         int32_t charOffset; // Current head offset
 
     protected:

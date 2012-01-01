@@ -15,11 +15,11 @@ namespace Lucene
     class LPPAPI StopFilter : public TokenFilter
     {
     public:
-        /// Construct a token stream filtering the given input.  If stopWords is an instance of {@link Collection<CharArray>Set}
+        /// Construct a token stream filtering the given input.  If stopWords is an instance of {@link CharArraySet}
         /// (true if makeStopSet() was used to construct the set) it will be directly used and ignoreCase will be
-        /// ignored since Collection<CharArray>Set directly controls case sensitivity.
+        /// ignored since CharArraySet directly controls case sensitivity.
         ///
-        /// If stopWords is not an instance of {@link Collection<CharArray>Set}, a new Collection<CharArray>Set will be constructed and
+        /// If stopWords is not an instance of {@link CharArraySet}, a new CharArraySet will be constructed and
         /// ignoreCase will be used to specify the case sensitivity of that set.
         ///
         /// @param enablePositionIncrements true if token positions should record the removed stop words
@@ -27,14 +27,14 @@ namespace Lucene
         /// @param stopWords A Set of Strings or char[] or any other toString()-able set representing the stopwords
         /// @param ignoreCase if true, all words are lower cased first
         StopFilter(bool enablePositionIncrements, TokenStreamPtr input, SetString stopWords, bool ignoreCase = false);
-        StopFilter(bool enablePositionIncrements, TokenStreamPtr input, Collection<CharArray>SetPtr stopWords, bool ignoreCase = false);
+        StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords, bool ignoreCase = false);
 
         virtual ~StopFilter();
 
         LUCENE_CLASS(StopFilter);
 
     protected:
-        Collection<CharArray>SetPtr stopWords;
+        CharArraySetPtr stopWords;
         bool enablePositionIncrements;
 
         TermAttributePtr termAtt;

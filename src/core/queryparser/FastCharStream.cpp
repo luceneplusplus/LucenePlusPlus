@@ -38,7 +38,7 @@ namespace Lucene
         if (tokenStart == 0) // token won't fit in buffer
         {
             if (!buffer)
-                buffer = Collection<CharArray>::newInstance(2048);
+                buffer = CharArray::newInstance(2048);
             else if (bufferLength == buffer.size()) // grow buffer
                 buffer.resize(buffer.size() * 2);
         }
@@ -73,9 +73,9 @@ namespace Lucene
         return String(buffer.get() + tokenStart, bufferPosition - tokenStart);
     }
 
-    Collection<CharArray> FastCharStream::GetSuffix(int32_t length)
+    CharArray FastCharStream::GetSuffix(int32_t length)
     {
-        Collection<CharArray> value(Collection<CharArray>::newInstance(length));
+        CharArray value(CharArray::newInstance(length));
         MiscUtils::arrayCopy(buffer.get(), bufferPosition - length, value.get(), 0, length);
         return value;
     }

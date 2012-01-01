@@ -107,7 +107,7 @@ namespace Lucene
         SegmentWriteStatePtr flushState;
 
         Collection<IntArray> freeIntBlocks;
-        CollectionCollection<CharArray> freeCharBlocks;
+        Collection<CharArray> freeCharBlocks;
 
     public:
         /// Coarse estimates used to measure RAM usage of buffered deletes
@@ -313,8 +313,8 @@ namespace Lucene
         void bytesUsed(int64_t numBytes);
         void recycleIntBlocks(Collection<IntArray> blocks, int32_t start, int32_t end);
 
-        Collection<CharArray> getCharBlock();
-        void recycleCharBlocks(CollectionCollection<CharArray> blocks, int32_t numBlocks);
+        CharArray getCharBlock();
+        void recycleCharBlocks(Collection<CharArray> blocks, int32_t numBlocks);
 
         String toMB(int64_t v);
 

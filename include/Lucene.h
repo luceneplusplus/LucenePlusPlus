@@ -77,7 +77,7 @@ namespace Lucene
     typedef Array<uint16_t> ShortArray;
     typedef Array<int32_t> IntArray;
     typedef Array<int64_t> LongArray;
-    typedef Array<wchar_t> Collection<CharArray>;
+    typedef Array<wchar_t> CharArray;
     typedef Array<double> DoubleArray;
 
     template <class T>

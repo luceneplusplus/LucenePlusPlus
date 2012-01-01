@@ -47,7 +47,7 @@ BOOST_FIXTURE_TEST_SUITE(MappingCharFilterTest, MappingCharFilterTestFixture)
 BOOST_AUTO_TEST_CASE(testReaderReset)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"x"));
-    Collection<CharArray> buf = Collection<CharArray>::newInstance(10);
+    CharArray buf = CharArray::newInstance(10);
     int32_t len = cs->read(buf.get(), 0, 10);
     BOOST_CHECK_EQUAL(1, len);
     BOOST_CHECK_EQUAL(L'x', buf[0]) ;

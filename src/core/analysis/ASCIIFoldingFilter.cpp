@@ -13,7 +13,7 @@ namespace Lucene
 {
     ASCIIFoldingFilter::ASCIIFoldingFilter(TokenStreamPtr input) : TokenFilter(input)
     {
-        output = Collection<CharArray>::newInstance(512);
+        output = CharArray::newInstance(512);
         outputPos = 0;
         termAtt = addAttribute<TermAttribute>();
     }

@@ -83,7 +83,7 @@ namespace Lucene
         int32_t zzLexicalState;
 
         /// This buffer contains the current text to be matched and is the source of the yytext() string
-        Collection<CharArray> zzBuffer;
+        CharArray zzBuffer;
 
         /// The text position at the last accepting state
         int32_t zzMarkedPos;

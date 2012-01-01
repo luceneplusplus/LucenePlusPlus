@@ -25,7 +25,7 @@ namespace Lucene
         LUCENE_CLASS(FastCharStream);
 
     public:
-        Collection<CharArray> buffer;
+        CharArray buffer;
 
         int32_t bufferLength; // end of valid chars
         int32_t bufferPosition; // next char to read
@@ -40,7 +40,7 @@ namespace Lucene
         virtual wchar_t BeginToken();
         virtual void backup(int32_t amount);
         virtual String GetImage();
-        virtual Collection<CharArray> GetSuffix(int32_t length);
+        virtual CharArray GetSuffix(int32_t length);
         virtual void Done();
         virtual int32_t getColumn();
         virtual int32_t getLine();

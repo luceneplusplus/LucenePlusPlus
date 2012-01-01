@@ -6,7 +6,7 @@
 
 #include "LuceneInc.h"
 #include "StopFilter.h"
-#include "Collection<CharArray>Set.h"
+#include "CharArraySet.h"
 #include "TermAttribute.h"
 #include "PositionIncrementAttribute.h"
 
@@ -14,13 +14,13 @@ namespace Lucene
 {
     StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, SetString stopWords, bool ignoreCase) : TokenFilter(input)
     {
-        this->stopWords = newLucene<Collection<CharArray>Set>(stopWords, ignoreCase);
+        this->stopWords = newLucene<CharArraySet>(stopWords, ignoreCase);
         this->enablePositionIncrements = enablePositionIncrements;
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
 
-    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, Collection<CharArray>SetPtr stopWords, bool ignoreCase) : TokenFilter(input)
+    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords, bool ignoreCase) : TokenFilter(input)
     {
         this->stopWords = stopWords;
         this->enablePositionIncrements = enablePositionIncrements;

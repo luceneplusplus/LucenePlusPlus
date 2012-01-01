@@ -33,7 +33,7 @@ namespace Lucene
     protected:
         static const wchar_t apostrophes[];
 
-        Collection<CharArray>SetPtr articles;
+        CharArraySetPtr articles;
         TermAttributePtr termAtt;
 
     public:

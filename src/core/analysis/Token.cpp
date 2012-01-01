@@ -58,7 +58,7 @@ namespace Lucene
         setTermBuffer(text);
     }
 
-    Token::Token(Collection<CharArray> startTermBuffer, int32_t termBufferOffset, int32_t termBufferLength, int32_t start, int32_t end)
+    Token::Token(CharArray startTermBuffer, int32_t termBufferOffset, int32_t termBufferLength, int32_t start, int32_t end)
     {
         ConstructToken(start, end, DEFAULT_TYPE(), 0);
         setTermBuffer(startTermBuffer.get(), termBufferOffset, termBufferLength);
@@ -126,7 +126,7 @@ namespace Lucene
         _termLength = length;
     }
 
-    Collection<CharArray> Token::termBuffer()
+    CharArray Token::termBuffer()
     {
         if (!_termBuffer)
             initTermBuffer();
@@ -140,12 +140,12 @@ namespace Lucene
         return _termBuffer.get();
     }
 
-    Collection<CharArray> Token::resizeTermBuffer(int32_t newSize)
+    CharArray Token::resizeTermBuffer(int32_t newSize)
     {
         if (!_termBuffer)
         {
             // The buffer is always at least MIN_BUFFER_SIZE
-            _termBuffer = Collection<CharArray>::newInstance(MiscUtils::getNextSize(std::max(newSize, MIN_BUFFER_SIZE)));
+            _termBuffer = CharArray::newInstance(MiscUtils::getNextSize(std::max(newSize, MIN_BUFFER_SIZE)));
         }
         else
         {
@@ -167,7 +167,7 @@ namespace Lucene
     {
         if (!_termBuffer)
         {
-            _termBuffer = Collection<CharArray>::newInstance(MiscUtils::getNextSize(MIN_BUFFER_SIZE));
+            _termBuffer = CharArray::newInstance(MiscUtils::getNextSize(MIN_BUFFER_SIZE));
             _termLength = 0;
         }
     }
@@ -290,7 +290,7 @@ namespace Lucene
         // Do a deep clone
         if (_termBuffer)
         {
-            cloneToken->_termBuffer = Collection<CharArray>::newInstance(_termBuffer.size());
+            cloneToken->_termBuffer = CharArray::newInstance(_termBuffer.size());
             MiscUtils::arrayCopy(_termBuffer.get(), 0, cloneToken->_termBuffer.get(), 0, _termBuffer.size());
         }
         if (payload)
@@ -299,7 +299,7 @@ namespace Lucene
         return cloneToken;
     }
 
-    TokenPtr Token::clone(Collection<CharArray> newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset)
+    TokenPtr Token::clone(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset)
     {
         TokenPtr clone(newLucene<Token>(newTermBuffer, newTermOffset, newTermLength, newStartOffset, newEndOffset));
         clone->positionIncrement = positionIncrement;
@@ -364,7 +364,7 @@ namespace Lucene
         _type = DEFAULT_TYPE();
     }
 
-    TokenPtr Token::reinit(Collection<CharArray> newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset, const String& newType)
+    TokenPtr Token::reinit(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset, const String& newType)
     {
         clearNoTermBuffer();
         payload.reset();
@@ -376,7 +376,7 @@ namespace Lucene
         return LuceneThis();
     }
 
-    TokenPtr Token::reinit(Collection<CharArray> newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset)
+    TokenPtr Token::reinit(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset)
     {
         clearNoTermBuffer();
         setTermBuffer(newTermBuffer.get(), newTermOffset, newTermLength);
@@ -449,7 +449,7 @@ namespace Lucene
         payload = prototype->payload;
     }
 
-    void Token::reinit(TokenPtr prototype, Collection<CharArray> newTermBuffer, int32_t offset, int32_t length)
+    void Token::reinit(TokenPtr prototype, CharArray newTermBuffer, int32_t offset, int32_t length)
     {
         setTermBuffer(newTermBuffer.get(), offset, length);
         positionIncrement = prototype->positionIncrement;

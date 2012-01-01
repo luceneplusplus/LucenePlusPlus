@@ -16,7 +16,7 @@ namespace Lucene
         bufferUpto = -1;
         charUpto = DocumentsWriter::CHAR_BLOCK_SIZE;
         charOffset = -DocumentsWriter::CHAR_BLOCK_SIZE;
-        buffers = CollectionCollection<CharArray>::newInstance(10);
+        buffers = Collection<CharArray>::newInstance(10);
         this->docWriter = docWriter;
     }
 

@@ -6,7 +6,7 @@
 
 #include "ContribInc.h"
 #include "ElisionFilter.h"
-#include "Collection<CharArray>Set.h"
+#include "CharArraySet.h"
 #include "TermAttribute.h"
 
 namespace Lucene
@@ -15,7 +15,7 @@ namespace Lucene
 
     ElisionFilter::ElisionFilter(TokenStreamPtr input) : TokenFilter(input)
     {
-        articles = newLucene<Collection<CharArray>Set>(newCollection<String>(L"l", L"m", L"t", L"qu", L"n", L"s", L"j"), true);
+        articles = newLucene<CharArraySet>(newCollection<String>(L"l", L"m", L"t", L"qu", L"n", L"s", L"j"), true);
         termAtt = addAttribute<TermAttribute>();
     }
 
@@ -31,7 +31,7 @@ namespace Lucene
 
     void ElisionFilter::setArticles(SetString articles)
     {
-        this->articles = newLucene<Collection<CharArray>Set>(articles, true);
+        this->articles = newLucene<CharArraySet>(articles, true);
     }
 
     bool ElisionFilter::incrementToken()

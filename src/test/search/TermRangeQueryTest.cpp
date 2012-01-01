@@ -29,7 +29,7 @@ public:
     SingleCharTokenizer(ReaderPtr r) : Tokenizer(r)
     {
         termAtt = addAttribute<TermAttribute>();
-        buffer = Collection<CharArray>::newInstance(1);
+        buffer = CharArray::newInstance(1);
         done = false;
     }
 
@@ -38,7 +38,7 @@ public:
     }
 
 public:
-    Collection<CharArray> buffer;
+    CharArray buffer;
     bool done;
     TermAttributePtr termAtt;
 

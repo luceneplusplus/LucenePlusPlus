@@ -54,7 +54,7 @@ namespace Lucene
             clearAttributes();
             done = true;
             int32_t upto = 0;
-            Collection<CharArray> buffer(termAtt->termBuffer());
+            CharArray buffer(termAtt->termBuffer());
             while (true)
             {
                 int32_t length = input->read(buffer.get(), upto, buffer.size() - upto);

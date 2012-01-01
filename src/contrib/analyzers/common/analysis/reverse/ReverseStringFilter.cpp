@@ -51,7 +51,7 @@ namespace Lucene
                 termAtt->resizeTermBuffer(len);
                 termAtt->termBuffer()[len - 1] = marker;
             }
-            Collection<CharArray> term(termAtt->termBuffer());
+            CharArray term(termAtt->termBuffer());
             std::reverse(term.get(), term.get() + len);
             termAtt->setTermLength(len);
             return true;

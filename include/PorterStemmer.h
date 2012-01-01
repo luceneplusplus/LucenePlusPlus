@@ -39,7 +39,7 @@ namespace Lucene
         bool dirty;
 
     public:
-        bool stem(Collection<CharArray> word);
+        bool stem(CharArray word);
 
         /// In stem(b, k), b is a char pointer, and the string to be stemmed is from b[0] to b[k] inclusive.
         /// Possibly b[k+1] == '\0', but it is not important. The stemmer adjusts the characters b[0] ... b[k] and

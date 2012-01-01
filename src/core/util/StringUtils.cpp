@@ -21,7 +21,7 @@ namespace Lucene
     /// Default character radix.
     const int32_t StringUtils::CHARACTER_MAX_RADIX = 36;
 
-    int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, Collection<CharArray> unicode)
+    int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, CharArray unicode)
     {
         if (length == 0)
             return 0;
@@ -47,7 +47,7 @@ namespace Lucene
     {
         if (length == 0)
             return L"";
-        Collection<CharArray> unicode(Collection<CharArray>::newInstance(length));
+        CharArray unicode(CharArray::newInstance(length));
         int32_t result = toUnicode(utf8, length, unicode);
         return String(unicode.get(), result);
     }
@@ -187,7 +187,7 @@ namespace Lucene
         static const wchar_t* digits = L"0123456789abcdefghijklmnopqrstuvwxyz";
 
         int32_t bufferSize = (sizeof(int32_t) << 3) + 1;
-        Collection<CharArray> baseOutput(Collection<CharArray>::newInstance(bufferSize));
+        CharArray baseOutput(CharArray::newInstance(bufferSize));
 
         wchar_t* ptr = baseOutput.get() + bufferSize - 1;
         *ptr = L'\0';

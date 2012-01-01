@@ -40,7 +40,7 @@ namespace Lucene
         docsWriter->setField(fieldInfo);
     }
 
-    FormatPostingsDocsConsumerPtr FormatPostingsTermsWriter::addTerm(Collection<CharArray> text, int32_t start)
+    FormatPostingsDocsConsumerPtr FormatPostingsTermsWriter::addTerm(CharArray text, int32_t start)
     {
         currentTerm = text;
         currentTermStart = start;

@@ -26,7 +26,7 @@ namespace Lucene
         TermInfosWriterPtr termsOut;
         FieldInfoPtr fieldInfo;
 
-        Collection<CharArray> currentTerm;
+        CharArray currentTerm;
         int32_t currentTermStart;
 
         int64_t freqStart;
@@ -38,7 +38,7 @@ namespace Lucene
         void setField(FieldInfoPtr fieldInfo);
 
         /// Adds a new term in this field
-        virtual FormatPostingsDocsConsumerPtr addTerm(Collection<CharArray> text, int32_t start);
+        virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start);
 
         /// Called when we are done adding terms to this field
         virtual void finish();

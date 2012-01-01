@@ -27,7 +27,7 @@ namespace Lucene
         Collection<RawPostingListPtr> postings;
 
         FreqProxTermsWriterPostingListPtr p;
-        Collection<CharArray> text;
+        CharArray text;
         int32_t textOffset;
 
         ByteSliceReaderPtr freq;

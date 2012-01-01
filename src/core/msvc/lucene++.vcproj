@@ -1754,11 +1754,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\analysis\Collection<CharArray>Set.cpp"
+				RelativePath="..\analysis\CharArraySet.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\Collection<CharArray>Set.h"
+				RelativePath="..\..\..\include\CharArraySet.h"
 				>
 			</File>
 			<File

@@ -120,7 +120,7 @@ namespace Lucene
         Token(const String& text, int32_t start, int32_t end, int32_t flags);
 
         /// Constructs a Token with the given term buffer (offset and length), start and end offsets
-        Token(Collection<CharArray> startTermBuffer, int32_t termBufferOffset, int32_t termBufferLength, int32_t start, int32_t end);
+        Token(CharArray startTermBuffer, int32_t termBufferOffset, int32_t termBufferLength, int32_t start, int32_t end);
 
         virtual ~Token();
 
@@ -132,7 +132,7 @@ namespace Lucene
     protected:
         static const int32_t MIN_BUFFER_SIZE;
 
-        Collection<CharArray> _termBuffer;
+        CharArray _termBuffer;
         int32_t _termLength;
         int32_t _startOffset;
         int32_t _endOffset;
@@ -193,7 +193,7 @@ namespace Lucene
         /// Returns the internal termBuffer character array which you can then directly alter.  If the array is too
         /// small for your token, use {@link #resizeTermBuffer(int)} to increase it.  After altering the buffer be sure
         /// to call {@link #setTermLength} to record the number of valid characters that were placed into the termBuffer.
-        virtual Collection<CharArray> termBuffer();
+        virtual CharArray termBuffer();
 
         /// Optimized implementation of termBuffer.
         virtual wchar_t* termBufferArray();
@@ -204,7 +204,7 @@ namespace Lucene
         /// setting of the termBuffer.
         /// @param newSize minimum size of the new termBuffer
         /// @return newly created termBuffer with length >= newSize
-        virtual Collection<CharArray> resizeTermBuffer(int32_t newSize);
+        virtual CharArray resizeTermBuffer(int32_t newSize);
 
         /// Return number of valid characters (length of the term) in the termBuffer array.
         virtual int32_t termLength();
@@ -270,7 +270,7 @@ namespace Lucene
 
         /// Makes a clone, but replaces the term buffer and start/end offset in the process.  This is more efficient than
         /// doing a full clone (and then calling setTermBuffer) because it saves a wasted copy of the old termBuffer.
-        TokenPtr clone(Collection<CharArray> newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset);
+        TokenPtr clone(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset);
 
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
@@ -278,12 +278,12 @@ namespace Lucene
         /// Shorthand for calling {@link #clear}, {@link #setTermBuffer(char[], int, int)}, {@link #setStartOffset},
         /// {@link #setEndOffset}, {@link #setType}
         /// @return this Token instance
-        TokenPtr reinit(Collection<CharArray> newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset, const String& newType);
+        TokenPtr reinit(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset, const String& newType);
 
         /// Shorthand for calling {@link #clear}, {@link #setTermBuffer(char[], int, int)}, {@link #setStartOffset},
         /// {@link #setEndOffset}, {@link #setType} on Token::DEFAULT_TYPE
         /// @return this Token instance
-        TokenPtr reinit(Collection<CharArray> newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset);
+        TokenPtr reinit(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset);
 
         /// Shorthand for calling {@link #clear}, {@link #setTermBuffer(String)}, {@link #setStartOffset},
         /// {@link #setEndOffset}, {@link #setType}
@@ -312,7 +312,7 @@ namespace Lucene
         void reinit(TokenPtr prototype, const String& newTerm);
 
         /// Copy the prototype token's fields into this one, with a different term. Note: Payloads are shared.
-        void reinit(TokenPtr prototype, Collection<CharArray> newTermBuffer, int32_t offset, int32_t length);
+        void reinit(TokenPtr prototype, CharArray newTermBuffer, int32_t offset, int32_t length);
 
         virtual void copyTo(AttributePtr target);
 

@@ -130,7 +130,7 @@ namespace Lucene
 
     struct comparePostings
     {
-        comparePostings(CollectionCollection<CharArray> buffers)
+        comparePostings(Collection<CharArray> buffers)
     {
             this->buffers = buffers;
     }
@@ -169,7 +169,7 @@ namespace Lucene
         }
         }
 
-        CollectionCollection<CharArray> buffers;
+        Collection<CharArray> buffers;
     };
 
     Collection<RawPostingListPtr> TermsHashPerField::sortPostings()
@@ -499,7 +499,7 @@ namespace Lucene
                 if (perThread->primary)
                 {
                     int32_t start = (p0->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-                    Collection<CharArray> text = charPool->buffers[p0->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
+                    CharArray text = charPool->buffers[p0->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
                     int32_t pos = start;
                     while (text[pos] != UTF8Base::UNICODE_TERMINATOR)
                         ++pos;

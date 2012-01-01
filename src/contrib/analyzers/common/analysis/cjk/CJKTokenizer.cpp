@@ -53,8 +53,8 @@ namespace Lucene
         offset = 0;
         bufferIndex = 0;
         dataLen = 0;
-        buffer = Collection<CharArray>::newInstance(MAX_WORD_LEN);
-        ioBuffer = Collection<CharArray>::newInstance(IO_BUFFER_SIZE);
+        buffer = CharArray::newInstance(MAX_WORD_LEN);
+        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
         tokenType = WORD_TYPE;
         preIsTokened = false;
 

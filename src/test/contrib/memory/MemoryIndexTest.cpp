@@ -41,7 +41,7 @@ public:
         SetString test2 = readQueries(L"testqueries2.txt");
         queries.addAll(test2.begin(), test2.end());
         random = newLucene<Random>(123);
-        buffer = Collection<CharArray>::newInstance(20);
+        buffer = CharArray::newInstance(20);
 
         /// Some terms to be indexed, in addition to random words.
         /// These terms are commonly used in the queries.
@@ -78,7 +78,7 @@ protected:
     String fileDir;
     SetString queries;
     RandomPtr random;
-    Collection<CharArray> buffer;
+    CharArray buffer;
 
     static const int32_t ITERATIONS;
     Collection<String> TEST_TERMS;

@@ -135,14 +135,14 @@ namespace Lucene
         int32_t lastTermBytesCount = 0;
 
         ByteSliceReaderPtr reader(perThread->vectorSliceReader);
-        CollectionCollection<CharArray> charBuffers(TermsHashPerThreadPtr(perThread->_termsHashPerThread)->charPool->buffers);
+        Collection<CharArray> charBuffers(TermsHashPerThreadPtr(perThread->_termsHashPerThread)->charPool->buffers);
 
         for (int32_t j = 0; j < numPostings; ++j)
         {
             TermVectorsTermsWriterPostingListPtr posting(LuceneStaticCast<TermVectorsTermsWriterPostingList>(postings[j]));
             int32_t freq = posting->freq;
 
-            Collection<CharArray> text2(charBuffers[posting->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT]);
+            CharArray text2(charBuffers[posting->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT]);
             int32_t start2 = (posting->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
 
             // We swap between two encoders to save copying last Term's byte array

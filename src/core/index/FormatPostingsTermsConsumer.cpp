@@ -19,7 +19,7 @@ namespace Lucene
     {
         int32_t len = text.length();
         if (!termBuffer)
-            termBuffer = Collection<CharArray>::newInstance(MiscUtils::getNextSize(len + 1));
+            termBuffer = CharArray::newInstance(MiscUtils::getNextSize(len + 1));
         if (termBuffer.size() < len + 1)
             termBuffer.resize(MiscUtils::getNextSize(len + 1));
         MiscUtils::arrayCopy(text.begin(), 0, termBuffer.get(), 0, len);

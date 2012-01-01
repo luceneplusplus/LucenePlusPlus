@@ -69,10 +69,10 @@ namespace Lucene
         return L""; // override
     }
 
-    Collection<CharArray> QueryParserCharStream::GetSuffix(int32_t length)
+    CharArray QueryParserCharStream::GetSuffix(int32_t length)
     {
         BOOST_ASSERT(false);
-        return Collection<CharArray>(); // override
+        return CharArray(); // override
     }
 
     void QueryParserCharStream::Done()

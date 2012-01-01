@@ -22,7 +22,7 @@ namespace Lucene
     {
     }
 
-    bool PorterStemmer::stem(Collection<CharArray> word)
+    bool PorterStemmer::stem(CharArray word)
     {
         return stem(word.get(), word.size() - 1);
     }

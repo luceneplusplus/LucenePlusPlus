@@ -48,7 +48,7 @@ namespace Lucene
         LUCENE_CLASS(ASCIIFoldingFilter);
 
     protected:
-        Collection<CharArray> output;
+        CharArray output;
         int32_t outputPos;
         TermAttributePtr termAtt;
 

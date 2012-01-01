@@ -71,7 +71,7 @@ namespace Lucene
 
         /// Returns an array of characters that make up the suffix of length for the currently matched token.
         /// This is used to build up the matched string for use in actions in the case of MORE.
-        virtual Collection<CharArray> GetSuffix(int32_t length) = 0;
+        virtual CharArray GetSuffix(int32_t length) = 0;
 
         /// The lexer calls this function to indicate that it is done with the stream and hence implementations
         /// can free any resources held by this class.  Again, the body of this function can be just empty and it

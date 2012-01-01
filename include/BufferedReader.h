@@ -27,7 +27,7 @@ namespace Lucene
         int32_t bufferSize;
         int32_t bufferLength; // end of valid bytes
         int32_t bufferPosition; // next byte to read
-        Collection<CharArray> buffer;
+        CharArray buffer;
 
     public:
         static const int32_t READER_BUFFER;

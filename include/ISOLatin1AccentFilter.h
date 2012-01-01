@@ -27,7 +27,7 @@ namespace Lucene
         LUCENE_CLASS(ISOLatin1AccentFilter);
 
     protected:
-        Collection<CharArray> output;
+        CharArray output;
         int32_t outputPos;
         TermAttributePtr termAtt;
 

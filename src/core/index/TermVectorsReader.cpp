@@ -449,13 +449,13 @@ namespace Lucene
         int32_t deltaLength = 0;
         int32_t totalLength = 0;
         ByteArray byteBuffer;
-        Collection<CharArray> charBuffer;
+        CharArray charBuffer;
         bool preUTF8 = (format < FORMAT_UTF8_LENGTH_IN_BYTES);
 
         // init the buffers
         if (preUTF8)
         {
-            charBuffer = Collection<CharArray>::newInstance(10);
+            charBuffer = CharArray::newInstance(10);
             byteBuffer.reset();
         }
         else

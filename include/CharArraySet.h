@@ -14,20 +14,20 @@ namespace Lucene
     /// A simple class that stores Strings as char[]'s in a hash table.  Note that this is not a general purpose class.
     /// For example, it cannot remove items from the set, nor does it resize its hash table to be smaller, etc.  It is
     /// designed to be quick to test if a char[] is in the set without the necessity of converting it to a String first.
-    class LPPAPI Collection<CharArray>Set : public LuceneObject
+    class LPPAPI CharArraySet : public LuceneObject
     {
     public:
-        Collection<CharArray>Set(bool ignoreCase);
+        CharArraySet(bool ignoreCase);
 
         /// Create set from a set of strings.
-        Collection<CharArray>Set(SetString entries, bool ignoreCase);
+        CharArraySet(SetString entries, bool ignoreCase);
 
         /// Create set from a collection of strings.
-        Collection<CharArray>Set(Collection<String> entries, bool ignoreCase);
+        CharArraySet(Collection<String> entries, bool ignoreCase);
 
-        virtual ~Collection<CharArray>Set();
+        virtual ~CharArraySet();
 
-        LUCENE_CLASS(Collection<CharArray>Set);
+        LUCENE_CLASS(CharArraySet);
 
     protected:
         SetString entries;
@@ -43,7 +43,7 @@ namespace Lucene
         virtual bool add(const String& text);
 
         /// Add this char[] into the set.
-        virtual bool add(Collection<CharArray> text);
+        virtual bool add(CharArray text);
 
         virtual int32_t size();
         virtual bool isEmpty();

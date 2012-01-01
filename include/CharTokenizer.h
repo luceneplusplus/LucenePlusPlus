@@ -30,7 +30,7 @@ namespace Lucene
         static const int32_t MAX_WORD_LEN;
         static const int32_t IO_BUFFER_SIZE;
 
-        Collection<CharArray> ioBuffer;
+        CharArray ioBuffer;
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
 

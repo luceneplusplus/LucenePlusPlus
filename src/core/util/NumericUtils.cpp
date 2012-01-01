@@ -35,7 +35,7 @@ namespace Lucene
     {
     }
 
-    int32_t NumericUtils::longToPrefixCoded(int64_t val, int32_t shift, Collection<CharArray> buffer)
+    int32_t NumericUtils::longToPrefixCoded(int64_t val, int32_t shift, CharArray buffer)
     {
         if (shift > 63 || shift < 0)
             boost::throw_exception(IllegalArgumentException(L"Illegal shift value, must be 0..63"));
@@ -56,7 +56,7 @@ namespace Lucene
 
     String NumericUtils::longToPrefixCoded(int64_t val, int32_t shift)
     {
-        Collection<CharArray> buffer(Collection<CharArray>::newInstance(BUF_SIZE_LONG));
+        CharArray buffer(CharArray::newInstance(BUF_SIZE_LONG));
         int32_t len = longToPrefixCoded(val, shift, buffer);
         return String(buffer.get(), len);
     }
@@ -66,7 +66,7 @@ namespace Lucene
         return longToPrefixCoded(val, 0);
     }
 
-    int32_t NumericUtils::intToPrefixCoded(int32_t val, int32_t shift, Collection<CharArray> buffer)
+    int32_t NumericUtils::intToPrefixCoded(int32_t val, int32_t shift, CharArray buffer)
     {
         if (shift > 31 || shift < 0)
             boost::throw_exception(IllegalArgumentException(L"Illegal shift value, must be 0..31"));
@@ -87,7 +87,7 @@ namespace Lucene
 
     String NumericUtils::intToPrefixCoded(int32_t val, int32_t shift)
     {
-        Collection<CharArray> buffer(Collection<CharArray>::newInstance(BUF_SIZE_INT));
+        CharArray buffer(CharArray::newInstance(BUF_SIZE_INT));
         int32_t len = intToPrefixCoded(val, shift, buffer);
         return String(buffer.get(), len);
     }

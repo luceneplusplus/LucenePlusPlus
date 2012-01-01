@@ -97,7 +97,7 @@ namespace Lucene
     int32_t BufferedReader::refill()
     {
         if (!buffer)
-            buffer = Collection<CharArray>::newInstance(bufferSize); // allocate buffer lazily
+            buffer = CharArray::newInstance(bufferSize); // allocate buffer lazily
         int32_t readLength = reader->read(buffer.get(), 0, bufferSize);
         bufferLength = readLength == READER_EOF ? 0 : readLength;
         bufferPosition = 0;

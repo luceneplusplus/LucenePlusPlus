@@ -23,7 +23,7 @@ namespace Lucene
     protected:
         static const int32_t MIN_BUFFER_SIZE;
 
-        Collection<CharArray> _termBuffer;
+        CharArray _termBuffer;
         int32_t _termLength;
 
     public:
@@ -51,7 +51,7 @@ namespace Lucene
         /// too small for your token, use {@link #resizeTermBuffer(int)} to increase it.  After altering the buffer
         /// be sure to call {@link #setTermLength} to record the number of valid characters that were placed into
         /// the termBuffer.
-        virtual Collection<CharArray> termBuffer();
+        virtual CharArray termBuffer();
 
         /// Optimized implementation of termBuffer.
         virtual wchar_t* termBufferArray();
@@ -62,7 +62,7 @@ namespace Lucene
         /// resize with the setting of the termBuffer.
         /// @param newSize minimum size of the new termBuffer
         /// @return newly created termBuffer with length >= newSize
-        virtual Collection<CharArray> resizeTermBuffer(int32_t newSize);
+        virtual CharArray resizeTermBuffer(int32_t newSize);
 
         /// Return number of valid characters (length of the term) in the termBuffer array.
         virtual int32_t termLength();

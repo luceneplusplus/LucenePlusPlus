@@ -20,7 +20,7 @@ namespace Lucene
         offset = 0;
         bufferIndex = 0;
         dataLen = 0;
-        ioBuffer = Collection<CharArray>::newInstance(IO_BUFFER_SIZE);
+        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
 
         offsetAtt = addAttribute<OffsetAttribute>();
         termAtt = addAttribute<TermAttribute>();
@@ -31,7 +31,7 @@ namespace Lucene
         offset = 0;
         bufferIndex = 0;
         dataLen = 0;
-        ioBuffer = Collection<CharArray>::newInstance(IO_BUFFER_SIZE);
+        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
 
         offsetAtt = addAttribute<OffsetAttribute>();
         termAtt = addAttribute<TermAttribute>();
@@ -42,7 +42,7 @@ namespace Lucene
         offset = 0;
         bufferIndex = 0;
         dataLen = 0;
-        ioBuffer = Collection<CharArray>::newInstance(IO_BUFFER_SIZE);
+        ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
 
         offsetAtt = addAttribute<OffsetAttribute>();
         termAtt = addAttribute<TermAttribute>();
@@ -62,7 +62,7 @@ namespace Lucene
         clearAttributes();
         int32_t length = 0;
         int32_t start = bufferIndex;
-        Collection<CharArray> buffer(termAtt->termBuffer());
+        CharArray buffer(termAtt->termBuffer());
         while (true)
         {
             if (bufferIndex >= dataLen)

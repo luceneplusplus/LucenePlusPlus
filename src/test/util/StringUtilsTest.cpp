@@ -20,10 +20,10 @@ BOOST_AUTO_TEST_CASE(testToUtf8)
     BOOST_CHECK_EQUAL(StringUtils::toUTF8(testString), "this is a ascii string");
 }
 
-BOOST_AUTO_TEST_CASE(testToUtf8Collection<CharArray>)
+BOOST_AUTO_TEST_CASE(testToUtf8CharArray)
 {
     String testString(L"this is a ascii string");
-    Collection<CharArray> testArray(Collection<CharArray>::newInstance(testString.length()));
+    CharArray testArray(CharArray::newInstance(testString.length()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     ByteArray expectedUft8(ByteArray::newInstance(30));
     BOOST_CHECK_EQUAL(StringUtils::toUTF8(testArray.get(), testArray.size(), expectedUft8), 22);
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(testToUtf8Collection<CharArray>)
 BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithOffset)
 {
     String testString(L"this is a ascii string");
-    Collection<CharArray> testArray(Collection<CharArray>::newInstance(testString.size()));
+    CharArray testArray(CharArray::newInstance(testString.size()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     ByteArray expectedUft8(ByteArray::newInstance(30));
     int32_t offset = 10; // "ascii string"
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithOffset)
 BOOST_AUTO_TEST_CASE(testToUtf8Result)
 {
     String testString(L"this is a ascii string");
-    Collection<CharArray> testArray(Collection<CharArray>::newInstance(testString.size()));
+    CharArray testArray(CharArray::newInstance(testString.size()));
     std::copy(testString.begin(), testString.end(), testArray.get());
     UTF8ResultPtr utf8Result(newLucene<UTF8Result>());
     StringUtils::toUTF8(testArray.get(), testArray.size(), utf8Result);
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(testToUtf8Result)
 BOOST_AUTO_TEST_CASE(testToUtf8ArrayWithTerminator)
 {
     String testString(L"this is a ascii string");
-    Collection<CharArray> testArray(Collection<CharArray>::newInstance(50));
+    CharArray testArray(CharArray::newInstance(50));
     std::copy(testString.begin(), testString.end(), testArray.get());
     testArray[testString.size()] = UTF8Base::UNICODE_TERMINATOR; // terminator
     ByteArray expectedUft8(ByteArray::newInstance(30));
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(testUnicodePerformance)
 
     BOOST_TEST_MESSAGE("Decode utf8 (pointer): " << (MiscUtils::currentTimeMillis() - startTime) << "ms");
 
-    Collection<CharArray> unicode = Collection<CharArray>::newInstance(utf8Length);
+    CharArray unicode = CharArray::newInstance(utf8Length);
 
     startTime = MiscUtils::currentTimeMillis();
 

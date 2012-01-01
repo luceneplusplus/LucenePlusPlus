@@ -5,18 +5,18 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include "Collection<CharArray>Set.h"
+#include "CharArraySet.h"
 #include "StringUtils.h"
 
 namespace Lucene
 {
-    Collection<CharArray>Set::Collection<CharArray>Set(bool ignoreCase)
+    CharArraySet::CharArraySet(bool ignoreCase)
     {
         this->ignoreCase = ignoreCase;
         this->entries = SetString::newInstance();
     }
 
-    Collection<CharArray>Set::Collection<CharArray>Set(SetString entries, bool ignoreCase)
+    CharArraySet::CharArraySet(SetString entries, bool ignoreCase)
     {
         this->ignoreCase = ignoreCase;
         this->entries = SetString::newInstance();
@@ -27,7 +27,7 @@ namespace Lucene
         }
     }
 
-    Collection<CharArray>Set::Collection<CharArray>Set(Collection<String> entries, bool ignoreCase)
+    CharArraySet::CharArraySet(Collection<String> entries, bool ignoreCase)
     {
         this->ignoreCase = ignoreCase;
         this->entries = SetString::newInstance();
@@ -38,46 +38,46 @@ namespace Lucene
         }
     }
 
-    Collection<CharArray>Set::~Collection<CharArray>Set()
+    CharArraySet::~CharArraySet()
     {
     }
 
-    bool Collection<CharArray>Set::contains(const String& text)
+    bool CharArraySet::contains(const String& text)
     {
         return entries.contains(ignoreCase ? StringUtils::toLower(text) : text);
     }
 
-    bool Collection<CharArray>Set::contains(const wchar_t* text, int32_t offset, int32_t length)
+    bool CharArraySet::contains(const wchar_t* text, int32_t offset, int32_t length)
     {
         return contains(String(text + offset, length));
     }
 
-    bool Collection<CharArray>Set::add(const String& text)
+    bool CharArraySet::add(const String& text)
     {
         return entries.add(ignoreCase ? StringUtils::toLower(text) : text);
     }
 
-    bool Collection<CharArray>Set::add(Collection<CharArray> text)
+    bool CharArraySet::add(CharArray text)
     {
         return add(String(text.get(), text.size()));
     }
 
-    int32_t Collection<CharArray>Set::size()
+    int32_t CharArraySet::size()
     {
         return entries.size();
     }
 
-    bool Collection<CharArray>Set::isEmpty()
+    bool CharArraySet::isEmpty()
     {
         return entries.empty();
     }
 
-    SetString::iterator Collection<CharArray>Set::begin()
+    SetString::iterator CharArraySet::begin()
     {
         return entries.begin();
     }
 
-    SetString::iterator Collection<CharArray>Set::end()
+    SetString::iterator CharArraySet::end()
     {
         return entries.end();
     }

@@ -107,7 +107,7 @@ namespace Lucene
 
     int32_t MappingCharFilter::read(wchar_t* buffer, int32_t offset, int32_t length)
     {
-        Collection<CharArray> tmp(Collection<CharArray>::newInstance(length));
+        CharArray tmp(CharArray::newInstance(length));
         int32_t l = input->read(tmp.get(), 0, length);
         if (l != -1)
         {

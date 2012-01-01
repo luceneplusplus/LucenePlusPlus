@@ -48,7 +48,7 @@ namespace Lucene
         _termLength = length;
     }
 
-    Collection<CharArray> TermAttribute::termBuffer()
+    CharArray TermAttribute::termBuffer()
     {
         if (!_termBuffer)
             initTermBuffer();
@@ -62,12 +62,12 @@ namespace Lucene
         return _termBuffer.get();
     }
 
-    Collection<CharArray> TermAttribute::resizeTermBuffer(int32_t newSize)
+    CharArray TermAttribute::resizeTermBuffer(int32_t newSize)
     {
         if (!_termBuffer)
         {
             // The buffer is always at least MIN_BUFFER_SIZE
-            _termBuffer = Collection<CharArray>::newInstance(MiscUtils::getNextSize(std::max(newSize, MIN_BUFFER_SIZE)));
+            _termBuffer = CharArray::newInstance(MiscUtils::getNextSize(std::max(newSize, MIN_BUFFER_SIZE)));
         }
         else if (_termBuffer.size() < newSize)
             _termBuffer.resize(MiscUtils::getNextSize(newSize));
@@ -79,7 +79,7 @@ namespace Lucene
         if (!_termBuffer)
         {
             // The buffer is always at least MIN_BUFFER_SIZE
-            _termBuffer = Collection<CharArray>::newInstance(MiscUtils::getNextSize(std::max(newSize, MIN_BUFFER_SIZE)));
+            _termBuffer = CharArray::newInstance(MiscUtils::getNextSize(std::max(newSize, MIN_BUFFER_SIZE)));
         }
         else if (_termBuffer.size() < newSize)
             _termBuffer.resize(MiscUtils::getNextSize(newSize));
@@ -89,7 +89,7 @@ namespace Lucene
     {
         if (!_termBuffer)
         {
-            _termBuffer = Collection<CharArray>::newInstance(MiscUtils::getNextSize(MIN_BUFFER_SIZE));
+            _termBuffer = CharArray::newInstance(MiscUtils::getNextSize(MIN_BUFFER_SIZE));
             _termLength = 0;
         }
     }
@@ -132,7 +132,7 @@ namespace Lucene
         cloneAttribute->_termLength = _termLength;
         if (_termBuffer)
         {
-            cloneAttribute->_termBuffer = Collection<CharArray>::newInstance(_termBuffer.size());
+            cloneAttribute->_termBuffer = CharArray::newInstance(_termBuffer.size());
             MiscUtils::arrayCopy(_termBuffer.get(), 0, cloneAttribute->_termBuffer.get(), 0, _termBuffer.size());
         }
         return cloneAttribute;

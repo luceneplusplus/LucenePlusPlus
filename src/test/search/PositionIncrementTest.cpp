@@ -25,7 +25,7 @@
 #include "QueryParser.h"
 #include "WhitespaceAnalyzer.h"
 #include "StopFilter.h"
-#include "Collection<CharArray>Set.h"
+#include "CharArraySet.h"
 #include "LowerCaseTokenizer.h"
 #include "PayloadAttribute.h"
 #include "Payload.h"
@@ -119,7 +119,7 @@ namespace TestSetPosition
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
         {
             TokenStreamPtr ts = a->tokenStream(fieldName, reader);
-            return newLucene<StopFilter>(enablePositionIncrements, ts, newLucene<Collection<CharArray>Set>(newCollection<String>(L"stop"), true));
+            return newLucene<StopFilter>(enablePositionIncrements, ts, newLucene<CharArraySet>(newCollection<String>(L"stop"), true));
         }
     };
 }

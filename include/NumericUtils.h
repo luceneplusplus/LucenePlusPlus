@@ -69,7 +69,7 @@ namespace Lucene
         /// @param shift how many bits to strip from the right
         /// @param buffer that will contain the encoded chars, must be at least of {@link #BUF_SIZE_LONG} length
         /// @return number of chars written to buffer
-        static int32_t longToPrefixCoded(int64_t val, int32_t shift, Collection<CharArray> buffer);
+        static int32_t longToPrefixCoded(int64_t val, int32_t shift, CharArray buffer);
 
         /// Returns prefix coded bits after reducing the precision by shift bits.  This is method is used by
         /// {@link LongRangeBuilder}.
@@ -88,7 +88,7 @@ namespace Lucene
         /// @param shift how many bits to strip from the right
         /// @param buffer that will contain the encoded chars, must be at least of {@link #BUF_SIZE_INT} length
         /// @return number of chars written to buffer
-        static int32_t intToPrefixCoded(int32_t val, int32_t shift, Collection<CharArray> buffer);
+        static int32_t intToPrefixCoded(int32_t val, int32_t shift, CharArray buffer);
 
         /// Returns prefix coded bits after reducing the precision by shift bits.  This is method is used by {@link
         /// IntRangeBuilder}.

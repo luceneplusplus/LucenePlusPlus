@@ -692,7 +692,7 @@ namespace Lucene
     String QueryParser::discardEscapeChar(const String& input)
     {
         // Create char array to hold unescaped char sequence
-        Collection<CharArray> output(Collection<CharArray>::newInstance(input.length()));
+        CharArray output(CharArray::newInstance(input.length()));
 
         // The length of the output can be less than the input due to discarded escape chars.
         // This variable holds the actual length of the output

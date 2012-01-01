@@ -115,7 +115,7 @@ namespace Lucene
             return false;
 
         clearAttributes();
-        Collection<CharArray> buffer;
+        CharArray buffer;
         switch (valSize)
         {
             case 64:

@@ -462,7 +462,7 @@ namespace Lucene
                         else
                         {
                             // read in chars because we already know the length we need to read
-                            Collection<CharArray> chars(Collection<CharArray>::newInstance(toRead));
+                            CharArray chars(CharArray::newInstance(toRead));
                             int32_t length = localFieldsStream->readChars(chars.get(), 0, toRead);
                             fieldsData = String(chars.get(), length);
                         }

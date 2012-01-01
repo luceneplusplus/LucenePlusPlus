@@ -177,7 +177,7 @@ namespace Lucene
 
             for (int32_t i = 1; i < numFields; ++i)
             {
-                Collection<CharArray> text = mergeStates[i]->text;
+                CharArray text = mergeStates[i]->text;
                 int32_t textOffset = mergeStates[i]->textOffset;
                 int32_t cmp = compareText(text.get(), textOffset, termStates[0]->text.get(), termStates[0]->textOffset);
 

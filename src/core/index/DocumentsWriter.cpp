@@ -110,7 +110,7 @@ namespace Lucene
         this->_openFiles = SetString::newInstance();
         this->_closedFiles = SetString::newInstance();
         this->freeIntBlocks = Collection<IntArray>::newInstance();
-        this->freeCharBlocks = CollectionCollection<CharArray>::newInstance();
+        this->freeCharBlocks = Collection<CharArray>::newInstance();
 
         this->directory = directory;
         this->writer = writer;
@@ -1194,15 +1194,15 @@ namespace Lucene
         }
     }
 
-    Collection<CharArray> DocumentsWriter::getCharBlock()
+    CharArray DocumentsWriter::getCharBlock()
     {
         SyncLock syncLock(this);
         int32_t size = freeCharBlocks.size();
-        Collection<CharArray> c;
+        CharArray c;
         if (size == 0)
         {
             numBytesAlloc += CHAR_BLOCK_SIZE * CHAR_NUM_BYTE;
-            c = Collection<CharArray>::newInstance(CHAR_BLOCK_SIZE);
+            c = CharArray::newInstance(CHAR_BLOCK_SIZE);
         }
         else
             c = freeCharBlocks.removeLast();
@@ -1213,7 +1213,7 @@ namespace Lucene
         return c;
     }
 
-    void DocumentsWriter::recycleCharBlocks(CollectionCollection<CharArray> blocks, int32_t numBlocks)
+    void DocumentsWriter::recycleCharBlocks(Collection<CharArray> blocks, int32_t numBlocks)
     {
         SyncLock syncLock(this);
         for (int32_t i = 0; i < numBlocks; ++i)

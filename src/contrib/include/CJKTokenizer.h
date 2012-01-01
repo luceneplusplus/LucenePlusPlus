@@ -68,10 +68,10 @@ namespace Lucene
         int32_t dataLen;
 
         /// character buffer, store the characters which are used to compose the returned Token
-        Collection<CharArray> buffer;
+        CharArray buffer;
 
         /// I/O buffer, used to store the content of the input (one of the members of Tokenizer)
-        Collection<CharArray> ioBuffer;
+        CharArray ioBuffer;
 
         /// word type: single=>ASCII  double=>non-ASCII word=>default
         int32_t tokenType;
