@@ -74,6 +74,10 @@
 #define LPP_UNICODE_CHAR_SIZE_4
 #endif
 
+// todo: change this!!!
+#define _MAC
+// todo: this only works if defined in wscript? #define BOOST_NO_IS_ABSTRACT
+
 // Make internal bitset storage public
 #define BOOST_DYNAMIC_BITSET_DONT_USE_FRIENDS
 
