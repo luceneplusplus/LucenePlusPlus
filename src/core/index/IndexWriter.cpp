@@ -131,7 +131,7 @@ namespace Lucene
     void IndexWriter::initialize()
     {
         messageID = -1;
-        messageIDLock = newInstance<Synchronize>();
+        messageIDLock = new_gc<Synchronize>();
         setMessageID(defaultInfoStream);
         this->writeLockTimeout = WRITE_LOCK_TIMEOUT;
         this->segmentInfos = newLucene<SegmentInfos>();
@@ -164,7 +164,7 @@ namespace Lucene
         mergeScheduler = newLucene<ConcurrentMergeScheduler>();
         similarity = Similarity::getDefault();
         termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
-        commitLock  = newInstance<Synchronize>();
+        commitLock  = new_gc<Synchronize>();
 
         if (!indexingChain)
             indexingChain = DocumentsWriter::getDefaultIndexingChain();
@@ -205,7 +205,7 @@ namespace Lucene
                     // Only commit if there is no segments file in this dir already.
                     segmentInfos->commit(directory);
                     SetString files(segmentInfos->files(directory, true));
-                    synced.addAll(files.begin(), files.end());
+                    synced.add(files.begin(), files.end());
                 }
                 else
                 {
@@ -233,7 +233,7 @@ namespace Lucene
 
                 // We assume that this segments_N was previously properly sync'd
                 SetString files(segmentInfos->files(directory, true));
-                synced.addAll(files.begin(), files.end());
+                synced.add(files.begin(), files.end());
             }
 
             setRollbackSegmentInfos(segmentInfos);
@@ -429,7 +429,7 @@ namespace Lucene
 
     LogMergePolicyPtr IndexWriter::getLogMergePolicy()
     {
-        LogMergePolicyPtr logMergePolicy(LuceneDynamicCast<LogMergePolicy>(mergePolicy));
+        LogMergePolicyPtr logMergePolicy(gc_ptr_dynamic_cast<LogMergePolicy>(mergePolicy));
         if (logMergePolicy)
             return logMergePolicy;
         boost::throw_exception(IllegalArgumentException(L"This method can only be called when the merge policy is the default LogMergePolicy"));
@@ -476,7 +476,7 @@ namespace Lucene
     void IndexWriter::setRollbackSegmentInfos(SegmentInfosPtr infos)
     {
         SyncLock syncLock(this);
-        rollbackSegmentInfos = LuceneDynamicCast<SegmentInfos>(infos->clone());
+        rollbackSegmentInfos = gc_ptr_dynamic_cast<SegmentInfos>(infos->clone());
         BOOST_ASSERT(!rollbackSegmentInfos->hasExternalSegments(directory));
         rollbackSegments = MapSegmentInfoInt::newInstance();
         int32_t size = rollbackSegmentInfos->size();
@@ -584,7 +584,7 @@ namespace Lucene
     {
         if (docWriter->getMaxBufferedDocs() != DISABLE_AUTO_FLUSH)
         {
-            LogDocMergePolicyPtr lmp(LuceneDynamicCast<LogDocMergePolicy>(mergePolicy));
+            LogDocMergePolicyPtr lmp(gc_ptr_dynamic_cast<LogDocMergePolicy>(mergePolicy));
             if (lmp)
             {
                 int32_t maxBufferedDocs = docWriter->getMaxBufferedDocs();
@@ -862,7 +862,7 @@ namespace Lucene
         finally.throwException();
 
         if (infoStream)
-            message(L"flushDocStores files=" + docWriter->closedFiles());
+            message(L"flushDocStores files=" + StringUtils::toString(docWriter->closedFiles().size()));
 
         useCompoundDocStore = mergePolicy->useCompoundDocStore(segmentInfos);
         SetString closedFiles(docWriter->closedFiles());
@@ -1447,7 +1447,7 @@ namespace Lucene
 
         try
         {
-            localRollbackSegmentInfos = LuceneDynamicCast<SegmentInfos>(segmentInfos->clone());
+            localRollbackSegmentInfos = gc_ptr_dynamic_cast<SegmentInfos>(segmentInfos->clone());
 
             BOOST_ASSERT(!hasExternalSegments());
 
@@ -1485,7 +1485,7 @@ namespace Lucene
         // Keep the same segmentInfos instance but replace all of its SegmentInfo instances.  This is so the next
         // attempt to commit using this instance of IndexWriter will always write to a new generation ("write once").
         segmentInfos->clear();
-        segmentInfos->addAll(localRollbackSegmentInfos);
+        segmentInfos->add(localRollbackSegmentInfos);
         localRollbackSegmentInfos.reset();
 
         // This must come after we rollback segmentInfos, so that if a commit() kicks off it does not see the
@@ -1569,7 +1569,7 @@ namespace Lucene
                 // Keep the same segmentInfos instance but replace all of its SegmentInfo instances.  This is so the next
                 // attempt to commit using this instance of IndexWriter will always write to a new generation ("write once").
                 segmentInfos->clear();
-                segmentInfos->addAll(rollbackSegmentInfos);
+                segmentInfos->add(rollbackSegmentInfos);
 
                 BOOST_ASSERT(!hasExternalSegments());
 
@@ -1911,7 +1911,7 @@ namespace Lucene
                     if (info->dir != directory)
                     {
                         done = false;
-                        OneMergePtr newMerge(newLucene<OneMerge>(segmentInfos->range(i, i + 1), LuceneDynamicCast<LogMergePolicy>(mergePolicy) && getUseCompoundFile()));
+                        OneMergePtr newMerge(newLucene<OneMerge>(segmentInfos->range(i, i + 1), gc_ptr_dynamic_cast<LogMergePolicy>(mergePolicy) && getUseCompoundFile()));
 
                         // Returns true if no running merge conflicts with this one (and, records this merge as
                         // pending), ie, this segment is not currently being merged
@@ -2060,7 +2060,7 @@ namespace Lucene
 
             finally.throwException();
 
-            if (LuceneDynamicCast<LogMergePolicy>(mergePolicy) && getUseCompoundFile())
+            if (gc_ptr_dynamic_cast<LogMergePolicy>(mergePolicy) && getUseCompoundFile())
             {
                 SetString files;
 
@@ -2359,7 +2359,7 @@ namespace Lucene
                 {
                     flushedDocCount = docWriter->flush(flushDocStores);
                     if (infoStream)
-                        message(L"flushedFiles=" + docWriter->getFlushedFiles());
+                        message(L"flushedFiles=" + StringUtils::toString(docWriter->getFlushedFiles().size()));
                     success = true;
                 }
                 catch (LuceneException& e)
@@ -2909,7 +2909,7 @@ namespace Lucene
         diagnostics.put(L"lucene.version", Constants::LUCENE_VERSION);
         diagnostics.put(L"os", Constants::OS_NAME);
         if (details)
-            diagnostics.putAll(details.begin(), details.end());
+            diagnostics.put(details.begin(), details.end());
         info->setDiagnostics(diagnostics);
     }
 
@@ -3056,7 +3056,7 @@ namespace Lucene
                 SegmentReaderPtr reader(merge->readers[i]);
 
                 // We clone the segment readers because other deletes may come in while we're merging so we need readers that will not change
-                merge->readersClone[i] = LuceneDynamicCast<SegmentReader>(reader->clone(true));
+                merge->readersClone[i] = gc_ptr_dynamic_cast<SegmentReader>(reader->clone(true));
                 SegmentReaderPtr clone(merge->readersClone[i]);
                 merger->add(clone);
 
@@ -3407,7 +3407,7 @@ namespace Lucene
                     // It's possible another flush (that did not close the open do stores) snook in after the flush we
                     // just did, so we remove any tail segments referencing the open doc store from the SegmentInfos
                     // we are about to sync (the main SegmentInfos will keep them)
-                    toSync = LuceneDynamicCast<SegmentInfos>(segmentInfos->clone());
+                    toSync = gc_ptr_dynamic_cast<SegmentInfos>(segmentInfos->clone());
 
                     String dss(docWriter->getDocStoreSegment());
                     if (!dss.empty())
@@ -3781,7 +3781,7 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            clone = LuceneDynamicCast<IndexReader>(sr->clone(true));
+            clone = gc_ptr_dynamic_cast<IndexReader>(sr->clone(true));
         }
         catch (LuceneException& e)
         {

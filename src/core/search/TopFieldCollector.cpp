@@ -88,7 +88,7 @@ namespace Lucene
 
     void TopFieldCollector::add(int32_t slot, int32_t doc, double score)
     {
-        bottom = LuceneStaticCast<FieldValueHitQueueEntry>(pq->add(newLucene<FieldValueHitQueueEntry>(slot, docBase + doc, score)));
+        bottom = gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->add(newLucene<FieldValueHitQueueEntry>(slot, docBase + doc, score)));
         queueFull = (totalHits == numHits);
     }
 
@@ -96,15 +96,15 @@ namespace Lucene
     {
         if (fillFields)
         {
-            FieldValueHitQueuePtr queue(LuceneStaticCast<FieldValueHitQueue>(pq));
+            FieldValueHitQueuePtr queue(gc_ptr_static_cast<FieldValueHitQueue>(pq));
             for (int32_t i = howMany - 1; i >= 0; --i)
-                results[i] = queue->fillFields(LuceneStaticCast<FieldValueHitQueueEntry>(queue->pop()));
+                results[i] = queue->fillFields(gc_ptr_static_cast<FieldValueHitQueueEntry>(queue->pop()));
         }
         else
         {
             for (int32_t i = howMany - 1; i >= 0; --i)
             {
-                FieldValueHitQueueEntryPtr entry(LuceneStaticCast<FieldValueHitQueueEntry>(pq->pop()));
+                FieldValueHitQueueEntryPtr entry(gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->pop()));
                 results[i] = newLucene<FieldDoc>(entry->doc, entry->score);
             }
         }
@@ -120,7 +120,7 @@ namespace Lucene
         }
 
         // If this is a maxScoring tracking collector and there were no results
-        return newLucene<TopFieldDocs>(totalHits, results, LuceneStaticCast<FieldValueHitQueue>(pq)->getFields(), maxScore);
+        return newLucene<TopFieldDocs>(totalHits, results, gc_ptr_static_cast<FieldValueHitQueue>(pq)->getFields(), maxScore);
     }
 
     bool TopFieldCollector::acceptsDocsOutOfOrder()
@@ -139,7 +139,7 @@ namespace Lucene
     void OneComparatorNonScoringCollector::initialize()
     {
         TopFieldCollector::initialize();
-        FieldValueHitQueuePtr queue(LuceneStaticCast<FieldValueHitQueue>(pq));
+        FieldValueHitQueuePtr queue(gc_ptr_static_cast<FieldValueHitQueue>(pq));
         comparator = queue->getComparators()[0];
         reverseMul = queue->getReverseMul()[0];
     }
@@ -148,7 +148,7 @@ namespace Lucene
     {
         // bottom.score is already set to NaN in add().
         bottom->doc = docBase + doc;
-        bottom = LuceneStaticCast<FieldValueHitQueueEntry>(pq->updateTop());
+        bottom = gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->updateTop());
     }
 
     void OneComparatorNonScoringCollector::collect(int32_t doc)
@@ -243,7 +243,7 @@ namespace Lucene
     {
         bottom->doc = docBase + doc;
         bottom->score = score;
-        bottom = LuceneStaticCast<FieldValueHitQueueEntry>(pq->updateTop());
+        bottom = gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->updateTop());
     }
 
     void OneComparatorScoringNoMaxScoreCollector::collect(int32_t doc)
@@ -347,7 +347,7 @@ namespace Lucene
     {
         bottom->doc = docBase + doc;
         bottom->score = score;
-        bottom = LuceneStaticCast<FieldValueHitQueueEntry>(pq->updateTop());
+        bottom = gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->updateTop());
     }
 
     void OneComparatorScoringMaxScoreCollector::collect(int32_t doc)
@@ -442,7 +442,7 @@ namespace Lucene
     void MultiComparatorNonScoringCollector::initialize()
     {
         TopFieldCollector::initialize();
-        FieldValueHitQueuePtr queue(LuceneStaticCast<FieldValueHitQueue>(pq));
+        FieldValueHitQueuePtr queue(gc_ptr_static_cast<FieldValueHitQueue>(pq));
         comparators = queue->getComparators();
         reverseMul = queue->getReverseMul();
     }
@@ -451,7 +451,7 @@ namespace Lucene
     {
         // bottom.score is already set to NaN in add().
         bottom->doc = docBase + doc;
-        bottom = LuceneStaticCast<FieldValueHitQueueEntry>(pq->updateTop());
+        bottom = gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->updateTop());
     }
 
     void MultiComparatorNonScoringCollector::collect(int32_t doc)
@@ -604,7 +604,7 @@ namespace Lucene
     {
         bottom->doc = docBase + doc;
         bottom->score = score;
-        bottom = LuceneStaticCast<FieldValueHitQueueEntry>(pq->updateTop());
+        bottom = gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->updateTop());
     }
 
     void MultiComparatorScoringMaxScoreCollector::collect(int32_t doc)
@@ -753,7 +753,7 @@ namespace Lucene
     {
         bottom->doc = docBase + doc;
         bottom->score = score;
-        bottom = LuceneStaticCast<FieldValueHitQueueEntry>(pq->updateTop());
+        bottom = gc_ptr_static_cast<FieldValueHitQueueEntry>(pq->updateTop());
     }
 
     void MultiComparatorScoringNoMaxScoreCollector::collect(int32_t doc)

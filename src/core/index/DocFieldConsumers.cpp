@@ -45,12 +45,12 @@ namespace Lucene
 
             for (Collection<DocFieldConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
             {
-                oneFields.add(LuceneStaticCast<DocFieldConsumersPerField>(*perField)->one);
-                twoFields.add(LuceneStaticCast<DocFieldConsumersPerField>(*perField)->two);
+                oneFields.add(gc_ptr_static_cast<DocFieldConsumersPerField>(*perField)->one);
+                twoFields.add(gc_ptr_static_cast<DocFieldConsumersPerField>(*perField)->two);
             }
 
-            oneThreadsAndFields.put(LuceneStaticCast<DocFieldConsumersPerThread>(entry->first)->one, oneFields);
-            twoThreadsAndFields.put(LuceneStaticCast<DocFieldConsumersPerThread>(entry->first)->two, oneFields);
+            oneThreadsAndFields.put(gc_ptr_static_cast<DocFieldConsumersPerThread>(entry->first)->one, oneFields);
+            twoThreadsAndFields.put(gc_ptr_static_cast<DocFieldConsumersPerThread>(entry->first)->two, oneFields);
         }
 
         one->flush(oneThreadsAndFields, state);

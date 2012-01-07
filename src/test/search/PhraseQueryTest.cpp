@@ -38,7 +38,7 @@ public:
     {
         return newLucene<WhitespaceTokenizer>(reader);
     }
-    
+
     virtual int32_t getPositionIncrementGap(const String& fieldName)
     {
         return 100;
@@ -76,7 +76,7 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
         query = newLucene<PhraseQuery>();
     }
-    
+
     virtual ~PhraseQueryFixture()
     {
         searcher->close();
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(testMulipleTerms)
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(0, hits.size());
     QueryUtils::check(query, searcher);
-    
+
     query->setSlop(6);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(testPhraseQueryInConjunctionScorer)
 
     doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"contents", L"foobar", Field::STORE_YES, Field::INDEX_ANALYZED));
-    doc->add(newLucene<Field>(L"source", L"marketing info", Field::STORE_YES, Field::INDEX_ANALYZED)); 
+    doc->add(newLucene<Field>(L"source", L"marketing info", Field::STORE_YES, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 
     writer->optimize();
@@ -347,7 +347,7 @@ BOOST_AUTO_TEST_CASE(testSlopScoring)
     BOOST_CHECK_EQUAL(1, hits[1]->doc);
     BOOST_CHECK_CLOSE_FRACTION(0.31, hits[2]->score, 0.01);
     BOOST_CHECK_EQUAL(2, hits[2]->doc);
-    QueryUtils::check(query, searcher);        
+    QueryUtils::check(query, searcher);
 }
 
 BOOST_AUTO_TEST_CASE(testToString)
@@ -355,7 +355,7 @@ BOOST_AUTO_TEST_CASE(testToString)
     StopAnalyzerPtr analyzer = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", analyzer);
     qp->setEnablePositionIncrements(true);
-    PhraseQueryPtr q = LuceneDynamicCast<PhraseQuery>(qp->parse(L"\"this hi this is a test is\""));
+    PhraseQueryPtr q = gc_ptr_dynamic_cast<PhraseQuery>(qp->parse(L"\"this hi this is a test is\""));
     BOOST_CHECK_EQUAL(L"field:\"? hi ? ? ? test\"", q->toString());
     q->add(newLucene<Term>(L"field", L"hello"), 1);
     BOOST_CHECK_EQUAL(L"field:\"? hi|hello ? ? ? test\"", q->toString());
@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE(testNonExistingPhrase)
     query->add(newLucene<Term>(L"nonexist", L"phrase"));
     query->add(newLucene<Term>(L"nonexist", L"exist"));
     query->add(newLucene<Term>(L"nonexist", L"exist"));
-    query->setSlop(1); // would be found 
+    query->setSlop(1); // would be found
 
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(2, hits.size());
@@ -431,9 +431,9 @@ BOOST_AUTO_TEST_CASE(testNonExistingPhrase)
 /// Working on a 2 fields like this:
 ///    Field(L"field", L"one two three four five")
 ///    Field(L"palindrome", L"one two three two one")
-/// Phrase of size 2 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice. 
-/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and 
-/// exact scorer scores the same.   
+/// Phrase of size 2 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice.
+/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and
+/// exact scorer scores the same.
 BOOST_AUTO_TEST_CASE(testPalindrome2)
 {
     // search on non palindrome, find phrase with no slop, using exact phrase scorer
@@ -446,7 +446,7 @@ BOOST_AUTO_TEST_CASE(testPalindrome2)
     QueryUtils::check(query, searcher);
 
     // search on non palindrome, find phrase with slop 2, though no slop required here.
-    query->setSlop(2); // to use sloppy scorer 
+    query->setSlop(2); // to use sloppy scorer
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     double score1 = hits[0]->score;
@@ -475,9 +475,9 @@ BOOST_AUTO_TEST_CASE(testPalindrome2)
 /// Working on a 2 fields like this:
 ///    Field(L"field", L"one two three four five")
 ///    Field(L"palindrome", L"one two three two one")
-/// Phrase of size 3 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice. 
-/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and exact 
-/// scorer scores the same.   
+/// Phrase of size 3 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice.
+/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and exact
+/// scorer scores the same.
 BOOST_AUTO_TEST_CASE(testPalindrome3)
 {
     // search on non palindrome, find phrase with no slop, using exact phrase scorer
@@ -491,7 +491,7 @@ BOOST_AUTO_TEST_CASE(testPalindrome3)
     QueryUtils::check(query, searcher);
 
     // search on non palindrome, find phrase with slop 3, though no slop required here.
-    query->setSlop(4); // to use sloppy scorer 
+    query->setSlop(4); // to use sloppy scorer
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
     double score1 = hits[0]->score;

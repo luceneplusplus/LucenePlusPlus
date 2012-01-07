@@ -219,9 +219,9 @@ BOOST_AUTO_TEST_CASE(testNorms)
     iw->optimize();
     iw->close();
 
-    norms1.addAll(norms.begin(), norms.end());
+    norms1.add(norms.begin(), norms.end());
     norms = norms1;
-    modifiedNorms1.addAll(modifiedNorms.begin(), modifiedNorms.end());
+    modifiedNorms1.add(modifiedNorms.begin(), modifiedNorms.end());
     modifiedNorms = modifiedNorms1;
     numDocNorms += numDocNorms1;
 

@@ -37,9 +37,9 @@ public:
         fileDir = FileUtils::joinPath(getTestDir(), L"memory");
         queries = SetString::newInstance();
         SetString test1 = readQueries(L"testqueries.txt");
-        queries.addAll(test1.begin(), test1.end());
+        queries.add(test1.begin(), test1.end());
         SetString test2 = readQueries(L"testqueries2.txt");
-        queries.addAll(test2.begin(), test2.end());
+        queries.add(test2.begin(), test2.end());
         random = newLucene<Random>(123);
         buffer = CharArray::newInstance(20);
 

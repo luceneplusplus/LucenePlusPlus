@@ -69,7 +69,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        TermVectorEntryPtr otherTermVectorEntry(LuceneDynamicCast<TermVectorEntry>(other));
+        TermVectorEntryPtr otherTermVectorEntry(gc_ptr_dynamic_cast<TermVectorEntry>(other));
         if (otherTermVectorEntry)
             return (term == otherTermVectorEntry->term);
 

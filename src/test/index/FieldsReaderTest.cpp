@@ -102,7 +102,7 @@ public:
 
     virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
-        return newLucene<FaultyIndexInput>(LuceneDynamicCast<IndexInput>(delegate->clone()));
+        return newLucene<FaultyIndexInput>(gc_ptr_dynamic_cast<IndexInput>(delegate->clone()));
     }
 
 protected:

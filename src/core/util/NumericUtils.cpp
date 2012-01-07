@@ -218,10 +218,10 @@ namespace Lucene
         switch (valSize)
         {
             case 64:
-                LuceneDynamicCast<LongRangeBuilder>(builder)->addRange(minBound, maxBound, shift);
+                gc_ptr_dynamic_cast<LongRangeBuilder>(builder)->addRange(minBound, maxBound, shift);
                 break;
             case 32:
-                LuceneDynamicCast<IntRangeBuilder>(builder)->addRange((int32_t)minBound, (int32_t)maxBound, shift);
+                gc_ptr_dynamic_cast<IntRangeBuilder>(builder)->addRange((int32_t)minBound, (int32_t)maxBound, shift);
                 break;
             default:
                 boost::throw_exception(IllegalArgumentException(L"valSize must be 32 or 64."));

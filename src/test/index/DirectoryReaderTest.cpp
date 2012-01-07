@@ -22,6 +22,7 @@
 #include "TermDocs.h"
 #include "TermEnum.h"
 #include "Term.h"
+#include "SegmentReader.h"
 
 using namespace Lucene;
 
@@ -85,7 +86,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (LuceneDynamicCast<MultiReader>(reader))
+        if (gc_ptr_dynamic_cast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
@@ -100,7 +101,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (LuceneDynamicCast<MultiReader>(reader))
+        if (gc_ptr_dynamic_cast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
@@ -115,7 +116,7 @@ protected:
     IndexReaderPtr openReader()
     {
         IndexReaderPtr reader = IndexReader::open(dir, false);
-        BOOST_CHECK(LuceneDynamicCast<DirectoryReader>(reader));
+        BOOST_CHECK(gc_ptr_dynamic_cast<DirectoryReader>(reader));
         BOOST_CHECK(dir);
         BOOST_CHECK(sis);
         BOOST_CHECK(reader);

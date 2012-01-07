@@ -13,7 +13,7 @@
 
 namespace Lucene
 {
-    TermRangeQuery::TermRangeQuery(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower, 
+    TermRangeQuery::TermRangeQuery(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower,
                                    bool includeUpper, CollatorPtr collator)
     {
         this->field = fieldName;
@@ -23,50 +23,50 @@ namespace Lucene
         this->includeUpper = includeUpper;
         this->collator = collator;
     }
-    
+
     TermRangeQuery::~TermRangeQuery()
     {
     }
-    
+
     String TermRangeQuery::getField()
     {
         return field;
     }
-    
+
     String TermRangeQuery::getLowerTerm()
     {
         return VariantUtils::get<String>(lowerTerm);
     }
-    
+
     String TermRangeQuery::getUpperTerm()
     {
         return VariantUtils::get<String>(upperTerm);
     }
-    
+
     bool TermRangeQuery::includesLower()
     {
         return includeLower;
     }
-    
+
     bool TermRangeQuery::includesUpper()
     {
         return includeUpper;
     }
-    
+
     CollatorPtr TermRangeQuery::getCollator()
     {
         return collator;
     }
-    
+
     FilteredTermEnumPtr TermRangeQuery::getEnum(IndexReaderPtr reader)
     {
         return newLucene<TermRangeTermEnum>(reader, field, lowerTerm, upperTerm, includeLower, includeUpper, collator);
     }
-    
+
     LuceneObjectPtr TermRangeQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<TermRangeQuery>(field, lowerTerm, upperTerm, includeLower, includeUpper, collator));
-        TermRangeQueryPtr cloneQuery(LuceneDynamicCast<TermRangeQuery>(clone));
+        TermRangeQueryPtr cloneQuery(gc_ptr_dynamic_cast<TermRangeQuery>(clone));
         cloneQuery->lowerTerm = lowerTerm;
         cloneQuery->upperTerm = upperTerm;
         cloneQuery->collator = collator;
@@ -75,7 +75,7 @@ namespace Lucene
         cloneQuery->includeUpper = includeUpper;
         return cloneQuery;
     }
-    
+
     String TermRangeQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -95,7 +95,7 @@ namespace Lucene
         buffer << boostString();
         return buffer.str();
     }
-    
+
     bool TermRangeQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -104,7 +104,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        TermRangeQueryPtr otherQuery(LuceneDynamicCast<TermRangeQuery>(other));
+        TermRangeQueryPtr otherQuery(gc_ptr_dynamic_cast<TermRangeQuery>(other));
         if (!otherQuery)
             return false;
         if (!collator)
@@ -136,7 +136,7 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     int32_t TermRangeQuery::hashCode()
     {
         int32_t prime = 31;

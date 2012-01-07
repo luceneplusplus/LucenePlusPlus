@@ -17,19 +17,19 @@ namespace Lucene
     public:
         DocFieldProcessorPerField(DocFieldProcessorPerThreadPtr perThread, FieldInfoPtr fieldInfo);
         virtual ~DocFieldProcessorPerField();
-        
+
         LUCENE_CLASS(DocFieldProcessorPerField);
-                
+
     public:
         DocFieldConsumerPerFieldPtr consumer;
         FieldInfoPtr fieldInfo;
-        
+
         DocFieldProcessorPerFieldPtr next;
         int32_t lastGen;
-        
+
         int32_t fieldCount;
         Collection<FieldablePtr> fields;
-    
+
     public:
         virtual void abort();
     };

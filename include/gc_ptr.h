@@ -4,18 +4,18 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _GC_PTR
-#define _GC_PTR
-
-#include <boost/preprocessor/punctuation.hpp>
-#include <boost/preprocessor/repetition.hpp>
-#include <boost/preprocessor/arithmetic.hpp>
-#include "gc.h"
+#ifndef _LUTZE_GC_PTR
+#define _LUTZE_GC_PTR
 
 namespace lutze
 {
     namespace detail
     {
+        struct static_cast_tag {};
+        struct const_cast_tag {};
+        struct dynamic_cast_tag {};
+        struct reinterpret_cast_tag {};
+
         template <class Y, class T>
         struct gc_ptr_convertible
         {
@@ -25,15 +25,10 @@ namespace lutze
             static yes f(T*);
             static no f(...);
 
-            static Y* get();
-            static const bool value = sizeof(f(get())) == sizeof(yes);
+            enum _vt { value = sizeof((f)(static_cast<Y*>(0))) == sizeof(yes) };
         };
 
-        struct gc_ptr_true
-        {
-        };
-
-        struct gc_ptr_false
+        struct gc_ptr_empty
         {
         };
 
@@ -43,13 +38,12 @@ namespace lutze
         template <>
         struct gc_ptr_enable_if_convertible_impl<true>
         {
-            typedef gc_ptr_true type;
+            typedef gc_ptr_empty type;
         };
 
         template <>
         struct gc_ptr_enable_if_convertible_impl<false>
         {
-            typedef gc_ptr_false type;
         };
 
         template <class Y, class T>
@@ -70,7 +64,27 @@ namespace lutze
         }
 
         template <class U>
-        gc_ptr(const gc_ptr<U>& rhs, typename detail::gc_ptr_enable_if_convertible<U, T>::type = detail::gc_ptr_true()) : px(rhs.get())
+        gc_ptr(const gc_ptr<U>& rhs, typename detail::gc_ptr_enable_if_convertible<U, T>::type = detail::gc_ptr_empty()) : px(rhs.get())
+        {
+        }
+
+        template <class U>
+        gc_ptr(const gc_ptr<U>& rhs, detail::static_cast_tag): px(static_cast<T*>(rhs.get()))
+        {
+        }
+
+        template <class U>
+        gc_ptr(const gc_ptr<U>& rhs, detail::const_cast_tag): px(const_cast<T*>(rhs.get()))
+        {
+        }
+
+        template <class U>
+        gc_ptr(const gc_ptr<U>& rhs, detail::dynamic_cast_tag): px(dynamic_cast<T*>(rhs.get()))
+        {
+        }
+
+        template <class U>
+        gc_ptr(const gc_ptr<U>& rhs, detail::reinterpret_cast_tag): px(reinterpret_cast<T*>(rhs.get()))
         {
         }
 
@@ -85,7 +99,8 @@ namespace lutze
             return *this;
         }
 
-        gc_ptr& operator = (T* rhs)
+        template <class Y>
+        gc_ptr& operator = (const gc_ptr<Y>& rhs)
         {
             this_type(rhs).swap(*this);
             return *this;
@@ -168,50 +183,26 @@ namespace lutze
     template <class T, class U>
     gc_ptr<T> gc_ptr_static_cast(const gc_ptr<U>& p)
     {
-        return static_cast<T*>(p.get());
+        return gc_ptr<T>(p, detail::static_cast_tag());
     }
 
     template <class T, class U>
     gc_ptr<T> gc_ptr_const_cast(const gc_ptr<U>& p)
     {
-        return const_cast<T*>(p.get());
+        return gc_ptr<T>(p, detail::const_cast_tag());
     }
 
     template <class T, class U>
     gc_ptr<T> gc_ptr_dynamic_cast(const gc_ptr<U>& p)
     {
-        return dynamic_cast<T*>(p.get());
+        return gc_ptr<T>(p, detail::dynamic_cast_tag());
     }
 
     template <class T, class U>
     gc_ptr<T> gc_ptr_reinterpret_cast(const gc_ptr<U>& p)
     {
-        return reinterpret_cast<T*>(p.get());
+        return gc_ptr<T>(p, detail::reinterpret_cast_tag());
     }
-
-    // This expands to...
-    // template <class T, class A1, ...etc>
-    // gc_ptr<T> new_gc(A1 const& a1, ...etc)
-    // {
-    //     return new_gc_placeholder<T>(get_gc(), a1, ...etc);
-    // }
-
-    // template <class T, class A1, ...etc>
-    // gc_ptr<T> new_static_gc(A1 const& a1, ...etc)
-    // {
-    // return new_gc_placeholder<T>(get_static_gc(), a1, ...etc);
-    // }
-    #define NEW_GC(Z, N, _) \
-    template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
-    gc_ptr<T> new_gc_placeholder(gc& gc BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
-    { gc_ptr<T> obj(new(gc) T(BOOST_PP_ENUM_PARAMS(N, a))); gc.collect(); return obj; } \
-    template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
-    gc_ptr<T> new_gc(BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
-    { return new_gc_placeholder<T>(get_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); } \
-    template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
-    gc_ptr<T> new_static_gc(BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
-    { return new_gc_placeholder<T>(get_static_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); }
-    BOOST_PP_REPEAT_2ND(BOOST_PP_INC(9), NEW_GC, _)
 }
 
 #endif

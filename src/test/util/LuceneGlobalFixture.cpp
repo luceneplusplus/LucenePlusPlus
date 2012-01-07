@@ -18,12 +18,11 @@ namespace Lucene
         FileUtils::createDirectory(getTempDir());
         TestPoint::enableTestPoints();
     }
-    
+
     LuceneGlobalFixture::~LuceneGlobalFixture()
     {
         FileUtils::removeDirectory(getTempDir());
-        Lucene::CycleCheck::dumpRefs();
     }
-    
+
     BOOST_GLOBAL_FIXTURE(LuceneGlobalFixture);
 }

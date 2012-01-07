@@ -592,7 +592,7 @@ BOOST_AUTO_TEST_CASE(testMergeWarmer)
     for (int32_t i = 0; i < 100; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
 
-    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     BOOST_CHECK(warmer->warmCount > 0);
     int32_t count = warmer->warmCount;
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE(testAfterCommit)
     for (int32_t i = 0; i < 10; ++i)
         writer->addDocument(createDocument(i, L"test", 4));
 
-    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
 
     IndexReaderPtr r2 = r1->reopen();
     if (r2 != r1)

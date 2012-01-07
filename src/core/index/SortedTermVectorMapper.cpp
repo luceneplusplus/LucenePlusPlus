@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "SortedTermVectorMapper.h"
 #include "TermVectorEntry.h"
+#include "TermVectorOffsetInfo.h"
 
 namespace Lucene
 {
@@ -44,7 +45,7 @@ namespace Lucene
             entry = newLucene<TermVectorEntry>(ALL, term, frequency, storeOffsets ? offsets : Collection<TermVectorOffsetInfoPtr>(), storePositions ? positions : Collection<int32_t>());
             termToTVE.put(term, entry);
 
-            if (!currentSet.contains_if(luceneEqualTo<TermVectorEntryPtr>(entry)))
+            if (!currentSet.containsIf(luceneEqualTo<TermVectorEntryPtr>(entry)))
                 currentSet.insert(std::upper_bound(currentSet.begin(), currentSet.end(), entry, comparator), entry);
         }
         else
@@ -58,7 +59,7 @@ namespace Lucene
                 {
                     // copy over the existing offsets
                     Collection<TermVectorOffsetInfoPtr> newOffsets(Collection<TermVectorOffsetInfoPtr>::newInstance(existingOffsets.begin(), existingOffsets.end()));
-                    newOffsets.addAll(offsets.begin(), offsets.end());
+                    newOffsets.add(offsets.begin(), offsets.end());
                     entry->setOffsets(newOffsets);
                 }
                 else if (!existingOffsets && offsets && !offsets.empty())
@@ -71,7 +72,7 @@ namespace Lucene
                 if (existingPositions && positions && !positions.empty())
                 {
                     Collection<int32_t> newPositions(existingPositions);
-                    newPositions.addAll(positions.begin(), positions.end());
+                    newPositions.add(positions.begin(), positions.end());
                     entry->setPositions(newPositions);
                 }
                 else if (!existingPositions && positions && !positions.empty())

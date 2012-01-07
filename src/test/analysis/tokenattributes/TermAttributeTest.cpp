@@ -15,7 +15,7 @@ BOOST_FIXTURE_TEST_SUITE(TermAttributeTest, LuceneTestFixture)
 
 static AttributePtr checkCloneIsEqual(AttributePtr att)
 {
-    AttributePtr clone = LuceneDynamicCast<Attribute>(att->clone());
+    AttributePtr clone = gc_ptr_dynamic_cast<Attribute>(att->clone());
     BOOST_CHECK(att->equals(clone));
     BOOST_CHECK_EQUAL(att->hashCode(), clone->hashCode());
     return clone;
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(testClone)
     TermAttributePtr t = newLucene<TermAttribute>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    TermAttributePtr clone = LuceneDynamicCast<TermAttribute>(checkCloneIsEqual(t));
+    TermAttributePtr clone = gc_ptr_dynamic_cast<TermAttribute>(checkCloneIsEqual(t));
     BOOST_CHECK_EQUAL(t->term(), clone->term());
     BOOST_CHECK(buf != clone->termBuffer());
 }
@@ -138,14 +138,14 @@ BOOST_AUTO_TEST_CASE(testEquals)
 BOOST_AUTO_TEST_CASE(testCopyTo)
 {
     TermAttributePtr t = newLucene<TermAttribute>();
-    TermAttributePtr copy = LuceneDynamicCast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
+    TermAttributePtr copy = gc_ptr_dynamic_cast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
     BOOST_CHECK_EQUAL(L"", t->term());
     BOOST_CHECK_EQUAL(L"", copy->term());
 
     t = newLucene<TermAttribute>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    copy = LuceneDynamicCast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
+    copy = gc_ptr_dynamic_cast<TermAttribute>(checkCopyIsEqual<TermAttribute>(t));
     BOOST_CHECK_EQUAL(t->term(), copy->term());
     BOOST_CHECK(buf != copy->termBuffer());
 }

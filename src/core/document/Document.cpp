@@ -57,12 +57,12 @@ namespace Lucene
 
     void Document::removeFields(const String& name)
     {
-        fields.remove_if(equalFieldableName(name));
+        fields.removeIf(equalFieldableName(name));
     }
 
     FieldPtr Document::getField(const String& name)
     {
-        return LuceneStaticCast<Field>(getFieldable(name));
+        return gc_ptr_static_cast<Field>(getFieldable(name));
     }
 
     FieldablePtr Document::getFieldable(const String& name)
@@ -92,7 +92,7 @@ namespace Lucene
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
         {
             if ((*field)->name() == name)
-                result.add(LuceneStaticCast<Field>(*field));
+                result.add(gc_ptr_static_cast<Field>(*field));
         }
         return result;
     }

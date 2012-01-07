@@ -13,79 +13,79 @@
 
 namespace Lucene
 {
-    NumericField::NumericField(const String& name) 
+    NumericField::NumericField(const String& name)
         : AbstractField(name, Field::STORE_NO, Field::INDEX_ANALYZED_NO_NORMS, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
         tokenStream = newLucene<NumericTokenStream>(NumericUtils::PRECISION_STEP_DEFAULT);
     }
-    
+
     NumericField::NumericField(const String& name, Field::Store store, bool index)
         : AbstractField(name, store, index ? Field::INDEX_ANALYZED_NO_NORMS : Field::INDEX_NO, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
         tokenStream = newLucene<NumericTokenStream>(NumericUtils::PRECISION_STEP_DEFAULT);
     }
-    
+
     NumericField::NumericField(const String& name, int32_t precisionStep)
         : AbstractField(name, Field::STORE_NO, Field::INDEX_ANALYZED_NO_NORMS, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
         tokenStream = newLucene<NumericTokenStream>(precisionStep);
     }
-    
+
     NumericField::NumericField(const String& name, int32_t precisionStep, Field::Store store, bool index)
         : AbstractField(name, store, index ? Field::INDEX_ANALYZED_NO_NORMS : Field::INDEX_NO, Field::TERM_VECTOR_NO)
     {
         setOmitTermFreqAndPositions(true);
         tokenStream = newLucene<NumericTokenStream>(precisionStep);
     }
-    
+
     NumericField::~NumericField()
     {
     }
-    
+
     TokenStreamPtr NumericField::tokenStreamValue()
     {
-        return isIndexed() ? LuceneStaticCast<TokenStream>(tokenStream) : TokenStreamPtr();
+        return isIndexed() ? gc_ptr_static_cast<TokenStream>(tokenStream) : TokenStreamPtr();
     }
-    
+
     ByteArray NumericField::getBinaryValue(ByteArray result)
     {
         return ByteArray();
     }
-    
+
     ReaderPtr NumericField::readerValue()
     {
         return ReaderPtr();
     }
-    
+
     String NumericField::stringValue()
     {
         StringStream value;
         value << fieldsData;
         return value.str();
     }
-    
+
     int64_t NumericField::getNumericValue()
     {
         return StringUtils::toLong(stringValue());
     }
-    
+
     NumericFieldPtr NumericField::setLongValue(int64_t value)
     {
         tokenStream->setLongValue(value);
         fieldsData = value;
         return LuceneThis();
     }
-    
+
     NumericFieldPtr NumericField::setIntValue(int32_t value)
     {
         tokenStream->setIntValue(value);
         fieldsData = value;
         return LuceneThis();
     }
-    
+
     NumericFieldPtr NumericField::setDoubleValue(double value)
     {
         tokenStream->setDoubleValue(value);

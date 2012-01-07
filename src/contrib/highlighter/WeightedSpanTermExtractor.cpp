@@ -63,7 +63,7 @@ namespace Lucene
     {
         if (MiscUtils::typeOf<BooleanQuery>(query))
         {
-            Collection<BooleanClausePtr> queryClauses(LuceneDynamicCast<BooleanQuery>(query)->getClauses());
+            Collection<BooleanClausePtr> queryClauses(gc_ptr_dynamic_cast<BooleanQuery>(query)->getClauses());
             for (int32_t i = 0; i < queryClauses.size(); ++i)
             {
                 if (!queryClauses[i]->isProhibited())
@@ -72,7 +72,7 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<PhraseQuery>(query))
         {
-            PhraseQueryPtr phraseQuery(LuceneDynamicCast<PhraseQuery>(query));
+            PhraseQueryPtr phraseQuery(gc_ptr_dynamic_cast<PhraseQuery>(query));
             Collection<TermPtr> phraseQueryTerms(phraseQuery->getTerms());
             Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(phraseQueryTerms.size()));
             for (int32_t i = 0; i < phraseQueryTerms.size(); ++i)
@@ -106,21 +106,21 @@ namespace Lucene
         else if (MiscUtils::typeOf<TermQuery>(query))
             extractWeightedTerms(terms, query);
         else if (MiscUtils::typeOf<SpanQuery>(query))
-            extractWeightedSpanTerms(terms, LuceneDynamicCast<SpanQuery>(query));
+            extractWeightedSpanTerms(terms, gc_ptr_dynamic_cast<SpanQuery>(query));
         else if (MiscUtils::typeOf<FilteredQuery>(query))
-            extract(LuceneDynamicCast<FilteredQuery>(query)->getQuery(), terms);
+            extract(gc_ptr_dynamic_cast<FilteredQuery>(query)->getQuery(), terms);
         else if (MiscUtils::typeOf<DisjunctionMaxQuery>(query))
         {
-            DisjunctionMaxQueryPtr dmq(LuceneDynamicCast<DisjunctionMaxQuery>(query));
+            DisjunctionMaxQueryPtr dmq(gc_ptr_dynamic_cast<DisjunctionMaxQuery>(query));
             for (Collection<QueryPtr>::iterator q = dmq->begin(); q != dmq->end(); ++q)
                 extract(*q, terms);
         }
         else if (MiscUtils::typeOf<MultiTermQuery>(query) && expandMultiTermQuery)
         {
-            MultiTermQueryPtr mtq(LuceneDynamicCast<MultiTermQuery>(query));
+            MultiTermQueryPtr mtq(gc_ptr_dynamic_cast<MultiTermQuery>(query));
             if (mtq->getRewriteMethod() != MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE())
             {
-                mtq = LuceneDynamicCast<MultiTermQuery>(mtq->clone());
+                mtq = gc_ptr_dynamic_cast<MultiTermQuery>(mtq->clone());
                 mtq->setRewriteMethod(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE());
                 query = mtq;
             }
@@ -134,7 +134,7 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<MultiPhraseQuery>(query))
         {
-            MultiPhraseQueryPtr mpq(LuceneDynamicCast<MultiPhraseQuery>(query));
+            MultiPhraseQueryPtr mpq(gc_ptr_dynamic_cast<MultiPhraseQuery>(query));
             Collection< Collection<TermPtr> > termArrays(mpq->getTermArrays());
             Collection<int32_t> positions(mpq->getPositions());
             if (!positions.empty())
@@ -203,7 +203,7 @@ namespace Lucene
         {
             for (SetString::iterator field = fieldNames.begin(); field != fieldNames.end(); ++field)
             {
-                SpanQueryPtr rewrittenQuery(LuceneDynamicCast<SpanQuery>(spanQuery->rewrite(getReaderForField(*field))));
+                SpanQueryPtr rewrittenQuery(gc_ptr_dynamic_cast<SpanQuery>(spanQuery->rewrite(getReaderForField(*field))));
                 queries.put(*field, rewrittenQuery);
                 rewrittenQuery->extractTerms(nonWeightedTerms);
             }
@@ -361,20 +361,20 @@ namespace Lucene
     void WeightedSpanTermExtractor::collectSpanQueryFields(SpanQueryPtr spanQuery, SetString fieldNames)
     {
         if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery))
-            collectSpanQueryFields(LuceneDynamicCast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery(), fieldNames);
+            collectSpanQueryFields(gc_ptr_dynamic_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery(), fieldNames);
         else if (MiscUtils::typeOf<SpanFirstQuery>(spanQuery))
-            collectSpanQueryFields(LuceneDynamicCast<SpanFirstQuery>(spanQuery)->getMatch(), fieldNames);
+            collectSpanQueryFields(gc_ptr_dynamic_cast<SpanFirstQuery>(spanQuery)->getMatch(), fieldNames);
         else if (MiscUtils::typeOf<SpanNearQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(LuceneDynamicCast<SpanNearQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(gc_ptr_dynamic_cast<SpanNearQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
                 collectSpanQueryFields(*clause, fieldNames);
         }
         else if (MiscUtils::typeOf<SpanNotQuery>(spanQuery))
-            collectSpanQueryFields(LuceneDynamicCast<SpanNotQuery>(spanQuery)->getInclude(), fieldNames);
+            collectSpanQueryFields(gc_ptr_dynamic_cast<SpanNotQuery>(spanQuery)->getInclude(), fieldNames);
         else if (MiscUtils::typeOf<SpanOrQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(LuceneDynamicCast<SpanOrQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(gc_ptr_dynamic_cast<SpanOrQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
                 collectSpanQueryFields(*clause, fieldNames);
         }
@@ -387,12 +387,12 @@ namespace Lucene
         if (!expandMultiTermQuery)
             return false; // Will throw UnsupportedOperationException in case of a SpanRegexQuery.
         else if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery))
-            return mustRewriteQuery(LuceneDynamicCast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery());
+            return mustRewriteQuery(gc_ptr_dynamic_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery());
         else if (MiscUtils::typeOf<SpanFirstQuery>(spanQuery))
-            return mustRewriteQuery(LuceneDynamicCast<SpanFirstQuery>(spanQuery)->getMatch());
+            return mustRewriteQuery(gc_ptr_dynamic_cast<SpanFirstQuery>(spanQuery)->getMatch());
         else if (MiscUtils::typeOf<SpanNearQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(LuceneDynamicCast<SpanNearQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(gc_ptr_dynamic_cast<SpanNearQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
             {
                 if (mustRewriteQuery(*clause))
@@ -402,12 +402,12 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<SpanNotQuery>(spanQuery))
         {
-            SpanNotQueryPtr spanNotQuery(LuceneDynamicCast<SpanNotQuery>(spanQuery));
+            SpanNotQueryPtr spanNotQuery(gc_ptr_dynamic_cast<SpanNotQuery>(spanQuery));
             return mustRewriteQuery(spanNotQuery->getInclude()) || mustRewriteQuery(spanNotQuery->getExclude());
         }
         else if (MiscUtils::typeOf<SpanOrQuery>(spanQuery))
         {
-            Collection<SpanQueryPtr> clauses(LuceneDynamicCast<SpanOrQuery>(spanQuery)->getClauses());
+            Collection<SpanQueryPtr> clauses(gc_ptr_dynamic_cast<SpanOrQuery>(spanQuery)->getClauses());
             for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
             {
                 if (mustRewriteQuery(*clause))

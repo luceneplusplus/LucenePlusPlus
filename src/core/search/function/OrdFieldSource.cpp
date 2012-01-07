@@ -37,7 +37,7 @@ namespace Lucene
     {
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        OrdFieldSourcePtr otherSource(LuceneDynamicCast<OrdFieldSource>(other));
+        OrdFieldSourcePtr otherSource(gc_ptr_dynamic_cast<OrdFieldSource>(other));
         if (!otherSource)
             return false;
         return field == otherSource->field;
@@ -50,7 +50,7 @@ namespace Lucene
 
     OrdDocValues::OrdDocValues(OrdFieldSourcePtr source, Collection<int32_t> arr)
     {
-        this->_source = source;
+        this->source = source;
         this->arr = arr;
     }
 
@@ -75,7 +75,7 @@ namespace Lucene
 
     String OrdDocValues::toString(int32_t doc)
     {
-        return OrdFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(intVal(doc));
+        return source->description() + L"=" + StringUtils::toString(intVal(doc));
     }
 
     CollectionValue OrdDocValues::getInnerArray()

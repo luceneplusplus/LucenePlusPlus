@@ -125,7 +125,7 @@ namespace Lucene
         template <typename T>
         static bool typeOf(LuceneObjectPtr object)
         {
-            return LuceneDynamicCast<T>(object);
+            return gc_ptr_dynamic_cast<T>(object);
         }
 
         /// Return whether given Lucene objects are of equal type.

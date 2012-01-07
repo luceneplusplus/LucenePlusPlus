@@ -16,61 +16,61 @@ namespace Lucene
         this->maskedQuery = maskedQuery;
         this->field = maskedField;
     }
-    
+
     FieldMaskingSpanQuery::~FieldMaskingSpanQuery()
     {
     }
-    
+
     String FieldMaskingSpanQuery::getField()
     {
         return field;
     }
-    
+
     SpanQueryPtr FieldMaskingSpanQuery::getMaskedQuery()
     {
         return maskedQuery;
     }
-    
+
     // :NOTE: getBoost and setBoost are not proxied to the maskedQuery
     // ...this is done to be more consistent with things like SpanFirstQuery
-    
+
     SpansPtr FieldMaskingSpanQuery::getSpans(IndexReaderPtr reader)
     {
         return maskedQuery->getSpans(reader);
     }
-    
+
     void FieldMaskingSpanQuery::extractTerms(SetTerm terms)
     {
         maskedQuery->extractTerms(terms);
     }
-    
+
     WeightPtr FieldMaskingSpanQuery::createWeight(SearcherPtr searcher)
     {
         return maskedQuery->createWeight(searcher);
     }
-    
+
     SimilarityPtr FieldMaskingSpanQuery::getSimilarity(SearcherPtr searcher)
     {
         return maskedQuery->getSimilarity(searcher);
     }
-    
+
     QueryPtr FieldMaskingSpanQuery::rewrite(IndexReaderPtr reader)
     {
         FieldMaskingSpanQueryPtr clone;
-        
-        SpanQueryPtr rewritten(LuceneDynamicCast<SpanQuery>(maskedQuery->rewrite(reader)));
+
+        SpanQueryPtr rewritten(gc_ptr_dynamic_cast<SpanQuery>(maskedQuery->rewrite(reader)));
         if (rewritten != maskedQuery)
         {
-            clone = LuceneDynamicCast<FieldMaskingSpanQuery>(this->clone());
+            clone = gc_ptr_dynamic_cast<FieldMaskingSpanQuery>(this->clone());
             clone->maskedQuery = rewritten;
         }
-        
+
         if (clone)
             return clone;
         else
             return LuceneThis();
     }
-    
+
     String FieldMaskingSpanQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -78,29 +78,29 @@ namespace Lucene
         buffer << boostString() << L" as " << this->field;
         return buffer.str();
     }
-    
+
     bool FieldMaskingSpanQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
-        FieldMaskingSpanQueryPtr otherQuery(LuceneDynamicCast<FieldMaskingSpanQuery>(other));
+
+        FieldMaskingSpanQueryPtr otherQuery(gc_ptr_dynamic_cast<FieldMaskingSpanQuery>(other));
         if (!otherQuery)
             return false;
-        
-        return (getField() == otherQuery->getField() && getBoost() == otherQuery->getBoost() && 
+
+        return (getField() == otherQuery->getField() && getBoost() == otherQuery->getBoost() &&
                 getMaskedQuery()->equals(otherQuery->getMaskedQuery()));
     }
-    
+
     int32_t FieldMaskingSpanQuery::hashCode()
     {
         return getMaskedQuery()->hashCode() ^ StringUtils::hashCode(getField()) ^ MiscUtils::doubleToRawIntBits(getBoost());
     }
-    
+
     LuceneObjectPtr FieldMaskingSpanQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<FieldMaskingSpanQuery>(maskedQuery, field));
-        FieldMaskingSpanQueryPtr cloneQuery(LuceneDynamicCast<FieldMaskingSpanQuery>(clone));
+        FieldMaskingSpanQueryPtr cloneQuery(gc_ptr_dynamic_cast<FieldMaskingSpanQuery>(clone));
         cloneQuery->maskedQuery = maskedQuery;
         cloneQuery->field = field;
         return cloneQuery;

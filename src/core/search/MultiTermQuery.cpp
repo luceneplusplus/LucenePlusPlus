@@ -95,7 +95,7 @@ namespace Lucene
     LuceneObjectPtr MultiTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other);
-        MultiTermQueryPtr cloneQuery(LuceneDynamicCast<MultiTermQuery>(clone));
+        MultiTermQueryPtr cloneQuery(gc_ptr_dynamic_cast<MultiTermQuery>(clone));
         cloneQuery->rewriteMethod = rewriteMethod;
         cloneQuery->numberOfTerms = numberOfTerms;
         return cloneQuery;
@@ -119,7 +119,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        MultiTermQueryPtr otherMultiTermQuery(LuceneDynamicCast<MultiTermQuery>(other));
+        MultiTermQueryPtr otherMultiTermQuery(gc_ptr_dynamic_cast<MultiTermQuery>(other));
         if (!otherMultiTermQuery)
             return false;
         if (MiscUtils::doubleToIntBits(getBoost()) != MiscUtils::doubleToIntBits(otherMultiTermQuery->getBoost()))
@@ -302,7 +302,7 @@ namespace Lucene
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
 
-        ConstantScoreAutoRewritePtr otherConstantScoreAutoRewrite(LuceneDynamicCast<ConstantScoreAutoRewrite>(other));
+        ConstantScoreAutoRewritePtr otherConstantScoreAutoRewrite(gc_ptr_dynamic_cast<ConstantScoreAutoRewrite>(other));
         if (!otherConstantScoreAutoRewrite)
             return false;
 

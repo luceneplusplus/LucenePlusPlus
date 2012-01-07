@@ -64,7 +64,7 @@ namespace Lucene
         {
             for (Collection<InvertedDocEndConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end();)
             {
-                NormsWriterPerFieldPtr normsPerField(LuceneStaticCast<NormsWriterPerField>(*perField));
+                NormsWriterPerFieldPtr normsPerField(gc_ptr_static_cast<NormsWriterPerField>(*perField));
                 if (normsPerField->upto > 0)
                 {
                     // It has some norms

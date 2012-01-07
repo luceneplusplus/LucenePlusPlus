@@ -15,54 +15,54 @@ namespace Lucene
         this->query = query;
         this->occur = occur;
     }
-    
+
     BooleanClause::~BooleanClause()
     {
     }
-    
+
     BooleanClause::Occur BooleanClause::getOccur()
     {
         return occur;
     }
-    
+
     void BooleanClause::setOccur(BooleanClause::Occur occur)
     {
         this->occur = occur;
     }
-    
+
     QueryPtr BooleanClause::getQuery()
     {
         return query;
     }
-    
+
     void BooleanClause::setQuery(QueryPtr query)
     {
         this->query = query;
     }
-    
+
     bool BooleanClause::isProhibited()
     {
         return (occur == MUST_NOT);
     }
-    
+
     bool BooleanClause::isRequired()
     {
         return (occur == MUST);
     }
-    
+
     bool BooleanClause::equals(LuceneObjectPtr other)
     {
-        BooleanClausePtr otherBooleanClause(LuceneDynamicCast<BooleanClause>(other));
+        BooleanClausePtr otherBooleanClause(gc_ptr_dynamic_cast<BooleanClause>(other));
         if (!otherBooleanClause)
             return false;
         return (this->query->equals(otherBooleanClause->query) && this->occur == otherBooleanClause->occur);
     }
-    
+
     int32_t BooleanClause::hashCode()
     {
         return query->hashCode() ^ (occur == MUST ? 1 : 0) ^ (occur == MUST_NOT ? 2 : 0);
     }
-    
+
     String BooleanClause::toString()
     {
         switch (occur)

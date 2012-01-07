@@ -16,7 +16,7 @@ namespace Lucene
     // todo: go through these "static" classes (UnicodeUtils, StringUtils, TestPoint, FileUtils, VariableUtils)
     // todo: do they really need to be derived from gc_object?
     // todo: instead we could make the destructors private
-    class LPPAPI VariantUtils : public gc_object
+    class LPPAPI VariantUtils
     {
     public:
         template <typename T>

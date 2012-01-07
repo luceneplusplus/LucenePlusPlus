@@ -17,22 +17,22 @@ namespace Lucene
     FieldDocSortedHitQueue::FieldDocSortedHitQueue(int32_t size) : PriorityQueue<FieldDocPtr>(size)
     {
     }
-    
+
     FieldDocSortedHitQueue::~FieldDocSortedHitQueue()
     {
     }
-    
+
     void FieldDocSortedHitQueue::setFields(Collection<SortFieldPtr> fields)
     {
         this->fields = fields;
         this->collators = hasCollators(fields);
     }
-    
+
     Collection<SortFieldPtr> FieldDocSortedHitQueue::getFields()
     {
         return fields;
     }
-    
+
     Collection<CollatorPtr> FieldDocSortedHitQueue::hasCollators(Collection<SortFieldPtr> fields)
     {
         if (!fields)
@@ -42,11 +42,11 @@ namespace Lucene
         {
             localePtr locale(fields[i]->getLocale());
             if (locale)
-                ret[i] = newInstance<Collator>(*locale);
+                ret[i] = newLucene<Collator>(*locale);
         }
         return ret;
     }
-    
+
     bool FieldDocSortedHitQueue::lessThan(const FieldDocPtr& first, const FieldDocPtr& second)
     {
         int32_t n = fields.size();
@@ -69,16 +69,16 @@ namespace Lucene
                 if (type == SortField::SCORE)
                     c = -c;
             }
-            
+
             // reverse sort
             if (fields[i]->getReverse())
                 c = -c;
         }
-        
+
         // avoid random sort order that could lead to duplicates
         if (c == 0)
             return (first->doc > second->doc);
-        
+
         return (c > 0);
     }
 }

@@ -12,6 +12,7 @@
 #include "FieldInfos.h"
 #include "SegmentTermPositionVector.h"
 #include "TermVectorOffsetInfo.h"
+#include "TermFreqVector.h"
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
@@ -544,7 +545,7 @@ namespace Lucene
     LuceneObjectPtr TermVectorsReader::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermVectorsReader>();
-        TermVectorsReaderPtr cloneReader(LuceneDynamicCast<TermVectorsReader>(LuceneObject::clone(clone)));
+        TermVectorsReaderPtr cloneReader(gc_ptr_dynamic_cast<TermVectorsReader>(LuceneObject::clone(clone)));
         cloneReader->fieldInfos = fieldInfos;
         cloneReader->_size = _size;
         cloneReader->numTotalDocs = numTotalDocs;
@@ -554,9 +555,9 @@ namespace Lucene
         // These are null when a TermVectorsReader was created on a segment that did not have term vectors saved
         if (tvx && tvd && tvf)
         {
-            cloneReader->tvx = LuceneDynamicCast<IndexInput>(tvx->clone());
-            cloneReader->tvd = LuceneDynamicCast<IndexInput>(tvd->clone());
-            cloneReader->tvf = LuceneDynamicCast<IndexInput>(tvf->clone());
+            cloneReader->tvx = gc_ptr_dynamic_cast<IndexInput>(tvx->clone());
+            cloneReader->tvd = gc_ptr_dynamic_cast<IndexInput>(tvd->clone());
+            cloneReader->tvf = gc_ptr_dynamic_cast<IndexInput>(tvf->clone());
         }
 
         return cloneReader;

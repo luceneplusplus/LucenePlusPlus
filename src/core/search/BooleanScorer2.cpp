@@ -53,7 +53,7 @@ namespace Lucene
 
     ScorerPtr BooleanScorer2::dualConjunctionSumScorer(ScorerPtr req1, ScorerPtr req2)
     {
-        Collection<ScorerPtr> scorers(newCollectionScorer(req1, req2));
+        Collection<ScorerPtr> scorers(newCollection(req1, req2));
 
         // All scorers match, so Similarity::getDefault() always has 1 as the coordination factor.
         // Therefore the sum of the scores of two scorers is used as score.
@@ -84,7 +84,7 @@ namespace Lucene
         if (optionalScorers.size() == minNrShouldMatch) // all optional scorers also required.
         {
             Collection<ScorerPtr> allReq(Collection<ScorerPtr>::newInstance(requiredScorers.begin(), requiredScorers.end()));
-            allReq.addAll(optionalScorers.begin(), optionalScorers.end());
+            allReq.add(optionalScorers.begin(), optionalScorers.end());
             return addProhibitedScorers(countingConjunctionSumScorer(allReq));
         }
         else // optionalScorers.size() > minNrShouldMatch, and at least one required scorer

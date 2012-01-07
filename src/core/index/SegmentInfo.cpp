@@ -254,7 +254,7 @@ namespace Lucene
         si->preLockless = preLockless;
         si->hasSingleNormFile = hasSingleNormFile;
         si->diagnostics = MapStringString::newInstance();
-        si->diagnostics.putAll(diagnostics.begin(), diagnostics.end());
+        si->diagnostics.put(diagnostics.begin(), diagnostics.end());
         if (normGen)
             si->normGen = Collection<int64_t>::newInstance(normGen.begin(), normGen.end());
         si->docStoreOffset = docStoreOffset;
@@ -599,7 +599,7 @@ namespace Lucene
     {
         if (LuceneObject::equals(other))
             return true;
-        SegmentInfoPtr otherSegmentInfo(LuceneDynamicCast<SegmentInfo>(other));
+        SegmentInfoPtr otherSegmentInfo(gc_ptr_dynamic_cast<SegmentInfo>(other));
         if (!otherSegmentInfo)
             return false;
         return (otherSegmentInfo->dir == dir && otherSegmentInfo->name == name);

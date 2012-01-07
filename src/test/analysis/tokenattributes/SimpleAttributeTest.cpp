@@ -20,7 +20,7 @@ BOOST_FIXTURE_TEST_SUITE(SimpleAttributeTest, LuceneTestFixture)
 
 static AttributePtr checkCloneIsEqual(AttributePtr att)
 {
-    AttributePtr clone = LuceneDynamicCast<Attribute>(att->clone());
+    AttributePtr clone = gc_ptr_dynamic_cast<Attribute>(att->clone());
     BOOST_CHECK(att->equals(clone));
     BOOST_CHECK_EQUAL(att->hashCode(), clone->hashCode());
     return clone;
@@ -44,10 +44,10 @@ BOOST_AUTO_TEST_CASE(testFlagsAttribute)
     att->setFlags(1234);
     BOOST_CHECK_EQUAL(L"flags=1234", att->toString());
 
-    FlagsAttributePtr att2 = LuceneDynamicCast<FlagsAttribute>(checkCloneIsEqual(att));
+    FlagsAttributePtr att2 = gc_ptr_dynamic_cast<FlagsAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(1234, att2->getFlags());
 
-    att2 = LuceneDynamicCast<FlagsAttribute>(checkCopyIsEqual<FlagsAttribute>(att));
+    att2 = gc_ptr_dynamic_cast<FlagsAttribute>(checkCopyIsEqual<FlagsAttribute>(att));
     BOOST_CHECK_EQUAL(1234, att2->getFlags());
 
     att->clear();
@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(testPositionIncrementAttribute)
     att->setPositionIncrement(1234);
     BOOST_CHECK_EQUAL(L"positionIncrement=1234", att->toString());
 
-    PositionIncrementAttributePtr att2 = LuceneDynamicCast<PositionIncrementAttribute>(checkCloneIsEqual(att));
+    PositionIncrementAttributePtr att2 = gc_ptr_dynamic_cast<PositionIncrementAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(1234, att2->getPositionIncrement());
 
-    att2 = LuceneDynamicCast<PositionIncrementAttribute>(checkCopyIsEqual<PositionIncrementAttribute>(att));
+    att2 = gc_ptr_dynamic_cast<PositionIncrementAttribute>(checkCopyIsEqual<PositionIncrementAttribute>(att));
     BOOST_CHECK_EQUAL(1234, att2->getPositionIncrement());
 
     att->clear();
@@ -80,9 +80,9 @@ namespace TestTypeAttribute
         virtual ~TestableTypeAttribute()
         {
         }
-        
+
         LUCENE_CLASS(TestableTypeAttribute);
-        
+
     public:
         using TypeAttribute::DEFAULT_TYPE;
     };
@@ -96,10 +96,10 @@ BOOST_AUTO_TEST_CASE(testTypeAttribute)
     att->setType(L"hello");
     BOOST_CHECK_EQUAL(L"type=hello", att->toString());
 
-    TypeAttributePtr att2 = LuceneDynamicCast<TypeAttribute>(checkCloneIsEqual(att));
+    TypeAttributePtr att2 = gc_ptr_dynamic_cast<TypeAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(L"hello", att2->type());
 
-    att2 = LuceneDynamicCast<TypeAttribute>(checkCopyIsEqual<TypeAttribute>(att));
+    att2 = gc_ptr_dynamic_cast<TypeAttribute>(checkCopyIsEqual<TypeAttribute>(att));
     BOOST_CHECK_EQUAL(L"hello", att2->type());
 
     att->clear();
@@ -116,15 +116,15 @@ BOOST_AUTO_TEST_CASE(testPayloadAttribute)
     payload[1] = 2;
     payload[2] = 3;
     payload[3] = 4;
-    
+
     PayloadPtr pl = newLucene<Payload>(payload);
     att->setPayload(pl);
 
-    PayloadAttributePtr att2 = LuceneDynamicCast<PayloadAttribute>(checkCloneIsEqual(att));
+    PayloadAttributePtr att2 = gc_ptr_dynamic_cast<PayloadAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK(pl->equals(att2->getPayload()));
     BOOST_CHECK_NE(pl, att2->getPayload());
 
-    att2 = LuceneDynamicCast<PayloadAttribute>(checkCopyIsEqual<PayloadAttribute>(att));
+    att2 = gc_ptr_dynamic_cast<PayloadAttribute>(checkCopyIsEqual<PayloadAttribute>(att));
     BOOST_CHECK(pl->equals(att2->getPayload()));
     BOOST_CHECK_NE(pl, att2->getPayload());
 
@@ -140,12 +140,12 @@ BOOST_AUTO_TEST_CASE(testOffsetAttribute)
 
     att->setOffset(12, 34);
     // no string test here, because order unknown
-    
-    OffsetAttributePtr att2 = LuceneDynamicCast<OffsetAttribute>(checkCloneIsEqual(att));
+
+    OffsetAttributePtr att2 = gc_ptr_dynamic_cast<OffsetAttribute>(checkCloneIsEqual(att));
     BOOST_CHECK_EQUAL(12, att2->startOffset());
     BOOST_CHECK_EQUAL(34, att2->endOffset());
 
-    att2 = LuceneDynamicCast<OffsetAttribute>(checkCopyIsEqual<OffsetAttribute>(att));
+    att2 = gc_ptr_dynamic_cast<OffsetAttribute>(checkCopyIsEqual<OffsetAttribute>(att));
     BOOST_CHECK_EQUAL(12, att2->startOffset());
     BOOST_CHECK_EQUAL(34, att2->endOffset());
 

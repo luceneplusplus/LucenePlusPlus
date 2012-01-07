@@ -128,7 +128,7 @@ namespace Lucene
     LuceneObjectPtr TermAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Attribute::clone(other ? other : newLucene<TermAttribute>());
-        TermAttributePtr cloneAttribute(LuceneDynamicCast<TermAttribute>(clone));
+        TermAttributePtr cloneAttribute(gc_ptr_dynamic_cast<TermAttribute>(clone));
         cloneAttribute->_termLength = _termLength;
         if (_termBuffer)
         {
@@ -143,7 +143,7 @@ namespace Lucene
         if (Attribute::equals(other))
             return true;
 
-        TermAttributePtr otherTermAttribute(LuceneDynamicCast<TermAttribute>(other));
+        TermAttributePtr otherTermAttribute(gc_ptr_dynamic_cast<TermAttribute>(other));
         if (otherTermAttribute)
         {
             initTermBuffer();
@@ -161,7 +161,7 @@ namespace Lucene
     void TermAttribute::copyTo(AttributePtr target)
     {
         initTermBuffer();
-        TermAttributePtr targetTermAttribute(LuceneDynamicCast<TermAttribute>(target));
+        TermAttributePtr targetTermAttribute(gc_ptr_dynamic_cast<TermAttribute>(target));
         targetTermAttribute->setTermBuffer(_termBuffer.get(), 0, _termLength);
     }
 }

@@ -31,8 +31,8 @@ namespace Lucene
         TermFreqVectorPtr tfv(reader->getTermFreqVector(docId, field));
         if (tfv)
         {
-            if (LuceneDynamicCast<TermPositionVector>(tfv))
-                ts = getTokenStream(LuceneDynamicCast<TermPositionVector>(tfv));
+            if (gc_ptr_dynamic_cast<TermPositionVector>(tfv))
+                ts = getTokenStream(gc_ptr_dynamic_cast<TermPositionVector>(tfv));
         }
         // No token info stored so fall back to analyzing raw content
         if (!ts)
@@ -46,8 +46,8 @@ namespace Lucene
         TermFreqVectorPtr tfv(reader->getTermFreqVector(docId, field));
         if (tfv)
         {
-            if (LuceneDynamicCast<TermPositionVector>(tfv))
-                ts = getTokenStream(LuceneDynamicCast<TermPositionVector>(tfv));
+            if (gc_ptr_dynamic_cast<TermPositionVector>(tfv))
+                ts = getTokenStream(gc_ptr_dynamic_cast<TermPositionVector>(tfv));
         }
         // No token info stored so fall back to analyzing raw content
         if (!ts)
@@ -136,9 +136,9 @@ namespace Lucene
         if (!tfv)
             boost::throw_exception(IllegalArgumentException(field + L" in doc #" + StringUtils::toString(docId) + L"does not have any term position data stored"));
 
-        if (LuceneDynamicCast<TermPositionVector>(tfv))
+        if (gc_ptr_dynamic_cast<TermPositionVector>(tfv))
         {
-            TermPositionVectorPtr tpv(LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(docId, field)));
+            TermPositionVectorPtr tpv(gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(docId, field)));
             return getTokenStream(tpv);
         }
         boost::throw_exception(IllegalArgumentException(field + L" in doc #" + StringUtils::toString(docId) + L"does not have any term position data stored"));

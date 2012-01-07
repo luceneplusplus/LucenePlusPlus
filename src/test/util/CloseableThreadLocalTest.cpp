@@ -14,39 +14,55 @@ BOOST_FIXTURE_TEST_SUITE(CloseableThreadLocalTest, LuceneTestFixture)
 
 static const String TEST_VALUE = L"initvaluetest";
 
+class TestString : public gc_object
+{
+public:
+    TestString(const String& str = L"") : string(str)
+    {
+    }
+
+    virtual ~TestString()
+    {
+    }
+
+    String string;
+};
+
+DECLARE_LUCENE_PTR(TestString)
+
+class InitValueThreadLocal : public CloseableThreadLocal<TestString>
+{
+public:
+    virtual ~InitValueThreadLocal()
+    {
+    }
+
+protected:
+    virtual gc_ptr<TestString> initialValue()
+    {
+        return new_gc<TestString>(TEST_VALUE);
+    }
+};
+
 BOOST_AUTO_TEST_CASE(testInitValue)
 {
-    class InitValueThreadLocal : public CloseableThreadLocal<String>
-    {
-    public:
-        virtual ~InitValueThreadLocal()
-        {
-        }
-
-    protected:
-        virtual gc_ptr<String> initialValue()
-        {
-            return newInstance<String>(TEST_VALUE);
-        }
-    };
-
     InitValueThreadLocal tl;
-    String str = *(tl.get());
+    String str = tl.get()->string;
     BOOST_CHECK_EQUAL(TEST_VALUE, str);
 }
 
 /// Tests that null can be set as a valid value.
 BOOST_AUTO_TEST_CASE(testNullValue)
 {
-    CloseableThreadLocal<String> ctl;
-    ctl.set(gc_ptr<String>());
+    CloseableThreadLocal<TestString> ctl;
+    ctl.set(gc_ptr<TestString>());
     BOOST_CHECK(!ctl.get());
 }
 
 /// Make sure default get returns null, twice in a row
 BOOST_AUTO_TEST_CASE(testDefaultValueWithoutSetting)
 {
-    CloseableThreadLocal<String> ctl;
+    CloseableThreadLocal<TestString> ctl;
     BOOST_CHECK(!ctl.get());
     BOOST_CHECK(!ctl.get());
 }

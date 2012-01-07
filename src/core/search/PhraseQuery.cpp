@@ -86,7 +86,7 @@ namespace Lucene
 
     void PhraseQuery::extractTerms(SetTerm terms)
     {
-        terms.addAll(this->terms.begin(), this->terms.end());
+        terms.add(this->terms.begin(), this->terms.end());
     }
 
     String PhraseQuery::toString(const String& field)
@@ -127,7 +127,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        PhraseQueryPtr otherPhraseQuery(LuceneDynamicCast<PhraseQuery>(other));
+        PhraseQueryPtr otherPhraseQuery(gc_ptr_dynamic_cast<PhraseQuery>(other));
         if (!otherPhraseQuery)
             return false;
 
@@ -145,7 +145,7 @@ namespace Lucene
     LuceneObjectPtr PhraseQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<PhraseQuery>();
-        PhraseQueryPtr cloneQuery(LuceneDynamicCast<PhraseQuery>(Query::clone(clone)));
+        PhraseQueryPtr cloneQuery(gc_ptr_dynamic_cast<PhraseQuery>(Query::clone(clone)));
         cloneQuery->field = field;
         cloneQuery->terms = terms;
         cloneQuery->positions = positions;
@@ -257,7 +257,7 @@ namespace Lucene
         ExplanationPtr fieldExpl(newLucene<Explanation>());
         fieldExpl->setDescription(L"fieldWeight(" +    query->field + L":" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
 
-        PhraseScorerPtr phraseScorer(LuceneDynamicCast<PhraseScorer>(scorer(reader, true, false)));
+        PhraseScorerPtr phraseScorer(gc_ptr_dynamic_cast<PhraseScorer>(scorer(reader, true, false)));
         if (!phraseScorer)
             return newLucene<Explanation>(0.0, L"no matching docs");
 

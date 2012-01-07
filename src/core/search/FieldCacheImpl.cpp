@@ -54,7 +54,7 @@ namespace Lucene
         {
             for (WeakMapLuceneObjectMapEntryAny::iterator key = cache->second->readerCache.begin(); key != cache->second->readerCache.end(); ++key)
             {
-                LuceneObjectPtr readerKey(key->first.lock());
+                LuceneObjectPtr readerKey(key->first);
 
                 // we've now materialized a hard ref
                 if (readerKey)
@@ -62,6 +62,16 @@ namespace Lucene
                     for (MapEntryAny::iterator mapEntry = key->second.begin(); mapEntry != key->second.end(); ++mapEntry)
                         result.add(newLucene<FieldCacheEntryImpl>(readerKey, mapEntry->first->field, cache->first, mapEntry->first->custom, mapEntry->second));
                 }
+
+                // todo
+                // LuceneObjectPtr readerKey(key->first.lock());
+
+                // // we've now materialized a hard ref
+                // if (readerKey)
+                // {
+                //     for (MapEntryAny::iterator mapEntry = key->second.begin(); mapEntry != key->second.end(); ++mapEntry)
+                //         result.add(newLucene<FieldCacheEntryImpl>(readerKey, mapEntry->first->field, cache->first, mapEntry->first->custom, mapEntry->second));
+                // }
             }
         }
         return result;
@@ -142,7 +152,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        EntryPtr otherEntry(LuceneDynamicCast<Entry>(other));
+        EntryPtr otherEntry(gc_ptr_dynamic_cast<Entry>(other));
         if (otherEntry)
         {
             if (otherEntry->field == field)

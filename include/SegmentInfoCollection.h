@@ -17,25 +17,25 @@ namespace Lucene
     public:
         SegmentInfoCollection();
         virtual ~SegmentInfoCollection();
-        
+
         LUCENE_CLASS(SegmentInfoCollection);
-    
+
     protected:
         Collection<SegmentInfoPtr> segmentInfos;
-    
+
     public:
         int32_t size();
         bool empty();
         void clear();
         void add(SegmentInfoPtr info);
         void add(int32_t pos, SegmentInfoPtr info);
-        void addAll(SegmentInfoCollectionPtr segmentInfos);
+        void add(SegmentInfoCollectionPtr segmentInfos);
         bool equals(SegmentInfoCollectionPtr other);
         int32_t find(SegmentInfoPtr info);
         bool contains(SegmentInfoPtr info);
         void remove(int32_t pos);
         void remove(int32_t start, int32_t end);
-                
+
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     };
 }

@@ -41,7 +41,7 @@ namespace Lucene
 
     void DisjunctionMaxQuery::add(Collection<QueryPtr> disjuncts)
     {
-        this->disjuncts.addAll(disjuncts.begin(), disjuncts.end());
+        this->disjuncts.add(disjuncts.begin(), disjuncts.end());
     }
 
     Collection<QueryPtr>::iterator DisjunctionMaxQuery::begin()
@@ -69,7 +69,7 @@ namespace Lucene
             if (getBoost() != 1.0)
             {
                 if (result == singleton)
-                    result = LuceneDynamicCast<Query>(result->clone());
+                    result = gc_ptr_dynamic_cast<Query>(result->clone());
                 result->setBoost(getBoost() * result->getBoost());
             }
             return result;
@@ -82,7 +82,7 @@ namespace Lucene
             if (rewrite != clause)
             {
                 if (!clone)
-                    clone = LuceneDynamicCast<DisjunctionMaxQuery>(this->clone());
+                    clone = gc_ptr_dynamic_cast<DisjunctionMaxQuery>(this->clone());
                 clone->disjuncts[i] = rewrite;
             }
         }
@@ -92,7 +92,7 @@ namespace Lucene
     LuceneObjectPtr DisjunctionMaxQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<DisjunctionMaxQuery>());
-        DisjunctionMaxQueryPtr cloneQuery(LuceneDynamicCast<DisjunctionMaxQuery>(clone));
+        DisjunctionMaxQueryPtr cloneQuery(gc_ptr_dynamic_cast<DisjunctionMaxQuery>(clone));
         cloneQuery->tieBreakerMultiplier = tieBreakerMultiplier;
         cloneQuery->disjuncts = Collection<QueryPtr>::newInstance(disjuncts.begin(), disjuncts.end());
         return cloneQuery;
@@ -111,7 +111,7 @@ namespace Lucene
         {
             if (query != disjuncts.begin())
                 buffer += L" | ";
-            if (LuceneDynamicCast<BooleanQuery>(*query)) // wrap sub-bools in parens
+            if (gc_ptr_dynamic_cast<BooleanQuery>(*query)) // wrap sub-bools in parens
                 buffer += L"(" + (*query)->toString(field) + L")";
             else
                 buffer += (*query)->toString(field);
@@ -129,7 +129,7 @@ namespace Lucene
         if (!Query::equals(other))
             return false;
 
-        DisjunctionMaxQueryPtr otherDisjunctionMaxQuery(LuceneDynamicCast<DisjunctionMaxQuery>(other));
+        DisjunctionMaxQueryPtr otherDisjunctionMaxQuery(gc_ptr_dynamic_cast<DisjunctionMaxQuery>(other));
         if (!otherDisjunctionMaxQuery)
             return false;
 

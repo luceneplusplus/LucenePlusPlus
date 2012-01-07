@@ -15,29 +15,29 @@ namespace Lucene
     {
         this->field = field;
     }
-    
+
     FieldCacheSource::~FieldCacheSource()
     {
     }
-    
+
     DocValuesPtr FieldCacheSource::getValues(IndexReaderPtr reader)
     {
         return getCachedFieldValues(FieldCache::DEFAULT(), field, reader);
     }
-    
+
     String FieldCacheSource::description()
     {
         return field;
     }
-    
+
     bool FieldCacheSource::equals(LuceneObjectPtr other)
     {
-        FieldCacheSourcePtr otherSource(LuceneDynamicCast<FieldCacheSource>(other));
+        FieldCacheSourcePtr otherSource(gc_ptr_dynamic_cast<FieldCacheSource>(other));
         if (!otherSource)
             return false;
         return field == otherSource->field && cachedFieldSourceEquals(otherSource);
     }
-    
+
     int32_t FieldCacheSource::hashCode()
     {
         return StringUtils::hashCode(field) + cachedFieldSourceHashCode();

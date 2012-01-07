@@ -130,7 +130,7 @@ public:
         LuceneException finally;
         try
         {
-            copyFiles(dir, LuceneDynamicCast<IndexCommit>(dp->snapshot()));
+            copyFiles(dir, gc_ptr_dynamic_cast<IndexCommit>(dp->snapshot()));
         }
         catch (LuceneException& e)
         {

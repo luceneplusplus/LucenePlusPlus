@@ -15,14 +15,18 @@ namespace Lucene
     /// array of the terms that occur in the field of the {@link Document} and a parallel array of frequencies.  Thus,
     /// getTermFrequencies()[5] corresponds with the frequency of getTerms()[5], assuming there are at least 5 terms
     /// in the Document.
-    class LPPAPI TermFreqVector
+
+    // todo: this was an interface class (affects QueryTermVector, TermPositionVector)
+
+    class LPPAPI TermFreqVector : public LuceneObject
     {
     protected:
         TermFreqVector();
 
     public:
         virtual ~TermFreqVector();
-        LUCENE_INTERFACE(TermFreqVector);
+
+        LUCENE_CLASS(TermFreqVector);
 
     public:
         /// The {@link Fieldable} name.

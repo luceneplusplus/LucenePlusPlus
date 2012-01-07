@@ -23,25 +23,25 @@ namespace Lucene
         this->function = function;
         this->includeSpanScore = includeSpanScore;
     }
-    
+
     PayloadTermQuery::~PayloadTermQuery()
     {
     }
-    
+
     WeightPtr PayloadTermQuery::createWeight(SearcherPtr searcher)
     {
         return newLucene<PayloadTermWeight>(LuceneThis(), searcher);
     }
-    
+
     LuceneObjectPtr PayloadTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<PayloadTermQuery>(term, function, includeSpanScore));
-        PayloadTermQueryPtr termQuery(LuceneDynamicCast<PayloadTermQuery>(clone));
+        PayloadTermQueryPtr termQuery(gc_ptr_dynamic_cast<PayloadTermQuery>(clone));
         termQuery->function = function;
         termQuery->includeSpanScore = includeSpanScore;
         return termQuery;
     }
-    
+
     bool PayloadTermQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -50,7 +50,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        PayloadTermQueryPtr otherQuery(LuceneDynamicCast<PayloadTermQuery>(other));
+        PayloadTermQueryPtr otherQuery(gc_ptr_dynamic_cast<PayloadTermQuery>(other));
         if (!otherQuery)
             return false;
         if (!function)
@@ -64,7 +64,7 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     int32_t PayloadTermQuery::hashCode()
     {
         int32_t prime = 31;
@@ -73,20 +73,20 @@ namespace Lucene
         result = prime * result + (includeSpanScore ? 1231 : 1237);
         return result;
     }
-    
+
     PayloadTermWeight::PayloadTermWeight(PayloadTermQueryPtr query, SearcherPtr searcher) : SpanWeight(query, searcher)
     {
     }
-    
+
     PayloadTermWeight::~PayloadTermWeight()
     {
     }
-    
+
     ScorerPtr PayloadTermWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
-        return newLucene<PayloadTermSpanScorer>(LuceneDynamicCast<TermSpans>(query->getSpans(reader)), LuceneThis(), similarity, reader->norms(query->getField()));
+        return newLucene<PayloadTermSpanScorer>(gc_ptr_dynamic_cast<TermSpans>(query->getSpans(reader)), LuceneThis(), similarity, reader->norms(query->getField()));
     }
-    
+
     PayloadTermSpanScorer::PayloadTermSpanScorer(TermSpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
     {
         positions = spans->getPositions();
@@ -94,11 +94,11 @@ namespace Lucene
         payloadScore = 0.0;
         payloadsSeen = 0;
     }
-    
+
     PayloadTermSpanScorer::~PayloadTermSpanScorer()
     {
     }
-    
+
     bool PayloadTermSpanScorer::setFreqCurrentDoc()
     {
         if (!more)
@@ -111,26 +111,26 @@ namespace Lucene
         while (more && doc == spans->doc())
         {
             int32_t matchLength = spans->end() - spans->start();
-            
+
             freq += similarity1->sloppyFreq(matchLength);
             processPayload(similarity1);
-            
+
             more = spans->next(); // this moves positions to the next match in this document
         }
         return more || (freq != 0);
     }
-    
+
     void PayloadTermSpanScorer::processPayload(SimilarityPtr similarity)
     {
         if (positions->isPayloadAvailable())
         {
-            PayloadTermWeightPtr payloadWeight(LuceneStaticCast<PayloadTermWeight>(weight));
-            PayloadTermQueryPtr payloadQuery(LuceneStaticCast<PayloadTermQuery>(payloadWeight->query));
-        
+            PayloadTermWeightPtr payloadWeight(gc_ptr_static_cast<PayloadTermWeight>(weight));
+            PayloadTermQueryPtr payloadQuery(gc_ptr_static_cast<PayloadTermQuery>(payloadWeight->query));
+
             payload = positions->getPayload(payload, 0);
             payloadScore = payloadQuery->function->currentScore(doc, payloadQuery->term->field(), spans->start(), spans->end(),
-                                                                payloadsSeen, payloadScore, similarity->scorePayload(doc, 
-                                                                payloadQuery->term->field(), spans->start(), spans->end(), 
+                                                                payloadsSeen, payloadScore, similarity->scorePayload(doc,
+                                                                payloadQuery->term->field(), spans->start(), spans->end(),
                                                                 payload, 0, positions->getPayloadLength()));
             ++payloadsSeen;
         }
@@ -139,43 +139,43 @@ namespace Lucene
             // zero out the payload?
         }
     }
-    
+
     double PayloadTermSpanScorer::score()
     {
-        PayloadTermWeightPtr payloadWeight(LuceneStaticCast<PayloadTermWeight>(weight));
-        PayloadTermQueryPtr payloadQuery(LuceneStaticCast<PayloadTermQuery>(payloadWeight->query));
+        PayloadTermWeightPtr payloadWeight(gc_ptr_static_cast<PayloadTermWeight>(weight));
+        PayloadTermQueryPtr payloadQuery(gc_ptr_static_cast<PayloadTermQuery>(payloadWeight->query));
         return payloadQuery->includeSpanScore ? getSpanScore() * getPayloadScore() : getPayloadScore();
     }
-    
+
     double PayloadTermSpanScorer::getSpanScore()
     {
         return SpanScorer::score();
     }
-    
+
     double PayloadTermSpanScorer::getPayloadScore()
     {
-        PayloadTermWeightPtr payloadWeight(LuceneStaticCast<PayloadTermWeight>(weight));
-        PayloadTermQueryPtr payloadQuery(LuceneStaticCast<PayloadTermQuery>(payloadWeight->query));
+        PayloadTermWeightPtr payloadWeight(gc_ptr_static_cast<PayloadTermWeight>(weight));
+        PayloadTermQueryPtr payloadQuery(gc_ptr_static_cast<PayloadTermQuery>(payloadWeight->query));
         return payloadQuery->function->docScore(doc, payloadQuery->term->field(), payloadsSeen, payloadScore);
     }
-    
+
     ExplanationPtr PayloadTermSpanScorer::explain(int32_t doc)
     {
         ComplexExplanationPtr result(newLucene<ComplexExplanation>());
         ExplanationPtr nonPayloadExpl(SpanScorer::explain(doc));
         result->addDetail(nonPayloadExpl);
-        
+
         ExplanationPtr payloadBoost(newLucene<Explanation>());
         result->addDetail(payloadBoost);
-        
+
         double payloadScore = getPayloadScore();
         payloadBoost->setValue(payloadScore);
         payloadBoost->setDescription(L"scorePayload(...)");
-        
+
         result->setValue(nonPayloadExpl->getValue() * payloadScore);
         result->setDescription(L"btq, product of:");
         result->setMatch(nonPayloadExpl->getValue() != 0.0);
-        
+
         return result;
     }
 }

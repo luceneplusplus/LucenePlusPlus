@@ -80,8 +80,8 @@ namespace Lucene
         {
             for (Collection<TermsHashConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
             {
-                FreqProxTermsWriterPerFieldPtr freqProxPerField(LuceneStaticCast<FreqProxTermsWriterPerField>(*perField));
-                if (TermsHashPerFieldPtr(freqProxPerField->_termsHashPerField)->numPostings > 0)
+                FreqProxTermsWriterPerFieldPtr freqProxPerField(gc_ptr_static_cast<FreqProxTermsWriterPerField>(*perField));
+                if (freqProxPerField->termsHashPerField->numPostings > 0)
                     allFields.add(freqProxPerField);
             }
         }
@@ -128,7 +128,7 @@ namespace Lucene
 
             for (int32_t i = 0; i < fields.size(); ++i)
             {
-                TermsHashPerFieldPtr perField(fields[i]->_termsHashPerField);
+                TermsHashPerFieldPtr perField(fields[i]->termsHashPerField);
                 int32_t numPostings = perField->numPostings;
                 perField->reset();
                 perField->shrinkHash(numPostings);
@@ -139,7 +139,7 @@ namespace Lucene
         }
 
         for (MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry)
-            TermsHashPerThreadPtr(LuceneStaticCast<FreqProxTermsWriterPerThread>(entry->first)->_termsHashPerThread)->reset(true);
+            gc_ptr_static_cast<FreqProxTermsWriterPerThread>(entry->first)->termsHashPerThread->reset(true);
 
         consumer->finish();
     }

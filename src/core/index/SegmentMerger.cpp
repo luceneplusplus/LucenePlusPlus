@@ -191,7 +191,7 @@ namespace Lucene
         for (int32_t i = 0; i < numReaders; ++i)
         {
             IndexReaderPtr reader(readers[i]);
-            SegmentReaderPtr segmentReader(LuceneDynamicCast<SegmentReader>(reader));
+            SegmentReaderPtr segmentReader(gc_ptr_dynamic_cast<SegmentReader>(reader));
             if (segmentReader)
             {
                 bool same = true;
@@ -215,14 +215,14 @@ namespace Lucene
         {
             // When we are not merging by doc stores, their field name -> number mapping are the same.
             // So, we start with the fieldInfos of the last segment in this case, to keep that numbering
-            fieldInfos = LuceneDynamicCast<FieldInfos>(LuceneDynamicCast<SegmentReader>(readers[readers.size() - 1])->core->fieldInfos->clone());
+            fieldInfos = gc_ptr_dynamic_cast<FieldInfos>(gc_ptr_dynamic_cast<SegmentReader>(readers[readers.size() - 1])->core->fieldInfos->clone());
         }
         else
             fieldInfos = newLucene<FieldInfos>();          // merge field names
 
         for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
         {
-            SegmentReaderPtr segmentReader(LuceneDynamicCast<SegmentReader>(*reader));
+            SegmentReaderPtr segmentReader(gc_ptr_dynamic_cast<SegmentReader>(*reader));
             if (segmentReader)
             {
                 FieldInfosPtr readerFieldInfos(segmentReader->fieldInfos());
@@ -561,8 +561,7 @@ namespace Lucene
                     delCounts = Collection<int32_t>::newInstance(readerCount);
                 }
                 docMaps[i] = docMap;
-                IndexReaderPtr segmentMergeReader(smi->_reader);
-                delCounts[i] = segmentMergeReader->maxDoc() - segmentMergeReader->numDocs();
+                delCounts[i] = smi->reader->maxDoc() - smi->reader->numDocs();
             }
 
             base += reader->numDocs();

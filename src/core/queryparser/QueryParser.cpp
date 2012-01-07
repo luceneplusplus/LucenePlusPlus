@@ -101,7 +101,7 @@ namespace Lucene
         for (int32_t i = 0; i < 23; ++i)
             jj_la1[i] = -1;
         for (int32_t i = 0; i < jj_2_rtns.size(); ++i)
-            jj_2_rtns[i] = newInstance<JJCalls>();
+            jj_2_rtns[i] = new_gc<JJCalls>();
         jj_expentries = Collection< Collection<int32_t> >::newInstance();
         jj_kind = -1;
         jj_lasttokens = Collection<int32_t>::newInstance(100);
@@ -532,9 +532,9 @@ namespace Lucene
     {
         QueryPtr query(getFieldQuery(field, queryText));
         if (MiscUtils::typeOf<PhraseQuery>(query))
-            LuceneDynamicCast<PhraseQuery>(query)->setSlop(slop);
+            gc_ptr_dynamic_cast<PhraseQuery>(query)->setSlop(slop);
         if (MiscUtils::typeOf<MultiPhraseQuery>(query))
-            LuceneDynamicCast<MultiPhraseQuery>(query)->setSlop(slop);
+            gc_ptr_dynamic_cast<MultiPhraseQuery>(query)->setSlop(slop);
         return query;
     }
 
@@ -1302,7 +1302,7 @@ namespace Lucene
         for (int32_t i = 0; i < 23; ++i)
             jj_la1[i] = -1;
         for (int32_t i = 0; i < jj_2_rtns.size(); ++i)
-            jj_2_rtns[i] = newInstance<JJCalls>();
+            jj_2_rtns[i] = new_gc<JJCalls>();
     }
 
     void QueryParser::ReInit(QueryParserTokenManagerPtr tokenMgr)
@@ -1314,7 +1314,7 @@ namespace Lucene
         for (int32_t i = 0; i < 23; ++i)
             jj_la1[i] = -1;
         for (int32_t i = 0; i < jj_2_rtns.size(); ++i)
-            jj_2_rtns[i] = newInstance<JJCalls>();
+            jj_2_rtns[i] = new_gc<JJCalls>();
     }
 
     QueryParserTokenPtr QueryParser::jj_consume_token(int32_t kind)
@@ -1558,7 +1558,7 @@ namespace Lucene
         {
             if (!p->next)
             {
-                p->next = newInstance<JJCalls>();
+                p->next = new_gc<JJCalls>();
                 p = p->next;
                 break;
             }

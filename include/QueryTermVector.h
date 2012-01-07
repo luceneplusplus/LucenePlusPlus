@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class LPPAPI QueryTermVector : public TermFreqVector, public LuceneObject
+    class LPPAPI QueryTermVector : public TermFreqVector
     {
     public:
         /// @param queryTerms The original list of terms from the query, can contain duplicates

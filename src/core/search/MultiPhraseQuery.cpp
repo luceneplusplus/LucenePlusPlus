@@ -147,7 +147,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        MultiPhraseQueryPtr otherMultiPhraseQuery(LuceneDynamicCast<MultiPhraseQuery>(other));
+        MultiPhraseQueryPtr otherMultiPhraseQuery(gc_ptr_dynamic_cast<MultiPhraseQuery>(other));
         if (!otherMultiPhraseQuery)
             return false;
 
@@ -187,7 +187,7 @@ namespace Lucene
     LuceneObjectPtr MultiPhraseQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<MultiPhraseQuery>();
-        MultiPhraseQueryPtr cloneQuery(LuceneDynamicCast<MultiPhraseQuery>(Query::clone(clone)));
+        MultiPhraseQueryPtr cloneQuery(gc_ptr_dynamic_cast<MultiPhraseQuery>(Query::clone(clone)));
         cloneQuery->field = field;
         cloneQuery->termArrays = termArrays;
         cloneQuery->positions = positions;
@@ -295,7 +295,7 @@ namespace Lucene
         ComplexExplanationPtr fieldExpl(newLucene<ComplexExplanation>());
         fieldExpl->setDescription(L"fieldWeight(" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");
 
-        PhraseScorerPtr phraseScorer(LuceneDynamicCast<PhraseScorer>(scorer(reader, true, false)));
+        PhraseScorerPtr phraseScorer(gc_ptr_dynamic_cast<PhraseScorer>(scorer(reader, true, false)));
         if (!phraseScorer)
             return newLucene<Explanation>(0.0, L"no matching docs");
 

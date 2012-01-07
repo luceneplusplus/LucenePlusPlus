@@ -56,7 +56,7 @@ namespace Lucene
         SetString primaryFiles(primaryDir->listAll());
         SetString secondaryFiles(secondaryDir->listAll());
         SetString files(SetString::newInstance(primaryFiles.begin(), primaryFiles.end()));
-        files.addAll(secondaryFiles.begin(), secondaryFiles.end());
+        files.add(secondaryFiles.begin(), secondaryFiles.end());
         return files;
     }
 

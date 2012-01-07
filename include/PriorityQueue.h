@@ -20,11 +20,11 @@ namespace Lucene
     class PriorityQueue : public LuceneObject
     {
     public:
-        typedef vector_container< std::vector<T> > heap_type;
+        typedef vector_ptr< std::vector<T> > heap_type;
 
         PriorityQueue(int32_t maxSize)
         {
-            this->heap = new_vector<heap_type::vector_type>();
+            this->heap = new_vector<typename heap_type::vector_type>();
             this->_size = 0;
             this->_maxSize = maxSize;
         }

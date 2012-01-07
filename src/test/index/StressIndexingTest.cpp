@@ -335,7 +335,7 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
     {
         IndexingThreadPtr th = threads[i];
         SyncLock syncLock(th);
-        docs.putAll(th->docs.begin(), th->docs.end());
+        docs.put(th->docs.begin(), th->docs.end());
     }
 
     checkIndex(dir);
@@ -381,7 +381,7 @@ static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iter
         {
             IndexingThreadPtr th = threads[i];
             SyncLock syncLock(th);
-            docs.putAll(th->docs.begin(), th->docs.end());
+            docs.put(th->docs.begin(), th->docs.end());
         }
     }
 
@@ -601,11 +601,11 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
             BOOST_CHECK_EQUAL(terms1[j], terms2[j]);
             BOOST_CHECK_EQUAL(freq1[j], freq2[j]);
         }
-        if (LuceneDynamicCast<SegmentTermPositionVector>(v1))
+        if (gc_ptr_dynamic_cast<SegmentTermPositionVector>(v1))
         {
-            BOOST_CHECK(LuceneDynamicCast<SegmentTermPositionVector>(v2));
-            SegmentTermPositionVectorPtr tpv1 = LuceneDynamicCast<SegmentTermPositionVector>(v1);
-            SegmentTermPositionVectorPtr tpv2 = LuceneDynamicCast<SegmentTermPositionVector>(v2);
+            BOOST_CHECK(gc_ptr_dynamic_cast<SegmentTermPositionVector>(v2));
+            SegmentTermPositionVectorPtr tpv1 = gc_ptr_dynamic_cast<SegmentTermPositionVector>(v1);
+            SegmentTermPositionVectorPtr tpv2 = gc_ptr_dynamic_cast<SegmentTermPositionVector>(v2);
             for (int32_t j = 0; j < numTerms; ++j)
             {
                 Collection<int32_t> pos1 = tpv1->getTermPositions(j);

@@ -37,7 +37,7 @@ namespace Lucene
     {
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        IntFieldSourcePtr otherSource(LuceneDynamicCast<IntFieldSource>(other));
+        IntFieldSourcePtr otherSource(gc_ptr_dynamic_cast<IntFieldSource>(other));
         if (!otherSource)
             return false;
         return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;

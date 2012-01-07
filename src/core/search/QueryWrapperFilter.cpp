@@ -18,50 +18,50 @@ namespace Lucene
     {
         this->query = query;
     }
-    
+
     QueryWrapperFilter::~QueryWrapperFilter()
     {
     }
-    
+
     DocIdSetPtr QueryWrapperFilter::getDocIdSet(IndexReaderPtr reader)
     {
         WeightPtr weight(query->weight(newLucene<IndexSearcher>(reader)));
         return newLucene<QueryWrapperFilterDocIdSet>(reader, weight);
     }
-    
+
     String QueryWrapperFilter::toString()
     {
         return L"QueryWrapperFilter(" + query->toString() + L")";
     }
-    
+
     bool QueryWrapperFilter::equals(LuceneObjectPtr other)
     {
-        QueryWrapperFilterPtr otherQueryWrapperFilter(LuceneDynamicCast<QueryWrapperFilter>(other));
+        QueryWrapperFilterPtr otherQueryWrapperFilter(gc_ptr_dynamic_cast<QueryWrapperFilter>(other));
         if (!otherQueryWrapperFilter)
             return false;
         return this->query->equals(otherQueryWrapperFilter->query);
     }
-    
+
     int32_t QueryWrapperFilter::hashCode()
     {
         return query->hashCode() ^ 0x923F64B9;
     }
-    
+
     QueryWrapperFilterDocIdSet::QueryWrapperFilterDocIdSet(IndexReaderPtr reader, WeightPtr weight)
     {
         this->reader = reader;
         this->weight = weight;
     }
-    
+
     QueryWrapperFilterDocIdSet::~QueryWrapperFilterDocIdSet()
     {
     }
-    
+
     DocIdSetIteratorPtr QueryWrapperFilterDocIdSet::iterator()
     {
         return weight->scorer(reader, true, false);
     }
-    
+
     bool QueryWrapperFilterDocIdSet::isCacheable()
     {
         return false;

@@ -71,13 +71,13 @@ namespace Lucene
         {
             for (Collection<TermsHashConsumerPerFieldPtr>::iterator field = entry->second.begin(); field != entry->second.end(); ++field)
             {
-                TermVectorsTermsWriterPerFieldPtr perField(LuceneStaticCast<TermVectorsTermsWriterPerField>(*field));
-                TermsHashPerFieldPtr(perField->_termsHashPerField)->reset();
+                TermVectorsTermsWriterPerFieldPtr perField(gc_ptr_static_cast<TermVectorsTermsWriterPerField>(*field));
+                perField->termsHashPerField->reset();
                 perField->shrinkHash();
             }
 
-            TermVectorsTermsWriterPerThreadPtr perThread(LuceneStaticCast<TermVectorsTermsWriterPerThread>(entry->first));
-            TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(true);
+            TermVectorsTermsWriterPerThreadPtr perThread(gc_ptr_static_cast<TermVectorsTermsWriterPerThread>(entry->first));
+            perThread->termsHashPerThread->reset(true);
         }
     }
 
@@ -180,7 +180,7 @@ namespace Lucene
     {
         SyncLock syncLock(this);
 
-        BOOST_ASSERT(IndexWriterPtr(docWriter->_writer)->testPoint(L"TermVectorsTermsWriter.finishDocument start"));
+        BOOST_ASSERT(docWriter->writer->testPoint(L"TermVectorsTermsWriter.finishDocument start"));
 
         initTermVectorsWriter();
 
@@ -213,7 +213,7 @@ namespace Lucene
 
         perDoc->reset();
         free(perDoc);
-        BOOST_ASSERT(IndexWriterPtr(docWriter->_writer)->testPoint(L"TermVectorsTermsWriter.finishDocument end"));
+        BOOST_ASSERT(docWriter->writer->testPoint(L"TermVectorsTermsWriter.finishDocument end"));
     }
 
     bool TermVectorsTermsWriter::freeRAM()

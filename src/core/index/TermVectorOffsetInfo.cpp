@@ -51,7 +51,7 @@ namespace Lucene
     {
         if (LuceneObject::equals(other))
             return true;
-        TermVectorOffsetInfoPtr otherTermVector(LuceneDynamicCast<TermVectorOffsetInfo>(other));
+        TermVectorOffsetInfoPtr otherTermVector(gc_ptr_dynamic_cast<TermVectorOffsetInfo>(other));
         if (!otherTermVector)
             return false;
         return (endOffset == otherTermVector->endOffset && startOffset == otherTermVector->startOffset);

@@ -43,7 +43,7 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
 
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = LuceneDynamicCast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = gc_ptr_dynamic_cast<SpanQuery>(clauses[i]->clone());
 
         PayloadNearQueryPtr payloadNearQuery(newLucene<PayloadNearQuery>(newClauses, slop, inOrder));
         payloadNearQuery->setBoost(getBoost());
@@ -72,7 +72,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        PayloadNearQueryPtr otherQuery(LuceneDynamicCast<PayloadNearQuery>(other));
+        PayloadNearQueryPtr otherQuery(gc_ptr_dynamic_cast<PayloadNearQuery>(other));
         if (!otherQuery)
             return false;
         if (fieldName != otherQuery->fieldName)
@@ -127,14 +127,14 @@ namespace Lucene
         {
             if (MiscUtils::typeOf<NearSpansOrdered>(*span))
             {
-                NearSpansOrderedPtr ordered(LuceneStaticCast<NearSpansOrdered>(*span));
+                NearSpansOrderedPtr ordered(gc_ptr_static_cast<NearSpansOrdered>(*span));
                 if (ordered->isPayloadAvailable())
                     processPayloads(ordered->getPayload(), ordered->start(), ordered->end());
                 getPayloads(ordered->getSubSpans());
             }
             else if (MiscUtils::typeOf<NearSpansUnordered>(*span))
             {
-                NearSpansUnorderedPtr unordered(LuceneStaticCast<NearSpansUnordered>(*span));
+                NearSpansUnorderedPtr unordered(gc_ptr_static_cast<NearSpansUnordered>(*span));
                 if (unordered->isPayloadAvailable())
                     processPayloads(unordered->getPayload(), unordered->start(), unordered->end());
                 getPayloads(unordered->getSubSpans());
@@ -144,8 +144,8 @@ namespace Lucene
 
     void PayloadNearSpanScorer::processPayloads(Collection<ByteArray> payLoads, int32_t start, int32_t end)
     {
-        PayloadNearSpanWeightPtr spanWeight(LuceneStaticCast<PayloadNearSpanWeight>(weight));
-        PayloadNearQueryPtr nearQuery(LuceneStaticCast<PayloadNearQuery>(spanWeight->query));
+        PayloadNearSpanWeightPtr spanWeight(gc_ptr_static_cast<PayloadNearSpanWeight>(weight));
+        PayloadNearQueryPtr nearQuery(gc_ptr_static_cast<PayloadNearQuery>(spanWeight->query));
 
         for (Collection<ByteArray>::iterator payload = payLoads.begin(); payload != payLoads.end(); ++payload)
         {
@@ -169,8 +169,8 @@ namespace Lucene
 
     double PayloadNearSpanScorer::score()
     {
-        PayloadNearSpanWeightPtr spanWeight(LuceneStaticCast<PayloadNearSpanWeight>(weight));
-        PayloadNearQueryPtr nearQuery(LuceneStaticCast<PayloadNearQuery>(spanWeight->query));
+        PayloadNearSpanWeightPtr spanWeight(gc_ptr_static_cast<PayloadNearSpanWeight>(weight));
+        PayloadNearQueryPtr nearQuery(gc_ptr_static_cast<PayloadNearQuery>(spanWeight->query));
         return SpanScorer::score() * nearQuery->function->docScore(doc, nearQuery->fieldName, payloadsSeen, payloadScore);
     }
 

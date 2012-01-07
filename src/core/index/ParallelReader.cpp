@@ -11,6 +11,7 @@
 #include "FieldSelector.h"
 #include "Term.h"
 #include "FieldCache.h"
+#include "TermFreqVector.h"
 #include "StringUtils.h"
 
 namespace Lucene
@@ -113,7 +114,7 @@ namespace Lucene
             {
                 IndexReaderPtr newReader;
                 if (doClone)
-                    newReader = LuceneDynamicCast<IndexReader>((*oldReader)->clone());
+                    newReader = gc_ptr_dynamic_cast<IndexReader>((*oldReader)->clone());
                 else
                     newReader = (*oldReader)->reopen();
                 newReaders.add(newReader);
@@ -423,7 +424,7 @@ namespace Lucene
         for (Collection<IndexReaderPtr>::iterator reader = readers.begin(); reader != readers.end(); ++reader)
         {
             SetString names((*reader)->getFieldNames(fieldOption));
-            fieldSet.addAll(names.begin(), names.end());
+            fieldSet.add(names.begin(), names.end());
         }
         return fieldSet;
     }
@@ -579,30 +580,30 @@ namespace Lucene
     void ParallelTermPositions::seek(TermPtr term)
     {
         MapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());
-        termDocs = indexReader != reader->fieldToReader.end() ? LuceneStaticCast<TermDocs>(indexReader->second->termPositions(term)) : TermDocsPtr();
+        termDocs = indexReader != reader->fieldToReader.end() ? gc_ptr_static_cast<TermDocs>(indexReader->second->termPositions(term)) : TermDocsPtr();
     }
 
     int32_t ParallelTermPositions::nextPosition()
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return LuceneStaticCast<TermPositions>(termDocs)->nextPosition();
+        return gc_ptr_static_cast<TermPositions>(termDocs)->nextPosition();
     }
 
     int32_t ParallelTermPositions::getPayloadLength()
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return LuceneStaticCast<TermPositions>(termDocs)->getPayloadLength();
+        return gc_ptr_static_cast<TermPositions>(termDocs)->getPayloadLength();
     }
 
     ByteArray ParallelTermPositions::getPayload(ByteArray data, int32_t offset)
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return LuceneStaticCast<TermPositions>(termDocs)->getPayload(data, offset);
+        return gc_ptr_static_cast<TermPositions>(termDocs)->getPayload(data, offset);
     }
 
     bool ParallelTermPositions::isPayloadAvailable()
     {
         // It is an error to call this if there is no next position, eg. if termDocs==null
-        return LuceneStaticCast<TermPositions>(termDocs)->isPayloadAvailable();
+        return gc_ptr_static_cast<TermPositions>(termDocs)->isPayloadAvailable();
     }
 }

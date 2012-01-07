@@ -8,6 +8,7 @@
 #include "TopDocsCollector.h"
 #include "TopDocs.h"
 #include "HitQueueBase.h"
+#include "ScoreDoc.h"
 
 namespace Lucene
 {

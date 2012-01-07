@@ -28,12 +28,27 @@ public:
 };
 
 DECLARE_LUCENE_PTR(IntegerPtrQueue)
-typedef gc_ptr<int32_t> IntPtr;
 
-class IntegerPtrQueue : public PriorityQueue<IntPtr>
+class Integer : public gc_object
 {
 public:
-    IntegerPtrQueue(int32_t maxSize) : PriorityQueue<IntPtr>(maxSize)
+    Integer(int32_t num) : number(num)
+    {
+    }
+
+    virtual ~Integer()
+    {
+    }
+
+    int32_t number;
+};
+
+DECLARE_LUCENE_PTR(Integer)
+
+class IntegerPtrQueue : public PriorityQueue<IntegerPtr>
+{
+public:
+    IntegerPtrQueue(int32_t maxSize) : PriorityQueue<IntegerPtr>(maxSize)
     {
     }
 
@@ -42,9 +57,9 @@ public:
     }
 
 protected:
-    virtual bool lessThan(const IntPtr& first, const IntPtr& second)
+    virtual bool lessThan(const IntegerPtr& first, const IntegerPtr& second)
     {
-        return (*first < *second);
+        return (first->number < second->number);
     }
 };
 
@@ -102,24 +117,24 @@ BOOST_AUTO_TEST_CASE(testPriorityQueueClear)
 BOOST_AUTO_TEST_CASE(testPriorityQueueUpdate)
 {
     IntegerPtrQueuePtr testQueue = newLucene<IntegerPtrQueue>(1024);
-    testQueue->add(newInstance<int32_t>(2));
-    testQueue->add(newInstance<int32_t>(3));
-    testQueue->add(newInstance<int32_t>(1));
-    testQueue->add(newInstance<int32_t>(4));
-    testQueue->add(newInstance<int32_t>(5));
+    testQueue->add(new_gc<Integer>(2));
+    testQueue->add(new_gc<Integer>(3));
+    testQueue->add(new_gc<Integer>(1));
+    testQueue->add(new_gc<Integer>(4));
+    testQueue->add(new_gc<Integer>(5));
     BOOST_CHECK_EQUAL(testQueue->size(), 5);
 
-    IntPtr top = testQueue->top();
-    BOOST_CHECK_EQUAL(*top, 1);
+    IntegerPtr top = testQueue->top();
+    BOOST_CHECK_EQUAL(top->number, 1);
 
-    *top = 6;
+    top->number = 6;
     testQueue->updateTop();
 
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 2);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 3);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 4);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 5);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 6);
+    BOOST_CHECK_EQUAL(testQueue->pop()->number, 2);
+    BOOST_CHECK_EQUAL(testQueue->pop()->number, 3);
+    BOOST_CHECK_EQUAL(testQueue->pop()->number, 4);
+    BOOST_CHECK_EQUAL(testQueue->pop()->number, 5);
+    BOOST_CHECK_EQUAL(testQueue->pop()->number, 6);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

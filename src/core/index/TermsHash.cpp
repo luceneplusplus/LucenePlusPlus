@@ -14,6 +14,7 @@
 #include "DocInverterPerThread.h"
 #include "TermsHashConsumerPerField.h"
 #include "IndexWriter.h"
+#include "RawPostingList.h"
 #include "MiscUtils.h"
 
 namespace Lucene
@@ -104,14 +105,14 @@ namespace Lucene
 
             for (Collection<InvertedDocConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
             {
-                childFields.add(LuceneStaticCast<TermsHashPerField>(*perField)->consumer);
+                childFields.add(gc_ptr_static_cast<TermsHashPerField>(*perField)->consumer);
                 if (nextTermsHash)
-                    nextChildFields.add(LuceneStaticCast<TermsHashPerField>(*perField)->nextPerField);
+                    nextChildFields.add(gc_ptr_static_cast<TermsHashPerField>(*perField)->nextPerField);
             }
 
-            childThreadsAndFields.put(LuceneStaticCast<TermsHashPerThread>(entry->first)->consumer, childFields);
+            childThreadsAndFields.put(gc_ptr_static_cast<TermsHashPerThread>(entry->first)->consumer, childFields);
             if (nextTermsHash)
-                nextThreadsAndFields.put(LuceneStaticCast<TermsHashPerThread>(entry->first)->nextPerThread, nextChildFields);
+                nextThreadsAndFields.put(gc_ptr_static_cast<TermsHashPerThread>(entry->first)->nextPerThread, nextChildFields);
         }
 
         consumer->flush(childThreadsAndFields, state);

@@ -13,22 +13,22 @@ namespace Lucene
     IndexCommit::~IndexCommit()
     {
     }
-    
+
     bool IndexCommit::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        IndexCommitPtr otherCommit(LuceneDynamicCast<IndexCommit>(other));
+        IndexCommitPtr otherCommit(gc_ptr_dynamic_cast<IndexCommit>(other));
         if (!otherCommit)
             return false;
         return (otherCommit->getDirectory()->equals(getDirectory()) && otherCommit->getVersion() == getVersion());
     }
-    
+
     int32_t IndexCommit::hashCode()
     {
         return (getDirectory()->hashCode() + (int32_t)getVersion());
     }
-    
+
     int64_t IndexCommit::getTimestamp()
     {
         return getDirectory()->fileModified(getSegmentsFileName());

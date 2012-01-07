@@ -207,7 +207,7 @@ namespace Lucene
         if (subSpan->isPayloadAvailable())
         {
             Collection<ByteArray> payload(subSpan->getPayload());
-            possibleMatchPayloads.addAll(payload.begin(), payload.end());
+            possibleMatchPayloads.add(payload.begin(), payload.end());
         }
 
         Collection<ByteArray> possiblePayload;
@@ -259,7 +259,7 @@ namespace Lucene
             }
 
             if (collectPayloads && possiblePayload)
-                possibleMatchPayloads.addAll(possiblePayload.begin(), possiblePayload.end());
+                possibleMatchPayloads.add(possiblePayload.begin(), possiblePayload.end());
 
             BOOST_ASSERT(prevStart <= matchStart);
             if (matchStart > prevEnd) // Only non overlapping spans add to slop.
@@ -275,7 +275,7 @@ namespace Lucene
         bool match = (matchSlop <= allowedSlop);
 
         if (collectPayloads && match && !possibleMatchPayloads.empty())
-            matchPayload.addAll(possibleMatchPayloads.begin(), possibleMatchPayloads.end());
+            matchPayload.add(possibleMatchPayloads.begin(), possibleMatchPayloads.end());
 
         return match; // ordered and allowed slop
     }

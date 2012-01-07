@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE(testNormalization)
     BOOST_CHECK_EQUAL(2, hits.size());
 
     // Store the scores for use later
-    Collection<double> scores = newCollectionDouble(hits[0]->score, hits[1]->score);
+    Collection<double> scores = newCollection<double>(hits[0]->score, hits[1]->score);
     BOOST_CHECK(scores[0] > scores[1]);
 
     indexSearcher1->close();

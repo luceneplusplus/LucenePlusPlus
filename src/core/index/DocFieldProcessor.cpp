@@ -43,7 +43,7 @@ namespace Lucene
 
         for (Collection<DocConsumerPerThreadPtr>::iterator thread = threads.begin(); thread != threads.end(); ++thread)
         {
-            DocFieldProcessorPerThreadPtr perThread(LuceneStaticCast<DocFieldProcessorPerThread>(*thread));
+            DocFieldProcessorPerThreadPtr perThread(gc_ptr_static_cast<DocFieldProcessorPerThread>(*thread));
             childThreadsAndFields.put(perThread->consumer, perThread->fields());
             perThread->trimFields(state);
         }

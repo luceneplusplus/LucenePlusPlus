@@ -14,16 +14,16 @@ namespace Lucene
     PrefixFilter::PrefixFilter(TermPtr prefix) : MultiTermQueryWrapperFilter(newLucene<PrefixQuery>(prefix))
     {
     }
-    
+
     PrefixFilter::~PrefixFilter()
     {
     }
-    
+
     TermPtr PrefixFilter::getPrefix()
     {
-        return LuceneStaticCast<PrefixQuery>(query)->getPrefix();
+        return gc_ptr_static_cast<PrefixQuery>(query)->getPrefix();
     }
-    
+
     String PrefixFilter::toString()
     {
         StringStream buffer;

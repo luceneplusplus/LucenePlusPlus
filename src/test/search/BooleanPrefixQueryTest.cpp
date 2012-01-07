@@ -28,10 +28,10 @@ BOOST_FIXTURE_TEST_SUITE(BooleanPrefixQueryTest, LuceneTestFixture)
 static int32_t getCount(IndexReaderPtr r, QueryPtr q)
 {
     if (MiscUtils::typeOf<BooleanQuery>(q))
-        return LuceneDynamicCast<BooleanQuery>(q)->getClauses().size();
+        return gc_ptr_dynamic_cast<BooleanQuery>(q)->getClauses().size();
     else if (MiscUtils::typeOf<ConstantScoreQuery>(q))
     {
-        DocIdSetIteratorPtr iter = LuceneDynamicCast<ConstantScoreQuery>(q)->getFilter()->getDocIdSet(r)->iterator();
+        DocIdSetIteratorPtr iter = gc_ptr_dynamic_cast<ConstantScoreQuery>(q)->getFilter()->getDocIdSet(r)->iterator();
         int32_t count = 0;
         while (iter->nextDoc() != DocIdSetIterator::NO_MORE_DOCS)
             ++count;

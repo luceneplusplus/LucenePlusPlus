@@ -14,74 +14,74 @@ namespace Lucene
     DocIdBitSet::DocIdBitSet()
     {
     }
-    
+
     DocIdBitSet::DocIdBitSet(BitSetPtr bitSet)
     {
         this->bitSet = bitSet;
     }
-    
+
     DocIdBitSet::~DocIdBitSet()
     {
     }
-    
+
     DocIdSetIteratorPtr DocIdBitSet::iterator()
     {
         return newLucene<DocIdBitSetIterator>(bitSet);
     }
-    
+
     bool DocIdBitSet::isCacheable()
     {
         return true;
     }
-    
+
     BitSetPtr DocIdBitSet::getBitSet()
     {
         return bitSet;
     }
-    
+
     bool DocIdBitSet::equals(LuceneObjectPtr other)
     {
         if (DocIdSet::equals(other))
             return true;
-        DocIdBitSetPtr otherBitSet(LuceneDynamicCast<DocIdBitSet>(other));
+        DocIdBitSetPtr otherBitSet(gc_ptr_dynamic_cast<DocIdBitSet>(other));
         return bitSet->equals(otherBitSet->bitSet);
     }
-    
+
     int32_t DocIdBitSet::hashCode()
     {
         return bitSet->hashCode();
     }
-    
+
     LuceneObjectPtr DocIdBitSet::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<DocIdBitSet>();
-        DocIdBitSetPtr cloneBitSet(LuceneDynamicCast<DocIdBitSet>(LuceneObject::clone(clone)));
-        cloneBitSet->bitSet = LuceneDynamicCast<BitSet>(bitSet->clone());
+        DocIdBitSetPtr cloneBitSet(gc_ptr_dynamic_cast<DocIdBitSet>(LuceneObject::clone(clone)));
+        cloneBitSet->bitSet = gc_ptr_dynamic_cast<BitSet>(bitSet->clone());
         return cloneBitSet;
     }
-    
+
     DocIdBitSetIterator::DocIdBitSetIterator(BitSetPtr bitSet)
     {
         this->bitSet = bitSet;
         this->docId = -1;
     }
-    
+
     DocIdBitSetIterator::~DocIdBitSetIterator()
     {
     }
-    
+
     int32_t DocIdBitSetIterator::docID()
     {
         return docId;
     }
-    
+
     int32_t DocIdBitSetIterator::nextDoc()
     {
         int32_t doc = bitSet->nextSetBit(docId + 1);
         docId = doc == -1 ? NO_MORE_DOCS : doc;
         return docId;
     }
-    
+
     int32_t DocIdBitSetIterator::advance(int32_t target)
     {
         int32_t doc = bitSet->nextSetBit(target);

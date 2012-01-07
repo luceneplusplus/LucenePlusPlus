@@ -24,7 +24,7 @@ namespace Lucene
         static boost::mutex lockMutex;
         boost::mutex::scoped_lock syncLock(lockMutex);
         if (!signal)
-            signal = newInstance<LuceneSignal>(objectLock);
+            signal = new_gc<LuceneSignal>(objectLock);
     }
 
     void LuceneSignal::wait(int32_t timeout)

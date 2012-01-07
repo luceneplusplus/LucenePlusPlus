@@ -41,7 +41,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        MultiTermQueryWrapperFilterPtr otherMultiTermQueryWrapperFilter(LuceneDynamicCast<MultiTermQueryWrapperFilter>(other));
+        MultiTermQueryWrapperFilterPtr otherMultiTermQueryWrapperFilter(gc_ptr_dynamic_cast<MultiTermQueryWrapperFilter>(other));
         if (otherMultiTermQueryWrapperFilter)
             return query->equals(otherMultiTermQueryWrapperFilter->query);
         return false;

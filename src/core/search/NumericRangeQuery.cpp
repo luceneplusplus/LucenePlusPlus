@@ -129,7 +129,7 @@ namespace Lucene
     LuceneObjectPtr NumericRangeQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<NumericRangeQuery>(field, precisionStep, valSize, min, max, minInclusive, maxInclusive));
-        NumericRangeQueryPtr cloneQuery(LuceneDynamicCast<NumericRangeQuery>(clone));
+        NumericRangeQueryPtr cloneQuery(gc_ptr_dynamic_cast<NumericRangeQuery>(clone));
         cloneQuery->field = field;
         cloneQuery->precisionStep = precisionStep;
         cloneQuery->valSize = valSize;
@@ -167,7 +167,7 @@ namespace Lucene
         if (!MultiTermQuery::equals(other))
             return false;
 
-        NumericRangeQueryPtr otherNumericRangeQuery(LuceneDynamicCast<NumericRangeQuery>(other));
+        NumericRangeQueryPtr otherNumericRangeQuery(gc_ptr_dynamic_cast<NumericRangeQuery>(other));
         if (!otherNumericRangeQuery)
             return false;
 

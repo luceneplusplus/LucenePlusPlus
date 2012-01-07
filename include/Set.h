@@ -14,16 +14,16 @@
 namespace Lucene
 {
     template <class T>
-    class Set : public set_container<T>, public LuceneSync
+    class Set : public set_ptr<T>, public LuceneSync
     {
     public:
         typedef typename T::value_type value_type;
 
-        Set(gc_container<T, value_type>* p = 0) : set_container<T>(p)
+        Set(single_container<T>* p = 0) : set_ptr<T>(p)
         {
         }
 
-        Set(const Set& rhs) : set_container<T>(rhs)
+        Set(const Set& rhs) : set_ptr<T>(rhs)
         {
         }
 
@@ -63,12 +63,12 @@ namespace Lucene
 
         int32_t hashCode()
         {
-            return (int32_t)(int64_t)get();
+            return (int32_t)(int64_t)this->get();
         }
 
         int32_t size() const
         {
-            return (int32_t)set_container<T>::size();
+            return (int32_t)set_ptr<T>::size();
         }
     };
 
@@ -81,7 +81,7 @@ namespace Lucene
         typedef typename set_type::hasher hasher;
         typedef typename set_type::key_equal key_equal;
 
-        HashSet(gc_container<set_type, value_type>* p = 0) : Set<set_type>(p)
+        HashSet(single_container<set_type>* p = 0) : Set<set_type>(p)
         {
         }
 
@@ -91,18 +91,18 @@ namespace Lucene
 
         static HashSet<VALUE, HASH, EQUAL> newInstance()
         {
-            return HashSet<VALUE, HASH, EQUAL>(new(get_gc()) gc_container<boost::unordered_set<VALUE, HASH, EQUAL>, VALUE>());
+            return HashSet<VALUE, HASH, EQUAL>(new(get_gc()) single_container<set_type>());
         }
 
         static HashSet<VALUE, HASH, EQUAL> newStaticInstance()
         {
-            return HashSet<VALUE, HASH, EQUAL>(new(get_static_gc()) gc_container<boost::unordered_set<VALUE, HASH, EQUAL>, VALUE>());
+            return HashSet<VALUE, HASH, EQUAL>(new(get_static_gc()) single_container<set_type>());
         }
 
         template <class ITER>
         static HashSet<VALUE, HASH, EQUAL> newInstance(ITER first, ITER last)
         {
-            HashSet<VALUE, HASH, EQUAL> container(new(get_gc()) gc_container<boost::unordered_set<VALUE, HASH, EQUAL>, VALUE>());
+            HashSet<VALUE, HASH, EQUAL> container(new(get_gc()) single_container<set_type>());
             container.insert(first, last);
             return container;
         }
@@ -110,50 +110,11 @@ namespace Lucene
         template <class ITER>
         static HashSet<VALUE, HASH, EQUAL> newStaticInstance(ITER first, ITER last)
         {
-            HashSet<VALUE, HASH, EQUAL> container(new(get_static_gc()) gc_container<boost::unordered_set<VALUE, HASH, EQUAL>, VALUE>());
+            HashSet<VALUE, HASH, EQUAL> container(new(get_static_gc()) single_container<set_type>());
             container.insert(first, last);
             return container;
         }
     };
-
-    // todo
-    // template <class VALUE, class HASH, class EQUAL>
-    // HashSet<VALUE, HASH, EQUAL> newHashSetPlaceholder(gc& gc)
-    // {
-    //     return HashSet<VALUE, HASH, EQUAL>(new(gc) gc_container<boost::unordered_set<VALUE, HASH, EQUAL>, VALUE>());
-    // }
-
-    // template <class T>
-    // HashSet<typename T::value_type, typename T::hasher, typename T::key_equal> newHashSet()
-    // {
-    //     return newHashSetPlaceholder<typename T::value_type, typename T::hasher, typename T::key_equal>(get_gc());
-    // }
-
-    // template <class T>
-    // HashSet<typename T::value_type, typename T::hasher, typename T::key_equal> newStaticHashSet()
-    // {
-    //     return newHashSetPlaceholder<typename T::value_type, typename T::hasher, typename T::key_equal>(get_static_gc());
-    // }
-
-    // template <class VALUE, class HASH, class EQUAL, class ITER>
-    // HashSet<VALUE, HASH, EQUAL> newHashSetPlaceholder(gc& gc, ITER first, ITER last)
-    // {
-    //     HashSet<VALUE, HASH, EQUAL> container(new(gc) gc_container<boost::unordered_set<VALUE, HASH, EQUAL>, VALUE>());
-    //     container.insert(first, last);
-    //     return container;
-    // }
-
-    // template <class T, class ITER>
-    // HashSet<typename T::value_type, typename T::hasher, typename T::key_equal> newHashSet(ITER first, ITER last)
-    // {
-    //     return newHashSetPlaceholder<typename T::value_type, typename T::hasher, typename T::key_equal>(get_gc(), first, last);
-    // }
-
-    // template <class T, class ITER>
-    // HashSet<typename T::value_type, typename T::hasher, typename T::key_equal> newStaticHashSet(ITER first, ITER last)
-    // {
-    //     return newHashSetPlaceholder<typename T::value_type, typename T::hasher, typename T::key_equal>(get_static_gc(), first, last);
-    // }
 
     template < class VALUE, class COMPARE = std::less<VALUE> >
     class SortedSet : public Set < std::set<VALUE, COMPARE> >
@@ -163,7 +124,7 @@ namespace Lucene
         typedef typename set_type::value_type value_type;
         typedef typename set_type::key_compare key_compare;
 
-        SortedSet(gc_container<set_type, value_type>* p = 0) : Set<set_type>(p)
+        SortedSet(single_container<set_type>* p = 0) : Set<set_type>(p)
         {
         }
 
@@ -173,18 +134,18 @@ namespace Lucene
 
         static SortedSet<VALUE, COMPARE> newInstance()
         {
-            return SortedSet<VALUE, COMPARE>(new(get_gc()) gc_container<std::set<VALUE, COMPARE>, VALUE>());
+            return SortedSet<VALUE, COMPARE>(new(get_gc()) single_container<set_type>());
         }
 
         static SortedSet<VALUE, COMPARE> newStaticInstance()
         {
-            return SortedSet<VALUE, COMPARE>(new(get_static_gc()) gc_container<std::set<VALUE, COMPARE>, VALUE>());
+            return SortedSet<VALUE, COMPARE>(new(get_static_gc()) single_container<set_type>());
         }
 
         template <class ITER>
         static SortedSet<VALUE, COMPARE> newInstance(ITER first, ITER last)
         {
-            SortedSet<VALUE, COMPARE> container(new(get_gc()) gc_container<std::set<VALUE, COMPARE>, VALUE>());
+            SortedSet<VALUE, COMPARE> container(new(get_gc()) single_container<set_type>());
             container.insert(first, last);
             return container;
         }
@@ -192,50 +153,11 @@ namespace Lucene
         template <class ITER>
         static SortedSet<VALUE, COMPARE> newStaticInstance(ITER first, ITER last)
         {
-            SortedSet<VALUE, COMPARE> container(new(get_static_gc()) gc_container<std::set<VALUE, COMPARE>, VALUE>());
+            SortedSet<VALUE, COMPARE> container(new(get_static_gc()) single_container<set_type>());
             container.insert(first, last);
             return container;
         }
     };
-
-    // todo
-    // template <class VALUE, class COMPARE>
-    // SortedSet<VALUE, COMPARE> newSortedSetPlaceholder(gc& gc)
-    // {
-    //     return SortedSet<VALUE, COMPARE>(new(gc) gc_container<std::set<VALUE, COMPARE>, VALUE>());
-    // }
-
-    // template <class T>
-    // SortedSet<typename T::value_type, typename T::key_compare> newSortedSet()
-    // {
-    //     return newSortedSetPlaceholder<typename T::value_type, typename T::key_compare>(get_gc());
-    // }
-
-    // template <class T>
-    // SortedSet<typename T::value_type, typename T::key_compare> newStaticSortedSet()
-    // {
-    //     return newSortedSetPlaceholder<typename T::value_type, typename T::key_compare>(get_static_gc());
-    // }
-
-    // template <class VALUE, class COMPARE, class ITER>
-    // HashSet<VALUE, COMPARE> newSortedSetPlaceholder(gc& gc, ITER first, ITER last)
-    // {
-    //     SortedSet<VALUE, COMPARE> container(new(gc) gc_container<std::set<VALUE, COMPARE>, VALUE>());
-    //     container.insert(first, last);
-    //     return container;
-    // }
-
-    // template <class T, class ITER>
-    // SortedSet<typename T::value_type, typename T::key_compare> newSortedSet(ITER first, ITER last)
-    // {
-    //     return newSortedSetPlaceholder<typename T::value_type, typename T::key_compare>(get_gc(), first, last);
-    // }
-
-    // template <class T, class ITER>
-    // SortedSet<typename T::value_type, typename T::key_compare > newStaticSortedSet(ITER first, ITER last)
-    // {
-    //     return newSortedSetPlaceholder<typename T::value_type, typename T::key_compare>(get_static_gc(), first, last);
-    // }
 }
 
 #endif

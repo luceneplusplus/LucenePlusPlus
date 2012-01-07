@@ -16,21 +16,21 @@ namespace Lucene
     {
         this->prefix = prefix;
     }
-    
+
     PrefixQuery::~PrefixQuery()
     {
     }
-    
+
     TermPtr PrefixQuery::getPrefix()
     {
         return prefix;
     }
-    
+
     FilteredTermEnumPtr PrefixQuery::getEnum(IndexReaderPtr reader)
     {
         return newLucene<PrefixTermEnum>(reader, prefix);
     }
-    
+
     String PrefixQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -39,15 +39,15 @@ namespace Lucene
         buffer << prefix->text() << L"*" << boostString();
         return buffer.str();
     }
-    
+
     LuceneObjectPtr PrefixQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<PrefixQuery>(prefix));
-        PrefixQueryPtr cloneQuery(LuceneDynamicCast<PrefixQuery>(clone));
+        PrefixQueryPtr cloneQuery(gc_ptr_dynamic_cast<PrefixQuery>(clone));
         cloneQuery->prefix = prefix;
         return cloneQuery;
     }
-    
+
     int32_t PrefixQuery::hashCode()
     {
         int32_t prime = 31;
@@ -55,7 +55,7 @@ namespace Lucene
         result = prime * result + (prefix ? prefix->hashCode() : 0);
         return result;
     }
-    
+
     bool PrefixQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -64,7 +64,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        PrefixQueryPtr otherPrefixQuery(LuceneDynamicCast<PrefixQuery>(other));
+        PrefixQueryPtr otherPrefixQuery(gc_ptr_dynamic_cast<PrefixQuery>(other));
         if (!otherPrefixQuery)
             return false;
         if (!prefix)

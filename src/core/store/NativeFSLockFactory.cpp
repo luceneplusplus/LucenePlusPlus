@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include <fstream>
 #include <boost/interprocess/sync/file_lock.hpp>
+#include <boost/make_shared.hpp>
 #include "NativeFSLockFactory.h"
 #include "_NativeFSLockFactory.h"
 #include "Random.h"
@@ -57,7 +58,7 @@ namespace Lucene
     {
         static SynchronizePtr _LOCK_HELD_LOCK;
         if (!_LOCK_HELD_LOCK)
-            _LOCK_HELD_LOCK = newStaticInstance<Synchronize>();
+            _LOCK_HELD_LOCK = new_static_gc<Synchronize>();
         return _LOCK_HELD_LOCK;
     }
 

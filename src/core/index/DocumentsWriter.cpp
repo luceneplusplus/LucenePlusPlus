@@ -154,7 +154,7 @@ namespace Lucene
         flushedDocCount = writer->maxDoc();
 
         consumer = indexingChain->getChain(LuceneThis());
-        docFieldProcessor = LuceneDynamicCast<DocFieldProcessor>(consumer);
+        docFieldProcessor = gc_ptr_dynamic_cast<DocFieldProcessor>(consumer);
     }
 
     PerDocBufferPtr DocumentsWriter::newPerDocBuffer()

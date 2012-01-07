@@ -377,10 +377,10 @@ BOOST_AUTO_TEST_CASE(testWildcard)
     BOOST_CHECK(MiscUtils::typeOf<PrefixQuery>(getQuery(L"term*^2", AnalyzerPtr())));
     BOOST_CHECK(MiscUtils::typeOf<FuzzyQuery>(getQuery(L"term~", AnalyzerPtr())));
     BOOST_CHECK(MiscUtils::typeOf<FuzzyQuery>(getQuery(L"term~0.7", AnalyzerPtr())));
-    FuzzyQueryPtr fq = LuceneDynamicCast<FuzzyQuery>(getQuery(L"term~0.7", AnalyzerPtr()));
+    FuzzyQueryPtr fq = gc_ptr_dynamic_cast<FuzzyQuery>(getQuery(L"term~0.7", AnalyzerPtr()));
     BOOST_CHECK_CLOSE_FRACTION(0.7, fq->getMinSimilarity(), 0.1);
     BOOST_CHECK_EQUAL(FuzzyQuery::defaultPrefixLength, fq->getPrefixLength());
-    fq = LuceneDynamicCast<FuzzyQuery>(getQuery(L"term~", AnalyzerPtr()));
+    fq = gc_ptr_dynamic_cast<FuzzyQuery>(getQuery(L"term~", AnalyzerPtr()));
     BOOST_CHECK_CLOSE_FRACTION(0.5, fq->getMinSimilarity(), 0.1);
     BOOST_CHECK_EQUAL(FuzzyQuery::defaultPrefixLength, fq->getPrefixLength());
 
@@ -473,11 +473,11 @@ BOOST_AUTO_TEST_CASE(testQPA)
 BOOST_AUTO_TEST_CASE(testRange)
 {
     checkQueryEquals(L"[ a TO z]", AnalyzerPtr(), L"[a TO z]");
-    BOOST_CHECK_EQUAL(MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT(), LuceneDynamicCast<TermRangeQuery>(getQuery(L"[ a TO z]", AnalyzerPtr()))->getRewriteMethod());
+    BOOST_CHECK_EQUAL(MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT(), gc_ptr_dynamic_cast<TermRangeQuery>(getQuery(L"[ a TO z]", AnalyzerPtr()))->getRewriteMethod());
 
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<SimpleAnalyzer>());
     qp->setMultiTermRewriteMethod(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE());
-    BOOST_CHECK_EQUAL(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE(), LuceneDynamicCast<TermRangeQuery>(qp->parse(L"[ a TO z]"))->getRewriteMethod());
+    BOOST_CHECK_EQUAL(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE(), gc_ptr_dynamic_cast<TermRangeQuery>(qp->parse(L"[ a TO z]"))->getRewriteMethod());
 
     checkQueryEquals(L"[ a TO z ]", AnalyzerPtr(), L"[a TO z]");
     checkQueryEquals(L"{ a TO z}", AnalyzerPtr(), L"{a TO z}");
@@ -797,35 +797,35 @@ BOOST_AUTO_TEST_CASE(testStarParsing)
 {
     TestStarParsing::StarParserPtr qp = newLucene<TestStarParsing::StarParser>(L"field", newLucene<WhitespaceAnalyzer>());
 
-    TermQueryPtr tq = LuceneDynamicCast<TermQuery>(qp->parse(L"foo:zoo*"));
+    TermQueryPtr tq = gc_ptr_dynamic_cast<TermQuery>(qp->parse(L"foo:zoo*"));
     BOOST_CHECK_EQUAL(L"zoo", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(2, qp->type[0]);
 
-    tq = LuceneDynamicCast<TermQuery>(qp->parse(L"foo:zoo*^2"));
+    tq = gc_ptr_dynamic_cast<TermQuery>(qp->parse(L"foo:zoo*^2"));
     BOOST_CHECK_EQUAL(L"zoo", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(2, qp->type[0]);
     BOOST_CHECK_EQUAL(tq->getBoost(), 2);
 
-    tq = LuceneDynamicCast<TermQuery>(qp->parse(L"foo:*"));
+    tq = gc_ptr_dynamic_cast<TermQuery>(qp->parse(L"foo:*"));
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(1, qp->type[0]);  // could be a valid prefix query in the future too
 
-    tq = LuceneDynamicCast<TermQuery>(qp->parse(L"foo:*^2"));
+    tq = gc_ptr_dynamic_cast<TermQuery>(qp->parse(L"foo:*^2"));
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(1, qp->type[0]);
     BOOST_CHECK_EQUAL(tq->getBoost(), 2);
 
-    tq = LuceneDynamicCast<TermQuery>(qp->parse(L"*:foo"));
+    tq = gc_ptr_dynamic_cast<TermQuery>(qp->parse(L"*:foo"));
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->field());
     BOOST_CHECK_EQUAL(L"foo", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(3, qp->type[0]);
 
-    tq = LuceneDynamicCast<TermQuery>(qp->parse(L"*:*"));
+    tq = gc_ptr_dynamic_cast<TermQuery>(qp->parse(L"*:*"));
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->field());
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(1, qp->type[0]);  // could be handled as a prefix query in the future
 
-    tq = LuceneDynamicCast<TermQuery>(qp->parse(L"(*:*)"));
+    tq = gc_ptr_dynamic_cast<TermQuery>(qp->parse(L"(*:*)"));
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->field());
     BOOST_CHECK_EQUAL(L"*", tq->getTerm()->text());
     BOOST_CHECK_EQUAL(1, qp->type[0]);
@@ -837,14 +837,14 @@ BOOST_AUTO_TEST_CASE(testStopwords)
     QueryPtr result = qp->parse(L"a:the OR a:foo");
     BOOST_CHECK(result);
     BOOST_CHECK(MiscUtils::typeOf<BooleanQuery>(result));
-    BOOST_CHECK(LuceneDynamicCast<BooleanQuery>(result)->getClauses().empty());
+    BOOST_CHECK(gc_ptr_dynamic_cast<BooleanQuery>(result)->getClauses().empty());
     result = qp->parse(L"a:woo OR a:the");
     BOOST_CHECK(result);
     BOOST_CHECK(MiscUtils::typeOf<TermQuery>(result));
     result = qp->parse(L"(fieldX:xxxxx OR fieldy:xxxxxxxx)^2 AND (fieldx:the OR fieldy:foo)");
     BOOST_CHECK(result);
     BOOST_CHECK(MiscUtils::typeOf<BooleanQuery>(result));
-    BOOST_CHECK_EQUAL(LuceneDynamicCast<BooleanQuery>(result)->getClauses().size(), 2);
+    BOOST_CHECK_EQUAL(gc_ptr_dynamic_cast<BooleanQuery>(result)->getClauses().size(), 2);
 }
 
 BOOST_AUTO_TEST_CASE(testPositionIncrement)
@@ -854,7 +854,7 @@ BOOST_AUTO_TEST_CASE(testPositionIncrement)
     String qtxt = L"\"the words in positions pos02578 are stopped in this phrasequery\"";
     //                0         2                     5           7  8
     Collection<int32_t> expectedPositions = newCollection<int32_t>(1, 3, 4, 6, 9);
-    PhraseQueryPtr pq = LuceneDynamicCast<PhraseQuery>(qp->parse(qtxt));
+    PhraseQueryPtr pq = gc_ptr_dynamic_cast<PhraseQuery>(qp->parse(qtxt));
     Collection<TermPtr> t = pq->getTerms();
     Collection<int32_t> pos = pq->getPositions();
     for (int32_t i = 0; i < t.size(); ++i)
@@ -866,7 +866,7 @@ BOOST_AUTO_TEST_CASE(testMatchAllDocs)
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<WhitespaceAnalyzer>());
     BOOST_CHECK(newLucene<MatchAllDocsQuery>()->equals(qp->parse(L"*:*")));
     BOOST_CHECK(newLucene<MatchAllDocsQuery>()->equals(qp->parse(L"(*:*)")));
-    BooleanQueryPtr bq = LuceneDynamicCast<BooleanQuery>(qp->parse(L"+*:* -*:*"));
+    BooleanQueryPtr bq = gc_ptr_dynamic_cast<BooleanQuery>(qp->parse(L"+*:* -*:*"));
     BOOST_CHECK(MiscUtils::typeOf<MatchAllDocsQuery>(bq->getClauses()[0]->getQuery()));
     BOOST_CHECK(MiscUtils::typeOf<MatchAllDocsQuery>(bq->getClauses()[1]->getQuery()));
 }

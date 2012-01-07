@@ -148,7 +148,7 @@ namespace Lucene
 
     LuceneObjectPtr IndexInput::clone(LuceneObjectPtr other)
     {
-        IndexInputPtr cloneIndexInput(LuceneDynamicCast<IndexInput>(LuceneObject::clone(other)));
+        IndexInputPtr cloneIndexInput(gc_ptr_dynamic_cast<IndexInput>(LuceneObject::clone(other)));
         cloneIndexInput->preUTF8Strings = preUTF8Strings;
         return cloneIndexInput;
     }

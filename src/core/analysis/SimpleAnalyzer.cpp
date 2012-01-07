@@ -13,15 +13,15 @@ namespace Lucene
     SimpleAnalyzer::~SimpleAnalyzer()
     {
     }
-    
+
     TokenStreamPtr SimpleAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
     {
         return newLucene<LowerCaseTokenizer>(reader);
     }
-    
+
     TokenStreamPtr SimpleAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        TokenizerPtr tokenizer(LuceneDynamicCast<Tokenizer>(getPreviousTokenStream()));
+        TokenizerPtr tokenizer(gc_ptr_dynamic_cast<Tokenizer>(getPreviousTokenStream()));
         if (!tokenizer)
         {
             tokenizer = newLucene<LowerCaseTokenizer>(reader);

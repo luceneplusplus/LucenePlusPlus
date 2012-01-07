@@ -52,7 +52,7 @@ namespace Lucene
                     entry->length = offset - entry->offset;
                 }
 
-                entry = newInstance<FileEntry>();
+                entry = new_gc<FileEntry>();
                 entry->offset = offset;
                 entries.put(id, entry);
             }
@@ -184,14 +184,14 @@ namespace Lucene
 
     CSIndexInput::CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length) : BufferedIndexInput(BufferedIndexInput::BUFFER_SIZE)
     {
-        this->base = LuceneDynamicCast<IndexInput>(base->clone());
+        this->base = gc_ptr_dynamic_cast<IndexInput>(base->clone());
         this->fileOffset = fileOffset;
         this->_length = length;
     }
 
     CSIndexInput::CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length, int32_t readBufferSize) : BufferedIndexInput(readBufferSize)
     {
-        this->base = LuceneDynamicCast<IndexInput>(base->clone());
+        this->base = gc_ptr_dynamic_cast<IndexInput>(base->clone());
         this->fileOffset = fileOffset;
         this->_length = length;
     }
@@ -226,8 +226,8 @@ namespace Lucene
     LuceneObjectPtr CSIndexInput::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<CSIndexInput>();
-        CSIndexInputPtr cloneIndexInput(LuceneDynamicCast<CSIndexInput>(BufferedIndexInput::clone(clone)));
-        cloneIndexInput->base = LuceneDynamicCast<IndexInput>(this->base->clone());
+        CSIndexInputPtr cloneIndexInput(gc_ptr_dynamic_cast<CSIndexInput>(BufferedIndexInput::clone(clone)));
+        cloneIndexInput->base = gc_ptr_dynamic_cast<IndexInput>(this->base->clone());
         cloneIndexInput->fileOffset = fileOffset;
         cloneIndexInput->_length = _length;
         return cloneIndexInput;

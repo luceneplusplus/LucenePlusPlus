@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE(testPayload)
 
     BOOST_CHECK_EXCEPTION(payload->byteAt(testData.size() + 1), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
 
-    PayloadPtr clone = LuceneDynamicCast<Payload>(payload->clone());
+    PayloadPtr clone = gc_ptr_dynamic_cast<Payload>(payload->clone());
     BOOST_CHECK_EQUAL(payload->length(), clone->length());
     for (int32_t i = 0; i < payload->length(); ++i)
         BOOST_CHECK_EQUAL(payload->byteAt(i), clone->byteAt(i));

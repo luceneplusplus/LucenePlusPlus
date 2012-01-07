@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(testTermVectorsFieldOrder)
     Collection<int32_t> expectedPositions = newCollection<int32_t>(1, 2, 0);
     for (int32_t i = 0; i < v.size(); ++i)
     {
-        TermPositionVectorPtr posVec = LuceneDynamicCast<TermPositionVector>(v[i]);
+        TermPositionVectorPtr posVec = gc_ptr_dynamic_cast<TermPositionVector>(v[i]);
         BOOST_CHECK_EQUAL(expectedFields[i], posVec->getField());
         Collection<String> terms = posVec->getTerms();
         BOOST_CHECK_EQUAL(3, terms.size());
@@ -137,14 +137,14 @@ BOOST_AUTO_TEST_CASE(testTermPositionVectors)
         BOOST_CHECK_EQUAL(vector.size(), 1);
 
         bool shouldBePosVector = (hits[i]->doc % 2 == 0);
-        BOOST_CHECK(!shouldBePosVector || (shouldBePosVector && LuceneDynamicCast<TermPositionVector>(vector[0])));
+        BOOST_CHECK(!shouldBePosVector || (shouldBePosVector && gc_ptr_dynamic_cast<TermPositionVector>(vector[0])));
 
         bool shouldBeOffVector = (hits[i]->doc % 3 == 0);
-        BOOST_CHECK(!shouldBeOffVector || (shouldBeOffVector && LuceneDynamicCast<TermPositionVector>(vector[0])));
+        BOOST_CHECK(!shouldBeOffVector || (shouldBeOffVector && gc_ptr_dynamic_cast<TermPositionVector>(vector[0])));
 
         if (shouldBePosVector || shouldBeOffVector)
         {
-            TermPositionVectorPtr posVec = LuceneDynamicCast<TermPositionVector>(vector[0]);
+            TermPositionVectorPtr posVec = gc_ptr_dynamic_cast<TermPositionVector>(vector[0]);
             Collection<String> terms = posVec->getTerms();
             BOOST_CHECK(terms && !terms.empty());
 
@@ -172,8 +172,8 @@ BOOST_AUTO_TEST_CASE(testTermPositionVectors)
         }
         else
         {
-            BOOST_CHECK(!LuceneDynamicCast<TermPositionVector>(vector[0]));
-            TermFreqVectorPtr freqVec = LuceneDynamicCast<TermFreqVector>(vector[0]);
+            BOOST_CHECK(!gc_ptr_dynamic_cast<TermPositionVector>(vector[0]));
+            TermFreqVectorPtr freqVec = gc_ptr_dynamic_cast<TermFreqVector>(vector[0]);
             Collection<String> terms = freqVec->getTerms();
             BOOST_CHECK(terms && !terms.empty());
         }
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(testMixedVectrosVectors)
     Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[0]->doc);
     BOOST_CHECK(vector);
     BOOST_CHECK_EQUAL(vector.size(), 1);
-    TermPositionVectorPtr tfv = LuceneDynamicCast<TermPositionVector>(vector[0]);
+    TermPositionVectorPtr tfv = gc_ptr_dynamic_cast<TermPositionVector>(vector[0]);
     BOOST_CHECK_EQUAL(tfv->getField(), L"field");
     Collection<String> terms = tfv->getTerms();
     BOOST_CHECK_EQUAL(1, terms.size());

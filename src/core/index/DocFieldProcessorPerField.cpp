@@ -9,6 +9,7 @@
 #include "DocFieldProcessorPerThread.h"
 #include "DocFieldConsumerPerThread.h"
 #include "DocFieldConsumerPerField.h"
+#include "Fieldable.h"
 
 namespace Lucene
 {
@@ -20,11 +21,11 @@ namespace Lucene
         this->consumer = perThread->consumer->addField(fieldInfo);
         this->fieldInfo = fieldInfo;
     }
-    
+
     DocFieldProcessorPerField::~DocFieldProcessorPerField()
     {
     }
-    
+
     void DocFieldProcessorPerField::abort()
     {
         consumer->abort();

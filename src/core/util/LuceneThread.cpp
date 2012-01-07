@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include <boost/thread/thread.hpp>
+#include <boost/make_shared.hpp>
 #include "LuceneThread.h"
 
 namespace Lucene
@@ -32,23 +33,23 @@ namespace Lucene
     void LuceneThread::start()
     {
         setRunning(false);
-        thread = newInstance<boost::thread>(LuceneThread::runThread, this);
+        thread = boost::make_shared<boost::thread>(LuceneThread::runThread, this);
         setRunning(true);
     }
 
     void LuceneThread::runThread(LuceneThread* thread)
     {
-        LuceneThreadPtr threadObject(thread->shared_from_this());
+        // todo LuceneThreadPtr threadObject(thread->shared_from_this());
         try
         {
-            threadObject->run();
+            thread->run();
         }
         catch (...)
         {
         }
-        threadObject->setRunning(false);
-        threadObject.reset();
-        ReleaseThreadCache();
+        thread->setRunning(false);
+        // todo thread.reset();
+        // todo ReleaseThreadCache();
     }
 
     void LuceneThread::setRunning(bool running)

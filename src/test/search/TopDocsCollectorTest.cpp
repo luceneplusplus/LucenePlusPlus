@@ -51,7 +51,7 @@ protected:
         {
             for (int32_t i = pq->size(); i > 1; --i)
                 pq->pop();
-            maxScore = LuceneDynamicCast<ScoreDoc>(pq->pop())->score;
+            maxScore = gc_ptr_dynamic_cast<ScoreDoc>(pq->pop())->score;
         }
         return newLucene<TopDocs>(totalHits, results, maxScore);
     }

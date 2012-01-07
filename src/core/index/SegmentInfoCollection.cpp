@@ -44,9 +44,9 @@ namespace Lucene
         segmentInfos.add(pos, info);
     }
 
-    void SegmentInfoCollection::addAll(SegmentInfoCollectionPtr segmentInfos)
+    void SegmentInfoCollection::add(SegmentInfoCollectionPtr segmentInfos)
     {
-        this->segmentInfos.addAll(segmentInfos->segmentInfos.begin(), segmentInfos->segmentInfos.end());
+        this->segmentInfos.add(segmentInfos->segmentInfos.begin(), segmentInfos->segmentInfos.end());
     }
 
     bool SegmentInfoCollection::equals(SegmentInfoCollectionPtr other)
@@ -64,7 +64,7 @@ namespace Lucene
 
     bool SegmentInfoCollection::contains(SegmentInfoPtr info)
     {
-        return segmentInfos.contains_if(luceneEqualTo<SegmentInfoPtr>(info));
+        return segmentInfos.containsIf(luceneEqualTo<SegmentInfoPtr>(info));
     }
 
     void SegmentInfoCollection::remove(int32_t pos)
@@ -80,7 +80,7 @@ namespace Lucene
     LuceneObjectPtr SegmentInfoCollection::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<SegmentInfoCollection>());
-        SegmentInfoCollectionPtr cloneInfos(LuceneDynamicCast<SegmentInfoCollection>(clone));
+        SegmentInfoCollectionPtr cloneInfos(gc_ptr_dynamic_cast<SegmentInfoCollection>(clone));
         for (Collection<SegmentInfoPtr>::iterator info = segmentInfos.begin(); info != segmentInfos.end(); ++info)
             cloneInfos->segmentInfos.add(*info);
         return cloneInfos;

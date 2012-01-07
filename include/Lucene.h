@@ -61,7 +61,12 @@ namespace Lucene
 
     const std::basic_string<wchar_t> EmptyString;
 
-    typedef gc_ptr<std::locale> localePtr;
+    typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
+    typedef boost::shared_ptr<boost::thread> threadPtr;
+
+    typedef boost::shared_ptr<std::ofstream> ofstreamPtr;
+    typedef boost::shared_ptr<std::ifstream> ifstreamPtr;
+    typedef boost::shared_ptr<std::locale> localePtr;
 }
 
 #include "LuceneException.h"
@@ -144,8 +149,8 @@ namespace Lucene
         }
     };
 
-    typedef SortedSet< int32_t > SetInt;
-    typedef HashSet< String > SetString;
+    typedef SortedSet< int32_t > SetInt; // todo: required?
+    typedef HashSet< String > SetString; // todo: required?
     typedef HashSet< SegmentInfoPtr, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > SetSegmentInfo;
     typedef HashSet< MergeThreadPtr, luceneHash<MergeThreadPtr>, luceneEquals<MergeThreadPtr> > SetMergeThread;
     typedef HashSet< OneMergePtr, luceneHash<OneMergePtr>, luceneEquals<OneMergePtr> > SetOneMerge;

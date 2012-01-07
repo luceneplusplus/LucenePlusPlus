@@ -98,17 +98,17 @@ namespace Lucene
     DECLARE_LUCENE_PTR(MemoryIndexInfo)
     DECLARE_LUCENE_PTR(MemoryIndexReader)
 
-    typedef HashMap<String, WeightedSpanTermPtr > MapStringWeightedSpanTerm;
-    typedef HashMap<String, WeightedTermPtr > MapStringWeightedTerm;
-    typedef HashMap<String, SpanQueryPtr > MapStringSpanQuery;
-    typedef HashMap<String, Collection<int32_t> > MapStringIntCollection;
-    typedef HashMap<String, MemoryIndexInfoPtr > MapStringMemoryIndexInfo;
+    typedef HashMap< String, WeightedSpanTermPtr > MapStringWeightedSpanTerm;
+    typedef HashMap< String, WeightedTermPtr > MapStringWeightedTerm;
+    typedef HashMap< String, SpanQueryPtr > MapStringSpanQuery;
+    typedef HashMap< String, Collection<int32_t> > MapStringIntCollection;
+    typedef HashMap< String, MemoryIndexInfoPtr > MapStringMemoryIndexInfo;
 
     typedef std::pair< String, Collection<int32_t> > PairStringIntCollection;
-    typedef Collection< PairStringIntCollection > Collection<String>IntCollection;
+    typedef Collection< PairStringIntCollection > CollectionStringIntCollection;
 
     typedef std::pair< String, MemoryIndexInfoPtr > PairStringMemoryIndexInfo;
-    typedef Collection< PairStringMemoryIndexInfo > Collection<String>MemoryIndexInfo;
+    typedef Collection< PairStringMemoryIndexInfo > CollectionStringMemoryIndexInfo;
 
     typedef HashSet< WeightedTermPtr, luceneHash<WeightedTermPtr>, luceneEquals<WeightedTermPtr> > SetWeightedTerm;
 }

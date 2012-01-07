@@ -259,22 +259,22 @@ namespace Lucene
 
     int32_t FilterTermPositions::nextPosition()
     {
-        return LuceneStaticCast<TermPositions>(in)->nextPosition();
+        return gc_ptr_static_cast<TermPositions>(in)->nextPosition();
     }
 
     int32_t FilterTermPositions::getPayloadLength()
     {
-        return LuceneStaticCast<TermPositions>(in)->getPayloadLength();
+        return gc_ptr_static_cast<TermPositions>(in)->getPayloadLength();
     }
 
     ByteArray FilterTermPositions::getPayload(ByteArray data, int32_t offset)
     {
-        return LuceneStaticCast<TermPositions>(in)->getPayload(data, offset);
+        return gc_ptr_static_cast<TermPositions>(in)->getPayload(data, offset);
     }
 
     bool FilterTermPositions::isPayloadAvailable()
     {
-        return LuceneStaticCast<TermPositions>(in)->isPayloadAvailable();
+        return gc_ptr_static_cast<TermPositions>(in)->isPayloadAvailable();
     }
 
     FilterTermEnum::FilterTermEnum(TermEnumPtr in)

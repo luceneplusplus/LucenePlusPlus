@@ -17,26 +17,26 @@ namespace Lucene
     {
         this->term = term;
     }
-    
+
     SpanTermQuery::~SpanTermQuery()
     {
     }
-    
+
     TermPtr SpanTermQuery::getTerm()
     {
         return term;
     }
-    
+
     String SpanTermQuery::getField()
     {
         return term->field();
     }
-    
+
     void SpanTermQuery::extractTerms(SetTerm terms)
     {
         terms.add(term);
     }
-    
+
     String SpanTermQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -47,7 +47,7 @@ namespace Lucene
         buffer << boostString();
         return buffer.str();
     }
-    
+
     int32_t SpanTermQuery::hashCode()
     {
         int32_t prime = 31;
@@ -55,7 +55,7 @@ namespace Lucene
         result = prime * result + (term ? term->hashCode() : 0);
         return result;
     }
-    
+
     bool SpanTermQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -64,7 +64,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        SpanTermQueryPtr otherQuery(LuceneDynamicCast<SpanTermQuery>(other));
+        SpanTermQueryPtr otherQuery(gc_ptr_dynamic_cast<SpanTermQuery>(other));
         if (!otherQuery)
             return false;
         if (!term)
@@ -76,15 +76,15 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     LuceneObjectPtr SpanTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanTermQuery>(term));
-        SpanTermQueryPtr spanFirstQuery(LuceneDynamicCast<SpanTermQuery>(clone));
+        SpanTermQueryPtr spanFirstQuery(gc_ptr_dynamic_cast<SpanTermQuery>(clone));
         spanFirstQuery->term = term;
         return spanFirstQuery;
     }
-    
+
     SpansPtr SpanTermQuery::getSpans(IndexReaderPtr reader)
     {
         return newLucene<TermSpans>(reader->termPositions(term), term);

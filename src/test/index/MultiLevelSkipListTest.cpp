@@ -25,8 +25,8 @@
 
 using namespace Lucene;
 
-/// This testcase tests whether multi-level skipping is being used to reduce I/O while 
-/// skipping through posting lists.  Skipping in general is already covered by 
+/// This testcase tests whether multi-level skipping is being used to reduce I/O while
+/// skipping through posting lists.  Skipping in general is already covered by
 /// several other testcases.
 BOOST_FIXTURE_TEST_SUITE(MultiLevelSkipListTest, LuceneTestFixture)
 
@@ -37,23 +37,23 @@ public:
     {
         payloadAtt = addAttribute<PayloadAttribute>();
     }
-    
+
     virtual ~PayloadFilter()
     {
     }
-    
+
     LUCENE_CLASS(PayloadFilter);
 
 public:
     static int32_t count;
     PayloadAttributePtr payloadAtt;
-    
+
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
         return newLucene<PayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
-    
+
     virtual bool incrementToken()
     {
         bool hasNext = input->incrementToken();
@@ -75,7 +75,7 @@ public:
     virtual ~PayloadAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(PayloadAnalyzer);
 
 public:
@@ -94,11 +94,11 @@ public:
     {
         this->input = input;
     }
-    
+
     virtual ~CountingStream()
     {
     }
-    
+
     LUCENE_CLASS(CountingStream);
 
 protected:
@@ -110,36 +110,36 @@ public:
         ++counter;
         return input->readByte();
     }
-    
+
     virtual void readBytes(uint8_t* b, int32_t offset, int32_t length)
     {
         counter += length;
         input->readBytes(b, offset, length);
     }
-    
+
     virtual void close()
     {
         input->close();
     }
-    
+
     virtual int64_t getFilePointer()
     {
         return input->getFilePointer();
     }
-    
+
     virtual void seek(int64_t pos)
     {
         input->seek(pos);
     }
-    
+
     virtual int64_t length()
     {
         return input->length();
     }
-    
+
     LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
-        return newLucene<CountingStream>(LuceneDynamicCast<IndexInput>(input->clone()));
+        return newLucene<CountingStream>(gc_ptr_dynamic_cast<IndexInput>(input->clone()));
     }
 };
 
@@ -168,13 +168,13 @@ BOOST_AUTO_TEST_CASE(testSimpleSkip)
         d1->add(newLucene<Field>(term->field(), term->text(), Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(d1);
     }
-    
+
     writer->commit();
     writer->optimize();
     writer->close();
 
     IndexReaderPtr reader = SegmentReader::getOnlySegmentReader(dir);
-    SegmentTermPositionsPtr tp = LuceneDynamicCast<SegmentTermPositions>(reader->termPositions());
+    SegmentTermPositionsPtr tp = gc_ptr_dynamic_cast<SegmentTermPositions>(reader->termPositions());
     tp->freqStream(newLucene<CountingStream>(tp->freqStream()));
 
     for (int32_t i = 0; i < 2; ++i)

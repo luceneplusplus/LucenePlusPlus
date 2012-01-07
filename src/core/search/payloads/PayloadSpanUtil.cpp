@@ -42,7 +42,7 @@ namespace Lucene
     {
         if (MiscUtils::typeOf<BooleanQuery>(query))
         {
-            BooleanQueryPtr booleanQuery(LuceneDynamicCast<BooleanQuery>(query));
+            BooleanQueryPtr booleanQuery(gc_ptr_dynamic_cast<BooleanQuery>(query));
             Collection<BooleanClausePtr> queryClauses(booleanQuery->getClauses());
             for (Collection<BooleanClausePtr>::iterator clause = queryClauses.begin(); clause != queryClauses.end(); ++clause)
             {
@@ -52,7 +52,7 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<PhraseQuery>(query))
         {
-            PhraseQueryPtr phraseQuery(LuceneDynamicCast<PhraseQuery>(query));
+            PhraseQueryPtr phraseQuery(gc_ptr_dynamic_cast<PhraseQuery>(query));
             Collection<TermPtr> phraseQueryTerms(phraseQuery->getTerms());
             Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(phraseQueryTerms.size()));
             for (int32_t i = 0; i < phraseQueryTerms.size(); ++i)
@@ -70,30 +70,30 @@ namespace Lucene
         }
         else if (MiscUtils::typeOf<TermQuery>(query))
         {
-            TermQueryPtr termQuery(LuceneDynamicCast<TermQuery>(query));
+            TermQueryPtr termQuery(gc_ptr_dynamic_cast<TermQuery>(query));
             SpanTermQueryPtr stq(newLucene<SpanTermQuery>(termQuery->getTerm()));
             stq->setBoost(query->getBoost());
             getPayloads(payloads, stq);
         }
         else if (MiscUtils::typeOf<SpanQuery>(query))
         {
-            SpanQueryPtr spanQuery(LuceneDynamicCast<SpanQuery>(query));
+            SpanQueryPtr spanQuery(gc_ptr_dynamic_cast<SpanQuery>(query));
             getPayloads(payloads, spanQuery);
         }
         else if (MiscUtils::typeOf<FilteredQuery>(query))
         {
-            FilteredQueryPtr filteredQuery(LuceneDynamicCast<FilteredQuery>(query));
+            FilteredQueryPtr filteredQuery(gc_ptr_dynamic_cast<FilteredQuery>(query));
             queryToSpanQuery(filteredQuery->getQuery(), payloads);
         }
         else if (MiscUtils::typeOf<DisjunctionMaxQuery>(query))
         {
-            DisjunctionMaxQueryPtr maxQuery(LuceneDynamicCast<DisjunctionMaxQuery>(query));
+            DisjunctionMaxQueryPtr maxQuery(gc_ptr_dynamic_cast<DisjunctionMaxQuery>(query));
             for (Collection<QueryPtr>::iterator disjunct = maxQuery->begin(); disjunct != maxQuery->end(); ++disjunct)
                 queryToSpanQuery(*disjunct, payloads);
         }
         else if (MiscUtils::typeOf<MultiPhraseQuery>(query))
         {
-            MultiPhraseQueryPtr multiphraseQuery(LuceneDynamicCast<MultiPhraseQuery>(query));
+            MultiPhraseQueryPtr multiphraseQuery(gc_ptr_dynamic_cast<MultiPhraseQuery>(query));
             Collection< Collection<TermPtr> > termArrays(multiphraseQuery->getTermArrays());
             Collection<int32_t> positions(multiphraseQuery->getPositions());
             if (!positions.empty())
@@ -132,7 +132,7 @@ namespace Lucene
                     {
                         Collection<SpanQueryPtr> spanDisjuncts(Collection<SpanQueryPtr>::newInstance(disjuncts.size()));
                         for (int32_t j = 0; j < disjuncts.size(); ++j)
-                            spanDisjuncts[j] = LuceneDynamicCast<SpanQuery>(disjuncts[j]);
+                            spanDisjuncts[j] = gc_ptr_dynamic_cast<SpanQuery>(disjuncts[j]);
                         clauses[position++] = newLucene<SpanOrQuery>(spanDisjuncts);
                     }
                     else

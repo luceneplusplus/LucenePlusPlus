@@ -147,7 +147,7 @@ namespace Lucene
             msg(L"\nChecking only these segments:");
             for (Collection<String>::iterator s = onlySegments.begin(); s != onlySegments.end(); ++s)
                 msg(L" " + *s);
-            result->segmentsChecked.addAll(onlySegments.begin(), onlySegments.end());
+            result->segmentsChecked.add(onlySegments.begin(), onlySegments.end());
             msg(L":");
         }
 
@@ -159,7 +159,7 @@ namespace Lucene
             return result;
         }
 
-        result->newSegments = LuceneDynamicCast<SegmentInfos>(sis->clone());
+        result->newSegments = gc_ptr_dynamic_cast<SegmentInfos>(sis->clone());
         result->newSegments->clear();
 
         for (int32_t i = 0; i < numSegments; ++i)
@@ -302,7 +302,7 @@ namespace Lucene
                 reader->close();
 
             // Keeper
-            result->newSegments->add(LuceneDynamicCast<SegmentInfo>(info->clone()));
+            result->newSegments->add(gc_ptr_dynamic_cast<SegmentInfo>(info->clone()));
         }
 
         if (result->numBadSegments == 0)

@@ -21,10 +21,12 @@ namespace Lucene
     ///
     /// NOTE: this interface is kept public for convenience.  Since it is not expected to be implemented directly,
     /// it may be changed unexpectedly between releases.
-    class LPPAPI Searchable
+
+    // todo: this was an interface class (see Searcher)
+    class LPPAPI Searchable : public LuceneObject
     {
     public:
-        LUCENE_INTERFACE(Searchable);
+        LUCENE_CLASS(Searchable);
 
     public:
         /// Lower-level search API.

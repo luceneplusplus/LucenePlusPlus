@@ -46,26 +46,26 @@ BOOST_AUTO_TEST_CASE(testCustomLockFactory)
     DirectoryPtr dir(newLucene<RAMDirectory>());
     MockLockFactoryPtr lf(newLucene<MockLockFactory>());
     dir->setLockFactory(lf);
-    
+
     // Lock prefix should have been set
     BOOST_CHECK(lf->lockPrefixSet);
-    
+
     IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
-    
+
     // add 100 documents (so that commit lock is used)
     for (int32_t i = 0; i < 100; ++i)
         addDoc(writer);
-    
+
     // Both write lock and commit lock should have been created
     BOOST_CHECK_EQUAL(lf->locksCreated.size(), 1); // # of unique locks created (after instantiating IndexWriter)
     BOOST_CHECK(lf->makeLockCount >= 1); // # calls to makeLock is 0 (after instantiating IndexWriter)
-    
+
     for (MapStringLock::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName)
     {
-        MockLockPtr lock(LuceneDynamicCast<MockLock>(lockName->second));
+        MockLockPtr lock(gc_ptr_dynamic_cast<MockLock>(lockName->second));
         BOOST_CHECK(lock->lockAttempts > 0); // # calls to Lock.obtain is 0 (after instantiating IndexWriter)
     }
-    
+
     writer->close();
 }
 
@@ -75,13 +75,13 @@ BOOST_AUTO_TEST_CASE(testRAMDirectoryNoLocking)
 {
     DirectoryPtr dir(newLucene<RAMDirectory>());
     dir->setLockFactory(NoLockFactory::getNoLockFactory());
-    
+
     BOOST_CHECK(dir->getLockFactory());
-    
+
     IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
-    
+
     IndexWriterPtr writer2;
-    
+
     // Create a 2nd IndexWriter.  This is normally not allowed but it should run through since we're not using any locks
     BOOST_CHECK_NO_THROW(writer2 = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED));
 
@@ -96,12 +96,12 @@ BOOST_AUTO_TEST_CASE(testDefaultRAMDirectory)
 {
     DirectoryPtr dir(newLucene<RAMDirectory>());
     LockFactoryPtr lockFactory(dir->getLockFactory());
-    BOOST_CHECK(LuceneDynamicCast<SingleInstanceLockFactory>(lockFactory));
-    
+    BOOST_CHECK(gc_ptr_dynamic_cast<SingleInstanceLockFactory>(lockFactory));
+
     IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
-    
+
     IndexWriterPtr writer2;
-    
+
     // Create a 2nd IndexWriter - This should fail
     BOOST_CHECK_EXCEPTION(writer2 = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED), LuceneException, check_exception(LuceneException::LockObtainFailed));
 
@@ -120,7 +120,7 @@ namespace LockFactoryTest
 {
     DECLARE_LUCENE_PTR(WriterThread)
     DECLARE_LUCENE_PTR(SearcherThread)
-    
+
     class WriterThread : public LuceneThread
     {
     public:
@@ -130,20 +130,20 @@ namespace LockFactoryTest
             this->dir = dir;
             this->hitException = false;
         }
-        
+
         virtual ~WriterThread()
         {
         }
-        
+
         LUCENE_CLASS(WriterThread);
-        
+
     public:
         bool hitException;
-        
+
     protected:
         DirectoryPtr dir;
         int32_t numIteration;
-        
+
     public:
         virtual void run()
         {
@@ -210,16 +210,16 @@ namespace LockFactoryTest
             this->dir = dir;
             this->hitException = false;
         }
-        
+
         virtual ~SearcherThread()
         {
         }
-        
+
         LUCENE_CLASS(SearcherThread);
-        
+
     public:
         bool hitException;
-        
+
     protected:
         DirectoryPtr dir;
         int32_t numIteration;
@@ -274,20 +274,20 @@ namespace LockFactoryTest
 static void _testStressLocks(LockFactoryPtr lockFactory, const String& indexDir)
 {
     FSDirectoryPtr fs1 = FSDirectory::open(indexDir, lockFactory);
-    
+
     // First create a 1 doc index
     IndexWriterPtr w = newLucene<IndexWriter>(fs1, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(w);
     w->close();
-    
+
     LockFactoryTest::WriterThreadPtr writer = newLucene<LockFactoryTest::WriterThread>(100, fs1);
     LockFactoryTest::SearcherThreadPtr searcher = newLucene<LockFactoryTest::SearcherThread>(100, fs1);
     writer->start();
     searcher->start();
-    
+
     writer->join();
     searcher->join();
-    
+
     BOOST_CHECK(!writer->hitException);
     BOOST_CHECK(!searcher->hitException);
 
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE(testNativeFSLockReleaseByOtherLock)
 
     BOOST_CHECK(l->obtain());
     BOOST_CHECK(l2->isLocked());
-    
+
     BOOST_CHECK_EXCEPTION(l2->release(), LockReleaseFailedException, check_exception(LuceneException::LockReleaseFailed));
     l->release();
 }
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE(testNativeFSLockFactoryPrefix)
 {
     String fdir1(getTempDir(L"TestLockFactory.8"));
     String fdir2(getTempDir(L"TestLockFactory.8.Lockdir"));
-    
+
     DirectoryPtr dir1(FSDirectory::open(fdir1, newLucene<NativeFSLockFactory>(fdir1)));
 
     // same directory, but locks are stored somewhere else. The prefix of the lock factory should != null
@@ -378,7 +378,7 @@ BOOST_AUTO_TEST_CASE(testNativeFSLockFactoryPrefix)
 
     String prefix1(dir1->getLockFactory()->getLockPrefix());
     BOOST_CHECK(prefix1.empty()); // Lock prefix for lockDir same as directory should be null
-    
+
     String prefix2(dir2->getLockFactory()->getLockPrefix());
     BOOST_CHECK(!prefix2.empty()); // Lock prefix for lockDir outside of directory should be not null
 
@@ -394,7 +394,7 @@ BOOST_AUTO_TEST_CASE(testDefaultFSLockFactoryPrefix)
     DirectoryPtr dir(FSDirectory::open(dirName));
 
     String prefix(dir->getLockFactory()->getLockPrefix());
-    
+
     BOOST_CHECK(prefix.empty()); // Default lock prefix should be null
 
     FileUtils::removeDirectory(dirName);

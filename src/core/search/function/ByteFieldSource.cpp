@@ -37,7 +37,7 @@ namespace Lucene
     {
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        ByteFieldSourcePtr otherSource(LuceneDynamicCast<ByteFieldSource>(other));
+        ByteFieldSourcePtr otherSource(gc_ptr_dynamic_cast<ByteFieldSource>(other));
         if (!otherSource)
             return false;
         return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;

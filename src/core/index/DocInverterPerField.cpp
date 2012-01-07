@@ -57,7 +57,6 @@ namespace Lucene
 
         int32_t maxFieldLength = docState->maxFieldLength;
         bool doInvert = consumer->start(fields, count);
-        DocumentsWriterPtr docWriter(docState->_docWriter);
 
         for (int32_t i = 0; i < count; ++i)
         {
@@ -90,7 +89,7 @@ namespace Lucene
                         finally = e;
                     }
                     if (!success)
-                        docWriter->setAborting();
+                        docState->docWriter->setAborting();
                     finally.throwException();
                     fieldState->offset += valueLength;
                     ++fieldState->length;
@@ -173,7 +172,7 @@ namespace Lucene
                                 finally = e;
                             }
                             if (!success)
-                                docWriter->setAborting();
+                                docState->docWriter->setAborting();
                             finally.throwException();
                             ++fieldState->position;
                             offsetEnd = fieldState->offset + offsetAttribute->endOffset();

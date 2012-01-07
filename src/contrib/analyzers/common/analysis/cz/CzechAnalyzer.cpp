@@ -111,7 +111,7 @@ namespace Lucene
 
     TokenStreamPtr CzechAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        CzechAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<CzechAnalyzerSavedStreams>(getPreviousTokenStream()));
+        CzechAnalyzerSavedStreamsPtr streams(gc_ptr_dynamic_cast<CzechAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<CzechAnalyzerSavedStreams>();

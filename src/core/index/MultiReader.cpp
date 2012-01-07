@@ -79,7 +79,7 @@ namespace Lucene
             for (int32_t i = 0; i < subReaders.size(); ++i)
             {
                 if (doClone)
-                    newSubReaders[i] = LuceneDynamicCast<IndexReader>(subReaders[i]->clone());
+                    newSubReaders[i] = gc_ptr_dynamic_cast<IndexReader>(subReaders[i]->clone());
                 else
                     newSubReaders[i] = subReaders[i]->reopen();
                 // if at least one of the subreaders was updated we remember that and return a new MultiReader

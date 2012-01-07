@@ -182,7 +182,7 @@ namespace Lucene
     {
         if (!sortedFields)
         {
-            sortedFields = Collection<String>MemoryIndexInfo::newInstance(fields.begin(), fields.end());
+            sortedFields = CollectionStringMemoryIndexInfo::newInstance(fields.begin(), fields.end());
             std::sort(sortedFields.begin(), sortedFields.end(), lessField());
         }
     }
@@ -211,7 +211,7 @@ namespace Lucene
     {
         if (!sortedTerms)
         {
-            sortedTerms = Collection<String>IntCollection::newInstance(terms.begin(), terms.end());
+            sortedTerms = CollectionStringIntCollection::newInstance(terms.begin(), terms.end());
             std::sort(sortedTerms.begin(), sortedTerms.end(), lessTerm());
         }
     }
@@ -282,7 +282,7 @@ namespace Lucene
             j = 0; // fast path
         else
         {
-            Collection<String>MemoryIndexInfo::iterator search = std::lower_bound(memoryIndex->sortedFields.begin(), memoryIndex->sortedFields.end(), std::make_pair(t->field(), MemoryIndexInfoPtr()), lessField());
+            CollectionStringMemoryIndexInfo::iterator search = std::lower_bound(memoryIndex->sortedFields.begin(), memoryIndex->sortedFields.end(), std::make_pair(t->field(), MemoryIndexInfoPtr()), lessField());
             int32_t keyPos = std::distance(memoryIndex->sortedFields.begin(), search);
             j = (search == memoryIndex->sortedFields.end() || t->field() < search->first) ? -(keyPos + 1) : keyPos;
         }
@@ -298,7 +298,7 @@ namespace Lucene
         {
             MemoryIndexInfoPtr info(getInfo(j));
             info->sortTerms();
-            Collection<String>IntCollection::iterator search = std::lower_bound(info->sortedTerms.begin(), info->sortedTerms.end(), std::make_pair(t->text(), Collection<int32_t>()), lessTerm());
+            CollectionStringIntCollection::iterator search = std::lower_bound(info->sortedTerms.begin(), info->sortedTerms.end(), std::make_pair(t->text(), Collection<int32_t>()), lessTerm());
             int32_t keyPos = std::distance(info->sortedTerms.begin(), search);
             i = (search == info->sortedTerms.end() || t->text() < search->first) ? -(keyPos + 1) : keyPos;
             if (i < 0) // not found; choose successor
@@ -708,7 +708,7 @@ namespace Lucene
 
     int32_t MemoryIndexTermPositionVector::indexOf(const String& term)
     {
-        Collection<String>IntCollection::iterator search = std::lower_bound(sortedTerms.begin(), sortedTerms.end(), std::make_pair(term, Collection<int32_t>()), lessTerm());
+        CollectionStringIntCollection::iterator search = std::lower_bound(sortedTerms.begin(), sortedTerms.end(), std::make_pair(term, Collection<int32_t>()), lessTerm());
         return (search == sortedTerms.end() || term < search->first) ? -1 : std::distance(sortedTerms.begin(), search);
     }
 

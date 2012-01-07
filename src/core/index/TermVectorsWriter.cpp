@@ -21,7 +21,7 @@ namespace Lucene
 {
     TermVectorsWriter::TermVectorsWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fieldInfos)
     {
-        utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
+        utf8Results = newCollection<UTF8ResultPtr>(newLucene<UTF8Result>(), newLucene<UTF8Result>());
 
         // Open files for TermVector storage
         tvx = directory->createOutput(segment + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
@@ -62,7 +62,7 @@ namespace Lucene
                 int32_t numTerms = vectors[i]->size();
                 tvf->writeVInt(numTerms);
 
-                TermPositionVectorPtr tpVector(LuceneDynamicCast<TermPositionVector>(vectors[i]));
+                TermPositionVectorPtr tpVector(gc_ptr_dynamic_cast<TermPositionVector>(vectors[i]));
 
                 uint8_t bits;
                 bool storePositions;

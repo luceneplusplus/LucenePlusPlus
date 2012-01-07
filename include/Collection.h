@@ -13,7 +13,7 @@
 namespace Lucene
 {
     template <class T>
-    class Collection : public vector_container< std::vector<T> >, public LuceneSync
+    class Collection : public vector_ptr< std::vector<T> >, public LuceneSync
     {
     public:
         typedef std::vector<T> vector_type;
@@ -21,22 +21,22 @@ namespace Lucene
         typedef typename vector_type::iterator iterator;
         typedef typename vector_type::const_iterator const_iterator;
 
-        Collection(gc_container<vector_type, value_type>* p = 0) : vector_container<vector_type>(p)
+        Collection(single_container<vector_type>* p = 0) : vector_ptr<vector_type>(p)
         {
         }
 
-        Collection(const Collection& rhs) : vector_container<vector_type>(rhs)
+        Collection(const Collection& rhs) : vector_ptr<vector_type>(rhs)
         {
         }
 
         void add(const value_type& x)
         {
-            this->push_back(type);
+            this->push_back(x);
         }
 
         void add(int32_t pos, const value_type& x)
         {
-            this->insert(container->begin() + pos, x);
+            this->insert(this->begin() + pos, x);
         }
 
         template <class ITER>
@@ -122,24 +122,24 @@ namespace Lucene
 
         int32_t hashCode()
         {
-            return (int32_t)(int64_t)get();
+            return (int32_t)(int64_t)this->get();
         }
 
         int32_t size() const
         {
-            return (int32_t)vector_container<T>::size();
+            return (int32_t)vector_ptr<vector_type>::size();
         }
 
-        static Collection<T> newInstance(typename std::vector<T>::size_type n = 0, const T& x = T())
+        static Collection<T> newInstance(typename vector_type::size_type n = 0, const T& x = T())
         {
-            Collection<T> container(new(get_gc()) gc_container<std::vector<T>, T>());
+            Collection<T> container(new(get_gc()) single_container<vector_type>());
             container.resize(n, x);
             return container;
         }
 
-        static Collection<T> newStaticInstance(typename std::vector<T>::size_type n = 0, const T& x = T())
+        static Collection<T> newStaticInstance(typename vector_type::size_type n = 0, const T& x = T())
         {
-            Collection<T> container(new(get_static_gc()) gc_container<std::vector<T>, T>());
+            Collection<T> container(new(get_static_gc()) single_container<vector_type>());
             container.resize(n, x);
             return container;
         }
@@ -147,71 +147,28 @@ namespace Lucene
         template <class ITER>
         static Collection<T> newInstance(ITER first, ITER last)
         {
-            Collection<T> container(new(get_gc()) gc_container<std::vector<T>, T>());
-            container.insert(first, last);
+            Collection<T> container(new(get_gc()) single_container<vector_type>());
+            container.assign(first, last);
             return container;
         }
 
         template <class ITER>
         static Collection<T> newStaticInstance(ITER first, ITER last)
         {
-            Collection<T> container(new(get_static_gc()) gc_container<std::vector<T>, T>());
-            container.insert(first, last);
+            Collection<T> container(new(get_static_gc()) single_container<vector_type>());
+            container.assign(first, last);
             return container;
         }
     };
 
-    // todo
-    // template <class T>
-    // Collection<T> newCollectionPlaceholder(gc& gc, typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
-    // {
-    //     Collection<T> container(new(gc) gc_container<std::vector<T>, T>());
-    //     container.resize(n, x);
-    //     return container;
-    // }
-
-    // template <class T>
-    // Collection<typename T::value_type> newCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
-    // {
-    //     return newCollectionPlaceholder<typename T::value_type>(get_gc(), n, x);
-    // }
-
-    // template <class T>
-    // Collection<typename T::value_type> newStaticCollection(typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
-    // {
-    //     return newCollectionPlaceholder<typename T::value_type>(get_static_gc(), n, x);
-    // }
-
-    // template <class T, class ITER>
-    // Collection<T> newCollectionPlaceholder(gc& gc, ITER first, ITER last)
-    // {
-    //     Collection<T> container(new(gc) gc_container<std::vector<T>, T>());
-    //     container.assign(first, last);
-    //     return container;
-    // }
-
-    // template <class T, class ITER>
-    // Collection<typename T::value_type> newCollection(ITER first, ITER last)
-    // {
-    //     return newCollectionPlaceholder<typename T::value_type>(get_gc(), first, last);
-    // }
-
-    // template <class T, class ITER>
-    // Collection<typename T::value_type> newStaticCollection(ITER first, ITER last)
-    // {
-    //     return newCollectionPlaceholder<typename T::value_type>(get_static_gc(), first, last);
-    // }
-
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1)
+    Collection<T> newCollection(const T& a1)
     {
-        Collection<typename T::value_type> collection(newCollection<T>());
-        collection.push_back(a1);
-        return collection;
+        return Collection<T>::newInstance(1, a1);
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2)
+    Collection<T> newCollection(const T& a1, const T& a2)
     {
         Collection<T> collection(newCollection<T>(a1));
         collection.push_back(a2);
@@ -219,7 +176,7 @@ namespace Lucene
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3)
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3)
     {
         Collection<T> collection(newCollection<T>(a1, a2));
         collection.push_back(a3);
@@ -227,8 +184,8 @@ namespace Lucene
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                                           const typename T::value_type& a4)
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4)
     {
         Collection<T> collection(newCollection<T>(a1, a2, a3));
         collection.push_back(a4);
@@ -236,8 +193,8 @@ namespace Lucene
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                                           const typename T::value_type& a4, const typename T::value_type& a5)
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5)
     {
         Collection<T> collection(newCollection<T>(a1, a2, a3, a4));
         collection.push_back(a5);
@@ -245,8 +202,8 @@ namespace Lucene
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6)
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5, const T& a6)
     {
         Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5));
         collection.push_back(a6);
@@ -254,9 +211,9 @@ namespace Lucene
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
-                                                           const typename T::value_type& a7)
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5, const T& a6,
+                                const T& a7)
     {
         Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6));
         collection.push_back(a7);
@@ -264,9 +221,9 @@ namespace Lucene
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
-                                                           const typename T::value_type& a7, const typename T::value_type& a8)
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5, const T& a6,
+                                const T& a7, const T& a8)
     {
         Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6, a7));
         collection.push_back(a8);
@@ -274,12 +231,45 @@ namespace Lucene
     }
 
     template <class T>
-    Collection<typename T::value_type> newCollection(const typename T::value_type& a1, const typename T::value_type& a2, const typename T::value_type& a3,
-                                                           const typename T::value_type& a4, const typename T::value_type& a5, const typename T::value_type& a6,
-                                                           const typename T::value_type& a7, const typename T::value_type& a8, const typename T::value_type& a9)
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5, const T& a6,
+                                const T& a7, const T& a8, const T& a9)
     {
         Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6, a7, a8));
         collection.push_back(a9);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5, const T& a6,
+                                const T& a7, const T& a8, const T& a9,
+                                const T& a10)
+    {
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6, a7, a8, a9));
+        collection.push_back(a10);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5, const T& a6,
+                                const T& a7, const T& a8, const T& a9,
+                                const T& a10, const T& a11)
+    {
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10));
+        collection.push_back(a11);
+        return collection;
+    }
+
+    template <class T>
+    Collection<T> newCollection(const T& a1, const T& a2, const T& a3,
+                                const T& a4, const T& a5, const T& a6,
+                                const T& a7, const T& a8, const T& a9,
+                                const T& a10, const T& a11, const T& a12)
+    {
+        Collection<T> collection(newCollection<T>(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11));
+        collection.push_back(a12);
         return collection;
     }
 }

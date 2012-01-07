@@ -57,7 +57,7 @@ namespace Lucene
         streamCount = consumer->getStreamCount();
         numPostingInt = 2 * streamCount;
         if (nextPerThread)
-            nextPerField = LuceneDynamicCast<TermsHashPerField>(nextPerThread->addField(docInverterPerField, fieldInfo));
+            nextPerField = gc_ptr_dynamic_cast<TermsHashPerField>(nextPerThread->addField(docInverterPerField, fieldInfo));
     }
 
     void TermsHashPerField::shrinkHash(int32_t targetSize)

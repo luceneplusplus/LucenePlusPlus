@@ -31,7 +31,7 @@ namespace Lucene
     void FieldSortedTermVectorMapper::map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions)
     {
         TermVectorEntryPtr entry(newLucene<TermVectorEntry>(currentField, term, frequency, offsets, positions));
-        if (!currentSet.contains_if(luceneEqualTo<TermVectorEntryPtr>(entry)))
+        if (!currentSet.containsIf(luceneEqualTo<TermVectorEntryPtr>(entry)))
             currentSet.insert(std::upper_bound(currentSet.begin(), currentSet.end(), entry, comparator), entry);
     }
 

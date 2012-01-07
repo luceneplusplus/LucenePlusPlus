@@ -4,16 +4,20 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _GC
-#define _GC
+#ifndef _LUTZE_GC
+#define _LUTZE_GC
 
 #include <set>
 #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
 #include "boost/thread/tss.hpp"
 #include "boost/thread/mutex.hpp"
+#include <boost/preprocessor/punctuation.hpp>
+#include <boost/preprocessor/repetition.hpp>
+#include <boost/preprocessor/arithmetic.hpp>
+#include "gc_ptr.h"
 
-#define _GC_VERSION "1.0.1"
+#define _GC_VERSION "1.0.2"
 
 #if defined(_WIN32) || defined(_WIN64)
 #define GC_PLATFORM_WINDOWS
@@ -48,10 +52,10 @@
 #elif defined(GC_PLATFORM_SPARC)
 
 #define GC_GET_STACK_EXTENTS(_gc, _stack, _size) \
-	jmp_buf __env; \
-	::setjmp(__env); \
-	asm ("mov %%sp, %0":"=r" (_stack)); \
-	_size = (uint32_t)(_gc->stack_top() - (uintptr_t)_stack);
+    jmp_buf __env; \
+    ::setjmp(__env); \
+    asm ("mov %%sp, %0":"=r" (_stack)); \
+    _size = (uint32_t)(_gc->stack_top() - (uintptr_t)_stack);
 
 #elif defined(GC_PLATFORM_POWERPC)
 
@@ -61,10 +65,10 @@
 register void* __sp __asm__("r1");
 
 #define GC_GET_STACK_EXTENTS(_gc, _stack, _size) \
-	jmp_buf __env; \
-	::setjmp(__env); \
-	_stack = (void*)__sp; \
-	_size = (uint32_t)(_gc->stack_top() - (uintptr_t)_stack);
+    jmp_buf __env; \
+    ::setjmp(__env); \
+    _stack = (void*)__sp; \
+    _size = (uint32_t)(_gc->stack_top() - (uintptr_t)_stack);
 
 #else
 
@@ -72,10 +76,10 @@ register void* __sp __asm__("r1");
 #include <setjmp.h>
 
 #define GC_GET_STACK_EXTENTS(_gc, _stack, _size) \
-	jmp_buf __env; \
-	::setjmp(__env); \
-	_stack = &__env; \
-	_size = (uint32_t)(_gc->stack_top() - (uintptr_t)_stack); \
+    jmp_buf __env; \
+    ::setjmp(__env); \
+    _stack = &__env; \
+    _size = (uint32_t)(_gc->stack_top() - (uintptr_t)_stack); \
 
 #endif
 
@@ -117,8 +121,9 @@ namespace lutze
 
     public:
         void* operator new (size_t size, gc& gc);
-        void operator delete (void* p);
+        void* operator new (size_t size, void* p = 0);
         void operator delete (void* p, gc& gc);
+        void operator delete (void* p);
 
         friend class gc;
     };
@@ -193,27 +198,39 @@ namespace lutze
         }
 
         template <class OBJ>
-        void mark(OBJ obj, typename boost::disable_if< boost::is_pointer<OBJ> >::type* dummy = 0)
+        void mark(OBJ obj)
+        {
+            // do nothing
+        }
+
+        template <class OBJ>
+        void mark(OBJ* obj)
+        {
+            mark_object(reinterpret_cast<gc_object*>(obj));
+        }
+
+        template <class OBJ>
+        void mark(const gc_ptr<OBJ>& obj)
         {
             mark_object(obj.get());
         }
 
         template <class OBJ>
-        void mark(OBJ obj, typename boost::enable_if< boost::is_pointer<OBJ> >::type* dummy = 0)
+        void unmark(OBJ obj)
         {
-            mark_object(obj);
+            // do nothing
         }
 
         template <class OBJ>
-        void unmark(OBJ obj, typename boost::disable_if< boost::is_pointer<OBJ> >::type* dummy = 0)
+        void unmark(OBJ* obj)
+        {
+            unmark_object(reinterpret_cast<gc_object*>(obj));
+        }
+
+        template <class OBJ>
+        void unmark(const gc_ptr<OBJ>& obj)
         {
             unmark_object(obj.get());
-        }
-
-        template <class OBJ>
-        void unmark(OBJ obj, typename boost::enable_if< boost::is_pointer<OBJ> >::type* dummy = 0)
-        {
-            unmark_object(obj);
         }
 
         void collect(bool force = false)
@@ -499,6 +516,11 @@ namespace lutze
         return pobj;
     }
 
+    void* gc_object::operator new (size_t size, void* p)
+    {
+        return gc_object::operator new(size, get_gc());
+    }
+
     void gc_object::operator delete (void* p, gc& gc)
     {
         gc_object* pobj = static_cast<gc_object*>(p);
@@ -510,6 +532,30 @@ namespace lutze
     {
         gc_object::operator delete(p, get_gc());
     }
+
+    // This expands to...
+    // template <class T, class A1, ...etc>
+    // gc_ptr<T> new_gc(A1 const& a1, ...etc)
+    // {
+    //     return new_gc_placeholder<T>(get_gc(), a1, ...etc);
+    // }
+
+    // template <class T, class A1, ...etc>
+    // gc_ptr<T> new_static_gc(A1 const& a1, ...etc)
+    // {
+    //     return new_gc_placeholder<T>(get_static_gc(), a1, ...etc);
+    // }
+    #define NEW_GC(Z, N, _) \
+    template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
+    gc_ptr<T> new_gc_placeholder(gc& gc BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
+    { gc_ptr<T> obj(new(gc) T(BOOST_PP_ENUM_PARAMS(N, a))); gc.collect(); return obj; } \
+    template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
+    gc_ptr<T> new_gc(BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
+    { return new_gc_placeholder<T>(get_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); } \
+    template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
+    gc_ptr<T> new_static_gc(BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
+    { return new_gc_placeholder<T>(get_static_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); }
+    BOOST_PP_REPEAT_2ND(BOOST_PP_INC(9), NEW_GC, _)
 }
 
 #endif

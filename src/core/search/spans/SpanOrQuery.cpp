@@ -52,7 +52,7 @@ namespace Lucene
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
 
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = LuceneDynamicCast<SpanQuery>(clauses[i]->clone());
+            newClauses[i] = gc_ptr_dynamic_cast<SpanQuery>(clauses[i]->clone());
 
         SpanOrQueryPtr spanOrQuery(newLucene<SpanOrQuery>(newClauses));
         spanOrQuery->setBoost(getBoost());
@@ -65,11 +65,11 @@ namespace Lucene
         for (int32_t i = 0; i < clauses.size(); ++i)
         {
             SpanQueryPtr clause(clauses[i]);
-            SpanQueryPtr query(LuceneDynamicCast<SpanQuery>(clause->rewrite(reader)));
+            SpanQueryPtr query(gc_ptr_dynamic_cast<SpanQuery>(clause->rewrite(reader)));
             if (query != clause) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = LuceneDynamicCast<SpanOrQuery>(this->clone());
+                    clone = gc_ptr_dynamic_cast<SpanOrQuery>(this->clone());
                 clone->clauses[i] = query;
             }
         }
@@ -98,7 +98,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        SpanOrQueryPtr otherQuery(LuceneDynamicCast<SpanOrQuery>(other));
+        SpanOrQueryPtr otherQuery(gc_ptr_dynamic_cast<SpanOrQuery>(other));
         if (!otherQuery)
             return false;
 

@@ -6,6 +6,7 @@
 
 #include "LuceneInc.h"
 #include "PositionBasedTermVectorMapper.h"
+#include "TermVectorOffsetInfo.h"
 
 namespace Lucene
 {

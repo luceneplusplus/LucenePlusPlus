@@ -14,6 +14,7 @@
 #include "CharBlockPool.h"
 #include "IntBlockPool.h"
 #include "DocumentsWriter.h"
+#include "RawPostingList.h"
 
 namespace Lucene
 {

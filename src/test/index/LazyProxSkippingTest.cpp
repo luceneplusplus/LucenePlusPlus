@@ -35,11 +35,11 @@ public:
     {
         this->input = input;
     }
-    
+
     virtual ~SeeksCountingStream()
     {
     }
-    
+
     LUCENE_CLASS(SeeksCountingStream);
 
 protected:
@@ -50,32 +50,32 @@ public:
     {
         return input->readByte();
     }
-    
+
     virtual void readBytes(uint8_t* b, int32_t offset, int32_t length)
     {
         input->readBytes(b, offset, length);
     }
-    
+
     virtual void close()
     {
         input->close();
     }
-    
+
     virtual int64_t getFilePointer()
     {
         return input->getFilePointer();
     }
-    
+
     virtual void seek(int64_t pos); // implemented below
-    
+
     virtual int64_t length()
     {
         return input->length();
     }
-    
+
     LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
-        return newLucene<SeeksCountingStream>(LuceneDynamicCast<IndexInput>(input->clone()));
+        return newLucene<SeeksCountingStream>(gc_ptr_dynamic_cast<IndexInput>(input->clone()));
     }
 };
 
@@ -110,14 +110,14 @@ public:
         term2 = L"yy";
         term3 = L"zz";
     }
-    
+
     virtual ~LazyProxSkippingFixture()
     {
     }
 
 protected:
     SearcherPtr searcher;
-    
+
     String field;
     String term1;
     String term2;
@@ -154,19 +154,19 @@ public:
                 // add a document that contains term2 but not term 1
                 content = term3 + L" " + term2;
             }
-            
+
             doc->add(newLucene<Field>(field, content, Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
         }
-        
+
         // make sure the index has only a single segment
         writer->optimize();
         writer->close();
 
         SegmentReaderPtr reader = SegmentReader::getOnlySegmentReader(directory);
-        searcher = newLucene<IndexSearcher>(reader);        
+        searcher = newLucene<IndexSearcher>(reader);
     }
-    
+
     Collection<ScoreDocPtr> search()
     {
         // create PhraseQuery "term1 term2" and search
@@ -175,7 +175,7 @@ public:
         pq->add(newLucene<Term>(field, term2));
         return searcher->search(pq, FilterPtr(), 1000)->scoreDocs;
     }
-    
+
     void performTest(int32_t numHits)
     {
         createIndex(numHits);
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(testSeek)
         doc->add(newLucene<Field>(field, L"a b", Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
     }
-    
+
     writer->close();
     IndexReaderPtr reader = IndexReader::open(directory, true);
     TermPositionsPtr tp = reader->termPositions();

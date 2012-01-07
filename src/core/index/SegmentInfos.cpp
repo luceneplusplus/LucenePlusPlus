@@ -284,16 +284,16 @@ namespace Lucene
     LuceneObjectPtr SegmentInfos::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SegmentInfoCollection::clone(other ? other : newLucene<SegmentInfos>());
-        SegmentInfosPtr cloneInfos(LuceneDynamicCast<SegmentInfos>(clone));
+        SegmentInfosPtr cloneInfos(gc_ptr_dynamic_cast<SegmentInfos>(clone));
         cloneInfos->counter = counter;
         cloneInfos->generation = generation;
         cloneInfos->lastGeneration = lastGeneration;
         cloneInfos->version = version;
         cloneInfos->pendingSegnOutput = pendingSegnOutput;
         for (int32_t i = 0; i < cloneInfos->size(); ++i)
-            cloneInfos->segmentInfos[i] = LuceneDynamicCast<SegmentInfo>(cloneInfos->info(i)->clone());
+            cloneInfos->segmentInfos[i] = gc_ptr_dynamic_cast<SegmentInfo>(cloneInfos->info(i)->clone());
         cloneInfos->userData = MapStringString::newInstance();
-        cloneInfos->userData.putAll(userData.begin(), userData.end());
+        cloneInfos->userData.put(userData.begin(), userData.end());
         return cloneInfos;
     }
 
@@ -586,7 +586,7 @@ namespace Lucene
     SegmentInfosPtr SegmentInfos::range(int32_t first, int32_t last)
     {
         SegmentInfosPtr infos(newLucene<SegmentInfos>());
-        infos->segmentInfos.addAll(segmentInfos.begin() + first, segmentInfos.begin() + last);
+        infos->segmentInfos.add(segmentInfos.begin() + first, segmentInfos.begin() + last);
         return infos;
     }
 
@@ -640,7 +640,7 @@ namespace Lucene
             if ((*seginfo)->dir == dir)
             {
                 SetString segFiles((*seginfo)->files());
-                files.addAll(segFiles.begin(), segFiles.end());
+                files.add(segFiles.begin(), segFiles.end());
             }
         }
         return files;
@@ -752,7 +752,7 @@ namespace Lucene
     void SegmentInfos::replace(SegmentInfosPtr other)
     {
         segmentInfos.clear();
-        segmentInfos.addAll(other->segmentInfos.begin(), other->segmentInfos.end());
+        segmentInfos.add(other->segmentInfos.begin(), other->segmentInfos.end());
         lastGeneration = other->lastGeneration;
     }
 

@@ -68,9 +68,9 @@ namespace Lucene
         try
         {
             if (MiscUtils::typeOf<BooleanQuery>(query))
-                getTermsFromBooleanQuery(LuceneDynamicCast<BooleanQuery>(query), terms, prohibited, fieldName);
+                getTermsFromBooleanQuery(gc_ptr_dynamic_cast<BooleanQuery>(query), terms, prohibited, fieldName);
             else if (MiscUtils::typeOf<FilteredQuery>(query))
-                getTermsFromFilteredQuery(LuceneDynamicCast<FilteredQuery>(query), terms, prohibited, fieldName);
+                getTermsFromFilteredQuery(gc_ptr_dynamic_cast<FilteredQuery>(query), terms, prohibited, fieldName);
             else
             {
                 SetTerm nonWeightedTerms(SetTerm::newInstance());

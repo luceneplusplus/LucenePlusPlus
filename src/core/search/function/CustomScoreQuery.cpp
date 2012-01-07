@@ -52,17 +52,17 @@ namespace Lucene
         QueryPtr sq = subQuery->rewrite(reader);
         if (sq != subQuery)
         {
-            cloneQuery = LuceneStaticCast<CustomScoreQuery>(clone());
+            cloneQuery = gc_ptr_static_cast<CustomScoreQuery>(clone());
             cloneQuery->subQuery = sq;
         }
 
         for (int32_t i = 0; i < valSrcQueries.size(); ++i)
         {
-            ValueSourceQueryPtr v = LuceneDynamicCast<ValueSourceQuery>(valSrcQueries[i]->rewrite(reader));
+            ValueSourceQueryPtr v = gc_ptr_dynamic_cast<ValueSourceQuery>(valSrcQueries[i]->rewrite(reader));
             if (v != valSrcQueries[i])
             {
                 if (!cloneQuery)
-                    cloneQuery = LuceneStaticCast<CustomScoreQuery>(clone());
+                    cloneQuery = gc_ptr_static_cast<CustomScoreQuery>(clone());
                 cloneQuery->valSrcQueries[i] = v;
             }
         }
@@ -80,12 +80,12 @@ namespace Lucene
     LuceneObjectPtr CustomScoreQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<CustomScoreQuery>(subQuery));
-        CustomScoreQueryPtr cloneQuery(LuceneDynamicCast<CustomScoreQuery>(clone));
+        CustomScoreQueryPtr cloneQuery(gc_ptr_dynamic_cast<CustomScoreQuery>(clone));
         cloneQuery->strict = strict;
-        cloneQuery->subQuery = LuceneDynamicCast<Query>(subQuery->clone());
+        cloneQuery->subQuery = gc_ptr_dynamic_cast<Query>(subQuery->clone());
         cloneQuery->valSrcQueries = Collection<ValueSourceQueryPtr>::newInstance(valSrcQueries.size());
         for (int32_t i = 0; i < valSrcQueries.size(); ++i)
-            cloneQuery->valSrcQueries[i] = LuceneDynamicCast<ValueSourceQuery>(valSrcQueries[i]->clone());
+            cloneQuery->valSrcQueries[i] = gc_ptr_dynamic_cast<ValueSourceQuery>(valSrcQueries[i]->clone());
         return cloneQuery;
     }
 
@@ -101,7 +101,7 @@ namespace Lucene
 
     bool CustomScoreQuery::equals(LuceneObjectPtr other)
     {
-        CustomScoreQueryPtr otherQuery(LuceneDynamicCast<CustomScoreQuery>(other));
+        CustomScoreQueryPtr otherQuery(gc_ptr_dynamic_cast<CustomScoreQuery>(other));
         if (!otherQuery)
             return false;
         if (getBoost() != otherQuery->getBoost() || !subQuery->equals(otherQuery->subQuery) || strict != otherQuery->strict)

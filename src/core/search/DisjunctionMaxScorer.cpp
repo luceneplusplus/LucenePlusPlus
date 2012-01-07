@@ -60,7 +60,7 @@ namespace Lucene
     double DisjunctionMaxScorer::score()
     {
         int32_t doc = subScorers[0]->docID();
-        Collection<double> sum(newCollectionDouble(subScorers[0]->score()));
+        Collection<double> sum(newCollection<double>(subScorers[0]->score()));
         Collection<double> max(Collection<double>::newInstance(sum.begin(), sum.end()));
         int32_t size = numScorers;
         scoreAll(1, size, doc, sum, max);

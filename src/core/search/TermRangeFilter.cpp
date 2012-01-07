@@ -12,54 +12,54 @@
 
 namespace Lucene
 {
-    TermRangeFilter::TermRangeFilter(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower, 
-                                     bool includeUpper, CollatorPtr collator) : 
-                                     MultiTermQueryWrapperFilter(newLucene<TermRangeQuery>(fieldName, lowerTerm, upperTerm, 
+    TermRangeFilter::TermRangeFilter(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower,
+                                     bool includeUpper, CollatorPtr collator) :
+                                     MultiTermQueryWrapperFilter(newLucene<TermRangeQuery>(fieldName, lowerTerm, upperTerm,
                                      includeLower, includeUpper, collator))
     {
     }
-    
+
     TermRangeFilter::~TermRangeFilter()
     {
     }
-    
+
     TermRangeFilterPtr TermRangeFilter::Less(const String& fieldName, StringValue upperTerm)
     {
         return newLucene<TermRangeFilter>(fieldName, VariantUtils::null(), upperTerm, false, true);
     }
-    
+
     TermRangeFilterPtr TermRangeFilter::More(const String& fieldName, StringValue lowerTerm)
     {
         return newLucene<TermRangeFilter>(fieldName, lowerTerm, VariantUtils::null(), true, false);
     }
-    
+
     String TermRangeFilter::getField()
     {
-        return LuceneStaticCast<TermRangeQuery>(query)->getField();
+        return gc_ptr_static_cast<TermRangeQuery>(query)->getField();
     }
-    
+
     String TermRangeFilter::getLowerTerm()
     {
-        return LuceneStaticCast<TermRangeQuery>(query)->getLowerTerm();
+        return gc_ptr_static_cast<TermRangeQuery>(query)->getLowerTerm();
     }
-    
+
     String TermRangeFilter::getUpperTerm()
     {
-        return LuceneStaticCast<TermRangeQuery>(query)->getUpperTerm();
+        return gc_ptr_static_cast<TermRangeQuery>(query)->getUpperTerm();
     }
-    
+
     bool TermRangeFilter::includesLower()
     {
-        return LuceneStaticCast<TermRangeQuery>(query)->includesLower();
+        return gc_ptr_static_cast<TermRangeQuery>(query)->includesLower();
     }
-    
+
     bool TermRangeFilter::includesUpper()
     {
-        return LuceneStaticCast<TermRangeQuery>(query)->includesUpper();
+        return gc_ptr_static_cast<TermRangeQuery>(query)->includesUpper();
     }
-    
+
     CollatorPtr TermRangeFilter::getCollator()
     {
-        return LuceneStaticCast<TermRangeQuery>(query)->getCollator();
+        return gc_ptr_static_cast<TermRangeQuery>(query)->getCollator();
     }
 }

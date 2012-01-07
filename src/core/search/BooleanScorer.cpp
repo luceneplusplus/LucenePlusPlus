@@ -7,6 +7,7 @@
 #include "LuceneInc.h"
 #include "BooleanScorer.h"
 #include "Similarity.h"
+#include "Collector.h"
 
 namespace Lucene
 {
@@ -72,7 +73,7 @@ namespace Lucene
                     if (current->doc >= max)
                     {
                         tmp = current;
-                        current = current->next();
+                        current = current->next;
                         tmp->next = bucketTable->first;
                         bucketTable->first = tmp;
                         continue;
@@ -86,13 +87,13 @@ namespace Lucene
                     }
                 }
 
-                current = current->next(); // pop the queue
+                current = current->next; // pop the queue
             }
 
             if (bucketTable->first)
             {
                 current = bucketTable->first;
-                bucketTable->first = current->next();
+                bucketTable->first = current->next;
                 return true;
             }
 
@@ -135,7 +136,7 @@ namespace Lucene
             while (bucketTable->first) // more queued
             {
                 current = bucketTable->first;
-                bucketTable->first = current->next(); // pop the queue
+                bucketTable->first = current->next; // pop the queue
 
                 // check prohibited & required and minNrShouldMatch
                 if ((current->bits & prohibitedMask) == 0 && (current->bits & requiredMask) == requiredMask && current->coord >= minNrShouldMatch)
@@ -234,7 +235,7 @@ namespace Lucene
 
     void BooleanScorerCollector::setScorer(ScorerPtr scorer)
     {
-        this->_scorer = scorer;
+        this->scorer = scorer;
     }
 
     bool BooleanScorerCollector::acceptsDocsOutOfOrder()

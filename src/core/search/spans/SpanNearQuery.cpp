@@ -30,37 +30,37 @@ namespace Lucene
         this->slop = slop;
         this->inOrder = inOrder;
     }
-    
+
     SpanNearQuery::~SpanNearQuery()
     {
     }
-    
+
     Collection<SpanQueryPtr> SpanNearQuery::getClauses()
     {
         return clauses;
     }
-    
+
     int32_t SpanNearQuery::getSlop()
     {
         return slop;
     }
-    
+
     bool SpanNearQuery::isInOrder()
     {
         return inOrder;
     }
-    
+
     String SpanNearQuery::getField()
     {
         return field;
     }
-    
+
     void SpanNearQuery::extractTerms(SetTerm terms)
     {
         for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
             (*clause)->extractTerms(terms);
     }
-    
+
     String SpanNearQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -74,31 +74,31 @@ namespace Lucene
         buffer << L"], " << slop << L", " << inOrder << L")" << boostString();
         return buffer.str();
     }
-    
+
     SpansPtr SpanNearQuery::getSpans(IndexReaderPtr reader)
     {
         if (clauses.empty()) // optimize 0-clause case
             return newLucene<SpanOrQuery>(getClauses())->getSpans(reader);
-        
+
         if (clauses.size() == 1) // optimize 1-clause case
             return clauses[0]->getSpans(reader);
-        
+
         return inOrder
-                ? LuceneStaticCast<Spans>(newLucene<NearSpansOrdered>(LuceneThis(), reader, collectPayloads))
-                : LuceneStaticCast<Spans>(newLucene<NearSpansUnordered>(LuceneThis(), reader));
+                ? gc_ptr_static_cast<Spans>(newLucene<NearSpansOrdered>(LuceneThis(), reader, collectPayloads))
+                : gc_ptr_static_cast<Spans>(newLucene<NearSpansUnordered>(LuceneThis(), reader));
     }
-    
+
     QueryPtr SpanNearQuery::rewrite(IndexReaderPtr reader)
     {
         SpanNearQueryPtr clone;
         for (int32_t i = 0; i < clauses.size(); ++i)
         {
             SpanQueryPtr clause(clauses[i]);
-            SpanQueryPtr query(LuceneDynamicCast<SpanQuery>(clause->rewrite(reader)));
+            SpanQueryPtr query(gc_ptr_dynamic_cast<SpanQuery>(clause->rewrite(reader)));
             if (query != clause) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = LuceneDynamicCast<SpanNearQuery>(this->clone());
+                    clone = gc_ptr_dynamic_cast<SpanNearQuery>(this->clone());
                 clone->clauses[i] = query;
             }
         }
@@ -107,43 +107,43 @@ namespace Lucene
         else
             return LuceneThis(); // no clauses rewrote
     }
-    
+
     LuceneObjectPtr SpanNearQuery::clone(LuceneObjectPtr other)
     {
         int32_t sz = clauses.size();
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
-        
+
         for (int32_t i = 0; i < sz; ++i)
-            newClauses[i] = LuceneDynamicCast<SpanQuery>(clauses[i]->clone());
-        
+            newClauses[i] = gc_ptr_dynamic_cast<SpanQuery>(clauses[i]->clone());
+
         SpanNearQueryPtr spanNearQuery(newLucene<SpanNearQuery>(newClauses, slop, inOrder));
         spanNearQuery->setBoost(getBoost());
         return spanNearQuery;
     }
-    
+
     bool SpanNearQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
-        SpanNearQueryPtr otherQuery(LuceneDynamicCast<SpanNearQuery>(other));
+
+        SpanNearQueryPtr otherQuery(gc_ptr_dynamic_cast<SpanNearQuery>(other));
         if (!otherQuery)
             return false;
-        
+
         if (inOrder != otherQuery->inOrder)
             return false;
         if (slop != otherQuery->slop)
             return false;
         if (!clauses.equals(otherQuery->clauses, luceneEquals<SpanQueryPtr>()))
             return false;
-        
+
         return (getBoost() == otherQuery->getBoost());
     }
-    
+
     int32_t SpanNearQuery::hashCode()
     {
         int32_t result = MiscUtils::hashCode(clauses.begin(), clauses.end(), MiscUtils::hashLucene<SpanQueryPtr>);
-        // Mix bits before folding in things like boost, since it could cancel the last element of clauses.  
+        // Mix bits before folding in things like boost, since it could cancel the last element of clauses.
         // This particular mix also serves to differentiate SpanNearQuery hashcodes from others.
         result ^= (result << 14) | MiscUtils::unsignedShift(result, 19); // reversible
         result += MiscUtils::doubleToRawIntBits(getBoost());

@@ -19,62 +19,62 @@ namespace Lucene
     {
         this->filter = filter;
     }
-    
+
     ConstantScoreQuery::~ConstantScoreQuery()
     {
     }
-    
+
     FilterPtr ConstantScoreQuery::getFilter()
     {
         return filter;
     }
-    
+
     QueryPtr ConstantScoreQuery::rewrite(IndexReaderPtr reader)
     {
         return LuceneThis();
     }
-    
+
     void ConstantScoreQuery::extractTerms(SetTerm terms)
     {
         // OK to not add any terms when used for MultiSearcher, but may not be OK for highlighting
     }
-    
+
     WeightPtr ConstantScoreQuery::createWeight(SearcherPtr searcher)
     {
         return newLucene<ConstantWeight>(LuceneThis(), searcher);
     }
-    
+
     String ConstantScoreQuery::toString(const String& field)
     {
         return L"ConstantScore(" + filter->toString() + (getBoost() == 1.0 ? L")" : L"^" + StringUtils::toString(getBoost()));
     }
-    
+
     bool ConstantScoreQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
-        ConstantScoreQueryPtr otherConstantScoreQuery(LuceneDynamicCast<ConstantScoreQuery>(other));
+
+        ConstantScoreQueryPtr otherConstantScoreQuery(gc_ptr_dynamic_cast<ConstantScoreQuery>(other));
         if (!otherConstantScoreQuery)
             return false;
-        
+
         return (this->getBoost() == otherConstantScoreQuery->getBoost() && this->filter->equals(otherConstantScoreQuery->filter));
     }
-    
+
     int32_t ConstantScoreQuery::hashCode()
     {
         // Simple add is OK since no existing filter hashcode has a float component.
         return filter->hashCode() + MiscUtils::doubleToIntBits(getBoost());
     }
-    
+
     LuceneObjectPtr ConstantScoreQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<ConstantScoreQuery>(filter);
-        ConstantScoreQueryPtr cloneQuery(LuceneDynamicCast<ConstantScoreQuery>(Query::clone(clone)));
+        ConstantScoreQueryPtr cloneQuery(gc_ptr_dynamic_cast<ConstantScoreQuery>(Query::clone(clone)));
         cloneQuery->filter = filter;
         return cloneQuery;
     }
-    
+
     ConstantWeight::ConstantWeight(ConstantScoreQueryPtr constantScorer, SearcherPtr searcher)
     {
         this->constantScorer = constantScorer;
@@ -82,45 +82,45 @@ namespace Lucene
         this->queryNorm = 0;
         this->queryWeight = 0;
     }
-    
+
     ConstantWeight::~ConstantWeight()
     {
     }
-    
+
     QueryPtr ConstantWeight::getQuery()
     {
         return constantScorer;
     }
-    
+
     double ConstantWeight::getValue()
     {
         return queryWeight;
     }
-    
+
     double ConstantWeight::sumOfSquaredWeights()
     {
         queryWeight = constantScorer->getBoost();
         return queryWeight * queryWeight;
     }
-    
+
     void ConstantWeight::normalize(double norm)
     {
         this->queryNorm = norm;
         queryWeight *= this->queryNorm;
     }
-    
+
     ScorerPtr ConstantWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<ConstantScorer>(constantScorer, similarity, reader, LuceneThis());
     }
-    
+
     ExplanationPtr ConstantWeight::explain(IndexReaderPtr reader, int32_t doc)
     {
         ConstantScorerPtr cs(newLucene<ConstantScorer>(constantScorer, similarity, reader, LuceneThis()));
         bool exists = (cs->docIdSetIterator->advance(doc) == doc);
-        
+
         ComplexExplanationPtr result(newLucene<ComplexExplanation>());
-        
+
         if (exists)
         {
             result->setDescription(L"ConstantScoreQuery(" + constantScorer->filter->toString() + L"), product of:");
@@ -137,7 +137,7 @@ namespace Lucene
         }
         return result;
     }
-    
+
     ConstantScorer::ConstantScorer(ConstantScoreQueryPtr constantScorer, SimilarityPtr similarity, IndexReaderPtr reader, WeightPtr w) : Scorer(similarity)
     {
         doc = -1;
@@ -154,26 +154,26 @@ namespace Lucene
                 docIdSetIterator = iter;
         }
     }
-    
+
     ConstantScorer::~ConstantScorer()
     {
     }
-    
+
     int32_t ConstantScorer::nextDoc()
     {
         return docIdSetIterator->nextDoc();
     }
-    
+
     int32_t ConstantScorer::docID()
     {
         return docIdSetIterator->docID();
     }
-    
+
     double ConstantScorer::score()
     {
         return theScore;
     }
-    
+
     int32_t ConstantScorer::advance(int32_t target)
     {
         return docIdSetIterator->advance(target);

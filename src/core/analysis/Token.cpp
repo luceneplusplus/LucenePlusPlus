@@ -279,7 +279,7 @@ namespace Lucene
     LuceneObjectPtr Token::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Attribute::clone(other ? other : newLucene<Token>());
-        TokenPtr cloneToken(LuceneDynamicCast<Token>(clone));
+        TokenPtr cloneToken(gc_ptr_dynamic_cast<Token>(clone));
         cloneToken->_termLength = _termLength;
         cloneToken->_startOffset = _startOffset;
         cloneToken->_endOffset = _endOffset;
@@ -294,7 +294,7 @@ namespace Lucene
             MiscUtils::arrayCopy(_termBuffer.get(), 0, cloneToken->_termBuffer.get(), 0, _termBuffer.size());
         }
         if (payload)
-            cloneToken->payload = LuceneDynamicCast<Payload>(payload->clone());
+            cloneToken->payload = gc_ptr_dynamic_cast<Payload>(payload->clone());
 
         return cloneToken;
     }
@@ -306,7 +306,7 @@ namespace Lucene
         clone->flags = flags;
         clone->_type = _type;
         if (payload)
-            clone->payload = LuceneDynamicCast<Payload>(payload->clone());
+            clone->payload = gc_ptr_dynamic_cast<Payload>(payload->clone());
         return clone;
     }
 
@@ -315,7 +315,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        TokenPtr otherToken(LuceneDynamicCast<Token>(other));
+        TokenPtr otherToken(gc_ptr_dynamic_cast<Token>(other));
         if (otherToken)
         {
             initTermBuffer();
@@ -462,33 +462,33 @@ namespace Lucene
 
     void Token::copyTo(AttributePtr target)
     {
-        TokenPtr targetToken(LuceneDynamicCast<Token>(target));
+        TokenPtr targetToken(gc_ptr_dynamic_cast<Token>(target));
         if (targetToken)
         {
             targetToken->reinit(LuceneThis());
             // reinit shares the payload, so clone it
             if (payload)
-                targetToken->payload = LuceneDynamicCast<Payload>(payload->clone());
+                targetToken->payload = gc_ptr_dynamic_cast<Payload>(payload->clone());
         }
         else
         {
             initTermBuffer();
-            TermAttributePtr targetTermAttribute(LuceneDynamicCast<TermAttribute>(target));
+            TermAttributePtr targetTermAttribute(gc_ptr_dynamic_cast<TermAttribute>(target));
             if (targetTermAttribute)
                 targetTermAttribute->setTermBuffer(_termBuffer.get(), 0, _termLength);
-            OffsetAttributePtr targetOffsetAttribute(LuceneDynamicCast<OffsetAttribute>(target));
+            OffsetAttributePtr targetOffsetAttribute(gc_ptr_dynamic_cast<OffsetAttribute>(target));
             if (targetOffsetAttribute)
                 targetOffsetAttribute->setOffset(_startOffset, _endOffset);
-            PositionIncrementAttributePtr targetPositionIncrementAttribute(LuceneDynamicCast<PositionIncrementAttribute>(target));
+            PositionIncrementAttributePtr targetPositionIncrementAttribute(gc_ptr_dynamic_cast<PositionIncrementAttribute>(target));
             if (targetPositionIncrementAttribute)
                 targetPositionIncrementAttribute->setPositionIncrement(positionIncrement);
-            PayloadAttributePtr targetPayloadAttribute(LuceneDynamicCast<PayloadAttribute>(target));
+            PayloadAttributePtr targetPayloadAttribute(gc_ptr_dynamic_cast<PayloadAttribute>(target));
             if (targetPayloadAttribute)
-                targetPayloadAttribute->setPayload(payload ? LuceneDynamicCast<Payload>(payload->clone()) : PayloadPtr());
-            FlagsAttributePtr targetFlagsAttribute(LuceneDynamicCast<FlagsAttribute>(target));
+                targetPayloadAttribute->setPayload(payload ? gc_ptr_dynamic_cast<Payload>(payload->clone()) : PayloadPtr());
+            FlagsAttributePtr targetFlagsAttribute(gc_ptr_dynamic_cast<FlagsAttribute>(target));
             if (targetFlagsAttribute)
                 targetFlagsAttribute->setFlags(flags);
-            TypeAttributePtr targetTypeAttribute(LuceneDynamicCast<TypeAttribute>(target));
+            TypeAttributePtr targetTypeAttribute(gc_ptr_dynamic_cast<TypeAttribute>(target));
             if (targetTypeAttribute)
                 targetTypeAttribute->setType(_type);
         }
@@ -521,7 +521,7 @@ namespace Lucene
         if (AttributeFactory::equals(other))
             return true;
 
-        TokenAttributeFactoryPtr otherTokenAttributeFactory(LuceneDynamicCast<TokenAttributeFactory>(other));
+        TokenAttributeFactoryPtr otherTokenAttributeFactory(gc_ptr_dynamic_cast<TokenAttributeFactory>(other));
         if (otherTokenAttributeFactory)
             return this->delegate->equals(otherTokenAttributeFactory->delegate);
         return false;

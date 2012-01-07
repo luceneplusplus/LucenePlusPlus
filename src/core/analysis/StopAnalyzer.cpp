@@ -65,7 +65,7 @@ namespace Lucene
 
     TokenStreamPtr StopAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        StopAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<StopAnalyzerSavedStreams>(getPreviousTokenStream()));
+        StopAnalyzerSavedStreamsPtr streams(gc_ptr_dynamic_cast<StopAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<StopAnalyzerSavedStreams>();

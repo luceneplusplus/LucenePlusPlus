@@ -53,6 +53,7 @@
 #include "FilteredQuery.h"
 #include "Token.h"
 #include "TermQuery.h"
+#include "Searchable.h"
 
 using namespace Lucene;
 class HighlighterTestFixture;
@@ -321,7 +322,7 @@ namespace HighlighterTest
             {
                 scorer = newLucene<QueryScorer>(query, fieldName);
                 if (!expanMultiTerm)
-                    LuceneDynamicCast<QueryScorer>(scorer)->setExpandMultiTermQuery(false);
+                    gc_ptr_dynamic_cast<QueryScorer>(scorer)->setExpandMultiTermQuery(false);
             }
             else if (mode == QUERY_TERM)
                 scorer = newLucene<QueryTermScorer>(query);
@@ -337,7 +338,7 @@ namespace HighlighterTest
             {
                 Collection<WeightedSpanTermPtr> weightedSpanTerms = Collection<WeightedSpanTermPtr>::newInstance(weightedTerms.size());
                 for (int32_t i = 0; i < weightedTerms.size(); ++i)
-                    weightedSpanTerms[i] = LuceneDynamicCast<WeightedSpanTerm>(weightedTerms[i]);
+                    weightedSpanTerms[i] = gc_ptr_dynamic_cast<WeightedSpanTerm>(weightedTerms[i]);
                 return newLucene<Highlighter>(formatter, newLucene<QueryScorer>(weightedSpanTerms));
             }
             else if (mode == QUERY_TERM)
@@ -1105,7 +1106,7 @@ BOOST_AUTO_TEST_CASE(testConstantScoreMultiTermQuery)
     numHighlights = 0;
 
     query = newLucene<WildcardQuery>(newLucene<Term>(FIELD_NAME, L"ken*"));
-    LuceneDynamicCast<WildcardQuery>(query)->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
+    gc_ptr_dynamic_cast<WildcardQuery>(query)->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
     searcher = newLucene<IndexSearcher>(ramDir, true);
     // can't rewrite ConstantScore if you want to highlight it - it rewrites to ConstantScoreQuery which cannot be highlighted
     // query = unReWrittenQuery.rewrite(reader);
@@ -1519,7 +1520,7 @@ namespace TestGetBestSingleFragment
                 HighlighterPtr highlighter = getHighlighter(fixture->query, HighlighterTestFixture::FIELD_NAME, tokenStream, newLucene<HighlighterTest::TestFormatter>(fixture));
                 highlighter->setTextFragmenter(newLucene<SimpleFragmenter>(40));
                 Collection<String> result = highlighter->getBestFragments(fixture->analyzer, HighlighterTestFixture::FIELD_NAME, text, 10);
-                results.addAll(result.begin(), result.end());
+                results.add(result.begin(), result.end());
             }
             BOOST_CHECK_EQUAL(fixture->numHighlights, 4);
 
@@ -1557,11 +1558,11 @@ namespace TestGetBestSingleFragmentWithWeights
             wTerms[0] = newLucene<WeightedSpanTerm>(10.0, L"hello");
 
             Collection<PositionSpanPtr> positionSpans = newCollection<PositionSpanPtr>(newLucene<PositionSpan>(0, 0));
-            LuceneDynamicCast<WeightedSpanTerm>(wTerms[0])->addPositionSpans(positionSpans);
+            gc_ptr_dynamic_cast<WeightedSpanTerm>(wTerms[0])->addPositionSpans(positionSpans);
 
             wTerms[1] = newLucene<WeightedSpanTerm>(1.0, L"kennedy");
             positionSpans = newCollection<PositionSpanPtr>(newLucene<PositionSpan>(14, 14));
-            LuceneDynamicCast<WeightedSpanTerm>(wTerms[1])->addPositionSpans(positionSpans);
+            gc_ptr_dynamic_cast<WeightedSpanTerm>(wTerms[1])->addPositionSpans(positionSpans);
 
             HighlighterPtr highlighter = getHighlighter(wTerms, newLucene<HighlighterTest::TestFormatter>(fixture));
             TokenStreamPtr tokenStream = fixture->analyzer->tokenStream(HighlighterTestFixture::FIELD_NAME, newLucene<StringReader>(fixture->texts[0]));
@@ -1712,7 +1713,7 @@ namespace TestOverlapAnalyzer
         virtual void run(Collection<String> expected)
         {
             MapStringString synonyms = MapStringString::newInstance();
-            synonyms.put(L"football", L"soccer,footie");
+            synonyms.put(String(L"football"), String(L"soccer,footie"));
             AnalyzerPtr analyzer = newLucene<SynonymAnalyzer>(synonyms);
             String srchkey = L"football";
 

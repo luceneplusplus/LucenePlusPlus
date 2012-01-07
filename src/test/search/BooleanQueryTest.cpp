@@ -57,12 +57,12 @@ BOOST_AUTO_TEST_CASE(testNullOrSubScorer)
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", L"a b c d", Field::STORE_NO, Field::INDEX_ANALYZED));
     w->addDocument(doc);
-    
+
     IndexReaderPtr r = w->getReader();
     IndexSearcherPtr s = newLucene<IndexSearcher>(r);
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"a")), BooleanClause::SHOULD);
-    
+
     double score = s->search(q, 10)->getMaxScore();
     QueryPtr subQuery = newLucene<TermQuery>(newLucene<Term>(L"field", L"not_in_index"));
     subQuery->setBoost(0);
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(testNullOrSubScorer)
     double score2 = s->search(q, 10)->getMaxScore();
     BOOST_CHECK_CLOSE_FRACTION(score * 0.5, score2, 1e-6);
 
-    BooleanQueryPtr qq = LuceneDynamicCast<BooleanQuery>(q->clone());
+    BooleanQueryPtr qq = gc_ptr_dynamic_cast<BooleanQuery>(q->clone());
     PhraseQueryPtr phrase = newLucene<PhraseQuery>();
     phrase->add(newLucene<Term>(L"field", L"not_in_index"));
     phrase->add(newLucene<Term>(L"field", L"another_not_in_index"));
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(testNullOrSubScorer)
     qq->add(phrase, BooleanClause::SHOULD);
     score2 = s->search(qq, 10)->getMaxScore();
     BOOST_CHECK_CLOSE_FRACTION(score * (1.0 / 3), score2, 1e-6);
-    
+
     // now test BooleanScorer2
     subQuery = newLucene<TermQuery>(newLucene<Term>(L"field", L"b"));
     subQuery->setBoost(0);

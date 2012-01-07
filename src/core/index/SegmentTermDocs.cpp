@@ -35,7 +35,7 @@ namespace Lucene
         this->currentFieldStoresPayloads = false;
         this->currentFieldOmitTermFreqAndPositions = false;
 
-        this->_freqStream = LuceneDynamicCast<IndexInput>(parent->core->freqStream->clone());
+        this->_freqStream = gc_ptr_dynamic_cast<IndexInput>(parent->core->freqStream->clone());
         {
             SyncLock parentLock(parent);
             this->deletedDocs = parent->deletedDocs;
@@ -59,7 +59,7 @@ namespace Lucene
         TermInfoPtr ti;
         TermPtr term;
 
-        SegmentTermEnumPtr segmentTermEnum(LuceneDynamicCast<SegmentTermEnum>(termEnum));
+        SegmentTermEnumPtr segmentTermEnum(gc_ptr_dynamic_cast<SegmentTermEnum>(termEnum));
 
         // use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
         if (segmentTermEnum && segmentTermEnum->fieldInfos == parent->core->fieldInfos) // optimized case
@@ -208,7 +208,7 @@ namespace Lucene
         if (df >= skipInterval) // optimized case
         {
             if (!skipListReader)
-                skipListReader = newLucene<DefaultSkipListReader>(LuceneDynamicCast<IndexInput>(_freqStream->clone()), maxSkipLevels, skipInterval); // lazily clone
+                skipListReader = newLucene<DefaultSkipListReader>(gc_ptr_dynamic_cast<IndexInput>(_freqStream->clone()), maxSkipLevels, skipInterval); // lazily clone
 
             if (!haveSkipped) // lazily initialize skip stream
             {

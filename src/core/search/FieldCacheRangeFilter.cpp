@@ -163,7 +163,7 @@ namespace Lucene
     {
         if (Filter::equals(other))
             return true;
-        FieldCacheRangeFilterStringPtr otherFilter(LuceneDynamicCast<FieldCacheRangeFilterString>(other));
+        FieldCacheRangeFilterStringPtr otherFilter(gc_ptr_dynamic_cast<FieldCacheRangeFilterString>(other));
         if (!otherFilter)
             return false;
         if (field != otherFilter->field || includeLower != otherFilter->includeLower || includeUpper != otherFilter->includeUpper)
@@ -197,7 +197,7 @@ namespace Lucene
 
     Collection<uint8_t> FieldCacheRangeFilterByte::getValues(IndexReaderPtr reader)
     {
-        return FieldCache::DEFAULT()->getBytes(reader, field, LuceneStaticCast<ByteParser>(parser));
+        return FieldCache::DEFAULT()->getBytes(reader, field, gc_ptr_static_cast<ByteParser>(parser));
     }
 
     FieldCacheRangeFilterInt::FieldCacheRangeFilterInt(const String& field, ParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
@@ -211,7 +211,7 @@ namespace Lucene
 
     Collection<int32_t> FieldCacheRangeFilterInt::getValues(IndexReaderPtr reader)
     {
-        return FieldCache::DEFAULT()->getInts(reader, field, LuceneStaticCast<IntParser>(parser));
+        return FieldCache::DEFAULT()->getInts(reader, field, gc_ptr_static_cast<IntParser>(parser));
     }
 
     FieldCacheRangeFilterLong::FieldCacheRangeFilterLong(const String& field, ParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
@@ -225,7 +225,7 @@ namespace Lucene
 
     Collection<int64_t> FieldCacheRangeFilterLong::getValues(IndexReaderPtr reader)
     {
-        return FieldCache::DEFAULT()->getLongs(reader, field, LuceneStaticCast<LongParser>(parser));
+        return FieldCache::DEFAULT()->getLongs(reader, field, gc_ptr_static_cast<LongParser>(parser));
     }
 
     FieldCacheRangeFilterDouble::FieldCacheRangeFilterDouble(const String& field, ParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
@@ -258,7 +258,7 @@ namespace Lucene
 
     Collection<double> FieldCacheRangeFilterDouble::getValues(IndexReaderPtr reader)
     {
-        return FieldCache::DEFAULT()->getDoubles(reader, field, LuceneStaticCast<DoubleParser>(parser));
+        return FieldCache::DEFAULT()->getDoubles(reader, field, gc_ptr_static_cast<DoubleParser>(parser));
     }
 
     FieldCacheDocIdSet::FieldCacheDocIdSet(IndexReaderPtr reader, bool mayUseTermDocs)

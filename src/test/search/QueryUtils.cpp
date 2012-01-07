@@ -57,10 +57,10 @@ namespace Lucene
 
     void QueryUtils::checkHashEquals(QueryPtr q)
     {
-        QueryPtr q2 = LuceneDynamicCast<Query>(q->clone());
+        QueryPtr q2 = gc_ptr_dynamic_cast<Query>(q->clone());
         checkEqual(q, q2);
 
-        QueryPtr q3 = LuceneDynamicCast<Query>(q->clone());
+        QueryPtr q3 = gc_ptr_dynamic_cast<Query>(q->clone());
         q3->setBoost(7.21792348);
         checkUnequal(q, q3);
 
@@ -101,7 +101,7 @@ namespace Lucene
         check(q1);
         if (s)
         {
-            IndexSearcherPtr is = LuceneDynamicCast<IndexSearcher>(s);
+            IndexSearcherPtr is = gc_ptr_dynamic_cast<IndexSearcher>(s);
             if (is)
             {
                 checkFirstSkipTo(q1, is);
@@ -121,7 +121,7 @@ namespace Lucene
             }
             checkExplanations(q1, s);
 
-            QueryPtr q2 = LuceneDynamicCast<Query>(q1->clone());
+            QueryPtr q2 = gc_ptr_dynamic_cast<Query>(q1->clone());
             checkEqual(s->rewrite(q1), s->rewrite(q2));
         }
     }
@@ -314,7 +314,7 @@ namespace Lucene
 
         int32_t skip_op = 0;
         int32_t next_op = 1;
-        Collection< Collection<int32_t> > orders = newCollectionCollection<int32_t>(
+        Collection< Collection<int32_t> > orders = newCollection < Collection<int32_t> >(
             newCollection<int32_t>(next_op),
             newCollection<int32_t>(skip_op),
             newCollection<int32_t>(skip_op, next_op),

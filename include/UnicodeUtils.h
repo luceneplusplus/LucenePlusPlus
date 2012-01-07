@@ -79,7 +79,7 @@ namespace Lucene
             MiscUtils::arrayCopy(other.result.get(), 0, result.get(), 0, other.length);
         }
 
-        void copyText(boost::shared_ptr< TranslationResult<T> > other)
+        void copyText(gc_ptr< TranslationResult<T> > other)
         {
             copyText(*other);
         }

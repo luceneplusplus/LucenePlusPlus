@@ -86,7 +86,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (LuceneDynamicCast<MultiReader>(reader))
+        if (gc_ptr_dynamic_cast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
@@ -101,7 +101,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (LuceneDynamicCast<MultiReader>(reader))
+        if (gc_ptr_dynamic_cast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);

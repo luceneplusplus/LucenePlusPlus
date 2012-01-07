@@ -5,6 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
+#include <boost/make_shared.hpp>
 #include "SortField.h"
 #include "FieldCache.h"
 #include "FieldComparator.h"
@@ -56,13 +57,13 @@ namespace Lucene
 
     SortField::SortField(const String& field, ParserPtr parser, bool reverse)
     {
-        if (LuceneDynamicCast<IntParser>(parser))
+        if (gc_ptr_dynamic_cast<IntParser>(parser))
             initFieldType(field, INT);
-        else if (LuceneDynamicCast<ByteParser>(parser))
+        else if (gc_ptr_dynamic_cast<ByteParser>(parser))
             initFieldType(field, BYTE);
-        else if (LuceneDynamicCast<LongParser>(parser))
+        else if (gc_ptr_dynamic_cast<LongParser>(parser))
             initFieldType(field, LONG);
-        else if (LuceneDynamicCast<DoubleParser>(parser))
+        else if (gc_ptr_dynamic_cast<DoubleParser>(parser))
             initFieldType(field, DOUBLE);
         else
             boost::throw_exception(IllegalArgumentException(L"Parser instance does not subclass existing numeric parser from FieldCache"));
@@ -73,7 +74,7 @@ namespace Lucene
     SortField::SortField(const String& field, const std::locale& locale, bool reverse)
     {
         initFieldType(field, STRING);
-        this->locale = newInstance<std::locale>(locale);
+        this->locale = boost::make_shared<std::locale>(locale);
         this->reverse = reverse;
     }
 
@@ -198,7 +199,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        SortFieldPtr otherSortField(LuceneDynamicCast<SortField>(other));
+        SortFieldPtr otherSortField(gc_ptr_dynamic_cast<SortField>(other));
         if (!otherSortField)
             return false;
 

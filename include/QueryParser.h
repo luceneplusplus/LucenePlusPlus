@@ -116,7 +116,7 @@ namespace Lucene
         struct JJCalls;
         typedef gc_ptr<JJCalls> JJCallsPtr;
 
-        struct JJCalls
+        struct JJCalls : public gc_object
         {
             JJCalls()
             {

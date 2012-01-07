@@ -15,7 +15,7 @@ namespace Lucene
     ///
     /// Note that you can only access hits from a Searcher as long as it is not yet closed, otherwise an IO
     /// exception will be thrown.
-    class LPPAPI Searcher : public Searchable, public LuceneObject
+    class LPPAPI Searcher : public Searchable
     {
     public:
         Searcher();

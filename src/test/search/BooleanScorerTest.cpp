@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(testEmptyBucketWithMoreDocs)
     // (for example). Currently, the code relies on the 'more' variable to work properly, and this
     // test ensures that if the logic changes, we have a test to back it up.
     SimilarityPtr sim = Similarity::getDefault();
-    Collection<ScorerPtr> scorers = newCollectionScorer(newLucene<TestEmptyBucketWithMoreDocs::EmptyScorer>(sim));
+    Collection<ScorerPtr> scorers = newCollection<ScorerPtr>(newLucene<TestEmptyBucketWithMoreDocs::EmptyScorer>(sim));
 
     BooleanScorerPtr bs = newLucene<BooleanScorer>(sim, 1, scorers, Collection<ScorerPtr>());
 

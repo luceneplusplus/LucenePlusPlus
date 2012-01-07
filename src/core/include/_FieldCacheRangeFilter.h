@@ -139,7 +139,7 @@ namespace Lucene
         {
             if (Filter::equals(other))
                 return true;
-            gc_ptr< FieldCacheRangeFilterNumeric<T> > otherFilter(LuceneDynamicCast< FieldCacheRangeFilterNumeric<T> >(other));
+            gc_ptr< FieldCacheRangeFilterNumeric<T> > otherFilter(gc_ptr_dynamic_cast< FieldCacheRangeFilterNumeric<T> >(other));
             if (!otherFilter)
                 return false;
             if (field != otherFilter->field || includeLower != otherFilter->includeLower || includeUpper != otherFilter->includeUpper)

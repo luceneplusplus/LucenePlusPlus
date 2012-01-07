@@ -13,43 +13,43 @@ namespace Lucene
     {
         input = in;
     }
-    
+
     CharReader::~CharReader()
     {
     }
-    
+
     CharStreamPtr CharReader::get(ReaderPtr input)
     {
-        CharStreamPtr charStream(LuceneDynamicCast<CharStream>(input));
+        CharStreamPtr charStream(gc_ptr_dynamic_cast<CharStream>(input));
         return charStream ? charStream : newLucene<CharReader>(input);
     }
-    
+
     int32_t CharReader::correctOffset(int32_t currentOff)
     {
         return currentOff;
     }
-    
+
     void CharReader::close()
     {
         if (input)
             input->close();
     }
-    
+
     int32_t CharReader::read(wchar_t* buffer, int32_t offset, int32_t length)
     {
         return input->read(buffer, offset, length);
     }
-    
+
     bool CharReader::markSupported()
     {
         return input->markSupported();
     }
-    
+
     void CharReader::mark(int32_t readAheadLimit)
     {
         input->mark(readAheadLimit);
     }
-    
+
     void CharReader::reset()
     {
         input->reset();

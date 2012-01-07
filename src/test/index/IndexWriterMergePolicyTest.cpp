@@ -54,7 +54,7 @@ static void checkInvariants(IndexWriterPtr writer)
         {
             if (upperBound * mergeFactor <= maxMergeDocs)
                 BOOST_CHECK(numSegments < mergeFactor);
-            
+
             do
             {
                 lowerBound = upperBound;
@@ -76,13 +76,13 @@ BOOST_AUTO_TEST_CASE(testNormalCase)
     writer->setMaxBufferedDocs(10);
     writer->setMergeFactor(10);
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
-    
+
     for (int32_t i = 0; i < 100; ++i)
     {
         addDoc(writer);
         checkInvariants(writer);
     }
-    
+
     writer->close();
 }
 
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(testNoOverMerge)
     writer->setMaxBufferedDocs(10);
     writer->setMergeFactor(10);
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
-    
+
     bool noOverMerge = false;
     for (int32_t i = 0; i < 100; ++i)
     {
@@ -103,9 +103,9 @@ BOOST_AUTO_TEST_CASE(testNoOverMerge)
         if (writer->getNumBufferedDocuments() + writer->getSegmentCount() >= 18)
             noOverMerge = true;
     }
-    
+
     BOOST_CHECK(noOverMerge);
-    
+
     writer->close();
 }
 
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(testForceFlush)
     LogDocMergePolicyPtr mp = newLucene<LogDocMergePolicy>(writer);
     mp->setMinMergeDocs(100);
     writer->setMergePolicy(mp);
-    
+
     for (int32_t i = 0; i < 100; ++i)
     {
         addDoc(writer);
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(testForceFlush)
         writer->setMergeFactor(10);
         checkInvariants(writer);
     }
-    
+
     writer->close();
 }
 
@@ -146,20 +146,20 @@ BOOST_AUTO_TEST_CASE(testMergeFactorChange)
     writer->setMaxBufferedDocs(10);
     writer->setMergeFactor(100);
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
-    
+
     for (int32_t i = 0; i < 250; ++i)
     {
         addDoc(writer);
         checkInvariants(writer);
     }
-    
+
     writer->setMergeFactor(5);
 
     // merge policy only fixes segments on levels where merges have been triggered, so check invariants after all adds
     for (int32_t i = 0; i < 10; ++i)
         addDoc(writer);
     checkInvariants(writer);
-    
+
     writer->close();
 }
 
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(testMaxBufferedDocsChange)
     writer->setMaxBufferedDocs(101);
     writer->setMergeFactor(101);
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
-    
+
     // leftmost* segment has 1 doc
     // rightmost* segment has 100 docs
     for (int32_t i = 1; i <= 100; ++i)
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE(testMaxBufferedDocsChange)
         writer->setMergeFactor(101);
         writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
     }
-    
+
     writer->setMaxBufferedDocs(10);
     writer->setMergeFactor(10);
 
@@ -197,11 +197,11 @@ BOOST_AUTO_TEST_CASE(testMaxBufferedDocsChange)
     for (int32_t i = 0; i < 100; ++i)
         addDoc(writer);
     checkInvariants(writer);
-    
+
     for (int32_t i = 100; i < 1000; ++i)
         addDoc(writer);
     writer->commit();
-    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     writer->commit();
     checkInvariants(writer);
 
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(testMergeDocCount0)
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
     writer->setMaxBufferedDocs(10);
     writer->setMergeFactor(100);
-    
+
     for (int32_t i = 0; i < 250; ++i)
     {
         addDoc(writer);
@@ -233,12 +233,12 @@ BOOST_AUTO_TEST_CASE(testMergeDocCount0)
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
     writer->setMaxBufferedDocs(10);
     writer->setMergeFactor(5);
-    
+
     // merge factor is changed, so check invariants after all adds
     for (int32_t i = 0; i < 10; ++i)
         addDoc(writer);
     writer->commit();
-    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     writer->commit();
     checkInvariants(writer);
     BOOST_CHECK_EQUAL(10, writer->maxDoc());

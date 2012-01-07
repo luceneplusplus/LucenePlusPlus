@@ -46,8 +46,8 @@ namespace Lucene
 
     LuceneObjectPtr SpanFirstQuery::clone(LuceneObjectPtr other)
     {
-        LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanFirstQuery>(LuceneDynamicCast<SpanQuery>(match->clone()), end));
-        SpanFirstQueryPtr spanFirstQuery(LuceneDynamicCast<SpanFirstQuery>(clone));
+        LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanFirstQuery>(gc_ptr_dynamic_cast<SpanQuery>(match->clone()), end));
+        SpanFirstQueryPtr spanFirstQuery(gc_ptr_dynamic_cast<SpanFirstQuery>(clone));
         spanFirstQuery->match = match;
         spanFirstQuery->end = end;
         spanFirstQuery->setBoost(getBoost());
@@ -67,10 +67,10 @@ namespace Lucene
     QueryPtr SpanFirstQuery::rewrite(IndexReaderPtr reader)
     {
         SpanFirstQueryPtr clone;
-        SpanQueryPtr rewritten(LuceneDynamicCast<SpanQuery>(match->rewrite(reader)));
+        SpanQueryPtr rewritten(gc_ptr_dynamic_cast<SpanQuery>(match->rewrite(reader)));
         if (rewritten != match)
         {
-            clone = LuceneDynamicCast<SpanFirstQuery>(this->clone());
+            clone = gc_ptr_dynamic_cast<SpanFirstQuery>(this->clone());
             clone->match = rewritten;
         }
 
@@ -85,7 +85,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        SpanFirstQueryPtr otherQuery(LuceneDynamicCast<SpanFirstQuery>(other));
+        SpanFirstQueryPtr otherQuery(gc_ptr_dynamic_cast<SpanFirstQuery>(other));
         if (!otherQuery)
             return false;
 

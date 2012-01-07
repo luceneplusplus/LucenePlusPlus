@@ -14,46 +14,46 @@
 namespace Lucene
 {
     const int32_t RAMInputStream::BUFFER_SIZE = RAMOutputStream::BUFFER_SIZE;
-    
+
     RAMInputStream::RAMInputStream()
     {
         _length = 0;
-        
+
         // make sure that we switch to the first needed buffer lazily
         currentBufferIndex = -1;
         bufferPosition = 0;
         bufferStart = 0;
         bufferLength = 0;
     }
-    
+
     RAMInputStream::RAMInputStream(RAMFilePtr f)
     {
         file = f;
         _length = file->length;
         if (_length / BUFFER_SIZE >= INT_MAX)
             boost::throw_exception(IOException(L"Too large RAMFile: " + StringUtils::toString(_length)));
-        
+
         // make sure that we switch to the first needed buffer lazily
         currentBufferIndex = -1;
         bufferPosition = 0;
         bufferStart = 0;
         bufferLength = 0;
     }
-    
+
     RAMInputStream::~RAMInputStream()
     {
     }
-    
+
     void RAMInputStream::close()
     {
         // nothing to do here
     }
-    
+
     int64_t RAMInputStream::length()
     {
         return _length;
     }
-    
+
     uint8_t RAMInputStream::readByte()
     {
         if (bufferPosition >= bufferLength)
@@ -63,7 +63,7 @@ namespace Lucene
         }
         return currentBuffer[bufferPosition++];
     }
-    
+
     void RAMInputStream::readBytes(uint8_t* b, int32_t offset, int32_t length)
     {
         while (length > 0)
@@ -73,7 +73,7 @@ namespace Lucene
                 ++currentBufferIndex;
                 switchCurrentBuffer(true);
             }
-            
+
             int32_t remainInBuffer = bufferLength - bufferPosition;
             int32_t bytesToCopy = length < remainInBuffer ? length : remainInBuffer;
             MiscUtils::arrayCopy(currentBuffer.get(), bufferPosition, b, offset, bytesToCopy);
@@ -82,7 +82,7 @@ namespace Lucene
             bufferPosition += bytesToCopy;
         }
     }
-    
+
     void RAMInputStream::switchCurrentBuffer(bool enforceEOF)
     {
         if (currentBufferIndex >= file->numBuffers())
@@ -106,12 +106,12 @@ namespace Lucene
             bufferLength = buflen > BUFFER_SIZE ? BUFFER_SIZE : (int32_t)buflen;
         }
     }
-    
+
     int64_t RAMInputStream::getFilePointer()
     {
         return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
     }
-    
+
     void RAMInputStream::seek(int64_t pos)
     {
         if (!currentBuffer || (int32_t)pos < bufferStart || (int32_t)pos >= bufferStart + BUFFER_SIZE)
@@ -121,11 +121,11 @@ namespace Lucene
         }
         bufferPosition = (int32_t)(pos % BUFFER_SIZE);
     }
-    
+
     LuceneObjectPtr RAMInputStream::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<RAMInputStream>());
-        RAMInputStreamPtr cloneInputStream(LuceneDynamicCast<RAMInputStream>(clone));
+        RAMInputStreamPtr cloneInputStream(gc_ptr_dynamic_cast<RAMInputStream>(clone));
         cloneInputStream->file = file;
         cloneInputStream->_length = _length;
         cloneInputStream->currentBuffer = currentBuffer;

@@ -34,7 +34,7 @@ namespace Lucene
     {
         for (Collection<IndexInputPtr>::iterator ii = allIndexInputs.begin(); ii != allIndexInputs.end(); ++ii)
         {
-            BufferedIndexInputPtr bii(LuceneDynamicCast<BufferedIndexInput>(*ii));
+            BufferedIndexInputPtr bii(gc_ptr_dynamic_cast<BufferedIndexInput>(*ii));
             int32_t bufferSize = 1024 + (int32_t)std::abs(rand->nextInt() % 32768);
             bii->setBufferSize(bufferSize);
         }

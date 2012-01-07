@@ -188,7 +188,7 @@ namespace Lucene
             int32_t writeTo = 0;
             while (readFrom < size)
             {
-                CommitPointPtr commit(LuceneDynamicCast<CommitPoint>(commits[readFrom]));
+                CommitPointPtr commit(gc_ptr_dynamic_cast<CommitPoint>(commits[readFrom]));
                 if (!commit->deleted)
                 {
                     if (writeTo != readFrom)
@@ -523,7 +523,7 @@ namespace Lucene
 
     int32_t CommitPoint::compareTo(LuceneObjectPtr other)
     {
-        CommitPointPtr otherCommit(LuceneStaticCast<CommitPoint>(other));
+        CommitPointPtr otherCommit(gc_ptr_static_cast<CommitPoint>(other));
         if (gen < otherCommit->gen)
             return -1;
         if (gen > otherCommit->gen)

@@ -133,7 +133,7 @@ namespace Lucene
 
     BitVectorPtr SegmentReader::cloneDeletedDocs(BitVectorPtr bv)
     {
-        return LuceneDynamicCast<BitVector>(bv->clone());
+        return gc_ptr_dynamic_cast<BitVector>(bv->clone());
     }
 
     LuceneObjectPtr SegmentReader::clone(LuceneObjectPtr other)
@@ -242,7 +242,7 @@ namespace Lucene
                     NormPtr norm(this->_norms.get(curField));
                     if (norm)
                     {
-                        NormPtr cloneNorm(LuceneDynamicCast<Norm>(norm->clone()));
+                        NormPtr cloneNorm(gc_ptr_dynamic_cast<Norm>(norm->clone()));
                         cloneNorm->reader = clone;
                         clone->_norms.put(curField, cloneNorm);
                     }
@@ -678,7 +678,7 @@ namespace Lucene
             {
                 try
                 {
-                    tvReader = LuceneDynamicCast<TermVectorsReader>(orig->clone());
+                    tvReader = gc_ptr_dynamic_cast<TermVectorsReader>(orig->clone());
                 }
                 catch (...)
                 {
@@ -763,7 +763,7 @@ namespace Lucene
 
     void SegmentReader::startCommit()
     {
-        rollbackSegmentInfo = LuceneDynamicCast<SegmentInfo>(si->clone());
+        rollbackSegmentInfo = gc_ptr_dynamic_cast<SegmentInfo>(si->clone());
         rollbackHasChanges = _hasChanges;
         rollbackDeletedDocsDirty = deletedDocsDirty;
         rollbackNormsDirty = normsDirty;
@@ -812,17 +812,17 @@ namespace Lucene
 
     SegmentReaderPtr SegmentReader::getOnlySegmentReader(IndexReaderPtr reader)
     {
-        SegmentReaderPtr segmentReader(LuceneDynamicCast<SegmentReader>(reader));
+        SegmentReaderPtr segmentReader(gc_ptr_dynamic_cast<SegmentReader>(reader));
         if (segmentReader)
             return segmentReader;
 
-        DirectoryReaderPtr directoryReader(LuceneDynamicCast<DirectoryReader>(reader));
+        DirectoryReaderPtr directoryReader(gc_ptr_dynamic_cast<DirectoryReader>(reader));
         if (directoryReader)
         {
             Collection<IndexReaderPtr> subReaders(directoryReader->getSequentialSubReaders());
             if (subReaders.size() != 1)
                 boost::throw_exception(IllegalArgumentException(L"reader has " + StringUtils::toString(subReaders.size()) + L" segments instead of exactly one"));
-            return LuceneDynamicCast<SegmentReader>(subReaders[0]);
+            return gc_ptr_dynamic_cast<SegmentReader>(subReaders[0]);
         }
 
         boost::throw_exception(IllegalArgumentException(L"reader is not a SegmentReader or a single-segment DirectoryReader"));
@@ -1042,7 +1042,7 @@ namespace Lucene
 
     FieldsReaderPtr FieldsReaderLocal::initialValue()
     {
-        return LuceneDynamicCast<FieldsReader>(reader->core->getFieldsReaderOrig()->clone());
+        return gc_ptr_dynamic_cast<FieldsReader>(reader->core->getFieldsReaderOrig()->clone());
     }
 
     SegmentReaderRef::SegmentReaderRef()
@@ -1270,7 +1270,7 @@ namespace Lucene
 
         BOOST_ASSERT(refCount > 0 && (!origNorm || origNorm->refCount > 0));
         LuceneObjectPtr clone = other ? other : newLucene<Norm>();
-        NormPtr cloneNorm(LuceneDynamicCast<Norm>(clone));
+        NormPtr cloneNorm(gc_ptr_dynamic_cast<Norm>(clone));
         cloneNorm->reader = reader;
         cloneNorm->origNorm = origNorm;
         cloneNorm->origReader = origReader;

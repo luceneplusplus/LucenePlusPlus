@@ -68,8 +68,6 @@ namespace Lucene
 
         merged = true;
 
-        DirectoryPtr directory(_directory);
-
         // open the compound stream
         IndexOutputPtr os;
         LuceneException finally;
@@ -141,7 +139,6 @@ namespace Lucene
     void CompoundFileWriter::copyFile(const FileEntry& source, IndexOutputPtr os, ByteArray buffer)
     {
         IndexInputPtr is;
-        DirectoryPtr directory(_directory);
         LuceneException finally;
         try
         {

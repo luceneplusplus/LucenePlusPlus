@@ -21,102 +21,102 @@ namespace Lucene
     {
         this->valSrc = valSrc;
     }
-    
+
     ValueSourceQuery::~ValueSourceQuery()
     {
     }
-    
+
     QueryPtr ValueSourceQuery::rewrite(IndexReaderPtr reader)
     {
         return LuceneThis();
     }
-    
+
     void ValueSourceQuery::extractTerms(SetTerm terms)
     {
         // no terms involved here
     }
-    
+
     WeightPtr ValueSourceQuery::createWeight(SearcherPtr searcher)
     {
         return newLucene<ValueSourceWeight>(LuceneThis(), searcher);
     }
-    
+
     String ValueSourceQuery::toString(const String& field)
     {
         return valSrc->toString() + boostString();
     }
-    
+
     bool ValueSourceQuery::equals(LuceneObjectPtr other)
     {
-        ValueSourceQueryPtr otherQuery(LuceneDynamicCast<ValueSourceQuery>(other));
+        ValueSourceQueryPtr otherQuery(gc_ptr_dynamic_cast<ValueSourceQuery>(other));
         if (!otherQuery)
             return false;
         return (getBoost() == otherQuery->getBoost() && valSrc->equals(otherQuery->valSrc));
     }
-    
+
     int32_t ValueSourceQuery::hashCode()
     {
         return (StringUtils::hashCode(ValueSourceQuery::_getClassName()) + valSrc->hashCode()) ^ MiscUtils::doubleToIntBits(getBoost());
     }
-    
+
     LuceneObjectPtr ValueSourceQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<ValueSourceQuery>(valSrc);
-        ValueSourceQueryPtr cloneQuery(LuceneDynamicCast<ValueSourceQuery>(Query::clone(clone)));
+        ValueSourceQueryPtr cloneQuery(gc_ptr_dynamic_cast<ValueSourceQuery>(Query::clone(clone)));
         cloneQuery->valSrc = valSrc;
         return cloneQuery;
     }
-    
+
     ValueSourceWeight::ValueSourceWeight(ValueSourceQueryPtr query, SearcherPtr searcher)
     {
         this->query = query;
         this->similarity = query->getSimilarity(searcher);
     }
-    
+
     ValueSourceWeight::~ValueSourceWeight()
     {
     }
-    
+
     QueryPtr ValueSourceWeight::getQuery()
     {
         return query;
     }
-    
+
     double ValueSourceWeight::getValue()
     {
         return queryWeight;
     }
-    
+
     double ValueSourceWeight::sumOfSquaredWeights()
     {
         queryWeight = query->getBoost();
         return queryWeight * queryWeight;
     }
-    
+
     void ValueSourceWeight::normalize(double norm)
     {
         queryNorm = norm;
         queryWeight *= queryNorm;
     }
-    
+
     ScorerPtr ValueSourceWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<ValueSourceScorer>(similarity, reader, LuceneThis());
     }
-    
+
     ExplanationPtr ValueSourceWeight::explain(IndexReaderPtr reader, int32_t doc)
     {
         DocValuesPtr vals(query->valSrc->getValues(reader));
         double sc = queryWeight * vals->doubleVal(doc);
-        
+
         ExplanationPtr result(newLucene<ComplexExplanation>(true, sc, query->toString() + L", product of:"));
-        
+
         result->addDetail(vals->explain(doc));
         result->addDetail(newLucene<Explanation>(query->getBoost(), L"boost"));
         result->addDetail(newLucene<Explanation>(queryNorm, L"queryNorm"));
         return result;
     }
-    
+
     ValueSourceScorer::ValueSourceScorer(SimilarityPtr similarity, IndexReaderPtr reader, ValueSourceWeightPtr weight) : Scorer(similarity)
     {
         this->weight = weight;
@@ -126,28 +126,28 @@ namespace Lucene
         vals = weight->query->valSrc->getValues(reader);
         termDocs = reader->termDocs(TermPtr());
     }
-    
+
     ValueSourceScorer::~ValueSourceScorer()
     {
     }
-    
+
     int32_t ValueSourceScorer::nextDoc()
     {
         doc = termDocs->next() ? termDocs->doc() : NO_MORE_DOCS;
         return doc;
     }
-    
+
     int32_t ValueSourceScorer::docID()
     {
         return doc;
     }
-    
+
     int32_t ValueSourceScorer::advance(int32_t target)
     {
         doc = termDocs->skipTo(target) ? termDocs->doc() : NO_MORE_DOCS;
         return doc;
     }
-    
+
     double ValueSourceScorer::score()
     {
         return qWeight * vals->doubleVal(termDocs->doc());

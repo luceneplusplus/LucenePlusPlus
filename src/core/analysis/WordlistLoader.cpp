@@ -40,7 +40,7 @@ namespace Lucene
     {
         SetString result(SetString::newInstance());
         LuceneException finally;
-        BufferedReaderPtr bufferedReader(LuceneDynamicCast<BufferedReader>(reader));
+        BufferedReaderPtr bufferedReader(gc_ptr_dynamic_cast<BufferedReader>(reader));
         try
         {
             if (!bufferedReader)

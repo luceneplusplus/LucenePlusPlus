@@ -117,7 +117,7 @@ namespace Lucene
         if (!currentState)
             computeCurrentState();
 
-        return LuceneDynamicCast<AttributeSourceState>(currentState->clone());
+        return gc_ptr_dynamic_cast<AttributeSourceState>(currentState->clone());
     }
 
     void AttributeSource::restoreState(AttributeSourceStatePtr state)
@@ -149,7 +149,7 @@ namespace Lucene
         if (LuceneObject::equals(other))
             return true;
 
-        AttributeSourcePtr otherAttributeSource = LuceneDynamicCast<AttributeSource>(other);
+        AttributeSourcePtr otherAttributeSource = gc_ptr_dynamic_cast<AttributeSource>(other);
         if (otherAttributeSource)
         {
             if (hasAttributes())
@@ -213,7 +213,7 @@ namespace Lucene
             if (!currentState)
                 computeCurrentState();
             for (AttributeSourceStatePtr state(currentState); state; state = state->next)
-                clone->attributes.put(state->attribute->getClassName(), LuceneDynamicCast<Attribute>(state->attribute->clone()));
+                clone->attributes.put(state->attribute->getClassName(), gc_ptr_dynamic_cast<Attribute>(state->attribute->clone()));
         }
 
         return clone;
@@ -248,10 +248,10 @@ namespace Lucene
     LuceneObjectPtr AttributeSourceState::clone(LuceneObjectPtr other)
     {
         AttributeSourceStatePtr clone(newLucene<AttributeSourceState>());
-        clone->attribute = LuceneDynamicCast<Attribute>(attribute->clone());
+        clone->attribute = gc_ptr_dynamic_cast<Attribute>(attribute->clone());
 
         if (next)
-            clone->next = LuceneDynamicCast<AttributeSourceState>(next->clone());
+            clone->next = gc_ptr_dynamic_cast<AttributeSourceState>(next->clone());
 
         return clone;
     }

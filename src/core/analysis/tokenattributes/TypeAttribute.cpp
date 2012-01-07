@@ -14,68 +14,68 @@ namespace Lucene
     {
         _type = DEFAULT_TYPE();
     }
-    
+
     TypeAttribute::TypeAttribute(const String& type)
     {
         _type = type;
     }
-    
+
     TypeAttribute::~TypeAttribute()
     {
     }
-    
+
     const String& TypeAttribute::DEFAULT_TYPE()
     {
         static String _DEFAULT_TYPE(L"word");
         return _DEFAULT_TYPE;
     }
-    
+
     String TypeAttribute::toString()
     {
         return L"type=" + _type;
     }
-    
+
     String TypeAttribute::type()
     {
         return _type;
     }
-    
+
     void TypeAttribute::setType(const String& type)
     {
         _type = type;
     }
-    
+
     void TypeAttribute::clear()
     {
         _type = DEFAULT_TYPE();
     }
-    
+
     bool TypeAttribute::equals(LuceneObjectPtr other)
     {
         if (Attribute::equals(other))
             return true;
-        
-        TypeAttributePtr otherTypeAttribute(LuceneDynamicCast<TypeAttribute>(other));
+
+        TypeAttributePtr otherTypeAttribute(gc_ptr_dynamic_cast<TypeAttribute>(other));
         if (otherTypeAttribute)
             return (otherTypeAttribute->_type == _type);
-        
+
         return false;
     }
-    
+
     int32_t TypeAttribute::hashCode()
     {
         return StringUtils::hashCode(_type);
     }
-    
+
     void TypeAttribute::copyTo(AttributePtr target)
     {
-        LuceneDynamicCast<TypeAttribute>(target)->setType(_type);
+        gc_ptr_dynamic_cast<TypeAttribute>(target)->setType(_type);
     }
-    
+
     LuceneObjectPtr TypeAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TypeAttribute>();
-        TypeAttributePtr cloneAttribute(LuceneDynamicCast<TypeAttribute>(Attribute::clone(clone)));
+        TypeAttributePtr cloneAttribute(gc_ptr_dynamic_cast<TypeAttribute>(Attribute::clone(clone)));
         cloneAttribute->_type = _type;
         return cloneAttribute;
     }

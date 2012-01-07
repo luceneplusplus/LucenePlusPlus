@@ -53,7 +53,7 @@ namespace Lucene
 
     TokenStreamPtr CJKAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        CJKAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<CJKAnalyzerSavedStreams>(getPreviousTokenStream()));
+        CJKAnalyzerSavedStreamsPtr streams(gc_ptr_dynamic_cast<CJKAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<CJKAnalyzerSavedStreams>();

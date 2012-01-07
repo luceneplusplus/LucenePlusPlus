@@ -122,27 +122,27 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
         // test ranges, including possible extension
         int32_t fromIndex = randBitSet->nextInt(sz + 80);
         int32_t toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
-        BitSetPtr aa = LuceneDynamicCast<BitSet>(a->clone());
+        BitSetPtr aa = gc_ptr_dynamic_cast<BitSet>(a->clone());
         aa->flip(fromIndex, toIndex);
-        OpenBitSetPtr bb = LuceneDynamicCast<OpenBitSet>(b->clone());
+        OpenBitSetPtr bb = gc_ptr_dynamic_cast<OpenBitSet>(b->clone());
         bb->flip(fromIndex, toIndex);
 
         doIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
         fromIndex = randBitSet->nextInt(sz + 80);
         toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
-        aa = LuceneDynamicCast<BitSet>(a->clone());
+        aa = gc_ptr_dynamic_cast<BitSet>(a->clone());
         aa->clear(fromIndex, toIndex);
-        bb = LuceneDynamicCast<OpenBitSet>(b->clone());
+        bb = gc_ptr_dynamic_cast<OpenBitSet>(b->clone());
         bb->clear(fromIndex, toIndex);
 
         doNextSetBit(aa, bb); // a problem here is from clear() or nextSetBit
 
         fromIndex = randBitSet->nextInt(sz + 80);
         toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
-        aa = LuceneDynamicCast<BitSet>(a->clone());
+        aa = gc_ptr_dynamic_cast<BitSet>(a->clone());
         aa->set((uint32_t)fromIndex, (uint32_t)toIndex);
-        bb = LuceneDynamicCast<OpenBitSet>(b->clone());
+        bb = gc_ptr_dynamic_cast<OpenBitSet>(b->clone());
         bb->set(fromIndex, toIndex);
 
         doNextSetBit(aa, bb); // a problem here is from set() or nextSetBit
@@ -152,23 +152,23 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
             BOOST_CHECK_EQUAL(a->equals(a0), b->equals(b0));
             BOOST_CHECK_EQUAL(a->cardinality(), b->cardinality());
 
-            BitSetPtr a_and = LuceneDynamicCast<BitSet>(a->clone());
+            BitSetPtr a_and = gc_ptr_dynamic_cast<BitSet>(a->clone());
             a_and->_and(a0);
-            BitSetPtr a_or = LuceneDynamicCast<BitSet>(a->clone());
+            BitSetPtr a_or = gc_ptr_dynamic_cast<BitSet>(a->clone());
             a_or->_or(a0);
-            BitSetPtr a_xor = LuceneDynamicCast<BitSet>(a->clone());
+            BitSetPtr a_xor = gc_ptr_dynamic_cast<BitSet>(a->clone());
             a_xor->_xor(a0);
-            BitSetPtr a_andn = LuceneDynamicCast<BitSet>(a->clone());
+            BitSetPtr a_andn = gc_ptr_dynamic_cast<BitSet>(a->clone());
             a_andn->andNot(a0);
 
-            OpenBitSetPtr b_and = LuceneDynamicCast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_and = gc_ptr_dynamic_cast<OpenBitSet>(b->clone());
             BOOST_CHECK(b->equals(b_and));
             b_and->_and(b0);
-            OpenBitSetPtr b_or = LuceneDynamicCast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_or = gc_ptr_dynamic_cast<OpenBitSet>(b->clone());
             b_or->_or(b0);
-            OpenBitSetPtr b_xor = LuceneDynamicCast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_xor = gc_ptr_dynamic_cast<OpenBitSet>(b->clone());
             b_xor->_xor(b0);
-            OpenBitSetPtr b_andn = LuceneDynamicCast<OpenBitSet>(b->clone());
+            OpenBitSetPtr b_andn = gc_ptr_dynamic_cast<OpenBitSet>(b->clone());
             b_andn->andNot(b0);
 
             doIterate(a_and, b_and, mode);

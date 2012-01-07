@@ -19,11 +19,11 @@ namespace Lucene
         this->hitCount = 0;
         this->missCount = 0;
     }
-    
+
     CachingWrapperFilter::~CachingWrapperFilter()
     {
     }
-    
+
     DocIdSetPtr CachingWrapperFilter::docIdSetToCache(DocIdSetPtr docIdSet, IndexReaderPtr reader)
     {
         if (!docIdSet)
@@ -41,68 +41,68 @@ namespace Lucene
             return !it ? DocIdSet::EMPTY_DOCIDSET() : newLucene<OpenBitSetDISI>(it, reader->maxDoc());
         }
     }
-    
+
     DocIdSetPtr CachingWrapperFilter::getDocIdSet(IndexReaderPtr reader)
     {
         LuceneObjectPtr coreKey = reader->getFieldCacheKey();
         LuceneObjectPtr delCoreKey = reader->hasDeletions() ? reader->getDeletesCacheKey() : coreKey;
-        
-        DocIdSetPtr docIdSet(LuceneDynamicCast<DocIdSet>(cache->get(reader, coreKey, delCoreKey)));
+
+        DocIdSetPtr docIdSet(gc_ptr_dynamic_cast<DocIdSet>(cache->get(reader, coreKey, delCoreKey)));
         if (docIdSet)
         {
             ++hitCount;
             return docIdSet;
         }
-        
+
         ++missCount;
-        
+
         // cache miss
         docIdSet = docIdSetToCache(filter->getDocIdSet(reader), reader);
-        
+
         if (docIdSet)
             cache->put(coreKey, delCoreKey, docIdSet);
-        
+
         return docIdSet;
     }
-    
+
     String CachingWrapperFilter::toString()
     {
         return L"CachingWrapperFilter(" + filter->toString() + L")";
     }
-    
+
     bool CachingWrapperFilter::equals(LuceneObjectPtr other)
     {
         if (Filter::equals(other))
             return true;
-        
-        CachingWrapperFilterPtr otherCachingWrapperFilter(LuceneDynamicCast<CachingWrapperFilter>(other));
+
+        CachingWrapperFilterPtr otherCachingWrapperFilter(gc_ptr_dynamic_cast<CachingWrapperFilter>(other));
         if (!otherCachingWrapperFilter)
             return false;
-        
+
         return this->filter->equals(otherCachingWrapperFilter->filter);
     }
-    
+
     int32_t CachingWrapperFilter::hashCode()
     {
         return filter->hashCode() ^ 0x1117bf25;
     }
-    
+
     FilterCache::FilterCache(CachingWrapperFilter::DeletesMode deletesMode)
     {
         this->deletesMode = deletesMode;
     }
-    
+
     FilterCache::~FilterCache()
     {
     }
-    
+
     LuceneObjectPtr FilterCache::get(IndexReaderPtr reader, LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey)
     {
         SyncLock syncLock(this);
-        
+
         if (!cache)
             cache = WeakMapObjectObject::newInstance();
-        
+
         LuceneObjectPtr value;
         if (deletesMode == CachingWrapperFilter::DELETES_IGNORE)
         {
@@ -120,7 +120,7 @@ namespace Lucene
 
             // first try for exact match
             value = cache.get(delCoreKey);
-            
+
             if (!value)
             {
                 // now for core match, but dynamically AND NOT deletions
@@ -129,14 +129,14 @@ namespace Lucene
                     value = mergeDeletes(reader, value);
             }
         }
-        
+
         return value;
     }
-    
+
     void FilterCache::put(LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey, LuceneObjectPtr value)
     {
         SyncLock syncLock(this);
-        
+
         if (deletesMode == CachingWrapperFilter::DELETES_IGNORE)
             cache.put(coreKey, value);
         else if (deletesMode == CachingWrapperFilter::DELETES_RECACHE)
@@ -147,29 +147,29 @@ namespace Lucene
             cache.put(delCoreKey, value);
         }
     }
-    
+
     FilterCacheDocIdSet::FilterCacheDocIdSet(CachingWrapperFilter::DeletesMode deletesMode) : FilterCache(deletesMode)
-    {    
+    {
     }
-    
+
     FilterCacheDocIdSet::~FilterCacheDocIdSet()
     {
     }
-    
+
     LuceneObjectPtr FilterCacheDocIdSet::mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value)
     {
-        return newLucene<FilteredCacheDocIdSet>(reader, LuceneDynamicCast<DocIdSet>(value));
+        return newLucene<FilteredCacheDocIdSet>(reader, gc_ptr_dynamic_cast<DocIdSet>(value));
     }
-    
+
     FilteredCacheDocIdSet::FilteredCacheDocIdSet(IndexReaderPtr reader, DocIdSetPtr innerSet) : FilteredDocIdSet(innerSet)
     {
         this->reader = reader;
     }
-    
+
     FilteredCacheDocIdSet::~FilteredCacheDocIdSet()
     {
     }
-    
+
     bool FilteredCacheDocIdSet::match(int32_t docid)
     {
         return !reader->isDeleted(docid);

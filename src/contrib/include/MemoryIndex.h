@@ -105,7 +105,7 @@ namespace Lucene
         MapStringMemoryIndexInfo fields;
 
         /// fields sorted ascending by fieldName; lazily computed on demand
-        Collection<String>MemoryIndexInfo sortedFields;
+        CollectionStringMemoryIndexInfo sortedFields;
 
         /// pos: positions[3 * i], startOffset: positions[3 * i + 1], endOffset: positions[3 * i + 2]
         int32_t stride;
@@ -173,7 +173,7 @@ namespace Lucene
         MapStringIntCollection terms;
 
         /// Terms sorted ascending by term text; computed on demand
-        Collection<String>IntCollection sortedTerms;
+        CollectionStringIntCollection sortedTerms;
 
         /// Number of added tokens for this field
         int32_t numTokens;
@@ -339,7 +339,7 @@ namespace Lucene
         virtual bool isPayloadAvailable();
     };
 
-    class MemoryIndexTermPositionVector : public TermPositionVector, public LuceneObject
+    class MemoryIndexTermPositionVector : public TermPositionVector
     {
     public:
         MemoryIndexTermPositionVector(MemoryIndexReaderPtr reader, MemoryIndexInfoPtr info, const String& fieldName);
@@ -349,7 +349,7 @@ namespace Lucene
 
     protected:
         MemoryIndexReaderPtr reader;
-        Collection<String>IntCollection sortedTerms;
+        CollectionStringIntCollection sortedTerms;
         String fieldName;
 
     public:

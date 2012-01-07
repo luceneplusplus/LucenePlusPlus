@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(testBooleanQueryWithSpanQueries)
     query->add(spanQuery, BooleanClause::MUST);
     query->add(spanQuery, BooleanClause::MUST);
     Collection<String> expectedIds = newCollection<String>(L"1", L"2", L"3", L"4");
-    Collection<double> expectedScores = newCollectionDouble(expectedScore, expectedScore, expectedScore, expectedScore);
+    Collection<double> expectedScores = newCollection<double>(expectedScore, expectedScore, expectedScore, expectedScore);
     checkHits(searcher, query, L"two span queries", expectedIds, expectedScores);
 }
 

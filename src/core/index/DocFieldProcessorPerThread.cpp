@@ -106,9 +106,8 @@ namespace Lucene
                     else
                         lastPerField->next = current->next;
 
-                    DocumentsWriterPtr docWriter(state->_docWriter);
-                    if (docWriter->infoStream)
-                        *(docWriter->infoStream) << L"  purge field=" << current->fieldInfo->name << L"\n";
+                    if (state->docWriter->infoStream)
+                        *(state->docWriter->infoStream) << L"  purge field=" << current->fieldInfo->name << L"\n";
 
                     --totalFieldCount;
                 }
@@ -163,16 +162,13 @@ namespace Lucene
         consumer->startDocument();
         fieldsWriter->startDocument();
 
-        DocumentPtr doc(docState->doc);
-
-        DocumentsWriterPtr docWriter(docFieldProcessor->_docWriter);
-        bool testPoint = IndexWriterPtr(docWriter->_writer)->testPoint(L"DocumentsWriter.ThreadState.init start");
+        bool testPoint = IndexWriterPtr(docFieldProcessor->docWriter->writer)->testPoint(L"DocumentsWriter.ThreadState.init start");
         BOOST_ASSERT(testPoint);
 
         fieldCount = 0;
         int32_t thisFieldGen = fieldGen++;
 
-        Collection<FieldablePtr> docFields(doc->getFields());
+        Collection<FieldablePtr> docFields(docState->doc->getFields());
 
         // Absorb any new fields first seen in this document.
         // Also absorb any changes to fields we had already seen before (eg suddenly turning on norms or

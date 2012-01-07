@@ -46,7 +46,7 @@ namespace Lucene
 
     int32_t NormsWriterPerField::compareTo(LuceneObjectPtr other)
     {
-        return fieldInfo->name.compare(LuceneStaticCast<NormsWriterPerField>(other)->fieldInfo->name);
+        return fieldInfo->name.compare(gc_ptr_static_cast<NormsWriterPerField>(other)->fieldInfo->name);
     }
 
     void NormsWriterPerField::finish()

@@ -39,7 +39,7 @@ namespace Lucene
     {
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        ReverseOrdFieldSourcePtr otherSource(LuceneDynamicCast<ReverseOrdFieldSource>(other));
+        ReverseOrdFieldSourcePtr otherSource(gc_ptr_dynamic_cast<ReverseOrdFieldSource>(other));
         if (!otherSource)
             return false;
         return field == otherSource->field;

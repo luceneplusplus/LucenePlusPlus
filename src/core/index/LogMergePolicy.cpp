@@ -55,13 +55,13 @@ namespace Lucene
 
     bool LogMergePolicy::verbose()
     {
-        return (!_writer.expired() && IndexWriterPtr(_writer)->verbose());
+        return (writer && writer->verbose());
     }
 
     void LogMergePolicy::message(const String& message)
     {
         if (verbose())
-            IndexWriterPtr(_writer)->message(L"LMP: " + message);
+            writer->message(L"LMP: " + message);
     }
 
     int32_t LogMergePolicy::getMergeFactor()
@@ -124,7 +124,7 @@ namespace Lucene
     {
         if (calibrateSizeByDeletes)
         {
-            int32_t delCount = IndexWriterPtr(_writer)->numDeletedDocs(info);
+            int32_t delCount = writer->numDeletedDocs(info);
             return (info->docCount - (int64_t)delCount);
         }
         else
@@ -136,7 +136,7 @@ namespace Lucene
         int64_t byteSize = info->sizeInBytes();
         if (calibrateSizeByDeletes)
         {
-            int32_t delCount = IndexWriterPtr(_writer)->numDeletedDocs(info);
+            int32_t delCount = writer->numDeletedDocs(info);
             double delRatio = info->docCount <= 0 ? 0.0 : ((double)delCount / (double)info->docCount);
             return info->docCount <= 0 ? byteSize : (int64_t)(byteSize * (1.0 - delRatio));
         }
@@ -163,7 +163,6 @@ namespace Lucene
 
     bool LogMergePolicy::isOptimized(SegmentInfoPtr info)
     {
-        IndexWriterPtr writer(_writer);
         bool hasDeletions = (writer->numDeletedDocs(info) > 0);
         return (!hasDeletions && !info->hasSeparateNorms() && info->dir == writer->getDirectory() && (info->getUseCompoundFile() == _useCompoundFile || noCFSRatio < 1.0));
     }
@@ -258,7 +257,7 @@ namespace Lucene
         for (int32_t i = 0; i < numSegments; ++i)
         {
             SegmentInfoPtr info(segmentInfos->info(i));
-            int32_t delCount = IndexWriterPtr(_writer)->numDeletedDocs(info);
+            int32_t delCount = writer->numDeletedDocs(info);
             if (delCount > 0)
             {
                 message(L"  segment " + info->name + L" has deletions");

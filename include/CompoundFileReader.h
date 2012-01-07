@@ -25,7 +25,7 @@ namespace Lucene
         LUCENE_CLASS(CompoundFileReader);
 
     protected:
-        struct FileEntry
+        struct FileEntry : public gc_object
         {
             FileEntry(int64_t offset = 0, int64_t length = 0)
             {

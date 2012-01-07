@@ -15,7 +15,7 @@ BOOST_FIXTURE_TEST_SUITE(TokenTest, LuceneTestFixture)
 
 static AttributePtr checkCloneIsEqual(AttributePtr att)
 {
-    AttributePtr clone = LuceneDynamicCast<Attribute>(att->clone());
+    AttributePtr clone = gc_ptr_dynamic_cast<Attribute>(att->clone());
     BOOST_CHECK(att->equals(clone));
     BOOST_CHECK_EQUAL(att->hashCode(), clone->hashCode());
     return clone;
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(testClone)
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    TokenPtr clone = LuceneDynamicCast<Token>(checkCloneIsEqual(t));
+    TokenPtr clone = gc_ptr_dynamic_cast<Token>(checkCloneIsEqual(t));
     BOOST_CHECK_EQUAL(t->term(), clone->term());
     BOOST_CHECK(buf != clone->termBuffer());
 
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE(testClone)
 
     PayloadPtr pl = newLucene<Payload>(payload);
     t->setPayload(pl);
-    clone = LuceneDynamicCast<Token>(checkCloneIsEqual(t));
+    clone = gc_ptr_dynamic_cast<Token>(checkCloneIsEqual(t));
     BOOST_CHECK(pl->equals(clone->getPayload()));
     BOOST_CHECK_NE(pl, clone->getPayload());
 }
@@ -177,14 +177,14 @@ BOOST_AUTO_TEST_CASE(testClone)
 BOOST_AUTO_TEST_CASE(testCopyTo)
 {
     TokenPtr t = newLucene<Token>();
-    TokenPtr copy = LuceneDynamicCast<Token>(checkCopyIsEqual<Token>(t));
+    TokenPtr copy = gc_ptr_dynamic_cast<Token>(checkCopyIsEqual<Token>(t));
     BOOST_CHECK_EQUAL(L"", t->term());
     BOOST_CHECK_EQUAL(L"", copy->term());
 
     t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
-    copy = LuceneDynamicCast<Token>(checkCopyIsEqual<Token>(t));
+    copy = gc_ptr_dynamic_cast<Token>(checkCopyIsEqual<Token>(t));
     BOOST_CHECK_EQUAL(t->term(), copy->term());
     BOOST_CHECK(buf != copy->termBuffer());
 
@@ -196,7 +196,7 @@ BOOST_AUTO_TEST_CASE(testCopyTo)
 
     PayloadPtr pl = newLucene<Payload>(payload);
     t->setPayload(pl);
-    copy = LuceneDynamicCast<Token>(checkCloneIsEqual(t));
+    copy = gc_ptr_dynamic_cast<Token>(checkCloneIsEqual(t));
     BOOST_CHECK(pl->equals(copy->getPayload()));
     BOOST_CHECK_NE(pl, copy->getPayload());
 }

@@ -156,7 +156,7 @@ namespace Lucene
             if (cell->isPayloadAvailable())
             {
                 Collection<ByteArray> payload(cell->getPayload());
-                matchPayload.addAll(payload.begin(), payload.end());
+                matchPayload.add(payload.begin(), payload.end());
             }
         }
         return Collection<ByteArray>::newInstance(matchPayload.begin(), matchPayload.end());

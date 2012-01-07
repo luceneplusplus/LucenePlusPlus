@@ -97,7 +97,7 @@ namespace Lucene
 
     TokenStreamPtr GreekAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        GreekAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<GreekAnalyzerSavedStreams>(getPreviousTokenStream()));
+        GreekAnalyzerSavedStreamsPtr streams(gc_ptr_dynamic_cast<GreekAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<GreekAnalyzerSavedStreams>();

@@ -36,8 +36,8 @@ namespace Lucene
         this->docStoreOffset = docStoreOffset;
         this->cloneableFieldsStream = cloneableFieldsStream;
         this->cloneableIndexStream = cloneableIndexStream;
-        fieldsStream = LuceneDynamicCast<IndexInput>(cloneableFieldsStream->clone());
-        indexStream = LuceneDynamicCast<IndexInput>(cloneableIndexStream->clone());
+        fieldsStream = gc_ptr_dynamic_cast<IndexInput>(cloneableFieldsStream->clone());
+        indexStream = gc_ptr_dynamic_cast<IndexInput>(cloneableIndexStream->clone());
     }
 
     FieldsReader::FieldsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
@@ -87,7 +87,7 @@ namespace Lucene
             if (format < FieldsWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES)
                 cloneableFieldsStream->setModifiedUTF8StringsMode();
 
-            fieldsStream = LuceneDynamicCast<IndexInput>(cloneableFieldsStream->clone());
+            fieldsStream = gc_ptr_dynamic_cast<IndexInput>(cloneableFieldsStream->clone());
 
             int64_t indexSize = cloneableIndexStream->length() - formatSize;
 
@@ -106,7 +106,7 @@ namespace Lucene
                 this->_size = (int32_t)(indexSize >> 3);
             }
 
-            indexStream = LuceneDynamicCast<IndexInput>(cloneableIndexStream->clone());
+            indexStream = gc_ptr_dynamic_cast<IndexInput>(cloneableIndexStream->clone());
             numTotalDocs = (int32_t)(indexSize >> 3);
             success = true;
         }
@@ -414,7 +414,7 @@ namespace Lucene
         IndexInputPtr localFieldsStream = reader->fieldsStreamTL.get();
         if (!localFieldsStream)
         {
-            localFieldsStream = LuceneStaticCast<IndexInput>(reader->cloneableFieldsStream->clone());
+            localFieldsStream = gc_ptr_static_cast<IndexInput>(reader->cloneableFieldsStream->clone());
             reader->fieldsStreamTL.set(localFieldsStream);
         }
         return localFieldsStream;

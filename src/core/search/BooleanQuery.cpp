@@ -107,7 +107,7 @@ namespace Lucene
                 if (getBoost() != 1.0) // incorporate boost
                 {
                     if (query == c->getQuery()) // if rewrite was no-op
-                        query = LuceneDynamicCast<Query>(query->clone()); // then clone before boost
+                        query = gc_ptr_dynamic_cast<Query>(query->clone()); // then clone before boost
                     query->setBoost(getBoost() * query->getBoost());
                 }
 
@@ -123,7 +123,7 @@ namespace Lucene
             if (query != c->getQuery()) // clause rewrote: must clone
             {
                 if (!clone)
-                    clone = LuceneDynamicCast<BooleanQuery>(this->clone());
+                    clone = gc_ptr_dynamic_cast<BooleanQuery>(this->clone());
                 clone->clauses[i] = newLucene<BooleanClause>(query, c->getOccur());
             }
         }
@@ -143,7 +143,7 @@ namespace Lucene
     LuceneObjectPtr BooleanQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<BooleanQuery>());
-        BooleanQueryPtr cloneQuery(LuceneDynamicCast<BooleanQuery>(clone));
+        BooleanQueryPtr cloneQuery(gc_ptr_dynamic_cast<BooleanQuery>(clone));
         cloneQuery->disableCoord = disableCoord;
         cloneQuery->minNrShouldMatch = minNrShouldMatch;
         cloneQuery->clauses = Collection<BooleanClausePtr>::newInstance(clauses.begin(), clauses.end());
@@ -170,7 +170,7 @@ namespace Lucene
             QueryPtr subQuery((*clause)->getQuery());
             if (subQuery)
             {
-                if (LuceneDynamicCast<BooleanQuery>(subQuery)) // wrap sub-bools in parens
+                if (gc_ptr_dynamic_cast<BooleanQuery>(subQuery)) // wrap sub-bools in parens
                 {
                     buffer += L"(";
                     buffer += subQuery->toString(field);
@@ -200,7 +200,7 @@ namespace Lucene
 
     bool BooleanQuery::equals(LuceneObjectPtr other)
     {
-        BooleanQueryPtr otherQuery(LuceneDynamicCast<BooleanQuery>(other));
+        BooleanQueryPtr otherQuery(gc_ptr_dynamic_cast<BooleanQuery>(other));
         if (!otherQuery)
             return false;
         return (getBoost() == otherQuery->getBoost() &&

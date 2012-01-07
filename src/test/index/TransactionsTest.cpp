@@ -34,23 +34,23 @@ public:
     TimedThread()
     {
     }
-    
+
     virtual ~TimedThread()
     {
     }
-    
+
     LUCENE_CLASS(TimedThread);
-    
+
 protected:
     static const int32_t RUN_TIME_SEC;
-    
+
 public:
     virtual void doWork() = 0;
-    
+
     virtual void run()
     {
         int64_t stopTime = MiscUtils::currentTimeMillis() + 1000 * RUN_TIME_SEC;
-        
+
         try
         {
             while ((int64_t)MiscUtils::currentTimeMillis() < stopTime)
@@ -76,40 +76,40 @@ public:
         this->nextID = 0;
         this->random = newLucene<Random>();
     }
-    
+
     virtual ~IndexerThread()
     {
     }
-    
+
     LUCENE_CLASS(IndexerThread);
-    
+
 public:
     DirectoryPtr dir1;
     DirectoryPtr dir2;
     SynchronizePtr lock;
     int32_t nextID;
     RandomPtr random;
-    
+
 public:
     virtual void doWork()
     {
         IndexWriterPtr writer1 = newLucene<IndexWriter>(dir1, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
         writer1->setMaxBufferedDocs(3);
         writer1->setMergeFactor(2);
-        LuceneDynamicCast<ConcurrentMergeScheduler>(writer1->getMergeScheduler())->setSuppressExceptions();
+        gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer1->getMergeScheduler())->setSuppressExceptions();
 
         IndexWriterPtr writer2 = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
         // Intentionally use different params so flush/merge happen at different times
         writer2->setMaxBufferedDocs(2);
         writer2->setMergeFactor(3);
-        LuceneDynamicCast<ConcurrentMergeScheduler>(writer2->getMergeScheduler())->setSuppressExceptions();
+        gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer2->getMergeScheduler())->setSuppressExceptions();
 
         update(writer1);
         update(writer2);
-        
+
         doFail = true;
         bool continueWork = true;
-        
+
         LuceneException finally;
         try
         {
@@ -143,14 +143,14 @@ public:
         }
         doFail = false;
         finally.throwException();
-        
+
         if (!continueWork)
             return;
-        
+
         writer1->close();
         writer2->close();
     }
-    
+
     void update(IndexWriterPtr writer)
     {
         // Add 10 docs
@@ -161,7 +161,7 @@ public:
             d->add(newLucene<Field>(L"contents", intToEnglish(random->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
             writer->addDocument(d);
         }
-        
+
         // Delete 5 docs
         int32_t deleteID = nextID - 1;
         for (int32_t j = 0; j < 5; ++j)
@@ -181,18 +181,18 @@ public:
         this->dir1 = dir1;
         this->dir2 = dir2;
     }
-    
+
     virtual ~SearcherThread()
     {
     }
-    
+
     LUCENE_CLASS(SearcherThread);
-    
+
 protected:
     DirectoryPtr dir1;
     DirectoryPtr dir2;
     SynchronizePtr lock;
-    
+
 public:
     virtual void doWork()
     {
@@ -219,14 +219,14 @@ public:
     {
         random = newLucene<Random>();
     }
-    
+
     virtual ~RandomFailure()
     {
     }
 
 protected:
     RandomPtr random;
-    
+
 public:
     virtual void eval(MockRAMDirectoryPtr dir)
     {
@@ -262,8 +262,8 @@ BOOST_AUTO_TEST_CASE(testTransactions)
 
     Collection<TimedThreadPtr> threads = Collection<TimedThreadPtr>::newInstance(3);
     int32_t numThread = 0;
-    
-    SynchronizePtr lock = newInstance<Synchronize>();
+
+    SynchronizePtr lock = new_gc<Synchronize>();
 
     IndexerThreadPtr indexerThread = newLucene<IndexerThread>(lock, dir1, dir2);
     threads[numThread++] = indexerThread;
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE(testTransactions)
     SearcherThreadPtr searcherThread2 = newLucene<SearcherThread>(lock, dir1, dir2);
     threads[numThread++] = searcherThread2;
     searcherThread2->start();
-    
+
     for (int32_t i = 0; i < numThread; ++i)
         threads[i]->join();
 }

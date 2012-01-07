@@ -8,6 +8,7 @@
 #define THREADPOOL_H
 
 #include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
 #include <boost/asio.hpp>
 #include <boost/any.hpp>
 #include "LuceneThread.h"
@@ -82,7 +83,7 @@ namespace Lucene
         template <typename FUNC>
         FuturePtr scheduleTask(FUNC func)
         {
-            FuturePtr future(newInstance<Future>());
+            FuturePtr future(newLucene<Future>());
             io_service.post(boost::bind(&ThreadPool::execute<FUNC>, this, func, future));
             return future;
         }

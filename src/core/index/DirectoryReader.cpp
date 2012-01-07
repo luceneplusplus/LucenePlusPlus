@@ -49,7 +49,7 @@ namespace Lucene
         {
             // We assume that this segments_N was previously properly sync'd
             SetString files(sis->files(directory, true));
-            synced.addAll(files.begin(), files.end());
+            synced.add(files.begin(), files.end());
         }
 
         // To reduce the chance of hitting FileNotFound (and having to retry), we open segments in
@@ -104,14 +104,14 @@ namespace Lucene
         this->_directory = writer->getDirectory();
         this->readOnly = true;
         this->segmentInfos = infos;
-        this->segmentInfosStart = LuceneDynamicCast<SegmentInfos>(infos->clone());
+        this->segmentInfosStart = gc_ptr_dynamic_cast<SegmentInfos>(infos->clone());
         this->termInfosIndexDivisor = termInfosIndexDivisor;
 
         if (!readOnly)
         {
             // We assume that this segments_N was previously properly sync'd
             SetString files(infos->files(_directory, true));
-            synced.addAll(files.begin(), files.end());
+            synced.add(files.begin(), files.end());
         }
 
         // IndexWriter synchronizes externally before calling us, which ensures infos will not change; so there's
@@ -129,7 +129,7 @@ namespace Lucene
             {
                 SegmentInfoPtr info(infos->info(i));
                 if (info->dir == dir)
-                    readers[upto++] = LuceneDynamicCast<SegmentReader>(writer->readerPool->getReadOnlyClone(info, true, termInfosIndexDivisor));
+                    readers[upto++] = gc_ptr_dynamic_cast<SegmentReader>(writer->readerPool->getReadOnlyClone(info, true, termInfosIndexDivisor));
                 success = true;
             }
             catch (LuceneException& e)
@@ -186,7 +186,7 @@ namespace Lucene
         {
             // We assume that this segments_N was previously properly sync'd
             SetString files(infos->files(directory, true));
-            synced.addAll(files.begin(), files.end());
+            synced.add(files.begin(), files.end());
         }
 
         // we put the old SegmentReaders in a map, that allows us to lookup a reader using its segment name
@@ -359,7 +359,7 @@ namespace Lucene
     LuceneObjectPtr DirectoryReader::clone(bool openReadOnly, LuceneObjectPtr other)
     {
         SyncLock syncLock(this);
-        DirectoryReaderPtr newReader(doReopen(LuceneDynamicCast<SegmentInfos>(segmentInfos->clone()), true, openReadOnly));
+        DirectoryReaderPtr newReader(doReopen(gc_ptr_dynamic_cast<SegmentInfos>(segmentInfos->clone()), true, openReadOnly));
 
         if (LuceneThis() != newReader)
             newReader->deletionPolicy = deletionPolicy;
@@ -438,7 +438,7 @@ namespace Lucene
                 BOOST_ASSERT(isCurrent());
 
                 if (openReadOnly)
-                    return LuceneDynamicCast<IndexReader>(clone(openReadOnly));
+                    return gc_ptr_dynamic_cast<IndexReader>(clone(openReadOnly));
                 else
                     return LuceneThis();
             }
@@ -447,7 +447,7 @@ namespace Lucene
                 if (openReadOnly != readOnly)
                 {
                     // Just fallback to clone
-                    return LuceneDynamicCast<IndexReader>(clone(openReadOnly));
+                    return gc_ptr_dynamic_cast<IndexReader>(clone(openReadOnly));
                 }
                 else
                     return LuceneThis();
@@ -462,7 +462,7 @@ namespace Lucene
                 if (readOnly != openReadOnly)
                 {
                     // Just fallback to clone
-                    return LuceneDynamicCast<IndexReader>(clone(openReadOnly));
+                    return gc_ptr_dynamic_cast<IndexReader>(clone(openReadOnly));
                 }
                 else
                     return LuceneThis();
@@ -853,7 +853,7 @@ namespace Lucene
         for (Collection<IndexReaderPtr>::iterator reader = subReaders.begin(); reader != subReaders.end(); ++reader)
         {
             SetString names((*reader)->getFieldNames(fieldOption));
-            fieldSet.addAll(names.begin(), names.end());
+            fieldSet.add(names.begin(), names.end());
         }
         return fieldSet;
     }
@@ -930,7 +930,6 @@ namespace Lucene
 
     IndexReaderPtr FindSegmentsOpen::doBody(const String& segmentFileName)
     {
-        SegmentInfosPtr segmentInfos(_segmentInfos);
         segmentInfos->read(directory, segmentFileName);
         if (readOnly)
             return newLucene<ReadOnlyDirectoryReader>(directory, segmentInfos, deletionPolicy, termInfosIndexDivisor);
@@ -950,7 +949,6 @@ namespace Lucene
 
     DirectoryReaderPtr FindSegmentsReopen::doBody(const String& segmentFileName)
     {
-        SegmentInfosPtr segmentInfos(_segmentInfos);
         segmentInfos->read(directory, segmentFileName);
         return reader->doReopen(segmentInfos, false, openReadOnly);
     }
@@ -1078,7 +1076,7 @@ namespace Lucene
     void MultiTermDocs::seek(TermEnumPtr termEnum)
     {
         seek(termEnum->term());
-        MultiTermEnumPtr multiTermEnum(LuceneDynamicCast<MultiTermEnum>(termEnum));
+        MultiTermEnumPtr multiTermEnum(gc_ptr_dynamic_cast<MultiTermEnum>(termEnum));
         if (multiTermEnum)
         {
             tenum = multiTermEnum;
@@ -1223,22 +1221,22 @@ namespace Lucene
 
     int32_t MultiTermPositions::nextPosition()
     {
-        return LuceneStaticCast<TermPositions>(current)->nextPosition();
+        return gc_ptr_static_cast<TermPositions>(current)->nextPosition();
     }
 
     int32_t MultiTermPositions::getPayloadLength()
     {
-        return LuceneStaticCast<TermPositions>(current)->getPayloadLength();
+        return gc_ptr_static_cast<TermPositions>(current)->getPayloadLength();
     }
 
     ByteArray MultiTermPositions::getPayload(ByteArray data, int32_t offset)
     {
-        return LuceneStaticCast<TermPositions>(current)->getPayload(data, offset);
+        return gc_ptr_static_cast<TermPositions>(current)->getPayload(data, offset);
     }
 
     bool MultiTermPositions::isPayloadAvailable()
     {
-        return LuceneStaticCast<TermPositions>(current)->isPayloadAvailable();
+        return gc_ptr_static_cast<TermPositions>(current)->isPayloadAvailable();
     }
 
     ReaderCommit::ReaderCommit(SegmentInfosPtr infos, DirectoryPtr dir)

@@ -116,7 +116,7 @@ namespace Lucene
 
     TokenStreamPtr ArabicAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        ArabicAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<ArabicAnalyzerSavedStreams>(getPreviousTokenStream()));
+        ArabicAnalyzerSavedStreamsPtr streams(gc_ptr_dynamic_cast<ArabicAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<ArabicAnalyzerSavedStreams>();

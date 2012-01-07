@@ -36,9 +36,9 @@ namespace Lucene
     {
         numTerms += in->numTerms;
         bytesUsed += in->bytesUsed;
-        terms.putAll(in->terms.begin(), in->terms.end());
-        queries.putAll(in->queries.begin(), in->queries.end());
-        docIDs.addAll(in->docIDs.begin(), in->docIDs.end());
+        terms.put(in->terms.begin(), in->terms.end());
+        queries.put(in->queries.begin(), in->queries.end());
+        docIDs.add(in->docIDs.begin(), in->docIDs.end());
         in->clear();
     }
 

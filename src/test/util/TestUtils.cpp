@@ -58,7 +58,7 @@ namespace Lucene
     void syncConcurrentMerges(MergeSchedulerPtr ms)
     {
         if (MiscUtils::typeOf<ConcurrentMergeScheduler>(ms))
-            LuceneDynamicCast<ConcurrentMergeScheduler>(ms)->sync();
+            gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(ms)->sync();
     }
 
     String intToEnglish(int32_t i)

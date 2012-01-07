@@ -71,7 +71,7 @@ namespace Lucene
         for (Collection<QueryPtr>::iterator query = queries.begin(); query != queries.end(); ++query)
         {
             Collection<BooleanClausePtr> clauses;
-            BooleanQueryPtr bq(LuceneDynamicCast<BooleanQuery>(*query));
+            BooleanQueryPtr bq(gc_ptr_dynamic_cast<BooleanQuery>(*query));
             // check if we can split the query into clauses
             bool splittable = bq;
             if (splittable)
@@ -128,7 +128,7 @@ namespace Lucene
     LuceneObjectPtr Query::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Query>());
-        QueryPtr cloneQuery(LuceneDynamicCast<Query>(clone));
+        QueryPtr cloneQuery(gc_ptr_dynamic_cast<Query>(clone));
         cloneQuery->boost = boost;
         return cloneQuery;
     }
@@ -149,7 +149,7 @@ namespace Lucene
             return false;
         if (!MiscUtils::equalTypes(LuceneThis(), other))
             return false;
-        QueryPtr otherQuery(LuceneDynamicCast<Query>(other));
+        QueryPtr otherQuery(gc_ptr_dynamic_cast<Query>(other));
         if (!otherQuery)
             return false;
         return (boost == otherQuery->boost);

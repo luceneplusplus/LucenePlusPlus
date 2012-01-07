@@ -10,6 +10,8 @@
 #include "gc.h"
 #include "gc_ptr.h"
 
+using namespace lutze;
+
 #define DECLARE_LUCENE_PTR(Type) \
     class Type; \
     typedef gc_ptr<Type> Type##Ptr;

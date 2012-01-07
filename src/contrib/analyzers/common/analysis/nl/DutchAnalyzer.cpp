@@ -55,10 +55,10 @@ namespace Lucene
 
     void DutchAnalyzer::initialize()
     {
-        stemdict.put(L"fiets", L"fiets"); // otherwise fiet
-        stemdict.put(L"bromfiets", L"bromfiets"); // otherwise bromfiet
-        stemdict.put(L"ei", L"eier");
-        stemdict.put(L"kind", L"kinder");
+        stemdict.put(String(L"fiets"), String(L"fiets")); // otherwise fiet
+        stemdict.put(String(L"bromfiets"), String(L"bromfiets")); // otherwise bromfiet
+        stemdict.put(String(L"ei"), String(L"eier"));
+        stemdict.put(String(L"kind"), String(L"kinder"));
     }
 
     const SetString DutchAnalyzer::getDefaultStopSet()
@@ -86,7 +86,7 @@ namespace Lucene
 
     TokenStreamPtr DutchAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        DutchAnalyzerSavedStreamsPtr streams(LuceneDynamicCast<DutchAnalyzerSavedStreams>(getPreviousTokenStream()));
+        DutchAnalyzerSavedStreamsPtr streams(gc_ptr_dynamic_cast<DutchAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)
         {
             streams = newLucene<DutchAnalyzerSavedStreams>();

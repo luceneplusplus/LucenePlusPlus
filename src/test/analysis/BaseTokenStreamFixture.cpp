@@ -42,7 +42,7 @@ namespace Lucene
         if (Attribute::equals(other))
             return true;
 
-        CheckClearAttributesAttributePtr otherAttribute(LuceneDynamicCast<CheckClearAttributesAttribute>(other));
+        CheckClearAttributesAttributePtr otherAttribute(gc_ptr_dynamic_cast<CheckClearAttributesAttribute>(other));
         if (otherAttribute)
             return (otherAttribute->clearCalled == clearCalled);
 
@@ -56,14 +56,14 @@ namespace Lucene
 
     void CheckClearAttributesAttribute::copyTo(AttributePtr target)
     {
-        CheckClearAttributesAttributePtr clearAttribute(LuceneDynamicCast<CheckClearAttributesAttribute>(target));
+        CheckClearAttributesAttributePtr clearAttribute(gc_ptr_dynamic_cast<CheckClearAttributesAttribute>(target));
         clearAttribute->clear();
     }
 
     LuceneObjectPtr CheckClearAttributesAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<CheckClearAttributesAttribute>();
-        CheckClearAttributesAttributePtr cloneAttribute(LuceneDynamicCast<CheckClearAttributesAttribute>(Attribute::clone(clone)));
+        CheckClearAttributesAttributePtr cloneAttribute(gc_ptr_dynamic_cast<CheckClearAttributesAttribute>(Attribute::clone(clone)));
         cloneAttribute->clearCalled = clearCalled;
         return cloneAttribute;
     }

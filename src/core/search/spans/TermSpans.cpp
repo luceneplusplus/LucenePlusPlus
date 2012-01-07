@@ -78,7 +78,7 @@ namespace Lucene
 
     Collection<ByteArray> TermSpans::getPayload()
     {
-        Collection<ByteArray> payload(newCollectionByteArray(ByteArray::newInstance(positions->getPayloadLength())));
+        Collection<ByteArray> payload(newCollection<ByteArray>(ByteArray::newInstance(positions->getPayloadLength())));
         payload[0] = positions->getPayload(payload[0], 0);
         return payload;
     }

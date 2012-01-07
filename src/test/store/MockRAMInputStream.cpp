@@ -50,7 +50,7 @@ namespace Lucene
     LuceneObjectPtr MockRAMInputStream::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = RAMInputStream::clone(other ? other : newLucene<MockRAMInputStream>());
-        MockRAMInputStreamPtr cloneInputStream(LuceneDynamicCast<MockRAMInputStream>(clone));
+        MockRAMInputStreamPtr cloneInputStream(gc_ptr_dynamic_cast<MockRAMInputStream>(clone));
         cloneInputStream->dir = dir;
         cloneInputStream->name = name;
         cloneInputStream->isClone = true;

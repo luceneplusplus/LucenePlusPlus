@@ -18,23 +18,23 @@ namespace Lucene
     MMapDirectory::MMapDirectory(const String& path, LockFactoryPtr lockFactory) : FSDirectory(path, lockFactory)
     {
     }
-    
+
     MMapDirectory::~MMapDirectory()
     {
     }
-    
+
     IndexInputPtr MMapDirectory::openInput(const String& name, int32_t bufferSize)
     {
         ensureOpen();
         return newLucene<MMapIndexInput>(FileUtils::joinPath(directory, name));
     }
-    
+
     IndexOutputPtr MMapDirectory::createOutput(const String& name)
     {
         initOutput(name);
         return newLucene<SimpleFSIndexOutput>(FileUtils::joinPath(directory, name));
     }
-    
+
     MMapIndexInput::MMapIndexInput(const String& path)
     {
         _length = path.empty() ? 0 : (int32_t)FileUtils::fileLength(path);
@@ -52,11 +52,11 @@ namespace Lucene
         }
         isClone = false;
     }
-    
+
     MMapIndexInput::~MMapIndexInput()
     {
     }
-    
+
     uint8_t MMapIndexInput::readByte()
     {
         try
@@ -69,7 +69,7 @@ namespace Lucene
             return 0;
         }
     }
-    
+
     void MMapIndexInput::readBytes(uint8_t* b, int32_t offset, int32_t length)
     {
         try
@@ -82,22 +82,22 @@ namespace Lucene
             boost::throw_exception(IOException(L"Read past EOF"));
         }
     }
-    
+
     int64_t MMapIndexInput::getFilePointer()
     {
         return bufferPosition;
     }
-    
+
     void MMapIndexInput::seek(int64_t pos)
     {
         bufferPosition = (int32_t)pos;
     }
-    
+
     int64_t MMapIndexInput::length()
     {
         return (int64_t)_length;
     }
-    
+
     void MMapIndexInput::close()
     {
         if (isClone || !file.is_open())
@@ -106,13 +106,13 @@ namespace Lucene
         bufferPosition = 0;
         file.close();
     }
-    
+
     LuceneObjectPtr MMapIndexInput::clone(LuceneObjectPtr other)
     {
         if (!file.is_open())
             boost::throw_exception(AlreadyClosedException(L"MMapIndexInput already closed"));
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<MMapIndexInput>());
-        MMapIndexInputPtr cloneIndexInput(LuceneDynamicCast<MMapIndexInput>(clone));
+        MMapIndexInputPtr cloneIndexInput(gc_ptr_dynamic_cast<MMapIndexInput>(clone));
         cloneIndexInput->_length = _length;
         cloneIndexInput->file = file;
         cloneIndexInput->bufferPosition = bufferPosition;

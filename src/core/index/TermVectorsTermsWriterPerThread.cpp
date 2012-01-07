@@ -18,7 +18,7 @@ namespace Lucene
 {
     TermVectorsTermsWriterPerThread::TermVectorsTermsWriterPerThread(TermsHashPerThreadPtr termsHashPerThread, TermVectorsTermsWriterPtr termsWriter)
     {
-        utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
+        utf8Results = newCollection<UTF8ResultPtr>(newLucene<UTF8Result>(), newLucene<UTF8Result>());
         this->vectorSliceReader = newLucene<ByteSliceReader>();
         this->termsWriter = termsWriter;
         this->termsHashPerThread = termsHashPerThread;

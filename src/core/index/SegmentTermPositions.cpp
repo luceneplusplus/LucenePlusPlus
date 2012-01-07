@@ -134,7 +134,7 @@ namespace Lucene
         if (!proxStream)
         {
             // clone lazily
-            proxStream = LuceneDynamicCast<IndexInput>(SegmentReaderPtr(_parent)->core->proxStream->clone());
+            proxStream = gc_ptr_dynamic_cast<IndexInput>(parent->core->proxStream->clone());
         }
 
         // we might have to skip the current payload if it was not read yet

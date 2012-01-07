@@ -74,10 +74,10 @@ namespace Lucene
         gc_ptr<ATTR> addAttribute()
         {
             String className(ATTR::_getClassName());
-            gc_ptr<ATTR> attrImpl(LuceneDynamicCast<ATTR>(getAttribute(className)));
+            gc_ptr<ATTR> attrImpl(gc_ptr_dynamic_cast<ATTR>(getAttribute(className)));
             if (!attrImpl)
             {
-                attrImpl = LuceneDynamicCast<ATTR>(factory->createInstance<ATTR>(className));
+                attrImpl = gc_ptr_dynamic_cast<ATTR>(factory->createInstance<ATTR>(className));
                 if (!attrImpl)
                     boost::throw_exception(IllegalArgumentException(L"Could not instantiate implementing class for " + className));
                 addAttribute(className, attrImpl);
@@ -103,7 +103,7 @@ namespace Lucene
         gc_ptr<ATTR> getAttribute()
         {
             String className(ATTR::_getClassName());
-            gc_ptr<ATTR> attr(LuceneDynamicCast<ATTR>(getAttribute(className)));
+            gc_ptr<ATTR> attr(gc_ptr_dynamic_cast<ATTR>(getAttribute(className)));
             if (!attr)
                 boost::throw_exception(IllegalArgumentException(L"This AttributeSource does not have the attribute '" + className + L"'."));
             return attr;

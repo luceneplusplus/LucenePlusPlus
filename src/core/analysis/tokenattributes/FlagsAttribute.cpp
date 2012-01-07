@@ -14,57 +14,57 @@ namespace Lucene
     {
         flags = 0;
     }
-    
+
     FlagsAttribute::~FlagsAttribute()
     {
     }
-    
+
     String FlagsAttribute::toString()
     {
         return L"flags=" + StringUtils::toString(flags);
     }
-    
+
     int32_t FlagsAttribute::getFlags()
     {
         return flags;
     }
-    
+
     void FlagsAttribute::setFlags(int32_t flags)
     {
         this->flags = flags;
     }
-    
+
     void FlagsAttribute::clear()
     {
         flags = 0;
     }
-    
+
     bool FlagsAttribute::equals(LuceneObjectPtr other)
     {
         if (Attribute::equals(other))
             return true;
-        
-        FlagsAttributePtr otherFlagsAttribute(LuceneDynamicCast<FlagsAttribute>(other));
+
+        FlagsAttributePtr otherFlagsAttribute(gc_ptr_dynamic_cast<FlagsAttribute>(other));
         if (otherFlagsAttribute)
             return (otherFlagsAttribute->flags == flags);
-        
+
         return false;
     }
-    
+
     int32_t FlagsAttribute::hashCode()
     {
         return flags;
     }
-    
+
     void FlagsAttribute::copyTo(AttributePtr target)
     {
-        LuceneDynamicCast<FlagsAttribute>(target)->setFlags(flags);
+        gc_ptr_dynamic_cast<FlagsAttribute>(target)->setFlags(flags);
     }
-    
+
     LuceneObjectPtr FlagsAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<FlagsAttribute>();
-        FlagsAttributePtr cloneAttribute(LuceneDynamicCast<FlagsAttribute>(Attribute::clone(clone)));
+        FlagsAttributePtr cloneAttribute(gc_ptr_dynamic_cast<FlagsAttribute>(Attribute::clone(clone)));
         cloneAttribute->flags = flags;
         return cloneAttribute;
     }

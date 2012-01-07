@@ -86,7 +86,7 @@ namespace Lucene
                 // Only necessary if previous doc hit a non-aborting exception while writing vectors
                 // in this field
                 termsHashPerField->reset();
-                TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(false);
+                perThread->termsHashPerThread->reset(false);
             }
         }
 
@@ -135,11 +135,11 @@ namespace Lucene
         int32_t lastTermBytesCount = 0;
 
         ByteSliceReaderPtr reader(perThread->vectorSliceReader);
-        Collection<CharArray> charBuffers(TermsHashPerThreadPtr(perThread->_termsHashPerThread)->charPool->buffers);
+        Collection<CharArray> charBuffers(perThread->termsHashPerThread->charPool->buffers);
 
         for (int32_t j = 0; j < numPostings; ++j)
         {
-            TermVectorsTermsWriterPostingListPtr posting(LuceneStaticCast<TermVectorsTermsWriterPostingList>(postings[j]));
+            TermVectorsTermsWriterPostingListPtr posting(gc_ptr_static_cast<TermVectorsTermsWriterPostingList>(postings[j]));
             int32_t freq = posting->freq;
 
             CharArray text2(charBuffers[posting->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT]);
@@ -191,7 +191,7 @@ namespace Lucene
         // NOTE: we clear per-field at the thread level, because term vectors fully write themselves on each
         // field; this saves RAM (eg if large doc has two large fields with term vectors on) because we
         // recycle/reuse all RAM after each field
-        TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(false);
+        perThread->termsHashPerThread->reset(false);
     }
 
     void TermVectorsTermsWriterPerField::shrinkHash()
@@ -212,7 +212,7 @@ namespace Lucene
     {
         BOOST_ASSERT(docState->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
 
-        TermVectorsTermsWriterPostingListPtr p(LuceneStaticCast<TermVectorsTermsWriterPostingList>(p0));
+        TermVectorsTermsWriterPostingListPtr p(gc_ptr_static_cast<TermVectorsTermsWriterPostingList>(p0));
 
         p->freq = 1;
 
@@ -237,7 +237,7 @@ namespace Lucene
     {
         BOOST_ASSERT(docState->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
 
-        TermVectorsTermsWriterPostingListPtr p(LuceneStaticCast<TermVectorsTermsWriterPostingList>(p0));
+        TermVectorsTermsWriterPostingListPtr p(gc_ptr_static_cast<TermVectorsTermsWriterPostingList>(p0));
 
         ++p->freq;
 

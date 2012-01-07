@@ -14,60 +14,60 @@ namespace Lucene
     {
         positionIncrement = 1;
     }
-    
+
     PositionIncrementAttribute::~PositionIncrementAttribute()
     {
     }
-    
+
     String PositionIncrementAttribute::toString()
     {
         return L"positionIncrement=" + StringUtils::toString(positionIncrement);
     }
-    
+
     void PositionIncrementAttribute::setPositionIncrement(int32_t positionIncrement)
     {
         if (positionIncrement < 0)
             boost::throw_exception(IllegalArgumentException(L"Increment must be zero or greater: " + StringUtils::toString(positionIncrement)));
         this->positionIncrement = positionIncrement;
     }
-    
+
     int32_t PositionIncrementAttribute::getPositionIncrement()
     {
         return positionIncrement;
     }
-    
+
     void PositionIncrementAttribute::clear()
     {
         this->positionIncrement = 1;
     }
-    
+
     bool PositionIncrementAttribute::equals(LuceneObjectPtr other)
     {
         if (Attribute::equals(other))
             return true;
-        
-        PositionIncrementAttributePtr otherPositionIncrementAttribute(LuceneDynamicCast<PositionIncrementAttribute>(other));
+
+        PositionIncrementAttributePtr otherPositionIncrementAttribute(gc_ptr_dynamic_cast<PositionIncrementAttribute>(other));
         if (otherPositionIncrementAttribute)
             return positionIncrement == otherPositionIncrementAttribute->positionIncrement;
-        
+
         return false;
     }
-    
+
     int32_t PositionIncrementAttribute::hashCode()
     {
         return positionIncrement;
     }
-    
+
     void PositionIncrementAttribute::copyTo(AttributePtr target)
     {
-        PositionIncrementAttributePtr targetPositionIncrementAttribute(LuceneDynamicCast<PositionIncrementAttribute>(target));
+        PositionIncrementAttributePtr targetPositionIncrementAttribute(gc_ptr_dynamic_cast<PositionIncrementAttribute>(target));
         targetPositionIncrementAttribute->setPositionIncrement(positionIncrement);
     }
-    
+
     LuceneObjectPtr PositionIncrementAttribute::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<PositionIncrementAttribute>();
-        PositionIncrementAttributePtr cloneAttribute(LuceneDynamicCast<PositionIncrementAttribute>(Attribute::clone(clone)));
+        PositionIncrementAttributePtr cloneAttribute(gc_ptr_dynamic_cast<PositionIncrementAttribute>(Attribute::clone(clone)));
         cloneAttribute->positionIncrement = positionIncrement;
         return cloneAttribute;
     }

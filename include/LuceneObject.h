@@ -9,6 +9,7 @@
 
 #include "LuceneSync.h"
 
+// todo: is this required?
 #define LUCENE_INTERFACE(Name) \
     static String _getClassName() { return L###Name; } \
     virtual String getClassName() { return L###Name; }

@@ -490,7 +490,7 @@ RunAddIndexesThreads::RunAddIndexesThreads(int32_t numCopy)
 
     dir2 = newLucene<MockRAMDirectory>();
     writer2 = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    cms = LuceneDynamicCast<ConcurrentMergeScheduler>(writer2->getMergeScheduler());
+    cms = gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer2->getMergeScheduler());
 
     readers = Collection<IndexReaderPtr>::newInstance(NUM_COPY);
     for (int32_t i = 0; i < NUM_COPY; ++i)
@@ -671,9 +671,9 @@ BOOST_AUTO_TEST_CASE(testAddIndexOnDiskFull)
                     // This test intentionally produces exceptions in the threads that CMS launches; we don't
                     // want to pollute test output with these.
                     if (x == 0)
-                        LuceneDynamicCast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
+                        gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
                     else
-                        LuceneDynamicCast<ConcurrentMergeScheduler>(ms)->clearSuppressExceptions();
+                        gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(ms)->clearSuppressExceptions();
                 }
 
                 // Two loops: first time, limit disk space and throw random IOExceptions; second time, no disk space limit
@@ -851,7 +851,7 @@ BOOST_AUTO_TEST_CASE(testAddDocumentOnDiskFull)
 
             MergeSchedulerPtr ms = writer->getMergeScheduler();
             if (MiscUtils::typeOf<ConcurrentMergeScheduler>(ms))
-                LuceneDynamicCast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
+                gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(ms)->setSuppressExceptions();
 
             bool hitError = false;
             try
@@ -1031,7 +1031,7 @@ BOOST_AUTO_TEST_CASE(testOptimizeMaxNumSegments2)
         writer->commit();
 
         sis = newLucene<SegmentInfos>();
-        LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+        gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
         sis->read(dir);
         int32_t optSegCount = sis->size();
 
@@ -3444,7 +3444,7 @@ BOOST_AUTO_TEST_CASE(testExceptionOnMergeInit)
             break;
         }
     }
-    LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
+    gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->sync();
     BOOST_CHECK(writer->failed);
     writer->close();
     dir->close();
@@ -4082,7 +4082,7 @@ BOOST_AUTO_TEST_CASE(testCommitUserData)
     for (int32_t j = 0; j < 17; ++j)
         addDoc(writer);
     MapStringString data = MapStringString::newInstance();
-    data.put(L"label", L"test1");
+    data.put(String(L"label"), String(L"test1"));
     writer->commit(data);
     writer->close();
 
@@ -4115,7 +4115,7 @@ BOOST_AUTO_TEST_CASE(testOptimizeExceptions)
     {
         MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>(startDir);
         writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
-        LuceneDynamicCast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
+        gc_ptr_dynamic_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
         dir->setRandomIOExceptionRate(0.5, 100);
 
         BOOST_CHECK_EXCEPTION(writer->optimize(), IOException, check_exception(LuceneException::IO));
@@ -4185,7 +4185,7 @@ BOOST_AUTO_TEST_CASE(testDoubleOffsetCounting)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     // Token "" occurred once
     BOOST_CHECK_EQUAL(1, termOffsets.size());
@@ -4193,7 +4193,7 @@ BOOST_AUTO_TEST_CASE(testDoubleOffsetCounting)
     BOOST_CHECK_EQUAL(8, termOffsets[0]->getEndOffset());
 
     // Token "abcd" occurred three times
-    termOffsets = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(1);
+    termOffsets = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(1);
     BOOST_CHECK_EQUAL(3, termOffsets.size());
     BOOST_CHECK_EQUAL(0, termOffsets[0]->getStartOffset());
     BOOST_CHECK_EQUAL(4, termOffsets[0]->getEndOffset());
@@ -4217,7 +4217,7 @@ BOOST_AUTO_TEST_CASE(testDoubleOffsetCounting2)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
     BOOST_CHECK_EQUAL(2, termOffsets.size());
     BOOST_CHECK_EQUAL(0, termOffsets[0]->getStartOffset());
     BOOST_CHECK_EQUAL(4, termOffsets[0]->getEndOffset());
@@ -4239,7 +4239,7 @@ BOOST_AUTO_TEST_CASE(testEndOffsetPositionCharAnalyzer)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     BOOST_CHECK_EQUAL(2, termOffsets.size());
     BOOST_CHECK_EQUAL(0, termOffsets[0]->getStartOffset());
@@ -4264,7 +4264,7 @@ BOOST_AUTO_TEST_CASE(testEndOffsetPositionWithCachingTokenFilter)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     BOOST_CHECK_EQUAL(2, termOffsets.size());
     BOOST_CHECK_EQUAL(0, termOffsets[0]->getStartOffset());
@@ -4291,7 +4291,7 @@ BOOST_AUTO_TEST_CASE(testEndOffsetPositionWithTeeSinkTokenFilter)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     BOOST_CHECK_EQUAL(2, termOffsets.size());
     BOOST_CHECK_EQUAL(0, termOffsets[0]->getStartOffset());
@@ -4314,7 +4314,7 @@ BOOST_AUTO_TEST_CASE(testEndOffsetPositionStopFilter)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    Collection<TermVectorOffsetInfoPtr> termOffsets = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
+    Collection<TermVectorOffsetInfoPtr> termOffsets = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"))->getOffsets(0);
 
     BOOST_CHECK_EQUAL(2, termOffsets.size());
     BOOST_CHECK_EQUAL(0, termOffsets[0]->getStartOffset());
@@ -4338,7 +4338,7 @@ BOOST_AUTO_TEST_CASE(testEndOffsetPositionStandard)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    TermPositionVectorPtr tpv = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
+    TermPositionVectorPtr tpv = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
     Collection<TermVectorOffsetInfoPtr> termOffsets = tpv->getOffsets(0);
 
     BOOST_CHECK_EQUAL(1, termOffsets.size());
@@ -4367,7 +4367,7 @@ BOOST_AUTO_TEST_CASE(testEndOffsetPositionStandardEmptyField)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    TermPositionVectorPtr tpv = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
+    TermPositionVectorPtr tpv = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
     Collection<TermVectorOffsetInfoPtr> termOffsets = tpv->getOffsets(0);
 
     BOOST_CHECK_EQUAL(1, termOffsets.size());
@@ -4394,7 +4394,7 @@ BOOST_AUTO_TEST_CASE(testEndOffsetPositionStandardEmptyField2)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    TermPositionVectorPtr tpv = LuceneDynamicCast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
+    TermPositionVectorPtr tpv = gc_ptr_dynamic_cast<TermPositionVector>(reader->getTermFreqVector(0, L"field"));
     Collection<TermVectorOffsetInfoPtr> termOffsets = tpv->getOffsets(0);
 
     BOOST_CHECK_EQUAL(1, termOffsets.size());
@@ -4458,7 +4458,7 @@ BOOST_AUTO_TEST_CASE(testDeadlock)
     writer2->close();
 
     IndexReaderPtr r1 = IndexReader::open(dir2, true);
-    IndexReaderPtr r2 = LuceneDynamicCast<IndexReader>(r1->clone());
+    IndexReaderPtr r2 = gc_ptr_dynamic_cast<IndexReader>(r1->clone());
 
     writer->addIndexes(newCollection<IndexReaderPtr>(r1, r2));
     writer->close();
@@ -4718,7 +4718,7 @@ BOOST_AUTO_TEST_CASE(testCorruptionAfterDiskFullDuringMerge)
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     w->setMergeScheduler(newLucene<SerialMergeScheduler>());
 
-    LuceneDynamicCast<LogMergePolicy>(w->getMergePolicy())->setMergeFactor(2);
+    gc_ptr_dynamic_cast<LogMergePolicy>(w->getMergePolicy())->setMergeFactor(2);
 
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"f", L"doctor who", Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -4786,12 +4786,12 @@ BOOST_AUTO_TEST_CASE(testFutureCommit)
 
     // commit to "first"
     MapStringString commitData = MapStringString::newInstance();
-    commitData.put(L"tag", L"first");
+    commitData.put(String(L"tag"), String(L"first"));
     w->commit(commitData);
 
     // commit to "second"
     w->addDocument(doc);
-    commitData.put(L"tag", L"second");
+    commitData.put(String(L"tag"), String(L"second"));
     w->commit(commitData);
     w->close();
 
@@ -4816,7 +4816,7 @@ BOOST_AUTO_TEST_CASE(testFutureCommit)
 
     // commit IndexWriter to "third"
     w->addDocument(doc);
-    commitData.put(L"tag", L"third");
+    commitData.put(String(L"tag"), String(L"third"));
     w->commit(commitData);
     w->close();
 
@@ -4844,7 +4844,7 @@ BOOST_AUTO_TEST_CASE(testFutureCommit)
     BOOST_CHECK_EQUAL(2, r->numDocs());
     r->deleteDocument(0);
     r->deleteDocument(1);
-    commitData.put(L"tag", L"fourth");
+    commitData.put(String(L"tag"), String(L"fourth"));
     r->commit(commitData);
     r->close();
 

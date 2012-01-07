@@ -13,15 +13,15 @@ namespace Lucene
     WhitespaceAnalyzer::~WhitespaceAnalyzer()
     {
     }
-    
+
     TokenStreamPtr WhitespaceAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
     {
         return newLucene<WhitespaceTokenizer>(reader);
     }
-    
+
     TokenStreamPtr WhitespaceAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        TokenizerPtr tokenizer(LuceneDynamicCast<Tokenizer>(getPreviousTokenStream()));
+        TokenizerPtr tokenizer(gc_ptr_dynamic_cast<Tokenizer>(getPreviousTokenStream()));
         if (!tokenizer)
         {
             tokenizer = newLucene<WhitespaceTokenizer>(reader);

@@ -13,15 +13,15 @@ namespace Lucene
     KeywordAnalyzer::~KeywordAnalyzer()
     {
     }
-    
+
     TokenStreamPtr KeywordAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
     {
         return newLucene<KeywordTokenizer>(reader);
     }
-    
+
     TokenStreamPtr KeywordAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
-        TokenizerPtr tokenizer(LuceneDynamicCast<Tokenizer>(getPreviousTokenStream()));
+        TokenizerPtr tokenizer(gc_ptr_dynamic_cast<Tokenizer>(getPreviousTokenStream()));
         if (!tokenizer)
         {
             tokenizer = newLucene<KeywordTokenizer>(reader);

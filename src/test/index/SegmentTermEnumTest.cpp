@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(testTermEnum)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    
+
     // ADD 100 documents with term : aaa
     // add 100 documents with terms: aaa bbb
     // Therefore, term 'aaa' has document frequency of 200 and term 'bbb' 100
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(testPrevTermAtEnd)
     addDoc(writer, L"aaa bbb");
     writer->close();
     SegmentReaderPtr reader = SegmentReader::getOnlySegmentReader(dir);
-    SegmentTermEnumPtr termEnum = LuceneDynamicCast<SegmentTermEnum>(reader->terms());
+    SegmentTermEnumPtr termEnum = gc_ptr_dynamic_cast<SegmentTermEnum>(reader->terms());
     BOOST_CHECK(termEnum->next());
     BOOST_CHECK_EQUAL(L"aaa", termEnum->term()->text());
     BOOST_CHECK(termEnum->next());

@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    class SegmentTermVector : public TermPositionVector, public LuceneObject
+    class SegmentTermVector : public TermPositionVector
     {
     public:
         SegmentTermVector(const String& field, Collection<String> terms, Collection<int32_t> termFreqs);

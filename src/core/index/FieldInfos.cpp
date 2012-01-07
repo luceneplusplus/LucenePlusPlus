@@ -92,7 +92,7 @@ namespace Lucene
         FieldInfosPtr fis(newLucene<FieldInfos>());
         for (Collection<FieldInfoPtr>::iterator field = byNumber.begin(); field != byNumber.end(); ++field)
         {
-            FieldInfoPtr fi(LuceneDynamicCast<FieldInfo>((*field)->clone()));
+            FieldInfoPtr fi(gc_ptr_dynamic_cast<FieldInfo>((*field)->clone()));
             fis->byNumber.add(fi);
             fis->byName.put(fi->name, fi);
         }
