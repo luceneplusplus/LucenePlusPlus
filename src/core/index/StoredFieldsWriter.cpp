@@ -167,7 +167,7 @@ namespace Lucene
         ++lastDocID;
         perDoc->reset();
         free(perDoc);
-        BOOST_ASSERT(writer->testPoint(L"StoredFieldsWriter.finishDocument end"));
+        BOOST_ASSERT(docWriter->writer->testPoint(L"StoredFieldsWriter.finishDocument end"));
     }
 
     bool StoredFieldsWriter::freeRAM()

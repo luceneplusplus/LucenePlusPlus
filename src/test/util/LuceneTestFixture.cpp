@@ -16,7 +16,7 @@ namespace Lucene
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
         ConcurrentMergeScheduler::setTestMode();
     }
-    
+
     LuceneTestFixture::~LuceneTestFixture()
     {
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
@@ -26,10 +26,7 @@ namespace Lucene
             ConcurrentMergeScheduler::clearUnhandledExceptions();
             BOOST_FAIL("ConcurrentMergeScheduler hit unhandled exceptions");
         }
-        
-        #ifdef LPP_USE_GC
-        GC_gcollect();
-        GC_invoke_finalizers();
-        #endif
+
+        get_gc().final_collect();
     }
 }
