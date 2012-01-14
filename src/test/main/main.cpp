@@ -17,10 +17,10 @@
 
 #endif
 
-#include "TestUtils.h"
-#include "MiscUtils.h"
-#include "FileUtils.h"
-#include "StringUtils.h"
+// #include "TestUtils.h"
+// #include "MiscUtils.h"
+// #include "FileUtils.h"
+// #include "StringUtils.h"
 
 #define BOOST_TEST_MODULE "Lucene"
 #define BOOST_TEST_NO_MAIN
@@ -28,11 +28,11 @@
 #include <boost/test/included/unit_test.hpp>
 #include <boost/algorithm/string.hpp>
 
-using namespace Lucene;
+// using namespace Lucene;
 
 int main(int argc, char* argv[])
 {
-    String testDir;
+    /*String testDir;
     uint64_t startTime = MiscUtils::currentTimeMillis();
 
     for (int32_t i = 0; i < argc; ++i)
@@ -69,10 +69,11 @@ int main(int argc, char* argv[])
     }
 
     setTestDir(testDir);
+    */
+    //int testMain = boost::unit_test::unit_test_main(init_unit_test_suite, argc, argv);
+    int testMain = 0;
 
-    int testMain = boost::unit_test::unit_test_main(init_unit_test_suite, argc, argv);
-
-    std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
+    //std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
 
     return testMain;
 }
