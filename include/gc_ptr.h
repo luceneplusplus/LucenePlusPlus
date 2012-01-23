@@ -9,6 +9,12 @@
 
 namespace lutze
 {
+    using boost::int32_t;
+    using boost::uint32_t;
+    using boost::int64_t;
+    using boost::uint64_t;
+    using boost::uint8_t;
+    
     namespace detail
     {
         struct static_cast_tag {};

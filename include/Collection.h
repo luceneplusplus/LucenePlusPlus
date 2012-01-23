@@ -132,32 +132,36 @@ namespace Lucene
 
         static Collection<T> newInstance(typename vector_type::size_type n = 0, const T& x = T())
         {
-            Collection<T> container(new(get_gc()) single_container<vector_type>());
-            container.resize(n, x);
-            return container;
+            single_container<vector_type>* container = new single_container<vector_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            container->resize(n, x);
+            return Collection<T>(container);
         }
 
         static Collection<T> newStaticInstance(typename vector_type::size_type n = 0, const T& x = T())
         {
-            Collection<T> container(new(get_static_gc()) single_container<vector_type>());
-            container.resize(n, x);
-            return container;
+            single_container<vector_type>* container = new single_container<vector_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            container->resize(n, x);
+            return Collection<T>(container);
         }
 
         template <class ITER>
         static Collection<T> newInstance(ITER first, ITER last)
         {
-            Collection<T> container(new(get_gc()) single_container<vector_type>());
-            container.assign(first, last);
-            return container;
+            single_container<vector_type>* container = new single_container<vector_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            container->assign(first, last);
+            return Collection<T>(container);
         }
 
         template <class ITER>
         static Collection<T> newStaticInstance(ITER first, ITER last)
         {
-            Collection<T> container(new(get_static_gc()) single_container<vector_type>());
-            container.assign(first, last);
-            return container;
+            single_container<vector_type>* container = new single_container<vector_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            container->assign(first, last);
+            return Collection<T>(container);
         }
     };
 

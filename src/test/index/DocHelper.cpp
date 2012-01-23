@@ -67,17 +67,9 @@ namespace Lucene
     String DocHelper::LARGE_LAZY_FIELD_TEXT;
     FieldPtr DocHelper::largeLazyField;
 
-    const uint8_t DocHelper::_FIELD_UTF1_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x6f, 0x6e,
-                                                   0x65, 0x20, 0xe4, 0xb8, 0x80, 0x74, 0x65, 0x78, 0x74};
-    const String DocHelper::FIELD_UTF1_TEXT = UTF8_TO_STRING(_FIELD_UTF1_TEXT);
     const wchar_t* DocHelper::TEXT_FIELD_UTF1_KEY = L"textField1Utf8";
     FieldPtr DocHelper::textUtfField1;
 
-    const uint8_t DocHelper::_FIELD_UTF2_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x66, 0x69, 0x65,
-                                                   0x6c, 0x64, 0x20, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x20,
-                                                   0xe4, 0xb8, 0x80, 0x74, 0x77, 0x6f, 0x20, 0x74, 0x65,
-                                                   0x78, 0x74};
-    const String DocHelper::FIELD_UTF2_TEXT = UTF8_TO_STRING(_FIELD_UTF2_TEXT);
     FieldPtr DocHelper::textUtfField2;
 
     // Fields will be lexicographically sorted.  So, the order is: field, text, two
@@ -109,6 +101,24 @@ namespace Lucene
 
     DocHelper::~DocHelper()
     {
+    }
+    
+    const String& DocHelper::FIELD_UTF1_TEXT()
+    {
+        static const uint8_t _FIELD_UTF1_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x6f, 0x6e,
+                                                   0x65, 0x20, 0xe4, 0xb8, 0x80, 0x74, 0x65, 0x78, 0x74};
+        static const String _FIELD_UTF1_TEXT_STRING = UTF8_TO_STRING(_FIELD_UTF1_TEXT);
+        return _FIELD_UTF1_TEXT_STRING;
+    }
+    
+    const String& DocHelper::FIELD_UTF2_TEXT()
+    {
+        static const uint8_t _FIELD_UTF2_TEXT[] = {0x66, 0x69, 0x65, 0x6c, 0x64, 0x20, 0x66, 0x69, 0x65,
+                                                   0x6c, 0x64, 0x20, 0x66, 0x69, 0x65, 0x6c, 0x64, 0x20,
+                                                   0xe4, 0xb8, 0x80, 0x74, 0x77, 0x6f, 0x20, 0x74, 0x65,
+                                                   0x78, 0x74};
+        static const String _FIELD_UTF2_TEXT_STRING = UTF8_TO_STRING(_FIELD_UTF2_TEXT);
+        return _FIELD_UTF2_TEXT_STRING;
     }
 
     void DocHelper::setup()
@@ -142,8 +152,8 @@ namespace Lucene
         }
 
         largeLazyField = newLucene<Field>(LARGE_LAZY_FIELD_KEY, LARGE_LAZY_FIELD_TEXT, Field::STORE_YES, Field::INDEX_ANALYZED);
-        textUtfField1 = newLucene<Field>(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO);
-        textUtfField2 = newLucene<Field>(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS);
+        textUtfField1 = newLucene<Field>(TEXT_FIELD_UTF1_KEY, FIELD_UTF1_TEXT(), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO);
+        textUtfField2 = newLucene<Field>(TEXT_FIELD_UTF2_KEY, FIELD_UTF2_TEXT(), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS);
 
         nameValues = MapStringString::newInstance();
         nameValues.put(String(TEXT_FIELD_1_KEY), String(FIELD_1_TEXT));
@@ -158,8 +168,8 @@ namespace Lucene
         nameValues.put(String(LAZY_FIELD_KEY), String(LAZY_FIELD_TEXT));
         nameValues.put(String(LAZY_FIELD_BINARY_KEY), String(L""));
         nameValues.put(String(LARGE_LAZY_FIELD_KEY), String(LARGE_LAZY_FIELD_TEXT));
-        nameValues.put(String(TEXT_FIELD_UTF1_KEY), String(FIELD_UTF1_TEXT));
-        nameValues.put(String(TEXT_FIELD_UTF2_KEY), String(FIELD_UTF2_TEXT));
+        nameValues.put(String(TEXT_FIELD_UTF1_KEY), FIELD_UTF1_TEXT());
+        nameValues.put(String(TEXT_FIELD_UTF2_KEY), FIELD_UTF2_TEXT());
 
         fields = Collection<FieldPtr>::newInstance();
         fields.add(textField1);

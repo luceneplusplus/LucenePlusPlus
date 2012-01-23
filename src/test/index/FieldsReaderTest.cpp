@@ -258,12 +258,12 @@ BOOST_AUTO_TEST_CASE(testLazyFields)
     field = doc->getFieldable(DocHelper::TEXT_FIELD_UTF1_KEY);
     BOOST_CHECK(field);
     BOOST_CHECK(!field->isLazy());
-    BOOST_CHECK_EQUAL(field->stringValue(), DocHelper::FIELD_UTF1_TEXT);
+    BOOST_CHECK_EQUAL(field->stringValue(), DocHelper::FIELD_UTF1_TEXT());
 
     field = doc->getFieldable(DocHelper::TEXT_FIELD_UTF2_KEY);
     BOOST_CHECK(field);
     BOOST_CHECK(field->isLazy());
-    BOOST_CHECK_EQUAL(field->stringValue(), DocHelper::FIELD_UTF2_TEXT);
+    BOOST_CHECK_EQUAL(field->stringValue(), DocHelper::FIELD_UTF2_TEXT());
 
     field = doc->getFieldable(DocHelper::LAZY_FIELD_BINARY_KEY);
     BOOST_CHECK(field);

@@ -13,30 +13,39 @@
 #include <boost/unordered_map.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/tss.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/preprocessor/punctuation.hpp>
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/preprocessor/arithmetic.hpp>
-#include "gc_object.h"
 #include "gc_ptr.h"
 
 namespace lutze
 {
-    using boost::int32_t;
-    using boost::uint32_t;
-    using boost::int64_t;
-    using boost::uint64_t;
-    using boost::uint8_t;
-
     class gc;
-    typedef std::set<gc*> gc_set;
+
+    // all garbage collected classes must be derived from this base class
+    class gc_object
+    {
+    public:
+        virtual ~gc_object()
+        {
+        }
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            // override
+        }
+
+        friend class gc;
+    };
 
     class gc
     {
     public:
         gc(bool alloc_only = false);
         ~gc();
+
+        typedef std::set<gc*> gc_set;
 
     private:
         struct gc_node
@@ -56,8 +65,8 @@ namespace lutze
         boost::mutex transfer_mutex;
         node_map transfer_queue;
 
-        static boost::shared_ptr<boost::mutex> gc_registry_mutex;
-        static boost::shared_ptr<gc_set> gc_registry;
+        static boost::mutex gc_registry_mutex;
+        static gc_set gc_registry;
 
         bool alloc_only;
         uint32_t mark_token;
@@ -67,26 +76,23 @@ namespace lutze
         // return current lutze gc version
         static std::string gc_version();
 
+        // initialize lutze garbage collector
+        static bool gc_init();
+
+        // terminate and clean up lutze garbage collector
+        static void gc_term();
+
         // register gc instance at thread launch
-        static void register_gc(gc* pgc)
-        {
-            if (!gc_registry_mutex)
-                gc_registry_mutex = boost::make_shared<boost::mutex>();
-            if (!gc_registry)
-                gc_registry = boost::make_shared<gc_set>();
-            boost::mutex::scoped_lock lock(*gc_registry_mutex);
-            gc_registry->insert(pgc);
-        }
+        static void register_gc(gc* pgc);
 
         // unregister gc instance after thread termination
-        static void unregister_gc(gc* pgc)
-        {
-            {
-                boost::mutex::scoped_lock lock(*gc_registry_mutex);
-                gc_registry->erase(pgc);
-            }
-            delete pgc;
-        }
+        static void unregister_gc(gc* pgc);
+
+        // retrieve the gc instance for current thread
+        static gc& get_gc();
+
+        // retrieve the static gc instance for current thread
+        static gc& get_static_gc();
 
         // register new object in this gc instance
         inline void register_object(const gc_object* pobj)
@@ -119,7 +125,7 @@ namespace lutze
         template <class OBJ>
         void mark(const gc_ptr<OBJ>& obj)
         {
-            mark_object(obj.get());
+            mark_object(reinterpret_cast<gc_object*>(obj.get()));
         }
 
         // a default unmark function called for pod types
@@ -140,7 +146,7 @@ namespace lutze
         template <class OBJ>
         void unmark(const gc_ptr<OBJ>& obj)
         {
-            unmark_object(obj.get());
+            unmark_object(reinterpret_cast<gc_object*>(obj.get()));
         }
 
         // perform garbage collection (can force collection which ignores thresholds)
@@ -187,49 +193,33 @@ namespace lutze
         void transfer(const node_map& transfer_nodes);
     };
 
-    // function for retrieving the gc instance for current thread
-    static gc& get_gc()
-    {
-        static boost::thread_specific_ptr<gc> thread_gc(gc::unregister_gc);
-        if (thread_gc.get() == NULL)
-        {
-            thread_gc.reset(new gc);
-            gc::register_gc(thread_gc.get());
-        }
-        return *thread_gc.get();
-    }
-
-    // function for retrieving the static gc instance for current thread
-    static gc& get_static_gc()
-    {
-        static gc* static_gc = NULL;
-        if (static_gc == NULL)
-            static_gc = new gc(true);
-        return *static_gc;
-    }
-
-    // This expands to...
+    // The following expands to...
     // template <class T, class A1, ...etc>
     // gc_ptr<T> new_gc(A1 const& a1, ...etc)
     // {
-    //     return new_gc_placeholder<T>(get_gc(), a1, ...etc);
+    //     return new_gc_placeholder<T>(gc::get_gc(), a1, ...etc);
     // }
 
     // template <class T, class A1, ...etc>
     // gc_ptr<T> new_static_gc(A1 const& a1, ...etc)
     // {
-    //     return new_gc_placeholder<T>(get_static_gc(), a1, ...etc);
+    //     return new_gc_placeholder<T>(gc::get_static_gc(), a1, ...etc);
     // }
+
     #define NEW_GC(Z, N, _) \
     template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
     gc_ptr<T> new_gc_placeholder(gc& gc BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
-    { gc_ptr<T> obj(new(gc) T(BOOST_PP_ENUM_PARAMS(N, a))); gc.collect(); return obj; } \
+    { \
+        T* pobj = new T(BOOST_PP_ENUM_PARAMS(N, a)); \
+        gc.register_object(static_cast<gc_object*>(pobj)); \
+        gc.collect(); return gc_ptr<T>(pobj); \
+    } \
     template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
     gc_ptr<T> new_gc(BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
-    { return new_gc_placeholder<T>(get_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); } \
+    { return new_gc_placeholder<T>(gc::get_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); } \
     template<class T BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, class A)> \
     gc_ptr<T> new_static_gc(BOOST_PP_ENUM_BINARY_PARAMS(N, const A, & a)) \
-    { return new_gc_placeholder<T>(get_static_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); }
+    { return new_gc_placeholder<T>(gc::get_static_gc() BOOST_PP_COMMA_IF(N) BOOST_PP_ENUM_PARAMS(N, a)); }
     BOOST_PP_REPEAT_2ND(BOOST_PP_INC(9), NEW_GC, _)
 }
 

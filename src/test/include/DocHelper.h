@@ -67,13 +67,11 @@ namespace Lucene
         static String LARGE_LAZY_FIELD_TEXT;
         static FieldPtr largeLazyField;
         
-        static const uint8_t _FIELD_UTF1_TEXT[];
-        static const String FIELD_UTF1_TEXT;
+        static const String& FIELD_UTF1_TEXT();
         static const wchar_t* TEXT_FIELD_UTF1_KEY;
         static FieldPtr textUtfField1;
         
-        static const uint8_t _FIELD_UTF2_TEXT[];
-        static const String FIELD_UTF2_TEXT;
+        static const String& FIELD_UTF2_TEXT();
         static const int32_t FIELD_UTF2_FREQS[];
         static const wchar_t* TEXT_FIELD_UTF2_KEY;
         static FieldPtr textUtfField2;

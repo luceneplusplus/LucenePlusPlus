@@ -68,11 +68,7 @@ namespace Lucene
         };
 
         /// Literal token values.
-        static Collection<String> tokenImage;
-
-    protected:
-        /// Literal token values.
-        static const wchar_t* _tokenImage[];
+        static const Collection<String>& tokenImage();
     };
 }
 

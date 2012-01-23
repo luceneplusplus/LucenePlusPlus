@@ -6,7 +6,7 @@
 
 #include "gc.h"
 
-#define _GC_VERSION "1.1.0"
+#define _GC_VERSION "2.0.1"
 
 #if defined(_WIN32) || defined(_WIN64) || defined(BOOST_THREAD_WIN32)
 #define GC_PLATFORM_WINDOWS
@@ -85,9 +85,6 @@ namespace lutze
     static const uint32_t register_threshold = 200;
     static const uint32_t transfer_threshold = 100;
 
-    boost::shared_ptr<boost::mutex> gc::gc_registry_mutex;
-    boost::shared_ptr<gc_set> gc::gc_registry;
-
     gc::gc(bool alloc_only) : alloc_only(alloc_only), mark_token(0), register_count(0)
     {
     }
@@ -100,6 +97,55 @@ namespace lutze
     std::string gc::gc_version()
     {
         return _GC_VERSION;
+    }
+
+    bool gc::gc_init()
+    {
+        static bool initialized = false;
+        bool prev_init = initialized;
+        initialized = true;
+        return prev_init;
+    }
+
+    void gc::gc_term()
+    {
+        unregister_gc(&get_static_gc());
+    }
+
+    void gc::register_gc(gc* pgc)
+    {
+        if (!gc_init())
+            boost::throw_exception(std::runtime_error("gc_init() must be called"));
+        boost::mutex::scoped_lock lock(gc_registry_mutex);
+        gc_registry.insert(pgc);
+    }
+
+    void gc::unregister_gc(gc* pgc)
+    {
+        {
+            boost::mutex::scoped_lock lock(gc_registry_mutex);
+            gc_registry.erase(pgc);
+        }
+        delete pgc;
+    }
+
+    gc& gc::get_gc()
+    {
+        static boost::thread_specific_ptr<gc> thread_gc(gc::unregister_gc);
+        if (thread_gc.get() == NULL)
+        {
+            thread_gc.reset(new gc);
+            gc::register_gc(thread_gc.get());
+        }
+        return *thread_gc.get();
+    }
+
+    gc& gc::get_static_gc()
+    {
+        static gc* static_gc = NULL;
+        if (static_gc == NULL)
+            static_gc = new gc(true);
+        return *static_gc;
     }
 
     void gc::collect(bool force)
@@ -213,13 +259,14 @@ namespace lutze
 
     bool gc::check_threshold()
     {
+        /* todo
         if (register_count > register_threshold)
             return true;
         {
             boost::mutex::scoped_lock lock(transfer_mutex);
             if (transfer_queue.size() > transfer_threshold)
                 return true;
-        }
+        }*/
         return false;
     }
 
@@ -279,7 +326,7 @@ namespace lutze
         if (node == object_registry.end()) // object does not belong to this gc registry
         {
             node_map::iterator input = release_queue.find(ptr);
-            if (node == object_registry.end())
+            if (input == release_queue.end())
                 return;
             node = object_registry.insert(std::make_pair(ptr, gc_node(pobj))).first;
             release_queue.erase(input); // take ownership
@@ -287,7 +334,7 @@ namespace lutze
         if (mark_token != node->second.mark_token)
         {
             node->second.mark_token = mark_token;
-            pobj->mark_members(this);
+            node->second.object->mark_members(this);
         }
     }
 
@@ -309,10 +356,10 @@ namespace lutze
 
     void gc::dispose_objects()
     {
-        boost::mutex::scoped_lock lock(*gc_registry_mutex);
+        boost::mutex::scoped_lock lock(gc_registry_mutex);
 
         // take snapshot of currently running gc set
-        gc_set gc_running(*gc_registry);
+        gc_set gc_running(gc_registry);
         gc_running.erase(this);
 
         typedef boost::unordered_map<gc*, node_map> transfer_map;
@@ -325,9 +372,9 @@ namespace lutze
             std::set_difference(gc_running.begin(), gc_running.end(), node->second.history.begin(), node->second.history.end(), std::inserter(remaining, remaining.end()));
             if (alloc_only || remaining.empty())
             {
-                // manually destroy object before unregistering from this gc
-                node->second.object->~gc_object();
-                gc_object::operator delete(const_cast<gc_object*>(node->second.object), *this);
+                // destroy object after unregistering from this gc
+                unregister_object(node->second.object);
+                delete const_cast<gc_object*>(node->second.object);
             }
             else
             {
@@ -348,4 +395,7 @@ namespace lutze
         boost::mutex::scoped_lock lock(transfer_mutex);
         transfer_queue.insert(transfer_nodes.begin(), transfer_nodes.end());
     }
+
+    boost::mutex gc::gc_registry_mutex;
+    gc::gc_set gc::gc_registry;
 }

@@ -99,28 +99,34 @@ namespace Lucene
 
         static HashMap<KEY, VALUE, HASH, EQUAL> newInstance()
         {
-            return HashMap<KEY, VALUE, HASH, EQUAL>(new(get_gc()) pair_container<map_type>());
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            return HashMap<KEY, VALUE, HASH, EQUAL>(container);
         }
 
         static HashMap<KEY, VALUE, HASH, EQUAL> newStaticInstance()
         {
-            return HashMap<KEY, VALUE, HASH, EQUAL>(new(get_static_gc()) pair_container<map_type>());
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            return HashMap<KEY, VALUE, HASH, EQUAL>(container);
         }
 
         template <class ITER>
         static HashMap<KEY, VALUE, HASH, EQUAL> newInstance(ITER first, ITER last)
         {
-            HashMap<KEY, VALUE, HASH, EQUAL> container(new(get_gc()) pair_container<map_type>());
-            container.insert(first, last);
-            return container;
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            container->insert(first, last);
+            return HashMap<KEY, VALUE, HASH, EQUAL>(container);
         }
 
         template <class ITER>
         static HashMap<KEY, VALUE, HASH, EQUAL> newStaticInstance(ITER first, ITER last)
         {
-            HashMap<KEY, VALUE, HASH, EQUAL> container(new(get_static_gc()) pair_container<map_type>());
-            container.insert(first, last);
-            return container;
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            container->insert(first, last);
+            return HashMap<KEY, VALUE, HASH, EQUAL>(container);
         }
     };
 
@@ -143,28 +149,34 @@ namespace Lucene
 
         static SortedMap<KEY, VALUE, COMPARE> newInstance()
         {
-            return SortedMap<KEY, VALUE, COMPARE>(new(get_gc()) pair_container<map_type>());
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            return SortedMap<KEY, VALUE, COMPARE>(container);
         }
 
         static SortedMap<KEY, VALUE, COMPARE> newStaticInstance()
         {
-            return SortedMap<KEY, VALUE, COMPARE>(new(get_static_gc()) pair_container<map_type>());
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            return SortedMap<KEY, VALUE, COMPARE>(container);
         }
 
         template <class ITER>
         static SortedMap<KEY, VALUE, COMPARE> newInstance(ITER first, ITER last)
         {
-            SortedMap<KEY, VALUE, COMPARE> container(new(get_gc()) pair_container<map_type>());
-            container.insert(first, last);
-            return container;
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            container->insert(first, last);
+            return SortedMap<KEY, VALUE, COMPARE>(container);
         }
 
         template <class ITER>
         static SortedMap<KEY, VALUE, COMPARE> newStaticInstance(ITER first, ITER last)
         {
-            SortedMap<KEY, VALUE, COMPARE> container(new(get_static_gc()) pair_container<map_type>());
-            container.insert(first, last);
-            return container;
+            pair_container<map_type>* container = new pair_container<map_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            container->insert(first, last);
+            return SortedMap<KEY, VALUE, COMPARE>(container);
         }
     };
 }

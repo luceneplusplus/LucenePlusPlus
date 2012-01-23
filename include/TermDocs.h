@@ -16,7 +16,7 @@ namespace Lucene
     /// portion gives the number of times the term occurred in each document.  The pairs are ordered by document
     /// number.
     /// @see IndexReader#termDocs()
-    class LPPAPI TermDocs : public gc_object
+    class LPPAPI TermDocs
     {
     protected:
         TermDocs();

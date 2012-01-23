@@ -18,7 +18,7 @@ namespace Lucene
         virtual ~TestPoint();
 
     protected:
-        static MapStringInt testMethods;
+        static MapStringInt& testMethods();
         static bool enable;
 
     public:

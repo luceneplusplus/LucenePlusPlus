@@ -91,28 +91,34 @@ namespace Lucene
 
         static HashSet<VALUE, HASH, EQUAL> newInstance()
         {
-            return HashSet<VALUE, HASH, EQUAL>(new(get_gc()) single_container<set_type>());
+            single_container<set_type>* container = new single_container<set_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            return HashSet<VALUE, HASH, EQUAL>(container);
         }
 
         static HashSet<VALUE, HASH, EQUAL> newStaticInstance()
         {
-            return HashSet<VALUE, HASH, EQUAL>(new(get_static_gc()) single_container<set_type>());
+            single_container<set_type>* container = new single_container<set_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            return HashSet<VALUE, HASH, EQUAL>(container);
         }
 
         template <class ITER>
         static HashSet<VALUE, HASH, EQUAL> newInstance(ITER first, ITER last)
         {
-            HashSet<VALUE, HASH, EQUAL> container(new(get_gc()) single_container<set_type>());
-            container.insert(first, last);
-            return container;
+            single_container<set_type>* container = new single_container<set_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            container->insert(first, last);
+            return HashSet<VALUE, HASH, EQUAL>(container);
         }
 
         template <class ITER>
         static HashSet<VALUE, HASH, EQUAL> newStaticInstance(ITER first, ITER last)
         {
-            HashSet<VALUE, HASH, EQUAL> container(new(get_static_gc()) single_container<set_type>());
-            container.insert(first, last);
-            return container;
+            single_container<set_type>* container = new single_container<set_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            container->insert(first, last);
+            return HashSet<VALUE, HASH, EQUAL>(container);
         }
     };
 
@@ -134,28 +140,34 @@ namespace Lucene
 
         static SortedSet<VALUE, COMPARE> newInstance()
         {
-            return SortedSet<VALUE, COMPARE>(new(get_gc()) single_container<set_type>());
+            single_container<set_type>* container = new single_container<set_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            return SortedSet<VALUE, COMPARE>(container);
         }
 
         static SortedSet<VALUE, COMPARE> newStaticInstance()
         {
-            return SortedSet<VALUE, COMPARE>(new(get_static_gc()) single_container<set_type>());
+            single_container<set_type>* container = new single_container<set_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            return SortedSet<VALUE, COMPARE>(container);
         }
 
         template <class ITER>
         static SortedSet<VALUE, COMPARE> newInstance(ITER first, ITER last)
         {
-            SortedSet<VALUE, COMPARE> container(new(get_gc()) single_container<set_type>());
-            container.insert(first, last);
-            return container;
+            single_container<set_type>* container = new single_container<set_type>();
+            container->insert(first, last);
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            return SortedSet<VALUE, COMPARE>(container);
         }
 
         template <class ITER>
         static SortedSet<VALUE, COMPARE> newStaticInstance(ITER first, ITER last)
         {
-            SortedSet<VALUE, COMPARE> container(new(get_static_gc()) single_container<set_type>());
-            container.insert(first, last);
-            return container;
+            single_container<set_type>* container = new single_container<set_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            container->insert(first, last);
+            return SortedSet<VALUE, COMPARE>(container);
         }
     };
 }

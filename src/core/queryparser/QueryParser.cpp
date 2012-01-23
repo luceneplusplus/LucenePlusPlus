@@ -1512,7 +1512,7 @@ namespace Lucene
         Collection< Collection<int32_t> > exptokseq(Collection< Collection<int32_t> >::newInstance(jj_expentries.size()));
         for (int32_t i = 0; i < jj_expentries.size(); ++i)
             exptokseq[i] = jj_expentries[i];
-        boost::throw_exception(QueryParserError(QueryParseError::parseError(token, exptokseq, tokenImage)));
+        boost::throw_exception(QueryParserError(QueryParseError::parseError(token, exptokseq, tokenImage())));
     }
 
     void QueryParser::enable_tracing()

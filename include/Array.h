@@ -31,7 +31,7 @@ namespace Lucene
 
         value_type* get() const
         {
-            return &(*const_cast<Array<T>*>(this))[0];
+            return vector_ptr<vector_type>::get() == NULL ? (value_type*)NULL : &(*const_cast<Array<T>*>(this))[0];
         }
 
         int32_t size() const
@@ -53,16 +53,18 @@ namespace Lucene
 
         static Array<T> newInstance(typename vector_type::size_type n = 0)
         {
-            Array<T> container(new(get_gc()) single_container<vector_type>());
-            container.resize(n);
-            return container;
+            single_container<vector_type>* container = new single_container<vector_type>();
+            gc::get_gc().register_object(static_cast<gc_object*>(container));
+            container->resize(n);
+            return Array<T>(container);
         }
 
         static Array<T> newStaticInstance(typename vector_type::size_type n = 0)
         {
-            Array<T> container(new(get_static_gc()) single_container<vector_type>());
-            container.resize(n);
-            return container;
+            single_container<vector_type>* container = new single_container<vector_type>();
+            gc::get_static_gc().register_object(static_cast<gc_object*>(container));
+            container->resize(n);
+            return Array<T>(container);
         }
     };
 

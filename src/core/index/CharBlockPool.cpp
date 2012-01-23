@@ -36,10 +36,10 @@ namespace Lucene
     {
         if (1 + bufferUpto == buffers.size())
             buffers.resize((int32_t)((double)buffers.size() * 1.5));
-        docWriter->getCharBlock();
+        buffers[1 + bufferUpto] = docWriter->getCharBlock();
         buffer = buffers[1 + bufferUpto];
         ++bufferUpto;
-
+        
         charUpto = 0;
         charOffset += DocumentsWriter::CHAR_BLOCK_SIZE;
     }
