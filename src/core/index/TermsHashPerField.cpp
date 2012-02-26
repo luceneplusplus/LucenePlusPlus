@@ -131,42 +131,42 @@ namespace Lucene
     struct comparePostings
     {
         comparePostings(Collection<CharArray> buffers)
-    {
+        {
             this->buffers = buffers;
-    }
+        }
 
         /// Compares term text for two Posting instance
         inline bool operator()(const RawPostingListPtr& first, const RawPostingListPtr& second) const
-    {
+        {
             if (first == second)
-            return false;
+                return false;
 
             wchar_t* text1 = buffers[first->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
             int32_t pos1 = (first->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
             wchar_t* text2 = buffers[second->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT].get();
             int32_t pos2 = (second->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
 
-        BOOST_ASSERT(text1 != text2 || pos1 != pos2);
+            BOOST_ASSERT(text1 != text2 || pos1 != pos2);
 
-        while (true)
-        {
-            wchar_t c1 = text1[pos1++];
-            wchar_t c2 = text2[pos2++];
-            if (c1 != c2)
+            while (true)
             {
-                if (c2 == UTF8Base::UNICODE_TERMINATOR)
-                    return false;
-                else if (c1 == UTF8Base::UNICODE_TERMINATOR)
-                    return true;
+                wchar_t c1 = text1[pos1++];
+                wchar_t c2 = text2[pos2++];
+                if (c1 != c2)
+                {
+                    if (c2 == UTF8Base::UNICODE_TERMINATOR)
+                        return false;
+                    else if (c1 == UTF8Base::UNICODE_TERMINATOR)
+                        return true;
+                    else
+                        return (c1 < c2);
+                }
                 else
-                    return (c1 < c2);
-            }
-            else
-            {
+                {
                     // This method should never compare equal postings unless first == second
-                BOOST_ASSERT(c1 != UTF8Base::UNICODE_TERMINATOR);
+                    BOOST_ASSERT(c1 != UTF8Base::UNICODE_TERMINATOR);
+                }
             }
-        }
         }
 
         Collection<CharArray> buffers;

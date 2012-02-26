@@ -12,13 +12,13 @@
 namespace Lucene
 {
     /// Used for unit testing as a substitute for stack trace
-    class TestPoint : public gc_object
+    class TestPoint
     {
     public:
         virtual ~TestPoint();
 
     protected:
-        static MapStringInt& testMethods();
+        static MapStringInt testMethods;
         static bool enable;
 
     public:

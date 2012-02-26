@@ -33,7 +33,7 @@ using namespace Lucene;
 int main(int argc, char* argv[])
 {
     gc::gc_init();
-    
+
     String testDir;
     uint64_t startTime = MiscUtils::currentTimeMillis();
 
@@ -71,12 +71,12 @@ int main(int argc, char* argv[])
     }
 
     setTestDir(testDir);
-    
+
     int testMain = boost::unit_test::unit_test_main(init_unit_test_suite, argc, argv);
 
     std::wcout << L"*** Test duration: " << (MiscUtils::currentTimeMillis() - startTime) / 1000 << L" sec\n";
 
     gc::gc_term();
-    
+
     return testMain;
 }
