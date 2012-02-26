@@ -4,9 +4,6 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include <boost/type_traits.hpp>
-#include <boost/utility/enable_if.hpp>
-
 #ifndef _LUTZE_GC_CONTAINER
 #define _LUTZE_GC_CONTAINER
 
@@ -15,7 +12,7 @@
 namespace lutze
 {
     template <class T>
-    class container_ptr : public gc_ptr<T>
+    class container_ptr : public gc_container, public gc_ptr<T>
     {
     public:
         typedef T container_type;
@@ -29,6 +26,11 @@ namespace lutze
 
         container_ptr(const container_ptr& rhs) : gc_ptr<T>(rhs.px)
         {
+        }
+
+        virtual gc_object* get_object() const
+        {
+            return gc_ptr<T>::get();
         }
 
         iterator begin()
@@ -222,8 +224,8 @@ namespace lutze
     vector_ptr<T> new_vector_placeholder(gc& gc, typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
     {
         vector_ptr<T> container(new single_container<T>());
-        container.resize(n, x);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.resize(n, x);
         return container;
     }
 
@@ -243,8 +245,8 @@ namespace lutze
     vector_ptr<T> new_vector_placeholder(gc& gc, Iter first, Iter last)
     {
         vector_ptr<T> container(new single_container<T>());
-        container.assign(first, last);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.assign(first, last);
         return container;
     }
 
@@ -290,8 +292,8 @@ namespace lutze
     deque_ptr<T> new_deque_placeholder(gc& gc, typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
     {
         deque_ptr<T> container(new single_container<T>());
-        container.resize(n, x);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.resize(n, x);
         return container;
     }
 
@@ -311,8 +313,8 @@ namespace lutze
     deque_ptr<T> new_deque_placeholder(gc& gc, Iter first, Iter last)
     {
         deque_ptr<T> container(new single_container<T>());
-        container.assign(first, last);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.assign(first, last);
         return container;
     }
 
@@ -409,8 +411,8 @@ namespace lutze
     list_ptr<T> new_list_placeholder(gc& gc, typename T::size_type n = 0, const typename T::value_type& x = typename T::value_type())
     {
         list_ptr<T> container(new single_container<T>());
-        container.resize(n, x);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.resize(n, x);
         return container;
     }
 
@@ -430,8 +432,8 @@ namespace lutze
     list_ptr<T> new_list_placeholder(gc& gc, Iter first, Iter last)
     {
         list_ptr<T> container(new single_container<T>());
-        container.assign(first, last);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.assign(first, last);
         return container;
     }
 
@@ -543,8 +545,8 @@ namespace lutze
     set_ptr<T> new_set_placeholder(gc& gc, Iter first, Iter last)
     {
         set_ptr<T> container(new single_container<T>());
-        container.insert(first, last);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.insert(first, last);
         return container;
     }
 
@@ -700,8 +702,8 @@ namespace lutze
     map_ptr<T> new_map_placeholder(gc& gc, Iter first, Iter last)
     {
         map_ptr<T> container(new pair_container<T>());
-        container.insert(first, last);
         gc.register_object(static_cast<gc_object*>(container.get()));
+        container.insert(first, last);
         return container;
     }
 
