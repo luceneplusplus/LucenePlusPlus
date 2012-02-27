@@ -91,7 +91,7 @@ namespace lutze
 
     gc::~gc()
     {
-        final_collect();
+        // todo: final_collect();
     }
 
     std::string gc::gc_version()

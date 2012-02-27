@@ -109,7 +109,7 @@ def build(bld):
     if Options.options.debug:
          compile_flags = ['-O0', '-g']
     else:
-         compile_flags = ['-O2']
+         compile_flags = ['-O2', '-g']
     lucene_sources = []
     for source_dir in lucene_source_dirs:
         source_dir = bld.path.find_dir(source_dir)
