@@ -127,7 +127,6 @@ namespace lutze
 
     void gc::register_gc(gc* pgc)
     {
-        // todo
         // if (!gc_init())
         //     boost::throw_exception(std::runtime_error("gc_init() must be called"));
         boost::mutex::scoped_lock lock(gc_registry_mutex());
@@ -194,6 +193,8 @@ namespace lutze
 
     void gc::static_collect(bool force)
     {
+        BOOST_ASSERT(static_gc);
+
         // have we reached threshold before collection is necessary?
         if (!force && !check_threshold())
             return;
@@ -209,7 +210,7 @@ namespace lutze
         mark_objects(roots);
 
         // 5) destroy or transfer released objects
-        dispose_objects();
+        // todo dispose_objects();
     }
 
     void gc::final_collect()
@@ -221,7 +222,8 @@ namespace lutze
         sweep_objects();
 
         // 3) destroy or transfer released objects
-        dispose_objects(static_gc);
+        // todo dispose_objects(static_gc);
+        dispose_objects(true);
     }
 
     #if defined(GC_PLATFORM_WINDOWS)
@@ -408,8 +410,9 @@ namespace lutze
         // clean up phase
         for (node_map::iterator node = release_queue.begin(), last = release_queue.end(); node != last; ++node)
         {
-            // std::cout << "release:" << node->second.object << "\n";
+            // unregister object from this gc before destroying or transfering
             unregister_object(node->second.object);
+
             gc_set remaining;
             std::set_difference(gc_running.begin(), gc_running.end(), node->second.history.begin(), node->second.history.end(), std::inserter(remaining, remaining.end()));
 

@@ -20,33 +20,33 @@ namespace Lucene
         Synchronize::createSync(objectLock);
         return objectLock;
     }
-    
+
     LuceneSignalPtr LuceneSync::getSignal()
     {
         LuceneSignal::createSignal(objectSignal, getSync());
         return objectSignal;
     }
-    
+
     void LuceneSync::lock(int32_t timeout)
     {
         getSync()->lock();
     }
-    
+
     void LuceneSync::unlock()
     {
         getSync()->unlock();
     }
-    
+
     bool LuceneSync::holdsLock()
     {
         return getSync()->holdsLock();
     }
-    
+
     void LuceneSync::wait(int32_t timeout)
     {
         getSignal()->wait(timeout);
     }
-    
+
     void LuceneSync::notifyAll()
     {
         getSignal()->notifyAll();
