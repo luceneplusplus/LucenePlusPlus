@@ -61,6 +61,15 @@ protected:
     double lastNorm;
     double normDelta;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(similarityOne);
+        gc->mark(norms);
+        gc->mark(modifiedNorms);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     /// return unique norm values that are unchanged by encoding/decoding
     double nextNorm()

@@ -80,6 +80,14 @@ namespace Lucene
         static InfoStreamPtr infoStream;
         ChecksumIndexOutputPtr pendingSegnOutput;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(userData);
+            gc->mark(pendingSegnOutput);
+            SegmentInfoCollection::mark_members(gc);
+        }
+
     public:
         SegmentInfoPtr info(int32_t i);
         String getCurrentSegmentFileName();

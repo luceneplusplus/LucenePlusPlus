@@ -26,6 +26,13 @@ namespace Lucene
         CharArray _termBuffer;
         int32_t _termLength;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(_termBuffer);
+            Attribute::mark_members(gc);
+        }
+
     public:
         virtual String toString();
 

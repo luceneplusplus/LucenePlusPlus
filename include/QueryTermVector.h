@@ -26,6 +26,14 @@ namespace Lucene
         Collection<String> terms;
         Collection<int32_t> termFreqs;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(terms);
+            gc->mark(termFreqs);
+            TermFreqVector::mark_members(gc);
+        }
+
     public:
         virtual String toString();
 

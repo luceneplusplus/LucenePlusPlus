@@ -32,6 +32,14 @@ public:
 protected:
     StopAnalyzerPtr stop;
     SetString inValidTokens;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(stop);
+        gc->mark(inValidTokens);
+        BaseTokenStreamFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(StopAnalyzerTest, StopAnalyzerTestFixture)

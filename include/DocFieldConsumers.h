@@ -29,6 +29,15 @@ namespace Lucene
         int32_t freeCount;
         int32_t allocCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(one);
+            gc->mark(two);
+            gc->mark(docFreeList);
+            DocFieldConsumer::mark_members(gc);
+        }
+
     public:
         virtual void setFieldInfos(FieldInfosPtr fieldInfos);
 
@@ -62,6 +71,15 @@ namespace Lucene
     public:
         DocWriterPtr one;
         DocWriterPtr two;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldConsumers);
+            gc->mark(one);
+            gc->mark(two);
+            DocWriter::mark_members(gc);
+        }
 
     public:
         virtual int64_t sizeInBytes();

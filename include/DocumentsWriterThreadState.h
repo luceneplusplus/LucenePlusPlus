@@ -30,6 +30,15 @@ namespace Lucene
         DocStatePtr docState;
         DocumentsWriterPtr docWriter;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(consumer);
+            gc->mark(docState);
+            gc->mark(docWriter);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         void doAfterFlush();

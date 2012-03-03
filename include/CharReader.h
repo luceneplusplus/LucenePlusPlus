@@ -18,17 +18,24 @@ namespace Lucene
     public:
         CharReader(ReaderPtr in);
         virtual ~CharReader();
-        
+
         LUCENE_CLASS(CharReader);
-    
+
     protected:
         ReaderPtr input;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(input);
+            CharStream::mark_members(gc);
+        }
+
     public:
         using CharStream::read;
-        
+
         static CharStreamPtr get(ReaderPtr input);
-        
+
         virtual int32_t correctOffset(int32_t currentOff);
         virtual void close();
         virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);

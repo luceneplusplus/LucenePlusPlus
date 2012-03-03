@@ -27,6 +27,13 @@ namespace Lucene
     protected:
         map_type theMap;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(theMap);
+            LuceneSync::mark_members(gc);
+        }
+
     public:
         /// @return direct access to the map backing this object.
         map_type getMap()

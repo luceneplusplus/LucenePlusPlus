@@ -63,6 +63,13 @@ namespace Lucene
         Array<T> result;
         int32_t length;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(result);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         void setLength(int32_t length)
         {

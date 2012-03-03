@@ -140,6 +140,13 @@ protected:
     AddDirectoriesThreadsPtr addDirectories;
     int32_t numIter;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(addDirectories);
+        LuceneThread::mark_members(gc);
+    }
+
 public:
     virtual void run();
 };
@@ -191,6 +198,19 @@ public:
     bool didClose;
     HeavyAtomicIntPtr count;
     HeavyAtomicIntPtr numAddIndexesNoOptimize;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(addDir);
+        gc->mark(threads);
+        gc->mark(mainWriter);
+        gc->mark(failures);
+        gc->mark(readers);
+        gc->mark(count);
+        gc->mark(numAddIndexesNoOptimize);
+        LuceneObject::mark_members(gc);
+    }
 
 public:
     void joinThreads()
@@ -687,6 +707,14 @@ namespace TestDuringAddIndexes
         IndexWriterPtr writer;
         Collection<DirectoryPtr> dirs;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(writer);
+            gc->mark(dirs);
+            LuceneThread::mark_members(gc);
+        }
+
     public:
         virtual void run()
         {
@@ -782,6 +810,14 @@ namespace TestDuringAddDelete
         int64_t endTime;
         IndexWriterPtr writer;
         RandomPtr random;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(writer);
+            gc->mark(random);
+            LuceneThread::mark_members(gc);
+        }
 
     public:
         virtual void run()

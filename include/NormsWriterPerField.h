@@ -33,6 +33,18 @@ namespace Lucene
 
         FieldInvertStatePtr fieldState;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(perThread);
+            gc->mark(fieldInfo);
+            gc->mark(docState);
+            gc->mark(docIDs);
+            gc->mark(norms);
+            gc->mark(fieldState);
+            InvertedDocEndConsumerPerField::mark_members(gc);
+        }
+
     public:
         void reset();
         virtual void abort();

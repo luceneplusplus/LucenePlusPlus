@@ -37,10 +37,20 @@ namespace Lucene
         bool closed;
         IndexWriterPtr writer;
 
+        // todo: check this - how is it used? how is it allocated?
         static Collection<ConcurrentMergeSchedulerPtr> allInstances;
 
         bool suppressExceptions;
         static bool anyExceptions;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(mergeThreads);
+            gc->mark(dir);
+            gc->mark(writer);
+            MergeScheduler::mark_members(gc);
+        }
 
     public:
         virtual void initialize();

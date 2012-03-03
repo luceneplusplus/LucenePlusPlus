@@ -71,7 +71,7 @@ public:
     {
         this->doc = doc;
     }
-    
+
     virtual ~SingleDocTestFilter()
     {
     }
@@ -123,7 +123,7 @@ public:
         query = newLucene<TermQuery>(newLucene<Term>(L"field", L"three"));
         filter = newStaticFilterB();
     }
-    
+
     virtual ~FilteredQueryFixture()
     {
         searcher->close();
@@ -136,24 +136,34 @@ protected:
     QueryPtr query;
     FilterPtr filter;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(directory);
+        gc->mark(query);
+        gc->mark(filter);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     FilterPtr newStaticFilterA()
     {
         return newLucene<StaticFilterA>();
     }
-    
+
     FilterPtr newStaticFilterB()
     {
         return newLucene<StaticFilterB>();
     }
-    
+
     void checkScoreEquals(QueryPtr q1, QueryPtr q2)
     {
         Collection<ScoreDocPtr> hits1 = searcher->search(q1, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> hits2 = searcher->search (q2, FilterPtr(), 1000)->scoreDocs;
 
         BOOST_CHECK_EQUAL(hits1.size(), hits2.size());
-        
+
         for (int32_t i = 0; i < hits1.size(); ++i)
             BOOST_CHECK_CLOSE_FRACTION(hits1[i]->score, hits2[i]->score, 0.0000001);
     }
@@ -177,7 +187,7 @@ BOOST_AUTO_TEST_CASE(testFilteredQuery)
     hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(2, hits.size());
     QueryUtils::check(filteredquery, searcher);
-    
+
     filteredquery = newLucene<FilteredQuery>(newLucene<TermQuery>(newLucene<Term>(L"field", L"x")), filter);
     hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
     BOOST_CHECK_EQUAL(1, hits.size());
@@ -208,7 +218,7 @@ BOOST_AUTO_TEST_CASE(testFilteredQuery)
     checkScoreEquals(bq1, bq2);
 
     BOOST_CHECK_EQUAL(boost, filteredquery->getBoost());
-    BOOST_CHECK_EQUAL(1.0, tq->getBoost()); // the boost value of the underlying query shouldn't have changed 
+    BOOST_CHECK_EQUAL(1.0, tq->getBoost()); // the boost value of the underlying query shouldn't have changed
 }
 
 BOOST_AUTO_TEST_CASE(testRangeQuery)

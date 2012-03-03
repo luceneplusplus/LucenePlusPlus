@@ -17,15 +17,23 @@ namespace Lucene
     public:
         MatchAllDocsWeight(MatchAllDocsQueryPtr query, SearcherPtr searcher);
         virtual ~MatchAllDocsWeight();
-    
+
         LUCENE_CLASS(MatchAllDocsWeight);
-    
+
     protected:
         MatchAllDocsQueryPtr query;
         SimilarityPtr similarity;
         double queryWeight;
         double queryNorm;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(similarity);
+            Weight::mark_members(gc);
+        }
+
     public:
         virtual String toString();
         virtual QueryPtr getQuery();
@@ -35,24 +43,33 @@ namespace Lucene
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
         virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
     };
-    
+
     class MatchAllScorer : public Scorer
     {
     public:
         MatchAllScorer(MatchAllDocsQueryPtr query, IndexReaderPtr reader, SimilarityPtr similarity, WeightPtr weight, ByteArray norms);
         virtual ~MatchAllScorer();
-    
+
         LUCENE_CLASS(MatchAllScorer);
-    
+
     public:
         TermDocsPtr termDocs;
         double _score;
         ByteArray norms;
-    
+
     protected:
         MatchAllDocsQueryPtr query;
         int32_t doc;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termDocs);
+            gc->mark(norms);
+            gc->mark(query);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual int32_t docID();
         virtual int32_t nextDoc();

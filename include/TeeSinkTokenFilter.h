@@ -71,6 +71,13 @@ namespace Lucene
     protected:
         Collection<SinkTokenStreamPtr> sinks;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(sinks);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         /// Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream.
         SinkTokenStreamPtr newSinkTokenStream();
@@ -134,6 +141,15 @@ namespace Lucene
         bool initIterator;
         Collection<AttributeSourceStatePtr>::iterator it;
         SinkFilterPtr filter;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(cachedStates);
+            gc->mark(finalState);
+            gc->mark(filter);
+            TokenStream::mark_members(gc);
+        }
 
     protected:
         bool accept(AttributeSourcePtr source);

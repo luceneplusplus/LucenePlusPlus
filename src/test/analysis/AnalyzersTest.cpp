@@ -88,6 +88,15 @@ namespace TestPayloadCopy
         ByteArray data;
         PayloadPtr p;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(payloadAtt);
+            gc->mark(data);
+            gc->mark(p);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {

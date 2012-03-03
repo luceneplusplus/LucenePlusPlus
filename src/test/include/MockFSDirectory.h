@@ -27,6 +27,15 @@ namespace Lucene
         DirectoryPtr dir;
         RandomPtr rand;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(allIndexInputs);
+            gc->mark(dir);
+            gc->mark(rand);
+            Directory::mark_members(gc);
+        }
+
     public:
         virtual IndexInputPtr openInput(const String& name);
         virtual IndexInputPtr openInput(const String& name, int32_t bufferSize);

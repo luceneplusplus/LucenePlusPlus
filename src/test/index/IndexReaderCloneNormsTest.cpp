@@ -63,6 +63,16 @@ protected:
     double lastNorm;
     double normDelta;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(similarityOne);
+        gc->mark(anlzr);
+        gc->mark(norms);
+        gc->mark(modifiedNorms);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     void createIndex(DirectoryPtr dir)
     {

@@ -18,26 +18,34 @@ namespace Lucene
         /// Create an InputStreamReader that uses the utf8 charset.
         InputStreamReader(ReaderPtr reader);
         virtual ~InputStreamReader();
-        
+
         LUCENE_CLASS(InputStreamReader);
-    
+
     protected:
         ReaderPtr reader;
         UTF8DecoderStreamPtr decoder;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            gc->mark(decoder);
+            Reader::mark_members(gc);
+        }
+
     public:
         /// Read a single character.
         virtual int32_t read();
-        
+
         /// Read characters into a portion of an array.
         virtual int32_t read(wchar_t* b, int32_t offset, int32_t length);
-        
+
         /// Close the stream.
         virtual void close();
-        
+
         /// Tell whether this stream supports the mark() operation
         virtual bool markSupported();
-        
+
         /// Reset the stream.
         virtual void reset();
     };

@@ -31,6 +31,15 @@ namespace Lucene
         Collection<int32_t> docIDs;
         int64_t bytesUsed;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(terms);
+            gc->mark(queries);
+            gc->mark(docIDs);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         int32_t size();
         void update(BufferedDeletesPtr in);

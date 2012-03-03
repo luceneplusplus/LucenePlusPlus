@@ -26,6 +26,15 @@ namespace Lucene
         QueryParserPtr qp;
         Collection<String> docFields;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(searcher);
+            gc->mark(qp);
+            gc->mark(docFields);
+            LuceneTestFixture::mark_members(gc);
+        }
+
     public:
         virtual SpanTermQueryPtr st(const String& s);
         virtual SpanFirstQueryPtr sf(const String& s, int32_t b);

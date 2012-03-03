@@ -22,9 +22,16 @@ namespace Lucene
     protected:
         BitVectorPtr deletedDocs;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(deletedDocs);
+            AbstractAllTermDocs::mark_members(gc);
+        }
+
     public:
         virtual bool isDeleted(int32_t doc);
-    };
+};
 }
 
 #endif

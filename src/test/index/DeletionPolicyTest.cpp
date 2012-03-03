@@ -85,6 +85,13 @@ public:
     int32_t numOnCommit;
     DirectoryPtr dir;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        IndexDeletionPolicy::mark_members(gc);
+    }
+
 public:
     virtual void onInit(Collection<IndexCommitPtr> commits)
     {
@@ -172,6 +179,13 @@ public:
     int32_t numDelete;
     SetString seen;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(seen);
+        IndexDeletionPolicy::mark_members(gc);
+    }
+
 public:
     virtual void onInit(Collection<IndexCommitPtr> commits)
     {
@@ -229,6 +243,13 @@ public:
     DirectoryPtr dir;
     double expirationTimeSeconds;
     int32_t numDelete;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        IndexDeletionPolicy::mark_members(gc);
+    }
 
 public:
     virtual void onInit(Collection<IndexCommitPtr> commits)

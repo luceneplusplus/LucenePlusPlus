@@ -18,28 +18,35 @@ namespace Lucene
         /// Construct a SpanOrQuery merging the provided clauses.
         SpanOrQuery(Collection<SpanQueryPtr> clauses);
         virtual ~SpanOrQuery();
-        
+
         LUCENE_CLASS(SpanOrQuery);
-    
+
     protected:
         Collection<SpanQueryPtr> clauses;
         String field;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(clauses);
+            SpanQuery::mark_members(gc);
+        }
+
     public:
         using SpanQuery::toString;
-        
+
         /// Return the clauses whose spans are matched.
         Collection<SpanQueryPtr> getClauses();
-    
+
         virtual String getField();
         virtual void extractTerms(SetTerm terms);
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         virtual QueryPtr rewrite(IndexReaderPtr reader);
         virtual String toString(const String& field);
         virtual bool equals(LuceneObjectPtr other);
-        virtual int32_t hashCode();        
+        virtual int32_t hashCode();
         virtual SpansPtr getSpans(IndexReaderPtr reader);
-        
+
         friend class OrSpans;
     };
 }

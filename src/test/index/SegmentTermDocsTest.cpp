@@ -32,7 +32,7 @@ public:
         DocHelper::setupDoc(testDoc);
         info = DocHelper::writeDoc(dir, testDoc);
     }
-    
+
     virtual ~SegmentTermDocsTestFixture()
     {
     }
@@ -41,6 +41,15 @@ protected:
     DocumentPtr testDoc;
     DirectoryPtr dir;
     SegmentInfoPtr info;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(testDoc);
+        gc->mark(dir);
+        gc->mark(info);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void checkTermDocs(int32_t indexDivisor)
@@ -57,11 +66,11 @@ public:
             int32_t docId = segTermDocs->doc();
             BOOST_CHECK_EQUAL(docId, 0);
             int32_t freq = segTermDocs->freq();
-            BOOST_CHECK_EQUAL(freq, 3);  
+            BOOST_CHECK_EQUAL(freq, 3);
         }
         reader->close();
     }
-    
+
     void checkBadSeek(int32_t indexDivisor)
     {
         {
@@ -85,7 +94,7 @@ public:
             reader->close();
         }
     }
-    
+
     void checkSkipTo(int32_t indexDivisor)
     {
         DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -103,7 +112,7 @@ public:
         for (int32_t i = 0; i < 50; ++i)
             addDoc(writer, L"ccc ccc ccc ccc");
 
-        // assure that we deal with a single segment  
+        // assure that we deal with a single segment
         writer->optimize();
         writer->close();
 
@@ -211,7 +220,7 @@ public:
         reader->close();
         dir->close();
     }
-    
+
     void addDoc(IndexWriterPtr writer, const String& value)
     {
         DocumentPtr doc = newLucene<Document>();

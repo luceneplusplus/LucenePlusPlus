@@ -48,6 +48,13 @@ public:
 protected:
     IndexReaderPtr reader;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(reader);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     static const int32_t NUM_DOCS;
 };

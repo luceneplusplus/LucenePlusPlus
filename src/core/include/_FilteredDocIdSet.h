@@ -17,12 +17,19 @@ namespace Lucene
     public:
         DefaultFilteredDocIdSetIterator(FilteredDocIdSetPtr filtered, DocIdSetIteratorPtr innerIter);
         virtual ~DefaultFilteredDocIdSetIterator();
-    
+
         LUCENE_CLASS(DefaultFilteredDocIdSetIterator);
-    
+
     protected:
         FilteredDocIdSetPtr filtered;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(filtered);
+            FilteredDocIdSetIterator::mark_members(gc);
+        }
+
     protected:
         virtual bool match(int32_t docid);
     };

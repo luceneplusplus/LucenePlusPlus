@@ -50,6 +50,17 @@ namespace Lucene
         int32_t minNrShouldMatch;
         int32_t doc;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(requiredScorers);
+            gc->mark(optionalScorers);
+            gc->mark(prohibitedScorers);
+            gc->mark(coordinator);
+            gc->mark(countingSumScorer);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 
@@ -100,6 +111,14 @@ namespace Lucene
     public:
         void init(); // use after all scorers have been added.
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            gc->mark(coordFactors);
+            LuceneObject::mark_members(gc);
+        }
+
         friend class BooleanScorer2;
     };
 
@@ -117,6 +136,14 @@ namespace Lucene
         CoordinatorPtr coordinator;
         int32_t lastScoredDoc;
         double lastDocScore;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            gc->mark(coordinator);
+            Scorer::mark_members(gc);
+        }
 
     public:
         virtual double score();
@@ -140,6 +167,13 @@ namespace Lucene
         // Save the score of lastScoredDoc, so that we don't compute it more than once in score().
         double lastDocScore;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            DisjunctionSumScorer::mark_members(gc);
+        }
+
     public:
         virtual double score();
 
@@ -161,6 +195,13 @@ namespace Lucene
 
         // Save the score of lastScoredDoc, so that we don't compute it more than once in score().
         double lastDocScore;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            ConjunctionScorer::mark_members(gc);
+        }
 
     public:
         virtual double score();

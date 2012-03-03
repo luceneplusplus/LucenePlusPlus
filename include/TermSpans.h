@@ -28,6 +28,14 @@ namespace Lucene
         int32_t count;
         int32_t position;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(positions);
+            gc->mark(term);
+            Spans::mark_members(gc);
+        }
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);

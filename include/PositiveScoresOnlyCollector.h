@@ -11,20 +11,28 @@
 
 namespace Lucene
 {
-    /// A {@link Collector} implementation which wraps another {@link Collector} and makes sure only 
+    /// A {@link Collector} implementation which wraps another {@link Collector} and makes sure only
     /// documents with scores > 0 are collected.
     class LPPAPI PositiveScoresOnlyCollector : public Collector
     {
     public:
         PositiveScoresOnlyCollector(CollectorPtr c);
         virtual ~PositiveScoresOnlyCollector();
-    
+
         LUCENE_CLASS(PositiveScoresOnlyCollector);
-    
+
     protected:
         CollectorPtr collector;
         ScorerPtr scorer;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(collector);
+            gc->mark(scorer);
+            Collector::mark_members(gc);
+        }
+
     public:
         virtual void collect(int32_t doc);
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);

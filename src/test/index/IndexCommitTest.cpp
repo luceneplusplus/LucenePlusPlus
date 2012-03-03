@@ -30,6 +30,13 @@ namespace TestEqualsHashCode
     protected:
         DirectoryPtr dir;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dir);
+            IndexCommit::mark_members(gc);
+        }
+
     public:
         virtual String getSegmentsFileName()
         {

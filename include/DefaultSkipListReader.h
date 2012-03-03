@@ -30,6 +30,15 @@ namespace Lucene
         int64_t lastProxPointer;
         int32_t lastPayloadLength;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(freqPointer);
+            gc->mark(proxPointer);
+            gc->mark(payloadLength);
+            MultiLevelSkipListReader::mark_members(gc);
+        }
+
     public:
         void init(int64_t skipPointer, int64_t freqBasePointer, int64_t proxBasePointer, int32_t df, bool storesPayloads);
 

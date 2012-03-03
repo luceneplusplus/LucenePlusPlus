@@ -24,6 +24,14 @@ namespace Lucene
         SegmentInfosPtr segmentInfos;
         DirectoryPtr directory;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(segmentInfos);
+            gc->mark(directory);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         void doRun(IndexCommitPtr commit = IndexCommitPtr());
         virtual void runBody(const String& segmentFileName) = 0;
@@ -38,6 +46,13 @@ namespace Lucene
 
     protected:
         T result;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(result);
+            FindSegmentsFile::mark_members(gc);
+        }
 
     public:
         virtual T run(IndexCommitPtr commit = IndexCommitPtr())

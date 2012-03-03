@@ -54,6 +54,27 @@ namespace Lucene
         bool doCall;
         bool doNextCall;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(consumer);
+            gc->mark(nextPerField);
+            gc->mark(docInverterPerField);
+            gc->mark(nextPerThread);
+            gc->mark(perThread);
+            gc->mark(docState);
+            gc->mark(fieldState);
+            gc->mark(termAtt);
+            gc->mark(charPool);
+            gc->mark(intPool);
+            gc->mark(bytePool);
+            gc->mark(fieldInfo);
+            gc->mark(intUptos);
+            gc->mark(postingsHash);
+            gc->mark(p);
+            InvertedDocConsumerPerField::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         void shrinkHash(int32_t targetSize);

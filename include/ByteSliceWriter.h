@@ -11,31 +11,39 @@
 
 namespace Lucene
 {
-    /// Class to write byte streams into slices of shared byte[].  This is used by DocumentsWriter to hold 
+    /// Class to write byte streams into slices of shared byte[].  This is used by DocumentsWriter to hold
     /// the posting list for many terms in RAM.
     class ByteSliceWriter : public LuceneObject
     {
     public:
         ByteSliceWriter(ByteBlockPoolPtr pool);
         virtual ~ByteSliceWriter();
-        
+
         LUCENE_CLASS(ByteSliceWriter);
-    
+
     protected:
         ByteArray slice;
         int32_t upto;
         ByteBlockPoolPtr pool;
-    
+
     public:
         int32_t offset0;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(slice);
+            gc->mark(pool);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Set up the writer to write at address.
         void init(int32_t address);
-        
+
         /// Write byte into byte slice stream
         void writeByte(uint8_t b);
-        
+
         void writeBytes(const uint8_t* b, int32_t offset, int32_t length);
         int32_t getAddress();
         void writeVInt(int32_t i);

@@ -36,6 +36,16 @@ namespace Lucene
         int32_t postingsFreeCount;
         int32_t postingsAllocCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(consumer);
+            gc->mark(nextTermsHash);
+            gc->mark(docWriter);
+            gc->mark(postingsFreeList);
+            InvertedDocConsumer::mark_members(gc);
+        }
+
     public:
         /// Add a new thread
         virtual InvertedDocConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread);

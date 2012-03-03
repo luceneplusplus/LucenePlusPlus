@@ -31,6 +31,15 @@ namespace Lucene
         int32_t numDocsInStore;
         SetString flushedFiles;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docWriter);
+            gc->mark(directory);
+            gc->mark(flushedFiles);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         String segmentFileName(const String& ext);
     };

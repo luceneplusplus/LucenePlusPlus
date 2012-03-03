@@ -17,15 +17,15 @@ namespace Lucene
     public:
         MockFilter();
         virtual ~MockFilter();
-        
+
         LUCENE_CLASS(MockFilter);
-    
+
     protected:
         bool _wasCalled;
-    
+
     public:
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
-        
+
         void clear();
         bool wasCalled();
     };

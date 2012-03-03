@@ -25,6 +25,14 @@ namespace Lucene
         Collection<PhrasePositionsPtr> tmpPos; // for flipping repeating pps
         bool checkedRepeats;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(repeats);
+            gc->mark(tmpPos);
+            PhraseScorer::mark_members(gc);
+        }
+
     public:
         /// Score a candidate doc for all slop-valid position-combinations (matches) encountered while
         /// traversing/hopping the PhrasePositions.  The score contribution of a match depends on the distance:

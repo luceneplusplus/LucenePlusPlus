@@ -17,9 +17,9 @@ namespace Lucene
     public:
         PhrasePositions(TermPositionsPtr t, int32_t o);
         virtual ~PhrasePositions();
-    
+
         LUCENE_CLASS(PhrasePositions);
-    
+
     public:
         int32_t doc; // current doc
         int32_t position; // position in doc
@@ -27,8 +27,16 @@ namespace Lucene
         int32_t offset; // position in phrase
         TermPositionsPtr tp; // stream of positions
         PhrasePositionsPtr _next; // used to make lists
-        bool repeats; // there's other pp for same term (eg. query="1st word 2nd word"~1) 
-    
+        bool repeats; // there's other pp for same term (eg. query="1st word 2nd word"~1)
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(tp);
+            gc->mark(_next);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         bool next();
         bool skipTo(int32_t target);

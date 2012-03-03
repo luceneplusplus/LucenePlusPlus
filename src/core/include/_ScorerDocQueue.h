@@ -17,13 +17,20 @@ namespace Lucene
         HeapedScorerDoc(ScorerPtr scorer);
         HeapedScorerDoc(ScorerPtr scorer, int32_t doc);
         virtual ~HeapedScorerDoc();
-    
+
         LUCENE_CLASS(HeapedScorerDoc);
-    
+
     public:
         ScorerPtr scorer;
         int32_t doc;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         void adjust();
     };

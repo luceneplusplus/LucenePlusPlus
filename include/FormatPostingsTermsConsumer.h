@@ -21,6 +21,13 @@ namespace Lucene
     public:
         CharArray termBuffer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termBuffer);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Adds a new term in this field
         virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start) = 0;

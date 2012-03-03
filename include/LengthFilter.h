@@ -18,16 +18,23 @@ namespace Lucene
         /// Build a filter that removes words that are too long or too short from the text.
         LengthFilter(TokenStreamPtr input, int32_t min, int32_t max);
         virtual ~LengthFilter();
-        
+
         LUCENE_CLASS(LengthFilter);
-    
+
     public:
         int32_t min;
         int32_t max;
-    
+
     protected:
         TermAttributePtr termAtt;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termAtt);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         /// Returns the next input Token whose term() is the right len
         virtual bool incrementToken();

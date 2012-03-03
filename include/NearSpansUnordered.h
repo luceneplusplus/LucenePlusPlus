@@ -41,6 +41,20 @@ namespace Lucene
         bool more; // true if not done
         bool firstTime; // true before first next()
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(reader);
+            gc->mark(ordered);
+            gc->mark(subSpans);
+            gc->mark(first);
+            gc->mark(last);
+            gc->mark(queue);
+            gc->mark(max);
+            Spans::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

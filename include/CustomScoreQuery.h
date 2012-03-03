@@ -48,6 +48,14 @@ namespace Lucene
         Collection<ValueSourceQueryPtr> valSrcQueries; // never null (empty array if there are no valSrcQueries).
         bool strict; // if true, valueSource part of query does not take part in weights normalization.
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(subQuery);
+            gc->mark(valSrcQueries);
+            Query::mark_members(gc);
+        }
+
     public:
         using Query::toString;
 

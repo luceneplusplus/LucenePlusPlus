@@ -17,20 +17,30 @@ namespace Lucene
     public:
         SpanWeight(SpanQueryPtr query, SearcherPtr searcher);
         virtual ~SpanWeight();
-        
+
         LUCENE_CLASS(SpanWeight);
-    
+
     protected:
         SimilarityPtr similarity;
         double value;
         double idf;
         double queryNorm;
         double queryWeight;
-        
+
         SetTerm terms;
         SpanQueryPtr query;
         IDFExplanationPtr idfExp;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(similarity);
+            gc->mark(terms);
+            gc->mark(query);
+            gc->mark(idfExp);
+            Weight::mark_members(gc);
+        }
+
     public:
         virtual QueryPtr getQuery();
         virtual double getValue();
@@ -38,7 +48,7 @@ namespace Lucene
         virtual void normalize(double norm);
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
         virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
-        
+
         friend class PayloadNearSpanScorer;
         friend class PayloadTermSpanScorer;
     };

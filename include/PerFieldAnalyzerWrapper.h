@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    /// This analyzer is used to facilitate scenarios where different fields require different analysis techniques.  
+    /// This analyzer is used to facilitate scenarios where different fields require different analysis techniques.
     /// Use {@link #addAnalyzer} to add a non-default analyzer on a field name basis.
     ///
     /// Example usage:
@@ -22,7 +22,7 @@ namespace Lucene
     /// aWrapper->addAnalyzer(L"lastname", newLucene<KeywordAnalyzer>());
     /// </pre>
     ///
-    /// In this example, StandardAnalyzer will be used for all fields except "firstname" and "lastname", for which 
+    /// In this example, StandardAnalyzer will be used for all fields except "firstname" and "lastname", for which
     /// KeywordAnalyzer will be used.
     ///
     /// A PerFieldAnalyzerWrapper can be used like any other analyzer, for both indexing and query parsing.
@@ -30,38 +30,46 @@ namespace Lucene
     {
     public:
         /// Constructs with default analyzer.
-        /// @param defaultAnalyzer Any fields not specifically defined to use a different analyzer will use the 
+        /// @param defaultAnalyzer Any fields not specifically defined to use a different analyzer will use the
         /// one provided here.
         PerFieldAnalyzerWrapper(AnalyzerPtr defaultAnalyzer);
-        
+
         /// Constructs with default analyzer and a map of analyzers to use for specific fields.
         /// @param defaultAnalyzer Any fields not specifically defined to use a different analyzer will use the one provided here.
-        /// @param fieldAnalyzers a Map (String field name to the Analyzer) to be used for those fields 
+        /// @param fieldAnalyzers a Map (String field name to the Analyzer) to be used for those fields
         PerFieldAnalyzerWrapper(AnalyzerPtr defaultAnalyzer, MapStringAnalyzer fieldAnalyzers);
-        
+
         virtual ~PerFieldAnalyzerWrapper();
-        
+
         LUCENE_CLASS(PerFieldAnalyzerWrapper);
-    
+
     protected:
         AnalyzerPtr defaultAnalyzer;
         MapStringAnalyzer analyzerMap;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(defaultAnalyzer);
+            gc->mark(analyzerMap);
+            Analyzer::mark_members(gc);
+        }
+
     public:
         /// Defines an analyzer to use for the specified field.
         /// @param fieldName field name requiring a non-default analyzer
         /// @param analyzer non-default analyzer to use for field
         void addAnalyzer(const String& fieldName, AnalyzerPtr analyzer);
-        
+
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
-        
+
         /// Return the positionIncrementGap from the analyzer assigned to fieldName.
         virtual int32_t getPositionIncrementGap(const String& fieldName);
-        
+
         /// Return the offsetGap from the analyzer assigned to field
         virtual int32_t getOffsetGap(FieldablePtr field);
-        
+
         virtual String toString();
     };
 }

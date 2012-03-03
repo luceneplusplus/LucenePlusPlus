@@ -42,6 +42,15 @@ protected:
     RAMDirectoryPtr dir;
     DocumentPtr testDoc;
     SegmentReaderPtr reader;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        gc->mark(testDoc);
+        gc->mark(reader);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(SegmentReaderTest, SegmentReaderTestFixture)

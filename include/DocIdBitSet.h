@@ -17,23 +17,30 @@ namespace Lucene
     public:
         DocIdBitSet();
         DocIdBitSet(BitSetPtr bitSet);
-        
+
         virtual ~DocIdBitSet();
-        
+
         LUCENE_CLASS(DocIdBitSet);
-    
+
     protected:
         BitSetPtr bitSet;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(bitSet);
+            DocIdSet::mark_members(gc);
+        }
+
     public:
         virtual DocIdSetIteratorPtr iterator();
-        
+
         /// This DocIdSet implementation is cacheable.
         virtual bool isCacheable();
-        
+
         /// Returns the underlying BitSet.
         BitSetPtr getBitSet();
-        
+
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());

@@ -59,6 +59,22 @@ protected:
     PhraseQueryPtr QUERY_2;
     PhraseQueryPtr QUERY_4;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(DOC_1);
+        gc->mark(DOC_2);
+        gc->mark(DOC_3);
+        gc->mark(DOC_1_B);
+        gc->mark(DOC_2_B);
+        gc->mark(DOC_3_B);
+        gc->mark(DOC_4);
+        gc->mark(QUERY_1);
+        gc->mark(QUERY_2);
+        gc->mark(QUERY_4);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     DocumentPtr makeDocument(const String& docText)
     {

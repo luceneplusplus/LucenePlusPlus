@@ -113,6 +113,15 @@ namespace Lucene
         int32_t binaryLength;
         int32_t binaryOffset;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            if (fieldsData.type() == typeid(ReaderPtr) || fieldsData.type() == typeid(ByteArray))
+                gc->mark(fieldsData);
+            gc->mark(tokenStream);
+            Fieldable::mark_members(gc);
+        }
+
     public:
         /// Sets the boost factor hits on this field.  This value will be multiplied into the score of all
         /// hits on this this field of this document.

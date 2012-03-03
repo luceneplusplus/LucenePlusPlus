@@ -19,18 +19,25 @@ namespace Lucene
         /// @param innerIter Underlying DocIdSetIterator.
         FilteredDocIdSetIterator(DocIdSetIteratorPtr innerIter);
         virtual ~FilteredDocIdSetIterator();
-    
+
         LUCENE_CLASS(FilteredDocIdSetIterator);
-    
+
     protected:
         DocIdSetIteratorPtr innerIter;
         int32_t doc;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(innerIter);
+            DocIdSetIterator::mark_members(gc);
+        }
+
     public:
         virtual int32_t docID();
         virtual int32_t nextDoc();
         virtual int32_t advance(int32_t target);
-    
+
     protected:
         /// Validation method to determine whether a docid should be in the result set.
         /// @param doc docid to be tested

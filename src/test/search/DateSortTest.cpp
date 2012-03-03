@@ -58,6 +58,13 @@ protected:
 
     DirectoryPtr directory;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(directory);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     DocumentPtr createDocument(const String& text, int64_t time)
     {

@@ -49,7 +49,7 @@ public:
         this->ir1 = IndexReader::open(rd1, true);
         this->ir2 = IndexReader::open(rd2, true);
     }
-    
+
     virtual ~ParallelTermEnumTestFixture()
     {
         ir1->close();
@@ -59,6 +59,14 @@ public:
 public:
     IndexReaderPtr ir1;
     IndexReaderPtr ir2;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(ir1);
+        gc->mark(ir2);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(ParallelTermEnumTest, ParallelTermEnumTestFixture)

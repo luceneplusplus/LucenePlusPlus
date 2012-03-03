@@ -228,6 +228,21 @@ namespace Lucene
             ScorerPtr scorer;
             Collection<IndexReaderPtr> lastReader;
 
+        protected:
+            virtual void mark_members(gc* gc) const
+            {
+                gc->mark(q);
+                gc->mark(s);
+                gc->mark(lastDoc);
+                gc->mark(order);
+                gc->mark(opidx);
+                gc->mark(sc);
+                gc->mark(reader);
+                gc->mark(scorer);
+                gc->mark(lastReader);
+                Collector::mark_members(gc);
+            }
+
         public:
             virtual void setScorer(ScorerPtr scorer)
             {
@@ -374,6 +389,18 @@ namespace Lucene
 
             ScorerPtr scorer;
             IndexReaderPtr reader;
+
+        protected:
+            virtual void mark_members(gc* gc) const
+            {
+                gc->mark(q);
+                gc->mark(s);
+                gc->mark(lastDoc);
+                gc->mark(lastReader);
+                gc->mark(scorer);
+                gc->mark(reader);
+                Collector::mark_members(gc);
+            }
 
         public:
             virtual void setScorer(ScorerPtr scorer)

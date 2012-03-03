@@ -21,6 +21,13 @@ namespace Lucene
         SynchronizePtr objectLock;
         LuceneSignalPtr objectSignal;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(objectLock);
+            gc->mark(objectSignal);
+        }
+
     public:
         /// Return this object synchronize lock.
         virtual SynchronizePtr getSync();

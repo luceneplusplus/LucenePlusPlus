@@ -16,9 +16,9 @@ namespace Lucene
     public:
         PhraseWeight(PhraseQueryPtr query, SearcherPtr searcher);
         virtual ~PhraseWeight();
-    
+
         LUCENE_CLASS(PhraseWeight);
-    
+
     protected:
         PhraseQueryPtr query;
         SimilarityPtr similarity;
@@ -27,7 +27,16 @@ namespace Lucene
         double queryNorm;
         double queryWeight;
         IDFExplanationPtr idfExp;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(similarity);
+            gc->mark(idfExp);
+            Weight::mark_members(gc);
+        }
+
     public:
         virtual String toString();
         virtual QueryPtr getQuery();

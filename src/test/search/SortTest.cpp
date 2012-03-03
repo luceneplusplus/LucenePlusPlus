@@ -100,6 +100,24 @@ protected:
     Collection< Collection<String> > data;
 
 protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(full);
+        gc->mark(searchX);
+        gc->mark(searchY);
+        gc->mark(queryX);
+        gc->mark(queryY);
+        gc->mark(queryA);
+        gc->mark(queryE);
+        gc->mark(queryF);
+        gc->mark(queryG);
+        gc->mark(sort);
+        gc->mark(r);
+        gc->mark(data);
+        LuceneTestFixture::mark_members(gc);
+    }
+
+protected:
     SearcherPtr getFullIndex()
     {
         return getIndex(true, true);
@@ -569,6 +587,14 @@ namespace TestNewCustomFieldParserSort
         Collection<int32_t> slotValues;
         int32_t bottomValue;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docValues);
+            gc->mark(slotValues);
+            FieldComparator::mark_members(gc);
+        }
+
     public:
         virtual void copy(int32_t slot, int32_t doc)
         {
@@ -841,6 +867,13 @@ namespace TestTopDocsScores
 
     protected:
         TopDocsPtr docs;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docs);
+            Filter::mark_members(gc);
+        }
 
     public:
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)

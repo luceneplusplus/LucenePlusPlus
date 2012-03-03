@@ -73,6 +73,14 @@ namespace TestCaching
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termAtt);
+            gc->mark(offsetAtt);
+            TokenStream::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {

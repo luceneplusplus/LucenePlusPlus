@@ -23,6 +23,13 @@ namespace Lucene
         SetString locks;
         String lockName;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(locks);
+            Lock::mark_members(gc);
+        }
+
     public:
         /// Attempts to obtain exclusive access and immediately return
         /// upon success or failure.

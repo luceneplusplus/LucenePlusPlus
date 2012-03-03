@@ -63,7 +63,7 @@ namespace Lucene
                         result.add(newLucene<FieldCacheEntryImpl>(readerKey, mapEntry->first->field, cache->first, mapEntry->first->custom, mapEntry->second));
                 }
 
-                // todo
+                // todo: this was the original code (using weak_ptr)
                 // LuceneObjectPtr readerKey(key->first.lock());
 
                 // // we've now materialized a hard ref

@@ -56,6 +56,22 @@ namespace Lucene
         IndexInputPtr singleNormStream;
         SegmentReaderRefPtr singleNormRef;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(deletedDocs);
+            gc->mark(deletedDocsRef);
+            gc->mark(core);
+            gc->mark(fieldsReaderLocal);
+            gc->mark(rollbackSegmentInfo);
+            gc->mark(termVectorsLocal);
+            gc->mark(_norms);
+            gc->mark(si);
+            gc->mark(singleNormStream);
+            gc->mark(singleNormRef);
+            IndexReader::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

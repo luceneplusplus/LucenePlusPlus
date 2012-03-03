@@ -18,25 +18,33 @@ namespace Lucene
     public:
         /// Default constructor that takes a {@link CharStream}.
         MappingCharFilter(NormalizeCharMapPtr normMap, CharStreamPtr in);
-        
+
         /// Easy-use constructor that takes a {@link Reader}.
         MappingCharFilter(NormalizeCharMapPtr normMap, ReaderPtr in);
-        
+
         virtual ~MappingCharFilter();
-        
+
         LUCENE_CLASS(MappingCharFilter);
-    
+
     protected:
         NormalizeCharMapPtr normMap;
         Collection<wchar_t> buffer;
         String replacement;
         int32_t charPointer;
         int32_t nextCharCounter;
-        
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(normMap);
+            gc->mark(buffer);
+            BaseCharFilter::mark_members(gc);
+        }
+
     public:
         virtual int32_t read();
         virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
-    
+
     protected:
         int32_t nextChar();
         void pushChar(int32_t c);

@@ -55,6 +55,13 @@ namespace Lucene
         String field;
         Collection<String> terms;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(terms);
+            Filter::mark_members(gc);
+        }
+
     public:
         FieldCachePtr getFieldCache();
 

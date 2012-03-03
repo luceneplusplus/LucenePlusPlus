@@ -42,6 +42,13 @@ protected:
 
     static const int32_t runsToDo;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(reader);
+        LuceneThread::mark_members(gc);
+    }
+
 public:
     virtual void run()
     {
@@ -126,6 +133,13 @@ protected:
     RAMDirectoryPtr directory;
     int32_t numDocs;
     int32_t numThreads;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(directory);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void testTermPositionVectors(IndexReaderPtr reader, int32_t threadCount)

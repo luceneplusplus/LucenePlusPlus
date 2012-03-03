@@ -17,13 +17,20 @@ namespace Lucene
     public:
         ReaderField(LuceneObjectPtr readerKey, const String& fieldName);
         virtual ~ReaderField();
-    
+
         LUCENE_CLASS(ReaderField);
-    
+
     public:
         LuceneObjectPtr readerKey;
         String fieldName;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(readerKey);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual int32_t hashCode();
         virtual bool equals(LuceneObjectPtr other);

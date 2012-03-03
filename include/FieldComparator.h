@@ -112,6 +112,14 @@ namespace Lucene
         String field;
         T bottom;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(values);
+            gc->mark(currentReaderValues);
+            FieldComparator::mark_members(gc);
+        }
+
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2)
         {
@@ -151,6 +159,13 @@ namespace Lucene
     protected:
         ByteParserPtr parser;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parser);
+            NumericComparator<uint8_t>::mark_members(gc);
+        }
+
     public:
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
     };
@@ -185,6 +200,13 @@ namespace Lucene
     protected:
         DoubleParserPtr parser;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parser);
+            NumericComparator<double>::mark_members(gc);
+        }
+
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
@@ -203,6 +225,13 @@ namespace Lucene
     protected:
         IntParserPtr parser;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parser);
+            NumericComparator<int32_t>::mark_members(gc);
+        }
+
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
@@ -220,6 +249,13 @@ namespace Lucene
 
     protected:
         LongParserPtr parser;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parser);
+            NumericComparator<int64_t>::mark_members(gc);
+        }
 
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
@@ -240,6 +276,13 @@ namespace Lucene
 
     protected:
         ScorerPtr scorer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            NumericComparator<double>::mark_members(gc);
+        }
 
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
@@ -264,6 +307,15 @@ namespace Lucene
         String field;
         CollatorPtr collator;
         String bottom;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(values);
+            gc->mark(currentReaderValues);
+            gc->mark(collator);
+            FieldComparator::mark_members(gc);
+        }
 
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
@@ -303,6 +355,17 @@ namespace Lucene
         bool reversed;
         int32_t sortPos;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(ords);
+            gc->mark(values);
+            gc->mark(readerGen);
+            gc->mark(lookup);
+            gc->mark(order);
+            FieldComparator::mark_members(gc);
+        }
+
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
@@ -334,6 +397,14 @@ namespace Lucene
         Collection<String> currentReaderValues;
         String field;
         String bottom;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(values);
+            gc->mark(currentReaderValues);
+            FieldComparator::mark_members(gc);
+        }
 
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);

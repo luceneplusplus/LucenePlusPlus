@@ -54,6 +54,17 @@ protected:
     Collection<IndexReaderPtr> readers;
     SegmentInfosPtr sis;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        gc->mark(doc1);
+        gc->mark(doc2);
+        gc->mark(readers);
+        gc->mark(sis);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     void doTestDocument()
     {

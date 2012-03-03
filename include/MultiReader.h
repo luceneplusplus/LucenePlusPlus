@@ -34,6 +34,16 @@ namespace Lucene
         int32_t _numDocs;
         bool _hasDeletions;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(subReaders);
+            gc->mark(starts);
+            gc->mark(decrefOnClose);
+            gc->mark(normsCache);
+            IndexReader::mark_members(gc);
+        }
+
     public:
         /// Tries to reopen the subreaders.
         ///

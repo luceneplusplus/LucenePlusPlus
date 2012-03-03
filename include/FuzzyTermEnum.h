@@ -51,6 +51,15 @@ namespace Lucene
         double minimumSimilarity;
         double scale_factor;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(p);
+            gc->mark(d);
+            gc->mark(searchTerm);
+            FilteredTermEnum::mark_members(gc);
+        }
+
     public:
         virtual double difference();
         virtual bool endEnum();

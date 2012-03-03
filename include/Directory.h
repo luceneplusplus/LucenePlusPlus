@@ -29,6 +29,13 @@ namespace Lucene
         /// Holds the LockFactory instance (implements locking for this Directory instance).
         LockFactoryPtr lockFactory;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(lockFactory);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Returns an array of strings, one for each file in the directory.
         virtual SetString listAll() = 0;

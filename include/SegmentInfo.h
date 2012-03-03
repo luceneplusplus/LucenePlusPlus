@@ -93,6 +93,16 @@ namespace Lucene
         int32_t docCount; // number of docs in seg
         DirectoryPtr dir; // where segment resides
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(normGen);
+            gc->mark(_files);
+            gc->mark(diagnostics);
+            gc->mark(dir);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Copy everything from src SegmentInfo into our instance.
         void reset(SegmentInfoPtr src);

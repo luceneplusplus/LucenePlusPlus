@@ -78,6 +78,16 @@ protected:
     Collection<String> values;
     IndexSearcherPtr indexSearcher;
     IndexReaderPtr indexReader;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(directory);
+        gc->mark(values);
+        gc->mark(indexSearcher);
+        gc->mark(indexReader);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 const String TermScorerFixture::FIELD = L"field";
@@ -103,6 +113,14 @@ namespace TestTermScorer
         int32_t base;
         ScorerPtr scorer;
         Collection<TestHitPtr> docs;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            gc->mark(docs);
+            Collector::mark_members(gc);
+        }
 
     public:
         virtual void setScorer(ScorerPtr scorer)

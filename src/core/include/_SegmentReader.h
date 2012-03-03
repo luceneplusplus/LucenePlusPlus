@@ -46,6 +46,25 @@ namespace Lucene
         CompoundFileReaderPtr cfsReader;
         CompoundFileReaderPtr storeCFSReader;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(ref);
+            gc->mark(origInstance);
+            gc->mark(fieldInfos);
+            gc->mark(freqStream);
+            gc->mark(proxStream);
+            gc->mark(tisNoIndex);
+            gc->mark(dir);
+            gc->mark(cfsDir);
+            gc->mark(tis);
+            gc->mark(fieldsReaderOrig);
+            gc->mark(termVectorsReaderOrig);
+            gc->mark(cfsReader);
+            gc->mark(storeCFSReader);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         TermVectorsReaderPtr getTermVectorsReaderOrig();
         FieldsReaderPtr getFieldsReaderOrig();
@@ -74,6 +93,13 @@ namespace Lucene
 
     protected:
         SegmentReaderPtr reader;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            CloseableThreadLocal<FieldsReader>::mark_members(gc);
+        }
 
     protected:
         virtual FieldsReaderPtr initialValue();
@@ -128,6 +154,18 @@ namespace Lucene
         bool dirty;
         int32_t number;
         bool rollbackDirty;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            gc->mark(origNorm);
+            gc->mark(origReader);
+            gc->mark(in);
+            gc->mark(_bytesRef);
+            gc->mark(_bytes);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         void incRef();

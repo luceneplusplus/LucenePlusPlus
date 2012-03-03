@@ -35,6 +35,13 @@ namespace Lucene
         Collection<FieldablePtr> fields;
         double boost;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fields);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Sets a boost factor for hits on any field of this document.  This value will be multiplied into the
         /// score of all hits on this document.

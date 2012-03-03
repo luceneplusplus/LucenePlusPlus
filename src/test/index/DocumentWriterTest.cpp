@@ -174,6 +174,16 @@ namespace TestTokenReuse
         PayloadAttributePtr payloadAtt;
         PositionIncrementAttributePtr posIncrAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(state);
+            gc->mark(termAtt);
+            gc->mark(payloadAtt);
+            gc->mark(posIncrAtt);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {
@@ -278,6 +288,14 @@ namespace TestPreAnalyzedField
         Collection<String> tokens;
         int32_t index;
         TermAttributePtr termAtt;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(tokens);
+            gc->mark(termAtt);
+            TokenStream::mark_members(gc);
+        }
 
     public:
         virtual bool incrementToken()

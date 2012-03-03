@@ -44,6 +44,20 @@ namespace Lucene
         int32_t freeCount;
         int32_t allocCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docFieldProcessor);
+            gc->mark(fieldInfos);
+            gc->mark(consumer);
+            gc->mark(_fields);
+            gc->mark(fieldHash);
+            gc->mark(fieldsWriter);
+            gc->mark(docState);
+            gc->mark(docFreeList);
+            DocConsumerPerThread::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         virtual void abort();
@@ -75,6 +89,15 @@ namespace Lucene
 
     protected:
         DocFieldProcessorPerThreadPtr docProcessor;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(one);
+            gc->mark(two);
+            gc->mark(docProcessor);
+            DocWriter::mark_members(gc);
+        }
 
     public:
         virtual int64_t sizeInBytes();

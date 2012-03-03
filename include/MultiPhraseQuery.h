@@ -29,6 +29,14 @@ namespace Lucene
         Collection<int32_t> positions;
         int32_t slop;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termArrays);
+            gc->mark(positions);
+            Query::mark_members(gc);
+        }
+
     public:
         using Query::toString;
 

@@ -50,6 +50,15 @@ public:
     Collection<int32_t> values;
     int32_t bottomVal;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(priority);
+        gc->mark(idIndex);
+        gc->mark(values);
+        FieldComparator::mark_members(gc);
+    }
+
 public:
     virtual int32_t compare(int32_t slot1, int32_t slot2)
     {
@@ -104,6 +113,13 @@ public:
 protected:
     MapStringInt priority;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(priority);
+        FieldComparatorSource::mark_members(gc);
+    }
+
 public:
     virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed)
     {
@@ -125,6 +141,13 @@ public:
 
 public:
     MapStringInt priority;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(priority);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     DocumentPtr adoc(Collection<String> vals)

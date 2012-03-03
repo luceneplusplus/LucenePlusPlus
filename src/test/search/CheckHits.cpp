@@ -44,6 +44,13 @@ namespace Lucene
     protected:
         int32_t base;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(bag);
+            Collector::mark_members(gc);
+        }
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
@@ -93,6 +100,15 @@ namespace Lucene
 
     protected:
         int32_t base;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(q);
+            gc->mark(s);
+            gc->mark(scorer);
+            Collector::mark_members(gc);
+        }
 
     public:
         virtual void setScorer(ScorerPtr scorer)

@@ -24,6 +24,13 @@ namespace Lucene
     protected:
         FieldInfosPtr fieldInfos;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldInfos);
+            InvertedDocEndConsumer::mark_members(gc);
+        }
+
     public:
         virtual InvertedDocEndConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread);
         virtual void abort();

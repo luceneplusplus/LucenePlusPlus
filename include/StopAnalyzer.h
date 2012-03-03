@@ -40,6 +40,13 @@ namespace Lucene
 
         static const wchar_t* _ENGLISH_STOP_WORDS_SET[];
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(stopWords);
+            Analyzer::mark_members(gc);
+        }
+
     public:
         /// An unmodifiable set containing some common English words that are usually not useful for searching.
         static const SetString ENGLISH_STOP_WORDS_SET();

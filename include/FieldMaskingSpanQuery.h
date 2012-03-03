@@ -61,6 +61,13 @@ namespace Lucene
         SpanQueryPtr maskedQuery;
         String field;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(maskedQuery);
+            SpanQuery::mark_members(gc);
+        }
+
     public:
         using SpanQuery::toString;
 

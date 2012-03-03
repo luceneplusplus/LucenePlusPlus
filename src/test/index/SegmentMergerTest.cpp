@@ -62,6 +62,19 @@ protected:
     DocumentPtr doc2;
     SegmentReaderPtr reader2;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(mergedDir);
+        gc->mark(merge1Dir);
+        gc->mark(doc1);
+        gc->mark(reader1);
+        gc->mark(merge2Dir);
+        gc->mark(doc2);
+        gc->mark(reader2);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     void checkNorms(IndexReaderPtr reader)
     {

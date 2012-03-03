@@ -52,6 +52,14 @@ namespace Lucene
         int32_t outputPos;
         TermAttributePtr termAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(output);
+            gc->mark(termAtt);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken();
 

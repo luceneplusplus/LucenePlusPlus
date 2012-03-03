@@ -16,23 +16,30 @@ namespace Lucene
     public:
         virtual ~ScoreTerm();
         LUCENE_CLASS(ScoreTerm);
-    
+
     public:
         TermPtr term;
         double score;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(term);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         int32_t compareTo(ScoreTermPtr other);
     };
-    
+
     class ScoreTermQueue : public PriorityQueue<ScoreTermPtr>
     {
     public:
         ScoreTermQueue(int32_t size);
         virtual ~ScoreTermQueue();
-        
+
         LUCENE_CLASS(ScoreTermQueue);
-    
+
     protected:
         virtual bool lessThan(const ScoreTermPtr& first, const ScoreTermPtr& second);
     };

@@ -154,6 +154,13 @@ public:
 protected:
     Collection<int32_t> values;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(values);
+        CustomScoreProvider::mark_members(gc);
+    }
+
 public:
     virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore)
     {

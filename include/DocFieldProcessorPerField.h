@@ -30,6 +30,16 @@ namespace Lucene
         int32_t fieldCount;
         Collection<FieldablePtr> fields;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(consumer);
+            gc->mark(fieldInfo);
+            gc->mark(next);
+            gc->mark(fields);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual void abort();
     };

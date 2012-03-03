@@ -46,6 +46,13 @@ protected:
     Collection<int32_t>::iterator neededShiftsFirst;
     Collection<int32_t>::iterator neededShiftsLast;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(bits);
+        LongRangeBuilder::mark_members(gc);
+    }
+
 public:
     virtual void addRange(int64_t min, int64_t max, int32_t shift)
     {
@@ -118,6 +125,13 @@ protected:
     Collection<int32_t>::iterator neededBoundsLast;
     Collection<int32_t>::iterator neededShiftsFirst;
     Collection<int32_t>::iterator neededShiftsLast;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(bits);
+        IntRangeBuilder::mark_members(gc);
+    }
 
 public:
     virtual void addRange(int32_t min, int32_t max, int32_t shift)

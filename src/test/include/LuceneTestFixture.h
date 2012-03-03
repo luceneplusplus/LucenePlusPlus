@@ -8,7 +8,7 @@
 
 namespace Lucene
 {
-    class LuceneTestFixture
+    class LuceneTestFixture : public gc_object
     {
     public:
         /// setup

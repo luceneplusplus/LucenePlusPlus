@@ -79,6 +79,13 @@ protected:
     IndexWriterPtr writer;
     int32_t num;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(writer);
+        LuceneThread::mark_members(gc);
+    }
+
 public:
     virtual void run()
     {
@@ -121,6 +128,13 @@ public:
 protected:
     int64_t capacity;
     MapIntByteArray singleBuffers;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(singleBuffers);
+        RAMFile::mark_members(gc);
+    }
 
 protected:
     virtual ByteArray newBuffer(int32_t size)

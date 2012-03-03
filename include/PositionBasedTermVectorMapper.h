@@ -29,6 +29,14 @@ namespace Lucene
 
         bool storeOffsets;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldToTerms);
+            gc->mark(currentPositions);
+            TermVectorMapper::mark_members(gc);
+        }
+
     public:
         /// Never ignores positions.  This mapper doesn't make much sense unless there are positions.
         /// @return false
@@ -59,6 +67,14 @@ namespace Lucene
         int32_t position;
         Collection<String> terms;
         Collection<TermVectorOffsetInfoPtr> offsets;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(terms);
+            gc->mark(offsets);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         void addTerm(const String& term, TermVectorOffsetInfoPtr info);

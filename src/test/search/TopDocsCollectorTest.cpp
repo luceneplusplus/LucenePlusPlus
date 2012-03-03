@@ -39,6 +39,13 @@ protected:
     Collection<double> scores;
 
 protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(scores);
+        TopDocsCollector::mark_members(gc);
+    }
+
+protected:
     virtual TopDocsPtr newTopDocs(Collection<ScoreDocPtr> results, int32_t start)
     {
         if (!results)
@@ -114,6 +121,14 @@ protected:
     DirectoryPtr dir;
     Collection<double> scores;
     double MAX_SCORE;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        gc->mark(scores);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     TopDocsCollectorPtr doSearch(int32_t numResults)

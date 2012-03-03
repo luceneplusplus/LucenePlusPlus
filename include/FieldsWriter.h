@@ -26,6 +26,15 @@ namespace Lucene
         IndexOutputPtr indexStream;
         bool doClose;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldInfos);
+            gc->mark(fieldsStream);
+            gc->mark(indexStream);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         static const uint8_t FIELD_IS_TOKENIZED;
         static const uint8_t FIELD_IS_BINARY;

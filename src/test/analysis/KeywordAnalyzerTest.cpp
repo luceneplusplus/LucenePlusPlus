@@ -43,7 +43,7 @@ public:
 
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
+
     virtual ~KeywordAnalyzerTestFixture()
     {
     }
@@ -51,6 +51,14 @@ public:
 protected:
     RAMDirectoryPtr directory;
     IndexSearcherPtr searcher;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(directory);
+        gc->mark(searcher);
+        BaseTokenStreamFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(KeywordAnalyzerTest, KeywordAnalyzerTestFixture)

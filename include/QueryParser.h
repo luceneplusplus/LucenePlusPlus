@@ -128,6 +128,12 @@ namespace Lucene
             QueryParserTokenPtr first;
             int32_t arg;
             JJCallsPtr next;
+
+            virtual void mark_members(gc* gc) const
+            {
+                gc->mark(first);
+                gc->mark(next);
+            }
         };
 
         Collection<JJCallsPtr> jj_2_rtns;
@@ -170,6 +176,26 @@ namespace Lucene
 
         /// Next token.
         QueryParserTokenPtr jj_nt;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(jj_scanpos);
+            gc->mark(jj_lastpos);
+            gc->mark(jj_la1);
+            gc->mark(jj_2_rtns);
+            gc->mark(jj_expentries);
+            gc->mark(jj_expentry);
+            gc->mark(jj_lasttokens);
+            gc->mark(multiTermRewriteMethod);
+            gc->mark(analyzer);
+            gc->mark(fieldToDateResolution);
+            gc->mark(rangeCollator);
+            gc->mark(token_source);
+            gc->mark(token);
+            gc->mark(jj_nt);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         /// Parses a query string, returning a {@link Query}.

@@ -16,13 +16,21 @@ namespace Lucene
     public:
         QueryWrapperFilterDocIdSet(IndexReaderPtr reader, WeightPtr weight);
         virtual ~QueryWrapperFilterDocIdSet();
-    
+
         LUCENE_CLASS(QueryWrapperFilterDocIdSet);
-    
+
     protected:
         IndexReaderPtr reader;
         WeightPtr weight;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            gc->mark(weight);
+            DocIdSet::mark_members(gc);
+        }
+
     public:
         virtual DocIdSetIteratorPtr iterator();
         virtual bool isCacheable();

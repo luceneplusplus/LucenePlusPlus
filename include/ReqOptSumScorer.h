@@ -11,28 +11,36 @@
 
 namespace Lucene
 {
-    /// A Scorer for queries with a required part and an optional part.  Delays skipTo() on the optional part 
+    /// A Scorer for queries with a required part and an optional part.  Delays skipTo() on the optional part
     /// until a score() is needed.  This Scorer implements {@link Scorer#skipTo(int32_t)}.
     class ReqOptSumScorer : public Scorer
     {
     public:
         ReqOptSumScorer(ScorerPtr reqScorer, ScorerPtr optScorer);
         virtual ~ReqOptSumScorer();
-    
+
         LUCENE_CLASS(ReqOptSumScorer);
-    
+
     protected:
         ScorerPtr reqScorer;
         ScorerPtr optScorer;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reqScorer);
+            gc->mark(optScorer);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual int32_t nextDoc();
         virtual int32_t advance(int32_t target);
         virtual int32_t docID();
-        
-        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()} 
+
+        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()}
         /// is called the first time.
-        /// @return The score of the required scorer, eventually increased by the score of the optional scorer when 
+        /// @return The score of the required scorer, eventually increased by the score of the optional scorer when
         /// it also matches the current document.
         virtual double score();
     };

@@ -29,7 +29,7 @@ public:
         t2 = newLucene<TermQuery>(newLucene<Term>(FIELD_T, L"deleting"));
         c1 = newLucene<TermQuery>(newLucene<Term>(FIELD_C, L"production"));
         c2 = newLucene<TermQuery>(newLucene<Term>(FIELD_C, L"optimize"));
-        
+
         RAMDirectoryPtr rd = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(rd, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -41,7 +41,7 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(rd, true);
     }
-    
+
     virtual ~BooleanOrFixture()
     {
     }
@@ -54,8 +54,19 @@ protected:
     TermQueryPtr t2;
     TermQueryPtr c1;
     TermQueryPtr c2;
-    
+
     IndexSearcherPtr searcher;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(t1);
+        gc->mark(t2);
+        gc->mark(c1);
+        gc->mark(c2);
+        gc->mark(searcher);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     int32_t search(QueryPtr q)

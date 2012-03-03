@@ -33,6 +33,14 @@ namespace Lucene
         /// This is publicly modifiable via Directory.touchFile(), so direct access not supported
         int64_t lastModified;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(directory);
+            gc->mark(buffers);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// For non-stream access from thread that might be concurrent with writing.
         int64_t getLength();

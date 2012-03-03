@@ -24,6 +24,14 @@ namespace Lucene
         Collection<String> terms;
         Collection<int32_t> termFreqs;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(terms);
+            gc->mark(termFreqs);
+            TermPositionVector::mark_members(gc);
+        }
+
     public:
         /// @return The number of the field this vector is associated with
         virtual String getField();

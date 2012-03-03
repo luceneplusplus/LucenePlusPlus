@@ -41,6 +41,13 @@ protected:
     String indexDir;
     DirectoryPtr dir;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     /// Creates a file of the specified size with random data.
     void createRandomFile(DirectoryPtr dir, const String& name, int32_t size)

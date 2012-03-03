@@ -34,6 +34,13 @@ namespace Lucene
     protected:
         DoubleParserPtr parser;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parser);
+            FieldCacheSource::mark_members(gc);
+        }
+
     public:
         virtual String description();
         virtual DocValuesPtr getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader);
@@ -52,6 +59,14 @@ namespace Lucene
     protected:
         DoubleFieldSourcePtr source;
         Collection<double> arr;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(source);
+            gc->mark(arr);
+            DocValues::mark_members(gc);
+        }
 
     public:
         virtual double doubleVal(int32_t doc);

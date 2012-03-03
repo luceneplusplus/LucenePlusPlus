@@ -18,12 +18,12 @@ namespace Lucene
         RAMInputStream();
         RAMInputStream(RAMFilePtr f);
         virtual ~RAMInputStream();
-        
+
         LUCENE_CLASS(RAMInputStream);
-            
-    public:    
+
+    public:
         static const int32_t BUFFER_SIZE;
-    
+
     protected:
         RAMFilePtr file;
         int64_t _length;
@@ -32,36 +32,44 @@ namespace Lucene
         int32_t bufferPosition;
         int64_t bufferStart;
         int32_t bufferLength;
-        
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(file);
+            gc->mark(currentBuffer);
+            IndexInput::mark_members(gc);
+        }
+
     public:
         /// Closes the stream to further operations.
         virtual void close();
-        
+
         /// The number of bytes in the file.
         virtual int64_t length();
-        
+
         /// Reads and returns a single byte.
         /// @see IndexOutput#writeByte(uint8_t)
         virtual uint8_t readByte();
-        
+
         /// Reads a specified number of bytes into an array at the specified offset.
         /// @param b the array to read bytes into.
         /// @param offset the offset in the array to start storing bytes.
         /// @param length the number of bytes to read.
         /// @see IndexOutput#writeBytes(const uint8_t*,int)
         virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
-        
+
         /// Returns the current position in this file, where the next read will occur.
         /// @see #seek(int64_t)
         virtual int64_t getFilePointer();
-        
+
         /// Sets current position in this file, where the next read will occur.
         /// @see #getFilePointer()
         virtual void seek(int64_t pos);
-        
+
         /// Returns a clone of this stream.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-    
+
     protected:
         void switchCurrentBuffer(bool enforceEOF);
     };

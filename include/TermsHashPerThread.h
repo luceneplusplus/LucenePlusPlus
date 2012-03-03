@@ -36,6 +36,23 @@ namespace Lucene
         Collection<RawPostingListPtr> freePostings;
         int32_t freePostingsCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docInverterPerThread);
+            gc->mark(termsHash);
+            gc->mark(nextTermsHash);
+            gc->mark(primaryPerThread);
+            gc->mark(consumer);
+            gc->mark(nextPerThread);
+            gc->mark(charPool);
+            gc->mark(intPool);
+            gc->mark(bytePool);
+            gc->mark(docState);
+            gc->mark(freePostings);
+            InvertedDocConsumerPerThread::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

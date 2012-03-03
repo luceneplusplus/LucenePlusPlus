@@ -40,6 +40,15 @@ namespace Lucene
         TermAttributePtr termAtt;
         PositionIncrementAttributePtr posIncrAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(stopWords);
+            gc->mark(termAtt);
+            gc->mark(posIncrAtt);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         /// Builds a Set from an array of stop words, appropriate for passing into the StopFilter constructor.
         static SetString makeStopSet(Collection<String> stopWords);

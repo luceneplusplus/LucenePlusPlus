@@ -31,6 +31,14 @@ namespace Lucene
         int32_t docBase;
         ScorerPtr scorer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(pqTop);
+            gc->mark(scorer);
+            TopDocsCollector::mark_members(gc);
+        }
+
     public:
         /// Creates a new {@link TopScoreDocCollector} given the number of hits to collect and whether documents
         /// are scored in order by the input {@link Scorer} to {@link #setScorer(ScorerPtr)}.

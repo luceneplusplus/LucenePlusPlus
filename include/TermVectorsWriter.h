@@ -26,6 +26,17 @@ namespace Lucene
         FieldInfosPtr fieldInfos;
         Collection<UTF8ResultPtr> utf8Results;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(tvx);
+            gc->mark(tvd);
+            gc->mark(tvf);
+            gc->mark(fieldInfos);
+            gc->mark(utf8Results);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Add a complete document specified by all its term vectors. If document has no term vectors,
         /// add value for tvx.

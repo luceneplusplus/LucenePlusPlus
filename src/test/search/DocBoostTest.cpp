@@ -41,6 +41,14 @@ namespace TestDocBoost
         int32_t base;
         ScorerPtr scorer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scores);
+            gc->mark(scorer);
+            Collector::mark_members(gc);
+        }
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {

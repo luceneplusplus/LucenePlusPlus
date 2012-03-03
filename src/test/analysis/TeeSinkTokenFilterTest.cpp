@@ -81,6 +81,16 @@ protected:
 
     SinkFilterPtr theFilter;
     SinkFilterPtr dogFilter;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(tokens1);
+        gc->mark(tokens2);
+        gc->mark(theFilter);
+        gc->mark(dogFilter);
+        BaseTokenStreamFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(TeeSinkTokenFilterTest, TeeSinkTokenFilterTestFixture)

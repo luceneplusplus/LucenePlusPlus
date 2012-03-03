@@ -17,18 +17,25 @@ namespace Lucene
     public:
         MockIndexInput(ByteArray bytes);
         virtual ~MockIndexInput();
-        
+
         LUCENE_CLASS(MockIndexInput);
-    
+
     protected:
         ByteArray buffer;
         int32_t pointer;
         int64_t _length;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(buffer);
+            BufferedIndexInput::mark_members(gc);
+        }
+
     public:
         virtual void close();
         virtual int64_t length();
-    
+
     protected:
         virtual void readInternal(uint8_t* b, int32_t offset, int32_t length);
         virtual void seekInternal(int64_t pos);

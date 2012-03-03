@@ -44,6 +44,13 @@ protected:
     Collection<int32_t> docs;
     int32_t index;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(docs);
+        Filter::mark_members(gc);
+    }
+
 public:
     virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
     {

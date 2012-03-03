@@ -18,17 +18,25 @@ namespace Lucene
         /// Construct filtering input.
         StandardFilter(TokenStreamPtr input);
         virtual ~StandardFilter();
-        
+
         LUCENE_CLASS(StandardFilter);
-    
+
     protected:
         TypeAttributePtr typeAtt;
         TermAttributePtr termAtt;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(typeAtt);
+            gc->mark(termAtt);
+            TokenFilter::mark_members(gc);
+        }
+
     protected:
         static const String& APOSTROPHE_TYPE();
         static const String& ACRONYM_TYPE();
-    
+
     public:
         /// Returns the next token in the stream, or null at EOS.
         ///

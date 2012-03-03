@@ -122,6 +122,15 @@ public:
     int32_t numSeen;
     PayloadAttributePtr payAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(payload2);
+        gc->mark(payload4);
+        gc->mark(payAtt);
+        TokenFilter::mark_members(gc);
+    }
+
 public:
     virtual bool incrementToken()
     {
@@ -157,6 +166,14 @@ public:
 protected:
     ByteArray payload2;
     ByteArray payload4;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(payload2);
+        gc->mark(payload4);
+        Analyzer::mark_members(gc);
+    }
 
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
@@ -206,6 +223,16 @@ protected:
     BoostingNearSimilarityPtr similarity;
     ByteArray payload2;
     ByteArray payload4;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(similarity);
+        gc->mark(payload2);
+        gc->mark(payload4);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     PayloadNearQueryPtr newPhraseQuery(const String& fieldName, const String& phrase, bool inOrder)

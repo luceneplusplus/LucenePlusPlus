@@ -29,6 +29,18 @@ namespace Lucene
         PayloadAttributePtr payloadAttribute;
         bool hasPayloads;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(perThread);
+            gc->mark(termsHashPerField);
+            gc->mark(fieldInfo);
+            gc->mark(docState);
+            gc->mark(fieldState);
+            gc->mark(payloadAttribute);
+            TermsHashConsumerPerField::mark_members(gc);
+        }
+
     public:
         virtual int32_t getStreamCount();
         virtual void finish();

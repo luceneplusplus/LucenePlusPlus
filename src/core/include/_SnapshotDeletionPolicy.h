@@ -25,6 +25,14 @@ namespace Lucene
     public:
         IndexCommitPtr cp;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(deletionPolicy);
+            gc->mark(cp);
+            IndexCommit::mark_members(gc);
+        }
+
     public:
         virtual String toString();
 

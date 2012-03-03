@@ -66,6 +66,15 @@ protected:
     IndexReaderPtr readerX;
 
     static const int32_t NUM_DOCS;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(readerA);
+        gc->mark(readerB);
+        gc->mark(readerX);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 const int32_t FieldCacheSanityCheckerTestFixture::NUM_DOCS = 1000;

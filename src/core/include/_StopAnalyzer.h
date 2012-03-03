@@ -16,12 +16,20 @@ namespace Lucene
     {
     public:
         virtual ~StopAnalyzerSavedStreams();
-        
+
         LUCENE_CLASS(StopAnalyzerSavedStreams);
-    
+
     public:
         TokenizerPtr source;
         TokenStreamPtr result;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(source);
+            gc->mark(result);
+            LuceneObject::mark_members(gc);
+        }
     };
 }
 

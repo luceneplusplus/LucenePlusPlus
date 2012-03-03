@@ -75,6 +75,23 @@ namespace Lucene
         bool startingCommitDeleted;
 
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(deletable);
+            gc->mark(refCounts);
+            gc->mark(commits);
+            gc->mark(lastFiles);
+            gc->mark(commitsToDelete);
+            gc->mark(infoStream);
+            gc->mark(directory);
+            gc->mark(policy);
+            gc->mark(docWriter);
+            gc->mark(lastSegmentInfos);
+            gc->mark(synced);
+            LuceneObject::mark_members(gc);
+        }
+
+    protected:
         void message(const String& message);
 
         /// Remove the CommitPoints in the commitsToDelete List by DecRef'ing all files from each SegmentInfos.

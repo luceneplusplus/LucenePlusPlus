@@ -14,22 +14,22 @@ namespace Lucene
     /// Utility class to generate a stream of pseudorandom numbers.
     class LPPAPI Random : public LuceneObject
     {
-        public:
-            Random();
-            Random(int64_t seed);
+    public:
+        Random();
+        Random(int64_t seed);
 
-            virtual ~Random();
+        virtual ~Random();
 
-        protected:
-            int64_t seed;
+    protected:
+        int64_t seed;
 
-        public:
-            void setSeed(int64_t seed);
-            int32_t nextInt(int32_t limit = INT_MAX);
-            double nextDouble();
+    public:
+        void setSeed(int64_t seed);
+        int32_t nextInt(int32_t limit = INT_MAX);
+        double nextDouble();
 
-        protected:
-            int32_t next(int32_t bits);
+    protected:
+        int32_t next(int32_t bits);
     };
 }
 

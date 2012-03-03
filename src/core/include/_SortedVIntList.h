@@ -25,6 +25,13 @@ namespace Lucene
         int32_t lastInt;
         int32_t doc;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(list);
+            DocIdSetIterator::mark_members(gc);
+        }
+
     public:
         virtual int32_t docID();
         virtual int32_t nextDoc();

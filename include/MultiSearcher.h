@@ -31,6 +31,14 @@ namespace Lucene
         Collection<int32_t> starts;
         int32_t _maxDoc;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(searchables);
+            gc->mark(starts);
+            Searcher::mark_members(gc);
+        }
+
     public:
         using Searcher::search;
 

@@ -34,6 +34,15 @@ namespace Lucene
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(ioBuffer);
+            gc->mark(termAtt);
+            gc->mark(offsetAtt);
+            Tokenizer::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken();
         virtual void end();

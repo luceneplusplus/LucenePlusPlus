@@ -48,6 +48,14 @@ public:
 public:
     HashMap<String, DocumentPtr> docs;
     IndexWriterPtr writer;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(docs);
+        gc->mark(writer);
+        LuceneObject::mark_members(gc);
+    }
 };
 
 class MockIndexWriter : public IndexWriter
@@ -66,6 +74,13 @@ public:
 
 protected:
     RandomPtr rand;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(rand);
+        IndexWriter::mark_members(gc);
+    }
 
 public:
     virtual bool testPoint(const String& name)
@@ -120,6 +135,16 @@ public:
     HashMap<String, DocumentPtr> docs;
     CharArray buffer;
     RandomPtr r;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(w);
+        gc->mark(docs);
+        gc->mark(buffer);
+        gc->mark(r);
+        LuceneThread::mark_members(gc);
+    }
 
 public:
     int32_t nextInt(int32_t limit = INT_MAX)
@@ -660,6 +685,13 @@ namespace RunStressTest
         int32_t RUN_TIME_SEC;
         RandomPtr rand;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(rand);
+            LuceneThread::mark_members(gc);
+        }
+
     public:
         virtual void doWork() = 0;
 
@@ -699,6 +731,13 @@ namespace RunStressTest
         IndexWriterPtr writer;
         int32_t nextID;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(writer);
+            TimedThread::mark_members(gc);
+        }
+
     public:
         virtual void doWork()
         {
@@ -737,6 +776,13 @@ namespace RunStressTest
 
     protected:
         DirectoryPtr directory;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(directory);
+            TimedThread::mark_members(gc);
+        }
 
     public:
         virtual void doWork()

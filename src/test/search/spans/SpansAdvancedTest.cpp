@@ -52,6 +52,14 @@ protected:
     DirectoryPtr directory;
     IndexSearcherPtr searcher;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(directory);
+        gc->mark(searcher);
+        LuceneTestFixture::mark_members(gc);
+    }
+
     void addDocument(IndexWriterPtr writer, const String& id, const String& text)
     {
         DocumentPtr document = newLucene<Document>();

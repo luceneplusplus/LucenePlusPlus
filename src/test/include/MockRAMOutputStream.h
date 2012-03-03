@@ -31,6 +31,14 @@ namespace Lucene
     public:
         ByteArray singleByte;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dir);
+            gc->mark(singleByte);
+            RAMOutputStream::mark_members(gc);
+        }
+
     public:
         virtual void close();
         virtual void flush();

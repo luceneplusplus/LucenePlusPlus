@@ -35,6 +35,14 @@ namespace Lucene
 
         ReaderPtr input; // source of chars
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(buffer);
+            gc->mark(input);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual wchar_t readChar();
         virtual wchar_t BeginToken();

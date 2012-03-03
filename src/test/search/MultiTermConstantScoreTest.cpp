@@ -70,6 +70,13 @@ public:
 
     DirectoryPtr small;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(small);
+        BaseTestRangeFilterFixture::mark_members(gc);
+    }
+
 public:
     QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih)
     {
@@ -170,6 +177,13 @@ namespace TestBoost
     protected:
         int32_t base;
         ScorerPtr scorer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            Collector::mark_members(gc);
+        }
 
     public:
         virtual void setScorer(ScorerPtr scorer)

@@ -90,6 +90,16 @@ public:
     int32_t nextID;
     RandomPtr random;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir1);
+        gc->mark(dir2);
+        gc->mark(lock);
+        gc->mark(random);
+        IndexerThread::mark_members(gc);
+    }
+
 public:
     virtual void doWork()
     {
@@ -193,6 +203,15 @@ protected:
     DirectoryPtr dir2;
     SynchronizePtr lock;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir1);
+        gc->mark(dir2);
+        gc->mark(lock);
+        TimedThread::mark_members(gc);
+    }
+
 public:
     virtual void doWork()
     {
@@ -226,6 +245,13 @@ public:
 
 protected:
     RandomPtr random;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(random);
+        MockDirectoryFailure::mark_members(gc);
+    }
 
 public:
     virtual void eval(MockRAMDirectoryPtr dir)

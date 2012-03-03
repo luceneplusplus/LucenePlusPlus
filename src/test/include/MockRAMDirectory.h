@@ -45,6 +45,18 @@ namespace Lucene
         SetString unSyncedFiles;
         SetString createdFiles;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(randomState);
+            gc->mark(openFiles);
+            gc->mark(openFilesDeleted);
+            gc->mark(failures);
+            gc->mark(unSyncedFiles);
+            gc->mark(createdFiles);
+            RAMDirectory::mark_members(gc);
+        }
+
     public:
         /// If set to true, we throw an IO exception if the same file is opened by createOutput, ever.
         void setPreventDoubleWrite(bool value);

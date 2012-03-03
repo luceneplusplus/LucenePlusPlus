@@ -28,6 +28,13 @@ namespace Lucene
         String name;
         bool isClone;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dir);
+            RAMInputStream::mark_members(gc);
+        }
+
     public:
         virtual void close();
 

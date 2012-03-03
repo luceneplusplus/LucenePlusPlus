@@ -46,6 +46,14 @@ public:
 protected:
     Collection<String> words;
     Collection<String> stems;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(words);
+        gc->mark(stems);
+        BaseTokenStreamFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(RussianStemTest, RussianStemmerFixture)

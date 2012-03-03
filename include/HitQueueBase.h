@@ -33,6 +33,13 @@ namespace Lucene
         PriorityQueueScoreDocsPtr queue;
         int32_t queueSize;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(queue);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 
@@ -53,6 +60,13 @@ namespace Lucene
 
     protected:
         HitQueueBasePtr hitQueue;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(hitQueue);
+            PriorityQueue<ScoreDocPtr>::mark_members(gc);
+        }
 
     protected:
         virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);

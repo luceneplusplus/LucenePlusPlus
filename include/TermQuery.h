@@ -11,37 +11,44 @@
 
 namespace Lucene
 {
-    /// A Query that matches documents containing a term.  This may be combined with other terms with a 
+    /// A Query that matches documents containing a term.  This may be combined with other terms with a
     /// {@link BooleanQuery}.
     class LPPAPI TermQuery : public Query
     {
     public:
         /// Constructs a query for the term.
         TermQuery(TermPtr term);
-        
+
         virtual ~TermQuery();
-    
+
         LUCENE_CLASS(TermQuery);
-    
+
     protected:
         TermPtr term;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(term);
+            Query::mark_members(gc);
+        }
+
     public:
         using Query::toString;
-        
+
         /// Returns the term of this query.
         TermPtr getTerm();
-        
+
         virtual WeightPtr createWeight(SearcherPtr searcher);
         virtual void extractTerms(SetTerm terms);
-        
+
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
-        
+
         virtual bool equals(LuceneObjectPtr other);
         virtual int32_t hashCode();
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        
+
         friend class TermWeight;
     };
 }

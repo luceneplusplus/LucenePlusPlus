@@ -50,6 +50,18 @@ namespace Lucene
         CloseableThreadLocal<IndexInput> fieldsStreamTL;
         bool isOriginal;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldInfos);
+            gc->mark(cloneableFieldsStream);
+            gc->mark(fieldsStream);
+            gc->mark(cloneableIndexStream);
+            gc->mark(indexStream);
+            gc->mark(fieldsStreamTL);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Returns a cloned FieldsReader that shares open IndexInputs with the original one.  It is the caller's job not to
         /// close the original FieldsReader until all clones are called (eg, currently SegmentReader manages this logic).
@@ -111,6 +123,13 @@ namespace Lucene
 
         /// @deprecated Only kept for backward-compatibility with <3.0 indexes.
         bool isCompressed;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            AbstractField::mark_members(gc);
+        }
 
     public:
         /// The value of the field as a Reader, or null.  If null, the String value, binary value, or TokenStream value is used.

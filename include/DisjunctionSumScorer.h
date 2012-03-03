@@ -48,6 +48,14 @@ namespace Lucene
 
         double currentScore;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(subScorers);
+            gc->mark(scorerDocQueue);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

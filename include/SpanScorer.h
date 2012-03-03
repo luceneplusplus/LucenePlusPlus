@@ -17,9 +17,9 @@ namespace Lucene
     public:
         SpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms);
         virtual ~SpanScorer();
-        
+
         LUCENE_CLASS(SpanScorer);
-    
+
     protected:
         SpansPtr spans;
         WeightPtr weight;
@@ -28,20 +28,29 @@ namespace Lucene
         bool more;
         int32_t doc;
         double freq;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(spans);
+            gc->mark(weight);
+            gc->mark(norms);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual int32_t nextDoc();
         virtual int32_t advance(int32_t target);
         virtual int32_t docID();
         virtual double score();
-        
+
     protected:
         virtual bool setFreqCurrentDoc();
-        
-        /// This method is no longer an official member of {@link Scorer}, but it is needed by SpanWeight 
+
+        /// This method is no longer an official member of {@link Scorer}, but it is needed by SpanWeight
         /// to build an explanation.
         virtual ExplanationPtr explain(int32_t doc);
-        
+
         friend class SpanWeight;
         friend class PayloadNearSpanWeight;
     };

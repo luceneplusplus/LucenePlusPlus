@@ -22,8 +22,9 @@ namespace Lucene
         typedef std::pair<KEY, VALUE> key_value;
         typedef std::list<key_value> key_list;
         typedef list_ptr<key_list> cache_list;
+        typedef typename cache_list::iterator iterator;
         typedef typename cache_list::const_iterator const_iterator;
-        typedef boost::unordered_map<KEY, const_iterator, HASH, EQUAL> key_map;
+        typedef boost::unordered_map<KEY, iterator, HASH, EQUAL> key_map;
         typedef map_ptr<key_map> cache_map;
 
         SimpleLRUCache(int32_t cacheSize)
@@ -42,13 +43,15 @@ namespace Lucene
         cache_list cacheList;
         cache_map cacheMap;
 
-    public:
+    protected:
         virtual void mark_members(gc* gc) const
         {
             gc->mark(cacheList);
             gc->mark(cacheMap);
+            LuceneObject::mark_members(gc);
         }
 
+    public:
         void put(const KEY& key, const VALUE& value)
         {
             cacheList.push_front(std::make_pair(key, value));
@@ -63,18 +66,16 @@ namespace Lucene
 
         VALUE get(const KEY& key)
         {
-            cacheMap.find(key);
-
-            // todo cache_map::iterator find = cacheMap.find(key);
-            //if (find == cacheMap.end())
+            typename cache_map::iterator find = cacheMap.find(key);
+            if (find == cacheMap.end())
                 return VALUE();
 
-            // VALUE value(find->second->second);
-            // cacheList.erase(find->second);
-            // cacheList.push_front(std::make_pair(key, value));
-            // cacheMap[key] = cacheList.begin();
+            VALUE value(find->second->second);
+            cacheList.erase(find->second);
+            cacheList.push_front(std::make_pair(key, value));
+            cacheMap[key] = cacheList.begin();
 
-            // return value;
+            return value;
         }
 
         bool contains(const KEY& key) const

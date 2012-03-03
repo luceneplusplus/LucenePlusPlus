@@ -23,21 +23,28 @@ namespace Lucene
 
     public:
         virtual ~TokenFilter();
-        
+
         LUCENE_CLASS(TokenFilter);
-    
+
     protected:
         /// The source of tokens for this filter.
         TokenStreamPtr input;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(input);
+            TokenStream::mark_members(gc);
+        }
+
     public:
         /// Performs end-of-stream operations, if any, and calls then end() on the input TokenStream.
         /// NOTE: Be sure to call TokenFilter::end() first when overriding this method.
         virtual void end();
-        
+
         /// Close the input TokenStream.
         virtual void close();
-        
+
         /// Reset the filter as well as the input TokenStream.
         virtual void reset();
     };

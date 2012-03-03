@@ -23,6 +23,14 @@ namespace Lucene
         NormsWriterPtr normsWriter;
         DocStatePtr docState;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(normsWriter);
+            gc->mark(docState);
+            InvertedDocEndConsumerPerThread::mark_members(gc);
+        }
+
     public:
         virtual InvertedDocEndConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo);
         virtual void abort();

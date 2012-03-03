@@ -43,6 +43,15 @@ namespace Lucene
         bool trackAllocations;
         ByteBlockPoolAllocatorBasePtr allocator;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(buffers);
+            gc->mark(buffer);
+            gc->mark(allocator);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         static int32_t FIRST_LEVEL_SIZE();
 

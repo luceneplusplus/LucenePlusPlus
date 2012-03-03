@@ -45,6 +45,14 @@ namespace Lucene
         MapStringFileEntryPtr entries;
 
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(directory);
+            gc->mark(stream);
+            gc->mark(entries);
+            Directory::mark_members(gc);
+        }
+
         void ConstructReader(DirectoryPtr dir, const String& name, int32_t readBufferSize);
 
     public:
@@ -97,6 +105,13 @@ namespace Lucene
         IndexInputPtr base;
         int64_t fileOffset;
         int64_t _length;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(base);
+            BufferedIndexInput::mark_members(gc);
+        }
 
     public:
         /// Closes the stream to further operations.

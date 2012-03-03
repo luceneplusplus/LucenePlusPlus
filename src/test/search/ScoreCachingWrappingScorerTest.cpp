@@ -37,6 +37,13 @@ namespace TestGetScores
         int32_t doc;
         Collection<double> scores;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scores);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual double score()
         {
@@ -82,6 +89,14 @@ namespace TestGetScores
         int32_t idx;
         ScorerPtr scorer;
         Collection<double> mscores;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            gc->mark(mscores);
+            Collector::mark_members(gc);
+        }
 
     public:
         virtual void collect(int32_t doc)

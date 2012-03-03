@@ -92,6 +92,13 @@ public:
     BitSetPtr answer;
     int32_t pos;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(answer);
+        CountingHitCollector::mark_members(gc);
+    }
+
 public:
     virtual void collect(int32_t doc)
     {
@@ -116,6 +123,13 @@ public:
 
 protected:
     BitSetPtr rnd;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(rnd);
+        Filter::mark_members(gc);
+    }
 
 public:
     virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
@@ -143,6 +157,16 @@ public:
     Collection<BitSetPtr> sets;
     Collection<TermPtr> terms;
     IndexSearcherPtr s;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(r);
+        gc->mark(sets);
+        gc->mark(terms);
+        gc->mark(s);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void createDummySearcher()

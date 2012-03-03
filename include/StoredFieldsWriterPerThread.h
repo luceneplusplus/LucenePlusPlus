@@ -26,6 +26,16 @@ namespace Lucene
 
         StoredFieldsWriterPerDocPtr doc;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(localFieldsWriter);
+            gc->mark(storedFieldsWriter);
+            gc->mark(docState);
+            gc->mark(doc);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         void startDocument();
         void addField(FieldablePtr field, FieldInfoPtr fieldInfo);

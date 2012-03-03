@@ -23,6 +23,14 @@ namespace Lucene
         ByteFieldSourcePtr source;
         Collection<uint8_t> arr;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(source);
+            gc->mark(arr);
+            DocValues::mark_members(gc);
+        }
+
     public:
         virtual double doubleVal(int32_t doc);
         virtual int32_t intVal(int32_t doc);

@@ -42,6 +42,14 @@ namespace TestSetNorm
         ScorerPtr scorer;
         Collection<double> scores;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            gc->mark(scores);
+            Collector::mark_members(gc);
+        }
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {

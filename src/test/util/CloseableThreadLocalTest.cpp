@@ -14,7 +14,7 @@ BOOST_FIXTURE_TEST_SUITE(CloseableThreadLocalTest, LuceneTestFixture)
 
 static const String TEST_VALUE = L"initvaluetest";
 
-class TestString : public gc_object
+class TestString : public gc_object // todo: see if we can minimise the number of "public gc_object"
 {
 public:
     TestString(const String& str = L"") : string(str)

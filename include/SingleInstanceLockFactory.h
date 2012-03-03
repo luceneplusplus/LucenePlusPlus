@@ -28,6 +28,13 @@ namespace Lucene
     protected:
         SetString locks;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(locks);
+            LockFactory::mark_members(gc);
+        }
+
     public:
         /// Return a new Lock instance identified by lockName.
         /// @param lockName name of the lock to be created.

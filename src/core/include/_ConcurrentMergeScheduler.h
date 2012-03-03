@@ -25,6 +25,16 @@ namespace Lucene
         OneMergePtr startMerge;
         OneMergePtr runningMerge;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(merger);
+            gc->mark(writer);
+            gc->mark(startMerge);
+            gc->mark(runningMerge);
+            LuceneThread::mark_members(gc);
+        }
+
     public:
         void setRunningMerge(OneMergePtr merge);
         OneMergePtr getRunningMerge();

@@ -31,6 +31,13 @@ public:
 public:
     Collection<double> innerArray;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(innerArray);
+        DocValues::mark_members(gc);
+    }
+
 public:
     virtual double doubleVal(int32_t doc)
     {

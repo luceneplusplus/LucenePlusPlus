@@ -37,6 +37,15 @@ namespace Lucene
         IndexReaderPtr reader;
         SpanQueuePtr queue;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(reader);
+            gc->mark(queue);
+            Spans::mark_members(gc);
+        }
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);

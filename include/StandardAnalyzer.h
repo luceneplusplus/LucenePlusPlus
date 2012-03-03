@@ -64,6 +64,13 @@ namespace Lucene
         int32_t maxTokenLength;
 
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(stopSet);
+            Analyzer::mark_members(gc);
+        }
+
+    protected:
         /// Construct an analyzer with the given stop words.
         void ConstructAnalyser(LuceneVersion::Version matchVersion, SetString stopWords);
 

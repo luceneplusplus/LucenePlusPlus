@@ -26,6 +26,13 @@ namespace Lucene
     protected:
         IndexReaderPtr reader;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Query should be rewritten for wild/fuzzy support.
         /// @return payloads Collection

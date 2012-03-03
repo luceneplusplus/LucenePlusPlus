@@ -23,6 +23,13 @@ namespace Lucene
     public:
         FilterPtr filter;
         int64_t timestamp;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(filter);
+            LuceneObject::mark_members(gc);
+        }
     };
 
     /// Keeps the cache from getting too big.
@@ -46,6 +53,14 @@ namespace Lucene
         FilterManagerPtr manager;
         bool running;
         MapLongInt sortedFilterItems;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(manager);
+            gc->mark(sortedFilterItems);
+            LuceneThread::mark_members(gc);
+        }
 
     public:
         virtual void run();

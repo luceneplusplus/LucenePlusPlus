@@ -26,6 +26,15 @@ namespace Lucene
         SpansPtr excludeSpans;
         bool moreExclude;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(includeSpans);
+            gc->mark(excludeSpans);
+            Spans::mark_members(gc);
+        }
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);

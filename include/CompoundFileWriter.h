@@ -53,6 +53,16 @@ namespace Lucene
         bool merged;
         CheckAbortPtr checkAbort;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(directory);
+            gc->mark(ids);
+            gc->mark(entries);
+            gc->mark(checkAbort);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Returns the directory of the compound file.
         DirectoryPtr getDirectory();

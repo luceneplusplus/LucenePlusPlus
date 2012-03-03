@@ -26,6 +26,16 @@ namespace Lucene
         DocFieldConsumersPtr parent;
         DocStatePtr docState;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(one);
+            gc->mark(two);
+            gc->mark(parent);
+            gc->mark(docState);
+            DocFieldConsumerPerThread::mark_members(gc);
+        }
+
     public:
         virtual void startDocument();
         virtual void abort();

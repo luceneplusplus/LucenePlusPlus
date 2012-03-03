@@ -36,17 +36,24 @@ public:
         this->value = val;
         this->termAtt = addAttribute<TermAttribute>();
     }
-    
+
     virtual ~RepeatingTokenStream()
     {
     }
-    
+
     LUCENE_CLASS(RepeatingTokenStream);
-    
+
 public:
     int32_t num;
     TermAttributePtr termAtt;
     String value;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(termAtt);
+        TokenStream::mark_members(gc);
+    }
 
 public:
     virtual bool incrementToken()
@@ -72,11 +79,11 @@ public:
         this->maxTF = maxTF;
         this->percentDocs = percentDocs;
     }
-    
+
     virtual ~TestAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(TestAnalyzer);
 
 protected:
@@ -84,6 +91,14 @@ protected:
     RandomPtr random;
     int32_t maxTF;
     double percentDocs;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(ts);
+        gc->mark(random);
+        Analyzer::mark_members(gc);
+    }
 
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
@@ -101,16 +116,16 @@ static void addDocs(DirectoryPtr dir, int32_t numDocs, const String& field, cons
     RepeatingTokenStreamPtr ts = newLucene<RepeatingTokenStream>(val);
     RandomPtr random = newLucene<Random>();
     AnalyzerPtr analyzer = newLucene<TestAnalyzer>(ts, random, maxTF, percentDocs);
-        
+
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(field, val, Field::STORE_NO, Field::INDEX_NOT_ANALYZED_NO_NORMS));
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(100);
     writer->setMergeFactor(100);
-    
+
     for (int32_t i = 0; i < numDocs; ++i)
         writer->addDocument(doc);
-    
+
     writer->optimize();
     writer->close();
 }
@@ -121,13 +136,13 @@ BOOST_AUTO_TEST_CASE(testTermDocsPerf)
     static const int32_t numDocs = 10000;
     static const int32_t maxTF = 3;
     static const double percentDocs = 0.1;
-    
+
     DirectoryPtr dir = newLucene<RAMDirectory>();
 
     int64_t start = MiscUtils::currentTimeMillis();
     addDocs(dir, numDocs, L"foo", L"val", maxTF, percentDocs);
     int64_t end = MiscUtils::currentTimeMillis();
-    
+
     BOOST_TEST_MESSAGE("Milliseconds for creation of " << numDocs << " docs = " << (end - start));
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
@@ -142,7 +157,7 @@ BOOST_AUTO_TEST_CASE(testTermDocsPerf)
         while (termDocs->next())
             termDocs->doc();
     }
-    
+
     end = MiscUtils::currentTimeMillis();
     BOOST_TEST_MESSAGE("Milliseconds for " << iter << " TermDocs iteration: " << (end - start));
 }

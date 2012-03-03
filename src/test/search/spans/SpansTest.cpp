@@ -72,6 +72,14 @@ protected:
 public:
     static const String field;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(docFields);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     SpanTermQueryPtr makeSpanTermQuery(const String& text)
     {
@@ -431,6 +439,13 @@ namespace TestSpanScorerZeroSloppyFreq
 
     protected:
         SimilarityPtr sim;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(sim);
+            SpanNearQuery::mark_members(gc);
+        }
 
     public:
         virtual SimilarityPtr getSimilarity(SearcherPtr searcher)

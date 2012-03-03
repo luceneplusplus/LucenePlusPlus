@@ -66,6 +66,12 @@ namespace Lucene
             container->resize(n);
             return Array<T>(container);
         }
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            // do not mark array elements
+        }
     };
 
     template <class T>

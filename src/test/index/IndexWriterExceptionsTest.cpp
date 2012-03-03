@@ -42,6 +42,14 @@ protected:
     RandomPtr random;
     Collection<Field::TermVector> tvSettings;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(random);
+        gc->mark(tvSettings);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     Field::TermVector randomTVSetting()
     {
@@ -80,6 +88,14 @@ public:
     IndexWriterExceptionsTestFixture* fixture;
     LuceneException failure;
     RandomPtr r;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(writer);
+        gc->mark(r);
+        LuceneThread::mark_members(gc);
+    }
 
 public:
     virtual void run()
@@ -159,6 +175,13 @@ public:
 
 protected:
     RandomPtr r;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(r);
+        IndexWriter::mark_members(gc);
+    }
 
 public:
     virtual bool testPoint(const String& name)

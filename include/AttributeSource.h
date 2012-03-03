@@ -64,6 +64,15 @@ namespace Lucene
         MapStringAttribute attributes;
         AttributeSourceStatePtr currentState;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(factory);
+            gc->mark(attributes);
+            gc->mark(currentState);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// returns the used AttributeFactory.
         AttributeFactoryPtr getAttributeFactory();
@@ -181,6 +190,14 @@ namespace Lucene
     protected:
         AttributePtr attribute;
         AttributeSourceStatePtr next;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(attribute);
+            gc->mark(next);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());

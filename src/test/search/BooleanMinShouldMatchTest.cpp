@@ -69,6 +69,15 @@ public:
     IndexReaderPtr r;
     IndexSearcherPtr s;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(index);
+        gc->mark(r);
+        gc->mark(s);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     void verifyNrHits(QueryPtr q, int32_t expected)
     {

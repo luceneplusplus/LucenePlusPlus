@@ -63,6 +63,14 @@ namespace Lucene
         Collection<String> fields;
         MapStringDouble boosts;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fields);
+            gc->mark(boosts);
+            QueryParser::mark_members(gc);
+        }
+
     public:
         using QueryParser::parse;
 

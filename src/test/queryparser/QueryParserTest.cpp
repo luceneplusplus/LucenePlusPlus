@@ -73,6 +73,14 @@ public:
     TermAttributePtr termAtt;
     OffsetAttributePtr offsetAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(termAtt);
+        gc->mark(offsetAtt);
+        TokenFilter::mark_members(gc);
+    }
+
 public:
     virtual bool incrementToken()
     {
@@ -769,6 +777,13 @@ namespace TestStarParsing
 
     public:
         Collection<int32_t> type;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(type);
+            QueryParser::mark_members(gc);
+        }
 
     public:
         virtual QueryPtr getWildcardQuery(const String& field, const String& termStr)

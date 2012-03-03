@@ -22,6 +22,13 @@ namespace Lucene
     protected:
         Collection<TermPositionsPtr> termPositions;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termPositions);
+            PriorityQueue<TermPositionsPtr>::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 
@@ -42,6 +49,13 @@ namespace Lucene
         int32_t index;
         int32_t lastIndex;
         Collection<int32_t> array;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(array);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         void add(int32_t i);

@@ -23,6 +23,14 @@ namespace Lucene
         TermsHashPerThreadPtr termsHashPerThread;
         DocStatePtr docState;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termsHashPerThread);
+            gc->mark(docState);
+            TermsHashConsumerPerThread::mark_members(gc);
+        }
+
     public:
         virtual TermsHashConsumerPerFieldPtr addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo);
         virtual void startDocument();

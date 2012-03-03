@@ -18,18 +18,25 @@ namespace Lucene
         /// Construct a SpanTermQuery matching the named term's spans.
         SpanTermQuery(TermPtr term);
         virtual ~SpanTermQuery();
-        
+
         LUCENE_CLASS(SpanTermQuery);
-    
+
     protected:
         TermPtr term;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(term);
+            SpanQuery::mark_members(gc);
+        }
+
     public:
         using SpanQuery::toString;
-        
+
         /// Return the term whose spans are matched.
         TermPtr getTerm();
-        
+
         virtual String getField();
         virtual void extractTerms(SetTerm terms);
         virtual String toString(const String& field);

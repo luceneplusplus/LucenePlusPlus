@@ -53,6 +53,15 @@ protected:
     QueryParserPtr qp;
     Collection<String> docFields;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(qp);
+        gc->mark(docFields);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     static const String FIELD;
 

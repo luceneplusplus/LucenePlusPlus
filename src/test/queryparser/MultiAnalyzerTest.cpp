@@ -19,7 +19,7 @@
 
 using namespace Lucene;
 
-/// Test QueryParser's ability to deal with Analyzers that return more than one token per 
+/// Test QueryParser's ability to deal with Analyzers that return more than one token per
 /// position or that return tokens with a position increment > 1.
 BOOST_FIXTURE_TEST_SUITE(MultiAnalyzerTest, BaseTokenStreamFixture)
 
@@ -43,11 +43,11 @@ public:
         offsetAtt = addAttribute<OffsetAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
     }
-    
+
     virtual ~TestFilter()
     {
     }
-    
+
     LUCENE_CLASS(TestFilter);
 
 protected:
@@ -59,6 +59,16 @@ protected:
     PositionIncrementAttributePtr posIncrAtt;
     OffsetAttributePtr offsetAtt;
     TypeAttributePtr typeAtt;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(termAtt);
+        gc->mark(posIncrAtt);
+        gc->mark(offsetAtt);
+        gc->mark(typeAtt);
+        TokenFilter::mark_members(gc);
+    }
 
 public:
     virtual bool incrementToken()
@@ -103,7 +113,7 @@ public:
     virtual ~MultiAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(MultiAnalyzer);
 
 public:
@@ -124,15 +134,22 @@ public:
     {
         this->q = q;
     }
-    
+
     virtual ~DumbQueryWrapper()
     {
     }
-    
+
     LUCENE_CLASS(DumbQueryWrapper);
 
 protected:
     QueryPtr q;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(q);
+        Query::mark_members(gc);
+    }
 
 public:
     virtual String toString(const String& field)
@@ -148,11 +165,11 @@ public:
     DumbQueryParser(const String& f, AnalyzerPtr a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
     {
     }
-    
+
     virtual ~DumbQueryParser()
     {
     }
-    
+
     LUCENE_CLASS(DumbQueryParser);
 
 public:
@@ -170,16 +187,24 @@ public:
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
-    
+
     virtual ~TestPosIncrementFilter()
     {
     }
-    
+
     LUCENE_CLASS(TestPosIncrementFilter);
 
 protected:
     TermAttributePtr termAtt;
     PositionIncrementAttributePtr posIncrAtt;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(termAtt);
+        gc->mark(posIncrAtt);
+        TokenFilter::mark_members(gc);
+    }
 
 public:
     virtual bool incrementToken()
@@ -213,7 +238,7 @@ public:
     virtual ~PosIncrementAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(PosIncrementAnalyzer);
 
 public:
@@ -259,7 +284,7 @@ BOOST_AUTO_TEST_CASE(testMultiAnalyzer)
 
     // phrase with non-default slop
     BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"~10", qp->parse(L"\"multi foo\"~10")->toString());
-    
+
     // phrase with non-default boost
     BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"^2.0", qp->parse(L"\"multi foo\"^2")->toString());
 

@@ -76,6 +76,13 @@ namespace Lucene
 
         static const int32_t THREADPOOL_SIZE;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(threads);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Get singleton thread pool instance.
         static ThreadPoolPtr getInstance();

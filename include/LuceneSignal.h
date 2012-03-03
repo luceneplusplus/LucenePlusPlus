@@ -24,6 +24,12 @@ namespace Lucene
         boost::condition signalCondition;
         SynchronizePtr objectLock;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(objectLock);
+        }
+
     public:
         /// create a new LuceneSignal instance atomically.
         static void createSignal(LuceneSignalPtr& signal, SynchronizePtr objectLock);

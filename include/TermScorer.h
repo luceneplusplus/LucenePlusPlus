@@ -41,6 +41,18 @@ namespace Lucene
         static const int32_t SCORE_CACHE_SIZE;
         Collection<double> scoreCache;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(weight);
+            gc->mark(termDocs);
+            gc->mark(norms);
+            gc->mark(docs);
+            gc->mark(freqs);
+            gc->mark(scoreCache);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual void score(CollectorPtr collector);
         virtual int32_t docID();

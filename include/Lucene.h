@@ -214,11 +214,11 @@ namespace Lucene
     typedef gc_ptr<TermInfoCache> TermInfoCachePtr;
 
     typedef boost::blank VariantNull;
-    typedef boost::variant<String, int32_t, int64_t, double, ReaderPtr, ByteArray, VariantNull> FieldsData;
-    typedef boost::variant<String, uint8_t, int32_t, int64_t, double, VariantNull> ComparableValue;
-    typedef boost::variant<int32_t, int64_t, double, VariantNull> NumericValue;
-    typedef boost::variant<String, VariantNull> StringValue;
-    typedef boost::variant<Collection<uint8_t>, Collection<int32_t>, Collection<double>, VariantNull> CollectionValue;
+    typedef boost::variant<VariantNull, String, int32_t, int64_t, double, ReaderPtr, ByteArray> FieldsData;
+    typedef boost::variant<VariantNull, String, uint8_t, int32_t, int64_t, double> ComparableValue;
+    typedef boost::variant<VariantNull, int32_t, int64_t, double> NumericValue;
+    typedef boost::variant<VariantNull, String> StringValue;
+    typedef boost::variant<VariantNull, Collection<uint8_t>, Collection<int32_t>, Collection<double> > CollectionValue;
 }
 
 #include "Synchronize.h"

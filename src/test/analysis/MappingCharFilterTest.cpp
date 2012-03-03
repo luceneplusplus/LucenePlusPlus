@@ -40,6 +40,13 @@ public:
 
 public:
     NormalizeCharMapPtr normMap;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(normMap);
+        BaseTokenStreamFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(MappingCharFilterTest, MappingCharFilterTestFixture)

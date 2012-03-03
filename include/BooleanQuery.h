@@ -37,6 +37,13 @@ namespace Lucene
         bool disableCoord;
         int32_t minNrShouldMatch;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(clauses);
+            Query::mark_members(gc);
+        }
+
     public:
         using Query::toString;
 

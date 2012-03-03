@@ -56,6 +56,16 @@ namespace Lucene
         SpanNearQueryPtr query;
         bool collectPayloads;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(subSpans);
+            gc->mark(matchPayload);
+            gc->mark(subSpansByDoc);
+            gc->mark(query);
+            Spans::mark_members(gc);
+        }
+
     public:
         virtual int32_t doc();
         virtual int32_t start();

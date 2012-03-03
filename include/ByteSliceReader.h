@@ -11,16 +11,16 @@
 
 namespace Lucene
 {
-    /// IndexInput that knows how to read the byte slices written by Posting and PostingVector.  We read the bytes in each slice 
+    /// IndexInput that knows how to read the byte slices written by Posting and PostingVector.  We read the bytes in each slice
     /// until we hit the end of that slice at which point we read the forwarding address of the next slice and then jump to it.
     class ByteSliceReader : public IndexInput
     {
     public:
         ByteSliceReader();
         virtual ~ByteSliceReader();
-        
+
         LUCENE_CLASS(ByteSliceReader);
-    
+
     public:
         ByteBlockPoolPtr pool;
         int32_t bufferUpto;
@@ -30,30 +30,38 @@ namespace Lucene
         int32_t level;
         int32_t bufferOffset;
         int32_t endIndex;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(pool);
+            gc->mark(buffer);
+            IndexInput::mark_members(gc);
+        }
+
     public:
         void init(ByteBlockPoolPtr pool, int32_t startIndex, int32_t endIndex);
         bool eof();
-        
+
         /// Reads and returns a single byte.
         virtual uint8_t readByte();
-        
+
         int64_t writeTo(IndexOutputPtr out);
-        
+
         void nextSlice();
-        
+
         /// Reads a specified number of bytes into an array at the specified offset.
         virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
-        
+
         /// Not implemented
         virtual int64_t getFilePointer();
-        
+
         /// Not implemented
         virtual int64_t length();
-        
+
         /// Not implemented
         virtual void seek(int64_t pos);
-        
+
         /// Not implemented
         virtual void close();
     };

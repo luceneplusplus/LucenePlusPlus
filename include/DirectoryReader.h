@@ -59,6 +59,22 @@ namespace Lucene
         // in case we were opened on a past IndexCommit
         int64_t maxIndexVersion;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(_directory);
+            gc->mark(writer);
+            gc->mark(deletionPolicy);
+            gc->mark(synced);
+            gc->mark(writeLock);
+            gc->mark(segmentInfos);
+            gc->mark(segmentInfosStart);
+            gc->mark(subReaders);
+            gc->mark(starts);
+            gc->mark(normsCache);
+            IndexReader::mark_members(gc);
+        }
+
     public:
         void _initialize(Collection<SegmentReaderPtr> subReaders);
 
@@ -210,6 +226,15 @@ namespace Lucene
         IndexReaderPtr topReader;
         Collection<SegmentMergeInfoPtr> matchingSegments; // null terminated array of matching segments
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(queue);
+            gc->mark(topReader);
+            gc->mark(matchingSegments);
+            TermEnum::mark_members(gc);
+        }
+
     public:
         /// Increments the enumeration to the next element.  True if one exists.
         virtual bool next();
@@ -246,6 +271,20 @@ namespace Lucene
         MultiTermEnumPtr tenum; // the term enum used for seeking
         int32_t matchingSegmentPos; // position into the matching segments from tenum
         SegmentMergeInfoPtr smi; // current segment mere info
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(topReader);
+            gc->mark(readers);
+            gc->mark(starts);
+            gc->mark(term);
+            gc->mark(readerTermDocs);
+            gc->mark(current);
+            gc->mark(tenum);
+            gc->mark(smi);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         /// Returns the current document number.
@@ -319,6 +358,15 @@ namespace Lucene
         int64_t version;
         bool _isOptimized;
         MapStringString userData;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(files);
+            gc->mark(dir);
+            gc->mark(userData);
+            IndexCommit::mark_members(gc);
+        }
 
     public:
         virtual String toString();

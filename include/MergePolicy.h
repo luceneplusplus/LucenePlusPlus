@@ -40,6 +40,13 @@ namespace Lucene
     protected:
         IndexWriterPtr writer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(writer);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Determine what set of merge operations are now necessary on the index. {@link IndexWriter} calls
         /// this whenever there is a change to the segments. This call is always synchronized on the {@link
@@ -98,6 +105,16 @@ namespace Lucene
         bool aborted;
         LuceneException error;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(info);
+            gc->mark(readers);
+            gc->mark(readersClone);
+            gc->mark(segments);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Record that an exception occurred while executing this merge
         void setException(const LuceneException& error);
@@ -128,6 +145,13 @@ namespace Lucene
 
     public:
         Collection<OneMergePtr> merges;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(merges);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         void add(OneMergePtr merge);

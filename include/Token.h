@@ -141,6 +141,14 @@ namespace Lucene
         PayloadPtr payload;
         int32_t positionIncrement;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(_termBuffer);
+            gc->mark(payload);
+            Attribute::mark_members(gc);
+        }
+
     public:
         /// Set the position increment.  This determines the position of this token relative to the previous Token
         /// in a {@link TokenStream}, used in phrase searching.

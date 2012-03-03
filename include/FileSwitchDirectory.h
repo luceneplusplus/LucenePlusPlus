@@ -32,6 +32,15 @@ namespace Lucene
         DirectoryPtr secondaryDir;
         bool doClose;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(primaryExtensions);
+            gc->mark(primaryDir);
+            gc->mark(secondaryDir);
+            Directory::mark_members(gc);
+        }
+
     public:
         /// Return the primary directory.
         DirectoryPtr getPrimaryDir();

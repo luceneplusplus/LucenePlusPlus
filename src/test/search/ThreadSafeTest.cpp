@@ -34,6 +34,13 @@ public:
 protected:
     RandomPtr rand;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(rand);
+        FieldSelector::mark_members(gc);
+    }
+
 public:
     virtual FieldSelectorResult accept(const String& fieldName)
     {
@@ -69,6 +76,14 @@ protected:
     IndexReaderPtr reader;
     int32_t iter;
     RandomPtr rand;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(reader);
+        gc->mark(rand);
+        LuceneThread::mark_members(gc);
+    }
 
 public:
     virtual void run()
@@ -119,6 +134,16 @@ public:
     DirectoryPtr dir;
     IndexReaderPtr reader;
     Collection<String> words;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(r);
+        gc->mark(dir);
+        gc->mark(reader);
+        gc->mark(words);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void buildDir(DirectoryPtr dir, int32_t numDocs, int32_t maxFields, int32_t maxFieldLen)

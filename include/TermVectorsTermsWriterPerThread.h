@@ -29,6 +29,18 @@ namespace Lucene
         Collection<UTF8ResultPtr> utf8Results;
         String lastVectorFieldName;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termsWriter);
+            gc->mark(termsHashPerThread);
+            gc->mark(docState);
+            gc->mark(doc);
+            gc->mark(vectorSliceReader);
+            gc->mark(utf8Results);
+            TermsHashConsumerPerThread::mark_members(gc);
+        }
+
     public:
         virtual void startDocument();
         virtual DocWriterPtr finishDocument();

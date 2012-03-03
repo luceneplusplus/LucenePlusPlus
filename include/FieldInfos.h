@@ -51,6 +51,14 @@ namespace Lucene
         MapStringFieldInfo byName;
         int32_t format;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(byNumber);
+            gc->mark(byName);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Returns a deep clone of this FieldInfos instance.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());

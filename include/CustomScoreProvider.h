@@ -31,6 +31,13 @@ namespace Lucene
     protected:
         IndexReaderPtr reader;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Compute a custom score by the subQuery score and a number of ValueSourceQuery scores.
         ///

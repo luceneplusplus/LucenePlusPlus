@@ -348,6 +348,13 @@ public:
     bool noErrors;
     int32_t addCount;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(writer);
+        LuceneThread::mark_members(gc);
+    }
+
 public:
     virtual void run()
     {
@@ -415,6 +422,18 @@ public:
     Collection<LuceneThreadPtr> threads;
     ConcurrentMergeSchedulerPtr cms;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        gc->mark(dir2);
+        gc->mark(writer2);
+        gc->mark(readers);
+        gc->mark(threads);
+        gc->mark(cms);
+        LuceneObject::mark_members(gc);
+    }
+
 public:
     void launchThreads(int32_t numIter);
     void joinThreads();
@@ -448,6 +467,14 @@ protected:
     int32_t numIter;
     int32_t numCopy;
     DirectoryPtr dir;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(runAdd);
+        gc->mark(dir);
+        LuceneThread::mark_members(gc);
+    }
 
 public:
     virtual void run()
@@ -2295,6 +2322,13 @@ namespace TestDocumentsWriterExceptionThreads
         int32_t numIter;
         int32_t finalI;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(writer);
+            LuceneThread::mark_members(gc);
+        }
+
     public:
         virtual void run()
         {
@@ -2484,6 +2518,14 @@ namespace TestNoWaitClose
     protected:
         IndexWriterPtr finalWriter;
         DocumentPtr doc;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(finalWriter);
+            gc->mark(doc);
+            LuceneThread::mark_members(gc);
+        }
 
     public:
         virtual void run()
@@ -3552,6 +3594,16 @@ namespace TestNegativePositions
         Collection<String>::iterator tokenIter;
         bool first;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termAtt);
+            gc->mark(posIncrAtt);
+            gc->mark(tokens);
+            gc->mark(tokenIter);
+            TokenStream::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {
@@ -4617,6 +4669,14 @@ namespace TestCommitThreadSafety
         IndexWriterPtr writer;
         DirectoryPtr dir;
         int64_t endTime;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(writer);
+            gc->mark(dir);
+            LuceneThread::mark_members(gc);
+        }
 
     public:
         virtual void run()

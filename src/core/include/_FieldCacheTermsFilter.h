@@ -24,6 +24,14 @@ namespace Lucene
         StringIndexPtr fcsi;
         OpenBitSetPtr openBitSet;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fcsi);
+            gc->mark(openBitSet);
+            DocIdSet::mark_members(gc);
+        }
+
     public:
         virtual DocIdSetIteratorPtr iterator();
 
@@ -43,6 +51,14 @@ namespace Lucene
         StringIndexPtr fcsi;
         OpenBitSetPtr openBitSet;
         int32_t doc;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fcsi);
+            gc->mark(openBitSet);
+            DocIdSetIterator::mark_members(gc);
+        }
 
     public:
         virtual int32_t docID();

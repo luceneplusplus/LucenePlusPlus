@@ -330,6 +330,13 @@ namespace TestBasic
     protected:
         ScorerPtr scorer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            CountingHitCollector::mark_members(gc);
+        }
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
@@ -347,6 +354,13 @@ namespace TestBasic
     {
     protected:
         ScorerPtr scorer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            CountingHitCollector::mark_members(gc);
+        }
 
     public:
         virtual void setScorer(ScorerPtr scorer)
@@ -366,6 +380,13 @@ namespace TestBasic
     protected:
         ScorerPtr scorer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            CountingHitCollector::mark_members(gc);
+        }
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
@@ -384,6 +405,13 @@ namespace TestBasic
     {
     protected:
         ScorerPtr scorer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            CountingHitCollector::mark_members(gc);
+        }
 
     public:
         virtual void setScorer(ScorerPtr scorer)

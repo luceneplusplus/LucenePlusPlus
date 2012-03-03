@@ -32,6 +32,15 @@ namespace Lucene
     protected:
         DocumentsWriterPtr docWriter;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(buffers);
+            gc->mark(buffer);
+            gc->mark(docWriter);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         void reset();
         void nextBuffer();

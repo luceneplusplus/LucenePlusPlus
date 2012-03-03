@@ -32,6 +32,15 @@ namespace Lucene
         String currentField;
         TermVectorEntryComparator comparator;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldToTerms);
+            gc->mark(currentSet);
+            gc->mark(comparator);
+            TermVectorMapper::mark_members(gc);
+        }
+
     public:
         /// Map the Term Vector information into your own structure
         virtual void map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions);

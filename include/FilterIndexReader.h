@@ -35,6 +35,13 @@ namespace Lucene
     protected:
         IndexReaderPtr in;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(in);
+            IndexReader::mark_members(gc);
+        }
+
     public:
         virtual DirectoryPtr directory();
         virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
@@ -89,6 +96,13 @@ namespace Lucene
     protected:
         TermDocsPtr in;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(in);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual void seek(TermPtr term);
         virtual void seek(TermEnumPtr termEnum);
@@ -127,6 +141,13 @@ namespace Lucene
 
     protected:
         TermEnumPtr in;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(in);
+            TermEnum::mark_members(gc);
+        }
 
     public:
         virtual bool next();

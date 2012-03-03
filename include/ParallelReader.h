@@ -47,6 +47,17 @@ namespace Lucene
         int32_t _numDocs;
         bool _hasDeletions;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(readers);
+            gc->mark(decrefOnClose);
+            gc->mark(fieldToReader);
+            gc->mark(readerToFields);
+            gc->mark(storedFieldReaders);
+            IndexReader::mark_members(gc);
+        }
+
     public:
         /// Add an IndexReader.
         void add(IndexReaderPtr reader);

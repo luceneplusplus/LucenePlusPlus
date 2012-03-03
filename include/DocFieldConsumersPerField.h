@@ -24,6 +24,15 @@ namespace Lucene
         DocFieldConsumerPerFieldPtr two;
         DocFieldConsumersPerThreadPtr perThread;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(one);
+            gc->mark(two);
+            gc->mark(perThread);
+            DocFieldConsumerPerField::mark_members(gc);
+        }
+
     public:
         /// Processes all occurrences of a single field
         virtual void processFields(Collection<FieldablePtr> fields, int32_t count);

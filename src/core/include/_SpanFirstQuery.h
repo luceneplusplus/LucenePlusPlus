@@ -23,6 +23,14 @@ namespace Lucene
         SpanFirstQueryPtr query;
         SpansPtr spans;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(spans);
+            Spans::mark_members(gc);
+        }
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);

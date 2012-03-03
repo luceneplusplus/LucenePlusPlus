@@ -25,6 +25,13 @@ namespace Lucene
         double coord;
         int32_t lastDoc;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorers);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual int32_t advance(int32_t target);
         virtual int32_t docID();

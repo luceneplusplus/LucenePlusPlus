@@ -11,9 +11,9 @@
 
 namespace Lucene
 {
-    /// Implements the wildcard search query.  Supported wildcards are *, which matches any character sequence 
-    /// (including the empty one), and ?, which matches any single character. Note this query can be slow, as 
-    /// it needs to iterate over many terms.  In order to prevent extremely slow WildcardQueries, a Wildcard 
+    /// Implements the wildcard search query.  Supported wildcards are *, which matches any character sequence
+    /// (including the empty one), and ?, which matches any single character. Note this query can be slow, as
+    /// it needs to iterate over many terms.  In order to prevent extremely slow WildcardQueries, a Wildcard
     /// term should not start with one of the wildcards * or ?.
     ///
     /// This query uses the {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} rewrite method.
@@ -23,29 +23,36 @@ namespace Lucene
     public:
         WildcardQuery(TermPtr term);
         virtual ~WildcardQuery();
-    
+
         LUCENE_CLASS(WildcardQuery);
-    
+
     protected:
         bool termContainsWildcard;
         bool termIsPrefix;
         TermPtr term;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(term);
+            MultiTermQuery::mark_members(gc);
+        }
+
     public:
         using MultiTermQuery::toString;
-        
+
         /// Returns the pattern term.
         TermPtr getTerm();
-        
+
         virtual QueryPtr rewrite(IndexReaderPtr reader);
-        
+
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
-        
+
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         virtual int32_t hashCode();
         virtual bool equals(LuceneObjectPtr other);
-        
+
     protected:
         virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
     };

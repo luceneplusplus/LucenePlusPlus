@@ -32,6 +32,15 @@ namespace Lucene
         Collection<FieldComparatorPtr> comparators;
         Collection<int32_t> reverseMul;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fields);
+            gc->mark(comparators);
+            gc->mark(reverseMul);
+            HitQueueBase::mark_members(gc);
+        }
+
     public:
         /// Creates a hit queue sorted by the given list of fields.
         /// @param fields SortField array we are sorting by in priority order (highest priority first); cannot

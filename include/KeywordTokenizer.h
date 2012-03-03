@@ -19,22 +19,30 @@ namespace Lucene
         KeywordTokenizer(ReaderPtr input, int32_t bufferSize);
         KeywordTokenizer(AttributeSourcePtr source, ReaderPtr input, int32_t bufferSize);
         KeywordTokenizer(AttributeFactoryPtr factory, ReaderPtr input, int32_t bufferSize);
-        
+
         virtual ~KeywordTokenizer();
-        
+
         LUCENE_CLASS(KeywordTokenizer);
-    
+
     protected:
         static const int32_t DEFAULT_BUFFER_SIZE;
-        
+
         bool done;
         int32_t finalOffset;
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termAtt);
+            gc->mark(offsetAtt);
+            Tokenizer::mark_members(gc);
+        }
+
     protected:
         void init(int32_t bufferSize);
-    
+
     public:
         virtual bool incrementToken();
         virtual void end();

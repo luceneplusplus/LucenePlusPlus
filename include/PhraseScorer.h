@@ -39,6 +39,17 @@ namespace Lucene
 
         double freq; // phrase frequency in current doc as computed by phraseFreq().
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(weight);
+            gc->mark(norms);
+            gc->mark(pq);
+            gc->mark(first);
+            gc->mark(last);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual int32_t docID();
         virtual int32_t nextDoc();

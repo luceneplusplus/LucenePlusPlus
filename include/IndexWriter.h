@@ -204,6 +204,40 @@ namespace Lucene
 
         ReaderPoolPtr readerPool;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(messageIDLock);
+            gc->mark(directory);
+            gc->mark(analyzer);
+            gc->mark(deletionPolicy);
+            gc->mark(indexingChain);
+            gc->mark(indexCommit);
+            gc->mark(similarity);
+            gc->mark(rollbackSegmentInfos);
+            gc->mark(rollbackSegments);
+            gc->mark(localRollbackSegmentInfos);
+            gc->mark(segmentInfos);
+            gc->mark(docWriter);
+            gc->mark(deleter);
+            gc->mark(segmentsToOptimize);
+            gc->mark(writeLock);
+            gc->mark(mergingSegments);
+            gc->mark(mergePolicy);
+            gc->mark(mergeScheduler);
+            gc->mark(pendingMerges);
+            gc->mark(runningMerges);
+            gc->mark(mergeExceptions);
+            gc->mark(infoStream);
+            gc->mark(synced);
+            gc->mark(syncing);
+            gc->mark(mergedSegmentWarmer);
+            gc->mark(commitLock);
+            gc->mark(pendingCommit);
+            gc->mark(readerPool);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Default value for the write lock timeout (1,000).
         /// @see #setDefaultWriteLockTimeout

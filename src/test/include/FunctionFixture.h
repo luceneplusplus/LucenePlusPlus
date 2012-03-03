@@ -33,6 +33,14 @@ namespace Lucene
         AnalyzerPtr anlzr;
 
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dir);
+            gc->mark(anlzr);
+            LuceneTestFixture::mark_members(gc);
+        }
+
+    protected:
         static const Collection<String> DOC_TEXT_LINES();
 
         void addDoc(IndexWriterPtr iw, int32_t i);

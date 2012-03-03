@@ -23,6 +23,14 @@ namespace Lucene
         OrdFieldSourcePtr source;
         Collection<int32_t> arr;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(source);
+            gc->mark(arr);
+            DocValues::mark_members(gc);
+        }
+
     public:
         virtual double doubleVal(int32_t doc);
         virtual String strVal(int32_t doc);

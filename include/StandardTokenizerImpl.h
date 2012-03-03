@@ -122,6 +122,14 @@ namespace Lucene
         /// Lexical states
         static const int32_t YYINITIAL;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(zzReader);
+            gc->mark(zzBuffer);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         int32_t yychar();
 

@@ -42,6 +42,14 @@ public:
     SearcherPtr parallel;
     SearcherPtr single;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(parallel);
+        gc->mark(single);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     /// Fields 1-4 indexed together
     SearcherPtr createSingle()

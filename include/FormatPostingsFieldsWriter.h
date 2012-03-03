@@ -16,9 +16,9 @@ namespace Lucene
     public:
         FormatPostingsFieldsWriter(SegmentWriteStatePtr state, FieldInfosPtr fieldInfos);
         virtual ~FormatPostingsFieldsWriter();
-        
+
         LUCENE_CLASS(FormatPostingsFieldsWriter);
-            
+
     public:
         DirectoryPtr dir;
         String segment;
@@ -28,13 +28,25 @@ namespace Lucene
         FormatPostingsTermsWriterPtr termsWriter;
         DefaultSkipListWriterPtr skipListWriter;
         int32_t totalNumDocs;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dir);
+            gc->mark(termsOut);
+            gc->mark(state);
+            gc->mark(fieldInfos);
+            gc->mark(termsWriter);
+            gc->mark(skipListWriter);
+            FormatPostingsFieldsConsumer::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
-        
+
         /// Add a new field.
         virtual FormatPostingsTermsConsumerPtr addField(FieldInfoPtr field);
-        
+
         /// Called when we are done adding everything.
         virtual void finish();
     };

@@ -34,6 +34,13 @@ namespace Lucene
         int64_t lazySkipPointer;
         int32_t lazySkipProxCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(proxStream);
+            SegmentTermDocs::mark_members(gc);
+        }
+
     public:
         using SegmentTermDocs::seek;
 

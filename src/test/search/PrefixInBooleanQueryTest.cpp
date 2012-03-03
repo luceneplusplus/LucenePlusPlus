@@ -27,7 +27,7 @@ public:
     {
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        
+
         for (int32_t i = 0; i < 5137; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
@@ -39,7 +39,7 @@ public:
             doc->add(newLucene<Field>(FIELD, L"tangfulin", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
         }
-        
+
         for (int32_t i = 5138; i < 11377; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
@@ -51,16 +51,23 @@ public:
             doc->add(newLucene<Field>(FIELD, L"tangfulin", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
         }
-        
+
         writer->close();
     }
-    
+
     virtual ~PrefixInBooleanQueryFixture()
     {
     }
 
 protected:
     RAMDirectoryPtr directory;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(directory);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     static const String FIELD;

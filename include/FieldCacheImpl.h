@@ -24,6 +24,14 @@ namespace Lucene
         MapStringCache caches;
         InfoStreamPtr infoStream;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(caches);
+            gc->mark(infoStream);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         virtual void purgeAllCaches();
@@ -82,6 +90,14 @@ namespace Lucene
     public:
         FieldCachePtr wrapper;
         WeakMapLuceneObjectMapEntryAny readerCache;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(wrapper);
+            gc->mark(readerCache);
+            LuceneObject::mark_members(gc);
+        }
 
     protected:
         virtual boost::any createValue(IndexReaderPtr reader, EntryPtr key) = 0;
@@ -180,6 +196,13 @@ namespace Lucene
         int32_t cacheType;
         boost::any custom;
         boost::any value;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(readerKey);
+            FieldCacheEntry::mark_members(gc);
+        }
 
     public:
         virtual LuceneObjectPtr getReaderKey();

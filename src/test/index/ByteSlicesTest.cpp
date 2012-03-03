@@ -37,6 +37,13 @@ public:
 public:
     Collection<ByteArray> freeByteBlocks;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(freeByteBlocks);
+        ByteBlockPoolAllocatorBase::mark_members(gc);
+    }
+
 public:
     virtual ByteArray getByteBlock(bool trackAllocations)
     {

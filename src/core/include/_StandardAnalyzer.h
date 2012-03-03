@@ -15,10 +15,18 @@ namespace Lucene
     {
     public:
         virtual ~StandardAnalyzerSavedStreams();
-    
+
     public:
         StandardTokenizerPtr tokenStream;
         TokenStreamPtr filteredTokenStream;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(tokenStream);
+            gc->mark(filteredTokenStream);
+            LuceneObject::mark_members(gc);
+        }
     };
 }
 

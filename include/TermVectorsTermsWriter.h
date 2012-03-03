@@ -32,6 +32,18 @@ namespace Lucene
         int32_t lastDocID;
         int32_t allocCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docWriter);
+            gc->mark(termVectorsWriter);
+            gc->mark(docFreeList);
+            gc->mark(tvx);
+            gc->mark(tvd);
+            gc->mark(tvf);
+            TermsHashConsumer::mark_members(gc);
+        }
+
     public:
         virtual TermsHashConsumerPerThreadPtr addThread(TermsHashPerThreadPtr perThread);
         virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count);

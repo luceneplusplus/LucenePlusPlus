@@ -41,6 +41,16 @@ namespace Lucene
         bool currentFieldStoresPayloads;
         bool currentFieldOmitTermFreqAndPositions;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parent);
+            gc->mark(_freqStream);
+            gc->mark(deletedDocs);
+            gc->mark(skipListReader);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Sets this to the data for a term.
         virtual void seek(TermPtr term);

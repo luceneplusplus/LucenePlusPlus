@@ -26,6 +26,14 @@ namespace Lucene
         IndexWriterPtr indexWriter;
         MapSegmentInfoSegmentReader readerMap;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(indexWriter);
+            gc->mark(readerMap);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Forcefully clear changes for the specified segments, and remove from the pool.
         /// This is called on successful merge.

@@ -42,6 +42,13 @@ protected:
     int64_t stopTime;
     IndexWriterPtr writer;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(writer);
+        LuceneThread::mark_members(gc);
+    }
+
 public:
     virtual void run()
     {
@@ -83,6 +90,13 @@ public:
 public:
     static const String INDEX_PATH;
     ByteArray buffer;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(buffer);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void runTest(DirectoryPtr dir)

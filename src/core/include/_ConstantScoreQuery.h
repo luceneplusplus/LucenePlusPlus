@@ -16,15 +16,23 @@ namespace Lucene
     public:
         ConstantWeight(ConstantScoreQueryPtr constantScorer, SearcherPtr searcher);
         virtual ~ConstantWeight();
-    
+
         LUCENE_CLASS(ConstantWeight);
-    
+
     protected:
         ConstantScoreQueryPtr constantScorer;
         SimilarityPtr similarity;
         double queryNorm;
         double queryWeight;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(constantScorer);
+            gc->mark(similarity);
+            Weight::mark_members(gc);
+        }
+
     public:
         virtual QueryPtr getQuery();
         virtual double getValue();
@@ -33,20 +41,27 @@ namespace Lucene
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
         virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
     };
-    
+
     class ConstantScorer : public Scorer
     {
     public:
         ConstantScorer(ConstantScoreQueryPtr constantScorer, SimilarityPtr similarity, IndexReaderPtr reader, WeightPtr w);
         virtual ~ConstantScorer();
-    
+
         LUCENE_CLASS(ConstantScorer);
-    
+
     public:
         DocIdSetIteratorPtr docIdSetIterator;
         double theScore;
         int32_t doc;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docIdSetIterator);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual int32_t nextDoc();
         virtual int32_t docID();

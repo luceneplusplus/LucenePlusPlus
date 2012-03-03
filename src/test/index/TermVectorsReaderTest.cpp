@@ -93,6 +93,16 @@ public:
     PositionIncrementAttributePtr posIncrAtt;
     OffsetAttributePtr offsetAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(tokens);
+        gc->mark(termAtt);
+        gc->mark(posIncrAtt);
+        gc->mark(offsetAtt);
+        TokenStream::mark_members(gc);
+    }
+
 public:
     virtual bool incrementToken()
     {
@@ -129,6 +139,13 @@ public:
 
 protected:
     Collection<TestTokenPtr> tokens;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(tokens);
+        Analyzer::mark_members(gc);
+    }
 
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
@@ -263,6 +280,21 @@ protected:
     Collection<TestTokenPtr> tokens;
 
     static const int32_t TERM_FREQ;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(testFields);
+        gc->mark(testFieldsStorePos);
+        gc->mark(testFieldsStoreOff);
+        gc->mark(testTerms);
+        gc->mark(positions);
+        gc->mark(offsets);
+        gc->mark(dir);
+        gc->mark(fieldInfos);
+        gc->mark(tokens);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 const int32_t TermVectorsReaderTestFixture::TERM_FREQ = 3;

@@ -144,6 +144,13 @@ namespace LockFactoryTest
         DirectoryPtr dir;
         int32_t numIteration;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dir);
+            LuceneThread::mark_members(gc);
+        }
+
     public:
         virtual void run()
         {
@@ -224,6 +231,12 @@ namespace LockFactoryTest
         DirectoryPtr dir;
         int32_t numIteration;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dir);
+            LuceneThread::mark_members(gc);
+        }
 
     public:
         virtual void run()

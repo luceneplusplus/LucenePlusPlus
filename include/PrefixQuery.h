@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    /// A Query that matches documents containing terms with a specified prefix. A PrefixQuery is built by 
+    /// A Query that matches documents containing terms with a specified prefix. A PrefixQuery is built by
     /// QueryParser for input like app*.
     ///
     /// This query uses the {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} rewrite method.
@@ -20,27 +20,34 @@ namespace Lucene
     public:
         /// Constructs a query for terms starting with prefix.
         PrefixQuery(TermPtr prefix);
-        
+
         virtual ~PrefixQuery();
-    
+
         LUCENE_CLASS(PrefixQuery);
-    
+
     protected:
         TermPtr prefix;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(prefix);
+            MultiTermQuery::mark_members(gc);
+        }
+
     public:
         using MultiTermQuery::toString;
-        
+
         /// Returns the prefix of this query.
         TermPtr getPrefix();
-        
+
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
-        
+
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
         virtual int32_t hashCode();
         virtual bool equals(LuceneObjectPtr other);
-    
+
     protected:
         virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
     };

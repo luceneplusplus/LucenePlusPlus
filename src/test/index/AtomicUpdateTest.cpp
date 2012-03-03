@@ -31,13 +31,20 @@ public:
     {
         random = newLucene<Random>();
     }
-    
+
     virtual ~MockIndexWriter()
     {
     }
 
 protected:
     RandomPtr random;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(random);
+        IndexWriter::mark_members(gc);
+    }
 
 public:
     virtual bool testPoint(const String& name)
@@ -59,26 +66,26 @@ public:
     {
         this->failed = false;
     }
-    
+
     virtual ~TimedThread()
     {
     }
-    
+
     LUCENE_CLASS(TimedThread);
-    
+
 public:
     bool failed;
 
 protected:
     static const int32_t RUN_TIME_SEC;
-    
+
 public:
     virtual void doWork() = 0;
-    
+
     virtual void run()
     {
         int64_t stopTime = MiscUtils::currentTimeMillis() + 1000 * RUN_TIME_SEC;
-        
+
         try
         {
             while ((int64_t)MiscUtils::currentTimeMillis() < stopTime && !failed)
@@ -101,16 +108,23 @@ public:
     {
         this->writer = writer;
     }
-    
+
     virtual ~IndexerThread()
     {
     }
-    
+
     LUCENE_CLASS(IndexerThread);
-    
+
 public:
     IndexWriterPtr writer;
-    
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(writer);
+        TimedThread::mark_members(gc);
+    }
+
 public:
     virtual void doWork()
     {
@@ -132,16 +146,23 @@ public:
     {
         this->directory = directory;
     }
-    
+
     virtual ~SearcherThread()
     {
     }
-    
+
     LUCENE_CLASS(SearcherThread);
-    
+
 protected:
     DirectoryPtr directory;
-    
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(directory);
+        TimedThread::mark_members(gc);
+    }
+
 public:
     virtual void doWork()
     {
@@ -157,12 +178,12 @@ static void runTest(DirectoryPtr directory)
 {
     Collection<TimedThreadPtr> threads(Collection<TimedThreadPtr>::newInstance(4));
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
-    
+
     IndexWriterPtr writer = newLucene<MockIndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     writer->setMaxBufferedDocs(7);
     writer->setMergeFactor(3);
-    
+
     // Establish a base index of 100 docs
     for (int32_t i = 0; i < 100; ++i)
     {
@@ -174,7 +195,7 @@ static void runTest(DirectoryPtr directory)
         writer->addDocument(d);
     }
     writer->commit();
-    
+
     IndexReaderPtr r = IndexReader::open(directory, true);
     BOOST_CHECK_EQUAL(100, r->numDocs());
     r->close();
@@ -194,12 +215,12 @@ static void runTest(DirectoryPtr directory)
     SearcherThreadPtr searcherThread2 = newLucene<SearcherThread>(directory);
     threads[3] = searcherThread2;
     searcherThread2->start();
-    
+
     indexerThread1->join();
     indexerThread2->join();
     searcherThread1->join();
     searcherThread2->join();
-    
+
     writer->close();
 
     BOOST_CHECK(!indexerThread1->failed); // hit unexpected exception in indexer1

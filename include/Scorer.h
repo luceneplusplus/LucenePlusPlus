@@ -17,34 +17,41 @@ namespace Lucene
     ///
     /// Document scores are computed using a given Similarity implementation.
     ///
-    /// NOTE: The values NEGATIVE_INFINITY and POSITIVE_INFINITY are not valid scores.  Certain collectors 
+    /// NOTE: The values NEGATIVE_INFINITY and POSITIVE_INFINITY are not valid scores.  Certain collectors
     /// (eg {@link TopScoreDocCollector}) will not properly collect hits with these scores.
     class LPPAPI Scorer : public DocIdSetIterator
     {
     public:
         /// Constructs a Scorer.
         /// @param similarity The Similarity implementation used by this scorer.
-        Scorer(SimilarityPtr similarity);        
+        Scorer(SimilarityPtr similarity);
         virtual ~Scorer();
-    
+
         LUCENE_CLASS(Scorer);
-    
+
     protected:
         SimilarityPtr similarity;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(similarity);
+            DocIdSetIterator::mark_members(gc);
+        }
+
     public:
         /// Returns the Similarity implementation used by this scorer.
         SimilarityPtr getSimilarity();
-        
+
         /// Scores and collects all matching documents.
         /// @param collector The collector to which all matching documents are passed.
         virtual void score(CollectorPtr collector);
-        
-        /// Returns the score of the current document matching the query.  Initially invalid, until {@link 
+
+        /// Returns the score of the current document matching the query.  Initially invalid, until {@link
         /// #nextDoc()} or {@link #advance(int32_t)} is called the first time, or when called from within
         /// {@link Collector#collect}.
         virtual double score() = 0;
-    
+
     protected:
         /// Collects matching documents in a range.  Hook for optimization.
         /// Note, firstDocID is added to ensure that {@link #nextDoc()} was called before this method.
@@ -54,7 +61,7 @@ namespace Lucene
         /// @param firstDocID The first document ID (ensures {@link #nextDoc()} is called before this method.
         /// @return true if more matching documents may remain.
         virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
-        
+
         friend class BooleanScorer;
         friend class ScoreCachingWrappingScorer;
     };

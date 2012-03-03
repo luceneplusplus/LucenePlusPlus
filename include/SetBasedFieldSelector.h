@@ -29,6 +29,14 @@ namespace Lucene
         SetString fieldsToLoad;
         SetString lazyFieldsToLoad;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldsToLoad);
+            gc->mark(lazyFieldsToLoad);
+            FieldSelector::mark_members(gc);
+        }
+
     public:
         /// Indicate whether to load the field with the given name or not. If the {@link Field#name()} is not in
         /// either of the  initializing Sets, then {@link FieldSelectorResult#NO_LOAD} is returned.  If a Field name

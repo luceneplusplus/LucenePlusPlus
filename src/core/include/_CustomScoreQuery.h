@@ -25,6 +25,13 @@ namespace Lucene
     protected:
         CustomScoreQueryPtr customQuery;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(customQuery);
+            CustomScoreProvider::mark_members(gc);
+        }
+
     public:
         virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
         virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore);
@@ -46,6 +53,16 @@ namespace Lucene
         WeightPtr subQueryWeight;
         Collection<WeightPtr> valSrcWeights;
         bool qStrict;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(similarity);
+            gc->mark(subQueryWeight);
+            gc->mark(valSrcWeights);
+            Weight::mark_members(gc);
+        }
 
     public:
         virtual QueryPtr getQuery();
@@ -76,6 +93,17 @@ namespace Lucene
         IndexReaderPtr reader;
         CustomScoreProviderPtr provider;
         Collection<double> vScores; // reused in score() to avoid allocating this array for each doc
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(subQueryScorer);
+            gc->mark(valSrcScorers);
+            gc->mark(reader);
+            gc->mark(provider);
+            gc->mark(vScores);
+            Scorer::mark_members(gc);
+        }
 
     public:
         virtual int32_t nextDoc();

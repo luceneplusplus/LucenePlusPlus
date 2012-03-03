@@ -47,6 +47,13 @@ namespace Lucene
         IndexReaderPtr reader;
         bool mayUseTermDocs;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            DocIdSet::mark_members(gc);
+        }
+
     public:
         /// This method checks, if a doc is a hit, should throw ArrayIndexOutOfBounds, when position invalid
         virtual bool matchDoc(int32_t doc) = 0;
@@ -76,6 +83,13 @@ namespace Lucene
         Collection<T> values;
         T inclusiveLowerPoint;
         T inclusiveUpperPoint;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(values);
+            FieldCacheDocIdSet::mark_members(gc);
+        }
 
     public:
         virtual bool matchDoc(int32_t doc)
@@ -225,6 +239,13 @@ namespace Lucene
         int32_t inclusiveLowerPoint;
         int32_t inclusiveUpperPoint;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fcsi);
+            FieldCacheDocIdSet::mark_members(gc);
+        }
+
     public:
         virtual bool matchDoc(int32_t doc);
     };
@@ -242,6 +263,14 @@ namespace Lucene
         FieldCacheDocIdSetPtr cacheDocIdSet;
         TermDocsPtr termDocs;
         int32_t doc;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(cacheDocIdSet);
+            gc->mark(termDocs);
+            DocIdSetIterator::mark_members(gc);
+        }
 
     public:
         virtual int32_t docID();
@@ -262,6 +291,13 @@ namespace Lucene
     protected:
         FieldCacheDocIdSetPtr cacheDocIdSet;
         int32_t doc;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(cacheDocIdSet);
+            DocIdSetIterator::mark_members(gc);
+        }
 
     public:
         virtual int32_t docID();

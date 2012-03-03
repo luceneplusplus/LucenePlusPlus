@@ -91,6 +91,15 @@ protected:
     IndexSearcherPtr searcher;
     PhraseQueryPtr query;
     RAMDirectoryPtr directory;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(query);
+        gc->mark(directory);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 const double PhraseQueryFixture::SCORE_COMP_THRESH = 1e-6f;

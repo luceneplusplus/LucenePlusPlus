@@ -21,25 +21,33 @@ namespace Lucene
         /// @param exclDisi indicates exclusion.
         ReqExclScorer(ScorerPtr reqScorer, DocIdSetIteratorPtr exclDisi);
         virtual ~ReqExclScorer();
-    
+
         LUCENE_CLASS(ReqExclScorer);
-    
+
     protected:
         ScorerPtr reqScorer;
         DocIdSetIteratorPtr exclDisi;
         int32_t doc;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reqScorer);
+            gc->mark(exclDisi);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual int32_t nextDoc();
         virtual int32_t docID();
-        
-        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()} 
+
+        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()}
         /// is called the first time.
         /// @return The score of the required scorer.
         virtual double score();
-        
+
         virtual int32_t advance(int32_t target);
-    
+
     protected:
         /// Advance to non excluded doc.
         ///

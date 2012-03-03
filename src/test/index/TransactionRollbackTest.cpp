@@ -27,14 +27,14 @@ public:
     virtual ~KeepAllDeletionPolicy()
     {
     }
-    
+
     LUCENE_CLASS(KeepAllDeletionPolicy);
-    
+
 public:
     virtual void onInit(Collection<IndexCommitPtr> commits)
     {
     }
-    
+
     virtual void onCommit(Collection<IndexCommitPtr> commits)
     {
     }
@@ -48,16 +48,16 @@ public:
     {
         this->rollbackPoint = rollbackPoint;
     }
-    
+
     virtual ~RollbackDeletionPolicy()
     {
     }
-    
+
     LUCENE_CLASS(RollbackDeletionPolicy);
-    
+
 protected:
     int32_t rollbackPoint;
-    
+
 public:
     virtual void onInit(Collection<IndexCommitPtr> commits)
     {
@@ -76,7 +76,7 @@ public:
             }
         }
     }
-    
+
     virtual void onCommit(Collection<IndexCommitPtr> commits)
     {
     }
@@ -88,15 +88,15 @@ public:
     virtual ~DeleteLastCommitPolicy()
     {
     }
-    
+
     LUCENE_CLASS(DeleteLastCommitPolicy);
-    
+
 public:
     virtual void onInit(Collection<IndexCommitPtr> commits)
     {
         commits[commits.size() - 1]->deleteCommit();
     }
-    
+
     virtual void onCommit(Collection<IndexCommitPtr> commits)
     {
     }
@@ -121,7 +121,7 @@ public:
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(FIELD_RECORD_ID, StringUtils::toString(currentRecordId), Field::STORE_YES, Field::INDEX_ANALYZED));
             w->addDocument(doc);
-        
+
             if (currentRecordId % 10 == 0)
             {
                 MapStringString data = MapStringString::newInstance();
@@ -129,10 +129,10 @@ public:
                 w->commit(data);
             }
         }
-        
+
         w->close();
     }
-    
+
     virtual ~TransactionRollbackTestFixture()
     {
     }
@@ -140,6 +140,13 @@ public:
 protected:
     String FIELD_RECORD_ID;
     DirectoryPtr dir;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     /// Rolls back index to a chosen ID
@@ -157,16 +164,16 @@ public:
                     last = *commit;
             }
         }
-        
+
         BOOST_CHECK(last);
-        
+
         IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), newLucene<RollbackDeletionPolicy>(id), IndexWriter::MaxFieldLengthUNLIMITED, last);
         MapStringString data = MapStringString::newInstance();
         data.put(L"index", L"Rolled back to 1-" + StringUtils::toString(id));
         w->commit(data);
         w->close();
     }
-    
+
     void checkExpecteds(BitSetPtr expecteds)
     {
         IndexReaderPtr r = IndexReader::open(dir, true);

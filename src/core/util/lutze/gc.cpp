@@ -91,7 +91,7 @@ namespace lutze
 
     gc::~gc()
     {
-        // todo: final_collect();
+        final_collect();
     }
 
     std::string gc::gc_version()
@@ -210,7 +210,7 @@ namespace lutze
         mark_objects(roots);
 
         // 5) destroy or transfer released objects
-        // todo dispose_objects();
+        dispose_objects();
     }
 
     void gc::final_collect()
@@ -222,8 +222,8 @@ namespace lutze
         sweep_objects();
 
         // 3) destroy or transfer released objects
-        // todo dispose_objects(static_gc);
-        dispose_objects(true);
+        dispose_objects(static_gc);
+        // todo dispose_objects(true);
     }
 
     #if defined(GC_PLATFORM_WINDOWS)

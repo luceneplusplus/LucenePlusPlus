@@ -29,6 +29,14 @@ namespace Lucene
         Collection<TermVectorOffsetInfoPtr> offsets;
         Collection<int32_t> positions;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(offsets);
+            gc->mark(positions);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         String getField();
         int32_t getFrequency();

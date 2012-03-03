@@ -56,6 +56,14 @@ protected:
     SearcherPtr multiSearcher;
     SearcherPtr singleSearcher;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(multiSearcher);
+        gc->mark(singleSearcher);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     void addCollection1(IndexWriterPtr iw)
     {

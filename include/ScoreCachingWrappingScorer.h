@@ -33,6 +33,13 @@ namespace Lucene
         int32_t curDoc;
         double curScore;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            Scorer::mark_members(gc);
+        }
+
     public:
         SimilarityPtr getSimilarity();
         virtual double score();

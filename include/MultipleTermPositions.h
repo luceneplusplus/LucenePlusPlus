@@ -27,6 +27,14 @@ namespace Lucene
         TermPositionsQueuePtr termPositionsQueue;
         IntQueuePtr posList;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termPositionsQueue);
+            gc->mark(posList);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual bool next();
         virtual int32_t nextPosition();

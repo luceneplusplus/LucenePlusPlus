@@ -40,6 +40,20 @@ namespace Lucene
         TermInfoPtr termInfo; // minimize consing
         UTF8ResultPtr utf8;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(out);
+            gc->mark(parent);
+            gc->mark(state);
+            gc->mark(posWriter);
+            gc->mark(skipListWriter);
+            gc->mark(fieldInfo);
+            gc->mark(termInfo);
+            gc->mark(utf8);
+            FormatPostingsDocsConsumer::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

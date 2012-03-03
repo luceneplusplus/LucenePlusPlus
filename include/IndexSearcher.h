@@ -52,6 +52,15 @@ namespace Lucene
         bool fieldSortDoTrackScores;
         bool fieldSortDoMaxScore;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            gc->mark(subReaders);
+            gc->mark(docStarts);
+            Searcher::mark_members(gc);
+        }
+
     public:
         /// Return the {@link IndexReader} this searches.
         IndexReaderPtr getIndexReader();

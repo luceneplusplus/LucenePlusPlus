@@ -32,6 +32,18 @@ namespace Lucene
         DocStatePtr docState;
         FieldInvertStatePtr fieldState;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(perThread);
+            gc->mark(fieldInfo);
+            gc->mark(consumer);
+            gc->mark(endConsumer);
+            gc->mark(docState);
+            gc->mark(fieldState);
+            DocFieldConsumerPerField::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         virtual void abort();

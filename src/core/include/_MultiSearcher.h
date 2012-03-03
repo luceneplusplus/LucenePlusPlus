@@ -26,6 +26,13 @@ namespace Lucene
         MapTermInt dfMap; // Map from Terms to corresponding doc freqs
         int32_t _maxDoc; // document count
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(dfMap);
+            Searcher::mark_members(gc);
+        }
+
     public:
         virtual int32_t docFreq(TermPtr term);
         virtual Collection<int32_t> docFreqs(Collection<TermPtr> terms);
@@ -60,6 +67,18 @@ namespace Lucene
         HitQueuePtr hq;
         Collection<int32_t> starts;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(lock);
+            gc->mark(searchable);
+            gc->mark(weight);
+            gc->mark(filter);
+            gc->mark(hq);
+            gc->mark(starts);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         TopDocsPtr call();
     };
@@ -85,6 +104,19 @@ namespace Lucene
         Collection<int32_t> starts;
         SortPtr sort;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(lock);
+            gc->mark(searchable);
+            gc->mark(weight);
+            gc->mark(filter);
+            gc->mark(hq);
+            gc->mark(starts);
+            gc->mark(sort);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         TopFieldDocsPtr call();
     };
@@ -100,6 +132,13 @@ namespace Lucene
     protected:
         CollectorPtr collector;
         int32_t start;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(collector);
+            Collector::mark_members(gc);
+        }
 
     public:
         virtual void setScorer(ScorerPtr scorer);

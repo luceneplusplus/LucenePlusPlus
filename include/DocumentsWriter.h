@@ -184,6 +184,34 @@ namespace Lucene
         // used only by assert
         TermPtr lastDeleteTerm;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(threadStates);
+            gc->mark(threadBindings);
+            gc->mark(docFieldProcessor);
+            gc->mark(deletesInRAM);
+            gc->mark(deletesFlushed);
+            gc->mark(_abortedFiles);
+            gc->mark(flushState);
+            gc->mark(freeIntBlocks);
+            gc->mark(freeCharBlocks);
+            gc->mark(writer);
+            gc->mark(directory);
+            gc->mark(indexingChain);
+            gc->mark(infoStream);
+            gc->mark(similarity);
+            gc->mark(consumer);
+            gc->mark(_openFiles);
+            gc->mark(_closedFiles);
+            gc->mark(waitQueue);
+            gc->mark(skipDocWriter);
+            gc->mark(byteBlockAllocator);
+            gc->mark(perDocAllocator);
+            gc->mark(lastDeleteTerm);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 
@@ -372,6 +400,17 @@ namespace Lucene
         DocumentPtr doc;
         String maxTermPrefix;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docWriter);
+            gc->mark(analyzer);
+            gc->mark(infoStream);
+            gc->mark(similarity);
+            gc->mark(doc);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Only called by asserts
         virtual bool testPoint(const String& name);
@@ -390,6 +429,13 @@ namespace Lucene
 
     protected:
         DocumentsWriterPtr docWriter;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docWriter);
+            RAMFile::mark_members(gc);
+        }
 
     public:
         /// Recycle the bytes used.
@@ -413,6 +459,13 @@ namespace Lucene
     public:
         DocWriterPtr next;
         int32_t docID;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(next);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         virtual void finish() = 0;
@@ -491,6 +544,14 @@ namespace Lucene
         int32_t numWaiting;
         int64_t waitingBytes;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docWriter);
+            gc->mark(waiting);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         void reset();
         bool doResume();
@@ -516,6 +577,14 @@ namespace Lucene
     public:
         int32_t blockSize;
         Collection<ByteArray> freeByteBlocks;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docWriter);
+            gc->mark(freeByteBlocks);
+            ByteBlockPoolAllocatorBase::mark_members(gc);
+        }
 
     public:
         /// Allocate another byte[] from the shared pool

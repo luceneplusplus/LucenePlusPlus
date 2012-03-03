@@ -27,6 +27,16 @@ namespace Lucene
             localData = MapLocalData::newInstance();
         }
 
+    protected:
+        MapLocalData localData;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(localData);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         localDataPtr get()
         {
@@ -53,8 +63,6 @@ namespace Lucene
         }
 
     protected:
-        MapLocalData localData;
-
         virtual localDataPtr initialValue()
         {
             return localDataPtr(); // override

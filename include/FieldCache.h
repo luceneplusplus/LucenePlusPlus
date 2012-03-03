@@ -195,6 +195,14 @@ namespace Lucene
         /// For each document, an index into the lookup array.
         Collection<int32_t> order;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(lookup);
+            gc->mark(order);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         int32_t binarySearchLookup(const String& key);
     };

@@ -51,6 +51,15 @@ protected:
     FieldInfosPtr fieldInfos;
 
     static String TEST_SEGMENT_NAME;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        gc->mark(testDoc);
+        gc->mark(fieldInfos);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 String FieldsReaderTestFixture::TEST_SEGMENT_NAME = L"_0";
@@ -77,6 +86,13 @@ public:
     IndexInputPtr delegate;
     static bool doFail;
     int32_t count;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(delegate);
+        BufferedIndexInput::mark_members(gc);
+    }
 
 public:
     virtual void readInternal(uint8_t* b, int32_t offset, int32_t length)
@@ -132,6 +148,13 @@ public:
 
 public:
     FSDirectoryPtr fsDir;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(fsDir);
+        Directory::mark_members(gc);
+    }
 
 public:
     virtual IndexInputPtr openInput(const String& name)

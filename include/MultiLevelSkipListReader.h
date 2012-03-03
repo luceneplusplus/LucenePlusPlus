@@ -53,6 +53,18 @@ namespace Lucene
 
         bool inputIsBuffered;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(skipStream);
+            gc->mark(skipPointer);
+            gc->mark(skipInterval);
+            gc->mark(numSkipped);
+            gc->mark(skipDoc);
+            gc->mark(childPointer);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Returns the id of the doc to which the last call of {@link #skipTo(int)} has skipped.
         virtual int32_t getDoc();
@@ -98,6 +110,13 @@ namespace Lucene
         ByteArray data;
         int64_t pointer;
         int32_t pos;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(data);
+            IndexInput::mark_members(gc);
+        }
 
     public:
         /// Closes the stream to further operations.

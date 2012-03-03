@@ -49,6 +49,15 @@ namespace Lucene
         int32_t doc;
 
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorers);
+            gc->mark(bucketTable);
+            gc->mark(coordFactors);
+            gc->mark(current);
+            Scorer::mark_members(gc);
+        }
+
         // firstDocID is ignored since nextDoc() initializes 'current'
         virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
 
@@ -73,6 +82,14 @@ namespace Lucene
         BucketTablePtr bucketTable;
         int32_t mask;
         ScorerPtr scorer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(bucketTable);
+            gc->mark(scorer);
+            Collector::mark_members(gc);
+        }
 
     public:
         virtual void collect(int32_t doc);
@@ -117,6 +134,13 @@ namespace Lucene
         int32_t bits; // used for bool constraints
         int32_t coord; // count of terms in score
         BucketPtr next; // next valid bucket
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(next);
+            LuceneObject::mark_members(gc);
+        }
     };
 
     /// A simple hash table of document scores within a range.
@@ -138,6 +162,14 @@ namespace Lucene
     public:
         CollectorPtr newCollector(int32_t mask);
         int32_t size();
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(buckets);
+            gc->mark(first);
+            LuceneObject::mark_members(gc);
+        }
     };
 
     class SubScorer : public LuceneObject
@@ -154,6 +186,15 @@ namespace Lucene
         bool prohibited;
         CollectorPtr collector;
         SubScorerPtr next;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            gc->mark(collector);
+            gc->mark(next);
+            LuceneObject::mark_members(gc);
+        }
     };
 }
 

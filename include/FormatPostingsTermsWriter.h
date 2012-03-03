@@ -32,6 +32,18 @@ namespace Lucene
         int64_t freqStart;
         int64_t proxStart;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parent);
+            gc->mark(state);
+            gc->mark(docsWriter);
+            gc->mark(termsOut);
+            gc->mark(fieldInfo);
+            gc->mark(currentTerm);
+            FormatPostingsTermsConsumer::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

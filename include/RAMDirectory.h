@@ -46,6 +46,14 @@ namespace Lucene
         bool copyDirectory;
         bool closeDir;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fileMap);
+            gc->mark(dirSource);
+            Directory::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

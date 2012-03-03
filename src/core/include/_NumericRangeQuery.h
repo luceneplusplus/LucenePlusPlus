@@ -32,6 +32,16 @@ namespace Lucene
         TermPtr termTemplate;
         String currentUpperBound;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(query);
+            gc->mark(reader);
+            gc->mark(rangeBounds);
+            gc->mark(termTemplate);
+            FilteredTermEnum::mark_members(gc);
+        }
+
     public:
         virtual double difference();
 
@@ -65,6 +75,13 @@ namespace Lucene
     protected:
         Collection<String> rangeBounds;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(rangeBounds);
+            LongRangeBuilder::mark_members(gc);
+        }
+
     public:
         virtual void addRange(const String& minPrefixCoded, const String& maxPrefixCoded);
     };
@@ -79,6 +96,13 @@ namespace Lucene
 
     protected:
         Collection<String> rangeBounds;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(rangeBounds);
+            IntRangeBuilder::mark_members(gc);
+        }
 
     public:
         virtual void addRange(const String& minPrefixCoded, const String& maxPrefixCoded);

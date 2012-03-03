@@ -31,6 +31,14 @@ namespace Lucene
         int32_t maxPosition;
         int32_t slop;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(terms);
+            gc->mark(positions);
+            Query::mark_members(gc);
+        }
+
     public:
         using Query::toString;
 

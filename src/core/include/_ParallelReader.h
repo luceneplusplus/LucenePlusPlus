@@ -29,6 +29,15 @@ namespace Lucene
         bool setIterator;
         TermEnumPtr termEnum;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            gc->mark(fieldIterator);
+            gc->mark(termEnum);
+            TermEnum::mark_members(gc);
+        }
+
     public:
         /// Increments the enumeration to the next element.  True if one exists.
         virtual bool next();
@@ -56,6 +65,14 @@ namespace Lucene
     protected:
         ParallelReaderPtr reader;
         TermDocsPtr termDocs;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            gc->mark(termDocs);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         virtual int32_t doc();

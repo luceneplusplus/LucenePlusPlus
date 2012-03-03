@@ -47,6 +47,13 @@ namespace Lucene
         int32_t numSeen;
         PayloadAttributePtr payloadAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(payloadAtt);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {

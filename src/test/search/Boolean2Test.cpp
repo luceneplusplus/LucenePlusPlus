@@ -103,6 +103,17 @@ public:
     static const int32_t NUM_EXTRA_DOCS;
     static const String field;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(bigSearcher);
+        gc->mark(reader);
+        gc->mark(dir2);
+        gc->mark(docFields);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     QueryPtr makeQuery(const String& queryText)
     {

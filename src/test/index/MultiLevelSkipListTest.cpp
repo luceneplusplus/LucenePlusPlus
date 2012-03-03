@@ -48,6 +48,13 @@ public:
     static int32_t count;
     PayloadAttributePtr payloadAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(payloadAtt);
+        TokenFilter::mark_members(gc);
+    }
+
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
@@ -103,6 +110,13 @@ public:
 
 protected:
     IndexInputPtr input;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(input);
+        IndexInput::mark_members(gc);
+    }
 
 public:
     virtual uint8_t readByte()

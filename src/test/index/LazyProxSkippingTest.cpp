@@ -45,6 +45,13 @@ public:
 protected:
     IndexInputPtr input;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(input);
+        IndexInput::mark_members(gc);
+    }
+
 public:
     virtual uint8_t readByte()
     {
@@ -125,6 +132,13 @@ protected:
 
 public:
     static int32_t seeksCounter;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void createIndex(int32_t numHits)

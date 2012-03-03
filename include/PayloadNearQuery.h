@@ -36,6 +36,13 @@ namespace Lucene
         String fieldName;
         PayloadFunctionPtr function;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(function);
+            SpanNearQuery::mark_members(gc);
+        }
+
     public:
         using SpanNearQuery::toString;
 
@@ -77,6 +84,13 @@ namespace Lucene
     protected:
         double payloadScore;
         int32_t payloadsSeen;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(similarity);
+            SpanScorer::mark_members(gc);
+        }
 
     public:
         /// Get the payloads associated with all underlying subspans

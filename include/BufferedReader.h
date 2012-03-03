@@ -32,6 +32,14 @@ namespace Lucene
     public:
         static const int32_t READER_BUFFER;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            gc->mark(buffer);
+            Reader::mark_members(gc);
+        }
+
     public:
         /// Read a single character.
         virtual int32_t read();

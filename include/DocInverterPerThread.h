@@ -34,6 +34,19 @@ namespace Lucene
         /// Used to read a string value for a field
         ReusableStringReaderPtr stringReader;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docInverter);
+            gc->mark(consumer);
+            gc->mark(endConsumer);
+            gc->mark(singleToken);
+            gc->mark(docState);
+            gc->mark(fieldState);
+            gc->mark(stringReader);
+            DocFieldConsumerPerThread::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         virtual void startDocument();
@@ -53,6 +66,14 @@ namespace Lucene
     public:
         TermAttributePtr termAttribute;
         OffsetAttributePtr offsetAttribute;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termAttribute);
+            gc->mark(offsetAttribute);
+            AttributeSource::mark_members(gc);
+        }
 
     public:
         void reinit(const String& stringValue, int32_t startOffset, int32_t endOffset);

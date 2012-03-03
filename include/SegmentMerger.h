@@ -60,6 +60,23 @@ namespace Lucene
         static const uint8_t NORMS_HEADER[];
         static const int32_t NORMS_HEADER_LENGTH;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(directory);
+            gc->mark(readers);
+            gc->mark(fieldInfos);
+            gc->mark(checkAbort);
+            gc->mark(matchingSegmentReaders);
+            gc->mark(rawDocLengths);
+            gc->mark(rawDocLengths2);
+            gc->mark(queue);
+            gc->mark(payloadBuffer);
+            gc->mark(docMaps);
+            gc->mark(delCounts);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         bool hasProx();
 

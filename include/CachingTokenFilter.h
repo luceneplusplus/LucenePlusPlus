@@ -29,6 +29,14 @@ namespace Lucene
         Collection<AttributeSourceStatePtr>::iterator iterator;
         AttributeSourceStatePtr finalState;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(cache);
+            gc->mark(finalState);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken();
         virtual void end();

@@ -61,6 +61,13 @@ public:
 protected:
     IndexSearcherPtr searcher;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     void checkHits(QueryPtr query, Collection<int32_t> results)
     {

@@ -55,6 +55,16 @@ namespace Lucene
 
         int32_t format;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldInfos);
+            gc->mark(tvx);
+            gc->mark(tvd);
+            gc->mark(tvf);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Used for bulk copy when merging
         IndexInputPtr getTvdStream();

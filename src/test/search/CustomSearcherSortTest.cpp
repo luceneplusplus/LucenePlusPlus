@@ -87,6 +87,15 @@ protected:
 
     static const int32_t INDEX_SIZE;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(index);
+        gc->mark(query);
+        gc->mark(random);
+        LuceneTestFixture::mark_members(gc);
+    }
+
 public:
     DirectoryPtr getIndex()
     {

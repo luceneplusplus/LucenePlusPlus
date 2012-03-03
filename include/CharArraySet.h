@@ -33,6 +33,13 @@ namespace Lucene
         SetString entries;
         bool ignoreCase;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(entries);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual bool contains(const String& text);
 

@@ -24,6 +24,13 @@ namespace Lucene
         FieldComparatorPtr comparator;
         int32_t reverseMul;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(comparator);
+            TopFieldCollector::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         virtual void updateBottom(int32_t doc);
@@ -59,6 +66,13 @@ namespace Lucene
     public:
         ScorerPtr scorer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            OneComparatorNonScoringCollector::mark_members(gc);
+        }
+
     public:
         virtual void updateBottom(int32_t doc, double score);
         virtual void collect(int32_t doc);
@@ -91,6 +105,13 @@ namespace Lucene
 
     public:
         ScorerPtr scorer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            OneComparatorNonScoringCollector::mark_members(gc);
+        }
 
     public:
         virtual void updateBottom(int32_t doc, double score);
@@ -126,6 +147,14 @@ namespace Lucene
         Collection<FieldComparatorPtr> comparators;
         Collection<int32_t> reverseMul;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(comparators);
+            gc->mark(reverseMul);
+            TopFieldCollector::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
         virtual void updateBottom(int32_t doc);
@@ -160,6 +189,13 @@ namespace Lucene
     public:
         ScorerPtr scorer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            MultiComparatorNonScoringCollector::mark_members(gc);
+        }
+
     public:
         virtual void updateBottom(int32_t doc, double score);
         virtual void collect(int32_t doc);
@@ -191,6 +227,13 @@ namespace Lucene
 
     public:
         ScorerPtr scorer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scorer);
+            MultiComparatorNonScoringCollector::mark_members(gc);
+        }
 
     public:
         virtual void updateBottom(int32_t doc, double score);

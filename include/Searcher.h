@@ -27,6 +27,13 @@ namespace Lucene
         /// The Similarity implementation used by this searcher.
         SimilarityPtr similarity;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(similarity);
+            Searchable::mark_members(gc);
+        }
+
     public:
         /// Search implementation with arbitrary sorting.  Finds the top n hits for query, applying filter if
         /// non-null, and sorting the hits by the criteria in sort.

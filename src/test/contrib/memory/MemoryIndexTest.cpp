@@ -83,6 +83,16 @@ protected:
     static const int32_t ITERATIONS;
     Collection<String> TEST_TERMS;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(queries);
+        gc->mark(random);
+        gc->mark(buffer);
+        gc->mark(TEST_TERMS);
+        BaseTokenStreamFixture::mark_members(gc);
+    }
+
 public:
     /// read a set of queries from a resource file
     SetString readQueries(const String& resource)

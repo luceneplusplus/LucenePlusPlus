@@ -23,6 +23,13 @@ namespace Lucene
     protected:
         Collection<SegmentInfoPtr> segmentInfos;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(segmentInfos);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         int32_t size();
         bool empty();

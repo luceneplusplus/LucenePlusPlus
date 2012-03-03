@@ -125,6 +125,16 @@ public:
     int32_t numSeen;
     PayloadAttributePtr payloadAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(payloadField);
+        gc->mark(payloadMultiField1);
+        gc->mark(payloadMultiField2);
+        gc->mark(payloadAtt);
+        TokenFilter::mark_members(gc);
+    }
+
 public:
     virtual bool incrementToken()
     {
@@ -168,6 +178,15 @@ protected:
     ByteArray payloadField;
     ByteArray payloadMultiField1;
     ByteArray payloadMultiField2;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(payloadField);
+        gc->mark(payloadMultiField1);
+        gc->mark(payloadMultiField2);
+        Analyzer::mark_members(gc);
+    }
 
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
@@ -222,6 +241,18 @@ protected:
     ByteArray payloadMultiField1;
     ByteArray payloadMultiField2;
     RAMDirectoryPtr directory;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(similarity);
+        gc->mark(payloadField);
+        gc->mark(payloadMultiField1);
+        gc->mark(payloadMultiField2);
+        gc->mark(directory);
+        LuceneTestFixture::mark_members(gc);
+    }
 };
 
 BOOST_FIXTURE_TEST_SUITE(PayloadTermQueryTest, PayloadTermQueryFixture)

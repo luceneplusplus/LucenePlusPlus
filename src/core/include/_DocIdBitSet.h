@@ -16,13 +16,20 @@ namespace Lucene
     public:
         DocIdBitSetIterator(BitSetPtr bitSet);
         virtual ~DocIdBitSetIterator();
-        
+
         LUCENE_CLASS(DocIdBitSetIterator);
-    
+
     protected:
         int32_t docId;
         BitSetPtr bitSet;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(bitSet);
+            DocIdSetIterator::mark_members(gc);
+        }
+
     public:
         virtual int32_t docID();
         virtual int32_t nextDoc();

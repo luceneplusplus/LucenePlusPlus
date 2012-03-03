@@ -70,6 +70,17 @@ namespace TestSetPosition
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(TOKENS);
+            gc->mark(INCREMENTS);
+            gc->mark(posIncrAtt);
+            gc->mark(termAtt);
+            gc->mark(offsetAtt);
+            TokenStream::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {
@@ -114,6 +125,13 @@ namespace TestSetPosition
     public:
         bool enablePositionIncrements;
         WhitespaceAnalyzerPtr a;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(a);
+            Analyzer::mark_members(gc);
+        }
 
     public:
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
@@ -283,6 +301,15 @@ namespace TestPayloadsPos0
         PositionIncrementAttributePtr posIncrAttr;
         PayloadAttributePtr payloadAttr;
         TermAttributePtr termAttr;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(posIncrAttr);
+            gc->mark(payloadAttr);
+            gc->mark(termAttr);
+            TokenFilter::mark_members(gc);
+        }
 
     public:
         virtual bool incrementToken()

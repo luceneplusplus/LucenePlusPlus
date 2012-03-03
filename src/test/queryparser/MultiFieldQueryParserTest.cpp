@@ -55,6 +55,14 @@ public:
     TermAttributePtr termAtt;
     OffsetAttributePtr offsetAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(termAtt);
+        gc->mark(offsetAtt);
+        TokenFilter::mark_members(gc);
+    }
+
 public:
     virtual bool incrementToken()
     {
@@ -136,6 +144,13 @@ public:
 
 protected:
     StandardAnalyzerPtr standardAnalyzer;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(standardAnalyzer);
+        Analyzer::mark_members(gc);
+    }
 
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)

@@ -24,6 +24,13 @@ namespace Lucene
         IndexDeletionPolicyPtr deletionPolicy;
         int32_t termInfosIndexDivisor;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(deletionPolicy);
+            FindSegmentsFileT<IndexReaderPtr>::mark_members(gc);
+        }
+
     public:
         virtual IndexReaderPtr doBody(const String& segmentFileName);
     };
@@ -39,6 +46,13 @@ namespace Lucene
     protected:
         DirectoryReaderPtr reader;
         bool openReadOnly;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(reader);
+            FindSegmentsFileT<DirectoryReaderPtr>::mark_members(gc);
+        }
 
     public:
         virtual DirectoryReaderPtr doBody(const String& segmentFileName);

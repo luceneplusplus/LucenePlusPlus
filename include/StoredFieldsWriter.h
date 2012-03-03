@@ -30,6 +30,16 @@ namespace Lucene
         int32_t freeCount;
         int32_t allocCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldsWriter);
+            gc->mark(docWriter);
+            gc->mark(fieldInfos);
+            gc->mark(docFreeList);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         StoredFieldsWriterPerThreadPtr addThread(DocStatePtr docState);
         void flush(SegmentWriteStatePtr state);
@@ -63,6 +73,15 @@ namespace Lucene
         PerDocBufferPtr buffer;
         RAMOutputStreamPtr fdt;
         int32_t numStoredFields;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldsWriter);
+            gc->mark(buffer);
+            gc->mark(fdt);
+            DocWriter::mark_members(gc);
+        }
 
     public:
         void reset();

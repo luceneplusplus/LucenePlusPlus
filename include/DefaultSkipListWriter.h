@@ -35,6 +35,18 @@ namespace Lucene
         int64_t curFreqPointer;
         int64_t curProxPointer;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(lastSkipDoc);
+            gc->mark(lastSkipPayloadLength);
+            gc->mark(lastSkipFreqPointer);
+            gc->mark(lastSkipProxPointer);
+            gc->mark(freqOutput);
+            gc->mark(proxOutput);
+            MultiLevelSkipListWriter::mark_members(gc);
+        }
+
     public:
         void setFreqOutput(IndexOutputPtr freqOutput);
         void setProxOutput(IndexOutputPtr proxOutput);

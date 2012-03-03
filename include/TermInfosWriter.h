@@ -67,6 +67,21 @@ namespace Lucene
         UnicodeResultPtr unicodeResult1;
         UnicodeResultPtr unicodeResult2;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldInfos);
+            gc->mark(output);
+            gc->mark(lastTi);
+            gc->mark(lastTermBytes);
+            gc->mark(otherWriter);
+            gc->mark(other);
+            gc->mark(utf8Result);
+            gc->mark(unicodeResult1);
+            gc->mark(unicodeResult2);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         virtual void initialize();
 

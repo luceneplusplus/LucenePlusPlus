@@ -31,6 +31,17 @@ namespace Lucene
         IndexReaderPtr reader;
         int32_t delCount;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(postings);
+            gc->mark(docMap);
+            gc->mark(term);
+            gc->mark(termEnum);
+            gc->mark(reader);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         Collection<int32_t> getDocMap();
         TermPositionsPtr getPositions();

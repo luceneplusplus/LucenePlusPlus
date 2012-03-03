@@ -35,7 +35,7 @@ public:
     OrdValuesFixture() : FunctionFixture(false)
     {
     }
-    
+
     virtual ~OrdValuesFixture()
     {
     }
@@ -53,7 +53,7 @@ public:
         QueryUtils::check(q, s);
         Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
         BOOST_CHECK_EQUAL(N_DOCS, h.size());
-        String prevID = inOrder ? 
+        String prevID = inOrder ?
             L"IE" : // greater than all ids of docs in this test ("ID0001", etc.)
             L"IC"; // smaller than all ids of docs in this test ("ID0001", etc.)
         for (int32_t i = 0; i < h.size(); ++i)
@@ -66,7 +66,7 @@ public:
             prevID = resID;
         }
     }
-    
+
     void doTestExactScore(const String& field, bool inOrder)
     {
         IndexSearcherPtr s = newLucene<IndexSearcher>(dir, true);
@@ -86,12 +86,12 @@ public:
             double expectedScore = N_DOCS - i;
             BOOST_CHECK_CLOSE_FRACTION(expectedScore, score, TEST_SCORE_TOLERANCE_DELTA);
             String expectedId = inOrder ?
-                id2String(N_DOCS - i) : // in-order ==> larger  values first 
-                id2String(i + 1); // reverse  ==> smaller values first 
+                id2String(N_DOCS - i) : // in-order ==> larger  values first
+                id2String(i + 1); // reverse  ==> smaller values first
             BOOST_CHECK_EQUAL(expectedId, id);
         }
     }
-    
+
     void doTestCaching(const String& field, bool inOrder)
     {
         IndexSearcherPtr s = newLucene<IndexSearcher>(dir, true);
@@ -128,7 +128,7 @@ public:
                 }
             }
         }
-        
+
         // verify that different values are loaded for a different field
         String field2 = INT_FIELD;
         BOOST_CHECK_NE(field, field2); // otherwise this test is meaningless.
@@ -157,7 +157,7 @@ public:
                 }
             }
         }
-        
+
         // verify new values are reloaded (not reused) for a new reader
         s = newLucene<IndexSearcher>(dir, true);
         if (inOrder)

@@ -18,29 +18,36 @@ namespace Lucene
     public:
         /// Constructs a TopDocs with a default maxScore = double.NaN.
         TopDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs);
-        
+
         /// Constructs a TopDocs.
         TopDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, double maxScore);
-        
+
         virtual ~TopDocs();
-    
+
         LUCENE_CLASS(TopDocs);
-    
+
     public:
         /// The total number of hits for the query.
         int32_t totalHits;
-        
+
         /// The top hits for the query.
         Collection<ScoreDocPtr> scoreDocs;
-        
+
         /// Stores the maximum score value encountered, needed for normalizing.
         double maxScore;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scoreDocs);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
-        /// Returns the maximum score value encountered. Note that in case scores are not tracked, 
+        /// Returns the maximum score value encountered. Note that in case scores are not tracked,
         /// this returns NaN.
         double getMaxScore();
-        
+
         /// Sets the maximum score value encountered.
         void setMaxScore(double maxScore);
     };

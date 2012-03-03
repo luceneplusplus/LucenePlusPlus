@@ -28,6 +28,16 @@ namespace Lucene
         DocFieldConsumerPtr consumer;
         StoredFieldsWriterPtr fieldsWriter;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(docWriter);
+            gc->mark(fieldInfos);
+            gc->mark(consumer);
+            gc->mark(fieldsWriter);
+            DocConsumer::mark_members(gc);
+        }
+
     public:
         virtual void closeDocStore(SegmentWriteStatePtr state);
         virtual void flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state);

@@ -78,6 +78,17 @@ namespace Lucene
         static const Collection<String> TOKEN_TYPES();
 
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scanner);
+            gc->mark(termAtt);
+            gc->mark(offsetAtt);
+            gc->mark(posIncrAtt);
+            gc->mark(typeAtt);
+            Tokenizer::mark_members(gc);
+        }
+
+    protected:
         void init(ReaderPtr input, LuceneVersion::Version matchVersion);
 
     public:

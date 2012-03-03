@@ -64,6 +64,13 @@ namespace Lucene
         int32_t lastBytePos;
         int32_t lastInt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(bytes);
+            DocIdSet::mark_members(gc);
+        }
+
     public:
         /// @return The total number of sorted integers.
         int32_t size();

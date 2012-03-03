@@ -61,6 +61,13 @@ public:
     int32_t offset;
     int32_t length;
     int32_t numFieldInstancesToSkip;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(data);
+        LuceneObject::mark_members(gc);
+    }
 };
 
 /// This Filter adds payloads to the tokens.
@@ -88,6 +95,15 @@ public:
     int32_t offset;
     PayloadPtr payload;
     PayloadAttributePtr payloadAtt;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(data);
+        gc->mark(payload);
+        gc->mark(payloadAtt);
+        TokenFilter::mark_members(gc);
+    }
 
 public:
     virtual bool incrementToken()
@@ -126,6 +142,13 @@ public:
 
 public:
     HashMap<String, PayloadDataPtr> fieldToData;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(fieldToData);
+        Analyzer::mark_members(gc);
+    }
 
 public:
     void setPayloadData(const String& field, ByteArray data, int32_t offset, int32_t length)
@@ -468,6 +491,13 @@ namespace TestThreadSafety
     public:
         Collection<ByteArray> pool;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(pool);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         String bytesToString(ByteArray bytes)
         {
@@ -523,6 +553,16 @@ namespace TestThreadSafety
         TermAttributePtr termAtt;
         PayloadAttributePtr payloadAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(payload);
+            gc->mark(pool);
+            gc->mark(termAtt);
+            gc->mark(payloadAtt);
+            TokenStream::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {
@@ -561,6 +601,14 @@ namespace TestThreadSafety
         int32_t numDocs;
         ByteArrayPoolPtr pool;
         IndexWriterPtr writer;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(pool);
+            gc->mark(writer);
+            LuceneThread::mark_members(gc);
+        }
 
     public:
         virtual void run()

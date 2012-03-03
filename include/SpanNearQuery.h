@@ -11,39 +11,46 @@
 
 namespace Lucene
 {
-    /// Matches spans which are near one another.  One can specify slop, the maximum number of intervening 
+    /// Matches spans which are near one another.  One can specify slop, the maximum number of intervening
     /// unmatched positions, as well as whether matches are required to be in-order.
     class LPPAPI SpanNearQuery : public SpanQuery
     {
     public:
-        /// Construct a SpanNearQuery.  Matches spans matching a span from each clause, with up to slop total 
-        /// unmatched positions between them.  * When inOrder is true, the spans from each clause must be 
+        /// Construct a SpanNearQuery.  Matches spans matching a span from each clause, with up to slop total
+        /// unmatched positions between them.  * When inOrder is true, the spans from each clause must be
         /// ordered as in clauses.
         SpanNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, bool collectPayloads = true);
         virtual ~SpanNearQuery();
-        
+
         LUCENE_CLASS(SpanNearQuery);
-    
+
     protected:
         Collection<SpanQueryPtr> clauses;
         int32_t slop;
         bool inOrder;
-        
+
         String field;
         bool collectPayloads;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(clauses);
+            SpanQuery::mark_members(gc);
+        }
+
     public:
         using SpanQuery::toString;
-        
+
         /// Return the clauses whose spans are matched.
         Collection<SpanQueryPtr> getClauses();
-        
+
         /// Return the maximum number of intervening unmatched positions permitted.
         int32_t getSlop();
-        
+
         /// Return true if matches are required to be in-order.
         bool isInOrder();
-        
+
         virtual String getField();
         virtual void extractTerms(SetTerm terms);
         virtual String toString(const String& field);

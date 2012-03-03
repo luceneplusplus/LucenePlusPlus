@@ -150,6 +150,21 @@ public:
     static const String FIELD_NAME;
     static const String NUMERIC_FIELD_NAME;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(reader);
+        gc->mark(query);
+        gc->mark(ramDir);
+        gc->mark(searcher);
+        gc->mark(analyzer);
+        gc->mark(hits);
+        gc->mark(texts);
+        gc->mark(dir);
+        gc->mark(a);
+        BaseTokenStreamFixture::mark_members(gc);
+    }
+
 public:
     void addDoc(IndexWriterPtr writer, const String& text)
     {
@@ -308,6 +323,13 @@ namespace HighlighterTest
     public:
         int32_t mode;
         FragmenterPtr frag;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(frag);
+            LuceneObject::mark_members(gc);
+        }
 
     public:
         virtual HighlighterPtr getHighlighter(QueryPtr query, const String& fieldName, TokenStreamPtr stream, FormatterPtr formatter)
@@ -1629,6 +1651,23 @@ namespace TestOverlapAnalyzer
         PositionIncrementAttributePtr posIncrAtt;
         OffsetAttributePtr offsetAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(realStream);
+            gc->mark(currentRealToken);
+            gc->mark(cRealToken);
+            gc->mark(synonyms);
+            gc->mark(synonymTokens);
+            gc->mark(realTermAtt);
+            gc->mark(realPosIncrAtt);
+            gc->mark(realOffsetAtt);
+            gc->mark(termAtt);
+            gc->mark(posIncrAtt);
+            gc->mark(offsetAtt);
+            TokenStream::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {
@@ -1686,6 +1725,13 @@ namespace TestOverlapAnalyzer
 
     protected:
         MapStringString synonyms;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(synonyms);
+            Analyzer::mark_members(gc);
+        }
 
     public:
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
@@ -2249,6 +2295,16 @@ namespace TestOverlapAnalyzer2
         PositionIncrementAttributePtr posIncrAtt;
         OffsetAttributePtr offsetAtt;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(lst);
+            gc->mark(termAtt);
+            gc->mark(posIncrAtt);
+            gc->mark(offsetAtt);
+            TokenStream::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken()
         {
@@ -2311,6 +2367,16 @@ namespace TestOverlapAnalyzer2
         TermAttributePtr termAtt;
         PositionIncrementAttributePtr posIncrAtt;
         OffsetAttributePtr offsetAtt;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(lst);
+            gc->mark(termAtt);
+            gc->mark(posIncrAtt);
+            gc->mark(offsetAtt);
+            TokenStream::mark_members(gc);
+        }
 
     public:
         virtual bool incrementToken()

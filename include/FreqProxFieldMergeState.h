@@ -39,6 +39,19 @@ namespace Lucene
     protected:
         int32_t postingUpto;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(field);
+            gc->mark(charPool);
+            gc->mark(postings);
+            gc->mark(p);
+            gc->mark(text);
+            gc->mark(freq);
+            gc->mark(prox);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         bool nextTerm();
         bool nextDoc();

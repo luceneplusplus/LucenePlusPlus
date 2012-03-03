@@ -30,6 +30,15 @@ namespace Lucene
         int32_t maxDocID; // 1+ the max docID that needs renumbering
         int32_t docShift; // total # deleted docs that were compacted by this merge
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(starts);
+            gc->mark(newStarts);
+            gc->mark(docMaps);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         int32_t remap(int32_t oldDocID);
     };

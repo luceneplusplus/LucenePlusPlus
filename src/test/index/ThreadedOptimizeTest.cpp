@@ -33,7 +33,7 @@ public:
         this->writer = writer;
         this->writerFinal = writerFinal;
     }
-    
+
     virtual ~OptimizeThread()
     {
     }
@@ -46,7 +46,15 @@ protected:
     int32_t iFinal;
     IndexWriterPtr writer;
     IndexWriterPtr writerFinal;
-                
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(writer);
+        gc->mark(writerFinal);
+        LuceneThread::mark_members(gc);
+    }
+
 public:
     virtual void run()
     {
@@ -81,7 +89,7 @@ public:
     {
         analyzer = newLucene<SimpleAnalyzer>();
     }
-    
+
     virtual ~ThreadedOptimizeTestFixture()
     {
     }
@@ -90,8 +98,15 @@ protected:
     static const int32_t NUM_THREADS;
     static const int32_t NUM_ITER;
     static const int32_t NUM_ITER2;
-    
+
     AnalyzerPtr analyzer;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(analyzer);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void runTest(DirectoryPtr directory, MergeSchedulerPtr merger)
@@ -100,13 +115,13 @@ public:
         writer->setMaxBufferedDocs(2);
         if (merger)
             writer->setMergeScheduler(merger);
-        
+
         for (int32_t iter = 0; iter < NUM_ITER; ++iter)
         {
             int32_t iterFinal = iter;
 
             writer->setMergeFactor(1000);
-            
+
             for (int32_t i = 0; i < 200; ++i)
             {
                 DocumentPtr d = newLucene<Document>();
@@ -114,23 +129,23 @@ public:
                 d->add(newLucene<Field>(L"contents", intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
                 writer->addDocument(d);
             }
-            
+
             writer->setMergeFactor(4);
-            
+
             Collection<LuceneThreadPtr> threads = Collection<LuceneThreadPtr>::newInstance(NUM_THREADS);
-            
+
             for (int32_t i = 0; i < NUM_THREADS; ++i)
             {
                 int32_t iFinal = i;
                 IndexWriterPtr writerFinal = writer;
                 threads[i] = newLucene<OptimizeThread>(NUM_ITER2, iterFinal, iFinal, writer, writerFinal);
             }
-            
+
             for (int32_t i = 0; i < NUM_THREADS; ++i)
                 threads[i]->start();
             for (int32_t i = 0; i < NUM_THREADS; ++i)
                 threads[i]->join();
-            
+
             int32_t expectedDocCount = (int32_t)((1 + iter) * (200 + 8 * NUM_ITER2 * (int32_t)(((double)NUM_THREADS / 2.0) * (double)(1 + NUM_THREADS))));
 
             BOOST_CHECK_EQUAL(expectedDocCount, writer->maxDoc());
@@ -160,7 +175,7 @@ BOOST_AUTO_TEST_CASE(testThreadedOptimize)
     runTest(directory, newLucene<SerialMergeScheduler>());
     runTest(directory, newLucene<ConcurrentMergeScheduler>());
     directory->close();
-    
+
     String dirName(FileUtils::joinPath(getTempDir(), L"luceneTestThreadedOptimize"));
     directory = FSDirectory::open(dirName);
     runTest(directory, newLucene<SerialMergeScheduler>());

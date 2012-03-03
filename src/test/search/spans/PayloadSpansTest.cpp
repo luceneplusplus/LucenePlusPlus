@@ -69,6 +69,17 @@ public:
     TermAttributePtr termAtt;
     PositionIncrementAttributePtr posIncrAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(entities);
+        gc->mark(nopayload);
+        gc->mark(payloadAtt);
+        gc->mark(termAtt);
+        gc->mark(posIncrAtt);
+        TokenFilter::mark_members(gc);
+    }
+
 public:
     virtual bool incrementToken()
     {
@@ -133,6 +144,15 @@ protected:
     IndexSearcherPtr searcher;
     SimilarityPtr similarity;
     IndexReaderPtr indexReader;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(similarity);
+        gc->mark(indexReader);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void checkSpans(SpansPtr spans, int32_t expectedNumSpans, int32_t expectedNumPayloads, int32_t expectedPayloadLength, int32_t expectedFirstByte)

@@ -42,6 +42,14 @@ public:
     bool done;
     TermAttributePtr termAtt;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(buffer);
+        gc->mark(termAtt);
+        Tokenizer::mark_members(gc);
+    }
+
 public:
     virtual bool incrementToken()
     {
@@ -113,6 +121,13 @@ public:
 protected:
     int32_t docCount;
     RAMDirectoryPtr dir;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(dir);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void initializeIndex(Collection<String> values)

@@ -20,14 +20,21 @@ namespace Lucene
         /// @param fields The sort criteria used to find the top hits.
         /// @param maxScore The maximum score encountered.
         TopFieldDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, Collection<SortFieldPtr> fields, double maxScore);
-        
+
         virtual ~TopFieldDocs();
-    
+
         LUCENE_CLASS(TopFieldDocs);
-    
+
     public:
         /// The fields which were used to sort results by.
         Collection<SortFieldPtr> fields;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fields);
+            TopDocs::mark_members(gc);
+        }
     };
 }
 

@@ -17,12 +17,19 @@ namespace Lucene
     public:
         LowerCaseFilter(TokenStreamPtr input);
         virtual ~LowerCaseFilter();
-        
+
         LUCENE_CLASS(LowerCaseFilter);
-    
+
     protected:
         TermAttributePtr termAtt;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(termAtt);
+            TokenFilter::mark_members(gc);
+        }
+
     public:
         virtual bool incrementToken();
     };

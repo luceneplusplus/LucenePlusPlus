@@ -17,14 +17,21 @@ namespace Lucene
     public:
         MockLockFactory();
         virtual ~MockLockFactory();
-        
+
         LUCENE_CLASS(MockLockFactory);
-        
+
     public:
         bool lockPrefixSet;
         int32_t makeLockCount;
         MapStringLock locksCreated;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(locksCreated);
+            LockFactory::mark_members(gc);
+        }
+
     public:
         virtual void setLockPrefix(const String& lockPrefix);
         virtual LockPtr makeLock(const String& lockName);

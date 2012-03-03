@@ -29,6 +29,14 @@ namespace Lucene
 
         int32_t lastPosition;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(parent);
+            gc->mark(out);
+            FormatPostingsPositionsConsumer::mark_members(gc);
+        }
+
     public:
         /// Add a new position & payload
         virtual void addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength);

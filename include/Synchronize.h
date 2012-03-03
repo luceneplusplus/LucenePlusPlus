@@ -60,6 +60,12 @@ namespace Lucene
         SynchronizePtr sync;
 
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(sync);
+        }
+
+    protected:
         void lock(int32_t timeout);
     };
 }

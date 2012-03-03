@@ -27,6 +27,14 @@ namespace Lucene
     protected:
         static const Collection<int32_t> EMPTY_TERM_POS();
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(positions);
+            gc->mark(offsets);
+            SegmentTermVector::mark_members(gc);
+        }
+
     public:
         /// Returns an array of TermVectorOffsetInfo in which the term is found.
         /// @param index The position in the array to get the offsets from

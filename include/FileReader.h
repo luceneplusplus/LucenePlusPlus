@@ -19,34 +19,41 @@ namespace Lucene
         /// Creates a new FileReader, given the file name to read from.
         FileReader(const String& fileName);
         virtual ~FileReader();
-        
+
         LUCENE_CLASS(FileReader);
-    
+
     protected:
-        std::ifstream file;
+        std::ifstream file; // todo: check instances of ifstream (used to be smart pointers)
         int64_t _length;
         ByteArray fileBuffer;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fileBuffer);
+            Reader::mark_members(gc);
+        }
+
     public:
         static const int32_t FILE_EOF;
         static const int32_t FILE_ERROR;
-    
+
     public:
         /// Read a single character.
         virtual int32_t read();
 
         /// Read characters into a portion of an array.
         virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
-        
+
         /// Close the stream.
         virtual void close();
-        
+
         /// Tell whether this stream supports the mark() operation
         virtual bool markSupported();
-        
+
         /// Reset the stream.
         virtual void reset();
-        
+
         /// The number of bytes in the file.
         virtual int64_t length();
     };

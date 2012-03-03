@@ -34,6 +34,19 @@ namespace Lucene
         int32_t maxNumPostings;
         OffsetAttributePtr offsetAttribute;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(perThread);
+            gc->mark(termsHashPerField);
+            gc->mark(termsWriter);
+            gc->mark(fieldInfo);
+            gc->mark(docState);
+            gc->mark(fieldState);
+            gc->mark(offsetAttribute);
+            TermsHashConsumerPerField::mark_members(gc);
+        }
+
     public:
         virtual int32_t getStreamCount();
         virtual bool start(Collection<FieldablePtr> fields, int32_t count);

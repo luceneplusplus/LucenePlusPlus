@@ -41,6 +41,15 @@ namespace Lucene
     public:
         static const wchar_t* ALL;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(currentSet);
+            gc->mark(termToTVE);
+            gc->mark(comparator);
+            TermVectorMapper::mark_members(gc);
+        }
+
     public:
         /// Map the Term Vector information into your own structure
         virtual void map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions);

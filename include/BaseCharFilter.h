@@ -11,25 +11,32 @@
 
 namespace Lucene
 {
-    /// Base utility class for implementing a {@link CharFilter}.  You subclass this, and then record mappings by 
+    /// Base utility class for implementing a {@link CharFilter}.  You subclass this, and then record mappings by
     /// calling {@link #addOffCorrectMap}, and then invoke the correct method to correct an offset.
     class LPPAPI BaseCharFilter : public CharFilter
     {
     public:
         BaseCharFilter(CharStreamPtr in);
         virtual ~BaseCharFilter();
-        
+
         LUCENE_CLASS(BaseCharFilter);
-    
+
     protected:
         IntArray offsets;
         IntArray diffs;
         int32_t size;
-    
+
     protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(offsets);
+            gc->mark(diffs);
+            CharFilter::mark_members(gc);
+        }
+
         /// Retrieve the corrected offset.
         virtual int32_t correct(int32_t currentOff);
-        
+
         int32_t getLastCumulativeDiff();
         void addOffCorrectMap(int32_t off, int32_t cumulativeDiff);
     };

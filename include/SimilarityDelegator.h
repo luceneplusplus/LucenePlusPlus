@@ -11,19 +11,26 @@
 
 namespace Lucene
 {
-    /// Delegating scoring implementation.  Useful in {@link Query#getSimilarity(Searcher)} implementations, 
+    /// Delegating scoring implementation.  Useful in {@link Query#getSimilarity(Searcher)} implementations,
     /// to override only certain methods of a Searcher's Similarity implementation.
     class LPPAPI SimilarityDelegator : public Similarity
     {
     public:
         SimilarityDelegator(SimilarityPtr delegee);
         virtual ~SimilarityDelegator();
-    
+
         LUCENE_CLASS(SimilarityDelegator);
-    
+
     protected:
         SimilarityPtr delegee;
-    
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(delegee);
+            Similarity::mark_members(gc);
+        }
+
     public:
         virtual double computeNorm(const String& field, FieldInvertStatePtr state);
         virtual double lengthNorm(const String& fieldName, int32_t numTokens);

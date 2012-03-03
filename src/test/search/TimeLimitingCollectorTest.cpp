@@ -44,6 +44,13 @@ protected:
     int32_t lastDocCollected;
     int32_t docBase;
 
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(bits);
+        Collector::mark_members(gc);
+    }
+
 public:
     /// amount of time to wait on each collect to simulate a long iteration
     void setSlowDown(int32_t milliseconds)
@@ -169,6 +176,14 @@ protected:
 
     SearcherPtr searcher;
     QueryPtr query;
+
+protected:
+    virtual void mark_members(gc* gc) const
+    {
+        gc->mark(searcher);
+        gc->mark(query);
+        LuceneTestFixture::mark_members(gc);
+    }
 
 public:
     void add(const String& value, IndexWriterPtr writer)

@@ -32,6 +32,14 @@ namespace Lucene
 
         static bool _assertsOn;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(infoStream);
+            gc->mark(dir);
+            LuceneObject::mark_members(gc);
+        }
+
     public:
         /// Set infoStream where messages should go.  If null, no messages are printed
         void setInfoStream(InfoStreamPtr out);
@@ -164,6 +172,17 @@ namespace Lucene
 
         /// Holds the userData of the last commit in the index
         MapStringString userData;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(segmentsChecked);
+            gc->mark(segmentInfos);
+            gc->mark(dir);
+            gc->mark(newSegments);
+            gc->mark(userData);
+            LuceneObject::mark_members(gc);
+        }
     };
 
     /// Holds the status of each segment in the index. See {@link #segmentInfos}.
@@ -234,6 +253,17 @@ namespace Lucene
 
         /// Status for testing of term vectors (null if term vectors could not be tested).
         TermVectorStatusPtr termVectorStatus;
+
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(diagnostics);
+            gc->mark(fieldNormStatus);
+            gc->mark(termIndexStatus);
+            gc->mark(storedFieldStatus);
+            gc->mark(termVectorStatus);
+            LuceneObject::mark_members(gc);
+        }
     };
 
     /// Status from testing field norms.

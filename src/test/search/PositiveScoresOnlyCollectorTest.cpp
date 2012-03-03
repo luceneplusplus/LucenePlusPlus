@@ -35,6 +35,13 @@ namespace TestNegativeScores
         int32_t idx;
         Collection<double> scores;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(scores);
+            Scorer::mark_members(gc);
+        }
+
     public:
         virtual double score()
         {

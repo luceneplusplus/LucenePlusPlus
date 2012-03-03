@@ -32,6 +32,13 @@ namespace Lucene
     public:
         MapStringFieldSelectorResult fieldSelections;
 
+    protected:
+        virtual void mark_members(gc* gc) const
+        {
+            gc->mark(fieldSelections);
+            FieldSelector::mark_members(gc);
+        }
+
     public:
         /// Load field according to its associated value in fieldSelections
         /// @param field a field name
