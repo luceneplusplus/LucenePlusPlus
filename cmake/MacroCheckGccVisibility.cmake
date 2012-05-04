@@ -43,7 +43,7 @@ macro(MACRO_CHECK_GCC_VISIBILITY GccVisibility)
 
    if (${GccVisibility} AND GCC_IS_NEWER_THAN_4_1 AND NOT _GCC_COMPILED_WITH_BAD_ALLOCATOR)
       set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-      set (KDE4_C_FLAGS "${KDE4_C_FLAGS}" "-fvisibility=hidden")
+      set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden")
 
       if (GCC_IS_NEWER_THAN_4_2)
           set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden")
