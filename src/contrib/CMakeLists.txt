@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES(${lucene++-contrib_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
-install(FILES HEADERS
+install(FILES ${HEADERS}
 		        DESTINATION include/lucene++
 		        COMPONENT development-contrib)
 
@@ -47,7 +47,8 @@ SET_TARGET_PROPERTIES(lucene++-contrib PROPERTIES
     COMPILE_FLAGS -DLPP_HAVE_DLL
 )
 TARGET_LINK_LIBRARIES(lucene++-contrib 
-  ${CMAKE_THREAD_LIBS_INIT})
+  ${CMAKE_THREAD_LIBS_INIT}
+  lucene++)
 install(TARGETS lucene++-contrib
 	        DESTINATION ${LIB_DESTINATION} 
 	        COMPONENT runtime )
