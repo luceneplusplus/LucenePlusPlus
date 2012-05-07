@@ -47,7 +47,8 @@ SET_TARGET_PROPERTIES(lucene++-contrib PROPERTIES
     COMPILE_FLAGS -DLPP_HAVE_DLL
 )
 TARGET_LINK_LIBRARIES(lucene++-contrib 
-  ${CMAKE_THREAD_LIBS_INIT})
+  ${CMAKE_THREAD_LIBS_INIT}
+  lucene++)
 install(TARGETS lucene++-contrib
 	        DESTINATION ${LIB_DESTINATION} 
 	        COMPONENT runtime )
