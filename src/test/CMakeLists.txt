@@ -33,5 +33,5 @@ TARGET_LINK_LIBRARIES(lucene++-tester
   ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY_RELEASE}
   ${LUCENE_BOOST_LIBS} )
 
-ADD_TEST(${EXECUTABLE_OUTPUT_PATH}/lucene++-tester ${EXECUTABLE_OUTPUT_PATH}/lucene++-tester -p)
+ADD_TEST(lucene++-tester ${EXECUTABLE_OUTPUT_PATH}/lucene++-tester -p --test_dir=${lucene++-tester_SOURCE_DIR}/testfiles)
 
