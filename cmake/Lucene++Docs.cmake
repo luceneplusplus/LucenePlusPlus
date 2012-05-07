@@ -138,7 +138,12 @@ IF (ENABLE_DOCS)
             )
         ENDIF ( TAR AND GZIP )
         
-        #install man if it was built
+	#install HTML pages if they were built
+	IF ( DOCS_HTML AND NOT WIN32 )
+            INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/doc/html/ DESTINATION share/doc/lucene++-${LUCENE++_VERSION})
+        ENDIF ( DOCS_HTML AND NOT WIN32 )
+
+        #install man pages if they were built
         IF ( DOCS_MAN )
             INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/doc/man/ DESTINATION man)
         ENDIF ( DOCS_MAN )
