@@ -17,7 +17,7 @@ INCLUDE_DIRECTORIES(${lucene++-contrib_SOURCE_DIR}/include)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
-install(FILES HEADERS
+install(FILES ${HEADERS}
 		        DESTINATION include/lucene++
 		        COMPONENT development-contrib)
 

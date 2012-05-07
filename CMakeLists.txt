@@ -154,7 +154,7 @@ INCLUDE(PCHSupport)
 ####################################
 #include sub-projects
 ADD_SUBDIRECTORY (src/core)
-ADD_SUBDIRECTORY (src/contrib EXCLUDE_FROM_ALL)
+ADD_SUBDIRECTORY (src/contrib)
 ADD_SUBDIRECTORY (src/demo EXCLUDE_FROM_ALL)
 ADD_SUBDIRECTORY (src/test)
 
@@ -163,8 +163,14 @@ ADD_SUBDIRECTORY (src/test)
 # install pkg-config file
 #################################
 IF(NOT WIN32)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblucene++.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc @ONLY)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblucene++.pc.cmake
+                 ${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liblucene++-contrib.pc.cmake
+                 ${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc @ONLY)
+
+  install(FILES
+          ${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc
+          ${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc
           DESTINATION ${LIB_DESTINATION}/pkgconfig )
 ENDIF(NOT WIN32)
 
