@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include "Allocator.h"
+#include "LuceneAllocator.h"
 
 #ifdef LPP_USE_NEDMALLOC
 extern "C"
@@ -20,13 +20,13 @@ namespace Lucene
     {
         #if defined(LPP_USE_NEDMALLOC)
         return nedalloc::nedmalloc(size);
-        #elif (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG) 
+        #elif (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG)
         return _malloc_dbg(size, _NORMAL_BLOCK, __FILE__, __LINE__);
         #else
         return malloc(size);
         #endif
     }
-    
+
     void* ReallocMemory(void* memory, size_t size)
     {
         if (memory == NULL)
@@ -44,7 +44,7 @@ namespace Lucene
         return realloc(memory, size);
         #endif
     }
-    
+
     void FreeMemory(void* memory)
     {
         if (memory == NULL)
@@ -57,7 +57,7 @@ namespace Lucene
         free(memory);
         #endif
     }
-    
+
     void ReleaseThreadCache()
     {
         #if defined(LPP_USE_NEDMALLOC)

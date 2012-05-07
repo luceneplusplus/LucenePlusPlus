@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    /// A PriorityQueue maintains a partial ordering of its elements such that the least element can always 
+    /// A PriorityQueue maintains a partial ordering of its elements such that the least element can always
     /// be found in constant time.  Put()'s and pop()'s require log(size) time.
     ///
     /// NOTE: This class pre-allocates a full array of length maxSize + 1.
@@ -20,14 +20,14 @@ namespace Lucene
     class PriorityQueue : public LuceneObject
     {
     public:
-        typedef typename std::vector< TYPE, Allocator<TYPE> > heap_type;
-        
+        typedef typename std::vector< TYPE, LuceneAllocator<TYPE> > heap_type;
+
         PriorityQueue(int32_t maxSize)
         {
             this->_size = 0;
             this->_maxSize = maxSize;
         }
-        
+
         virtual ~PriorityQueue()
         {
         }
@@ -36,12 +36,12 @@ namespace Lucene
         heap_type heap;
         int32_t _size;
         int32_t _maxSize;
-        
+
     public:
         virtual void initialize()
         {
             bool empty = heap.empty();
-            
+
             if (empty)
             {
                 int32_t heapSize = 0;
@@ -53,8 +53,8 @@ namespace Lucene
                 else if (_maxSize == INT_MAX)
                 {
                     // Don't wrap heapSize to -1, in this case, which causes a confusing NegativeArraySizeException.
-                    // Note that very likely this will simply then hit an OOME, but at least that's more indicative 
-                    // to caller that this values is too big.  We don't +1 in this case, but it's very unlikely in 
+                    // Note that very likely this will simply then hit an OOME, but at least that's more indicative
+                    // to caller that this values is too big.  We don't +1 in this case, but it's very unlikely in
                     // practice one will actually insert this many objects into the PQ
                     heapSize = INT_MAX;
                 }
@@ -65,7 +65,7 @@ namespace Lucene
                 }
                 this->heap.resize(heapSize);
             }
-            
+
             // If sentinel objects are supported, populate the queue with them
             TYPE sentinel = getSentinelObject();
             if (empty && sentinel)
@@ -76,14 +76,14 @@ namespace Lucene
                 _size = _maxSize;
             }
         }
-        
+
         /// Return maximum size of queue
         int32_t maxSize()
         {
             return _maxSize;
         }
-        
-        /// Adds an Object to a PriorityQueue in log(size) time.  If one tries to add more objects 
+
+        /// Adds an Object to a PriorityQueue in log(size) time.  If one tries to add more objects
         /// than maxSize from initialize an {@link IndexOutOfBoundsException} is thrown.
         TYPE add(const TYPE& type)
         {
@@ -94,10 +94,10 @@ namespace Lucene
             upHeap();
             return heap[1];
         }
-        
-        /// Adds an Object to a PriorityQueue in log(size) time.  It returns the object (if any) that was 
-        /// dropped off the heap because it was full.  This can be the given parameter (in case it is 
-        /// smaller than the full heap's minimum, and couldn't be added), or another object that was 
+
+        /// Adds an Object to a PriorityQueue in log(size) time.  It returns the object (if any) that was
+        /// dropped off the heap because it was full.  This can be the given parameter (in case it is
+        /// smaller than the full heap's minimum, and couldn't be added), or another object that was
         /// previously the smallest value in the heap and now has been replaced by a larger one, or null
         /// if the queue wasn't yet full with maxSize elements.
         TYPE addOverflow(const TYPE& type)
@@ -117,15 +117,15 @@ namespace Lucene
             else
                 return type;
         }
-        
+
         /// Returns the least element of the PriorityQueue.
         TYPE top()
         {
-            // We don't need to check size here: if maxSize is 0, then heap is length 2 array with both 
+            // We don't need to check size here: if maxSize is 0, then heap is length 2 array with both
             // entries null.  If size is 0 then heap[1] is already null.
             return heap[1];
         }
-        
+
         /// Removes and returns the least element of the PriorityQueue.
         TYPE pop()
         {
@@ -140,26 +140,26 @@ namespace Lucene
             else
                 return TYPE();
         }
-        
+
         /// Should be called when the Object at top changes values.
         TYPE updateTop()
         {
             downHeap();
             return heap[1];
         }
-        
+
         /// Returns the number of elements currently stored in the PriorityQueue.
         int32_t size() const
         {
             return _size;
         }
-        
+
         /// Returns whether PriorityQueue is currently empty.
         bool empty() const
         {
             return (_size == 0);
         }
-        
+
         /// Removes all entries from the PriorityQueue.
         void clear()
         {
@@ -167,7 +167,7 @@ namespace Lucene
                 heap[i] = TYPE();
             _size = 0;
         }
-        
+
     protected:
         void upHeap()
         {
@@ -182,7 +182,7 @@ namespace Lucene
             }
             heap[i] = node; // install saved node
         }
-        
+
         void downHeap()
         {
             int32_t i = 1;
@@ -202,18 +202,18 @@ namespace Lucene
             }
             heap[i] = node; // install saved node
         }
-        
+
         /// Determines the ordering of objects in this priority queue.  Subclasses must define this one method.
         virtual bool lessThan(const TYPE& first, const TYPE& second)
         {
             return std::less<TYPE>()(first, second);
         }
-        
-        /// This method can be overridden by extending classes to return a sentinel object which will be used by 
-        /// {@link #initialize} to fill the queue, so that the code which uses that queue can always assume it's 
+
+        /// This method can be overridden by extending classes to return a sentinel object which will be used by
+        /// {@link #initialize} to fill the queue, so that the code which uses that queue can always assume it's
         /// full and only change the top without attempting to insert any new object.
         ///
-        /// Those sentinel values should always compare worse than any non-sentinel value (ie., {@link #lessThan} 
+        /// Those sentinel values should always compare worse than any non-sentinel value (ie., {@link #lessThan}
         /// should always favour the non-sentinel values).
         virtual TYPE getSentinelObject()
         {

@@ -13,24 +13,26 @@ namespace Lucene
 {
     /// Allocate block of memory.
     LPPAPI void* AllocMemory(size_t size);
-    
+
     /// Reallocate a given block of memory.
     LPPAPI void* ReallocMemory(void* memory, size_t size);
-    
+
     /// Release a given block of memory.
     LPPAPI void FreeMemory(void* memory);
-    
+
     /// Release thread cache.  Note: should be called whenever a thread
     /// exits and using nedmalloc.
     LPPAPI void ReleaseThreadCache();
-    
+
+    #ifdef LPP_USE_ALLOCATOR
+
     /// Custom stl allocator used to help exporting stl container across process
     /// borders.  It can also calls custom memory allocation functions that can
     /// help track memory leaks and/or improve performance over standard allocators.
     /// @see #AllocMemory(size_t)
     /// @see #FreeMemory(void*)
     template <typename TYPE>
-    class Allocator
+    class LuceneAllocator
     {
     public:
         typedef size_t size_type;
@@ -41,106 +43,112 @@ namespace Lucene
         typedef const TYPE& const_reference;
         typedef TYPE value_type;
 
-        Allocator()
-        {
-        }
-        
-        Allocator(const Allocator&)
+        LuceneAllocator()
         {
         }
 
-        pointer allocate(size_type n, const void* = 0) 
+        LuceneAllocator(const LuceneAllocator&)
+        {
+        }
+
+        pointer allocate(size_type n, const void* = 0)
         {
             return (TYPE*)AllocMemory((size_t)(n * sizeof(TYPE)));
         }
 
-        void deallocate(void* p, size_type) 
+        void deallocate(void* p, size_type)
         {
-            if (p != NULL) 
+            if (p != NULL)
                 FreeMemory(p);
         }
 
-        pointer address(reference x) const 
-        { 
-            return &x; 
+        pointer address(reference x) const
+        {
+            return &x;
         }
 
-        const_pointer address(const_reference x) const 
-        { 
-            return &x; 
+        const_pointer address(const_reference x) const
+        {
+            return &x;
         }
 
-        Allocator<TYPE>& operator= (const Allocator&) 
-        { 
-            return *this; 
+        LuceneAllocator<TYPE>& operator= (const LuceneAllocator&)
+        {
+            return *this;
         }
 
         void construct(pointer p, const TYPE& val)
         {
-            new ((TYPE*)p) TYPE(val); 
+            new ((TYPE*)p) TYPE(val);
         }
 
-        void destroy(pointer p) 
-        { 
+        void destroy(pointer p)
+        {
             p->~TYPE();
         }
 
-        size_type max_size() const 
-        { 
-            return size_t(-1); 
+        size_type max_size() const
+        {
+            return size_t(-1);
         }
 
         template <class U>
-        struct rebind 
-        { 
-            typedef Allocator<U> other; 
+        struct rebind
+        {
+            typedef LuceneAllocator<U> other;
         };
 
         template <class U>
-        Allocator(const Allocator<U>&) 
+        LuceneAllocator(const LuceneAllocator<U>&)
         {
         }
     };
 
     template <typename TYPE>
-    inline bool operator== (const Allocator<TYPE>&, const Allocator<TYPE>&)
-    { 
-        return true; 
+    inline bool operator== (const LuceneAllocator<TYPE>&, const LuceneAllocator<TYPE>&)
+    {
+        return true;
     }
-      
+
     template <typename TYPE>
-    inline bool operator!= (const Allocator<TYPE>&, const Allocator<TYPE>&)
-    { 
-        return false; 
+    inline bool operator!= (const LuceneAllocator<TYPE>&, const LuceneAllocator<TYPE>&)
+    {
+        return false;
     }
 
     template <>
-    class Allocator<void>
+    class LuceneAllocator<void>
     {
     public:
         typedef void* pointer;
         typedef const void* const_pointer;
         typedef void value_type;
 
-        Allocator()
+        LuceneAllocator()
         {
         }
-        
-        Allocator(const Allocator&)
+
+        LuceneAllocator(const LuceneAllocator&)
         {
         }
 
         template <class U>
-        struct rebind 
-        { 
-            typedef Allocator<U> other; 
+        struct rebind
+        {
+            typedef LuceneAllocator<U> other;
         };
 
         template <class U>
-        Allocator(const Allocator<U>&) 
+        LuceneAllocator(const LuceneAllocator<U>&)
         {
         }
     };
+
+    #endif
 }
+
+#ifndef LPP_USE_ALLOCATOR
+#define LuceneAllocator std::allocator
+#endif
 
 #endif

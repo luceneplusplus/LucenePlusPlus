@@ -77,6 +77,9 @@
 // Define to enable cyclic checking in debug builds
 // #define LPP_USE_CYCLIC_CHECK
 
+// Define to use custom allocator (useful in Windows builds and when using nedmalloc)
+#define LPP_USE_ALLOCATOR
+
 // Define to use nedmalloc memory allocator
 // #define LPP_USE_NEDMALLOC
 

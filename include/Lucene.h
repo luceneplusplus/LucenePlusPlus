@@ -35,7 +35,7 @@ using boost::uint64_t;
 #define SIZEOF_ARRAY(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 #include "LuceneTypes.h"
-#include "Allocator.h"
+#include "LuceneAllocator.h"
 
 namespace boost
 {
@@ -55,16 +55,16 @@ namespace boost
 
 namespace Lucene
 {
-    typedef std::basic_string< char, std::char_traits<char>, Allocator<char> > SingleString;
-    typedef std::basic_ostringstream< char, std::char_traits<char>, Allocator<char> > SingleStringStream;
-    typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > String;
-    typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > StringStream;
-    
-    const std::basic_string< wchar_t, std::char_traits<wchar_t>, Allocator<wchar_t> > EmptyString;
-    
+    typedef std::basic_string< char, std::char_traits<char>, LuceneAllocator<char> > SingleString;
+    typedef std::basic_ostringstream< char, std::char_traits<char>, LuceneAllocator<char> > SingleStringStream;
+    typedef std::basic_string< wchar_t, std::char_traits<wchar_t>, LuceneAllocator<wchar_t> > String;
+    typedef std::basic_ostringstream< wchar_t, std::char_traits<wchar_t>, LuceneAllocator<wchar_t> > StringStream;
+
+    const std::basic_string< wchar_t, std::char_traits<wchar_t>, LuceneAllocator<wchar_t> > EmptyString;
+
     typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
     typedef boost::shared_ptr<boost::thread> threadPtr;
-            
+
     typedef boost::shared_ptr<std::ofstream> ofstreamPtr;
     typedef boost::shared_ptr<std::ifstream> ifstreamPtr;
     typedef boost::shared_ptr<std::locale> localePtr;
@@ -87,7 +87,7 @@ namespace Lucene
     typedef Array<int64_t> LongArray;
     typedef Array<wchar_t> CharArray;
     typedef Array<double> DoubleArray;
-    
+
     template <class TYPE>
     struct luceneEquals
     {
@@ -96,7 +96,7 @@ namespace Lucene
             return first ? first->equals(second) : (!first && !second);
         }
     };
-    
+
     template <class TYPE>
     struct luceneEqualTo
     {
@@ -107,7 +107,7 @@ namespace Lucene
         }
         const TYPE& equalType;
     };
-    
+
     template <class TYPE>
     struct luceneWeakEquals
     {
@@ -118,7 +118,7 @@ namespace Lucene
             return first.lock()->equals(second.lock());
         }
     };
-    
+
     template <class TYPE>
     struct luceneHash : std::unary_function<TYPE, std::size_t>
     {
@@ -127,7 +127,7 @@ namespace Lucene
             return type ? type->hashCode() : 0;
         }
     };
-    
+
     template <class TYPE>
     struct luceneWeakHash : std::unary_function<TYPE, std::size_t>
     {
@@ -136,7 +136,7 @@ namespace Lucene
             return type.expired() ? 0 : type.lock()->hashCode();
         }
     };
-    
+
     template <class TYPE>
     struct luceneCompare
     {
@@ -149,14 +149,14 @@ namespace Lucene
             return (first->compareTo(second) < 0);
         }
     };
-    
+
     typedef boost::blank VariantNull;
     typedef boost::variant<String, int32_t, int64_t, double, ReaderPtr, ByteArray, VariantNull> FieldsData;
     typedef boost::variant<String, uint8_t, int32_t, int64_t, double, VariantNull> ComparableValue;
     typedef boost::variant<int32_t, int64_t, double, VariantNull> NumericValue;
     typedef boost::variant<String, VariantNull> StringValue;
     typedef boost::variant<Collection<uint8_t>, Collection<int32_t>, Collection<double>, VariantNull> CollectionValue;
-    
+
     typedef HashSet< SegmentInfoPtr, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > SetSegmentInfo;
     typedef HashSet< MergeThreadPtr, luceneHash<MergeThreadPtr>, luceneEquals<MergeThreadPtr> > SetMergeThread;
     typedef HashSet< OneMergePtr, luceneHash<OneMergePtr>, luceneEquals<OneMergePtr> > SetOneMerge;
@@ -165,7 +165,7 @@ namespace Lucene
     typedef HashSet< BooleanClausePtr, luceneHash<BooleanClausePtr>, luceneEquals<BooleanClausePtr> > SetBooleanClause;
     typedef HashSet< ReaderFieldPtr, luceneHash<ReaderFieldPtr>, luceneEquals<ReaderFieldPtr> > SetReaderField;
     typedef HashSet<ByteArray> SetByteArray;
-        
+
     typedef HashMap< String, String > MapStringString;
     typedef HashMap< wchar_t, NormalizeCharMapPtr > MapCharNormalizeCharMap;
     typedef HashMap< String, AnalyzerPtr > MapStringAnalyzer;
@@ -186,7 +186,7 @@ namespace Lucene
     typedef HashMap< String, double > MapStringDouble;
     typedef HashMap< int32_t, CachePtr > MapStringCache;
     typedef HashMap< String, LockPtr > MapStringLock;
-    
+
     typedef HashMap< SegmentInfoPtr, SegmentReaderPtr, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > MapSegmentInfoSegmentReader;
     typedef HashMap< SegmentInfoPtr, int32_t, luceneHash<SegmentInfoPtr>, luceneEquals<SegmentInfoPtr> > MapSegmentInfoInt;
     typedef HashMap< DocFieldConsumerPerThreadPtr, Collection<DocFieldConsumerPerFieldPtr>, luceneHash<DocFieldConsumerPerThreadPtr>, luceneEquals<DocFieldConsumerPerThreadPtr> > MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField;
@@ -200,17 +200,17 @@ namespace Lucene
     typedef HashMap< EntryPtr, boost::any, luceneHash<EntryPtr>, luceneEquals<EntryPtr> > MapEntryAny;
     typedef HashMap< PhrasePositionsPtr, LuceneObjectPtr, luceneHash<PhrasePositionsPtr>, luceneEquals<PhrasePositionsPtr> > MapPhrasePositionsLuceneObject;
     typedef HashMap< ReaderFieldPtr, SetReaderField, luceneHash<ReaderFieldPtr>, luceneEquals<ReaderFieldPtr> > MapReaderFieldSetReaderField;
-    
+
     typedef WeakHashMap< LuceneObjectWeakPtr, LuceneObjectPtr, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapObjectObject;
     typedef WeakHashMap< LuceneObjectWeakPtr, MapEntryAny, luceneWeakHash<LuceneObjectWeakPtr>, luceneWeakEquals<LuceneObjectWeakPtr> > WeakMapLuceneObjectMapEntryAny;
-    
+
     typedef Map< String, AttributePtr > MapStringAttribute;
     typedef Map< int64_t, DocumentsWriterThreadStatePtr > MapThreadDocumentsWriterThreadState;
     typedef Map< String, IndexReaderPtr > MapStringIndexReader;
     typedef Map< TermPtr, NumPtr, luceneCompare<TermPtr> > MapTermNum;
-    
+
     typedef boost::function<bool (const TermVectorEntryPtr&, const TermVectorEntryPtr&)> TermVectorEntryComparator;
-    
+
     template < class KEY, class VALUE, class HASH = boost::hash<KEY>, class EQUAL = std::equal_to<KEY> > class SimpleLRUCache;
     typedef SimpleLRUCache< TermPtr, TermInfoPtr, luceneHash<TermPtr>, luceneEquals<TermPtr> > TermInfoCache;
     typedef boost::shared_ptr<TermInfoCache> TermInfoCachePtr;

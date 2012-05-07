@@ -3520,11 +3520,11 @@
 			Name="platform"
 			>
 			<File
-				RelativePath="..\util\Allocator.cpp"
+				RelativePath="..\util\LuceneAllocator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\include\Allocator.h"
+				RelativePath="..\..\..\include\LuceneAllocator.h"
 				>
 			</File>
 			<File

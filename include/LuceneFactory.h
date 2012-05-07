@@ -18,7 +18,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T);
         #else
-        return boost::allocate_shared<T>(Allocator<T>());
+        return boost::allocate_shared<T>(LuceneAllocator<T>());
         #endif
     }
 
@@ -28,7 +28,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1);
         #endif
     }
 
@@ -38,7 +38,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2);
         #endif
     }
 
@@ -48,7 +48,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2, a3);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2, a3);
         #endif
     }
 
@@ -58,7 +58,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2, a3, a4);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2, a3, a4);
         #endif
     }
 
@@ -68,7 +68,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2, a3, a4, a5);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2, a3, a4, a5);
         #endif
     }
 
@@ -78,7 +78,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2, a3, a4, a5, a6);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2, a3, a4, a5, a6);
         #endif
     }
 
@@ -88,7 +88,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6, a7));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2, a3, a4, a5, a6, a7);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2, a3, a4, a5, a6, a7);
         #endif
     }
 
@@ -98,7 +98,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6, a7, a8));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2, a3, a4, a5, a6, a7, a8);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2, a3, a4, a5, a6, a7, a8);
         #endif
     }
 
@@ -108,7 +108,7 @@ namespace Lucene
         #if BOOST_VERSION <= 103800
         return boost::shared_ptr<T>(new T(a1, a2, a3, a4, a5, a6, a7, a8, a9));
         #else
-        return boost::allocate_shared<T>(Allocator<T>(), a1, a2, a3, a4, a5, a6, a7, a8, a9);
+        return boost::allocate_shared<T>(LuceneAllocator<T>(), a1, a2, a3, a4, a5, a6, a7, a8, a9);
         #endif
     }
 
