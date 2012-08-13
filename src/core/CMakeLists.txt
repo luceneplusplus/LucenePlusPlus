@@ -13,7 +13,8 @@ file(GLOB_RECURSE lucene_sources
   ${lucene++-lib_SOURCE_DIR}/util/*.cpp)
 
 file(GLOB_RECURSE INTERN_HEADERS ${lucene++-libs_SOURCE_DIR}/include/*.h)
-file(GLOB_RECURSE HEADERS ${lucene++-base_SOURCE_DIR}/include/*.h)
+file(GLOB_RECURSE HEADERS ${lucene++-base_SOURCE_DIR}/include/*.h
+                          ${lucene++-base_BINARY_DIR}/include/*.h)
 
 #C sources...
 file(GLOB_RECURSE lucene_c_sources

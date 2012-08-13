@@ -76,13 +76,23 @@ OPTION(ENABLE_CYCLIC_CHECK
 SET(LIB_DESTINATION "lib" CACHE STRING "Define lib output directory name")
 
 IF ( ENABLE_NEDMALLOC )
-  ADD_DEFINITIONS(-DLPP_USE_NEDMALLOC)
+  SET(DEFINE_USE_NEDMALLOC "define")
+ELSE ( ENABLE_NEDMALLOC )
+  SET(DEFINE_USE_NEDMALLOC "undef")
 ENDIF ( ENABLE_NEDMALLOC )
+
+IF ( ENABLE_STANDARD_ALLOCATOR )
+  SET(DEFINE_USE_ALLOCATOR "undef")
+ELSE ( ENABLE_STANDARD_ALLOCATOR )
+  SET(DEFINE_USE_ALLOCATOR "define")
+ENDIF ( ENABLE_STANDARD_ALLOCATOR )
+
 IF ( ENABLE_CYCLIC_CHECK )
-  ADD_DEFINITIONS(-DLPP_USE_CYCLIC_CHECK)
+  SET(DEFINE_USE_CYCLIC_CHECK "define")
+ELSE ( ENABLE_CYCLIC_CHECK )
+  SET(DEFINE_USE_CYCLIC_CHECK "undef")
 ENDIF ( ENABLE_CYCLIC_CHECK )
 ####################################
-
 
 ####################################
 # PLATFORM specific options
@@ -149,6 +159,15 @@ INCLUDE(PCHSupport)
 #todo: make this optional and make it possible to add more headers - like boost threads
 
 
+#################################
+# generate Config.h
+#################################
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/Config.h.cmake
+               ${CMAKE_CURRENT_BINARY_DIR}/include/Config.h @ONLY)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/include)
+
 ####################################
 # The subdirs
 ####################################
@@ -157,7 +176,6 @@ ADD_SUBDIRECTORY (src/core)
 ADD_SUBDIRECTORY (src/contrib)
 ADD_SUBDIRECTORY (src/demo EXCLUDE_FROM_ALL)
 ADD_SUBDIRECTORY (src/test)
-
 
 #################################
 # install pkg-config file
@@ -173,7 +191,6 @@ IF(NOT WIN32)
           ${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc
           DESTINATION ${LIB_DESTINATION}/pkgconfig )
 ENDIF(NOT WIN32)
-
 
 ####################################
 # Custom targets
