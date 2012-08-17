@@ -42,7 +42,7 @@ On Debian systems, the following packages are required:
 Build Instructions using Waf
 ------------------------------
 
-Alternatively you can use `Waf <http://code.google.com/p/waf/>`_ to drive the build. Waf requires that you have a recent version of `Python <http://python.org>`_ installed on your system.  
+**After running CMake** you can use `Waf <http://code.google.com/p/waf/>`_ to drive the build. Waf requires that you have a recent version of `Python <http://python.org>`_ installed on your system.
 
 To build the library the following commands should be issued::
 
@@ -70,7 +70,7 @@ Open solution lucene++.sln located in the *msvc* folder into Visual Studio 2008 
 
 **Note: "BOOST_ROOT" environment variable must be defined to point to the boost library directory (eg. c:\\boost_1_44_0)**
 
-You'll need boost installed. 
+You'll need boost installed.
 
 `BoostPro <http://www.boostpro.com>`_ has some precompiled windows packages. You'll need the following extras installed::
 
