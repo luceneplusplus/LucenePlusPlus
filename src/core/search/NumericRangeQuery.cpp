@@ -202,27 +202,27 @@ namespace Lucene
             case 64:
             {
                 // lower
-                int64_t minBound = LLONG_MIN;
+                int64_t minBound = std::numeric_limits<int64_t>::min();
                 if (VariantUtils::typeOf<int64_t>(query->min))
                     minBound = VariantUtils::get<int64_t>(query->min);
                 else if (VariantUtils::typeOf<double>(query->min))
                     minBound = NumericUtils::doubleToSortableLong(VariantUtils::get<double>(query->min));
                 if (!query->minInclusive && !VariantUtils::isNull(query->min))
                 {
-                    if (minBound == LLONG_MAX)
+                    if (minBound == std::numeric_limits<int64_t>::max())
                         break;
                     ++minBound;
                 }
                 
                 // upper
-                int64_t maxBound = LLONG_MAX;
+                int64_t maxBound = std::numeric_limits<int64_t>::max();
                 if (VariantUtils::typeOf<int64_t>(query->max))
                     maxBound = VariantUtils::get<int64_t>(query->max);
                 else if (VariantUtils::typeOf<double>(query->max))
                     maxBound = NumericUtils::doubleToSortableLong(VariantUtils::get<double>(query->max));
                 if (!query->maxInclusive && !VariantUtils::isNull(query->max))
                 {
-                    if (maxBound == LLONG_MIN)
+                    if (maxBound == std::numeric_limits<int64_t>::min())
                         break;
                     --maxBound;
                 }

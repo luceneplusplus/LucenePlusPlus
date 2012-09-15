@@ -215,7 +215,7 @@ namespace Lucene
     }
     
     FieldCacheRangeFilterLong::FieldCacheRangeFilterLong(const String& field, ParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
-        : FieldCacheRangeFilterNumeric<int64_t>(field, parser, lowerVal, upperVal, LLONG_MAX, includeLower, includeUpper)
+        : FieldCacheRangeFilterNumeric<int64_t>(field, parser, lowerVal, upperVal, std::numeric_limits<int64_t>::max(), includeLower, includeUpper)
     {
     }
     
