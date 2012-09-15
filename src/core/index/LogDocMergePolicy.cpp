@@ -17,7 +17,7 @@ namespace Lucene
         minMergeSize = DEFAULT_MIN_MERGE_DOCS;
         
         // maxMergeSize is never used by LogDocMergePolicy; set it to LLONG_MAX to disable it
-        maxMergeSize = LLONG_MAX;
+        maxMergeSize = std::numeric_limits<int64_t>::max();
     }
     
     LogDocMergePolicy::~LogDocMergePolicy()

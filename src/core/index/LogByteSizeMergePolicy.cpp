@@ -19,7 +19,7 @@ namespace Lucene
     LogByteSizeMergePolicy::LogByteSizeMergePolicy(IndexWriterPtr writer) : LogMergePolicy(writer)
     {
         minMergeSize = (int64_t)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
-        maxMergeSize = DEFAULT_MAX_MERGE_MB == DBL_MAX ? LLONG_MAX : (int64_t)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
+        maxMergeSize = DEFAULT_MAX_MERGE_MB == DBL_MAX ? std::numeric_limits<int64_t>::max() : (int64_t)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
     }
     
     LogByteSizeMergePolicy::~LogByteSizeMergePolicy()

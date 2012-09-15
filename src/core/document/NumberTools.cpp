@@ -50,7 +50,7 @@ namespace Lucene
     
     String NumberTools::longToString(int64_t l)
     {
-        if (l == LLONG_MIN)
+        if (l == std::numeric_limits<int64_t>::min())
         {
             // special case, because long is not symmetric around zero
             return MIN_STRING_VALUE();
@@ -62,7 +62,7 @@ namespace Lucene
         if (l < 0)
         {
             buf += NEGATIVE_PREFIX;
-            l = LLONG_MAX + l + 1;
+            l = std::numeric_limits<int64_t>::max() + l + 1;
         }
             buf += POSITIVE_PREFIX;
         
@@ -81,7 +81,7 @@ namespace Lucene
             boost::throw_exception(NumberFormatException(L"string is the wrong size"));
         
         if (str == MIN_STRING_VALUE())
-            return LLONG_MIN;
+            return std::numeric_limits<int64_t>::min();
         
         wchar_t prefix = str[0];
         int64_t l = StringUtils::toLong(str.substr(1), RADIX);
@@ -90,7 +90,7 @@ namespace Lucene
         { // nop
         }
         else if (prefix == NEGATIVE_PREFIX)
-            l = l - LLONG_MAX - 1;
+            l = l - std::numeric_limits<int64_t>::max() - 1;
         else
             boost::throw_exception(NumberFormatException(L"string does not begin with the correct prefix"));
         
