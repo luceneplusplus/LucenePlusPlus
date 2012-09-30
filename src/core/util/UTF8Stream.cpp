@@ -16,10 +16,10 @@ namespace Lucene
     const uint16_t UTF8Base::TRAIL_SURROGATE_MAX = 0xdfffu;
     const uint16_t UTF8Base::LEAD_OFFSET = LEAD_SURROGATE_MIN - (0x10000 >> 10);
     const uint32_t UTF8Base::SURROGATE_OFFSET = 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
-    
+
     // Maximum valid value for a Unicode code point
     const uint32_t UTF8Base::CODE_POINT_MAX = 0x0010ffffu;
-    
+
     #ifdef LPP_UNICODE_CHAR_SIZE_2
     const wchar_t UTF8Base::UNICODE_REPLACEMENT_CHAR = (wchar_t)0xfffd;
     const wchar_t UTF8Base::UNICODE_TERMINATOR = (wchar_t)0xffff;
@@ -27,11 +27,11 @@ namespace Lucene
     const wchar_t UTF8Base::UNICODE_REPLACEMENT_CHAR = (wchar_t)0x0001fffd;
     const wchar_t UTF8Base::UNICODE_TERMINATOR = (wchar_t)0x0001ffff;
     #endif
-    
+
     UTF8Base::~UTF8Base()
     {
     }
-    
+
     inline uint8_t UTF8Base::mask8(uint32_t b)
     {
         return static_cast<uint8_t>(0xff & b);
@@ -46,7 +46,7 @@ namespace Lucene
     {
         return ((mask8(b) >> 6) == 0x2);
     }
-    
+
     inline bool UTF8Base::isSurrogate(uint32_t cp)
     {
         return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
@@ -61,47 +61,47 @@ namespace Lucene
     {
         return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
     }
-    
+
     inline bool UTF8Base::isValidCodePoint(uint32_t cp)
     {
         return (cp <= CODE_POINT_MAX && !isSurrogate(cp) && cp != 0xfffe && cp != 0xffff);
     }
-    
+
     inline bool UTF8Base::isOverlongSequence(uint32_t cp, int32_t length)
     {
         if (cp < 0x80)
         {
-            if (length != 1) 
+            if (length != 1)
                 return true;
         }
         else if (cp < 0x800)
         {
-            if (length != 2) 
+            if (length != 2)
                 return true;
         }
         else if (cp < 0x10000)
         {
-            if (length != 3) 
+            if (length != 3)
                 return true;
         }
         return false;
     }
-    
+
     UTF8Encoder::UTF8Encoder(const wchar_t* unicodeBegin, const wchar_t* unicodeEnd)
     {
         this->unicodeBegin = unicodeBegin;
         this->unicodeEnd = unicodeEnd;
     }
-    
+
     UTF8Encoder::~UTF8Encoder()
     {
     }
-    
+
     uint32_t UTF8Encoder::readNext()
     {
         return unicodeBegin == unicodeEnd ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*unicodeBegin++;
     }
-    
+
     inline uint8_t* UTF8Encoder::appendChar(uint8_t* utf8, uint32_t cp)
     {
         if (cp < 0x80) // one octet
@@ -126,12 +126,12 @@ namespace Lucene
         }
         return utf8;
     }
-    
+
     int32_t UTF8Encoder::utf16to8(uint8_t* utf8, int32_t length)
     {
         uint8_t* start = utf8;
         uint32_t next = readNext();
-        
+
         while (next != UNICODE_TERMINATOR)
         {
             uint32_t cp = mask16(next);
@@ -154,15 +154,15 @@ namespace Lucene
                 break;
             next = readNext();
         }
-        
+
         return ((utf8 - start) == 0 && next == UNICODE_TERMINATOR) ? Reader::READER_EOF : (utf8 - start);
     }
-    
+
     int32_t UTF8Encoder::utf32to8(uint8_t* utf8, int32_t length)
     {
         uint8_t* start = utf8;
         uint32_t next = readNext();
-        
+
         while (next != UNICODE_TERMINATOR)
         {
             if (!isValidCodePoint(next))
@@ -172,10 +172,10 @@ namespace Lucene
                 break;
             next = readNext();
         }
-        
+
         return ((utf8 - start) == 0 && next == UNICODE_TERMINATOR) ? Reader::READER_EOF : (utf8 - start);
     }
-    
+
     int32_t UTF8Encoder::encode(uint8_t* utf8, int32_t length)
     {
         #ifdef LPP_UNICODE_CHAR_SIZE_2
@@ -184,37 +184,37 @@ namespace Lucene
         return utf32to8(utf8, length);
         #endif
     }
-    
+
     UTF8EncoderStream::UTF8EncoderStream(ReaderPtr reader) : UTF8Encoder(NULL, NULL)
     {
         this->reader = reader;
     }
-    
+
     UTF8EncoderStream::~UTF8EncoderStream()
     {
     }
-    
+
     uint32_t UTF8EncoderStream::readNext()
     {
         int32_t next = reader->read();
         return next == Reader::READER_EOF ? UNICODE_TERMINATOR : (uint32_t)next;
     }
-    
+
     UTF8Decoder::UTF8Decoder(const uint8_t* utf8Begin, const uint8_t* utf8End)
     {
         this->utf8Begin = utf8Begin;
         this->utf8End = utf8End;
     }
-    
+
     UTF8Decoder::~UTF8Decoder()
     {
     }
-    
+
     uint32_t UTF8Decoder::readNext()
     {
         return utf8Begin == utf8End ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*utf8Begin++;
     }
-    
+
     inline int32_t UTF8Decoder::sequenceLength(uint32_t cp)
     {
         uint8_t lead = mask8(cp);
@@ -228,7 +228,7 @@ namespace Lucene
             return 4;
         return 0;
     }
-    
+
     inline bool UTF8Decoder::getSequence(uint32_t& cp, int32_t length)
     {
         cp = mask8(cp);
@@ -267,27 +267,27 @@ namespace Lucene
         cp += next & 0x3f;
         return true;
     }
-    
+
     inline bool UTF8Decoder::isValidNext(uint32_t& cp)
     {
         // Determine the sequence length based on the lead octet
         int32_t length = sequenceLength(cp);
-        if (length < 1 && length > 4)
+        if (length < 1 || length > 4)
             return false;
 
         // Now that we have a valid sequence length, get trail octets and calculate the code point
         if (!getSequence(cp, length))
             return false;
-        
+
         // Decoding succeeded, now security checks
         return (isValidCodePoint(cp) && !isOverlongSequence(cp, length));
     }
-    
+
     int32_t UTF8Decoder::utf8to16(wchar_t* unicode, int32_t length)
     {
         int32_t position = 0;
         uint32_t next = readNext();
-        
+
         while (next != UNICODE_TERMINATOR)
         {
             if (!isValidNext(next))
@@ -303,15 +303,15 @@ namespace Lucene
                 break;
             next = readNext();
         }
-        
+
         return (position == 0 && next == UNICODE_TERMINATOR) ? Reader::READER_EOF : position;
     }
-    
+
     int32_t UTF8Decoder::utf8to32(wchar_t* unicode, int32_t length)
     {
         int32_t position = 0;
         uint32_t next = readNext();
-        
+
         while (next != UNICODE_TERMINATOR)
         {
             if (!isValidNext(next))
@@ -321,10 +321,10 @@ namespace Lucene
                 break;
             next = readNext();
         }
-        
+
         return (position == 0 && next == UNICODE_TERMINATOR) ? Reader::READER_EOF : position;
     }
-    
+
     int32_t UTF8Decoder::decode(wchar_t* unicode, int32_t length)
     {
         #ifdef LPP_UNICODE_CHAR_SIZE_2
@@ -333,42 +333,42 @@ namespace Lucene
         return utf8to32(unicode, length);
         #endif
     }
-    
+
     UTF8DecoderStream::UTF8DecoderStream(ReaderPtr reader)  : UTF8Decoder(NULL, NULL)
     {
         this->reader = reader;
     }
-    
+
     UTF8DecoderStream::~UTF8DecoderStream()
     {
     }
-    
+
     uint32_t UTF8DecoderStream::readNext()
     {
         int32_t next = reader->read();
         return next == Reader::READER_EOF ? UNICODE_TERMINATOR : (uint32_t)next;
     }
-    
+
     UTF16Decoder::UTF16Decoder(const uint16_t* utf16Begin, const uint16_t* utf16End)
     {
         this->utf16Begin = utf16Begin;
         this->utf16End = utf16End;
     }
-    
+
     UTF16Decoder::~UTF16Decoder()
     {
     }
-    
+
     uint32_t UTF16Decoder::readNext()
     {
         return utf16Begin == utf16End ? (uint32_t)UNICODE_TERMINATOR : (uint32_t)*utf16Begin++;
     }
-    
+
     int32_t UTF16Decoder::utf16to32(wchar_t* unicode, int32_t length)
     {
         int32_t position = 0;
         uint32_t next = readNext();
-        
+
         while (next != UNICODE_TERMINATOR)
         {
             uint32_t cp = mask16(next);
@@ -390,15 +390,15 @@ namespace Lucene
                 break;
             next = readNext();
         }
-        
+
         return (position == 0 && next == UNICODE_TERMINATOR) ? Reader::READER_EOF : position;
     }
-    
+
     int32_t UTF16Decoder::utf16to16(wchar_t* unicode, int32_t length)
     {
         int32_t position = 0;
         uint32_t next = readNext();
-        
+
         while (next != UNICODE_TERMINATOR)
         {
             unicode[position++] = static_cast<wchar_t>(next);
@@ -406,10 +406,10 @@ namespace Lucene
                 break;
             next = readNext();
         }
-        
+
         return (position == 0 && next == UNICODE_TERMINATOR) ? Reader::READER_EOF : position;
     }
-    
+
     int32_t UTF16Decoder::decode(wchar_t* unicode, int32_t length)
     {
         #ifdef LPP_UNICODE_CHAR_SIZE_2
