@@ -124,10 +124,10 @@ namespace Lucene
 
     void MultiLevelSkipListReader::close()
     {
-        for (Collection<IndexInputPtr>::iterator skip = skipStream.begin(); skip != skipStream.end(); ++skip)
+        for (int32_t i = 1; i < skipStream.size(); ++i)
         {
-            if (*skip)
-                (*skip)->close();
+            if (skipStream[i])
+                skipStream[i]->close();
         }
     }
 
