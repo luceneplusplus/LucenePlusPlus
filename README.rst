@@ -3,7 +3,7 @@ Lucene++
 
 Welcome to lucene++ version **3.0.3**.
 
-Lucene++ is an up to date C++ port of the popular Java Lucene library, a high-performance, full-featured text search engine.
+Lucene++ is an up to date C++ port of the popular Java `Lucene <http://lucene.apache.org/>`_ library, a high-performance, full-featured text search engine.
 
 
 Components
@@ -27,7 +27,7 @@ Official `Java Lucene <http://lucene.apache.org/java/docs/index.html>`_ - useful
 Build Instructions using CMake
 ------------------------------
 
-You'll need boost installed somewhere.
+You'll need the `Boost <http://www.boost.org>`_ libraries installed somewhere.
 
 On Debian systems, the following packages are required:
 
@@ -37,6 +37,24 @@ On Debian systems, the following packages are required:
 - libboost-thread-dev
 - libboost-iostreams-dev
 - libboost-test-dev
+
+.. note::
+
+   At present, you must use Boost 1.49 or older. There is an incompatibility
+   to Boost 1.50 and newer that causes ``make`` to fail. See `issue #30`__.
+
+__ https://github.com/luceneplusplus/LucenePlusPlus/issues/30
+
+To build the library the following commands should be issued::
+
+    $ cmake .
+    $ make
+    $ make install
+
+To build the demo programs, execute the following after having first built
+the library::
+
+    $ make indexfiles searchfiles deletefiles
 
 
 Build Instructions using Waf
@@ -60,7 +78,7 @@ Additionally static builds of the following libraries are required for a success
 - boost::iostreams
 - boost::unit_test_framework
 
-The libraries and headers should be made available at a standard prefix (/usr/local for example).
+The libraries and headers should be made available at a standard prefix (``/usr/local`` for example).
 
 
 Build Instructions for Windows systems
@@ -68,11 +86,11 @@ Build Instructions for Windows systems
 
 Open solution lucene++.sln located in the *msvc* folder into Visual Studio 2008 and build.
 
-**Note: "BOOST_ROOT" environment variable must be defined to point to the boost library directory (eg. c:\\boost_1_44_0)**
+**Note: "BOOST_ROOT" environment variable must be defined to point to the Boost library directory (eg. c:\\boost_1_44_0)**
 
-You'll need boost installed.
+You'll need Boost installed.
 
-`BoostPro <http://www.boostpro.com>`_ has some precompiled windows packages. You'll need the following extras installed::
+`BoostPro <http://www.boostpro.com>`_ has some precompiled Windows packages. You'll need the following extras installed::
 
 - boost::system
 - boost::thread
@@ -86,9 +104,9 @@ You'll need boost installed.
 Building Performance
 --------------------
 
-Use of ccache will speed up build times a lot. I found it easiest to add the /usr/lib/ccache directory to the beginning of your paths. This works for most common compilers.
+Use of ccache will speed up build times a lot. I found it easiest to add the ``/usr/lib/ccache`` directory to the beginning of your paths. This works for most common compilers::
 
-PATH=/usr/lib/ccache:$PATH
+    PATH=/usr/lib/ccache:$PATH
 
 
 To run unit test suite
