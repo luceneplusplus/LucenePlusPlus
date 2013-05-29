@@ -164,10 +164,10 @@ namespace Lucene
         {
             try
             {
-                for (boost::filesystem::wdirectory_iterator dir(path.c_str()); dir != boost::filesystem::wdirectory_iterator(); ++dir)
+                for (boost::filesystem::directory_iterator dir(path.c_str()); dir != boost::filesystem::directory_iterator(); ++dir)
                 {
                     if (!filesOnly || !boost::filesystem::is_directory(dir->status()))
-                        dirList.add(dir->path().filename().c_str());
+                        dirList.add(dir->path().filename().wstring().c_str());
                 }
                 return true;
             }
@@ -202,9 +202,9 @@ namespace Lucene
         {
             try
             {
-                boost::filesystem::wpath join(path.c_str());
+                boost::filesystem::path join(path.c_str());
                 join /= file.c_str();
-                return join.directory_string().c_str();
+                return join.wstring().c_str();
             }
             catch (...)
             {
@@ -217,7 +217,7 @@ namespace Lucene
             try
             {
                 boost::filesystem::wpath parentPath(path.c_str());
-                return parentPath.parent_path().directory_string().c_str();
+                return parentPath.parent_path().wstring().c_str();
             }
             catch (...)
             {
@@ -230,7 +230,7 @@ namespace Lucene
             try
             {
                 boost::filesystem::wpath fileName(path.c_str());
-                return fileName.filename().c_str();
+                return fileName.filename().wstring().c_str();
             }
             catch (...)
             {
