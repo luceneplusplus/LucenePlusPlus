@@ -54,3 +54,30 @@ src/demo/searchfiles/msvc/Release DLL
 src/demo/searchfiles/msvc/Release Static
 src/demo/searchfiles/msvc/Debug DLL
 src/demo/searchfiles/msvc/Debug Static
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+Makefile
+cmake_install.cmake
+cmake_uninstall.cmake
+include/Config.h
+install_manifest.txt
+liblucene++-contrib.pc
+liblucene++.pc
+src/contrib/CMakeFiles/
+src/contrib/CTestTestfile.cmake
+src/contrib/Makefile
+src/contrib/cmake_install.cmake
+src/core/CMakeFiles/
+src/core/CTestTestfile.cmake
+src/core/Makefile
+src/core/cmake_install.cmake
+src/demo/CMakeFiles/
+src/demo/CTestTestfile.cmake
+src/demo/Makefile
+src/demo/cmake_install.cmake
+src/test/CMakeFiles/
+src/test/CTestTestfile.cmake
+src/test/Makefile
+src/test/cmake_install.cmake
+
