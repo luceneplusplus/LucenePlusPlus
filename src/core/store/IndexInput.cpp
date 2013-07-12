@@ -64,7 +64,7 @@ namespace Lucene
         for (int32_t shift = 7; (b & 0x80) != 0; shift += 7)
         {
             b = readByte();
-            i |= (b & 0x7f) << shift;
+            i |= (int64_t)(b & 0x7f) << shift;
         }
         return i;
     }
