@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(testReadVLong)
     uint8_t input[8] = { 213, 143, 132, 196, 172, 154, 129, 96 };
     std::memcpy(inputBytes.get(), input, 8);
     IndexInputPtr is = newLucene<MockIndexInput>(inputBytes);
-    BOOST_CHECK_EQUAL(is->readVLong(), -926873643);
+    BOOST_CHECK_EQUAL(is->readVLong(), 54048498881988565LL);
 }
 
 BOOST_AUTO_TEST_CASE(testReadString)

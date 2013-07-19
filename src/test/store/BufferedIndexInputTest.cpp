@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(testReadVLong)
     uint8_t input[8] = { 213, 143, 132, 196, 172, 154, 129, 96 };
     std::memcpy(inputBytes.get(), input, 8);
     TestableBufferedIndexInputRead indexInput(inputBytes.get(), 8);
-    BOOST_CHECK_EQUAL(indexInput.readVLong(), -926873643LL);
+    BOOST_CHECK_EQUAL(indexInput.readVLong(), 54048498881988565LL);
 }
 
 BOOST_AUTO_TEST_CASE(testReadString)
