@@ -13,7 +13,7 @@ from TaskGen import feature, after
 import Task
 
 APPNAME='Lucene++'
-VERSION='3.0.3.4'
+VERSION='3.0.4.0'
 
 top = '.'
 out = 'bin'
