@@ -421,10 +421,10 @@ namespace Lucene
                 // as there is no stale caching on the directory contents (NOTE: NFS clients often have such stale caching)
                 HashSet<String> files(directory->listAll());
                 int64_t genA = segmentInfos->getCurrentSegmentGeneration(files);
-                
-                segmentInfos->message(L"directory listing genA=" + genA);
-                
-                // Method 2: open segments.gen and read its contents.  Then we take the larger of the two gens.  This way, 
+
+                segmentInfos->message(L"directory listing genA=" + StringUtils::toString(genA));
+
+                // Method 2: open segments.gen and read its contents.  Then we take the larger of the two gens.  This way,
                 // if either approach is hitting a stale cache (NFS) we have a better chance of getting the right generation.
                 int64_t genB = -1;
                 for (int32_t i = 0; i < SegmentInfos::defaultGenFileRetryCount; ++i)
