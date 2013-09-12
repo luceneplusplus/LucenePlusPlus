@@ -78,7 +78,7 @@
 #@DEFINE_USE_CYCLIC_CHECK@ LPP_USE_CYCLIC_CHECK
 
 // Define to use custom allocator (useful in Windows builds and when using nedmalloc)
-#@DEFINE_USE_ALLOCATOR@ LPP_USE_ALLOCATOR
+#@DEFINE_USE_CUSTOM_ALLOCATOR@ LPP_USE_ALLOCATOR
 
 // Define to use nedmalloc memory allocator
 #@DEFINE_USE_NEDMALLOC@ LPP_USE_NEDMALLOC

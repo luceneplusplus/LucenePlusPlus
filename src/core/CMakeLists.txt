@@ -20,7 +20,11 @@ file(GLOB_RECURSE HEADERS ${lucene++-base_SOURCE_DIR}/include/*.h
 file(GLOB_RECURSE lucene_c_sources
   ${lucene++-lib_SOURCE_DIR}/util/*.c)
 
-  
+
+IF ( ENABLE_CUSTOM_ALLOCATOR )
+  ADD_DEFINITIONS(-DLPP_USE_ALLOCATOR)
+ENDIF()
+
 IF ( ENABLE_NEDMALLOC )
   ADD_DEFINITIONS(-DLPP_USE_NEDMALLOC)
 ENDIF()
@@ -51,12 +55,12 @@ SET_TARGET_PROPERTIES(lucene++ PROPERTIES
     SOVERSION ${LUCENE++_SOVERSION}
     COMPILE_FLAGS -DLPP_HAVE_DLL
 )
-TARGET_LINK_LIBRARIES(lucene++ 
-  lucene++-c 
+TARGET_LINK_LIBRARIES(lucene++
+  lucene++-c
   ${CMAKE_THREAD_LIBS_INIT}
   ${LUCENE_BOOST_LIBS} )
 install(TARGETS lucene++
-	        DESTINATION ${LIB_DESTINATION} 
+	        DESTINATION ${LIB_DESTINATION}
 	        COMPONENT runtime)
 
 #################################

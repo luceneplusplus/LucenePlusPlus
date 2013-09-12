@@ -62,6 +62,9 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 OPTION(ENABLE_PACKAGING
   "create build scripts for creating lucene++ packages"
   OFF)
+OPTION(ENABLE_CUSTOM_ALLOCATOR
+  "use custom memory allocator"
+  OFF)
 OPTION(ENABLE_NEDMALLOC
   "use nedmalloc for memory allocations"
   OFF)
@@ -75,17 +78,17 @@ OPTION(ENABLE_CYCLIC_CHECK
 #install path options
 SET(LIB_DESTINATION "lib" CACHE STRING "Define lib output directory name")
 
+IF ( ENABLE_CUSTOM_ALLOCATOR )
+  SET(DEFINE_USE_CUSTOM_ALLOCATOR "define")
+ELSE ( ENABLE_CUSTOM_ALLOCATOR )
+  SET(DEFINE_USE_CUSTOM_ALLOCATOR "undef")
+ENDIF ( ENABLE_CUSTOM_ALLOCATOR )
+
 IF ( ENABLE_NEDMALLOC )
   SET(DEFINE_USE_NEDMALLOC "define")
 ELSE ( ENABLE_NEDMALLOC )
   SET(DEFINE_USE_NEDMALLOC "undef")
 ENDIF ( ENABLE_NEDMALLOC )
-
-IF ( ENABLE_STANDARD_ALLOCATOR )
-  SET(DEFINE_USE_ALLOCATOR "undef")
-ELSE ( ENABLE_STANDARD_ALLOCATOR )
-  SET(DEFINE_USE_ALLOCATOR "define")
-ENDIF ( ENABLE_STANDARD_ALLOCATOR )
 
 IF ( ENABLE_CYCLIC_CHECK )
   SET(DEFINE_USE_CYCLIC_CHECK "define")
@@ -116,11 +119,11 @@ IF(CYGWIN)
   ADD_DEFINITIONS(-D__LARGE64_FILES)
 ENDIF(CYGWIN)
 
-#set ansi mode 
+#set ansi mode
 SET(ENABLE_ANSI_MODE OFF)
 IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(ENABLE_ANSI_MODE ON)
-  
+
   #exceptions:
   IF(MINGW OR CYGWIN)
     SET(ENABLE_ANSI_MODE OFF)
@@ -130,20 +133,20 @@ IF ( CMAKE_COMPILER_IS_GNUCC )
    IF( ENABLE_ANSI_MODE )
     SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ansi")
    ENDIF ( ENABLE_ANSI_MODE )
-ENDIF(CMAKE_COMPILER_IS_GNUCC) 
+ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
 ####################################
 #find boost
 ####################################
 SET(Boost_USE_STATIC_LIBS   ${LUCENE_USE_STATIC_BOOST_LIBS})
 SET(Boost_USE_MULTITHREADED ON)
-#Boost 1.38 required for bug fixes in basic_streambuf. 
+#Boost 1.38 required for bug fixes in basic_streambuf.
 #The following line fails in earlier builds, so if altered, may allow older versions of boost:
 #boost::gregorian::date date = parser.parse_date(paddedDate.c_str(), dateFormat->c_str(), svp);
 find_package( Boost 1.38.0 COMPONENTS date_time filesystem iostreams regex system thread unit_test_framework REQUIRED)
 IF (Boost_FOUND)
   MESSAGE( STATUS "boost found: includes in ${Boost_INCLUDE_DIRS}, library in ${Boost_LIBRARY_DIRS}")
-  SET(LUCENE_BOOST_LIBS 
+  SET(LUCENE_BOOST_LIBS
     ${Boost_FILESYSTEM_LIBRARY_RELEASE}
     ${Boost_IOSTREAMS_LIBRARY_RELEASE}
     ${Boost_REGEX_LIBRARY_RELEASE}
