@@ -135,6 +135,8 @@ IF ( CMAKE_COMPILER_IS_GNUCC )
    ENDIF ( ENABLE_ANSI_MODE )
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 
+SET( CMAKE_EXE_LINKER_FLAGS "-s")
+
 ####################################
 #find boost
 ####################################
