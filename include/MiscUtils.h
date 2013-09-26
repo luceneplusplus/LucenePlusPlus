@@ -125,7 +125,7 @@ namespace Lucene
         template <typename TYPE>
         static bool typeOf(LuceneObjectPtr object)
         {
-            return boost::dynamic_pointer_cast<TYPE>(object);
+            return boost::dynamic_pointer_cast<TYPE>(object).get() != NULL;
         }
         
         /// Return whether given Lucene objects are of equal type.

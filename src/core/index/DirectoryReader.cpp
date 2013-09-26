@@ -976,7 +976,7 @@ namespace Lucene
             
             SegmentMergeInfoPtr smi(newLucene<SegmentMergeInfo>(starts[i], termEnum, reader));
             smi->ord = i;
-            if (t ? termEnum->term() : smi->next())
+            if (t.get() != NULL ? termEnum->term().get() != NULL : smi->next())
                 queue->add(smi); // initialize queue
             else
                 smi->close();

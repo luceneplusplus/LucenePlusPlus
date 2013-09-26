@@ -15,9 +15,10 @@
 namespace Lucene
 {
     const int64_t QueryParserTokenManager::jjbitVec0[] = {0x1LL, 0x0LL, 0x0LL, 0x0LL};
-    const int64_t QueryParserTokenManager::jjbitVec1[] = {0xfffffffffffffffeLL, 0xffffffffffffffffLL, 0xffffffffffffffffLL, 0xffffffffffffffffLL};
-    const int64_t QueryParserTokenManager::jjbitVec3[] = {0x0LL, 0x0LL, 0xffffffffffffffffLL, 0xffffffffffffffffLL};
-    const int64_t QueryParserTokenManager::jjbitVec4[] = {0xfffefffffffffffeLL, 0xffffffffffffffffLL, 0xffffffffffffffffLL, 0xffffffffffffffffLL};
+    const int64_t QueryParserTokenManager::jjbitVec1[] = {static_cast<int64_t>(0xfffffffffffffffeLL), static_cast<int64_t>(0xffffffffffffffffLL), static_cast<int64_t>(0xffffffffffffffffLL), static_cast<int64_t>(0xffffffffffffffffLL)};
+    const int64_t QueryParserTokenManager::jjbitVec3[] = {0x0LL, 0x0LL, static_cast<int64_t>(0xffffffffffffffffLL), static_cast<int64_t>(0xffffffffffffffffLL)};
+    const int64_t QueryParserTokenManager::jjbitVec4[] = {static_cast<int64_t>(0xfffefffffffffffeLL), static_cast<int64_t>(0xffffffffffffffffLL), static_cast<int64_t>(0xffffffffffffffffLL), static_cast<int64_t>(0xffffffffffffffffLL)};
+
     const int32_t QueryParserTokenManager::jjnextStates[] = {15, 16, 18, 29, 32, 23, 33, 30, 20, 21, 32, 23, 33, 31, 34, 27, 2, 4, 5, 0, 1};
     
     /// Token literal values.

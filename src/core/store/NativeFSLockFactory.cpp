@@ -79,7 +79,7 @@ namespace Lucene
     bool NativeFSLock::lockExists()
     {
         SyncLock syncLock(this);
-        return lock;
+        return lock.get() != NULL;
     }
     
     bool NativeFSLock::obtain()
