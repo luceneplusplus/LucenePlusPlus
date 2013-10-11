@@ -38,11 +38,6 @@ On Debian systems, the following packages are required:
 - libboost-iostreams-dev
 - libboost-test-dev
 
-.. note::
-
-   At present, you must use Boost 1.49 or older. There is an incompatibility
-   to Boost 1.50 and newer that causes ``make`` to fail. See `issue #30`__.
-
 __ https://github.com/luceneplusplus/LucenePlusPlus/issues/30
 
 To build the library the following commands should be issued::
