@@ -19,12 +19,12 @@ namespace Lucene
                                          const String& errorAfter, wchar_t curChar)
     {
         StringStream buffer;
-        buffer << L"Lexical error at line " << errorLine << L", column " << errorColumn + L".  Encountered:";
+        buffer << L"Lexical error at line " << errorLine << L", column " << errorColumn << L".  Encountered:";
         if (EOFSeen)
             buffer << L"<EOF>";
         else
             buffer << L"\"" << addEscapes(String(1, curChar)) << L"\"";
-        buffer << L" (" + (int32_t)curChar << L"), after : \"" << addEscapes(errorAfter) + L"\"";
+        buffer << L" (" << (int32_t)curChar << L"), after : \"" << addEscapes(errorAfter) + L"\"";
         return buffer.str();
     }
     

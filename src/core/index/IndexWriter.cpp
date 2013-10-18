@@ -862,7 +862,7 @@ namespace Lucene
         finally.throwException();
         
         if (infoStream)
-            message(L"flushDocStores files=" + docWriter->closedFiles());
+            message(L"flushDocStores files=" + StringUtils::toString(docWriter->closedFiles()));
         
         useCompoundDocStore = mergePolicy->useCompoundDocStore(segmentInfos);
         HashSet<String> closedFiles(docWriter->closedFiles());
@@ -2359,7 +2359,7 @@ namespace Lucene
                 {
                     flushedDocCount = docWriter->flush(flushDocStores);
                     if (infoStream)
-                        message(L"flushedFiles=" + docWriter->getFlushedFiles());
+                        message(L"flushedFiles=" + StringUtils::toString(docWriter->getFlushedFiles()));
                     success = true;
                 }
                 catch (LuceneException& e)
