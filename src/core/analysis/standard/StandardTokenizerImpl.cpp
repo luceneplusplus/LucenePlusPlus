@@ -4,6 +4,8 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
+#include <boost/thread/once.hpp>
+
 #include "LuceneInc.h"
 #include "StandardTokenizerImpl.h"
 #include "StandardTokenizer.h"
@@ -202,112 +204,127 @@ namespace Lucene
     StandardTokenizerImpl::~StandardTokenizerImpl()
     {
     }
+
+    void StandardTokenizerImpl::ZZ_CMAP_INIT(CharArray& zz_cmap)
+    {
+        zz_cmap = CharArray::newInstance(ZZ_CMAP_LENGTH);
+        wchar_t* result = zz_cmap.get();
     
+        int32_t i = 0; // index in packed string
+        int32_t j = 0; // index in unpacked array
+        while (i < ZZ_CMAP_PACKED_LENGTH)
+        {
+            int32_t count = ZZ_CMAP_PACKED[i++];
+            wchar_t value = ZZ_CMAP_PACKED[i++];
+            do
+                result[j++] = value;
+            while (--count > 0);
+        }
+    }
+
     const wchar_t* StandardTokenizerImpl::ZZ_CMAP()
     {
+        static boost::once_flag once = BOOST_ONCE_INIT;
         static CharArray _ZZ_CMAP;
-        if (!_ZZ_CMAP)
-        {
-            _ZZ_CMAP = CharArray::newInstance(ZZ_CMAP_LENGTH);
-            wchar_t* result = _ZZ_CMAP.get();
-            
-            int32_t i = 0; // index in packed string
-            int32_t j = 0; // index in unpacked array
-            while (i < ZZ_CMAP_PACKED_LENGTH)
-            {
-                int32_t count = ZZ_CMAP_PACKED[i++];
-                wchar_t value = ZZ_CMAP_PACKED[i++];
-                do
-                    result[j++] = value;
-                while (--count > 0);
-            }
-        }
+        boost::call_once(once, ZZ_CMAP_INIT, _ZZ_CMAP);
         return _ZZ_CMAP.get();
+    }
+
+    void StandardTokenizerImpl::ZZ_ACTION_INIT(IntArray& zz_action)
+    {
+        zz_action = IntArray::newInstance(ZZ_ACTION_LENGTH);
+        int32_t* result = zz_action.get();
+
+        int32_t i = 0; // index in packed string
+        int32_t j = 0; // index in unpacked array
+        while (i < ZZ_ACTION_PACKED_LENGTH)
+        {
+            int32_t count = ZZ_ACTION_PACKED_0[i++];
+            int32_t value = ZZ_ACTION_PACKED_0[i++];
+            do
+                result[j++] = value;
+            while (--count > 0);
+        }
     }
     
     const int32_t* StandardTokenizerImpl::ZZ_ACTION()
     {
+        static boost::once_flag once = BOOST_ONCE_INIT;
         static IntArray _ZZ_ACTION;
-        if (!_ZZ_ACTION)
-        {
-            _ZZ_ACTION = IntArray::newInstance(ZZ_ACTION_LENGTH);
-            int32_t* result = _ZZ_ACTION.get();
-            
-            int32_t i = 0; // index in packed string
-            int32_t j = 0; // index in unpacked array
-            while (i < ZZ_ACTION_PACKED_LENGTH)
-            {
-                int32_t count = ZZ_ACTION_PACKED_0[i++];
-                int32_t value = ZZ_ACTION_PACKED_0[i++];
-                do
-                    result[j++] = value;
-                while (--count > 0);
-            }
-        }
+        boost::call_once(once, ZZ_ACTION_INIT, _ZZ_ACTION);
         return _ZZ_ACTION.get();
     }
-    
-    const  int32_t* StandardTokenizerImpl::ZZ_ROWMAP()
+
+    void StandardTokenizerImpl::ZZ_ROWMAP_INIT(IntArray& zz_rowmap)
+    {
+        zz_rowmap = IntArray::newInstance(ZZ_ROWMAP_LENGTH);
+        int32_t* result = zz_rowmap.get();
+
+        int32_t i = 0; // index in packed string
+        int32_t j = 0; // index in unpacked array
+        while (i < ZZ_ROWMAP_PACKED_LENGTH)
+        {
+            int32_t high = ZZ_ROWMAP_PACKED_0[i++] << 16;
+            result[j++] = high | ZZ_ROWMAP_PACKED_0[i++];
+        }
+    }
+
+    const int32_t* StandardTokenizerImpl::ZZ_ROWMAP()
     {
         static IntArray _ZZ_ROWMAP;
-        if (!_ZZ_ROWMAP)
-        {
-            _ZZ_ROWMAP = IntArray::newInstance(ZZ_ROWMAP_LENGTH);
-            int32_t* result = _ZZ_ROWMAP.get();
-            
-            int32_t i = 0; // index in packed string
-            int32_t j = 0; // index in unpacked array
-            while (i < ZZ_ROWMAP_PACKED_LENGTH)
-            {
-                int32_t high = ZZ_ROWMAP_PACKED_0[i++] << 16;
-                result[j++] = high | ZZ_ROWMAP_PACKED_0[i++];
-            }
-        }
+        static boost::once_flag once = BOOST_ONCE_INIT;
+        boost:call_once(once, ZZ_ROWMAP_INIT, _ZZ_ROWMAP);
         return _ZZ_ROWMAP.get();
+    }
+
+    void StandardTokenizerImpl::ZZ_TRANS_INIT(IntArray& zz_trans)
+    {
+        zz_trans = IntArray::newInstance(ZZ_TRANS_LENGTH);
+        int32_t* result = zz_trans.get();
+
+        int32_t i = 0; // index in packed string
+        int32_t j = 0; // index in unpacked array
+        while (i < ZZ_TRANS_PACKED_LENGTH)
+        {
+            int32_t count = ZZ_TRANS_PACKED_0[i++];
+            int32_t value = ZZ_TRANS_PACKED_0[i++];
+            --value;
+            do
+                result[j++] = value;
+            while (--count > 0);
+        }    
     }
     
     const int32_t* StandardTokenizerImpl::ZZ_TRANS()
     {
+        static boost::once_flag once = BOOST_ONCE_INIT;
         static IntArray _ZZ_TRANS;
-        if (!_ZZ_TRANS)
-        {
-            _ZZ_TRANS = IntArray::newInstance(ZZ_TRANS_LENGTH);
-            int32_t* result = _ZZ_TRANS.get();
-            
-            int32_t i = 0; // index in packed string
-            int32_t j = 0; // index in unpacked array
-            while (i < ZZ_TRANS_PACKED_LENGTH)
-            {
-                int32_t count = ZZ_TRANS_PACKED_0[i++];
-                int32_t value = ZZ_TRANS_PACKED_0[i++];
-                --value;
-                do
-                    result[j++] = value;
-                while (--count > 0);
-            }
-        }
+        boost::call_once(once, ZZ_TRANS_INIT, _ZZ_TRANS);
         return _ZZ_TRANS.get();
     }
-    
+
+    void StandardTokenizerImpl::ZZ_ATTRIBUTE_INIT(IntArray& zz_attribute)
+    {
+        zz_attribute = IntArray::newInstance(ZZ_ATTRIBUTE_LENGTH);
+        int32_t* result = zz_attribute.get();
+
+        int32_t i = 0; // index in packed string
+        int32_t j = 0; // index in unpacked array
+        while (i < ZZ_ATTRIBUTE_PACKED_LENGTH)
+        {
+            int32_t count = ZZ_ATTRIBUTE_PACKED_0[i++];
+            int32_t value = ZZ_ATTRIBUTE_PACKED_0[i++];
+            do
+                result[j++] = value;
+            while (--count > 0);
+        }
+    }
+
     const int32_t* StandardTokenizerImpl::ZZ_ATTRIBUTE()
     {
+        static boost::once_flag once = BOOST_ONCE_INIT;
         static IntArray _ZZ_ATTRIBUTE;
-        if (!_ZZ_ATTRIBUTE)
-        {
-            _ZZ_ATTRIBUTE = IntArray::newInstance(ZZ_ATTRIBUTE_LENGTH);
-            int32_t* result = _ZZ_ATTRIBUTE.get();
-            
-            int32_t i = 0; // index in packed string
-            int32_t j = 0; // index in unpacked array
-            while (i < ZZ_ATTRIBUTE_PACKED_LENGTH)
-            {
-                int32_t count = ZZ_ATTRIBUTE_PACKED_0[i++];
-                int32_t value = ZZ_ATTRIBUTE_PACKED_0[i++];
-                do
-                    result[j++] = value;
-                while (--count > 0);
-            }
-        }
+        boost::call_once(once, ZZ_ATTRIBUTE_INIT, _ZZ_ATTRIBUTE);
         return _ZZ_ATTRIBUTE.get();
     }
     
