@@ -42,7 +42,7 @@ namespace Lucene
         return startOffset;
     }
     
-    void TermVectorOffsetInfo::setStartOffset(int32_t endOffset)
+    void TermVectorOffsetInfo::setStartOffset(int32_t startOffset)
     {
         this->startOffset = startOffset;
     }
