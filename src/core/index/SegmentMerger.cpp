@@ -38,7 +38,7 @@ namespace Lucene
     const int32_t SegmentMerger::MAX_RAW_MERGE_DOCS = 4192;
     
     /// norms header placeholder
-    const uint8_t SegmentMerger::NORMS_HEADER[] = {'N', 'R', 'M', -1};
+    const uint8_t SegmentMerger::NORMS_HEADER[] = {'N', 'R', 'M', static_cast<uint8_t>(-1) };
     const int32_t SegmentMerger::NORMS_HEADER_LENGTH = 4;
     
     SegmentMerger::SegmentMerger(DirectoryPtr dir, const String& name)

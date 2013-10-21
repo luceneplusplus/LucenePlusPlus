@@ -73,7 +73,7 @@ namespace Lucene
             Collection<BooleanClausePtr> clauses;
             BooleanQueryPtr bq(boost::dynamic_pointer_cast<BooleanQuery>(*query));
             // check if we can split the query into clauses
-            bool splittable = bq;
+            bool splittable = bq.get() != NULL;
             if (splittable)
             {
                 splittable = bq->isCoordDisabled();

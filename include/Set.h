@@ -132,7 +132,7 @@ namespace Lucene
 
         operator bool() const
         {
-            return setContainer;
+            return setContainer.get() != NULL;
         }
 
         bool operator! () const
