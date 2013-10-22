@@ -4,8 +4,6 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
-#include <boost/thread/once.hpp>
-
 #include "LuceneInc.h"
 #include "StandardTokenizerImpl.h"
 #include "StandardTokenizer.h"
@@ -13,6 +11,8 @@
 #include "Token.h"
 #include "TermAttribute.h"
 #include "MiscUtils.h"
+
+#include <boost/thread/once.hpp>
 
 namespace Lucene
 {
@@ -273,7 +273,7 @@ namespace Lucene
     {
         static IntArray _ZZ_ROWMAP;
         static boost::once_flag once = BOOST_ONCE_INIT;
-        boost:call_once(once, ZZ_ROWMAP_INIT, _ZZ_ROWMAP);
+        boost::call_once(once, ZZ_ROWMAP_INIT, _ZZ_ROWMAP);
         return _ZZ_ROWMAP.get();
     }
 
