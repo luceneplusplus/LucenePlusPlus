@@ -27,7 +27,7 @@ namespace Lucene
         this->maxNumberOfSkipLevels = maxSkipLevels;
         this->skipInterval = Collection<int32_t>::newInstance(maxSkipLevels);
         this->skipStream[0] = skipStream;
-        this->inputIsBuffered = boost::dynamic_pointer_cast<BufferedIndexInput>(skipStream);
+        this->inputIsBuffered = boost::dynamic_pointer_cast<BufferedIndexInput>(skipStream) != NULL;
         this->skipInterval[0] = skipInterval;
         this->skipDoc = Collection<int32_t>::newInstance(maxSkipLevels);
 

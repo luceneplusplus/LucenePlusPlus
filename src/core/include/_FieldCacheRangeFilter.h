@@ -146,7 +146,7 @@ namespace Lucene
                 return false;
             if (lowerVal != otherFilter->lowerVal || upperVal != otherFilter->upperVal)
                 return false;
-            if (parser ? !parser->equals(otherFilter->parser) : otherFilter->parser)
+            if (parser ? !parser->equals(otherFilter->parser) : (otherFilter->parser != NULL))
                 return false;
             return true;
         }

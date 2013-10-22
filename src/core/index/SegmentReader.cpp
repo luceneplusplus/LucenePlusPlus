@@ -376,7 +376,7 @@ namespace Lucene
     bool SegmentReader::hasDeletions()
     {
         // Don't call ensureOpen() here (it could affect performance)
-        return deletedDocs;
+        return deletedDocs != NULL;
     }
     
     bool SegmentReader::usesCompoundFile(SegmentInfoPtr si)
@@ -923,7 +923,7 @@ namespace Lucene
     bool CoreReaders::termsIndexIsLoaded()
     {
         SyncLock syncLock(this);
-        return tis;
+        return tis != NULL;
     }
     
     void CoreReaders::loadTermsIndex(SegmentInfoPtr si, int32_t termsIndexDivisor)

@@ -687,7 +687,7 @@ namespace Lucene
     
     bool IndexWriter::verbose()
     {
-        return infoStream;
+        return infoStream != NULL;
     }
     
     void IndexWriter::setWriteLockTimeout(int64_t writeLockTimeout)

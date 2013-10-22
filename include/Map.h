@@ -82,7 +82,7 @@ namespace Lucene
 
         operator bool() const
         {
-            return mapContainer;
+            return mapContainer != NULL;
         }
 
         bool operator! () const

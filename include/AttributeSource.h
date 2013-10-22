@@ -95,7 +95,7 @@ namespace Lucene
         template <class ATTR>
         bool hasAttribute()
         {
-            return getAttribute(ATTR::_getClassName());
+            return getAttribute(ATTR::_getClassName()) != NULL;
         }
         
         /// Returns the instance of the passed in Attribute contained in this AttributeSource.
