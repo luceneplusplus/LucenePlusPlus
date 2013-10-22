@@ -27,39 +27,43 @@ namespace Lucene
         static const int32_t ZZ_BUFFERSIZE;
         
         /// Translates characters to character classes
+        static CharArray _ZZ_CMAP;
         static const wchar_t ZZ_CMAP_PACKED[];
         static const int32_t ZZ_CMAP_LENGTH;
         static const int32_t ZZ_CMAP_PACKED_LENGTH;
         
         /// Translates characters to character classes
-        static void ZZ_CMAP_INIT(CharArray& zz_action);
+        static void ZZ_CMAP_INIT();
         static const wchar_t* ZZ_CMAP();
         
         /// Translates DFA states to action switch labels.
+        static IntArray _ZZ_ACTION;
         static const wchar_t ZZ_ACTION_PACKED_0[];
         static const int32_t ZZ_ACTION_LENGTH;
         static const int32_t ZZ_ACTION_PACKED_LENGTH;
         
         /// Translates DFA states to action switch labels.
-        static void ZZ_ACTION_INIT(IntArray& zz_action);
+        static void ZZ_ACTION_INIT();
         static const int32_t* ZZ_ACTION();
         
         /// Translates a state to a row index in the transition table
+        static IntArray _ZZ_ROWMAP;
         static const wchar_t ZZ_ROWMAP_PACKED_0[];
         static const int32_t ZZ_ROWMAP_LENGTH;
         static const int32_t ZZ_ROWMAP_PACKED_LENGTH;
         
         /// Translates a state to a row index in the transition table
-        static void ZZ_ROWMAP_INIT(IntArray& zz_rowmap);
+        static void ZZ_ROWMAP_INIT();
         static const int32_t* ZZ_ROWMAP();
         
         /// The transition table of the DFA
+        static IntArray _ZZ_TRANS;
         static const wchar_t ZZ_TRANS_PACKED_0[];
         static const int32_t ZZ_TRANS_LENGTH;
         static const int32_t ZZ_TRANS_PACKED_LENGTH;
         
         /// The transition table of the DFA
-        static void ZZ_TRANS_INIT(IntArray& zz_trans);
+        static void ZZ_TRANS_INIT();
         static const int32_t* ZZ_TRANS();
         
         // error codes
@@ -70,12 +74,13 @@ namespace Lucene
         static const wchar_t* ZZ_ERROR_MSG[];
         
         /// ZZ_ATTRIBUTE[aState] contains the attributes of state aState
+        static IntArray _ZZ_ATTRIBUTE;
         static const wchar_t ZZ_ATTRIBUTE_PACKED_0[];
         static const int32_t ZZ_ATTRIBUTE_LENGTH;
         static const int32_t ZZ_ATTRIBUTE_PACKED_LENGTH;
         
         /// ZZ_ATTRIBUTE[aState] contains the attributes of state aState
-        static void ZZ_ATTRIBUTE_INIT(IntArray& zz_attribute);
+        static void ZZ_ATTRIBUTE_INIT();
         static const int32_t* ZZ_ATTRIBUTE();
         
         /// The input device
