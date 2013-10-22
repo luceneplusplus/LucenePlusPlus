@@ -18,8 +18,9 @@ namespace Lucene
 {
     /// Initial size of the lookahead buffer
     const int32_t StandardTokenizerImpl::ZZ_BUFFERSIZE = 16384;
-    
+
     /// Translates characters to character classes
+    CharArray StandardTokenizerImpl::_ZZ_CMAP;
     const wchar_t StandardTokenizerImpl::ZZ_CMAP_PACKED[] = 
     {
         L"\11\0\1\0\1\15\1\0\1\0\1\14\22\0\1\0\5\0\1\5"
@@ -84,7 +85,8 @@ namespace Lucene
     
     const int32_t StandardTokenizerImpl::ZZ_CMAP_LENGTH = 65536;
     const int32_t StandardTokenizerImpl::ZZ_CMAP_PACKED_LENGTH = 1154;
-    
+
+    IntArray StandardTokenizerImpl::_ZZ_ACTION;
     const wchar_t StandardTokenizerImpl::ZZ_ACTION_PACKED_0[] = 
     {
         L"\1\0\1\1\3\2\1\3\1\1\13\0\1\2\3\4"
@@ -95,7 +97,8 @@ namespace Lucene
     
     const int32_t StandardTokenizerImpl::ZZ_ACTION_LENGTH = 51;
     const int32_t StandardTokenizerImpl::ZZ_ACTION_PACKED_LENGTH = 50;
-    
+
+    IntArray StandardTokenizerImpl::_ZZ_ROWMAP;
     const wchar_t StandardTokenizerImpl::ZZ_ROWMAP_PACKED_0[] = 
     {
         L"\0\0\0\16\0\34\0\52\0\70\0\16\0\106\0\124"
@@ -109,7 +112,8 @@ namespace Lucene
     
     const int32_t StandardTokenizerImpl::ZZ_ROWMAP_LENGTH = 51;
     const int32_t StandardTokenizerImpl::ZZ_ROWMAP_PACKED_LENGTH = 102;
-    
+
+    IntArray StandardTokenizerImpl::_ZZ_TRANS;
     const wchar_t StandardTokenizerImpl::ZZ_TRANS_PACKED_0[] = 
     {
         L"\1\2\1\3\1\4\7\2\1\5\1\6\1\7\1\2"
@@ -167,7 +171,8 @@ namespace Lucene
         L"Error: could not match input",
         L"Error: pushback value was too large"
     };
-    
+
+    IntArray StandardTokenizerImpl::_ZZ_ATTRIBUTE;
     const wchar_t StandardTokenizerImpl::ZZ_ATTRIBUTE_PACKED_0[] = 
     {
         L"\1\0\1\11\3\1\1\11\1\1\13\0\4\1\2\0"
@@ -205,10 +210,10 @@ namespace Lucene
     {
     }
 
-    void StandardTokenizerImpl::ZZ_CMAP_INIT(CharArray& zz_cmap)
+    void StandardTokenizerImpl::ZZ_CMAP_INIT()
     {
-        zz_cmap = CharArray::newInstance(ZZ_CMAP_LENGTH);
-        wchar_t* result = zz_cmap.get();
+        _ZZ_CMAP = CharArray::newInstance(ZZ_CMAP_LENGTH);
+        wchar_t* result = _ZZ_CMAP.get();
     
         int32_t i = 0; // index in packed string
         int32_t j = 0; // index in unpacked array
@@ -225,15 +230,14 @@ namespace Lucene
     const wchar_t* StandardTokenizerImpl::ZZ_CMAP()
     {
         static boost::once_flag once = BOOST_ONCE_INIT;
-        static CharArray _ZZ_CMAP;
-        boost::call_once(once, ZZ_CMAP_INIT, _ZZ_CMAP);
+        boost::call_once(once, ZZ_CMAP_INIT);
         return _ZZ_CMAP.get();
     }
 
-    void StandardTokenizerImpl::ZZ_ACTION_INIT(IntArray& zz_action)
+    void StandardTokenizerImpl::ZZ_ACTION_INIT()
     {
-        zz_action = IntArray::newInstance(ZZ_ACTION_LENGTH);
-        int32_t* result = zz_action.get();
+        _ZZ_ACTION = IntArray::newInstance(ZZ_ACTION_LENGTH);
+        int32_t* result = _ZZ_ACTION.get();
 
         int32_t i = 0; // index in packed string
         int32_t j = 0; // index in unpacked array
@@ -250,15 +254,14 @@ namespace Lucene
     const int32_t* StandardTokenizerImpl::ZZ_ACTION()
     {
         static boost::once_flag once = BOOST_ONCE_INIT;
-        static IntArray _ZZ_ACTION;
-        boost::call_once(once, ZZ_ACTION_INIT, _ZZ_ACTION);
+        boost::call_once(once, ZZ_ACTION_INIT);
         return _ZZ_ACTION.get();
     }
 
-    void StandardTokenizerImpl::ZZ_ROWMAP_INIT(IntArray& zz_rowmap)
+    void StandardTokenizerImpl::ZZ_ROWMAP_INIT()
     {
-        zz_rowmap = IntArray::newInstance(ZZ_ROWMAP_LENGTH);
-        int32_t* result = zz_rowmap.get();
+        _ZZ_ROWMAP = IntArray::newInstance(ZZ_ROWMAP_LENGTH);
+        int32_t* result = _ZZ_ROWMAP.get();
 
         int32_t i = 0; // index in packed string
         int32_t j = 0; // index in unpacked array
@@ -271,16 +274,15 @@ namespace Lucene
 
     const int32_t* StandardTokenizerImpl::ZZ_ROWMAP()
     {
-        static IntArray _ZZ_ROWMAP;
         static boost::once_flag once = BOOST_ONCE_INIT;
-        boost:call_once(once, ZZ_ROWMAP_INIT, _ZZ_ROWMAP);
+        boost:call_once(once, ZZ_ROWMAP_INIT);
         return _ZZ_ROWMAP.get();
     }
 
-    void StandardTokenizerImpl::ZZ_TRANS_INIT(IntArray& zz_trans)
+    void StandardTokenizerImpl::ZZ_TRANS_INIT()
     {
-        zz_trans = IntArray::newInstance(ZZ_TRANS_LENGTH);
-        int32_t* result = zz_trans.get();
+        _ZZ_TRANS = IntArray::newInstance(ZZ_TRANS_LENGTH);
+        int32_t* result = _ZZ_TRANS.get();
 
         int32_t i = 0; // index in packed string
         int32_t j = 0; // index in unpacked array
@@ -298,15 +300,14 @@ namespace Lucene
     const int32_t* StandardTokenizerImpl::ZZ_TRANS()
     {
         static boost::once_flag once = BOOST_ONCE_INIT;
-        static IntArray _ZZ_TRANS;
-        boost::call_once(once, ZZ_TRANS_INIT, _ZZ_TRANS);
+        boost::call_once(once, ZZ_TRANS_INIT);
         return _ZZ_TRANS.get();
     }
 
-    void StandardTokenizerImpl::ZZ_ATTRIBUTE_INIT(IntArray& zz_attribute)
+    void StandardTokenizerImpl::ZZ_ATTRIBUTE_INIT()
     {
-        zz_attribute = IntArray::newInstance(ZZ_ATTRIBUTE_LENGTH);
-        int32_t* result = zz_attribute.get();
+        _ZZ_ATTRIBUTE = IntArray::newInstance(ZZ_ATTRIBUTE_LENGTH);
+        int32_t* result = _ZZ_ATTRIBUTE.get();
 
         int32_t i = 0; // index in packed string
         int32_t j = 0; // index in unpacked array
@@ -323,8 +324,7 @@ namespace Lucene
     const int32_t* StandardTokenizerImpl::ZZ_ATTRIBUTE()
     {
         static boost::once_flag once = BOOST_ONCE_INIT;
-        static IntArray _ZZ_ATTRIBUTE;
-        boost::call_once(once, ZZ_ATTRIBUTE_INIT, _ZZ_ATTRIBUTE);
+        boost::call_once(once, ZZ_ATTRIBUTE_INIT);
         return _ZZ_ATTRIBUTE.get();
     }
     
