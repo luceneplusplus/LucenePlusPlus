@@ -640,7 +640,7 @@ namespace Lucene
                 std::wcout << L"WARNING: would write new segments file, and " << result->totLoseDocCount << L" documents would be lost, if -fix were specified\n\n";
             else
             {
-                std::wcout << L"WARNING: " << result->totLoseDocCount + L" documents will be lost\n";
+                std::wcout << L"WARNING: " << result->totLoseDocCount << L" documents will be lost\n";
                 std::wcout << L"NOTE: will write new segments file in 5 seconds; this will remove " << result->totLoseDocCount;
                 std::wcout << L" docs from the index. THIS IS YOUR LAST CHANCE TO CTRL+C!\n";
                 for (int32_t sec = 0; sec < 5; ++sec)
