@@ -19,6 +19,7 @@
 #include <stdexcept>
 
 #include <boost/cstdint.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/variant.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
@@ -65,8 +66,8 @@ namespace Lucene
     typedef boost::shared_ptr<boost::interprocess::file_lock> filelockPtr;
     typedef boost::shared_ptr<boost::thread> threadPtr;
 
-    typedef boost::shared_ptr<std::ofstream> ofstreamPtr;
-    typedef boost::shared_ptr<std::ifstream> ifstreamPtr;
+    typedef boost::shared_ptr<boost::filesystem::ofstream> ofstreamPtr;
+    typedef boost::shared_ptr<boost::filesystem::ifstream> ifstreamPtr;
     typedef boost::shared_ptr<std::locale> localePtr;
 }
 

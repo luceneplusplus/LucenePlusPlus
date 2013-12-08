@@ -89,7 +89,7 @@ namespace Lucene
                 int32_t fd = _wopen(path.c_str(), _O_WRONLY | _O_CREAT | _O_BINARY, _S_IWRITE);
                 return _chsize(fd, (long)length) == 0;
                 #else
-                return truncate(StringUtils::toUTF8(path).c_str(), (off_t)length) == 0;
+                return truncate(boost::filesystem::path(path).c_str(), (off_t)length) == 0;
                 #endif
             }
             catch (...)

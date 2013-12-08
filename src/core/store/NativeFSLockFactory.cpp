@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
 #include "NativeFSLockFactory.h"
 #include "_NativeFSLockFactory.h"
@@ -119,11 +119,26 @@ namespace Lucene
         try
         {
             // we can get intermittent "access denied" here, so we treat this as failure to acquire the lock
-            std::ofstream f(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::out);
+            boost::filesystem::ofstream f(path, std::ios::binary | std::ios::out);
             
             if (f.is_open())
             {
-                lock = newInstance<boost::interprocess::file_lock>(StringUtils::toUTF8(path).c_str());
+                std::string lockpath;
+
+                // file_lock only accepts char* filenames and we cannot losslessly convert Unicode paths to
+                // char*. The usual way to work around this is to use 8.3 short names.
+#if defined(_WIN32) || defined(_WIN64)
+                wchar_t pathOut[MAX_PATH+1];
+                if (::GetShortPathNameW(path.c_str(), pathOut, MAX_PATH+1) != 0)
+                {
+                    lockpath = boost::filesystem::path(pathOut).string();
+                }
+                else
+#endif // Windows
+                {
+                    lockpath = boost::filesystem::path(path).string();
+                }
+                lock = newInstance<boost::interprocess::file_lock>(lockpath.c_str());
                 lock->lock();
             }
         }

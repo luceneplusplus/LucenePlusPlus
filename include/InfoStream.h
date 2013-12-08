@@ -8,7 +8,7 @@
 #define INFOSTREAM_H
 
 #include "LuceneObject.h"
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 
 namespace Lucene
 {
@@ -36,7 +36,7 @@ namespace Lucene
         LUCENE_CLASS(InfoStreamFile);
             
     protected:
-        std::wofstream file;
+        boost::filesystem::wofstream file;
     
     public:
         virtual InfoStreamFile& operator<< (const String& t);

@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include "SimpleFSDirectory.h"
 #include "_SimpleFSDirectory.h"
 #include "IndexOutput.h"
@@ -45,7 +45,7 @@ namespace Lucene
     
     InputFile::InputFile(const String& path)
     {
-        file = newInstance<std::ifstream>(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::in);
+        file = newInstance<boost::filesystem::ifstream>(path, std::ios::binary | std::ios::in);
         if (!file->is_open())
             boost::throw_exception(FileNotFoundException(path));
         position = 0;
@@ -175,7 +175,7 @@ namespace Lucene
     OutputFile::OutputFile(const String& path)
     {
         this->path = path;
-        file = newInstance<std::ofstream>(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::out);
+        file = newInstance<boost::filesystem::ofstream>(path, std::ios::binary | std::ios::out);
     }
     
     OutputFile::~OutputFile()
