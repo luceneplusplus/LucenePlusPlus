@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include "SimpleFSLockFactory.h"
 #include "_SimpleFSLockFactory.h"
 #include "FileUtils.h"
@@ -61,10 +61,10 @@ namespace Lucene
         }
         else if (!FileUtils::isDirectory(lockDir))
             boost::throw_exception(RuntimeException(L"Found regular file where directory expected: " + lockDir));
-        std::ofstream f;
+        boost::filesystem::ofstream f;
         try
         {
-            f.open(StringUtils::toUTF8(FileUtils::joinPath(lockDir, lockFile)).c_str(), std::ios::binary | std::ios::out);
+            f.open(FileUtils::joinPath(lockDir, lockFile), std::ios::binary | std::ios::out);
         }
         catch (...)
         {

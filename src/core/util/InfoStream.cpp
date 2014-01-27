@@ -19,7 +19,7 @@ namespace Lucene
     {
     }
     
-    InfoStreamFile::InfoStreamFile(const String& path) : file(StringUtils::toUTF8(path).c_str())
+    InfoStreamFile::InfoStreamFile(const String& path) : file(path)
     {
     }
     

@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include "FSDirectory.h"
 #include "NativeFSLockFactory.h"
 #include "SimpleFSDirectory.h"
@@ -158,10 +158,10 @@ namespace Lucene
         
         for (int32_t retryCount = 0; retryCount < 5; ++retryCount)
         {
-            std::ofstream syncFile;
+            boost::filesystem::ofstream syncFile;
             try
             {
-                syncFile.open(StringUtils::toUTF8(path).c_str(), std::ios::binary | std::ios::in | std::ios::out);
+                syncFile.open(path, std::ios::binary | std::ios::in | std::ios::out);
             }
             catch (...)
             {

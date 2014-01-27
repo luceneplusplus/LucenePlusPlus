@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include "FileReader.h"
 #include "MiscUtils.h"
 #include "FileUtils.h"
@@ -18,7 +18,7 @@ namespace Lucene
     
     FileReader::FileReader(const String& fileName)
     {
-        this->file = newInstance<std::ifstream>(StringUtils::toUTF8(fileName).c_str(), std::ios::binary | std::ios::in);
+        this->file = newInstance<boost::filesystem::ifstream>(fileName, std::ios::binary | std::ios::in);
         if (!file->is_open())
             boost::throw_exception(FileNotFoundException(fileName));
         _length = FileUtils::fileLength(fileName);

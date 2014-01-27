@@ -43,7 +43,7 @@ namespace Lucene
         {
             try
             {
-                file.open(StringUtils::toUTF8(path).c_str(), _length);
+                file.open(boost::filesystem::wpath(path), _length);
             }
             catch (...)
             {

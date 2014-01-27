@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 #include <iostream>
 #include "IndexReader.h"
 #include "_IndexReader.h"
@@ -383,8 +383,8 @@ namespace Lucene
                 {
                     std::wcout << L"extract " << *file << L" with " << len << L" bytes to local directory...";
                     IndexInputPtr ii(cfr->openInput(*file));
-                    
-                    std::ofstream f(StringUtils::toUTF8(*file).c_str(), std::ios::binary | std::ios::out);
+
+                    boost::filesystem::ofstream f(*file, std::ios::binary | std::ios::out);
                     
                     // read and write with a small buffer, which is more effective than reading byte by byte
                     ByteArray buffer(ByteArray::newInstance(1024));
