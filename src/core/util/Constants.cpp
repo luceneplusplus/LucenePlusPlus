@@ -20,28 +20,28 @@ namespace Lucene
     #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
     String Constants::OS_NAME = L"BSD";
     #endif
-    
-    String Constants::LUCENE_MAIN_VERSION = L"3.0.3.4";
-    String Constants::LUCENE_VERSION = L"3.0.3";
-    
+
+    String Constants::LUCENE_MAIN_VERSION = L"3.0.5";
+    String Constants::LUCENE_VERSION = L"3.0.5";
+
     Constants::Constants()
     {
         // private
     }
-    
+
     Constants::~Constants()
     {
     }
-    
+
     LuceneVersion::LuceneVersion()
     {
         // private
     }
-    
+
     LuceneVersion::~LuceneVersion()
     {
     }
-    
+
     bool LuceneVersion::onOrAfter(LuceneVersion::Version first, LuceneVersion::Version second)
     {
         return (first >= second);
