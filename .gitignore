@@ -56,6 +56,7 @@ src/demo/searchfiles/msvc/Debug DLL
 src/demo/searchfiles/msvc/Debug Static
 CMakeCache.txt
 CMakeFiles/
+build/
 CTestTestfile.cmake
 Makefile
 cmake_install.cmake
