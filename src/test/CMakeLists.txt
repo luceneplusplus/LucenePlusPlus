@@ -38,7 +38,3 @@ target_link_libraries(lucene++-tester
   lucene++-contrib
   ${lucene_boost_libs}
 )
-
-add_test(lucene++-tester
-  ${EXECUTABLE_OUTPUT_PATH}/lucene++-tester -p --test_dir=${lucene++-tester_SOURCE_DIR}/testfiles
-)
