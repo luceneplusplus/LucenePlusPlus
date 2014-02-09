@@ -19,7 +19,7 @@ namespace Lucene
     public:
         typedef Map<KEY, VALUE, LESS> this_type;
         typedef std::pair<KEY, VALUE> key_value;
-        typedef std::map< KEY, VALUE, LESS, LuceneAllocator<key_value> > map_type;
+        typedef std::map<KEY, VALUE, LESS> map_type;
         typedef typename map_type::iterator iterator;
         typedef typename map_type::const_iterator const_iterator;
         typedef KEY key_type;

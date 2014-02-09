@@ -1,78 +1,57 @@
-PROJECT (lucene++-lib)
+project(lucene++-lib)
 
-####################################
-# THE lucene++ library
-####################################
+include_directories(
+  ${lucene++_SOURCE_DIR}/include
+  ${lucene++-lib_SOURCE_DIR}/include
+  ${Boost_INCLUDE_DIRS}
+)
+
 file(GLOB_RECURSE lucene_sources
-  ${lucene++-lib_SOURCE_DIR}/search/*.cpp
-  ${lucene++-lib_SOURCE_DIR}/analysis/*.cpp
-  ${lucene++-lib_SOURCE_DIR}/document/*.cpp
-  ${lucene++-lib_SOURCE_DIR}/index/*.cpp
-  ${lucene++-lib_SOURCE_DIR}/queryparser/*.cpp
-  ${lucene++-lib_SOURCE_DIR}/store/*.cpp
-  ${lucene++-lib_SOURCE_DIR}/util/*.cpp)
+  search/*.cpp
+  analysis/*.cpp
+  document/*.cpp
+  index/*.cpp
+  queryparser/*.cpp
+  store/*.cpp
+  util/*.c*)
 
-file(GLOB_RECURSE INTERN_HEADERS ${lucene++-libs_SOURCE_DIR}/include/*.h)
-file(GLOB_RECURSE HEADERS ${lucene++-base_SOURCE_DIR}/include/*.h
-                          ${lucene++-base_BINARY_DIR}/include/*.h)
-
-#C sources...
-file(GLOB_RECURSE lucene_c_sources
-  ${lucene++-lib_SOURCE_DIR}/util/*.c)
-
-
-IF ( ENABLE_CUSTOM_ALLOCATOR )
-  ADD_DEFINITIONS(-DLPP_USE_ALLOCATOR)
-ENDIF()
-
-IF ( ENABLE_NEDMALLOC )
-  ADD_DEFINITIONS(-DLPP_USE_NEDMALLOC)
-ENDIF()
-
-LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
-INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
-INCLUDE_DIRECTORIES(${lucene++-base_SOURCE_DIR}/include)
-INCLUDE_DIRECTORIES(${lucene++-lib_SOURCE_DIR}/include)
-ADD_DEFINITIONS(-DLPP_BUILDING_LIB)
-ADD_LIBRARY(lucene++-c STATIC
-	${lucene_c_sources}
+file(GLOB_RECURSE lucene_internal_headers
+  ${lucene++-lib_SOURCE_DIR}/include/*.h
 )
-install(FILES ${HEADERS}
-		        DESTINATION include/lucene++
-		        COMPONENT development)
 
-#################################
-# lucene++ shared library
-#################################
-ADD_LIBRARY(lucene++ SHARED
-	${lucene_sources} ${HEADERS} ${INTERN_HEADERS}
+file(GLOB_RECURSE lucene_headers
+  include/*.h
 )
-SET(PCH_ADDITIONAL_COMPILER_FLAGS_lucene++ -DLPP_HAVE_DLL)
-ADD_PRECOMPILED_HEADER(lucene++ ${lucene++-lib_SOURCE_DIR}/include/LuceneInc.h)
-#set properties on the libraries
-SET_TARGET_PROPERTIES(lucene++ PROPERTIES
-    VERSION ${LUCENE++_VERSION}
-    SOVERSION ${LUCENE++_SOVERSION}
-    COMPILE_FLAGS -DLPP_HAVE_DLL
+
+add_definitions(-DLPP_BUILDING_LIB)
+
+add_library(lucene++ SHARED
+  ${lucene_sources}
 )
-TARGET_LINK_LIBRARIES(lucene++
-  lucene++-c
+
+set(PCH_ADDITIONAL_COMPILER_FLAGS_lucene++ -DLPP_HAVE_DLL)
+
+add_precompiled_header(lucene++
+  ${lucene++-lib_SOURCE_DIR}/include/LuceneInc.h
+)
+
+target_link_libraries(lucene++
   ${CMAKE_THREAD_LIBS_INIT}
-  ${LUCENE_BOOST_LIBS} )
+  ${lucene_boost_libs}
+)
+
+set_target_properties(lucene++ PROPERTIES
+  VERSION ${lucene++_VERSION}
+  SOVERSION ${lucene++_SOVERSION}
+  COMPILE_FLAGS -DLPP_HAVE_DLL
+)
+
+install(FILES ${lucene_headers}
+  DESTINATION include/lucene++
+  COMPONENT development
+)
+
 install(TARGETS lucene++
-	        DESTINATION ${LIB_DESTINATION}
-	        COMPONENT runtime)
-
-#################################
-# lucene++ static library
-#################################
-ADD_LIBRARY(lucene++-static STATIC EXCLUDE_FROM_ALL
-	${lucene_sources} ${HEADERS} ${INTERN_HEADERS}
+  DESTINATION ${LIB_DESTINATION}
+  COMPONENT runtime
 )
-ADD_PRECOMPILED_HEADER(lucene++-static ${lucene++-lib_SOURCE_DIR}/include/LuceneInc.h)
-#set properties on the libraries
-SET_TARGET_PROPERTIES(lucene++-static PROPERTIES
-    VERSION ${LUCENE++_VERSION}
-    SOVERSION ${LUCENE++_SOVERSION}
-)
-

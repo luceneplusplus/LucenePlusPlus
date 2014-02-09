@@ -77,16 +77,6 @@
 // Define to enable cyclic checking in debug builds
 #@DEFINE_USE_CYCLIC_CHECK@ LPP_USE_CYCLIC_CHECK
 
-// Define to use custom allocator (useful in Windows builds and when using nedmalloc)
-#@DEFINE_USE_CUSTOM_ALLOCATOR@ LPP_USE_ALLOCATOR
-
-// Define to use nedmalloc memory allocator
-#@DEFINE_USE_NEDMALLOC@ LPP_USE_NEDMALLOC
-
-#ifdef LPP_USE_NEDMALLOC
-#define EXTSPEC LPPAPI
-#endif
-
 // Make internal bitset storage public
 #define BOOST_DYNAMIC_BITSET_DONT_USE_FRIENDS
 

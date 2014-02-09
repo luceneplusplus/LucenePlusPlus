@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 
 PROJECT_NAME           = Lucene++
-PROJECT_NUMBER         = @LUCENE++_SOVERSION@
+PROJECT_NUMBER         = @lucene++_SOVERSION@
 
 OUTPUT_DIRECTORY       = @PROJECT_BINARY_DIR@/doc
 OUTPUT_LANGUAGE        = English
@@ -24,7 +24,7 @@ REPEAT_BRIEF           = YES
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = NO
-STRIP_FROM_PATH        = 
+STRIP_FROM_PATH        =
 INTERNAL_DOCS          = NO
 STRIP_CODE_COMMENTS    = YES
 CASE_SENSE_NAMES       = YES
@@ -45,7 +45,7 @@ GENERATE_TESTLIST      = YES
 GENERATE_BUGLIST       = YES
 GENERATE_DEPRECATEDLIST= YES
 ALIASES                = "memory=\par Memory management:\n"
-ENABLED_SECTIONS       = 
+ENABLED_SECTIONS       =
 MAX_INITIALIZER_LINES  = 30
 OPTIMIZE_OUTPUT_FOR_C  = YES
 OPTIMIZE_OUTPUT_JAVA   = NO
@@ -93,11 +93,11 @@ EXCLUDE_PATTERNS       = "**/.svn/**" \
                          "*/md5/*" \
                          "*/nedmalloc/*" \
                          "*/utf8/*"
-EXAMPLE_PATH           = 
-EXAMPLE_PATTERNS       = 
+EXAMPLE_PATH           =
+EXAMPLE_PATTERNS       =
 EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             = 
-INPUT_FILTER           = 
+IMAGE_PATH             =
+INPUT_FILTER           =
 FILTER_SOURCE_FILES    = NO
 
 #---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ REFERENCES_RELATION    = YES
 
 ALPHABETICAL_INDEX     = NO
 COLS_IN_ALPHA_INDEX    = 5
-IGNORE_PREFIX          = 
+IGNORE_PREFIX          =
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -126,7 +126,7 @@ HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = @PROJECT_BINARY_DIR@/doc/helpheader.htm
 HTML_FOOTER            = @PROJECT_BINARY_DIR@/doc/helpfooter.htm
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        =
 HTML_ALIGN_MEMBERS     = YES
 HTML_DYNAMIC_SECTIONS  = YES
 
@@ -151,8 +151,8 @@ LATEX_CMD_NAME         = @LATEX_COMPILER@
 MAKEINDEX_CMD_NAME     = makeindex
 COMPACT_LATEX          = NO
 PAPER_TYPE             = a4wide
-EXTRA_PACKAGES         = 
-LATEX_HEADER           = 
+EXTRA_PACKAGES         =
+LATEX_HEADER           =
 PDF_HYPERLINKS         = YES
 USE_PDFLATEX           = NO
 LATEX_BATCHMODE        = NO
@@ -165,8 +165,8 @@ GENERATE_RTF           = @DOCS_RTF@
 RTF_OUTPUT             = rtf
 COMPACT_RTF            = NO
 RTF_HYPERLINKS         = NO
-RTF_STYLESHEET_FILE    = 
-RTF_EXTENSIONS_FILE    = 
+RTF_STYLESHEET_FILE    =
+RTF_EXTENSIONS_FILE    =
 
 #---------------------------------------------------------------------------
 # configuration options related to the man page output
@@ -181,8 +181,8 @@ MAN_LINKS              = NO
 #---------------------------------------------------------------------------
 
 GENERATE_XML           = @DOCS_XML@
-XML_SCHEMA             = 
-XML_DTD                = 
+XML_SCHEMA             =
+XML_DTD                =
 XML_OUTPUT             = xml
 XML_PROGRAMLISTING     = YES
 
@@ -193,33 +193,33 @@ XML_PROGRAMLISTING     = YES
 GENERATE_AUTOGEN_DEF   = NO
 
 #---------------------------------------------------------------------------
-# Configuration options related to the preprocessor   
+# Configuration options related to the preprocessor
 #---------------------------------------------------------------------------
 
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = 
-INCLUDE_FILE_PATTERNS  = 
+INCLUDE_PATH           =
+INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = ""
 
-EXPAND_AS_DEFINED      = 
+EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 
 #---------------------------------------------------------------------------
-# Configuration::addtions related to external references   
+# Configuration::addtions related to external references
 #---------------------------------------------------------------------------
 
-TAGFILES               = 
+TAGFILES               =
 GENERATE_TAGFILE       = @DOCS_TAGFILE_LOCATION@
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = @PERL_EXECUTABLE@
 
 #---------------------------------------------------------------------------
-# Configuration options related to the dot tool   
+# Configuration options related to the dot tool
 #---------------------------------------------------------------------------
 
 CLASS_DIAGRAMS         = YES
@@ -233,18 +233,18 @@ INCLUDED_BY_GRAPH      = YES
 GRAPHICAL_HIERARCHY    = YES
 DOT_IMAGE_FORMAT       = png
 DOT_PATH               = @DOXYGEN_DOT_EXECUTABLE@
-DOTFILE_DIRS           = 
+DOTFILE_DIRS           =
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
 DOT_FONTNAME           = FreeSans
-DOT_FONTPATH           = 
+DOT_FONTPATH           =
 DOT_FONTSIZE           = 10
 DOT_GRAPH_MAX_NODES    = 50
 DOT_MULTI_TARGETS      = NO
 DOT_TRANSPARENT        = NO
 
 #---------------------------------------------------------------------------
-# Configuration::addtions related to the search engine   
+# Configuration::addtions related to the search engine
 #---------------------------------------------------------------------------
 
 SEARCHENGINE           = YES

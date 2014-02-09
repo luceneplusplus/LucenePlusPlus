@@ -21,7 +21,7 @@ namespace Lucene
         LUCENE_CLASS(BitSet);
 
     protected:
-        typedef boost::dynamic_bitset< uint64_t, LuceneAllocator<uint64_t> > bitset_type;
+        typedef boost::dynamic_bitset<uint64_t> bitset_type;
         bitset_type bitSet;
 
     public:

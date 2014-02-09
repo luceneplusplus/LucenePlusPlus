@@ -7,20 +7,11 @@
 #include "LuceneInc.h"
 #include "LuceneAllocator.h"
 
-#ifdef LPP_USE_NEDMALLOC
-extern "C"
-{
-#include "nedmalloc/nedmalloc.h"
-}
-#endif
-
 namespace Lucene
 {
     void* AllocMemory(size_t size)
     {
-        #if defined(LPP_USE_NEDMALLOC)
-        return nedalloc::nedmalloc(size);
-        #elif (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG)
+        #if (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG)
         return _malloc_dbg(size, _NORMAL_BLOCK, __FILE__, __LINE__);
         #else
         return malloc(size);
@@ -36,9 +27,7 @@ namespace Lucene
             FreeMemory(memory);
             return NULL;
         }
-        #if defined(LPP_USE_NEDMALLOC)
-        return nedalloc::nedrealloc(memory, size);
-        #elif defined(_WIN32) && !defined(NDEBUG)
+        #if defined(_WIN32) && !defined(NDEBUG)
         return _realloc_dbg(memory, size, _NORMAL_BLOCK, __FILE__, __LINE__);
         #else
         return realloc(memory, size);
@@ -49,19 +38,10 @@ namespace Lucene
     {
         if (memory == NULL)
             return;
-        #if defined(LPP_USE_NEDMALLOC)
-        nedalloc::nedfree(memory);
-        #elif defined(_WIN32) && !defined(NDEBUG)
+        #if defined(_WIN32) && !defined(NDEBUG)
         _free_dbg(memory, _NORMAL_BLOCK);
         #else
         free(memory);
-        #endif
-    }
-
-    void ReleaseThreadCache()
-    {
-        #if defined(LPP_USE_NEDMALLOC)
-        nedalloc::neddisablethreadcache(0);
         #endif
     }
 }

@@ -22,9 +22,9 @@ MACRO(SET_BLANK)
 ENDMACRO(SET_BLANK)
 
 IF (ENABLE_DOCS)
-    OPTION(DOCS_HTML_HELP 
+    OPTION(DOCS_HTML_HELP
         "Doxygen should compile HTML into a Help file (CHM)." NO)
-        
+
     OPTION(DOCS_HTML
         "Doxygen should build HTML documentation." YES)
     OPTION(DOCS_XML
@@ -35,7 +35,7 @@ IF (ENABLE_DOCS)
         "Doxygen should build man documentation." NO)
     OPTION(DOCS_TAGFILE
         "Doxygen should build a tagfile." NO)
-        
+
     OPTION(DOCS_LATEX
         "Doxygen should build Latex documentation." NO )
 
@@ -48,12 +48,12 @@ IF (ENABLE_DOCS)
         DOCS_MAN
         DOCS_TAGFILE
     )
-    
+
     #
     # Check for the tools
     #
     FIND_PACKAGE(Doxygen)
-    
+
     IF ( DOXYGEN_FOUND )
         # This creates a new target to build documentation.
         # It runs ${DOXYGEN_EXECUTABLE} which is the full path and executable to
@@ -64,7 +64,7 @@ IF (ENABLE_DOCS)
         ADD_CUSTOM_TARGET(doc
             ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/doc/doxyfile
         )
-        
+
         IF ( DOCS_HTML_HELP )
             IF ( NOT DOCS_HTML )
                 MESSAGE ( FATAL_ERROR "DOCS_HTML is required to buidl DOCS_HTML_HELP" )
@@ -73,7 +73,7 @@ IF (ENABLE_DOCS)
             IF ( NOT HTML_HELP_COMPILER )
                 MESSAGE(FATAL_ERROR "HTML Help compiler not found, turn DOCS_HTML_HELP off to proceed")
             ENDIF ( NOT HTML_HELP_COMPILER )
-            
+
             #make cygwin work with hhc...
             IF ( CYGWIN )
                 EXECUTE_PROCESS ( COMMAND cygpath "${HTML_HELP_COMPILER}"
@@ -85,22 +85,22 @@ IF (ENABLE_DOCS)
                 SET ( HTML_HELP_COMPILER_EX ${HTML_HELP_COMPILER} )
             ENDIF ( CYGWIN )
         ENDIF ( DOCS_HTML_HELP )
-        
+
         IF ( DOCS_LATEX )
             FIND_PACKAGE(LATEX)
             IF ( NOT LATEX_COMPILER )
                 MESSAGE(FATAL_ERROR "Latex compiler not found, turn DOCS_LATEX off to proceed")
             ENDIF ( NOT LATEX_COMPILER )
         ENDIF ( DOCS_LATEX )
-    
+
         FIND_PACKAGE(Perl)
-        
+
         IF ( DOXYGEN_DOT_EXECUTABLE )
             SET ( HAVE_DOT "YES" )
         ELSE ( DOXYGEN_DOT_EXECUTABLE )
             SET ( HAVE_DOT "NO" )
         ENDIF ( DOXYGEN_DOT_EXECUTABLE )
-        
+
         #doxygen expects YES/NO parameters
         SET_YESNO(
             DOCS_HTML_HELP
@@ -117,17 +117,17 @@ IF (ENABLE_DOCS)
             HTML_HELP_COMPILER
             LATEX_COMPILER
         )
-        
+
         IF ( DOCS_TAGFILE )
             SET ( DOCS_TAGFILE_LOCATION "${PROJECT_BINARY_DIR}/doc/tag/lucene++.tag"  )
         ENDIF ( DOCS_TAGFILE )
-        
+
         # This processes our Doxyfile.cmake and substitutes paths to generate a final Doxyfile
         CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/Doxyfile.cmake ${PROJECT_BINARY_DIR}/doc/doxyfile )
         CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/helpheader.htm.cmake ${PROJECT_BINARY_DIR}/doc/helpheader.htm )
         CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/helpfooter.htm.cmake ${PROJECT_BINARY_DIR}/doc/helpfooter.htm )
         CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/doxygen.css.cmake ${PROJECT_BINARY_DIR}/doc/html/doxygen.css )
-        
+
         #create a target for tar.gz html help
         FIND_PACKAGE(UnixCommands)
         IF ( TAR AND GZIP )
@@ -137,20 +137,20 @@ IF (ENABLE_DOCS)
                 #DEPENDS doc
             )
         ENDIF ( TAR AND GZIP )
-        
+
 	#install HTML pages if they were built
 	IF ( DOCS_HTML AND NOT WIN32 )
-            INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/doc/html/ DESTINATION share/doc/lucene++-${LUCENE++_VERSION})
+            INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/doc/html/ DESTINATION share/doc/lucene++-${lucene++_VERSION})
         ENDIF ( DOCS_HTML AND NOT WIN32 )
 
         #install man pages if they were built
         IF ( DOCS_MAN )
             INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/doc/man/ DESTINATION man)
         ENDIF ( DOCS_MAN )
-        
+
     ELSE ( DOXYGEN_FOUND )
         MESSAGE(FATAL_ERROR "Doxygen not found, turn ENABLE_DOCS off to proceed")
     ENDIF ( DOXYGEN_FOUND )
 
-    
+
 ENDIF (ENABLE_DOCS)

@@ -1,16 +1,16 @@
 <HTML>
 <HEAD>
 <TITLE>
-Lucene++ API Documentation (Version @LUCENE++_SOVERSION@)
+Lucene++ API Documentation (Version @lucene++_SOVERSION@)
 </TITLE>
 
 <LINK HREF="doxygen.css" REL="stylesheet" TYPE="text/css">
-<META NAME="keywords" CONTENT="CLucene API Documentation (Version @LUCENE++_SOVERSION@)">
+<META NAME="keywords" CONTENT="CLucene API Documentation (Version @lucene++_SOVERSION@)">
 
 <SCRIPT type="text/javascript">
 function windowTitle()
 {
-    parent.document.title="Lucene++ API Documentation (Version @LUCENE++_SOVERSION@)";
+    parent.document.title="Lucene++ API Documentation (Version @lucene++_SOVERSION@)";
 }
 </SCRIPT>
 

@@ -48,7 +48,6 @@ namespace Lucene
         }
         threadObject->setRunning(false);
         threadObject.reset();
-        ReleaseThreadCache();
     }
 
     void LuceneThread::setRunning(bool running)
