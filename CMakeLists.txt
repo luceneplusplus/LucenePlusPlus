@@ -92,12 +92,6 @@ if(NOT MSVC AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
   add_definitions(-fPIC)
 endif()
 
-include(MacroCheckGccVisibility)
-MACRO_CHECK_GCC_VISIBILITY(LPP_HAVE_GXXCLASSVISIBILITY)
-if(LPP_HAVE_GXXCLASSVISIBILITY)
-	add_definitions(-DLPP_HAVE_GXXCLASSVISIBILITY)
-endif()
-
 if(CYGWIN)
   add_definitions(-D__LARGE64_FILES)
 endif()

@@ -21,13 +21,8 @@
 #define LPP_IMPORT __declspec(dllimport)
 #define LPP_EXPORT __declspec(dllexport)
 #else
-#ifdef LPP_HAVE_GXXCLASSVISIBILITY
-#define LPP_IMPORT __attribute__ ((visibility("default")))
-#define LPP_EXPORT __attribute__ ((visibility("default")))
-#else
 #define LPP_IMPORT
 #define LPP_EXPORT
-#endif
 #endif
 
 // Define LPPAPI for dll builds
