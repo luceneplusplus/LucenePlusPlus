@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,22 +19,22 @@ namespace Lucene
 {
     /// NOTE: if you make a new format, it must be larger than the current format
     const int32_t TermVectorsReader::FORMAT_VERSION = 2;
-    
+
     /// Changes to speed up bulk merging of term vectors
     const int32_t TermVectorsReader::FORMAT_VERSION2 = 3;
-    
+
     /// Changed strings to UTF8 with length-in-bytes not length-in-chars
     const int32_t TermVectorsReader::FORMAT_UTF8_LENGTH_IN_BYTES = 4;
-    
+
     /// NOTE: always change this if you switch to a new format
     const int32_t TermVectorsReader::FORMAT_CURRENT = TermVectorsReader::FORMAT_UTF8_LENGTH_IN_BYTES;
-    
+
     /// The size in bytes that the FORMAT_VERSION will take up at the beginning of each file
     const int32_t TermVectorsReader::FORMAT_SIZE = 4;
-    
+
     const uint8_t TermVectorsReader::STORE_POSITIONS_WITH_TERMVECTOR = 0x1;
     const uint8_t TermVectorsReader::STORE_OFFSET_WITH_TERMVECTOR = 0x2;
-    
+
     TermVectorsReader::TermVectorsReader()
     {
         this->_size = 0;
@@ -42,28 +42,28 @@ namespace Lucene
         this->docStoreOffset = 0;
         this->format = 0;
     }
-    
+
     TermVectorsReader::TermVectorsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos)
     {
         ConstructReader(d, segment, fieldInfos, BufferedIndexInput::BUFFER_SIZE, -1, 0);
     }
-    
+
     TermVectorsReader::TermVectorsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
     {
         ConstructReader(d, segment, fieldInfos, readBufferSize, docStoreOffset, size);
     }
-    
+
     TermVectorsReader::~TermVectorsReader()
     {
     }
-    
+
     void TermVectorsReader::ConstructReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
     {
         this->_size = 0;
         this->numTotalDocs = 0;
         this->docStoreOffset = 0;
         this->format = 0;
-        
+
         bool success = false;
         LuceneException finally;
         try
@@ -76,10 +76,10 @@ namespace Lucene
                 int32_t tvdFormat = checkValidFormat(tvd);
                 tvf = d->openInput(segment + L"." + IndexFileNames::VECTORS_FIELDS_EXTENSION(), readBufferSize);
                 int32_t tvfFormat = checkValidFormat(tvf);
-                
+
                 BOOST_ASSERT(format == tvdFormat);
                 BOOST_ASSERT(format == tvfFormat);
-                
+
                 if (format >= FORMAT_VERSION2)
                 {
                     BOOST_ASSERT((tvx->length() - FORMAT_SIZE) % 16 == 0);
@@ -90,7 +90,7 @@ namespace Lucene
                     BOOST_ASSERT((tvx->length() - FORMAT_SIZE) % 8 == 0);
                     numTotalDocs = (int32_t)(tvx->length() >> 3);
                 }
-                
+
                 if (docStoreOffset == -1)
                 {
                     this->docStoreOffset = 0;
@@ -111,7 +111,7 @@ namespace Lucene
                 // FieldInfos.hasVectors returns true yet the term vector files don't exist.
                 format = 0;
             }
-            
+
             this->fieldInfos = fieldInfos;
             success = true;
         }
@@ -119,24 +119,24 @@ namespace Lucene
         {
             finally = e;
         }
-        
-        // With lock-less commits, it's entirely possible (and fine) to hit a FileNotFound exception 
+
+        // With lock-less commits, it's entirely possible (and fine) to hit a FileNotFound exception
         // above. In this case, we want to explicitly close any subset of things that were opened.
         if (!success)
             close();
         finally.throwException();
     }
-    
+
     IndexInputPtr TermVectorsReader::getTvdStream()
     {
         return tvd;
     }
-    
+
     IndexInputPtr TermVectorsReader::getTvfStream()
     {
         return tvf;
     }
-    
+
     void TermVectorsReader::seekTvx(int32_t docNum)
     {
         if (format < FORMAT_VERSION2)
@@ -144,12 +144,12 @@ namespace Lucene
         else
             tvx->seek((docNum + docStoreOffset) * 16 + FORMAT_SIZE);
     }
-    
+
     bool TermVectorsReader::canReadRawDocs()
     {
         return (format >= FORMAT_UTF8_LENGTH_IN_BYTES);
     }
-    
+
     void TermVectorsReader::rawDocs(Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t startDocID, int32_t numDocs)
     {
         if (!tvx)
@@ -158,22 +158,22 @@ namespace Lucene
             MiscUtils::arrayFill(tvfLengths.begin(), 0, tvfLengths.size(), 0);
             return;
         }
-        
+
         // SegmentMerger calls canReadRawDocs() first and should not call us if that returns false.
         if (format < FORMAT_VERSION2)
             boost::throw_exception(IllegalStateException(L"cannot read raw docs with older term vector formats"));
-        
+
         seekTvx(startDocID);
-        
+
         int64_t tvdPosition = tvx->readLong();
         tvd->seek(tvdPosition);
-        
+
         int64_t tvfPosition = tvx->readLong();
         tvf->seek(tvfPosition);
-        
+
         int64_t lastTvdPosition = tvdPosition;
         int64_t lastTvfPosition = tvfPosition;
-        
+
         int32_t count = 0;
         while (count < numDocs)
         {
@@ -197,19 +197,19 @@ namespace Lucene
             lastTvfPosition = tvfPosition;
         }
     }
-    
+
     int32_t TermVectorsReader::checkValidFormat(IndexInputPtr in)
     {
         int32_t format = in->readInt();
         if (format > FORMAT_CURRENT)
         {
-            boost::throw_exception(CorruptIndexException(L"Incompatible format version: " + 
-                                                         StringUtils::toString(format) + L" expected " + 
+            boost::throw_exception(CorruptIndexException(L"Incompatible format version: " +
+                                                         StringUtils::toString(format) + L" expected " +
                                                          StringUtils::toString(FORMAT_CURRENT) + L" or less"));
         }
         return format;
     }
-    
+
     void TermVectorsReader::close()
     {
         // make all effort to close up. Keep the first exception and throw it as a new one.
@@ -252,27 +252,27 @@ namespace Lucene
         }
         keep.throwException();
     }
-    
+
     int32_t TermVectorsReader::size()
     {
         return _size;
     }
-    
+
     void TermVectorsReader::get(int32_t docNum, const String& field, TermVectorMapperPtr mapper)
     {
         if (tvx)
         {
             int32_t fieldNumber = fieldInfos->fieldNumber(field);
-            
-            // We need to account for the FORMAT_SIZE at when seeking in the tvx.  We don't need to do 
+
+            // We need to account for the FORMAT_SIZE at when seeking in the tvx.  We don't need to do
             // this in other seeks because we already have the file pointer that was written in another file
             seekTvx(docNum);
             int64_t tvdPosition = tvx->readLong();
-            
+
             tvd->seek(tvdPosition);
             int32_t fieldCount = tvd->readVInt();
-            
-            // There are only a few fields per document. We opt for a full scan rather then requiring that they 
+
+            // There are only a few fields per document. We opt for a full scan rather then requiring that they
             // be ordered. We need to read through all of the fields anyway to get to the tvf pointers.
             int32_t number = 0;
             int32_t found = -1;
@@ -282,11 +282,11 @@ namespace Lucene
                     number = tvd->readVInt();
                 else
                     number += tvd->readVInt();
-                
+
                 if (number == fieldNumber)
                     found = i;
             }
-            
+
             // This field, although valid in the segment, was not found in this document
             if (found != -1)
             {
@@ -298,13 +298,13 @@ namespace Lucene
                     position = tvd->readVLong();
                 for (int32_t i = 1; i <= found; ++i)
                     position += tvd->readVLong();
-                
+
                 mapper->setDocumentNumber(docNum);
                 readTermVector(field, position, mapper);
             }
         }
     }
-    
+
     TermFreqVectorPtr TermVectorsReader::get(int32_t docNum, const String& field)
     {
         // Check if no term vectors are available for this segment at all
@@ -312,12 +312,12 @@ namespace Lucene
         get(docNum, field, mapper);
         return mapper->materializeVector();
     }
-    
+
     Collection<String> TermVectorsReader::readFields(int32_t fieldCount)
     {
         int32_t number = 0;
         Collection<String> fields(Collection<String>::newInstance(fieldCount));
-        
+
         for (int32_t i = 0; i < fieldCount; ++i)
         {
             if (format >= FORMAT_VERSION)
@@ -326,10 +326,10 @@ namespace Lucene
                 number += tvd->readVInt();
             fields[i] = fieldInfos->fieldName(number);
         }
-        
+
         return fields;
     }
-    
+
     Collection<int64_t> TermVectorsReader::readTvfPointers(int32_t fieldCount)
     {
         // Compute position in the tvf file
@@ -338,19 +338,19 @@ namespace Lucene
             position = tvx->readLong();
         else
             position = tvd->readVLong();
-        
+
         Collection<int64_t> tvfPointers(Collection<int64_t>::newInstance(fieldCount));
         tvfPointers[0] = position;
-        
+
         for (int32_t i = 1; i < fieldCount; ++i)
         {
             position += tvd->readVLong();
             tvfPointers[i] = position;
         }
-        
+
         return tvfPointers;
     }
-    
+
     Collection<TermFreqVectorPtr> TermVectorsReader::get(int32_t docNum)
     {
         Collection<TermFreqVectorPtr> result;
@@ -359,10 +359,10 @@ namespace Lucene
             // We need to offset by
             seekTvx(docNum);
             int64_t tvdPosition = tvx->readLong();
-            
+
             tvd->seek(tvdPosition);
             int32_t fieldCount = tvd->readVInt();
-            
+
             // No fields are vectorized for this document
             if (fieldCount != 0)
             {
@@ -373,7 +373,7 @@ namespace Lucene
         }
         return result;
     }
-    
+
     void TermVectorsReader::get(int32_t docNumber, TermVectorMapperPtr mapper)
     {
         // Check if no term vectors are available for this segment at all
@@ -382,10 +382,10 @@ namespace Lucene
             // We need to offset by
             seekTvx(docNumber);
             int64_t tvdPosition = tvx->readLong();
-            
+
             tvd->seek(tvdPosition);
             int32_t fieldCount = tvd->readVInt();
-            
+
             // No fields are vectorized for this document
             if (fieldCount != 0)
             {
@@ -396,7 +396,7 @@ namespace Lucene
             }
         }
     }
-    
+
     Collection<TermFreqVectorPtr> TermVectorsReader::readTermVectors(int32_t docNum, Collection<String> fields, Collection<int64_t> tvfPointers)
     {
         Collection<TermFreqVectorPtr> res(Collection<TermFreqVectorPtr>::newInstance(fields.size()));
@@ -409,28 +409,28 @@ namespace Lucene
         }
         return res;
     }
-    
+
     void TermVectorsReader::readTermVectors(Collection<String> fields, Collection<int64_t> tvfPointers, TermVectorMapperPtr mapper)
     {
         for (int32_t i = 0; i < fields.size(); ++i)
             readTermVector(fields[i], tvfPointers[i], mapper);
     }
-    
+
     void TermVectorsReader::readTermVector(const String& field, int64_t tvfPointer, TermVectorMapperPtr mapper)
     {
-        // Now read the data from specified position.  We don't need to offset by the FORMAT here since 
+        // Now read the data from specified position.  We don't need to offset by the FORMAT here since
         // the pointer already includes the offset
         tvf->seek(tvfPointer);
-        
+
         int32_t numTerms = tvf->readVInt();
-        
+
         // If no terms - return a constant empty termvector. However, this should never occur!
         if (numTerms == 0)
             return;
-        
+
         bool storePositions;
         bool storeOffsets;
-        
+
         if (format >= FORMAT_VERSION)
         {
             uint8_t bits = tvf->readByte();
@@ -443,7 +443,7 @@ namespace Lucene
             storePositions = false;
             storeOffsets = false;
         }
-        
+
         mapper->setExpectations(field, numTerms, storeOffsets, storePositions);
         int32_t start = 0;
         int32_t deltaLength = 0;
@@ -451,7 +451,7 @@ namespace Lucene
         ByteArray byteBuffer;
         CharArray charBuffer;
         bool preUTF8 = (format < FORMAT_UTF8_LENGTH_IN_BYTES);
-        
+
         // init the buffers
         if (preUTF8)
         {
@@ -463,15 +463,15 @@ namespace Lucene
             charBuffer.reset();
             byteBuffer = ByteArray::newInstance(20);
         }
-        
+
         for (int32_t i = 0; i < numTerms; ++i)
         {
             start = tvf->readVInt();
             deltaLength = tvf->readVInt();
             totalLength = start + deltaLength;
-            
+
             String term;
-            
+
             if (preUTF8)
             {
                 // Term stored as "java chars"
@@ -505,13 +505,13 @@ namespace Lucene
                 }
                 else
                 {
-                    // we need to skip over the positions.  Since these are VInts, I don't believe there 
+                    // we need to skip over the positions.  Since these are VInts, I don't believe there
                     // is anyway to know for sure how far to skip
                     for (int32_t j = 0; j < freq; ++j)
                         tvf->readVInt();
                 }
             }
-            
+
             Collection<TermVectorOffsetInfoPtr> offsets;
             if (storeOffsets)
             {
@@ -540,7 +540,7 @@ namespace Lucene
             mapper->map(term, freq, offsets, positions);
         }
     }
-    
+
     LuceneObjectPtr TermVectorsReader::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermVectorsReader>();
@@ -550,7 +550,7 @@ namespace Lucene
         cloneReader->numTotalDocs = numTotalDocs;
         cloneReader->docStoreOffset = docStoreOffset;
         cloneReader->format = format;
-        
+
         // These are null when a TermVectorsReader was created on a segment that did not have term vectors saved
         if (tvx && tvd && tvf)
         {
@@ -558,21 +558,21 @@ namespace Lucene
             cloneReader->tvd = boost::dynamic_pointer_cast<IndexInput>(tvd->clone());
             cloneReader->tvf = boost::dynamic_pointer_cast<IndexInput>(tvf->clone());
         }
-        
+
         return cloneReader;
     }
-    
+
     ParallelArrayTermVectorMapper::ParallelArrayTermVectorMapper()
     {
         currentPosition = 0;
         storingOffsets = false;
         storingPositions = false;
     }
-    
+
     ParallelArrayTermVectorMapper::~ParallelArrayTermVectorMapper()
     {
     }
-    
+
     void ParallelArrayTermVectorMapper::setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions)
     {
         this->field = field;
@@ -580,13 +580,13 @@ namespace Lucene
         termFreqs = Collection<int32_t>::newInstance(numTerms);
         this->storingOffsets = storeOffsets;
         this->storingPositions = storePositions;
-        
+
         if (storePositions)
             this->positions = Collection< Collection<int32_t> >::newInstance(numTerms);
         if (storeOffsets)
             this->offsets = Collection< Collection<TermVectorOffsetInfoPtr> >::newInstance(numTerms);
     }
-    
+
     void ParallelArrayTermVectorMapper::map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions)
     {
         terms[currentPosition] = term;
@@ -594,10 +594,10 @@ namespace Lucene
         if (storingOffsets)
             this->offsets[currentPosition] = offsets;
         if (storingPositions)
-            this->positions[currentPosition] = positions; 
+            this->positions[currentPosition] = positions;
         ++currentPosition;
     }
-    
+
     TermFreqVectorPtr ParallelArrayTermVectorMapper::materializeVector()
     {
         SegmentTermVectorPtr tv;

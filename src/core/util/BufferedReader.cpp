@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 namespace Lucene
 {
     const int32_t BufferedReader::READER_BUFFER = 8192;
-    
+
     BufferedReader::BufferedReader(ReaderPtr reader, int32_t size)
     {
         this->reader = reader;
@@ -19,11 +19,11 @@ namespace Lucene
         this->bufferLength = 0;
         this->bufferPosition = 0;
     }
-    
+
     BufferedReader::~BufferedReader()
     {
     }
-    
+
     int32_t BufferedReader::read()
     {
         if (bufferPosition >= bufferLength)
@@ -33,7 +33,7 @@ namespace Lucene
         }
         return buffer[bufferPosition++];
     }
-    
+
     int32_t BufferedReader::peek()
     {
         if (bufferPosition >= bufferLength)
@@ -43,18 +43,18 @@ namespace Lucene
         }
         return buffer[bufferPosition];
     }
-    
+
     int32_t BufferedReader::read(wchar_t* b, int32_t offset, int32_t length)
     {
         if (length == 0)
             return 0;
 
         int32_t remaining = length;
-        
+
         while (remaining > 0)
         {
             int32_t available = bufferLength - bufferPosition;
-        
+
             if (remaining <= available)
             {
                 // the buffer contains enough data to satisfy this request
@@ -76,10 +76,10 @@ namespace Lucene
                 break;
             }
         }
-        
+
         return length == 0 ? READER_EOF : length;
     }
-    
+
     bool BufferedReader::readLine(String& line)
     {
         line.clear();
@@ -93,7 +93,7 @@ namespace Lucene
             read();
         return (!line.empty() || ch != (wchar_t)READER_EOF);
     }
-    
+
     int32_t BufferedReader::refill()
     {
         if (!buffer)
@@ -110,12 +110,12 @@ namespace Lucene
         bufferLength = 0;
         bufferPosition = 0;
     }
-    
+
     bool BufferedReader::markSupported()
     {
         return false;
     }
-    
+
     void BufferedReader::reset()
     {
         reader->reset();

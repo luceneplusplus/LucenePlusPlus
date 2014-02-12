@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,33 +19,33 @@ namespace Lucene
     public:
         NearSpansUnordered(SpanNearQueryPtr query, IndexReaderPtr reader);
         virtual ~NearSpansUnordered();
-        
+
         LUCENE_CLASS(NearSpansUnordered);
-    
+
     protected:
         SpanNearQueryPtr query;
         IndexReaderPtr reader;
-        
+
         Collection<SpansCellPtr> ordered; // spans in query order
         Collection<SpansPtr> subSpans;
         int32_t slop; // from query
-        
+
         SpansCellPtr first; // linked list of spans
         SpansCellPtr last; // sorted by doc only
-        
+
         int32_t totalLength; // sum of current lengths
-        
+
         CellQueuePtr queue; // sorted queue of spans
         SpansCellPtr max; // max element in queue
-        
+
         bool more; // true if not done
         bool firstTime; // true before first next()
-    
+
     public:
         virtual void initialize();
-        
+
         Collection<SpansPtr> getSubSpans();
-        
+
         virtual bool next();
         virtual bool skipTo(int32_t target);
         virtual int32_t doc();
@@ -54,7 +54,7 @@ namespace Lucene
         virtual Collection<ByteArray> getPayload();
         virtual bool isPayloadAvailable();
         virtual String toString();
-    
+
     protected:
         SpansCellPtr min();
         void initList(bool next);
@@ -63,7 +63,7 @@ namespace Lucene
         void queueToList();
         void listToQueue();
         bool atMatch();
-        
+
         friend class SpansCell;
     };
 }

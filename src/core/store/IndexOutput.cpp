@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
 namespace Lucene
 {
     const int32_t IndexOutput::COPY_BUFFER_SIZE = 16384;
-    
+
     IndexOutput::~IndexOutput()
     {
     }
-    
+
     void IndexOutput::writeBytes(const uint8_t* b, int32_t length)
     {
         writeBytes(b, 0, length);
     }
-    
+
     void IndexOutput::writeInt(int32_t i)
     {
         writeByte((uint8_t)(i >> 24));
@@ -31,7 +31,7 @@ namespace Lucene
         writeByte((uint8_t)(i >> 8));
         writeByte((uint8_t)i);
     }
-    
+
     void IndexOutput::writeVInt(int32_t i)
     {
         while ((i & ~0x7f) != 0)
@@ -41,13 +41,13 @@ namespace Lucene
         }
         writeByte((uint8_t)i);
     }
-    
+
     void IndexOutput::writeLong(int64_t i)
     {
         writeInt((int32_t)(i >> 32));
         writeInt((int32_t)i);
     }
-    
+
     void IndexOutput::writeVLong(int64_t i)
     {
         while ((i & ~0x7f) != 0)
@@ -57,7 +57,7 @@ namespace Lucene
         }
         writeByte((uint8_t)i);
     }
-    
+
     void IndexOutput::writeString(const String& s)
     {
         UTF8ResultPtr utf8Result(newLucene<UTF8Result>());
@@ -65,7 +65,7 @@ namespace Lucene
         writeVInt(utf8Result->length);
         writeBytes(utf8Result->result.get(), utf8Result->length);
     }
-    
+
     void IndexOutput::writeChars(const String& s, int32_t start, int32_t length)
     {
         int32_t end = start + length;
@@ -87,7 +87,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexOutput::copyBytes(IndexInputPtr input, int64_t numBytes)
     {
         BOOST_ASSERT(numBytes >= 0);
@@ -102,11 +102,11 @@ namespace Lucene
             left -= toCopy;
         }
     }
-    
+
     void IndexOutput::setLength(int64_t length)
     {
     }
-    
+
     void IndexOutput::writeStringStringMap(MapStringString map)
     {
         if (!map)

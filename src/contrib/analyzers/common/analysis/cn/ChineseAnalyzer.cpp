@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,14 +14,14 @@ namespace Lucene
     ChineseAnalyzer::~ChineseAnalyzer()
     {
     }
-    
+
     TokenStreamPtr ChineseAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
     {
         TokenStreamPtr result = newLucene<ChineseTokenizer>(reader);
         result = newLucene<ChineseFilter>(result);
         return result;
     }
-    
+
     TokenStreamPtr ChineseAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
         ChineseAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ChineseAnalyzerSavedStreams>(getPreviousTokenStream()));
@@ -36,7 +36,7 @@ namespace Lucene
             streams->source->reset(reader);
         return streams->result;
     }
-    
+
     ChineseAnalyzerSavedStreams::~ChineseAnalyzerSavedStreams()
     {
     }

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,26 +14,26 @@ namespace Lucene
         this->error = error;
         this->type = type;
     }
-    
+
     LuceneException::~LuceneException() throw()
     {
     }
-    
+
     LuceneException::ExceptionType LuceneException::getType() const
     {
         return type;
     }
-    
+
     String LuceneException::getError() const
     {
         return error;
     }
-    
+
     bool LuceneException::isNull() const
     {
         return (type == Null);
     }
-    
+
     void LuceneException::throwException()
     {
         switch (type)

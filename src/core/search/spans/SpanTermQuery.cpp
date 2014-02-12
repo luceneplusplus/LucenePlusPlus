@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,26 +17,26 @@ namespace Lucene
     {
         this->term = term;
     }
-    
+
     SpanTermQuery::~SpanTermQuery()
     {
     }
-    
+
     TermPtr SpanTermQuery::getTerm()
     {
         return term;
     }
-    
+
     String SpanTermQuery::getField()
     {
         return term->field();
     }
-    
+
     void SpanTermQuery::extractTerms(SetTerm terms)
     {
         terms.add(term);
     }
-    
+
     String SpanTermQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -47,7 +47,7 @@ namespace Lucene
         buffer << boostString();
         return buffer.str();
     }
-    
+
     int32_t SpanTermQuery::hashCode()
     {
         int32_t prime = 31;
@@ -55,7 +55,7 @@ namespace Lucene
         result = prime * result + (term ? term->hashCode() : 0);
         return result;
     }
-    
+
     bool SpanTermQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -76,7 +76,7 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     LuceneObjectPtr SpanTermQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanTermQuery>(term));
@@ -84,7 +84,7 @@ namespace Lucene
         spanFirstQuery->term = term;
         return spanFirstQuery;
     }
-    
+
     SpansPtr SpanTermQuery::getSpans(IndexReaderPtr reader)
     {
         return newLucene<TermSpans>(reader->termPositions(term), term);

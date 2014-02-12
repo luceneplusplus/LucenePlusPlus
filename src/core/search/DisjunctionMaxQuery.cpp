@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -22,43 +22,43 @@ namespace Lucene
         this->tieBreakerMultiplier = tieBreakerMultiplier;
         this->disjuncts = Collection<QueryPtr>::newInstance();
     }
-    
+
     DisjunctionMaxQuery::DisjunctionMaxQuery(Collection<QueryPtr> disjuncts, double tieBreakerMultiplier)
     {
         this->tieBreakerMultiplier = tieBreakerMultiplier;
         this->disjuncts = Collection<QueryPtr>::newInstance();
         add(disjuncts);
     }
-    
+
     DisjunctionMaxQuery::~DisjunctionMaxQuery()
     {
     }
-    
+
     void DisjunctionMaxQuery::add(QueryPtr query)
     {
         disjuncts.add(query);
     }
-    
+
     void DisjunctionMaxQuery::add(Collection<QueryPtr> disjuncts)
     {
         this->disjuncts.addAll(disjuncts.begin(), disjuncts.end());
     }
-    
+
     Collection<QueryPtr>::iterator DisjunctionMaxQuery::begin()
     {
         return disjuncts.begin();
     }
-    
+
     Collection<QueryPtr>::iterator DisjunctionMaxQuery::end()
     {
         return disjuncts.end();
     }
-    
+
     WeightPtr DisjunctionMaxQuery::createWeight(SearcherPtr searcher)
     {
         return newLucene<DisjunctionMaxWeight>(shared_from_this(), searcher);
     }
-    
+
     QueryPtr DisjunctionMaxQuery::rewrite(IndexReaderPtr reader)
     {
         int32_t numDisjunctions = disjuncts.size();
@@ -88,7 +88,7 @@ namespace Lucene
         }
         return clone ? clone : shared_from_this();
     }
-    
+
     LuceneObjectPtr DisjunctionMaxQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<DisjunctionMaxQuery>());
@@ -97,13 +97,13 @@ namespace Lucene
         cloneQuery->disjuncts = Collection<QueryPtr>::newInstance(disjuncts.begin(), disjuncts.end());
         return cloneQuery;
     }
-    
+
     void DisjunctionMaxQuery::extractTerms(SetTerm terms)
     {
         for (Collection<QueryPtr>::iterator query = disjuncts.begin(); query != disjuncts.end(); ++query)
             (*query)->extractTerms(terms);
     }
-    
+
     String DisjunctionMaxQuery::toString(const String& field)
     {
         String buffer(L"(");
@@ -123,24 +123,24 @@ namespace Lucene
             buffer += L"^" + StringUtils::toString(getBoost());
         return buffer;
     }
-    
+
     bool DisjunctionMaxQuery::equals(LuceneObjectPtr other)
     {
         if (!Query::equals(other))
             return false;
-        
+
         DisjunctionMaxQueryPtr otherDisjunctionMaxQuery(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(other));
         if (!otherDisjunctionMaxQuery)
             return false;
-            
+
         return (tieBreakerMultiplier == otherDisjunctionMaxQuery->tieBreakerMultiplier && disjuncts.equals(otherDisjunctionMaxQuery->disjuncts, luceneEquals<QueryPtr>()));
     }
-    
+
     int32_t DisjunctionMaxQuery::hashCode()
     {
         return MiscUtils::doubleToIntBits(getBoost()) + MiscUtils::doubleToIntBits(tieBreakerMultiplier) + MiscUtils::hashCode(disjuncts.begin(), disjuncts.end(), MiscUtils::hashLucene<QueryPtr>);
     }
-    
+
     DisjunctionMaxWeight::DisjunctionMaxWeight(DisjunctionMaxQueryPtr query, SearcherPtr searcher)
     {
         this->query = query;
@@ -149,21 +149,21 @@ namespace Lucene
         for (Collection<QueryPtr>::iterator disjunctQuery = query->disjuncts.begin(); disjunctQuery != query->disjuncts.end(); ++disjunctQuery)
             this->weights.add((*disjunctQuery)->createWeight(searcher));
     }
-    
+
     DisjunctionMaxWeight::~DisjunctionMaxWeight()
     {
     }
-    
+
     QueryPtr DisjunctionMaxWeight::getQuery()
     {
         return query;
     }
-    
+
     double DisjunctionMaxWeight::getValue()
     {
         return query->getBoost();
     }
-    
+
     double DisjunctionMaxWeight::sumOfSquaredWeights()
     {
         double max = 0.0;
@@ -177,14 +177,14 @@ namespace Lucene
         double boost = query->getBoost();
         return (((sum - max) * query->tieBreakerMultiplier * query->tieBreakerMultiplier) + max) * boost * boost;
     }
-    
+
     void DisjunctionMaxWeight::normalize(double norm)
     {
         norm *= query->getBoost(); // Incorporate our boost
         for (Collection<WeightPtr>::iterator wt = weights.begin(); wt != weights.end(); ++wt)
             (*wt)->normalize(norm);
     }
-    
+
     ScorerPtr DisjunctionMaxWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
         Collection<ScorerPtr> scorers(Collection<ScorerPtr>::newInstance(weights.size()));
@@ -200,7 +200,7 @@ namespace Lucene
         DisjunctionMaxScorerPtr result(newLucene<DisjunctionMaxScorer>(query->tieBreakerMultiplier, similarity, scorers, idx));
         return result;
     }
-    
+
     ExplanationPtr DisjunctionMaxWeight::explain(IndexReaderPtr reader, int32_t doc)
     {
         if (query->disjuncts.size() == 1)

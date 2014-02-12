@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,12 +15,12 @@ namespace Lucene
     {
     public:
         virtual ~TermsHashConsumer();
-        
+
         LUCENE_CLASS(TermsHashConsumer);
-    
+
     public:
         FieldInfosPtr fieldInfos;
-    
+
     public:
         virtual int32_t bytesPerPosting() = 0;
         virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count) = 0;
@@ -28,7 +28,7 @@ namespace Lucene
         virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, SegmentWriteStatePtr state) = 0;
         virtual void abort() = 0;
         virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
-        
+
         virtual void setFieldInfos(FieldInfosPtr fieldInfos);
     };
 }

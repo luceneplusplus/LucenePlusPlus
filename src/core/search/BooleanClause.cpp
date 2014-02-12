@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,41 +15,41 @@ namespace Lucene
         this->query = query;
         this->occur = occur;
     }
-    
+
     BooleanClause::~BooleanClause()
     {
     }
-    
+
     BooleanClause::Occur BooleanClause::getOccur()
     {
         return occur;
     }
-    
+
     void BooleanClause::setOccur(BooleanClause::Occur occur)
     {
         this->occur = occur;
     }
-    
+
     QueryPtr BooleanClause::getQuery()
     {
         return query;
     }
-    
+
     void BooleanClause::setQuery(QueryPtr query)
     {
         this->query = query;
     }
-    
+
     bool BooleanClause::isProhibited()
     {
         return (occur == MUST_NOT);
     }
-    
+
     bool BooleanClause::isRequired()
     {
         return (occur == MUST);
     }
-    
+
     bool BooleanClause::equals(LuceneObjectPtr other)
     {
         BooleanClausePtr otherBooleanClause(boost::dynamic_pointer_cast<BooleanClause>(other));
@@ -57,12 +57,12 @@ namespace Lucene
             return false;
         return (this->query->equals(otherBooleanClause->query) && this->occur == otherBooleanClause->occur);
     }
-    
+
     int32_t BooleanClause::hashCode()
     {
         return query->hashCode() ^ (occur == MUST ? 1 : 0) ^ (occur == MUST_NOT ? 2 : 0);
     }
-    
+
     String BooleanClause::toString()
     {
         switch (occur)

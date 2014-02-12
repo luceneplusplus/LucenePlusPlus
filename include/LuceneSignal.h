@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,19 +18,19 @@ namespace Lucene
     public:
         LuceneSignal(SynchronizePtr objectLock = SynchronizePtr());
         virtual ~LuceneSignal();
-    
+
     protected:
         boost::mutex waitMutex;
         boost::condition signalCondition;
         SynchronizePtr objectLock;
-    
+
     public:
         /// create a new LuceneSignal instance atomically.
         static void createSignal(LuceneSignalPtr& signal, SynchronizePtr objectLock);
-        
+
         /// Wait for signal using an optional timeout.
         void wait(int32_t timeout = 0);
-        
+
         /// Notify all threads waiting for signal.
         void notifyAll();
     };

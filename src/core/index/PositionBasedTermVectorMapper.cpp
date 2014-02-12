@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,16 +13,16 @@ namespace Lucene
     {
         storeOffsets = false;
     }
-    
+
     PositionBasedTermVectorMapper::~PositionBasedTermVectorMapper()
     {
     }
-    
+
     bool PositionBasedTermVectorMapper::isIgnoringPositions()
     {
         return false;
     }
-    
+
     void PositionBasedTermVectorMapper::map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions)
     {
         for (int32_t i = 0; i < positions.size(); ++i)
@@ -36,7 +36,7 @@ namespace Lucene
             pos->addTerm(term, offsets ? offsets[i] : TermVectorOffsetInfoPtr());
         }
     }
-    
+
     void PositionBasedTermVectorMapper::setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions)
     {
         if (storePositions == false)
@@ -51,12 +51,12 @@ namespace Lucene
         this->currentPositions = MapIntTermVectorsPositionInfo::newInstance();
         fieldToTerms.put(currentField, currentPositions);
     }
-    
+
     MapStringMapIntTermVectorsPositionInfo PositionBasedTermVectorMapper::getFieldToTerms()
     {
         return fieldToTerms;
     }
-    
+
     TermVectorsPositionInfo::TermVectorsPositionInfo(int32_t position, bool storeOffsets)
     {
         this->position = position;
@@ -64,28 +64,28 @@ namespace Lucene
         if (storeOffsets)
             offsets = Collection<TermVectorOffsetInfoPtr>::newInstance();
     }
-    
+
     TermVectorsPositionInfo::~TermVectorsPositionInfo()
     {
     }
-    
+
     void TermVectorsPositionInfo::addTerm(const String& term, TermVectorOffsetInfoPtr info)
     {
         terms.add(term);
         if (offsets)
             offsets.add(info);
     }
-    
+
     int32_t TermVectorsPositionInfo::getPosition()
     {
         return position;
     }
-    
+
     Collection<String> TermVectorsPositionInfo::getTerms()
     {
         return terms;
     }
-    
+
     Collection<TermVectorOffsetInfoPtr> TermVectorsPositionInfo::getOffsets()
     {
         return offsets;

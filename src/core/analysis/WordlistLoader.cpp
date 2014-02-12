@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ namespace Lucene
     WordlistLoader::~WordlistLoader()
     {
     }
-    
+
     HashSet<String> WordlistLoader::getWordSet(const String& wordfile, const String& comment)
     {
         HashSet<String> result(HashSet<String>::newInstance());
@@ -35,7 +35,7 @@ namespace Lucene
         finally.throwException();
         return result;
     }
-    
+
     HashSet<String> WordlistLoader::getWordSet(ReaderPtr reader, const String& comment)
     {
         HashSet<String> result(HashSet<String>::newInstance());
@@ -64,7 +64,7 @@ namespace Lucene
         finally.throwException();
         return result;
     }
-    
+
     MapStringString WordlistLoader::getStemDict(const String& wordstemfile)
     {
         MapStringString result(MapStringString::newInstance());

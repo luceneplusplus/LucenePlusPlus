@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,28 +14,28 @@ namespace Lucene
 {
     /// The default maximum number of Filters in the cache
     const int32_t FilterManager::DEFAULT_CACHE_CLEAN_SIZE = 100;
-    
+
     /// The default frequency of cache cleanup
     const int64_t FilterManager::DEFAULT_CACHE_SLEEP_TIME = 1000 * 60 * 10;
-    
+
     FilterManager::FilterManager()
     {
     }
-    
+
     FilterManager::~FilterManager()
     {
     }
-    
+
     void FilterManager::initialize()
     {
         cache = MapIntFilterItem::newInstance();
         cacheCleanSize = DEFAULT_CACHE_CLEAN_SIZE; // Let the cache get to 100 items
         cleanSleepTime = DEFAULT_CACHE_SLEEP_TIME; // 10 minutes between cleanings
-        
+
         filterCleaner = newLucene<FilterCleaner>(shared_from_this());
         filterCleaner->start();
     }
-    
+
     FilterManagerPtr FilterManager::getInstance()
     {
         static FilterManagerPtr manager;
@@ -46,17 +46,17 @@ namespace Lucene
         }
         return manager;
     }
-    
+
     void FilterManager::setCacheSize(int32_t cacheCleanSize)
     {
         this->cacheCleanSize = cacheCleanSize;
     }
-    
+
     void FilterManager::setCleanThreadSleepTime(int64_t cleanSleepTime)
     {
         this->cleanSleepTime = cleanSleepTime;
     }
-    
+
     FilterPtr FilterManager::getFilter(FilterPtr filter)
     {
         SyncLock parentLock(&cache);
@@ -69,39 +69,39 @@ namespace Lucene
         cache.put(filter->hashCode(), newLucene<FilterItem>(filter));
         return filter;
     }
-    
+
     FilterItem::FilterItem(FilterPtr filter)
     {
         this->filter = filter;
         this->timestamp = MiscUtils::currentTimeMillis();
     }
-    
+
     FilterItem::~FilterItem()
     {
     }
-    
+
     FilterCleaner::FilterCleaner(FilterManagerPtr manager)
     {
         _manager = manager;
         running = true;
     }
-    
+
     FilterCleaner::~FilterCleaner()
     {
     }
-    
+
     void FilterCleaner::run()
     {
         while (running)
         {
             FilterManagerPtr manager(_manager);
-            
-            // sort items from oldest to newest we delete the oldest filters 
+
+            // sort items from oldest to newest we delete the oldest filters
             if (manager->cache.size() > manager->cacheCleanSize)
             {
                 // empty the temporary set
                 sortedFilterItems.clear();
-                
+
                 {
                     SyncLock parentLock(&manager->cache);
                     for (MapIntFilterItem::iterator item = manager->cache.begin(); item != manager->cache.end(); ++item)
@@ -116,7 +116,7 @@ namespace Lucene
                 // empty the set so we don't tie up the memory
                 sortedFilterItems.clear();
             }
-            
+
             // take a nap
             LuceneThread::threadSleep(manager->cleanSleepTime);
         }

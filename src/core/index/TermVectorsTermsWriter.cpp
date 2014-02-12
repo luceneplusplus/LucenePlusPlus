@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -29,30 +29,30 @@ namespace Lucene
         this->_docWriter = docWriter;
         this->docFreeList = Collection<TermVectorsTermsWriterPerDocPtr>::newInstance(1);
     }
-    
+
     TermVectorsTermsWriter::~TermVectorsTermsWriter()
     {
     }
-    
+
     TermsHashConsumerPerThreadPtr TermVectorsTermsWriter::addThread(TermsHashPerThreadPtr perThread)
     {
         return newLucene<TermVectorsTermsWriterPerThread>(perThread, shared_from_this());
     }
-    
+
     void TermVectorsTermsWriter::createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count)
     {
         int32_t end = start + count;
         for (int32_t i = start; i < end; ++i)
             postings[i] = newLucene<TermVectorsTermsWriterPostingList>();
     }
-    
+
     void TermVectorsTermsWriter::flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
     {
         SyncLock syncLock(this);
-        
+
         // NOTE: it's possible that all documents seen in this segment hit non-aborting exceptions, in which case we will
-        // not have yet init'd the TermVectorsWriter.  This is actually OK (unlike in the stored fields case) because, 
-        // although IieldInfos.hasVectors() will return true, the TermVectorsReader gracefully handles non-existence of 
+        // not have yet init'd the TermVectorsWriter.  This is actually OK (unlike in the stored fields case) because,
+        // although IieldInfos.hasVectors() will return true, the TermVectorsReader gracefully handles non-existence of
         // the term vectors files.
         if (tvx)
         {
@@ -61,12 +61,12 @@ namespace Lucene
                 // In case there are some final documents that we didn't see (because they hit a non-aborting exception)
                 fill(state->numDocsInStore - DocumentsWriterPtr(_docWriter)->getDocStoreOffset());
             }
-            
+
             tvx->flush();
             tvd->flush();
             tvf->flush();
         }
-        
+
         for (MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry)
         {
             for (Collection<TermsHashConsumerPerFieldPtr>::iterator field = entry->second.begin(); field != entry->second.end(); ++field)
@@ -75,19 +75,19 @@ namespace Lucene
                 TermsHashPerFieldPtr(perField->_termsHashPerField)->reset();
                 perField->shrinkHash();
             }
-            
+
             TermVectorsTermsWriterPerThreadPtr perThread(boost::static_pointer_cast<TermVectorsTermsWriterPerThread>(entry->first));
             TermsHashPerThreadPtr(perThread->_termsHashPerThread)->reset(true);
         }
     }
-    
+
     void TermVectorsTermsWriter::closeDocStore(SegmentWriteStatePtr state)
     {
         SyncLock syncLock(this);
         if (tvx)
         {
             DocumentsWriterPtr docWriter(_docWriter);
-            
+
             // At least one doc in this run had term vectors enabled
             fill(state->numDocsInStore - docWriter->getDocStoreOffset());
             tvx->close();
@@ -98,24 +98,24 @@ namespace Lucene
             String fileName(state->docStoreSegmentName + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
             if (4 + ((int64_t)state->numDocsInStore) * 16 != state->directory->fileLength(fileName))
             {
-                boost::throw_exception(RuntimeException(L"after flush: tvx size mismatch: " + StringUtils::toString(state->numDocsInStore) + 
-                                                        L" docs vs " + StringUtils::toString(state->directory->fileLength(fileName)) + 
-                                                        L" length in bytes of " + fileName + L" file exists?=" + 
+                boost::throw_exception(RuntimeException(L"after flush: tvx size mismatch: " + StringUtils::toString(state->numDocsInStore) +
+                                                        L" docs vs " + StringUtils::toString(state->directory->fileLength(fileName)) +
+                                                        L" length in bytes of " + fileName + L" file exists?=" +
                                                         StringUtils::toString(state->directory->fileExists(fileName))));
             }
-            
+
             state->flushedFiles.add(state->docStoreSegmentName + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
             state->flushedFiles.add(state->docStoreSegmentName + L"." + IndexFileNames::VECTORS_FIELDS_EXTENSION());
             state->flushedFiles.add(state->docStoreSegmentName + L"." + IndexFileNames::VECTORS_DOCUMENTS_EXTENSION());
-            
+
             docWriter->removeOpenFile(state->docStoreSegmentName + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
             docWriter->removeOpenFile(state->docStoreSegmentName + L"." + IndexFileNames::VECTORS_FIELDS_EXTENSION());
             docWriter->removeOpenFile(state->docStoreSegmentName + L"." + IndexFileNames::VECTORS_DOCUMENTS_EXTENSION());
-            
+
             lastDocID = 0;
         }
     }
-    
+
     TermVectorsTermsWriterPerDocPtr TermVectorsTermsWriter::getPerDoc()
     {
         SyncLock syncLock(this);
@@ -123,7 +123,7 @@ namespace Lucene
         {
             if (++allocCount > docFreeList.size())
             {
-                // Grow our free list up front to make sure we have enough space to recycle all outstanding 
+                // Grow our free list up front to make sure we have enough space to recycle all outstanding
                 // PerDoc instances
                 BOOST_ASSERT(allocCount == 1 + docFreeList.size());
                 docFreeList.resize(MiscUtils::getNextSize(allocCount));
@@ -133,7 +133,7 @@ namespace Lucene
         else
             return docFreeList[--freeCount];
     }
-    
+
     void TermVectorsTermsWriter::fill(int32_t docID)
     {
         int32_t docStoreOffset = DocumentsWriterPtr(_docWriter)->getDocStoreOffset();
@@ -150,52 +150,52 @@ namespace Lucene
             }
         }
     }
-    
+
     void TermVectorsTermsWriter::initTermVectorsWriter()
     {
         SyncLock syncLock(this);
         if (!tvx)
         {
             DocumentsWriterPtr docWriter(_docWriter);
-            
+
             String docStoreSegment(docWriter->getDocStoreSegment());
             if (docStoreSegment.empty())
                 return;
-            
+
             // If we hit an exception while init'ing the term vector output files, we must abort this segment
             // because those files will be in an unknown state
             tvx = docWriter->directory->createOutput(docStoreSegment + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
             tvd = docWriter->directory->createOutput(docStoreSegment + L"." + IndexFileNames::VECTORS_DOCUMENTS_EXTENSION());
             tvf = docWriter->directory->createOutput(docStoreSegment + L"." + IndexFileNames::VECTORS_FIELDS_EXTENSION());
-            
+
             tvx->writeInt(TermVectorsReader::FORMAT_CURRENT);
             tvd->writeInt(TermVectorsReader::FORMAT_CURRENT);
             tvf->writeInt(TermVectorsReader::FORMAT_CURRENT);
-            
+
             docWriter->addOpenFile(docStoreSegment + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
             docWriter->addOpenFile(docStoreSegment + L"." + IndexFileNames::VECTORS_FIELDS_EXTENSION());
             docWriter->addOpenFile(docStoreSegment + L"." + IndexFileNames::VECTORS_DOCUMENTS_EXTENSION());
-            
+
             lastDocID = 0;
         }
     }
-    
+
     void TermVectorsTermsWriter::finishDocument(TermVectorsTermsWriterPerDocPtr perDoc)
     {
         SyncLock syncLock(this);
         DocumentsWriterPtr docWriter(_docWriter);
-        
+
         BOOST_ASSERT(IndexWriterPtr(docWriter->_writer)->testPoint(L"TermVectorsTermsWriter.finishDocument start"));
-        
+
         initTermVectorsWriter();
-        
+
         fill(perDoc->docID);
-        
+
         // Append term vectors to the real outputs
         tvx->writeLong(tvd->getFilePointer());
         tvx->writeLong(tvf->getFilePointer());
         tvd->writeVInt(perDoc->numVectorFields);
-        
+
         if (perDoc->numVectorFields > 0)
         {
             for (int32_t i = 0; i < perDoc->numVectorFields; ++i)
@@ -211,22 +211,22 @@ namespace Lucene
             perDoc->perDocTvf->writeTo(tvf);
             perDoc->numVectorFields = 0;
         }
-        
+
         BOOST_ASSERT(lastDocID == perDoc->docID + docWriter->getDocStoreOffset());
-        
+
         ++lastDocID;
-        
+
         perDoc->reset();
         free(perDoc);
         BOOST_ASSERT(IndexWriterPtr(docWriter->_writer)->testPoint(L"TermVectorsTermsWriter.finishDocument end"));
     }
-    
+
     bool TermVectorsTermsWriter::freeRAM()
     {
         // We don't hold any state beyond one doc, so we don't free persistent RAM here
         return false;
     }
-    
+
     void TermVectorsTermsWriter::abort()
     {
         if (tvx)
@@ -264,19 +264,19 @@ namespace Lucene
         }
         lastDocID = 0;
     }
-    
+
     void TermVectorsTermsWriter::free(TermVectorsTermsWriterPerDocPtr doc)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(freeCount < docFreeList.size());
         docFreeList[freeCount++] = doc;
     }
-    
+
     int32_t TermVectorsTermsWriter::bytesPerPosting()
     {
         return (RawPostingList::BYTES_SIZE + 3 * DocumentsWriter::INT_NUM_BYTE);
     }
-    
+
     TermVectorsTermsWriterPerDoc::TermVectorsTermsWriterPerDoc(TermVectorsTermsWriterPtr termsWriter)
     {
         this->_termsWriter = termsWriter;
@@ -286,24 +286,24 @@ namespace Lucene
         fieldNumbers = Collection<int32_t>::newInstance(1);
         fieldPointers = Collection<int64_t>::newInstance(1);
     }
-    
+
     TermVectorsTermsWriterPerDoc::~TermVectorsTermsWriterPerDoc()
     {
     }
-    
+
     void TermVectorsTermsWriterPerDoc::reset()
     {
         perDocTvf->reset();
         buffer->recycle();
         numVectorFields = 0;
     }
-    
+
     void TermVectorsTermsWriterPerDoc::abort()
     {
         reset();
         TermVectorsTermsWriterPtr(_termsWriter)->free(shared_from_this());
     }
-    
+
     void TermVectorsTermsWriterPerDoc::addField(int32_t fieldNumber)
     {
         if (numVectorFields == fieldNumbers.size())
@@ -315,24 +315,24 @@ namespace Lucene
         fieldPointers[numVectorFields] = perDocTvf->getFilePointer();
         ++numVectorFields;
     }
-    
+
     int64_t TermVectorsTermsWriterPerDoc::sizeInBytes()
     {
         return buffer->getSizeInBytes();
     }
-    
+
     void TermVectorsTermsWriterPerDoc::finish()
     {
         TermVectorsTermsWriterPtr(_termsWriter)->finishDocument(shared_from_this());
     }
-    
+
     TermVectorsTermsWriterPostingList::TermVectorsTermsWriterPostingList()
     {
         freq = 0;
         lastOffset = 0;
         lastPosition = 0;
     }
-    
+
     TermVectorsTermsWriterPostingList::~TermVectorsTermsWriterPostingList()
     {
     }

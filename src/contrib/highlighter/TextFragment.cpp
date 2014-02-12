@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,61 +17,61 @@ namespace Lucene
         this->fragNum = fragNum;
         this->score = 0;
     }
-    
+
     TextFragment::~TextFragment()
     {
     }
-    
+
     void TextFragment::setScore(double score)
     {
         this->score = score;
     }
-    
+
     double TextFragment::getScore()
     {
         return score;
     }
-    
+
     void TextFragment::merge(TextFragmentPtr frag2)
     {
         textEndPos = frag2->textEndPos;
         score = std::max(score, frag2->score);
     }
-    
+
     bool TextFragment::follows(TextFragmentPtr fragment)
     {
         return (textStartPos == fragment->textEndPos);
     }
-    
+
     int32_t TextFragment::getFragNum()
     {
         return fragNum;
     }
-    
+
     String TextFragment::toString()
     {
         return markedUpText->toString().substr(textStartPos, textEndPos - textStartPos);
     }
-    
+
     StringBuffer::~StringBuffer()
     {
     }
-    
+
     int32_t StringBuffer::length()
     {
         return buffer.str().length();
     }
-    
+
     String StringBuffer::toString()
     {
         return buffer.str();
     }
-    
+
     void StringBuffer::append(const String& str)
     {
         buffer << str;
     }
-    
+
     void StringBuffer::clear()
     {
         buffer.str(L"");

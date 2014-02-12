@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,36 +18,36 @@ namespace Lucene
 {
     /// Word token type
     const int32_t CJKTokenizer::WORD_TYPE = 0;
-    
+
     /// Single byte token type
     const int32_t CJKTokenizer::SINGLE_TOKEN_TYPE = 1;
-    
+
     /// Double byte token type
     const int32_t CJKTokenizer::DOUBLE_TOKEN_TYPE = 2;
 
     /// Names for token types
     const wchar_t* CJKTokenizer::TOKEN_TYPE_NAMES[] = {L"word", L"single", L"double"};
-    
+
     const int32_t CJKTokenizer::MAX_WORD_LEN = 255;
 
     const int32_t CJKTokenizer::IO_BUFFER_SIZE = 256;
-    
+
     CJKTokenizer::CJKTokenizer(ReaderPtr input) : Tokenizer(input)
     {
     }
-    
+
     CJKTokenizer::CJKTokenizer(AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source, input)
     {
     }
-    
+
     CJKTokenizer::CJKTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory, input)
     {
     }
-    
+
     CJKTokenizer::~CJKTokenizer()
     {
     }
-    
+
     void CJKTokenizer::initialize()
     {
         offset = 0;
@@ -57,12 +57,12 @@ namespace Lucene
         ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
         tokenType = WORD_TYPE;
         preIsTokened = false;
-        
+
         termAtt = addAttribute<TermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
     }
-    
+
     CJKTokenizer::UnicodeBlock CJKTokenizer::unicodeBlock(wchar_t c)
     {
         if (c >= 0x0000 && c <= 0x007f)
@@ -71,7 +71,7 @@ namespace Lucene
             return HALFWIDTH_AND_FULLWIDTH_FORMS;
         return NONE;
     }
-    
+
     bool CJKTokenizer::incrementToken()
     {
         clearAttributes();
@@ -119,7 +119,7 @@ namespace Lucene
                 {
                     // get current character
                     c = ioBuffer[bufferIndex++];
-                    
+
                     // get the UnicodeBlock of the current character
                     ub = unicodeBlock(c);
                 }
@@ -148,7 +148,7 @@ namespace Lucene
                             // letter
                             start = offset - 1;
                         }
-                        else if (tokenType == DOUBLE_TOKEN_TYPE) 
+                        else if (tokenType == DOUBLE_TOKEN_TYPE)
                         {
                             // "javaC1C2C3C4linux" <br>
                             //              ^--: the previous non-ASCII
@@ -252,14 +252,14 @@ namespace Lucene
             // Cycle back and try for the next token (don't return an empty string)
         }
     }
-    
+
     void CJKTokenizer::end()
     {
         // set final offset
         int32_t finalOffset = correctOffset(offset);
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
-    
+
     void CJKTokenizer::reset()
     {
         Tokenizer::reset();
@@ -269,7 +269,7 @@ namespace Lucene
         preIsTokened = false;
         tokenType = WORD_TYPE;
     }
-    
+
     void CJKTokenizer::reset(ReaderPtr input)
     {
         Tokenizer::reset(input);

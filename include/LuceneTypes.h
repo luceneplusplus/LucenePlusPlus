@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
     class Type; \
     typedef boost::shared_ptr<Type> Type##Ptr; \
     typedef boost::weak_ptr<Type> Type##WeakPtr;
-    
+
 namespace Lucene
 {
     // analysis
@@ -42,7 +42,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(PerFieldAnalyzerWrapper)
     DECLARE_SHARED_PTR(PorterStemFilter)
     DECLARE_SHARED_PTR(PorterStemmer)
-    DECLARE_SHARED_PTR(PositionIncrementAttribute)    
+    DECLARE_SHARED_PTR(PositionIncrementAttribute)
     DECLARE_SHARED_PTR(SimpleAnalyzer)
     DECLARE_SHARED_PTR(SinkFilter)
     DECLARE_SHARED_PTR(SinkTokenStream)
@@ -65,7 +65,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(WhitespaceAnalyzer)
     DECLARE_SHARED_PTR(WhitespaceTokenizer)
     DECLARE_SHARED_PTR(WordlistLoader)
-    
+
     // document
     DECLARE_SHARED_PTR(AbstractField)
     DECLARE_SHARED_PTR(CompressionTools)
@@ -263,7 +263,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(TermVectorsWriter)
     DECLARE_SHARED_PTR(TermVectorsPositionInfo)
     DECLARE_SHARED_PTR(WaitQueue)
-    
+
     // query parser
     DECLARE_SHARED_PTR(FastCharStream)
     DECLARE_SHARED_PTR(MultiFieldQueryParser)
@@ -272,7 +272,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(QueryParserConstants)
     DECLARE_SHARED_PTR(QueryParserToken)
     DECLARE_SHARED_PTR(QueryParserTokenManager)
-            
+
     // search
     DECLARE_SHARED_PTR(AveragePayloadFunction)
     DECLARE_SHARED_PTR(BooleanClause)
@@ -286,7 +286,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(BucketTable)
     DECLARE_SHARED_PTR(ByteCache)
     DECLARE_SHARED_PTR(ByteFieldSource)
-    DECLARE_SHARED_PTR(ByteParser)    
+    DECLARE_SHARED_PTR(ByteParser)
     DECLARE_SHARED_PTR(Cache)
     DECLARE_SHARED_PTR(CachedDfSource)
     DECLARE_SHARED_PTR(CachingSpanFilter)
@@ -480,7 +480,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(Weight)
     DECLARE_SHARED_PTR(WildcardQuery)
     DECLARE_SHARED_PTR(WildcardTermEnum)
-        
+
     // store
     DECLARE_SHARED_PTR(BufferedIndexInput)
     DECLARE_SHARED_PTR(BufferedIndexOutput)
@@ -513,7 +513,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(SimpleFSLockFactory)
     DECLARE_SHARED_PTR(SingleInstanceLock)
     DECLARE_SHARED_PTR(SingleInstanceLockFactory)
-    
+
     // util
     DECLARE_SHARED_PTR(Attribute)
     DECLARE_SHARED_PTR(AttributeFactory)

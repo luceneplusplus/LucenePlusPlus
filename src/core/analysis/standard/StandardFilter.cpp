@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@ namespace Lucene
         termAtt = addAttribute<TermAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
     }
-    
+
     StandardFilter::~StandardFilter()
     {
     }
-    
+
     const String& StandardFilter::APOSTROPHE_TYPE()
     {
         static String _APOSTROPHE_TYPE;
@@ -29,7 +29,7 @@ namespace Lucene
             _APOSTROPHE_TYPE = StandardTokenizer::TOKEN_TYPES()[StandardTokenizer::APOSTROPHE];
         return _APOSTROPHE_TYPE;
     }
-    
+
     const String& StandardFilter::ACRONYM_TYPE()
     {
         static String _ACRONYM_TYPE;
@@ -37,16 +37,16 @@ namespace Lucene
             _ACRONYM_TYPE = StandardTokenizer::TOKEN_TYPES()[StandardTokenizer::ACRONYM];
         return _ACRONYM_TYPE;
     }
-    
+
     bool StandardFilter::incrementToken()
     {
         if (!input->incrementToken())
             return false;
-        
+
         wchar_t* termBuffer = termAtt->termBufferArray();
         int32_t bufferLength = termAtt->termLength();
         String type(typeAtt->type());
-        
+
         if (type == APOSTROPHE_TYPE() && bufferLength >= 2 && termBuffer[bufferLength - 2] == L'\'' &&
             (termBuffer[bufferLength - 1] == L's' || termBuffer[bufferLength - 1] == L'S')) // remove 's
         {
@@ -64,7 +64,7 @@ namespace Lucene
             }
             termAtt->setTermLength(upto);
         }
-        
+
         return true;
     }
 }

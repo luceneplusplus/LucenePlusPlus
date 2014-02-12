@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,11 +14,11 @@ namespace Lucene
     {
         this->sinks = Collection<SinkTokenStreamPtr>::newInstance();
     }
-    
+
     TeeSinkTokenFilter::~TeeSinkTokenFilter()
     {
     }
-    
+
     SinkTokenStreamPtr TeeSinkTokenFilter::newSinkTokenStream()
     {
         static SinkFilterPtr ACCEPT_ALL_FILTER;
@@ -29,14 +29,14 @@ namespace Lucene
         }
         return newSinkTokenStream(ACCEPT_ALL_FILTER);
     }
-    
+
     SinkTokenStreamPtr TeeSinkTokenFilter::newSinkTokenStream(SinkFilterPtr filter)
     {
         SinkTokenStreamPtr sink(newLucene<SinkTokenStream>(this->cloneAttributes(), filter));
         this->sinks.add(sink);
         return sink;
     }
-    
+
     void TeeSinkTokenFilter::addSinkTokenStream(SinkTokenStreamPtr sink)
     {
         // check that sink has correct factory
@@ -48,14 +48,14 @@ namespace Lucene
             sink->addAttribute((*it)->getClassName(), *it);
         this->sinks.add(sink);
     }
-    
+
     void TeeSinkTokenFilter::consumeAllTokens()
     {
         while (incrementToken())
         {
         }
     }
-    
+
     bool TeeSinkTokenFilter::incrementToken()
     {
         if (input->incrementToken())
@@ -76,10 +76,10 @@ namespace Lucene
             }
             return true;
         }
-        
+
         return false;
     }
-    
+
     void TeeSinkTokenFilter::end()
     {
         TokenFilter::end();
@@ -90,25 +90,25 @@ namespace Lucene
                 (*ref)->setFinalState(finalState);
         }
     }
-    
+
     SinkFilter::~SinkFilter()
     {
     }
-    
+
     void SinkFilter::reset()
     {
         // nothing to do; can be overridden
     }
-    
+
     AcceptAllSinkFilter::~AcceptAllSinkFilter()
     {
     }
-    
+
     bool AcceptAllSinkFilter::accept(AttributeSourcePtr source)
     {
         return true;
     }
-    
+
     SinkTokenStream::SinkTokenStream(AttributeSourcePtr source, SinkFilterPtr filter) : TokenStream(source)
     {
         this->filter = filter;
@@ -116,28 +116,28 @@ namespace Lucene
         this->it = cachedStates.begin();
         this->initIterator = false;
     }
-    
+
     SinkTokenStream::~SinkTokenStream()
     {
     }
-    
+
     bool SinkTokenStream::accept(AttributeSourcePtr source)
     {
         return filter->accept(source);
     }
-    
+
     void SinkTokenStream::addState(AttributeSourceStatePtr state)
     {
         if (initIterator)
             boost::throw_exception(IllegalStateException(L"The tee must be consumed before sinks are consumed."));
         cachedStates.add(state);
     }
-    
+
     void SinkTokenStream::setFinalState(AttributeSourceStatePtr finalState)
     {
         this->finalState = finalState;
     }
-    
+
     bool SinkTokenStream::incrementToken()
     {
         // lazy init the iterator
@@ -146,21 +146,21 @@ namespace Lucene
             it = cachedStates.begin();
             initIterator = true;
         }
-        
+
         if (it == cachedStates.end())
             return false;
-        
+
         AttributeSourceStatePtr state = *it++;
         restoreState(state);
         return true;
     }
-    
+
     void SinkTokenStream::end()
     {
         if (finalState)
             restoreState(finalState);
     }
-    
+
     void SinkTokenStream::reset()
     {
         it = cachedStates.begin();

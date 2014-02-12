@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,20 +17,20 @@ namespace Lucene
     public:
         SpanWeight(SpanQueryPtr query, SearcherPtr searcher);
         virtual ~SpanWeight();
-        
+
         LUCENE_CLASS(SpanWeight);
-    
+
     protected:
         SimilarityPtr similarity;
         double value;
         double idf;
         double queryNorm;
         double queryWeight;
-        
+
         SetTerm terms;
         SpanQueryPtr query;
         IDFExplanationPtr idfExp;
-    
+
     public:
         virtual QueryPtr getQuery();
         virtual double getValue();
@@ -38,7 +38,7 @@ namespace Lucene
         virtual void normalize(double norm);
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
         virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
-        
+
         friend class PayloadNearSpanScorer;
         friend class PayloadTermSpanScorer;
     };

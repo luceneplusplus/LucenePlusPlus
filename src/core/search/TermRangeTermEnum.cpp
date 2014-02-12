@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    TermRangeTermEnum::TermRangeTermEnum(IndexReaderPtr reader, const String& field, StringValue lowerTermText, 
+    TermRangeTermEnum::TermRangeTermEnum(IndexReaderPtr reader, const String& field, StringValue lowerTermText,
                                          StringValue upperTermText, bool includeLower, bool includeUpper, CollatorPtr collator)
     {
         this->collator = collator;
@@ -24,32 +24,32 @@ namespace Lucene
         this->includeLower = includeLower;
         this->includeUpper = includeUpper;
         this->field = field;
-        
+
         // do a little bit of normalization: open ended range queries should always be inclusive.
         if (VariantUtils::isNull(this->lowerTermText))
             this->includeLower = true;
-        
+
         if (VariantUtils::isNull(this->upperTermText))
             this->includeUpper = true;
-        
+
         String startTermText(collator ? L"" : VariantUtils::get<String>(this->lowerTermText));
         setEnum(reader->terms(newLucene<Term>(this->field, startTermText)));
     }
-    
+
     TermRangeTermEnum::~TermRangeTermEnum()
     {
     }
-    
+
     double TermRangeTermEnum::difference()
     {
         return 1.0;
     }
-    
+
     bool TermRangeTermEnum::endEnum()
     {
         return _endEnum;
     }
-    
+
     bool TermRangeTermEnum::termCompare(TermPtr term)
     {
         if (!collator)
@@ -88,11 +88,11 @@ namespace Lucene
         {
             if (term && term->field() == field)
             {
-                if ((VariantUtils::isNull(lowerTermText) || 
-                    (includeLower ? collator->compare(term->text(), VariantUtils::get<String>(lowerTermText)) >= 0 : 
-                    collator->compare(term->text(), VariantUtils::get<String>(lowerTermText)) > 0)) && 
+                if ((VariantUtils::isNull(lowerTermText) ||
+                    (includeLower ? collator->compare(term->text(), VariantUtils::get<String>(lowerTermText)) >= 0 :
+                    collator->compare(term->text(), VariantUtils::get<String>(lowerTermText)) > 0)) &&
                     (VariantUtils::isNull(upperTermText) ||
-                    (includeUpper ? collator->compare(term->text(), VariantUtils::get<String>(upperTermText)) <= 0 : 
+                    (includeUpper ? collator->compare(term->text(), VariantUtils::get<String>(upperTermText)) <= 0 :
                     collator->compare(term->text(), VariantUtils::get<String>(upperTermText)) < 0)))
                     return true;
                 return false;

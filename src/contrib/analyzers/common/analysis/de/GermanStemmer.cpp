@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,28 +17,28 @@ namespace Lucene
     {
         substCount = 0;
     }
-    
+
     GermanStemmer::~GermanStemmer()
     {
     }
-    
+
     String GermanStemmer::stem(const String& term)
     {
         // Use lowercase for medium stemming.
         buffer = StringUtils::toLower(term);
         if (!isStemmable())
             return buffer;
-        
+
         // Stemming starts here
         substitute();
         strip();
         optimize();
         resubstitute();
         removeParticleDenotion();
-        
+
         return buffer;
     }
-    
+
     bool GermanStemmer::isStemmable()
     {
         for (int32_t c = 0; c < (int32_t)buffer.length(); ++c)
@@ -48,7 +48,7 @@ namespace Lucene
         }
         return true;
     }
-    
+
     void GermanStemmer::strip()
     {
         bool doMore = true;
@@ -73,7 +73,7 @@ namespace Lucene
                 doMore = false;
         }
     }
-    
+
     void GermanStemmer::optimize()
     {
         // Additional step for female plurals of professions and inhabitants.
@@ -82,12 +82,12 @@ namespace Lucene
             buffer.resize(buffer.length() - 1);
             strip();
         }
-        
+
         // Additional step for irregular plural nouns like "Matrizen -> Matrix".
         if (buffer[buffer.length() - 1] == L'z')
             buffer[buffer.length() - 1] = L'x';
     }
-    
+
     void GermanStemmer::removeParticleDenotion()
     {
         if (buffer.length() > 4)
@@ -102,7 +102,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void GermanStemmer::substitute()
     {
         substCount = 0;
@@ -168,7 +168,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void GermanStemmer::resubstitute()
     {
         for (int32_t c = 0; c < (int32_t)buffer.length(); ++c)

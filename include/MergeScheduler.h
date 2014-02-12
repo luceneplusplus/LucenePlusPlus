@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,13 +17,13 @@ namespace Lucene
     {
     public:
         virtual ~MergeScheduler();
-        
+
         LUCENE_CLASS(MergeScheduler);
-    
+
     public:
         /// Run the merges provided by {@link IndexWriter#getNextMerge()}.
         virtual void merge(IndexWriterPtr writer) = 0;
-        
+
         /// Close this MergeScheduler.
         virtual void close() = 0;
     };

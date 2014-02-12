@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ namespace Lucene
     TermVectorsWriter::TermVectorsWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fieldInfos)
     {
         utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
-        
+
         // Open files for TermVector storage
         tvx = directory->createOutput(segment + L"." + IndexFileNames::VECTORS_INDEX_EXTENSION());
         tvx->writeInt(TermVectorsReader::FORMAT_CURRENT);
@@ -33,41 +33,41 @@ namespace Lucene
 
         this->fieldInfos = fieldInfos;
     }
-    
+
     TermVectorsWriter::~TermVectorsWriter()
     {
     }
-    
+
     void TermVectorsWriter::addAllDocVectors(Collection<TermFreqVectorPtr> vectors)
     {
         tvx->writeLong(tvd->getFilePointer());
         tvx->writeLong(tvf->getFilePointer());
-        
+
         if (vectors)
         {
             int32_t numFields = vectors.size();
             tvd->writeVInt(numFields);
-            
+
             Collection<int64_t> fieldPointers(Collection<int64_t>::newInstance(numFields));
-            
+
             for (int32_t i = 0; i < numFields; ++i)
             {
                 fieldPointers[i] = tvf->getFilePointer();
-                
+
                 int32_t fieldNumber = fieldInfos->fieldNumber(vectors[i]->getField());
-                
+
                 // 1st pass: write field numbers to tvd
                 tvd->writeVInt(fieldNumber);
-                
+
                 int32_t numTerms = vectors[i]->size();
                 tvf->writeVInt(numTerms);
-                
+
                 TermPositionVectorPtr tpVector(boost::dynamic_pointer_cast<TermPositionVector>(vectors[i]));
-                
+
                 uint8_t bits;
                 bool storePositions;
                 bool storeOffsets;
-                
+
                 if (tpVector)
                 {
                     // May have positions & offsets
@@ -82,18 +82,18 @@ namespace Lucene
                     storePositions = false;
                     storeOffsets = false;
                 }
-                
+
                 tvf->writeVInt(bits);
                 Collection<String> terms(vectors[i]->getTerms());
                 Collection<int32_t> freqs(vectors[i]->getTermFrequencies());
-                
+
                 int32_t utf8Upto = 0;
                 utf8Results[1]->length = 0;
-                
+
                 for (int32_t j = 0; j < numTerms; ++j)
                 {
                     StringUtils::toUTF8(terms[j].c_str(), terms[j].length(), utf8Results[utf8Upto]);
-                    
+
                     int32_t start = MiscUtils::bytesDifference(utf8Results[1 - utf8Upto]->result.get(), utf8Results[1 - utf8Upto]->length,
                                                                utf8Results[utf8Upto]->result.get(), utf8Results[utf8Upto]->length);
                     int32_t length = utf8Results[utf8Upto]->length - start;
@@ -101,17 +101,17 @@ namespace Lucene
                     tvf->writeVInt(length); // write delta length
                     tvf->writeBytes(utf8Results[utf8Upto]->result.get(), start, length); // write delta bytes
                     utf8Upto = 1 - utf8Upto;
-                    
+
                     int32_t termFreq = freqs[j];
                     tvf->writeVInt(termFreq);
-                    
+
                     if (storePositions)
                     {
                         Collection<int32_t> positions(tpVector->getTermPositions(j));
                         if (!positions)
                             boost::throw_exception(IllegalStateException(L"Trying to write positions that are null!"));
                         BOOST_ASSERT(positions.size() == termFreq);
-                        
+
                         // use delta encoding for positions
                         int32_t lastPosition = 0;
                         for (int32_t k = 0; k < positions.size(); ++k)
@@ -121,14 +121,14 @@ namespace Lucene
                             lastPosition = position;
                         }
                     }
-                    
+
                     if (storeOffsets)
                     {
                         Collection<TermVectorOffsetInfoPtr> offsets(tpVector->getOffsets(j));
                         if (!offsets)
                             boost::throw_exception(IllegalStateException(L"Trying to write offsets that are null!"));
                         BOOST_ASSERT(offsets.size() == termFreq);
-                        
+
                         // use delta encoding for offsets
                         int32_t lastEndOffset = 0;
                         for (int32_t k = 0; k < offsets.size(); ++k)
@@ -142,7 +142,7 @@ namespace Lucene
                     }
                 }
             }
-            
+
             // 2nd pass: write field pointers to tvd
             if (numFields > 1)
             {
@@ -158,7 +158,7 @@ namespace Lucene
         else
             tvd->writeVInt(0);
     }
-    
+
     void TermVectorsWriter::addRawDocuments(TermVectorsReaderPtr reader, Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t numDocs)
     {
         int64_t tvdPosition = tvd->getFilePointer();
@@ -177,10 +177,10 @@ namespace Lucene
         BOOST_ASSERT(tvd->getFilePointer() == tvdPosition);
         BOOST_ASSERT(tvf->getFilePointer() == tvfPosition);
     }
-    
+
     void TermVectorsWriter::close()
     {
-        // make an effort to close all streams we can but remember and re-throw the first exception 
+        // make an effort to close all streams we can but remember and re-throw the first exception
         // encountered in this process
         LuceneException keep;
         if (tvx)

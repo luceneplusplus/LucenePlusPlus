@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@ namespace Lucene
         this->offset = offset;
         this->boost = boost;
     }
-    
+
     FieldInvertState::~FieldInvertState()
     {
     }
-    
+
     void FieldInvertState::reset(double docBoost)
     {
         position = 0;
@@ -31,32 +31,32 @@ namespace Lucene
         boost = docBoost;
         attributeSource.reset();
     }
-    
+
     int32_t FieldInvertState::getPosition()
     {
         return position;
     }
-    
+
     int32_t FieldInvertState::getLength()
     {
         return length;
     }
-    
+
     int32_t FieldInvertState::getNumOverlap()
     {
         return numOverlap;
     }
-    
+
     int32_t FieldInvertState::getOffset()
     {
         return offset;
     }
-    
+
     double FieldInvertState::getBoost()
     {
         return boost;
     }
-    
+
     AttributeSourcePtr FieldInvertState::getAttributeSource()
     {
         return attributeSource;

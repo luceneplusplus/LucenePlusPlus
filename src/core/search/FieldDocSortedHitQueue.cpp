@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,22 +17,22 @@ namespace Lucene
     FieldDocSortedHitQueue::FieldDocSortedHitQueue(int32_t size) : PriorityQueue<FieldDocPtr>(size)
     {
     }
-    
+
     FieldDocSortedHitQueue::~FieldDocSortedHitQueue()
     {
     }
-    
+
     void FieldDocSortedHitQueue::setFields(Collection<SortFieldPtr> fields)
     {
         this->fields = fields;
         this->collators = hasCollators(fields);
     }
-    
+
     Collection<SortFieldPtr> FieldDocSortedHitQueue::getFields()
     {
         return fields;
     }
-    
+
     Collection<CollatorPtr> FieldDocSortedHitQueue::hasCollators(Collection<SortFieldPtr> fields)
     {
         if (!fields)
@@ -46,7 +46,7 @@ namespace Lucene
         }
         return ret;
     }
-    
+
     bool FieldDocSortedHitQueue::lessThan(const FieldDocPtr& first, const FieldDocPtr& second)
     {
         int32_t n = fields.size();
@@ -69,16 +69,16 @@ namespace Lucene
                 if (type == SortField::SCORE)
                     c = -c;
             }
-            
+
             // reverse sort
             if (fields[i]->getReverse())
                 c = -c;
         }
-        
+
         // avoid random sort order that could lead to duplicates
         if (c == 0)
             return (first->doc > second->doc);
-        
+
         return (c > 0);
     }
 }

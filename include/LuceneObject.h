@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -32,28 +32,28 @@ namespace Lucene
     {
     public:
         virtual ~LuceneObject();
-    
+
     protected:
         LuceneObject();
 
     public:
-        /// Called directly after instantiation to create objects that depend on this object being 
+        /// Called directly after instantiation to create objects that depend on this object being
         /// fully constructed.
         virtual void initialize();
-        
+
         /// Return clone of this object
         /// @param other clone reference - null when called initially, then set in top virtual override.
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        
+
         /// Return hash code for this object.
         virtual int32_t hashCode();
-        
+
         /// Return whether two objects are equal
         virtual bool equals(LuceneObjectPtr other);
-        
+
         /// Compare two objects
         virtual int32_t compareTo(LuceneObjectPtr other);
-        
+
         /// Returns a string representation of the object
         virtual String toString();
     };

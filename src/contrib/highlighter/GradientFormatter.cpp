@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ namespace Lucene
                 boost::throw_exception(IllegalArgumentException(L"minForegroundColor is not 7 bytes long eg a hex RGB value such as #FFFFFF"));
             if (maxForegroundColor.length() != 7)
                 boost::throw_exception(IllegalArgumentException(L"maxForegroundColor is not 7 bytes long eg a hex RGB value such as #FFFFFF"));
-            
+
             fgRMin = hexToInt(minForegroundColor.substr(1, 2));
             fgGMin = hexToInt(minForegroundColor.substr(3, 2));
             fgBMin = hexToInt(minForegroundColor.substr(5, 2));
@@ -29,7 +29,7 @@ namespace Lucene
             fgGMax = hexToInt(maxForegroundColor.substr(3, 2));
             fgBMax = hexToInt(maxForegroundColor.substr(5, 2));
         }
-        
+
         highlightBackground = (!minBackgroundColor.empty()  && !maxBackgroundColor.empty());
         if (highlightBackground)
         {
@@ -37,7 +37,7 @@ namespace Lucene
                 boost::throw_exception(IllegalArgumentException(L"minBackgroundColor is not 7 bytes long eg a hex RGB value such as #FFFFFF"));
             if (maxBackgroundColor.length() != 7)
                 boost::throw_exception(IllegalArgumentException(L"maxBackgroundColor is not 7 bytes long eg a hex RGB value such as #FFFFFF"));
-            
+
             bgRMin = hexToInt(minBackgroundColor.substr(1, 2));
             bgGMin = hexToInt(minBackgroundColor.substr(3, 2));
             bgBMin = hexToInt(minBackgroundColor.substr(5, 2));
@@ -46,14 +46,14 @@ namespace Lucene
             bgGMax = hexToInt(maxBackgroundColor.substr(3, 2));
             bgBMax = hexToInt(maxBackgroundColor.substr(5, 2));
         }
-        
+
         this->maxScore = maxScore;
     }
-    
+
     GradientFormatter::~GradientFormatter()
     {
     }
-    
+
     String GradientFormatter::highlightTerm(const String& originalText, TokenGroupPtr tokenGroup)
     {
         if (tokenGroup->getTotalScore() == 0)
@@ -70,7 +70,7 @@ namespace Lucene
         buffer << L">" << originalText << L"</font>";
         return buffer.str();
     }
-    
+
     String GradientFormatter::getForegroundColorString(double score)
     {
         int32_t rVal = getColorVal(fgRMin, fgRMax, score);
@@ -80,7 +80,7 @@ namespace Lucene
         buffer << L"#" << intToHex(rVal) << intToHex(gVal) << intToHex(bVal);
         return buffer.str();
     }
-    
+
     String GradientFormatter::getBackgroundColorString(double score)
     {
         int32_t rVal = getColorVal(bgRMin, bgRMax, score);
@@ -90,7 +90,7 @@ namespace Lucene
         buffer << L"#" << intToHex(rVal) << intToHex(gVal) << intToHex(bVal);
         return buffer.str();
     }
-    
+
     int32_t GradientFormatter::getColorVal(int32_t colorMin, int32_t colorMax, double score)
     {
         if (colorMin == colorMax)
@@ -100,7 +100,7 @@ namespace Lucene
         double colScore = scale * relScorePercent;
         return std::min(colorMin, colorMax) + (int32_t)colScore;
     }
-    
+
     String GradientFormatter::intToHex(int32_t i)
     {
         static const wchar_t* hexDigits = L"0123456789abcdef";
@@ -108,7 +108,7 @@ namespace Lucene
         buffer << hexDigits[(i & 0xf0) >> 4] << hexDigits[i & 0x0f];
         return buffer.str();
     }
-    
+
     int32_t GradientFormatter::hexToInt(const String& hex)
     {
         int32_t len = (int32_t)hex.length();

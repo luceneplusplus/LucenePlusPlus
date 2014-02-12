@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,18 +15,18 @@ namespace Lucene
         upto = 0;
         left = 0;
     }
-    
+
     ReusableStringReader::~ReusableStringReader()
     {
     }
-    
+
     void ReusableStringReader::init(const String& s)
     {
         this->s = s;
         left = s.length();
         this->upto = 0;
     }
-    
+
     int32_t ReusableStringReader::read(wchar_t* buffer, int32_t offset, int32_t length)
     {
         if (left > length)
@@ -50,7 +50,7 @@ namespace Lucene
             return r;
         }
     }
-    
+
     void ReusableStringReader::close()
     {
     }

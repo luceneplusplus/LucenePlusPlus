@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -12,14 +12,14 @@ namespace Lucene
 {
     /// How long {@link #obtain(int64_t)} waits, in milliseconds, in between attempts to acquire the lock.
     const int32_t Lock::LOCK_OBTAIN_WAIT_FOREVER = -1;
-    
+
     /// Pass this value to {@link #obtain(int64_t)} to try forever to obtain the lock.
     const int32_t Lock::LOCK_POLL_INTERVAL = 1000;
-    
+
     Lock::~Lock()
     {
     }
-    
+
     bool Lock::obtain(int32_t lockWaitTimeout)
     {
         bool locked = obtain();

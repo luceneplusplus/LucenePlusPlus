@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@ namespace Lucene
     {
     public:
         virtual ~TestPoint();
-    
+
     protected:
         static MapStringInt testMethods;
         static bool enable;
-        
+
     public:
         static void enableTestPoints();
         static void clear();
@@ -28,13 +28,13 @@ namespace Lucene
         static bool getTestPoint(const String& object, const String& method);
         static bool getTestPoint(const String& method);
     };
-    
+
     class TestScope
     {
     public:
         TestScope(const String& object, const String& method);
         virtual ~TestScope();
-    
+
     protected:
         String object;
         String method;

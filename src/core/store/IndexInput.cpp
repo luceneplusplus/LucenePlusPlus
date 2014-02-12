@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,17 +16,17 @@ namespace Lucene
     {
         preUTF8Strings = false;
     }
-    
+
     IndexInput::~IndexInput()
     {
     }
-    
+
     void IndexInput::readBytes(uint8_t* b, int32_t offset, int32_t length, bool useBuffer)
     {
         // default to ignoring useBuffer entirely
         readBytes(b, offset, length);
     }
-    
+
     int32_t IndexInput::readInt()
     {
         int32_t i = (readByte() & 0xff) << 24;
@@ -35,12 +35,12 @@ namespace Lucene
         i |= (readByte() & 0xff);
         return i;
     }
-    
+
     int32_t IndexInput::readVInt()
     {
         uint8_t b = readByte();
         int32_t i = (b & 0x7f);
-        
+
         for (int32_t shift = 7; (b & 0x80) != 0; shift += 7)
         {
             b = readByte();
@@ -48,19 +48,19 @@ namespace Lucene
         }
         return i;
     }
-    
+
     int64_t IndexInput::readLong()
     {
         int64_t i = (int64_t)readInt() << 32;
         i |= (readInt() & 0xffffffffLL);
         return i;
     }
-    
+
     int64_t IndexInput::readVLong()
     {
         uint8_t b = readByte();
         int64_t i = (b & 0x7f);
-        
+
         for (int32_t shift = 7; (b & 0x80) != 0; shift += 7)
         {
             b = readByte();
@@ -68,12 +68,12 @@ namespace Lucene
         }
         return i;
     }
-    
+
     void IndexInput::setModifiedUTF8StringsMode()
     {
         preUTF8Strings = true;
     }
-    
+
     String IndexInput::readString()
     {
         if (preUTF8Strings)
@@ -83,14 +83,14 @@ namespace Lucene
         readBytes(bytes.get(), 0, length);
         return StringUtils::toUnicode(bytes.get(), length);
     }
-    
+
     String IndexInput::readModifiedUTF8String()
     {
         int32_t length = readVInt();
         CharArray chars(CharArray::newInstance(length));
         return String(chars.get(), readChars(chars.get(), 0, length));
     }
-    
+
     int32_t IndexInput::readChars(wchar_t* buffer, int32_t start, int32_t length)
     {
         Array<uint16_t> chars(Array<uint16_t>::newInstance(length));
@@ -113,7 +113,7 @@ namespace Lucene
         int32_t decodeLength = utf16Decoder->decode(buffer + start, length);
         return decodeLength == Reader::READER_EOF ? 0 : decodeLength;
     }
-    
+
     void IndexInput::skipChars(int32_t length)
     {
         for (int32_t i = 0; i < length; ++i)
@@ -132,7 +132,7 @@ namespace Lucene
             }
         }
     }
-    
+
     MapStringString IndexInput::readStringStringMap()
     {
         MapStringString map(MapStringString::newInstance());
@@ -145,7 +145,7 @@ namespace Lucene
         }
         return map;
     }
-    
+
     LuceneObjectPtr IndexInput::clone(LuceneObjectPtr other)
     {
         IndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<IndexInput>(LuceneObject::clone(other)));

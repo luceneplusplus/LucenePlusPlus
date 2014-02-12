@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -25,40 +25,40 @@ namespace Lucene
             this->clauses.add(clause);
         }
     }
-    
+
     SpanOrQuery::~SpanOrQuery()
     {
     }
-    
+
     Collection<SpanQueryPtr> SpanOrQuery::getClauses()
     {
         return clauses;
     }
-    
+
     String SpanOrQuery::getField()
     {
         return field;
     }
-    
+
     void SpanOrQuery::extractTerms(SetTerm terms)
     {
         for (Collection<SpanQueryPtr>::iterator clause = clauses.begin(); clause != clauses.end(); ++clause)
             (*clause)->extractTerms(terms);
     }
-    
+
     LuceneObjectPtr SpanOrQuery::clone(LuceneObjectPtr other)
     {
         int32_t sz = clauses.size();
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
-        
+
         for (int32_t i = 0; i < sz; ++i)
             newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
-        
+
         SpanOrQueryPtr spanOrQuery(newLucene<SpanOrQuery>(newClauses));
         spanOrQuery->setBoost(getBoost());
         return spanOrQuery;
     }
-    
+
     QueryPtr SpanOrQuery::rewrite(IndexReaderPtr reader)
     {
         SpanOrQueryPtr clone;
@@ -78,7 +78,7 @@ namespace Lucene
         else
             return shared_from_this(); // no clauses rewrote
     }
-    
+
     String SpanOrQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -92,24 +92,24 @@ namespace Lucene
         buffer << L"])" << boostString();
         return buffer.str();
     }
-    
+
     bool SpanOrQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
+
         SpanOrQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanOrQuery>(other));
         if (!otherQuery)
             return false;
-        
+
         if (!clauses.equals(otherQuery->clauses, luceneEquals<SpanQueryPtr>()))
             return false;
         if (!clauses.empty() && field != otherQuery->field)
             return false;
-        
+
         return (getBoost() == otherQuery->getBoost());
     }
-    
+
     int32_t SpanOrQuery::hashCode()
     {
         int32_t result = MiscUtils::hashCode(clauses.begin(), clauses.end(), MiscUtils::hashLucene<SpanQueryPtr>);
@@ -117,22 +117,22 @@ namespace Lucene
         result ^= MiscUtils::doubleToRawIntBits(getBoost());
         return result;
     }
-    
+
     SpansPtr SpanOrQuery::getSpans(IndexReaderPtr reader)
     {
         if (clauses.size() == 1) // optimize 1-clause case
             return clauses[0]->getSpans(reader);
         return newLucene<OrSpans>(shared_from_this(), reader);
     }
-    
+
     SpanQueue::SpanQueue(int32_t size) : PriorityQueue<SpansPtr>(size)
     {
     }
-    
+
     SpanQueue::~SpanQueue()
     {
     }
-    
+
     bool SpanQueue::lessThan(const SpansPtr& first, const SpansPtr& second)
     {
         if (first->doc() == second->doc())
@@ -145,17 +145,17 @@ namespace Lucene
         else
             return (first->doc() < second->doc());
     }
-    
+
     OrSpans::OrSpans(SpanOrQueryPtr query, IndexReaderPtr reader)
     {
         this->query = query;
         this->reader = reader;
     }
-    
+
     OrSpans::~OrSpans()
     {
     }
-    
+
     bool OrSpans::initSpanQueue(int32_t target)
     {
         queue = newLucene<SpanQueue>(query->clauses.size());
@@ -167,35 +167,35 @@ namespace Lucene
         }
         return !queue->empty();
     }
-    
+
     bool OrSpans::next()
     {
         if (!queue)
             return initSpanQueue(-1);
-        
+
         if (queue->empty()) // all done
             return false;
-        
+
         if (top()->next()) // move to next
         {
             queue->updateTop();
             return true;
         }
-        
+
         queue->pop(); // exhausted a clause
         return !queue->empty();
     }
-    
+
     SpansPtr OrSpans::top()
     {
         return queue->top();
     }
-    
+
     bool OrSpans::skipTo(int32_t target)
     {
         if (!queue)
             return initSpanQueue(target);
-        
+
         bool skipCalled = false;
         while (!queue->empty() && top()->doc() < target)
         {
@@ -205,27 +205,27 @@ namespace Lucene
                 queue->pop();
             skipCalled = true;
         }
-        
+
         if (skipCalled)
             return !queue->empty();
         return next();
     }
-    
+
     int32_t OrSpans::doc()
     {
         return top()->doc();
     }
-    
+
     int32_t OrSpans::start()
     {
         return top()->start();
     }
-    
+
     int32_t OrSpans::end()
     {
         return top()->end();
     }
-    
+
     Collection<ByteArray> OrSpans::getPayload()
     {
         Collection<ByteArray> result;
@@ -237,13 +237,13 @@ namespace Lucene
         }
         return result;
     }
-    
+
     bool OrSpans::isPayloadAvailable()
     {
         SpansPtr theTop(top());
         return (theTop && theTop->isPayloadAvailable());
     }
-    
+
     String OrSpans::toString()
     {
         StringStream buffer;

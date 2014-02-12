@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -21,24 +21,24 @@
 namespace Lucene
 {
     const int32_t IndexReader::DEFAULT_TERMS_INDEX_DIVISOR = 1;
-    
+
     IndexReader::IndexReader()
     {
         refCount = 1;
         closed = false;
         _hasChanges = false;
     }
-    
+
     IndexReader::~IndexReader()
     {
     }
-    
+
     int32_t IndexReader::getRefCount()
     {
         SyncLock syncLock(this);
         return refCount;
     }
-    
+
     void IndexReader::incRef()
     {
         SyncLock syncLock(this);
@@ -46,7 +46,7 @@ namespace Lucene
         ensureOpen();
         ++refCount;
     }
-    
+
     void IndexReader::decRef()
     {
         SyncLock syncLock(this);
@@ -59,67 +59,67 @@ namespace Lucene
         }
         --refCount;
     }
-    
+
     void IndexReader::ensureOpen()
     {
         if (refCount <= 0)
             boost::throw_exception(AlreadyClosedException(L"this IndexReader is closed"));
     }
-    
+
     IndexReaderPtr IndexReader::open(DirectoryPtr directory)
     {
         return open(directory, IndexDeletionPolicyPtr(), IndexCommitPtr(), true, DEFAULT_TERMS_INDEX_DIVISOR);
     }
-    
+
     IndexReaderPtr IndexReader::open(DirectoryPtr directory, bool readOnly)
     {
         return open(directory, IndexDeletionPolicyPtr(), IndexCommitPtr(), readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
-    
+
     IndexReaderPtr IndexReader::open(IndexCommitPtr commit, bool readOnly)
     {
         return open(commit->getDirectory(), IndexDeletionPolicyPtr(), commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
-    
+
     IndexReaderPtr IndexReader::open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, bool readOnly)
     {
         return open(directory, deletionPolicy, IndexCommitPtr(), readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
-    
+
     IndexReaderPtr IndexReader::open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
     {
         return open(directory, deletionPolicy, IndexCommitPtr(), readOnly, termInfosIndexDivisor);
     }
-    
+
     IndexReaderPtr IndexReader::open(IndexCommitPtr commit, IndexDeletionPolicyPtr deletionPolicy, bool readOnly)
     {
         return open(commit->getDirectory(), deletionPolicy, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
-    
+
     IndexReaderPtr IndexReader::open(IndexCommitPtr commit, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
     {
         return open(commit->getDirectory(), deletionPolicy, commit, readOnly, termInfosIndexDivisor);
     }
-    
+
     IndexReaderPtr IndexReader::open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, IndexCommitPtr commit, bool readOnly, int32_t termInfosIndexDivisor)
     {
         return DirectoryReader::open(directory, deletionPolicy, commit, readOnly, termInfosIndexDivisor);
     }
-    
+
     IndexReaderPtr IndexReader::reopen()
     {
         SyncLock syncLock(this);
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support reopen()."));
         return IndexReaderPtr();
     }
-    
+
     IndexReaderPtr IndexReader::reopen(bool openReadOnly)
     {
         SyncLock syncLock(this);
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support reopen()."));
         return IndexReaderPtr();
     }
-    
+
     IndexReaderPtr IndexReader::reopen(IndexCommitPtr commit)
     {
         SyncLock syncLock(this);
@@ -134,7 +134,7 @@ namespace Lucene
             boost::throw_exception(UnsupportedOperationException(L"This reader does not implement clone()."));
         return other;
     }
-    
+
     LuceneObjectPtr IndexReader::clone(bool openReadOnly, LuceneObjectPtr other)
     {
         SyncLock syncLock(this);
@@ -142,74 +142,74 @@ namespace Lucene
             boost::throw_exception(UnsupportedOperationException(L"This reader does not implement clone(bool)."));
         return other;
     }
-    
+
     DirectoryPtr IndexReader::directory()
     {
         ensureOpen();
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return DirectoryPtr();
     }
-    
+
     int64_t IndexReader::lastModified(DirectoryPtr directory2)
     {
         return newLucene<FindSegmentsModified>(newLucene<SegmentInfos>(), directory2)->run();
     }
-    
+
     int64_t IndexReader::getCurrentVersion(DirectoryPtr directory)
     {
         return SegmentInfos::readCurrentVersion(directory);
     }
-    
+
     MapStringString IndexReader::getCommitUserData(DirectoryPtr directory)
     {
         return SegmentInfos::readCurrentUserData(directory);
     }
-    
+
     int64_t IndexReader::getVersion()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return 0;
     }
-    
+
     MapStringString IndexReader::getCommitUserData()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return MapStringString();
     }
-    
+
     bool IndexReader::isCurrent()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return false;
     }
-    
+
     bool IndexReader::isOptimized()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return false;
     }
-    
+
     bool IndexReader::indexExists(DirectoryPtr directory)
     {
         return (SegmentInfos::getCurrentSegmentGeneration(directory) != -1);
     }
-    
+
     int32_t IndexReader::numDeletedDocs()
     {
         return (maxDoc() - numDocs());
     }
-    
+
     DocumentPtr IndexReader::document(int32_t n)
     {
         ensureOpen();
         return document(n, FieldSelectorPtr());
     }
-    
+
     bool IndexReader::hasChanges()
     {
         return _hasChanges;
     }
-    
+
     bool IndexReader::hasNorms(const String& field)
     {
         // backward compatible implementation.
@@ -217,7 +217,7 @@ namespace Lucene
         ensureOpen();
         return norms(field);
     }
-    
+
     void IndexReader::setNorm(int32_t doc, const String& field, uint8_t value)
     {
         SyncLock syncLock(this);
@@ -226,7 +226,7 @@ namespace Lucene
         _hasChanges = true;
         doSetNorm(doc, field, value);
     }
-    
+
     void IndexReader::setNorm(int32_t doc, const String& field, double value)
     {
         ensureOpen();
@@ -240,7 +240,7 @@ namespace Lucene
         _termDocs->seek(term);
         return _termDocs;
     }
-    
+
     TermPositionsPtr IndexReader::termPositions(TermPtr term)
     {
         ensureOpen();
@@ -248,7 +248,7 @@ namespace Lucene
         _termPositions->seek(term);
         return _termPositions;
     }
-    
+
     void IndexReader::deleteDocument(int32_t docNum)
     {
         SyncLock syncLock(this);
@@ -257,7 +257,7 @@ namespace Lucene
         _hasChanges = true;
         doDelete(docNum);
     }
-    
+
     int32_t IndexReader::deleteDocuments(TermPtr term)
     {
         ensureOpen();
@@ -282,7 +282,7 @@ namespace Lucene
         finally.throwException();
         return n;
     }
-    
+
     void IndexReader::undeleteAll()
     {
         SyncLock syncLock(this);
@@ -291,32 +291,32 @@ namespace Lucene
         _hasChanges = true;
         doUndeleteAll();
     }
-    
+
     void IndexReader::acquireWriteLock()
     {
         SyncLock syncLock(this);
         // NOOP
     }
-    
+
     void IndexReader::flush()
     {
         SyncLock syncLock(this);
         ensureOpen();
         commit();
     }
-    
+
     void IndexReader::flush(MapStringString commitUserData)
     {
         SyncLock syncLock(this);
         ensureOpen();
         commit(commitUserData);
     }
-    
+
     void IndexReader::commit()
     {
         commit(MapStringString());
     }
-    
+
     void IndexReader::commit(MapStringString commitUserData)
     {
         SyncLock syncLock(this);
@@ -324,7 +324,7 @@ namespace Lucene
             doCommit(commitUserData);
         _hasChanges = false;
     }
-    
+
     void IndexReader::close()
     {
         SyncLock syncLock(this);
@@ -334,18 +334,18 @@ namespace Lucene
             closed = true;
         }
     }
-    
+
     IndexCommitPtr IndexReader::getIndexCommit()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return IndexCommitPtr();
     }
-    
+
     void IndexReader::main(Collection<String> args)
     {
         String filename;
         bool extract = false;
-        
+
         for (Collection<String>::iterator arg = args.begin(); arg != args.end(); ++arg)
         {
             if (*arg == L"-extract")
@@ -353,16 +353,16 @@ namespace Lucene
             else if (filename.empty())
                 filename = *arg;
         }
-        
+
         if (filename.empty())
         {
             std::wcout << L"Usage: IndexReader [-extract] <cfsfile>";
             return;
         }
-        
+
         DirectoryPtr dir;
         CompoundFileReaderPtr cfr;
-        
+
         LuceneException finally;
         try
         {
@@ -370,25 +370,25 @@ namespace Lucene
             filename = FileUtils::extractPath(filename);
             dir = FSDirectory::open(dirname);
             cfr = newLucene<CompoundFileReader>(dir, filename);
-            
+
             HashSet<String> _files(cfr->listAll());
             Collection<String> files(Collection<String>::newInstance(_files.begin(), _files.end()));
             std::sort(files.begin(), files.end()); // sort the array of filename so that the output is more readable
-            
+
             for (Collection<String>::iterator file = files.begin(); file != files.end(); ++file)
             {
                 int64_t len = cfr->fileLength(*file);
-                
+
                 if (extract)
                 {
                     std::wcout << L"extract " << *file << L" with " << len << L" bytes to local directory...";
                     IndexInputPtr ii(cfr->openInput(*file));
 
                     boost::filesystem::ofstream f(*file, std::ios::binary | std::ios::out);
-                    
+
                     // read and write with a small buffer, which is more effective than reading byte by byte
                     ByteArray buffer(ByteArray::newInstance(1024));
-                    
+
                     int32_t chunk = buffer.size();
                     while (len > 0)
                     {
@@ -407,56 +407,56 @@ namespace Lucene
         {
             finally = e;
         }
-        
+
         if (dir)
             dir->close();
         if (cfr)
             cfr->close();
-        
+
         finally.throwException();
     }
-    
+
     Collection<IndexCommitPtr> IndexReader::listCommits(DirectoryPtr dir)
     {
         return DirectoryReader::listCommits(dir);
     }
-    
+
     Collection<IndexReaderPtr> IndexReader::getSequentialSubReaders()
     {
         return Collection<IndexReaderPtr>(); // override
     }
-    
+
     LuceneObjectPtr IndexReader::getFieldCacheKey()
     {
         return shared_from_this();
     }
-    
+
     LuceneObjectPtr IndexReader::getDeletesCacheKey()
     {
         return shared_from_this();
     }
-    
+
     int64_t IndexReader::getUniqueTermCount()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not implement getUniqueTermCount()"));
         return 0;
     }
-    
+
     int32_t IndexReader::getTermInfosIndexDivisor()
     {
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support this method."));
         return 0;
     }
-    
+
     FindSegmentsModified::FindSegmentsModified(SegmentInfosPtr infos, DirectoryPtr directory) : FindSegmentsFileT<uint64_t>(infos, directory)
     {
         result = 0;
     }
-    
+
     FindSegmentsModified::~FindSegmentsModified()
     {
     }
-    
+
     uint64_t FindSegmentsModified::doBody(const String& segmentFileName)
     {
         return directory->fileModified(segmentFileName);

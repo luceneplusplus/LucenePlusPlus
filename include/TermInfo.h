@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,16 +18,16 @@ namespace Lucene
         TermInfo(TermInfoPtr ti);
         TermInfo(int32_t df = 0, int64_t fp = 0, int64_t pp = 0);
         virtual ~TermInfo();
-        
+
         LUCENE_CLASS(TermInfo);
-            
+
     public:
         /// The number of documents which contain the term.
         int32_t docFreq;
         int64_t freqPointer;
         int64_t proxPointer;
         int32_t skipOffset;
-    
+
     public:
         void set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset);
         void set(TermInfoPtr ti);

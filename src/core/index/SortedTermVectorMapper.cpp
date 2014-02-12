@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 namespace Lucene
 {
     const wchar_t* SortedTermVectorMapper::ALL = L"_ALL_";
-    
+
     SortedTermVectorMapper::SortedTermVectorMapper(TermVectorEntryComparator comparator) : TermVectorMapper(false, false)
     {
         this->storeOffsets = false;
@@ -20,7 +20,7 @@ namespace Lucene
         this->currentSet = Collection<TermVectorEntryPtr>::newInstance();
         this->termToTVE = MapStringTermVectorEntry::newInstance();
     }
-    
+
     SortedTermVectorMapper::SortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, TermVectorEntryComparator comparator)
         : TermVectorMapper(ignoringPositions, ignoringPositions)
     {
@@ -30,11 +30,11 @@ namespace Lucene
         this->currentSet = Collection<TermVectorEntryPtr>::newInstance();
         this->termToTVE = MapStringTermVectorEntry::newInstance();
     }
-    
+
     SortedTermVectorMapper::~SortedTermVectorMapper()
     {
     }
-    
+
     void SortedTermVectorMapper::map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions)
     {
         // We need to combine any previous mentions of the term
@@ -43,7 +43,7 @@ namespace Lucene
         {
             entry = newLucene<TermVectorEntry>(ALL, term, frequency, storeOffsets ? offsets : Collection<TermVectorOffsetInfoPtr>(), storePositions ? positions : Collection<int32_t>());
             termToTVE.put(term, entry);
-            
+
             if (!currentSet.contains_if(luceneEqualTo<TermVectorEntryPtr>(entry)))
                 currentSet.insert(std::upper_bound(currentSet.begin(), currentSet.end(), entry, comparator), entry);
         }
@@ -80,13 +80,13 @@ namespace Lucene
             }
         }
     }
-    
+
     void SortedTermVectorMapper::setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions)
     {
         this->storeOffsets = storeOffsets;
         this->storePositions = storePositions;
     }
-    
+
     Collection<TermVectorEntryPtr> SortedTermVectorMapper::getTermVectorEntrySet()
     {
         return currentSet;

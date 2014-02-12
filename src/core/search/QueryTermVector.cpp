@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ namespace Lucene
         termFreqs = Collection<int32_t>::newInstance();
         processTerms(queryTerms);
     }
-    
+
     QueryTermVector::QueryTermVector(const String& queryString, AnalyzerPtr analyzer)
     {
         terms = Collection<String>::newInstance();
@@ -33,10 +33,10 @@ namespace Lucene
                 try
                 {
                     bool hasMoreTokens = false;
-                    
+
                     stream->reset();
                     TermAttributePtr termAtt(stream->addAttribute<TermAttribute>());
-                    
+
                     hasMoreTokens = stream->incrementToken();
                     while (hasMoreTokens)
                     {
@@ -51,18 +51,18 @@ namespace Lucene
             }
         }
     }
-    
+
     QueryTermVector::~QueryTermVector()
     {
     }
-    
+
     void QueryTermVector::processTerms(Collection<String> queryTerms)
     {
         if (queryTerms)
         {
             std::sort(queryTerms.begin(), queryTerms.end());
             MapStringInt tmpSet(MapStringInt::newInstance());
-            
+
             // filter out duplicates
             Collection<String> tmpList(Collection<String>::newInstance());
             Collection<int32_t> tmpFreqs(Collection<int32_t>::newInstance());
@@ -90,7 +90,7 @@ namespace Lucene
                 termFreqs[i++] = *freq;
         }
     }
-    
+
     String QueryTermVector::toString()
     {
         StringStream buffer;
@@ -104,28 +104,28 @@ namespace Lucene
         buffer << L"}";
         return buffer.str();
     }
-    
+
     int32_t QueryTermVector::size()
     {
         return terms.size();
     }
-    
+
     Collection<String> QueryTermVector::getTerms()
     {
         return terms;
     }
-    
+
     Collection<int32_t> QueryTermVector::getTermFrequencies()
     {
         return termFreqs;
     }
-    
+
     int32_t QueryTermVector::indexOf(const String& term)
     {
         Collection<String>::iterator search = std::lower_bound(terms.begin(), terms.end(), term);
         return (search == terms.end() || term < *search) ? -1 : std::distance(terms.begin(), search);
     }
-    
+
     Collection<int32_t> QueryTermVector::indexesOf(Collection<String> terms, int32_t start, int32_t length)
     {
         Collection<int32_t> res(Collection<int32_t>::newInstance(length));

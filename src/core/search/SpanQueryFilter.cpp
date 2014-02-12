@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,17 +18,17 @@ namespace Lucene
     {
         this->query = query;
     }
-    
+
     SpanQueryFilter::~SpanQueryFilter()
     {
     }
-    
+
     DocIdSetPtr SpanQueryFilter::getDocIdSet(IndexReaderPtr reader)
     {
         SpanFilterResultPtr result(bitSpans(reader));
         return result->getDocIdSet();
     }
-    
+
     SpanFilterResultPtr SpanQueryFilter::bitSpans(IndexReaderPtr reader)
     {
         OpenBitSetPtr bits(newLucene<OpenBitSet>(reader->maxDoc()));
@@ -50,28 +50,28 @@ namespace Lucene
         }
         return newLucene<SpanFilterResult>(bits, tmp);
     }
-    
+
     SpanQueryPtr SpanQueryFilter::getQuery()
     {
         return query;
     }
-    
+
     String SpanQueryFilter::toString()
     {
         return L"SpanQueryFilter(" + query->toString() + L")";
     }
-    
+
     bool SpanQueryFilter::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
+
         SpanQueryFilterPtr otherSpanQueryFilter(boost::dynamic_pointer_cast<SpanQueryFilter>(other));
         if (!otherSpanQueryFilter)
             return false;
         return query->equals(otherSpanQueryFilter->query);
     }
-    
+
     int32_t SpanQueryFilter::hashCode()
     {
         return query->hashCode() ^ 0x923f64b9;

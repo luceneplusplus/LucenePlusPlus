@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,10 +16,10 @@ namespace Lucene
     class LPPAPI MultiFieldQueryParser : public QueryParser
     {
     public:
-        /// Creates a MultiFieldQueryParser.  Allows passing of a map with term to Boost, and the boost to 
+        /// Creates a MultiFieldQueryParser.  Allows passing of a map with term to Boost, and the boost to
         /// apply to each term.
         ///
-        /// It will, when parse(String query) is called, construct a query like this (assuming the query 
+        /// It will, when parse(String query) is called, construct a query like this (assuming the query
         /// consists of two terms and you specify the two fields title and body):
         /// <pre>
         /// (title:term1 body:term1) (title:term2 body:term2)
@@ -29,18 +29,18 @@ namespace Lucene
         /// <pre>
         /// +(title:term1 body:term1) +(title:term2 body:term2)
         /// </pre>
-        /// 
+        ///
         /// When you pass a boost (title=>5 body=>10) you can get:
         /// <pre>
         /// +(title:term1^5.0 body:term1^10.0) +(title:term2^5.0 body:term2^10.0)
         /// </pre>
         ///
-        /// In other words, all the query's terms must appear, but it doesn't matter in what fields they 
+        /// In other words, all the query's terms must appear, but it doesn't matter in what fields they
         /// appear.
         MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer, MapStringDouble boosts);
-        
-        /// Creates a MultiFieldQueryParser.  It will, when parse(String query) is called, construct a 
-        /// query like this (assuming the query consists of two terms and you specify the two fields 
+
+        /// Creates a MultiFieldQueryParser.  It will, when parse(String query) is called, construct a
+        /// query like this (assuming the query consists of two terms and you specify the two fields
         /// title and body):
         /// <pre>
         /// (title:term1 body:term1) (title:term2 body:term2)
@@ -51,21 +51,21 @@ namespace Lucene
         /// +(title:term1 body:term1) +(title:term2 body:term2)
         /// </pre>
         ///
-        /// In other words, all the query's terms must appear, but it doesn't matter in what fields they 
+        /// In other words, all the query's terms must appear, but it doesn't matter in what fields they
         /// appear.
         MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer);
-        
+
         virtual ~MultiFieldQueryParser();
-        
+
         LUCENE_CLASS(MultiFieldQueryParser);
-    
+
     protected:
         Collection<String> fields;
         MapStringDouble boosts;
-    
+
     public:
         using QueryParser::parse;
-        
+
         /// Parses a query which searches on the fields specified.
         ///
         /// If x fields are specified, this effectively constructs:
@@ -77,8 +77,8 @@ namespace Lucene
         /// @param fields Fields to search on
         /// @param analyzer Analyzer to use
         static QueryPtr parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, AnalyzerPtr analyzer);
-        
-        /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as 
+
+        /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as
         /// required, and others as prohibited.
         ///
         /// <pre>
@@ -99,8 +99,8 @@ namespace Lucene
         /// @param flags Flags describing the fields
         /// @param analyzer Analyzer to use
         static QueryPtr parse(LuceneVersion::Version matchVersion, const String& query, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer);
-        
-        /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as 
+
+        /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as
         /// required, and others as prohibited.
         ///
         /// <pre>
@@ -122,12 +122,12 @@ namespace Lucene
         /// @param flags Flags describing the fields
         /// @param analyzer Analyzer to use
         static QueryPtr parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer);
-    
+
     protected:
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText, int32_t slop);
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText);
         void applySlop(QueryPtr query, int32_t slop);
-        
+
         virtual QueryPtr getFuzzyQuery(const String& field, const String& termStr, double minSimilarity);
         virtual QueryPtr getPrefixQuery(const String& field, const String& termStr);
         virtual QueryPtr getWildcardQuery(const String& field, const String& termStr);

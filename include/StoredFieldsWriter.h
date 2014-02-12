@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@ namespace Lucene
     public:
         StoredFieldsWriter(DocumentsWriterPtr docWriter, FieldInfosPtr fieldInfos);
         virtual ~StoredFieldsWriter();
-        
+
         LUCENE_CLASS(StoredFieldsWriter);
-            
+
     public:
         FieldsWriterPtr fieldsWriter;
         DocumentsWriterWeakPtr _docWriter;
@@ -29,41 +29,41 @@ namespace Lucene
         Collection<StoredFieldsWriterPerDocPtr> docFreeList;
         int32_t freeCount;
         int32_t allocCount;
-        
+
     public:
         StoredFieldsWriterPerThreadPtr addThread(DocStatePtr docState);
         void flush(SegmentWriteStatePtr state);
         void closeDocStore(SegmentWriteStatePtr state);
         StoredFieldsWriterPerDocPtr getPerDoc();
         void abort();
-        
+
         /// Fills in any hole in the docIDs
         void fill(int32_t docID);
-        
+
         void finishDocument(StoredFieldsWriterPerDocPtr perDoc);
         bool freeRAM();
         void free(StoredFieldsWriterPerDocPtr perDoc);
-        
+
     protected:
         void initFieldsWriter();
     };
-    
+
     class StoredFieldsWriterPerDoc : public DocWriter
     {
     public:
         StoredFieldsWriterPerDoc(StoredFieldsWriterPtr fieldsWriter);
         virtual ~StoredFieldsWriterPerDoc();
-        
+
         LUCENE_CLASS(StoredFieldsWriterPerDoc);
-            
+
     protected:
         StoredFieldsWriterWeakPtr _fieldsWriter;
-    
+
     public:
         PerDocBufferPtr buffer;
         RAMOutputStreamPtr fdt;
         int32_t numStoredFields;
-    
+
     public:
         void reset();
         virtual void abort();

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ namespace Lucene
     DECLARE_SHARED_PTR(SnowballFilter)
     DECLARE_SHARED_PTR(SnowballAnalyzer)
     DECLARE_SHARED_PTR(SnowballAnalyzerSavedStreams)
-    
+
     // highlighter
     DECLARE_SHARED_PTR(DefaultEncoder)
     DECLARE_SHARED_PTR(Encoder)
@@ -103,13 +103,13 @@ namespace Lucene
     typedef HashMap< String, SpanQueryPtr > MapStringSpanQuery;
     typedef HashMap< String, Collection<int32_t> > MapStringIntCollection;
     typedef HashMap< String, MemoryIndexInfoPtr > MapStringMemoryIndexInfo;
-    
+
     typedef std::pair< String, Collection<int32_t> > PairStringIntCollection;
     typedef Collection< PairStringIntCollection > CollectionStringIntCollection;
-    
+
     typedef std::pair< String, MemoryIndexInfoPtr > PairStringMemoryIndexInfo;
     typedef Collection< PairStringMemoryIndexInfo > CollectionStringMemoryIndexInfo;
-        
+
     typedef HashSet< WeightedTermPtr, luceneHash<WeightedTermPtr>, luceneEquals<WeightedTermPtr> > SetWeightedTerm;
 }
 

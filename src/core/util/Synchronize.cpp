@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@ namespace Lucene
         lockThread = 0;
         recursionCount = 0;
     }
-    
+
     Synchronize::~Synchronize()
     {
     }
-    
+
     void Synchronize::createSync(SynchronizePtr& sync)
     {
         static boost::mutex lockMutex;
@@ -28,7 +28,7 @@ namespace Lucene
         if (!sync)
             sync = newInstance<Synchronize>();
     }
-    
+
     void Synchronize::lock(int32_t timeout)
     {
         if (timeout > 0)
@@ -38,14 +38,14 @@ namespace Lucene
         lockThread = LuceneThread::currentId();
         ++recursionCount;
     }
-    
+
     void Synchronize::unlock()
     {
         if (--recursionCount == 0)
             lockThread = 0;
-        mutexSynchronize.unlock();        
+        mutexSynchronize.unlock();
     }
-    
+
     int32_t Synchronize::unlockAll()
     {
         int32_t count = recursionCount;
@@ -53,12 +53,12 @@ namespace Lucene
             this->unlock();
         return count;
     }
-    
+
     bool Synchronize::holdsLock()
     {
         return (lockThread == LuceneThread::currentId() && recursionCount > 0);
     }
-    
+
     SyncLock::SyncLock(SynchronizePtr sync, int32_t timeout)
     {
         this->sync = sync;
@@ -70,7 +70,7 @@ namespace Lucene
         if (sync)
             sync->unlock();
     }
-    
+
     void SyncLock::lock(int32_t timeout)
     {
         if (sync)

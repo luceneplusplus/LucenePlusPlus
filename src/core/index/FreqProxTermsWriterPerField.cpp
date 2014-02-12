@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -29,36 +29,36 @@ namespace Lucene
         fieldState = termsHashPerField->fieldState;
         omitTermFreqAndPositions = fieldInfo->omitTermFreqAndPositions;
     }
-    
+
     FreqProxTermsWriterPerField::~FreqProxTermsWriterPerField()
     {
     }
-    
+
     int32_t FreqProxTermsWriterPerField::getStreamCount()
     {
         return fieldInfo->omitTermFreqAndPositions ? 1 : 2;
     }
-    
+
     void FreqProxTermsWriterPerField::finish()
     {
     }
-    
+
     void FreqProxTermsWriterPerField::skippingLongTerm()
     {
     }
-    
+
     int32_t FreqProxTermsWriterPerField::compareTo(LuceneObjectPtr other)
     {
         return fieldInfo->name.compare(boost::static_pointer_cast<FreqProxTermsWriterPerField>(other)->fieldInfo->name);
     }
-    
+
     void FreqProxTermsWriterPerField::reset()
     {
         // Record, up front, whether our in-RAM format will be with or without term freqs
         omitTermFreqAndPositions = fieldInfo->omitTermFreqAndPositions;
         payloadAttribute.reset();
     }
-    
+
     bool FreqProxTermsWriterPerField::start(Collection<FieldablePtr> fields, int32_t count)
     {
         for (int32_t i = 0; i < count; ++i)
@@ -68,7 +68,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void FreqProxTermsWriterPerField::start(FieldablePtr field)
     {
         if (fieldState->attributeSource->hasAttribute<PayloadAttribute>())
@@ -76,15 +76,15 @@ namespace Lucene
         else
             payloadAttribute.reset();
     }
-    
+
     void FreqProxTermsWriterPerField::writeProx(FreqProxTermsWriterPostingListPtr p, int32_t proxCode)
     {
         PayloadPtr payload;
         if (payloadAttribute)
             payload = payloadAttribute->getPayload();
-        
+
         TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
-        
+
         if (payload && payload->length() > 0)
         {
             termsHashPerField->writeVInt(1, (proxCode << 1) | 1);
@@ -96,7 +96,7 @@ namespace Lucene
             termsHashPerField->writeVInt(1, proxCode << 1);
         p->lastPosition = fieldState->position;
     }
-    
+
     void FreqProxTermsWriterPerField::newTerm(RawPostingListPtr p)
     {
         // First time we're seeing this term since the last flush
@@ -112,16 +112,16 @@ namespace Lucene
             writeProx(newPostingList, fieldState->position);
         }
     }
-    
+
     void FreqProxTermsWriterPerField::addTerm(RawPostingListPtr p)
     {
         BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.addTerm start"));
-        
+
         FreqProxTermsWriterPostingListPtr addPostingList(boost::static_pointer_cast<FreqProxTermsWriterPostingList>(p));
-        
+
         BOOST_ASSERT(omitTermFreqAndPositions || addPostingList->docFreq > 0);
         TermsHashPerFieldPtr termsHashPerField(_termsHashPerField);
-        
+
         if (omitTermFreqAndPositions)
         {
             if (docState->docID != addPostingList->lastDocID)
@@ -137,9 +137,9 @@ namespace Lucene
             if (docState->docID != addPostingList->lastDocID)
             {
                 BOOST_ASSERT(docState->docID > addPostingList->lastDocID);
-                // Term not yet seen in the current doc but previously seen in other doc(s) since 
+                // Term not yet seen in the current doc but previously seen in other doc(s) since
                 // the last flush
-                
+
                 // Now that we know doc freq for previous doc, write it & lastDocCode
                 if (addPostingList->docFreq == 1)
                     termsHashPerField->writeVInt(0, addPostingList->lastDocCode | 1);
@@ -160,7 +160,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void FreqProxTermsWriterPerField::abort()
     {
     }

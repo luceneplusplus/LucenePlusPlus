@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -26,29 +26,29 @@ namespace Lucene
 
     /// @deprecated this solves a bug where HOSTs that end with '.' are identified as ACRONYMs.
     const int32_t StandardTokenizer::ACRONYM_DEP = 8;
-    
+
     StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input)
     {
         this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
-    
+
     StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source)
     {
         this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
-    
+
     StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory)
     {
         this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
-    
+
     StandardTokenizer::~StandardTokenizer()
     {
     }
-    
+
     const Collection<String> StandardTokenizer::TOKEN_TYPES()
     {
         static Collection<String> _TOKEN_TYPES;
@@ -68,7 +68,7 @@ namespace Lucene
         }
         return _TOKEN_TYPES;
     }
-    
+
     void StandardTokenizer::init(ReaderPtr input, LuceneVersion::Version matchVersion)
     {
         replaceInvalidAcronym = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_24);
@@ -79,37 +79,37 @@ namespace Lucene
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
     }
-    
+
     void StandardTokenizer::setMaxTokenLength(int32_t length)
     {
         this->maxTokenLength = length;
     }
-    
+
     int32_t StandardTokenizer::getMaxTokenLength()
     {
         return maxTokenLength;
     }
-    
+
     bool StandardTokenizer::incrementToken()
     {
         clearAttributes();
         int32_t posIncr = 1;
-        
+
         while (true)
         {
             int32_t tokenType = scanner->getNextToken();
-            
+
             if (tokenType == StandardTokenizerImpl::YYEOF)
                 return false;
-            
+
             if (scanner->yylength() <= maxTokenLength)
             {
                 posIncrAtt->setPositionIncrement(posIncr);
                 scanner->getText(termAtt);
                 int32_t start = scanner->yychar();
                 offsetAtt->setOffset(correctOffset(start), correctOffset(start + termAtt->termLength()));
-                
-                // This 'if' should be removed in the next release. For now, it converts invalid acronyms to HOST. 
+
+                // This 'if' should be removed in the next release. For now, it converts invalid acronyms to HOST.
                 /// When removed, only the 'else' part should remain.
                 if (tokenType == ACRONYM_DEP)
                 {
@@ -132,25 +132,25 @@ namespace Lucene
             }
         }
     }
-    
+
     void StandardTokenizer::end()
     {
         // set final offset
         int32_t finalOffset = correctOffset(scanner->yychar() + scanner->yylength());
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
-    
+
     void StandardTokenizer::reset(ReaderPtr input)
     {
         Tokenizer::reset(input);
         scanner->reset(input);
     }
-    
+
     bool StandardTokenizer::isReplaceInvalidAcronym()
     {
         return replaceInvalidAcronym;
     }
-    
+
     void StandardTokenizer::setReplaceInvalidAcronym(bool replaceInvalidAcronym)
     {
         this->replaceInvalidAcronym = replaceInvalidAcronym;

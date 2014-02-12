@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,22 +17,22 @@ namespace Lucene
     public:
         MockFSDirectory(const String& path);
         virtual ~MockFSDirectory();
-        
+
         LUCENE_CLASS(MockFSDirectory);
-    
+
     public:
         Collection<IndexInputPtr> allIndexInputs;
-    
+
     protected:
         DirectoryPtr dir;
         RandomPtr rand;
-        
+
     public:
         virtual IndexInputPtr openInput(const String& name);
         virtual IndexInputPtr openInput(const String& name, int32_t bufferSize);
-        
+
         void tweakBufferSizes();
-        
+
         virtual IndexOutputPtr createOutput(const String& name);
         virtual void close();
         virtual void deleteFile(const String& name);

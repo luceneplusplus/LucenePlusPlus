@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,18 +13,18 @@ namespace Lucene
     {
         this->fieldSelections = fieldSelections;
     }
-    
+
     MapFieldSelector::MapFieldSelector(Collection<String> fields)
     {
         fieldSelections = MapStringFieldSelectorResult::newInstance();
         for (Collection<String>::iterator field = fields.begin(); field != fields.end(); ++field)
             fieldSelections.put(*field, FieldSelector::SELECTOR_LOAD);
     }
-    
+
     MapFieldSelector::~MapFieldSelector()
     {
     }
-    
+
     FieldSelector::FieldSelectorResult MapFieldSelector::accept(const String& fieldName)
     {
         MapStringFieldSelectorResult::iterator selection = fieldSelections.find(fieldName);

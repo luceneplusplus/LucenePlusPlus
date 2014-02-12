@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ namespace Lucene
     {
         set(ti);
     }
-    
+
     TermInfo::TermInfo(int32_t df, int64_t fp, int64_t pp)
     {
         docFreq = df;
@@ -21,11 +21,11 @@ namespace Lucene
         proxPointer = pp;
         skipOffset = 0;
     }
-    
+
     TermInfo::~TermInfo()
     {
     }
-    
+
     void TermInfo::set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset)
     {
         this->docFreq = docFreq;
@@ -33,7 +33,7 @@ namespace Lucene
         this->proxPointer = proxPointer;
         this->skipOffset = skipOffset;
     }
-    
+
     void TermInfo::set(TermInfoPtr ti)
     {
         docFreq = ti->docFreq;

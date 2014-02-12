@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@ namespace Lucene
     FilteredTermEnum::~FilteredTermEnum()
     {
     }
-    
+
     void FilteredTermEnum::setEnum(TermEnumPtr actualEnum)
     {
         this->actualEnum = actualEnum;
@@ -23,7 +23,7 @@ namespace Lucene
         else
             next();
     }
-    
+
     int32_t FilteredTermEnum::docFreq()
     {
         if (!currentTerm)
@@ -31,7 +31,7 @@ namespace Lucene
         BOOST_ASSERT(actualEnum);
         return actualEnum->docFreq();
     }
-    
+
     bool FilteredTermEnum::next()
     {
         if (!actualEnum)
@@ -56,12 +56,12 @@ namespace Lucene
         currentTerm.reset();
         return false;
     }
-    
+
     TermPtr FilteredTermEnum::term()
     {
         return currentTerm;
     }
-    
+
     void FilteredTermEnum::close()
     {
         if (actualEnum)

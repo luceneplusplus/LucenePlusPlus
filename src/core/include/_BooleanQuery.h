@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,16 +17,16 @@ namespace Lucene
     public:
         BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher);
         virtual ~BooleanWeight();
-        
+
         LUCENE_CLASS(BooleanWeight);
-    
+
     protected:
         BooleanQueryPtr query;
-        
+
         /// The Similarity implementation.
         SimilarityPtr similarity;
         Collection<WeightPtr> weights;
-    
+
     public:
         virtual QueryPtr getQuery();
         virtual double getValue();
@@ -36,16 +36,16 @@ namespace Lucene
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
         virtual bool scoresDocsOutOfOrder();
     };
-    
+
     /// Disabled coord Similarity
     class SimilarityDisableCoord : public SimilarityDelegator
     {
     public:
         SimilarityDisableCoord(SimilarityPtr delegee);
         virtual ~SimilarityDisableCoord();
-        
+
         LUCENE_CLASS(SimilarityDisableCoord);
-    
+
     public:
         virtual double coord(int32_t overlap, int32_t maxOverlap);
     };

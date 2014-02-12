@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,11 +19,11 @@ namespace Lucene
         buffers = Collection<CharArray>::newInstance(10);
         this->_docWriter = docWriter;
     }
-    
+
     CharBlockPool::~CharBlockPool()
     {
     }
-    
+
     void CharBlockPool::reset()
     {
         DocumentsWriterPtr(_docWriter)->recycleCharBlocks(buffers, 1 + bufferUpto);
@@ -31,7 +31,7 @@ namespace Lucene
         charUpto = DocumentsWriter::CHAR_BLOCK_SIZE;
         charOffset = -DocumentsWriter::CHAR_BLOCK_SIZE;
     }
-    
+
     void CharBlockPool::nextBuffer()
     {
         if (1 + bufferUpto == buffers.size())
@@ -39,7 +39,7 @@ namespace Lucene
         buffers[1 + bufferUpto] = DocumentsWriterPtr(_docWriter)->getCharBlock();
         buffer = buffers[1 + bufferUpto];
         ++bufferUpto;
-        
+
         charUpto = 0;
         charOffset += DocumentsWriter::CHAR_BLOCK_SIZE;
     }

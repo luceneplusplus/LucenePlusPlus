@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -26,18 +26,18 @@ namespace Lucene
     {
         this->reader = reader;
     }
-    
+
     PayloadSpanUtil::~PayloadSpanUtil()
     {
     }
-    
+
     Collection<ByteArray> PayloadSpanUtil::getPayloadsForQuery(QueryPtr query)
     {
         Collection<ByteArray> payloads(Collection<ByteArray>::newInstance());
         queryToSpanQuery(query, payloads);
         return payloads;
     }
-    
+
     void PayloadSpanUtil::queryToSpanQuery(QueryPtr query, Collection<ByteArray> payloads)
     {
         if (MiscUtils::typeOf<BooleanQuery>(query))
@@ -57,13 +57,13 @@ namespace Lucene
             Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(phraseQueryTerms.size()));
             for (int32_t i = 0; i < phraseQueryTerms.size(); ++i)
                 clauses[i] = newLucene<SpanTermQuery>(phraseQueryTerms[i]);
-            
+
             int32_t slop = phraseQuery->getSlop();
             bool inorder = false;
-            
+
             if (slop == 0)
                 inorder = true;
-            
+
             SpanNearQueryPtr sp(newLucene<SpanNearQuery>(clauses, slop, inorder));
             sp->setBoost(query->getBoost());
             getPayloads(payloads, sp);
@@ -104,10 +104,10 @@ namespace Lucene
                     if (positions[i] > maxPosition)
                         maxPosition = positions[i];
                 }
-                
+
                 Collection< Collection<QueryPtr> > disjunctLists(Collection< Collection<QueryPtr> >::newInstance(maxPosition + 1));
                 int32_t distinctPositions = 0;
-                
+
                 for (int32_t i = 0; i < termArrays.size(); ++i)
                 {
                     Collection<TermPtr> termArray(termArrays[i]);
@@ -121,7 +121,7 @@ namespace Lucene
                     for (Collection<TermPtr>::iterator term = termArray.begin(); term != termArray.end(); ++term)
                         disjuncts.add(newLucene<SpanTermQuery>(*term));
                 }
-                
+
                 int32_t positionGaps = 0;
                 int32_t position = 0;
                 Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(distinctPositions));
@@ -138,21 +138,21 @@ namespace Lucene
                     else
                         ++positionGaps;
                 }
-                
+
                 int32_t slop = multiphraseQuery->getSlop();
                 bool inorder = (slop == 0);
-                
+
                 SpanNearQueryPtr sp(newLucene<SpanNearQuery>(clauses, slop + positionGaps, inorder));
                 sp->setBoost(query->getBoost());
                 getPayloads(payloads, sp);
             }
         }
     }
-    
+
     void PayloadSpanUtil::getPayloads(Collection<ByteArray> payloads, SpanQueryPtr query)
     {
         SpansPtr spans(query->getSpans(reader));
-        
+
         while (spans->next())
         {
             if (spans->isPayloadAvailable())

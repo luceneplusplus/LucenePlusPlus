@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,26 +14,26 @@ namespace Lucene
     Term::Term(const String& fld, const String& txt) : _field(fld), _text(txt)
     {
     }
-    
+
     Term::~Term()
     {
     }
-    
+
     String Term::field()
     {
         return _field;
     }
-    
+
     String Term::text()
     {
         return _text;
     }
-    
+
     TermPtr Term::createTerm(const String& text)
     {
         return newLucene<Term>(_field, text);
     }
-    
+
     bool Term::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -47,7 +47,7 @@ namespace Lucene
             return false;
         return (_field == otherTerm->_field && _text == otherTerm->_text);
     }
-    
+
     int32_t Term::hashCode()
     {
         int32_t prime = 31;
@@ -56,7 +56,7 @@ namespace Lucene
         result = prime * result + (_text.empty() ? 0 : StringUtils::hashCode(_text));
         return result;
     }
-    
+
     int32_t Term::compareTo(LuceneObjectPtr other)
     {
         TermPtr otherTerm(boost::static_pointer_cast<Term>(other));
@@ -65,13 +65,13 @@ namespace Lucene
         else
             return _field.compare(otherTerm->_field);
     }
-    
+
     void Term::set(const String& fld, const String& txt)
     {
         _field = fld;
         _text = txt;
     }
-    
+
     String Term::toString()
     {
         return _field + L":" + _text;

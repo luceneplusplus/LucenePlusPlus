@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@ namespace Lucene
     {
         this->_docWriter = docWriter;
     }
-    
+
     DocumentsWriterThreadState::~DocumentsWriterThreadState()
     {
     }
-    
+
     void DocumentsWriterThreadState::initialize()
     {
         isIdle = true;
@@ -33,7 +33,7 @@ namespace Lucene
         docState->_docWriter = docWriter;
         consumer = docWriter->consumer->addThread(shared_from_this());
     }
-    
+
     void DocumentsWriterThreadState::doAfterFlush()
     {
         numThreads = 0;

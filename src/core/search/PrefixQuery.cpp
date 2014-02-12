@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,21 +16,21 @@ namespace Lucene
     {
         this->prefix = prefix;
     }
-    
+
     PrefixQuery::~PrefixQuery()
     {
     }
-    
+
     TermPtr PrefixQuery::getPrefix()
     {
         return prefix;
     }
-    
+
     FilteredTermEnumPtr PrefixQuery::getEnum(IndexReaderPtr reader)
     {
         return newLucene<PrefixTermEnum>(reader, prefix);
     }
-    
+
     String PrefixQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -39,7 +39,7 @@ namespace Lucene
         buffer << prefix->text() << L"*" << boostString();
         return buffer.str();
     }
-    
+
     LuceneObjectPtr PrefixQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<PrefixQuery>(prefix));
@@ -47,7 +47,7 @@ namespace Lucene
         cloneQuery->prefix = prefix;
         return cloneQuery;
     }
-    
+
     int32_t PrefixQuery::hashCode()
     {
         int32_t prime = 31;
@@ -55,7 +55,7 @@ namespace Lucene
         result = prime * result + (prefix ? prefix->hashCode() : 0);
         return result;
     }
-    
+
     bool PrefixQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ namespace Lucene
             Compression,
             CorruptIndex,
             FieldReader,
-            FileNotFound,        
+            FileNotFound,
             IllegalArgument,
             IllegalState,
             IndexOutOfBounds,
@@ -46,21 +46,21 @@ namespace Lucene
             TooManyClauses,
             UnsupportedOperation
         };
-        
+
         LuceneException(const String& error = EmptyString, LuceneException::ExceptionType type = Null) throw();
         ~LuceneException() throw();
-    
+
     protected:
         ExceptionType type;
         String error;
-    
+
     public:
         ExceptionType getType() const;
         String getError() const;
         bool isNull() const;
         void throwException();
     };
-    
+
     template <class ParentException, LuceneException::ExceptionType Type>
     class ExceptionTemplate : public ParentException
     {
@@ -69,7 +69,7 @@ namespace Lucene
         {
         }
     };
-    
+
     typedef ExceptionTemplate<LuceneException, LuceneException::Runtime> RuntimeException;
     typedef ExceptionTemplate<LuceneException, LuceneException::OutOfMemory> OutOfMemoryError;
     typedef ExceptionTemplate<LuceneException, LuceneException::Temporary> TemporaryException;

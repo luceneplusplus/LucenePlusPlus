@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ namespace Lucene
 {
     /// Change to true to see details of reference counts when infoStream != null
     bool IndexFileDeleter::VERBOSE_REF_COUNTS = false;
-    
+
     IndexFileDeleter::IndexFileDeleter(DirectoryPtr directory, IndexDeletionPolicyPtr policy, SegmentInfosPtr segmentInfos, InfoStreamPtr infoStream, DocumentsWriterPtr docWriter, HashSet<String> synced)
     {
         this->lastFiles = Collection< HashSet<String> >::newInstance();
@@ -34,30 +34,30 @@ namespace Lucene
         this->docWriter = docWriter;
         this->infoStream = infoStream;
         this->synced = synced;
-        
+
         if (infoStream)
             message(L"init: current segments file is \"" + segmentInfos->getCurrentSegmentFileName());
-        
+
         this->policy = policy;
         this->directory = directory;
-        
+
         // First pass: walk the files and initialize our ref counts
         int64_t currentGen = segmentInfos->getGeneration();
         IndexFileNameFilterPtr filter(IndexFileNameFilter::getFilter());
-        
+
         HashSet<String> files(directory->listAll());
         CommitPointPtr currentCommitPoint;
-        
+
         for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
         {
             if (filter->accept(L"", *fileName) && *fileName != IndexFileNames::SEGMENTS_GEN())
             {
                 // Add this file to refCounts with initial count 0
                 getRefCount(*fileName);
-                
+
                 if (boost::starts_with(*fileName, IndexFileNames::SEGMENTS()))
                 {
-                    // This is a commit (segments or segments_N), and it's valid (<= the max gen).  
+                    // This is a commit (segments or segments_N), and it's valid (<= the max gen).
                     // Load it, then incref all files it refers to
                     if (infoStream)
                         message(L"init: load commit \"" + *fileName + L"\"");
@@ -72,7 +72,7 @@ namespace Lucene
                             boost::throw_exception(e);
                         else
                         {
-                            // Most likely we are opening an index that has an aborted "future" commit, 
+                            // Most likely we are opening an index that has an aborted "future" commit,
                             // so suppress exc in this case
                             sis.reset();
                         }
@@ -90,19 +90,19 @@ namespace Lucene
                             currentCommitPoint = commitPoint;
                         commits.add(commitPoint);
                         incRef(sis, true);
-                        
+
                         if (!lastSegmentInfos || sis->getGeneration() > lastSegmentInfos->getGeneration())
                             lastSegmentInfos = sis;
                     }
                 }
             }
         }
-        
+
         if (!currentCommitPoint)
         {
             // We did not in fact see the segments_N file corresponding to the segmentInfos that was passed
-            // in.  Yet, it must exist, because our caller holds the write lock.  This can happen when the 
-            // directory listing was stale (eg when index accessed via NFS client with stale directory listing 
+            // in.  Yet, it must exist, because our caller holds the write lock.  This can happen when the
+            // directory listing was stale (eg when index accessed via NFS client with stale directory listing
             // cache).  So we try now to explicitly open this commit point.
             SegmentInfosPtr sis(newLucene<SegmentInfos>());
             try
@@ -119,10 +119,10 @@ namespace Lucene
             commits.add(currentCommitPoint);
             incRef(sis, true);
         }
-        
+
         // We keep commits list in sorted order (oldest to newest)
         std::sort(commits.begin(), commits.end(), luceneCompare<IndexCommitPtr>());
-        
+
         // Now delete anything with ref count at 0.  These are presumably abandoned files eg due to crash of IndexWriter.
         for (MapStringRefCount::iterator entry = refCounts.begin(); entry != refCounts.end(); ++entry)
         {
@@ -133,27 +133,27 @@ namespace Lucene
                 deleteFile(entry->first);
             }
         }
-        
+
         // Finally, give policy a chance to remove things on startup
         policy->onInit(commits);
-        
+
         // Always protect the incoming segmentInfos since sometime it may not be the most recent commit
         checkpoint(segmentInfos, false);
-        
+
         startingCommitDeleted = currentCommitPoint->isDeleted();
-        
+
         deleteCommits();
     }
-    
+
     IndexFileDeleter::~IndexFileDeleter()
     {
     }
-    
+
     void IndexFileDeleter::setInfoStream(InfoStreamPtr infoStream)
     {
         this->infoStream = infoStream;
     }
-    
+
     void IndexFileDeleter::message(const String& message)
     {
         if (infoStream)
@@ -162,12 +162,12 @@ namespace Lucene
             *infoStream << L"; " << StringUtils::toString(LuceneThread::currentId()) << L"]: " << message << L"\n";
         }
     }
-    
+
     SegmentInfosPtr IndexFileDeleter::getLastSegmentInfos()
     {
         return lastSegmentInfos;
     }
-    
+
     void IndexFileDeleter::deleteCommits()
     {
         if (!commitsToDelete.empty())
@@ -181,7 +181,7 @@ namespace Lucene
                     decRef(*file);
             }
             commitsToDelete.clear();
-            
+
             // Now compact commits to remove deleted ones (preserving the sort)
             int32_t size = commits.size();
             int32_t readFrom = 0;
@@ -197,7 +197,7 @@ namespace Lucene
                 }
                 ++readFrom;
             }
-            
+
             while (size > writeTo)
             {
                 commits.removeLast();
@@ -205,17 +205,17 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexFileDeleter::refresh(const String& segmentName)
     {
         HashSet<String> files(directory->listAll());
         IndexFileNameFilterPtr filter(IndexFileNameFilter::getFilter());
         String segmentPrefix1(segmentName + L".");
         String segmentPrefix2(segmentName + L"_");
-        
+
         for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
         {
-            if (filter->accept(L"", *fileName) && 
+            if (filter->accept(L"", *fileName) &&
                 (segmentName.empty() || boost::starts_with(*fileName, segmentPrefix1) || boost::starts_with(*fileName, segmentPrefix2)) &&
                 !refCounts.contains(*fileName) && *fileName != IndexFileNames::SEGMENTS_GEN())
             {
@@ -226,12 +226,12 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexFileDeleter::refresh()
     {
         refresh(L"");
     }
-    
+
     void IndexFileDeleter::close()
     {
         // DecRef old files from the last checkpoint, if any
@@ -240,7 +240,7 @@ namespace Lucene
         lastFiles.clear();
         deletePendingFiles();
     }
-    
+
     void IndexFileDeleter::deletePendingFiles()
     {
         if (deletable)
@@ -255,26 +255,26 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexFileDeleter::checkpoint(SegmentInfosPtr segmentInfos, bool isCommit)
     {
         if (infoStream)
             message(L"now checkpoint \"" + segmentInfos->getCurrentSegmentFileName() + L"\" [" + StringUtils::toString(segmentInfos->size()) + L" segments; isCommit = " + StringUtils::toString(isCommit) + L"]");
-        
+
         // Try again now to delete any previously un-deletable files (because they were in use, on Windows)
         deletePendingFiles();
-        
+
         // Incref the files
         incRef(segmentInfos, isCommit);
-        
+
         if (isCommit)
         {
             // Append to our commits list
             commits.add(newLucene<CommitPoint>(commitsToDelete, directory, segmentInfos));
-            
+
             // Tell policy so it can remove commits
             policy->onCommit(commits);
-            
+
             // Decref files for commits that were deleted by the policy
             deleteCommits();
         }
@@ -286,25 +286,25 @@ namespace Lucene
                 docWriterFiles = docWriter->openFiles();
                 if (docWriterFiles)
                 {
-                    // We must incRef these files before decRef'ing last files to make sure we 
+                    // We must incRef these files before decRef'ing last files to make sure we
                     // don't accidentally delete them
                     incRef(docWriterFiles);
                 }
             }
-            
+
             // DecRef old files from the last checkpoint, if any
             for (Collection< HashSet<String> >::iterator file = lastFiles.begin(); file != lastFiles.end(); ++file)
                 decRef(*file);
             lastFiles.clear();
-            
+
             // Save files so we can decr on next checkpoint/commit
             lastFiles.add(segmentInfos->files(directory, false));
-            
+
             if (docWriterFiles)
                 lastFiles.add(docWriterFiles);
         }
     }
-    
+
     void IndexFileDeleter::incRef(SegmentInfosPtr segmentInfos, bool isCommit)
     {
         // If this is a commit point, also incRef the segments_N file
@@ -312,13 +312,13 @@ namespace Lucene
         for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
             incRef(*fileName);
     }
-    
+
     void IndexFileDeleter::incRef(HashSet<String> files)
     {
         for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
             incRef(*file);
     }
-    
+
     void IndexFileDeleter::incRef(const String& fileName)
     {
         RefCountPtr rc(getRefCount(fileName));
@@ -326,13 +326,13 @@ namespace Lucene
             message(L"  IncRef \"" + fileName + L"\": pre-incr count is " + StringUtils::toString(rc->count));
         rc->IncRef();
     }
-    
+
     void IndexFileDeleter::decRef(HashSet<String> files)
     {
         for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
             decRef(*file);
     }
-    
+
     void IndexFileDeleter::decRef(const String& fileName)
     {
         RefCountPtr rc(getRefCount(fileName));
@@ -343,7 +343,7 @@ namespace Lucene
             // This file is no longer referenced by any past commit points nor by the in-memory SegmentInfos
             deleteFile(fileName);
             refCounts.remove(fileName);
-            
+
             if (synced)
             {
                 SyncLock syncLock(&synced);
@@ -351,17 +351,17 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexFileDeleter::decRef(SegmentInfosPtr segmentInfos)
     {
         decRef(segmentInfos->files(directory, false));
     }
-    
+
     bool IndexFileDeleter::exists(const String& fileName)
     {
         return refCounts.contains(fileName) ? getRefCount(fileName)->count > 0 : false;
     }
-    
+
     RefCountPtr IndexFileDeleter::getRefCount(const String& fileName)
     {
         RefCountPtr rc;
@@ -375,13 +375,13 @@ namespace Lucene
             rc = ref->second;
         return rc;
     }
-    
+
     void IndexFileDeleter::deleteFiles(HashSet<String> files)
     {
         for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
             deleteFile(*file);
     }
-    
+
     void IndexFileDeleter::deleteNewFiles(HashSet<String> files)
     {
         for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
@@ -394,7 +394,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexFileDeleter::deleteFile(const String& fileName)
     {
         try
@@ -408,7 +408,7 @@ namespace Lucene
             if (directory->fileExists(fileName)) // if delete fails
             {
                 // Some operating systems (eg. Windows) don't permit a file to be deleted while it is opened
-                // for read (eg. by another process or thread). So we assume that when a delete fails it is 
+                // for read (eg. by another process or thread). So we assume that when a delete fails it is
                 // because the file is open in another process, and queue the file for subsequent deletion.
                 if (infoStream)
                     message(L"IndexFileDeleter: unable to remove file \"" + fileName + L"\": " + e.getError() + L"; Will re-try later.");
@@ -418,18 +418,18 @@ namespace Lucene
             }
         }
     }
-    
+
     RefCount::RefCount(const String& fileName)
     {
         initDone = false;
         count = 0;
         this->fileName = fileName;
     }
-    
+
     RefCount::~RefCount()
     {
     }
-    
+
     int32_t RefCount::IncRef()
     {
         if (!initDone)
@@ -438,17 +438,17 @@ namespace Lucene
             BOOST_ASSERT(count > 0);
         return ++count;
     }
-    
+
     int32_t RefCount::DecRef()
     {
         BOOST_ASSERT(count > 0);
         return --count;
     }
-    
+
     CommitPoint::CommitPoint(Collection<CommitPointPtr> commitsToDelete, DirectoryPtr directory, SegmentInfosPtr segmentInfos)
     {
         deleted = false;
-        
+
         this->directory = directory;
         this->commitsToDelete = commitsToDelete;
         userData = segmentInfos->getUserData();
@@ -459,54 +459,54 @@ namespace Lucene
         this->files = HashSet<String>::newInstance(files.begin(), files.end());
         gen = segmentInfos->getGeneration();
         _isOptimized = (segmentInfos->size() == 1 && !segmentInfos->info(0)->hasDeletions());
-                
+
         BOOST_ASSERT(!segmentInfos->hasExternalSegments(directory));
     }
-    
+
     CommitPoint::~CommitPoint()
     {
     }
-    
+
     String CommitPoint::toString()
     {
         return L"IndexFileDeleter::CommitPoint(" + segmentsFileName + L")";
     }
-    
+
     bool CommitPoint::isOptimized()
     {
         return _isOptimized;
     }
-    
+
     String CommitPoint::getSegmentsFileName()
     {
         return segmentsFileName;
     }
-    
+
     HashSet<String> CommitPoint::getFileNames()
     {
         return files;
     }
-    
+
     DirectoryPtr CommitPoint::getDirectory()
     {
         return directory;
     }
-    
+
     int64_t CommitPoint::getVersion()
     {
         return version;
     }
-    
+
     int64_t CommitPoint::getGeneration()
     {
         return generation;
     }
-    
+
     MapStringString CommitPoint::getUserData()
     {
         return userData;
     }
-    
+
     void CommitPoint::deleteCommit()
     {
         if (!deleted)
@@ -515,12 +515,12 @@ namespace Lucene
             commitsToDelete.add(shared_from_this());
         }
     }
-    
+
     bool CommitPoint::isDeleted()
     {
         return deleted;
     }
-    
+
     int32_t CommitPoint::compareTo(LuceneObjectPtr other)
     {
         CommitPointPtr otherCommit(boost::static_pointer_cast<CommitPoint>(other));

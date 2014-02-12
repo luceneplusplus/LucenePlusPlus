@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    const wchar_t* BrazilianAnalyzer::_BRAZILIAN_STOP_WORDS[] = 
+    const wchar_t* BrazilianAnalyzer::_BRAZILIAN_STOP_WORDS[] =
     {
         L"a", L"ainda", L"alem", L"ambas", L"ambos", L"antes",
         L"ao", L"aonde", L"aos", L"apos", L"aquele", L"aqueles",
@@ -27,41 +27,41 @@ namespace Lucene
         L"essa", L"essas", L"esse", L"esses", L"esta", L"estas",
         L"este", L"estes", L"ha", L"isso", L"isto", L"logo", L"mais",
         L"mas", L"mediante", L"menos", L"mesma", L"mesmas", L"mesmo",
-        L"mesmos", L"na", L"nas", L"nao", L"nas", L"nem", L"nesse", 
-        L"neste", L"nos", L"o", L"os", L"ou", L"outra", L"outras", 
-        L"outro", L"outros", L"pelas", L"pelas", L"pelo", L"pelos", 
-        L"perante", L"pois", L"por", L"porque", L"portanto", 
-        L"proprio", L"propios", L"quais", L"qual", L"qualquer", 
-        L"quando", L"quanto", L"que", L"quem", L"quer", L"se", L"seja", 
+        L"mesmos", L"na", L"nas", L"nao", L"nas", L"nem", L"nesse",
+        L"neste", L"nos", L"o", L"os", L"ou", L"outra", L"outras",
+        L"outro", L"outros", L"pelas", L"pelas", L"pelo", L"pelos",
+        L"perante", L"pois", L"por", L"porque", L"portanto",
+        L"proprio", L"propios", L"quais", L"qual", L"qualquer",
+        L"quando", L"quanto", L"que", L"quem", L"quer", L"se", L"seja",
         L"sem", L"sendo", L"seu", L"seus", L"sob", L"sobre", L"sua",
-        L"suas", L"tal", L"tambem", L"teu", L"teus", L"toda", L"todas", 
-        L"todo", L"todos", L"tua", L"tuas", L"tudo", L"um", L"uma", 
+        L"suas", L"tal", L"tambem", L"teu", L"teus", L"toda", L"todas",
+        L"todo", L"todos", L"tua", L"tuas", L"tudo", L"um", L"uma",
         L"umas", L"uns"
     };
-    
+
     BrazilianAnalyzer::BrazilianAnalyzer(LuceneVersion::Version matchVersion)
     {
         this->stoptable = getDefaultStopSet();
         this->matchVersion = matchVersion;
     }
-    
+
     BrazilianAnalyzer::BrazilianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords)
     {
         this->stoptable = stopwords;
         this->matchVersion = matchVersion;
     }
-    
+
     BrazilianAnalyzer::BrazilianAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopwords, HashSet<String> exclusions)
     {
         this->stoptable = stopwords;
         this->excltable = exclusions;
         this->matchVersion = matchVersion;
     }
-    
+
     BrazilianAnalyzer::~BrazilianAnalyzer()
     {
     }
-    
+
     const HashSet<String> BrazilianAnalyzer::getDefaultStopSet()
     {
         static HashSet<String> stopSet;
@@ -69,13 +69,13 @@ namespace Lucene
             stopSet = HashSet<String>::newInstance(_BRAZILIAN_STOP_WORDS, _BRAZILIAN_STOP_WORDS + SIZEOF_ARRAY(_BRAZILIAN_STOP_WORDS));
         return stopSet;
     }
-    
+
     void BrazilianAnalyzer::setStemExclusionTable(HashSet<String> exclusions)
     {
         excltable = exclusions;
         setPreviousTokenStream(LuceneObjectPtr()); // force a new stemmer to be created
     }
-    
+
     TokenStreamPtr BrazilianAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
@@ -85,7 +85,7 @@ namespace Lucene
         result = newLucene<BrazilianStemFilter>(result, excltable);
         return result;
     }
-    
+
     TokenStreamPtr BrazilianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
     {
         BrazilianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<BrazilianAnalyzerSavedStreams>(getPreviousTokenStream()));
@@ -103,7 +103,7 @@ namespace Lucene
             streams->source->reset(reader);
         return streams->result;
     }
-    
+
     BrazilianAnalyzerSavedStreams::~BrazilianAnalyzerSavedStreams()
     {
     }

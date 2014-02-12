@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,20 +16,20 @@ namespace Lucene
     public:
         TimerThread();
         virtual ~TimerThread();
-        
+
         LUCENE_CLASS(TimerThread);
-        
+
     protected:
         int64_t time;
         bool _stopThread;
-    
+
     public:
         virtual void start();
         virtual void run();
-        
+
         /// Get the timer value in milliseconds.
         int64_t getMilliseconds();
-        
+
         /// Stop timer thread.
         void stopThread();
     };

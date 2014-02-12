@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ namespace Lucene
     DateField::~DateField()
     {
     }
-    
+
     int32_t DateField::DATE_LEN()
     {
         static int32_t _DATE_LEN = 0;
@@ -25,7 +25,7 @@ namespace Lucene
         }
         return _DATE_LEN;
     }
-    
+
     const String& DateField::MIN_DATE_STRING()
     {
         static String _MIN_DATE_STRING;
@@ -33,7 +33,7 @@ namespace Lucene
             _MIN_DATE_STRING = timeToString(0);
         return _MIN_DATE_STRING;
     }
-    
+
     const String& DateField::MAX_DATE_STRING()
     {
         static String _MAX_DATE_STRING;
@@ -44,23 +44,23 @@ namespace Lucene
         }
         return _MAX_DATE_STRING;
     }
-    
+
     String DateField::dateToString(const boost::posix_time::ptime& date)
     {
         return timeToString(MiscUtils::getTimeMillis(date));
     }
-    
+
     String DateField::timeToString(int64_t time)
     {
         if (time < 0)
             boost::throw_exception(RuntimeException(L"time '" + StringUtils::toString(time) + L"' is too early, must be >= 0"));
-        
+
         String timeString(DATE_LEN(), L'0');
         timeString += StringUtils::toString(time, StringUtils::CHARACTER_MAX_RADIX);
-        
+
         return timeString.substr(timeString.length() - DATE_LEN(), DATE_LEN());
     }
-    
+
     int64_t DateField::stringToTime(const String& s)
     {
         return StringUtils::toLong(s, StringUtils::CHARACTER_MAX_RADIX);

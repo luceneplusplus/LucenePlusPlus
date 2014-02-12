@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,44 +17,44 @@ namespace Lucene
         this->_dir = dir;
         this->name = name;
     }
-    
+
     MockRAMOutputStream::~MockRAMOutputStream()
     {
     }
-    
+
     void MockRAMOutputStream::close()
     {
         RAMOutputStream::close();
         MockRAMDirectoryPtr dir(_dir);
-        
+
         // Now compute actual disk usage & track the maxUsedSize in the MockRAMDirectory
         int64_t size = dir->getRecomputedActualSizeInBytes();
         if (size > dir->maxUsedSize)
             dir->maxUsedSize = size;
     }
-    
+
     void MockRAMOutputStream::flush()
     {
         MockRAMDirectoryPtr(_dir)->maybeThrowDeterministicException();
         RAMOutputStream::flush();
     }
-    
+
     void MockRAMOutputStream::writeByte(uint8_t b)
     {
         singleByte[0] = b;
         writeBytes(singleByte.get(), 0, 1);
     }
-    
+
     void MockRAMOutputStream::writeBytes(const uint8_t* b, int32_t offset, int32_t length)
     {
         MockRAMDirectoryPtr dir(_dir);
         int64_t freeSpace = dir->maxSize - dir->sizeInBytes();
         int64_t realUsage = 0;
-        
+
         // If MockRAMDir crashed since we were opened, then don't write anything
         if (dir->crashed)
             boost::throw_exception(IOException(L"MockRAMDirectory was crashed; cannot write to " + name));
-        
+
         // Enforce disk full
         if (dir->maxSize != 0 && freeSpace <= length)
         {
@@ -62,7 +62,7 @@ namespace Lucene
             realUsage = dir->getRecomputedActualSizeInBytes();
             freeSpace = dir->maxSize - realUsage;
         }
-        
+
         if (dir->maxSize != 0 && freeSpace <= length)
         {
             if (freeSpace > 0 && freeSpace < length)
@@ -76,9 +76,9 @@ namespace Lucene
         }
         else
             RAMOutputStream::writeBytes(b, offset, length);
-        
+
         dir->maybeThrowDeterministicException();
-        
+
         if (first)
         {
             // Maybe throw random exception; only do this on first write to a new file

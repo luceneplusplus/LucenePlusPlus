@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,15 +16,15 @@ namespace Lucene
         position = 0;
         count = 0;
         repeats = false;
-        
+
         tp = t;
         offset = o;
     }
-    
+
     PhrasePositions::~PhrasePositions()
     {
     }
-    
+
     bool PhrasePositions::next()
     {
         if (!tp->next())
@@ -37,7 +37,7 @@ namespace Lucene
         position = 0;
         return true;
     }
-    
+
     bool PhrasePositions::skipTo(int32_t target)
     {
         if (!tp->skipTo(target))
@@ -50,13 +50,13 @@ namespace Lucene
         position = 0;
         return true;
     }
-    
+
     void PhrasePositions::firstPosition()
     {
         count = tp->freq(); // read first pos
         nextPosition();
     }
-    
+
     bool PhrasePositions::nextPosition()
     {
         if (count-- > 0) // read subsequent pos's

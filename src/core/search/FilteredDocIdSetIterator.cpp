@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,16 +16,16 @@ namespace Lucene
         this->innerIter = innerIter;
         this->doc = -1;
     }
-    
+
     FilteredDocIdSetIterator::~FilteredDocIdSetIterator()
     {
     }
-    
+
     int32_t FilteredDocIdSetIterator::docID()
     {
         return doc;
     }
-    
+
     int32_t FilteredDocIdSetIterator::nextDoc()
     {
         while ((doc = innerIter->nextDoc()) != NO_MORE_DOCS)
@@ -35,7 +35,7 @@ namespace Lucene
         }
         return doc;
     }
-    
+
     int32_t FilteredDocIdSetIterator::advance(int32_t target)
     {
         doc = innerIter->advance(target);

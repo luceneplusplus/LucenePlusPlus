@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,21 +16,21 @@ namespace Lucene
     class MockRAMInputStream : public RAMInputStream
     {
     public:
-        /// Construct an empty output buffer. 
+        /// Construct an empty output buffer.
         MockRAMInputStream();
         MockRAMInputStream(MockRAMDirectoryPtr dir, const String& name, RAMFilePtr f);
         virtual ~MockRAMInputStream();
-        
+
         LUCENE_CLASS(MockRAMInputStream);
-    
+
     protected:
         MockRAMDirectoryWeakPtr _dir;
         String name;
         bool isClone;
-    
+
     public:
         virtual void close();
-        
+
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     };
 }

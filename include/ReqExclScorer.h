@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -21,25 +21,25 @@ namespace Lucene
         /// @param exclDisi indicates exclusion.
         ReqExclScorer(ScorerPtr reqScorer, DocIdSetIteratorPtr exclDisi);
         virtual ~ReqExclScorer();
-    
+
         LUCENE_CLASS(ReqExclScorer);
-    
+
     protected:
         ScorerPtr reqScorer;
         DocIdSetIteratorPtr exclDisi;
         int32_t doc;
-    
+
     public:
         virtual int32_t nextDoc();
         virtual int32_t docID();
-        
-        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()} 
+
+        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()}
         /// is called the first time.
         /// @return The score of the required scorer.
         virtual double score();
-        
+
         virtual int32_t advance(int32_t target);
-    
+
     protected:
         /// Advance to non excluded doc.
         ///

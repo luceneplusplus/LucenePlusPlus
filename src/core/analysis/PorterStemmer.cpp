@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,16 +17,16 @@ namespace Lucene
         i = 0;
         dirty = false;
     }
-    
+
     PorterStemmer::~PorterStemmer()
     {
     }
-    
+
     bool PorterStemmer::stem(CharArray word)
     {
         return stem(word.get(), word.size() - 1);
     }
-    
+
     bool PorterStemmer::stem(wchar_t* b, int32_t k)
     {
         this->b = b;
@@ -34,11 +34,11 @@ namespace Lucene
         this->j = 0;
         this->i = k;
         dirty = false;
-        
+
         if (k <= 1)
             return false; // DEPARTURE
-        
-        // With these lines, strings of length 1 or 2 don't go through the stemming process, although no mention 
+
+        // With these lines, strings of length 1 or 2 don't go through the stemming process, although no mention
         // is made of this in the published algorithm. Remove the line to match the published algorithm.
         step1ab();
         step1c();
@@ -46,22 +46,22 @@ namespace Lucene
         step3();
         step4();
         step5();
-        
+
         if (i != this->k)
             dirty = true;
         return dirty;
     }
-    
+
     wchar_t* PorterStemmer::getResultBuffer()
     {
         return b;
     }
-    
+
     int32_t PorterStemmer::getResultLength()
     {
         return k + 1;
     }
-    
+
     bool PorterStemmer::cons(int32_t i)
     {
         switch (b[i])
@@ -78,7 +78,7 @@ namespace Lucene
                 return true;
         }
     }
-    
+
     int32_t PorterStemmer::m()
     {
         int32_t n = 0;
@@ -115,7 +115,7 @@ namespace Lucene
             ++i;
         }
     }
-    
+
     bool PorterStemmer::vowelinstem()
     {
         for (int32_t i = 0; i <= j; ++i)
@@ -125,7 +125,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     bool PorterStemmer::doublec(int32_t j)
     {
         if (j < 1)
@@ -134,7 +134,7 @@ namespace Lucene
             return false;
         return cons(j);
     }
-    
+
     bool PorterStemmer::cvc(int32_t i)
     {
         if (i < 2 || !cons(i) || cons(i - 1) || !cons(i - 2))
@@ -144,7 +144,7 @@ namespace Lucene
             return false;
         return true;
     }
-    
+
     bool PorterStemmer::ends(const wchar_t* s)
     {
         int32_t length = s[0];
@@ -157,7 +157,7 @@ namespace Lucene
         j = k - length;
         return true;
     }
-    
+
     void PorterStemmer::setto(const wchar_t* s)
     {
         int32_t length = s[0];
@@ -165,13 +165,13 @@ namespace Lucene
         k = j + length;
         dirty = true;
     }
-    
+
     void PorterStemmer::r(const wchar_t* s)
     {
         if (m() > 0)
             setto(s);
     }
-    
+
     void PorterStemmer::step1ab()
     {
         if (b[k] == L's')
@@ -208,7 +208,7 @@ namespace Lucene
                 setto(L"\01" L"e");
         }
     }
-    
+
     void PorterStemmer::step1c()
     {
         if (ends(L"\01" L"y") && vowelinstem())
@@ -217,7 +217,7 @@ namespace Lucene
             dirty = true;
         }
     }
-    
+
     void PorterStemmer::step2()
     {
         if (k == 0)
@@ -346,7 +346,7 @@ namespace Lucene
                 }
         }
     }
-    
+
     void PorterStemmer::step3()
     {
         switch (b[k])
@@ -396,7 +396,7 @@ namespace Lucene
                 break;
         }
     }
-    
+
     void PorterStemmer::step4()
     {
         if (k == 0)
@@ -449,7 +449,7 @@ namespace Lucene
                     break;
                 return;
             case L't':
-                if (ends(L"\03" L"ate")) 
+                if (ends(L"\03" L"ate"))
                     break;
                 if (ends(L"\03" L"iti"))
                     break;
@@ -472,7 +472,7 @@ namespace Lucene
         if (m() > 1)
             k = j;
     }
-    
+
     void PorterStemmer::step5()
     {
         j = k;

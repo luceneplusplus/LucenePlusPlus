@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ namespace Lucene
     {
         this->reader = reader;
     }
-    
+
     CustomScoreProvider::~CustomScoreProvider()
     {
     }
@@ -30,12 +30,12 @@ namespace Lucene
             score *= *srcScore;
         return score;
     }
-    
+
     double CustomScoreProvider::customScore(int32_t doc, double subQueryScore, double valSrcScore)
     {
         return subQueryScore * valSrcScore;
     }
-    
+
     ExplanationPtr CustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
     {
         if (valSrcExpls.size() == 1)
@@ -51,7 +51,7 @@ namespace Lucene
             exp->addDetail(*srcExpl);
         return exp;
     }
-    
+
     ExplanationPtr CustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
     {
         double valSrcScore = 1;

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,18 +14,18 @@ namespace Lucene
     {
         this->isClone = false;
     }
-    
+
     MockRAMInputStream::MockRAMInputStream(MockRAMDirectoryPtr dir, const String& name, RAMFilePtr f) : RAMInputStream(f)
     {
         this->isClone = false;
         this->name = name;
         this->_dir = dir;
     }
-    
+
     MockRAMInputStream::~MockRAMInputStream()
     {
     }
-    
+
     void MockRAMInputStream::close()
     {
         RAMInputStream::close();
@@ -47,7 +47,7 @@ namespace Lucene
             }
         }
     }
-    
+
     LuceneObjectPtr MockRAMInputStream::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = RAMInputStream::clone(other ? other : newLucene<MockRAMInputStream>());

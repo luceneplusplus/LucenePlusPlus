@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,16 +14,16 @@
 namespace Lucene
 {
     DateTools::DateOrder DateTools::dateOrder = DateTools::DATEORDER_LOCALE;
-    
+
     DateTools::~DateTools()
     {
     }
-    
+
     String DateTools::dateToString(const boost::posix_time::ptime& date, Resolution resolution)
     {
         return timeToString(MiscUtils::getTimeMillis(date), resolution);
     }
-    
+
     String DateTools::timeToString(int64_t time, Resolution resolution)
     {
         std::string timeString(boost::posix_time::to_iso_string(boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1), boost::posix_time::milliseconds(time))));
@@ -50,16 +50,16 @@ namespace Lucene
                 // silence static analyzers
                 break;
         }
-        
+
         boost::throw_exception(IllegalArgumentException(L"unknown resolution '" + StringUtils::toString(resolution) + L"'"));
         return L"";
     }
-    
+
     int64_t DateTools::stringToTime(const String& dateString)
     {
         return MiscUtils::getTimeMillis(stringToDate(dateString));
     }
-    
+
     boost::posix_time::ptime DateTools::stringToDate(const String& dateString)
     {
         uint16_t year = dateString.length() >= 4 ? (uint16_t)wcstol(dateString.substr(0, 4).c_str(), 0, 10) : 1970;
@@ -73,9 +73,9 @@ namespace Lucene
         try
         {
             date = boost::posix_time::ptime(boost::gregorian::date(year, month, day),
-                                            boost::posix_time::hours(hour) + 
-                                            boost::posix_time::minutes(minute) + 
-                                            boost::posix_time::seconds(second) + 
+                                            boost::posix_time::hours(hour) +
+                                            boost::posix_time::minutes(minute) +
+                                            boost::posix_time::seconds(second) +
                                             boost::posix_time::milliseconds(millisecond));
         }
         catch (...)
@@ -84,11 +84,11 @@ namespace Lucene
         }
         return date;
     }
-    
+
     boost::posix_time::ptime DateTools::round(const boost::posix_time::ptime& date, Resolution resolution)
     {
         boost::posix_time::ptime roundDate;
-        
+
         switch (resolution)
         {
             case RESOLUTION_YEAR:
@@ -98,16 +98,16 @@ namespace Lucene
             case RESOLUTION_DAY:
                 return boost::posix_time::ptime(date.date());
             case RESOLUTION_HOUR:
-                return boost::posix_time::ptime(date.date(), 
+                return boost::posix_time::ptime(date.date(),
                                                 boost::posix_time::hours(boost::posix_time::time_duration(date.time_of_day()).hours()));
             case RESOLUTION_MINUTE:
-                return boost::posix_time::ptime(date.date(), 
+                return boost::posix_time::ptime(date.date(),
                                                 boost::posix_time::hours(boost::posix_time::time_duration(date.time_of_day()).hours()) +
                                                 boost::posix_time::minutes(boost::posix_time::time_duration(date.time_of_day()).minutes()));
             case RESOLUTION_SECOND:
-                return boost::posix_time::ptime(date.date(), 
+                return boost::posix_time::ptime(date.date(),
                                                 boost::posix_time::hours(boost::posix_time::time_duration(date.time_of_day()).hours()) +
-                                                boost::posix_time::minutes(boost::posix_time::time_duration(date.time_of_day()).minutes()) + 
+                                                boost::posix_time::minutes(boost::posix_time::time_duration(date.time_of_day()).minutes()) +
                                                 boost::posix_time::seconds(boost::posix_time::time_duration(date.time_of_day()).seconds()));
             case RESOLUTION_MILLISECOND:
                 return date;
@@ -115,38 +115,38 @@ namespace Lucene
                 // silence static analyzers
                 break;
         }
-        
+
         return boost::posix_time::ptime();
     }
-    
+
     int64_t DateTools::round(int64_t time, Resolution resolution)
     {
         return MiscUtils::getTimeMillis(round(boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1), boost::posix_time::milliseconds(time)), resolution));
     }
-    
+
     void DateTools::setDateOrder(DateTools::DateOrder order)
     {
         dateOrder = order;
     }
-    
+
     DateTools::DateOrder DateTools::getDateOrder(std::locale locale)
     {
         if (dateOrder != DATEORDER_LOCALE)
             return dateOrder;
-        
+
         std::locale localeDate(std::locale(locale, new boost::gregorian::date_facet("%x")));
         SingleStringStream controlStream;
-        
+
         controlStream.imbue(localeDate);
         controlStream << boost::gregorian::date(1974, 10, 20); // Oct 20th 1974
-        
+
         SingleString controlDate(controlStream.str());
         SingleString::size_type year = controlDate.find("74");
         SingleString::size_type month = controlDate.find("10");
         if (month == SingleString::npos)
             month = controlDate.find("O"); // safety
         SingleString::size_type day = controlDate.find("20");
-        
+
         if (year < month)
             return DATEORDER_YMD;
         else if (month < day)
@@ -154,7 +154,7 @@ namespace Lucene
         else
             return DATEORDER_DMY;
     }
-    
+
     boost::posix_time::ptime DateTools::parseDate(const String& dateString, std::locale locale)
     {
         Collection<String> dateTokens(StringUtils::split(dateString, L",-. /"));
@@ -169,9 +169,9 @@ namespace Lucene
             else
                 paddedDate += *token;
         }
-        
+
         Collection<String> dateFormats(Collection<String>::newInstance());
-        
+
         switch (getDateOrder(locale))
         {
             case DATEORDER_DMY:
@@ -202,10 +202,10 @@ namespace Lucene
                 // silence static analyzers
                 break;
         }
-        
+
         boost::date_time::format_date_parser<boost::gregorian::date, wchar_t> parser(L"", locale);
-        boost::date_time::special_values_parser<boost::gregorian::date, wchar_t> svp; 
-        
+        boost::date_time::special_values_parser<boost::gregorian::date, wchar_t> svp;
+
         for (Collection<String>::iterator dateFormat = dateFormats.begin(); dateFormat != dateFormats.end(); ++dateFormat)
         {
             try
@@ -218,7 +218,7 @@ namespace Lucene
             {
             }
         }
-        
+
         boost::throw_exception(ParseException(L"Invalid date '" + dateString + L"'"));
         return boost::posix_time::ptime();
     }

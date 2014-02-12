@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,9 +16,9 @@ namespace Lucene
     public:
         FormatPostingsFieldsWriter(SegmentWriteStatePtr state, FieldInfosPtr fieldInfos);
         virtual ~FormatPostingsFieldsWriter();
-        
+
         LUCENE_CLASS(FormatPostingsFieldsWriter);
-            
+
     public:
         DirectoryPtr dir;
         String segment;
@@ -28,13 +28,13 @@ namespace Lucene
         FormatPostingsTermsWriterPtr termsWriter;
         DefaultSkipListWriterPtr skipListWriter;
         int32_t totalNumDocs;
-    
+
     public:
         virtual void initialize();
-        
+
         /// Add a new field.
         virtual FormatPostingsTermsConsumerPtr addField(FieldInfoPtr field);
-        
+
         /// Called when we are done adding everything.
         virtual void finish();
     };

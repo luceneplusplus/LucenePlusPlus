@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,16 +18,16 @@ namespace Lucene
         suite = false;
         modified = false;
     }
-    
+
     FrenchStemmer::~FrenchStemmer()
     {
     }
-    
+
     String FrenchStemmer::stem(const String& term)
     {
         if (!isStemmable(term))
             return term;
-        
+
         // Use lowercase for medium stemming.
         stringBuffer = StringUtils::toLower(term);
 
@@ -62,7 +62,7 @@ namespace Lucene
 
         return stringBuffer;
     }
-    
+
     void FrenchStemmer::setStrings()
     {
         // set the strings
@@ -77,7 +77,7 @@ namespace Lucene
         else
             R2.clear();
     }
-    
+
     void FrenchStemmer::step1()
     {
         Collection<String> suffix = newCollection<String>(L"ances", L"iqUes", L"ismes", L"ables", L"istes", L"ance", L"iqUe", L"isme", L"able", L"iste");
@@ -123,56 +123,56 @@ namespace Lucene
         if (deleteFromIfTestVowelBeforeIn(RV, newCollection<String>(L"ments", L"ment"), true, RV))
             suite = true;
     }
-    
+
     bool FrenchStemmer::step2a()
     {
         static Collection<String> search;
         if (!search)
         {
-            static const wchar_t* _search[] = 
+            static const wchar_t* _search[] =
             {
                 L"\x00eemes", L"\x00eetes", L"iraIent", L"irait", L"irais", L"irai", L"iras", L"ira",
-                L"irent", L"iriez", L"irez", L"irions", L"irons", L"iront", L"issaIent", 
-                L"issais", L"issantes", L"issante", L"issants", L"issant", L"issait", 
-                L"issais", L"issions", L"issons", L"issiez", L"issez", L"issent", L"isses", 
+                L"irent", L"iriez", L"irez", L"irions", L"irons", L"iront", L"issaIent",
+                L"issais", L"issantes", L"issante", L"issants", L"issant", L"issait",
+                L"issais", L"issions", L"issons", L"issiez", L"issez", L"issent", L"isses",
                 L"isse", L"ir", L"is", L"\x00eet", L"it", L"ies", L"ie", L"i"
             };
             search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
         }
         return deleteFromIfTestVowelBeforeIn(RV, search, false, RV);
     }
-    
+
     void FrenchStemmer::step2b()
     {
         static Collection<String> suffix;
         if (!suffix)
         {
-            static const wchar_t* _suffix[] = 
+            static const wchar_t* _suffix[] =
             {
-                L"eraIent", L"erais", L"erait", L"erai", L"eras", L"erions", L"eriez", 
-                L"erons", L"eront", L"erez", L"\x00e8rent", L"era", L"\x00e9es", L"iez", L"\x00e9e", L"\x00e9s", 
+                L"eraIent", L"erais", L"erait", L"erai", L"eras", L"erions", L"eriez",
+                L"erons", L"eront", L"erez", L"\x00e8rent", L"era", L"\x00e9es", L"iez", L"\x00e9e", L"\x00e9s",
                 L"er", L"ez", L"\x00e9"
             };
             suffix = Collection<String>::newInstance(_suffix, _suffix + SIZEOF_ARRAY(_suffix));
         }
         deleteFrom(RV, suffix);
-        
+
         static Collection<String> search;
         if (!search)
         {
-            static const wchar_t* _search[] = 
+            static const wchar_t* _search[] =
             {
-                L"assions", L"assiez", L"assent", L"asses", L"asse", L"aIent", L"antes", 
-                L"aIent", L"Aient", L"ante", L"\x00e2mes", L"\x00e2tes", L"ants", L"ant", L"ait", 
+                L"assions", L"assiez", L"assent", L"asses", L"asse", L"aIent", L"antes",
+                L"aIent", L"Aient", L"ante", L"\x00e2mes", L"\x00e2tes", L"ants", L"ant", L"ait",
                 L"a\x00eet", L"ais", L"Ait", L"A\x00eet", L"Ais", L"\x00e2t", L"as", L"ai", L"Ai", L"a"
             };
             search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
         }
         deleteButSuffixFrom(RV, search, L"e", true);
-        
+
         deleteFrom(R2, newCollection<String>(L"ions"));
     }
-    
+
     void FrenchStemmer::step3()
     {
         if (!stringBuffer.empty())
@@ -190,7 +190,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void FrenchStemmer::step4()
     {
         if (stringBuffer.length() > 1)
@@ -213,12 +213,12 @@ namespace Lucene
         deleteFrom(RV, newCollection<String>(L"e"));
         deleteFromIfPrecededIn(RV, newCollection<String>(L"\x00eb"), R0, L"gu");
     }
-    
+
     void FrenchStemmer::step5()
     {
         if (!R0.empty())
         {
-            if (boost::ends_with(R0, L"enn") || boost::ends_with(R0, L"onn") || 
+            if (boost::ends_with(R0, L"enn") || boost::ends_with(R0, L"onn") ||
                 boost::ends_with(R0, L"ett") || boost::ends_with(R0, L"ell") || boost::ends_with(R0, L"eill"))
             {
                 stringBuffer.resize(stringBuffer.length() - 1);
@@ -226,7 +226,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void FrenchStemmer::step6()
     {
         if (!R0.empty())
@@ -261,7 +261,7 @@ namespace Lucene
                 stringBuffer[pos] = L'e';
         }
     }
-    
+
     bool FrenchStemmer::deleteFromIfPrecededIn(const String& source, Collection<String> search, const String& from, const String& prefix)
     {
         bool found = false;
@@ -283,7 +283,7 @@ namespace Lucene
         }
         return found;
     }
-    
+
     bool FrenchStemmer::deleteFromIfTestVowelBeforeIn(const String& source, Collection<String> search, bool vowel, const String& from)
     {
         bool found = false;
@@ -310,7 +310,7 @@ namespace Lucene
         }
         return found;
     }
-    
+
     void FrenchStemmer::deleteButSuffixFrom(const String& source, Collection<String> search, const String& prefix, bool without)
     {
         if (!source.empty())
@@ -334,7 +334,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void FrenchStemmer::deleteButSuffixFromElseReplace(const String& source, Collection<String> search, const String& prefix, bool without, const String& from, const String& replace)
     {
         if (!source.empty())
@@ -366,7 +366,7 @@ namespace Lucene
             }
         }
     }
-    
+
     bool FrenchStemmer::replaceFrom(const String& source, Collection<String> search, const String& replace)
     {
         bool found = false;
@@ -387,7 +387,7 @@ namespace Lucene
         }
         return found;
     }
-    
+
     void FrenchStemmer::deleteFrom(const String& source, Collection<String> suffix)
     {
         if (!source.empty())
@@ -404,7 +404,7 @@ namespace Lucene
             }
         }
     }
-    
+
     bool FrenchStemmer::isVowel(wchar_t ch)
     {
         switch (ch)
@@ -432,7 +432,7 @@ namespace Lucene
                 return false;
         }
     }
-    
+
     String FrenchStemmer::retrieveR(const String& buffer)
     {
         int32_t len = (int32_t)buffer.length();
@@ -464,7 +464,7 @@ namespace Lucene
         else
             return L"";
     }
-    
+
     String FrenchStemmer::retrieveRV(const String& buffer)
     {
         int32_t len = (int32_t)buffer.length();
@@ -492,10 +492,10 @@ namespace Lucene
         else
             return L"";
     }
-    
+
     void FrenchStemmer::treatVowels(String& buffer)
     {
-        
+
         for (int32_t c = 0; c < (int32_t)buffer.length(); ++c)
         {
             wchar_t ch = buffer[c];
@@ -537,7 +537,7 @@ namespace Lucene
             }
         }
     }
-    
+
     bool FrenchStemmer::isStemmable(const String& term)
     {
         bool upper = false;

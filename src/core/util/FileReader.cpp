@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ namespace Lucene
 {
     const int32_t FileReader::FILE_EOF = Reader::READER_EOF;
     const int32_t FileReader::FILE_ERROR = -1;
-    
+
     FileReader::FileReader(const String& fileName)
     {
         this->file = newInstance<boost::filesystem::ifstream>(fileName, std::ios::binary | std::ios::in);
@@ -23,17 +23,17 @@ namespace Lucene
             boost::throw_exception(FileNotFoundException(fileName));
         _length = FileUtils::fileLength(fileName);
     }
-    
+
     FileReader::~FileReader()
     {
     }
-    
+
     int32_t FileReader::read()
     {
         wchar_t buffer;
         return read(&buffer, 0, 1) == FILE_EOF ? FILE_EOF : buffer;
     }
-    
+
     int32_t FileReader::read(wchar_t* buffer, int32_t offset, int32_t length)
     {
         try
@@ -54,23 +54,23 @@ namespace Lucene
             return FILE_ERROR;
         }
     }
-    
+
     void FileReader::close()
     {
         file->close();
     }
-    
+
     bool FileReader::markSupported()
     {
         return false;
     }
-    
+
     void FileReader::reset()
     {
         file->clear();
         file->seekg((std::streamoff)0);
     }
-    
+
     int64_t FileReader::length()
     {
         return _length;

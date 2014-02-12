@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,26 +17,26 @@ namespace Lucene
     public:
         OneComparatorFieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
         virtual ~OneComparatorFieldValueHitQueue();
-        
+
         LUCENE_CLASS(OneComparatorFieldValueHitQueue);
-    
+
     public:
         FieldComparatorPtr comparator;
         int32_t oneReverseMul;
-    
+
     protected:
         virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
     };
-    
+
     /// An implementation of {@link FieldValueHitQueue} which is optimized in case there is more than one comparator.
     class MultiComparatorsFieldValueHitQueue : public FieldValueHitQueue
     {
     public:
         MultiComparatorsFieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
         virtual ~MultiComparatorsFieldValueHitQueue();
-        
+
         LUCENE_CLASS(MultiComparatorsFieldValueHitQueue);
-    
+
     protected:
         virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
     };

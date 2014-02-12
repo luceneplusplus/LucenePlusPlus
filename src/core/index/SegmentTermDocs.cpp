@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ namespace Lucene
         this->haveSkipped = false;
         this->currentFieldStoresPayloads = false;
         this->currentFieldOmitTermFreqAndPositions = false;
-        
+
         this->_freqStream = boost::dynamic_pointer_cast<IndexInput>(parent->core->freqStream->clone());
         {
             SyncLock parentLock(parent);
@@ -43,25 +43,25 @@ namespace Lucene
         this->skipInterval = parent->core->getTermsReader()->getSkipInterval();
         this->maxSkipLevels = parent->core->getTermsReader()->getMaxSkipLevels();
     }
-    
+
     SegmentTermDocs::~SegmentTermDocs()
     {
     }
-    
+
     void SegmentTermDocs::seek(TermPtr term)
     {
         TermInfoPtr ti(SegmentReaderPtr(_parent)->core->getTermsReader()->get(term));
         seek(ti, term);
     }
-    
+
     void SegmentTermDocs::seek(TermEnumPtr termEnum)
     {
         TermInfoPtr ti;
         TermPtr term;
-        
+
         SegmentTermEnumPtr segmentTermEnum(boost::dynamic_pointer_cast<SegmentTermEnum>(termEnum));
         SegmentReaderPtr parent(_parent);
-        
+
         // use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
         if (segmentTermEnum && segmentTermEnum->fieldInfos == parent->core->fieldInfos) // optimized case
         {
@@ -73,10 +73,10 @@ namespace Lucene
             term = termEnum->term();
             ti = parent->core->getTermsReader()->get(term);
         }
-        
+
         seek(ti, term);
     }
-    
+
     void SegmentTermDocs::seek(TermInfoPtr ti, TermPtr term)
     {
         count = 0;
@@ -96,28 +96,28 @@ namespace Lucene
             haveSkipped = false;
         }
     }
-    
+
     void SegmentTermDocs::close()
     {
         _freqStream->close();
         if (skipListReader)
             skipListReader->close();
     }
-    
+
     int32_t SegmentTermDocs::doc()
     {
         return _doc;
     }
-    
+
     int32_t SegmentTermDocs::freq()
     {
         return _freq;
     }
-    
+
     void SegmentTermDocs::skippingDoc()
     {
     }
-    
+
     bool SegmentTermDocs::next()
     {
         while (true)
@@ -125,7 +125,7 @@ namespace Lucene
             if (count == df)
                 return false;
             int32_t docCode = _freqStream->readVInt();
-            
+
             if (currentFieldOmitTermFreqAndPositions)
             {
                 _doc += docCode;
@@ -139,16 +139,16 @@ namespace Lucene
                 else
                     _freq = _freqStream->readVInt(); // else read freq
             }
-            
+
             ++count;
-            
+
             if (!deletedDocs || !deletedDocs->get(_doc))
                 break;
             skippingDoc();
         }
         return true;
     }
-    
+
     int32_t SegmentTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs)
     {
         int32_t length = docs.size();
@@ -167,7 +167,7 @@ namespace Lucene
                 else
                     _freq = _freqStream->readVInt(); // else read freq
                 ++count;
-                
+
                 if (!deletedDocs || !deletedDocs->get(_doc))
                 {
                     docs[i] = _doc;
@@ -178,7 +178,7 @@ namespace Lucene
             return i;
         }
     }
-    
+
     int32_t SegmentTermDocs::readNoTf(Collection<int32_t> docs, Collection<int32_t> freqs, int32_t length)
     {
         int32_t i = 0;
@@ -187,11 +187,11 @@ namespace Lucene
             // manually inlined call to next() for speed
             _doc += _freqStream->readVInt();
             ++count;
-            
+
             if (!deletedDocs || !deletedDocs->get(_doc))
             {
                 docs[i] = _doc;
-                
+
                 // Hardware freq to 1 when term freqs were not stored in the index
                 freqs[i] = 1;
                 ++i;
@@ -199,24 +199,24 @@ namespace Lucene
         }
         return i;
     }
-    
+
     void SegmentTermDocs::skipProx(int64_t proxPointer, int32_t payloadLength)
     {
     }
-    
+
     bool SegmentTermDocs::skipTo(int32_t target)
     {
         if (df >= skipInterval) // optimized case
         {
             if (!skipListReader)
                 skipListReader = newLucene<DefaultSkipListReader>(boost::dynamic_pointer_cast<IndexInput>(_freqStream->clone()), maxSkipLevels, skipInterval); // lazily clone
-            
+
             if (!haveSkipped) // lazily initialize skip stream
             {
                 skipListReader->init(skipPointer, freqBasePointer, proxBasePointer, df, currentFieldStoresPayloads);
                 haveSkipped = true;
             }
-            
+
             int32_t newCount = skipListReader->skipTo(target);
             if (newCount > count)
             {
@@ -227,7 +227,7 @@ namespace Lucene
                 count = newCount;
             }
         }
-        
+
         // done skipping, now just scan
         do
         {
@@ -237,12 +237,12 @@ namespace Lucene
         while (target > _doc);
         return true;
     }
-    
+
     IndexInputPtr SegmentTermDocs::freqStream()
     {
         return _freqStream;
     }
-    
+
     void SegmentTermDocs::freqStream(IndexInputPtr freqStream)
     {
         _freqStream = freqStream;

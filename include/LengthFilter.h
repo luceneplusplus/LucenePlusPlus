@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,16 +18,16 @@ namespace Lucene
         /// Build a filter that removes words that are too long or too short from the text.
         LengthFilter(TokenStreamPtr input, int32_t min, int32_t max);
         virtual ~LengthFilter();
-        
+
         LUCENE_CLASS(LengthFilter);
-    
+
     public:
         int32_t min;
         int32_t max;
-    
+
     protected:
         TermAttributePtr termAtt;
-    
+
     public:
         /// Returns the next input Token whose term() is the right len
         virtual bool incrementToken();

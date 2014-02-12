@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,18 +18,18 @@ namespace Lucene
     public:
         BrazilianStemFilter(TokenStreamPtr input);
         BrazilianStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable);
-        
+
         virtual ~BrazilianStemFilter();
-        
+
         LUCENE_CLASS(BrazilianStemFilter);
-    
+
     protected:
         /// {@link BrazilianStemmer} in use by this filter.
         BrazilianStemmerPtr stemmer;
-        
+
         HashSet<String> exclusions;
         TermAttributePtr termAtt;
-    
+
     public:
         virtual bool incrementToken();
     };

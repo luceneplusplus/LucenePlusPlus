@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,16 +18,16 @@ namespace Lucene
     public:
         SpansCell(NearSpansUnorderedPtr unordered, SpansPtr spans, int32_t index);
         virtual ~SpansCell();
-        
+
         LUCENE_CLASS(SpansCell);
-    
+
     protected:
         NearSpansUnorderedWeakPtr _unordered;
         SpansPtr spans;
         SpansCellPtr _next;
         int32_t length;
         int32_t index;
-    
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);
@@ -37,21 +37,21 @@ namespace Lucene
         virtual Collection<ByteArray> getPayload();
         virtual bool isPayloadAvailable();
         virtual String toString();
-    
+
     protected:
         bool adjust(bool condition);
-        
+
         friend class NearSpansUnordered;
     };
-    
+
     class CellQueue : public PriorityQueue<SpansCellPtr>
     {
     public:
         CellQueue(int32_t size);
         virtual ~CellQueue();
-        
+
         LUCENE_CLASS(CellQueue);
-    
+
     protected:
         virtual bool lessThan(const SpansCellPtr& first, const SpansCellPtr& second);
     };

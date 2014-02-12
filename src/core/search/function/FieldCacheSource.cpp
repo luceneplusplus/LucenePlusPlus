@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,21 +15,21 @@ namespace Lucene
     {
         this->field = field;
     }
-    
+
     FieldCacheSource::~FieldCacheSource()
     {
     }
-    
+
     DocValuesPtr FieldCacheSource::getValues(IndexReaderPtr reader)
     {
         return getCachedFieldValues(FieldCache::DEFAULT(), field, reader);
     }
-    
+
     String FieldCacheSource::description()
     {
         return field;
     }
-    
+
     bool FieldCacheSource::equals(LuceneObjectPtr other)
     {
         FieldCacheSourcePtr otherSource(boost::dynamic_pointer_cast<FieldCacheSource>(other));
@@ -37,7 +37,7 @@ namespace Lucene
             return false;
         return field == otherSource->field && cachedFieldSourceEquals(otherSource);
     }
-    
+
     int32_t FieldCacheSource::hashCode()
     {
         return StringUtils::hashCode(field) + cachedFieldSourceHashCode();

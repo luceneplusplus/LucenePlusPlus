@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -11,15 +11,15 @@
 
 namespace Lucene
 {
-    /// Tokenizes the entire stream as a single token. This is useful for data like zip codes, ids, and some 
+    /// Tokenizes the entire stream as a single token. This is useful for data like zip codes, ids, and some
     /// product names.
     class LPPAPI KeywordAnalyzer : public Analyzer
     {
     public:
         virtual ~KeywordAnalyzer();
-        
+
         LUCENE_CLASS(KeywordAnalyzer);
-    
+
     public:
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,12 +14,12 @@ namespace Lucene
     {
         this->seed = (int64_t)MiscUtils::currentTimeMillis();
     }
-    
+
     Random::Random(int64_t seed)
     {
         this->seed = seed;
     }
-        
+
     Random::~Random()
     {
     }
@@ -28,7 +28,7 @@ namespace Lucene
     {
         this->seed = (seed ^ 0x5deece66dLL) & (((int64_t)1 << 48) - 1);
     }
-        
+
     int32_t Random::nextInt(int32_t limit)
     {
         if ((limit & -limit) == limit)
@@ -36,17 +36,17 @@ namespace Lucene
 
         int32_t bits = 0;
         int32_t val = 0;
-        
+
         do
         {
             bits = next(31);
             val = bits % limit;
         }
         while (bits - val + (limit - 1) < 0);
-        
+
         return val;
     }
-    
+
     double Random::nextDouble()
     {
         return ((double)(((int64_t)next(26) << 27) + next(27)) / (double)((int64_t)1 << 53));

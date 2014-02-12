@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -21,35 +21,35 @@ namespace Lucene
         fieldName = clauses[0]->getField(); // all clauses must have same field
         this->function = newLucene<AveragePayloadFunction>();
     }
-    
+
     PayloadNearQuery::PayloadNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, PayloadFunctionPtr function) : SpanNearQuery(clauses, slop, inOrder)
     {
         fieldName = clauses[0]->getField(); // all clauses must have same field
         this->function = function;
     }
-    
+
     PayloadNearQuery::~PayloadNearQuery()
     {
     }
-    
+
     WeightPtr PayloadNearQuery::createWeight(SearcherPtr searcher)
     {
         return newLucene<PayloadNearSpanWeight>(shared_from_this(), searcher);
     }
-    
+
     LuceneObjectPtr PayloadNearQuery::clone(LuceneObjectPtr other)
     {
         int32_t sz = clauses.size();
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
-        
+
         for (int32_t i = 0; i < sz; ++i)
             newClauses[i] = boost::dynamic_pointer_cast<SpanQuery>(clauses[i]->clone());
-        
+
         PayloadNearQueryPtr payloadNearQuery(newLucene<PayloadNearQuery>(newClauses, slop, inOrder));
         payloadNearQuery->setBoost(getBoost());
         return payloadNearQuery;
     }
-    
+
     String PayloadNearQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -63,7 +63,7 @@ namespace Lucene
         buffer << L"], " << slop << L", " << inOrder << L")" << boostString();
         return buffer.str();
     }
-    
+
     bool PayloadNearQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -81,12 +81,12 @@ namespace Lucene
         {
             if (otherQuery->function)
                 return false;
-        } 
+        }
         else if (!function->equals(otherQuery->function))
             return false;
         return true;
     }
-    
+
     int32_t PayloadNearQuery::hashCode()
     {
         int32_t prime = 31;
@@ -95,20 +95,20 @@ namespace Lucene
         result = prime * result + (!function ? 0 : function->hashCode());
         return result;
     }
-    
+
     PayloadNearSpanWeight::PayloadNearSpanWeight(SpanQueryPtr query, SearcherPtr searcher) : SpanWeight(query, searcher)
     {
     }
-    
+
     PayloadNearSpanWeight::~PayloadNearSpanWeight()
     {
     }
-    
+
     ScorerPtr PayloadNearSpanWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<PayloadNearSpanScorer>(query->getSpans(reader), shared_from_this(), similarity, reader->norms(query->getField()));
     }
-    
+
     PayloadNearSpanScorer::PayloadNearSpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
     {
         this->spans = spans;
@@ -116,11 +116,11 @@ namespace Lucene
         this->payloadsSeen = 0;
         this->similarity = getSimilarity();
     }
-    
+
     PayloadNearSpanScorer::~PayloadNearSpanScorer()
     {
     }
-    
+
     void PayloadNearSpanScorer::getPayloads(Collection<SpansPtr> subSpans)
     {
         for (Collection<SpansPtr>::iterator span = subSpans.begin(); span != subSpans.end(); ++span)
@@ -141,21 +141,21 @@ namespace Lucene
             }
         }
     }
-    
+
     void PayloadNearSpanScorer::processPayloads(Collection<ByteArray> payLoads, int32_t start, int32_t end)
     {
         PayloadNearSpanWeightPtr spanWeight(boost::static_pointer_cast<PayloadNearSpanWeight>(weight));
         PayloadNearQueryPtr nearQuery(boost::static_pointer_cast<PayloadNearQuery>(spanWeight->query));
-        
+
         for (Collection<ByteArray>::iterator payload = payLoads.begin(); payload != payLoads.end(); ++payload)
         {
             payloadScore = nearQuery->function->currentScore(doc, nearQuery->fieldName, start, end, payloadsSeen, payloadScore,
-                                                             similarity->scorePayload(doc, nearQuery->fieldName, spans->start(), 
+                                                             similarity->scorePayload(doc, nearQuery->fieldName, spans->start(),
                                                              spans->end(), *payload, 0, payload->size()));
             ++payloadsSeen;
         }
     }
-    
+
     bool PayloadNearSpanScorer::setFreqCurrentDoc()
     {
         if (!more)
@@ -166,14 +166,14 @@ namespace Lucene
         getPayloads(spansArr);
         return SpanScorer::setFreqCurrentDoc();
     }
-    
+
     double PayloadNearSpanScorer::score()
     {
         PayloadNearSpanWeightPtr spanWeight(boost::static_pointer_cast<PayloadNearSpanWeight>(weight));
         PayloadNearQueryPtr nearQuery(boost::static_pointer_cast<PayloadNearQuery>(spanWeight->query));
         return SpanScorer::score() * nearQuery->function->docScore(doc, nearQuery->fieldName, payloadsSeen, payloadScore);
     }
-    
+
     ExplanationPtr PayloadNearSpanScorer::explain(int32_t doc)
     {
         ExplanationPtr result(newLucene<Explanation>());

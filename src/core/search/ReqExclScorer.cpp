@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@ namespace Lucene
         this->exclDisi = exclDisi;
         this->doc = -1;
     }
-    
+
     ReqExclScorer::~ReqExclScorer()
     {
     }
-    
+
     int32_t ReqExclScorer::nextDoc()
     {
         if (!reqScorer)
@@ -35,7 +35,7 @@ namespace Lucene
         doc = toNonExcluded();
         return doc;
     }
-    
+
     int32_t ReqExclScorer::toNonExcluded()
     {
         int32_t exclDoc = exclDisi->docID();
@@ -60,17 +60,17 @@ namespace Lucene
         reqScorer.reset(); // exhausted, nothing left
         return NO_MORE_DOCS;
     }
-    
+
     int32_t ReqExclScorer::docID()
     {
         return doc;
     }
-    
+
     double ReqExclScorer::score()
     {
         return reqScorer->score(); // reqScorer may be null when next() or skipTo() already return false
     }
-    
+
     int32_t ReqExclScorer::advance(int32_t target)
     {
         if (!reqScorer)

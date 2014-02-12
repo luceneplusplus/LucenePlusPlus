@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,16 +15,16 @@ namespace Lucene
         this->terms = terms;
         this->termFreqs = termFreqs;
     }
-    
+
     SegmentTermVector::~SegmentTermVector()
     {
     }
-    
+
     String SegmentTermVector::getField()
     {
         return field;
     }
-    
+
     String SegmentTermVector::toString()
     {
         StringStream segTermVector;
@@ -41,22 +41,22 @@ namespace Lucene
         segTermVector << L"}";
         return segTermVector.str();
     }
-    
+
     int32_t SegmentTermVector::size()
     {
         return terms ? terms.size() : 0;
     }
-    
+
     Collection<String> SegmentTermVector::getTerms()
     {
         return terms;
     }
-    
+
     Collection<int32_t> SegmentTermVector::getTermFrequencies()
     {
         return termFreqs;
     }
-    
+
     int32_t SegmentTermVector::indexOf(const String& term)
     {
         if (!terms)
@@ -64,7 +64,7 @@ namespace Lucene
         Collection<String>::iterator search = std::lower_bound(terms.begin(), terms.end(), term);
         return (search == terms.end() || term < *search) ? -1 : std::distance(terms.begin(), search);
     }
-    
+
     Collection<int32_t> SegmentTermVector::indexesOf(Collection<String> termNumbers, int32_t start, int32_t length)
     {
         Collection<int32_t> res(Collection<int32_t>::newInstance(length));

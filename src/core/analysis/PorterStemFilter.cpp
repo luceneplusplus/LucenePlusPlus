@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,16 +16,16 @@ namespace Lucene
         stemmer = newLucene<PorterStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
-    
+
     PorterStemFilter::~PorterStemFilter()
     {
     }
-    
+
     bool PorterStemFilter::incrementToken()
     {
         if (!input->incrementToken())
             return false;
-        
+
         if (stemmer->stem(termAtt->termBuffer()))
             termAtt->setTermBuffer(stemmer->getResultBuffer(), 0, stemmer->getResultLength());
         return true;

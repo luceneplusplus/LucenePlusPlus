@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@ namespace Lucene
         _length = bytes.size();
         pointer = 0;
     }
-    
+
     MockIndexInput::~MockIndexInput()
     {
     }
-    
+
     void MockIndexInput::readInternal(uint8_t* b, int32_t offset, int32_t length)
     {
         int32_t remainder = length;
@@ -37,17 +37,17 @@ namespace Lucene
         }
         pointer += length;
     }
-    
+
     void MockIndexInput::close()
     {
         // ignore
     }
-    
+
     void MockIndexInput::seekInternal(int64_t pos)
     {
         pointer = (int32_t)pos;
     }
-    
+
     int64_t MockIndexInput::length()
     {
         return _length;

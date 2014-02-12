@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ namespace Lucene
 
     /// Translates characters to character classes
     CharArray StandardTokenizerImpl::_ZZ_CMAP;
-    const wchar_t StandardTokenizerImpl::ZZ_CMAP_PACKED[] = 
+    const wchar_t StandardTokenizerImpl::ZZ_CMAP_PACKED[] =
     {
         L"\11\0\1\0\1\15\1\0\1\0\1\14\22\0\1\0\5\0\1\5"
         L"\1\3\4\0\1\11\1\7\1\4\1\11\12\2\6\0\1\6\32\12"
@@ -82,24 +82,24 @@ namespace Lucene
         L"\7\0\32\12\6\0\32\12\12\0\1\13\72\13\37\12\3\0\6\12"
         L"\2\0\6\12\2\0\6\12\2\0\3\12\43\0"
     };
-    
+
     const int32_t StandardTokenizerImpl::ZZ_CMAP_LENGTH = 65536;
     const int32_t StandardTokenizerImpl::ZZ_CMAP_PACKED_LENGTH = 1154;
 
     IntArray StandardTokenizerImpl::_ZZ_ACTION;
-    const wchar_t StandardTokenizerImpl::ZZ_ACTION_PACKED_0[] = 
+    const wchar_t StandardTokenizerImpl::ZZ_ACTION_PACKED_0[] =
     {
         L"\1\0\1\1\3\2\1\3\1\1\13\0\1\2\3\4"
         L"\2\0\1\5\1\0\1\5\3\4\6\5\1\6\1\4"
         L"\2\7\1\10\1\0\1\10\3\0\2\10\1\11\1\12"
         L"\1\4"
     };
-    
+
     const int32_t StandardTokenizerImpl::ZZ_ACTION_LENGTH = 51;
     const int32_t StandardTokenizerImpl::ZZ_ACTION_PACKED_LENGTH = 50;
 
     IntArray StandardTokenizerImpl::_ZZ_ROWMAP;
-    const wchar_t StandardTokenizerImpl::ZZ_ROWMAP_PACKED_0[] = 
+    const wchar_t StandardTokenizerImpl::ZZ_ROWMAP_PACKED_0[] =
     {
         L"\0\0\0\16\0\34\0\52\0\70\0\16\0\106\0\124"
         L"\0\142\0\160\0\176\0\214\0\232\0\250\0\266\0\304"
@@ -109,12 +109,12 @@ namespace Lucene
         L"\0\u0214\0\u0222\0\u0230\0\u023e\0\u024c\0\u025a\0\124\0\214"
         L"\0\u0268\0\u0276\0\u0284"
     };
-    
+
     const int32_t StandardTokenizerImpl::ZZ_ROWMAP_LENGTH = 51;
     const int32_t StandardTokenizerImpl::ZZ_ROWMAP_PACKED_LENGTH = 102;
 
     IntArray StandardTokenizerImpl::_ZZ_TRANS;
-    const wchar_t StandardTokenizerImpl::ZZ_TRANS_PACKED_0[] = 
+    const wchar_t StandardTokenizerImpl::ZZ_TRANS_PACKED_0[] =
     {
         L"\1\2\1\3\1\4\7\2\1\5\1\6\1\7\1\2"
         L"\17\0\2\3\1\0\1\10\1\0\1\11\2\12\1\13"
@@ -157,15 +157,15 @@ namespace Lucene
         L"\1\56\2\0\1\62\4\0\2\24\1\0\1\61\1\0"
         L"\1\11\2\52\1\0\1\24\3\0"
     };
-    
+
     const int32_t StandardTokenizerImpl::ZZ_TRANS_LENGTH = 658;
     const int32_t StandardTokenizerImpl::ZZ_TRANS_PACKED_LENGTH = 634;
-    
+
     const int32_t StandardTokenizerImpl::ZZ_UNKNOWN_ERROR = 0;
     const int32_t StandardTokenizerImpl::ZZ_NO_MATCH = 1;
     const int32_t StandardTokenizerImpl::ZZ_PUSHBACK_2BIG = 2;
-    
-    const wchar_t* StandardTokenizerImpl::ZZ_ERROR_MSG[] = 
+
+    const wchar_t* StandardTokenizerImpl::ZZ_ERROR_MSG[] =
     {
         L"Unknown internal scanner error",
         L"Error: could not match input",
@@ -173,21 +173,21 @@ namespace Lucene
     };
 
     IntArray StandardTokenizerImpl::_ZZ_ATTRIBUTE;
-    const wchar_t StandardTokenizerImpl::ZZ_ATTRIBUTE_PACKED_0[] = 
+    const wchar_t StandardTokenizerImpl::ZZ_ATTRIBUTE_PACKED_0[] =
     {
         L"\1\0\1\11\3\1\1\11\1\1\13\0\4\1\2\0"
         L"\1\1\1\0\17\1\1\0\1\1\3\0\5\1"
     };
-    
+
     const int32_t StandardTokenizerImpl::ZZ_ATTRIBUTE_LENGTH = 51;
     const int32_t StandardTokenizerImpl::ZZ_ATTRIBUTE_PACKED_LENGTH = 30;
-    
+
     /// This character denotes the end of file
     const int32_t StandardTokenizerImpl::YYEOF = -1;
-    
+
     /// Lexical states
     const int32_t StandardTokenizerImpl::YYINITIAL = 0;
-    
+
     StandardTokenizerImpl::StandardTokenizerImpl(ReaderPtr in)
     {
         this->zzState = 0;
@@ -205,7 +205,7 @@ namespace Lucene
         this->zzAtEOF = false;
         this->zzReader = in;
     }
-    
+
     StandardTokenizerImpl::~StandardTokenizerImpl()
     {
     }
@@ -214,7 +214,7 @@ namespace Lucene
     {
         _ZZ_CMAP = CharArray::newInstance(ZZ_CMAP_LENGTH);
         wchar_t* result = _ZZ_CMAP.get();
-    
+
         int32_t i = 0; // index in packed string
         int32_t j = 0; // index in unpacked array
         while (i < ZZ_CMAP_PACKED_LENGTH)
@@ -250,7 +250,7 @@ namespace Lucene
             while (--count > 0);
         }
     }
-    
+
     const int32_t* StandardTokenizerImpl::ZZ_ACTION()
     {
         static boost::once_flag once = BOOST_ONCE_INIT;
@@ -294,9 +294,9 @@ namespace Lucene
             do
                 result[j++] = value;
             while (--count > 0);
-        }    
+        }
     }
-    
+
     const int32_t* StandardTokenizerImpl::ZZ_TRANS()
     {
         static boost::once_flag once = BOOST_ONCE_INIT;
@@ -327,12 +327,12 @@ namespace Lucene
         boost::call_once(once, ZZ_ATTRIBUTE_INIT);
         return _ZZ_ATTRIBUTE.get();
     }
-    
+
     int32_t StandardTokenizerImpl::yychar()
     {
         return _yychar;
     }
-    
+
     void StandardTokenizerImpl::reset(ReaderPtr r)
     {
         // reset to default buffer size, if buffer has grown
@@ -340,24 +340,24 @@ namespace Lucene
             zzBuffer.resize(ZZ_BUFFERSIZE);
         yyreset(r);
     }
-    
+
     void StandardTokenizerImpl::getText(TokenPtr t)
     {
         t->setTermBuffer(zzBuffer.get(), zzStartRead, zzMarkedPos - zzStartRead);
     }
-    
+
     void StandardTokenizerImpl::getText(TermAttributePtr t)
     {
         t->setTermBuffer(zzBuffer.get(), zzStartRead, zzMarkedPos - zzStartRead);
     }
-    
+
     bool StandardTokenizerImpl::zzRefill()
     {
         // first: make room (if you can)
         if (zzStartRead > 0)
         {
             MiscUtils::arrayCopy(zzBuffer.get(), zzStartRead, zzBuffer.get(), 0, zzEndRead - zzStartRead);
-            
+
             // translate stored positions
             zzEndRead -= zzStartRead;
             zzCurrentPos -= zzStartRead;
@@ -365,14 +365,14 @@ namespace Lucene
             zzPushbackPos -= zzStartRead;
             zzStartRead = 0;
         }
-        
+
         // is the buffer big enough?
         if (zzCurrentPos >= zzBuffer.size())
             zzBuffer.resize(zzCurrentPos * 2);
-        
+
         // finally: fill the buffer with new input
         int32_t numRead = zzReader->read(zzBuffer.get(), zzEndRead, zzBuffer.size() - zzEndRead);
-        
+
         if (numRead < 0)
             return true;
         else
@@ -381,16 +381,16 @@ namespace Lucene
             return false;
         }
     }
-    
+
     void StandardTokenizerImpl::yyclose()
     {
         zzAtEOF = true; // indicate end of file
         zzEndRead = zzStartRead; // invalidate buffer
-        
+
         if (zzReader)
             zzReader->close();
     }
-    
+
     void StandardTokenizerImpl::yyreset(ReaderPtr reader)
     {
         zzReader = reader;
@@ -406,61 +406,61 @@ namespace Lucene
         yycolumn = 0;
         zzLexicalState = YYINITIAL;
     }
-    
+
     int32_t StandardTokenizerImpl::yystate()
     {
         return zzLexicalState;
     }
-    
+
     void StandardTokenizerImpl::yybegin(int32_t newState)
     {
         zzLexicalState = newState;
     }
-    
+
     String StandardTokenizerImpl::yytext()
     {
         return String(zzBuffer.get() + zzStartRead, zzMarkedPos - zzStartRead);
     }
-    
+
     wchar_t StandardTokenizerImpl::yycharat(int32_t pos)
     {
         return zzBuffer[zzStartRead + pos];
     }
-    
+
     int32_t StandardTokenizerImpl::yylength()
     {
         return zzMarkedPos - zzStartRead;
     }
-    
+
     void StandardTokenizerImpl::zzScanError(int32_t errorCode)
     {
         boost::throw_exception(ParseException(ZZ_ERROR_MSG[errorCode]));
     }
-    
+
     void StandardTokenizerImpl::yypushback(int32_t number)
     {
         if (number > yylength())
             zzScanError(ZZ_PUSHBACK_2BIG);
         zzMarkedPos -= number;
     }
-    
+
     int32_t StandardTokenizerImpl::getNextToken()
     {
         int32_t zzInput;
         int32_t zzAction;
-        
+
         // cached fields
         int32_t zzCurrentPosL;
         int32_t zzMarkedPosL;
         int32_t zzEndReadL = zzEndRead;
         wchar_t* zzBufferL = zzBuffer.get();
         const wchar_t* zzCMapL = ZZ_CMAP();
-        
+
         const int32_t* zzTransL = ZZ_TRANS();
         const int32_t* zzRowMapL = ZZ_ROWMAP();
         const int32_t* zzAttrL = ZZ_ATTRIBUTE();
         const int32_t* zzActionL = ZZ_ACTION();
-        
+
         while (true)
         {
             zzMarkedPosL = zzMarkedPos;
@@ -499,12 +499,12 @@ namespace Lucene
                     else
                         zzInput = zzBufferL[zzCurrentPosL++];
                 }
-                
+
                 int32_t zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
                 if (zzNext == -1)
                     break;
                 zzState = zzNext;
-                
+
                 int32_t zzAttributes = zzAttrL[zzState];
                 if ((zzAttributes & 1) == 1)
                 {
@@ -517,7 +517,7 @@ namespace Lucene
 
             // store back cached position
             zzMarkedPos = zzMarkedPosL;
-            
+
             switch (zzAction < 0 ? zzAction : zzActionL[zzAction])
             {
                 case 4:
@@ -569,7 +569,7 @@ namespace Lucene
                         zzScanError(ZZ_NO_MATCH);
             }
         }
-        
+
         return YYINITIAL;
     }
 }

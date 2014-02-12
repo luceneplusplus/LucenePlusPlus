@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -32,43 +32,43 @@
 
 namespace Lucene
 {
-    /// The normal read buffer size defaults to 1024, but increasing this during merging seems to 
-    /// yield performance gains.  However we don't want to increase it too much because there are 
+    /// The normal read buffer size defaults to 1024, but increasing this during merging seems to
+    /// yield performance gains.  However we don't want to increase it too much because there are
     /// quite a few BufferedIndexInputs created during merging.
     const int32_t IndexWriter::MERGE_READ_BUFFER_SIZE = 4096;
-    
+
     int32_t IndexWriter::MESSAGE_ID = 0;
     InfoStreamPtr IndexWriter::defaultInfoStream;
-    
+
     /// Default value for the write lock timeout (1,000).
     int64_t IndexWriter::WRITE_LOCK_TIMEOUT = 1000;
-    
+
     const String IndexWriter::WRITE_LOCK_NAME = L"write.lock";
-    
+
     /// Value to denote a flush trigger is disabled.
     const int32_t IndexWriter::DISABLE_AUTO_FLUSH = -1;
-    
+
     /// Disabled by default (because IndexWriter flushes by RAM usage by default).
     const int32_t IndexWriter::DEFAULT_MAX_BUFFERED_DOCS = IndexWriter::DISABLE_AUTO_FLUSH;
-    
+
     /// Default value is 16 MB (which means flush when buffered docs consume 16 MB RAM).
     const double IndexWriter::DEFAULT_RAM_BUFFER_SIZE_MB = 16.0;
-    
+
     /// Disabled by default (because IndexWriter flushes by RAM usage by default).
     const int32_t IndexWriter::DEFAULT_MAX_BUFFERED_DELETE_TERMS = IndexWriter::DISABLE_AUTO_FLUSH;
-    
+
     /// Default value is 10000.
     const int32_t IndexWriter::DEFAULT_MAX_FIELD_LENGTH = 10000;
-    
+
     /// Default value is 128.
     const int32_t IndexWriter::DEFAULT_TERM_INDEX_INTERVAL = 128;
-    
+
     /// Sets the maximum field length to INT_MAX
     const int32_t IndexWriter::MaxFieldLengthUNLIMITED = INT_MAX;
-    
+
     /// Sets the maximum field length to {@link #DEFAULT_MAX_FIELD_LENGTH}
     const int32_t IndexWriter::MaxFieldLengthLIMITED = IndexWriter::DEFAULT_MAX_FIELD_LENGTH;
-    
+
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl)
     {
         this->directory = d;
@@ -76,7 +76,7 @@ namespace Lucene
         this->create = create;
         this->maxFieldLength = mfl;
     }
-    
+
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl)
     {
         this->directory = d;
@@ -84,7 +84,7 @@ namespace Lucene
         this->create = !IndexReader::indexExists(d);
         this->maxFieldLength = mfl;
     }
-    
+
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl)
     {
         this->directory = d;
@@ -93,7 +93,7 @@ namespace Lucene
         this->create = !IndexReader::indexExists(d);
         this->maxFieldLength = mfl;
     }
-    
+
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl)
     {
         this->directory = d;
@@ -102,7 +102,7 @@ namespace Lucene
         this->deletionPolicy = deletionPolicy;
         this->maxFieldLength = mfl;
     }
-    
+
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexingChainPtr indexingChain, IndexCommitPtr commit)
     {
         this->directory = d;
@@ -113,7 +113,7 @@ namespace Lucene
         this->indexingChain = indexingChain;
         this->indexCommit = commit;
     }
-    
+
     IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexCommitPtr commit)
     {
         this->directory = d;
@@ -123,11 +123,11 @@ namespace Lucene
         this->maxFieldLength = mfl;
         this->indexCommit = commit;
     }
-    
+
     IndexWriter::~IndexWriter()
     {
     }
-    
+
     void IndexWriter::initialize()
     {
         messageID = -1;
@@ -171,16 +171,16 @@ namespace Lucene
 
         if (create)
             directory->clearLock(WRITE_LOCK_NAME); // clear the write lock in case it's leftover
-        
+
         LockPtr writeLock(directory->makeLock(WRITE_LOCK_NAME));
-        
+
         if (!writeLock->obtain((int32_t)writeLockTimeout)) // obtain write lock
             boost::throw_exception(LockObtainFailedException(L"Index locked for write: " + writeLock->toString()));
         this->writeLock = writeLock;
-        
+
         bool success = false;
         LuceneException finally;
-        
+
         try
         {
             if (create)
@@ -193,7 +193,7 @@ namespace Lucene
                     segmentInfos->read(directory);
                     segmentInfos->clear();
                     doCommit = false;
-                } 
+                }
                 catch (LuceneException&)
                 {
                     // Likely this means it's a fresh directory
@@ -206,7 +206,7 @@ namespace Lucene
                     segmentInfos->commit(directory);
                     HashSet<String> files(segmentInfos->files(directory, true));
                     synced.addAll(files.begin(), files.end());
-                } 
+                }
                 else
                 {
                     // Record that we have a change (zero out all segments) pending
@@ -216,7 +216,7 @@ namespace Lucene
             else
             {
                 segmentInfos->read(directory);
-                
+
                 if (indexCommit)
                 {
                     // Swap out all segments, but, keep metadata in SegmentInfos, like version & generation, to
@@ -230,41 +230,41 @@ namespace Lucene
                     if (infoStream)
                         message(L"init: loaded commit \"" + indexCommit->getSegmentsFileName() + L"\"");
                 }
-                
+
                 // We assume that this segments_N was previously properly sync'd
                 HashSet<String> files(segmentInfos->files(directory, true));
                 synced.addAll(files.begin(), files.end());
             }
-            
+
             setRollbackSegmentInfos(segmentInfos);
-            
+
             docWriter = newLucene<DocumentsWriter>(directory, shared_from_this(), indexingChain);
             docWriter->setInfoStream(infoStream);
             docWriter->setMaxFieldLength(maxFieldLength);
-            
+
             // Default deleter (for backwards compatibility) is KeepOnlyLastCommitDeleter
             deleter = newLucene<IndexFileDeleter>(directory, deletionPolicy ? deletionPolicy : newLucene<KeepOnlyLastCommitDeletionPolicy>(), segmentInfos, infoStream, docWriter, synced);
-            
+
             if (deleter->startingCommitDeleted)
             {
                 // Deletion policy deleted the "head" commit point.  We have to mark ourself as changed so that if we
                 // are closed without any further changes we write a new segments_N file.
                 ++changeCount;
             }
-            
+
             pushMaxBufferedDocs();
-            
+
             if (infoStream)
                 message(L"init: create=" + StringUtils::toString(create));
             messageState();
-            
+
             success = true;
         }
         catch (LuceneException& e)
         {
             finally = e;
         }
-        
+
         if (!success)
         {
             if (infoStream)
@@ -279,10 +279,10 @@ namespace Lucene
             }
             this->writeLock.reset();
         }
-        
+
         finally.throwException();
     }
-    
+
     int32_t IndexWriter::MAX_TERM_LENGTH()
     {
         static int32_t _MAX_TERM_LENGTH = 0;
@@ -290,19 +290,19 @@ namespace Lucene
             _MAX_TERM_LENGTH = DocumentsWriter::MAX_TERM_LENGTH;
         return _MAX_TERM_LENGTH;
     }
-    
+
     IndexReaderPtr IndexWriter::getReader()
     {
         return getReader(readerTermsIndexDivisor);
     }
-    
+
     IndexReaderPtr IndexWriter::getReader(int32_t termInfosIndexDivisor)
     {
         ensureOpen();
-        
+
         if (infoStream)
             message(L"flush at getReader");
-        
+
         // Do this up front before flushing so that the readers obtained during this flush are pooled, the first time
         // this method is called
         poolReaders = true;
@@ -318,7 +318,7 @@ namespace Lucene
         maybeMerge();
         return r;
     }
-        
+
     int32_t IndexWriter::numDeletedDocs(SegmentInfoPtr info)
     {
         SegmentReaderPtr reader(readerPool->getIfExists(info));
@@ -337,20 +337,20 @@ namespace Lucene
         finally.throwException();
         return deletedDocs;
     }
-    
+
     void IndexWriter::acquireWrite()
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(writeThread != LuceneThread::currentId());
         while (writeThread != 0 || readCount > 0)
             doWait();
-        
+
         // we could have been closed while we were waiting
         ensureOpen();
-        
+
         writeThread = LuceneThread::currentId();
     }
-    
+
     void IndexWriter::releaseWrite()
     {
         SyncLock syncLock(this);
@@ -358,7 +358,7 @@ namespace Lucene
         writeThread = 0;
         notifyAll();
     }
-    
+
     void IndexWriter::acquireRead()
     {
         SyncLock syncLock(this);
@@ -367,7 +367,7 @@ namespace Lucene
             doWait();
         ++readCount;
     }
-    
+
     void IndexWriter::upgradeReadToWrite()
     {
         SyncLock syncLock(this);
@@ -379,7 +379,7 @@ namespace Lucene
         --readCount;
         --upgradeCount;
     }
-    
+
     void IndexWriter::releaseRead()
     {
         SyncLock syncLock(this);
@@ -387,7 +387,7 @@ namespace Lucene
         BOOST_ASSERT(readCount >= 0);
         notifyAll();
     }
-    
+
     bool IndexWriter::isOpen(bool includePendingClose)
     {
         SyncLock syncLock(this);
@@ -400,12 +400,12 @@ namespace Lucene
         if (!isOpen(includePendingClose))
             boost::throw_exception(AlreadyClosedException(L"This IndexWriter is closed"));
     }
-    
+
     void IndexWriter::ensureOpen()
     {
         ensureOpen(true);
     }
-    
+
     void IndexWriter::message(const String& message)
     {
         if (infoStream)
@@ -415,7 +415,7 @@ namespace Lucene
             *infoStream << L"; " << StringUtils::toString(LuceneThread::currentId()) << L"]: " << message << L"\n";
         }
     }
-    
+
     void IndexWriter::setMessageID(InfoStreamPtr infoStream)
     {
         SyncLock syncLock(this);
@@ -426,7 +426,7 @@ namespace Lucene
         }
         this->infoStream = infoStream;
     }
-    
+
     LogMergePolicyPtr IndexWriter::getLogMergePolicy()
     {
         LogMergePolicyPtr logMergePolicy(boost::dynamic_pointer_cast<LogMergePolicy>(mergePolicy));
@@ -435,18 +435,18 @@ namespace Lucene
         boost::throw_exception(IllegalArgumentException(L"This method can only be called when the merge policy is the default LogMergePolicy"));
         return LogMergePolicyPtr();
     }
-    
+
     bool IndexWriter::getUseCompoundFile()
     {
         return getLogMergePolicy()->getUseCompoundFile();
     }
-    
+
     void IndexWriter::setUseCompoundFile(bool value)
     {
         getLogMergePolicy()->setUseCompoundFile(value);
         getLogMergePolicy()->setUseCompoundDocStore(value);
     }
-    
+
     void IndexWriter::setSimilarity(SimilarityPtr similarity)
     {
         ensureOpen();
@@ -459,13 +459,13 @@ namespace Lucene
         ensureOpen();
         return this->similarity;
     }
-    
+
     void IndexWriter::setTermIndexInterval(int32_t interval)
     {
         ensureOpen();
         this->termIndexInterval = interval;
     }
-    
+
     int32_t IndexWriter::getTermIndexInterval()
     {
         // We pass false because this method is called by SegmentMerger while we are in the process of closing
@@ -483,13 +483,13 @@ namespace Lucene
         for (int32_t i = 0; i < size; ++i)
             rollbackSegments.put(rollbackSegmentInfos->info(i), i);
     }
-    
+
     void IndexWriter::setMergePolicy(MergePolicyPtr mp)
     {
         ensureOpen();
         if (!mp)
             boost::throw_exception(NullPointerException(L"MergePolicy must be non-null"));
-        
+
         if (mergePolicy != mp)
             mergePolicy->close();
         mergePolicy = mp;
@@ -497,13 +497,13 @@ namespace Lucene
         if (infoStream)
             message(L"setMergePolicy");
     }
-    
+
     MergePolicyPtr IndexWriter::getMergePolicy()
     {
         ensureOpen();
         return mergePolicy;
     }
-    
+
     void IndexWriter::setMergeScheduler(MergeSchedulerPtr mergeScheduler)
     {
         SyncLock syncLock(this);
@@ -519,23 +519,23 @@ namespace Lucene
         if (infoStream)
             message(L"setMergeScheduler");
     }
-    
+
     MergeSchedulerPtr IndexWriter::getMergeScheduler()
     {
         ensureOpen();
         return mergeScheduler;
     }
-    
+
     void IndexWriter::setMaxMergeDocs(int32_t maxMergeDocs)
     {
         getLogMergePolicy()->setMaxMergeDocs(maxMergeDocs);
     }
-    
+
     int32_t IndexWriter::getMaxMergeDocs()
     {
         return getLogMergePolicy()->getMaxMergeDocs();
     }
-    
+
     void IndexWriter::setMaxFieldLength(int32_t maxFieldLength)
     {
         ensureOpen();
@@ -544,13 +544,13 @@ namespace Lucene
         if (infoStream)
             message(L"setMaxFieldLength " + StringUtils::toString(maxFieldLength));
     }
-    
+
     int32_t IndexWriter::getMaxFieldLength()
     {
         ensureOpen();
         return maxFieldLength;
     }
-    
+
     void IndexWriter::setReaderTermsIndexDivisor(int32_t divisor)
     {
         ensureOpen();
@@ -560,13 +560,13 @@ namespace Lucene
         if (infoStream)
             message(L"setReaderTermsIndexDivisor " + StringUtils::toString(readerTermsIndexDivisor));
     }
-    
+
     int32_t IndexWriter::getReaderTermsIndexDivisor()
     {
         ensureOpen();
         return readerTermsIndexDivisor;
     }
-    
+
     void IndexWriter::setMaxBufferedDocs(int32_t maxBufferedDocs)
     {
         ensureOpen();
@@ -579,7 +579,7 @@ namespace Lucene
         if (infoStream)
             message(L"setMaxBufferedDocs " + StringUtils::toString(maxBufferedDocs));
     }
-    
+
     void IndexWriter::pushMaxBufferedDocs()
     {
         if (docWriter->getMaxBufferedDocs() != DISABLE_AUTO_FLUSH)
@@ -597,13 +597,13 @@ namespace Lucene
             }
         }
     }
-    
+
     int32_t IndexWriter::getMaxBufferedDocs()
     {
         ensureOpen();
         return docWriter->getMaxBufferedDocs();
     }
-    
+
     void IndexWriter::setRAMBufferSizeMB(double mb)
     {
         if (mb > 2048.0)
@@ -616,12 +616,12 @@ namespace Lucene
         if (infoStream)
             message(L"setRAMBufferSizeMB " + StringUtils::toString(mb));
     }
-    
+
     double IndexWriter::getRAMBufferSizeMB()
     {
         return docWriter->getRAMBufferSizeMB();
     }
-    
+
     void IndexWriter::setMaxBufferedDeleteTerms(int32_t maxBufferedDeleteTerms)
     {
         ensureOpen();
@@ -631,33 +631,33 @@ namespace Lucene
         if (infoStream)
             message(L"setMaxBufferedDeleteTerms " + StringUtils::toString(maxBufferedDeleteTerms));
     }
-    
+
     int32_t IndexWriter::getMaxBufferedDeleteTerms()
     {
         ensureOpen();
         return docWriter->getMaxBufferedDeleteTerms();
     }
-    
+
     void IndexWriter::setMergeFactor(int32_t mergeFactor)
     {
         getLogMergePolicy()->setMergeFactor(mergeFactor);
     }
-    
+
     int32_t IndexWriter::getMergeFactor()
     {
         return getLogMergePolicy()->getMergeFactor();
     }
-    
+
     void IndexWriter::setDefaultInfoStream(InfoStreamPtr infoStream)
     {
         IndexWriter::defaultInfoStream = infoStream;
     }
-    
+
     InfoStreamPtr IndexWriter::getDefaultInfoStream()
     {
         return IndexWriter::defaultInfoStream;
     }
-    
+
     void IndexWriter::setInfoStream(InfoStreamPtr infoStream)
     {
         ensureOpen();
@@ -666,7 +666,7 @@ namespace Lucene
         deleter->setInfoStream(infoStream);
         messageState();
     }
-    
+
     void IndexWriter::messageState()
     {
         if (infoStream)
@@ -678,45 +678,45 @@ namespace Lucene
                     L" index=" + segString());
         }
     }
-    
+
     InfoStreamPtr IndexWriter::getInfoStream()
     {
         ensureOpen();
         return infoStream;
     }
-    
+
     bool IndexWriter::verbose()
     {
         return infoStream.get() != NULL;
     }
-    
+
     void IndexWriter::setWriteLockTimeout(int64_t writeLockTimeout)
     {
         ensureOpen();
         this->writeLockTimeout = writeLockTimeout;
     }
-    
+
     int64_t IndexWriter::getWriteLockTimeout()
     {
         ensureOpen();
         return writeLockTimeout;
     }
-    
+
     void IndexWriter::setDefaultWriteLockTimeout(int64_t writeLockTimeout)
     {
         IndexWriter::WRITE_LOCK_TIMEOUT = writeLockTimeout;
     }
-    
+
     int64_t IndexWriter::getDefaultWriteLockTimeout()
     {
         return IndexWriter::WRITE_LOCK_TIMEOUT;
     }
-    
+
     void IndexWriter::close()
     {
         close(true);
     }
-    
+
     void IndexWriter::close(bool waitForMerges)
     {
         // Ensure that only one thread actually gets to do the closing
@@ -754,56 +754,56 @@ namespace Lucene
                 return false;
         }
     }
-    
+
     void IndexWriter::closeInternal(bool waitForMerges)
     {
         docWriter->pauseAllThreads();
-        
+
         LuceneException finally;
         try
         {
             if (infoStream)
                 message(L"now flush at close");
-                
+
             docWriter->close();
-            
+
             // Only allow a new merge to be triggered if we are going to wait for merges
             if (!hitOOM)
                 flush(waitForMerges, true, true);
-            
+
             // Give merge scheduler last chance to run, in case any pending merges are waiting
             if (waitForMerges)
                 mergeScheduler->merge(shared_from_this());
-            
+
             mergePolicy->close();
-            
+
             finishMerges(waitForMerges);
             stopMerges = true;
-            
+
             mergeScheduler->close();
-            
+
             if (infoStream)
                 message(L"now call final commit()");
-            
+
             if (!hitOOM)
                 commit(0);
-            
+
             if (infoStream)
                 message(L"at close: " + segString());
-            
+
             {
                 SyncLock syncLock(this);
                 readerPool->close();
                 docWriter.reset();
                 deleter->close();
             }
-            
+
             if (writeLock)
             {
                 writeLock->release(); // release write lock
                 writeLock.reset();
             }
-            
+
             {
                 SyncLock syncLock(this);
                 closed = true;
@@ -831,21 +831,21 @@ namespace Lucene
         }
         finally.throwException();
     }
-    
+
     bool IndexWriter::flushDocStores()
     {
         SyncLock syncLock(this);
-        
+
         if (infoStream)
             message(L"flushDocStores segment=" + docWriter->getDocStoreSegment());
-        
+
         bool useCompoundDocStore = false;
-        
+
         if (infoStream)
             message(L"closeDocStores segment=" + docWriter->getDocStoreSegment());
-        
+
         String docStoreSegment;
-        
+
         bool success = false;
         LuceneException finally;
         try
@@ -860,30 +860,30 @@ namespace Lucene
         if (!success && infoStream)
             message(L"hit exception closing doc store segment");
         finally.throwException();
-        
+
         if (infoStream)
             message(L"flushDocStores files=" + StringUtils::toString(docWriter->closedFiles()));
-        
+
         useCompoundDocStore = mergePolicy->useCompoundDocStore(segmentInfos);
         HashSet<String> closedFiles(docWriter->closedFiles());
-        
+
         if (useCompoundDocStore && !docStoreSegment.empty() && !closedFiles.empty())
         {
             // Now build compound doc store file
             if (infoStream)
                 message(L"create compound file " + docStoreSegment + L"." + IndexFileNames::COMPOUND_FILE_STORE_EXTENSION());
-            
+
             success = false;
-            
+
             int32_t numSegments = segmentInfos->size();
             String compoundFileName(docStoreSegment + L"." + IndexFileNames::COMPOUND_FILE_STORE_EXTENSION());
-            
+
             try
             {
                 CompoundFileWriterPtr cfsWriter(newLucene<CompoundFileWriter>(directory, compoundFileName));
                 for (HashSet<String>::iterator file = closedFiles.begin(); file != closedFiles.end(); ++file)
                     cfsWriter->addFile(*file);
-                
+
                 // Perform the merge
                 cfsWriter->close();
                 success = true;
@@ -892,7 +892,7 @@ namespace Lucene
             {
                 finally = e;
             }
-            
+
             if (!success)
             {
                 if (infoStream)
@@ -901,35 +901,35 @@ namespace Lucene
                 docWriter->abort();
             }
             finally.throwException();
-            
+
             for (int32_t i = 0; i < numSegments; ++i)
             {
                 SegmentInfoPtr si(segmentInfos->info(i));
                 if (si->getDocStoreOffset() != -1 && si->getDocStoreSegment() == docStoreSegment)
                     si->setDocStoreIsCompoundFile(true);
             }
-            
+
             checkpoint();
-            
+
             // In case the files we just merged into a CFS were not previously checkpointed
             deleter->deleteNewFiles(docWriter->closedFiles());
         }
-        
+
         return useCompoundDocStore;
     }
-    
+
     DirectoryPtr IndexWriter::getDirectory()
     {
         ensureOpen(false); // Pass false because the flush during closing calls getDirectory
         return directory;
     }
-    
+
     AnalyzerPtr IndexWriter::getAnalyzer()
     {
         ensureOpen();
         return analyzer;
     }
-    
+
     int32_t IndexWriter::maxDoc()
     {
         SyncLock syncLock(this);
@@ -938,7 +938,7 @@ namespace Lucene
             count += segmentInfos->info(i)->docCount;
         return count;
     }
-    
+
     int32_t IndexWriter::numDocs()
     {
         SyncLock syncLock(this);
@@ -950,7 +950,7 @@ namespace Lucene
         }
         return count;
     }
-    
+
     bool IndexWriter::hasDeletions()
     {
         SyncLock syncLock(this);
@@ -964,12 +964,12 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void IndexWriter::addDocument(DocumentPtr doc)
     {
         addDocument(doc, analyzer);
     }
-    
+
     void IndexWriter::addDocument(DocumentPtr doc, AnalyzerPtr analyzer)
     {
         ensureOpen();
@@ -1011,7 +1011,7 @@ namespace Lucene
             boost::throw_exception(handleOOM(oom, L"addDocument"));
         }
     }
-    
+
     void IndexWriter::deleteDocuments(TermPtr term)
     {
         ensureOpen();
@@ -1026,7 +1026,7 @@ namespace Lucene
             boost::throw_exception(handleOOM(oom, L"deleteDocuments(Term)"));
         }
     }
-    
+
     void IndexWriter::deleteDocuments(Collection<TermPtr> terms)
     {
         ensureOpen();
@@ -1041,7 +1041,7 @@ namespace Lucene
             boost::throw_exception(handleOOM(oom, L"deleteDocuments(VectorTerm)"));
         }
     }
-    
+
     void IndexWriter::deleteDocuments(QueryPtr query)
     {
         ensureOpen();
@@ -1049,7 +1049,7 @@ namespace Lucene
         if (doFlush)
             flush(true, false, false);
     }
-    
+
     void IndexWriter::deleteDocuments(Collection<QueryPtr> queries)
     {
         ensureOpen();
@@ -1057,13 +1057,13 @@ namespace Lucene
         if (doFlush)
             flush(true, false, false);
     }
-    
+
     void IndexWriter::updateDocument(TermPtr term, DocumentPtr doc)
     {
         ensureOpen();
         updateDocument(term, doc, getAnalyzer());
     }
-    
+
     void IndexWriter::updateDocument(TermPtr term, DocumentPtr doc, AnalyzerPtr analyzer)
     {
         ensureOpen();
@@ -1085,7 +1085,7 @@ namespace Lucene
             {
                 if (infoStream)
                     message(L"hit exception updating document");
-                
+
                 {
                     SyncLock syncLock(this);
                     // If docWriter has some aborted files that were never incref'd, then we clean them up here
@@ -1106,102 +1106,102 @@ namespace Lucene
             boost::throw_exception(handleOOM(oom, L"updateDocument"));
         }
     }
-    
+
     int32_t IndexWriter::getSegmentCount()
     {
         SyncLock syncLock(this);
         return segmentInfos->size();
     }
-    
+
     int32_t IndexWriter::getNumBufferedDocuments()
     {
         SyncLock syncLock(this);
         return docWriter->getNumDocsInRAM();
     }
-    
+
     int32_t IndexWriter::getDocCount(int32_t i)
     {
         SyncLock syncLock(this);
         return (i >= 0 && i < segmentInfos->size()) ? segmentInfos->info(i)->docCount : -1;
     }
-    
+
     int32_t IndexWriter::getFlushCount()
     {
         SyncLock syncLock(this);
         return flushCount;
     }
-    
+
     int32_t IndexWriter::getFlushDeletesCount()
     {
         SyncLock syncLock(this);
         return flushDeletesCount;
     }
-    
+
     String IndexWriter::newSegmentName()
     {
         // Cannot synchronize on IndexWriter because that causes deadlock
         SyncLock segmentLock(segmentInfos);
-    
-        // Important to increment changeCount so that the segmentInfos is written on close.  
-        // Otherwise we could close, re-open and re-return the same segment name that was 
+
+        // Important to increment changeCount so that the segmentInfos is written on close.
+        // Otherwise we could close, re-open and re-return the same segment name that was
         // previously returned which can cause problems at least with ConcurrentMergeScheduler.
         ++changeCount;
         return L"_" + StringUtils::toString(segmentInfos->counter++, StringUtils::CHARACTER_MAX_RADIX);
     }
-    
+
     void IndexWriter::optimize()
     {
         optimize(true);
     }
-    
+
     void IndexWriter::optimize(int32_t maxNumSegments)
     {
         optimize(maxNumSegments, true);
     }
-    
+
     void IndexWriter::optimize(bool doWait)
     {
         optimize(1, doWait);
     }
-    
+
     void IndexWriter::optimize(int32_t maxNumSegments, bool doWait)
     {
         ensureOpen();
-        
+
         if (maxNumSegments < 1)
             boost::throw_exception(IllegalArgumentException(L"maxNumSegments must be >= 1; got " + StringUtils::toString(maxNumSegments)));
-        
+
         if (infoStream)
             message(L"optimize: index now " + segString());
-        
+
         flush(true, false, true);
-        
+
         {
             SyncLock syncLock(this);
-            
+
             resetMergeExceptions();
             segmentsToOptimize.clear();
             optimizeMaxNumSegments = maxNumSegments;
             int32_t numSegments = segmentInfos->size();
             for (int32_t i = 0; i < numSegments; ++i)
                 segmentsToOptimize.add(segmentInfos->info(i));
-            
+
             // Now mark all pending & running merges as optimize merge
             for (Collection<OneMergePtr>::iterator merge = pendingMerges.begin(); merge != pendingMerges.end(); ++merge)
             {
                 (*merge)->optimize = true;
                 (*merge)->maxNumSegmentsOptimize = maxNumSegments;
             }
-            
+
             for (SetOneMerge::iterator merge = runningMerges.begin(); merge != runningMerges.end(); ++merge)
             {
                 (*merge)->optimize = true;
                 (*merge)->maxNumSegmentsOptimize = maxNumSegments;
             }
         }
-        
+
         maybeMerge(maxNumSegments, true);
-        
+
         if (doWait)
         {
             {
@@ -1210,7 +1210,7 @@ namespace Lucene
                 {
                     if (hitOOM)
                         boost::throw_exception(IllegalStateException(L"this writer hit an OutOfMemoryError; cannot complete optimize"));
-                    
+
                     if (!mergeExceptions.empty())
                     {
                         // Forward any exceptions in background merge threads to the current thread
@@ -1224,60 +1224,60 @@ namespace Lucene
                             }
                         }
                     }
-                    
+
                     if (optimizeMergesPending())
                         IndexWriter::doWait();
                     else
                         break;
                 }
             }
-            
-            // If close is called while we are still running, throw an exception so the calling thread will know the 
+
+            // If close is called while we are still running, throw an exception so the calling thread will know the
             // optimize did not complete
             ensureOpen();
         }
-        
-        // NOTE: in the ConcurrentMergeScheduler case, when doWait is false, we can return immediately while background 
+
+        // NOTE: in the ConcurrentMergeScheduler case, when doWait is false, we can return immediately while background
         // threads accomplish the optimization
     }
-    
+
     bool IndexWriter::optimizeMergesPending()
     {
         SyncLock syncLock(this);
-        
+
         for (Collection<OneMergePtr>::iterator merge = pendingMerges.begin(); merge != pendingMerges.end(); ++merge)
         {
             if ((*merge)->optimize)
                 return true;
         }
-        
+
         for (SetOneMerge::iterator merge = runningMerges.begin(); merge != runningMerges.end(); ++merge)
         {
             if ((*merge)->optimize)
                 return true;
         }
-        
+
         return false;
     }
-    
+
     void IndexWriter::expungeDeletes(bool doWait)
     {
         ensureOpen();
-        
+
         if (infoStream)
             message(L"expungeDeletes: index now " + segString());
-        
+
         MergeSpecificationPtr spec;
-        
+
         {
             SyncLock syncLock(this);
             spec = mergePolicy->findMergesToExpungeDeletes(segmentInfos);
             for (Collection<OneMergePtr>::iterator merge = spec->merges.begin(); merge != spec->merges.end(); ++merge)
                 registerMerge(*merge);
         }
-        
+
         mergeScheduler->merge(shared_from_this());
-        
+
         if (doWait)
         {
             {
@@ -1287,7 +1287,7 @@ namespace Lucene
                 {
                     if (hitOOM)
                         boost::throw_exception(IllegalStateException(L"this writer hit an OutOfMemoryError; cannot complete expungeDeletes"));
-                    
+
                     // Check each merge that MergePolicy asked us to do, to see if any of them are still running and
                     // if any of them have hit an exception.
                     running = false;
@@ -1299,57 +1299,57 @@ namespace Lucene
                         if (!err.isNull())
                             boost::throw_exception(IOException(L"background merge hit exception: " + (*merge)->segString(directory)));
                     }
-                    
+
                     // If any of our merges are still running, wait
                     if (running)
                         IndexWriter::doWait();
                 }
             }
         }
-        
-        // NOTE: in the ConcurrentMergeScheduler case, when doWait is false, we can return immediately while background 
+
+        // NOTE: in the ConcurrentMergeScheduler case, when doWait is false, we can return immediately while background
         // threads accomplish the optimization
     }
-    
+
     void IndexWriter::expungeDeletes()
     {
         expungeDeletes(true);
     }
-    
+
     void IndexWriter::maybeMerge()
     {
         maybeMerge(false);
     }
-    
+
     void IndexWriter::maybeMerge(bool optimize)
     {
         maybeMerge(1, optimize);
     }
-    
+
     void IndexWriter::maybeMerge(int32_t maxNumSegmentsOptimize, bool optimize)
     {
         updatePendingMerges(maxNumSegmentsOptimize, optimize);
         mergeScheduler->merge(shared_from_this());
     }
-    
+
     void IndexWriter::updatePendingMerges(int32_t maxNumSegmentsOptimize, bool optimize)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(!optimize || maxNumSegmentsOptimize > 0);
-        
+
         if (stopMerges)
             return;
-        
+
         // Do not start new merges if we've hit std::bad_alloc
         if (hitOOM)
             return;
-        
+
         MergeSpecificationPtr spec;
-        
+
         if (optimize)
         {
             spec = mergePolicy->findMergesForOptimize(segmentInfos, maxNumSegmentsOptimize, segmentsToOptimize);
-            
+
             if (spec)
             {
                 for (Collection<OneMergePtr>::iterator merge = spec->merges.begin(); merge != spec->merges.end(); ++merge)
@@ -1361,14 +1361,14 @@ namespace Lucene
         }
         else
             spec = mergePolicy->findMerges(segmentInfos);
-        
+
         if (spec)
         {
             for (Collection<OneMergePtr>::iterator merge = spec->merges.begin(); merge != spec->merges.end(); ++merge)
                 registerMerge(*merge);
         }
     }
-    
+
     OneMergePtr IndexWriter::getNextMerge()
     {
         SyncLock syncLock(this);
@@ -1382,7 +1382,7 @@ namespace Lucene
             return merge;
         }
     }
-    
+
     OneMergePtr IndexWriter::getNextExternalMerge()
     {
         SyncLock syncLock(this);
@@ -1402,11 +1402,11 @@ namespace Lucene
                 }
             }
         }
-        
+
         // All existing merges do not involve external segments
         return OneMergePtr();
     }
-    
+
     void IndexWriter::startTransaction(bool haveReadLock)
     {
         SyncLock syncLock(this);
@@ -1416,148 +1416,148 @@ namespace Lucene
         {
             if (infoStream)
                 message(L"now start transaction");
-            
+
             BOOST_ASSERT(docWriter->getNumBufferedDeleteTerms() == 0); // calling startTransaction with buffered delete terms not supported
             BOOST_ASSERT(docWriter->getNumDocsInRAM() == 0); // calling startTransaction with buffered documents not supported
-            
+
             ensureOpen();
-            
+
             // If a transaction is trying to roll back (because addIndexes hit an exception) then wait here until that's done
             while (stopMerges)
                 doWait();
-            
+
             success = true;
         }
         catch (LuceneException& e)
         {
             finally = e;
         }
-        
+
         // Release the write lock if our caller held it, on hitting an exception
         if (!success && haveReadLock)
             releaseRead();
         finally.throwException();
-        
+
         if (haveReadLock)
             upgradeReadToWrite();
         else
             acquireWrite();
-            
+
         success = false;
-        
+
         try
         {
             localRollbackSegmentInfos = boost::dynamic_pointer_cast<SegmentInfos>(segmentInfos->clone());
-            
+
             BOOST_ASSERT(!hasExternalSegments());
-            
+
             localFlushedDocCount = docWriter->getFlushedDocCount();
-            
+
             // We must "protect" our files at this point from deletion in case we need to rollback
             deleter->incRef(segmentInfos, false);
-            
+
             success = true;
         }
         catch (LuceneException& e)
         {
             finally = e;
         }
-        
+
         if (!success)
             finishAddIndexes();
         finally.throwException();
     }
-    
+
     void IndexWriter::rollbackTransaction()
     {
         SyncLock syncLock(this);
-        
+
         if (infoStream)
             message(L"now rollback transaction");
-        
+
         if (docWriter)
             docWriter->setFlushedDocCount(localFlushedDocCount);
-        
-        // Must finish merges before rolling back segmentInfos so merges don't hit  exceptions on trying to commit 
+
+        // Must finish merges before rolling back segmentInfos so merges don't hit  exceptions on trying to commit
         // themselves, don't get files deleted out  from under them, etc.
         finishMerges(false);
-        
-        // Keep the same segmentInfos instance but replace all of its SegmentInfo instances.  This is so the next 
+
+        // Keep the same segmentInfos instance but replace all of its SegmentInfo instances.  This is so the next
         // attempt to commit using this instance of IndexWriter will always write to a new generation ("write once").
         segmentInfos->clear();
         segmentInfos->addAll(localRollbackSegmentInfos);
         localRollbackSegmentInfos.reset();
-        
-        // This must come after we rollback segmentInfos, so that if a commit() kicks off it does not see the 
+
+        // This must come after we rollback segmentInfos, so that if a commit() kicks off it does not see the
         // segmentInfos with external segments.
         finishAddIndexes();
-        
+
         // Ask deleter to locate unreferenced files we had created & remove them
         deleter->checkpoint(segmentInfos, false);
-        
+
         // Remove the incRef we did in startTransaction
         deleter->decRef(segmentInfos);
-        
-        // Also ask deleter to remove any newly created files that were never incref'd; this "garbage" is created 
+
+        // Also ask deleter to remove any newly created files that were never incref'd; this "garbage" is created
         // when a merge kicks off but aborts part way through before it had a chance to incRef the files it had
         // partially created
         deleter->refresh();
-        
+
         notifyAll();
-        
+
         BOOST_ASSERT(!hasExternalSegments());
     }
-    
+
     void IndexWriter::commitTransaction()
     {
         SyncLock syncLock(this);
-        
+
         if (infoStream)
             message(L"now commit transaction");
-        
+
         // Give deleter a chance to remove files now
         checkpoint();
-        
+
         // Remove the incRef we did in startTransaction.
         deleter->decRef(localRollbackSegmentInfos);
-        
+
         localRollbackSegmentInfos.reset();
-        
+
         BOOST_ASSERT(!hasExternalSegments());
-        
+
         finishAddIndexes();
     }
-    
+
     void IndexWriter::rollback()
     {
         ensureOpen();
-        
+
         // Ensure that only one thread actually gets to do the closing
         if (shouldClose())
             rollbackInternal();
     }
-    
+
     void IndexWriter::rollbackInternal()
     {
         bool success = false;
-        
+
         if (infoStream)
             message(L"rollback");
-        
+
         docWriter->pauseAllThreads();
         LuceneException finally;
         try
         {
             finishMerges(false);
-            
-            // Must pre-close these two, in case they increment changeCount so that we can then set it to false before 
+
+            // Must pre-close these two, in case they increment changeCount so that we can then set it to false before
             // calling closeInternal
             mergePolicy->close();
             mergeScheduler->close();
 
             {
                 SyncLock syncLock(this);
-                
+
                 if (pendingCommit)
                 {
                     pendingCommit->rollbackCommit(directory);
@@ -1566,28 +1566,28 @@ namespace Lucene
                     notifyAll();
                 }
 
-                // Keep the same segmentInfos instance but replace all of its SegmentInfo instances.  This is so the next 
+                // Keep the same segmentInfos instance but replace all of its SegmentInfo instances.  This is so the next
                 // attempt to commit using this instance of IndexWriter will always write to a new generation ("write once").
                 segmentInfos->clear();
                 segmentInfos->addAll(rollbackSegmentInfos);
-                
+
                 BOOST_ASSERT(!hasExternalSegments());
-                
+
                 docWriter->abort();
-                
+
                 bool test = testPoint(L"rollback before checkpoint");
                 BOOST_ASSERT(test);
-                
+
                 // Ask deleter to locate unreferenced files & remove them
                 deleter->checkpoint(segmentInfos, false);
                 deleter->refresh();
             }
-            
+
             // Don't bother saving any changes in our segmentInfos
             readerPool->clear(SegmentInfosPtr());
-            
+
             lastCommitChangeCount = changeCount;
-            
+
             success = true;
         }
         catch (std::bad_alloc& oom)
@@ -1600,7 +1600,7 @@ namespace Lucene
         }
         {
             SyncLock syncLock(this);
-            
+
             if (!success)
             {
                 docWriter->resumeAllThreads();
@@ -1611,10 +1611,10 @@ namespace Lucene
             }
         }
         finally.throwException();
-        
+
         closeInternal(false);
     }
-    
+
     void IndexWriter::deleteAll()
     {
         SyncLock syncLock(this);
@@ -1625,24 +1625,24 @@ namespace Lucene
         {
             // Abort any running merges
             finishMerges(false);
-            
+
             // Remove any buffered docs
             docWriter->abort();
             docWriter->setFlushedDocCount(0);
-            
+
             // Remove all segments
             segmentInfos->clear();
-            
+
             // Ask deleter to locate unreferenced files & remove them
             deleter->checkpoint(segmentInfos, false);
             deleter->refresh();
-            
+
             // Don't bother saving any changes in our segmentInfos
             readerPool->clear(SegmentInfosPtr());
-            
+
             // Mark that the index has changed
             ++changeCount;
-            
+
             success = true;
         }
         catch (std::bad_alloc& oom)
@@ -1653,21 +1653,21 @@ namespace Lucene
         {
             finally = e;
         }
-        
+
         docWriter->resumeAllThreads();
         if (!success && infoStream)
             message(L"hit exception during deleteAll");
-        
+
         finally.throwException();
     }
-    
+
     void IndexWriter::finishMerges(bool waitForMerges)
     {
         SyncLock syncLock(this);
         if (!waitForMerges)
         {
             stopMerges = true;
-            
+
             // Abort all pending and running merges
             for (Collection<OneMergePtr>::iterator merge = pendingMerges.begin(); merge != pendingMerges.end(); ++merge)
             {
@@ -1677,21 +1677,21 @@ namespace Lucene
                 mergeFinish(*merge);
             }
             pendingMerges.clear();
-            
+
             for (SetOneMerge::iterator merge = runningMerges.begin(); merge != runningMerges.end(); ++merge)
             {
                 if (infoStream)
                     message(L"now abort running merge " + (*merge)->segString(directory));
                 (*merge)->abort();
             }
-            
-            // Ensure any running addIndexes finishes.  It's fine if a new one attempts to start because its merges 
+
+            // Ensure any running addIndexes finishes.  It's fine if a new one attempts to start because its merges
             // will quickly see the stopMerges == true and abort.
             acquireRead();
             releaseRead();
-            
-            // These merges periodically check whether they have been aborted, and stop if so.  We wait here to make 
-            // sure they all stop.  It should not take very long because the merge threads periodically check if they 
+
+            // These merges periodically check whether they have been aborted, and stop if so.  We wait here to make
+            // sure they all stop.  It should not take very long because the merge threads periodically check if they
             // are aborted.
             while (!runningMerges.empty())
             {
@@ -1699,54 +1699,54 @@ namespace Lucene
                     message(L"now wait for " + StringUtils::toString(runningMerges.size()) + L" running merge to abort");
                 doWait();
             }
-            
+
             stopMerges = false;
             notifyAll();
-            
+
             BOOST_ASSERT(mergingSegments.empty());
-            
+
             if (infoStream)
                 message(L"all running merges have aborted");
         }
         else
         {
-            // waitForMerges() will ensure any running addIndexes finishes.   It's fine if a new one attempts to start 
-            // because from our caller above the call will see that we are in the process of closing, and will throw 
+            // waitForMerges() will ensure any running addIndexes finishes.   It's fine if a new one attempts to start
+            // because from our caller above the call will see that we are in the process of closing, and will throw
             // an AlreadyClosed exception.
             IndexWriter::waitForMerges();
         }
     }
-    
+
     void IndexWriter::waitForMerges()
     {
         SyncLock syncLock(this);
         // Ensure any running addIndexes finishes.
         acquireRead();
         releaseRead();
-        
+
         while (!pendingMerges.empty() || !runningMerges.empty())
             doWait();
-        
+
         // sanity check
         BOOST_ASSERT(mergingSegments.empty());
     }
-    
+
     void IndexWriter::checkpoint()
     {
         SyncLock syncLock(this);
         ++changeCount;
         deleter->checkpoint(segmentInfos, false);
     }
-    
+
     void IndexWriter::finishAddIndexes()
     {
         releaseWrite();
     }
-    
+
     void IndexWriter::blockAddIndexes(bool includePendingClose)
     {
         acquireRead();
-        
+
         bool success = false;
         LuceneException finally;
         try
@@ -1759,28 +1759,28 @@ namespace Lucene
         {
             finally = e;
         }
-        
+
         if (!success)
             releaseRead();
         finally.throwException();
     }
-    
+
     void IndexWriter::resumeAddIndexes()
     {
         releaseRead();
     }
-    
+
     void IndexWriter::resetMergeExceptions()
     {
         SyncLock syncLock(this);
         mergeExceptions.clear();
         ++mergeGen;
     }
-    
+
     void IndexWriter::noDupDirs(Collection<DirectoryPtr> dirs)
     {
         Collection<DirectoryPtr> dups(Collection<DirectoryPtr>::newInstance());
-        
+
         for (Collection<DirectoryPtr>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
         {
             for (Collection<DirectoryPtr>::iterator dup = dups.begin(); dup != dups.end(); ++dup)
@@ -1793,35 +1793,35 @@ namespace Lucene
             dups.add(*dir);
         }
     }
-    
+
     void IndexWriter::addIndexesNoOptimize(Collection<DirectoryPtr> dirs)
     {
         ensureOpen();
-        
+
         noDupDirs(dirs);
-        
+
         // Do not allow add docs or deletes while we are running
         docWriter->pauseAllThreads();
-        
+
         LuceneException finally;
         try
         {
             if (infoStream)
                 message(L"flush at addIndexesNoOptimize");
             flush(true, false, true);
-            
+
             bool success = false;
-            
+
             startTransaction(false);
-            
+
             try
             {
                 int32_t docCount = 0;
-                
+
                 {
                     SyncLock syncLock(this);
                     ensureOpen();
-                    
+
                     for (Collection<DirectoryPtr>::iterator dir = dirs.begin(); dir != dirs.end(); ++dir)
                     {
                         if (directory == *dir)
@@ -1829,10 +1829,10 @@ namespace Lucene
                             // cannot add this index: segments may be deleted in merge before added
                             boost::throw_exception(IllegalArgumentException(L"Cannot add this index to itself"));
                         }
-                        
+
                         SegmentInfosPtr sis(newLucene<SegmentInfos>()); // read infos from dir
                         sis->read(*dir);
-                        
+
                         for (int32_t j = 0; j < sis->size(); ++j)
                         {
                             SegmentInfoPtr info(sis->info(j));
@@ -1842,16 +1842,16 @@ namespace Lucene
                         }
                     }
                 }
-                
+
                 // Notify DocumentsWriter that the flushed count just increased
                 docWriter->updateFlushedDocCount(docCount);
-                
+
                 maybeMerge();
-                
+
                 ensureOpen();
-                
-                // If after merging there remain segments in the index that are in a different directory, just copy these 
-                // over into our index.  This is necessary (before finishing the transaction) to avoid leaving the index 
+
+                // If after merging there remain segments in the index that are in a different directory, just copy these
+                // over into our index.  This is necessary (before finishing the transaction) to avoid leaving the index
                 // in an unusable (inconsistent) state.
                 resolveExternalSegments();
 
@@ -1863,7 +1863,7 @@ namespace Lucene
             {
                 finally = e;
             }
-            
+
             if (success)
                 commitTransaction();
             else
@@ -1881,29 +1881,29 @@ namespace Lucene
             docWriter->resumeAllThreads();
         finally.throwException();
     }
-    
+
     bool IndexWriter::hasExternalSegments()
     {
         return segmentInfos->hasExternalSegments(directory);
     }
-    
+
     void IndexWriter::resolveExternalSegments()
     {
         bool any = false;
         bool done = false;
-        
+
         while (!done)
         {
             SegmentInfoPtr info;
             OneMergePtr merge;
-            
+
             {
                 SyncLock syncLock(this);
                 if (stopMerges)
                     boost::throw_exception(MergeAbortedException(L"rollback() was called or addIndexes* hit an unhandled exception"));
-                
+
                 int32_t numSegments = segmentInfos->size();
-                
+
                 done = true;
                 for (int32_t i = 0; i < numSegments; ++i)
                 {
@@ -1912,13 +1912,13 @@ namespace Lucene
                     {
                         done = false;
                         OneMergePtr newMerge(newLucene<OneMerge>(segmentInfos->range(i, i + 1), boost::dynamic_pointer_cast<LogMergePolicy>(mergePolicy) && getUseCompoundFile()));
-                        
+
                         // Returns true if no running merge conflicts with this one (and, records this merge as
                         // pending), ie, this segment is not currently being merged
                         if (registerMerge(newMerge))
                         {
                             merge = newMerge;
-                            
+
                             // If this segment is not currently being merged, then advance it to running & run
                             // the merge ourself (below)
                             pendingMerges.remove(merge);
@@ -1927,7 +1927,7 @@ namespace Lucene
                         }
                     }
                 }
-                
+
                 if (!done && !merge)
                 {
                     // We are not yet done (external segments still exist in segmentInfos), yet, all such segments
@@ -1935,7 +1935,7 @@ namespace Lucene
                     // that involves external segments
                     merge = getNextExternalMerge();
                 }
-                
+
                 if (!done && !merge)
                 {
                     // We are not yet done, and, all external segments fall under merges that the merge scheduler is
@@ -1943,42 +1943,42 @@ namespace Lucene
                     doWait();
                 }
             }
-            
+
             if (merge)
             {
                 any = true;
                 IndexWriter::merge(merge);
             }
         }
-        
+
         if (any)
         {
             // Sometimes, on copying an external segment over, more merges may become necessary
             mergeScheduler->merge(shared_from_this());
         }
     }
-    
+
     void IndexWriter::addIndexes(Collection<IndexReaderPtr> readers)
     {
         ensureOpen();
-        
+
         // Do not allow add docs or deletes while we are running
         docWriter->pauseAllThreads();
-        
-        // We must pre-acquire a read lock here (and upgrade to write lock in startTransaction below) so that no 
-        // other addIndexes is allowed to start up after we have flushed & optimized but before we then start our 
+
+        // We must pre-acquire a read lock here (and upgrade to write lock in startTransaction below) so that no
+        // other addIndexes is allowed to start up after we have flushed & optimized but before we then start our
         // transaction.  This is because the merging below requires that only one segment is present in the index
         acquireRead();
-        
+
         LuceneException finally;
         try
         {
             SegmentInfoPtr info;
             String mergedName;
             SegmentMergerPtr merger;
-            
+
             bool success = false;
-            
+
             try
             {
                 flush(true, false, true);
@@ -1989,40 +1989,40 @@ namespace Lucene
             {
                 finally = e;
             }
-            
+
             // Take care to release the read lock if we hit an exception before starting the transaction
             if (!success)
                 releaseRead();
             finally.throwException();
-            
+
             // true means we already have a read lock; if this call hits an exception it will release the write lock
             startTransaction(true);
-            
+
             try
             {
                 mergedName = newSegmentName();
                 merger = newLucene<SegmentMerger>(shared_from_this(), mergedName, OneMergePtr());
-                
+
                 SegmentReaderPtr sReader;
-                
+
                 {
                     SyncLock syncLock(this);
                     if (segmentInfos->size() == 1) // add existing index, if any
                         sReader = readerPool->get(segmentInfos->info(0), true, BufferedIndexInput::BUFFER_SIZE, -1);
                 }
-                
+
                 success = false;
-                
+
                 try
                 {
                     if (sReader)
                         merger->add(sReader);
-                    
+
                     for (Collection<IndexReaderPtr>::iterator i = readers.begin(); i != readers.end(); ++i)
                         merger->add(*i);
-                    
+
                     int32_t docCount = merger->merge(); // merge 'em
-                    
+
                     {
                         SyncLock syncLock(this);
                         segmentInfos->clear(); // pop old infos & add new
@@ -2030,17 +2030,17 @@ namespace Lucene
                         setDiagnostics(info, L"addIndexes(Collection<IndexReaderPtr>)");
                         segmentInfos->add(info);
                     }
-                    
+
                     // Notify DocumentsWriter that the flushed count just increased
                     docWriter->updateFlushedDocCount(docCount);
-                    
+
                     success = true;
                 }
                 catch (LuceneException& e)
                 {
                     finally = e;
                 }
-                
+
                 if (sReader)
                     readerPool->release(sReader);
             }
@@ -2048,7 +2048,7 @@ namespace Lucene
             {
                 finally = e;
             }
-            
+
             if (!success)
             {
                 if (infoStream)
@@ -2057,16 +2057,16 @@ namespace Lucene
             }
             else
                 commitTransaction();
-            
+
             finally.throwException();
-            
+
             if (boost::dynamic_pointer_cast<LogMergePolicy>(mergePolicy) && getUseCompoundFile())
             {
                 HashSet<String> files;
-                
+
                 {
                     SyncLock syncLock(this);
-                    // Must incRef our files so that if another thread is running merge/optimize, it doesn't delete our 
+                    // Must incRef our files so that if another thread is running merge/optimize, it doesn't delete our
                     // segment's files before we have a change to finish making the compound file.
                     if (segmentInfos->contains(info))
                     {
@@ -2074,34 +2074,34 @@ namespace Lucene
                         deleter->incRef(files);
                     }
                 }
-                
+
                 if (files)
                 {
                     success = false;
-                    
+
                     startTransaction(false);
-                    
+
                     try
                     {
                         merger->createCompoundFile(mergedName + L".cfs");
-                        
+
                         {
                             SyncLock syncLock(this);
                             info->setUseCompoundFile(true);
                         }
-                        
+
                         success = true;
                     }
                     catch (LuceneException& e)
                     {
                         finally = e;
                     }
-                    
+
                     {
                         SyncLock syncLock(this);
                         deleter->decRef(files);
                     }
-                    
+
                     if (!success)
                     {
                         if (infoStream)
@@ -2125,77 +2125,77 @@ namespace Lucene
             docWriter->resumeAllThreads();
         finally.throwException();
     }
-    
+
     void IndexWriter::doAfterFlush()
     {
         // override
     }
-    
+
     void IndexWriter::doBeforeFlush()
     {
         // override
     }
-    
+
     void IndexWriter::prepareCommit()
     {
         ensureOpen();
         prepareCommit(MapStringString());
     }
-    
+
     void IndexWriter::prepareCommit(MapStringString commitUserData)
     {
         if (hitOOM)
             boost::throw_exception(IllegalStateException(L"this writer hit an OutOfMemoryError; cannot commit"));
-        
+
         if (pendingCommit)
             boost::throw_exception(IllegalStateException(L"prepareCommit was already called with no corresponding call to commit"));
 
         if (infoStream)
             message(L"prepareCommit: flush");
-        
+
         flush(true, true, true);
-        
+
         startCommit(0, commitUserData);
     }
-    
+
     void IndexWriter::commit(int64_t sizeInBytes)
     {
         SyncLock messageLock(commitLock);
         startCommit(sizeInBytes, MapStringString());
         finishCommit();
     }
-    
+
     void IndexWriter::commit()
     {
         commit(MapStringString());
     }
-    
+
     void IndexWriter::commit(MapStringString commitUserData)
     {
         ensureOpen();
-        
+
         if (infoStream)
             message(L"commit: start");
-        
+
         {
             SyncLock messageLock(commitLock);
-            
+
             if (infoStream)
                 message(L"commit: enter lock");
-            
+
             if (!pendingCommit)
             {
                 if (infoStream)
                     message(L"commit: now prepare");
                 prepareCommit(commitUserData);
             }
-            else if (infoStream) 
+            else if (infoStream)
                 message(L"commit: already prepared");
-            
+
             finishCommit();
         }
     }
-    
+
     void IndexWriter::finishCommit()
     {
         SyncLock syncLock(this);
@@ -2219,19 +2219,19 @@ namespace Lucene
             {
                 finally = e;
             }
-            
+
             deleter->decRef(pendingCommit);
             pendingCommit.reset();
             notifyAll();
             finally.throwException();
         }
-        else if (infoStream) 
+        else if (infoStream)
             message(L"commit: pendingCommit == null; skip");
-        
+
         if (infoStream)
             message(L"commit: done");
     }
-    
+
     void IndexWriter::flush(bool triggerMerge, bool flushDocStores, bool flushDeletes)
     {
         // We can be called during close, when closing = true, so we must pass false to ensureOpen
@@ -2239,7 +2239,7 @@ namespace Lucene
         if (doFlush(flushDocStores, flushDeletes) && triggerMerge)
             maybeMerge();
     }
-    
+
     bool IndexWriter::doFlush(bool flushDocStores, bool flushDeletes)
     {
         TestScope testScope(L"IndexWriter", L"doFlush");
@@ -2268,58 +2268,58 @@ namespace Lucene
         finally.throwException();
         return success;
     }
-    
+
     bool IndexWriter::doFlushInternal(bool flushDocStores, bool flushDeletes)
     {
         SyncLock syncLock(this);
         if (hitOOM)
             boost::throw_exception(IllegalStateException(L"this writer hit an OutOfMemoryError; cannot flush"));
-        
+
         ensureOpen(false);
-        
+
         BOOST_ASSERT(testPoint(L"startDoFlush"));
-        
+
         doBeforeFlush();
-        
+
         ++flushCount;
-        
+
         // If we are flushing because too many deletes accumulated, then we should apply the deletes to free RAM
         if (docWriter->doApplyDeletes())
             flushDeletes = true;
-        
-        // Make sure no threads are actively adding a document. Returns true if docWriter is currently aborting, in 
+
+        // Make sure no threads are actively adding a document. Returns true if docWriter is currently aborting, in
         // which case we skip flushing this segment
         if (infoStream)
-            message(L"flush: now pause all indexing threads");        
+            message(L"flush: now pause all indexing threads");
         if (docWriter->pauseAllThreads())
         {
             docWriter->resumeAllThreads();
             return false;
         }
-        
+
         bool flushDocs = false;
-        
+
         LuceneException finally;
         try
         {
             SegmentInfoPtr newSegment;
-            
+
             int32_t numDocs = docWriter->getNumDocsInRAM();
-            
+
             // Always flush docs if there are any
             flushDocs = (numDocs > 0);
-            
+
             String docStoreSegment(docWriter->getDocStoreSegment());
-            
+
             BOOST_ASSERT(!docStoreSegment.empty() || numDocs == 0);
-            
+
             if (docStoreSegment.empty())
                 flushDocStores = false;
-            
+
             int32_t docStoreOffset = docWriter->getDocStoreOffset();
-            
+
             bool docStoreIsCompoundFile = false;
-            
+
             if (infoStream)
             {
                 message(L" flush: segment=" + docWriter->getSegment() +
@@ -2332,29 +2332,29 @@ namespace Lucene
                         L" numBufDelTerms=" + StringUtils::toString(docWriter->getNumBufferedDeleteTerms()));
                 message(L" index before flush " + segString());
             }
-            
-            // Check if the doc stores must be separately flushed because other segments, besides the one we are 
+
+            // Check if the doc stores must be separately flushed because other segments, besides the one we are
             // about to flush, reference it
             if (flushDocStores && (!flushDocs || docWriter->getSegment() != docWriter->getDocStoreSegment()))
             {
                 // We must separately flush the doc store
                 if (infoStream)
                     message(L" flush shared docStore segment " + docStoreSegment);
-                
+
                 docStoreIsCompoundFile = IndexWriter::flushDocStores();
                 flushDocStores = false;
             }
-            
+
             String segment(docWriter->getSegment());
-            
+
             // If we are flushing docs, segment must not be null
             BOOST_ASSERT(!segment.empty() || !flushDocs);
-            
+
             if (flushDocs)
             {
                 bool success = false;
                 int32_t flushedDocCount;
-                
+
                 try
                 {
                     flushedDocCount = docWriter->flush(flushDocStores);
@@ -2366,19 +2366,19 @@ namespace Lucene
                 {
                     finally = e;
                 }
-                
+
                 if (!success)
                 {
                     if (infoStream)
                         message(L"hit exception flushing segment " + segment);
                     deleter->refresh(segment);
                 }
-                
+
                 finally.throwException();
-                
+
                 if (docStoreOffset == 0 && flushDocStores)
                 {
-                    // This means we are flushing private doc stores with this segment, so it will not be shared 
+                    // This means we are flushing private doc stores with this segment, so it will not be shared
                     // with other segments
                     BOOST_ASSERT(!docStoreSegment.empty());
                     BOOST_ASSERT(docStoreSegment == segment);
@@ -2386,20 +2386,20 @@ namespace Lucene
                     docStoreIsCompoundFile = false;
                     docStoreSegment.clear();
                 }
-                
+
                 // Create new SegmentInfo, but do not add to our segmentInfos until deletes are flushed successfully.
                 newSegment = newLucene<SegmentInfo>(segment, flushedDocCount, directory, false, true, docStoreOffset, docStoreSegment, docStoreIsCompoundFile, docWriter->hasProx());
                 setDiagnostics(newSegment, L"flush");
             }
-            
+
             docWriter->pushDeletes();
-            
+
             if (flushDocs)
             {
                 segmentInfos->add(newSegment);
                 checkpoint();
             }
-            
+
             if (flushDocs && mergePolicy->useCompoundFile(segmentInfos, newSegment))
             {
                 // Now build compound file
@@ -2413,26 +2413,26 @@ namespace Lucene
                 {
                     finally = e;
                 }
-                
+
                 if (!success)
                 {
                     if (infoStream)
                         message(L"hit exception creating compound file for newly flushed segment " + segment);
                     deleter->deleteFile(segment + L"." + IndexFileNames::COMPOUND_FILE_EXTENSION());
                 }
-                
+
                 finally.throwException();
-                
+
                 newSegment->setUseCompoundFile(true);
                 checkpoint();
             }
-            
+
             if (flushDeletes)
                 applyDeletes();
-            
+
             if (flushDocs)
                 checkpoint();
-            
+
             doAfterFlush();
         }
         catch (std::bad_alloc& oom)
@@ -2446,36 +2446,36 @@ namespace Lucene
         }
         docWriter->resumeAllThreads();
         finally.throwException();
-        
+
         return flushDocs;
     }
-    
+
     int64_t IndexWriter::ramSizeInBytes()
     {
         ensureOpen();
         return docWriter->getRAMUsed();
     }
-    
+
     int32_t IndexWriter::numRamDocs()
     {
         SyncLock syncLock(this);
         ensureOpen();
         return docWriter->getNumDocsInRAM();
     }
-    
+
     int32_t IndexWriter::ensureContiguousMerge(OneMergePtr merge)
     {
         int32_t first = segmentInfos->find(merge->segments->info(0));
         if (first == -1)
             boost::throw_exception(MergeException(L"Could not find segment " + merge->segments->info(0)->name + L" in current index " + segString()));
-        
+
         int32_t numSegments = segmentInfos->size();
         int32_t numSegmentsToMerge = merge->segments->size();
-        
+
         for (int32_t i = 0; i < numSegmentsToMerge; ++i)
         {
             SegmentInfoPtr info(merge->segments->info(i));
-            
+
             if (first + i >= numSegments || !segmentInfos->info(first + i)->equals(info))
             {
                 if (!segmentInfos->contains(info))
@@ -2484,24 +2484,24 @@ namespace Lucene
                     boost::throw_exception(MergeException(L"MergePolicy selected non-contiguous segments to merge (" + merge->segString(directory) + L" vs " + segString() + L"), which IndexWriter (currently) cannot handle"));
             }
         }
-        
+
         return first;
     }
-    
+
     void IndexWriter::commitMergedDeletes(OneMergePtr merge, SegmentReaderPtr mergeReader)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(testPoint(L"startCommitMergeDeletes"));
-        
+
         SegmentInfosPtr sourceSegments(merge->segments);
-        
+
         if (infoStream)
             message(L"commitMergeDeletes " + merge->segString(directory));
-        
+
         // Carefully merge deletes that occurred after we started merging
         int32_t docUpto = 0;
         int32_t delCount = 0;
-        
+
         for (int32_t i = 0; i < sourceSegments->size(); ++i)
         {
             SegmentInfoPtr info(sourceSegments->info(i));
@@ -2510,10 +2510,10 @@ namespace Lucene
             SegmentReaderPtr currentReader(merge->readers[i]);
             if (previousReader->hasDeletions())
             {
-                // There were deletes on this segment when the merge started.  The merge has collapsed away those deletes, 
-                // but if new deletes were flushed since the merge started, we must now carefully keep any newly flushed 
+                // There were deletes on this segment when the merge started.  The merge has collapsed away those deletes,
+                // but if new deletes were flushed since the merge started, we must now carefully keep any newly flushed
                 // deletes but mapping them to the new docIDs.
-                
+
                 if (currentReader->numDeletedDocs() > previousReader->numDeletedDocs())
                 {
                     // This means this segment has had new deletes committed since we started the merge, so we must merge them
@@ -2554,27 +2554,27 @@ namespace Lucene
                 docUpto += info->docCount;
             }
         }
-        
+
         BOOST_ASSERT(mergeReader->numDeletedDocs() == delCount);
-        
+
         mergeReader->_hasChanges = (delCount > 0);
     }
-    
+
     bool IndexWriter::commitMerge(OneMergePtr merge, SegmentMergerPtr merger, int32_t mergedDocCount, SegmentReaderPtr mergedReader)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(testPoint(L"startCommitMerge"));
-        
+
         if (hitOOM)
             boost::throw_exception(IllegalStateException(L"this writer hit an OutOfMemoryError; cannot complete merge"));
-        
+
         if (infoStream)
             message(L"commitMerge: " + merge->segString(directory) + L" index=" + segString());
-        
+
         BOOST_ASSERT(merge->registerDone);
-        
-        // If merge was explicitly aborted, or, if rollback() or rollbackTransaction() had been called since our merge 
-        // started (which results in an unqualified deleter.refresh() call that will remove any index file that current 
+
+        // If merge was explicitly aborted, or, if rollback() or rollbackTransaction() had been called since our merge
+        // started (which results in an unqualified deleter.refresh() call that will remove any index file that current
         // segments does not reference), we abort this merge
         if (merge->isAborted())
         {
@@ -2582,31 +2582,31 @@ namespace Lucene
                 message(L"commitMerge: skipping merge " + merge->segString(directory) + L": it was aborted");
             return false;
         }
-        
+
         int32_t start = ensureContiguousMerge(merge);
-        
+
         commitMergedDeletes(merge, mergedReader);
         docWriter->remapDeletes(segmentInfos, merger->getDocMaps(), merger->getDelCounts(), merge, mergedDocCount);
-        
-        // If the doc store we are using has been closed and is in now compound format (but wasn't when we started), 
+
+        // If the doc store we are using has been closed and is in now compound format (but wasn't when we started),
         // then we will switch to the compound format as well
         setMergeDocStoreIsCompoundFile(merge);
-        
+
         merge->info->setHasProx(merger->hasProx());
-        
+
         segmentInfos->remove(start, start + merge->segments->size());
         BOOST_ASSERT(!segmentInfos->contains(merge->info));
         segmentInfos->add(start, merge->info);
-        
+
         closeMergeReaders(merge, false);
-        
+
         // Must note the change to segmentInfos so any commits in-flight don't lose it
         checkpoint();
-        
-        // If the merged segments had pending changes, clear them so that they don't bother writing 
+
+        // If the merged segments had pending changes, clear them so that they don't bother writing
         // them to disk, updating SegmentInfo, etc.
         readerPool->clear(merge->segments);
-        
+
         if (merge->optimize)
         {
             // cascade the optimize
@@ -2614,21 +2614,21 @@ namespace Lucene
         }
         return true;
     }
-    
+
     LuceneException IndexWriter::handleMergeException(const LuceneException& exc, OneMergePtr merge)
     {
         if (infoStream)
             message(L"handleMergeException: merge=" + merge->segString(directory) + L" exc=" + exc.getError());
-        
+
         // Set the exception on the merge, so if optimize() is waiting on us it sees the root cause exception
         merge->setException(exc);
         addMergeException(merge);
-        
+
         switch (exc.getType())
         {
             case LuceneException::MergeAborted:
                 // We can ignore this exception (it happens when close(false) or rollback is called), unless the
-                // merge involves segments from external directories, in which case we must throw it so, for 
+                // merge involves segments from external directories, in which case we must throw it so, for
                 // example, the rollbackTransaction code in addIndexes* is executed.
                 if (merge->isExternal)
                     return exc;
@@ -2641,11 +2641,11 @@ namespace Lucene
         }
         return LuceneException();
     }
-    
+
     void IndexWriter::merge(OneMergePtr merge)
     {
         bool success = false;
-        
+
         try
         {
             LuceneException finally;
@@ -2656,7 +2656,7 @@ namespace Lucene
                     mergeInit(merge);
                     if (infoStream)
                         message(L"now merge\n merge=" + merge->segString(directory) + L"\n index=" + segString());
-                    
+
                     mergeMiddle(merge);
                     mergeSuccess(merge);
                     success = true;
@@ -2665,21 +2665,21 @@ namespace Lucene
                 {
                     finally = handleMergeException(e, merge);
                 }
-            
+
                 {
                     SyncLock syncLock(this);
                     mergeFinish(merge);
-                    
+
                     if (!success)
                     {
                         if (infoStream)
                             message(L"hit exception during merge");
-                    
+
                         if (merge->info && !segmentInfos->contains(merge->info))
                             deleter->refresh(merge->info->name);
                     }
 
-                    // This merge (and, generally, any change to the segments) may now enable 
+                    // This merge (and, generally, any change to the segments) may now enable
                     // new merges, so we call merge policy & update pending merges.
                     if (success && !merge->isAborted() && !closed && !closing)
                         updatePendingMerges(merge->maxNumSegmentsOptimize, merge->optimize);
@@ -2696,25 +2696,25 @@ namespace Lucene
             boost::throw_exception(handleOOM(oom, L"merge"));
         }
     }
-    
+
     void IndexWriter::mergeSuccess(OneMergePtr merge)
     {
         // override
     }
-    
+
     bool IndexWriter::registerMerge(OneMergePtr merge)
     {
         SyncLock syncLock(this);
-        
+
         if (merge->registerDone)
             return true;
-        
+
         if (stopMerges)
         {
             merge->abort();
             boost::throw_exception(MergeAbortedException(L"merge is aborted: " + merge->segString(directory)));
         }
-        
+
         int32_t count = merge->segments->size();
         bool isExternal = false;
         for (int32_t i = 0; i < count; ++i)
@@ -2732,27 +2732,27 @@ namespace Lucene
                 merge->maxNumSegmentsOptimize = optimizeMaxNumSegments;
             }
         }
-        
+
         ensureContiguousMerge(merge);
-        
+
         pendingMerges.add(merge);
-        
+
         if (infoStream)
             message(L"add merge to pendingMerges: " + merge->segString(directory) + L" [total " + StringUtils::toString(pendingMerges.size()) + L" pending]");
-        
+
         merge->mergeGen = mergeGen;
         merge->isExternal = isExternal;
-        
-        // OK it does not conflict; now record that this merge is running (while synchronized) 
+
+        // OK it does not conflict; now record that this merge is running (while synchronized)
         // to avoid race condition where two conflicting merges from different threads, start
         for (int32_t i = 0; i < count; ++i)
             mergingSegments.add(merge->segments->info(i));
-        
+
         // Merge is now registered
         merge->registerDone = true;
         return true;
     }
-    
+
     void IndexWriter::mergeInit(OneMergePtr merge)
     {
         SyncLock syncLock(this);
@@ -2767,61 +2767,61 @@ namespace Lucene
         {
             finally = e;
         }
-        
+
         if (!success)
             mergeFinish(merge);
         finally.throwException();
     }
-    
+
     void IndexWriter::_mergeInit(OneMergePtr merge)
     {
         SyncLock syncLock(this);
         bool test = testPoint(L"startMergeInit");
         BOOST_ASSERT(test);
-        
+
         BOOST_ASSERT(merge->registerDone);
         BOOST_ASSERT(!merge->optimize || merge->maxNumSegmentsOptimize > 0);
-        
+
         if (hitOOM)
             boost::throw_exception(IllegalStateException(L"this writer hit an OutOfMemoryError; cannot merge"));
-        
+
         if (merge->info)
         {
             // mergeInit already done
             return;
         }
-        
+
         if (merge->isAborted())
             return;
-        
+
         applyDeletes();
-        
+
         SegmentInfosPtr sourceSegments(merge->segments);
         int32_t end = sourceSegments->size();
-        
+
         // Check whether this merge will allow us to skip merging the doc stores (stored field & vectors).
         // This is a very substantial optimization (saves tons of IO).
         DirectoryPtr lastDir(directory);
         String lastDocStoreSegment;
         int32_t next = -1;
-        
+
         bool mergeDocStores = false;
         bool doFlushDocStore = false;
         String currentDocStoreSegment(docWriter->getDocStoreSegment());
-        
+
         // Test each segment to be merged: check if we need to flush/merge doc stores
         for (int32_t i = 0; i < end; ++i)
         {
             SegmentInfoPtr si(sourceSegments->info(i));
-            
+
             // If it has deletions we must merge the doc stores
             if (si->hasDeletions())
                 mergeDocStores = true;
-            
+
             // If it has its own (private) doc stores we must merge the doc stores
             if (si->getDocStoreOffset() == -1)
                 mergeDocStores = true;
-            
+
             // If it has a different doc store segment than previous segments, we must merge the doc stores
             String docStoreSegment(si->getDocStoreSegment());
             if (docStoreSegment.empty())
@@ -2830,7 +2830,7 @@ namespace Lucene
                 lastDocStoreSegment = docStoreSegment;
             else if (lastDocStoreSegment != docStoreSegment)
                 mergeDocStores = true;
-            
+
             // Segments' docScoreOffsets must be in-order, contiguous.  For the default merge policy now
             // this will always be the case but for an arbitrary merge policy this may not be the case
             if (next == -1)
@@ -2839,7 +2839,7 @@ namespace Lucene
                 mergeDocStores = true;
             else
                 next = si->getDocStoreOffset() + si->docCount;
-            
+
             // If the segment comes from a different directory we must merge
             if (lastDir != si->dir)
                 mergeDocStores = true;
@@ -2848,16 +2848,16 @@ namespace Lucene
             if (si->getDocStoreOffset() != -1 && !currentDocStoreSegment.empty() && si->getDocStoreSegment() == currentDocStoreSegment)
                 doFlushDocStore = true;
         }
-        
+
         // if a mergedSegmentWarmer is installed, we must merge the doc stores because we will open a full
         // SegmentReader on the merged segment
         if (!mergeDocStores && mergedSegmentWarmer && !currentDocStoreSegment.empty() && !lastDocStoreSegment.empty() && lastDocStoreSegment == currentDocStoreSegment)
             mergeDocStores = true;
-        
+
         int32_t docStoreOffset;
         String docStoreSegment;
         bool docStoreIsCompoundFile;
-        
+
         if (mergeDocStores)
         {
             docStoreOffset = -1;
@@ -2871,37 +2871,37 @@ namespace Lucene
             docStoreSegment = si->getDocStoreSegment();
             docStoreIsCompoundFile = si->getDocStoreIsCompoundFile();
         }
-        
+
         if (mergeDocStores && doFlushDocStore)
         {
-            // SegmentMerger intends to merge the doc stores (stored fields, vectors), and at 
+            // SegmentMerger intends to merge the doc stores (stored fields, vectors), and at
             // least one of the segments to be merged refers to the currently live doc stores.
             if (infoStream)
                 message(L"now flush at merge");
             doFlush(true, false);
         }
-        
+
         merge->mergeDocStores = mergeDocStores;
-        
+
         // Bind a new segment name here so even with ConcurrentMergePolicy we keep deterministic segment names.
         merge->info = newLucene<SegmentInfo>(newSegmentName(), 0, directory, false, true, docStoreOffset, docStoreSegment, docStoreIsCompoundFile, false);
-        
+
         MapStringString details(MapStringString::newInstance());
         details.put(L"optimize", StringUtils::toString(merge->optimize));
         details.put(L"mergeFactor", StringUtils::toString(end));
         details.put(L"mergeDocStores", StringUtils::toString(mergeDocStores));
         setDiagnostics(merge->info, L"merge", details);
-        
-        // Also enroll the merged segment into mergingSegments; this prevents it from getting 
+
+        // Also enroll the merged segment into mergingSegments; this prevents it from getting
         // selected for a merge after our merge is done but while we are building the CFS
         mergingSegments.add(merge->info);
     }
-    
+
     void IndexWriter::setDiagnostics(SegmentInfoPtr info, const String& source)
     {
         setDiagnostics(info, source, MapStringString());
     }
-    
+
     void IndexWriter::setDiagnostics(SegmentInfoPtr info, const String& source, MapStringString details)
     {
         MapStringString diagnostics(MapStringString::newInstance());
@@ -2912,13 +2912,13 @@ namespace Lucene
             diagnostics.putAll(details.begin(), details.end());
         info->setDiagnostics(diagnostics);
     }
-    
+
     void IndexWriter::mergeFinish(OneMergePtr merge)
     {
         SyncLock syncLock(this);
         // Optimize, addIndexes or finishMerges may be waiting on merges to finish.
         notifyAll();
-        
+
         // It's possible we are called twice, eg if there was an exception inside mergeInit
         if (merge->registerDone)
         {
@@ -2926,18 +2926,18 @@ namespace Lucene
             int32_t end = sourceSegments->size();
             for (int32_t i = 0; i < end; ++i)
                 mergingSegments.remove(sourceSegments->info(i));
-            
+
             mergingSegments.remove(merge->info);
             merge->registerDone = false;
         }
 
         runningMerges.remove(merge);
     }
-    
+
     void IndexWriter::setMergeDocStoreIsCompoundFile(OneMergePtr merge)
     {
         SyncLock syncLock(this);
-        
+
         String mergeDocStoreSegment(merge->info->getDocStoreSegment());
         if (!mergeDocStoreSegment.empty() && !merge->info->getDocStoreIsCompoundFile())
         {
@@ -2954,11 +2954,11 @@ namespace Lucene
             }
         }
     }
-    
+
     void IndexWriter::closeMergeReaders(OneMergePtr merge, bool suppressExceptions)
     {
         SyncLock syncLock(this);
-        
+
         int32_t numSegments = merge->segments->size();
         if (suppressExceptions)
         {
@@ -2976,7 +2976,7 @@ namespace Lucene
                     }
                     merge->readers[i].reset();
                 }
-                
+
                 if (merge->readersClone[i])
                 {
                     try
@@ -3001,7 +3001,7 @@ namespace Lucene
                     readerPool->release(merge->readers[i], true);
                     merge->readers[i].reset();
                 }
-                
+
                 if (merge->readersClone[i])
                 {
                     merge->readersClone[i]->close();
@@ -3012,35 +3012,35 @@ namespace Lucene
             }
         }
     }
-    
+
     int32_t IndexWriter::mergeMiddle(OneMergePtr merge)
     {
         merge->checkAborted(directory);
-        
+
         String mergedName(merge->info->name);
         int32_t mergedDocCount = 0;
-        
+
         SegmentInfosPtr sourceSegments(merge->segments);
         int32_t numSegments = sourceSegments->size();
-        
+
         if (infoStream)
             message(L"merging " + merge->segString(directory));
-        
+
         SegmentMergerPtr merger(newLucene<SegmentMerger>(shared_from_this(), mergedName, merge));
-        
+
         merge->readers = Collection<SegmentReaderPtr>::newInstance(numSegments);
         merge->readersClone = Collection<SegmentReaderPtr>::newInstance(numSegments);
-        
+
         bool mergeDocStores = false;
-        
+
         String currentDocStoreSegment;
         {
             SyncLock syncLock(this);
             currentDocStoreSegment = docWriter->getDocStoreSegment();
         }
-        
+
         bool currentDSSMerged = false;
-        
+
         LuceneException finally;
         // This is try/finally to make sure merger's readers are closed
         bool success = false;
@@ -3050,11 +3050,11 @@ namespace Lucene
             for (int32_t i = 0; i < numSegments; ++i)
             {
                 SegmentInfoPtr info(sourceSegments->info(i));
-                
+
                 // Hold onto the "live" reader; we will use this to commit merged deletes
                 merge->readers[i] = readerPool->get(info, merge->mergeDocStores, MERGE_READ_BUFFER_SIZE, -1);
                 SegmentReaderPtr reader(merge->readers[i]);
-                
+
                 // We clone the segment readers because other deletes may come in while we're merging so we need readers that will not change
                 merge->readersClone[i] = boost::dynamic_pointer_cast<SegmentReader>(reader->clone(true));
                 SegmentReaderPtr clone(merge->readersClone[i]);
@@ -3068,17 +3068,17 @@ namespace Lucene
 
                 totDocCount += clone->numDocs();
             }
-            
+
             if (infoStream)
                 message(L"merge: total " + StringUtils::toString(totDocCount) + L" docs");
-            
+
             merge->checkAborted(directory);
-            
+
             // If deletions have arrived and it has now become necessary to merge doc stores, go and open them
             if (mergeDocStores && !merge->mergeDocStores)
             {
                 merge->mergeDocStores = true;
-                
+
                 {
                     SyncLock syncLock(this);
                     if (currentDSSMerged)
@@ -3088,26 +3088,26 @@ namespace Lucene
                         doFlush(true, false);
                     }
                 }
-                
+
                 for (Collection<SegmentReaderPtr>::iterator reader = merge->readersClone.begin(); reader != merge->readersClone.end(); ++reader)
                     (*reader)->openDocStores();
-                    
+
                 // Clear DSS
                 merge->info->setDocStore(-1, L"", false);
             }
-            
+
             // This is where all the work happens
             merge->info->docCount = merger->merge(merge->mergeDocStores);
             mergedDocCount = merge->info->docCount;
-            
+
             BOOST_ASSERT(mergedDocCount == totDocCount);
-            
+
             if (merge->useCompoundFile)
             {
                 success = false;
-                
+
                 String compoundFileName(IndexFileNames::segmentFileName(mergedName, IndexFileNames::COMPOUND_FILE_EXTENSION()));
-                
+
                 try
                 {
                     if (infoStream)
@@ -3120,7 +3120,7 @@ namespace Lucene
                     SyncLock syncLock(this);
                     if (merge->isAborted())
                     {
-                        // This can happen if rollback or close(false) is called - fall through to logic 
+                        // This can happen if rollback or close(false) is called - fall through to logic
                         // below to remove the partially created CFS
                     }
                     else
@@ -3130,7 +3130,7 @@ namespace Lucene
                 {
                     finally = handleMergeException(e, merge);
                 }
-                
+
                 if (!success)
                 {
                     if (infoStream)
@@ -3141,17 +3141,17 @@ namespace Lucene
                         deleter->deleteNewFiles(merger->getMergedFiles());
                     }
                 }
-                
+
                 finally.throwException();
-                
+
                 success = false;
-                
+
                 {
                     SyncLock syncLock(this);
-                    
+
                     // delete new non cfs files directly: they were never registered with IFD
                     deleter->deleteNewFiles(merger->getMergedFiles());
-                    
+
                     if (merge->isAborted())
                     {
                         if (infoStream)
@@ -3160,26 +3160,26 @@ namespace Lucene
                         boost::throw_exception(TemporaryException());
                     }
                 }
-                
+
                 merge->info->setUseCompoundFile(true);
             }
-            
+
             int32_t termsIndexDivisor = -1;
             bool loadDocStores = false;
 
-            // if the merged segment warmer was not installed when this merge was started, causing us 
+            // if the merged segment warmer was not installed when this merge was started, causing us
             // to not force the docStores to close, we can't warm it now
             bool canWarm = (merge->info->getDocStoreSegment().empty() || currentDocStoreSegment.empty() || merge->info->getDocStoreSegment() == currentDocStoreSegment);
-            
+
             if (poolReaders && mergedSegmentWarmer && canWarm)
             {
                 // Load terms index & doc stores so the segment warmer can run searches, load documents/term vectors
                 termsIndexDivisor = readerTermsIndexDivisor;
                 loadDocStores = true;
             }
-            
+
             SegmentReaderPtr mergedReader(readerPool->get(merge->info, loadDocStores, BufferedIndexInput::BUFFER_SIZE, termsIndexDivisor));
-            
+
             try
             {
                 if (poolReaders && mergedSegmentWarmer)
@@ -3194,14 +3194,14 @@ namespace Lucene
             {
                 finally = e;
             }
-            
+
             {
                 SyncLock syncLock(this);
                 readerPool->release(mergedReader);
             }
-            
+
             finally.throwException();
-            
+
             success = true;
         }
         catch (LuceneException& e)
@@ -3212,16 +3212,16 @@ namespace Lucene
         // Readers are already closed in commitMerge if we didn't hit an exc
         if (!success)
             closeMergeReaders(merge, true);
-        
+
         // has this merge been aborted?
         if (finally.getType() == LuceneException::Temporary)
             return 0;
-        
+
         finally.throwException();
-        
+
         return mergedDocCount;
     }
-    
+
     void IndexWriter::addMergeException(OneMergePtr merge)
     {
         SyncLock syncLock(this);
@@ -3229,7 +3229,7 @@ namespace Lucene
         if (!mergeExceptions.contains(merge) && mergeGen == merge->mergeGen)
             mergeExceptions.add(merge);
     }
-    
+
     bool IndexWriter::applyDeletes()
     {
         TestScope testScope(L"IndexWriter", L"applyDeletes");
@@ -3238,7 +3238,7 @@ namespace Lucene
         ++flushDeletesCount;
         bool success = false;
         bool changed = false;
-        
+
         LuceneException finally;
         try
         {
@@ -3249,29 +3249,29 @@ namespace Lucene
         {
             finally = e;
         }
-        
+
         if (!success && infoStream)
             message(L"hit exception flushing deletes");
-        
+
         finally.throwException();
-        
+
         if (changed)
             checkpoint();
         return changed;
     }
-    
+
     int32_t IndexWriter::getBufferedDeleteTermsSize()
     {
         SyncLock syncLock(this);
         return docWriter->getBufferedDeleteTerms().size();
     }
-    
+
     int32_t IndexWriter::getNumBufferedDeleteTerms()
     {
         SyncLock syncLock(this);
         return docWriter->getNumBufferedDeleteTerms();
     }
-    
+
     SegmentInfoPtr IndexWriter::newestSegment()
     {
         return !segmentInfos->empty() ? segmentInfos->info(segmentInfos->size() - 1) : SegmentInfoPtr();
@@ -3281,7 +3281,7 @@ namespace Lucene
     {
         return segString(segmentInfos);
     }
-    
+
     String IndexWriter::segString(SegmentInfosPtr infos)
     {
         SyncLock syncLock(this);
@@ -3298,7 +3298,7 @@ namespace Lucene
         }
         return buffer.str();
     }
-    
+
     bool IndexWriter::startSync(const String& fileName, HashSet<String> pending)
     {
         SyncLock syncedLock(&synced);
@@ -3328,7 +3328,7 @@ namespace Lucene
             synced.add(fileName);
         synced.notifyAll();
     }
-    
+
     bool IndexWriter::waitForAllSynced(HashSet<String> syncing)
     {
         SyncLock syncedLock(&synced);
@@ -3351,8 +3351,8 @@ namespace Lucene
     void IndexWriter::doWait()
     {
         SyncLock syncLock(this);
-        // NOTE: the callers of this method should in theory be able to do simply wait(), but, as a defense against 
-        // thread timing hazards where notifyAll() fails to be called, we wait for at most 1 second and then return 
+        // NOTE: the callers of this method should in theory be able to do simply wait(), but, as a defense against
+        // thread timing hazards where notifyAll() fails to be called, we wait for at most 1 second and then return
         // so caller can check if wait conditions are satisfied
         wait(1000);
     }
@@ -3360,34 +3360,34 @@ namespace Lucene
     void IndexWriter::startCommit(int64_t sizeInBytes, MapStringString commitUserData)
     {
         BOOST_ASSERT(testPoint(L"startStartCommit"));
-        
+
         if (hitOOM)
             boost::throw_exception(IllegalStateException(L"this writer hit an OutOfMemoryError; cannot commit"));
-        
+
         try
         {
             if (infoStream)
                 message(L"startCommit(): start sizeInBytes=" + StringUtils::toString(sizeInBytes));
-            
+
             SegmentInfosPtr toSync;
             int64_t myChangeCount = 0;
             LuceneException finally;
-            
+
             {
                 SyncLock syncLock(this);
-                
-                // Wait for any running addIndexes to complete first, then block any from running 
+
+                // Wait for any running addIndexes to complete first, then block any from running
                 // until we've copied the segmentInfos we intend to sync
                 blockAddIndexes(false);
 
                 // On commit the segmentInfos must never reference a segment in another directory
                 BOOST_ASSERT(!hasExternalSegments());
-                
+
                 try
                 {
                     BOOST_ASSERT(lastCommitChangeCount <= changeCount);
                     myChangeCount = changeCount;
-                    
+
                     if (changeCount == lastCommitChangeCount)
                     {
                         if (infoStream)
@@ -3395,20 +3395,20 @@ namespace Lucene
                         boost::throw_exception(TemporaryException());
                     }
 
-                    // First, we clone & incref the segmentInfos we intend to sync, then, without locking, we sync() each 
-                    // file referenced by toSync, in the background.  Multiple threads can be doing this at once, if say 
+                    // First, we clone & incref the segmentInfos we intend to sync, then, without locking, we sync() each
+                    // file referenced by toSync, in the background.  Multiple threads can be doing this at once, if say
                     // a large merge and a small merge finish at the same time
-                    
+
                     if (infoStream)
                         message(L"startCommit index=" + segString(segmentInfos) + L" changeCount=" + StringUtils::toString(changeCount));
-                
+
                     readerPool->commit();
-                    
+
                     // It's possible another flush (that did not close the open do stores) snook in after the flush we
-                    // just did, so we remove any tail segments referencing the open doc store from the SegmentInfos 
-                    // we are about to sync (the main SegmentInfos will keep them)                    
+                    // just did, so we remove any tail segments referencing the open doc store from the SegmentInfos
+                    // we are about to sync (the main SegmentInfos will keep them)
                     toSync = boost::dynamic_pointer_cast<SegmentInfos>(segmentInfos->clone());
-                    
+
                     String dss(docWriter->getDocStoreSegment());
                     if (!dss.empty())
                     {
@@ -3421,18 +3421,18 @@ namespace Lucene
                             ++changeCount;
                         }
                     }
-                    
+
                     if (commitUserData)
                         toSync->setUserData(commitUserData);
-                    
+
                     deleter->incRef(toSync, false);
-                    
+
                     HashSet<String> files(toSync->files(directory, false));
                     for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
                     {
                         BOOST_ASSERT(directory->fileExists(*fileName));
-                        
-                        // If this trips it means we are missing a call to .checkpoint somewhere, because by the 
+
+                        // If this trips it means we are missing a call to .checkpoint somewhere, because by the
                         // time we are called, deleter should know about every file referenced by the current head
                         // segmentInfos
                         BOOST_ASSERT(deleter->exists(*fileName));
@@ -3443,18 +3443,18 @@ namespace Lucene
                     finally = e;
                 }
                 resumeAddIndexes();
-                
+
                 // no changes pending?
                 if (finally.getType() == LuceneException::Temporary)
                     return;
-                
+
                 finally.throwException();
             }
-            
+
             BOOST_ASSERT(testPoint(L"midStartCommit"));
-            
+
             bool setPending = false;
-            
+
             try
             {
                 // Loop until all files toSync references are sync'd
@@ -3471,7 +3471,7 @@ namespace Lucene
                             {
                                 // Because we incRef'd this commit point above, the file had better exist
                                 BOOST_ASSERT(directory->fileExists(*fileName));
-                                
+
                                 if (infoStream)
                                     message(L"now sync " + *fileName);
                                 directory->sync(*fileName);
@@ -3485,22 +3485,22 @@ namespace Lucene
                             finally.throwException();
                         }
                     }
-                    
-                    // All files that I require are either synced or being synced by other threads.  If they are being 
-                    // synced, we must at this point block until they are done.  If this returns false, that means an 
+
+                    // All files that I require are either synced or being synced by other threads.  If they are being
+                    // synced, we must at this point block until they are done.  If this returns false, that means an
                     // error in another thread resulted in failing to actually sync one of our files, so we repeat
                     if (waitForAllSynced(pending))
                         break;
                 }
-                
+
                 BOOST_ASSERT(testPoint(L"midStartCommit2"));
-                
+
                 {
                     SyncLock syncLock(this);
-                    
-                    // If someone saved a newer version of segments file since I first started syncing 
+
+                    // If someone saved a newer version of segments file since I first started syncing
                     // my version, I can safely skip saving myself since I've been superseded
-                    
+
                     while (true)
                     {
                         if (myChangeCount <= lastCommitChangeCount)
@@ -3514,11 +3514,11 @@ namespace Lucene
                             // My turn to commit
                             if (segmentInfos->getGeneration() > toSync->getGeneration())
                                 toSync->updateGeneration(segmentInfos);
-                            
+
                             bool success = false;
                             try
                             {
-                                // Exception here means nothing is prepared (this method unwinds 
+                                // Exception here means nothing is prepared (this method unwinds
                                 // everything it did on an exception)
                                 try
                                 {
@@ -3528,12 +3528,12 @@ namespace Lucene
                                 {
                                     finally = e;
                                 }
-                                
-                                // Have our master segmentInfos record the generations we just prepared.  We do this on 
+
+                                // Have our master segmentInfos record the generations we just prepared.  We do this on
                                 // error or success so we don't double-write a segments_N file.
                                 segmentInfos->updateGeneration(toSync);
                                 finally.throwException();
-                                
+
                                 BOOST_ASSERT(!pendingCommit);
                                 setPending = true;
                                 pendingCommit = toSync;
@@ -3544,7 +3544,7 @@ namespace Lucene
                             {
                                 finally = e;
                             }
-                            
+
                             if (!success && infoStream)
                                 message(L"hit exception committing segments file");
                             finally.throwException();
@@ -3557,7 +3557,7 @@ namespace Lucene
                         }
                     }
                 }
-                
+
                 if (infoStream)
                     message(L"done all syncs");
                 BOOST_ASSERT(testPoint(L"midStartCommitSuccess"));
@@ -3566,7 +3566,7 @@ namespace Lucene
             {
                 finally = e;
             }
-            
+
             {
                 SyncLock syncLock(this);
                 if (!setPending)
@@ -3580,12 +3580,12 @@ namespace Lucene
         }
         BOOST_ASSERT(testPoint(L"finishStartCommit"));
     }
-    
+
     bool IndexWriter::isLocked(DirectoryPtr directory)
     {
         return directory->makeLock(WRITE_LOCK_NAME)->isLocked();
     }
-    
+
     void IndexWriter::unlock(DirectoryPtr directory)
     {
         directory->makeLock(IndexWriter::WRITE_LOCK_NAME)->release();
@@ -3595,12 +3595,12 @@ namespace Lucene
     {
         mergedSegmentWarmer = warmer;
     }
-    
+
     IndexReaderWarmerPtr IndexWriter::getMergedSegmentWarmer()
     {
         return mergedSegmentWarmer;
     }
-    
+
     LuceneException IndexWriter::handleOOM(const std::bad_alloc& oom, const String& location)
     {
         if (infoStream)
@@ -3608,12 +3608,12 @@ namespace Lucene
         hitOOM = true;
         return OutOfMemoryError();
     }
-    
+
     bool IndexWriter::testPoint(const String& name)
     {
         return true;
     }
-    
+
     bool IndexWriter::nrtIsCurrent(SegmentInfosPtr infos)
     {
         SyncLock syncLock(this);
@@ -3630,13 +3630,13 @@ namespace Lucene
         else
             return !docWriter->anyChanges();
     }
-    
+
     bool IndexWriter::isClosed()
     {
         SyncLock syncLock(this);
         return closed;
     }
-    
+
     ReaderPool::ReaderPool(IndexWriterPtr writer)
     {
         readerMap = MapSegmentInfoSegmentReader::newInstance();
@@ -3646,7 +3646,7 @@ namespace Lucene
     ReaderPool::~ReaderPool()
     {
     }
-    
+
     void ReaderPool::clear(SegmentInfosPtr infos)
     {
         SyncLock syncLock(this);
@@ -3665,7 +3665,7 @@ namespace Lucene
             }
         }
     }
-    
+
     bool ReaderPool::infoIsLive(SegmentInfoPtr info)
     {
         SyncLock syncLock(this);
@@ -3675,7 +3675,7 @@ namespace Lucene
         BOOST_ASSERT(indexWriter->segmentInfos->info(idx) == info);
         return true;
     }
-    
+
     SegmentInfoPtr ReaderPool::mapToLive(SegmentInfoPtr info)
     {
         SyncLock syncLock(this);
@@ -3685,30 +3685,30 @@ namespace Lucene
             info = indexWriter->segmentInfos->info(idx);
         return info;
     }
-    
+
     void ReaderPool::release(SegmentReaderPtr sr)
     {
         release(sr, false);
     }
-    
+
     void ReaderPool::release(SegmentReaderPtr sr, bool drop)
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
-        
+
         bool pooled = readerMap.contains(sr->getSegmentInfo());
-        
+
         BOOST_ASSERT(!pooled || readerMap.get(sr->getSegmentInfo()) == sr);
-        
+
         // Drop caller's ref; for an external reader (not pooled), this decRef will close it
         sr->decRef();
-        
+
         if (pooled && (drop || (!indexWriter->poolReaders && sr->getRefCount() == 1)))
         {
             // We invoke deleter.checkpoint below, so we must be sync'd on IW if there are changes
             BOOST_ASSERT(!sr->_hasChanges || holdsLock());
 
-            // Discard (don't save) changes when we are dropping the reader; this is used only on the 
+            // Discard (don't save) changes when we are dropping the reader; this is used only on the
             // sub-readers after a successful merge.
             sr->_hasChanges = sr->_hasChanges && !drop;
 
@@ -3722,62 +3722,62 @@ namespace Lucene
 
             if (hasChanges)
             {
-                // Must checkpoint with deleter, because this segment reader will have created new 
+                // Must checkpoint with deleter, because this segment reader will have created new
                 // _X_N.del file.
                 indexWriter->deleter->checkpoint(indexWriter->segmentInfos, false);
             }
         }
     }
-    
+
     void ReaderPool::close()
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
-        
+
         // We invoke deleter.checkpoint below, so we must be sync'd on IW
         BOOST_ASSERT(holdsLock());
-        
+
         for (MapSegmentInfoSegmentReader::iterator iter = readerMap.begin(); iter != readerMap.end(); ++iter)
         {
             if (iter->second->_hasChanges)
             {
                 BOOST_ASSERT(infoIsLive(iter->second->getSegmentInfo()));
                 iter->second->doCommit(MapStringString());
-                
-                // Must checkpoint with deleter, because this segment reader will have created 
+
+                // Must checkpoint with deleter, because this segment reader will have created
                 // new _X_N.del file.
                 indexWriter->deleter->checkpoint(indexWriter->segmentInfos, false);
             }
-                
+
             // NOTE: it is allowed that this decRef does not actually close the SR; this can happen when a
             // near real-time reader is kept open after the IndexWriter instance is closed
             iter->second->decRef();
         }
         readerMap.clear();
     }
-    
+
     void ReaderPool::commit()
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
-        
+
         // We invoke deleter.checkpoint below, so we must be sync'd on IW
         BOOST_ASSERT(holdsLock());
-        
+
         for (MapSegmentInfoSegmentReader::iterator ent = readerMap.begin(); ent != readerMap.end(); ++ent)
         {
             if (ent->second->_hasChanges)
             {
                 BOOST_ASSERT(infoIsLive(ent->second->getSegmentInfo()));
                 ent->second->doCommit(MapStringString());
-                
-                // Must checkpoint with deleter, because this segment reader will have created 
+
+                // Must checkpoint with deleter, because this segment reader will have created
                 // new _X_N.del file.
                 indexWriter->deleter->checkpoint(indexWriter->segmentInfos, false);
             }
         }
     }
-    
+
     IndexReaderPtr ReaderPool::getReadOnlyClone(SegmentInfoPtr info, bool doOpenStores, int32_t termInfosIndexDivisor)
     {
         SyncLock syncLock(this);
@@ -3796,19 +3796,19 @@ namespace Lucene
         finally.throwException();
         return clone;
     }
-    
+
     SegmentReaderPtr ReaderPool::get(SegmentInfoPtr info, bool doOpenStores)
     {
         return get(info, doOpenStores, BufferedIndexInput::BUFFER_SIZE, IndexWriterPtr(_indexWriter)->readerTermsIndexDivisor);
     }
-    
+
     SegmentReaderPtr ReaderPool::get(SegmentInfoPtr info, bool doOpenStores, int32_t readBufferSize, int32_t termsIndexDivisor)
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
         if (indexWriter->poolReaders)
             readBufferSize = BufferedIndexInput::BUFFER_SIZE;
-        
+
         SegmentReaderPtr sr(readerMap.get(info));
         if (!sr)
         {
@@ -3832,7 +3832,7 @@ namespace Lucene
                 sr->loadTermsIndex(termsIndexDivisor);
             }
         }
-        
+
         // Return a ref to our caller
         if (info->dir == indexWriter->directory)
         {
@@ -3841,7 +3841,7 @@ namespace Lucene
         }
         return sr;
     }
-    
+
     SegmentReaderPtr ReaderPool::getIfExists(SegmentInfoPtr info)
     {
         SyncLock syncLock(this);
@@ -3850,7 +3850,7 @@ namespace Lucene
             sr->incRef();
         return sr;
     }
-    
+
     IndexReaderWarmer::~IndexReaderWarmer()
     {
     }

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -20,20 +20,20 @@ DocumentPtr fileDocument(const String& docFile)
 {
     DocumentPtr doc = newLucene<Document>();
 
-    // Add the path of the file as a field named "path".  Use a field that is indexed (ie. searchable), but 
+    // Add the path of the file as a field named "path".  Use a field that is indexed (ie. searchable), but
     // don't tokenize the field into words.
     doc->add(newLucene<Field>(L"path", docFile, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-    
-    // Add the last modified date of the file a field named "modified".  Use a field that is indexed (ie. searchable), 
+
+    // Add the last modified date of the file a field named "modified".  Use a field that is indexed (ie. searchable),
     // but don't tokenize the field into words.
     doc->add(newLucene<Field>(L"modified", DateTools::timeToString(FileUtils::fileModified(docFile), DateTools::RESOLUTION_MINUTE),
                               Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
 
-    // Add the contents of the file to a field named "contents".  Specify a Reader, so that the text of the file is 
-    // tokenized and indexed, but not stored.  Note that FileReader expects the file to be in the system's default 
+    // Add the contents of the file to a field named "contents".  Specify a Reader, so that the text of the file is
+    // tokenized and indexed, but not stored.  Note that FileReader expects the file to be in the system's default
     // encoding.  If that's not the case searching for special characters will fail.
     doc->add(newLucene<Field>(L"contents", newLucene<FileReader>(docFile)));
-    
+
     return doc;
 }
 

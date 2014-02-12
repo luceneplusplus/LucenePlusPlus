@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #include "QueryParseError.h"
 #include "MultiTermQuery.h"
 #include "TermQuery.h"
-#include "TermRangeQuery.h" 
+#include "TermRangeQuery.h"
 #include "FuzzyQuery.h"
 #include "FastCharStream.h"
 #include "StringReader.h"
@@ -47,13 +47,13 @@ namespace Lucene
         0x300, 0x300, 0x1c00, 0x1c00, 0x3ed3f00, 0x90000, 0x20000, 0x3ed2000, 0x2690000, 0x100000, 0x100000, 0x20000,
         0x30000000, 0x4000000, 0x30000000, 0x20000, 0x0, 0x40000000, 0x0, 0x20000, 0x100000, 0x20000, 0x3ed0000
     };
-    
+
     const int32_t QueryParser::jj_la1_1[] =
     {
-        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+        0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
         0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x0, 0x3, 0x0, 0x0, 0x0, 0x0
     };
-    
+
     QueryParser::QueryParser(LuceneVersion::Version matchVersion, const String& field, AnalyzerPtr analyzer)
     {
         ConstructParser(newLucene<FastCharStream>(newLucene<StringReader>(L"")), QueryParserTokenManagerPtr());
@@ -61,21 +61,21 @@ namespace Lucene
         this->field = field;
         this->enablePositionIncrements = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
     }
-    
+
     QueryParser::QueryParser(QueryParserCharStreamPtr stream)
     {
         ConstructParser(stream, QueryParserTokenManagerPtr());
     }
-    
+
     QueryParser::QueryParser(QueryParserTokenManagerPtr tokenMgr)
     {
         ConstructParser(QueryParserCharStreamPtr(), tokenMgr);
     }
-    
+
     QueryParser::~QueryParser()
     {
     }
-    
+
     void QueryParser::ConstructParser(QueryParserCharStreamPtr stream, QueryParserTokenManagerPtr tokenMgr)
     {
         _operator = OR_OPERATOR;
@@ -88,7 +88,7 @@ namespace Lucene
         fuzzyPrefixLength = FuzzyQuery::defaultPrefixLength;
         locale = std::locale();
         dateResolution = DateTools::RESOLUTION_NULL;
-        
+
         token_source = tokenMgr ? tokenMgr : newLucene<QueryParserTokenManager>(stream);
         token = newLucene<QueryParserToken>();
         _jj_ntk = -1;
@@ -107,7 +107,7 @@ namespace Lucene
         jj_lasttokens = Collection<int32_t>::newInstance(100);
         jj_endpos = 0;
     }
-    
+
     QueryPtr QueryParser::parse(const String& query)
     {
         ReInit(newLucene<FastCharStream>(newLucene<StringReader>(query)));
@@ -127,162 +127,162 @@ namespace Lucene
         }
         return QueryPtr();
     }
-    
+
     AnalyzerPtr QueryParser::getAnalyzer()
     {
         return analyzer;
     }
-    
+
     String QueryParser::getField()
     {
         return field;
     }
-    
+
     double QueryParser::getFuzzyMinSim()
     {
         return fuzzyMinSim;
     }
-    
+
     void QueryParser::setFuzzyMinSim(double fuzzyMinSim)
     {
         this->fuzzyMinSim = fuzzyMinSim;
     }
-    
+
     int32_t QueryParser::getFuzzyPrefixLength()
     {
         return fuzzyPrefixLength;
     }
-    
+
     void QueryParser::setFuzzyPrefixLength(int32_t fuzzyPrefixLength)
     {
         this->fuzzyPrefixLength = fuzzyPrefixLength;
     }
-    
+
     void QueryParser::setPhraseSlop(int32_t phraseSlop)
     {
         this->phraseSlop = phraseSlop;
     }
-    
+
     int32_t QueryParser::getPhraseSlop()
     {
         return phraseSlop;
     }
-    
+
     void QueryParser::setAllowLeadingWildcard(bool allowLeadingWildcard)
     {
         this->allowLeadingWildcard = allowLeadingWildcard;
     }
-    
+
     bool QueryParser::getAllowLeadingWildcard()
     {
         return allowLeadingWildcard;
     }
-    
+
     void QueryParser::setEnablePositionIncrements(bool enable)
     {
         this->enablePositionIncrements = enable;
     }
-    
+
     bool QueryParser::getEnablePositionIncrements()
     {
         return enablePositionIncrements;
     }
-    
+
     void QueryParser::setDefaultOperator(Operator op)
     {
         this->_operator = op;
     }
-    
+
     QueryParser::Operator QueryParser::getDefaultOperator()
     {
         return _operator;
     }
-    
+
     void QueryParser::setLowercaseExpandedTerms(bool lowercaseExpandedTerms)
     {
         this->lowercaseExpandedTerms = lowercaseExpandedTerms;
     }
-    
+
     bool QueryParser::getLowercaseExpandedTerms()
     {
         return lowercaseExpandedTerms;
     }
-    
+
     void QueryParser::setMultiTermRewriteMethod(RewriteMethodPtr method)
     {
         multiTermRewriteMethod = method;
     }
-    
+
     RewriteMethodPtr QueryParser::getMultiTermRewriteMethod()
     {
         return multiTermRewriteMethod;
     }
-    
+
     void QueryParser::setLocale(std::locale locale)
     {
         this->locale = locale;
     }
-    
+
     std::locale QueryParser::getLocale()
     {
         return locale;
     }
-    
+
     void QueryParser::setDateResolution(DateTools::Resolution dateResolution)
     {
         this->dateResolution = dateResolution;
     }
-    
+
     void QueryParser::setDateResolution(const String& fieldName, DateTools::Resolution dateResolution)
     {
         if (fieldName.empty())
             boost::throw_exception(IllegalArgumentException(L"Field cannot be empty."));
-        
+
         if (!fieldToDateResolution)
         {
             // lazily initialize Map
             fieldToDateResolution = MapStringResolution::newInstance();
         }
-        
+
         fieldToDateResolution.put(fieldName, dateResolution);
     }
-    
+
     DateTools::Resolution QueryParser::getDateResolution(const String& fieldName)
     {
         if (fieldName.empty())
             boost::throw_exception(IllegalArgumentException(L"Field cannot be empty."));
-        
+
         if (!fieldToDateResolution)
         {
             // no field specific date resolutions set; return default date resolution instead
             return this->dateResolution;
         }
-        
+
         MapStringResolution::iterator resolution = fieldToDateResolution.find(fieldName);
         if (resolution == fieldToDateResolution.end())
         {
             // no date resolutions set for the given field; return default date resolution instead
             return this->dateResolution;
         }
-        
+
         return resolution->second;
     }
-    
+
     void QueryParser::setRangeCollator(CollatorPtr rc)
     {
         rangeCollator = rc;
     }
-    
+
     CollatorPtr QueryParser::getRangeCollator()
     {
         return rangeCollator;
     }
-    
+
     void QueryParser::addClause(Collection<BooleanClausePtr> clauses, int32_t conj, int32_t mods, QueryPtr q)
     {
         bool required = false;
         bool prohibited = false;
-        
+
         // If this term is introduced by AND, make the preceding term required, unless it's already prohibited
         if (!clauses.empty() && conj == CONJ_AND)
         {
@@ -290,24 +290,24 @@ namespace Lucene
             if (!c->isProhibited())
                 c->setOccur(BooleanClause::MUST);
         }
-        
+
         if (!clauses.empty() && _operator == AND_OPERATOR && conj == CONJ_OR)
         {
-            // If this term is introduced by OR, make the preceding term optional, unless it's prohibited (that 
-            // means we leave -a OR b but +a OR b-->a OR b) notice if the input is a OR b, first term is parsed 
+            // If this term is introduced by OR, make the preceding term optional, unless it's prohibited (that
+            // means we leave -a OR b but +a OR b-->a OR b) notice if the input is a OR b, first term is parsed
             // as required; without this modification a OR b would parsed as +a OR b
             BooleanClausePtr c(clauses[clauses.size() - 1]);
             if (!c->isProhibited())
                 c->setOccur(BooleanClause::SHOULD);
         }
-        
+
         // We might have been passed a null query; the term might have been filtered away by the analyzer.
         if (!q)
             return;
-        
+
         if (_operator == OR_OPERATOR)
         {
-            // We set REQUIRED if we're introduced by AND or +; PROHIBITED if introduced by NOT or -; make 
+            // We set REQUIRED if we're introduced by AND or +; PROHIBITED if introduced by NOT or -; make
             // sure not to set both.
             prohibited = (mods == MOD_NOT);
             required = (mods == MOD_REQ);
@@ -316,8 +316,8 @@ namespace Lucene
         }
         else
         {
-            // We set PROHIBITED if we're introduced by NOT or -; We set REQUIRED if not PROHIBITED and not 
-            // introduced by OR 
+            // We set PROHIBITED if we're introduced by NOT or -; We set REQUIRED if not PROHIBITED and not
+            // introduced by OR
             prohibited = (mods == MOD_NOT);
             required = (!prohibited && conj != CONJ_OR);
         }
@@ -330,7 +330,7 @@ namespace Lucene
         else
             boost::throw_exception(RuntimeException(L"Clause cannot be both required and prohibited"));
     }
-    
+
     QueryPtr QueryParser::getFieldQuery(const String& field, const String& queryText)
     {
         TokenStreamPtr source;
@@ -343,12 +343,12 @@ namespace Lucene
         {
             source = analyzer->tokenStream(field, newLucene<StringReader>(queryText));
         }
-        
+
         CachingTokenFilterPtr buffer(newLucene<CachingTokenFilter>(source));
         TermAttributePtr termAtt;
         PositionIncrementAttributePtr posIncrAtt;
         int32_t numTokens = 0;
-        
+
         bool success = false;
         try
         {
@@ -366,10 +366,10 @@ namespace Lucene
             if (buffer->hasAttribute<PositionIncrementAttribute>())
                 posIncrAtt = buffer->getAttribute<PositionIncrementAttribute>();
         }
-        
+
         int32_t positionCount = 0;
         bool severalTokensAtSamePosition = false;
-        
+
         bool hasMoreTokens = false;
         if (termAtt)
         {
@@ -396,7 +396,7 @@ namespace Lucene
         {
             // rewind the buffer stream
             buffer->reset();
-            
+
             // close original stream - all tokens buffered
             source->close();
         }
@@ -404,7 +404,7 @@ namespace Lucene
         {
             // ignore
         }
-        
+
         if (numTokens == 0)
             return QueryPtr();
         else if (numTokens == 1)
@@ -443,7 +443,7 @@ namespace Lucene
                         {
                             // safe to ignore, because we know the number of tokens
                         }
-                        
+
                         QueryPtr currentQuery(newTermQuery(newLucene<Term>(field, term)));
                         q->add(currentQuery, BooleanClause::SHOULD);
                     }
@@ -472,7 +472,7 @@ namespace Lucene
                         {
                             // safe to ignore, because we know the number of tokens
                         }
-                        
+
                         if (positionIncrement > 0 && !multiTerms.empty())
                         {
                             if (enablePositionIncrements)
@@ -496,12 +496,12 @@ namespace Lucene
                 PhraseQueryPtr pq(newPhraseQuery());
                 pq->setSlop(phraseSlop);
                 int32_t position = -1;
-                
+
                 for (int32_t i = 0; i < numTokens; ++i)
                 {
                     String term;
                     int32_t positionIncrement = 1;
-                    
+
                     try
                     {
                         bool hasNext = buffer->incrementToken();
@@ -514,7 +514,7 @@ namespace Lucene
                     {
                         // safe to ignore, because we know the number of tokens
                     }
-                    
+
                     if (enablePositionIncrements)
                     {
                         position += positionIncrement;
@@ -527,7 +527,7 @@ namespace Lucene
             }
         }
     }
-    
+
     QueryPtr QueryParser::getFieldQuery(const String& field, const String& queryText, int32_t slop)
     {
         QueryPtr query(getFieldQuery(field, queryText));
@@ -537,7 +537,7 @@ namespace Lucene
             boost::dynamic_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
         return query;
     }
-    
+
     QueryPtr QueryParser::getRangeQuery(const String& field, const String& part1, const String& part2, bool inclusive)
     {
         String date1(part1);
@@ -551,13 +551,13 @@ namespace Lucene
         {
             boost::posix_time::ptime d1(DateTools::parseDate(date1, locale));
             boost::posix_time::ptime d2;
-            
-            // The user can only specify the date, not the time, so make sure the time is set to 
+
+            // The user can only specify the date, not the time, so make sure the time is set to
             // the latest possible time of that date to really include all documents
             if (inclusive)
             {
                 d2 = boost::posix_time::ptime(DateTools::parseDate(date2, locale) +
-                                              boost::posix_time::hours(23) + 
+                                              boost::posix_time::hours(23) +
                                               boost::posix_time::minutes(59) +
                                               boost::posix_time::seconds(59) +
                                               boost::posix_time::millisec(999));
@@ -567,7 +567,7 @@ namespace Lucene
             DateTools::Resolution resolution = getDateResolution(field);
             if (resolution == DateTools::RESOLUTION_NULL)
             {
-                // no default or field specific date resolution has been set, use deprecated 
+                // no default or field specific date resolution has been set, use deprecated
                 // DateField to maintain compatibility with pre-1.9 Lucene versions.
                 date1 = DateField::dateToString(d1);
                 date2 = DateField::dateToString(d2);
@@ -583,22 +583,22 @@ namespace Lucene
         }
         return newRangeQuery(field, date1, date2, inclusive);
     }
-    
+
     BooleanQueryPtr QueryParser::newBooleanQuery(bool disableCoord)
     {
         return newLucene<BooleanQuery>(disableCoord);
     }
-    
+
     BooleanClausePtr QueryParser::newBooleanClause(QueryPtr q, BooleanClause::Occur occur)
     {
         return newLucene<BooleanClause>(q, occur);
     }
-    
+
     QueryPtr QueryParser::newTermQuery(TermPtr term)
     {
         return newLucene<TermQuery>(term);
     }
-    
+
     PhraseQueryPtr QueryParser::newPhraseQuery()
     {
         return newLucene<PhraseQuery>();
@@ -608,14 +608,14 @@ namespace Lucene
     {
         return newLucene<MultiPhraseQuery>();
     }
-    
+
     QueryPtr QueryParser::newPrefixQuery(TermPtr prefix)
     {
         PrefixQueryPtr query(newLucene<PrefixQuery>(prefix));
         query->setRewriteMethod(multiTermRewriteMethod);
         return query;
     }
-    
+
     QueryPtr QueryParser::newFuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength)
     {
         // FuzzyQuery doesn't yet allow constant score rewrite
@@ -628,24 +628,24 @@ namespace Lucene
         query->setRewriteMethod(multiTermRewriteMethod);
         return query;
     }
-    
+
     QueryPtr QueryParser::newMatchAllDocsQuery()
     {
         return newLucene<MatchAllDocsQuery>();
     }
-    
+
     QueryPtr QueryParser::newWildcardQuery(TermPtr term)
     {
         WildcardQueryPtr query(newLucene<WildcardQuery>(term));
         query->setRewriteMethod(multiTermRewriteMethod);
         return query;
     }
-    
+
     QueryPtr QueryParser::getBooleanQuery(Collection<BooleanClausePtr> clauses)
     {
         return getBooleanQuery(clauses, false);
     }
-    
+
     QueryPtr QueryParser::getBooleanQuery(Collection<BooleanClausePtr> clauses, bool disableCoord)
     {
         if (clauses.empty())
@@ -655,7 +655,7 @@ namespace Lucene
             query->add(*clause);
         return query;
     }
-    
+
     QueryPtr QueryParser::getWildcardQuery(const String& field, const String& termStr)
     {
         if (field == L"*" && termStr == L"*")
@@ -668,7 +668,7 @@ namespace Lucene
         TermPtr term(newLucene<Term>(field, queryTerm));
         return newWildcardQuery(term);
     }
-    
+
     QueryPtr QueryParser::getPrefixQuery(const String& field, const String& termStr)
     {
         if (!allowLeadingWildcard && boost::starts_with(termStr, L"*"))
@@ -679,7 +679,7 @@ namespace Lucene
         TermPtr term(newLucene<Term>(field, queryTerm));
         return newPrefixQuery(term);
     }
-    
+
     QueryPtr QueryParser::getFuzzyQuery(const String& field, const String& termStr, double minSimilarity)
     {
         String queryTerm(termStr);
@@ -688,26 +688,26 @@ namespace Lucene
         TermPtr term(newLucene<Term>(field, queryTerm));
         return newFuzzyQuery(term, minSimilarity, fuzzyPrefixLength);
     }
-    
+
     String QueryParser::discardEscapeChar(const String& input)
     {
         // Create char array to hold unescaped char sequence
         CharArray output(CharArray::newInstance(input.length()));
-        
-        // The length of the output can be less than the input due to discarded escape chars. 
+
+        // The length of the output can be less than the input due to discarded escape chars.
         // This variable holds the actual length of the output
         int32_t length = 0;
-        
+
         // We remember whether the last processed character was an escape character
         bool lastCharWasEscapeChar = false;
-        
-        // The multiplier the current unicode digit must be multiplied with.  eg. the first digit must 
+
+        // The multiplier the current unicode digit must be multiplied with.  eg. the first digit must
         // be multiplied with 16^3, the second with 16^2
         int32_t codePointMultiplier = 0;
-        
+
         // Used to calculate the codepoint of the escaped unicode character
         int32_t codePoint = 0;
-        
+
         for (int32_t i = 0; i < (int32_t)input.length(); ++i)
         {
             wchar_t curChar = input[i];
@@ -743,14 +743,14 @@ namespace Lucene
                     output[length++] = curChar;
             }
         }
-        
+
         if (codePointMultiplier > 0)
             boost::throw_exception(QueryParserError(L"Truncated unicode escape sequence."));
         if (lastCharWasEscapeChar)
             boost::throw_exception(QueryParserError(L"Term can not end with escape character."));
         return String(output.get(), length);
     }
-    
+
     int32_t QueryParser::hexToInt(wchar_t c)
     {
         if (L'0' <= c && c <= L'9')
@@ -765,7 +765,7 @@ namespace Lucene
             return 0;
         }
     }
-    
+
     String QueryParser::escape(const String& s)
     {
         StringStream buffer;
@@ -773,15 +773,15 @@ namespace Lucene
         {
             wchar_t c = s[i];
             // These characters are part of the query syntax and must be escaped
-            if (c == L'\\' || c == L'+' || c == L'-' || c == L'!' || c == L'(' || c == L')' || c == L':' || 
-                c == L'^' || c == L'[' || c == L']' || c == L'\"' || c == L'{' || c == L'}' || c == L'~' || 
+            if (c == L'\\' || c == L'+' || c == L'-' || c == L'!' || c == L'(' || c == L')' || c == L':' ||
+                c == L'^' || c == L'[' || c == L']' || c == L'\"' || c == L'{' || c == L'}' || c == L'~' ||
                 c == L'*' || c == L'?' || c == L'|' || c == L'&')
                 buffer << L"\\";
             buffer << c;
         }
         return buffer.str();
     }
-    
+
     int QueryParser::main(Collection<String> args)
     {
         if (args.empty())
@@ -794,7 +794,7 @@ namespace Lucene
         std::wcout << q->toString(L"field");
         return 0;
     }
-    
+
     int32_t QueryParser::Conjunction()
     {
         int32_t ret = CONJ_NONE;
@@ -823,7 +823,7 @@ namespace Lucene
         }
         return ret;
     }
-    
+
     int32_t QueryParser::Modifiers()
     {
         int32_t ret = MOD_NONE;
@@ -857,14 +857,14 @@ namespace Lucene
         }
         return ret;
     }
-    
+
     QueryPtr QueryParser::TopLevelQuery(const String& field)
     {
         QueryPtr q(ParseQuery(field));
         jj_consume_token(0);
         return q;
     }
-    
+
     QueryPtr QueryParser::ParseQuery(const String& field)
     {
         Collection<BooleanClausePtr> clauses(Collection<BooleanClausePtr>::newInstance());
@@ -908,7 +908,7 @@ namespace Lucene
         else
             return getBooleanQuery(clauses);
     }
-    
+
     QueryPtr QueryParser::ParseClause(const String& field)
     {
         QueryPtr q;
@@ -983,7 +983,7 @@ namespace Lucene
         }
         return q;
     }
-    
+
     QueryPtr QueryParser::ParseTerm(const String& field)
     {
         QueryParserTokenPtr term;
@@ -1231,14 +1231,14 @@ namespace Lucene
             catch (...)
             {
             }
-            
+
             // avoid boosting null queries, such as those caused by stop words
             if (q)
                 q->setBoost(f);
         }
         return q;
     }
-    
+
     bool QueryParser::jj_2_1(int32_t xla)
     {
         jj_la = xla;
@@ -1262,7 +1262,7 @@ namespace Lucene
         finally.throwException();
         return _jj_2_1;
     }
-    
+
     bool QueryParser::jj_3R_2()
     {
         if (jj_scan_token(TERM))
@@ -1271,7 +1271,7 @@ namespace Lucene
             return true;
         return false;
     }
-    
+
     bool QueryParser::jj_3_1()
     {
         QueryParserTokenPtr xsp(jj_scanpos);
@@ -1283,7 +1283,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     bool QueryParser::jj_3R_3()
     {
         if (jj_scan_token(STAR))
@@ -1292,7 +1292,7 @@ namespace Lucene
             return true;
         return false;
     }
-    
+
     void QueryParser::ReInit(QueryParserCharStreamPtr stream)
     {
         token_source->ReInit(stream);
@@ -1304,7 +1304,7 @@ namespace Lucene
         for (int32_t i = 0; i < jj_2_rtns.size(); ++i)
             jj_2_rtns[i] = newInstance<JJCalls>();
     }
-    
+
     void QueryParser::ReInit(QueryParserTokenManagerPtr tokenMgr)
     {
         token_source = tokenMgr;
@@ -1316,7 +1316,7 @@ namespace Lucene
         for (int32_t i = 0; i < jj_2_rtns.size(); ++i)
             jj_2_rtns[i] = newInstance<JJCalls>();
     }
-    
+
     QueryParserTokenPtr QueryParser::jj_consume_token(int32_t kind)
     {
         QueryParserTokenPtr oldToken(token);
@@ -1352,7 +1352,7 @@ namespace Lucene
         generateParseException();
         return QueryParserTokenPtr();
     }
-    
+
     bool QueryParser::jj_scan_token(int32_t kind)
     {
         if (jj_scanpos == jj_lastpos)
@@ -1390,7 +1390,7 @@ namespace Lucene
             boost::throw_exception(LookaheadSuccess());
         return false;
     }
-    
+
     QueryParserTokenPtr QueryParser::getNextToken()
     {
         if (token->next)
@@ -1404,7 +1404,7 @@ namespace Lucene
         ++jj_gen;
         return token;
     }
-    
+
     QueryParserTokenPtr QueryParser::getToken(int32_t index)
     {
         QueryParserTokenPtr t(token);
@@ -1420,7 +1420,7 @@ namespace Lucene
         }
         return t;
     }
-    
+
     int32_t QueryParser::jj_ntk()
     {
         jj_nt = token->next;
@@ -1436,7 +1436,7 @@ namespace Lucene
             return _jj_ntk;
         }
     }
-    
+
     void QueryParser::jj_add_error_token(int32_t kind, int32_t pos)
     {
         if (pos >= 100)
@@ -1474,7 +1474,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void QueryParser::generateParseException()
     {
         jj_expentries.clear();
@@ -1514,15 +1514,15 @@ namespace Lucene
             exptokseq[i] = jj_expentries[i];
         boost::throw_exception(QueryParserError(QueryParseError::parseError(token, exptokseq, tokenImage)));
     }
-    
+
     void QueryParser::enable_tracing()
     {
     }
-    
+
     void QueryParser::disable_tracing()
     {
     }
-    
+
     void QueryParser::jj_rescan_token()
     {
         jj_rescan = true;
@@ -1550,7 +1550,7 @@ namespace Lucene
         }
         jj_rescan = false;
     }
-    
+
     void QueryParser::jj_save(int32_t index, int32_t xla)
     {
         JJCallsPtr p(jj_2_rtns[index]);

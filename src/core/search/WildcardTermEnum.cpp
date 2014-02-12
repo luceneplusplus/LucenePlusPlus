@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,14 +14,14 @@ namespace Lucene
 {
     const wchar_t WildcardTermEnum::WILDCARD_STRING = L'*';
     const wchar_t WildcardTermEnum::WILDCARD_CHAR = L'?';
-    
+
     WildcardTermEnum::WildcardTermEnum(IndexReaderPtr reader, TermPtr term)
     {
         _endEnum = false;
         searchTerm = term;
         field = searchTerm->field();
         String searchTermText(searchTerm->text());
-        
+
         String::size_type sidx = searchTermText.find(WILDCARD_STRING);
         String::size_type cidx = searchTermText.find(WILDCARD_CHAR);
         String::size_type idx = sidx;
@@ -30,16 +30,16 @@ namespace Lucene
         else if (cidx != String::npos)
             idx = std::min(idx, cidx);
         pre = idx != String::npos ? searchTerm->text().substr(0, idx) : L"";
-        
+
         preLen = pre.length();
         text = searchTermText.substr(preLen);
         setEnum(reader->terms(newLucene<Term>(searchTerm->field(), pre)));
     }
-    
+
     WildcardTermEnum::~WildcardTermEnum()
     {
     }
-    
+
     bool WildcardTermEnum::termCompare(TermPtr term)
     {
         if (field == term->field())
@@ -51,17 +51,17 @@ namespace Lucene
         _endEnum = true;
         return false;
     }
-    
+
     double WildcardTermEnum::difference()
     {
         return 1.0;
     }
-    
+
     bool WildcardTermEnum::endEnum()
     {
         return _endEnum;
     }
-    
+
     bool WildcardTermEnum::wildcardEquals(const String& pattern, int32_t patternIdx, const String& string, int32_t stringIdx)
     {
         int32_t p = patternIdx;
@@ -71,22 +71,22 @@ namespace Lucene
             bool sEnd = (s >= (int32_t)string.length());
             // End of pattern yet?
             bool pEnd = (p >= (int32_t)pattern.length());
-            
+
             // If we're looking at the end of the string
             if (sEnd)
             {
                 // Assume the only thing left on the pattern is/are wildcards
                 bool justWildcardsLeft = true;
-                
+
                 // Current wildcard position
                 int32_t wildcardSearchPos = p;
-                
+
                 // While we haven't found the end of the pattern, and haven't encountered any non-wildcard characters
                 while (wildcardSearchPos < (int32_t)pattern.length() && justWildcardsLeft)
                 {
                     // Check the character at the current position
                     wchar_t wildchar = pattern[wildcardSearchPos];
-                    
+
                     // If it's not a wildcard character, then there is more pattern information after this/these wildcards.
                     if (wildchar != WILDCARD_CHAR && wildchar != WILDCARD_STRING)
                         justWildcardsLeft = false;
@@ -99,20 +99,20 @@ namespace Lucene
                         ++wildcardSearchPos;
                     }
                 }
-                
+
                 // This was a prefix wildcard search, and we've matched, so return true.
                 if (justWildcardsLeft)
                     return true;
             }
-            
+
             // If we've gone past the end of the string, or the pattern, return false.
             if (sEnd || pEnd)
                 break;
-            
+
             // Match a single character, so continue.
             if (pattern[p] == WILDCARD_CHAR)
                 continue;
-            
+
             if (pattern[p] == WILDCARD_STRING)
             {
                 // Look at the character beyond the '*' characters.

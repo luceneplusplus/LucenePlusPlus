@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -21,19 +21,19 @@ namespace Lucene
         ord = 0;
         delCount = 0;
     }
-    
+
     SegmentMergeInfo::~SegmentMergeInfo()
     {
     }
-    
+
     Collection<int32_t> SegmentMergeInfo::getDocMap()
     {
         if (!docMap)
         {
             delCount = 0;
             IndexReaderPtr reader(_reader);
-            
-            // build array which maps document numbers around deletions 
+
+            // build array which maps document numbers around deletions
             if (reader->hasDeletions())
             {
                 int32_t maxDoc = reader->maxDoc();
@@ -53,14 +53,14 @@ namespace Lucene
         }
         return docMap;
     }
-    
+
     TermPositionsPtr SegmentMergeInfo::getPositions()
     {
         if (!postings)
             postings = IndexReaderPtr(_reader)->termPositions();
         return postings;
     }
-    
+
     bool SegmentMergeInfo::next()
     {
         if (termEnum->next())
@@ -74,7 +74,7 @@ namespace Lucene
             return false;
         }
     }
-    
+
     void SegmentMergeInfo::close()
     {
         termEnum->close();

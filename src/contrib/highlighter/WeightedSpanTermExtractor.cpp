@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -40,11 +40,11 @@ namespace Lucene
         this->wrapToCaching = true;
         this->readers = MapStringIndexReader::newInstance();
     }
-    
+
     WeightedSpanTermExtractor::~WeightedSpanTermExtractor()
     {
     }
-    
+
     void WeightedSpanTermExtractor::closeReaders()
     {
         for (MapStringIndexReader::iterator reader = readers.begin(); reader != readers.end(); ++reader)
@@ -58,7 +58,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void WeightedSpanTermExtractor::extract(QueryPtr query, MapWeightedSpanTermPtr terms)
     {
         if (MiscUtils::typeOf<BooleanQuery>(query))
@@ -96,9 +96,9 @@ namespace Lucene
                 if (largestInc > 1)
                     slop += largestInc;
             }
-            
+
             bool inorder = (slop == 0);
-            
+
             SpanNearQueryPtr sp(newLucene<SpanNearQuery>(clauses, slop, inorder));
             sp->setBoost(query->getBoost());
             extractWeightedSpanTerms(terms, sp);
@@ -145,7 +145,7 @@ namespace Lucene
                     if (positions[i] > maxPosition)
                         maxPosition = positions[i];
                 }
-                
+
                 Collection< Collection<SpanQueryPtr> > disjunctLists(Collection< Collection<SpanQueryPtr> >::newInstance(maxPosition + 1));
                 int32_t distinctPositions = 0;
                 for (int32_t i = 0; i < termArrays.size(); ++i)
@@ -161,7 +161,7 @@ namespace Lucene
                     for (int32_t j = 0; j < termArray.size(); ++j)
                         disjuncts.add(newLucene<SpanTermQuery>(termArray[j]));
                 }
-                
+
                 int32_t positionGaps = 0;
                 int32_t position = 0;
                 Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(distinctPositions));
@@ -173,7 +173,7 @@ namespace Lucene
                     else
                         ++positionGaps;
                 }
-                
+
                 int32_t slop = mpq->getSlop();
                 bool inorder = (slop == 0);
 
@@ -183,7 +183,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void WeightedSpanTermExtractor::extractWeightedSpanTerms(MapWeightedSpanTermPtr terms, SpanQueryPtr spanQuery)
     {
         HashSet<String> fieldNames(HashSet<String>::newInstance());
@@ -194,10 +194,10 @@ namespace Lucene
         // To support the use of the default field name
         if (!defaultField.empty())
             fieldNames.add(defaultField);
-        
+
         MapStringSpanQuery queries(MapStringSpanQuery::newInstance());
         SetTerm nonWeightedTerms(SetTerm::newInstance());
-        
+
         bool rewriteQuery = mustRewriteQuery(spanQuery);
         if (rewriteQuery)
         {
@@ -210,9 +210,9 @@ namespace Lucene
         }
         else
             spanQuery->extractTerms(nonWeightedTerms);
-        
+
         Collection<PositionSpanPtr> spanPositions(Collection<PositionSpanPtr>::newInstance());
-        
+
         for (HashSet<String>::iterator field = fieldNames.begin(); field != fieldNames.end(); ++field)
         {
             IndexReaderPtr reader(getReaderForField(*field));
@@ -221,18 +221,18 @@ namespace Lucene
                 spans = queries.get(*field)->getSpans(reader);
             else
                 spans = spanQuery->getSpans(reader);
-            
+
             // collect span positions
             while (spans->next())
                 spanPositions.add(newLucene<PositionSpan>(spans->start(), spans->end() - 1));
         }
-        
+
         if (spanPositions.empty())
         {
             // no spans found
             return;
         }
-        
+
         for (SetTerm::iterator queryTerm = nonWeightedTerms.begin(); queryTerm != nonWeightedTerms.end(); ++queryTerm)
         {
             if (fieldNameComparator((*queryTerm)->field()))
@@ -253,12 +253,12 @@ namespace Lucene
             }
         }
     }
-    
+
     void WeightedSpanTermExtractor::extractWeightedTerms(MapWeightedSpanTermPtr terms, QueryPtr query)
     {
         SetTerm nonWeightedTerms(SetTerm::newInstance());
         query->extractTerms(nonWeightedTerms);
-        
+
         for (SetTerm::iterator queryTerm = nonWeightedTerms.begin(); queryTerm != nonWeightedTerms.end(); ++queryTerm)
         {
             if (fieldNameComparator((*queryTerm)->field()))
@@ -268,12 +268,12 @@ namespace Lucene
             }
         }
     }
-    
+
     bool WeightedSpanTermExtractor::fieldNameComparator(const String& fieldNameToCheck)
     {
         return (fieldName.empty() || fieldNameToCheck == fieldName || fieldNameToCheck == defaultField);
     }
-    
+
     IndexReaderPtr WeightedSpanTermExtractor::getReaderForField(const String& field)
     {
         if (wrapToCaching && !cachedTokenStream && !MiscUtils::typeOf<CachingTokenFilter>(tokenStream))
@@ -293,22 +293,22 @@ namespace Lucene
         }
         return reader;
     }
-    
+
     MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTerms(QueryPtr query, TokenStreamPtr tokenStream)
     {
         return getWeightedSpanTerms(query, tokenStream, L"");
     }
-    
+
     MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTerms(QueryPtr query, TokenStreamPtr tokenStream, const String& fieldName)
     {
         if (!fieldName.empty())
             this->fieldName = fieldName;
         else
             this->fieldName.clear();
-        
+
         MapWeightedSpanTermPtr terms(newLucene<PositionCheckingMap>());
         this->tokenStream = tokenStream;
-        
+
         LuceneException finally;
         try
         {
@@ -322,19 +322,19 @@ namespace Lucene
         finally.throwException();
         return terms;
     }
-    
+
     MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTermsWithScores(QueryPtr query, TokenStreamPtr tokenStream, const String& fieldName, IndexReaderPtr reader)
     {
         if (!fieldName.empty())
             this->fieldName = fieldName;
         else
             this->fieldName.clear();
-        
+
         MapWeightedSpanTermPtr terms(newLucene<PositionCheckingMap>());
         extract(query, terms);
-        
+
         int32_t totalNumDocs = reader->numDocs();
-        
+
         LuceneException finally;
         try
         {
@@ -357,7 +357,7 @@ namespace Lucene
         finally.throwException();
         return terms;
     }
-    
+
     void WeightedSpanTermExtractor::collectSpanQueryFields(SpanQueryPtr spanQuery, HashSet<String> fieldNames)
     {
         if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery))
@@ -381,7 +381,7 @@ namespace Lucene
         else
             fieldNames.add(spanQuery->getField());
     }
-    
+
     bool WeightedSpanTermExtractor::mustRewriteQuery(SpanQueryPtr spanQuery)
     {
         if (!expandMultiTermQuery)
@@ -420,39 +420,39 @@ namespace Lucene
         else
             return true;
     }
-    
+
     bool WeightedSpanTermExtractor::getExpandMultiTermQuery()
     {
         return expandMultiTermQuery;
     }
-    
+
     void WeightedSpanTermExtractor::setExpandMultiTermQuery(bool expandMultiTermQuery)
     {
         this->expandMultiTermQuery = expandMultiTermQuery;
     }
-    
+
     bool WeightedSpanTermExtractor::isCachedTokenStream()
     {
         return cachedTokenStream;
     }
-    
+
     TokenStreamPtr WeightedSpanTermExtractor::getTokenStream()
     {
         return tokenStream;
     }
-    
+
     void WeightedSpanTermExtractor::setWrapIfNotCachingTokenFilter(bool wrap)
     {
         this->wrapToCaching = wrap;
     }
-    
+
     PositionCheckingMap::~PositionCheckingMap()
     {
     }
-    
+
     void PositionCheckingMap::put(const String& key, WeightedSpanTermPtr val)
     {
-        MapStringWeightedSpanTerm::iterator prev = map.find(key);        
+        MapStringWeightedSpanTerm::iterator prev = map.find(key);
         if (prev == map.end())
         {
             map.put(key, val);
@@ -463,15 +463,15 @@ namespace Lucene
         if (!positionSensitive)
             prev->second->positionSensitive = false;
     }
-    
+
     FakeReader::FakeReader() : FilterIndexReader(EMPTY_MEMORY_INDEX_READER())
     {
     }
-    
+
     FakeReader::~FakeReader()
     {
     }
-    
+
     IndexReaderPtr FakeReader::EMPTY_MEMORY_INDEX_READER()
     {
         static IndexReaderPtr _EMPTY_MEMORY_INDEX_READER;
@@ -482,7 +482,7 @@ namespace Lucene
         }
         return _EMPTY_MEMORY_INDEX_READER;
     }
-    
+
     TermEnumPtr FakeReader::terms(TermPtr t)
     {
         // only set first fieldname

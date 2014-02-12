@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         uint64_t fileModified(const String& path)
         {
             try
@@ -47,7 +47,7 @@ namespace Lucene
                 return 0;
             }
         }
-        
+
         bool touchFile(const String& path)
         {
             try
@@ -60,7 +60,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         int64_t fileLength(const String& path)
         {
             try
@@ -97,7 +97,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         bool removeFile(const String& path)
         {
             try
@@ -109,7 +109,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         bool copyFile(const String& source, const String& dest)
         {
             try
@@ -122,7 +122,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         bool createDirectory(const String& path)
         {
             try
@@ -134,7 +134,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         bool removeDirectory(const String& path)
         {
             try
@@ -147,7 +147,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         bool isDirectory(const String& path)
         {
             try
@@ -159,7 +159,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         bool listDirectory(const String& path, bool filesOnly, HashSet<String> dirList)
         {
             try
@@ -176,7 +176,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         bool copyDirectory(const String& source, const String& dest)
         {
             try
@@ -184,12 +184,12 @@ namespace Lucene
                 HashSet<String> dirList(HashSet<String>::newInstance());
                 if (!listDirectory(source, true, dirList))
                     return false;
-                
+
                 createDirectory(dest);
-                
+
                 for (HashSet<String>::iterator file = dirList.begin(); file != dirList.end(); ++file)
                     copyFile(joinPath(source, *file), joinPath(dest, *file));
-            
+
                 return true;
             }
             catch (...)
@@ -197,7 +197,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         String joinPath(const String& path, const String& file)
         {
             try
@@ -211,7 +211,7 @@ namespace Lucene
                 return path;
             }
         }
-        
+
         String extractPath(const String& path)
         {
             try
@@ -224,7 +224,7 @@ namespace Lucene
                 return path;
             }
         }
-        
+
         String extractFile(const String& path)
         {
             try

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ namespace Lucene
         curPayloadLength = 0;
         curFreqPointer = 0;
         curProxPointer = 0;
-        
+
         this->freqOutput = freqOutput;
         this->proxOutput = proxOutput;
 
@@ -27,21 +27,21 @@ namespace Lucene
         lastSkipFreqPointer = Collection<int64_t>::newInstance(numberOfSkipLevels);
         lastSkipProxPointer = Collection<int64_t>::newInstance(numberOfSkipLevels);
     }
-    
+
     DefaultSkipListWriter::~DefaultSkipListWriter()
     {
     }
-    
+
     void DefaultSkipListWriter::setFreqOutput(IndexOutputPtr freqOutput)
     {
         this->freqOutput = freqOutput;
     }
-    
+
     void DefaultSkipListWriter::setProxOutput(IndexOutputPtr proxOutput)
     {
         this->proxOutput = proxOutput;
     }
-    
+
     void DefaultSkipListWriter::setSkipData(int32_t doc, bool storePayloads, int32_t payloadLength)
     {
         this->curDoc = doc;
@@ -51,7 +51,7 @@ namespace Lucene
         if (proxOutput)
             this->curProxPointer = proxOutput->getFilePointer();
     }
-    
+
     void DefaultSkipListWriter::resetSkip()
     {
         MultiLevelSkipListWriter::resetSkip();
@@ -61,7 +61,7 @@ namespace Lucene
         if (proxOutput)
             MiscUtils::arrayFill(lastSkipProxPointer.begin(), 0, lastSkipProxPointer.size(), proxOutput->getFilePointer());
     }
-    
+
     void DefaultSkipListWriter::writeSkipData(int32_t level, IndexOutputPtr skipBuffer)
     {
         // To efficiently store payloads in the posting lists we do not store the length of
@@ -72,12 +72,12 @@ namespace Lucene
         // Case 1: current field does not store payloads
         //           SkipDatum                 --> DocSkip, FreqSkip, ProxSkip
         //           DocSkip,FreqSkip,ProxSkip --> VInt
-        //           DocSkip records the document number before every SkipInterval th  document in TermFreqs. 
+        //           DocSkip records the document number before every SkipInterval th  document in TermFreqs.
         //           Document numbers are represented as differences from the previous value in the sequence.
         // Case 2: current field stores payloads
         //           SkipDatum                 --> DocSkip, PayloadLength?, FreqSkip,ProxSkip
         //           DocSkip,FreqSkip,ProxSkip --> VInt
-        //           PayloadLength             --> VInt    
+        //           PayloadLength             --> VInt
         //         In this case DocSkip/2 is the difference between
         //         the current and the previous value. If DocSkip
         //         is odd, then a PayloadLength encoded as VInt follows,
@@ -89,13 +89,13 @@ namespace Lucene
             int32_t delta = curDoc - lastSkipDoc[level];
             if (curPayloadLength == lastSkipPayloadLength[level])
             {
-                // the current payload length equals the length at the previous skip point, so we don't store 
+                // the current payload length equals the length at the previous skip point, so we don't store
                 // the length again
                 skipBuffer->writeVInt(delta * 2);
             }
             else
             {
-                // the payload length is different from the previous one. We shift the DocSkip, set the lowest 
+                // the payload length is different from the previous one. We shift the DocSkip, set the lowest
                 // bit and store the current payload length as VInt.
                 skipBuffer->writeVInt(delta * 2 + 1);
                 skipBuffer->writeVInt(curPayloadLength);
@@ -109,7 +109,7 @@ namespace Lucene
         }
         skipBuffer->writeVInt((int32_t)(curFreqPointer - lastSkipFreqPointer[level]));
         skipBuffer->writeVInt((int32_t)(curProxPointer - lastSkipProxPointer[level]));
-        
+
         lastSkipDoc[level] = curDoc;
 
         lastSkipFreqPointer[level] = curFreqPointer;

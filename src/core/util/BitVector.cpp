@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ namespace Lucene
         2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6, 3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
         3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7, 4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
     };
-    
+
     BitVector::BitVector(int32_t n)
     {
         _size = n;
@@ -33,14 +33,14 @@ namespace Lucene
         MiscUtils::arrayFill(bits.get(), 0, bits.size(), 0);
         _count = 0;
     }
-    
+
     BitVector::BitVector(ByteArray bits, int32_t size)
     {
         this->bits = bits;
         this->_size = size;
         this->_count = -1;
     }
-    
+
     BitVector::BitVector(DirectoryPtr d, const String& name)
     {
         IndexInputPtr input(d->openInput(name));
@@ -60,11 +60,11 @@ namespace Lucene
         input->close();
         finally.throwException();
     }
-    
+
     BitVector::~BitVector()
     {
     }
-    
+
     LuceneObjectPtr BitVector::clone(LuceneObjectPtr other)
     {
         ByteArray copyBits(ByteArray::newInstance(bits.size()));
@@ -73,7 +73,7 @@ namespace Lucene
         clone->_count = _count;
         return clone;
     }
-    
+
     void BitVector::set(int32_t bit)
     {
         if (bit >= _size)
@@ -81,7 +81,7 @@ namespace Lucene
         bits[bit >> 3] |= 1 << (bit & 7);
         _count = -1;
     }
-    
+
     bool BitVector::getAndSet(int32_t bit)
     {
         if (bit >= _size)
@@ -99,7 +99,7 @@ namespace Lucene
             return false;
         }
     }
-    
+
     void BitVector::clear(int32_t bit)
     {
         if (bit >= _size)
@@ -107,18 +107,18 @@ namespace Lucene
         bits[bit >> 3] &= ~(1 << (bit & 7));
         _count = -1;
     }
-    
+
     bool BitVector::get(int32_t bit)
     {
         BOOST_ASSERT(bit >= 0 && bit < _size);
         return (bits[bit >> 3] & (1 << (bit & 7))) != 0;
     }
-    
+
     int32_t BitVector::size()
     {
         return _size;
     }
-    
+
     int32_t BitVector::count()
     {
         // if the vector has been modified
@@ -132,7 +132,7 @@ namespace Lucene
         }
         return _count;
     }
-    
+
     int32_t BitVector::getRecomputedCount()
     {
         int32_t c = 0;
@@ -141,7 +141,7 @@ namespace Lucene
             c += BYTE_COUNTS[bits[i] & 0xff]; // sum bits per byte
         return c;
     }
-    
+
     void BitVector::write(DirectoryPtr d, const String& name)
     {
         TestScope testScope(L"BitVector", L"write");
@@ -161,14 +161,14 @@ namespace Lucene
         output->close();
         finally.throwException();
     }
-    
+
     void BitVector::writeBits(IndexOutputPtr output)
     {
         output->writeInt(size()); // write size
         output->writeInt(count()); // write count
         output->writeBytes(bits.get(), bits.size());
     }
-    
+
     void BitVector::writeDgaps(IndexOutputPtr output)
     {
         output->writeInt(-1); // mark using d-gaps
@@ -188,15 +188,15 @@ namespace Lucene
             }
         }
     }
-    
+
     bool BitVector::isSparse()
     {
         // note: order of comparisons below set to favor smaller values (no binary range search.)
         // note: adding 4 because we start with ((int) -1) to indicate d-gaps format.
         // note: we write the d-gap for the byte number, and the byte (bits[i]) itself, therefore
         //       multiplying count by (8+8) or (8+16) or (8+24) etc.:
-        //       - first 8 for writing bits[i] (1 byte vs. 1 bit), and 
-        //       - second part for writing the byte-number d-gap as vint. 
+        //       - first 8 for writing bits[i] (1 byte vs. 1 bit), and
+        //       - second part for writing the byte-number d-gap as vint.
         // note: factor is for read/write of byte-arrays being faster than vints.
         int32_t factor = 10;
         if (bits.size() < (1 << 7))
@@ -209,7 +209,7 @@ namespace Lucene
             return factor * (4 + (8 + 32) * count()) < size();
         return factor * (4 + (8 + 40) * count()) < size();
     }
-    
+
     void BitVector::readBits(IndexInputPtr input)
     {
         _count = input->readInt(); // read count
@@ -217,7 +217,7 @@ namespace Lucene
         MiscUtils::arrayFill(bits.get(), 0, bits.size(), 0);
         input->readBytes(bits.get(), 0, bits.size());
     }
-    
+
     void BitVector::readDgaps(IndexInputPtr input)
     {
         _size = input->readInt(); // (re)read size
@@ -233,7 +233,7 @@ namespace Lucene
             n -= BYTE_COUNTS[bits[last] & 0xff];
         }
     }
-    
+
     BitVectorPtr BitVector::subset(int32_t start, int32_t end)
     {
         if (start < 0 || end > size() || end < start)

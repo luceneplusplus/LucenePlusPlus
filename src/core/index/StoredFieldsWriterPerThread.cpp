@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,22 +18,22 @@ namespace Lucene
         this->docState = docState;
         localFieldsWriter = newLucene<FieldsWriter>(IndexOutputPtr(), IndexOutputPtr(), storedFieldsWriter->fieldInfos);
     }
-    
+
     StoredFieldsWriterPerThread::~StoredFieldsWriterPerThread()
     {
     }
-    
+
     void StoredFieldsWriterPerThread::startDocument()
     {
         if (doc)
         {
-            // Only happens if previous document hit non-aborting exception while writing stored fields 
+            // Only happens if previous document hit non-aborting exception while writing stored fields
             // into localFieldsWriter
             doc->reset();
             doc->docID = docState->docID;
         }
     }
-    
+
     void StoredFieldsWriterPerThread::addField(FieldablePtr field, FieldInfoPtr fieldInfo)
     {
         if (!doc)
@@ -45,12 +45,12 @@ namespace Lucene
             BOOST_ASSERT(doc->fdt->length() == 0);
             BOOST_ASSERT(doc->fdt->getFilePointer() == 0);
         }
-        
+
         localFieldsWriter->writeField(fieldInfo, field);
         BOOST_ASSERT(docState->testPoint(L"StoredFieldsWriterPerThread.processFields.writeField"));
         ++doc->numStoredFields;
     }
-    
+
     DocWriterPtr StoredFieldsWriterPerThread::finishDocument()
     {
         // If there were any stored fields in this doc, doc will be non-null; else it's null.
@@ -58,7 +58,7 @@ namespace Lucene
         doc.reset();
         return finishDoc;
     }
-    
+
     void StoredFieldsWriterPerThread::abort()
     {
         if (doc)

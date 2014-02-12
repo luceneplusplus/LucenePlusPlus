@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -23,8 +23,8 @@ namespace Lucene
     const int32_t SegmentInfo::NO = -1; // no norms; no deletes;
     const int32_t SegmentInfo::YES = 1; // have norms; have deletes;
     const int32_t SegmentInfo::CHECK_DIR = 0; // must check dir to see if there are norms/deletions
-    const int32_t SegmentInfo::WITHOUT_GEN = 0; // a file name that has no GEN in it. 
-    
+    const int32_t SegmentInfo::WITHOUT_GEN = 0; // a file name that has no GEN in it.
+
     SegmentInfo::SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir)
     {
         _sizeInBytes = -1;
@@ -41,7 +41,7 @@ namespace Lucene
         delCount = 0;
         hasProx = true;
     }
-    
+
     SegmentInfo::SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, bool hasSingleNormFile)
     {
         _sizeInBytes = -1;
@@ -57,7 +57,7 @@ namespace Lucene
         delCount = 0;
         hasProx = true;
     }
-            
+
     SegmentInfo::SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, bool hasSingleNormFile,
                              int32_t docStoreOffset, const String& docStoreSegment, bool docStoreIsCompoundFile, bool hasProx)
     {
@@ -75,7 +75,7 @@ namespace Lucene
         delCount = 0;
         this->hasProx = hasProx;
     }
-    
+
     SegmentInfo::SegmentInfo(DirectoryPtr dir, int32_t format, IndexInputPtr input)
     {
         _sizeInBytes = -1;
@@ -129,7 +129,7 @@ namespace Lucene
                 hasProx = (input->readByte() == 1);
             else
                 hasProx = true;
-            
+
             if (format <= SegmentInfos::FORMAT_DIAGNOSTICS)
                 diagnostics = input->readStringStringMap();
             else
@@ -148,11 +148,11 @@ namespace Lucene
             diagnostics = MapStringString::newInstance();
         }
     }
-    
+
     SegmentInfo::~SegmentInfo()
     {
     }
-    
+
     void SegmentInfo::reset(SegmentInfoPtr src)
     {
         clearFiles();
@@ -171,17 +171,17 @@ namespace Lucene
         hasSingleNormFile = src->hasSingleNormFile;
         delCount = src->delCount;
     }
-    
+
     void SegmentInfo::setDiagnostics(MapStringString diagnostics)
     {
         this->diagnostics = diagnostics;
     }
-    
+
     MapStringString SegmentInfo::getDiagnostics()
     {
         return diagnostics;
     }
-    
+
     void SegmentInfo::setNumFields(int32_t numFields)
     {
         if (!normGen)
@@ -189,9 +189,9 @@ namespace Lucene
             // normGen is null if we loaded a pre-2.1 segment file, or, if this segments file hasn't had any
             // norms set against it yet
             normGen = Collection<int64_t>::newInstance(numFields);
-            
-            if (!preLockless) 
-            { // Do nothing: thus leaving normGen[k] == CHECK_DIR (==0), so that later we know  
+
+            if (!preLockless)
+            { // Do nothing: thus leaving normGen[k] == CHECK_DIR (==0), so that later we know
             } // we have to check filesystem for norm files, because this is prelockless.
             else
             {
@@ -201,7 +201,7 @@ namespace Lucene
             }
         }
     }
-    
+
     int64_t SegmentInfo::sizeInBytes()
     {
         if (_sizeInBytes == -1)
@@ -217,7 +217,7 @@ namespace Lucene
         }
         return _sizeInBytes;
     }
-    
+
     bool SegmentInfo::hasDeletions()
     {
         if (delGen == NO)
@@ -227,7 +227,7 @@ namespace Lucene
         else
             return dir->fileExists(getDelFileName());
     }
-    
+
     void SegmentInfo::advanceDelGen()
     {
         // delGen 0 is reserved for pre-LOCKLESS format
@@ -237,13 +237,13 @@ namespace Lucene
             delGen++;
         clearFiles();
     }
-    
+
     void SegmentInfo::clearDelGen()
     {
         delGen = NO;
         clearFiles();
     }
-    
+
     LuceneObjectPtr SegmentInfo::clone(LuceneObjectPtr other)
     {
         SegmentInfoPtr si(newLucene<SegmentInfo>(name, docCount, dir));
@@ -262,7 +262,7 @@ namespace Lucene
         si->docStoreIsCompoundFile = docStoreIsCompoundFile;
         return si;
     }
-    
+
     String SegmentInfo::getDelFileName()
     {
         if (delGen == NO)
@@ -273,10 +273,10 @@ namespace Lucene
         else
         {
             // if delgen is check_dir, it's the pre-lockless-commit file format
-            return IndexFileNames::fileNameFromGeneration(name, String(L".") + IndexFileNames::DELETES_EXTENSION(), delGen); 
+            return IndexFileNames::fileNameFromGeneration(name, String(L".") + IndexFileNames::DELETES_EXTENSION(), delGen);
         }
     }
-    
+
     bool SegmentInfo::hasSeparateNorms(int32_t fieldNumber)
     {
         if ((!normGen && preLockless) || (normGen && normGen[fieldNumber] == CHECK_DIR))
@@ -289,7 +289,7 @@ namespace Lucene
         else
             return true;
     }
-    
+
     bool SegmentInfo::hasSeparateNorms()
     {
         if (!normGen)
@@ -333,7 +333,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void SegmentInfo::advanceNormGen(int32_t fieldIndex)
     {
         if (normGen[fieldIndex] == NO)
@@ -342,37 +342,37 @@ namespace Lucene
             normGen[fieldIndex]++;
         clearFiles();
     }
-    
+
     String SegmentInfo::getNormFileName(int32_t number)
     {
         String prefix;
         int64_t gen = !normGen ? CHECK_DIR : normGen[number];
-        
+
         if (hasSeparateNorms(number))
         {
             // case 1: separate norm
             prefix = L".s";
             return IndexFileNames::fileNameFromGeneration(name, prefix + StringUtils::toString(number), gen);
         }
-        
+
         if (hasSingleNormFile)
         {
-            // case 2: lockless (or nrm file exists) - single file for all norms 
+            // case 2: lockless (or nrm file exists) - single file for all norms
             prefix = String(L".") + IndexFileNames::NORMS_EXTENSION();
             return IndexFileNames::fileNameFromGeneration(name, prefix, WITHOUT_GEN);
         }
-        
+
         // case 3: norm file for each field
         prefix = L".f";
-        return IndexFileNames::fileNameFromGeneration(name, prefix + StringUtils::toString(number), WITHOUT_GEN);    
+        return IndexFileNames::fileNameFromGeneration(name, prefix + StringUtils::toString(number), WITHOUT_GEN);
     }
-    
+
     void SegmentInfo::setUseCompoundFile(bool isCompoundFile)
     {
         this->isCompoundFile = (uint8_t)(isCompoundFile ? YES : NO);
         clearFiles();
     }
-    
+
     bool SegmentInfo::getUseCompoundFile()
     {
         if (isCompoundFile == (uint8_t)NO)
@@ -382,7 +382,7 @@ namespace Lucene
         else
             return dir->fileExists(name + L"." + IndexFileNames::COMPOUND_FILE_EXTENSION());
     }
-    
+
     int32_t SegmentInfo::getDelCount()
     {
         if (delCount == -1)
@@ -390,47 +390,47 @@ namespace Lucene
         BOOST_ASSERT(delCount <= docCount);
         return delCount;
     }
-    
+
     void SegmentInfo::setDelCount(int32_t delCount)
     {
         this->delCount = delCount;
         BOOST_ASSERT(delCount <= docCount);
     }
-    
+
     int32_t SegmentInfo::getDocStoreOffset()
     {
         return docStoreOffset;
     }
-    
+
     bool SegmentInfo::getDocStoreIsCompoundFile()
     {
         return docStoreIsCompoundFile;
     }
-    
+
     void SegmentInfo::setDocStoreIsCompoundFile(bool v)
     {
         docStoreIsCompoundFile = v;
         clearFiles();
     }
-    
+
     String SegmentInfo::getDocStoreSegment()
     {
         return docStoreSegment;
     }
-    
+
     void SegmentInfo::setDocStoreOffset(int32_t offset)
     {
         docStoreOffset = offset;
         clearFiles();
     }
-    
+
     void SegmentInfo::setDocStore(int32_t offset, const String& segment, bool isCompoundFile)
     {
         docStoreOffset = offset;
         docStoreSegment = segment;
         docStoreIsCompoundFile = isCompoundFile;
     }
-    
+
     void SegmentInfo::write(IndexOutputPtr output)
     {
         output->writeString(name);
@@ -442,7 +442,7 @@ namespace Lucene
             output->writeString(docStoreSegment);
             output->writeByte((uint8_t)(docStoreIsCompoundFile ? 1 : 0));
         }
-        
+
         output->writeByte((uint8_t)(hasSingleNormFile ? 1 : 0));
         if (!normGen)
             output->writeInt(NO);
@@ -457,24 +457,24 @@ namespace Lucene
         output->writeByte((uint8_t)(hasProx ? 1 : 0));
         output->writeStringStringMap(diagnostics);
     }
-    
+
     void SegmentInfo::setHasProx(bool hasProx)
     {
         this->hasProx = hasProx;
         clearFiles();
     }
-    
+
     bool SegmentInfo::getHasProx()
     {
         return hasProx;
     }
-    
+
     void SegmentInfo::addIfExists(HashSet<String> files, const String& fileName)
     {
         if (dir->fileExists(fileName))
             files.add(fileName);
     }
-    
+
     HashSet<String> SegmentInfo::files()
     {
         if (_files)
@@ -482,10 +482,10 @@ namespace Lucene
             // already cached
             return _files;
         }
-        
+
         _files = HashSet<String>::newInstance();
         bool useCompoundFile = getUseCompoundFile();
-        
+
         if (useCompoundFile)
             _files.add(name + L"." + IndexFileNames::COMPOUND_FILE_EXTENSION());
         else
@@ -493,7 +493,7 @@ namespace Lucene
             for (HashSet<String>::iterator ext = IndexFileNames::NON_STORE_INDEX_EXTENSIONS().begin(); ext != IndexFileNames::NON_STORE_INDEX_EXTENSIONS().end(); ++ext)
                 addIfExists(_files, name + L"." + *ext);
         }
-        
+
         if (docStoreOffset != -1)
         {
             // we are sharing doc stores (stored fields, term vectors) with other segments
@@ -512,11 +512,11 @@ namespace Lucene
             for (HashSet<String>::iterator ext = IndexFileNames::STORE_INDEX_EXTENSIONS().begin(); ext != IndexFileNames::STORE_INDEX_EXTENSIONS().end(); ++ext)
                 addIfExists(_files, name + L"." + *ext);
         }
-        
+
         String delFileName(IndexFileNames::fileNameFromGeneration(name, String(L".") + IndexFileNames::DELETES_EXTENSION(), delGen));
         if (!delFileName.empty() && (delGen >= YES || dir->fileExists(delFileName)))
             _files.add(delFileName);
-        
+
         // careful logic for norms files
         if (normGen)
         {
@@ -562,20 +562,20 @@ namespace Lucene
             HashSet<String> allFiles(dir->listAll());
             for (HashSet<String>::iterator fileName = allFiles.begin(); fileName != allFiles.end(); ++fileName)
             {
-                if (IndexFileNameFilter::accept(L"", *fileName) && (int32_t)fileName->length() > prefixLength && 
+                if (IndexFileNameFilter::accept(L"", *fileName) && (int32_t)fileName->length() > prefixLength &&
                     UnicodeUtil::isDigit((*fileName)[prefixLength]) && boost::starts_with(*fileName, prefix))
                     _files.add(*fileName);
             }
         }
         return _files;
     }
-    
+
     void SegmentInfo::clearFiles()
     {
         _files.reset();
         _sizeInBytes = -1;
     }
-    
+
     String SegmentInfo::segString(DirectoryPtr dir)
     {
         String cfs;
@@ -587,14 +587,14 @@ namespace Lucene
         {
             cfs = L"?";
         }
-        
+
         String docStore;
         if (docStoreOffset != -1)
             docStore = L"->" + docStoreSegment;
-        
+
         return name + L":" + cfs + (this->dir == dir ? L"" : L"x") + StringUtils::toString(docCount) + docStore;
     }
-    
+
     bool SegmentInfo::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -604,7 +604,7 @@ namespace Lucene
             return false;
         return (otherSegmentInfo->dir == dir && otherSegmentInfo->name == name);
     }
-    
+
     int32_t SegmentInfo::hashCode()
     {
         return dir->hashCode() + StringUtils::hashCode(name);

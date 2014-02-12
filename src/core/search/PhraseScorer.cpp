@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,12 +18,12 @@ namespace Lucene
         this->firstTime = true;
         this->more = true;
         this->freq = 0.0;
-        
+
         this->norms = norms;
         this->weight = weight;
         this->value = weight->getValue();
-        
-        // convert tps to a list of phrase positions.  
+
+        // convert tps to a list of phrase positions.
         // Note: phrase-position differs from term-position in that its position reflects the phrase offset: pp.pos = tp.pos - offset.
         // This allows to easily identify a matching (exact) phrase when all PhrasePositions have exactly the same position.
         for (int32_t i = 0; i < tps.size(); ++i)
@@ -35,20 +35,20 @@ namespace Lucene
                 first = pp;
             last = pp;
         }
-        
+
         pq = newLucene<PhraseQueue>(tps.size()); // construct empty pq
         first->doc = -1;
     }
-    
+
     PhraseScorer::~PhraseScorer()
     {
     }
-    
+
     int32_t PhraseScorer::docID()
     {
         return first->doc;
     }
-    
+
     int32_t PhraseScorer::nextDoc()
     {
         if (firstTime)
@@ -62,7 +62,7 @@ namespace Lucene
             first->doc = NO_MORE_DOCS;
         return first->doc;
     }
-    
+
     bool PhraseScorer::doNext()
     {
         while (more)
@@ -72,7 +72,7 @@ namespace Lucene
                 more = first->skipTo(last->doc); // skip first upto last and move it to the end
                 firstToLast();
             }
-            
+
             if (more)
             {
                 // found a doc with all of the terms
@@ -85,13 +85,13 @@ namespace Lucene
         }
         return false; // no more matches
     }
-    
+
     double PhraseScorer::score()
     {
         double raw = getSimilarity()->tf(freq) * value; // raw score
         return !norms ? raw : raw * Similarity::decodeNorm(norms[first->doc]); // normalize
     }
-    
+
     int32_t PhraseScorer::advance(int32_t target)
     {
         firstTime = false;
@@ -103,12 +103,12 @@ namespace Lucene
             first->doc = NO_MORE_DOCS;
         return first->doc;
     }
-    
+
     double PhraseScorer::currentFreq()
     {
         return freq;
     }
-    
+
     void PhraseScorer::init()
     {
         for (PhrasePositionsPtr pp(first); more && pp; pp = pp->_next)
@@ -116,7 +116,7 @@ namespace Lucene
         if (more)
             sort();
     }
-    
+
     void PhraseScorer::sort()
     {
         pq->clear();
@@ -124,7 +124,7 @@ namespace Lucene
             pq->add(pp);
         pqToList();
     }
-    
+
     void PhraseScorer::pqToList()
     {
         last.reset();
@@ -140,7 +140,7 @@ namespace Lucene
             pp->_next.reset();
         }
     }
-    
+
     void PhraseScorer::firstToLast()
     {
         last->_next = first; // move first to end of list
@@ -148,7 +148,7 @@ namespace Lucene
         first = first->_next;
         last->_next.reset();
     }
-    
+
     String PhraseScorer::toString()
     {
         return L"scorer(" + weight->toString() + L")";

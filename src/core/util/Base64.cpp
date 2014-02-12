@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -12,23 +12,23 @@
 namespace Lucene
 {
     const String Base64::BASE64_CHARS = L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    
+
     Base64::~Base64()
     {
     }
-    
+
     String Base64::encode(ByteArray bytes)
     {
         return encode(bytes.get(), bytes.size());
     }
-    
+
     String Base64::encode(const uint8_t* bytes, int32_t length)
     {
         String result;
         uint8_t byteArray3[3];
         uint8_t byteArray4[4];
         int32_t i = 0;
-        
+
         while (length--)
         {
             byteArray3[i++] = *(bytes++);
@@ -63,16 +63,16 @@ namespace Lucene
         }
         return result;
     }
-    
+
     ByteArray Base64::decode(const String& str)
     {
         int32_t length = str.length();
         uint8_t byteArray4[4];
         uint8_t byteArray3[3];
-        
+
         int32_t i = 0;
         int32_t charIndex = 0;
-        
+
         ByteArray result(ByteArray::newInstance(length / 2));
         int32_t resultIndex = 0;
 
@@ -93,7 +93,7 @@ namespace Lucene
                         result.resize((int32_t)((double)result.size() * 1.5));
                     result[resultIndex++] = byteArray3[i];
                 }
-                
+
                 i = 0;
             }
         }
@@ -115,12 +115,12 @@ namespace Lucene
                 result[resultIndex++] = byteArray3[j];
             }
         }
-        
+
         result.resize(resultIndex);
 
         return result;
     }
-    
+
     bool Base64::isBase64(wchar_t ch)
     {
         return (UnicodeUtil::isAlnum(ch) || ch == L'+' || ch == L'/');

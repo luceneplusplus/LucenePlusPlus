@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,27 +17,27 @@ namespace Lucene
     {
     public:
         virtual ~ChineseAnalyzer();
-        
+
         LUCENE_CLASS(ChineseAnalyzer);
-    
+
     public:
         /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
         ///
         /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
         virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        
-        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the 
+
+        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the
         /// provided {@link Reader}.
         ///
         /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
         virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
     };
-    
+
     class LPPCONTRIBAPI ChineseAnalyzerSavedStreams : public LuceneObject
     {
     public:
         virtual ~ChineseAnalyzerSavedStreams();
-        
+
         LUCENE_CLASS(ChineseAnalyzerSavedStreams);
 
     public:

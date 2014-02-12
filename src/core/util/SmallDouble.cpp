@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ namespace Lucene
     SmallDouble::~SmallDouble()
     {
     }
-    
+
     uint8_t SmallDouble::doubleToByte(double f)
     {
         if (f < 0.0) // round negatives up to zero
@@ -38,7 +38,7 @@ namespace Lucene
 
         return (uint8_t)((exponent << 3) | mantissa); // pack into a uint8_t
     }
-    
+
     double SmallDouble::byteToDouble(uint8_t b)
     {
         if (b == 0) // zero is a special case

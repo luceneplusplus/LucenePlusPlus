@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,15 +17,15 @@ namespace Lucene
     public:
         ValueSourceWeight(ValueSourceQueryPtr query, SearcherPtr searcher);
         virtual ~ValueSourceWeight();
-        
+
         LUCENE_CLASS(ValueSourceWeight);
-    
+
     public:
         ValueSourceQueryPtr query;
         SimilarityPtr similarity;
         double queryNorm;
         double queryWeight;
-    
+
     public:
         virtual QueryPtr getQuery();
         virtual double getValue();
@@ -34,25 +34,25 @@ namespace Lucene
         virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
         virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
     };
-    
-    /// A scorer that (simply) matches all documents, and scores each document with the value of the value 
+
+    /// A scorer that (simply) matches all documents, and scores each document with the value of the value
     /// source in effect. As an example, if the value source is a (cached) field source, then value of that
-    /// field in that document will be used. (assuming field is indexed for this doc, with a single token.) 
+    /// field in that document will be used. (assuming field is indexed for this doc, with a single token.)
     class ValueSourceScorer : public Scorer
     {
     public:
         ValueSourceScorer(SimilarityPtr similarity, IndexReaderPtr reader, ValueSourceWeightPtr weight);
         virtual ~ValueSourceScorer();
-    
+
         LUCENE_CLASS(ValueSourceScorer);
-    
+
     public:
         ValueSourceWeightPtr weight;
         double qWeight;
         DocValuesPtr vals;
         TermDocsPtr termDocs;
         int32_t doc;
-        
+
     public:
         virtual int32_t nextDoc();
         virtual int32_t docID();

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ namespace Lucene
     /// Sort using term values as Shorts.  Sort values are Short and lower values are at the front.
     const int32_t SortField::SHORT = 8;
 
-    /// Sort using a custom Comparator.  Sort values are any ComparableValue and sorting is done according 
+    /// Sort using a custom Comparator.  Sort values are any ComparableValue and sorting is done according
     /// to natural order.
     const int32_t SortField::CUSTOM = 9;
 
@@ -53,7 +53,7 @@ namespace Lucene
         initFieldType(field, type);
         this->reverse = reverse;
     }
-    
+
     SortField::SortField(const String& field, ParserPtr parser, bool reverse)
     {
         if (boost::dynamic_pointer_cast<IntParser>(parser))
@@ -69,25 +69,25 @@ namespace Lucene
         this->reverse = reverse;
         this->parser = parser;
     }
-    
+
     SortField::SortField(const String& field, const std::locale& locale, bool reverse)
     {
         initFieldType(field, STRING);
         this->locale = newInstance<std::locale>(locale);
         this->reverse = reverse;
     }
-    
+
     SortField::SortField(const String& field, FieldComparatorSourcePtr comparator, bool reverse)
     {
         initFieldType(field, CUSTOM);
         this->comparatorSource = comparator;
         this->reverse = reverse;
     }
-    
+
     SortField::~SortField()
     {
     }
-    
+
     SortFieldPtr SortField::FIELD_SCORE()
     {
         static SortFieldPtr _FIELD_SCORE;
@@ -98,7 +98,7 @@ namespace Lucene
         }
         return _FIELD_SCORE;
     }
-    
+
     SortFieldPtr SortField::FIELD_DOC()
     {
         static SortFieldPtr _FIELD_DOC;
@@ -109,7 +109,7 @@ namespace Lucene
         }
         return _FIELD_DOC;
     }
-    
+
     void SortField::initFieldType(const String& field, int32_t type)
     {
         this->type = type;
@@ -117,37 +117,37 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"Field can only be null when type is SCORE or DOC"));
         this->field = field;
     }
-    
+
     String SortField::getField()
     {
         return field;
     }
-    
+
     int32_t SortField::getType()
     {
         return type;
     }
-    
+
     localePtr SortField::getLocale()
     {
         return locale;
     }
-    
+
     ParserPtr SortField::getParser()
     {
         return parser;
     }
-    
+
     bool SortField::getReverse()
     {
         return reverse;
     }
-    
+
     FieldComparatorSourcePtr SortField::getComparatorSource()
     {
         return comparatorSource;
     }
-    
+
     String SortField::toString()
     {
         StringStream buffer;
@@ -190,31 +190,31 @@ namespace Lucene
                 buffer << L"<???: \"" << field << L"\">";
                 break;
         }
-                
+
         if (parser)
             buffer << L"(" << parser->toString() << L")";
         if (reverse)
             buffer << L"!";
-        
+
         return buffer.str();
     }
-    
+
     bool SortField::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
             return true;
-        
+
         SortFieldPtr otherSortField(boost::dynamic_pointer_cast<SortField>(other));
         if (!otherSortField)
             return false;
-        
+
         return (field == otherSortField->field && type == otherSortField->type &&
-                reverse == otherSortField->reverse && 
+                reverse == otherSortField->reverse &&
                 ((locale && otherSortField->locale && *locale == *otherSortField->locale) || (!locale && !otherSortField->locale)) &&
                 (comparatorSource ? comparatorSource->equals(otherSortField->comparatorSource) : !otherSortField->comparatorSource) &&
                 (parser ? parser->equals(otherSortField->parser) : !otherSortField->parser));
     }
-    
+
     int32_t SortField::hashCode()
     {
         int32_t hash = type ^ 0x346565dd + (reverse ? 1 : 0) ^ 0xaf5998bb;
@@ -227,12 +227,12 @@ namespace Lucene
             hash += parser->hashCode() ^ 0x3aaf56ff;
         return hash;
     }
-    
+
     FieldComparatorPtr SortField::getComparator(int32_t numHits, int32_t sortPos)
     {
         if (locale)
             return newLucene<StringComparatorLocale>(numHits, field, *locale);
-        
+
         switch (type)
         {
             case SCORE:

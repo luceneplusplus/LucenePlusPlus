@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -20,11 +20,11 @@ namespace Lucene
         this->count = 0;
         this->position = 0;
     }
-    
+
     TermSpans::~TermSpans()
     {
     }
-    
+
     bool TermSpans::next()
     {
         if (count == freq)
@@ -42,7 +42,7 @@ namespace Lucene
         ++count;
         return true;
     }
-    
+
     bool TermSpans::skipTo(int32_t target)
     {
         if (!positions->skipTo(target))
@@ -50,44 +50,44 @@ namespace Lucene
             _doc = INT_MAX;
             return false;
         }
-        
+
         _doc = positions->doc();
         freq = positions->freq();
         count = 0;
-        
+
         position = positions->nextPosition();
         ++count;
-        
+
         return true;
     }
-    
+
     int32_t TermSpans::doc()
     {
         return _doc;
     }
-    
+
     int32_t TermSpans::start()
     {
         return position;
     }
-    
+
     int32_t TermSpans::end()
     {
         return position + 1;
     }
-    
+
     Collection<ByteArray> TermSpans::getPayload()
     {
         Collection<ByteArray> payload(newCollection<ByteArray>(ByteArray::newInstance(positions->getPayloadLength())));
         payload[0] = positions->getPayload(payload[0], 0);
         return payload;
     }
-    
+
     bool TermSpans::isPayloadAvailable()
     {
         return positions->isPayloadAvailable();
     }
-    
+
     String TermSpans::toString()
     {
         StringStream buffer;
@@ -100,7 +100,7 @@ namespace Lucene
             buffer << _doc << L"-" << position;
         return buffer.str();
     }
-    
+
     TermPositionsPtr TermSpans::getPositions()
     {
         return positions;

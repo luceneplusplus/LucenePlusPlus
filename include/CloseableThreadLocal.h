@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,13 +18,13 @@ namespace Lucene
     public:
         typedef boost::shared_ptr<TYPE> localDataPtr;
         typedef Map<int64_t, localDataPtr> MapLocalData;
-        
+
         CloseableThreadLocal()
         {
             localData = MapLocalData::newInstance();
         }
-    
-    public:        
+
+    public:
         localDataPtr get()
         {
             SyncLock syncLock(this);
@@ -36,22 +36,22 @@ namespace Lucene
                 localData.put(LuceneThread::currentId(), initial);
             return initial;
         }
-        
+
         void set(localDataPtr data)
         {
             SyncLock syncLock(this);
             localData.put(LuceneThread::currentId(), data);
         }
-        
+
         void close()
         {
             SyncLock syncLock(this);
             localData.remove(LuceneThread::currentId());
         }
-        
+
     protected:
         MapLocalData localData;
-        
+
         virtual localDataPtr initialValue()
         {
             return localDataPtr(); // override

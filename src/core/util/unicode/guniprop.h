@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
- 
+
 #include "Lucene.h"
 
 typedef uint32_t gunichar;
@@ -119,7 +119,7 @@ typedef enum
   G_UNICODE_BREAK_HANGUL_LVT_SYLLABLE
 } GUnicodeBreakType;
 
-typedef enum 
+typedef enum
 {                         /* ISO 15924 code */
   G_UNICODE_SCRIPT_INVALID_CODE = -1,
   G_UNICODE_SCRIPT_COMMON       = 0,   /* Zyyy */
@@ -178,7 +178,7 @@ typedef enum
   G_UNICODE_SCRIPT_LINEAR_B,           /* Linb */
   G_UNICODE_SCRIPT_TAI_LE,             /* Tale */
   G_UNICODE_SCRIPT_UGARITIC,           /* Ugar */
-      
+
   /* Unicode-4.1 additions */
   G_UNICODE_SCRIPT_NEW_TAI_LUE,        /* Talu */
   G_UNICODE_SCRIPT_BUGINESE,           /* Bugi */

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 
 using namespace Lucene;
 
-/// Use the norms from one field for all fields.  Norms are read into memory, using a byte of memory 
-/// per document per searched field.  This can cause search of large collections with a large number 
+/// Use the norms from one field for all fields.  Norms are read into memory, using a byte of memory
+/// per document per searched field.  This can cause search of large collections with a large number
 /// of fields to run out of memory.  If all of the fields contain only a single token, then the norms
 /// are all identical, then single norm vector may be shared.
 class OneNormsReader : public FilterIndexReader
@@ -41,11 +41,11 @@ public:
     }
 };
 
-/// This demonstrates a typical paging search scenario, where the search engine presents pages of size n 
+/// This demonstrates a typical paging search scenario, where the search engine presents pages of size n
 /// to the user. The user can then go to the next page if interested in the next hits.
 ///
-/// When the query is executed for the first time, then only enough results are collected to fill 5 result 
-/// pages. If the user wants to page beyond this limit, then the query is executed another time and all 
+/// When the query is executed for the first time, then only enough results are collected to fill 5 result
+/// pages. If the user wants to page beyond this limit, then the query is executed another time and all
 /// hits are collected.
 static void doPagingSearch(SearcherPtr searcher, QueryPtr query, int32_t hitsPerPage, bool raw, bool interactive)
 {
@@ -201,10 +201,10 @@ public:
     }
 };
 
-/// This method uses a custom HitCollector implementation which simply prints out the docId and score of 
-/// every matching document. 
+/// This method uses a custom HitCollector implementation which simply prints out the docId and score of
+/// every matching document.
 ///
-/// This simulates the streaming search use case, where all hits are supposed to be processed, regardless 
+/// This simulates the streaming search use case, where all hits are supposed to be processed, regardless
 /// of their relevance.
 static void doStreamingSearch(SearcherPtr searcher, QueryPtr query)
 {

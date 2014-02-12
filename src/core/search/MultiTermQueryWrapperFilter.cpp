@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -22,17 +22,17 @@ namespace Lucene
     {
         this->query = query;
     }
-    
+
     MultiTermQueryWrapperFilter::~MultiTermQueryWrapperFilter()
     {
     }
-    
+
     String MultiTermQueryWrapperFilter::toString()
     {
         // query->toString should be ok for the filter, too, if the query boost is 1.0
         return query->toString();
     }
-    
+
     bool MultiTermQueryWrapperFilter::equals(LuceneObjectPtr other)
     {
         if (Filter::equals(other))
@@ -46,22 +46,22 @@ namespace Lucene
             return query->equals(otherMultiTermQueryWrapperFilter->query);
         return false;
     }
-    
+
     int32_t MultiTermQueryWrapperFilter::hashCode()
     {
         return query->hashCode();
     }
-    
+
     int32_t MultiTermQueryWrapperFilter::getTotalNumberOfTerms()
     {
         return query->getTotalNumberOfTerms();
     }
-    
+
     void MultiTermQueryWrapperFilter::clearTotalNumberOfTerms()
     {
         query->clearTotalNumberOfTerms();
     }
-    
+
     DocIdSetPtr MultiTermQueryWrapperFilter::getDocIdSet(IndexReaderPtr reader)
     {
         TermEnumPtr enumerator(query->getEnum(reader));
@@ -100,7 +100,7 @@ namespace Lucene
                     }
                 }
                 while (enumerator->next());
-                
+
                 query->incTotalNumberOfTerms(termCount);
             }
             catch (LuceneException& e)

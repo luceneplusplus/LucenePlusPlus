@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,31 +17,31 @@ namespace Lucene
     public:
         FreqProxFieldMergeState(FreqProxTermsWriterPerFieldPtr field);
         virtual ~FreqProxFieldMergeState();
-        
+
         LUCENE_CLASS(FreqProxFieldMergeState);
-            
+
     public:
         FreqProxTermsWriterPerFieldPtr field;
         int32_t numPostings;
         CharBlockPoolPtr charPool;
         Collection<RawPostingListPtr> postings;
-        
+
         FreqProxTermsWriterPostingListPtr p;
         CharArray text;
         int32_t textOffset;
-        
+
         ByteSliceReaderPtr freq;
         ByteSliceReaderPtr prox;
-        
+
         int32_t docID;
         int32_t termFreq;
-    
+
     protected:
         int32_t postingUpto;
-        
+
     public:
         bool nextTerm();
-        bool nextDoc();  
+        bool nextDoc();
     };
 }
 

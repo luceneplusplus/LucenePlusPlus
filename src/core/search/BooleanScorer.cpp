@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ namespace Lucene
         this->minNrShouldMatch = minNrShouldMatch;
         this->end = 0;
         this->doc = -1;
-        
+
         if (optionalScorers && !optionalScorers.empty())
         {
             for (Collection<ScorerPtr>::iterator scorer = optionalScorers.begin(); scorer != optionalScorers.end(); ++scorer)
@@ -30,7 +30,7 @@ namespace Lucene
                     scorers = newLucene<SubScorer>(*scorer, false, false, bucketTable->newCollector(0), scorers);
             }
         }
-        
+
         if (prohibitedScorers && !prohibitedScorers.empty())
         {
             for (Collection<ScorerPtr>::iterator scorer = prohibitedScorers.begin(); scorer != prohibitedScorers.end(); ++scorer)
@@ -42,17 +42,17 @@ namespace Lucene
                     scorers = newLucene<SubScorer>(*scorer, false, true, bucketTable->newCollector(mask), scorers);
             }
         }
-        
+
         coordFactors = Collection<double>::newInstance(maxCoord);
         SimilarityPtr sim(getSimilarity());
         for (int32_t i = 0; i < maxCoord; ++i)
-            coordFactors[i] = sim->coord(i, maxCoord - 1); 
+            coordFactors[i] = sim->coord(i, maxCoord - 1);
     }
-    
+
     BooleanScorer::~BooleanScorer()
     {
     }
-    
+
     bool BooleanScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
         bool more = false;
@@ -63,7 +63,7 @@ namespace Lucene
         do
         {
             bucketTable->first.reset();
-            
+
             while (current) // more queued
             {
                 // check prohibited & required
@@ -77,7 +77,7 @@ namespace Lucene
                         bucketTable->first = tmp;
                         continue;
                     }
-                    
+
                     if (current->coord >= minNrShouldMatch)
                     {
                         bs->_score = current->score * coordFactors[current->coord];
@@ -85,21 +85,21 @@ namespace Lucene
                         collector->collect(current->doc);
                     }
                 }
-                
+
                 current = current->_next.lock(); // pop the queue
             }
-            
+
             if (bucketTable->first)
             {
                 current = bucketTable->first;
                 bucketTable->first = current->_next.lock();
                 return true;
             }
-            
+
             // refill the queue
             more = false;
             end += BucketTable::SIZE;
-            
+
             for (SubScorerPtr sub(scorers); sub; sub = sub->next)
             {
                 int32_t subScorerDocID = sub->scorer->docID();
@@ -112,21 +112,21 @@ namespace Lucene
             current = bucketTable->first;
         }
         while (current || more);
-        
+
         return false;
     }
-    
+
     int32_t BooleanScorer::advance(int32_t target)
     {
         boost::throw_exception(UnsupportedOperationException());
         return 0;
     }
-    
+
     int32_t BooleanScorer::docID()
     {
         return doc;
     }
-    
+
     int32_t BooleanScorer::nextDoc()
     {
         bool more = false;
@@ -136,7 +136,7 @@ namespace Lucene
             {
                 current = bucketTable->first;
                 bucketTable->first = current->_next.lock(); // pop the queue
-                
+
                 // check prohibited & required and minNrShouldMatch
                 if ((current->bits & prohibitedMask) == 0 && (current->bits & requiredMask) == requiredMask && current->coord >= minNrShouldMatch)
                 {
@@ -144,11 +144,11 @@ namespace Lucene
                     return doc;
                 }
             }
-            
+
             // refill the queue
             more = false;
             end += BucketTable::SIZE;
-            
+
             for (SubScorerPtr sub(scorers); sub; sub = sub->next)
             {
                 ScorerPtr scorer(sub->scorer);
@@ -164,21 +164,21 @@ namespace Lucene
             }
         }
         while (bucketTable->first || more);
-        
+
         doc = NO_MORE_DOCS;
         return doc;
     }
-    
+
     double BooleanScorer::score()
     {
         return current->score * coordFactors[current->coord];
     }
-    
+
     void BooleanScorer::score(CollectorPtr collector)
     {
         score(collector, INT_MAX, nextDoc());
     }
-    
+
     String BooleanScorer::toString()
     {
         StringStream buffer;
@@ -188,17 +188,17 @@ namespace Lucene
         buffer << L")";
         return buffer.str();
     }
-    
+
     BooleanScorerCollector::BooleanScorerCollector(int32_t mask, BucketTablePtr bucketTable)
     {
         this->mask = mask;
         this->_bucketTable = bucketTable;
     }
-    
+
     BooleanScorerCollector::~BooleanScorerCollector()
     {
     }
-    
+
     void BooleanScorerCollector::collect(int32_t doc)
     {
         BucketTablePtr table(_bucketTable);
@@ -209,14 +209,14 @@ namespace Lucene
             bucket = newLucene<Bucket>();
             table->buckets[i] = bucket;
         }
-        
+
         if (bucket->doc != doc) // invalid bucket
         {
             bucket->doc = doc; // set doc
             bucket->score = ScorerPtr(_scorer)->score(); // initialize score
             bucket->bits = mask; // initialize mask
             bucket->coord = 1; // initialize coord
-            
+
             bucket->_next = table->first; // push onto valid list
             table->first = bucket;
         }
@@ -227,52 +227,52 @@ namespace Lucene
             ++bucket->coord; // increment coord
         }
     }
-    
+
     void BooleanScorerCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
         // not needed by this implementation
     }
-    
+
     void BooleanScorerCollector::setScorer(ScorerPtr scorer)
     {
         this->_scorer = scorer;
     }
-    
+
     bool BooleanScorerCollector::acceptsDocsOutOfOrder()
     {
         return true;
     }
-    
+
     BucketScorer::BucketScorer() : Scorer(SimilarityPtr())
     {
         _score = 0;
         doc = NO_MORE_DOCS;
     }
-    
+
     BucketScorer::~BucketScorer()
     {
     }
-    
+
     int32_t BucketScorer::advance(int32_t target)
     {
         return NO_MORE_DOCS;
     }
-    
+
     int32_t BucketScorer::docID()
     {
         return doc;
     }
-    
+
     int32_t BucketScorer::nextDoc()
     {
         return NO_MORE_DOCS;
     }
-    
+
     double BucketScorer::score()
     {
         return _score;
     }
-    
+
     Bucket::Bucket()
     {
         doc = -1;
@@ -280,33 +280,33 @@ namespace Lucene
         bits = 0;
         coord = 0;
     }
-    
+
     Bucket::~Bucket()
     {
     }
-    
+
     const int32_t BucketTable::SIZE = 1 << 11;
     const int32_t BucketTable::MASK = BucketTable::SIZE - 1;
-    
+
     BucketTable::BucketTable()
     {
         buckets = Collection<BucketPtr>::newInstance(SIZE);
     }
-    
+
     BucketTable::~BucketTable()
     {
     }
-    
+
     CollectorPtr BucketTable::newCollector(int32_t mask)
     {
         return newLucene<BooleanScorerCollector>(mask, shared_from_this());
     }
-    
+
     int32_t BucketTable::size()
     {
         return SIZE;
     }
-    
+
     SubScorer::SubScorer(ScorerPtr scorer, bool required, bool prohibited, CollectorPtr collector, SubScorerPtr next)
     {
         this->scorer = scorer;
@@ -315,7 +315,7 @@ namespace Lucene
         this->collector = collector;
         this->next = next;
     }
-    
+
     SubScorer::~SubScorer()
     {
     }

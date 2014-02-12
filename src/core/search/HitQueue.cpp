@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,11 +14,11 @@ namespace Lucene
     {
         this->prePopulate = prePopulate;
     }
-    
+
     HitQueue::~HitQueue()
     {
     }
-    
+
     bool HitQueue::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second)
     {
         if (first->score == second->score)
@@ -26,10 +26,10 @@ namespace Lucene
         else
             return (first->score < second->score);
     }
-    
+
     ScoreDocPtr HitQueue::getSentinelObject()
     {
-        // Always set the doc Id to MAX_VALUE so that it won't be favored by lessThan. This generally should 
+        // Always set the doc Id to MAX_VALUE so that it won't be favored by lessThan. This generally should
         // not happen since if score is not NEG_INF, TopScoreDocCollector will always add the object to the queue.
         return !prePopulate ? ScoreDocPtr() : newLucene<ScoreDoc>(INT_MAX, -std::numeric_limits<double>::infinity());
     }

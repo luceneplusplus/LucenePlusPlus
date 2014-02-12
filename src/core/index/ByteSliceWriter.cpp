@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@ namespace Lucene
         upto = 0;
         offset0 = 0;
     }
-    
+
     ByteSliceWriter::~ByteSliceWriter()
     {
     }
-    
+
     void ByteSliceWriter::init(int32_t address)
     {
         slice = pool->buffers[address >> DocumentsWriter::BYTE_BLOCK_SHIFT];
@@ -30,7 +30,7 @@ namespace Lucene
         offset0 = address;
         BOOST_ASSERT(upto < slice.size());
     }
-    
+
     void ByteSliceWriter::writeByte(uint8_t b)
     {
         BOOST_ASSERT(slice);
@@ -44,7 +44,7 @@ namespace Lucene
         slice[upto++] = b;
         BOOST_ASSERT(upto != slice.size());
     }
-    
+
     void ByteSliceWriter::writeBytes(const uint8_t* b, int32_t offset, int32_t length)
     {
         int32_t offsetEnd = offset + length;
@@ -57,17 +57,17 @@ namespace Lucene
                 slice = pool->buffer;
                 offset0 = pool->byteOffset;
             }
-            
+
             slice[upto++] = b[offset++];
             BOOST_ASSERT(upto != slice.size());
         }
     }
-    
+
     int32_t ByteSliceWriter::getAddress()
     {
         return upto + (offset0 & DocumentsWriter::BYTE_BLOCK_NOT_MASK);
     }
-    
+
     void ByteSliceWriter::writeVInt(int32_t i)
     {
         while ((i & ~0x7f) != 0)

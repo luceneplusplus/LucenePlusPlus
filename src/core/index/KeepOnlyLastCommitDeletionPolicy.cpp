@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,13 +13,13 @@ namespace Lucene
     KeepOnlyLastCommitDeletionPolicy::~KeepOnlyLastCommitDeletionPolicy()
     {
     }
-    
+
     void KeepOnlyLastCommitDeletionPolicy::onInit(Collection<IndexCommitPtr> commits)
     {
         // Note that commits.size() should normally be 1
         onCommit(commits);
     }
-    
+
     void KeepOnlyLastCommitDeletionPolicy::onCommit(Collection<IndexCommitPtr> commits)
     {
         // Note that commits.size() should normally be 2 (if not called by onInit above)

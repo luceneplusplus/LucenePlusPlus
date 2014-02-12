@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -21,11 +21,11 @@ namespace Lucene
     const wchar_t ArabicStemmer::HEH = (wchar_t)0x0647;
     const wchar_t ArabicStemmer::WAW = (wchar_t)0x0648;
     const wchar_t ArabicStemmer::YEH = (wchar_t)0x064a;
-    
+
     ArabicStemmer::~ArabicStemmer()
     {
     }
-    
+
     const Collection<String> ArabicStemmer::prefixes()
     {
         static Collection<String> _prefixes;
@@ -42,7 +42,7 @@ namespace Lucene
         }
         return _prefixes;
     }
-    
+
     const Collection<String> ArabicStemmer::suffixes()
     {
         static Collection<String> _suffixes;
@@ -62,14 +62,14 @@ namespace Lucene
         }
         return _suffixes;
     }
-    
+
     int32_t ArabicStemmer::stem(wchar_t* s, int32_t len)
     {
         len = stemPrefix(s, len);
         len = stemSuffix(s, len);
         return len;
     }
-    
+
     int32_t ArabicStemmer::stemPrefix(wchar_t* s, int32_t len)
     {
         Collection<String> stemPrefixes(prefixes());
@@ -80,7 +80,7 @@ namespace Lucene
         }
         return len;
     }
-    
+
     int32_t ArabicStemmer::stemSuffix(wchar_t* s, int32_t len)
     {
         Collection<String> stemSuffixes(suffixes());
@@ -91,7 +91,7 @@ namespace Lucene
         }
         return len;
     }
-    
+
     bool ArabicStemmer::startsWith(wchar_t* s, int32_t len, const String& prefix)
     {
         if (prefix.length() == 1 && len < 4) // wa- prefix requires at least 3 characters
@@ -108,7 +108,7 @@ namespace Lucene
             return true;
         }
     }
-    
+
     bool ArabicStemmer::endsWith(wchar_t* s, int32_t len, const String& suffix)
     {
         if (len < (int32_t)suffix.length() + 2) // all suffixes require at least 2 characters after stemming
@@ -123,14 +123,14 @@ namespace Lucene
             return true;
         }
     }
-    
+
     int32_t ArabicStemmer::deleteChars(wchar_t* s, int32_t pos, int32_t len, int32_t chars)
     {
         for (int32_t i = 0; i < chars; ++i)
             len = deleteChar(s, pos, len);
         return len;
     }
-    
+
     int32_t ArabicStemmer::deleteChar(wchar_t* s, int32_t pos, int32_t len)
     {
         if (pos < len)

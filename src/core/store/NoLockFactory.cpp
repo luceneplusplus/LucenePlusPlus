@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ namespace Lucene
     NoLockFactory::~NoLockFactory()
     {
     }
-    
+
     NoLockFactoryPtr NoLockFactory::getNoLockFactory()
     {
         static NoLockFactoryPtr singleton;
@@ -24,7 +24,7 @@ namespace Lucene
         }
         return singleton;
     }
-    
+
     NoLockPtr NoLockFactory::getSingletonLock()
     {
         // Single instance returned whenever makeLock is called.
@@ -36,34 +36,34 @@ namespace Lucene
         }
         return singletonLock;
     }
-    
+
     LockPtr NoLockFactory::makeLock(const String& lockName)
     {
         return getSingletonLock();
     }
-    
+
     void NoLockFactory::clearLock(const String& lockName)
     {
     }
-    
+
     NoLock::~NoLock()
     {
     }
-    
+
     bool NoLock::obtain()
     {
         return true;
     }
-    
+
     void NoLock::release()
     {
     }
-    
+
     bool NoLock::isLocked()
     {
         return false;
     }
-    
+
     String NoLock::toString()
     {
         return getClassName();

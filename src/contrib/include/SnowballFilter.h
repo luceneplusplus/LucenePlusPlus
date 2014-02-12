@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -20,14 +20,14 @@ namespace Lucene
     public:
         SnowballFilter(TokenStreamPtr input, const String& name);
         virtual ~SnowballFilter();
-        
+
         LUCENE_CLASS(SnowballFilter);
-    
+
     protected:
         struct sb_stemmer* stemmer;
         UTF8ResultPtr utf8Result;
         TermAttributePtr termAtt;
-    
+
     public:
         virtual bool incrementToken();
     };

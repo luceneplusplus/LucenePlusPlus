@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -21,11 +21,11 @@ namespace Lucene
         text = newLucene<UnicodeResult>();
         bytes = newLucene<UTF8Result>();
     }
-    
+
     TermBuffer::~TermBuffer()
     {
     }
-    
+
     int32_t TermBuffer::compareTo(LuceneObjectPtr other)
     {
         TermBufferPtr otherTermBuffer(boost::static_pointer_cast<TermBuffer>(other));
@@ -34,7 +34,7 @@ namespace Lucene
         else
             return field.compare(otherTermBuffer->field);
     }
-    
+
     int32_t TermBuffer::compareChars(wchar_t* chars1, int32_t len1, wchar_t* chars2, int32_t len2)
     {
         int32_t end = len1 < len2 ? len1 : len2;
@@ -47,12 +47,12 @@ namespace Lucene
         }
         return len1 - len2;
     }
-    
+
     void TermBuffer::setPreUTF8Strings()
     {
         preUTF8Strings = true;
     }
-    
+
     void TermBuffer::read(IndexInputPtr input, FieldInfosPtr fieldInfos)
     {
         this->term.reset(); // invalidate cache
@@ -73,7 +73,7 @@ namespace Lucene
         }
         this->field = fieldInfos->fieldName(input->readVInt());
     }
-    
+
     void TermBuffer::set(TermPtr term)
     {
         if (!term)
@@ -88,7 +88,7 @@ namespace Lucene
         field = term->field();
         this->term = term;
     }
-    
+
     void TermBuffer::set(TermBufferPtr other)
     {
         text->copyText(other->text);
@@ -102,18 +102,18 @@ namespace Lucene
         text->setLength(0);
         term.reset();
     }
-    
+
     TermPtr TermBuffer::toTerm()
     {
         if (field.empty()) // unset
             return TermPtr();
-        
+
         if (!term)
             term = newLucene<Term>(field, String(text->result.get(), text->length));
-        
+
         return term;
     }
-    
+
     LuceneObjectPtr TermBuffer::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermBuffer>();
@@ -121,7 +121,7 @@ namespace Lucene
         cloneBuffer->field = field;
         cloneBuffer->term = term;
         cloneBuffer->preUTF8Strings = preUTF8Strings;
-        
+
         cloneBuffer->bytes = newLucene<UTF8Result>();
         cloneBuffer->text = newLucene<UnicodeResult>();
         cloneBuffer->text->copyText(text);

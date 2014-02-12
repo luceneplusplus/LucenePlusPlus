@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
- 
+
 #include "LuceneInc.h"
 #include "guniprop.h"
 
@@ -135,17 +135,17 @@
       (Result) <<= 6;							\
       (Result) |= ((Chars)[(Count)] & 0x3f);	\
     }
-    
+
 /**
  * g_utf8_get_char:
  * @p: a pointer to Unicode character encoded as UTF-8
- * 
+ *
  * Converts a sequence of bytes encoded as UTF-8 to a Unicode character.
  * If @p does not point to a valid UTF-8 encoded character, results are
  * undefined. If you are not sure that the bytes are complete
  * valid Unicode characters, you should use g_utf8_get_char_validated()
  * instead.
- * 
+ *
  * Return value: the resulting character
  **/
 gunichar
@@ -166,11 +166,11 @@ g_utf8_get_char (const gchar *p)
 /**
  * g_unichar_isalnum:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is alphanumeric.
  * Given some UTF-8 text, obtain a character value
  * with g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is an alphanumeric character
  **/
 gboolean
@@ -182,11 +182,11 @@ g_unichar_isalnum (gunichar c)
 /**
  * g_unichar_isalpha:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is alphabetic (i.e. a letter).
  * Given some UTF-8 text, obtain a character value with
  * g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is an alphabetic character
  **/
 gboolean
@@ -199,11 +199,11 @@ g_unichar_isalpha (gunichar c)
 /**
  * g_unichar_iscntrl:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is a control character.
  * Given some UTF-8 text, obtain a character value with
  * g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is a control character
  **/
 gboolean
@@ -215,11 +215,11 @@ g_unichar_iscntrl (gunichar c)
 /**
  * g_unichar_isdigit:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is numeric (i.e. a digit).  This
  * covers ASCII 0-9 and also digits in other languages/scripts.  Given
  * some UTF-8 text, obtain a character value with g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is a digit
  **/
 gboolean
@@ -232,13 +232,13 @@ g_unichar_isdigit (gunichar c)
 /**
  * g_unichar_isgraph:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is printable and not a space
  * (returns %FALSE for control characters, format characters, and
  * spaces). g_unichar_isprint() is similar, but returns %TRUE for
  * spaces. Given some UTF-8 text, obtain a character value with
  * g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is printable unless it's a space
  **/
 gboolean
@@ -256,11 +256,11 @@ g_unichar_isgraph (gunichar c)
 /**
  * g_unichar_islower:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is a lowercase letter.
  * Given some UTF-8 text, obtain a character value with
  * g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is a lowercase letter
  **/
 gboolean
@@ -273,12 +273,12 @@ g_unichar_islower (gunichar c)
 /**
  * g_unichar_isprint:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is printable.
  * Unlike g_unichar_isgraph(), returns %TRUE for spaces.
  * Given some UTF-8 text, obtain a character value with
  * g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is printable
  **/
 gboolean
@@ -295,11 +295,11 @@ g_unichar_isprint (gunichar c)
 /**
  * g_unichar_ispunct:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is punctuation or a symbol.
  * Given some UTF-8 text, obtain a character value with
  * g_utf8_get_char().
- * 
+ *
  * Return value: %TRUE if @c is a punctuation or symbol character
  **/
 gboolean
@@ -323,7 +323,7 @@ g_unichar_ispunct (gunichar c)
 /**
  * g_unichar_isspace:
  * @c: a Unicode character
- * 
+ *
  * Determines whether a character is a space, tab, or line separator
  * (newline, carriage return, etc.).  Given some UTF-8 text, obtain a
  * character value with g_utf8_get_char().
@@ -331,7 +331,7 @@ g_unichar_ispunct (gunichar c)
  * (Note: don't use this to do word breaking; you have to use
  * Pango or equivalent to get word breaking right, the algorithm
  * is fairly complex.)
- *  
+ *
  * Return value: %TRUE if @c is a space character
  **/
 gboolean
@@ -346,7 +346,7 @@ g_unichar_isspace (gunichar c)
     case '\f':
       return true;
       break;
-      
+
     default:
       {
 	return IS (TYPE(c),
@@ -386,9 +386,9 @@ g_unichar_ismark (gunichar c)
 /**
  * g_unichar_isupper:
  * @c: a Unicode character
- * 
+ *
  * Determines if a character is uppercase.
- * 
+ *
  * Return value: %TRUE if @c is an uppercase character
  **/
 gboolean
@@ -400,14 +400,14 @@ g_unichar_isupper (gunichar c)
 /**
  * g_unichar_istitle:
  * @c: a Unicode character
- * 
+ *
  * Determines if a character is titlecase. Some characters in
  * Unicode which are composites, such as the DZ digraph
  * have three case variants instead of just two. The titlecase
  * form is used at the beginning of a word where only the
  * first letter is capitalized. The titlecase form of the DZ
  * digraph is U+01F2 LATIN CAPITAL LETTTER D WITH SMALL LETTER Z.
- * 
+ *
  * Return value: %TRUE if the character is titlecase
  **/
 gboolean
@@ -423,9 +423,9 @@ g_unichar_istitle (gunichar c)
 /**
  * g_unichar_isxdigit:
  * @c: a Unicode character.
- * 
+ *
  * Determines if a character is a hexidecimal digit.
- * 
+ *
  * Return value: %TRUE if the character is a hexadecimal digit
  **/
 gboolean
@@ -439,7 +439,7 @@ g_unichar_isxdigit (gunichar c)
 /**
  * g_unichar_isdefined:
  * @c: a Unicode character
- * 
+ *
  * Determines if a given character is assigned in the Unicode
  * standard.
  *
@@ -457,9 +457,9 @@ g_unichar_isdefined (gunichar c)
 /**
  * g_unichar_toupper:
  * @c: a Unicode character
- * 
+ *
  * Converts a character to uppercase.
- * 
+ *
  * Return value: the result of converting @c to uppercase.
  *               If @c is not an lowercase or titlecase character,
  *               or has no upper case equivalent @c is returned unchanged.
@@ -478,7 +478,7 @@ g_unichar_toupper (gunichar c)
 	}
       /* Some lowercase letters, e.g., U+000AA, FEMININE ORDINAL INDICATOR,
        * do not have an uppercase equivalent, in which case val will be
-       * zero. 
+       * zero.
        */
       return val ? val : c;
     }
@@ -497,9 +497,9 @@ g_unichar_toupper (gunichar c)
 /**
  * g_unichar_tolower:
  * @c: a Unicode character.
- * 
+ *
  * Converts a character to lower case.
- * 
+ *
  * Return value: the result of converting @c to lower case.
  *               If @c is not an upperlower or titlecase character,
  *               or has no lowercase equivalent @c is returned unchanged.
@@ -538,9 +538,9 @@ g_unichar_tolower (gunichar c)
 /**
  * g_unichar_totitle:
  * @c: a Unicode character
- * 
+ *
  * Converts a character to the titlecase.
- * 
+ *
  * Return value: the result of converting @c to titlecase.
  *               If @c is not an uppercase or lowercase character,
  *               @c is returned unchanged.
@@ -555,7 +555,7 @@ g_unichar_totitle (gunichar c)
 	  || title_table[i][2] == c)
 	return title_table[i][0];
     }
-    
+
   if (TYPE (c) == G_UNICODE_LOWERCASE_LETTER)
     return g_unichar_toupper (c);
 
@@ -605,9 +605,9 @@ g_unichar_xdigit_value (gunichar c)
 /**
  * g_unichar_type:
  * @c: a Unicode character
- * 
+ *
  * Classifies a Unicode character by type.
- * 
+ *
  * Return value: the type of the character.
  **/
 GUnicodeType

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,15 +13,15 @@ namespace Lucene
     {
         inPlaceOr(disi);
     }
-    
+
     OpenBitSetDISI::OpenBitSetDISI(int32_t maxSize) : OpenBitSet(maxSize)
     {
     }
-    
+
     OpenBitSetDISI::~OpenBitSetDISI()
     {
     }
-    
+
     void OpenBitSetDISI::inPlaceOr(DocIdSetIteratorPtr disi)
     {
         int32_t doc;
@@ -29,7 +29,7 @@ namespace Lucene
         while ((doc = disi->nextDoc()) < _size)
             set(doc);
     }
-    
+
     void OpenBitSetDISI::inPlaceAnd(DocIdSetIteratorPtr disi)
     {
         int32_t bitSetDoc = nextSetBit((int32_t)0);
@@ -42,7 +42,7 @@ namespace Lucene
         if (bitSetDoc != -1)
             clear((int64_t)bitSetDoc, size());
     }
-    
+
     void OpenBitSetDISI::inPlaceNot(DocIdSetIteratorPtr disi)
     {
         int32_t doc;
@@ -50,7 +50,7 @@ namespace Lucene
         while ((doc = disi->nextDoc()) < _size)
             clear(doc);
     }
-    
+
     void OpenBitSetDISI::inPlaceXor(DocIdSetIteratorPtr disi)
     {
         int32_t doc;

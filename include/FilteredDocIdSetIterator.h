@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,18 +19,18 @@ namespace Lucene
         /// @param innerIter Underlying DocIdSetIterator.
         FilteredDocIdSetIterator(DocIdSetIteratorPtr innerIter);
         virtual ~FilteredDocIdSetIterator();
-    
+
         LUCENE_CLASS(FilteredDocIdSetIterator);
-    
+
     protected:
         DocIdSetIteratorPtr innerIter;
         int32_t doc;
-    
+
     public:
         virtual int32_t docID();
         virtual int32_t nextDoc();
         virtual int32_t advance(int32_t target);
-    
+
     protected:
         /// Validation method to determine whether a docid should be in the result set.
         /// @param doc docid to be tested

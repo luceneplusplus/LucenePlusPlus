@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -20,15 +20,15 @@ namespace Lucene
         this->term = term;
         String text(term->text());
         this->termContainsWildcard = boost::contains(text, L"*") || boost::contains(text, L"?");
-        this->termIsPrefix = termContainsWildcard && 
-                             !boost::contains(text, L"?") && 
+        this->termIsPrefix = termContainsWildcard &&
+                             !boost::contains(text, L"?") &&
                              text.find_first_of(L"*") == text.length() - 1;
     }
-    
+
     WildcardQuery::~WildcardQuery()
     {
     }
-    
+
     FilteredTermEnumPtr WildcardQuery::getEnum(IndexReaderPtr reader)
     {
         if (termContainsWildcard)
@@ -36,12 +36,12 @@ namespace Lucene
         else
             return newLucene<SingleTermEnum>(reader, getTerm());
     }
-    
+
     TermPtr WildcardQuery::getTerm()
     {
         return term;
     }
-    
+
     QueryPtr WildcardQuery::rewrite(IndexReaderPtr reader)
     {
         if (termIsPrefix)
@@ -54,7 +54,7 @@ namespace Lucene
         else
             return MultiTermQuery::rewrite(reader);
     }
-    
+
     String WildcardQuery::toString(const String& field)
     {
         StringStream buffer;
@@ -63,7 +63,7 @@ namespace Lucene
         buffer << term->text() << boostString();
         return buffer.str();
     }
-    
+
     LuceneObjectPtr WildcardQuery::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<WildcardQuery>(term));
@@ -73,7 +73,7 @@ namespace Lucene
         cloneQuery->term = term;
         return cloneQuery;
     }
-    
+
     int32_t WildcardQuery::hashCode()
     {
         int32_t prime = 31;
@@ -81,7 +81,7 @@ namespace Lucene
         result = prime * result + (term ? term->hashCode() : 0);
         return result;
     }
-    
+
     bool WildcardQuery::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))

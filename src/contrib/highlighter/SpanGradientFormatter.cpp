@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -10,15 +10,15 @@
 
 namespace Lucene
 {
-    SpanGradientFormatter::SpanGradientFormatter(double maxScore, const String& minForegroundColor, const String& maxForegroundColor, const String& minBackgroundColor, const String& maxBackgroundColor) : 
+    SpanGradientFormatter::SpanGradientFormatter(double maxScore, const String& minForegroundColor, const String& maxForegroundColor, const String& minBackgroundColor, const String& maxBackgroundColor) :
         GradientFormatter(maxScore, minForegroundColor, maxForegroundColor, minBackgroundColor, maxBackgroundColor)
     {
     }
-    
+
     SpanGradientFormatter::~SpanGradientFormatter()
     {
     }
-    
+
     String SpanGradientFormatter::highlightTerm(const String& originalText, TokenGroupPtr tokenGroup)
     {
         if (tokenGroup->getTotalScore() == 0)

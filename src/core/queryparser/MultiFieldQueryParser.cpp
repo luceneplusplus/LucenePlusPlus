@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,16 +19,16 @@ namespace Lucene
         this->boosts = boosts;
         this->fields = fields;
     }
-    
+
     MultiFieldQueryParser::MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer) : QueryParser(matchVersion, L"", analyzer)
     {
         this->fields = fields;
     }
-    
+
     MultiFieldQueryParser::~MultiFieldQueryParser()
     {
     }
-    
+
     QueryPtr MultiFieldQueryParser::getFieldQuery(const String& field, const String& queryText, int32_t slop)
     {
         if (field.empty())
@@ -59,12 +59,12 @@ namespace Lucene
         applySlop(query, slop);
         return query;
     }
-    
+
     QueryPtr MultiFieldQueryParser::getFieldQuery(const String& field, const String& queryText)
     {
         return getFieldQuery(field, queryText, 0);
     }
-    
+
     void MultiFieldQueryParser::applySlop(QueryPtr query, int32_t slop)
     {
         if (MiscUtils::typeOf<PhraseQuery>(query))
@@ -72,7 +72,7 @@ namespace Lucene
         if (MiscUtils::typeOf<MultiPhraseQuery>(query))
             boost::dynamic_pointer_cast<MultiPhraseQuery>(query)->setSlop(slop);
     }
-    
+
     QueryPtr MultiFieldQueryParser::getFuzzyQuery(const String& field, const String& termStr, double minSimilarity)
     {
         if (field.empty())
@@ -84,7 +84,7 @@ namespace Lucene
         }
         return QueryParser::getFuzzyQuery(field, termStr, minSimilarity);
     }
-    
+
     QueryPtr MultiFieldQueryParser::getPrefixQuery(const String& field, const String& termStr)
     {
         if (field.empty())
@@ -96,7 +96,7 @@ namespace Lucene
         }
         return QueryParser::getPrefixQuery(field, termStr);
     }
-    
+
     QueryPtr MultiFieldQueryParser::getWildcardQuery(const String& field, const String& termStr)
     {
         if (field.empty())
@@ -108,7 +108,7 @@ namespace Lucene
         }
         return QueryParser::getWildcardQuery(field, termStr);
     }
-    
+
     QueryPtr MultiFieldQueryParser::getRangeQuery(const String& field, const String& part1, const String& part2, bool inclusive)
     {
         if (field.empty())
@@ -120,7 +120,7 @@ namespace Lucene
         }
         return QueryParser::getRangeQuery(field, part1, part2, inclusive);
     }
-    
+
     QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, AnalyzerPtr analyzer)
     {
         if (queries.size() != fields.size())
@@ -135,7 +135,7 @@ namespace Lucene
         }
         return booleanQuery;
     }
-    
+
     QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, const String& query, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer)
     {
         if (fields.size() != flags.size())
@@ -150,7 +150,7 @@ namespace Lucene
         }
         return booleanQuery;
     }
-    
+
     QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer)
     {
         if (queries.size() != fields.size() || fields.size() != flags.size())

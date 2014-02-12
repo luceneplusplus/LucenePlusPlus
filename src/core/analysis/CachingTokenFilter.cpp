@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -12,11 +12,11 @@ namespace Lucene
     CachingTokenFilter::CachingTokenFilter(TokenStreamPtr input) : TokenFilter(input)
     {
     }
-    
+
     CachingTokenFilter::~CachingTokenFilter()
     {
     }
-    
+
     bool CachingTokenFilter::incrementToken()
     {
         if (!cache)
@@ -26,30 +26,30 @@ namespace Lucene
             fillCache();
             iterator = cache.begin();
         }
-        
+
         if (iterator == cache.end())
         {
             // the cache is exhausted, return false
             return false;
         }
-        
+
         // Since the TokenFilter can be reset, the tokens need to be preserved as immutable.
         restoreState(*iterator++);
         return true;
     }
-    
+
     void CachingTokenFilter::end()
     {
         if (finalState)
             restoreState(finalState);
     }
-    
+
     void CachingTokenFilter::reset()
     {
         if (cache)
             iterator = cache.begin();
     }
-    
+
     void CachingTokenFilter::fillCache()
     {
         while (input->incrementToken())

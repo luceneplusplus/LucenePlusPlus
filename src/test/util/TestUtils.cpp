@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,37 +19,37 @@ namespace Lucene
 {
     static RandomPtr randomTest = newLucene<Random>();
     static String testDir;
-    
+
     void setTestDir(const String& dir)
     {
         testDir = dir;
     }
-    
+
     String getTestDir()
     {
         if (testDir.empty())
             boost::throw_exception(RuntimeException(L"test directory not set"));
         return testDir;
     }
-    
+
     String getTempDir()
     {
         static String tempDir;
-        
+
         if (tempDir.empty())
         {
             tempDir = FileUtils::joinPath(getTestDir(), L"temp");
             FileUtils::createDirectory(tempDir);
         }
-        
+
         return tempDir;
     }
-    
+
     String getTempDir(const String& desc)
     {
         return FileUtils::joinPath(getTempDir(), desc + L"." + StringUtils::toString(randomTest->nextInt()));
     }
-    
+
     void syncConcurrentMerges(IndexWriterPtr writer)
     {
         syncConcurrentMerges(writer->getMergeScheduler());
@@ -60,20 +60,20 @@ namespace Lucene
         if (MiscUtils::typeOf<ConcurrentMergeScheduler>(ms))
             boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->sync();
     }
-    
+
     String intToEnglish(int32_t i)
     {
         String english(_intToEnglish(i));
         boost::trim(english);
         return english;
     }
-    
+
     String _intToEnglish(int32_t i)
     {
         String english;
         if (i == 0)
             return L"zero";
-        if (i < 0) 
+        if (i < 0)
         {
             english += L"minus ";
             i = -i;
@@ -169,7 +169,7 @@ namespace Lucene
         }
         return english;
     }
-    
+
     bool checkIndex(DirectoryPtr dir)
     {
         CheckIndexPtr checker = newLucene<CheckIndex>(dir);

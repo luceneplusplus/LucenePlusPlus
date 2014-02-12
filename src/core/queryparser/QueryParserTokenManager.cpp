@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -20,31 +20,31 @@ namespace Lucene
     const int64_t QueryParserTokenManager::jjbitVec4[] = {static_cast<int64_t>(0xfffefffffffffffeLL), static_cast<int64_t>(0xffffffffffffffffLL), static_cast<int64_t>(0xffffffffffffffffLL), static_cast<int64_t>(0xffffffffffffffffLL)};
 
     const int32_t QueryParserTokenManager::jjnextStates[] = {15, 16, 18, 29, 32, 23, 33, 30, 20, 21, 32, 23, 33, 31, 34, 27, 2, 4, 5, 0, 1};
-    
+
     /// Token literal values.
-    const wchar_t* QueryParserTokenManager::jjstrLiteralImages[] = 
+    const wchar_t* QueryParserTokenManager::jjstrLiteralImages[] =
     {
-        L"", L"", L"", L"", L"", L"", L"", L"", L"", L"", L"", L"\53", L"\55", 
-        L"\50", L"\51", L"\72", L"\52", L"\136", L"", L"", L"", L"", L"", L"\133", 
+        L"", L"", L"", L"", L"", L"", L"", L"", L"", L"", L"", L"\53", L"\55",
+        L"\50", L"\51", L"\72", L"\52", L"\136", L"", L"", L"", L"", L"", L"\133",
         L"\173", L"", L"\124\117", L"\135", L"", L"", L"\124\117", L"\175", L"", L""
     };
-    
+
     /// Lexer state names.
-    const wchar_t* QueryParserTokenManager::lexStateNames[] = 
+    const wchar_t* QueryParserTokenManager::lexStateNames[] =
     {
         L"Boost", L"RangeEx", L"RangeIn", L"DEFAULT"
     };
-    
+
     /// Lex State array.
-    const int32_t QueryParserTokenManager::jjnewLexState[] = 
+    const int32_t QueryParserTokenManager::jjnewLexState[] =
     {
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0,
         -1, -1, -1, -1, -1, 2, 1, 3, -1, 3, -1, -1, -1, 3, -1, -1
     };
-    
+
     const int64_t QueryParserTokenManager::jjtoToken[] = {0x3ffffff01LL};
     const int64_t QueryParserTokenManager::jjtoSkip[] = {0x80LL};
-    
+
     QueryParserTokenManager::QueryParserTokenManager(QueryParserCharStreamPtr stream)
     {
         debugStream = newLucene<InfoStreamOut>();
@@ -59,7 +59,7 @@ namespace Lucene
         jjmatchedKind = 0;
         input_stream = stream;
     }
-    
+
     QueryParserTokenManager::QueryParserTokenManager(QueryParserCharStreamPtr stream, int32_t lexState)
     {
         debugStream = newLucene<InfoStreamOut>();
@@ -75,33 +75,33 @@ namespace Lucene
         jjmatchedKind = 0;
         SwitchTo(lexState);
     }
-    
+
     QueryParserTokenManager::~QueryParserTokenManager()
     {
     }
-    
+
     void QueryParserTokenManager::setDebugStream(InfoStreamPtr debugStream)
     {
         this->debugStream = debugStream;
     }
-    
+
     int32_t QueryParserTokenManager::jjStopStringLiteralDfa_3(int32_t pos, int64_t active0)
     {
         return -1;
     }
-    
+
     int32_t QueryParserTokenManager::jjStartNfa_3(int32_t pos, int64_t active0)
     {
         return jjMoveNfa_3(jjStopStringLiteralDfa_3(pos, active0), pos + 1);
     }
-    
+
     int32_t QueryParserTokenManager::jjStopAtPos(int32_t pos, int32_t kind)
     {
         jjmatchedKind = kind;
         jjmatchedPos = pos;
         return pos + 1;
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveStringLiteralDfa0_3()
     {
         switch (curChar)
@@ -128,7 +128,7 @@ namespace Lucene
                 return jjMoveNfa_3(0, 0);
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjStartNfaWithStates_3(int32_t pos, int32_t kind, int32_t state)
     {
         jjmatchedKind = kind;
@@ -143,7 +143,7 @@ namespace Lucene
         }
         return jjMoveNfa_3(state, pos + 1);
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveNfa_3(int32_t startState, int32_t curPos)
     {
         int32_t startsAt = 0;
@@ -579,7 +579,7 @@ namespace Lucene
             }
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjStopStringLiteralDfa_1(int32_t pos, int64_t active0)
     {
         switch (pos)
@@ -595,12 +595,12 @@ namespace Lucene
                 return -1;
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjStartNfa_1(int32_t pos, int64_t active0)
     {
         return jjMoveNfa_1(jjStopStringLiteralDfa_1(pos, active0), pos + 1);
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveStringLiteralDfa0_1()
     {
         switch (curChar)
@@ -613,7 +613,7 @@ namespace Lucene
                 return jjMoveNfa_1(0, 0);
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveStringLiteralDfa1_1(int64_t active0)
     {
         try
@@ -636,7 +636,7 @@ namespace Lucene
         }
         return jjStartNfa_1(0, active0);
     }
-    
+
     int32_t QueryParserTokenManager::jjStartNfaWithStates_1(int32_t pos, int32_t kind, int32_t state)
     {
         jjmatchedKind = kind;
@@ -651,7 +651,7 @@ namespace Lucene
         }
         return jjMoveNfa_1(state, pos + 1);
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveNfa_1(int32_t startState, int32_t curPos)
     {
         int32_t startsAt = 0;
@@ -802,12 +802,12 @@ namespace Lucene
             }
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveStringLiteralDfa0_0()
     {
         return jjMoveNfa_0(0, 0);
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveNfa_0(int32_t startState, int32_t curPos)
     {
         int32_t startsAt = 0;
@@ -891,7 +891,7 @@ namespace Lucene
             }
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjStopStringLiteralDfa_2(int32_t pos, int64_t active0)
     {
         switch (pos)
@@ -907,12 +907,12 @@ namespace Lucene
                 return -1;
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjStartNfa_2(int32_t pos, int64_t active0)
     {
         return jjMoveNfa_2(jjStopStringLiteralDfa_2(pos, active0), pos + 1);
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveStringLiteralDfa0_2()
     {
         switch (curChar)
@@ -925,7 +925,7 @@ namespace Lucene
                 return jjMoveNfa_2(0, 0);
         }
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveStringLiteralDfa1_2(int64_t active0)
     {
         try
@@ -948,7 +948,7 @@ namespace Lucene
         }
         return jjStartNfa_2(0, active0);
     }
-    
+
     int32_t QueryParserTokenManager::jjStartNfaWithStates_2(int32_t pos, int32_t kind, int32_t state)
     {
         jjmatchedKind = kind;
@@ -963,7 +963,7 @@ namespace Lucene
         }
         return jjMoveNfa_2(state, pos + 1);
     }
-    
+
     int32_t QueryParserTokenManager::jjMoveNfa_2(int32_t startState, int32_t curPos)
     {
         int32_t startsAt = 0;
@@ -1114,7 +1114,7 @@ namespace Lucene
             }
         }
     }
-    
+
     bool QueryParserTokenManager::jjCanMove_0(int32_t hiByte, int32_t i1, int32_t i2, int64_t l1, int64_t l2)
     {
         switch (hiByte)
@@ -1125,7 +1125,7 @@ namespace Lucene
                 return false;
         }
     }
-    
+
     bool QueryParserTokenManager::jjCanMove_1(int32_t hiByte, int32_t i1, int32_t i2, int64_t l1, int64_t l2)
     {
         switch (hiByte)
@@ -1138,7 +1138,7 @@ namespace Lucene
                 return false;
         }
     }
-    
+
     bool QueryParserTokenManager::jjCanMove_2(int32_t hiByte, int32_t i1, int32_t i2, int64_t l1, int64_t l2)
     {
         switch (hiByte)
@@ -1153,7 +1153,7 @@ namespace Lucene
                 return false;
         }
     }
-    
+
     void QueryParserTokenManager::ReInit(QueryParserCharStreamPtr stream)
     {
         jjmatchedPos = 0;
@@ -1162,31 +1162,31 @@ namespace Lucene
         input_stream = stream;
         ReInitRounds();
     }
-    
+
     void QueryParserTokenManager::ReInitRounds()
     {
         jjround = 0x80000001;
         for (int32_t i = 36; i-- > 0;)
             jjrounds[i] = 0x80000000;
     }
-    
+
     void QueryParserTokenManager::ReInit(QueryParserCharStreamPtr stream, int32_t lexState)
     {
         ReInit(stream);
         SwitchTo(lexState);
     }
-    
+
     void QueryParserTokenManager::SwitchTo(int32_t lexState)
     {
         if (lexState >= 4 || lexState < 0)
         {
-            boost::throw_exception(QueryParserError(L"Error: Ignoring invalid lexical state : " + 
+            boost::throw_exception(QueryParserError(L"Error: Ignoring invalid lexical state : " +
                                                     StringUtils::toString(lexState) + L". State unchanged."));
         }
         else
             curLexState = lexState;
     }
-    
+
     QueryParserTokenPtr QueryParserTokenManager::jjFillToken()
     {
         String im(jjstrLiteralImages[jjmatchedKind]);
@@ -1196,20 +1196,20 @@ namespace Lucene
         int32_t endLine = input_stream->getEndLine();
         int32_t endColumn = input_stream->getEndColumn();
         QueryParserTokenPtr t(QueryParserToken::newToken(jjmatchedKind, curTokenImage));
-        
+
         t->beginLine = beginLine;
         t->endLine = endLine;
         t->beginColumn = beginColumn;
         t->endColumn = endColumn;
-        
+
         return t;
     }
-    
+
     QueryParserTokenPtr QueryParserTokenManager::getNextToken()
     {
         QueryParserTokenPtr matchedToken;
         int32_t curPos = 0;
-        
+
         while (true)
         {
             try
@@ -1222,7 +1222,7 @@ namespace Lucene
                 matchedToken = jjFillToken();
                 return matchedToken;
             }
-            
+
             switch (curLexState)
             {
                 case 0:
@@ -1246,7 +1246,7 @@ namespace Lucene
                     curPos = jjMoveStringLiteralDfa0_3();
                     break;
             }
-            
+
             if (jjmatchedKind != 0x7fffffff)
             {
                 if (jjmatchedPos + 1 < curPos)
@@ -1286,17 +1286,17 @@ namespace Lucene
                 else
                     ++error_column;
             }
-            
+
             if (!EOFSeen)
             {
                 input_stream->backup(1);
                 error_after = curPos <= 1 ? L"" : input_stream->GetImage();
             }
-            
+
             boost::throw_exception(QueryParserError(QueryParseError::lexicalError(EOFSeen, curLexState, error_line, error_column, error_after, curChar)));
         }
     }
-    
+
     void QueryParserTokenManager::jjCheckNAdd(int32_t state)
     {
         if (jjrounds[state] != jjround)
@@ -1305,7 +1305,7 @@ namespace Lucene
             jjrounds[state] = jjround;
         }
     }
-    
+
     void QueryParserTokenManager::jjAddStates(int32_t start, int32_t end)
     {
         do
@@ -1314,13 +1314,13 @@ namespace Lucene
         }
         while (start++ != end);
     }
-    
+
     void QueryParserTokenManager::jjCheckNAddTwoStates(int32_t state1, int32_t state2)
     {
         jjCheckNAdd(state1);
         jjCheckNAdd(state2);
     }
-    
+
     void QueryParserTokenManager::jjCheckNAddStates(int32_t start, int32_t end)
     {
         do

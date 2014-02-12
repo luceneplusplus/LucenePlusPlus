@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,18 +16,18 @@ namespace Lucene
         outputPos = 0;
         termAtt = addAttribute<TermAttribute>();
     }
-    
+
     ISOLatin1AccentFilter::~ISOLatin1AccentFilter()
     {
     }
-    
+
     bool ISOLatin1AccentFilter::incrementToken()
     {
         if (input->incrementToken())
         {
             wchar_t* buffer = termAtt->termBufferArray();
             int32_t length = termAtt->termLength();
-            
+
             // If no characters actually require rewriting then we just return token as-is
             for (int32_t i = 0; i < length; ++i)
             {
@@ -44,28 +44,28 @@ namespace Lucene
         else
             return false;
     }
-    
+
     void ISOLatin1AccentFilter::removeAccents(const wchar_t* input, int32_t length)
     {
         // Worst-case length required
         int32_t maxSizeNeeded = 2 * length;
-        
+
         int32_t size = output.size();
         while (size < maxSizeNeeded)
             size *= 2;
-        
+
         if (size != output.size())
             output.resize(size);
-        
+
         outputPos = 0;
         int32_t pos = 0;
-        
+
         wchar_t* output = this->output.get();
-        
+
         for (int32_t i = 0; i < length; ++i, ++pos)
         {
             wchar_t c = input[pos];
-            
+
             // Quick test: if it's not in range then just keep current character
             if (c < 0x00C0 || c > 0xFB06)
                 output[outputPos++] = c;

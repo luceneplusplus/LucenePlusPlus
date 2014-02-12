@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ namespace Lucene
     BrazilianStemmer::~BrazilianStemmer()
     {
     }
-    
+
     String BrazilianStemmer::stem(const String& term)
     {
         // creates CT
@@ -44,7 +44,7 @@ namespace Lucene
 
         return CT;
     }
-    
+
     bool BrazilianStemmer::isStemmable(const String& term)
     {
         for (int32_t c = 0; c < (int32_t)term.length(); ++c)
@@ -55,17 +55,17 @@ namespace Lucene
         }
         return true;
     }
-    
+
     bool BrazilianStemmer::isIndexable(const String& term)
     {
         return (term.length() < 30) && (term.length() > 2);
     }
-    
+
     bool BrazilianStemmer::isVowel(wchar_t value)
     {
         return (value == L'a' || value == L'e' || value == L'i' || value == L'o' || value == L'u');
     }
-    
+
     String BrazilianStemmer::getR1(const String& value)
     {
         if (value.empty())
@@ -95,7 +95,7 @@ namespace Lucene
 
         return value.substr(j + 1);
     }
-    
+
     String BrazilianStemmer::getRV(const String& value)
     {
         if (value.empty())
@@ -133,14 +133,14 @@ namespace Lucene
             if (j < i)
                 return value.substr(j + 1);
         }
-        
+
         // RV - AND otherwise (consonant-vowel case) RV is the region after the third letter.
         if (i > 2)
             return value.substr(3);
-    
+
         return L"";
     }
-    
+
     String BrazilianStemmer::changeTerm(const String& value)
     {
         if (value.empty())
@@ -148,7 +148,7 @@ namespace Lucene
 
         String lowerValue(StringUtils::toLower(value));
         String r;
-        
+
         for (int32_t j = 0; j < (int32_t)value.length(); ++j)
         {
             if (value[j] == 0x00e1 || value[j] == 0x00e2 || value[j] == 0x00e3)
@@ -192,7 +192,7 @@ namespace Lucene
 
         return r ;
     }
-    
+
     bool BrazilianStemmer::checkSuffix(const String& value, const String& suffix)
     {
         if (value.empty() || suffix.empty())
@@ -201,34 +201,34 @@ namespace Lucene
             return false;
         return (value.substr(value.length() - suffix.length()) == suffix);
     }
-    
+
     String BrazilianStemmer::replaceSuffix(const String& value, const String& toReplace, const String& changeTo)
     {
         if (value.empty() || toReplace.empty() || changeTo.empty())
             return value;
-        
+
         String vvalue = removeSuffix(value, toReplace);
-        
+
         if (value == vvalue)
             return value;
         else
             return vvalue + changeTo;
     }
-    
+
     String BrazilianStemmer::removeSuffix(const String& value, const String& toRemove)
     {
         if (value.empty() || toRemove.empty() || !checkSuffix(value, toRemove))
             return value;
         return value.substr(0, value.length() - toRemove.length());
     }
-    
+
     bool BrazilianStemmer::suffixPreceded(const String& value, const String& suffix, const String& preceded)
     {
         if (value.empty() || suffix.empty() || preceded.empty() || !checkSuffix(value, suffix))
             return false;
         return checkSuffix(removeSuffix(value, suffix), preceded);
     }
-    
+
     void BrazilianStemmer::createCT(const String& term)
     {
         CT = changeTerm(term);
@@ -250,12 +250,12 @@ namespace Lucene
             CT[CT.length() - 1] == L'\'' || CT[CT.length() - 1] == L'"')
             CT = CT.substr(0, CT.length() - 1);
     }
-    
+
     bool BrazilianStemmer::step1()
     {
         if (CT.empty())
             return false;
-        
+
         // suffix length = 7
         if (checkSuffix(CT, L"uciones") && checkSuffix(R2, L"uciones"))
         {
@@ -286,7 +286,7 @@ namespace Lucene
                 CT = removeSuffix(CT, L"adoras");
                 return true;
             }
-            if (checkSuffix(CT, L"logias") && checkSuffix(R2, L"logias")) 
+            if (checkSuffix(CT, L"logias") && checkSuffix(R2, L"logias"))
             {
                 replaceSuffix(CT, L"logias", L"log");
                 return true;
@@ -491,12 +491,12 @@ namespace Lucene
         // no ending was removed by step1
         return false;
     }
-    
+
     bool BrazilianStemmer::step2()
     {
         if (RV.empty())
             return false;
-        
+
         // suffix lenght = 7
         if (RV.length() >= 7)
         {
@@ -601,7 +601,7 @@ namespace Lucene
                 return true;
             }
         }
-        
+
         // suffix length = 5
         if (RV.length() >= 5)
         {
@@ -1100,21 +1100,21 @@ namespace Lucene
         // no ending was removed by step2
         return false;
     }
-    
+
     void BrazilianStemmer::step3()
     {
         if (RV.empty())
             return;
-        
+
         if (checkSuffix(RV, L"i") && suffixPreceded(RV, L"i", L"c"))
             CT = removeSuffix(CT, L"i");
     }
-    
+
     void BrazilianStemmer::step4()
     {
         if (RV.empty())
             return;
-        
+
         if (checkSuffix(RV, L"os"))
         {
             CT = removeSuffix(CT, L"os");
@@ -1136,12 +1136,12 @@ namespace Lucene
             return;
         }
     }
-    
+
     void BrazilianStemmer::step5()
     {
         if (RV.empty())
             return;
-        
+
         if (checkSuffix(RV, L"e"))
         {
             if (suffixPreceded(RV, L"e", L"gu"))

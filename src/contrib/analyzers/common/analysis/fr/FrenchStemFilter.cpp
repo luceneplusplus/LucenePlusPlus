@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,18 +16,18 @@ namespace Lucene
         stemmer = newLucene<FrenchStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
-    
+
     FrenchStemFilter::FrenchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<FrenchStemmer>();
         termAtt = addAttribute<TermAttribute>();
         this->exclusions = exclusiontable;
     }
-    
+
     FrenchStemFilter::~FrenchStemFilter()
     {
     }
-    
+
     bool FrenchStemFilter::incrementToken()
     {
         if (input->incrementToken())
@@ -46,13 +46,13 @@ namespace Lucene
         else
             return false;
     }
-    
+
     void FrenchStemFilter::setStemmer(FrenchStemmerPtr stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;
     }
-    
+
     void FrenchStemFilter::setExclusionSet(HashSet<String> exclusiontable)
     {
         this->exclusions = exclusiontable;

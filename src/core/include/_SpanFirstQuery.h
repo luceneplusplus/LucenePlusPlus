@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,13 +16,13 @@ namespace Lucene
     public:
         FirstSpans(SpanFirstQueryPtr query, SpansPtr spans);
         virtual ~FirstSpans();
-        
+
         LUCENE_CLASS(FirstSpans);
-    
+
     protected:
         SpanFirstQueryPtr query;
         SpansPtr spans;
-    
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);

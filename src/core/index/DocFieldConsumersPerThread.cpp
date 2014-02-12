@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -12,8 +12,8 @@
 
 namespace Lucene
 {
-    DocFieldConsumersPerThread::DocFieldConsumersPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, 
-                                                           DocFieldConsumersPtr parent, 
+    DocFieldConsumersPerThread::DocFieldConsumersPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread,
+                                                           DocFieldConsumersPtr parent,
                                                            DocFieldConsumerPerThreadPtr one, DocFieldConsumerPerThreadPtr two)
     {
         this->_parent = parent;
@@ -21,17 +21,17 @@ namespace Lucene
         this->two = two;
         docState = docFieldProcessorPerThread->docState;
     }
-    
+
     DocFieldConsumersPerThread::~DocFieldConsumersPerThread()
     {
     }
-    
+
     void DocFieldConsumersPerThread::startDocument()
     {
         one->startDocument();
         two->startDocument();
     }
-    
+
     void DocFieldConsumersPerThread::abort()
     {
         LuceneException finally;
@@ -53,7 +53,7 @@ namespace Lucene
         }
         finally.throwException();
     }
-    
+
     DocWriterPtr DocFieldConsumersPerThread::finishDocument()
     {
         DocWriterPtr oneDoc(one->finishDocument());
@@ -73,7 +73,7 @@ namespace Lucene
             return both;
         }
     }
-    
+
     DocFieldConsumerPerFieldPtr DocFieldConsumersPerThread::addField(FieldInfoPtr fi)
     {
         return newLucene<DocFieldConsumersPerField>(shared_from_this(), one->addField(fi), two->addField(fi));

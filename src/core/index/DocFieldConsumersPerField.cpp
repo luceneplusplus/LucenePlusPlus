@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,17 +15,17 @@ namespace Lucene
         this->one = one;
         this->two = two;
     }
-    
+
     DocFieldConsumersPerField::~DocFieldConsumersPerField()
     {
     }
-    
+
     void DocFieldConsumersPerField::processFields(Collection<FieldablePtr> fields, int32_t count)
     {
         one->processFields(fields, count);
         two->processFields(fields, count);
     }
-    
+
     void DocFieldConsumersPerField::abort()
     {
         LuceneException finally;

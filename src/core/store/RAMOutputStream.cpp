@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,33 +13,33 @@
 namespace Lucene
 {
     const int32_t RAMOutputStream::BUFFER_SIZE = 1024;
-    
+
     RAMOutputStream::RAMOutputStream()
     {
         file = newLucene<RAMFile>(RAMDirectoryPtr());
-        
+
         // make sure that we switch to the first needed buffer lazily
         currentBufferIndex = -1;
         bufferPosition = 0;
         bufferStart = 0;
         bufferLength = 0;
     }
-    
+
     RAMOutputStream::RAMOutputStream(RAMFilePtr f)
     {
         file = f;
-        
+
         // make sure that we switch to the first needed buffer lazily
         currentBufferIndex = -1;
         bufferPosition = 0;
         bufferStart = 0;
         bufferLength = 0;
     }
-    
+
     RAMOutputStream::~RAMOutputStream()
     {
     }
-    
+
     void RAMOutputStream::writeTo(IndexOutputPtr out)
     {
         flush();
@@ -56,7 +56,7 @@ namespace Lucene
             pos = nextPos;
         }
     }
-    
+
     void RAMOutputStream::reset()
     {
         currentBuffer.reset();
@@ -66,12 +66,12 @@ namespace Lucene
         bufferLength = 0;
         file->setLength(0);
     }
-    
+
     void RAMOutputStream::close()
     {
         flush();
     }
-    
+
     void RAMOutputStream::seek(int64_t pos)
     {
         // set the file length in case we seek back and flush() has not been called yet
@@ -83,12 +83,12 @@ namespace Lucene
         }
         bufferPosition = (int32_t)(pos % BUFFER_SIZE);
     }
-    
+
     int64_t RAMOutputStream::length()
     {
         return file->length;
     }
-    
+
     void RAMOutputStream::writeByte(uint8_t b)
     {
         if (bufferPosition == bufferLength)
@@ -98,7 +98,7 @@ namespace Lucene
         }
         currentBuffer[bufferPosition++] = b;
     }
-    
+
     void RAMOutputStream::writeBytes(const uint8_t* b, int32_t offset, int32_t length)
     {
         while (length > 0)
@@ -109,7 +109,7 @@ namespace Lucene
                 ++currentBufferIndex;
                 switchCurrentBuffer();
             }
-            
+
             int32_t remainInBuffer = currentBuffer.size() - bufferPosition;
             int32_t bytesToCopy = length < remainInBuffer ? length : remainInBuffer;
             MiscUtils::arrayCopy(b, offset, currentBuffer.get(), bufferPosition, bytesToCopy);
@@ -118,7 +118,7 @@ namespace Lucene
             bufferPosition += bytesToCopy;
         }
     }
-    
+
     void RAMOutputStream::switchCurrentBuffer()
     {
         if (currentBufferIndex == file->numBuffers())
@@ -129,25 +129,25 @@ namespace Lucene
         bufferStart = (int64_t)BUFFER_SIZE * (int64_t)currentBufferIndex;
         bufferLength = currentBuffer.size();
     }
-    
+
     void RAMOutputStream::setFileLength()
     {
         int64_t pointer = bufferStart + bufferPosition;
         if (pointer > file->length)
             file->setLength(pointer);
     }
-    
+
     void RAMOutputStream::flush()
     {
         file->setLastModified(MiscUtils::currentTimeMillis());
         setFileLength();
     }
-    
+
     int64_t RAMOutputStream::getFilePointer()
     {
         return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
     }
-    
+
     int64_t RAMOutputStream::sizeInBytes()
     {
         return file->numBuffers() * BUFFER_SIZE;

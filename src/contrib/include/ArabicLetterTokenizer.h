@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -22,17 +22,17 @@ namespace Lucene
     public:
         /// Construct a new ArabicLetterTokenizer.
         ArabicLetterTokenizer(ReaderPtr input);
-        
+
         /// Construct a new ArabicLetterTokenizer using a given {@link AttributeSource}.
         ArabicLetterTokenizer(AttributeSourcePtr source, ReaderPtr input);
-        
+
         /// Construct a new ArabicLetterTokenizer using a given {@link AttributeFactory}.
         ArabicLetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
-        
+
         virtual ~ArabicLetterTokenizer();
-        
+
         LUCENE_CLASS(ArabicLetterTokenizer);
-    
+
     public:
         /// Allows for Letter category or NonspacingMark category
         virtual bool isTokenChar(wchar_t c);

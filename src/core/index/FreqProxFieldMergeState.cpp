@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -28,43 +28,43 @@ namespace Lucene
         this->postingUpto = -1;
         this->freq = newLucene<ByteSliceReader>();
         this->prox = newLucene<ByteSliceReader>();
-        
+
         this->field = field;
         this->charPool = TermsHashPerThreadPtr(FreqProxTermsWriterPerThreadPtr(field->_perThread)->_termsHashPerThread)->charPool;
-        
+
         TermsHashPerFieldPtr termsHashPerField(field->_termsHashPerField);
         this->numPostings = termsHashPerField->numPostings;
         this->postings = termsHashPerField->sortPostings();
     }
-    
+
     FreqProxFieldMergeState::~FreqProxFieldMergeState()
     {
     }
-    
+
     bool FreqProxFieldMergeState::nextTerm()
     {
         ++postingUpto;
         if (postingUpto == numPostings)
             return false;
-        
+
         p = boost::static_pointer_cast<FreqProxTermsWriterPostingList>(postings[postingUpto]);
         docID = 0;
-        
+
         text = charPool->buffers[p->textStart >> DocumentsWriter::CHAR_BLOCK_SHIFT];
         textOffset = (p->textStart & DocumentsWriter::CHAR_BLOCK_MASK);
-        
+
         TermsHashPerFieldPtr termsHashPerField(field->_termsHashPerField);
         termsHashPerField->initReader(freq, p, 0);
         if (!field->fieldInfo->omitTermFreqAndPositions)
             termsHashPerField->initReader(prox, p, 1);
-        
+
         // Should always be true
         bool result = nextDoc();
         BOOST_ASSERT(result);
-        
+
         return true;
     }
-    
+
     bool FreqProxFieldMergeState::nextDoc()
     {
         if (freq->eof())
@@ -84,7 +84,7 @@ namespace Lucene
                 return false;
             }
         }
-        
+
         int32_t code = freq->readVInt();
         if (field->omitTermFreqAndPositions)
             docID += code;
@@ -96,9 +96,9 @@ namespace Lucene
             else
                 termFreq = freq->readVInt();
         }
-        
+
         BOOST_ASSERT(docID != p->lastDocID);
-        
+
         return true;
     }
 }

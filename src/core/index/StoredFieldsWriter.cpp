@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -24,38 +24,38 @@ namespace Lucene
         docFreeList = Collection<StoredFieldsWriterPerDocPtr>::newInstance(1);
         freeCount = 0;
         allocCount = 0;
-        
+
         this->_docWriter = docWriter;
         this->fieldInfos = fieldInfos;
     }
-    
+
     StoredFieldsWriter::~StoredFieldsWriter()
     {
     }
-    
+
     StoredFieldsWriterPerThreadPtr StoredFieldsWriter::addThread(DocStatePtr docState)
     {
         return newLucene<StoredFieldsWriterPerThread>(docState, shared_from_this());
     }
-    
+
     void StoredFieldsWriter::flush(SegmentWriteStatePtr state)
     {
         SyncLock syncLock(this);
         if (state->numDocsInStore > 0)
         {
-            // It's possible that all documents seen in this segment hit non-aborting exceptions, 
+            // It's possible that all documents seen in this segment hit non-aborting exceptions,
             // in which case we will not have yet init'd the FieldsWriter
             initFieldsWriter();
 
-            // Fill fdx file to include any final docs that we skipped because they hit non-aborting 
+            // Fill fdx file to include any final docs that we skipped because they hit non-aborting
             // exceptions
             fill(state->numDocsInStore - DocumentsWriterPtr(_docWriter)->getDocStoreOffset());
         }
-        
+
         if (fieldsWriter)
             fieldsWriter->flush();
     }
-    
+
     void StoredFieldsWriter::initFieldsWriter()
     {
         if (!fieldsWriter)
@@ -71,7 +71,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void StoredFieldsWriter::closeDocStore(SegmentWriteStatePtr state)
     {
         SyncLock syncLock(this);
@@ -81,7 +81,7 @@ namespace Lucene
             initFieldsWriter();
             fill(state->numDocsInStore - DocumentsWriterPtr(_docWriter)->getDocStoreOffset());
         }
-        
+
         if (fieldsWriter)
         {
             fieldsWriter->close();
@@ -94,19 +94,19 @@ namespace Lucene
             DocumentsWriterPtr docWriter(state->_docWriter);
             docWriter->removeOpenFile(state->docStoreSegmentName + L"." + IndexFileNames::FIELDS_EXTENSION());
             docWriter->removeOpenFile(state->docStoreSegmentName + L"." + IndexFileNames::FIELDS_INDEX_EXTENSION());
-            
+
             String fileName(state->docStoreSegmentName + L"." + IndexFileNames::FIELDS_INDEX_EXTENSION());
-            
+
             if (4 + ((int64_t)state->numDocsInStore) * 8 != state->directory->fileLength(fileName))
             {
-                boost::throw_exception(RuntimeException(L"after flush: fdx size mismatch: " + StringUtils::toString(state->numDocsInStore) + 
-                                                        L" docs vs " + StringUtils::toString(state->directory->fileLength(fileName)) + 
-                                                        L" length in bytes of " + fileName + L" file exists?=" + 
+                boost::throw_exception(RuntimeException(L"after flush: fdx size mismatch: " + StringUtils::toString(state->numDocsInStore) +
+                                                        L" docs vs " + StringUtils::toString(state->directory->fileLength(fileName)) +
+                                                        L" length in bytes of " + fileName + L" file exists?=" +
                                                         StringUtils::toString(state->directory->fileExists(fileName))));
             }
         }
     }
-    
+
     StoredFieldsWriterPerDocPtr StoredFieldsWriter::getPerDoc()
     {
         SyncLock syncLock(this);
@@ -115,7 +115,7 @@ namespace Lucene
             ++allocCount;
             if (allocCount > docFreeList.size())
             {
-                // Grow our free list up front to make sure we have enough space to recycle all 
+                // Grow our free list up front to make sure we have enough space to recycle all
                 // outstanding StoredFieldsWriterPerDoc instances
                 BOOST_ASSERT(allocCount == docFreeList.size() + 1);
                 docFreeList.resize(MiscUtils::getNextSize(allocCount));
@@ -125,7 +125,7 @@ namespace Lucene
         else
             return docFreeList[--freeCount];
     }
-    
+
     void StoredFieldsWriter::abort()
     {
         SyncLock syncLock(this);
@@ -142,11 +142,11 @@ namespace Lucene
             lastDocID = 0;
         }
     }
-    
+
     void StoredFieldsWriter::fill(int32_t docID)
     {
         int32_t docStoreOffset = DocumentsWriterPtr(_docWriter)->getDocStoreOffset();
-        
+
         // We must "catch up" for all docs before us that had no stored fields
         int32_t end = docID + docStoreOffset;
         while (lastDocID < end)
@@ -155,16 +155,16 @@ namespace Lucene
             ++lastDocID;
         }
     }
-    
+
     void StoredFieldsWriter::finishDocument(StoredFieldsWriterPerDocPtr perDoc)
     {
         SyncLock syncLock(this);
         IndexWriterPtr writer(DocumentsWriterPtr(_docWriter)->_writer);
         BOOST_ASSERT(writer->testPoint(L"StoredFieldsWriter.finishDocument start"));
         initFieldsWriter();
-        
+
         fill(perDoc->docID);
-        
+
         // Append stored fields to the real FieldsWriter
         fieldsWriter->flushDocument(perDoc->numStoredFields, perDoc->fdt);
         ++lastDocID;
@@ -172,12 +172,12 @@ namespace Lucene
         free(perDoc);
         BOOST_ASSERT(writer->testPoint(L"StoredFieldsWriter.finishDocument end"));
     }
-    
+
     bool StoredFieldsWriter::freeRAM()
     {
         return false;
     }
-    
+
     void StoredFieldsWriter::free(StoredFieldsWriterPerDocPtr perDoc)
     {
         SyncLock syncLock(this);
@@ -187,7 +187,7 @@ namespace Lucene
         BOOST_ASSERT(perDoc->fdt->getFilePointer() == 0);
         docFreeList[freeCount++] = perDoc;
     }
-    
+
     StoredFieldsWriterPerDoc::StoredFieldsWriterPerDoc(StoredFieldsWriterPtr fieldsWriter)
     {
         this->_fieldsWriter = fieldsWriter;
@@ -195,29 +195,29 @@ namespace Lucene
         fdt = newLucene<RAMOutputStream>(buffer);
         numStoredFields = 0;
     }
-    
+
     StoredFieldsWriterPerDoc::~StoredFieldsWriterPerDoc()
     {
     }
-    
+
     void StoredFieldsWriterPerDoc::reset()
     {
         fdt->reset();
         buffer->recycle();
         numStoredFields = 0;
     }
-    
+
     void StoredFieldsWriterPerDoc::abort()
     {
         reset();
         StoredFieldsWriterPtr(_fieldsWriter)->free(shared_from_this());
     }
-    
+
     int64_t StoredFieldsWriterPerDoc::sizeInBytes()
     {
         return buffer->getSizeInBytes();
     }
-    
+
     void StoredFieldsWriterPerDoc::finish()
     {
         StoredFieldsWriterPtr(_fieldsWriter)->finishDocument(shared_from_this());

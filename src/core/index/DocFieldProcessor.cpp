@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -25,22 +25,22 @@ namespace Lucene
         consumer->setFieldInfos(fieldInfos);
         fieldsWriter = newLucene<StoredFieldsWriter>(docWriter, fieldInfos);
     }
-    
+
     DocFieldProcessor::~DocFieldProcessor()
     {
     }
-    
+
     void DocFieldProcessor::closeDocStore(SegmentWriteStatePtr state)
     {
         consumer->closeDocStore(state);
         fieldsWriter->closeDocStore(state);
     }
-    
+
     void DocFieldProcessor::flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state)
     {
         TestScope testScope(L"DocFieldProcessor", L"flush");
         MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField childThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
-        
+
         for (Collection<DocConsumerPerThreadPtr>::iterator thread = threads.begin(); thread != threads.end(); ++thread)
         {
             DocFieldProcessorPerThreadPtr perThread(boost::static_pointer_cast<DocFieldProcessorPerThread>(*thread));
@@ -49,25 +49,25 @@ namespace Lucene
         }
         fieldsWriter->flush(state);
         consumer->flush(childThreadsAndFields, state);
-        
+
         // Important to save after asking consumer to flush so consumer can alter the FieldInfo* if necessary.
         // eg FreqProxTermsWriter does this with FieldInfo.storePayload.
         String fileName(state->segmentFileName(IndexFileNames::FIELD_INFOS_EXTENSION()));
         fieldInfos->write(state->directory, fileName);
         state->flushedFiles.add(fileName);
     }
-    
+
     void DocFieldProcessor::abort()
     {
         fieldsWriter->abort();
         consumer->abort();
     }
-    
+
     bool DocFieldProcessor::freeRAM()
     {
         return consumer->freeRAM();
     }
-    
+
     DocConsumerPerThreadPtr DocFieldProcessor::addThread(DocumentsWriterThreadStatePtr perThread)
     {
         return newLucene<DocFieldProcessorPerThread>(perThread, shared_from_this());

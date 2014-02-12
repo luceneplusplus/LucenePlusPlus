@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@ namespace Lucene
 {
     /// Default buffer size.
     const int32_t BufferedIndexInput::BUFFER_SIZE = 1024;
-    
+
     BufferedIndexInput::BufferedIndexInput(int32_t bufferSize)
     {
         this->bufferSize = bufferSize;
@@ -21,18 +21,18 @@ namespace Lucene
         bufferLength = 0;
         bufferPosition = 0;
     }
-    
+
     BufferedIndexInput::~BufferedIndexInput()
     {
     }
-    
+
     uint8_t BufferedIndexInput::readByte()
     {
         if (bufferPosition >= bufferLength)
             refill();
         return buffer[bufferPosition++];
     }
-    
+
     void BufferedIndexInput::setBufferSize(int32_t newSize)
     {
         if (newSize != bufferSize)
@@ -44,7 +44,7 @@ namespace Lucene
                 ByteArray _newBuffer(ByteArray::newInstance(newSize));
                 int32_t leftInBuffer = bufferLength - bufferPosition;
                 int32_t numToCopy = leftInBuffer > newSize ? newSize : leftInBuffer;
-                
+
                 MiscUtils::arrayCopy(buffer.get(), bufferPosition, _newBuffer.get(), 0, numToCopy);
                 bufferStart += bufferPosition;
                 bufferPosition = 0;
@@ -53,29 +53,29 @@ namespace Lucene
             }
         }
     }
-    
+
     void BufferedIndexInput::newBuffer(ByteArray newBuffer)
     {
         // Subclasses can do something here
         buffer = newBuffer;
     }
-    
+
     int32_t BufferedIndexInput::getBufferSize()
     {
         return bufferSize;
     }
-    
+
     void BufferedIndexInput::checkBufferSize(int32_t bufferSize)
     {
         if (bufferSize <= 0)
             boost::throw_exception(IllegalArgumentException(L"bufferSize must be greater than 0 (got " + StringUtils::toString(bufferSize) + L")"));
     }
-    
+
     void BufferedIndexInput::readBytes(uint8_t* b, int32_t offset, int32_t length)
     {
         readBytes(b, offset, length, true);
     }
-    
+
     void BufferedIndexInput::readBytes(uint8_t* b, int32_t offset, int32_t length, bool useBuffer)
     {
         if (length <= (bufferLength - bufferPosition))
@@ -96,11 +96,11 @@ namespace Lucene
                 length -= available;
                 bufferPosition += available;
             }
-            
+
             // and now, read the remaining 'length' bytes
             if (useBuffer && length < bufferSize)
             {
-                // If the amount left to read is small enough, and we are allowed to use our buffer, 
+                // If the amount left to read is small enough, and we are allowed to use our buffer,
                 // do it in the usual buffered way: fill the buffer and copy from it
                 refill();
                 if (bufferLength < length)
@@ -117,8 +117,8 @@ namespace Lucene
             }
             else
             {
-                // The amount left to read is larger than the buffer or we've been asked to not use 
-                // our buffer - there's no performance reason not to read it all at once. 
+                // The amount left to read is larger than the buffer or we've been asked to not use
+                // our buffer - there's no performance reason not to read it all at once.
                 // Note that unlike the previous code of this function, there is no need to do a seek
                 // here, because there's no need to reread what we had in the buffer.
                 int64_t after = bufferStart + bufferPosition + length;
@@ -131,7 +131,7 @@ namespace Lucene
             }
         }
     }
-    
+
     void BufferedIndexInput::refill()
     {
         int64_t start = bufferStart + bufferPosition;
@@ -141,7 +141,7 @@ namespace Lucene
         int32_t newLength = (int32_t)(end - start);
         if (newLength <= 0)
             boost::throw_exception(IOException(L"Read past EOF"));
-        
+
         if (!buffer)
         {
             newBuffer(ByteArray::newInstance(bufferSize)); // allocate buffer lazily
@@ -152,19 +152,19 @@ namespace Lucene
         bufferStart = start;
         bufferPosition = 0;
     }
-    
+
     void BufferedIndexInput::close()
     {
         bufferStart = 0;
         bufferLength = 0;
         bufferPosition = 0;
     }
-    
+
     int64_t BufferedIndexInput::getFilePointer()
     {
         return bufferStart + bufferPosition;
     }
-    
+
     void BufferedIndexInput::seek(int64_t pos)
     {
         if (pos >= bufferStart && pos < (bufferStart + bufferLength))
@@ -177,7 +177,7 @@ namespace Lucene
             seekInternal(pos);
         }
     }
-    
+
     LuceneObjectPtr BufferedIndexInput::clone(LuceneObjectPtr other)
     {
         BufferedIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<BufferedIndexInput>(IndexInput::clone(other)));

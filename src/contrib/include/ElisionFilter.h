@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -22,23 +22,23 @@ namespace Lucene
     public:
         /// Constructs an elision filter with standard stop words.
         ElisionFilter(TokenStreamPtr input);
-        
+
         /// Constructs an elision filter with a Set of stop words
         ElisionFilter(TokenStreamPtr input, HashSet<String> articles);
-        
+
         virtual ~ElisionFilter();
-        
+
         LUCENE_CLASS(ElisionFilter);
-    
+
     protected:
         static const wchar_t apostrophes[];
-        
+
         CharArraySetPtr articles;
         TermAttributePtr termAtt;
-    
+
     public:
         void setArticles(HashSet<String> articles);
-        
+
         virtual bool incrementToken();
     };
 }

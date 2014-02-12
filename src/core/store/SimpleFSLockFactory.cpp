@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,21 +16,21 @@ namespace Lucene
     SimpleFSLockFactory::SimpleFSLockFactory()
     {
     }
-    
+
     SimpleFSLockFactory::SimpleFSLockFactory(const String& lockDir)
     {
         setLockDir(lockDir);
     }
-    
+
     SimpleFSLockFactory::~SimpleFSLockFactory()
     {
     }
-    
+
     LockPtr SimpleFSLockFactory::makeLock(const String& lockName)
     {
         return newLucene<SimpleFSLock>(lockDir, lockPrefix.empty() ? lockName : lockPrefix + L"-" + lockName);
     }
-    
+
     void SimpleFSLockFactory::clearLock(const String& lockName)
     {
         if (FileUtils::isDirectory(lockDir))
@@ -40,17 +40,17 @@ namespace Lucene
                 boost::throw_exception(IOException(L"Cannot delete " + lockPath));
         }
     }
-    
+
     SimpleFSLock::SimpleFSLock(const String& lockDir, const String& lockFileName)
     {
         this->lockDir = lockDir;
         this->lockFile = lockFile;
     }
-    
+
     SimpleFSLock::~SimpleFSLock()
     {
     }
-    
+
     bool SimpleFSLock::obtain()
     {
         // Ensure that lockDir exists and is a directory
@@ -71,19 +71,19 @@ namespace Lucene
         }
         return f.is_open();
     }
-    
+
     void SimpleFSLock::release()
     {
         String path(FileUtils::joinPath(lockDir, lockFile));
         if (FileUtils::fileExists(path) && !FileUtils::removeFile(path))
             boost::throw_exception(LockReleaseFailedException(L"failed to delete " + path));
     }
-    
+
     bool SimpleFSLock::isLocked()
     {
         return FileUtils::fileExists(FileUtils::joinPath(lockDir, lockFile));
     }
-    
+
     String SimpleFSLock::toString()
     {
         return getClassName() + L"@" + FileUtils::joinPath(lockDir, lockFile);

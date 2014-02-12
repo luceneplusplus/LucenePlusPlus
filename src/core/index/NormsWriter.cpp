@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -23,11 +23,11 @@ namespace Lucene
     NormsWriter::NormsWriter()
     {
     }
-    
+
     NormsWriter::~NormsWriter()
     {
     }
-    
+
     uint8_t NormsWriter::getDefaultNorm()
     {
         static uint8_t defaultNorm = 0;
@@ -35,29 +35,29 @@ namespace Lucene
             defaultNorm = Similarity::encodeNorm(1.0);
         return defaultNorm;
     }
-    
+
     InvertedDocEndConsumerPerThreadPtr NormsWriter::addThread(DocInverterPerThreadPtr docInverterPerThread)
     {
         return newLucene<NormsWriterPerThread>(docInverterPerThread, shared_from_this());
     }
-    
+
     void NormsWriter::abort()
     {
     }
-    
+
     void NormsWriter::files(HashSet<String> files)
     {
     }
-    
+
     void NormsWriter::setFieldInfos(FieldInfosPtr fieldInfos)
     {
         this->fieldInfos = fieldInfos;
     }
-    
+
     void NormsWriter::flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
     {
         MapFieldInfoCollectionNormsWriterPerField byField(MapFieldInfoCollectionNormsWriterPerField::newInstance());
-        
+
         // Typically, each thread will have encountered the same field.  So first we collate by field, ie all
         // per-thread field instances that correspond to the same FieldInfo
         for (MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry)
@@ -84,48 +84,48 @@ namespace Lucene
                 }
             }
         }
-        
+
         String normsFileName(state->segmentName + L"." + IndexFileNames::NORMS_EXTENSION());
         state->flushedFiles.add(normsFileName);
         IndexOutputPtr normsOut(state->directory->createOutput(normsFileName));
-        
+
         LuceneException finally;
         try
         {
             normsOut->writeBytes(SegmentMerger::NORMS_HEADER, 0, SegmentMerger::NORMS_HEADER_LENGTH);
-            
+
             int32_t numField = fieldInfos->size();
-            
+
             int32_t normCount = 0;
-            
+
             for (int32_t fieldNumber = 0; fieldNumber < numField; ++fieldNumber)
             {
                 FieldInfoPtr fieldInfo(fieldInfos->fieldInfo(fieldNumber));
-                
+
                 Collection<NormsWriterPerFieldPtr> toMerge = byField.get(fieldInfo);
                 int32_t upto = 0;
-                
+
                 if (toMerge)
                 {
                     int32_t numFields = toMerge.size();
-                    
+
                     ++normCount;
-                    
+
                     Collection<NormsWriterPerFieldPtr> fields(Collection<NormsWriterPerFieldPtr>::newInstance(numFields));
                     Collection<int32_t> uptos(Collection<int32_t>::newInstance(numFields));
-                    
+
                     for (int32_t j = 0; j < numFields; ++j)
                         fields[j] = toMerge[j];
-                    
+
                     int32_t numLeft = numFields;
-                    
+
                     while (numLeft > 0)
                     {
                         BOOST_ASSERT(uptos[0] < fields[0]->docIDs.size());
-                        
+
                         int32_t minLoc = 0;
                         int32_t minDocID = fields[0]->docIDs[uptos[0]];
-                        
+
                         for (int32_t j = 1; j < numLeft; ++j)
                         {
                             int32_t docID = fields[j]->docIDs[uptos[j]];
@@ -135,17 +135,17 @@ namespace Lucene
                                 minLoc = j;
                             }
                         }
-                        
+
                         BOOST_ASSERT(minDocID < state->numDocs);
-                        
+
                         // Fill hole
                         for (;upto < minDocID; ++upto)
                             normsOut->writeByte(getDefaultNorm());
-                        
+
                         normsOut->writeByte(fields[minLoc]->norms[uptos[minLoc]]);
                         ++(uptos[minLoc]);
                         ++upto;
-                        
+
                         if (uptos[minLoc] == fields[minLoc]->upto)
                         {
                             fields[minLoc]->reset();
@@ -157,7 +157,7 @@ namespace Lucene
                             --numLeft;
                         }
                     }
-                    
+
                     // Fill final hole with defaultNorm
                     for (;upto < state->numDocs; ++upto)
                         normsOut->writeByte(getDefaultNorm());
@@ -169,7 +169,7 @@ namespace Lucene
                     for (;upto < state->numDocs; ++upto)
                         normsOut->writeByte(getDefaultNorm());
                 }
-                
+
                 BOOST_ASSERT(4 + normCount * state->numDocs == normsOut->getFilePointer()); // .nrm file size mismatch?
             }
         }
@@ -177,12 +177,12 @@ namespace Lucene
         {
             finally = e;
         }
-        
+
         normsOut->close();
-        
+
         finally.throwException();
     }
-    
+
     void NormsWriter::closeDocStore(SegmentWriteStatePtr state)
     {
     }

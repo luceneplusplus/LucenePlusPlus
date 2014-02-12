@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,16 +17,16 @@ namespace Lucene
     public:
         NormalizeCharMap();
         virtual ~NormalizeCharMap();
-        
+
         LUCENE_CLASS(NormalizeCharMap);
-    
+
     public:
         MapCharNormalizeCharMap submap;
         String normStr;
         int32_t diff;
-    
+
     public:
-        /// Records a replacement to be applied to the inputs stream.  Whenever singleMatch occurs in the input, it 
+        /// Records a replacement to be applied to the inputs stream.  Whenever singleMatch occurs in the input, it
         /// will be replaced with replacement.
         ///
         /// @param singleMatch input String to be replaced

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,26 +17,26 @@ namespace Lucene
     public:
         SpanQueue(int32_t size);
         virtual ~SpanQueue();
-        
+
         LUCENE_CLASS(SpanQueue);
-    
+
     protected:
         virtual bool lessThan(const SpansPtr& first, const SpansPtr& second);
     };
-    
+
     class OrSpans : public Spans
     {
     public:
         OrSpans(SpanOrQueryPtr query, IndexReaderPtr reader);
         virtual ~OrSpans();
-        
+
         LUCENE_CLASS(OrSpans);
-    
+
     protected:
         SpanOrQueryPtr query;
         IndexReaderPtr reader;
         SpanQueuePtr queue;
-    
+
     public:
         virtual bool next();
         virtual bool skipTo(int32_t target);
@@ -46,7 +46,7 @@ namespace Lucene
         virtual Collection<ByteArray> getPayload();
         virtual bool isPayloadAvailable();
         virtual String toString();
-    
+
     protected:
         bool initSpanQueue(int32_t target);
         SpansPtr top();

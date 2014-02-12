@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -18,17 +18,17 @@ namespace Lucene
     public:
         CharReader(ReaderPtr in);
         virtual ~CharReader();
-        
+
         LUCENE_CLASS(CharReader);
-    
+
     protected:
         ReaderPtr input;
-    
+
     public:
         using CharStream::read;
-        
+
         static CharStreamPtr get(ReaderPtr input);
-        
+
         virtual int32_t correctOffset(int32_t currentOff);
         virtual void close();
         virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);

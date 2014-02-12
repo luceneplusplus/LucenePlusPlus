@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +17,12 @@ namespace Lucene
     public:
         SegmentInfoCollection();
         virtual ~SegmentInfoCollection();
-        
+
         LUCENE_CLASS(SegmentInfoCollection);
-    
+
     protected:
         Collection<SegmentInfoPtr> segmentInfos;
-    
+
     public:
         int32_t size();
         bool empty();
@@ -35,7 +35,7 @@ namespace Lucene
         bool contains(SegmentInfoPtr info);
         void remove(int32_t pos);
         void remove(int32_t start, int32_t end);
-                
+
         virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
     };
 }

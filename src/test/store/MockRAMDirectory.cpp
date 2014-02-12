@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ namespace Lucene
         crashed = false;
         init();
     }
-    
+
     MockRAMDirectory::MockRAMDirectory(DirectoryPtr dir) : RAMDirectory(dir)
     {
         maxSize = 0;
@@ -36,11 +36,11 @@ namespace Lucene
         crashed = false;
         init();
     }
-    
+
     MockRAMDirectory::~MockRAMDirectory()
     {
     }
-    
+
     void MockRAMDirectory::init()
     {
         SyncLock syncLock(this);
@@ -54,12 +54,12 @@ namespace Lucene
         if (!unSyncedFiles)
             unSyncedFiles = HashSet<String>::newInstance();
     }
-    
+
     void MockRAMDirectory::setPreventDoubleWrite(bool value)
     {
         preventDoubleWrite = value;
     }
-    
+
     void MockRAMDirectory::sync(const String& name)
     {
         TestScope testScope(L"MockRAMDirectory", L"sync");
@@ -69,7 +69,7 @@ namespace Lucene
             boost::throw_exception(IOException(L"cannot sync after crash"));
         unSyncedFiles.remove(name);
     }
-    
+
     void MockRAMDirectory::crash()
     {
         SyncLock syncLock(this);
@@ -99,55 +99,55 @@ namespace Lucene
             ++count;
         }
     }
-    
+
     void MockRAMDirectory::clearCrash()
     {
         SyncLock syncLock(this);
         crashed = false;
     }
-    
+
     void MockRAMDirectory::setMaxSizeInBytes(int64_t maxSize)
     {
         this->maxSize = maxSize;
     }
-    
+
     int64_t MockRAMDirectory::getMaxSizeInBytes()
     {
         return maxSize;
     }
-    
+
     int64_t MockRAMDirectory::getMaxUsedSizeInBytes()
     {
         return maxUsedSize;
     }
-    
+
     void MockRAMDirectory::resetMaxUsedSizeInBytes()
     {
         maxUsedSize = getRecomputedActualSizeInBytes();
     }
-    
+
     void MockRAMDirectory::setNoDeleteOpenFile(bool value)
     {
         noDeleteOpenFile = value;
     }
-    
+
     bool MockRAMDirectory::getNoDeleteOpenFile()
     {
         return noDeleteOpenFile;
     }
-    
+
     void MockRAMDirectory::setRandomIOExceptionRate(double rate, int64_t seed)
     {
         randomIOExceptionRate = rate;
         // seed so we have deterministic behaviour
         randomState = newLucene<Random>(seed);
     }
-    
+
     double MockRAMDirectory::getRandomIOExceptionRate()
     {
         return randomIOExceptionRate;
     }
-    
+
     void MockRAMDirectory::maybeThrowIOException()
     {
         if (randomIOExceptionRate > 0.0)
@@ -157,23 +157,23 @@ namespace Lucene
                 boost::throw_exception(IOException(L"a random IO exception"));
         }
     }
-    
+
     void MockRAMDirectory::deleteFile(const String& name)
     {
         deleteFile(name, false);
     }
-    
+
     void MockRAMDirectory::deleteFile(const String& name, bool forced)
     {
         TestScope testScope(L"MockRAMDirectory", L"deleteFile");
         SyncLock syncLock(this);
         maybeThrowDeterministicException();
-        
+
         if (crashed && !forced)
             boost::throw_exception(IOException(L"cannot delete after crash"));
-        
+
         unSyncedFiles.remove(name);
-        
+
         if (!forced && noDeleteOpenFile)
         {
             if (openFiles.contains(name))
@@ -184,17 +184,17 @@ namespace Lucene
             else
                 openFilesDeleted.remove(name);
         }
-        
+
         RAMDirectory::deleteFile(name);
     }
-    
+
     HashSet<String> MockRAMDirectory::getOpenDeletedFiles()
     {
         SyncLock syncLock(this);
         HashSet<String> openFilesDeleted = HashSet<String>::newInstance(this->openFilesDeleted.begin(), this->openFilesDeleted.end());
         return openFilesDeleted;
     }
-    
+
     IndexOutputPtr MockRAMDirectory::createOutput(const String& name)
     {
         SyncLock syncLock(this);
@@ -223,10 +223,10 @@ namespace Lucene
             }
             fileMap.put(name, file);
         }
-        
+
         return newLucene<MockRAMOutputStream>(shared_from_this(), file, name);
     }
-    
+
     IndexInputPtr MockRAMDirectory::openInput(const String& name)
     {
         SyncLock syncLock(this);
@@ -243,7 +243,7 @@ namespace Lucene
         }
         return newLucene<MockRAMInputStream>(shared_from_this(), name, file->second);
     }
-    
+
     int64_t MockRAMDirectory::getRecomputedSizeInBytes()
     {
         SyncLock syncLock(this);
@@ -252,7 +252,7 @@ namespace Lucene
             size += file->second->getSizeInBytes();
         return size;
     }
-    
+
     int64_t MockRAMDirectory::getRecomputedActualSizeInBytes()
     {
         SyncLock syncLock(this);
@@ -261,7 +261,7 @@ namespace Lucene
             size += file->second->length;
         return size;
     }
-    
+
     void MockRAMDirectory::close()
     {
         SyncLock syncLock(this);
@@ -276,7 +276,7 @@ namespace Lucene
             boost::throw_exception(RuntimeException(L"MockRAMDirectory: cannot close: there are still open files"));
         }
     }
-    
+
     void MockRAMDirectory::failOn(MockDirectoryFailurePtr fail)
     {
         SyncLock syncLock(this);
@@ -284,7 +284,7 @@ namespace Lucene
             failures = Collection<MockDirectoryFailurePtr>::newInstance();
         failures.add(fail);
     }
-    
+
     void MockRAMDirectory::maybeThrowDeterministicException()
     {
         SyncLock syncLock(this);
@@ -294,30 +294,30 @@ namespace Lucene
                 (*failure)->eval(shared_from_this());
         }
     }
-    
+
     MockDirectoryFailure::MockDirectoryFailure()
     {
         doFail = false;
     }
-    
+
     MockDirectoryFailure::~MockDirectoryFailure()
     {
     }
-    
+
     void MockDirectoryFailure::eval(MockRAMDirectoryPtr dir)
     {
     }
-    
+
     MockDirectoryFailurePtr MockDirectoryFailure::reset()
     {
         return shared_from_this();
     }
-    
+
     void MockDirectoryFailure::setDoFail()
     {
         doFail = true;
     }
-    
+
     void MockDirectoryFailure::clearDoFail()
     {
         doFail = false;

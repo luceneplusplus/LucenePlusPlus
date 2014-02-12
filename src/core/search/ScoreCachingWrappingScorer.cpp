@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -15,21 +15,21 @@ namespace Lucene
         this->curScore = 0.0;
         this->_scorer = scorer;
     }
-    
+
     ScoreCachingWrappingScorer::~ScoreCachingWrappingScorer()
     {
     }
-    
+
     bool ScoreCachingWrappingScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
     {
         return ScorerPtr(_scorer)->score(collector, max, firstDocID);
     }
-    
+
     SimilarityPtr ScoreCachingWrappingScorer::getSimilarity()
     {
         return ScorerPtr(_scorer)->getSimilarity();
     }
-        
+
     double ScoreCachingWrappingScorer::score()
     {
         ScorerPtr scorer(_scorer);
@@ -41,22 +41,22 @@ namespace Lucene
         }
         return curScore;
     }
-        
+
     int32_t ScoreCachingWrappingScorer::docID()
     {
         return ScorerPtr(_scorer)->docID();
     }
-    
+
     int32_t ScoreCachingWrappingScorer::nextDoc()
     {
         return ScorerPtr(_scorer)->nextDoc();
     }
-    
+
     void ScoreCachingWrappingScorer::score(CollectorPtr collector)
     {
         ScorerPtr(_scorer)->score(collector);
     }
-    
+
     int32_t ScoreCachingWrappingScorer::advance(int32_t target)
     {
         return ScorerPtr(_scorer)->advance(target);

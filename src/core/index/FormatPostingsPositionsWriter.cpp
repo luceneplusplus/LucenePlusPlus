@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -24,12 +24,12 @@ namespace Lucene
         lastPosition = 0;
         storePayloads = false;
         lastPayloadLength = -1;
-        
+
         this->_parent = parent;
         FormatPostingsFieldsWriterPtr parentFieldsWriter(FormatPostingsTermsWriterPtr(parent->_parent)->_parent);
-        
+
         omitTermFreqAndPositions = parent->omitTermFreqAndPositions;
-        
+
         if (parentFieldsWriter->fieldInfos->hasProx())
         {
             // At least one field does not omit TF, so create the prox file
@@ -43,19 +43,19 @@ namespace Lucene
             // Every field omits TF so we will write no prox file
         }
     }
-    
+
     FormatPostingsPositionsWriter::~FormatPostingsPositionsWriter()
     {
     }
-    
+
     void FormatPostingsPositionsWriter::addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength)
     {
         BOOST_ASSERT(!omitTermFreqAndPositions);
         BOOST_ASSERT(out);
-        
+
         int32_t delta = position - lastPosition;
         lastPosition = position;
-        
+
         if (storePayloads)
         {
             if (payloadLength != lastPayloadLength)
@@ -72,19 +72,19 @@ namespace Lucene
         else
             out->writeVInt(delta);
     }
-    
+
     void FormatPostingsPositionsWriter::setField(FieldInfoPtr fieldInfo)
     {
         omitTermFreqAndPositions = fieldInfo->omitTermFreqAndPositions;
         storePayloads = omitTermFreqAndPositions ? false : fieldInfo->storePayloads;
     }
-    
+
     void FormatPostingsPositionsWriter::finish()
     {
         lastPosition = 0;
         lastPayloadLength = -1;
     }
-    
+
     void FormatPostingsPositionsWriter::close()
     {
         if (out)

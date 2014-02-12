@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -22,11 +22,11 @@ namespace Lucene
         this->allowNegativeRandomInts = allowNegativeRandomInts;
         this->index = newLucene<RAMDirectory>();
     }
-    
+
     TestIndex::~TestIndex()
     {
     }
-        
+
     BaseTestRangeFilterFixture::BaseTestRangeFilterFixture()
     {
         signedIndex = newLucene<TestIndex>(INT_MAX, INT_MIN, true);
@@ -35,15 +35,15 @@ namespace Lucene
         maxId = 10000;
         intLength = StringUtils::toString(INT_MAX).length();
         random = newLucene<Random>();
-        
+
         build(signedIndex);
         build(unsignedIndex);
     }
-    
+
     BaseTestRangeFilterFixture::~BaseTestRangeFilterFixture()
     {
     }
-    
+
     void BaseTestRangeFilterFixture::build(TestIndexPtr index)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(index->index, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -58,11 +58,11 @@ namespace Lucene
             doc->add(newLucene<Field>(L"body", L"body", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
         }
-        
+
         writer->optimize();
         writer->close();
     }
-    
+
     String BaseTestRangeFilterFixture::pad(int32_t n)
     {
         StringStream buf;
@@ -77,6 +77,6 @@ namespace Lucene
         for (int32_t i = s.length(); i <= intLength; ++i)
             buf << L"0";
         buf << s;
-        return buf.str(); 
+        return buf.str();
     }
 }

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -16,11 +16,11 @@ namespace Lucene
     {
         this->_writer = writer;
     }
-    
+
     MergePolicy::~MergePolicy()
     {
     }
-    
+
     OneMerge::OneMerge(SegmentInfosPtr segments, bool useCompoundFile)
     {
         mergeDocStores = false;
@@ -30,48 +30,48 @@ namespace Lucene
         isExternal = false;
         maxNumSegmentsOptimize = 0;
         aborted = false;
-        
+
         if (segments->empty())
             boost::throw_exception(RuntimeException(L"segments must include at least one segment"));
         this->segments = segments;
         this->useCompoundFile = useCompoundFile;
     }
-    
+
     OneMerge::~OneMerge()
     {
     }
-    
+
     void OneMerge::setException(const LuceneException& error)
     {
         SyncLock syncLock(this);
         this->error = error;
     }
-        
+
     LuceneException OneMerge::getException()
     {
         SyncLock syncLock(this);
         return error;
     }
-    
+
     void OneMerge::abort()
     {
         SyncLock syncLock(this);
         aborted = true;
     }
-    
+
     bool OneMerge::isAborted()
     {
         SyncLock syncLock(this);
         return aborted;
     }
-    
+
     void OneMerge::checkAborted(DirectoryPtr dir)
     {
         SyncLock syncLock(this);
         if (aborted)
             boost::throw_exception(MergeAbortedException(L"merge is aborted: " + segString(dir)));
     }
-    
+
     String OneMerge::segString(DirectoryPtr dir)
     {
         StringStream buffer;
@@ -90,21 +90,21 @@ namespace Lucene
             buffer << L" [mergeDocStores]";
         return buffer.str();
     }
-    
+
     MergeSpecification::MergeSpecification()
     {
         merges = Collection<OneMergePtr>::newInstance();
     }
-    
+
     MergeSpecification::~MergeSpecification()
     {
     }
-    
+
     void MergeSpecification::add(OneMergePtr merge)
     {
         merges.add(merge);
     }
-    
+
     String MergeSpecification::segString(DirectoryPtr dir)
     {
         String seg(L"MergeSpec:\n");

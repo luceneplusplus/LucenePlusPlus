@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -14,8 +14,8 @@ namespace Lucene
     QueryParseError::~QueryParseError()
     {
     }
-    
-    String QueryParseError::lexicalError(bool EOFSeen, int32_t lexState, int32_t errorLine, int32_t errorColumn, 
+
+    String QueryParseError::lexicalError(bool EOFSeen, int32_t lexState, int32_t errorLine, int32_t errorColumn,
                                          const String& errorAfter, wchar_t curChar)
     {
         StringStream buffer;
@@ -27,7 +27,7 @@ namespace Lucene
         buffer << L" (" << (int32_t)curChar << L"), after : \"" << addEscapes(errorAfter) + L"\"";
         return buffer.str();
     }
-    
+
     String QueryParseError::parseError(QueryParserTokenPtr currentToken, Collection< Collection<int32_t> > expectedTokenSequences,
                                        Collection<String> tokenImage)
     {
@@ -67,7 +67,7 @@ namespace Lucene
         retval << expected.str();
         return retval.str();
     }
-    
+
     String QueryParseError::addEscapes(const String& str)
     {
         StringStream buffer;

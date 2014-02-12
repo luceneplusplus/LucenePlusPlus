@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2009-2011 Alan Wright. All rights reserved.
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
 // Distributable under the terms of either the Apache License (Version 2.0)
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ namespace Lucene
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
-    
+
     StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords, bool ignoreCase) : TokenFilter(input)
     {
         this->stopWords = stopWords;
@@ -27,16 +27,16 @@ namespace Lucene
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
-    
+
     StopFilter::~StopFilter()
     {
     }
-    
+
     HashSet<String> StopFilter::makeStopSet(Collection<String> stopWords)
     {
         return HashSet<String>::newInstance(stopWords.begin(), stopWords.end());
     }
-    
+
     bool StopFilter::incrementToken()
     {
         // return the first non-stop word found
@@ -54,17 +54,17 @@ namespace Lucene
         // reached EOS -- return false
         return false;
     }
-    
+
     bool StopFilter::getEnablePositionIncrementsVersionDefault(LuceneVersion::Version matchVersion)
     {
         return LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
     }
-    
+
     bool StopFilter::getEnablePositionIncrements()
     {
         return enablePositionIncrements;
     }
-    
+
     void StopFilter::setEnablePositionIncrements(bool enable)
     {
         this->enablePositionIncrements = enable;
