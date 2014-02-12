@@ -25,7 +25,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(ConcurrentMergeSchedulerTest, LuceneTestFixture)
+typedef LuceneTestFixture ConcurrentMergeSchedulerTest;
 
 static bool mergeCalled = false;
 static bool mergeThreadCreated = false;
@@ -38,14 +38,14 @@ static void checkNoUnreferencedFiles(DirectoryPtr dir)
     infos->read(dir);
     IndexFileDeleterPtr deleter = newLucene<IndexFileDeleter>(dir, newLucene<KeepOnlyLastCommitDeletionPolicy>(), infos, InfoStreamPtr(), DocumentsWriterPtr(), HashSet<String>());
     HashSet<String> _endFiles = dir->listAll();
-    
+
     Collection<String> startFiles = Collection<String>::newInstance(_startFiles.begin(), _startFiles.end());
     Collection<String> endFiles = Collection<String>::newInstance(_endFiles.begin(), _endFiles.end());
-    
+
     std::sort(startFiles.begin(), startFiles.end());
     std::sort(endFiles.begin(), endFiles.end());
-    
-    BOOST_CHECK(startFiles.equals(endFiles));
+
+    EXPECT_TRUE(startFiles.equals(endFiles));
 }
 
 namespace TestFlushException
@@ -61,7 +61,7 @@ namespace TestFlushException
             mainThread = LuceneThread::currentId();
             TestPoint::clear();
         }
-        
+
         virtual ~FailOnlyOnFlush()
         {
         }
@@ -76,13 +76,13 @@ namespace TestFlushException
             MockDirectoryFailure::setDoFail();
             hitExc = false;
         }
-        
+
         virtual void clearDoFail()
         {
             MockDirectoryFailure::clearDoFail();
             this->doFail = false;
         }
-        
+
         virtual void eval(MockRAMDirectoryPtr dir)
         {
             if (this->doFail && mainThread == LuceneThread::currentId() && TestPoint::getTestPoint(L"doFlush"))
@@ -92,7 +92,7 @@ namespace TestFlushException
             }
         }
     };
-    
+
     DECLARE_SHARED_PTR(TestableIndexWriter)
 
     class TestableIndexWriter : public IndexWriter
@@ -101,20 +101,20 @@ namespace TestFlushException
         TestableIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
         }
-        
+
         virtual ~TestableIndexWriter()
         {
         }
-        
+
         LUCENE_CLASS(TestableIndexWriter);
-        
+
     public:
         using IndexWriter::flush;
     };
 }
 
 /// Make sure running background merges still work fine even when we are hitting exceptions during flushing.
-BOOST_AUTO_TEST_CASE(testFlushExceptions)
+TEST_F(ConcurrentMergeSchedulerTest, testFlushExceptions)
 {
     MockRAMDirectoryPtr directory = newLucene<MockRAMDirectory>();
     TestFlushException::FailOnlyOnFlushPtr failure = newLucene<TestFlushException::FailOnlyOnFlush>();
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(testFlushExceptions)
     FieldPtr idField = newLucene<Field>(L"id", L"", Field::STORE_YES, Field::INDEX_NOT_ANALYZED);
     doc->add(idField);
     int32_t extraCount = 0;
-    
+
     for (int32_t i = 0; i < 10; ++i)
     {
         for (int32_t j = 0; j < 20; ++j)
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(testFlushExceptions)
                 writer->addDocument(doc);
                 failure->setDoFail();
                 writer->flush(true, false, true);
-                BOOST_CHECK(!failure->hitExc);
+                EXPECT_TRUE(!failure->hitExc);
                 ++extraCount;
             }
             catch (LuceneException&)
@@ -156,16 +156,16 @@ BOOST_AUTO_TEST_CASE(testFlushExceptions)
             }
         }
     }
-    
+
     writer->close();
     IndexReaderPtr reader = IndexReader::open(directory, true);
-    BOOST_CHECK_EQUAL(200 + extraCount, reader->numDocs());
+    EXPECT_EQ(200 + extraCount, reader->numDocs());
     reader->close();
     directory->close();
 }
 
 /// Test that deletes committed after a merge started and before it finishes, are correctly merged back
-BOOST_AUTO_TEST_CASE(testDeleteMerging)
+TEST_F(ConcurrentMergeSchedulerTest, testDeleteMerging)
 {
     RAMDirectoryPtr directory = newLucene<MockRAMDirectory>();
 
@@ -189,26 +189,26 @@ BOOST_AUTO_TEST_CASE(testDeleteMerging)
             idField->setValue(StringUtils::toString(i * 100 + j));
             writer->addDocument(doc);
         }
-        
+
         int32_t delID = i;
         while (delID < 100 * (1 + i))
         {
             writer->deleteDocuments(newLucene<Term>(L"id", StringUtils::toString(delID)));
             delID += 10;
         }
-        
+
         writer->commit();
     }
-    
+
     writer->close();
     IndexReaderPtr reader = IndexReader::open(directory, true);
     // Verify that we did not lose any deletes
-    BOOST_CHECK_EQUAL(450, reader->numDocs());
+    EXPECT_EQ(450, reader->numDocs());
     reader->close();
     directory->close();
 }
 
-BOOST_AUTO_TEST_CASE(testNoExtraFiles)
+TEST_F(ConcurrentMergeSchedulerTest, testNoExtraFiles)
 {
     RAMDirectoryPtr directory = newLucene<MockRAMDirectory>();
 
@@ -233,34 +233,34 @@ BOOST_AUTO_TEST_CASE(testNoExtraFiles)
         // Reopen
         writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), false, IndexWriter::MaxFieldLengthUNLIMITED);
     }
-    
+
     writer->close();
     directory->close();
 }
 
-BOOST_AUTO_TEST_CASE(testNoWaitClose)
+TEST_F(ConcurrentMergeSchedulerTest, testNoWaitClose)
 {
     RAMDirectoryPtr directory = newLucene<MockRAMDirectory>();
 
     DocumentPtr doc = newLucene<Document>();
     FieldPtr idField = newLucene<Field>(L"id", L"", Field::STORE_YES, Field::INDEX_NOT_ANALYZED);
     doc->add(idField);
-    
+
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     for (int32_t i = 0; i < 10; ++i)
     {
         ConcurrentMergeSchedulerPtr cms = newLucene<ConcurrentMergeScheduler>();
         writer->setMergeScheduler(cms);
         writer->setMaxBufferedDocs(2);
         writer->setMergeFactor(100);
-        
+
         for (int32_t j = 0; j < 201; ++j)
         {
             idField->setValue(StringUtils::toString(i * 201 + j));
             writer->addDocument(doc);
         }
-        
+
         int32_t delID = i * 201;
         for (int32_t j = 0; j < 20; ++j)
         {
@@ -276,8 +276,8 @@ BOOST_AUTO_TEST_CASE(testNoWaitClose)
         writer->close(false);
 
         IndexReaderPtr reader = IndexReader::open(directory, true);
-        BOOST_CHECK_EQUAL((1 + i) * 182, reader->numDocs());
-        
+        EXPECT_EQ((1 + i) * 182, reader->numDocs());
+
         reader->close();
 
         // Reopen
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(testNoWaitClose)
 
     writer->close();
     directory->close();
-    
+
     // allow time for merge threads to finish
     LuceneThread::threadSleep(1000);
 }
@@ -294,7 +294,7 @@ BOOST_AUTO_TEST_CASE(testNoWaitClose)
 namespace TestSubclassConcurrentMergeScheduler
 {
     DECLARE_SHARED_PTR(MyMergeScheduler)
-    
+
     class FailOnlyOnMerge : public MockDirectoryFailure
     {
     public:
@@ -302,7 +302,7 @@ namespace TestSubclassConcurrentMergeScheduler
         {
             TestPoint::clear();
         }
-        
+
         virtual ~FailOnlyOnMerge()
         {
         }
@@ -314,7 +314,7 @@ namespace TestSubclassConcurrentMergeScheduler
                 boost::throw_exception(IOException(L"now failing during merge"));
         }
     };
-    
+
     class MyMergeThread : public MergeThread
     {
     public:
@@ -322,21 +322,21 @@ namespace TestSubclassConcurrentMergeScheduler
         {
             mergeThreadCreated = true;
         }
-        
+
         virtual ~MyMergeThread()
         {
         }
     };
-    
+
     class MyMergeScheduler : public ConcurrentMergeScheduler
     {
     public:
         virtual ~MyMergeScheduler()
         {
         }
-        
+
         LUCENE_CLASS(MyMergeScheduler);
-    
+
     protected:
         virtual MergeThreadPtr getMergeThread(IndexWriterPtr writer, OneMergePtr merge)
         {
@@ -344,12 +344,12 @@ namespace TestSubclassConcurrentMergeScheduler
             thread->setThreadPriority(getMergeThreadPriority());
             return thread;
         }
-        
+
         virtual void handleMergeException(const LuceneException& exc)
         {
             excCalled = true;
         }
-        
+
         virtual void doMerge(OneMergePtr merge)
         {
             mergeCalled = true;
@@ -358,7 +358,7 @@ namespace TestSubclassConcurrentMergeScheduler
     };
 }
 
-BOOST_AUTO_TEST_CASE(testSubclassConcurrentMergeScheduler)
+TEST_F(ConcurrentMergeSchedulerTest, testSubclassConcurrentMergeScheduler)
 {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     dir->failOn(newLucene<TestSubclassConcurrentMergeScheduler::FailOnlyOnMerge>());
@@ -378,11 +378,9 @@ BOOST_AUTO_TEST_CASE(testSubclassConcurrentMergeScheduler)
     ms->sync();
     writer->close();
 
-    BOOST_CHECK(mergeThreadCreated);
-    BOOST_CHECK(mergeCalled);
-    BOOST_CHECK(excCalled);
+    EXPECT_TRUE(mergeThreadCreated);
+    EXPECT_TRUE(mergeCalled);
+    EXPECT_TRUE(excCalled);
     dir->close();
-    BOOST_CHECK(ConcurrentMergeScheduler::anyUnhandledExceptions());
+    EXPECT_TRUE(ConcurrentMergeScheduler::anyUnhandledExceptions());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -17,10 +17,10 @@
 
 using namespace Lucene;
 
-class FieldCacheFixture : public LuceneTestFixture
+class FieldCacheTest : public LuceneTestFixture
 {
 public:
-    FieldCacheFixture()
+    FieldCacheTest()
     {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer= newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -40,52 +40,56 @@ public:
         writer->close();
         reader = IndexReader::open(directory, true);
     }
-    
-    virtual ~FieldCacheFixture()
+
+    virtual ~FieldCacheTest()
     {
     }
 
 protected:
     IndexReaderPtr reader;
-    
+
 public:
     static const int32_t NUM_DOCS;
 };
 
-const int32_t FieldCacheFixture::NUM_DOCS = 1000;
+const int32_t FieldCacheTest::NUM_DOCS = 1000;
 
-BOOST_FIXTURE_TEST_SUITE(FieldCacheTest, FieldCacheFixture)
-
-BOOST_AUTO_TEST_CASE(testFieldCache)
+TEST_F(FieldCacheTest, testFieldCache)
 {
     FieldCachePtr cache = FieldCache::DEFAULT();
     Collection<double> doubles = cache->getDoubles(reader, L"theDouble");
-    BOOST_CHECK_EQUAL(doubles.hashCode(), cache->getDoubles(reader, L"theDouble").hashCode());
-    BOOST_CHECK_EQUAL(doubles.hashCode(), cache->getDoubles(reader, L"theDouble", FieldCache::DEFAULT_DOUBLE_PARSER()).hashCode());
-    BOOST_CHECK_EQUAL(doubles.size(), NUM_DOCS);
+    EXPECT_EQ(doubles.hashCode(), cache->getDoubles(reader, L"theDouble").hashCode());
+    EXPECT_EQ(doubles.hashCode(), cache->getDoubles(reader, L"theDouble", FieldCache::DEFAULT_DOUBLE_PARSER()).hashCode());
+    EXPECT_EQ(doubles.size(), NUM_DOCS);
     for (int32_t i = 0; i < doubles.size(); ++i)
-        BOOST_CHECK_CLOSE_FRACTION(doubles[i], (DBL_MAX - i), 0.00001);
-    
-    Collection<int64_t> longs = cache->getLongs(reader, L"theLong");
-    BOOST_CHECK_EQUAL(longs.hashCode(), cache->getLongs(reader, L"theLong").hashCode());
-    BOOST_CHECK_EQUAL(longs.hashCode(), cache->getLongs(reader, L"theLong", FieldCache::DEFAULT_LONG_PARSER()).hashCode());
-    BOOST_CHECK_EQUAL(longs.size(), NUM_DOCS);
-    for (int32_t i = 0; i < longs.size(); ++i)
-        BOOST_CHECK_EQUAL(longs[i], (LLONG_MAX - i));
-    
-    Collection<uint8_t> bytes = cache->getBytes(reader, L"theByte");
-    BOOST_CHECK_EQUAL(bytes.hashCode(), cache->getBytes(reader, L"theByte").hashCode());
-    BOOST_CHECK_EQUAL(bytes.hashCode(), cache->getBytes(reader, L"theByte", FieldCache::DEFAULT_BYTE_PARSER()).hashCode());
-    BOOST_CHECK_EQUAL(bytes.size(), NUM_DOCS);
-    for (int32_t i = 0; i < bytes.size(); ++i)
-        BOOST_CHECK_EQUAL(bytes[i], (uint8_t)(UCHAR_MAX - i));
-    
-    Collection<int32_t> ints = cache->getInts(reader, L"theInt");
-    BOOST_CHECK_EQUAL(ints.hashCode(), cache->getInts(reader, L"theInt").hashCode());
-    BOOST_CHECK_EQUAL(ints.hashCode(), cache->getInts(reader, L"theInt", FieldCache::DEFAULT_INT_PARSER()).hashCode());
-    BOOST_CHECK_EQUAL(ints.size(), NUM_DOCS);
-    for (int32_t i = 0; i < ints.size(); ++i)
-        BOOST_CHECK_EQUAL(ints[i], (INT_MAX - i));
-}
+    {
+        StringStream first;
+        first.precision(5);
+        first << doubles[i];
+        StringStream second;
+        second.precision(5);
+        second << (DBL_MAX - i);
+        EXPECT_EQ(first.str(), second.str());
+    }
 
-BOOST_AUTO_TEST_SUITE_END()
+    Collection<int64_t> longs = cache->getLongs(reader, L"theLong");
+    EXPECT_EQ(longs.hashCode(), cache->getLongs(reader, L"theLong").hashCode());
+    EXPECT_EQ(longs.hashCode(), cache->getLongs(reader, L"theLong", FieldCache::DEFAULT_LONG_PARSER()).hashCode());
+    EXPECT_EQ(longs.size(), NUM_DOCS);
+    for (int32_t i = 0; i < longs.size(); ++i)
+        EXPECT_EQ(longs[i], (LLONG_MAX - i));
+
+    Collection<uint8_t> bytes = cache->getBytes(reader, L"theByte");
+    EXPECT_EQ(bytes.hashCode(), cache->getBytes(reader, L"theByte").hashCode());
+    EXPECT_EQ(bytes.hashCode(), cache->getBytes(reader, L"theByte", FieldCache::DEFAULT_BYTE_PARSER()).hashCode());
+    EXPECT_EQ(bytes.size(), NUM_DOCS);
+    for (int32_t i = 0; i < bytes.size(); ++i)
+        EXPECT_EQ(bytes[i], (uint8_t)(UCHAR_MAX - i));
+
+    Collection<int32_t> ints = cache->getInts(reader, L"theInt");
+    EXPECT_EQ(ints.hashCode(), cache->getInts(reader, L"theInt").hashCode());
+    EXPECT_EQ(ints.hashCode(), cache->getInts(reader, L"theInt", FieldCache::DEFAULT_INT_PARSER()).hashCode());
+    EXPECT_EQ(ints.size(), NUM_DOCS);
+    for (int32_t i = 0; i < ints.size(); ++i)
+        EXPECT_EQ(ints[i], (INT_MAX - i));
+}

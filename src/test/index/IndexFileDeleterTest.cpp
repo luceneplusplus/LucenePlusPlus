@@ -23,7 +23,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(IndexFileDeleterTest, LuceneTestFixture)
+typedef LuceneTestFixture IndexFileDeleterTest;
 
 static void addDoc(IndexWriterPtr writer, int32_t id)
 {
@@ -72,7 +72,7 @@ static HashSet<String> difFiles(Collection<String> files1, Collection<String> fi
     return extra;
 }
 
-BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
+TEST_F(IndexFileDeleterTest, testDeleteLeftoverFiles)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
 
@@ -85,12 +85,12 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     for (; i < 45; ++i)
         addDoc(writer, i);
     writer->close();
-    
+
     // Delete one doc so we get a .del file
     IndexReaderPtr reader = IndexReader::open(dir, false);
     TermPtr searchTerm = newLucene<Term>(L"id", L"7");
     int32_t delCount = reader->deleteDocuments(searchTerm);
-    BOOST_CHECK_EQUAL(1, delCount);
+    EXPECT_EQ(1, delCount);
 
     // Set one norm so we get a .s0 file
     reader->setNorm(21, L"content", 1.5);
@@ -98,8 +98,8 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
 
     // Now, artificially create an extra .del file and extra .s0 file
     HashSet<String> _files = dir->listAll();
-    
-    // Here we have to figure out which field number corresponds to "content", and then 
+
+    // Here we have to figure out which field number corresponds to "content", and then
     // set our expected file names below accordingly.
     CompoundFileReaderPtr cfsReader = newLucene<CompoundFileReader>(dir, L"_2.cfs");
     FieldInfosPtr fieldInfos = newLucene<FieldInfos>(cfsReader, L"_2.fnm");
@@ -115,31 +115,31 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     }
 
     cfsReader->close();
-    BOOST_CHECK_NE(contentFieldIndex, -1);
+    EXPECT_NE(contentFieldIndex, -1);
 
     String normSuffix = L"s" + StringUtils::toString(contentFieldIndex);
 
-    // Create a bogus separate norms file for a segment/field that actually has a 
+    // Create a bogus separate norms file for a segment/field that actually has a
     // separate norms file already
     copyFile(dir, L"_2_1." + normSuffix, L"_2_2." + normSuffix);
 
-    // Create a bogus separate norms file for a segment/field that actually has a 
+    // Create a bogus separate norms file for a segment/field that actually has a
     // separate norms file already, using the "not compound file" extension
     copyFile(dir, L"_2_1." + normSuffix, L"_2_2.f" + StringUtils::toString(contentFieldIndex));
 
-    // Create a bogus separate norms file for a segment/field that does not have a 
+    // Create a bogus separate norms file for a segment/field that does not have a
     // separate norms file already
     copyFile(dir, L"_2_1." + normSuffix, L"_1_1." + normSuffix);
 
-    // Create a bogus separate norms file for a segment/field that does not have a 
+    // Create a bogus separate norms file for a segment/field that does not have a
     // separate norms file already using the "not compound file" extension
     copyFile(dir, L"_2_1." + normSuffix, L"_1_1.f" + StringUtils::toString(contentFieldIndex));
 
-    // Create a bogus separate del file for a segment that already has a separate 
+    // Create a bogus separate del file for a segment that already has a separate
     // del file
     copyFile(dir, L"_0_1.del", L"_0_2.del");
 
-    // Create a bogus separate del file for a segment that does not yet have a 
+    // Create a bogus separate del file for a segment that does not yet have a
     // separate del file
     copyFile(dir, L"_0_1.del", L"_1_1.del");
 
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     copyFile(dir, L"_2.cfs", L"_3.cfs");
 
     HashSet<String> filesPre = dir->listAll();
-    
+
     // Open and close a writer: it should delete the above 4 files and nothing more
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
@@ -178,8 +178,6 @@ BOOST_AUTO_TEST_CASE(testDeleteLeftoverFiles)
     std::sort(files2.begin(), files2.end());
 
     HashSet<String> dif = difFiles(files, files2);
-    
-    BOOST_CHECK(dif.empty());
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    EXPECT_TRUE(dif.empty());
+}

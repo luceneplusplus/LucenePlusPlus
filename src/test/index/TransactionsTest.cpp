@@ -20,37 +20,37 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(TransactionsTest, LuceneTestFixture)
+typedef LuceneTestFixture TransactionsTest;
 
 static bool doFail = false;
 
-DECLARE_SHARED_PTR(TimedThread)
-DECLARE_SHARED_PTR(IndexerThread)
-DECLARE_SHARED_PTR(SearcherThread)
+DECLARE_SHARED_PTR(TransactionsTimedThread)
+DECLARE_SHARED_PTR(TransactionsIndexerThread)
+DECLARE_SHARED_PTR(TransactionsSearcherThread)
 
-class TimedThread : public LuceneThread
+class TransactionsTimedThread : public LuceneThread
 {
 public:
-    TimedThread()
+    TransactionsTimedThread()
     {
     }
-    
-    virtual ~TimedThread()
+
+    virtual ~TransactionsTimedThread()
     {
     }
-    
-    LUCENE_CLASS(TimedThread);
-    
+
+    LUCENE_CLASS(TransactionsTimedThread);
+
 protected:
     static const int32_t RUN_TIME_SEC;
-    
+
 public:
     virtual void doWork() = 0;
-    
+
     virtual void run()
     {
         int64_t stopTime = MiscUtils::currentTimeMillis() + 1000 * RUN_TIME_SEC;
-        
+
         try
         {
             while ((int64_t)MiscUtils::currentTimeMillis() < stopTime)
@@ -58,17 +58,17 @@ public:
         }
         catch (LuceneException& e)
         {
-            BOOST_FAIL("Unexpected exception: " << e.getError());
+            FAIL() << "Unexpected exception: " << e.getError();
         }
     }
 };
 
-const int32_t TimedThread::RUN_TIME_SEC = 6;
+const int32_t TransactionsTimedThread::RUN_TIME_SEC = 6;
 
-class IndexerThread : public TimedThread
+class TransactionsIndexerThread : public TransactionsTimedThread
 {
 public:
-    IndexerThread(SynchronizePtr lock, DirectoryPtr dir1, DirectoryPtr dir2)
+    TransactionsIndexerThread(SynchronizePtr lock, DirectoryPtr dir1, DirectoryPtr dir2)
     {
         this->lock = lock;
         this->dir1 = dir1;
@@ -76,20 +76,20 @@ public:
         this->nextID = 0;
         this->random = newLucene<Random>();
     }
-    
-    virtual ~IndexerThread()
+
+    virtual ~TransactionsIndexerThread()
     {
     }
-    
-    LUCENE_CLASS(IndexerThread);
-    
+
+    LUCENE_CLASS(TransactionsIndexerThread);
+
 public:
     DirectoryPtr dir1;
     DirectoryPtr dir2;
     SynchronizePtr lock;
     int32_t nextID;
     RandomPtr random;
-    
+
 public:
     virtual void doWork()
     {
@@ -106,10 +106,10 @@ public:
 
         update(writer1);
         update(writer2);
-        
+
         doFail = true;
         bool continueWork = true;
-        
+
         LuceneException finally;
         try
         {
@@ -143,14 +143,14 @@ public:
         }
         doFail = false;
         finally.throwException();
-        
+
         if (!continueWork)
             return;
-        
+
         writer1->close();
         writer2->close();
     }
-    
+
     void update(IndexWriterPtr writer)
     {
         // Add 10 docs
@@ -161,7 +161,7 @@ public:
             d->add(newLucene<Field>(L"contents", intToEnglish(random->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
             writer->addDocument(d);
         }
-        
+
         // Delete 5 docs
         int32_t deleteID = nextID - 1;
         for (int32_t j = 0; j < 5; ++j)
@@ -172,27 +172,27 @@ public:
     }
 };
 
-class SearcherThread : public TimedThread
+class TransactionsSearcherThread : public TransactionsTimedThread
 {
 public:
-    SearcherThread(SynchronizePtr lock, DirectoryPtr dir1, DirectoryPtr dir2)
+    TransactionsSearcherThread(SynchronizePtr lock, DirectoryPtr dir1, DirectoryPtr dir2)
     {
         this->lock = lock;
         this->dir1 = dir1;
         this->dir2 = dir2;
     }
-    
-    virtual ~SearcherThread()
+
+    virtual ~TransactionsSearcherThread()
     {
     }
-    
-    LUCENE_CLASS(SearcherThread);
-    
+
+    LUCENE_CLASS(TransactionsSearcherThread);
+
 protected:
     DirectoryPtr dir1;
     DirectoryPtr dir2;
     SynchronizePtr lock;
-    
+
 public:
     virtual void doWork()
     {
@@ -204,7 +204,7 @@ public:
             r2 = IndexReader::open(dir2, true);
         }
         if (r1->numDocs() != r2->numDocs())
-            BOOST_FAIL("doc counts differ");
+            FAIL() << "doc counts differ";
         r1->close();
         r2->close();
     }
@@ -219,14 +219,14 @@ public:
     {
         random = newLucene<Random>();
     }
-    
+
     virtual ~RandomFailure()
     {
     }
 
 protected:
     RandomPtr random;
-    
+
 public:
     virtual void eval(MockRAMDirectoryPtr dir)
     {
@@ -248,7 +248,7 @@ static void initIndex(DirectoryPtr dir)
     writer->close();
 }
 
-BOOST_AUTO_TEST_CASE(testTransactions)
+TEST_F(TransactionsTest, testTransactions)
 {
     MockRAMDirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     MockRAMDirectoryPtr dir2 = newLucene<MockRAMDirectory>();
@@ -260,25 +260,23 @@ BOOST_AUTO_TEST_CASE(testTransactions)
     initIndex(dir1);
     initIndex(dir2);
 
-    Collection<TimedThreadPtr> threads = Collection<TimedThreadPtr>::newInstance(3);
+    Collection<TransactionsTimedThreadPtr> threads = Collection<TransactionsTimedThreadPtr>::newInstance(3);
     int32_t numThread = 0;
-    
+
     SynchronizePtr lock = newInstance<Synchronize>();
 
-    IndexerThreadPtr indexerThread = newLucene<IndexerThread>(lock, dir1, dir2);
+    TransactionsIndexerThreadPtr indexerThread = newLucene<TransactionsIndexerThread>(lock, dir1, dir2);
     threads[numThread++] = indexerThread;
     indexerThread->start();
 
-    SearcherThreadPtr searcherThread1 = newLucene<SearcherThread>(lock, dir1, dir2);
+    TransactionsSearcherThreadPtr searcherThread1 = newLucene<TransactionsSearcherThread>(lock, dir1, dir2);
     threads[numThread++] = searcherThread1;
     searcherThread1->start();
 
-    SearcherThreadPtr searcherThread2 = newLucene<SearcherThread>(lock, dir1, dir2);
+    TransactionsSearcherThreadPtr searcherThread2 = newLucene<TransactionsSearcherThread>(lock, dir1, dir2);
     threads[numThread++] = searcherThread2;
     searcherThread2->start();
-    
+
     for (int32_t i = 0; i < numThread; ++i)
         threads[i]->join();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

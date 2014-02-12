@@ -33,10 +33,10 @@
 
 using namespace Lucene;
 
-class NumericRangeQuery32Fixture : public LuceneTestFixture
+class NumericRangeQuery32Test : public LuceneTestFixture
 {
 public:
-    NumericRangeQuery32Fixture()
+    NumericRangeQuery32Test()
     {
         static bool setupRequired = true;
         if (setupRequired)
@@ -45,21 +45,21 @@ public:
             setupRequired = false;
         }
     }
-    
-    virtual ~NumericRangeQuery32Fixture()
+
+    virtual ~NumericRangeQuery32Test()
     {
     }
 
 protected:
     // distance of entries
     static const int32_t distance;
-    
+
     // shift the starting of the values to the left, to also have negative values
     static const int32_t startOffset;
-    
+
     // number of docs to generate for testing
     static const int32_t noDocs;
-    
+
     static RAMDirectoryPtr directory;
     static IndexSearcherPtr searcher;
 
@@ -82,18 +82,18 @@ protected:
         NumericFieldPtr ascfield2 = newLucene<NumericField>(L"ascfield2", 2, Field::STORE_NO, true);
 
         DocumentPtr doc = newLucene<Document>();
-        
+
         // add fields, that have a distance to test general functionality
         doc->add(field8);
-        doc->add(field4); 
-        doc->add(field2); 
+        doc->add(field4);
+        doc->add(field2);
         doc->add(fieldNoTrie);
-        
+
         // add ascending fields with a distance of 1, beginning at -noDocs/2 to test the correct splitting of range and inclusive/exclusive
         doc->add(ascfield8);
         doc->add(ascfield4);
         doc->add(ascfield2);
-        
+
         // Add a series of noDocs docs with increasing int values
         for (int32_t l = 0; l < noDocs; ++l)
         {
@@ -109,12 +109,12 @@ protected:
             ascfield2->setIntValue(val);
             writer->addDocument(doc);
         }
-        
+
         writer->optimize();
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-        
+
 public:
     /// test for both constant score and boolean query, the other tests only use the constant score mode
     void testRange(int32_t precisionStep)
@@ -123,7 +123,7 @@ public:
         int32_t count = 3000;
         int32_t lower = (distance * 3 / 2) + startOffset;
         int32_t upper = lower + count * distance + (distance / 3);
-        
+
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, true);
         NumericRangeFilterPtr f = NumericRangeFilter::newIntRange(field, precisionStep, lower, upper, true, true);
         int32_t lastTerms = 0;
@@ -156,20 +156,20 @@ public:
                 default:
                     return;
             }
-            BOOST_TEST_MESSAGE("Found " << terms << " distinct terms in range for field '" << field << "'" << type << ".");
+            // std::cout << "Found " << terms << " distinct terms in range for field '" << field << "'" << type << ".";
             Collection<ScoreDocPtr> sd = topDocs->scoreDocs;
-            BOOST_CHECK(sd);
-            BOOST_CHECK_EQUAL(count, sd.size());
+            EXPECT_TRUE(sd);
+            EXPECT_EQ(count, sd.size());
             DocumentPtr doc = searcher->doc(sd[0]->doc);
-            BOOST_CHECK_EQUAL(StringUtils::toString(2 * distance + startOffset), doc->get(field));
+            EXPECT_EQ(StringUtils::toString(2 * distance + startOffset), doc->get(field));
             doc = searcher->doc(sd[sd.size() - 1]->doc);
-            BOOST_CHECK_EQUAL(StringUtils::toString((1 + count) * distance + startOffset), doc->get(field));
+            EXPECT_EQ(StringUtils::toString((1 + count) * distance + startOffset), doc->get(field));
             if (i > 0)
-                BOOST_CHECK_EQUAL(lastTerms, terms);
+                EXPECT_EQ(lastTerms, terms);
             lastTerms = terms;
         }
     }
-    
+
     void testLeftOpenRange(int32_t precisionStep)
     {
         String field = L"field" + StringUtils::toString(precisionStep);
@@ -178,14 +178,14 @@ public:
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(field, precisionStep, INT_MIN, upper, true, true);
         TopDocsPtr topDocs = searcher->search(q, FilterPtr(), noDocs, Sort::INDEXORDER());
         Collection<ScoreDocPtr> sd = topDocs->scoreDocs;
-        BOOST_CHECK(sd);
-        BOOST_CHECK_EQUAL(count, sd.size());
+        EXPECT_TRUE(sd);
+        EXPECT_EQ(count, sd.size());
         DocumentPtr doc = searcher->doc(sd[0]->doc);
-        BOOST_CHECK_EQUAL(StringUtils::toString(startOffset), doc->get(field));
+        EXPECT_EQ(StringUtils::toString(startOffset), doc->get(field));
         doc = searcher->doc(sd[sd.size() - 1]->doc);
-        BOOST_CHECK_EQUAL(StringUtils::toString((count - 1) * distance + startOffset), doc->get(field));
+        EXPECT_EQ(StringUtils::toString((count - 1) * distance + startOffset), doc->get(field));
     }
-    
+
     void testRightOpenRange(int32_t precisionStep)
     {
         String field = L"field" + StringUtils::toString(precisionStep);
@@ -194,14 +194,14 @@ public:
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(field, precisionStep, lower, INT_MAX, true, true);
         TopDocsPtr topDocs = searcher->search(q, FilterPtr(), noDocs, Sort::INDEXORDER());
         Collection<ScoreDocPtr> sd = topDocs->scoreDocs;
-        BOOST_CHECK(sd);
-        BOOST_CHECK_EQUAL(noDocs - count, sd.size());
+        EXPECT_TRUE(sd);
+        EXPECT_EQ(noDocs - count, sd.size());
         DocumentPtr doc = searcher->doc(sd[0]->doc);
-        BOOST_CHECK_EQUAL(StringUtils::toString(count * distance + startOffset), doc->get(field));
+        EXPECT_EQ(StringUtils::toString(count * distance + startOffset), doc->get(field));
         doc = searcher->doc(sd[sd.size() - 1]->doc);
-        BOOST_CHECK_EQUAL(StringUtils::toString((noDocs - 1) * distance + startOffset), doc->get(field));
+        EXPECT_EQ(StringUtils::toString((noDocs - 1) * distance + startOffset), doc->get(field));
     }
-    
+
     void testRandomTrieAndClassicRangeQuery(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -219,7 +219,7 @@ public:
             TermRangeQueryPtr cq = newLucene<TermRangeQuery>(field, NumericUtils::intToPrefixCoded(lower), NumericUtils::intToPrefixCoded(upper), true, true);
             TopDocsPtr tTopDocs = searcher->search(tq, 1);
             TopDocsPtr cTopDocs = searcher->search(cq, 1);
-            BOOST_CHECK_EQUAL(cTopDocs->totalHits, tTopDocs->totalHits);
+            EXPECT_EQ(cTopDocs->totalHits, tTopDocs->totalHits);
             termCountT += tq->getTotalNumberOfTerms();
             termCountC += cq->getTotalNumberOfTerms();
             // test exclusive range
@@ -227,7 +227,7 @@ public:
             cq = newLucene<TermRangeQuery>(field, NumericUtils::intToPrefixCoded(lower), NumericUtils::intToPrefixCoded(upper), false, false);
             tTopDocs = searcher->search(tq, 1);
             cTopDocs = searcher->search(cq, 1);
-            BOOST_CHECK_EQUAL(cTopDocs->totalHits, tTopDocs->totalHits);
+            EXPECT_EQ(cTopDocs->totalHits, tTopDocs->totalHits);
             termCountT += tq->getTotalNumberOfTerms();
             termCountC += cq->getTotalNumberOfTerms();
             // test left exclusive range
@@ -235,7 +235,7 @@ public:
             cq = newLucene<TermRangeQuery>(field, NumericUtils::intToPrefixCoded(lower), NumericUtils::intToPrefixCoded(upper), false, true);
             tTopDocs = searcher->search(tq, 1);
             cTopDocs = searcher->search(cq, 1);
-            BOOST_CHECK_EQUAL(cTopDocs->totalHits, tTopDocs->totalHits);
+            EXPECT_EQ(cTopDocs->totalHits, tTopDocs->totalHits);
             termCountT += tq->getTotalNumberOfTerms();
             termCountC += cq->getTotalNumberOfTerms();
             // test right exclusive range
@@ -243,14 +243,14 @@ public:
             cq = newLucene<TermRangeQuery>(field, NumericUtils::intToPrefixCoded(lower), NumericUtils::intToPrefixCoded(upper), true, false);
             tTopDocs = searcher->search(tq, 1);
             cTopDocs = searcher->search(cq, 1);
-            BOOST_CHECK_EQUAL(cTopDocs->totalHits, tTopDocs->totalHits);
+            EXPECT_EQ(cTopDocs->totalHits, tTopDocs->totalHits);
             termCountT += tq->getTotalNumberOfTerms();
             termCountC += cq->getTotalNumberOfTerms();
         }
         if (precisionStep == INT_MAX)
-            BOOST_CHECK_EQUAL(termCountT, termCountC);
+            EXPECT_EQ(termCountT, termCountC);
     }
-    
+
     void testRangeSplit(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -265,22 +265,22 @@ public:
             // test inclusive range
             QueryPtr tq = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, true);
             TopDocsPtr tTopDocs = searcher->search(tq, 1);
-            BOOST_CHECK_EQUAL(upper - lower + 1, tTopDocs->totalHits);
+            EXPECT_EQ(upper - lower + 1, tTopDocs->totalHits);
             // test exclusive range
             tq = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, false, false);
             tTopDocs = searcher->search(tq, 1);
-            BOOST_CHECK_EQUAL(std::max(upper - lower - 1, (int32_t)0), tTopDocs->totalHits);
+            EXPECT_EQ(std::max(upper - lower - 1, (int32_t)0), tTopDocs->totalHits);
             // test left exclusive range
             tq = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, false, true);
             tTopDocs = searcher->search(tq, 1);
-            BOOST_CHECK_EQUAL(upper - lower, tTopDocs->totalHits);
+            EXPECT_EQ(upper - lower, tTopDocs->totalHits);
             // test right exclusive range
             tq = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, false);
             tTopDocs = searcher->search(tq, 1);
-            BOOST_CHECK_EQUAL(upper - lower, tTopDocs->totalHits);
+            EXPECT_EQ(upper - lower, tTopDocs->totalHits);
         }
     }
-    
+
     void testSorting(int32_t precisionStep)
     {
         RandomPtr rnd = newLucene<Random>();
@@ -297,17 +297,17 @@ public:
             if (topDocs->totalHits == 0)
                 continue;
             Collection<ScoreDocPtr> sd = topDocs->scoreDocs;
-            BOOST_CHECK(sd);
+            EXPECT_TRUE(sd);
             int32_t last = StringUtils::toInt(searcher->doc(sd[0]->doc)->get(field));
             for (int32_t j = 1; j < sd.size(); ++j)
             {
                 int32_t act = StringUtils::toInt(searcher->doc(sd[j]->doc)->get(field));
-                BOOST_CHECK(last > act);
+                EXPECT_TRUE(last > act);
                 last = act;
             }
         }
     }
-    
+
     void testEnumRange(int32_t lower, int32_t upper)
     {
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(L"field4", 4, lower, upper, true, true);
@@ -318,147 +318,145 @@ public:
             if (t)
             {
                 int32_t val = NumericUtils::prefixCodedToInt(t->text());
-                BOOST_CHECK(val >= lower && val <= upper);
+                EXPECT_TRUE(val >= lower && val <= upper);
             }
             else
                 break;
         }
         while (termEnum->next());
-        BOOST_CHECK(!termEnum->next());
+        EXPECT_TRUE(!termEnum->next());
         termEnum->close();
     }
 };
 
 // distance of entries
-const int32_t NumericRangeQuery32Fixture::distance = 6666;
-    
+const int32_t NumericRangeQuery32Test::distance = 6666;
+
 // shift the starting of the values to the left, to also have negative values
-const int32_t NumericRangeQuery32Fixture::startOffset = -1 << 15;
+const int32_t NumericRangeQuery32Test::startOffset = -1 << 15;
 
 // number of docs to generate for testing
-const int32_t NumericRangeQuery32Fixture::noDocs = 10000;
+const int32_t NumericRangeQuery32Test::noDocs = 10000;
 
-RAMDirectoryPtr NumericRangeQuery32Fixture::directory;
-IndexSearcherPtr NumericRangeQuery32Fixture::searcher;
+RAMDirectoryPtr NumericRangeQuery32Test::directory;
+IndexSearcherPtr NumericRangeQuery32Test::searcher;
 
-BOOST_FIXTURE_TEST_SUITE(NumericRangeQuery32Test, NumericRangeQuery32Fixture)
-
-BOOST_AUTO_TEST_CASE(testRange_8bit)
+TEST_F(NumericRangeQuery32Test, testRange_8bit)
 {
     testRange(8);
 }
 
-BOOST_AUTO_TEST_CASE(testRange_4bit)
+TEST_F(NumericRangeQuery32Test, testRange_4bit)
 {
     testRange(4);
 }
 
-BOOST_AUTO_TEST_CASE(testRange_2bit)
+TEST_F(NumericRangeQuery32Test, testRange_2bit)
 {
     testRange(2);
 }
 
-BOOST_AUTO_TEST_CASE(testInverseRange)
+TEST_F(NumericRangeQuery32Test, testInverseRange)
 {
     NumericRangeFilterPtr f = NumericRangeFilter::newIntRange(L"field8", 8, 1000, -1000, true, true);
-    BOOST_CHECK_EQUAL(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
+    EXPECT_EQ(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
     f = NumericRangeFilter::newIntRange(L"field8", 8, INT_MAX, INT_MIN, false, false);
-    BOOST_CHECK_EQUAL(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
+    EXPECT_EQ(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
     f = NumericRangeFilter::newIntRange(L"field8", 8, INT_MIN, INT_MIN, false, false);
-    BOOST_CHECK_EQUAL(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
+    EXPECT_EQ(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
 }
 
-BOOST_AUTO_TEST_CASE(testOneMatchQuery)
+TEST_F(NumericRangeQuery32Test, testOneMatchQuery)
 {
     NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(L"ascfield8", 8, 1000, 1000, true, true);
-    BOOST_CHECK_EQUAL(MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE(), q->getRewriteMethod());
+    EXPECT_EQ(MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE(), q->getRewriteMethod());
     TopDocsPtr topDocs = searcher->search(q, noDocs);
     Collection<ScoreDocPtr> sd = topDocs->scoreDocs;
-    BOOST_CHECK(sd);
-    BOOST_CHECK_EQUAL(1, sd.size());
+    EXPECT_TRUE(sd);
+    EXPECT_EQ(1, sd.size());
 }
 
-BOOST_AUTO_TEST_CASE(testLeftOpenRange_8bit)
+TEST_F(NumericRangeQuery32Test, testLeftOpenRange_8bit)
 {
     testLeftOpenRange(8);
 }
 
-BOOST_AUTO_TEST_CASE(testLeftOpenRange_4bit)
+TEST_F(NumericRangeQuery32Test, testLeftOpenRange_4bit)
 {
     testLeftOpenRange(4);
 }
 
-BOOST_AUTO_TEST_CASE(testLeftOpenRange_2bit)
+TEST_F(NumericRangeQuery32Test, testLeftOpenRange_2bit)
 {
     testLeftOpenRange(2);
 }
 
-BOOST_AUTO_TEST_CASE(testRightOpenRange_8bit)
+TEST_F(NumericRangeQuery32Test, testRightOpenRange_8bit)
 {
     testRightOpenRange(8);
 }
 
-BOOST_AUTO_TEST_CASE(testRightOpenRange_4bit)
+TEST_F(NumericRangeQuery32Test, testRightOpenRange_4bit)
 {
     testRightOpenRange(4);
 }
 
-BOOST_AUTO_TEST_CASE(testRightOpenRange_2bit)
+TEST_F(NumericRangeQuery32Test, testRightOpenRange_2bit)
 {
     testRightOpenRange(2);
 }
 
-BOOST_AUTO_TEST_CASE(testRandomTrieAndClassicRangeQuery_8bit)
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_8bit)
 {
     testRandomTrieAndClassicRangeQuery(8);
 }
 
-BOOST_AUTO_TEST_CASE(testRandomTrieAndClassicRangeQuery_4bit)
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_4bit)
 {
     testRandomTrieAndClassicRangeQuery(4);
 }
 
-BOOST_AUTO_TEST_CASE(testRandomTrieAndClassicRangeQuery_2bit)
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_2bit)
 {
     testRandomTrieAndClassicRangeQuery(2);
 }
 
-BOOST_AUTO_TEST_CASE(testRandomTrieAndClassicRangeQuery_NoTrie)
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_NoTrie)
 {
     testRandomTrieAndClassicRangeQuery(INT_MAX);
 }
 
-BOOST_AUTO_TEST_CASE(testRangeSplit_8bit)
+TEST_F(NumericRangeQuery32Test, testRangeSplit_8bit)
 {
     testRangeSplit(8);
 }
 
-BOOST_AUTO_TEST_CASE(testRangeSplit_4bit)
+TEST_F(NumericRangeQuery32Test, testRangeSplit_4bit)
 {
     testRangeSplit(4);
 }
 
-BOOST_AUTO_TEST_CASE(testRangeSplit_2bit)
+TEST_F(NumericRangeQuery32Test, testRangeSplit_2bit)
 {
     testRangeSplit(2);
 }
 
-BOOST_AUTO_TEST_CASE(testSorting_8bit)
+TEST_F(NumericRangeQuery32Test, testSorting_8bit)
 {
     testSorting(8);
 }
 
-BOOST_AUTO_TEST_CASE(testSorting_4bit)
+TEST_F(NumericRangeQuery32Test, testSorting_4bit)
 {
     testSorting(4);
 }
 
-BOOST_AUTO_TEST_CASE(testSorting_2bit)
+TEST_F(NumericRangeQuery32Test, testSorting_2bit)
 {
     testSorting(2);
 }
 
-BOOST_AUTO_TEST_CASE(testEqualsAndHash)
+TEST_F(NumericRangeQuery32Test, testEqualsAndHash)
 {
     QueryUtils::checkHashEquals(NumericRangeQuery::newIntRange(L"test1", 4, 10, 20, true, true));
     QueryUtils::checkHashEquals(NumericRangeQuery::newIntRange(L"test2", 4, 10, 20, false, true));
@@ -473,30 +471,28 @@ BOOST_AUTO_TEST_CASE(testEqualsAndHash)
     QueryUtils::checkUnequal(NumericRangeQuery::newIntRange(L"test11", 4, 10, 20, true, true), NumericRangeQuery::newIntRange(L"test11", 4, 20, 10, true, true));
     QueryUtils::checkUnequal(NumericRangeQuery::newIntRange(L"test12", 4, 10, 20, true, true), NumericRangeQuery::newIntRange(L"test12", 4, 10, 20, false, true));
     QueryUtils::checkUnequal(NumericRangeQuery::newIntRange(L"test13", 4, 10, 20, true, true), NumericRangeQuery::newDoubleRange(L"test13", 4, 10.0, 20.0, true, true));
-    
+
     // the following produces a hash collision, because Long and Integer have the same hashcode, so only test equality
     QueryPtr q1 = NumericRangeQuery::newIntRange(L"test14", 4, 10, 20, true, true);
     QueryPtr q2 = NumericRangeQuery::newLongRange(L"test14", 4, 10, 20, true, true);
-    BOOST_CHECK(!q1->equals(q2));
-    BOOST_CHECK(!q2->equals(q1));
+    EXPECT_TRUE(!q1->equals(q2));
+    EXPECT_TRUE(!q2->equals(q1));
 }
 
-BOOST_AUTO_TEST_CASE(testEnum)
+TEST_F(NumericRangeQuery32Test, testEnum)
 {
     int32_t count = 3000;
     int32_t lower= (distance * 3 / 2) + startOffset;
     int32_t upper = lower + count * distance + (distance / 3);
-    
+
     // test enum with values
     testEnumRange(lower, upper);
-    
+
     // test empty enum
     testEnumRange(upper, lower);
-    
+
     // test empty enum outside of bounds
     lower = distance * noDocs + startOffset;
     upper = 2 * lower;
     testEnumRange(lower, upper);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

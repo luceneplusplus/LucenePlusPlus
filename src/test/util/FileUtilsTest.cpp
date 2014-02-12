@@ -12,210 +12,208 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(FileUtilsTest, LuceneTestFixture)
+typedef LuceneTestFixture FileUtilsTest;
 
-BOOST_AUTO_TEST_CASE(testFileExists)
+TEST_F(FileUtilsTest, testFileExists)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"testfile1.txt"));
-    BOOST_CHECK(FileUtils::fileExists(fileDir));
+    EXPECT_TRUE(FileUtils::fileExists(fileDir));
 }
 
-BOOST_AUTO_TEST_CASE(testFileModified)
+TEST_F(FileUtilsTest, testFileModified)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"testfile1.txt"));
-    
+
     uint64_t fileModified = FileUtils::fileModified(fileDir);
-    BOOST_CHECK_NE(fileModified, 0);
-    
+    EXPECT_NE(fileModified, 0);
+
     struct tm *fileTime = localtime((const time_t*)&fileModified);
-    BOOST_CHECK(fileTime != NULL);
+    EXPECT_TRUE(fileTime != NULL);
 }
 
-BOOST_AUTO_TEST_CASE(testInvalidFileModified)
+TEST_F(FileUtilsTest, testInvalidFileModified)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"invalid"));
-    BOOST_CHECK_EQUAL(FileUtils::fileModified(fileDir), 0);
+    EXPECT_EQ(FileUtils::fileModified(fileDir), 0);
 }
 
-BOOST_AUTO_TEST_CASE(testTouchFile)
+TEST_F(FileUtilsTest, testTouchFile)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"testfile1.txt"));
-    
-    BOOST_CHECK(FileUtils::touchFile(fileDir));
-    
+
+    EXPECT_TRUE(FileUtils::touchFile(fileDir));
+
     uint64_t fileModified = FileUtils::fileModified(fileDir);
-    BOOST_CHECK_NE(fileModified, 0);
-    
+    EXPECT_NE(fileModified, 0);
+
     struct tm *fileTime = localtime((const time_t*)&fileModified);
-    BOOST_CHECK(fileTime != NULL);
-    
+    EXPECT_TRUE(fileTime != NULL);
+
     time_t current = time(NULL);
     struct tm *currentTime = localtime((const time_t*)&current);
-    
-    BOOST_CHECK_EQUAL(fileTime->tm_year, currentTime->tm_year);
-    BOOST_CHECK_EQUAL(fileTime->tm_mon, currentTime->tm_mon);
-    BOOST_CHECK_EQUAL(fileTime->tm_mday, currentTime->tm_mday);
+
+    EXPECT_EQ(fileTime->tm_year, currentTime->tm_year);
+    EXPECT_EQ(fileTime->tm_mon, currentTime->tm_mon);
+    EXPECT_EQ(fileTime->tm_mday, currentTime->tm_mday);
 }
 
-BOOST_AUTO_TEST_CASE(testInvalidTouchFile)
+TEST_F(FileUtilsTest, testInvalidTouchFile)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"invalid"));
-    BOOST_CHECK(!FileUtils::touchFile(fileDir));
+    EXPECT_TRUE(!FileUtils::touchFile(fileDir));
 }
 
-BOOST_AUTO_TEST_CASE(testFileLength)
+TEST_F(FileUtilsTest, testFileLength)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"testfilesize1.txt"));
     int64_t fileLength = FileUtils::fileLength(fileDir);
-    BOOST_CHECK_EQUAL(fileLength, 29);
+    EXPECT_EQ(fileLength, 29);
 }
 
-BOOST_AUTO_TEST_CASE(testInvalidFileLength)
+TEST_F(FileUtilsTest, testInvalidFileLength)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"invalid"));
-    BOOST_CHECK_EQUAL(FileUtils::fileLength(fileDir), 0);
+    EXPECT_EQ(FileUtils::fileLength(fileDir), 0);
 }
 
-BOOST_AUTO_TEST_CASE(testSetFileLength)
+TEST_F(FileUtilsTest, testSetFileLength)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"testfilesize2.txt"));
-    
-    BOOST_CHECK(FileUtils::setFileLength(fileDir, 1234));
-    
+
+    EXPECT_TRUE(FileUtils::setFileLength(fileDir, 1234));
+
     int64_t fileLengthGrow = FileUtils::fileLength(fileDir);
-    BOOST_CHECK_EQUAL(fileLengthGrow, 1234);
-    
-    BOOST_CHECK(FileUtils::setFileLength(fileDir, 29));
-    
+    EXPECT_EQ(fileLengthGrow, 1234);
+
+    EXPECT_TRUE(FileUtils::setFileLength(fileDir, 29));
+
     int64_t fileLengthShrink = FileUtils::fileLength(fileDir);
-    BOOST_CHECK_EQUAL(fileLengthShrink, 29);
+    EXPECT_EQ(fileLengthShrink, 29);
 }
 
-BOOST_AUTO_TEST_CASE(testInvalidSetFileLength)
+TEST_F(FileUtilsTest, testInvalidSetFileLength)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"invalid"));
-    BOOST_CHECK(!FileUtils::setFileLength(fileDir, 1234));
+    EXPECT_TRUE(!FileUtils::setFileLength(fileDir, 1234));
 }
 
-BOOST_AUTO_TEST_CASE(testRemoveFile)
+TEST_F(FileUtilsTest, testRemoveFile)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"testdelete.txt"));
-    
+
     std::ofstream f(StringUtils::toUTF8(fileDir).c_str(), std::ios::binary | std::ios::out);
     f.close();
-    
-    BOOST_CHECK(FileUtils::fileExists(fileDir));
-    BOOST_CHECK(FileUtils::removeFile(fileDir));
-    BOOST_CHECK(!FileUtils::fileExists(fileDir));
+
+    EXPECT_TRUE(FileUtils::fileExists(fileDir));
+    EXPECT_TRUE(FileUtils::removeFile(fileDir));
+    EXPECT_TRUE(!FileUtils::fileExists(fileDir));
 }
 
-BOOST_AUTO_TEST_CASE(testInvalidRemoveFile)
+TEST_F(FileUtilsTest, testInvalidRemoveFile)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"invalid"));
-    BOOST_CHECK(!FileUtils::removeFile(fileDir));
+    EXPECT_TRUE(!FileUtils::removeFile(fileDir));
 }
 
-BOOST_AUTO_TEST_CASE(testIsDirectory)
+TEST_F(FileUtilsTest, testIsDirectory)
 {
     String fileDir(FileUtils::joinPath(getTestDir(), L"testdirectory"));
-    BOOST_CHECK(FileUtils::isDirectory(fileDir));
+    EXPECT_TRUE(FileUtils::isDirectory(fileDir));
 }
 
-BOOST_AUTO_TEST_CASE(testNotDirectory)
+TEST_F(FileUtilsTest, testNotDirectory)
 {
     String fileDir(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"testdirectory"), L"testfile1.txt"));
-    BOOST_CHECK(!FileUtils::isDirectory(fileDir));
+    EXPECT_TRUE(!FileUtils::isDirectory(fileDir));
 }
 
-BOOST_AUTO_TEST_CASE(testNotDirectoryEmpty)
+TEST_F(FileUtilsTest, testNotDirectoryEmpty)
 {
-    BOOST_CHECK(!FileUtils::isDirectory(L""));
+    EXPECT_TRUE(!FileUtils::isDirectory(L""));
 }
 
-BOOST_AUTO_TEST_CASE(testListDirectory)
-{
-    String fileDir(FileUtils::joinPath(getTestDir(), L"testdirectory"));
-    
-    HashSet<String> list(HashSet<String>::newInstance());
-    BOOST_CHECK(FileUtils::listDirectory(fileDir, false, list));
-    
-    Collection<String> expectedList(Collection<String>::newInstance(list.begin(), list.end()));
-    std::sort(expectedList.begin(), expectedList.end());
-    
-    BOOST_CHECK_EQUAL(expectedList.size(), 6);
-    BOOST_CHECK_EQUAL(expectedList[0], L"subdirectory");
-    BOOST_CHECK_EQUAL(expectedList[1], L"testfile1.txt");
-    BOOST_CHECK_EQUAL(expectedList[2], L"testfile2.txt");
-    BOOST_CHECK_EQUAL(expectedList[3], L"testfile3.txt");
-    BOOST_CHECK_EQUAL(expectedList[4], L"testfilesize1.txt");
-    BOOST_CHECK_EQUAL(expectedList[5], L"testfilesize2.txt");
-}
-
-BOOST_AUTO_TEST_CASE(testListDirectoryFiles)
+TEST_F(FileUtilsTest, testListDirectory)
 {
     String fileDir(FileUtils::joinPath(getTestDir(), L"testdirectory"));
-    
+
     HashSet<String> list(HashSet<String>::newInstance());
-    BOOST_CHECK(FileUtils::listDirectory(fileDir, true, list));
-    
+    EXPECT_TRUE(FileUtils::listDirectory(fileDir, false, list));
+
     Collection<String> expectedList(Collection<String>::newInstance(list.begin(), list.end()));
     std::sort(expectedList.begin(), expectedList.end());
-    
-    BOOST_CHECK_EQUAL(expectedList.size(), 5);
-    BOOST_CHECK_EQUAL(expectedList[0], L"testfile1.txt");
-    BOOST_CHECK_EQUAL(expectedList[1], L"testfile2.txt");
-    BOOST_CHECK_EQUAL(expectedList[2], L"testfile3.txt");
-    BOOST_CHECK_EQUAL(expectedList[3], L"testfilesize1.txt");
-    BOOST_CHECK_EQUAL(expectedList[4], L"testfilesize2.txt");
+
+    EXPECT_EQ(expectedList.size(), 6);
+    EXPECT_EQ(expectedList[0], L"subdirectory");
+    EXPECT_EQ(expectedList[1], L"testfile1.txt");
+    EXPECT_EQ(expectedList[2], L"testfile2.txt");
+    EXPECT_EQ(expectedList[3], L"testfile3.txt");
+    EXPECT_EQ(expectedList[4], L"testfilesize1.txt");
+    EXPECT_EQ(expectedList[5], L"testfilesize2.txt");
 }
 
-BOOST_AUTO_TEST_CASE(testJoinPath)
+TEST_F(FileUtilsTest, testListDirectoryFiles)
+{
+    String fileDir(FileUtils::joinPath(getTestDir(), L"testdirectory"));
+
+    HashSet<String> list(HashSet<String>::newInstance());
+    EXPECT_TRUE(FileUtils::listDirectory(fileDir, true, list));
+
+    Collection<String> expectedList(Collection<String>::newInstance(list.begin(), list.end()));
+    std::sort(expectedList.begin(), expectedList.end());
+
+    EXPECT_EQ(expectedList.size(), 5);
+    EXPECT_EQ(expectedList[0], L"testfile1.txt");
+    EXPECT_EQ(expectedList[1], L"testfile2.txt");
+    EXPECT_EQ(expectedList[2], L"testfile3.txt");
+    EXPECT_EQ(expectedList[3], L"testfilesize1.txt");
+    EXPECT_EQ(expectedList[4], L"testfilesize2.txt");
+}
+
+TEST_F(FileUtilsTest, testJoinPath)
 {
     #if defined(_WIN32) || defined(_WIN64)
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"c:\\test", L"\\testfile.txt"), L"c:\\test\\testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"c:\\test", L"testfile.txt"), L"c:\\test\\testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"", L"testfile.txt"), L"testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"c:\\test", L""), L"c:\\test");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"\\test", L"\\testfile.txt"), L"\\test\\testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"\\test", L"testfile.txt"), L"\\test\\testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"", L"testfile.txt"), L"testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"\\test", L""), L"\\test");
+    EXPECT_EQ(FileUtils::joinPath(L"c:\\test", L"\\testfile.txt"), L"c:\\test\\testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"c:\\test", L"testfile.txt"), L"c:\\test\\testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"", L"testfile.txt"), L"testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"c:\\test", L""), L"c:\\test");
+    EXPECT_EQ(FileUtils::joinPath(L"\\test", L"\\testfile.txt"), L"\\test\\testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"\\test", L"testfile.txt"), L"\\test\\testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"", L"testfile.txt"), L"testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"\\test", L""), L"\\test");
     #else
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"/test", L"/testfile.txt"), L"/test/testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"/test", L"testfile.txt"), L"/test/testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"", L"testfile.txt"), L"testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::joinPath(L"/test", L""), L"/test");
+    EXPECT_EQ(FileUtils::joinPath(L"/test", L"/testfile.txt"), L"/test/testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"/test", L"testfile.txt"), L"/test/testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"", L"testfile.txt"), L"testfile.txt");
+    EXPECT_EQ(FileUtils::joinPath(L"/test", L""), L"/test");
     #endif
 }
 
-BOOST_AUTO_TEST_CASE(testExtractPath)
+TEST_F(FileUtilsTest, testExtractPath)
 {
     #if defined(_WIN32) || defined(_WIN64)
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L"c:\\test"), L"c:\\");
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L"c:\\test\\testfile.txt"), L"c:\\test");
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L""), L"");
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L"\\test"), L"\\");
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L"\\test\\testfile.txt"), L"\\test");
+    EXPECT_EQ(FileUtils::extractPath(L"c:\\test"), L"c:\\");
+    EXPECT_EQ(FileUtils::extractPath(L"c:\\test\\testfile.txt"), L"c:\\test");
+    EXPECT_EQ(FileUtils::extractPath(L""), L"");
+    EXPECT_EQ(FileUtils::extractPath(L"\\test"), L"\\");
+    EXPECT_EQ(FileUtils::extractPath(L"\\test\\testfile.txt"), L"\\test");
     #else
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L"/test"), L"/");
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L"/test/testfile.txt"), L"/test");
-    BOOST_CHECK_EQUAL(FileUtils::extractPath(L""), L"");
+    EXPECT_EQ(FileUtils::extractPath(L"/test"), L"/");
+    EXPECT_EQ(FileUtils::extractPath(L"/test/testfile.txt"), L"/test");
+    EXPECT_EQ(FileUtils::extractPath(L""), L"");
     #endif
 }
 
-BOOST_AUTO_TEST_CASE(testExtractFile)
+TEST_F(FileUtilsTest, testExtractFile)
 {
     #if defined(_WIN32) || defined(_WIN64)
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L"c:\\test"), L"test");
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L"c:\\test\\testfile.txt"), L"testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L""), L"");
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L"\\test"), L"test");
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L"\\test\\testfile.txt"), L"testfile.txt");
+    EXPECT_EQ(FileUtils::extractFile(L"c:\\test"), L"test");
+    EXPECT_EQ(FileUtils::extractFile(L"c:\\test\\testfile.txt"), L"testfile.txt");
+    EXPECT_EQ(FileUtils::extractFile(L""), L"");
+    EXPECT_EQ(FileUtils::extractFile(L"\\test"), L"test");
+    EXPECT_EQ(FileUtils::extractFile(L"\\test\\testfile.txt"), L"testfile.txt");
     #else
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L"/test"), L"test");
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L"/test/testfile.txt"), L"testfile.txt");
-    BOOST_CHECK_EQUAL(FileUtils::extractFile(L""), L"");
+    EXPECT_EQ(FileUtils::extractFile(L"/test"), L"test");
+    EXPECT_EQ(FileUtils::extractFile(L"/test/testfile.txt"), L"testfile.txt");
+    EXPECT_EQ(FileUtils::extractFile(L""), L"");
     #endif
 }
-
-BOOST_AUTO_TEST_SUITE_END()

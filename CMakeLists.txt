@@ -52,9 +52,9 @@ find_package(Boost COMPONENTS
   regex
   system
   thread
-  unit_test_framework
   REQUIRED
 )
+
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ${LUCENE_USE_STATIC_BOOST_LIBS})
 
@@ -118,6 +118,9 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}/include
 )
 
+include(CMakeExternal.txt)
+enable_testing()
+
 add_subdirectory(src/core)
 add_subdirectory(src/contrib)
 add_subdirectory(src/demo)
@@ -157,8 +160,6 @@ add_custom_target(
 if(ENABLE_PACKAGING)
   include(CreateLucene++Packages)
 endif()
-
-enable_testing()
 
 message("** Build Summary **")
 message("  Version:        ${lucene++_VERSION}")

@@ -11,7 +11,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(PriorityQueueTest, LuceneTestFixture)
+typedef LuceneTestFixture PriorityQueueTest;
 
 DECLARE_SHARED_PTR(IntegerQueue)
 
@@ -21,7 +21,7 @@ public:
     IntegerQueue(int32_t maxSize) : PriorityQueue<int32_t>(maxSize)
     {
     }
-    
+
     virtual ~IntegerQueue()
     {
     }
@@ -36,7 +36,7 @@ public:
     IntegerPtrQueue(int32_t maxSize) : PriorityQueue<IntPtr>(maxSize)
     {
     }
-    
+
     virtual ~IntegerPtrQueue()
     {
     }
@@ -48,34 +48,34 @@ protected:
     }
 };
 
-BOOST_AUTO_TEST_CASE(testPriorityQueue)
+TEST_F(PriorityQueueTest, testPriorityQueue)
 {
     IntegerQueuePtr testQueue = newLucene<IntegerQueue>(10000);
     int64_t sum = 0;
     RandomPtr random = newLucene<Random>();
-    
+
     for (int32_t i = 0; i < 10000; ++i)
     {
         int32_t next = random->nextInt();
         sum += next;
         testQueue->add(next);
     }
-    
+
     int32_t last = INT_MIN;
     int64_t sum2 = 0;
-    
+
     for (int32_t i = 0; i < 10000; ++i)
     {
         int32_t next = testQueue->pop();
-        BOOST_CHECK(next >= last);
+        EXPECT_TRUE(next >= last);
         last = next;
         sum2 += last;
     }
 
-    BOOST_CHECK_EQUAL(sum, sum2);
+    EXPECT_EQ(sum, sum2);
 }
 
-BOOST_AUTO_TEST_CASE(testPriorityQueueOverflow)
+TEST_F(PriorityQueueTest, testPriorityQueueOverflow)
 {
     IntegerQueuePtr testQueue = newLucene<IntegerQueue>(3);
     testQueue->addOverflow(2);
@@ -84,22 +84,22 @@ BOOST_AUTO_TEST_CASE(testPriorityQueueOverflow)
     testQueue->addOverflow(5);
     testQueue->addOverflow(7);
     testQueue->addOverflow(1);
-    BOOST_CHECK_EQUAL(testQueue->size(), 3);
-    BOOST_CHECK_EQUAL(3, testQueue->top());
+    EXPECT_EQ(testQueue->size(), 3);
+    EXPECT_EQ(3, testQueue->top());
 }
 
-BOOST_AUTO_TEST_CASE(testPriorityQueueClear)
+TEST_F(PriorityQueueTest, testPriorityQueueClear)
 {
     IntegerQueuePtr testQueue = newLucene<IntegerQueue>(3);
     testQueue->add(2);
     testQueue->add(3);
     testQueue->add(1);
-    BOOST_CHECK_EQUAL(testQueue->size(), 3);
+    EXPECT_EQ(testQueue->size(), 3);
     testQueue->clear();
-    BOOST_CHECK(testQueue->empty());
+    EXPECT_TRUE(testQueue->empty());
 }
 
-BOOST_AUTO_TEST_CASE(testPriorityQueueUpdate)
+TEST_F(PriorityQueueTest, testPriorityQueueUpdate)
 {
     IntegerPtrQueuePtr testQueue = newLucene<IntegerPtrQueue>(1024);
     testQueue->add(newInstance<int32_t>(2));
@@ -107,19 +107,17 @@ BOOST_AUTO_TEST_CASE(testPriorityQueueUpdate)
     testQueue->add(newInstance<int32_t>(1));
     testQueue->add(newInstance<int32_t>(4));
     testQueue->add(newInstance<int32_t>(5));
-    BOOST_CHECK_EQUAL(testQueue->size(), 5);
-    
+    EXPECT_EQ(testQueue->size(), 5);
+
     IntPtr top = testQueue->top();
-    BOOST_CHECK_EQUAL(*top, 1);
-    
+    EXPECT_EQ(*top, 1);
+
     *top = 6;
     testQueue->updateTop();
-    
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 2);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 3);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 4);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 5);
-    BOOST_CHECK_EQUAL(*testQueue->pop(), 6);
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    EXPECT_EQ(*testQueue->pop(), 2);
+    EXPECT_EQ(*testQueue->pop(), 3);
+    EXPECT_EQ(*testQueue->pop(), 4);
+    EXPECT_EQ(*testQueue->pop(), 5);
+    EXPECT_EQ(*testQueue->pop(), 6);
+}

@@ -20,14 +20,14 @@
 
 using namespace Lucene;
 
-class PrefixInBooleanQueryFixture : public LuceneTestFixture
+class PrefixInBooleanQueryTest : public LuceneTestFixture
 {
 public:
-    PrefixInBooleanQueryFixture()
+    PrefixInBooleanQueryTest()
     {
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        
+
         for (int32_t i = 0; i < 5137; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
@@ -39,7 +39,7 @@ public:
             doc->add(newLucene<Field>(FIELD, L"tangfulin", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
         }
-        
+
         for (int32_t i = 5138; i < 11377; ++i)
         {
             DocumentPtr doc = newLucene<Document>();
@@ -51,11 +51,11 @@ public:
             doc->add(newLucene<Field>(FIELD, L"tangfulin", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
         }
-        
+
         writer->close();
     }
-    
-    virtual ~PrefixInBooleanQueryFixture()
+
+    virtual ~PrefixInBooleanQueryTest()
     {
     }
 
@@ -66,40 +66,36 @@ public:
     static const String FIELD;
 };
 
-const String PrefixInBooleanQueryFixture::FIELD = L"name";
+const String PrefixInBooleanQueryTest::FIELD = L"name";
 
-BOOST_FIXTURE_TEST_SUITE(PrefixInBooleanQueryTest, PrefixInBooleanQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testPrefixQuery)
+TEST_F(PrefixInBooleanQueryTest, testPrefixQuery)
 {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     QueryPtr query = newLucene<PrefixQuery>(newLucene<Term>(FIELD, L"tang"));
-    BOOST_CHECK_EQUAL(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
+    EXPECT_EQ(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
 }
 
-BOOST_AUTO_TEST_CASE(testTermQuery)
+TEST_F(PrefixInBooleanQueryTest, testTermQuery)
 {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(FIELD, L"tangfulin"));
-    BOOST_CHECK_EQUAL(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
+    EXPECT_EQ(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
 }
 
-BOOST_AUTO_TEST_CASE(testTermBooleanQuery)
+TEST_F(PrefixInBooleanQueryTest, testTermBooleanQuery)
 {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     BooleanQueryPtr query = newLucene<BooleanQuery>();
     query->add(newLucene<TermQuery>(newLucene<Term>(FIELD, L"tangfulin")), BooleanClause::SHOULD);
     query->add(newLucene<TermQuery>(newLucene<Term>(FIELD, L"notexistnames")), BooleanClause::SHOULD);
-    BOOST_CHECK_EQUAL(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
+    EXPECT_EQ(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
 }
 
-BOOST_AUTO_TEST_CASE(testPrefixBooleanQuery)
+TEST_F(PrefixInBooleanQueryTest, testPrefixBooleanQuery)
 {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     BooleanQueryPtr query = newLucene<BooleanQuery>();
     query->add(newLucene<PrefixQuery>(newLucene<Term>(FIELD, L"tang")), BooleanClause::SHOULD);
     query->add(newLucene<TermQuery>(newLucene<Term>(FIELD, L"notexistnames")), BooleanClause::SHOULD);
-    BOOST_CHECK_EQUAL(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
+    EXPECT_EQ(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

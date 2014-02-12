@@ -10,11 +10,11 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(CloseableThreadLocalTest, LuceneTestFixture)
+typedef LuceneTestFixture CloseableThreadLocalTest;
 
 static const String TEST_VALUE = L"initvaluetest";
 
-BOOST_AUTO_TEST_CASE(testInitValue)
+TEST_F(CloseableThreadLocalTest, testInitValue)
 {
     class InitValueThreadLocal : public CloseableThreadLocal<String>
     {
@@ -32,23 +32,21 @@ BOOST_AUTO_TEST_CASE(testInitValue)
 
     InitValueThreadLocal tl;
     String str = *(tl.get());
-    BOOST_CHECK_EQUAL(TEST_VALUE, str);
+    EXPECT_EQ(TEST_VALUE, str);
 }
 
 /// Tests that null can be set as a valid value.
-BOOST_AUTO_TEST_CASE(testNullValue)
+TEST_F(CloseableThreadLocalTest, testNullValue)
 {
     CloseableThreadLocal<String> ctl;
     ctl.set(boost::shared_ptr<String>());
-    BOOST_CHECK(!ctl.get());
+    EXPECT_TRUE(!ctl.get());
 }
 
 /// Make sure default get returns null, twice in a row
-BOOST_AUTO_TEST_CASE(testDefaultValueWithoutSetting)
+TEST_F(CloseableThreadLocalTest, testDefaultValueWithoutSetting)
 {
     CloseableThreadLocal<String> ctl;
-    BOOST_CHECK(!ctl.get());
-    BOOST_CHECK(!ctl.get());
+    EXPECT_TRUE(!ctl.get());
+    EXPECT_TRUE(!ctl.get());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

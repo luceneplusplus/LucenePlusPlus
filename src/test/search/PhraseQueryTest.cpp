@@ -38,17 +38,17 @@ public:
     {
         return newLucene<WhitespaceTokenizer>(reader);
     }
-    
+
     virtual int32_t getPositionIncrementGap(const String& fieldName)
     {
         return 100;
     }
 };
 
-class PhraseQueryFixture : public LuceneTestFixture
+class PhraseQueryTest : public LuceneTestFixture
 {
 public:
-    PhraseQueryFixture()
+    PhraseQueryTest()
     {
         directory = newLucene<RAMDirectory>();
         AnalyzerPtr analyzer = newLucene<PhraseQueryAnalyzer>();
@@ -76,8 +76,8 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
         query = newLucene<PhraseQuery>();
     }
-    
-    virtual ~PhraseQueryFixture()
+
+    virtual ~PhraseQueryTest()
     {
         searcher->close();
         directory->close();
@@ -93,56 +93,54 @@ protected:
     RAMDirectoryPtr directory;
 };
 
-const double PhraseQueryFixture::SCORE_COMP_THRESH = 1e-6f;
+const double PhraseQueryTest::SCORE_COMP_THRESH = 1e-6f;
 
-BOOST_FIXTURE_TEST_SUITE(PhraseQueryTest, PhraseQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testNotCloseEnough)
+TEST_F(PhraseQueryTest, testNotCloseEnough)
 {
     query->setSlop(2);
     query->add(newLucene<Term>(L"field", L"one"));
     query->add(newLucene<Term>(L"field", L"five"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 }
 
-BOOST_AUTO_TEST_CASE(testBarelyCloseEnough)
+TEST_F(PhraseQueryTest, testBarelyCloseEnough)
 {
     query->setSlop(3);
     query->add(newLucene<Term>(L"field", L"one"));
     query->add(newLucene<Term>(L"field", L"five"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 }
 
 /// Ensures slop of 0 works for exact matches, but not reversed
-BOOST_AUTO_TEST_CASE(testExact)
+TEST_F(PhraseQueryTest, testExact)
 {
     // slop is zero by default
     query->add(newLucene<Term>(L"field", L"four"));
     query->add(newLucene<Term>(L"field", L"five"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     query = newLucene<PhraseQuery>();
     query->add(newLucene<Term>(L"field", L"two"));
     query->add(newLucene<Term>(L"field", L"one"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 }
 
-BOOST_AUTO_TEST_CASE(testSlop1)
+TEST_F(PhraseQueryTest, testSlop1)
 {
     // Ensures slop of 1 works with terms in order.
     query->setSlop(1);
     query->add(newLucene<Term>(L"field", L"one"));
     query->add(newLucene<Term>(L"field", L"two"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     // Ensures slop of 1 does not work for phrases out of order; must be at least 2
@@ -151,19 +149,19 @@ BOOST_AUTO_TEST_CASE(testSlop1)
     query->add(newLucene<Term>(L"field", L"two"));
     query->add(newLucene<Term>(L"field", L"one"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 }
 
 /// As long as slop is at least 2, terms can be reversed
-BOOST_AUTO_TEST_CASE(testOrderDoesntMatter)
+TEST_F(PhraseQueryTest, testOrderDoesntMatter)
 {
     // must be at least two for reverse order match
     query->setSlop(2);
     query->add(newLucene<Term>(L"field", L"two"));
     query->add(newLucene<Term>(L"field", L"one"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     query = newLucene<PhraseQuery>();
@@ -171,19 +169,19 @@ BOOST_AUTO_TEST_CASE(testOrderDoesntMatter)
     query->add(newLucene<Term>(L"field", L"three"));
     query->add(newLucene<Term>(L"field", L"one"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 }
 
 /// Slop is the total number of positional moves allowed to line up a phrase
-BOOST_AUTO_TEST_CASE(testMulipleTerms)
+TEST_F(PhraseQueryTest, testMulipleTerms)
 {
     query->setSlop(2);
     query->add(newLucene<Term>(L"field", L"one"));
     query->add(newLucene<Term>(L"field", L"three"));
     query->add(newLucene<Term>(L"field", L"five"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     query = newLucene<PhraseQuery>();
@@ -192,16 +190,16 @@ BOOST_AUTO_TEST_CASE(testMulipleTerms)
     query->add(newLucene<Term>(L"field", L"three"));
     query->add(newLucene<Term>(L"field", L"one"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
-    
+
     query->setSlop(6);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 }
 
-BOOST_AUTO_TEST_CASE(testPhraseQueryWithStopAnalyzer)
+TEST_F(PhraseQueryTest, testPhraseQueryWithStopAnalyzer)
 {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     StopAnalyzerPtr stopAnalyzer = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_24);
@@ -218,7 +216,7 @@ BOOST_AUTO_TEST_CASE(testPhraseQueryWithStopAnalyzer)
     query->add(newLucene<Term>(L"field", L"stop"));
     query->add(newLucene<Term>(L"field", L"words"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     // StopAnalyzer as of 2.4 does not leave "holes", so this matches.
@@ -226,13 +224,13 @@ BOOST_AUTO_TEST_CASE(testPhraseQueryWithStopAnalyzer)
     query->add(newLucene<Term>(L"field", L"words"));
     query->add(newLucene<Term>(L"field", L"here"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testPhraseQueryInConjunctionScorer)
+TEST_F(PhraseQueryTest, testPhraseQueryInConjunctionScorer)
 {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -243,7 +241,7 @@ BOOST_AUTO_TEST_CASE(testPhraseQueryInConjunctionScorer)
 
     doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"contents", L"foobar", Field::STORE_YES, Field::INDEX_ANALYZED));
-    doc->add(newLucene<Field>(L"source", L"marketing info", Field::STORE_YES, Field::INDEX_ANALYZED)); 
+    doc->add(newLucene<Field>(L"source", L"marketing info", Field::STORE_YES, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 
     writer->optimize();
@@ -255,7 +253,7 @@ BOOST_AUTO_TEST_CASE(testPhraseQueryInConjunctionScorer)
     phraseQuery->add(newLucene<Term>(L"source", L"marketing"));
     phraseQuery->add(newLucene<Term>(L"source", L"info"));
     Collection<ScoreDocPtr> hits = searcher->search(phraseQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     QueryUtils::check(phraseQuery, searcher);
 
     TermQueryPtr termQuery = newLucene<TermQuery>(newLucene<Term>(L"contents", L"foobar"));
@@ -263,7 +261,7 @@ BOOST_AUTO_TEST_CASE(testPhraseQueryInConjunctionScorer)
     booleanQuery->add(termQuery, BooleanClause::MUST);
     booleanQuery->add(phraseQuery, BooleanClause::MUST);
     hits = searcher->search(booleanQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(termQuery, searcher);
 
     searcher->close();
@@ -292,28 +290,28 @@ BOOST_AUTO_TEST_CASE(testPhraseQueryInConjunctionScorer)
     phraseQuery->add(newLucene<Term>(L"contents", L"entry"));
 
     hits = searcher->search(termQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
     hits = searcher->search(phraseQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     booleanQuery = newLucene<BooleanQuery>();
     booleanQuery->add(termQuery, BooleanClause::MUST);
     booleanQuery->add(phraseQuery, BooleanClause::MUST);
     hits = searcher->search(booleanQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     booleanQuery = newLucene<BooleanQuery>();
     booleanQuery->add(phraseQuery, BooleanClause::MUST);
     booleanQuery->add(termQuery, BooleanClause::MUST);
     hits = searcher->search(booleanQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     QueryUtils::check(booleanQuery, searcher);
 
     searcher->close();
     directory->close();
 }
 
-BOOST_AUTO_TEST_CASE(testSlopScoring)
+TEST_F(PhraseQueryTest, testSlopScoring)
 {
     DirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -339,29 +337,29 @@ BOOST_AUTO_TEST_CASE(testSlopScoring)
     query->add(newLucene<Term>(L"field", L"lastname"));
     query->setSlop(INT_MAX);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
     // Make sure that those matches where the terms appear closer to each other get a higher score
-    BOOST_CHECK_CLOSE_FRACTION(0.71, hits[0]->score, 0.01);
-    BOOST_CHECK_EQUAL(0, hits[0]->doc);
-    BOOST_CHECK_CLOSE_FRACTION(0.44, hits[1]->score, 0.01);
-    BOOST_CHECK_EQUAL(1, hits[1]->doc);
-    BOOST_CHECK_CLOSE_FRACTION(0.31, hits[2]->score, 0.01);
-    BOOST_CHECK_EQUAL(2, hits[2]->doc);
-    QueryUtils::check(query, searcher);        
+    EXPECT_NEAR(0.71, hits[0]->score, 0.01);
+    EXPECT_EQ(0, hits[0]->doc);
+    EXPECT_NEAR(0.44, hits[1]->score, 0.01);
+    EXPECT_EQ(1, hits[1]->doc);
+    EXPECT_NEAR(0.31, hits[2]->score, 0.01);
+    EXPECT_EQ(2, hits[2]->doc);
+    QueryUtils::check(query, searcher);
 }
 
-BOOST_AUTO_TEST_CASE(testToString)
+TEST_F(PhraseQueryTest, testToString)
 {
     StopAnalyzerPtr analyzer = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", analyzer);
     qp->setEnablePositionIncrements(true);
     PhraseQueryPtr q = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(L"\"this hi this is a test is\""));
-    BOOST_CHECK_EQUAL(L"field:\"? hi ? ? ? test\"", q->toString());
+    EXPECT_EQ(L"field:\"? hi ? ? ? test\"", q->toString());
     q->add(newLucene<Term>(L"field", L"hello"), 1);
-    BOOST_CHECK_EQUAL(L"field:\"? hi|hello ? ? ? test\"", q->toString());
+    EXPECT_EQ(L"field:\"? hi|hello ? ? ? test\"", q->toString());
 }
 
-BOOST_AUTO_TEST_CASE(testWrappedPhrase)
+TEST_F(PhraseQueryTest, testWrappedPhrase)
 {
     query->add(newLucene<Term>(L"repeated", L"first"));
     query->add(newLucene<Term>(L"repeated", L"part"));
@@ -370,18 +368,18 @@ BOOST_AUTO_TEST_CASE(testWrappedPhrase)
     query->setSlop(100);
 
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     query->setSlop(99);
 
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 }
 
 /// work on two docs like this: "phrase exist notexist exist found"
-BOOST_AUTO_TEST_CASE(testNonExistingPhrase)
+TEST_F(PhraseQueryTest, testNonExistingPhrase)
 {
     // phrase without repetitions that exists in 2 docs
     query->add(newLucene<Term>(L"nonexist", L"phrase"));
@@ -390,7 +388,7 @@ BOOST_AUTO_TEST_CASE(testNonExistingPhrase)
     query->setSlop(2); // would be found this way
 
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     QueryUtils::check(query, searcher);
 
     // phrase with repetitions that exists in 2 docs
@@ -398,10 +396,10 @@ BOOST_AUTO_TEST_CASE(testNonExistingPhrase)
     query->add(newLucene<Term>(L"nonexist", L"phrase"));
     query->add(newLucene<Term>(L"nonexist", L"exist"));
     query->add(newLucene<Term>(L"nonexist", L"exist"));
-    query->setSlop(1); // would be found 
+    query->setSlop(1); // would be found
 
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     QueryUtils::check(query, searcher);
 
     // phrase I with repetitions that does not exist in any doc
@@ -412,7 +410,7 @@ BOOST_AUTO_TEST_CASE(testNonExistingPhrase)
     query->setSlop(1000); // would not be found no matter how high the slop is
 
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 
     // phrase II with repetitions that does not exist in any doc
@@ -424,33 +422,33 @@ BOOST_AUTO_TEST_CASE(testNonExistingPhrase)
     query->setSlop(1000); // would not be found no matter how high the slop is
 
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 }
 
 /// Working on a 2 fields like this:
 ///    Field(L"field", L"one two three four five")
 ///    Field(L"palindrome", L"one two three two one")
-/// Phrase of size 2 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice. 
-/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and 
-/// exact scorer scores the same.   
-BOOST_AUTO_TEST_CASE(testPalindrome2)
+/// Phrase of size 2 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice.
+/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and
+/// exact scorer scores the same.
+TEST_F(PhraseQueryTest, testPalindrome2)
 {
     // search on non palindrome, find phrase with no slop, using exact phrase scorer
     query->setSlop(0); // to use exact phrase scorer
     query->add(newLucene<Term>(L"field", L"two"));
     query->add(newLucene<Term>(L"field", L"three"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     double score0 = hits[0]->score;
     QueryUtils::check(query, searcher);
 
     // search on non palindrome, find phrase with slop 2, though no slop required here.
-    query->setSlop(2); // to use sloppy scorer 
+    query->setSlop(2); // to use sloppy scorer
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     double score1 = hits[0]->score;
-    BOOST_CHECK_CLOSE_FRACTION(score0, score1, SCORE_COMP_THRESH);
+    EXPECT_NEAR(score0, score1, SCORE_COMP_THRESH);
     QueryUtils::check(query, searcher);
 
     // search ordered in palindrome, find it twice
@@ -459,7 +457,7 @@ BOOST_AUTO_TEST_CASE(testPalindrome2)
     query->add(newLucene<Term>(L"palindrome", L"two"));
     query->add(newLucene<Term>(L"palindrome", L"three"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     // search reversed in palindrome, find it twice
@@ -468,17 +466,17 @@ BOOST_AUTO_TEST_CASE(testPalindrome2)
     query->add(newLucene<Term>(L"palindrome", L"three"));
     query->add(newLucene<Term>(L"palindrome", L"two"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 }
 
 /// Working on a 2 fields like this:
 ///    Field(L"field", L"one two three four five")
 ///    Field(L"palindrome", L"one two three two one")
-/// Phrase of size 3 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice. 
-/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and exact 
-/// scorer scores the same.   
-BOOST_AUTO_TEST_CASE(testPalindrome3)
+/// Phrase of size 3 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice.
+/// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and exact
+/// scorer scores the same.
+TEST_F(PhraseQueryTest, testPalindrome3)
 {
     // search on non palindrome, find phrase with no slop, using exact phrase scorer
     query->setSlop(0); // to use exact phrase scorer
@@ -486,16 +484,16 @@ BOOST_AUTO_TEST_CASE(testPalindrome3)
     query->add(newLucene<Term>(L"field", L"two"));
     query->add(newLucene<Term>(L"field", L"three"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     double score0 = hits[0]->score;
     QueryUtils::check(query, searcher);
 
     // search on non palindrome, find phrase with slop 3, though no slop required here.
-    query->setSlop(4); // to use sloppy scorer 
+    query->setSlop(4); // to use sloppy scorer
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     double score1 = hits[0]->score;
-    BOOST_CHECK_CLOSE_FRACTION(score0, score1, SCORE_COMP_THRESH);
+    EXPECT_NEAR(score0, score1, SCORE_COMP_THRESH);
     QueryUtils::check(query, searcher);
 
     // search ordered in palindrome, find it twice
@@ -505,7 +503,7 @@ BOOST_AUTO_TEST_CASE(testPalindrome3)
     query->add(newLucene<Term>(L"palindrome", L"two"));
     query->add(newLucene<Term>(L"palindrome", L"three"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 
     // search reversed in palindrome, find it twice
@@ -515,15 +513,13 @@ BOOST_AUTO_TEST_CASE(testPalindrome3)
     query->add(newLucene<Term>(L"palindrome", L"two"));
     query->add(newLucene<Term>(L"palindrome", L"one"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 }
 
-BOOST_AUTO_TEST_CASE(testEmptyPhraseQuery)
+TEST_F(PhraseQueryTest, testEmptyPhraseQuery)
 {
     BooleanQueryPtr q2 = newLucene<BooleanQuery>();
     q2->add(newLucene<PhraseQuery>(), BooleanClause::MUST);
-    BOOST_CHECK_EQUAL(q2->toString(), L"+\"?\"");
+    EXPECT_EQ(q2->toString(), L"+\"?\"");
 }
-
-BOOST_AUTO_TEST_SUITE_END()

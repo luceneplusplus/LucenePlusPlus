@@ -10,12 +10,12 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(FrenchAnalyzerTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture FrenchAnalyzerTest;
 
-BOOST_AUTO_TEST_CASE(testAnalyzer)
+TEST_F(FrenchAnalyzerTest, testAnalyzer)
 {
     AnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     checkAnalyzesTo(fa, L"", Collection<String>::newInstance());
 
     checkAnalyzesTo(fa, L"chien chat cheval", newCollection<String>(L"chien", L"chat", L"cheval"));
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(testAnalyzer)
     checkAnalyzesTo(fa, L"le la chien les aux chat du des \u00e0 cheval", newCollection<String>(L"chien", L"chat", L"cheval"));
 
     // some nouns and adjectives
-    checkAnalyzesTo(fa, L"lances chismes habitable chiste \u00e9l\u00e9ments captifs", 
+    checkAnalyzesTo(fa, L"lances chismes habitable chiste \u00e9l\u00e9ments captifs",
                     newCollection<String>( L"lanc", L"chism", L"habit", L"chist", L"\u00e9l\u00e9ment", L"captif"));
 
     // some verbs
@@ -52,10 +52,10 @@ BOOST_AUTO_TEST_CASE(testAnalyzer)
                     newCollection<String>(L"33bis", L"1940-1945", L"1940", L"1945", L"i"));
 }
 
-BOOST_AUTO_TEST_CASE(testReusableTokenStream)
+TEST_F(FrenchAnalyzerTest, testReusableTokenStream)
 {
     AnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-    
+
     // stopwords
     checkAnalyzesToReuse(fa, L"le la chien les aux chat du des \u00e0 cheval",
                          newCollection<String>(L"chien", L"chat", L"cheval"));
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
+TEST_F(FrenchAnalyzerTest, testExclusionTableReuse)
 {
     FrenchAnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesToReuse(fa, L"habitable", newCollection<String>(L"habit"));
@@ -75,5 +75,3 @@ BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
     fa->setStemExclusionTable(exclusions);
     checkAnalyzesToReuse(fa, L"habitable", newCollection<String>(L"habitable"));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

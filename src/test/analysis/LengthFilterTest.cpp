@@ -14,21 +14,19 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(LengthFilterTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture LengthFilterTest;
 
-BOOST_AUTO_TEST_CASE(testFilter)
+TEST_F(LengthFilterTest, testFilter)
 {
     TokenStreamPtr stream = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(L"short toolong evenmuchlongertext a ab toolong foo"));
     LengthFilterPtr filter = newLucene<LengthFilter>(stream, 2, 6);
     TermAttributePtr termAtt = filter->getAttribute<TermAttribute>();
 
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"short", termAtt->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"ab", termAtt->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"foo", termAtt->term());
-    BOOST_CHECK(!filter->incrementToken());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"short", termAtt->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"ab", termAtt->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"foo", termAtt->term());
+    EXPECT_TRUE(!filter->incrementToken());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

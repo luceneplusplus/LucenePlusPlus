@@ -25,16 +25,16 @@
 
 using namespace Lucene;
 
-class ParallelReaderTestFixture : public LuceneTestFixture
+class ParallelReaderTest : public LuceneTestFixture
 {
 public:
-    ParallelReaderTestFixture()
+    ParallelReaderTest()
     {
         single = createSingle();
         parallel = createParallel();
     }
-    
-    virtual ~ParallelReaderTestFixture()
+
+    virtual ~ParallelReaderTest()
     {
     }
 
@@ -63,7 +63,7 @@ public:
         w->close();
         return newLucene<IndexSearcher>(dir, false);
     }
-    
+
     /// Fields 1 & 2 in one index, 3 & 4 in other, with ParallelReader
     SearcherPtr createParallel()
     {
@@ -74,7 +74,7 @@ public:
         pr->add(IndexReader::open(dir2, false));
         return newLucene<IndexSearcher>(pr);
     }
-    
+
     DirectoryPtr getDir1()
     {
         DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
@@ -90,7 +90,7 @@ public:
         w1->close();
         return dir1;
     }
-    
+
     DirectoryPtr getDir2()
     {
         DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
@@ -106,28 +106,26 @@ public:
         w2->close();
         return dir2;
     }
-    
+
     void queryTest(QueryPtr query)
     {
         Collection<ScoreDocPtr> parallelHits = parallel->search(query, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> singleHits = single->search(query, FilterPtr(), 1000)->scoreDocs;
-        BOOST_CHECK_EQUAL(parallelHits.size(), singleHits.size());
+        EXPECT_EQ(parallelHits.size(), singleHits.size());
         for (int32_t i = 0; i < parallelHits.size(); ++i)
         {
-            BOOST_CHECK_CLOSE_FRACTION(parallelHits[i]->score, singleHits[i]->score, 0.001);
+            EXPECT_NEAR(parallelHits[i]->score, singleHits[i]->score, 0.001);
             DocumentPtr docParallel = parallel->doc(parallelHits[i]->doc);
             DocumentPtr docSingle = single->doc(singleHits[i]->doc);
-            BOOST_CHECK_EQUAL(docParallel->get(L"f1"), docSingle->get(L"f1"));
-            BOOST_CHECK_EQUAL(docParallel->get(L"f2"), docSingle->get(L"f2"));
-            BOOST_CHECK_EQUAL(docParallel->get(L"f3"), docSingle->get(L"f3"));
-            BOOST_CHECK_EQUAL(docParallel->get(L"f4"), docSingle->get(L"f4"));
+            EXPECT_EQ(docParallel->get(L"f1"), docSingle->get(L"f1"));
+            EXPECT_EQ(docParallel->get(L"f2"), docSingle->get(L"f2"));
+            EXPECT_EQ(docParallel->get(L"f3"), docSingle->get(L"f3"));
+            EXPECT_EQ(docParallel->get(L"f4"), docSingle->get(L"f4"));
         }
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ParallelReaderTest, ParallelReaderTestFixture)
-
-BOOST_AUTO_TEST_CASE(testQueries)
+TEST_F(ParallelReaderTest, testQueries)
 {
     queryTest(newLucene<TermQuery>(newLucene<Term>(L"f1", L"v1")));
     queryTest(newLucene<TermQuery>(newLucene<Term>(L"f2", L"v1")));
@@ -143,7 +141,7 @@ BOOST_AUTO_TEST_CASE(testQueries)
     queryTest(bq1);
 }
 
-BOOST_AUTO_TEST_CASE(testFieldNames)
+TEST_F(ParallelReaderTest, testFieldNames)
 {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
@@ -151,14 +149,14 @@ BOOST_AUTO_TEST_CASE(testFieldNames)
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
     HashSet<String> fieldNames = pr->getFieldNames(IndexReader::FIELD_OPTION_ALL);
-    BOOST_CHECK_EQUAL(4, fieldNames.size());
-    BOOST_CHECK(fieldNames.contains(L"f1"));
-    BOOST_CHECK(fieldNames.contains(L"f2"));
-    BOOST_CHECK(fieldNames.contains(L"f3"));
-    BOOST_CHECK(fieldNames.contains(L"f4"));
+    EXPECT_EQ(4, fieldNames.size());
+    EXPECT_TRUE(fieldNames.contains(L"f1"));
+    EXPECT_TRUE(fieldNames.contains(L"f2"));
+    EXPECT_TRUE(fieldNames.contains(L"f3"));
+    EXPECT_TRUE(fieldNames.contains(L"f4"));
 }
 
-BOOST_AUTO_TEST_CASE(testDocument)
+TEST_F(ParallelReaderTest, testDocument)
 {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
@@ -174,17 +172,17 @@ BOOST_AUTO_TEST_CASE(testDocument)
     DocumentPtr doc24 = pr->document(1, newLucene<MapFieldSelector>(fields2));
     DocumentPtr doc223 = pr->document(1, newLucene<MapFieldSelector>(fields3));
 
-    BOOST_CHECK_EQUAL(1, doc11->getFields().size());
-    BOOST_CHECK_EQUAL(1, doc24->getFields().size());
-    BOOST_CHECK_EQUAL(2, doc223->getFields().size());
+    EXPECT_EQ(1, doc11->getFields().size());
+    EXPECT_EQ(1, doc24->getFields().size());
+    EXPECT_EQ(2, doc223->getFields().size());
 
-    BOOST_CHECK_EQUAL(L"v1", doc11->get(L"f1"));
-    BOOST_CHECK_EQUAL(L"v2", doc24->get(L"f4"));
-    BOOST_CHECK_EQUAL(L"v2", doc223->get(L"f2"));
-    BOOST_CHECK_EQUAL(L"v2", doc223->get(L"f3"));
+    EXPECT_EQ(L"v1", doc11->get(L"f1"));
+    EXPECT_EQ(L"v2", doc24->get(L"f4"));
+    EXPECT_EQ(L"v2", doc223->get(L"f2"));
+    EXPECT_EQ(L"v2", doc223->get(L"f3"));
 }
 
-BOOST_AUTO_TEST_CASE(testIncompatibleIndexes)
+TEST_F(ParallelReaderTest, testIncompatibleIndexes)
 {
     // two documents
     DirectoryPtr dir1 = getDir1();
@@ -199,11 +197,18 @@ BOOST_AUTO_TEST_CASE(testIncompatibleIndexes)
 
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(dir1, false));
-    
-    BOOST_CHECK_EXCEPTION(pr->add(IndexReader::open(dir2, false)), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
+
+    try
+    {
+        pr->add(IndexReader::open(dir2, false));
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
 }
 
-BOOST_AUTO_TEST_CASE(testIsCurrent)
+TEST_F(ParallelReaderTest, testIsCurrent)
 {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
@@ -211,23 +216,23 @@ BOOST_AUTO_TEST_CASE(testIsCurrent)
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
 
-    BOOST_CHECK(pr->isCurrent());
+    EXPECT_TRUE(pr->isCurrent());
     IndexReaderPtr modifier = IndexReader::open(dir1, false);
     modifier->setNorm(0, L"f1", (uint8_t)100);
     modifier->close();
 
     // one of the two IndexReaders which ParallelReader is using is not current anymore
-    BOOST_CHECK(!pr->isCurrent());
+    EXPECT_TRUE(!pr->isCurrent());
 
     modifier = IndexReader::open(dir2, false);
     modifier->setNorm(0, L"f3", (uint8_t)100);
     modifier->close();
 
     // now both are not current anymore
-    BOOST_CHECK(!pr->isCurrent());
+    EXPECT_TRUE(!pr->isCurrent());
 }
 
-BOOST_AUTO_TEST_CASE(testIsOptimized)
+TEST_F(ParallelReaderTest, testIsOptimized)
 {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
@@ -248,7 +253,7 @@ BOOST_AUTO_TEST_CASE(testIsOptimized)
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
-    BOOST_CHECK(!pr->isOptimized());
+    EXPECT_TRUE(!pr->isOptimized());
     pr->close();
 
     modifier = newLucene<IndexWriter>(dir1, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), IndexWriter::MaxFieldLengthLIMITED);
@@ -259,7 +264,7 @@ BOOST_AUTO_TEST_CASE(testIsOptimized)
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
     // just one of the two indexes are optimized
-    BOOST_CHECK(!pr->isOptimized());
+    EXPECT_TRUE(!pr->isOptimized());
     pr->close();
 
     modifier = newLucene<IndexWriter>(dir2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), IndexWriter::MaxFieldLengthLIMITED);
@@ -270,15 +275,15 @@ BOOST_AUTO_TEST_CASE(testIsOptimized)
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
     // now both indexes are optimized
-    BOOST_CHECK(pr->isOptimized());
+    EXPECT_TRUE(pr->isOptimized());
     pr->close();
 }
 
-BOOST_AUTO_TEST_CASE(testAllTermDocs)
+TEST_F(ParallelReaderTest, testAllTermDocs)
 {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
-    
+
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(dir1, false));
     pr->add(IndexReader::open(dir2, false));
@@ -286,14 +291,12 @@ BOOST_AUTO_TEST_CASE(testAllTermDocs)
     TermDocsPtr td = pr->termDocs(TermPtr());
     for (int32_t i = 0; i < NUM_DOCS; ++i)
     {
-        BOOST_CHECK(td->next());
-        BOOST_CHECK_EQUAL(i, td->doc());
-        BOOST_CHECK_EQUAL(1, td->freq());
+        EXPECT_TRUE(td->next());
+        EXPECT_EQ(i, td->doc());
+        EXPECT_EQ(1, td->freq());
     }
     td->close();
     pr->close();
     dir1->close();
     dir2->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

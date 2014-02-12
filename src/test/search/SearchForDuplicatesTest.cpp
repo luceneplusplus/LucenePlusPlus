@@ -19,7 +19,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(SearchForDuplicatesTest, LuceneTestFixture)
+typedef LuceneTestFixture SearchForDuplicatesTest;
 
 static const String PRIORITY_FIELD = L"priority";
 static const String ID_FIELD = L"id";
@@ -42,13 +42,13 @@ static void printHits(StringStream& out, Collection<ScoreDocPtr> hits, SearcherP
 
 static void checkHits(Collection<ScoreDocPtr> hits, int32_t expectedCount, SearcherPtr searcher)
 {
-    BOOST_CHECK_EQUAL(expectedCount, hits.size());
+    EXPECT_EQ(expectedCount, hits.size());
     for (int32_t i = 0; i < hits.size(); ++i)
     {
         if (i < 10 || (i > 94 && i < 105))
         {
             DocumentPtr doc = searcher->doc(hits[i]->doc);
-            BOOST_CHECK_EQUAL(StringUtils::toString(i), doc->get(ID_FIELD));
+            EXPECT_EQ(StringUtils::toString(i), doc->get(ID_FIELD));
         }
     }
 }
@@ -60,7 +60,7 @@ static void doTest(StringStream& out, bool useCompoundFile)
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
 
     writer->setUseCompoundFile(useCompoundFile);
-    
+
     int32_t MAX_DOCS = 225;
 
     for (int32_t j = 0; j < MAX_DOCS; ++j)
@@ -88,7 +88,7 @@ static void doTest(StringStream& out, bool useCompoundFile)
 
     // try a new search with OR
     searcher = newLucene<IndexSearcher>(directory, true);
-    
+
     parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, PRIORITY_FIELD, analyzer);
 
     query = parser->parse(HIGH_PRIORITY + L" OR " + MED_PRIORITY);
@@ -101,15 +101,13 @@ static void doTest(StringStream& out, bool useCompoundFile)
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testRun)
+TEST_F(SearchForDuplicatesTest, testRun)
 {
     StringStream multiFileOutput;
     doTest(multiFileOutput, false);
-    
+
     StringStream singleFileOutput;
     doTest(singleFileOutput, true);
-    
-    BOOST_CHECK_EQUAL(multiFileOutput.str(), singleFileOutput.str());
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    EXPECT_EQ(multiFileOutput.str(), singleFileOutput.str());
+}

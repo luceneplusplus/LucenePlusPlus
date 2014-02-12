@@ -14,7 +14,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(PositiveScoresOnlyCollectorTest, LuceneTestFixture)
+typedef LuceneTestFixture PositiveScoresOnlyCollectorTest;
 
 namespace TestNegativeScores
 {
@@ -26,31 +26,31 @@ namespace TestNegativeScores
             this->scores = scores;
             idx = -1;
         }
-        
+
         virtual ~SimpleScorer()
         {
         }
-    
+
     public:
         int32_t idx;
         Collection<double> scores;
-    
+
     public:
         virtual double score()
         {
             return idx == scores.size() ? std::numeric_limits<double>::quiet_NaN() : scores[idx];
         }
-        
+
         virtual int32_t docID()
         {
             return idx;
         }
-        
+
         virtual int32_t nextDoc()
         {
             return ++idx != scores.size() ? idx : DocIdSetIterator::NO_MORE_DOCS;
         }
-        
+
         virtual int32_t advance(int32_t target)
         {
             idx = target;
@@ -59,7 +59,7 @@ namespace TestNegativeScores
     };
 }
 
-BOOST_AUTO_TEST_CASE(testNegativeScores)
+TEST_F(PositiveScoresOnlyCollectorTest, testNegativeScores)
 {
     // The scores must have positive as well as negative values
     Collection<double> scores = Collection<double>::newInstance();
@@ -76,9 +76,9 @@ BOOST_AUTO_TEST_CASE(testNegativeScores)
     scores.add(2.2423935);
     scores.add(-7.285586);
     scores.add(4.6699767);
-    
-    // The Top*Collectors previously filtered out documents with <= scores. This behaviour has changed. 
-    // This test checks that if PositiveOnlyScoresFilter wraps one of these collectors, documents with 
+
+    // The Top*Collectors previously filtered out documents with <= scores. This behaviour has changed.
+    // This test checks that if PositiveOnlyScoresFilter wraps one of these collectors, documents with
     // <= 0 scores are indeed filtered.
 
     int32_t numPositiveScores = 0;
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(testNegativeScores)
         if (scores[i] > 0)
             ++numPositiveScores;
     }
-    
+
     ScorerPtr s = newLucene<TestNegativeScores::SimpleScorer>(scores);
     TopDocsCollectorPtr tdc = TopScoreDocCollector::create(scores.size(), true);
     CollectorPtr c = newLucene<PositiveScoresOnlyCollector>(tdc);
@@ -97,9 +97,7 @@ BOOST_AUTO_TEST_CASE(testNegativeScores)
 
     TopDocsPtr td = tdc->topDocs();
     Collection<ScoreDocPtr> sd = td->scoreDocs;
-    BOOST_CHECK_EQUAL(numPositiveScores, td->totalHits);
+    EXPECT_EQ(numPositiveScores, td->totalHits);
     for (int32_t i = 0; i < sd.size(); ++i)
-        BOOST_CHECK(sd[i]->score > 0);
+        EXPECT_TRUE(sd[i]->score > 0);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

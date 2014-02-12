@@ -13,42 +13,40 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(ReverseStringFilterTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture ReverseStringFilterTest;
 
-BOOST_AUTO_TEST_CASE(testFilter)
+TEST_F(ReverseStringFilterTest, testFilter)
 {
     TokenStreamPtr stream = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(L"Do have a nice day")); // 1-4 length string
     ReverseStringFilterPtr filter = newLucene<ReverseStringFilter>(stream);
     TermAttributePtr text = filter->getAttribute<TermAttribute>();
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"oD", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"evah", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"a", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"ecin", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(L"yad", text->term());
-    BOOST_CHECK(!filter->incrementToken());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"oD", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"evah", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"a", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"ecin", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(L"yad", text->term());
+    EXPECT_TRUE(!filter->incrementToken());
 }
 
-BOOST_AUTO_TEST_CASE(testFilterWithMark)
+TEST_F(ReverseStringFilterTest, testFilterWithMark)
 {
     TokenStreamPtr stream = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(L"Do have a nice day")); // 1-4 length string
     ReverseStringFilterPtr filter = newLucene<ReverseStringFilter>(stream, (wchar_t)0x0001);
     TermAttributePtr text = filter->getAttribute<TermAttribute>();
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(String(1, (wchar_t)0x0001) + L"oD", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(String(1, (wchar_t)0x0001) + L"evah", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(String(1, (wchar_t)0x0001) + L"a", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(String(1, (wchar_t)0x0001) + L"ecin", text->term());
-    BOOST_CHECK(filter->incrementToken());
-    BOOST_CHECK_EQUAL(String(1, (wchar_t)0x0001) + L"yad", text->term());
-    BOOST_CHECK(!filter->incrementToken());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(String(1, (wchar_t)0x0001) + L"oD", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(String(1, (wchar_t)0x0001) + L"evah", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(String(1, (wchar_t)0x0001) + L"a", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(String(1, (wchar_t)0x0001) + L"ecin", text->term());
+    EXPECT_TRUE(filter->incrementToken());
+    EXPECT_EQ(String(1, (wchar_t)0x0001) + L"yad", text->term());
+    EXPECT_TRUE(!filter->incrementToken());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

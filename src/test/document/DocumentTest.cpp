@@ -19,7 +19,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(DocumentTest, LuceneTestFixture)
+typedef LuceneTestFixture DocumentTest;
 
 static String binaryVal = L"this text will be stored as a byte array in the index";
 static String binaryVal2 = L"this text will be also stored as a byte array in the index";
@@ -45,28 +45,28 @@ static void checkDocument(DocumentPtr doc, bool fromIndex)
     Collection<String> unindexedFieldValues = doc->getValues(L"unindexed");
     Collection<String> unstoredFieldValues = doc->getValues(L"unstored");
 
-    BOOST_CHECK_EQUAL(keywordFieldValues.size(), 2);
-    BOOST_CHECK_EQUAL(textFieldValues.size(), 2);
-    BOOST_CHECK_EQUAL(unindexedFieldValues.size(), 2);
+    EXPECT_EQ(keywordFieldValues.size(), 2);
+    EXPECT_EQ(textFieldValues.size(), 2);
+    EXPECT_EQ(unindexedFieldValues.size(), 2);
     // this test cannot work for documents retrieved from the index since unstored fields will obviously not be returned
     if (!fromIndex)
-        BOOST_CHECK_EQUAL(unstoredFieldValues.size(), 2);
+        EXPECT_EQ(unstoredFieldValues.size(), 2);
 
-    BOOST_CHECK_EQUAL(keywordFieldValues[0], L"test1");
-    BOOST_CHECK_EQUAL(keywordFieldValues[1], L"test2");
-    BOOST_CHECK_EQUAL(textFieldValues[0], L"test1");
-    BOOST_CHECK_EQUAL(textFieldValues[1], L"test2");
-    BOOST_CHECK_EQUAL(unindexedFieldValues[0], L"test1");
-    BOOST_CHECK_EQUAL(unindexedFieldValues[1], L"test2");
+    EXPECT_EQ(keywordFieldValues[0], L"test1");
+    EXPECT_EQ(keywordFieldValues[1], L"test2");
+    EXPECT_EQ(textFieldValues[0], L"test1");
+    EXPECT_EQ(textFieldValues[1], L"test2");
+    EXPECT_EQ(unindexedFieldValues[0], L"test1");
+    EXPECT_EQ(unindexedFieldValues[1], L"test2");
     // this test cannot work for documents retrieved from the index since unstored fields will obviously not be returned
     if (!fromIndex)
     {
-        BOOST_CHECK_EQUAL(unstoredFieldValues[0], L"test1");
-        BOOST_CHECK_EQUAL(unstoredFieldValues[1], L"test2");
+        EXPECT_EQ(unstoredFieldValues[0], L"test1");
+        EXPECT_EQ(unstoredFieldValues[1], L"test2");
     }
 }
-    
-BOOST_AUTO_TEST_CASE(testBinaryField)
+
+TEST_F(DocumentTest, testBinaryField)
 {
     DocumentPtr doc = newLucene<Document>();
     FieldablePtr stringFld = newLucene<Field>(L"string", binaryVal, Field::STORE_YES, Field::INDEX_NO);
@@ -82,92 +82,106 @@ BOOST_AUTO_TEST_CASE(testBinaryField)
     doc->add(stringFld);
     doc->add(binaryFld);
 
-    BOOST_CHECK_EQUAL(2, doc->getFields().size());
+    EXPECT_EQ(2, doc->getFields().size());
 
-    BOOST_CHECK(binaryFld->isBinary());
-    BOOST_CHECK(binaryFld->isStored());
-    BOOST_CHECK(!binaryFld->isIndexed());
-    BOOST_CHECK(!binaryFld->isTokenized());
+    EXPECT_TRUE(binaryFld->isBinary());
+    EXPECT_TRUE(binaryFld->isStored());
+    EXPECT_TRUE(!binaryFld->isIndexed());
+    EXPECT_TRUE(!binaryFld->isTokenized());
 
     ByteArray bytesTest = doc->getBinaryValue(L"binary");
     String binaryTest((wchar_t*)bytesTest.get(), bytesTest.size() / sizeof(wchar_t));
-    BOOST_CHECK_EQUAL(binaryTest, binaryVal);
+    EXPECT_EQ(binaryTest, binaryVal);
 
     String stringTest = doc->get(L"string");
-    BOOST_CHECK_EQUAL(binaryTest, stringTest);
+    EXPECT_EQ(binaryTest, stringTest);
 
     doc->add(binaryFld2);
 
-    BOOST_CHECK_EQUAL(3, doc->getFields().size());
+    EXPECT_EQ(3, doc->getFields().size());
 
     Collection<ByteArray> binaryTests = doc->getBinaryValues(L"binary");
 
-    BOOST_CHECK_EQUAL(2, binaryTests.size());
+    EXPECT_EQ(2, binaryTests.size());
 
     bytesTest = binaryTests[0];
     binaryTest = String((wchar_t*)bytesTest.get(), bytesTest.size() / sizeof(wchar_t));
-    
+
     ByteArray bytesTest2 = binaryTests[1];
     String binaryTest2((wchar_t*)bytesTest2.get(), bytesTest2.size() / sizeof(wchar_t));
-    
-    BOOST_CHECK_NE(binaryTest, binaryTest2);
 
-    BOOST_CHECK_EQUAL(binaryTest, binaryVal);
-    BOOST_CHECK_EQUAL(binaryTest2, binaryVal2);
+    EXPECT_NE(binaryTest, binaryTest2);
+
+    EXPECT_EQ(binaryTest, binaryVal);
+    EXPECT_EQ(binaryTest2, binaryVal2);
 
     doc->removeField(L"string");
-    BOOST_CHECK_EQUAL(2, doc->getFields().size());
+    EXPECT_EQ(2, doc->getFields().size());
 
     doc->removeFields(L"binary");
-    BOOST_CHECK_EQUAL(0, doc->getFields().size());
+    EXPECT_EQ(0, doc->getFields().size());
 }
 
 /// Tests {@link Document#removeField(String)} method for a brand new Document that has not been indexed yet.
-BOOST_AUTO_TEST_CASE(testRemoveForNewDocument)
+TEST_F(DocumentTest, testRemoveForNewDocument)
 {
     DocumentPtr doc = makeDocumentWithFields();
-    BOOST_CHECK_EQUAL(8, doc->getFields().size());
+    EXPECT_EQ(8, doc->getFields().size());
     doc->removeFields(L"keyword");
-    BOOST_CHECK_EQUAL(6, doc->getFields().size());
+    EXPECT_EQ(6, doc->getFields().size());
     doc->removeFields(L"doesnotexists"); // removing non-existing fields is silently ignored
     doc->removeFields(L"keyword"); // removing a field more than once
-    BOOST_CHECK_EQUAL(6, doc->getFields().size());
+    EXPECT_EQ(6, doc->getFields().size());
     doc->removeField(L"text");
-    BOOST_CHECK_EQUAL(5, doc->getFields().size());
+    EXPECT_EQ(5, doc->getFields().size());
     doc->removeField(L"text");
-    BOOST_CHECK_EQUAL(4, doc->getFields().size());
+    EXPECT_EQ(4, doc->getFields().size());
     doc->removeField(L"text");
-    BOOST_CHECK_EQUAL(4, doc->getFields().size());
+    EXPECT_EQ(4, doc->getFields().size());
     doc->removeField(L"doesnotexists"); // removing non-existing fields is silently ignored
-    BOOST_CHECK_EQUAL(4, doc->getFields().size());
+    EXPECT_EQ(4, doc->getFields().size());
     doc->removeFields(L"unindexed");
-    BOOST_CHECK_EQUAL(2, doc->getFields().size());
+    EXPECT_EQ(2, doc->getFields().size());
     doc->removeFields(L"unstored");
-    BOOST_CHECK_EQUAL(0, doc->getFields().size());
+    EXPECT_EQ(0, doc->getFields().size());
     doc->removeFields(L"doesnotexists"); // removing non-existing fields is silently ignored
-    BOOST_CHECK_EQUAL(0, doc->getFields().size());
+    EXPECT_EQ(0, doc->getFields().size());
 }
 
-BOOST_AUTO_TEST_CASE(testConstructorExceptions)
+TEST_F(DocumentTest, testConstructorExceptions)
 {
     newLucene<Field>(L"name", L"value", Field::STORE_YES, Field::INDEX_NO); // ok
     newLucene<Field>(L"name", L"value", Field::STORE_NO, Field::INDEX_NOT_ANALYZED); // ok
-    
-    BOOST_CHECK_EXCEPTION(newLucene<Field>(L"name", L"value", Field::STORE_NO, Field::INDEX_NO), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
-    
+
+    try
+    {
+        newLucene<Field>(L"name", L"value", Field::STORE_NO, Field::INDEX_NO);
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
+
     newLucene<Field>(L"name", L"value", Field::STORE_YES, Field::INDEX_NO, Field::TERM_VECTOR_NO); // ok
-    
-    BOOST_CHECK_EXCEPTION(newLucene<Field>(L"name", L"value", Field::STORE_YES, Field::INDEX_NO, Field::TERM_VECTOR_YES), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
+
+    try
+    {
+        newLucene<Field>(L"name", L"value", Field::STORE_YES, Field::INDEX_NO, Field::TERM_VECTOR_YES);
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
 }
 
 /// Tests {@link Document#getValues(String)} method for a brand new Document that has not been indexed yet.
-BOOST_AUTO_TEST_CASE(testGetValuesForNewDocument)
+TEST_F(DocumentTest, testGetValuesForNewDocument)
 {
     checkDocument(makeDocumentWithFields(), false);
 }
 
 /// Tests {@link Document#getValues(String)} method for a Document retrieved from an index.
-BOOST_AUTO_TEST_CASE(testGetValuesForIndexedDocument)
+TEST_F(DocumentTest, testGetValuesForIndexedDocument)
 {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -181,13 +195,13 @@ BOOST_AUTO_TEST_CASE(testGetValuesForIndexedDocument)
 
     // ensure that queries return expected results without DateFilter first
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
 
     checkDocument(searcher->doc(hits[0]->doc), true);
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testFieldSetValue)
+TEST_F(DocumentTest, testFieldSetValue)
 {
     FieldPtr field = newLucene<Field>(L"id", L"id1", Field::STORE_YES, Field::INDEX_NOT_ANALYZED);
     DocumentPtr doc = newLucene<Document>();
@@ -204,12 +218,12 @@ BOOST_AUTO_TEST_CASE(testFieldSetValue)
     writer->close();
 
     SearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
-    
+
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"keyword", L"test"));
 
     // ensure that queries return expected results without DateFilter first
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
     int32_t result = 0;
     for (int32_t i = 0; i < 3; ++i)
     {
@@ -222,20 +236,33 @@ BOOST_AUTO_TEST_CASE(testFieldSetValue)
         else if (f->stringValue() == L"id3")
             result |= 4;
         else
-            BOOST_FAIL("unexpected id field");
+            FAIL() << "unexpected id field";
     }
     searcher->close();
     dir->close();
-    BOOST_CHECK_EQUAL(7, result);
+    EXPECT_EQ(7, result);
 }
 
-BOOST_AUTO_TEST_CASE(testFieldSetValueChangeBinary)
+TEST_F(DocumentTest, testFieldSetValueChangeBinary)
 {
     FieldPtr field1 = newLucene<Field>(L"field1", ByteArray::newInstance(0), Field::STORE_YES);
     FieldPtr field2 = newLucene<Field>(L"field2", L"", Field::STORE_YES, Field::INDEX_ANALYZED);
 
-    BOOST_CHECK_EXCEPTION(field1->setValue(L"abc"), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
-    BOOST_CHECK_EXCEPTION(field2->setValue(ByteArray::newInstance(0)), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
-}
+    try
+    {
+        field1->setValue(L"abc");
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
 
-BOOST_AUTO_TEST_SUITE_END()
+    try
+    {
+        field2->setValue(ByteArray::newInstance(0));
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
+}

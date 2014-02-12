@@ -15,9 +15,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(PerFieldAnalzyerWrapperTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture PerFieldAnalzyerWrapperTest;
 
-BOOST_AUTO_TEST_CASE(testPerField)
+TEST_F(PerFieldAnalzyerWrapperTest, testPerField)
 {
     String text = L"Qwerty";
     PerFieldAnalyzerWrapperPtr analyzer = newLucene<PerFieldAnalyzerWrapper>(newLucene<WhitespaceAnalyzer>());
@@ -26,13 +26,11 @@ BOOST_AUTO_TEST_CASE(testPerField)
     TokenStreamPtr tokenStream = analyzer->tokenStream(L"field", newLucene<StringReader>(text));
     TermAttributePtr termAtt = tokenStream->getAttribute<TermAttribute>();
 
-    BOOST_CHECK(tokenStream->incrementToken());
-    BOOST_CHECK_EQUAL(L"Qwerty", termAtt->term());
+    EXPECT_TRUE(tokenStream->incrementToken());
+    EXPECT_EQ(L"Qwerty", termAtt->term());
 
     tokenStream = analyzer->tokenStream(L"special", newLucene<StringReader>(text));
     termAtt = tokenStream->getAttribute<TermAttribute>();
-    BOOST_CHECK(tokenStream->incrementToken());
-    BOOST_CHECK_EQUAL(L"qwerty", termAtt->term());
+    EXPECT_TRUE(tokenStream->incrementToken());
+    EXPECT_EQ(L"qwerty", termAtt->term());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

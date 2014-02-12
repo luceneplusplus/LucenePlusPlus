@@ -22,7 +22,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(AddIndexesNoOptimizeTest, LuceneTestFixture)
+typedef LuceneTestFixture AddIndexesNoOptimizeTest;
 
 static IndexWriterPtr newWriter(DirectoryPtr dir, bool create)
 {
@@ -54,8 +54,8 @@ static void addDocs2(IndexWriterPtr writer, int32_t numDocs)
 static void verifyNumDocs(DirectoryPtr dir, int32_t numDocs)
 {
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    BOOST_CHECK_EQUAL(reader->maxDoc(), numDocs);
-    BOOST_CHECK_EQUAL(reader->numDocs(), numDocs);
+    EXPECT_EQ(reader->maxDoc(), numDocs);
+    EXPECT_EQ(reader->numDocs(), numDocs);
     reader->close();
 }
 
@@ -66,7 +66,7 @@ static void verifyTermDocs(DirectoryPtr dir, TermPtr term, int32_t numDocs)
     int32_t count = 0;
     while (termDocs->next())
         ++count;
-    BOOST_CHECK_EQUAL(count, numDocs);
+    EXPECT_EQ(count, numDocs);
     reader->close();
 }
 
@@ -78,8 +78,8 @@ static void setUpDirs(DirectoryPtr dir, DirectoryPtr aux)
     writer->setMaxBufferedDocs(1000);
     // add 1000 documents in 1 segment
     addDocs(writer, 1000);
-    BOOST_CHECK_EQUAL(1000, writer->maxDoc());
-    BOOST_CHECK_EQUAL(1, writer->getSegmentCount());
+    EXPECT_EQ(1000, writer->maxDoc());
+    EXPECT_EQ(1, writer->getSegmentCount());
     writer->close();
 
     writer = newWriter(aux, true);
@@ -96,12 +96,12 @@ static void setUpDirs(DirectoryPtr dir, DirectoryPtr aux)
         writer->setMaxBufferedDocs(100);
         writer->setMergeFactor(10);
     }
-    BOOST_CHECK_EQUAL(30, writer->maxDoc());
-    BOOST_CHECK_EQUAL(3, writer->getSegmentCount());
+    EXPECT_EQ(30, writer->maxDoc());
+    EXPECT_EQ(3, writer->getSegmentCount());
     writer->close();
 }
 
-BOOST_AUTO_TEST_CASE(testSimpleCase)
+TEST_F(AddIndexesNoOptimizeTest, testSimpleCase)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -112,29 +112,29 @@ BOOST_AUTO_TEST_CASE(testSimpleCase)
     IndexWriterPtr writer = newWriter(dir, true);
     // add 100 documents
     addDocs(writer, 100);
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 100);
+    EXPECT_EQ(writer->maxDoc(), 100);
     writer->close();
-    
+
     writer = newWriter(aux, true);
     writer->setUseCompoundFile(false); // use one without a compound file
     // add 40 documents in separate files
     addDocs(writer, 40);
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 40);
+    EXPECT_EQ(writer->maxDoc(), 40);
     writer->close();
-    
+
     writer = newWriter(aux2, true);
     // add 40 documents in compound files
     addDocs2(writer, 50);
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 50);
+    EXPECT_EQ(writer->maxDoc(), 50);
     writer->close();
 
     // test doc count before segments are merged
     writer = newWriter(dir, false);
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 100);
+    EXPECT_EQ(writer->maxDoc(), 100);
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux, aux2));
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 190);
+    EXPECT_EQ(writer->maxDoc(), 190);
     writer->close();
-    
+
     // make sure the old index is correct
     verifyNumDocs(aux, 40);
 
@@ -146,14 +146,14 @@ BOOST_AUTO_TEST_CASE(testSimpleCase)
     writer = newWriter(aux3, true);
     // add 40 documents
     addDocs(writer, 40);
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 40);
+    EXPECT_EQ(writer->maxDoc(), 40);
     writer->close();
-    
+
     // test doc count before segments are merged/index is optimized
     writer = newWriter(dir, false);
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 190);
+    EXPECT_EQ(writer->maxDoc(), 190);
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux3));
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 230);
+    EXPECT_EQ(writer->maxDoc(), 230);
     writer->close();
 
     // make sure the new index is correct
@@ -182,9 +182,9 @@ BOOST_AUTO_TEST_CASE(testSimpleCase)
     writer->close();
 
     writer = newWriter(dir, false);
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 230);
+    EXPECT_EQ(writer->maxDoc(), 230);
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux4));
-    BOOST_CHECK_EQUAL(writer->maxDoc(), 231);
+    EXPECT_EQ(writer->maxDoc(), 231);
     writer->close();
 
     verifyNumDocs(dir, 231);
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE(testSimpleCase)
     verifyTermDocs(dir, newLucene<Term>(L"content", L"bbb"), 51);
 }
 
-BOOST_AUTO_TEST_CASE(testWithPendingDeletes)
+TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(testWithPendingDeletes)
     setUpDirs(dir, aux);
     IndexWriterPtr writer = newWriter(dir, false);
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux));
-    
+
     // Adds 10 docs, then replaces them with another 10 docs, so 10 pending deletes
     for (int32_t i = 0; i < 20; ++i)
     {
@@ -230,16 +230,16 @@ BOOST_AUTO_TEST_CASE(testWithPendingDeletes)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testWithPendingDeletes2)
+TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes2)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
     DirectoryPtr aux = newLucene<RAMDirectory>();
-    
+
     setUpDirs(dir, aux);
     IndexWriterPtr writer = newWriter(dir, false);
-    
+
     // Adds 10 docs, then replaces them with another 10 docs, so 10 pending deletes
     for (int32_t i = 0; i < 20; ++i)
     {
@@ -248,7 +248,7 @@ BOOST_AUTO_TEST_CASE(testWithPendingDeletes2)
         doc->add(newLucene<Field>(L"content", L"bbb " + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->updateDocument(newLucene<Term>(L"id", StringUtils::toString(i % 10)), doc);
     }
-    
+
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux));
 
     // Deletes one of the 10 added docs, leaving 9
@@ -269,16 +269,16 @@ BOOST_AUTO_TEST_CASE(testWithPendingDeletes2)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testWithPendingDeletes3)
+TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes3)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
     DirectoryPtr aux = newLucene<RAMDirectory>();
-    
+
     setUpDirs(dir, aux);
     IndexWriterPtr writer = newWriter(dir, false);
-    
+
     // Adds 10 docs, then replaces them with another 10 docs, so 10 pending deletes
     for (int32_t i = 0; i < 20; ++i)
     {
@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE(testWithPendingDeletes3)
     q->add(newLucene<Term>(L"content", L"bbb"));
     q->add(newLucene<Term>(L"content", L"14"));
     writer->deleteDocuments(q);
-    
+
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux));
 
     writer->optimize();
@@ -308,17 +308,17 @@ BOOST_AUTO_TEST_CASE(testWithPendingDeletes3)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testAddSelf)
+TEST_F(AddIndexesNoOptimizeTest, testAddSelf)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
     DirectoryPtr aux = newLucene<RAMDirectory>();
-    
+
     IndexWriterPtr writer = newWriter(dir, true);
     // add 100 documents
     addDocs(writer, 100);
-    BOOST_CHECK_EQUAL(100, writer->maxDoc());
+    EXPECT_EQ(100, writer->maxDoc());
     writer->close();
 
     writer = newWriter(aux, true);
@@ -332,13 +332,20 @@ BOOST_AUTO_TEST_CASE(testAddSelf)
     writer->setMaxBufferedDocs(1000);
     addDocs(writer, 100);
     writer->close();
-    
+
     writer = newWriter(dir, false);
-    BOOST_CHECK_EXCEPTION(writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux, dir)), LuceneException, check_exception(LuceneException::IllegalArgument)); // cannot add self
-    BOOST_CHECK_EQUAL(100, writer->maxDoc());
+    try
+    {
+        writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux, dir));
+    }
+    catch (LuceneException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e)); // cannot add self
+    }
+    EXPECT_EQ(100, writer->maxDoc());
 
     writer->close();
-    
+
     // make sure the index is correct
     verifyNumDocs(dir, 100);
 
@@ -346,7 +353,7 @@ BOOST_AUTO_TEST_CASE(testAddSelf)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testNoTailSegments)
+TEST_F(AddIndexesNoOptimizeTest, testNoTailSegments)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -361,10 +368,10 @@ BOOST_AUTO_TEST_CASE(testNoTailSegments)
     addDocs(writer, 10);
 
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux));
-    
-    BOOST_CHECK_EQUAL(1040, writer->maxDoc());
-    BOOST_CHECK_EQUAL(2, writer->getSegmentCount());
-    BOOST_CHECK_EQUAL(1000, writer->getDocCount(0));
+
+    EXPECT_EQ(1040, writer->maxDoc());
+    EXPECT_EQ(2, writer->getSegmentCount());
+    EXPECT_EQ(1000, writer->getDocCount(0));
     writer->close();
 
     // make sure the index is correct
@@ -374,7 +381,7 @@ BOOST_AUTO_TEST_CASE(testNoTailSegments)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testNoCopySegments)
+TEST_F(AddIndexesNoOptimizeTest, testNoCopySegments)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -389,10 +396,10 @@ BOOST_AUTO_TEST_CASE(testNoCopySegments)
     addDocs(writer, 2);
 
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux));
-    
-    BOOST_CHECK_EQUAL(1032, writer->maxDoc());
-    BOOST_CHECK_EQUAL(2, writer->getSegmentCount());
-    BOOST_CHECK_EQUAL(1000, writer->getDocCount(0));
+
+    EXPECT_EQ(1032, writer->maxDoc());
+    EXPECT_EQ(2, writer->getSegmentCount());
+    EXPECT_EQ(1000, writer->getDocCount(0));
     writer->close();
 
     // make sure the index is correct
@@ -402,7 +409,7 @@ BOOST_AUTO_TEST_CASE(testNoCopySegments)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testNoMergeAfterCopy)
+TEST_F(AddIndexesNoOptimizeTest, testNoMergeAfterCopy)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -416,9 +423,9 @@ BOOST_AUTO_TEST_CASE(testNoMergeAfterCopy)
     writer->setMergeFactor(4);
 
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux, newLucene<RAMDirectory>(aux)));
-    
-    BOOST_CHECK_EQUAL(1060, writer->maxDoc());
-    BOOST_CHECK_EQUAL(1000, writer->getDocCount(0));
+
+    EXPECT_EQ(1060, writer->maxDoc());
+    EXPECT_EQ(1000, writer->getDocCount(0));
     writer->close();
 
     // make sure the index is correct
@@ -428,7 +435,7 @@ BOOST_AUTO_TEST_CASE(testNoMergeAfterCopy)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testMergeAfterCopy)
+TEST_F(AddIndexesNoOptimizeTest, testMergeAfterCopy)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -440,7 +447,7 @@ BOOST_AUTO_TEST_CASE(testMergeAfterCopy)
     IndexReaderPtr reader = IndexReader::open(aux, false);
     for (int32_t i = 0; i < 20; ++i)
         reader->deleteDocument(i);
-    BOOST_CHECK_EQUAL(10, reader->numDocs());
+    EXPECT_EQ(10, reader->numDocs());
     reader->close();
 
     IndexWriterPtr writer = newWriter(dir, false);
@@ -448,9 +455,9 @@ BOOST_AUTO_TEST_CASE(testMergeAfterCopy)
     writer->setMergeFactor(4);
 
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux, newLucene<RAMDirectory>(aux)));
-    
-    BOOST_CHECK_EQUAL(1020, writer->maxDoc());
-    BOOST_CHECK_EQUAL(1000, writer->getDocCount(0));
+
+    EXPECT_EQ(1020, writer->maxDoc());
+    EXPECT_EQ(1000, writer->getDocCount(0));
     writer->close();
 
     // make sure the index is correct
@@ -460,7 +467,7 @@ BOOST_AUTO_TEST_CASE(testMergeAfterCopy)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testMoreMerges)
+TEST_F(AddIndexesNoOptimizeTest, testMoreMerges)
 {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -475,33 +482,33 @@ BOOST_AUTO_TEST_CASE(testMoreMerges)
     writer->setMergeFactor(10);
 
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux));
-    
-    BOOST_CHECK_EQUAL(30, writer->maxDoc());
-    BOOST_CHECK_EQUAL(3, writer->getSegmentCount());
+
+    EXPECT_EQ(30, writer->maxDoc());
+    EXPECT_EQ(3, writer->getSegmentCount());
     writer->close();
-    
+
     IndexReaderPtr reader = IndexReader::open(aux, false);
     for (int32_t i = 0; i < 27; ++i)
         reader->deleteDocument(i);
-    BOOST_CHECK_EQUAL(3, reader->numDocs());
+    EXPECT_EQ(3, reader->numDocs());
     reader->close();
-    
+
     reader = IndexReader::open(aux2, false);
     for (int32_t i = 0; i < 8; ++i)
         reader->deleteDocument(i);
-    BOOST_CHECK_EQUAL(22, reader->numDocs());
+    EXPECT_EQ(22, reader->numDocs());
     reader->close();
-    
+
     writer = newWriter(dir, false);
     writer->setMaxBufferedDocs(6);
     writer->setMergeFactor(4);
-    
+
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux, aux2));
 
-    BOOST_CHECK_EQUAL(1025, writer->maxDoc());
-    BOOST_CHECK_EQUAL(1000, writer->getDocCount(0));
+    EXPECT_EQ(1025, writer->maxDoc());
+    EXPECT_EQ(1000, writer->getDocCount(0));
     writer->close();
-    
+
     // make sure the index is correct
     verifyNumDocs(dir, 1025);
 
@@ -509,7 +516,7 @@ BOOST_AUTO_TEST_CASE(testMoreMerges)
     aux->close();
 }
 
-BOOST_AUTO_TEST_CASE(testHangOnClose)
+TEST_F(AddIndexesNoOptimizeTest, testHangOnClose)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -520,21 +527,21 @@ BOOST_AUTO_TEST_CASE(testHangOnClose)
 
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-    
+
     for (int32_t i = 0; i < 60; ++i)
         writer->addDocument(doc);
     writer->setMaxBufferedDocs(200);
     DocumentPtr doc2 = newLucene<Document>();
-    
+
     doc2->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_NO));
     doc2->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_NO));
     doc2->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_NO));
     doc2->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_NO));
-    
+
     for (int32_t i = 0; i < 60; ++i)
         writer->addDocument(doc2);
     writer->close();
-    
+
     DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
     writer = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     LogByteSizeMergePolicyPtr lmp = newLucene<LogByteSizeMergePolicy>(writer);
@@ -549,7 +556,7 @@ BOOST_AUTO_TEST_CASE(testHangOnClose)
     dir2->close();
 }
 
-BOOST_AUTO_TEST_CASE(testTargetCFS)
+TEST_F(AddIndexesNoOptimizeTest, testTargetCFS)
 {
     // make sure CFS of destination indexwriter is respected when copying tail segments
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -562,8 +569,6 @@ BOOST_AUTO_TEST_CASE(testTargetCFS)
     writer = newWriter(other, true);
     writer->setUseCompoundFile(true);
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(dir));
-    BOOST_CHECK(writer->newestSegment()->getUseCompoundFile());
+    EXPECT_TRUE(writer->newestSegment()->getUseCompoundFile());
     writer->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

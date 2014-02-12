@@ -36,7 +36,6 @@ On Debian systems, the following packages are required:
 - libboost-regex-dev
 - libboost-thread-dev
 - libboost-iostreams-dev
-- libboost-test-dev
 
 To build the library the following commands should be issued::
 
@@ -67,7 +66,6 @@ You'll need Boost installed.
 - boost::regex
 - boost::date_time
 - boost::iostreams
-- boost::unit_test_framework
 
 
 Building Performance
@@ -81,11 +79,11 @@ Use of ccache will speed up build times a lot. I found it easiest to add the ``/
 To run unit test suite
 ----------------------
 
-lucene_tester is built using the `Boost Unit Test Framework <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/index.html>`_ and is launched by the following command::
+lucene_tester is built using the `Google Testing Framework <https://code.google.com/p/googletest/>`_ and is launched by the following command::
 
-    $ bin/lucene_tester --show_progress=yes
+    $ build/src/test/lucene++-tester
 
-Other `command options <http://www.boost.org/doc/libs/1_44_0/libs/test/doc/html/utf/user-guide/runtime-config/reference.html>`_ can be supplied.
+Command options can be discovered by supplying `--help`.
 
 
 Acknowledgements

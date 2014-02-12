@@ -25,10 +25,10 @@
 
 using namespace Lucene;
 
-class FieldsReaderTestFixture : public LuceneTestFixture, public DocHelper
+class FieldsReaderTest : public LuceneTestFixture, public DocHelper
 {
 public:
-    FieldsReaderTestFixture()
+    FieldsReaderTest()
     {
         dir = newLucene<RAMDirectory>();
         testDoc = newLucene<Document>();
@@ -40,8 +40,8 @@ public:
         writer->addDocument(testDoc);
         writer->close();
     }
-    
-    virtual ~FieldsReaderTestFixture()
+
+    virtual ~FieldsReaderTest()
     {
     }
 
@@ -49,11 +49,11 @@ protected:
     RAMDirectoryPtr dir;
     DocumentPtr testDoc;
     FieldInfosPtr fieldInfos;
-    
+
     static String TEST_SEGMENT_NAME;
 };
 
-String FieldsReaderTestFixture::TEST_SEGMENT_NAME = L"_0";
+String FieldsReaderTest::TEST_SEGMENT_NAME = L"_0";
 
 DECLARE_SHARED_PTR(FaultyFSDirectory)
 DECLARE_SHARED_PTR(FaultyIndexInput)
@@ -66,45 +66,45 @@ public:
         this->delegate = delegate;
         count = 0;
     }
-    
+
     virtual ~FaultyIndexInput()
     {
     }
-    
+
     LUCENE_CLASS(FaultyIndexInput);
 
 public:
     IndexInputPtr delegate;
     static bool doFail;
     int32_t count;
-    
+
 public:
     virtual void readInternal(uint8_t* b, int32_t offset, int32_t length)
     {
         simOutage();
         delegate->readBytes(b, offset, length);
     }
-    
+
     virtual void seekInternal(int64_t pos)
     {
         delegate->seek(pos);
     }
-    
+
     virtual int64_t length()
     {
         return delegate->length();
     }
-    
+
     virtual void close()
     {
         delegate->close();
     }
-    
+
     virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
         return newLucene<FaultyIndexInput>(boost::dynamic_pointer_cast<IndexInput>(delegate->clone()));
     }
-    
+
 protected:
     void simOutage()
     {
@@ -123,57 +123,57 @@ public:
         fsDir = FSDirectory::open(dir);
         lockFactory = fsDir->getLockFactory();
     }
-    
+
     virtual ~FaultyFSDirectory()
     {
     }
-    
+
     LUCENE_CLASS(FaultyFSDirectory);
 
 public:
     FSDirectoryPtr fsDir;
-    
+
 public:
     virtual IndexInputPtr openInput(const String& name)
     {
         return newLucene<FaultyIndexInput>(fsDir->openInput(name));
     }
-    
+
     virtual HashSet<String> listAll()
     {
         return fsDir->listAll();
     }
-    
+
     virtual bool fileExists(const String& name)
     {
         return fsDir->fileExists(name);
     }
-    
+
     virtual uint64_t fileModified(const String& name)
     {
         return fsDir->fileModified(name);
     }
-    
+
     virtual void touchFile(const String& name)
     {
         fsDir->touchFile(name);
     }
-    
+
     virtual void deleteFile(const String& name)
     {
         fsDir->deleteFile(name);
     }
-    
+
     virtual int64_t fileLength(const String& name)
     {
         return fsDir->fileLength(name);
     }
-    
+
     virtual IndexOutputPtr createOutput(const String& name)
     {
         return fsDir->createOutput(name);
     }
-    
+
     virtual void close()
     {
         fsDir->close();
@@ -182,59 +182,57 @@ public:
 
 static void checkSizeEquals(int32_t size, const uint8_t* sizebytes)
 {
-    BOOST_CHECK_EQUAL((uint8_t)MiscUtils::unsignedShift(size, 24), sizebytes[0]);
-    BOOST_CHECK_EQUAL((uint8_t)MiscUtils::unsignedShift(size, 16), sizebytes[1]);
-    BOOST_CHECK_EQUAL((uint8_t)MiscUtils::unsignedShift(size, 8), sizebytes[2]);
-    BOOST_CHECK_EQUAL((uint8_t)size, sizebytes[3]);
+    EXPECT_EQ((uint8_t)MiscUtils::unsignedShift(size, 24), sizebytes[0]);
+    EXPECT_EQ((uint8_t)MiscUtils::unsignedShift(size, 16), sizebytes[1]);
+    EXPECT_EQ((uint8_t)MiscUtils::unsignedShift(size, 8), sizebytes[2]);
+    EXPECT_EQ((uint8_t)size, sizebytes[3]);
 }
 
-BOOST_FIXTURE_TEST_SUITE(FieldsReaderTest, FieldsReaderTestFixture)
-
-BOOST_AUTO_TEST_CASE(testFieldsReader)
+TEST_F(FieldsReaderTest, testFieldsReader)
 {
-    BOOST_CHECK(dir);
-    BOOST_CHECK(fieldInfos);
+    EXPECT_TRUE(dir);
+    EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
-    BOOST_CHECK(reader);
-    BOOST_CHECK(reader->size() == 1);
+    EXPECT_TRUE(reader);
+    EXPECT_TRUE(reader->size() == 1);
     DocumentPtr doc = reader->doc(0, FieldSelectorPtr());
-    BOOST_CHECK(doc);
-    BOOST_CHECK(doc->getField(DocHelper::TEXT_FIELD_1_KEY));
+    EXPECT_TRUE(doc);
+    EXPECT_TRUE(doc->getField(DocHelper::TEXT_FIELD_1_KEY));
 
     FieldablePtr field = doc->getField(DocHelper::TEXT_FIELD_2_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(field->isTermVectorStored());
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(field->isTermVectorStored());
 
-    BOOST_CHECK(field->isStoreOffsetWithTermVector());
-    BOOST_CHECK(field->isStorePositionWithTermVector());
-    BOOST_CHECK(!field->getOmitNorms());
-    BOOST_CHECK(!field->getOmitTermFreqAndPositions());
+    EXPECT_TRUE(field->isStoreOffsetWithTermVector());
+    EXPECT_TRUE(field->isStorePositionWithTermVector());
+    EXPECT_TRUE(!field->getOmitNorms());
+    EXPECT_TRUE(!field->getOmitTermFreqAndPositions());
 
     field = doc->getField(DocHelper::TEXT_FIELD_3_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(!field->isTermVectorStored());
-    BOOST_CHECK(!field->isStoreOffsetWithTermVector());
-    BOOST_CHECK(!field->isStorePositionWithTermVector());
-    BOOST_CHECK(field->getOmitNorms());
-    BOOST_CHECK(!field->getOmitTermFreqAndPositions());
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(!field->isTermVectorStored());
+    EXPECT_TRUE(!field->isStoreOffsetWithTermVector());
+    EXPECT_TRUE(!field->isStorePositionWithTermVector());
+    EXPECT_TRUE(field->getOmitNorms());
+    EXPECT_TRUE(!field->getOmitTermFreqAndPositions());
 
     field = doc->getField(DocHelper::NO_TF_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(!field->isTermVectorStored());
-    BOOST_CHECK(!field->isStoreOffsetWithTermVector());
-    BOOST_CHECK(!field->isStorePositionWithTermVector());
-    BOOST_CHECK(!field->getOmitNorms());
-    BOOST_CHECK(field->getOmitTermFreqAndPositions());
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(!field->isTermVectorStored());
+    EXPECT_TRUE(!field->isStoreOffsetWithTermVector());
+    EXPECT_TRUE(!field->isStorePositionWithTermVector());
+    EXPECT_TRUE(!field->getOmitNorms());
+    EXPECT_TRUE(field->getOmitTermFreqAndPositions());
     reader->close();
 }
 
-BOOST_AUTO_TEST_CASE(testLazyFields)
+TEST_F(FieldsReaderTest, testLazyFields)
 {
-    BOOST_CHECK(dir);
-    BOOST_CHECK(fieldInfos);
+    EXPECT_TRUE(dir);
+    EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
-    BOOST_CHECK(reader);
-    BOOST_CHECK(reader->size() == 1);
+    EXPECT_TRUE(reader);
+    EXPECT_TRUE(reader->size() == 1);
     HashSet<String> loadFieldNames = HashSet<String>::newInstance();
     loadFieldNames.add(DocHelper::TEXT_FIELD_1_KEY);
     loadFieldNames.add(DocHelper::TEXT_FIELD_UTF1_KEY);
@@ -245,44 +243,44 @@ BOOST_AUTO_TEST_CASE(testLazyFields)
     lazyFieldNames.add(DocHelper::TEXT_FIELD_UTF2_KEY);
     SetBasedFieldSelectorPtr fieldSelector = newLucene<SetBasedFieldSelector>(loadFieldNames, lazyFieldNames);
     DocumentPtr doc = reader->doc(0, fieldSelector);
-    BOOST_CHECK(doc);
+    EXPECT_TRUE(doc);
     FieldablePtr field = doc->getFieldable(DocHelper::LAZY_FIELD_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(field->isLazy());
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(field->isLazy());
     String value = field->stringValue();
-    BOOST_CHECK(!value.empty());
-    BOOST_CHECK_EQUAL(value, DocHelper::LAZY_FIELD_TEXT);
+    EXPECT_TRUE(!value.empty());
+    EXPECT_EQ(value, DocHelper::LAZY_FIELD_TEXT);
     field = doc->getFieldable(DocHelper::TEXT_FIELD_1_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(!field->isLazy());
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(!field->isLazy());
     field = doc->getFieldable(DocHelper::TEXT_FIELD_UTF1_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(!field->isLazy());
-    BOOST_CHECK_EQUAL(field->stringValue(), DocHelper::FIELD_UTF1_TEXT);
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(!field->isLazy());
+    EXPECT_EQ(field->stringValue(), DocHelper::FIELD_UTF1_TEXT);
 
     field = doc->getFieldable(DocHelper::TEXT_FIELD_UTF2_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(field->isLazy());
-    BOOST_CHECK_EQUAL(field->stringValue(), DocHelper::FIELD_UTF2_TEXT);
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(field->isLazy());
+    EXPECT_EQ(field->stringValue(), DocHelper::FIELD_UTF2_TEXT);
 
     field = doc->getFieldable(DocHelper::LAZY_FIELD_BINARY_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(field->stringValue().empty());
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(field->stringValue().empty());
 
     ByteArray bytes = field->getBinaryValue();
-    BOOST_CHECK(bytes);
-    BOOST_CHECK_EQUAL(DocHelper::LAZY_FIELD_BINARY_BYTES.size(), bytes.size());
-    BOOST_CHECK(bytes);
-    BOOST_CHECK(bytes.equals(DocHelper::LAZY_FIELD_BINARY_BYTES));
+    EXPECT_TRUE(bytes);
+    EXPECT_EQ(DocHelper::LAZY_FIELD_BINARY_BYTES.size(), bytes.size());
+    EXPECT_TRUE(bytes);
+    EXPECT_TRUE(bytes.equals(DocHelper::LAZY_FIELD_BINARY_BYTES));
 }
 
-BOOST_AUTO_TEST_CASE(testLazyFieldsAfterClose)
+TEST_F(FieldsReaderTest, testLazyFieldsAfterClose)
 {
-    BOOST_CHECK(dir);
-    BOOST_CHECK(fieldInfos);
+    EXPECT_TRUE(dir);
+    EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
-    BOOST_CHECK(reader);
-    BOOST_CHECK(reader->size() == 1);
+    EXPECT_TRUE(reader);
+    EXPECT_TRUE(reader->size() == 1);
     HashSet<String> loadFieldNames = HashSet<String>::newInstance();
     loadFieldNames.add(DocHelper::TEXT_FIELD_1_KEY);
     loadFieldNames.add(DocHelper::TEXT_FIELD_UTF1_KEY);
@@ -293,50 +291,57 @@ BOOST_AUTO_TEST_CASE(testLazyFieldsAfterClose)
     lazyFieldNames.add(DocHelper::TEXT_FIELD_UTF2_KEY);
     SetBasedFieldSelectorPtr fieldSelector = newLucene<SetBasedFieldSelector>(loadFieldNames, lazyFieldNames);
     DocumentPtr doc = reader->doc(0, fieldSelector);
-    BOOST_CHECK(doc);
+    EXPECT_TRUE(doc);
     FieldablePtr field = doc->getFieldable(DocHelper::LAZY_FIELD_KEY);
-    BOOST_CHECK(field);
-    BOOST_CHECK(field->isLazy());
+    EXPECT_TRUE(field);
+    EXPECT_TRUE(field->isLazy());
     reader->close();
-    BOOST_CHECK_EXCEPTION(field->stringValue(), AlreadyClosedException, check_exception(LuceneException::AlreadyClosed));
+    try
+    {
+        field->stringValue();
+    }
+    catch (AlreadyClosedException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
+    }
 }
 
-BOOST_AUTO_TEST_CASE(testLoadFirst)
+TEST_F(FieldsReaderTest, testLoadFirst)
 {
-    BOOST_CHECK(dir);
-    BOOST_CHECK(fieldInfos);
+    EXPECT_TRUE(dir);
+    EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
-    BOOST_CHECK(reader);
-    BOOST_CHECK(reader->size() == 1);
+    EXPECT_TRUE(reader);
+    EXPECT_TRUE(reader->size() == 1);
     LoadFirstFieldSelectorPtr fieldSelector = newLucene<LoadFirstFieldSelector>();
     DocumentPtr doc = reader->doc(0, fieldSelector);
-    BOOST_CHECK(doc);
+    EXPECT_TRUE(doc);
     int32_t count = 0;
     Collection<FieldablePtr> fields = doc->getFields();
     for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
     {
-        BOOST_CHECK(*field);
+        EXPECT_TRUE(*field);
         String sv = (*field)->stringValue();
-        BOOST_CHECK(!sv.empty());
+        EXPECT_TRUE(!sv.empty());
         ++count;
     }
-    BOOST_CHECK_EQUAL(count, 1);
+    EXPECT_EQ(count, 1);
 }
 
 /// Not really a test per se, but we should have some way of assessing whether this is worthwhile.
 /// Must test using a File based directory.
-BOOST_AUTO_TEST_CASE(testLazyPerformance)
+TEST_F(FieldsReaderTest, testLazyPerformance)
 {
     String path(FileUtils::joinPath(getTempDir(), L"lazyDir"));
     FSDirectoryPtr tmpDir = FSDirectory::open(path);
-    BOOST_CHECK(tmpDir);
+    EXPECT_TRUE(tmpDir);
 
     IndexWriterPtr writer = newLucene<IndexWriter>(tmpDir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setUseCompoundFile(false);
     writer->addDocument(testDoc);
     writer->close();
 
-    BOOST_CHECK(fieldInfos);
+    EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader;
     int64_t lazyTime = 0;
     int64_t regularTime = 0;
@@ -344,22 +349,22 @@ BOOST_AUTO_TEST_CASE(testLazyPerformance)
     HashSet<String> lazyFieldNames = HashSet<String>::newInstance();
     lazyFieldNames.add(DocHelper::LARGE_LAZY_FIELD_KEY);
     SetBasedFieldSelectorPtr fieldSelector = newLucene<SetBasedFieldSelector>(HashSet<String>::newInstance(), lazyFieldNames);
-    
+
     for (int32_t i = 0; i < length; ++i)
     {
         reader = newLucene<FieldsReader>(tmpDir, TEST_SEGMENT_NAME, fieldInfos);
-        BOOST_CHECK(reader);
-        BOOST_CHECK(reader->size() == 1);
+        EXPECT_TRUE(reader);
+        EXPECT_TRUE(reader->size() == 1);
 
         DocumentPtr doc = reader->doc(0, FieldSelectorPtr()); // Load all of them
-        BOOST_CHECK(doc);
+        EXPECT_TRUE(doc);
         FieldablePtr field = doc->getFieldable(DocHelper::LARGE_LAZY_FIELD_KEY);
-        BOOST_CHECK(!field->isLazy());
+        EXPECT_TRUE(!field->isLazy());
         int64_t start = MiscUtils::currentTimeMillis();
         String value = field->stringValue();
         int64_t finish = MiscUtils::currentTimeMillis(); // ~ 0ms
-        BOOST_CHECK(!value.empty());
-        BOOST_CHECK(field);
+        EXPECT_TRUE(!value.empty());
+        EXPECT_TRUE(field);
         regularTime += (finish - start);
         reader->close();
         reader.reset();
@@ -367,17 +372,17 @@ BOOST_AUTO_TEST_CASE(testLazyPerformance)
         reader = newLucene<FieldsReader>(tmpDir, TEST_SEGMENT_NAME, fieldInfos);
         doc = reader->doc(0, fieldSelector);
         field = doc->getFieldable(DocHelper::LARGE_LAZY_FIELD_KEY);
-        BOOST_CHECK(field->isLazy());
+        EXPECT_TRUE(field->isLazy());
         start = MiscUtils::currentTimeMillis();
         value = field->stringValue();
         finish = MiscUtils::currentTimeMillis(); // ~ 50 - 70ms
-        BOOST_CHECK(!value.empty());
+        EXPECT_TRUE(!value.empty());
         lazyTime += (finish - start);
         reader->close();
     }
-    
-    BOOST_TEST_MESSAGE("Average Non-lazy time (should be very close to zero): " << (regularTime / length) << " ms for " << length << " reads");
-    BOOST_TEST_MESSAGE("Average Lazy Time (should be greater than zero): " << (lazyTime / length) << " ms for " << length << " reads");
+
+    // std::cout << "Average Non-lazy time (should be very close to zero): " << (regularTime / length) << " ms for " << length << " reads";
+    // std::cout << "Average Lazy Time (should be greater than zero): " << (lazyTime / length) << " ms for " << length << " reads";
 
     FileUtils::removeDirectory(path);
 }
@@ -385,16 +390,16 @@ BOOST_AUTO_TEST_CASE(testLazyPerformance)
 namespace TestLoadSize
 {
     DECLARE_SHARED_PTR(TestableFieldSelector)
-    
+
     class TestableFieldSelector : public FieldSelector
     {
     public:
         virtual ~TestableFieldSelector()
         {
         }
-        
+
         LUCENE_CLASS(TestableFieldSelector);
-        
+
     public:
         virtual FieldSelectorResult accept(const String& fieldName)
         {
@@ -408,7 +413,7 @@ namespace TestLoadSize
     };
 }
 
-BOOST_AUTO_TEST_CASE(testLoadSize)
+TEST_F(FieldsReaderTest, testLoadSize)
 {
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
     DocumentPtr doc = reader->doc(0, newLucene<TestLoadSize::TestableFieldSelector>());
@@ -416,17 +421,17 @@ BOOST_AUTO_TEST_CASE(testLoadSize)
     FieldablePtr f1 = doc->getFieldable(DocHelper::TEXT_FIELD_1_KEY);
     FieldablePtr f3 = doc->getFieldable(DocHelper::TEXT_FIELD_3_KEY);
     FieldablePtr fb = doc->getFieldable(DocHelper::LAZY_FIELD_BINARY_KEY);
-    BOOST_CHECK(f1->isBinary());
-    BOOST_CHECK(!f3->isBinary());
-    BOOST_CHECK(fb->isBinary());
+    EXPECT_TRUE(f1->isBinary());
+    EXPECT_TRUE(!f3->isBinary());
+    EXPECT_TRUE(fb->isBinary());
     checkSizeEquals(2 * String(DocHelper::FIELD_1_TEXT).length(), f1->getBinaryValue().get());
-    BOOST_CHECK_EQUAL(DocHelper::FIELD_3_TEXT, f3->stringValue());
+    EXPECT_EQ(DocHelper::FIELD_3_TEXT, f3->stringValue());
     checkSizeEquals(DocHelper::LAZY_FIELD_BINARY_BYTES.size(), fb->getBinaryValue().get());
 
     reader->close();
 }
 
-BOOST_AUTO_TEST_CASE(testExceptions)
+TEST_F(FieldsReaderTest, testExceptions)
 {
     String indexDir(FileUtils::joinPath(getTempDir(), L"testfieldswriterexceptions"));
 
@@ -445,7 +450,7 @@ BOOST_AUTO_TEST_CASE(testExceptions)
         FaultyIndexInput::doFail = true;
 
         bool exc = false;
-        
+
         for (int32_t i = 0; i < 2; ++i)
         {
             try
@@ -465,7 +470,7 @@ BOOST_AUTO_TEST_CASE(testExceptions)
                 exc = true; // expected
             }
         }
-        BOOST_CHECK(exc);
+        EXPECT_TRUE(exc);
         reader->close();
         dir->close();
     }
@@ -476,5 +481,3 @@ BOOST_AUTO_TEST_CASE(testExceptions)
     FileUtils::removeDirectory(indexDir);
     finally.throwException();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -20,16 +20,16 @@
 
 using namespace Lucene;
 
-class BooleanOrFixture : public LuceneTestFixture
+class BooleanOrTest : public LuceneTestFixture
 {
 public:
-    BooleanOrFixture()
+    BooleanOrTest()
     {
         t1 = newLucene<TermQuery>(newLucene<Term>(FIELD_T, L"files"));
         t2 = newLucene<TermQuery>(newLucene<Term>(FIELD_T, L"deleting"));
         c1 = newLucene<TermQuery>(newLucene<Term>(FIELD_C, L"production"));
         c2 = newLucene<TermQuery>(newLucene<Term>(FIELD_C, L"optimize"));
-        
+
         RAMDirectoryPtr rd = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(rd, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -41,8 +41,8 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(rd, true);
     }
-    
-    virtual ~BooleanOrFixture()
+
+    virtual ~BooleanOrTest()
     {
     }
 
@@ -54,7 +54,7 @@ protected:
     TermQueryPtr t2;
     TermQueryPtr c1;
     TermQueryPtr c2;
-    
+
     IndexSearcherPtr searcher;
 
 public:
@@ -65,30 +65,28 @@ public:
     }
 };
 
-const String BooleanOrFixture::FIELD_T = L"T";
-const String BooleanOrFixture::FIELD_C = L"C";
+const String BooleanOrTest::FIELD_T = L"T";
+const String BooleanOrTest::FIELD_C = L"C";
 
-BOOST_FIXTURE_TEST_SUITE(BooleanOrTest, BooleanOrFixture)
-
-BOOST_AUTO_TEST_CASE(testElements)
+TEST_F(BooleanOrTest, testElements)
 {
-    BOOST_CHECK_EQUAL(1, search(t1));
-    BOOST_CHECK_EQUAL(1, search(t2));
-    BOOST_CHECK_EQUAL(1, search(c1));
-    BOOST_CHECK_EQUAL(1, search(c2));
+    EXPECT_EQ(1, search(t1));
+    EXPECT_EQ(1, search(t2));
+    EXPECT_EQ(1, search(c1));
+    EXPECT_EQ(1, search(c2));
 }
 
-BOOST_AUTO_TEST_CASE(testFlat)
+TEST_F(BooleanOrTest, testFlat)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
     q->add(newLucene<BooleanClause>(t2, BooleanClause::SHOULD));
     q->add(newLucene<BooleanClause>(c1, BooleanClause::SHOULD));
     q->add(newLucene<BooleanClause>(c2, BooleanClause::SHOULD));
-    BOOST_CHECK_EQUAL(1, search(q));
+    EXPECT_EQ(1, search(q));
 }
 
-BOOST_AUTO_TEST_CASE(testParenthesisMust)
+TEST_F(BooleanOrTest, testParenthesisMust)
 {
     BooleanQueryPtr q3 = newLucene<BooleanQuery>();
     q3->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
@@ -99,10 +97,10 @@ BOOST_AUTO_TEST_CASE(testParenthesisMust)
     BooleanQueryPtr q2 = newLucene<BooleanQuery>();
     q2->add(q3, BooleanClause::SHOULD);
     q2->add(q4, BooleanClause::SHOULD);
-    BOOST_CHECK_EQUAL(1, search(q2));
+    EXPECT_EQ(1, search(q2));
 }
 
-BOOST_AUTO_TEST_CASE(testParenthesisMust2)
+TEST_F(BooleanOrTest, testParenthesisMust2)
 {
     BooleanQueryPtr q3 = newLucene<BooleanQuery>();
     q3->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
@@ -113,10 +111,10 @@ BOOST_AUTO_TEST_CASE(testParenthesisMust2)
     BooleanQueryPtr q2 = newLucene<BooleanQuery>();
     q2->add(q3, BooleanClause::SHOULD);
     q2->add(q4, BooleanClause::MUST);
-    BOOST_CHECK_EQUAL(1, search(q2));
+    EXPECT_EQ(1, search(q2));
 }
 
-BOOST_AUTO_TEST_CASE(testParenthesisShould)
+TEST_F(BooleanOrTest, testParenthesisShould)
 {
     BooleanQueryPtr q3 = newLucene<BooleanQuery>();
     q3->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
@@ -127,7 +125,5 @@ BOOST_AUTO_TEST_CASE(testParenthesisShould)
     BooleanQueryPtr q2 = newLucene<BooleanQuery>();
     q2->add(q3, BooleanClause::SHOULD);
     q2->add(q4, BooleanClause::SHOULD);
-    BOOST_CHECK_EQUAL(1, search(q2));
+    EXPECT_EQ(1, search(q2));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

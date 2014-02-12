@@ -9,9 +9,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(BaseTestRangeFilterTest, BaseTestRangeFilterFixture)
+typedef BaseTestRangeFilterFixture BaseTestRangeFilterTest;
 
-BOOST_AUTO_TEST_CASE(testPad)
+TEST_F(BaseTestRangeFilterTest, testPad)
 {
     Collection<int32_t> tests = newCollection<int32_t>(-9999999, -99560, -100, -1, 0, 3, 9, 10, 1000, 999999999);
     for (int32_t i = 0; i < tests.size() - 1; ++i)
@@ -20,9 +20,7 @@ BOOST_AUTO_TEST_CASE(testPad)
         int32_t b = tests[i + 1];
         String aa = pad(a);
         String bb = pad(b);
-        BOOST_CHECK_EQUAL(aa.length(), bb.length());
-        BOOST_CHECK(aa.compare(bb) < 0);
+        EXPECT_EQ(aa.length(), bb.length());
+        EXPECT_TRUE(aa.compare(bb) < 0);
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

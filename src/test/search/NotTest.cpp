@@ -19,9 +19,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(NotTest, LuceneTestFixture)
+typedef LuceneTestFixture NotTest;
 
-BOOST_AUTO_TEST_CASE(testNot)
+TEST_F(NotTest, testNot)
 {
     RAMDirectoryPtr store = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(store, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -37,7 +37,5 @@ BOOST_AUTO_TEST_CASE(testNot)
     QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<SimpleAnalyzer>());
     QueryPtr query = parser->parse(L"a NOT b");
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

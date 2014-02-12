@@ -25,18 +25,18 @@
 
 using namespace Lucene;
 
-class RAMDirectoryTestFixture : public LuceneTestFixture
+class RAMDirectoryTest : public LuceneTestFixture
 {
 public:
-    RAMDirectoryTestFixture()
+    RAMDirectoryTest()
     {
         indexDir = FileUtils::joinPath(getTempDir(), L"RAMDirIndex");
         DirectoryPtr dir(FSDirectory::open(indexDir));
         IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
-        
+
         // add enough document so that the index will be larger than RAMDirectory::READ_BUFFER_SIZE
         docsToAdd = 500;
-        
+
         // add some documents
         for (int32_t i = 0; i < docsToAdd; ++i)
         {
@@ -44,13 +44,13 @@ public:
             doc->add(newLucene<Field>(L"content", intToEnglish(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
         }
-        BOOST_CHECK_EQUAL(docsToAdd, writer->maxDoc());
-        
+        EXPECT_EQ(docsToAdd, writer->maxDoc());
+
         writer->close();
         dir->close();
     }
-    
-    virtual ~RAMDirectoryTestFixture()
+
+    virtual ~RAMDirectoryTest()
     {
         FileUtils::removeDirectory(indexDir);
     }
@@ -68,7 +68,7 @@ public:
         this->writer = writer;
         this->num = num;
     }
-    
+
     LUCENE_CLASS(TestRAMDirectoryThread);
 
 public:
@@ -78,7 +78,7 @@ public:
 protected:
     IndexWriterPtr writer;
     int32_t num;
-    
+
 public:
     virtual void run()
     {
@@ -112,7 +112,7 @@ public:
         capacity = 0;
         singleBuffers = MapIntByteArray::newInstance();
     }
-    
+
     LUCENE_CLASS(DenseRAMFile);
 
 public:
@@ -145,31 +145,29 @@ const int64_t DenseRAMFile::MAX_VALUE = 2 * (int64_t)INT_MAX;
 
 typedef boost::shared_ptr<DenseRAMFile> DenseRAMFilePtr;
 
-BOOST_FIXTURE_TEST_SUITE(RAMDirectoryTest, RAMDirectoryTestFixture)
-
-BOOST_AUTO_TEST_CASE(testRAMDirectory)
+TEST_F(RAMDirectoryTest, testRAMDirectory)
 {
     DirectoryPtr dir(FSDirectory::open(indexDir));
     MockRAMDirectoryPtr ramDir(newLucene<MockRAMDirectory>(dir));
-    
+
     // close the underlaying directory
     dir->close();
-    
+
     // Check size
-    BOOST_CHECK_EQUAL(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
-    
+    EXPECT_EQ(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
+
     // open reader to test document count
     IndexReaderPtr reader(IndexReader::open(ramDir, true));
-    BOOST_CHECK_EQUAL(docsToAdd, reader->numDocs());
-    
+    EXPECT_EQ(docsToAdd, reader->numDocs());
+
     // open search to check if all doc's are there
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);
-    
+
     // search for all documents
     for (int32_t i = 0; i < docsToAdd; ++i)
     {
         DocumentPtr doc = searcher->doc(i);
-        BOOST_CHECK(doc->getField(L"content"));
+        EXPECT_TRUE(doc->getField(L"content"));
     }
 
     // cleanup
@@ -177,33 +175,33 @@ BOOST_AUTO_TEST_CASE(testRAMDirectory)
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testRAMDirectorySize)
+TEST_F(RAMDirectoryTest, testRAMDirectorySize)
 {
     DirectoryPtr dir(FSDirectory::open(indexDir));
     MockRAMDirectoryPtr ramDir(newLucene<MockRAMDirectory>(dir));
     dir->close();
-    
+
     IndexWriterPtr writer(newLucene<IndexWriter>(ramDir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED));
     writer->optimize();
-    
-    BOOST_CHECK_EQUAL(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
-    
+
+    EXPECT_EQ(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
+
     Collection<TestRAMDirectoryThreadPtr> threads(Collection<TestRAMDirectoryThreadPtr>::newInstance(TestRAMDirectoryThread::numThreads));
     for (int32_t i = 0; i < TestRAMDirectoryThread::numThreads; ++i)
         threads[i] = newLucene<TestRAMDirectoryThread>(writer, i);
-    
+
     for (int32_t i = 0; i < TestRAMDirectoryThread::numThreads; ++i)
         threads[i]->start();
     for (int32_t i = 0; i < TestRAMDirectoryThread::numThreads; ++i)
         threads[i]->join();
-    
+
     writer->optimize();
-    BOOST_CHECK_EQUAL(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
-    
+    EXPECT_EQ(ramDir->sizeInBytes(), ramDir->getRecomputedSizeInBytes());
+
     writer->close();
 }
 
-BOOST_AUTO_TEST_CASE(testIllegalEOF)
+TEST_F(RAMDirectoryTest, testIllegalEOF)
 {
     RAMDirectoryPtr dir(newLucene<RAMDirectory>());
     IndexOutputPtr o(dir->createOutput(L"out"));
@@ -217,27 +215,27 @@ BOOST_AUTO_TEST_CASE(testIllegalEOF)
 }
 
 /// Test huge RAMFile with more than INT_MAX bytes.
-BOOST_AUTO_TEST_CASE(testHugeFile)
+TEST_F(RAMDirectoryTest, testHugeFile)
 {
     DenseRAMFilePtr f(newLucene<DenseRAMFile>());
-    
+
     // output part
     RAMOutputStreamPtr out(newLucene<RAMOutputStream>(f));
     ByteArray b1(ByteArray::newInstance(RAMOutputStream::BUFFER_SIZE));
     ByteArray b2(ByteArray::newInstance(RAMOutputStream::BUFFER_SIZE / 3));
-    
+
     for (int32_t i = 0; i < b1.size(); ++i)
         b1[i] = (uint8_t)(i & 0x0007f);
     for (int32_t i = 0; i < b2.size(); ++i)
         b2[i] = (uint8_t)(i & 0x0003f);
     int64_t n = 0;
-    BOOST_CHECK_EQUAL(n, out->length()); // output length must match
+    EXPECT_EQ(n, out->length()); // output length must match
     while (n <= DenseRAMFile::MAX_VALUE - b1.size())
     {
         out->writeBytes(b1.get(), 0, b1.size());
         out->flush();
         n += b1.size();
-        BOOST_CHECK_EQUAL(n, out->length()); // output length must match
+        EXPECT_EQ(n, out->length()); // output length must match
     }
     int32_t m = b2.size();
     int64_t l = 12;
@@ -245,16 +243,16 @@ BOOST_AUTO_TEST_CASE(testHugeFile)
     {
         for (int32_t i = 0; i < b2.size(); ++i)
             b2[i]++;
-        
+
         out->writeBytes(b2.get(), 0, m);
         out->flush();
         n += m;
-        BOOST_CHECK_EQUAL(n, out->length()); // output length must match
+        EXPECT_EQ(n, out->length()); // output length must match
     }
     out->close();
     // input part
     RAMInputStreamPtr in(newLucene<RAMInputStream>(f));
-    BOOST_CHECK_EQUAL(n, in->length()); // input length must match
+    EXPECT_EQ(n, in->length()); // input length must match
     for (int32_t j = 0; j < l; ++j)
     {
         int64_t loc = n - (l - j) * m;
@@ -264,9 +262,7 @@ BOOST_AUTO_TEST_CASE(testHugeFile)
         {
             uint8_t bt = in->readByte();
             uint8_t expected = (uint8_t)(1 + j + (i & 0x0003f));
-            BOOST_CHECK_EQUAL(expected, bt); // must read same value that was written
+            EXPECT_EQ(expected, bt); // must read same value that was written
         }
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

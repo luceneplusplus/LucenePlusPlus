@@ -8,7 +8,7 @@
 
 namespace Lucene
 {
-    class LuceneTestFixture
+    class LuceneTestFixture : public testing::Test
     {
     public:
         /// setup

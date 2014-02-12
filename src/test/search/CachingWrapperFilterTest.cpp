@@ -32,19 +32,19 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(CachingWrapperFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture CachingWrapperFilterTest;
 
 static void checkDocIdSetCacheable(IndexReaderPtr reader, FilterPtr filter, bool shouldCacheable)
 {
     CachingWrapperFilterPtr cacher = newLucene<CachingWrapperFilter>(filter);
     DocIdSetPtr originalSet = filter->getDocIdSet(reader);
     DocIdSetPtr cachedSet = cacher->getDocIdSet(reader);
-    BOOST_CHECK(cachedSet->isCacheable());
-    BOOST_CHECK_EQUAL(shouldCacheable, originalSet->isCacheable());
+    EXPECT_TRUE(cachedSet->isCacheable());
+    EXPECT_EQ(shouldCacheable, originalSet->isCacheable());
     if (originalSet->isCacheable())
-        BOOST_CHECK(MiscUtils::equalTypes(originalSet, cachedSet));
+        EXPECT_TRUE(MiscUtils::equalTypes(originalSet, cachedSet));
     else
-        BOOST_CHECK(MiscUtils::typeOf<OpenBitSetDISI>(cachedSet));
+        EXPECT_TRUE(MiscUtils::typeOf<OpenBitSetDISI>(cachedSet));
 }
 
 static IndexReaderPtr refreshReader(IndexReaderPtr reader)
@@ -56,7 +56,7 @@ static IndexReaderPtr refreshReader(IndexReaderPtr reader)
     return reader;
 }
 
-BOOST_AUTO_TEST_CASE(testCachingWorks)
+TEST_F(CachingWrapperFilterTest, testCachingWorks)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(testCachingWorks)
 
     // first time, nested filter is called
     cacher->getDocIdSet(reader);
-    BOOST_CHECK(filter->wasCalled());
+    EXPECT_TRUE(filter->wasCalled());
 
     // make sure no exception if cache is holding the wrong docIdSet
     cacher->getDocIdSet(reader);
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(testCachingWorks)
     // second time, nested filter should not be called
     filter->clear();
     cacher->getDocIdSet(reader);
-    BOOST_CHECK(!filter->wasCalled());
+    EXPECT_TRUE(!filter->wasCalled());
 
     reader->close();
 }
@@ -90,7 +90,7 @@ namespace TestNullDocIdSet
         virtual ~NullDocIdSetFilter()
         {
         }
-    
+
     public:
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
         {
@@ -99,7 +99,7 @@ namespace TestNullDocIdSet
     };
 }
 
-BOOST_AUTO_TEST_CASE(testNullDocIdSet)
+TEST_F(CachingWrapperFilterTest, testNullDocIdSet)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -110,8 +110,8 @@ BOOST_AUTO_TEST_CASE(testNullDocIdSet)
     CachingWrapperFilterPtr cacher = newLucene<CachingWrapperFilter>(filter);
 
     // the caching filter should return the empty set constant
-    BOOST_CHECK_EQUAL(DocIdSet::EMPTY_DOCIDSET(), cacher->getDocIdSet(reader));
-    
+    EXPECT_EQ(DocIdSet::EMPTY_DOCIDSET(), cacher->getDocIdSet(reader));
+
     reader->close();
 }
 
@@ -123,21 +123,21 @@ namespace TestNullDocIdSetIterator
         virtual ~NullDocIdSetIterator()
         {
         }
-    
+
     public:
         virtual DocIdSetIteratorPtr iterator()
         {
             return DocIdSetIteratorPtr();
         }
     };
-    
+
     class NullDocIdSetIteratorFilter : public Filter
     {
     public:
         virtual ~NullDocIdSetIteratorFilter()
         {
         }
-    
+
     public:
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
         {
@@ -146,7 +146,7 @@ namespace TestNullDocIdSetIterator
     };
 }
 
-BOOST_AUTO_TEST_CASE(testNullDocIdSetIterator)
+TEST_F(CachingWrapperFilterTest, testNullDocIdSetIterator)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -157,8 +157,8 @@ BOOST_AUTO_TEST_CASE(testNullDocIdSetIterator)
     CachingWrapperFilterPtr cacher = newLucene<CachingWrapperFilter>(filter);
 
     // the caching filter should return the empty set constant
-    BOOST_CHECK_EQUAL(DocIdSet::EMPTY_DOCIDSET(), cacher->getDocIdSet(reader));
-    
+    EXPECT_EQ(DocIdSet::EMPTY_DOCIDSET(), cacher->getDocIdSet(reader));
+
     reader->close();
 }
 
@@ -170,7 +170,7 @@ namespace TestIsCacheable
         virtual ~OpenBitSetFilter()
         {
         }
-    
+
     public:
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
         {
@@ -179,28 +179,28 @@ namespace TestIsCacheable
     };
 }
 
-BOOST_AUTO_TEST_CASE(testIsCacheable)
+TEST_F(CachingWrapperFilterTest, testIsCacheable)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
-    
+
     // not cacheable
     checkDocIdSetCacheable(reader, newLucene<QueryWrapperFilter>(newLucene<TermQuery>(newLucene<Term>(L"test", L"value"))), false);
-    
+
     // returns default empty docidset, always cacheable
     checkDocIdSetCacheable(reader, NumericRangeFilter::newIntRange(L"test", 10000, -10000, true, true), true);
-    
+
     // is cacheable
     checkDocIdSetCacheable(reader, FieldCacheRangeFilter::newIntRange(L"test", 10, 20, true, true), true);
-    
+
     // a openbitset filter is always cacheable
     checkDocIdSetCacheable(reader, newLucene<TestIsCacheable::OpenBitSetFilter>(), true);
 }
 
-BOOST_AUTO_TEST_CASE(testEnforceDeletions)
+TEST_F(CachingWrapperFilterTest, testEnforceDeletions)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     TopDocsPtr docs = searcher->search(newLucene<MatchAllDocsQuery>(), 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     FilterPtr startFilter = newLucene<QueryWrapperFilter>(newLucene<TermQuery>(newLucene<Term>(L"id", L"1")));
 
@@ -224,10 +224,10 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     CachingWrapperFilterPtr filter = newLucene<CachingWrapperFilter>(startFilter, CachingWrapperFilter::DELETES_IGNORE);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
     ConstantScoreQueryPtr constantScore = newLucene<ConstantScoreQuery>(filter);
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     // now delete the doc, refresh the reader, and see that it's not there
     writer->deleteDocuments(newLucene<Term>(L"id", L"1"));
@@ -236,10 +236,10 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(0, docs->totalHits);
 
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     // force cache to regenerate
     filter = newLucene<CachingWrapperFilter>(startFilter, CachingWrapperFilter::DELETES_RECACHE);
@@ -249,21 +249,21 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     constantScore = newLucene<ConstantScoreQuery>(filter);
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     // make sure we get a cache hit when we reopen reader that had no change to deletions
     IndexReaderPtr newReader = refreshReader(reader);
-    BOOST_CHECK_NE(reader, newReader);
+    EXPECT_NE(reader, newReader);
     reader = newReader;
     searcher = newLucene<IndexSearcher>(reader);
     int32_t missCount = filter->missCount;
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
-    BOOST_CHECK_EQUAL(missCount, filter->missCount);
+    EXPECT_EQ(1, docs->totalHits);
+    EXPECT_EQ(missCount, filter->missCount);
 
     // now delete the doc, refresh the reader, and see that it's not there
     writer->deleteDocuments(newLucene<Term>(L"id", L"1"));
@@ -273,10 +273,10 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
 
     missCount = filter->missCount;
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(missCount + 1, filter->missCount);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(missCount + 1, filter->missCount);
+    EXPECT_EQ(0, docs->totalHits);
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(0, docs->totalHits);
 
     // apply deletions dynamically
     filter = newLucene<CachingWrapperFilter>(startFilter, CachingWrapperFilter::DELETES_DYNAMIC);
@@ -286,10 +286,10 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
     constantScore = newLucene<ConstantScoreQuery>(filter);
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     // now delete the doc, refresh the reader, and see that it's not there
     writer->deleteDocuments(newLucene<Term>(L"id", L"1"));
@@ -298,14 +298,12 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(0, docs->totalHits);
 
     missCount = filter->missCount;
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(0, docs->totalHits);
 
     // doesn't count as a miss
-    BOOST_CHECK_EQUAL(missCount, filter->missCount);
+    EXPECT_EQ(missCount, filter->missCount);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

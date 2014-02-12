@@ -19,10 +19,10 @@
 
 using namespace Lucene;
 
-class FieldCacheSanityCheckerTestFixture : public LuceneTestFixture
+class FieldCacheSanityCheckerTest : public LuceneTestFixture
 {
 public:
-    FieldCacheSanityCheckerTestFixture()
+    FieldCacheSanityCheckerTest()
     {
         RAMDirectoryPtr dirA = newLucene<RAMDirectory>();
         RAMDirectoryPtr dirB = newLucene<RAMDirectory>();
@@ -52,8 +52,8 @@ public:
         readerB = IndexReader::open(dirB, true);
         readerX = newLucene<MultiReader>(newCollection<IndexReaderPtr>(readerA, readerB));
     }
-    
-    virtual ~FieldCacheSanityCheckerTestFixture()
+
+    virtual ~FieldCacheSanityCheckerTest()
     {
         readerA->close();
         readerB->close();
@@ -68,11 +68,9 @@ protected:
     static const int32_t NUM_DOCS;
 };
 
-const int32_t FieldCacheSanityCheckerTestFixture::NUM_DOCS = 1000;
+const int32_t FieldCacheSanityCheckerTest::NUM_DOCS = 1000;
 
-BOOST_FIXTURE_TEST_SUITE(FieldCacheSanityCheckerTest, FieldCacheSanityCheckerTestFixture)
-
-BOOST_AUTO_TEST_CASE(testSanity)
+TEST_F(FieldCacheSanityCheckerTest, testSanity)
 {
     FieldCachePtr cache = FieldCache::DEFAULT();
     cache->purgeAllCaches();
@@ -85,12 +83,12 @@ BOOST_AUTO_TEST_CASE(testSanity)
     ints = cache->getInts(readerX, L"theInt", FieldCache::DEFAULT_INT_PARSER());
 
     Collection<InsanityPtr> insanity = FieldCacheSanityChecker::checkSanity(cache->getCacheEntries());
-    
-    BOOST_CHECK_EQUAL(0, insanity.size());
+
+    EXPECT_EQ(0, insanity.size());
     cache->purgeAllCaches();
 }
 
-BOOST_AUTO_TEST_CASE(testInsanity1)
+TEST_F(FieldCacheSanityCheckerTest, testInsanity1)
 {
     FieldCachePtr cache = FieldCache::DEFAULT();
     cache->purgeAllCaches();
@@ -103,15 +101,15 @@ BOOST_AUTO_TEST_CASE(testInsanity1)
 
     Collection<InsanityPtr> insanity = FieldCacheSanityChecker::checkSanity(cache->getCacheEntries());
 
-    BOOST_CHECK_EQUAL(1, insanity.size());
-    BOOST_CHECK_EQUAL(FieldCacheSanityChecker::VALUEMISMATCH, insanity[0]->getType());
-    BOOST_CHECK_EQUAL(2, insanity[0]->getCacheEntries().size());
+    EXPECT_EQ(1, insanity.size());
+    EXPECT_EQ(FieldCacheSanityChecker::VALUEMISMATCH, insanity[0]->getType());
+    EXPECT_EQ(2, insanity[0]->getCacheEntries().size());
 
     // we expect bad things, don't let tearDown complain about them
     cache->purgeAllCaches();
 }
 
-BOOST_AUTO_TEST_CASE(testInsanity2)
+TEST_F(FieldCacheSanityCheckerTest, testInsanity2)
 {
     FieldCachePtr cache = FieldCache::DEFAULT();
     cache->purgeAllCaches();
@@ -119,18 +117,16 @@ BOOST_AUTO_TEST_CASE(testInsanity2)
     Collection<String> strings = cache->getStrings(readerA, L"theString");
     strings = cache->getStrings(readerB, L"theString");
     strings = cache->getStrings(readerX, L"theString");
-    
+
     // this one is ok
     Collection<uint8_t> bytes = cache->getBytes(readerX, L"theByte");
 
     Collection<InsanityPtr> insanity = FieldCacheSanityChecker::checkSanity(cache->getCacheEntries());
 
-    BOOST_CHECK_EQUAL(1, insanity.size());
-    BOOST_CHECK_EQUAL(FieldCacheSanityChecker::SUBREADER, insanity[0]->getType());
-    BOOST_CHECK_EQUAL(3, insanity[0]->getCacheEntries().size());
+    EXPECT_EQ(1, insanity.size());
+    EXPECT_EQ(FieldCacheSanityChecker::SUBREADER, insanity[0]->getType());
+    EXPECT_EQ(3, insanity[0]->getCacheEntries().size());
 
     // we expect bad things, don't let tearDown complain about them
     cache->purgeAllCaches();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

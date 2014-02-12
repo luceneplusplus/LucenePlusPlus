@@ -71,7 +71,7 @@ public:
     {
         this->doc = doc;
     }
-    
+
     virtual ~SingleDocTestFilter()
     {
     }
@@ -88,10 +88,10 @@ public:
     }
 };
 
-class FilteredQueryFixture : public LuceneTestFixture
+class FilteredQueryTest : public LuceneTestFixture
 {
 public:
-    FilteredQueryFixture()
+    FilteredQueryTest()
     {
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -123,8 +123,8 @@ public:
         query = newLucene<TermQuery>(newLucene<Term>(L"field", L"three"));
         filter = newStaticFilterB();
     }
-    
-    virtual ~FilteredQueryFixture()
+
+    virtual ~FilteredQueryTest()
     {
         searcher->close();
         directory->close();
@@ -141,52 +141,50 @@ public:
     {
         return newLucene<StaticFilterA>();
     }
-    
+
     FilterPtr newStaticFilterB()
     {
         return newLucene<StaticFilterB>();
     }
-    
+
     void checkScoreEquals(QueryPtr q1, QueryPtr q2)
     {
         Collection<ScoreDocPtr> hits1 = searcher->search(q1, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> hits2 = searcher->search (q2, FilterPtr(), 1000)->scoreDocs;
 
-        BOOST_CHECK_EQUAL(hits1.size(), hits2.size());
-        
+        EXPECT_EQ(hits1.size(), hits2.size());
+
         for (int32_t i = 0; i < hits1.size(); ++i)
-            BOOST_CHECK_CLOSE_FRACTION(hits1[i]->score, hits2[i]->score, 0.0000001);
+            EXPECT_NEAR(hits1[i]->score, hits2[i]->score, 0.0000001);
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(FilteredQueryTest, FilteredQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testFilteredQuery)
+TEST_F(FilteredQueryTest, testFilteredQuery)
 {
     QueryPtr filteredquery = newLucene<FilteredQuery>(query, filter);
     Collection<ScoreDocPtr> hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
-    BOOST_CHECK_EQUAL(1, hits[0]->doc);
+    EXPECT_EQ(1, hits.size());
+    EXPECT_EQ(1, hits[0]->doc);
     QueryUtils::check(filteredquery, searcher);
 
     hits = searcher->search(filteredquery, FilterPtr(), 1000, newLucene<Sort>(newLucene<SortField>(L"sorter", SortField::STRING)))->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
-    BOOST_CHECK_EQUAL(1, hits[0]->doc);
+    EXPECT_EQ(1, hits.size());
+    EXPECT_EQ(1, hits[0]->doc);
 
     filteredquery = newLucene<FilteredQuery>(newLucene<TermQuery>(newLucene<Term>(L"field", L"one")), filter);
     hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     QueryUtils::check(filteredquery, searcher);
-    
+
     filteredquery = newLucene<FilteredQuery>(newLucene<TermQuery>(newLucene<Term>(L"field", L"x")), filter);
     hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
-    BOOST_CHECK_EQUAL(3, hits[0]->doc);
+    EXPECT_EQ(1, hits.size());
+    EXPECT_EQ(3, hits[0]->doc);
     QueryUtils::check(filteredquery, searcher);
 
     filteredquery = newLucene<FilteredQuery>(newLucene<TermQuery>(newLucene<Term>(L"field", L"y")), filter);
     hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(filteredquery, searcher);
 
     // test boost
@@ -207,21 +205,21 @@ BOOST_AUTO_TEST_CASE(testFilteredQuery)
     bq2->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"five")), BooleanClause::MUST);
     checkScoreEquals(bq1, bq2);
 
-    BOOST_CHECK_EQUAL(boost, filteredquery->getBoost());
-    BOOST_CHECK_EQUAL(1.0, tq->getBoost()); // the boost value of the underlying query shouldn't have changed 
+    EXPECT_EQ(boost, filteredquery->getBoost());
+    EXPECT_EQ(1.0, tq->getBoost()); // the boost value of the underlying query shouldn't have changed
 }
 
-BOOST_AUTO_TEST_CASE(testRangeQuery)
+TEST_F(FilteredQueryTest, testRangeQuery)
 {
     TermRangeQueryPtr rq = newLucene<TermRangeQuery>(L"sorter", L"b", L"d", true, true);
 
     QueryPtr filteredquery = newLucene<FilteredQuery>(rq, filter);
     Collection<ScoreDocPtr> hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     QueryUtils::check(filteredquery, searcher);
 }
 
-BOOST_AUTO_TEST_CASE(testBoolean)
+TEST_F(FilteredQueryTest, testBoolean)
 {
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
     QueryPtr query = newLucene<FilteredQuery>(newLucene<MatchAllDocsQuery>(), newLucene<SingleDocTestFilter>(0));
@@ -229,20 +227,18 @@ BOOST_AUTO_TEST_CASE(testBoolean)
     query = newLucene<FilteredQuery>(newLucene<MatchAllDocsQuery>(), newLucene<SingleDocTestFilter>(1));
     bq->add(query, BooleanClause::MUST);
     Collection<ScoreDocPtr> hits = searcher->search(bq, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
     QueryUtils::check(query, searcher);
 }
 
 /// Make sure BooleanQuery, which does out-of-order scoring, inside FilteredQuery, works
-BOOST_AUTO_TEST_CASE(testBoolean2)
+TEST_F(FilteredQueryTest, testBoolean2)
 {
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
     QueryPtr query = newLucene<FilteredQuery>(bq, newLucene<SingleDocTestFilter>(0));
     bq->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"one")), BooleanClause::SHOULD);
     bq->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"two")), BooleanClause::SHOULD);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     QueryUtils::check(query, searcher);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

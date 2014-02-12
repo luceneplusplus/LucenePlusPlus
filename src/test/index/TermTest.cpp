@@ -11,18 +11,16 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(TermTest, LuceneTestFixture)
+typedef LuceneTestFixture TermTest;
 
-BOOST_AUTO_TEST_CASE(testEquals)
+TEST_F(TermTest, testEquals)
 {
     TermPtr base = newLucene<Term>(L"same", L"same");
     TermPtr same = newLucene<Term>(L"same", L"same");
     TermPtr differentField = newLucene<Term>(L"different", L"same");
     TermPtr differentText = newLucene<Term>(L"same", L"different");
-    BOOST_CHECK(base->equals(base));
-    BOOST_CHECK(base->equals(same));
-    BOOST_CHECK(!base->equals(differentField));
-    BOOST_CHECK(!base->equals(differentText));
+    EXPECT_TRUE(base->equals(base));
+    EXPECT_TRUE(base->equals(same));
+    EXPECT_TRUE(!base->equals(differentField));
+    EXPECT_TRUE(!base->equals(differentText));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

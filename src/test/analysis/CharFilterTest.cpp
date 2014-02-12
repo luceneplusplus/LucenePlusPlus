@@ -12,7 +12,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(CharFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture CharFilterTest;
 
 class CharFilter1 : public CharFilter
 {
@@ -20,7 +20,7 @@ public:
     CharFilter1(CharStreamPtr in) : CharFilter(in)
     {
     }
-    
+
     virtual ~CharFilter1()
     {
     }
@@ -38,7 +38,7 @@ public:
     CharFilter2(CharStreamPtr in) : CharFilter(in)
     {
     }
-    
+
     virtual ~CharFilter2()
     {
     }
@@ -50,28 +50,26 @@ protected:
     }
 };
 
-BOOST_AUTO_TEST_CASE(testCharFilter1)
+TEST_F(CharFilterTest, testCharFilter1)
 {
     CharStreamPtr cs = newLucene<CharFilter1>(CharReader::get(newLucene<StringReader>(L"")));
-    BOOST_CHECK_EQUAL(1, cs->correctOffset(0));
+    EXPECT_EQ(1, cs->correctOffset(0));
 }
 
-BOOST_AUTO_TEST_CASE(testCharFilter2)
+TEST_F(CharFilterTest, testCharFilter2)
 {
     CharStreamPtr cs = newLucene<CharFilter2>(CharReader::get(newLucene<StringReader>(L"")));
-    BOOST_CHECK_EQUAL(2, cs->correctOffset(0));
+    EXPECT_EQ(2, cs->correctOffset(0));
 }
 
-BOOST_AUTO_TEST_CASE(testCharFilter12)
+TEST_F(CharFilterTest, testCharFilter12)
 {
     CharStreamPtr cs = newLucene<CharFilter2>(newLucene<CharFilter1>(CharReader::get(newLucene<StringReader>(L""))));
-    BOOST_CHECK_EQUAL(3, cs->correctOffset(0));
+    EXPECT_EQ(3, cs->correctOffset(0));
 }
 
-BOOST_AUTO_TEST_CASE(testCharFilter11)
+TEST_F(CharFilterTest, testCharFilter11)
 {
     CharStreamPtr cs = newLucene<CharFilter1>(newLucene<CharFilter1>(CharReader::get(newLucene<StringReader>(L""))));
-    BOOST_CHECK_EQUAL(2, cs->correctOffset(0));
+    EXPECT_EQ(2, cs->correctOffset(0));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

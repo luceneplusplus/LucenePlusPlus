@@ -23,7 +23,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(MatchAllDocsQueryTest, LuceneTestFixture)
+typedef LuceneTestFixture MatchAllDocsQueryTest;
 
 static void addDoc(const String& text, IndexWriterPtr iw, double boost)
 {
@@ -34,7 +34,7 @@ static void addDoc(const String& text, IndexWriterPtr iw, double boost)
     iw->addDocument(doc);
 }
 
-BOOST_AUTO_TEST_CASE(testQuery)
+TEST_F(MatchAllDocsQueryTest, testQuery)
 {
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
@@ -50,72 +50,70 @@ BOOST_AUTO_TEST_CASE(testQuery)
 
     // assert with norms scoring turned off
     Collection<ScoreDocPtr> hits = is->search(newLucene<MatchAllDocsQuery>(), FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
-    BOOST_CHECK_EQUAL(L"one", ir->document(hits[0]->doc)->get(L"key"));
-    BOOST_CHECK_EQUAL(L"two", ir->document(hits[1]->doc)->get(L"key"));
-    BOOST_CHECK_EQUAL(L"three four", ir->document(hits[2]->doc)->get(L"key"));
+    EXPECT_EQ(3, hits.size());
+    EXPECT_EQ(L"one", ir->document(hits[0]->doc)->get(L"key"));
+    EXPECT_EQ(L"two", ir->document(hits[1]->doc)->get(L"key"));
+    EXPECT_EQ(L"three four", ir->document(hits[2]->doc)->get(L"key"));
 
     // assert with norms scoring turned on
     MatchAllDocsQueryPtr normsQuery = newLucene<MatchAllDocsQuery>(L"key");
     hits = is->search(normsQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
-    BOOST_CHECK_EQUAL(L"three four", ir->document(hits[0]->doc)->get(L"key"));    
-    BOOST_CHECK_EQUAL(L"two", ir->document(hits[1]->doc)->get(L"key"));
-    BOOST_CHECK_EQUAL(L"one", ir->document(hits[2]->doc)->get(L"key"));
+    EXPECT_EQ(L"three four", ir->document(hits[0]->doc)->get(L"key"));
+    EXPECT_EQ(L"two", ir->document(hits[1]->doc)->get(L"key"));
+    EXPECT_EQ(L"one", ir->document(hits[2]->doc)->get(L"key"));
 
     // change norm & retest
     ir->setNorm(0, L"key", 400.0);
     normsQuery = newLucene<MatchAllDocsQuery>(L"key");
     hits = is->search(normsQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
-    BOOST_CHECK_EQUAL(L"one", ir->document(hits[0]->doc)->get(L"key"));
-    BOOST_CHECK_EQUAL(L"three four", ir->document(hits[1]->doc)->get(L"key"));    
-    BOOST_CHECK_EQUAL(L"two", ir->document(hits[2]->doc)->get(L"key"));
+    EXPECT_EQ(L"one", ir->document(hits[0]->doc)->get(L"key"));
+    EXPECT_EQ(L"three four", ir->document(hits[1]->doc)->get(L"key"));
+    EXPECT_EQ(L"two", ir->document(hits[2]->doc)->get(L"key"));
 
     // some artificial queries to trigger the use of skipTo()
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
     bq->add(newLucene<MatchAllDocsQuery>(), BooleanClause::MUST);
     bq->add(newLucene<MatchAllDocsQuery>(), BooleanClause::MUST);
     hits = is->search(bq, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
     bq = newLucene<BooleanQuery>();
     bq->add(newLucene<MatchAllDocsQuery>(), BooleanClause::MUST);
     bq->add(newLucene<TermQuery>(newLucene<Term>(L"key", L"three")), BooleanClause::MUST);
     hits = is->search(bq, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
 
     // delete a document
     is->getIndexReader()->deleteDocument(0);
     hits = is->search(newLucene<MatchAllDocsQuery>(), FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     // test parsable toString()
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"key", analyzer);
     hits = is->search(qp->parse(newLucene<MatchAllDocsQuery>()->toString()), FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     // test parsable toString() with non default boost
     QueryPtr maq = newLucene<MatchAllDocsQuery>();
     maq->setBoost(2.3);
     QueryPtr pq = qp->parse(maq->toString());
     hits = is->search(pq, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     is->close();
     ir->close();
     dir->close();
 }
 
-BOOST_AUTO_TEST_CASE(testEquals)
+TEST_F(MatchAllDocsQueryTest, testEquals)
 {
     QueryPtr q1 = newLucene<MatchAllDocsQuery>();
     QueryPtr q2 = newLucene<MatchAllDocsQuery>();
-    BOOST_CHECK(q1->equals(q2));
+    EXPECT_TRUE(q1->equals(q2));
     q1->setBoost(1.5);
-    BOOST_CHECK(!q1->equals(q2));
+    EXPECT_TRUE(!q1->equals(q2));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

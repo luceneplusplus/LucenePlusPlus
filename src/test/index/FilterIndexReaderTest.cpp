@@ -30,11 +30,11 @@ public:
     TestTermEnum(TermEnumPtr termEnum) : FilterTermEnum(termEnum)
     {
     }
-    
+
     virtual ~TestTermEnum()
     {
     }
-    
+
     LUCENE_CLASS(TestTermEnum);
 
 public:
@@ -56,11 +56,11 @@ public:
     TestTermPositions(TermPositionsPtr in) : FilterTermPositions(in)
     {
     }
-    
+
     virtual ~TestTermPositions()
     {
     }
-    
+
     LUCENE_CLASS(TestTermPositions);
 
 public:
@@ -81,11 +81,11 @@ public:
     TestReader(IndexReaderPtr reader) : FilterIndexReader(reader)
     {
     }
-    
+
     virtual ~TestReader()
     {
     }
-    
+
     LUCENE_CLASS(TestReader);
 
 public:
@@ -94,7 +94,7 @@ public:
     {
         return newLucene<TestTermEnum>(in->terms());
     }
-    
+
     /// Filter positions with TestTermPositions.
     virtual TermPositionsPtr termPositions()
     {
@@ -102,10 +102,10 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(FilterIndexReaderTest, LuceneTestFixture)
+typedef LuceneTestFixture FilterIndexReaderTest;
 
 /// Tests the IndexReader::getFieldNames implementation
-BOOST_AUTO_TEST_CASE(testFilterIndexReader)
+TEST_F(FilterIndexReaderTest, testFilterIndexReader)
 {
     RAMDirectoryPtr directory = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -126,29 +126,27 @@ BOOST_AUTO_TEST_CASE(testFilterIndexReader)
 
     IndexReaderPtr reader = newLucene<TestReader>(IndexReader::open(directory, true));
 
-    BOOST_CHECK(reader->isOptimized());
+    EXPECT_TRUE(reader->isOptimized());
 
     TermEnumPtr terms = reader->terms();
     while (terms->next())
-        BOOST_CHECK_NE(terms->term()->text().find(L'e'), String::npos);
+        EXPECT_NE(terms->term()->text().find(L'e'), String::npos);
     terms->close();
-    
+
     TermPositionsPtr positions = reader->termPositions(newLucene<Term>(L"default", L"one"));
     while (positions->next())
-        BOOST_CHECK((positions->doc() % 2) == 1);
-    
+        EXPECT_TRUE((positions->doc() % 2) == 1);
+
     int32_t NUM_DOCS = 3;
-    
+
     TermDocsPtr td = reader->termDocs(TermPtr());
     for (int32_t i = 0; i < NUM_DOCS; ++i)
     {
-        BOOST_CHECK(td->next());
-        BOOST_CHECK_EQUAL(i, td->doc());
-        BOOST_CHECK_EQUAL(1, td->freq());
+        EXPECT_TRUE(td->next());
+        EXPECT_EQ(i, td->doc());
+        EXPECT_EQ(1, td->freq());
     }
     td->close();
     reader->close();
     directory->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

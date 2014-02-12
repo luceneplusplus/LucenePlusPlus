@@ -21,7 +21,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(CachingTokenFilterTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture CachingTokenFilterTest;
 
 static Collection<String> tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
 
@@ -30,14 +30,14 @@ static void checkTokens(TokenStreamPtr stream)
     int32_t count = 0;
 
     TermAttributePtr termAtt = stream->getAttribute<TermAttribute>();
-    BOOST_CHECK(termAtt);
+    EXPECT_TRUE(termAtt);
     while (stream->incrementToken())
     {
-        BOOST_CHECK(count < tokens.size());
-        BOOST_CHECK_EQUAL(tokens[count], termAtt->term());
+        EXPECT_TRUE(count < tokens.size());
+        EXPECT_EQ(tokens[count], termAtt->term());
         ++count;
     }
-    BOOST_CHECK_EQUAL(tokens.size(), count);
+    EXPECT_EQ(tokens.size(), count);
 }
 
 namespace TestCaching
@@ -51,16 +51,16 @@ namespace TestCaching
             termAtt = addAttribute<TermAttribute>();
             offsetAtt = addAttribute<OffsetAttribute>();
         }
-        
+
         virtual ~TestableTokenStream()
         {
         }
-    
+
     protected:
         int32_t index;
         TermAttributePtr termAtt;
         OffsetAttributePtr offsetAtt;
-    
+
     public:
         virtual bool incrementToken()
         {
@@ -77,7 +77,7 @@ namespace TestCaching
     };
 }
 
-BOOST_AUTO_TEST_CASE(testCaching)
+TEST_F(CachingTokenFilterTest, testCaching)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
@@ -88,35 +88,33 @@ BOOST_AUTO_TEST_CASE(testCaching)
 
     // 1) we consume all tokens twice before we add the doc to the index
     checkTokens(stream);
-    stream->reset();  
+    stream->reset();
     checkTokens(stream);
 
-    // 2) now add the document to the index and verify if all tokens are indexed don't reset the stream here, the 
+    // 2) now add the document to the index and verify if all tokens are indexed don't reset the stream here, the
     // DocumentWriter should do that implicitly
     writer->addDocument(doc);
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
     TermPositionsPtr termPositions = reader->termPositions(newLucene<Term>(L"preanalyzed", L"term1"));
-    BOOST_CHECK(termPositions->next());
-    BOOST_CHECK_EQUAL(1, termPositions->freq());
-    BOOST_CHECK_EQUAL(0, termPositions->nextPosition());
+    EXPECT_TRUE(termPositions->next());
+    EXPECT_EQ(1, termPositions->freq());
+    EXPECT_EQ(0, termPositions->nextPosition());
 
     termPositions->seek(newLucene<Term>(L"preanalyzed", L"term2"));
-    BOOST_CHECK(termPositions->next());
-    BOOST_CHECK_EQUAL(2, termPositions->freq());
-    BOOST_CHECK_EQUAL(1, termPositions->nextPosition());
-    BOOST_CHECK_EQUAL(3, termPositions->nextPosition());
+    EXPECT_TRUE(termPositions->next());
+    EXPECT_EQ(2, termPositions->freq());
+    EXPECT_EQ(1, termPositions->nextPosition());
+    EXPECT_EQ(3, termPositions->nextPosition());
 
     termPositions->seek(newLucene<Term>(L"preanalyzed", L"term3"));
-    BOOST_CHECK(termPositions->next());
-    BOOST_CHECK_EQUAL(1, termPositions->freq());
-    BOOST_CHECK_EQUAL(2, termPositions->nextPosition());
+    EXPECT_TRUE(termPositions->next());
+    EXPECT_EQ(1, termPositions->freq());
+    EXPECT_EQ(2, termPositions->nextPosition());
     reader->close();
 
     // 3) reset stream and consume tokens again
     stream->reset();
     checkTokens(stream);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

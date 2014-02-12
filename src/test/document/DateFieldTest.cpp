@@ -10,31 +10,29 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(DateFieldTest, LuceneTestFixture)
+typedef LuceneTestFixture DateFieldTest;
 
-BOOST_AUTO_TEST_CASE(testMinDate)
+TEST_F(DateFieldTest, testMinDate)
 {
-    BOOST_CHECK_EQUAL(DateField::MIN_DATE_STRING(), L"000000000");
+    EXPECT_EQ(DateField::MIN_DATE_STRING(), L"000000000");
 }
 
-BOOST_AUTO_TEST_CASE(testMaxDate)
+TEST_F(DateFieldTest, testMaxDate)
 {
-    BOOST_CHECK_EQUAL(DateField::MAX_DATE_STRING(), L"zzzzzzzzz");
+    EXPECT_EQ(DateField::MAX_DATE_STRING(), L"zzzzzzzzz");
 }
 
-BOOST_AUTO_TEST_CASE(testDateToString)
+TEST_F(DateFieldTest, testDateToString)
 {
-    BOOST_CHECK_EQUAL(DateField::dateToString(boost::posix_time::ptime(boost::gregorian::date(2010, boost::gregorian::Jan, 14))), L"0g4erxmo0");
+    EXPECT_EQ(DateField::dateToString(boost::posix_time::ptime(boost::gregorian::date(2010, boost::gregorian::Jan, 14))), L"0g4erxmo0");
 }
 
-BOOST_AUTO_TEST_CASE(testTimeToString)
+TEST_F(DateFieldTest, testTimeToString)
 {
-    BOOST_CHECK_EQUAL(DateField::timeToString(1263427200000LL), L"0g4erxmo0");
+    EXPECT_EQ(DateField::timeToString(1263427200000LL), L"0g4erxmo0");
 }
 
-BOOST_AUTO_TEST_CASE(testStringToTime)
+TEST_F(DateFieldTest, testStringToTime)
 {
-    BOOST_CHECK_EQUAL(DateField::stringToTime(L"0g4erxmo0"), 1263427200000LL);
+    EXPECT_EQ(DateField::stringToTime(L"0g4erxmo0"), 1263427200000LL);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

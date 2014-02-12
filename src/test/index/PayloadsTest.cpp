@@ -33,7 +33,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(PayloadsTest, LuceneTestFixture)
+typedef LuceneTestFixture PayloadsTest;
 
 DECLARE_SHARED_PTR(PayloadData)
 DECLARE_SHARED_PTR(PayloadFilter)
@@ -49,11 +49,11 @@ public:
         this->offset = offset;
         this->length = length;
     }
-        
+
     virtual ~PayloadData()
     {
     }
-    
+
     LUCENE_CLASS(PayloadData);
 
 public:
@@ -75,11 +75,11 @@ public:
         this->offset = offset;
         this->payloadAtt = addAttribute<PayloadAttribute>();
     }
-    
+
     virtual ~PayloadFilter()
     {
     }
-    
+
     LUCENE_CLASS(PayloadFilter);
 
 public:
@@ -117,11 +117,11 @@ public:
     {
         fieldToData = HashMap<String, PayloadDataPtr>::newInstance();
     }
-    
+
     virtual ~PayloadAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(PayloadAnalyzer);
 
 public:
@@ -132,12 +132,13 @@ public:
     {
         fieldToData.put(field, newLucene<PayloadData>(0, data, offset, length));
     }
-    
+
     void setPayloadData(const String& field, int32_t numFieldInstancesToSkip, ByteArray data, int32_t offset, int32_t length)
     {
-        fieldToData.put(field, newLucene<PayloadData>(numFieldInstancesToSkip, data, offset, length));
+        PayloadDataPtr payload = newLucene<PayloadData>(numFieldInstancesToSkip, data, offset, length);
+        fieldToData.put(field, payload);
     }
-    
+
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
         PayloadDataPtr payload = fieldToData.get(fieldName);
@@ -183,42 +184,56 @@ static Collection<TermPtr> generateTerms(const String& fieldName, int32_t n)
 }
 
 /// Simple tests to test the Payload class
-BOOST_AUTO_TEST_CASE(testPayload)
+TEST_F(PayloadsTest, testPayload)
 {
     ByteArray testData(ByteArray::newInstance(15));
     uint8_t input[15] = { 'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 't', 'e', 's', 't', '!' };
     std::memcpy(testData.get(), input, 15);
     PayloadPtr payload = newLucene<Payload>(testData);
-    BOOST_CHECK_EQUAL(testData.size(), payload->length());
-    
+    EXPECT_EQ(testData.size(), payload->length());
+
     // test copyTo()
     ByteArray target(ByteArray::newInstance(testData.size() - 1));
-    BOOST_CHECK_EXCEPTION(payload->copyTo(target, 0), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
-    
+    try
+    {
+        payload->copyTo(target, 0);
+    }
+    catch (IndexOutOfBoundsException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
+    }
+
     target.resize(testData.size() + 3);
     payload->copyTo(target, 3);
-    
+
     for (int32_t i = 0; i < testData.size(); ++i)
-        BOOST_CHECK_EQUAL(testData[i], target[i + 3]);
-    
+        EXPECT_EQ(testData[i], target[i + 3]);
+
     // test toByteArray()
     target = payload->toByteArray();
-    BOOST_CHECK(testData.equals(target));
-    
+    EXPECT_TRUE(testData.equals(target));
+
     // test byteAt()
     for (int32_t i = 0; i < testData.size(); ++i)
-        BOOST_CHECK_EQUAL(payload->byteAt(i), testData[i]);
-    
-    BOOST_CHECK_EXCEPTION(payload->byteAt(testData.size() + 1), IndexOutOfBoundsException, check_exception(LuceneException::IndexOutOfBounds));
-    
+        EXPECT_EQ(payload->byteAt(i), testData[i]);
+
+    try
+    {
+        payload->byteAt(testData.size() + 1);
+    }
+    catch (IndexOutOfBoundsException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
+    }
+
     PayloadPtr clone = boost::dynamic_pointer_cast<Payload>(payload->clone());
-    BOOST_CHECK_EQUAL(payload->length(), clone->length());
+    EXPECT_EQ(payload->length(), clone->length());
     for (int32_t i = 0; i < payload->length(); ++i)
-        BOOST_CHECK_EQUAL(payload->byteAt(i), clone->byteAt(i));
+        EXPECT_EQ(payload->byteAt(i), clone->byteAt(i));
 }
 
 /// Tests whether the DocumentWriter and SegmentMerger correctly enable the payload bit in the FieldInfo
-BOOST_AUTO_TEST_CASE(testPayloadFieldBit)
+TEST_F(PayloadsTest, testPayloadFieldBit)
 {
     DirectoryPtr ram = newLucene<RAMDirectory>();
     PayloadAnalyzerPtr analyzer = newLucene<PayloadAnalyzer>();
@@ -231,25 +246,26 @@ BOOST_AUTO_TEST_CASE(testPayloadFieldBit)
     // even if only some term positions have payloads
     d->add(newLucene<Field>(L"f2", L"This field has payloads in all docs", Field::STORE_NO, Field::INDEX_ANALYZED));
     d->add(newLucene<Field>(L"f2", L"This field has payloads in all docs", Field::STORE_NO, Field::INDEX_ANALYZED));
-    // this field is used to verify if the SegmentMerger enables payloads for a field if it has payloads 
+    // this field is used to verify if the SegmentMerger enables payloads for a field if it has payloads
     // enabled in only some documents
     d->add(newLucene<Field>(L"f3", L"This field has payloads in some docs", Field::STORE_NO, Field::INDEX_ANALYZED));
     // only add payload data for field f2
-    
+
     ByteArray someData(ByteArray::newInstance(8));
     uint8_t input[8] = { 's', 'o', 'm', 'e', 'd', 'a', 't', 'a' };
     std::memcpy(someData.get(), input, 8);
-    
+
     analyzer->setPayloadData(L"f2", 1, someData, 0, 1);
+
     writer->addDocument(d);
     // flush
-    writer->close();        
+    writer->close();
 
     SegmentReaderPtr reader = SegmentReader::getOnlySegmentReader(ram);
     FieldInfosPtr fi = reader->fieldInfos();
-    BOOST_CHECK(!fi->fieldInfo(L"f1")->storePayloads);
-    BOOST_CHECK(fi->fieldInfo(L"f2")->storePayloads);
-    BOOST_CHECK(!fi->fieldInfo(L"f3")->storePayloads);
+    EXPECT_TRUE(!fi->fieldInfo(L"f1")->storePayloads);
+    EXPECT_TRUE(fi->fieldInfo(L"f2")->storePayloads);
+    EXPECT_TRUE(!fi->fieldInfo(L"f3")->storePayloads);
     reader->close();
 
     // now we add another document which has payloads for field f3 and verify if the SegmentMerger
@@ -271,13 +287,13 @@ BOOST_AUTO_TEST_CASE(testPayloadFieldBit)
 
     reader = SegmentReader::getOnlySegmentReader(ram);
     fi = reader->fieldInfos();
-    BOOST_CHECK(!fi->fieldInfo(L"f1")->storePayloads);
-    BOOST_CHECK(fi->fieldInfo(L"f2")->storePayloads);
-    BOOST_CHECK(fi->fieldInfo(L"f3")->storePayloads);
+    EXPECT_TRUE(!fi->fieldInfo(L"f1")->storePayloads);
+    EXPECT_TRUE(fi->fieldInfo(L"f2")->storePayloads);
+    EXPECT_TRUE(fi->fieldInfo(L"f3")->storePayloads);
     reader->close();
 }
 
-/// Builds an index with payloads in the given Directory and performs different 
+/// Builds an index with payloads in the given Directory and performs different
 /// tests to verify the payload encoding
 static void encodingTest(DirectoryPtr dir)
 {
@@ -290,7 +306,7 @@ static void encodingTest(DirectoryPtr dir)
     int32_t numTerms = 5;
     String fieldName = L"f1";
 
-    int32_t numDocs = skipInterval + 1; 
+    int32_t numDocs = skipInterval + 1;
     // create content for the test documents with just a few terms
     Collection<TermPtr> terms = generateTerms(fieldName, numTerms);
     StringStream sb;
@@ -303,7 +319,7 @@ static void encodingTest(DirectoryPtr dir)
 
     DocumentPtr d = newLucene<Document>();
     d->add(newLucene<Field>(fieldName, content, Field::STORE_NO, Field::INDEX_ANALYZED));
-    
+
     // add the same document multiple times to have the same payload lengths for all
     // occurrences within two consecutive skip intervals
     int32_t offset = 0;
@@ -313,10 +329,10 @@ static void encodingTest(DirectoryPtr dir)
         offset += numTerms;
         writer->addDocument(d);
     }
-    
+
     // make sure we create more than one segment to test merging
     writer->commit();
-    
+
     for (int32_t i = 0; i < numDocs; ++i)
     {
         analyzer->setPayloadData(fieldName, payloadData, offset, i);
@@ -336,13 +352,13 @@ static void encodingTest(DirectoryPtr dir)
     Collection<TermPositionsPtr> tps = Collection<TermPositionsPtr>::newInstance(numTerms);
     for (int32_t i = 0; i < numTerms; ++i)
         tps[i] = reader->termPositions(terms[i]);
-    
+
     while (tps[0]->next())
     {
         for (int32_t i = 1; i < numTerms; ++i)
             tps[i]->next();
         int32_t freq = tps[0]->freq();
-        
+
         for (int32_t i = 0; i < freq; ++i)
         {
             for (int32_t j = 0; j < numTerms; ++j)
@@ -353,50 +369,57 @@ static void encodingTest(DirectoryPtr dir)
             }
         }
     }
-    
+
     for (int32_t i = 0; i < numTerms; ++i)
         tps[i]->close();
-    
-    BOOST_CHECK(payloadData.equals(verifyPayloadData));
-    
+
+    EXPECT_TRUE(payloadData.equals(verifyPayloadData));
+
     // test lazy skipping
     TermPositionsPtr tp = reader->termPositions(terms[0]);
     tp->next();
     tp->nextPosition();
     // now we don't read this payload
     tp->nextPosition();
-    BOOST_CHECK_EQUAL(1, tp->getPayloadLength());
+    EXPECT_EQ(1, tp->getPayloadLength());
     ByteArray payload = tp->getPayload(ByteArray(), 0);
-    BOOST_CHECK_EQUAL(payload[0], payloadData[numTerms]);
+    EXPECT_EQ(payload[0], payloadData[numTerms]);
     tp->nextPosition();
 
     // we don't read this payload and skip to a different document
     tp->skipTo(5);
     tp->nextPosition();
-    BOOST_CHECK_EQUAL(1, tp->getPayloadLength());
+    EXPECT_EQ(1, tp->getPayloadLength());
     payload = tp->getPayload(ByteArray(), 0);
-    BOOST_CHECK_EQUAL(payload[0], payloadData[5 * numTerms]);
-    
+    EXPECT_EQ(payload[0], payloadData[5 * numTerms]);
+
     // Test different lengths at skip points
     tp->seek(terms[1]);
     tp->next();
     tp->nextPosition();
-    BOOST_CHECK_EQUAL(1, tp->getPayloadLength());
+    EXPECT_EQ(1, tp->getPayloadLength());
     tp->skipTo(skipInterval - 1);
     tp->nextPosition();
-    BOOST_CHECK_EQUAL(1, tp->getPayloadLength());
+    EXPECT_EQ(1, tp->getPayloadLength());
     tp->skipTo(2 * skipInterval - 1);
     tp->nextPosition();
-    BOOST_CHECK_EQUAL(1, tp->getPayloadLength());
+    EXPECT_EQ(1, tp->getPayloadLength());
     tp->skipTo(3 * skipInterval - 1);
     tp->nextPosition();
-    BOOST_CHECK_EQUAL(3 * skipInterval - 2 * numDocs - 1, tp->getPayloadLength());
-    
+    EXPECT_EQ(3 * skipInterval - 2 * numDocs - 1, tp->getPayloadLength());
+
     // Test multiple call of getPayload()
     tp->getPayload(ByteArray(), 0);
-    
+
     // it is forbidden to call getPayload() more than once without calling nextPosition()
-    BOOST_CHECK_EXCEPTION(tp->getPayload(ByteArray(), 0), IOException, check_exception(LuceneException::IO));
+    try
+    {
+        tp->getPayload(ByteArray(), 0);
+    }
+    catch (IOException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IO)(e));
+    }
 
     reader->close();
 
@@ -426,13 +449,13 @@ static void encodingTest(DirectoryPtr dir)
     ByteArray portion(ByteArray::newInstance(1500));
     MiscUtils::arrayCopy(payloadData.get(), 100, portion.get(), 0, 1500);
 
-    BOOST_CHECK(portion.equals(verifyPayloadData));
-    
+    EXPECT_TRUE(portion.equals(verifyPayloadData));
+
     reader->close();
 }
 
 /// Tests if payloads are correctly stored and loaded using both RamDirectory and FSDirectory
-BOOST_AUTO_TEST_CASE(testPayloadsEncoding)
+TEST_F(PayloadsTest, testPayloadsEncoding)
 {
     // first perform the test using a RAMDirectory
     DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -448,7 +471,7 @@ BOOST_AUTO_TEST_CASE(testPayloadsEncoding)
 namespace TestThreadSafety
 {
     DECLARE_SHARED_PTR(ByteArrayPool)
-    
+
     class ByteArrayPool : public LuceneObject
     {
     public:
@@ -458,42 +481,42 @@ namespace TestThreadSafety
             for (int32_t i = 0; i < capacity; ++i)
                 pool.add(ByteArray::newInstance(size));
         }
-        
+
         virtual ~ByteArrayPool()
         {
         }
-        
+
         LUCENE_CLASS(ByteArrayPool);
-    
+
     public:
         Collection<ByteArray> pool;
-    
+
     public:
         String bytesToString(ByteArray bytes)
         {
             SyncLock syncLock(this);
             return Base64::encode(bytes);
         }
-        
+
         ByteArray get()
         {
             SyncLock syncLock(this);
             return pool.removeFirst();
         }
-        
+
         void release(ByteArray b)
         {
             SyncLock syncLock(this);
             pool.add(b);
         }
-        
+
         int32_t size()
         {
             SyncLock syncLock(this);
             return pool.size();
         }
     };
-    
+
     class PoolingPayloadTokenStream : public TokenStream
     {
     public:
@@ -507,13 +530,13 @@ namespace TestThreadSafety
             payloadAtt = addAttribute<PayloadAttribute>();
             termAtt = addAttribute<TermAttribute>();
         }
-        
+
         virtual ~PoolingPayloadTokenStream()
         {
         }
-        
+
         LUCENE_CLASS(PoolingPayloadTokenStream);
-    
+
     public:
         ByteArray payload;
         bool first;
@@ -522,7 +545,7 @@ namespace TestThreadSafety
 
         TermAttributePtr termAtt;
         PayloadAttributePtr payloadAtt;
-    
+
     public:
         virtual bool incrementToken()
         {
@@ -534,13 +557,13 @@ namespace TestThreadSafety
             payloadAtt->setPayload(newLucene<Payload>(payload));
             return true;
         }
-        
+
         virtual void close()
         {
             pool->release(payload);
         }
     };
-    
+
     class IngesterThread : public LuceneThread
     {
     public:
@@ -550,18 +573,18 @@ namespace TestThreadSafety
             this->pool = pool;
             this->writer = writer;
         }
-        
+
         virtual ~IngesterThread()
         {
         }
-        
+
         LUCENE_CLASS(IngesterThread);
-    
+
     protected:
         int32_t numDocs;
         ByteArrayPoolPtr pool;
         IndexWriterPtr writer;
-    
+
     public:
         virtual void run()
         {
@@ -576,13 +599,13 @@ namespace TestThreadSafety
             }
             catch (LuceneException& e)
             {
-                BOOST_FAIL("Unexpected exception: " << e.getError());
+                FAIL() << "Unexpected exception: " << e.getError();
             }
         }
     };
 }
 
-BOOST_AUTO_TEST_CASE(testThreadSafety)
+TEST_F(PayloadsTest, testThreadSafety)
 {
     int32_t numThreads = 5;
     int32_t numDocs = 50;
@@ -590,17 +613,17 @@ BOOST_AUTO_TEST_CASE(testThreadSafety)
 
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    
+
     Collection<LuceneThreadPtr> ingesters = Collection<LuceneThreadPtr>::newInstance(numThreads);
     for (int32_t i = 0; i < numThreads; ++i)
     {
         ingesters[i] = newLucene<TestThreadSafety::IngesterThread>(numDocs, pool, writer);
         ingesters[i]->start();
     }
-    
+
     for (int32_t i = 0; i < numThreads; ++i)
         ingesters[i]->join();
-    
+
     writer->close();
     IndexReaderPtr reader = IndexReader::open(dir, true);
     TermEnumPtr terms = reader->terms();
@@ -613,16 +636,14 @@ BOOST_AUTO_TEST_CASE(testThreadSafety)
             for (int32_t i = 0; i < freq; ++i)
             {
                 tp->nextPosition();
-                BOOST_CHECK_EQUAL(pool->bytesToString(tp->getPayload(ByteArray::newInstance(5), 0)), terms->term()->text());
+                EXPECT_EQ(pool->bytesToString(tp->getPayload(ByteArray::newInstance(5), 0)), terms->term()->text());
             }
         }
         tp->close();
     }
-    
+
     terms->close();
     reader->close();
 
-    BOOST_CHECK_EQUAL(pool->size(), numThreads);
+    EXPECT_EQ(pool->size(), numThreads);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

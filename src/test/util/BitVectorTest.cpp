@@ -11,7 +11,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(BitVectorTest, LuceneTestFixture)
+typedef LuceneTestFixture BitVectorTest;
 
 static const int32_t subsetPattern[] = {1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1};
 
@@ -29,11 +29,11 @@ static bool compareBitVectors(BitVectorPtr bv, BitVectorPtr compare)
 static void doTestConstructOfSize(int32_t n)
 {
     BitVectorPtr bv = newLucene<BitVector>(n);
-    BOOST_CHECK_EQUAL(n, bv->size());
+    EXPECT_EQ(n, bv->size());
 }
 
 /// Test the default constructor on BitVectors of various sizes.
-BOOST_AUTO_TEST_CASE(testConstructSize)
+TEST_F(BitVectorTest, testConstructSize)
 {
     doTestConstructOfSize(8);
     doTestConstructOfSize(20);
@@ -46,14 +46,14 @@ static void doTestGetSetVectorOfSize(int32_t n)
     BitVectorPtr bv = newLucene<BitVector>(n);
     for (int32_t i = 0; i < bv->size(); ++i)
     {
-        BOOST_CHECK(!bv->get(i));
+        EXPECT_TRUE(!bv->get(i));
         bv->set(i);
-        BOOST_CHECK(bv->get(i));
+        EXPECT_TRUE(bv->get(i));
     }
 }
 
 /// Test the get() and set() methods on BitVectors of various sizes.
-BOOST_AUTO_TEST_CASE(testGetSet)
+TEST_F(BitVectorTest, testGetSet)
 {
     doTestGetSetVectorOfSize(8);
     doTestGetSetVectorOfSize(20);
@@ -66,16 +66,16 @@ static void doTestClearVectorOfSize(int32_t n)
     BitVectorPtr bv = newLucene<BitVector>(n);
     for (int32_t i = 0; i < bv->size(); ++i)
     {
-        BOOST_CHECK(!bv->get(i));
+        EXPECT_TRUE(!bv->get(i));
         bv->set(i);
-        BOOST_CHECK(bv->get(i));
+        EXPECT_TRUE(bv->get(i));
         bv->clear(i);
-        BOOST_CHECK(!bv->get(i));
+        EXPECT_TRUE(!bv->get(i));
     }
 }
 
 /// Test the clear() method on BitVectors of various sizes.
-BOOST_AUTO_TEST_CASE(testClear)
+TEST_F(BitVectorTest, testClear)
 {
     doTestClearVectorOfSize(8);
     doTestClearVectorOfSize(20);
@@ -89,30 +89,30 @@ static void doTestCountVectorOfSize(int32_t n)
     // test count when incrementally setting bits
     for (int32_t i = 0; i < bv->size(); ++i)
     {
-        BOOST_CHECK(!bv->get(i));
-        BOOST_CHECK_EQUAL(i, bv->count());
+        EXPECT_TRUE(!bv->get(i));
+        EXPECT_EQ(i, bv->count());
         bv->set(i);
-        BOOST_CHECK(bv->get(i));
-        BOOST_CHECK_EQUAL(i + 1, bv->count());
+        EXPECT_TRUE(bv->get(i));
+        EXPECT_EQ(i + 1, bv->count());
     }
-    
+
     bv = newLucene<BitVector>(n);
     // test count when setting then clearing bits
     for (int32_t i = 0; i < bv->size(); ++i)
     {
-        BOOST_CHECK(!bv->get(i));
-        BOOST_CHECK_EQUAL(0, bv->count());
+        EXPECT_TRUE(!bv->get(i));
+        EXPECT_EQ(0, bv->count());
         bv->set(i);
-        BOOST_CHECK(bv->get(i));
-        BOOST_CHECK_EQUAL(1, bv->count());
+        EXPECT_TRUE(bv->get(i));
+        EXPECT_EQ(1, bv->count());
         bv->clear(i);
-        BOOST_CHECK(!bv->get(i));
-        BOOST_CHECK_EQUAL(0, bv->count());
+        EXPECT_TRUE(!bv->get(i));
+        EXPECT_EQ(0, bv->count());
     }
 }
 
 /// Test the count() method on BitVectors of various sizes.
-BOOST_AUTO_TEST_CASE(testCount)
+TEST_F(BitVectorTest, testCount)
 {
     doTestCountVectorOfSize(8);
     doTestCountVectorOfSize(20);
@@ -127,20 +127,20 @@ static void doTestWriteRead(int32_t n)
     // test count when incrementally setting bits
     for (int32_t i = 0; i < bv->size(); ++i)
     {
-        BOOST_CHECK(!bv->get(i));
-        BOOST_CHECK_EQUAL(i, bv->count());
+        EXPECT_TRUE(!bv->get(i));
+        EXPECT_EQ(i, bv->count());
         bv->set(i);
-        BOOST_CHECK(bv->get(i));
-        BOOST_CHECK_EQUAL(i + 1, bv->count());
+        EXPECT_TRUE(bv->get(i));
+        EXPECT_EQ(i + 1, bv->count());
         bv->write(d, L"TESTBV");
         BitVectorPtr compare = newLucene<BitVector>(d, L"TESTBV");
         // compare bit vectors with bits set incrementally
-        BOOST_CHECK(compareBitVectors(bv, compare));
+        EXPECT_TRUE(compareBitVectors(bv, compare));
     }
 }
 
 /// Test writing and construction to/from Directory.
-BOOST_AUTO_TEST_CASE(testWriteRead)
+TEST_F(BitVectorTest, testWriteRead)
 {
     doTestWriteRead(8);
     doTestWriteRead(20);
@@ -155,33 +155,33 @@ static void doTestDgaps(int32_t size, int32_t count1, int32_t count2)
     for (int32_t i = 0; i < count1; ++i)
     {
         bv->set(i);
-        BOOST_CHECK_EQUAL(i + 1, bv->count());
+        EXPECT_EQ(i + 1, bv->count());
     }
     bv->write(d, L"TESTBV");
     // gradually increase number of set bits
     for (int32_t i = count1; i < count2; ++i)
     {
         BitVectorPtr bv2 = newLucene<BitVector>(d, L"TESTBV");
-        BOOST_CHECK(compareBitVectors(bv, bv2));
+        EXPECT_TRUE(compareBitVectors(bv, bv2));
         bv = bv2;
         bv->set(i);
-        BOOST_CHECK_EQUAL(i + 1, bv->count());
+        EXPECT_EQ(i + 1, bv->count());
         bv->write(d, L"TESTBV");
     }
     // now start decreasing number of set bits
     for (int32_t i = count2 - 1; i >= count1; --i)
     {
         BitVectorPtr bv2 = newLucene<BitVector>(d, L"TESTBV");
-        BOOST_CHECK(compareBitVectors(bv, bv2));
+        EXPECT_TRUE(compareBitVectors(bv, bv2));
         bv = bv2;
         bv->clear(i);
-        BOOST_CHECK_EQUAL(i, bv->count());
+        EXPECT_EQ(i, bv->count());
         bv->write(d, L"TESTBV");
     }
 }
 
 /// Test r/w when size/count cause switching between bit-set and d-gaps file formats.
-BOOST_AUTO_TEST_CASE(testDgaps)
+TEST_F(BitVectorTest, testDgaps)
 {
     doTestDgaps(1, 0, 1);
     doTestDgaps(10, 0, 1);
@@ -209,23 +209,23 @@ static void doTestSubset(int32_t start, int32_t end)
 {
     BitVectorPtr full = createSubsetTestVector();
     BitVectorPtr subset = full->subset(start, end);
-    BOOST_CHECK_EQUAL(end - start, subset->size());
+    EXPECT_EQ(end - start, subset->size());
     int32_t count = 0;
     for (int32_t i = start, j = 0; i < end; ++i, ++j)
     {
         if (subsetPattern[i] == 1)
         {
             ++count;
-            BOOST_CHECK(subset->get(j));
+            EXPECT_TRUE(subset->get(j));
         }
         else
-            BOOST_CHECK(!subset->get(j));
+            EXPECT_TRUE(!subset->get(j));
     }
-    BOOST_CHECK_EQUAL(count, subset->count());
+    EXPECT_EQ(count, subset->count());
 }
 
 /// Tests BitVector.subset() against a pattern
-BOOST_AUTO_TEST_CASE(testSubset)
+TEST_F(BitVectorTest, testSubset)
 {
     doTestSubset(0, 0);
     doTestSubset(0, 20);
@@ -256,5 +256,3 @@ BOOST_AUTO_TEST_CASE(testSubset)
     doTestSubset(12, 20);
     doTestSubset(13, 20);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

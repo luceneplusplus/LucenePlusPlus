@@ -10,10 +10,10 @@
 
 using namespace Lucene;
 
-class BrazilianStemmerFixture : public BaseTokenStreamFixture
+class BrazilianStemmerTest : public BaseTokenStreamFixture
 {
 public:
-    virtual ~BrazilianStemmerFixture()
+    virtual ~BrazilianStemmerTest()
     {
     }
 
@@ -22,19 +22,17 @@ public:
     {
         checkOneTerm(newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
-    
+
     void checkReuse(AnalyzerPtr a, const String& input, const String& expected)
     {
         checkOneTermReuse(a, input, expected);
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(BrazilianStemmerTest, BrazilianStemmerFixture)
-
 /// Test the Brazilian Stem Filter, which only modifies the term text.
 /// It is very similar to the snowball Portuguese algorithm but not exactly the same.
 
-BOOST_AUTO_TEST_CASE(testWithSnowballExamples)
+TEST_F(BrazilianStemmerTest, testWithSnowballExamples)
 {
     check(L"boa", L"boa");
     check(L"boainain", L"boainain");
@@ -134,7 +132,7 @@ BOOST_AUTO_TEST_CASE(testWithSnowballExamples)
     check(L"quiosque", L"quiosqu");
 }
 
-BOOST_AUTO_TEST_CASE(testNormalization)
+TEST_F(BrazilianStemmerTest, testNormalization)
 {
     check(L"Brasil", L"brasil"); // lowercase by default
     const uint8_t brasil[] = {0x42, 0x72, 0x61, 0x73, 0xc3, 0xad, 0x6c, 0x69, 0x61};
@@ -147,7 +145,7 @@ BOOST_AUTO_TEST_CASE(testNormalization)
     check(UTF8_TO_STRING(aaa), L"aaa"); // normally, diacritics are removed
 }
 
-BOOST_AUTO_TEST_CASE(testReusableTokenStream)
+TEST_F(BrazilianStemmerTest, testReusableTokenStream)
 {
     AnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"boa", L"boa");
@@ -157,7 +155,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
     checkReuse(a, UTF8_TO_STRING(boas), L"boas"); // removes diacritic: different from snowball Portuguese
 }
 
-BOOST_AUTO_TEST_CASE(testStemExclusionTable)
+TEST_F(BrazilianStemmerTest, testStemExclusionTable)
 {
     BrazilianAnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     HashSet<String> exclusions = HashSet<String>::newInstance();
@@ -168,7 +166,7 @@ BOOST_AUTO_TEST_CASE(testStemExclusionTable)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
+TEST_F(BrazilianStemmerTest, testExclusionTableReuse)
 {
     BrazilianAnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t quintessencia[] = {0x71, 0x75, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x73, 0xc3, 0xaa, 0x6e, 0x63, 0x69, 0x61};
@@ -178,5 +176,3 @@ BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
     a->setStemExclusionTable(exclusions);
     checkReuse(a, UTF8_TO_STRING(quintessencia), UTF8_TO_STRING(quintessencia));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

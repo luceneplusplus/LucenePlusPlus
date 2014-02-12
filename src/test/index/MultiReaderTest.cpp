@@ -26,10 +26,10 @@
 
 using namespace Lucene;
 
-class MultiReaderTestFixture : public LuceneTestFixture, public DocHelper
+class MultiReaderTest : public LuceneTestFixture, public DocHelper
 {
 public:
-    MultiReaderTestFixture()
+    MultiReaderTest()
     {
         readers = Collection<IndexReaderPtr>::newInstance(2);
         dir = newLucene<RAMDirectory>();
@@ -42,8 +42,8 @@ public:
         sis = newLucene<SegmentInfos>();
         sis->read(dir);
     }
-    
-    virtual ~MultiReaderTestFixture()
+
+    virtual ~MultiReaderTest()
     {
     }
 
@@ -53,63 +53,63 @@ protected:
     DocumentPtr doc2;
     Collection<IndexReaderPtr> readers;
     SegmentInfosPtr sis;
-  
+
 public:
     void doTestDocument()
     {
         sis->read(dir);
         IndexReaderPtr reader = openReader();
-        BOOST_CHECK(reader);
+        EXPECT_TRUE(reader);
         DocumentPtr newDoc1 = reader->document(0);
-        BOOST_CHECK(newDoc1);
-        BOOST_CHECK(DocHelper::numFields(newDoc1) == DocHelper::numFields(doc1) - DocHelper::unstored.size());
+        EXPECT_TRUE(newDoc1);
+        EXPECT_TRUE(DocHelper::numFields(newDoc1) == DocHelper::numFields(doc1) - DocHelper::unstored.size());
         DocumentPtr newDoc2 = reader->document(1);
-        BOOST_CHECK(newDoc2);
-        BOOST_CHECK(DocHelper::numFields(newDoc2) == DocHelper::numFields(doc2) - DocHelper::unstored.size());
+        EXPECT_TRUE(newDoc2);
+        EXPECT_TRUE(DocHelper::numFields(newDoc2) == DocHelper::numFields(doc2) - DocHelper::unstored.size());
         TermFreqVectorPtr vector = reader->getTermFreqVector(0, DocHelper::TEXT_FIELD_2_KEY);
-        BOOST_CHECK(vector);
+        EXPECT_TRUE(vector);
         checkNorms(reader);
     }
-    
+
     void doTestUndeleteAll()
     {
         sis->read(dir);
         IndexReaderPtr reader = openReader();
-        BOOST_CHECK(reader);
-        BOOST_CHECK_EQUAL(2, reader->numDocs());
+        EXPECT_TRUE(reader);
+        EXPECT_EQ(2, reader->numDocs());
         reader->deleteDocument(0);
-        BOOST_CHECK_EQUAL(1, reader->numDocs());
+        EXPECT_EQ(1, reader->numDocs());
         reader->undeleteAll();
-        BOOST_CHECK_EQUAL(2, reader->numDocs());
+        EXPECT_EQ(2, reader->numDocs());
 
         // Ensure undeleteAll survives commit/close/reopen
         reader->commit(MapStringString());
         reader->close();
-        
+
         if (boost::dynamic_pointer_cast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }
-        
+
         sis->read(dir);
         reader = openReader();
-        BOOST_CHECK_EQUAL(2, reader->numDocs());
+        EXPECT_EQ(2, reader->numDocs());
 
         reader->deleteDocument(0);
-        BOOST_CHECK_EQUAL(1, reader->numDocs());
+        EXPECT_EQ(1, reader->numDocs());
         reader->commit(MapStringString());
         reader->close();
-        
+
         if (boost::dynamic_pointer_cast<MultiReader>(reader))
         {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }
-        
+
         sis->read(dir);
         reader = openReader();
-        BOOST_CHECK_EQUAL(1, reader->numDocs());
+        EXPECT_EQ(1, reader->numDocs());
     }
 
 protected:
@@ -120,41 +120,41 @@ protected:
         SegmentReaderPtr reader2 = SegmentReader::get(false, sis->info(1), IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
         readers[0] = reader1;
         readers[1] = reader2;
-        BOOST_CHECK(reader1);
-        BOOST_CHECK(reader2);
-        
+        EXPECT_TRUE(reader1);
+        EXPECT_TRUE(reader2);
+
         IndexReaderPtr reader = newLucene<MultiReader>(readers);
 
-        BOOST_CHECK(dir);
-        BOOST_CHECK(sis);
-        BOOST_CHECK(reader);
+        EXPECT_TRUE(dir);
+        EXPECT_TRUE(sis);
+        EXPECT_TRUE(reader);
 
         return reader;
     }
-    
+
     void checkNorms(IndexReaderPtr reader)
     {
         for (Collection<FieldPtr>::iterator field = DocHelper::fields.begin(); field != DocHelper::fields.end(); ++field)
         {
             if ((*field)->isIndexed())
             {
-                BOOST_CHECK_EQUAL(reader->hasNorms((*field)->name()), !(*field)->getOmitNorms());
-                BOOST_CHECK_EQUAL(reader->hasNorms((*field)->name()), !DocHelper::noNorms.contains((*field)->name()));
+                EXPECT_EQ(reader->hasNorms((*field)->name()), !(*field)->getOmitNorms());
+                EXPECT_EQ(reader->hasNorms((*field)->name()), !DocHelper::noNorms.contains((*field)->name()));
                 if (!reader->hasNorms((*field)->name()))
                 {
                     // test for fake norms of 1.0 or null depending on the flag
                     ByteArray norms = reader->norms((*field)->name());
                     uint8_t norm1 = DefaultSimilarity::encodeNorm(1.0);
-                    BOOST_CHECK(!norms);
+                    EXPECT_TRUE(!norms);
                     norms = ByteArray::newInstance(reader->maxDoc());
                     reader->norms((*field)->name(), norms, 0);
                     for (int32_t j = 0; j < reader->maxDoc(); ++j)
-                        BOOST_CHECK_EQUAL(norms[j], norm1);
+                        EXPECT_EQ(norms[j], norm1);
                 }
             }
         }
     }
-    
+
     void addDoc(RAMDirectoryPtr ramDir1, const String& s, bool create)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(ramDir1, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), create, IndexWriter::MaxFieldLengthLIMITED);
@@ -165,31 +165,36 @@ protected:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(MultiReaderTest, MultiReaderTestFixture)
-
-BOOST_AUTO_TEST_CASE(testTestMultiReader)
+TEST_F(MultiReaderTest, testTestMultiReader)
 {
     doTestDocument();
     doTestUndeleteAll();
 }
 
-BOOST_AUTO_TEST_CASE(testIsCurrent)
+TEST_F(MultiReaderTest, testIsCurrent)
 {
     RAMDirectoryPtr ramDir1 = newLucene<RAMDirectory>();
     addDoc(ramDir1, L"test foo", true);
     RAMDirectoryPtr ramDir2 = newLucene<RAMDirectory>();
     addDoc(ramDir2, L"test blah", true);
     MultiReaderPtr mr = newLucene<MultiReader>(newCollection<IndexReaderPtr>(IndexReader::open(ramDir1, false), IndexReader::open(ramDir2, false)));
-    BOOST_CHECK(mr->isCurrent()); // just opened, must be current
+    EXPECT_TRUE(mr->isCurrent()); // just opened, must be current
     addDoc(ramDir1, L"more text", false);
-    BOOST_CHECK(!mr->isCurrent()); // has been modified, not current anymore
+    EXPECT_TRUE(!mr->isCurrent()); // has been modified, not current anymore
     addDoc(ramDir2, L"even more text", false);
-    BOOST_CHECK(!mr->isCurrent()); // has been modified even more, not current anymore
-    BOOST_CHECK_EXCEPTION(mr->getVersion(), LuceneException, check_exception(LuceneException::UnsupportedOperation));
+    EXPECT_TRUE(!mr->isCurrent()); // has been modified even more, not current anymore
+    try
+    {
+        mr->getVersion();
+    }
+    catch (LuceneException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::UnsupportedOperation)(e));
+    }
     mr->close();
 }
 
-BOOST_AUTO_TEST_CASE(testMultiTermDocs)
+TEST_F(MultiReaderTest, testMultiTermDocs)
 {
     RAMDirectoryPtr ramDir1 = newLucene<RAMDirectory>();
     addDoc(ramDir1, L"test foo", true);
@@ -217,22 +222,20 @@ BOOST_AUTO_TEST_CASE(testMultiTermDocs)
     te3->close();
 
     // really a dummy check to ensure that we got some docs and to ensure that nothing is optimized out.
-    BOOST_CHECK(ret > 0);
+    EXPECT_TRUE(ret > 0);
 }
 
-BOOST_AUTO_TEST_CASE(testAllTermDocs)
+TEST_F(MultiReaderTest, testAllTermDocs)
 {
     IndexReaderPtr reader = openReader();
     int32_t NUM_DOCS = 2;
     TermDocsPtr td = reader->termDocs(TermPtr());
     for (int32_t i = 0; i < NUM_DOCS; ++i)
     {
-        BOOST_CHECK(td->next());
-        BOOST_CHECK_EQUAL(i, td->doc());
-        BOOST_CHECK_EQUAL(1, td->freq());
+        EXPECT_TRUE(td->next());
+        EXPECT_EQ(i, td->doc());
+        EXPECT_EQ(1, td->freq());
     }
     td->close();
     reader->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

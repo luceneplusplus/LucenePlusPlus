@@ -51,32 +51,32 @@ public:
         // we know it is size 4 here, so ignore the offset/length
         return (double)payload[0];
     }
-    
+
     virtual double lengthNorm(const String& fieldName, int32_t numTokens)
     {
         return 1.0;
     }
-    
+
     virtual double queryNorm(double sumOfSquaredWeights)
     {
         return 1.0;
     }
-    
+
     virtual double sloppyFreq(int32_t distance)
     {
         return 1.0;
     }
-    
+
     virtual double coord(int32_t overlap, int32_t maxOverlap)
     {
         return 1.0;
     }
-    
+
     virtual double idf(int32_t docFreq, int32_t numDocs)
     {
         return 1.0;
     }
-    
+
     virtual double tf(double freq)
     {
         return freq == 0.0 ? 0.0 : 1.0;
@@ -110,11 +110,11 @@ public:
         this->fieldName = fieldName;
         this->payloadAtt = addAttribute<PayloadAttribute>();
     }
-    
+
     virtual ~PayloadTermFilter()
     {
     }
-    
+
     LUCENE_CLASS(PayloadTermFilter);
 
 public:
@@ -157,11 +157,11 @@ public:
         this->payloadMultiField1 = payloadMultiField1;
         this->payloadMultiField2 = payloadMultiField2;
     }
-    
+
     virtual ~PayloadTermAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(PayloadTermAnalyzer);
 
 protected:
@@ -178,10 +178,10 @@ public:
     }
 };
 
-class PayloadTermQueryFixture : public LuceneTestFixture
+class PayloadTermQueryTest : public LuceneTestFixture
 {
 public:
-    PayloadTermQueryFixture()
+    PayloadTermQueryTest()
     {
         similarity = newLucene<BoostingTermSimilarity>();
         payloadField = ByteArray::newInstance(1);
@@ -190,7 +190,7 @@ public:
         payloadMultiField1[0] = 2;
         payloadMultiField2 = ByteArray::newInstance(1);
         payloadMultiField2[0] = 4;
-        
+
         directory = newLucene<RAMDirectory>();
         PayloadTermAnalyzerPtr analyzer = newLucene<PayloadTermAnalyzer>(payloadField, payloadMultiField1, payloadMultiField2);
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -210,8 +210,8 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
         searcher->setSimilarity(similarity);
     }
-    
-    virtual ~PayloadTermQueryFixture()
+
+    virtual ~PayloadTermQueryTest()
     {
     }
 
@@ -224,51 +224,49 @@ protected:
     RAMDirectoryPtr directory;
 };
 
-BOOST_FIXTURE_TEST_SUITE(PayloadTermQueryTest, PayloadTermQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testSetup)
+TEST_F(PayloadTermQueryTest, testSetup)
 {
     PayloadTermQueryPtr query = newLucene<PayloadTermQuery>(newLucene<Term>(L"field", L"seventy"), newLucene<MaxPayloadFunction>());
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
-    BOOST_CHECK(hits);
-    BOOST_CHECK_EQUAL(hits->totalHits, 100);
+    EXPECT_TRUE(hits);
+    EXPECT_EQ(hits->totalHits, 100);
 
     // they should all have the exact same score, because they all contain seventy once, and we set all the other similarity factors to be 1
-    BOOST_CHECK_EQUAL(hits->getMaxScore(), 1);
+    EXPECT_EQ(hits->getMaxScore(), 1);
     for (int32_t i = 0; i < hits->scoreDocs.size(); ++i)
     {
         ScoreDocPtr doc = hits->scoreDocs[i];
-        BOOST_CHECK_EQUAL(doc->score, 1);
+        EXPECT_EQ(doc->score, 1);
     }
     CheckHits::checkExplanations(query, PayloadHelper::FIELD, searcher, true);
     SpansPtr spans = query->getSpans(searcher->getIndexReader());
-    BOOST_CHECK(spans);
-    BOOST_CHECK(MiscUtils::typeOf<TermSpans>(spans));
+    EXPECT_TRUE(spans);
+    EXPECT_TRUE(MiscUtils::typeOf<TermSpans>(spans));
 }
 
-BOOST_AUTO_TEST_CASE(testQuery)
+TEST_F(PayloadTermQueryTest, testQuery)
 {
     PayloadTermQueryPtr BoostingTermFuncTermQuery = newLucene<PayloadTermQuery>(newLucene<Term>(PayloadHelper::MULTI_FIELD, L"seventy"), newLucene<MaxPayloadFunction>());
     QueryUtils::check(BoostingTermFuncTermQuery);
 
     SpanTermQueryPtr spanTermQuery = newLucene<SpanTermQuery>(newLucene<Term>(PayloadHelper::MULTI_FIELD, L"seventy"));
-    BOOST_CHECK(BoostingTermFuncTermQuery->equals(spanTermQuery) == spanTermQuery->equals(BoostingTermFuncTermQuery));
+    EXPECT_TRUE(BoostingTermFuncTermQuery->equals(spanTermQuery) == spanTermQuery->equals(BoostingTermFuncTermQuery));
 
     PayloadTermQueryPtr BoostingTermFuncTermQuery2 = newLucene<PayloadTermQuery>(newLucene<Term>(PayloadHelper::MULTI_FIELD, L"seventy"), newLucene<AveragePayloadFunction>());
 
     QueryUtils::checkUnequal(BoostingTermFuncTermQuery, BoostingTermFuncTermQuery2);
 }
 
-BOOST_AUTO_TEST_CASE(testMultipleMatchesPerDoc)
+TEST_F(PayloadTermQueryTest, testMultipleMatchesPerDoc)
 {
     PayloadTermQueryPtr query = newLucene<PayloadTermQuery>(newLucene<Term>(PayloadHelper::MULTI_FIELD, L"seventy"), newLucene<MaxPayloadFunction>());
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
-    BOOST_CHECK(hits);
-    BOOST_CHECK_EQUAL(hits->totalHits, 100);
+    EXPECT_TRUE(hits);
+    EXPECT_EQ(hits->totalHits, 100);
 
     // they should all have the exact same score, because they all contain seventy once, and we set all the other similarity factors to be 1
-    BOOST_CHECK_EQUAL(hits->getMaxScore(), 4.0);
-    
+    EXPECT_EQ(hits->getMaxScore(), 4.0);
+
     // there should be exactly 10 items that score a 4, all the rest should score a 2
     // The 10 items are: 70 + i*100 where i in [0-9]
     int32_t numTens = 0;
@@ -278,37 +276,37 @@ BOOST_AUTO_TEST_CASE(testMultipleMatchesPerDoc)
         if (doc->doc % 10 == 0)
         {
             ++numTens;
-            BOOST_CHECK_EQUAL(doc->score, 4.0);
+            EXPECT_EQ(doc->score, 4.0);
         }
         else
-            BOOST_CHECK_EQUAL(doc->score, 2.0);
+            EXPECT_EQ(doc->score, 2.0);
     }
-    BOOST_CHECK_EQUAL(numTens, 10);
+    EXPECT_EQ(numTens, 10);
     CheckHits::checkExplanations(query, L"field", searcher, true);
     SpansPtr spans = query->getSpans(searcher->getIndexReader());
-    BOOST_CHECK(spans);
-    BOOST_CHECK(MiscUtils::typeOf<TermSpans>(spans));
+    EXPECT_TRUE(spans);
+    EXPECT_TRUE(MiscUtils::typeOf<TermSpans>(spans));
     // should be two matches per document
     int32_t count = 0;
     // 100 hits times 2 matches per hit, we should have 200 in count
     while (spans->next())
         ++count;
-    BOOST_CHECK_EQUAL(count, 200);
+    EXPECT_EQ(count, 200);
 }
 
-BOOST_AUTO_TEST_CASE(testIgnoreSpanScorer)
+TEST_F(PayloadTermQueryTest, testIgnoreSpanScorer)
 {
     PayloadTermQueryPtr query = newLucene<PayloadTermQuery>(newLucene<Term>(PayloadHelper::MULTI_FIELD, L"seventy"), newLucene<MaxPayloadFunction>(), false);
 
     IndexSearcherPtr theSearcher = newLucene<IndexSearcher>(directory, true);
     theSearcher->setSimilarity(newLucene<FullSimilarity>());
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
-    BOOST_CHECK(hits);
-    BOOST_CHECK_EQUAL(hits->totalHits, 100);
+    EXPECT_TRUE(hits);
+    EXPECT_EQ(hits->totalHits, 100);
 
     // they should all have the exact same score, because they all contain seventy once, and we set all the other similarity factors to be 1
-    BOOST_CHECK_EQUAL(hits->getMaxScore(), 4.0);
-    
+    EXPECT_EQ(hits->getMaxScore(), 4.0);
+
     // there should be exactly 10 items that score a 4, all the rest should score a 2
     // The 10 items are: 70 + i*100 where i in [0-9]
     int32_t numTens = 0;
@@ -318,33 +316,33 @@ BOOST_AUTO_TEST_CASE(testIgnoreSpanScorer)
         if (doc->doc % 10 == 0)
         {
             ++numTens;
-            BOOST_CHECK_EQUAL(doc->score, 4.0);
+            EXPECT_EQ(doc->score, 4.0);
         }
         else
-            BOOST_CHECK_EQUAL(doc->score, 2.0);
+            EXPECT_EQ(doc->score, 2.0);
     }
-    BOOST_CHECK_EQUAL(numTens, 10);
+    EXPECT_EQ(numTens, 10);
     CheckHits::checkExplanations(query, L"field", searcher, true);
     SpansPtr spans = query->getSpans(searcher->getIndexReader());
-    BOOST_CHECK(spans);
-    BOOST_CHECK(MiscUtils::typeOf<TermSpans>(spans));
+    EXPECT_TRUE(spans);
+    EXPECT_TRUE(MiscUtils::typeOf<TermSpans>(spans));
     // should be two matches per document
     int32_t count = 0;
     // 100 hits times 2 matches per hit, we should have 200 in count
     while (spans->next())
         ++count;
-    BOOST_CHECK_EQUAL(count, 200);
+    EXPECT_EQ(count, 200);
 }
 
-BOOST_AUTO_TEST_CASE(testNoMatch)
+TEST_F(PayloadTermQueryTest, testNoMatch)
 {
     PayloadTermQueryPtr query = newLucene<PayloadTermQuery>(newLucene<Term>(PayloadHelper::FIELD, L"junk"), newLucene<MaxPayloadFunction>());
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
-    BOOST_CHECK(hits);
-    BOOST_CHECK_EQUAL(hits->totalHits, 0);
+    EXPECT_TRUE(hits);
+    EXPECT_EQ(hits->totalHits, 0);
 }
 
-BOOST_AUTO_TEST_CASE(testNoPayload)
+TEST_F(PayloadTermQueryTest, testNoPayload)
 {
     PayloadTermQueryPtr q1 = newLucene<PayloadTermQuery>(newLucene<Term>(PayloadHelper::NO_PAYLOAD_FIELD, L"zero"), newLucene<MaxPayloadFunction>());
     PayloadTermQueryPtr q2 = newLucene<PayloadTermQuery>(newLucene<Term>(PayloadHelper::NO_PAYLOAD_FIELD, L"foo"), newLucene<MaxPayloadFunction>());
@@ -354,10 +352,8 @@ BOOST_AUTO_TEST_CASE(testNoPayload)
     query->add(c1);
     query->add(c2);
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
-    BOOST_CHECK(hits);
-    BOOST_CHECK_EQUAL(hits->totalHits, 1);
+    EXPECT_TRUE(hits);
+    EXPECT_EQ(hits->totalHits, 1);
     Collection<int32_t> results = newCollection<int32_t>(0);
     CheckHits::checkHitCollector(query, PayloadHelper::NO_PAYLOAD_FIELD, searcher, results);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

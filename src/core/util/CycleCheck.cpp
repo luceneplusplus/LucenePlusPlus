@@ -12,11 +12,11 @@ namespace Lucene
 {
     MapStringInt CycleCheck::cycleMap;
     Set<LuceneObjectPtr*> CycleCheck::staticRefs;
-    
+
     CycleCheck::~CycleCheck()
     {
     }
-    
+
     void CycleCheck::addRef(const String& className, int32_t ref)
     {
         if (!cycleMap)
@@ -32,7 +32,7 @@ namespace Lucene
                 boost::throw_exception(RuntimeException(L"invalid class reference"));
         }
     }
-    
+
     void CycleCheck::addStatic(LuceneObjectPtr* staticRef)
     {
         #ifdef LPP_USE_CYCLIC_CHECK
@@ -41,20 +41,19 @@ namespace Lucene
         staticRefs.add(staticRef);
         #endif
     }
-    
+
     void CycleCheck::dumpRefs()
     {
-        SyncLock lockRef(&cycleMap);
-        
         // destroy all registered statics
         if (staticRefs)
         {
             for (Set<LuceneObjectPtr*>::iterator staticRef = staticRefs.begin(); staticRef != staticRefs.end(); ++staticRef)
                 (*staticRef)->reset();
         }
-        
+
         if (cycleMap)
         {
+            SyncLock lockRef(&cycleMap);
             bool reportCycles = true;
             for (MapStringInt::iterator classRef = cycleMap.begin(); classRef != cycleMap.end(); ++classRef)
             {

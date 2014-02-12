@@ -10,11 +10,11 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(ArabicAnalyzerTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture ArabicAnalyzerTest;
 
 /// Some simple tests showing some features of the analyzer, how some regular forms will conflate
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures1)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures1)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x83, 0xd8, 0xa8, 0xd9, 0x8a, 0xd8, 0xb1};
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures1)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures2)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures2)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x83, 0xd8, 0xa8, 0xd9, 0x8a, 0xd8, 0xb1, 0xd8, 0xa9};
@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures2)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures3)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures3)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x85, 0xd8, 0xb4, 0xd8, 0xb1, 0xd9, 0x88, 0xd8, 0xa8};
@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures3)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures4)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures4)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x85, 0xd8, 0xb4, 0xd8, 0xb1, 0xd9, 0x88, 0xd8, 0xa8, 0xd8, 0xa7, 0xd8, 0xaa};
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures4)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures5)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures5)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd8, 0xa3, 0xd9, 0x85, 0xd8, 0xb1, 0xd9, 0x8a, 0xd9, 0x83, 0xd9, 0x8a, 0xd9, 0x8a, 0xd9, 0x86};
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures5)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures6)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures6)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd8, 0xa7, 0xd9, 0x85, 0xd8, 0xb1, 0xd9, 0x8a, 0xd9, 0x83, 0xd9, 0x8a};
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures6)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures7)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures7)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x83, 0xd8, 0xaa, 0xd8, 0xa7, 0xd8, 0xa8};
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures7)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures8)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures8)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd8, 0xa7, 0xd9, 0x84, 0xd9, 0x83, 0xd8, 0xaa, 0xd8, 0xa7, 0xd8, 0xa8};
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures8)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures9)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures9)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x85, 0xd8, 0xa7, 0x20, 0xd9, 0x85, 0xd9, 0x84, 0xd9, 0x83, 0xd8, 0xaa, 0x20, 0xd8, 0xa3, 0xd9, 0x8a, 0xd9, 0x85, 0xd8, 0xa7, 0xd9, 0x86, 0xd9, 0x83, 0xd9, 0x85};
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures9)
     checkAnalyzesTo(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second), UTF8_TO_STRING(third)));
 }
 
-BOOST_AUTO_TEST_CASE(testBasicFeatures10)
+TEST_F(ArabicAnalyzerTest, testBasicFeatures10)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd8, 0xa7, 0xd9, 0x84, 0xd8, 0xb0, 0xd9, 0x8a, 0xd9, 0x86, 0x20, 0xd9, 0x85, 0xd9, 0x84, 0xd9, 0x83, 0xd8, 0xaa, 0x20, 0xd8, 0xa3, 0xd9, 0x8a, 0xd9, 0x85, 0xd8, 0xa7, 0xd9, 0x86, 0xd9, 0x83, 0xd9, 0x85};
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(testBasicFeatures10)
 }
 
 /// Simple tests to show things are getting reset correctly, etc.
-BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
+TEST_F(ArabicAnalyzerTest, testReusableTokenStream1)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x83, 0xd8, 0xa8, 0xd9, 0x8a, 0xd8, 0xb1};
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream1)
     checkAnalyzesToReuse(a, UTF8_TO_STRING(first), newCollection<String>(UTF8_TO_STRING(second)));
 }
 
-BOOST_AUTO_TEST_CASE(testReusableTokenStream2)
+TEST_F(ArabicAnalyzerTest, testReusableTokenStream2)
 {
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t first[] = {0xd9, 0x83, 0xd8, 0xa8, 0xd9, 0x8a, 0xd8, 0xb1, 0xd8, 0xa9};
@@ -114,17 +114,15 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream2)
 }
 
 /// Non-arabic text gets treated in a similar way as SimpleAnalyzer.
-BOOST_AUTO_TEST_CASE(testEnglishInput)
+TEST_F(ArabicAnalyzerTest, testEnglishInput)
 {
     checkAnalyzesTo(newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT), L"English text.", newCollection<String>(L"english", L"text"));
 }
 
 /// Test that custom stopwords work, and are not case-sensitive.
-BOOST_AUTO_TEST_CASE(testCustomStopwords)
+TEST_F(ArabicAnalyzerTest, testCustomStopwords)
 {
     Collection<String> stopWords = newCollection<String>(L"the", L"and", L"a");
     ArabicAnalyzerPtr a = newLucene<ArabicAnalyzer>(LuceneVersion::LUCENE_CURRENT, HashSet<String>::newInstance(stopWords.begin(), stopWords.end()));
     checkAnalyzesTo(a, L"The quick brown fox.", newCollection<String>(L"quick", L"brown", L"fox"));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

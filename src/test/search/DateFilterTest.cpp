@@ -22,9 +22,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(DateFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture DateFilterTest;
 
-BOOST_AUTO_TEST_CASE(testBefore)
+TEST_F(DateFilterTest, testBefore)
 {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(testBefore)
     // filter that should discard matches
     TermRangeFilterPtr df2 = newLucene<TermRangeFilter>(L"datefield", DateTools::timeToString(0, DateTools::RESOLUTION_MILLISECOND),
                                                         DateTools::timeToString(now - 2000, DateTools::RESOLUTION_MILLISECOND), true, false);
-    
+
     // search something that doesn't exist with DateFilter
     QueryPtr query1 = newLucene<TermQuery>(newLucene<Term>(L"body", L"NoMatchForThis"));
 
@@ -56,26 +56,26 @@ BOOST_AUTO_TEST_CASE(testBefore)
 
     // ensure that queries return expected results without DateFilter first
     Collection<ScoreDocPtr> result = searcher->search(query1, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = searcher->search(query2, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
 
     // run queries with DateFilter
     result = searcher->search(query1, df1, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = searcher->search(query1, df2, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = searcher->search(query2, df1, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
-    
+    EXPECT_EQ(1, result.size());
+
     result = searcher->search(query2, df2, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 }
 
-BOOST_AUTO_TEST_CASE(testAfter)
+TEST_F(DateFilterTest, testAfter)
 {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(testAfter)
     // filter that should discard matches
     TermRangeFilterPtr df2 = newLucene<TermRangeFilter>(L"datefield", DateTools::timeToString(now + 999999, DateTools::RESOLUTION_MILLISECOND),
                                                         DateTools::timeToString(now + 999999999, DateTools::RESOLUTION_MILLISECOND), false, true);
-    
+
     // search something that doesn't exist with DateFilter
     QueryPtr query1 = newLucene<TermQuery>(newLucene<Term>(L"body", L"NoMatchForThis"));
 
@@ -107,23 +107,21 @@ BOOST_AUTO_TEST_CASE(testAfter)
 
     // ensure that queries return expected results without DateFilter first
     Collection<ScoreDocPtr> result = searcher->search(query1, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = searcher->search(query2, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
 
     // run queries with DateFilter
     result = searcher->search(query1, df1, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = searcher->search(query1, df2, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = searcher->search(query2, df1, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
-    
-    result = searcher->search(query2, df2, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
-}
+    EXPECT_EQ(1, result.size());
 
-BOOST_AUTO_TEST_SUITE_END()
+    result = searcher->search(query2, df2, 1000)->scoreDocs;
+    EXPECT_EQ(0, result.size());
+}

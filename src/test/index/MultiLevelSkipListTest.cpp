@@ -25,35 +25,35 @@
 
 using namespace Lucene;
 
-/// This testcase tests whether multi-level skipping is being used to reduce I/O while 
-/// skipping through posting lists.  Skipping in general is already covered by 
+/// This testcase tests whether multi-level skipping is being used to reduce I/O while
+/// skipping through posting lists.  Skipping in general is already covered by
 /// several other testcases.
-BOOST_FIXTURE_TEST_SUITE(MultiLevelSkipListTest, LuceneTestFixture)
+typedef LuceneTestFixture MultiLevelSkipListTest;
 
-class PayloadFilter : public TokenFilter
+class MultiLevelSkipListPayloadFilter : public TokenFilter
 {
 public:
-    PayloadFilter(TokenStreamPtr input) : TokenFilter(input)
+    MultiLevelSkipListPayloadFilter(TokenStreamPtr input) : TokenFilter(input)
     {
         payloadAtt = addAttribute<PayloadAttribute>();
     }
-    
-    virtual ~PayloadFilter()
+
+    virtual ~MultiLevelSkipListPayloadFilter()
     {
     }
-    
-    LUCENE_CLASS(PayloadFilter);
+
+    LUCENE_CLASS(MultiLevelSkipListPayloadFilter);
 
 public:
     static int32_t count;
     PayloadAttributePtr payloadAtt;
-    
+
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
-        return newLucene<PayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
+        return newLucene<MultiLevelSkipListPayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
-    
+
     virtual bool incrementToken()
     {
         bool hasNext = input->incrementToken();
@@ -67,21 +67,21 @@ public:
     }
 };
 
-int32_t PayloadFilter::count = 0;
+int32_t MultiLevelSkipListPayloadFilter::count = 0;
 
-class PayloadAnalyzer : public Analyzer
+class MultiLevelSkipListPayloadAnalyzer : public Analyzer
 {
 public:
-    virtual ~PayloadAnalyzer()
+    virtual ~MultiLevelSkipListPayloadAnalyzer()
     {
     }
-    
-    LUCENE_CLASS(PayloadAnalyzer);
+
+    LUCENE_CLASS(MultiLevelSkipListPayloadAnalyzer);
 
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
-        return newLucene<PayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
+        return newLucene<MultiLevelSkipListPayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
 };
 
@@ -94,11 +94,11 @@ public:
     {
         this->input = input;
     }
-    
+
     virtual ~CountingStream()
     {
     }
-    
+
     LUCENE_CLASS(CountingStream);
 
 protected:
@@ -110,33 +110,33 @@ public:
         ++counter;
         return input->readByte();
     }
-    
+
     virtual void readBytes(uint8_t* b, int32_t offset, int32_t length)
     {
         counter += length;
         input->readBytes(b, offset, length);
     }
-    
+
     virtual void close()
     {
         input->close();
     }
-    
+
     virtual int64_t getFilePointer()
     {
         return input->getFilePointer();
     }
-    
+
     virtual void seek(int64_t pos)
     {
         input->seek(pos);
     }
-    
+
     virtual int64_t length()
     {
         return input->length();
     }
-    
+
     LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
     {
         return newLucene<CountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
@@ -147,20 +147,20 @@ static void checkSkipTo(TermPositionsPtr tp, int32_t target, int32_t maxCounter)
 {
     tp->skipTo(target);
     if (maxCounter < counter)
-        BOOST_FAIL("Too many bytes read: " << counter);
+        FAIL() << "Too many bytes read: " << counter;
 
-    BOOST_CHECK_EQUAL(target, tp->doc());
-    BOOST_CHECK_EQUAL(1, tp->freq());
+    EXPECT_EQ(target, tp->doc());
+    EXPECT_EQ(1, tp->freq());
     tp->nextPosition();
     ByteArray b = ByteArray::newInstance(1);
     tp->getPayload(b, 0);
-    BOOST_CHECK_EQUAL((uint8_t)target, b[0]);
+    EXPECT_EQ((uint8_t)target, b[0]);
 }
 
-BOOST_AUTO_TEST_CASE(testSimpleSkip)
+TEST_F(MultiLevelSkipListTest, testSimpleSkip)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
-    IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<PayloadAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
+    IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<MultiLevelSkipListPayloadAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     TermPtr term = newLucene<Term>(L"test", L"a");
     for (int32_t i = 0; i < 5000; ++i)
     {
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(testSimpleSkip)
         d1->add(newLucene<Field>(term->field(), term->text(), Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(d1);
     }
-    
+
     writer->commit();
     writer->optimize();
     writer->close();
@@ -190,5 +190,3 @@ BOOST_AUTO_TEST_CASE(testSimpleSkip)
         checkSkipTo(tp, 4800, 250);// one skip on level 2
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

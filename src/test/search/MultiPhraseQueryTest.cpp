@@ -25,7 +25,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(MultiPhraseQueryTest, LuceneTestFixture)
+typedef LuceneTestFixture MultiPhraseQueryTest;
 
 static void add(const String& s, IndexWriterPtr writer)
 {
@@ -42,7 +42,7 @@ static void add(const String& s, const String& type, IndexWriterPtr writer)
     writer->addDocument(doc);
 }
 
-BOOST_AUTO_TEST_CASE(testPhrasePrefix)
+TEST_F(MultiPhraseQueryTest, testPhrasePrefix)
 {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -79,14 +79,14 @@ BOOST_AUTO_TEST_CASE(testPhrasePrefix)
     while (te->next());
 
     query1->add(termsWithPrefix);
-    BOOST_CHECK_EQUAL(L"body:\"blueberry (piccadilly pie pizza)\"", query1->toString());
+    EXPECT_EQ(L"body:\"blueberry (piccadilly pie pizza)\"", query1->toString());
     query2->add(termsWithPrefix);
-    BOOST_CHECK_EQUAL(L"body:\"strawberry (piccadilly pie pizza)\"", query2->toString());
+    EXPECT_EQ(L"body:\"strawberry (piccadilly pie pizza)\"", query2->toString());
 
     Collection<ScoreDocPtr> result = searcher->search(query1, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, result.size());
+    EXPECT_EQ(2, result.size());
     result = searcher->search(query2, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     // search for "blue* pizza"
     MultiPhraseQueryPtr query3 = newLucene<MultiPhraseQuery>();
@@ -104,23 +104,30 @@ BOOST_AUTO_TEST_CASE(testPhrasePrefix)
     query3->add(newLucene<Term>(L"body", L"pizza"));
 
     result = searcher->search(query3, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, result.size()); // blueberry pizza, bluebird pizza
-    BOOST_CHECK_EQUAL(L"body:\"(blueberry bluebird) pizza\"", query3->toString());
+    EXPECT_EQ(2, result.size()); // blueberry pizza, bluebird pizza
+    EXPECT_EQ(L"body:\"(blueberry bluebird) pizza\"", query3->toString());
 
     // test slop
     query3->setSlop(1);
     result = searcher->search(query3, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, result.size()); // blueberry pizza, bluebird pizza, bluebird foobar pizza
+    EXPECT_EQ(3, result.size()); // blueberry pizza, bluebird pizza, bluebird foobar pizza
 
     MultiPhraseQueryPtr query4 = newLucene<MultiPhraseQuery>();
     query4->add(newLucene<Term>(L"field1", L"foo"));
-    BOOST_CHECK_EXCEPTION(query4->add(newLucene<Term>(L"field2", L"foobar")), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
-    
+    try
+    {
+        query4->add(newLucene<Term>(L"field2", L"foobar"));
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
+
     searcher->close();
     indexStore->close();
 }
 
-BOOST_AUTO_TEST_CASE(testBooleanQueryContainingSingleTermPrefixQuery)
+TEST_F(MultiPhraseQueryTest, testBooleanQueryContainingSingleTermPrefixQuery)
 {
     // In order to cause the bug, the outer query must have more than one term and all terms required.
     // The contained PhraseMultiQuery must contain exactly one term array.
@@ -144,11 +151,11 @@ BOOST_AUTO_TEST_CASE(testBooleanQueryContainingSingleTermPrefixQuery)
 
     Collection<ScoreDocPtr> hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testPhrasePrefixWithBooleanQuery)
+TEST_F(MultiPhraseQueryTest, testPhrasePrefixWithBooleanQuery)
 {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, HashSet<String>::newInstance()), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -168,38 +175,36 @@ BOOST_AUTO_TEST_CASE(testPhrasePrefixWithBooleanQuery)
     q->add(mpq, BooleanClause::MUST);
 
     Collection<ScoreDocPtr> hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
-    
-    BOOST_CHECK_EQUAL(0, hits.size());
+
+    EXPECT_EQ(0, hits.size());
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testHashCodeAndEquals)
+TEST_F(MultiPhraseQueryTest, testHashCodeAndEquals)
 {
     MultiPhraseQueryPtr query1 = newLucene<MultiPhraseQuery>();
     MultiPhraseQueryPtr query2 = newLucene<MultiPhraseQuery>();
 
-    BOOST_CHECK_EQUAL(query1->hashCode(), query2->hashCode());
-    BOOST_CHECK(query1->equals(query2));
+    EXPECT_EQ(query1->hashCode(), query2->hashCode());
+    EXPECT_TRUE(query1->equals(query2));
 
     TermPtr term1 = newLucene<Term>(L"someField", L"someText");
 
     query1->add(term1);
     query2->add(term1);
 
-    BOOST_CHECK_EQUAL(query1->hashCode(), query2->hashCode());
-    BOOST_CHECK(query1->equals(query2));
+    EXPECT_EQ(query1->hashCode(), query2->hashCode());
+    EXPECT_TRUE(query1->equals(query2));
 
     TermPtr term2 = newLucene<Term>(L"someField", L"someMoreText");
 
     query1->add(term2);
 
-    BOOST_CHECK_NE(query1->hashCode(), query2->hashCode());
-    BOOST_CHECK(!query1->equals(query2));
+    EXPECT_NE(query1->hashCode(), query2->hashCode());
+    EXPECT_TRUE(!query1->equals(query2));
 
     query2->add(term2);
 
-    BOOST_CHECK_EQUAL(query1->hashCode(), query2->hashCode());
-    BOOST_CHECK(query1->equals(query2));
+    EXPECT_EQ(query1->hashCode(), query2->hashCode());
+    EXPECT_TRUE(query1->equals(query2));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

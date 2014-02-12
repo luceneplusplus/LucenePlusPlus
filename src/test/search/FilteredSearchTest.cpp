@@ -34,7 +34,7 @@ public:
         this->docBase = 0;
         this->index = 0;
     }
-    
+
     virtual ~SimpleDocIdSetFilter()
     {
     }
@@ -59,7 +59,7 @@ public:
         docBase = limit;
         return set->isEmpty() ? DocIdSetPtr() : set;
     }
-    
+
     void reset()
     {
         index = 0;
@@ -87,12 +87,12 @@ static void searchFiltered(IndexWriterPtr writer, DirectoryPtr directory, Filter
 
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     Collection<ScoreDocPtr> hits = indexSearcher->search(booleanQuery, filter, 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
 }
 
-BOOST_FIXTURE_TEST_SUITE(FilteredSearchTest, LuceneTestFixture)
+typedef LuceneTestFixture FilteredSearchTest;
 
-BOOST_AUTO_TEST_CASE(testFilteredSearch)
+TEST_F(FilteredSearchTest, testFilteredSearch)
 {
     bool enforceSingleSegment = true;
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
@@ -109,5 +109,3 @@ BOOST_AUTO_TEST_CASE(testFilteredSearch)
     writer->setMaxBufferedDocs(10);
     searchFiltered(writer, directory, filter, enforceSingleSegment);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

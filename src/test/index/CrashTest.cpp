@@ -18,13 +18,13 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(CrashTest, LuceneTestFixture)
+typedef LuceneTestFixture CrashTest;
 
 static IndexWriterPtr initIndex(MockRAMDirectoryPtr dir)
 {
     dir->setLockFactory(NoLockFactory::getNoLockFactory());
 
-    IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);      
+    IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
 
     writer->setMaxBufferedDocs(10);
     boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
@@ -52,16 +52,16 @@ static void crash(IndexWriterPtr writer)
     dir->clearCrash();
 }
 
-BOOST_AUTO_TEST_CASE(testCrashWhileIndexing)
+TEST_F(CrashTest, testCrashWhileIndexing)
 {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     crash(writer);
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    BOOST_CHECK(reader->numDocs() < 157);
+    EXPECT_TRUE(reader->numDocs() < 157);
 }
 
-BOOST_AUTO_TEST_CASE(testWriterAfterCrash)
+TEST_F(CrashTest, testWriterAfterCrash)
 {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
@@ -69,75 +69,73 @@ BOOST_AUTO_TEST_CASE(testWriterAfterCrash)
     crash(writer);
     writer = initIndex();
     writer->close();
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    BOOST_CHECK(reader->numDocs() < 314);
+    EXPECT_TRUE(reader->numDocs() < 314);
 }
 
-BOOST_AUTO_TEST_CASE(testCrashAfterReopen)
+TEST_F(CrashTest, testCrashAfterReopen)
 {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close();
     writer = initIndex(dir);
-    BOOST_CHECK_EQUAL(314, writer->maxDoc());
+    EXPECT_EQ(314, writer->maxDoc());
     crash(writer);
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    BOOST_CHECK(reader->numDocs() >= 157);
+    EXPECT_TRUE(reader->numDocs() >= 157);
 }
 
-BOOST_AUTO_TEST_CASE(testCrashAfterClose)
+TEST_F(CrashTest, testCrashAfterClose)
 {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close();
     dir->crash();
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    BOOST_CHECK_EQUAL(157, reader->numDocs());
+    EXPECT_EQ(157, reader->numDocs());
 }
 
-BOOST_AUTO_TEST_CASE(testCrashAfterCloseNoWait)
+TEST_F(CrashTest, testCrashAfterCloseNoWait)
 {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
     dir->crash();
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    BOOST_CHECK_EQUAL(157, reader->numDocs());
+    EXPECT_EQ(157, reader->numDocs());
 }
 
-BOOST_AUTO_TEST_CASE(testCrashReaderDeletes)
+TEST_F(CrashTest, testCrashReaderDeletes)
 {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
     reader->deleteDocument(3);
-    
+
     dir->crash();
-    
+
     reader = IndexReader::open(dir, false);
-    BOOST_CHECK_EQUAL(157, reader->numDocs());
+    EXPECT_EQ(157, reader->numDocs());
 }
 
-BOOST_AUTO_TEST_CASE(testCrashReaderDeletesAfterClose)
+TEST_F(CrashTest, testCrashReaderDeletesAfterClose)
 {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
-    
+
     IndexReaderPtr reader = IndexReader::open(dir, false);
     reader->deleteDocument(3);
     reader->close();
-    
-    dir->crash();
-    
-    reader = IndexReader::open(dir, false);
-    BOOST_CHECK_EQUAL(156, reader->numDocs());
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    dir->crash();
+
+    reader = IndexReader::open(dir, false);
+    EXPECT_EQ(156, reader->numDocs());
+}

@@ -19,17 +19,15 @@
 
 using namespace Lucene;
 
-class TermRangeFilterFixture : public BaseTestRangeFilterFixture
+class TermRangeFilterTest : public BaseTestRangeFilterFixture
 {
 public:
-    virtual ~TermRangeFilterFixture()
+    virtual ~TermRangeFilterTest()
     {
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(TermRangeFilterTest, TermRangeFilterFixture)
-
-BOOST_AUTO_TEST_CASE(testRangeFilterId)
+TEST_F(TermRangeFilterTest, testRangeFilterId)
 {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
@@ -42,80 +40,80 @@ BOOST_AUTO_TEST_CASE(testRangeFilterId)
 
     int32_t numDocs = reader->numDocs();
 
-    BOOST_CHECK_EQUAL(numDocs, 1 + maxId - minId);
+    EXPECT_EQ(numDocs, 1 + maxId - minId);
 
     QueryPtr q = newLucene<TermQuery>(newLucene<Term>(L"body", L"body"));
 
     // test id, bounded on both ends
-    
+
     Collection<ScoreDocPtr> result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs, result.size());
+    EXPECT_EQ(numDocs, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, true, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, false, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 2, result.size());
+    EXPECT_EQ(numDocs - 2, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, maxIP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1 + maxId - medId, result.size());
+    EXPECT_EQ(1 + maxId - medId, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, medIP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1 + medId - minId, result.size());
+    EXPECT_EQ(1 + medId - minId, result.size());
 
     // unbounded id
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, VariantUtils::null(), true, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs, result.size());
+    EXPECT_EQ(numDocs, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", VariantUtils::null(), maxIP, false, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs, result.size());
+    EXPECT_EQ(numDocs, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, VariantUtils::null(), false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", VariantUtils::null(), maxIP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, maxIP, true, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(maxId - medId, result.size());
+    EXPECT_EQ(maxId - medId, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, medIP, false, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(medId - minId, result.size());
+    EXPECT_EQ(medId - minId, result.size());
 
     // very small sets
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, minIP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, medIP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", maxIP, maxIP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, minIP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", VariantUtils::null(), minIP, false, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", maxIP, maxIP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", maxIP, VariantUtils::null(), true, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
 
     result = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, medIP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
 }
 
-BOOST_AUTO_TEST_CASE(testRangeFilterIdCollating)
+TEST_F(TermRangeFilterTest, testRangeFilterIdCollating)
 {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
     CollatorPtr c = newLucene<Collator>(std::locale());
-    
+
     int32_t medId = ((maxId - minId) / 2);
 
     String minIP = pad(minId);
@@ -124,74 +122,74 @@ BOOST_AUTO_TEST_CASE(testRangeFilterIdCollating)
 
     int32_t numDocs = reader->numDocs();
 
-    BOOST_CHECK_EQUAL(numDocs, 1 + maxId - minId);
-    
+    EXPECT_EQ(numDocs, 1 + maxId - minId);
+
     QueryPtr q = newLucene<TermQuery>(newLucene<Term>(L"body", L"body"));
 
     // test id, bounded on both ends
 
     int32_t numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs, numHits);
+    EXPECT_EQ(numDocs, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, true, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, false, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, maxIP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 2, numHits);
+    EXPECT_EQ(numDocs - 2, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, maxIP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1 + maxId - medId, numHits);
+    EXPECT_EQ(1 + maxId - medId, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, medIP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1 + medId - minId, numHits);
+    EXPECT_EQ(1 + medId - minId, numHits);
 
     // unbounded id
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, VariantUtils::null(), true, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs, numHits);
+    EXPECT_EQ(numDocs, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", VariantUtils::null(), maxIP, false, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs, numHits);
+    EXPECT_EQ(numDocs, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, VariantUtils::null(), false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", VariantUtils::null(), maxIP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, maxIP, true, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(maxId - medId, numHits);
+    EXPECT_EQ(maxId - medId, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, medIP, false, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(medId - minId, numHits);
+    EXPECT_EQ(medId - minId, numHits);
 
     // very small sets
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, minIP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(0, numHits);
+    EXPECT_EQ(0, numHits);
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, medIP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(0, numHits);
+    EXPECT_EQ(0, numHits);
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", maxIP, maxIP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(0, numHits);
+    EXPECT_EQ(0, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", minIP, minIP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", VariantUtils::null(), minIP, false, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", maxIP, maxIP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", maxIP, VariantUtils::null(), true, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
 
     numHits = search->search(q,  newLucene<TermRangeFilter>(L"id", medIP, medIP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
 }
 
-BOOST_AUTO_TEST_CASE(testRangeFilterRand)
+TEST_F(TermRangeFilterTest, testRangeFilterRand)
 {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
@@ -201,57 +199,57 @@ BOOST_AUTO_TEST_CASE(testRangeFilterRand)
 
     int32_t numDocs = reader->numDocs();
 
-    BOOST_CHECK_EQUAL(numDocs, 1 + maxId - minId);
-    
+    EXPECT_EQ(numDocs, 1 + maxId - minId);
+
     QueryPtr q = newLucene<TermQuery>(newLucene<Term>(L"body", L"body"));
-    
+
     // test extremes, bounded on both ends
 
     Collection<ScoreDocPtr> result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs, result.size());
+    EXPECT_EQ(numDocs, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, true, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, false, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 2, result.size());
+    EXPECT_EQ(numDocs - 2, result.size());
 
     // unbounded
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, VariantUtils::null(), true, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs, result.size());
+    EXPECT_EQ(numDocs, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", VariantUtils::null(), maxRP, false, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs, result.size());
+    EXPECT_EQ(numDocs, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, VariantUtils::null(), false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", VariantUtils::null(), maxRP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(numDocs - 1, result.size());
+    EXPECT_EQ(numDocs - 1, result.size());
 
     // very small sets
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, minRP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", maxRP, maxRP, false, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, minRP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", VariantUtils::null(), minRP, false, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
 
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", maxRP, maxRP, true, true), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
     result = search->search(q, newLucene<TermRangeFilter>(L"rand", maxRP, VariantUtils::null(), true, false), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, result.size());
+    EXPECT_EQ(1, result.size());
 }
 
-BOOST_AUTO_TEST_CASE(testRangeFilterRandCollating)
+TEST_F(TermRangeFilterTest, testRangeFilterRandCollating)
 {
     // using the unsigned index because collation seems to ignore hyphens
     IndexReaderPtr reader = IndexReader::open(unsignedIndex->index, true);
@@ -264,54 +262,52 @@ BOOST_AUTO_TEST_CASE(testRangeFilterRandCollating)
 
     int32_t numDocs = reader->numDocs();
 
-    BOOST_CHECK_EQUAL(numDocs, 1 + maxId - minId);
-    
+    EXPECT_EQ(numDocs, 1 + maxId - minId);
+
     QueryPtr q = newLucene<TermQuery>(newLucene<Term>(L"body", L"body"));
-    
+
     // test extremes, bounded on both ends
 
     int32_t numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs, numHits);
+    EXPECT_EQ(numDocs, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, true, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, false, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, maxRP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 2, numHits);
+    EXPECT_EQ(numDocs - 2, numHits);
 
     // unbounded
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, VariantUtils::null(), true, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs, numHits);
+    EXPECT_EQ(numDocs, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", VariantUtils::null(), maxRP, false, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs, numHits);
+    EXPECT_EQ(numDocs, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, VariantUtils::null(), false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", VariantUtils::null(), maxRP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(numDocs - 1, numHits);
+    EXPECT_EQ(numDocs - 1, numHits);
 
     // very small sets
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, minRP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(0, numHits);
+    EXPECT_EQ(0, numHits);
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", maxRP, maxRP, false, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(0, numHits);
+    EXPECT_EQ(0, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", minRP, minRP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", VariantUtils::null(), minRP, false, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
 
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", maxRP, maxRP, true, true, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
     numHits = search->search(q, newLucene<TermRangeFilter>(L"rand", maxRP, VariantUtils::null(), true, false, c), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(1, numHits);
+    EXPECT_EQ(1, numHits);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -19,70 +19,91 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(DirectoryTest, LuceneTestFixture)
+typedef LuceneTestFixture DirectoryTest;
 
-BOOST_AUTO_TEST_CASE(testDetectDirectoryClose)
+TEST_F(DirectoryTest, testDetectDirectoryClose)
 {
     RAMDirectoryPtr dir(newLucene<RAMDirectory>());
     dir->close();
-    BOOST_CHECK_EXCEPTION(dir->createOutput(L"test"), LuceneException, check_exception(LuceneException::AlreadyClosed));
+    try
+    {
+        dir->createOutput(L"test");
+    }
+    catch (LuceneException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
+    }
 }
 
-BOOST_AUTO_TEST_CASE(testDetectFSDirectoryClose)
+TEST_F(DirectoryTest, testDetectFSDirectoryClose)
 {
     DirectoryPtr dir = FSDirectory::open(getTempDir());
     dir->close();
-    BOOST_CHECK_EXCEPTION(dir->createOutput(L"test"), LuceneException, check_exception(LuceneException::AlreadyClosed));
+    try
+    {
+        dir->createOutput(L"test");
+    }
+    catch (LuceneException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
+    }
 }
 
 template < class FSDirectory1, class FSDirectory2 >
 void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const String& fileName, const String& lockName)
 {
-    BOOST_CHECK_NO_THROW(first.ensureOpen());
-    
+    EXPECT_NO_THROW(first.ensureOpen());
+
     IndexOutputPtr out = first.createOutput(fileName);
-    BOOST_CHECK_NO_THROW(out->writeByte(123));
-    BOOST_CHECK_NO_THROW(out->close());
-    
-    BOOST_CHECK_NO_THROW(first.ensureOpen());
-    BOOST_CHECK(first.fileExists(fileName));
-    BOOST_CHECK_EQUAL(first.fileLength(fileName), 1);
-    
+    EXPECT_NO_THROW(out->writeByte(123));
+    EXPECT_NO_THROW(out->close());
+
+    EXPECT_NO_THROW(first.ensureOpen());
+    EXPECT_TRUE(first.fileExists(fileName));
+    EXPECT_EQ(first.fileLength(fileName), 1);
+
     // don't test read on MMapDirectory, since it can't really be closed and will cause a failure to delete the file.
     if (!first.isMMapDirectory())
     {
         IndexInputPtr input = first.openInput(fileName);
-        BOOST_CHECK_EQUAL(input->readByte(), 123);
-        BOOST_CHECK_NO_THROW(input->close());
+        EXPECT_EQ(input->readByte(), 123);
+        EXPECT_NO_THROW(input->close());
     }
-    
-    BOOST_CHECK_NO_THROW(second.ensureOpen());
-    BOOST_CHECK(second.fileExists(fileName));
-    BOOST_CHECK_EQUAL(second.fileLength(fileName), 1);
-    
+
+    EXPECT_NO_THROW(second.ensureOpen());
+    EXPECT_TRUE(second.fileExists(fileName));
+    EXPECT_EQ(second.fileLength(fileName), 1);
+
     if (!second.isMMapDirectory())
     {
         IndexInputPtr input = second.openInput(fileName);
-        BOOST_CHECK_EQUAL(input->readByte(), 123);
-        BOOST_CHECK_NO_THROW(input->close());
+        EXPECT_EQ(input->readByte(), 123);
+        EXPECT_NO_THROW(input->close());
     }
-    
+
     // delete with a different dir
     second.deleteFile(fileName);
-    
-    BOOST_CHECK(!first.fileExists(fileName));
-    BOOST_CHECK(!second.fileExists(fileName));
-    
+
+    EXPECT_TRUE(!first.fileExists(fileName));
+    EXPECT_TRUE(!second.fileExists(fileName));
+
     LockPtr lock = first.makeLock(lockName);
-    BOOST_CHECK(lock->obtain());
-    
+    EXPECT_TRUE(lock->obtain());
+
     LockPtr lock2 = first.makeLock(lockName);
-    BOOST_CHECK_EXCEPTION(lock2->obtain(1), LuceneException, check_exception(LuceneException::LockObtainFailed));
-    
+    try
+    {
+        lock2->obtain(1);
+    }
+    catch (LuceneException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
+    }
+
     lock->release();
-    
+
     lock = second.makeLock(lockName);
-    BOOST_CHECK(lock->obtain());
+    EXPECT_TRUE(lock->obtain());
     lock->release();
 }
 
@@ -109,7 +130,7 @@ namespace TestDirectInstantiation
 
 // Test that different instances of FSDirectory can coexist on the same
 // path, can read, write, and lock files.
-BOOST_AUTO_TEST_CASE(testDirectInstantiation)
+TEST_F(DirectoryTest, testDirectInstantiation)
 {
     TestDirectInstantiation::TestableSimpleFSDirectory fsDir(getTempDir());
     fsDir.ensureOpen();
@@ -121,14 +142,14 @@ BOOST_AUTO_TEST_CASE(testDirectInstantiation)
     TestInstantiationPair(mmapDir, fsDir, L"foo.1", L"foo1.lck");
 }
 
-BOOST_AUTO_TEST_CASE(testDontCreate)
+TEST_F(DirectoryTest, testDontCreate)
 {
     String path(FileUtils::joinPath(getTempDir(), L"doesnotexist"));
     try
     {
-        BOOST_CHECK(!FileUtils::fileExists(path));
+        EXPECT_TRUE(!FileUtils::fileExists(path));
         SimpleFSDirectoryPtr fsDir(newLucene<SimpleFSDirectory>(path));
-        BOOST_CHECK(!FileUtils::fileExists(path));
+        EXPECT_TRUE(!FileUtils::fileExists(path));
     }
     catch (...)
     {
@@ -140,22 +161,22 @@ void checkDirectoryFilter(DirectoryPtr dir)
 {
     String name(L"file");
     dir->createOutput(name)->close();
-    BOOST_CHECK(dir->fileExists(name));
+    EXPECT_TRUE(dir->fileExists(name));
     HashSet<String> dirFiles(dir->listAll());
-    BOOST_CHECK(dirFiles.contains(name));
+    EXPECT_TRUE(dirFiles.contains(name));
 }
 
-BOOST_AUTO_TEST_CASE(testRAMDirectoryFilter)
+TEST_F(DirectoryTest, testRAMDirectoryFilter)
 {
     checkDirectoryFilter(newLucene<RAMDirectory>());
 }
 
-BOOST_AUTO_TEST_CASE(testFSDirectoryFilter)
+TEST_F(DirectoryTest, testFSDirectoryFilter)
 {
     checkDirectoryFilter(newLucene<SimpleFSDirectory>(getTempDir()));
 }
 
-BOOST_AUTO_TEST_CASE(testCopySubdir)
+TEST_F(DirectoryTest, testCopySubdir)
 {
     String path(FileUtils::joinPath(getTempDir(), L"testsubdir"));
     try
@@ -164,7 +185,7 @@ BOOST_AUTO_TEST_CASE(testCopySubdir)
         String subpath(FileUtils::joinPath(path, L"subdir"));
         FileUtils::createDirectory(subpath);
         SimpleFSDirectoryPtr fsDir(newLucene<SimpleFSDirectory>(path));
-        BOOST_CHECK(newLucene<RAMDirectory>(fsDir)->listAll().empty());
+        EXPECT_TRUE(newLucene<RAMDirectory>(fsDir)->listAll().empty());
     }
     catch (...)
     {
@@ -172,7 +193,7 @@ BOOST_AUTO_TEST_CASE(testCopySubdir)
     FileUtils::removeDirectory(path);
 }
 
-BOOST_AUTO_TEST_CASE(testNotDirectory)
+TEST_F(DirectoryTest, testNotDirectory)
 {
     String path(FileUtils::joinPath(getTempDir(), L"testnotdir"));
     SimpleFSDirectoryPtr fsDir(newLucene<SimpleFSDirectory>(path));
@@ -180,13 +201,18 @@ BOOST_AUTO_TEST_CASE(testNotDirectory)
     {
         IndexOutputPtr out = fsDir->createOutput(L"afile");
         out->close();
-        BOOST_CHECK(fsDir->fileExists(L"afile"));
-        BOOST_CHECK_EXCEPTION(newLucene<SimpleFSDirectory>(FileUtils::joinPath(path, L"afile")), LuceneException, check_exception(LuceneException::NoSuchDirectory));
+        EXPECT_TRUE(fsDir->fileExists(L"afile"));
+        try
+        {
+            newLucene<SimpleFSDirectory>(FileUtils::joinPath(path, L"afile"));
+        }
+        catch (LuceneException& e)
+        {
+            EXPECT_TRUE(check_exception(LuceneException::NoSuchDirectory)(e));
+        }
     }
     catch (...)
     {
     }
     FileUtils::removeDirectory(path);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

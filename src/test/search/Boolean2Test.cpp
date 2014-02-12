@@ -34,10 +34,10 @@ using namespace Lucene;
 
 /// Test BooleanQuery2 against BooleanQuery by overriding the standard query parser.
 /// This also tests the scoring order of BooleanQuery.
-class Boolean2Fixture : public LuceneTestFixture
+class Boolean2Test : public LuceneTestFixture
 {
 public:
-    Boolean2Fixture()
+    Boolean2Test()
     {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -68,7 +68,7 @@ public:
             mulFactor *= 2;
         }
         while (docCount < 3000);
-        
+
         IndexWriterPtr w = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"field2", L"xxx", Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -84,8 +84,8 @@ public:
         w->close();
         bigSearcher = newLucene<IndexSearcher>(reader);
     }
-    
-    virtual ~Boolean2Fixture()
+
+    virtual ~Boolean2Test()
     {
         reader->close();
         dir2->close();
@@ -98,7 +98,7 @@ protected:
     DirectoryPtr dir2;
     int32_t mulFactor;
     Collection<String> docFields;
-  
+
 public:
     static const int32_t NUM_EXTRA_DOCS;
     static const String field;
@@ -108,7 +108,7 @@ public:
     {
         return newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, field, newLucene<WhitespaceAnalyzer>())->parse(queryText);
     }
-    
+
     void queriesTest(const String& queryText, Collection<int32_t> expDocNrs)
     {
         QueryPtr query1 = makeQuery(queryText);
@@ -121,11 +121,11 @@ public:
         searcher->search(query2, FilterPtr(), collector);
         Collection<ScoreDocPtr> hits2 = collector->topDocs()->scoreDocs;
 
-        BOOST_CHECK_EQUAL(mulFactor * collector->getTotalHits(), bigSearcher->search(query1, 1)->totalHits);
+        EXPECT_EQ(mulFactor * collector->getTotalHits(), bigSearcher->search(query1, 1)->totalHits);
 
         CheckHits::checkHitsQuery(query2, hits1, hits2, expDocNrs);
     }
-    
+
     /// Random rnd is passed in so that the exact same random query may be created more than once.
     BooleanQueryPtr randBoolQuery(RandomPtr rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
     {
@@ -142,7 +142,7 @@ public:
                 q = newLucene<WildcardQuery>(newLucene<Term>(field, L"w*"));
             else
                 q = randBoolQuery(rnd, allowMust, level - 1, field, vals);
-            
+
             int32_t r = rnd->nextInt(10);
             BooleanClause::Occur occur = BooleanClause::SHOULD;
             if (r < 2)
@@ -154,75 +154,73 @@ public:
                 else
                     occur = BooleanClause::SHOULD;
             }
-            
+
             current->add(q, occur);
         }
         return current;
     }
 };
 
-const String Boolean2Fixture::field = L"field";
-const int32_t Boolean2Fixture::NUM_EXTRA_DOCS = 6000;
+const String Boolean2Test::field = L"field";
+const int32_t Boolean2Test::NUM_EXTRA_DOCS = 6000;
 
-BOOST_FIXTURE_TEST_SUITE(Boolean2Test, Boolean2Fixture)
-
-BOOST_AUTO_TEST_CASE(testQueries01)
+TEST_F(Boolean2Test, testQueries01)
 {
     String queryText = L"+w3 +xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3);
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries02)
+TEST_F(Boolean2Test, testQueries02)
 {
     String queryText = L"+w3 xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3, 1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries03)
+TEST_F(Boolean2Test, testQueries03)
 {
     String queryText = L"w3 xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3, 1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries04)
+TEST_F(Boolean2Test, testQueries04)
 {
     String queryText = L"w3 -xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries05)
+TEST_F(Boolean2Test, testQueries05)
 {
     String queryText = L"+w3 -xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries06)
+TEST_F(Boolean2Test, testQueries06)
 {
     String queryText = L"+w3 -xx -w5";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(1);
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries07)
+TEST_F(Boolean2Test, testQueries07)
 {
     String queryText = L"-w3 -xx -w5";
     Collection<int32_t> expDocNrs = Collection<int32_t>::newInstance();
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries08)
+TEST_F(Boolean2Test, testQueries08)
 {
     String queryText = L"+w3 xx -w5";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3, 1);
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testQueries09)
+TEST_F(Boolean2Test, testQueries09)
 {
     String queryText = L"+w3 +xx +w2 zz";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3);
@@ -237,7 +235,7 @@ namespace TestQueries10
         virtual ~OverlapSimilarity()
         {
         }
-    
+
     public:
         virtual double coord(int32_t overlap, int32_t maxOverlap)
         {
@@ -246,16 +244,16 @@ namespace TestQueries10
     };
 }
 
-BOOST_AUTO_TEST_CASE(testQueries10)
+TEST_F(Boolean2Test, testQueries10)
 {
     String queryText = L"+w3 +xx +w2 zz";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3);
     searcher->setSimilarity(newLucene<TestQueries10::OverlapSimilarity>());
-    
+
     queriesTest(queryText, expDocNrs);
 }
 
-BOOST_AUTO_TEST_CASE(testRandomQueries)
+TEST_F(Boolean2Test, testRandomQueries)
 {
     RandomPtr rnd = newLucene<Random>(17);
     Collection<String> vals = newCollection<String>(L"w1", L"w2", L"w3", L"w4", L"w5", L"xx", L"yy", L"zzz");
@@ -286,8 +284,6 @@ BOOST_AUTO_TEST_CASE(testRandomQueries)
         q3->add(q1, BooleanClause::SHOULD);
         q3->add(newLucene<PrefixQuery>(newLucene<Term>(L"field2", L"b")), BooleanClause::SHOULD);
         TopDocsPtr hits4 = bigSearcher->search(q3, 1);
-        BOOST_CHECK_EQUAL(mulFactor * collector->getTotalHits() + NUM_EXTRA_DOCS / 2, hits4->totalHits);
+        EXPECT_EQ(mulFactor * collector->getTotalHits() + NUM_EXTRA_DOCS / 2, hits4->totalHits);
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -16,59 +16,55 @@
 
 using namespace Lucene;
 
-class FieldInfosTestFixture : public LuceneTestFixture, public DocHelper
+class FieldInfosTest : public LuceneTestFixture, public DocHelper
 {
 public:
-    virtual ~FieldInfosTestFixture()
+    virtual ~FieldInfosTest()
     {
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(FieldInfosTest, FieldInfosTestFixture)
-
-BOOST_AUTO_TEST_CASE(testFieldInfos)
+TEST_F(FieldInfosTest, testFieldInfos)
 {
     DocumentPtr testDoc = newLucene<Document>();
     DocHelper::setupDoc(testDoc);
-    
+
     // Positive test of FieldInfos
-    BOOST_CHECK(testDoc);
+    EXPECT_TRUE(testDoc);
     FieldInfosPtr fieldInfos = newLucene<FieldInfos>();
     fieldInfos->add(testDoc);
     // Since the complement is stored as well in the fields map
-    BOOST_CHECK(fieldInfos->size() == DocHelper::all.size()); // this is all because we are using the no-arg constructor
+    EXPECT_TRUE(fieldInfos->size() == DocHelper::all.size()); // this is all because we are using the no-arg constructor
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     String name = L"testFile";
     IndexOutputPtr output = dir->createOutput(name);
-    BOOST_CHECK(output);
+    EXPECT_TRUE(output);
     // Use a RAMOutputStream
 
     fieldInfos->write(output);
     output->close();
-    BOOST_CHECK(output->length() > 0);
+    EXPECT_TRUE(output->length() > 0);
     FieldInfosPtr readIn = newLucene<FieldInfos>(dir, name);
-    BOOST_CHECK(fieldInfos->size() == readIn->size());
+    EXPECT_TRUE(fieldInfos->size() == readIn->size());
     FieldInfoPtr info = readIn->fieldInfo(L"textField1");
-    BOOST_CHECK(info);
-    BOOST_CHECK(!info->storeTermVector);
-    BOOST_CHECK(!info->omitNorms);
+    EXPECT_TRUE(info);
+    EXPECT_TRUE(!info->storeTermVector);
+    EXPECT_TRUE(!info->omitNorms);
 
     info = readIn->fieldInfo(L"textField2");
-    BOOST_CHECK(info);
-    BOOST_CHECK(info->storeTermVector);
-    BOOST_CHECK(!info->omitNorms);
+    EXPECT_TRUE(info);
+    EXPECT_TRUE(info->storeTermVector);
+    EXPECT_TRUE(!info->omitNorms);
 
     info = readIn->fieldInfo(L"textField3");
-    BOOST_CHECK(info);
-    BOOST_CHECK(!info->storeTermVector);
-    BOOST_CHECK(info->omitNorms);
+    EXPECT_TRUE(info);
+    EXPECT_TRUE(!info->storeTermVector);
+    EXPECT_TRUE(info->omitNorms);
 
     info = readIn->fieldInfo(L"omitNorms");
-    BOOST_CHECK(info);
-    BOOST_CHECK(!info->storeTermVector);
-    BOOST_CHECK(info->omitNorms);
+    EXPECT_TRUE(info);
+    EXPECT_TRUE(!info->storeTermVector);
+    EXPECT_TRUE(info->omitNorms);
 
     dir->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

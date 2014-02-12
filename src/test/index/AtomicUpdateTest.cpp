@@ -22,7 +22,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(AtomicUpdateTest, LuceneTestFixture)
+typedef LuceneTestFixture AtomicUpdateTest;
 
 class MockIndexWriter : public IndexWriter
 {
@@ -31,7 +31,7 @@ public:
     {
         random = newLucene<Random>();
     }
-    
+
     virtual ~MockIndexWriter()
     {
     }
@@ -48,37 +48,37 @@ public:
     }
 };
 
-DECLARE_SHARED_PTR(TimedThread)
-DECLARE_SHARED_PTR(IndexerThread)
-DECLARE_SHARED_PTR(SearcherThread)
+DECLARE_SHARED_PTR(AtomicTimedThread)
+DECLARE_SHARED_PTR(AtomicIndexerThread)
+DECLARE_SHARED_PTR(AtomicSearcherThread)
 
-class TimedThread : public LuceneThread
+class AtomicTimedThread : public LuceneThread
 {
 public:
-    TimedThread()
+    AtomicTimedThread()
     {
         this->failed = false;
     }
-    
-    virtual ~TimedThread()
+
+    virtual ~AtomicTimedThread()
     {
     }
-    
-    LUCENE_CLASS(TimedThread);
-    
+
+    LUCENE_CLASS(AtomicTimedThread);
+
 public:
     bool failed;
 
 protected:
     static const int32_t RUN_TIME_SEC;
-    
+
 public:
     virtual void doWork() = 0;
-    
+
     virtual void run()
     {
         int64_t stopTime = MiscUtils::currentTimeMillis() + 1000 * RUN_TIME_SEC;
-        
+
         try
         {
             while ((int64_t)MiscUtils::currentTimeMillis() < stopTime && !failed)
@@ -87,30 +87,30 @@ public:
         catch (LuceneException& e)
         {
             failed = true;
-            BOOST_FAIL("Unexpected exception: " << e.getError());
+            FAIL() << "Unexpected exception: " << e.getError();
         }
     }
 };
 
-const int32_t TimedThread::RUN_TIME_SEC = 3;
+const int32_t AtomicTimedThread::RUN_TIME_SEC = 3;
 
-class IndexerThread : public TimedThread
+class AtomicIndexerThread : public AtomicTimedThread
 {
 public:
-    IndexerThread(IndexWriterPtr writer)
+    AtomicIndexerThread(IndexWriterPtr writer)
     {
         this->writer = writer;
     }
-    
-    virtual ~IndexerThread()
+
+    virtual ~AtomicIndexerThread()
     {
     }
-    
-    LUCENE_CLASS(IndexerThread);
-    
+
+    LUCENE_CLASS(AtomicIndexerThread);
+
 public:
     IndexWriterPtr writer;
-    
+
 public:
     virtual void doWork()
     {
@@ -125,29 +125,29 @@ public:
     }
 };
 
-class SearcherThread : public TimedThread
+class AtomicSearcherThread : public AtomicTimedThread
 {
 public:
-    SearcherThread(DirectoryPtr directory)
+    AtomicSearcherThread(DirectoryPtr directory)
     {
         this->directory = directory;
     }
-    
-    virtual ~SearcherThread()
+
+    virtual ~AtomicSearcherThread()
     {
     }
-    
-    LUCENE_CLASS(SearcherThread);
-    
+
+    LUCENE_CLASS(AtomicSearcherThread);
+
 protected:
     DirectoryPtr directory;
-    
+
 public:
     virtual void doWork()
     {
         IndexReaderPtr r = IndexReader::open(directory, true);
         if (r->numDocs() != 100)
-            BOOST_FAIL("num docs failure");
+            FAIL() << "num docs failure";
         r->close();
     }
 };
@@ -155,14 +155,14 @@ public:
 // Run one indexer and 2 searchers against single index as stress test.
 static void runTest(DirectoryPtr directory)
 {
-    Collection<TimedThreadPtr> threads(Collection<TimedThreadPtr>::newInstance(4));
+    Collection<AtomicTimedThreadPtr> threads(Collection<AtomicTimedThreadPtr>::newInstance(4));
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
-    
+
     IndexWriterPtr writer = newLucene<MockIndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
-    
+
     writer->setMaxBufferedDocs(7);
     writer->setMergeFactor(3);
-    
+
     // Establish a base index of 100 docs
     for (int32_t i = 0; i < 100; ++i)
     {
@@ -174,42 +174,42 @@ static void runTest(DirectoryPtr directory)
         writer->addDocument(d);
     }
     writer->commit();
-    
+
     IndexReaderPtr r = IndexReader::open(directory, true);
-    BOOST_CHECK_EQUAL(100, r->numDocs());
+    EXPECT_EQ(100, r->numDocs());
     r->close();
 
-    IndexerThreadPtr indexerThread1 = newLucene<IndexerThread>(writer);
+    AtomicIndexerThreadPtr indexerThread1 = newLucene<AtomicIndexerThread>(writer);
     threads[0] = indexerThread1;
     indexerThread1->start();
 
-    IndexerThreadPtr indexerThread2 = newLucene<IndexerThread>(writer);
+    AtomicIndexerThreadPtr indexerThread2 = newLucene<AtomicIndexerThread>(writer);
     threads[1] = indexerThread2;
     indexerThread2->start();
 
-    SearcherThreadPtr searcherThread1 = newLucene<SearcherThread>(directory);
+    AtomicSearcherThreadPtr searcherThread1 = newLucene<AtomicSearcherThread>(directory);
     threads[2] = searcherThread1;
     searcherThread1->start();
 
-    SearcherThreadPtr searcherThread2 = newLucene<SearcherThread>(directory);
+    AtomicSearcherThreadPtr searcherThread2 = newLucene<AtomicSearcherThread>(directory);
     threads[3] = searcherThread2;
     searcherThread2->start();
-    
+
     indexerThread1->join();
     indexerThread2->join();
     searcherThread1->join();
     searcherThread2->join();
-    
+
     writer->close();
 
-    BOOST_CHECK(!indexerThread1->failed); // hit unexpected exception in indexer1
-    BOOST_CHECK(!indexerThread2->failed); // hit unexpected exception in indexer2
-    BOOST_CHECK(!searcherThread1->failed); // hit unexpected exception in search1
-    BOOST_CHECK(!searcherThread2->failed); // hit unexpected exception in search2
+    EXPECT_TRUE(!indexerThread1->failed); // hit unexpected exception in indexer1
+    EXPECT_TRUE(!indexerThread2->failed); // hit unexpected exception in indexer2
+    EXPECT_TRUE(!searcherThread1->failed); // hit unexpected exception in search1
+    EXPECT_TRUE(!searcherThread2->failed); // hit unexpected exception in search2
 }
 
 /// Run above stress test against RAMDirectory.
-BOOST_AUTO_TEST_CASE(testAtomicUpdatesRAMDirectory)
+TEST_F(AtomicUpdateTest, testAtomicUpdatesRAMDirectory)
 {
     DirectoryPtr directory = newLucene<MockRAMDirectory>();
     runTest(directory);
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(testAtomicUpdatesRAMDirectory)
 }
 
 /// Run above stress test against FSDirectory
-BOOST_AUTO_TEST_CASE(testAtomicUpdatesFSDirectory)
+TEST_F(AtomicUpdateTest, testAtomicUpdatesFSDirectory)
 {
     String dirPath(getTempDir(L"lucene.test.atomic"));
     DirectoryPtr directory = FSDirectory::open(dirPath);
@@ -225,5 +225,3 @@ BOOST_AUTO_TEST_CASE(testAtomicUpdatesFSDirectory)
     directory->close();
     FileUtils::removeDirectory(dirPath);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

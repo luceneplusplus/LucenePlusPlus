@@ -32,7 +32,7 @@ public:
         this->doc = doc;
         this->score = score;
     }
-    
+
     virtual ~TestHit()
     {
     }
@@ -48,10 +48,10 @@ public:
     }
 };
 
-class TermScorerFixture : public LuceneTestFixture
+class TermScorerTest : public LuceneTestFixture
 {
 public:
-    TermScorerFixture()
+    TermScorerTest()
     {
         values = newCollection<String>(L"all", L"dogs dogs", L"like", L"playing", L"fetch", L"all");
         directory = newLucene<RAMDirectory>();
@@ -66,23 +66,21 @@ public:
         indexSearcher = newLucene<IndexSearcher>(directory, false);
         indexReader = indexSearcher->getIndexReader();
     }
-    
-    virtual ~TermScorerFixture()
+
+    virtual ~TermScorerTest()
     {
     }
 
 protected:
     static const String FIELD;
-    
+
     RAMDirectoryPtr directory;
     Collection<String> values;
     IndexSearcherPtr indexSearcher;
     IndexReaderPtr indexReader;
 };
 
-const String TermScorerFixture::FIELD = L"field";
-
-BOOST_FIXTURE_TEST_SUITE(TermScorerTest, TermScorerFixture)
+const String TermScorerTest::FIELD = L"field";
 
 namespace TestTermScorer
 {
@@ -94,36 +92,36 @@ namespace TestTermScorer
             this->docs = docs;
             this->base = 0;
         }
-        
+
         virtual ~TestCollector()
         {
         }
-    
+
     protected:
         int32_t base;
         ScorerPtr scorer;
         Collection<TestHitPtr> docs;
-    
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
-            this->scorer = scorer; 
+            this->scorer = scorer;
         }
-        
+
         virtual void collect(int32_t doc)
         {
             double score = scorer->score();
             doc = doc + base;
             docs.add(newLucene<TestHit>(doc, score));
-            BOOST_CHECK(score > 0);
-            BOOST_CHECK(doc == 0 || doc == 5);
+            EXPECT_TRUE(score > 0);
+            EXPECT_TRUE(doc == 0 || doc == 5);
         }
-        
+
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
         {
             base = docBase;
         }
-        
+
         virtual bool acceptsDocsOutOfOrder()
         {
             return true;
@@ -131,7 +129,7 @@ namespace TestTermScorer
     };
 }
 
-BOOST_AUTO_TEST_CASE(testTermScorer)
+TEST_F(TermScorerTest, testTermScorer)
 {
     TermPtr allTerm = newLucene<Term>(FIELD, L"all");
     TermQueryPtr termQuery = newLucene<TermQuery>(allTerm);
@@ -139,18 +137,18 @@ BOOST_AUTO_TEST_CASE(testTermScorer)
     WeightPtr weight = termQuery->weight(indexSearcher);
 
     TermScorerPtr ts = newLucene<TermScorer>(weight, indexReader->termDocs(allTerm), indexSearcher->getSimilarity(), indexReader->norms(FIELD));
-    
+
     // we have 2 documents with the term all in them, one document for all the other values
     Collection<TestHitPtr> docs = Collection<TestHitPtr>::newInstance();
 
     ts->score(newLucene<TestTermScorer::TestCollector>(docs));
-    
-    BOOST_CHECK_EQUAL(docs.size(), 2);
-    BOOST_CHECK_EQUAL(docs[0]->score, docs[1]->score);
-    BOOST_CHECK_CLOSE_FRACTION(docs[0]->score, 1.6931472, 0.000001);
+
+    EXPECT_EQ(docs.size(), 2);
+    EXPECT_EQ(docs[0]->score, docs[1]->score);
+    EXPECT_NEAR(docs[0]->score, 1.6931472, 0.000001);
 }
 
-BOOST_AUTO_TEST_CASE(testNext)
+TEST_F(TermScorerTest, testNext)
 {
     TermPtr allTerm = newLucene<Term>(FIELD, L"all");
     TermQueryPtr termQuery = newLucene<TermQuery>(allTerm);
@@ -158,14 +156,14 @@ BOOST_AUTO_TEST_CASE(testNext)
     WeightPtr weight = termQuery->weight(indexSearcher);
 
     TermScorerPtr ts = newLucene<TermScorer>(weight, indexReader->termDocs(allTerm), indexSearcher->getSimilarity(), indexReader->norms(FIELD));
-    BOOST_CHECK_NE(ts->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
-    BOOST_CHECK_CLOSE_FRACTION(ts->score(), 1.6931472, 0.000001);
-    BOOST_CHECK_NE(ts->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
-    BOOST_CHECK_CLOSE_FRACTION(ts->score(), 1.6931472, 0.000001);
-    BOOST_CHECK_EQUAL(ts->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_NE(ts->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_NEAR(ts->score(), 1.6931472, 0.000001);
+    EXPECT_NE(ts->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_NEAR(ts->score(), 1.6931472, 0.000001);
+    EXPECT_EQ(ts->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
 }
 
-BOOST_AUTO_TEST_CASE(testSkipTo)
+TEST_F(TermScorerTest, testSkipTo)
 {
     TermPtr allTerm = newLucene<Term>(FIELD, L"all");
     TermQueryPtr termQuery = newLucene<TermQuery>(allTerm);
@@ -173,8 +171,6 @@ BOOST_AUTO_TEST_CASE(testSkipTo)
     WeightPtr weight = termQuery->weight(indexSearcher);
 
     TermScorerPtr ts = newLucene<TermScorer>(weight, indexReader->termDocs(allTerm), indexSearcher->getSimilarity(), indexReader->norms(FIELD));
-    BOOST_CHECK_NE(ts->advance(3), DocIdSetIterator::NO_MORE_DOCS);
-    BOOST_CHECK_EQUAL(ts->docID(), 5);
+    EXPECT_NE(ts->advance(3), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_EQ(ts->docID(), 5);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

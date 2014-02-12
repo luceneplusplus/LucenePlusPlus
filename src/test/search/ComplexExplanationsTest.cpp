@@ -44,11 +44,11 @@ public:
     ItemizedFilter(const String& field, Collection<int32_t> terms) : FieldCacheTermsFilter(field, int2str(terms))
     {
     }
-    
+
     ItemizedFilter(Collection<int32_t> terms) : FieldCacheTermsFilter(L"KEY", int2str(terms))
     {
     }
-    
+
     virtual ~ItemizedFilter()
     {
     }
@@ -63,17 +63,17 @@ public:
     }
 };
 
-/// TestExplanations subclass that builds up super crazy complex queries on the assumption that 
+/// TestExplanations subclass that builds up super crazy complex queries on the assumption that
 /// if the explanations work out right for them, they should work for anything.
-class ComplexExplanationsFixture : public ExplanationsFixture
+class ComplexExplanationsTest : public ExplanationsFixture
 {
 public:
-    ComplexExplanationsFixture()
+    ComplexExplanationsTest()
     {
         searcher->setSimilarity(createQnorm1Similarity());
     }
-    
-    virtual ~ComplexExplanationsFixture()
+
+    virtual ~ComplexExplanationsTest()
     {
     }
 
@@ -84,9 +84,7 @@ protected:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ComplexExplanationsTest, ComplexExplanationsFixture)
-
-BOOST_AUTO_TEST_CASE(test1)
+TEST_F(ComplexExplanationsTest, test1)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
 
@@ -127,7 +125,7 @@ BOOST_AUTO_TEST_CASE(test1)
     qtest(q, newCollection<int32_t>(0, 1, 2));
 }
 
-BOOST_AUTO_TEST_CASE(test2)
+TEST_F(ComplexExplanationsTest, test2)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
 
@@ -169,31 +167,31 @@ BOOST_AUTO_TEST_CASE(test2)
     qtest(q, newCollection<int32_t>(0, 1, 2));
 }
 
-BOOST_AUTO_TEST_CASE(testT3)
+TEST_F(ComplexExplanationsTest, testT3)
 {
     bqtest(L"w1^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMA3)
+TEST_F(ComplexExplanationsTest, testMA3)
 {
     QueryPtr q = newLucene<MatchAllDocsQuery>();
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testFQ5)
+TEST_F(ComplexExplanationsTest, testFQ5)
 {
     bqtest(newLucene<FilteredQuery>(qp->parse(L"xx^0"), newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3))), newCollection<int32_t>(3));
 }
 
-BOOST_AUTO_TEST_CASE(testCSQ4)
+TEST_F(ComplexExplanationsTest, testCSQ4)
 {
     QueryPtr q = newLucene<ConstantScoreQuery>(newLucene<ItemizedFilter>(newCollection<int32_t>(3)));
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ10)
+TEST_F(ComplexExplanationsTest, testDMQ10)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"yy w5^100"));
@@ -202,7 +200,7 @@ BOOST_AUTO_TEST_CASE(testDMQ10)
     bqtest(q, newCollection<int32_t>(0, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMPQ7)
+TEST_F(ComplexExplanationsTest, testMPQ7)
 {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1")));
@@ -212,74 +210,74 @@ BOOST_AUTO_TEST_CASE(testMPQ7)
     bqtest(q, newCollection<int32_t>(0, 1, 2));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ12)
+TEST_F(ComplexExplanationsTest, testBQ12)
 {
     qtest(L"w1 w2^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ13)
+TEST_F(ComplexExplanationsTest, testBQ13)
 {
     qtest(L"w1 -w5^0.0", newCollection<int32_t>(1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ18)
+TEST_F(ComplexExplanationsTest, testBQ18)
 {
     qtest(L"+w1^0.0 w2", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ21)
+TEST_F(ComplexExplanationsTest, testBQ21)
 {
     bqtest(L"(+w1 w2)^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ22)
+TEST_F(ComplexExplanationsTest, testBQ22)
 {
     bqtest(L"(+w1^0.0 w2)^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testST3)
+TEST_F(ComplexExplanationsTest, testST3)
 {
     SpanQueryPtr q = st(L"w1");
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testST6)
+TEST_F(ComplexExplanationsTest, testST6)
 {
     SpanQueryPtr q = st(L"xx");
     q->setBoost(0);
     qtest(q, newCollection<int32_t>(2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testSF3)
+TEST_F(ComplexExplanationsTest, testSF3)
 {
     SpanQueryPtr q = sf(L"w1", 1);
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testSF7)
+TEST_F(ComplexExplanationsTest, testSF7)
 {
     SpanQueryPtr q = sf(L"xx", 3);
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testSNot3)
+TEST_F(ComplexExplanationsTest, testSNot3)
 {
     SpanQueryPtr q = snot(sf(L"w1", 10), st(L"QQ"));
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testSNot6)
+TEST_F(ComplexExplanationsTest, testSNot6)
 {
     SpanQueryPtr q = snot(sf(L"w1", 10), st(L"xx"));
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testSNot8)
+TEST_F(ComplexExplanationsTest, testSNot8)
 {
     SpanQueryPtr f = snear(L"w1", L"w3", 10, true);
     f->setBoost(0);
@@ -287,12 +285,10 @@ BOOST_AUTO_TEST_CASE(testSNot8)
     qtest(q, newCollection<int32_t>(0, 1, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testSNot9)
+TEST_F(ComplexExplanationsTest, testSNot9)
 {
     SpanQueryPtr t = st(L"xx");
     t->setBoost(0);
     SpanQueryPtr q = snot(snear(L"w1", L"w3", 10, true), t);
     qtest(q, newCollection<int32_t>(0, 1, 3));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

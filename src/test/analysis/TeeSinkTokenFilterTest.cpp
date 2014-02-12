@@ -52,24 +52,24 @@ public:
     }
 };
 
-class TeeSinkTokenFilterTestFixture : public BaseTokenStreamFixture
+class TeeSinkTokenFilterTest : public BaseTokenStreamFixture
 {
 public:
-    TeeSinkTokenFilterTestFixture()
+    TeeSinkTokenFilterTest()
     {
         tokens1 = newCollection<String>(L"The", L"quick", L"Burgundy", L"Fox", L"jumped", L"over", L"the", L"lazy", L"Red", L"Dogs");
         tokens2 = newCollection<String>(L"The", L"Lazy", L"Dogs", L"should", L"stay", L"on", L"the", L"porch");
-        
+
         for (int32_t i = 0; i < tokens1.size(); ++i)
             buffer1 << tokens1[i] << L" ";
         for (int32_t i = 0; i < tokens2.size(); ++i)
             buffer2 << tokens2[i] << L" ";
-        
+
         theFilter = newLucene<TheSinkFilter>();
         dogFilter = newLucene<DogSinkFilter>();
     }
-    
-    virtual ~TeeSinkTokenFilterTestFixture()
+
+    virtual ~TeeSinkTokenFilterTest()
     {
     }
 
@@ -78,19 +78,17 @@ protected:
     StringStream buffer2;
     Collection<String> tokens1;
     Collection<String> tokens2;
-    
+
     SinkFilterPtr theFilter;
     SinkFilterPtr dogFilter;
 };
 
-BOOST_FIXTURE_TEST_SUITE(TeeSinkTokenFilterTest, TeeSinkTokenFilterTestFixture)
-
-BOOST_AUTO_TEST_CASE(testGeneral)
+TEST_F(TeeSinkTokenFilterTest, testGeneral)
 {
     TeeSinkTokenFilterPtr source = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer1.str())));
     TokenStreamPtr sink1 = source->newSinkTokenStream();
     TokenStreamPtr sink2 = source->newSinkTokenStream(theFilter);
-    
+
     source->addAttribute<CheckClearAttributesAttribute>();
     sink1->addAttribute<CheckClearAttributesAttribute>();
     sink2->addAttribute<CheckClearAttributesAttribute>();
@@ -100,13 +98,13 @@ BOOST_AUTO_TEST_CASE(testGeneral)
     checkTokenStreamContents(sink2, newCollection<String>(L"The", L"the"));
 }
 
-BOOST_AUTO_TEST_CASE(testMultipleSources)
+TEST_F(TeeSinkTokenFilterTest, testMultipleSources)
 {
     TeeSinkTokenFilterPtr tee1 = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer1.str())));
     SinkTokenStreamPtr dogDetector = tee1->newSinkTokenStream(dogFilter);
     SinkTokenStreamPtr theDetector = tee1->newSinkTokenStream(theFilter);
     TokenStreamPtr source1 = newLucene<CachingTokenFilter>(tee1);
-    
+
     tee1->addAttribute<CheckClearAttributesAttribute>();
     dogDetector->addAttribute<CheckClearAttributesAttribute>();
     theDetector->addAttribute<CheckClearAttributesAttribute>();
@@ -115,7 +113,7 @@ BOOST_AUTO_TEST_CASE(testMultipleSources)
     tee2->addSinkTokenStream(dogDetector);
     tee2->addSinkTokenStream(theDetector);
     TokenStreamPtr source2 = tee2;
-    
+
     checkTokenStreamContents(source1, tokens1);
     checkTokenStreamContents(source2, tokens2);
 
@@ -140,15 +138,15 @@ namespace TestPerformance
             modCount = mc;
             count = 0;
         }
-        
+
         virtual ~ModuloTokenFilter()
         {
         }
-    
+
     public:
         int32_t modCount;
         int32_t count;
-    
+
     public:
         // return every 100 tokens
         virtual bool incrementToken()
@@ -160,7 +158,7 @@ namespace TestPerformance
             return hasNext;
         }
     };
-    
+
     class ModuloSinkFilter : public SinkFilter
     {
     public:
@@ -169,15 +167,15 @@ namespace TestPerformance
             modCount = mc;
             count = 0;
         }
-        
+
         virtual ~ModuloSinkFilter()
         {
         }
-    
+
     public:
         int32_t modCount;
         int32_t count;
-    
+
     public:
         virtual bool accept(AttributeSourcePtr source)
         {
@@ -189,14 +187,14 @@ namespace TestPerformance
 }
 
 /// Not an explicit test, just useful to print out some info on performance
-BOOST_AUTO_TEST_CASE(testPerformance)
+TEST_F(TeeSinkTokenFilterTest, testPerformance)
 {
     Collection<int32_t> tokCount = newCollection<int32_t>(100, 500, 1000, 2000, 5000, 10000);
     Collection<int32_t> modCounts = newCollection<int32_t>(1, 2, 5, 10, 20, 50, 100, 200, 500);
     for (int32_t k = 0; k < tokCount.size(); ++k)
     {
         StringStream buffer;
-        BOOST_TEST_MESSAGE("-----Tokens: " << tokCount[k] << "-----");
+        // std::cout << "-----Tokens: " << tokCount[k] << "-----";
         for (int32_t i = 0; i < tokCount[k]; ++i)
             buffer << StringUtils::toUpper(intToEnglish(i)) << L" ";
         // make sure we produce the same tokens
@@ -208,10 +206,10 @@ BOOST_AUTO_TEST_CASE(testPerformance)
         TermAttributePtr sinkTok = sink->addAttribute<TermAttribute>();
         for (int32_t i = 0; stream->incrementToken(); ++i)
         {
-            BOOST_CHECK(sink->incrementToken());
-            BOOST_CHECK(tfTok->equals(sinkTok));
+            EXPECT_TRUE(sink->incrementToken());
+            EXPECT_TRUE(tfTok->equals(sinkTok));
         }
-        
+
         // simulate two fields, each being analyzed once, for 20 documents
         for (int32_t j = 0; j < modCounts.size(); ++j)
         {
@@ -229,7 +227,7 @@ BOOST_AUTO_TEST_CASE(testPerformance)
                     tfPos += posIncrAtt->getPositionIncrement();
             }
             int64_t finish = MiscUtils::currentTimeMillis();
-            BOOST_TEST_MESSAGE("ModCount: " << modCounts[j] << " Two fields took " << (finish - start) << " ms");
+            // std::cout << "ModCount: " << modCounts[j] << " Two fields took " << (finish - start) << " ms";
             int32_t sinkPos = 0;
             // simulate one field with one sink
             start = MiscUtils::currentTimeMillis();
@@ -245,11 +243,9 @@ BOOST_AUTO_TEST_CASE(testPerformance)
                     sinkPos += posIncrAtt->getPositionIncrement();
             }
             finish = MiscUtils::currentTimeMillis();
-            BOOST_TEST_MESSAGE("ModCount: " << modCounts[j] << " Tee fields took " << (finish - start) << " ms");
-            BOOST_CHECK_EQUAL(sinkPos, tfPos);
+            // std::cout << "ModCount: " << modCounts[j] << " Tee fields took " << (finish - start) << " ms";
+            EXPECT_EQ(sinkPos, tfPos);
         }
-        BOOST_TEST_MESSAGE("- End Tokens: " << tokCount[k] << "-----");
+        // std::cout << "- End Tokens: " << tokCount[k] << "-----";
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

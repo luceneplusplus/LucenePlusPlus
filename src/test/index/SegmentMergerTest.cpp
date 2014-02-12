@@ -23,10 +23,10 @@
 
 using namespace Lucene;
 
-class SegmentMergerTestFixture : public LuceneTestFixture, public DocHelper
+class SegmentMergerTest : public LuceneTestFixture, public DocHelper
 {
 public:
-    SegmentMergerTestFixture()
+    SegmentMergerTest()
     {
         mergedDir = newLucene<RAMDirectory>();
         mergedSegment = L"test";
@@ -34,7 +34,7 @@ public:
         doc1 = newLucene<Document>();
         merge2Dir = newLucene<RAMDirectory>();
         doc2 = newLucene<Document>();
-        
+
         DocHelper::setupDoc(doc1);
         SegmentInfoPtr info1 = DocHelper::writeDoc(merge1Dir, doc1);
         DocHelper::setupDoc(doc2);
@@ -42,8 +42,8 @@ public:
         reader1 = SegmentReader::get(true, info1, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
         reader2 = SegmentReader::get(true, info2, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
     }
-    
-    virtual ~SegmentMergerTestFixture()
+
+    virtual ~SegmentMergerTest()
     {
     }
 
@@ -51,12 +51,12 @@ protected:
     // The variables for the new merged segment
     DirectoryPtr mergedDir;
     String mergedSegment;
-    
+
     // First segment to be merged
     DirectoryPtr merge1Dir;
     DocumentPtr doc1;
     SegmentReaderPtr reader1;
-    
+
     // Second Segment to be merged
     DirectoryPtr merge2Dir;
     DocumentPtr doc2;
@@ -71,79 +71,75 @@ public:
             FieldPtr f = DocHelper::fields[i];
             if (f->isIndexed())
             {
-                BOOST_CHECK_EQUAL(reader->hasNorms(f->name()), !f->getOmitNorms());
-                BOOST_CHECK_EQUAL(reader->hasNorms(f->name()), !DocHelper::noNorms.contains(f->name()));
-                
+                EXPECT_EQ(reader->hasNorms(f->name()), !f->getOmitNorms());
+                EXPECT_EQ(reader->hasNorms(f->name()), !DocHelper::noNorms.contains(f->name()));
+
                 if (!reader->hasNorms(f->name()))
                 {
                     // test for fake norms of 1.0 or null depending on the flag
                     ByteArray norms = reader->norms(f->name());
                     uint8_t norm1 = DefaultSimilarity::encodeNorm(1.0);
-                    BOOST_CHECK(!norms);
+                    EXPECT_TRUE(!norms);
                     norms.resize(reader->maxDoc());
                     reader->norms(f->name(), norms, 0);
                     for (int32_t j = 0; j < reader->maxDoc(); ++j)
-                        BOOST_CHECK_EQUAL(norms[j], norm1);
+                        EXPECT_EQ(norms[j], norm1);
                 }
             }
         }
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(SegmentMergerTest, SegmentMergerTestFixture)
-
-BOOST_AUTO_TEST_CASE(testMerge)
+TEST_F(SegmentMergerTest, testMerge)
 {
     SegmentMergerPtr merger = newLucene<SegmentMerger>(mergedDir, mergedSegment);
     merger->add(reader1);
     merger->add(reader2);
     int32_t docsMerged = merger->merge();
     merger->closeReaders();
-    BOOST_CHECK_EQUAL(docsMerged, 2);
-    
+    EXPECT_EQ(docsMerged, 2);
+
     // Should be able to open a new SegmentReader against the new directory
     SegmentReaderPtr mergedReader = SegmentReader::get(true, newLucene<SegmentInfo>(mergedSegment, docsMerged, mergedDir, false, true), IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
-    BOOST_CHECK(mergedReader);
-    BOOST_CHECK_EQUAL(mergedReader->numDocs(), 2);
+    EXPECT_TRUE(mergedReader);
+    EXPECT_EQ(mergedReader->numDocs(), 2);
     DocumentPtr newDoc1 = mergedReader->document(0);
-    BOOST_CHECK(newDoc1);
-    
+    EXPECT_TRUE(newDoc1);
+
     // There are 2 unstored fields on the document
-    BOOST_CHECK_EQUAL(DocHelper::numFields(newDoc1), DocHelper::numFields(doc1) - DocHelper::unstored.size());
+    EXPECT_EQ(DocHelper::numFields(newDoc1), DocHelper::numFields(doc1) - DocHelper::unstored.size());
     DocumentPtr newDoc2 = mergedReader->document(1);
-    BOOST_CHECK(newDoc2);
-    BOOST_CHECK_EQUAL(DocHelper::numFields(newDoc2), DocHelper::numFields(doc2) - DocHelper::unstored.size());
+    EXPECT_TRUE(newDoc2);
+    EXPECT_EQ(DocHelper::numFields(newDoc2), DocHelper::numFields(doc2) - DocHelper::unstored.size());
 
     TermDocsPtr termDocs = mergedReader->termDocs(newLucene<Term>(DocHelper::TEXT_FIELD_2_KEY, L"field"));
-    BOOST_CHECK(termDocs);
-    BOOST_CHECK(termDocs->next());
+    EXPECT_TRUE(termDocs);
+    EXPECT_TRUE(termDocs->next());
 
     HashSet<String> stored = mergedReader->getFieldNames(IndexReader::FIELD_OPTION_INDEXED_WITH_TERMVECTOR);
-    BOOST_CHECK(stored);
-    
-    BOOST_CHECK_EQUAL(stored.size(), 3);
+    EXPECT_TRUE(stored);
+
+    EXPECT_EQ(stored.size(), 3);
 
     TermFreqVectorPtr vector = mergedReader->getTermFreqVector(0, DocHelper::TEXT_FIELD_2_KEY);
-    BOOST_CHECK(vector);
+    EXPECT_TRUE(vector);
     Collection<String> terms = vector->getTerms();
-    BOOST_CHECK(terms);
-    
-    BOOST_CHECK_EQUAL(terms.size(), 3);
+    EXPECT_TRUE(terms);
+
+    EXPECT_EQ(terms.size(), 3);
     Collection<int32_t> freqs = vector->getTermFrequencies();
-    BOOST_CHECK(freqs);
-    
-    BOOST_CHECK(boost::dynamic_pointer_cast<TermPositionVector>(vector));
-    
+    EXPECT_TRUE(freqs);
+
+    EXPECT_TRUE(boost::dynamic_pointer_cast<TermPositionVector>(vector));
+
     for (int32_t i = 0; i < terms.size(); ++i)
     {
         String term = terms[i];
         int32_t freq = freqs[i];
-        
-        BOOST_CHECK(String(DocHelper::FIELD_2_TEXT).find(term) != String::npos);
-        BOOST_CHECK_EQUAL(DocHelper::FIELD_2_FREQS[i], freq);
+
+        EXPECT_TRUE(String(DocHelper::FIELD_2_TEXT).find(term) != String::npos);
+        EXPECT_EQ(DocHelper::FIELD_2_FREQS[i], freq);
     }
-    
+
     checkNorms(mergedReader);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

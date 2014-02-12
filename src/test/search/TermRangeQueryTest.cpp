@@ -32,7 +32,7 @@ public:
         buffer = CharArray::newInstance(1);
         done = false;
     }
-    
+
     virtual ~SingleCharTokenizer()
     {
     }
@@ -62,7 +62,7 @@ public:
             return true;
         }
     }
-    
+
     virtual void reset(ReaderPtr input)
     {
         Tokenizer::reset(input);
@@ -90,23 +90,23 @@ public:
             tokenizer->reset(reader);
         return tokenizer;
     }
-    
+
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
         return newLucene<SingleCharTokenizer>(reader);
     }
 };
 
-class TermRangeQueryFixture : public LuceneTestFixture
+class TermRangeQueryTest : public LuceneTestFixture
 {
 public:
-    TermRangeQueryFixture()
+    TermRangeQueryTest()
     {
         docCount = 0;
         dir = newLucene<RAMDirectory>();
     }
-    
-    virtual ~TermRangeQueryFixture()
+
+    virtual ~TermRangeQueryTest()
     {
     }
 
@@ -119,7 +119,7 @@ public:
     {
         initializeIndex(values, newLucene<WhitespaceAnalyzer>());
     }
-    
+
     void initializeIndex(Collection<String> values, AnalyzerPtr analyzer)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -127,14 +127,14 @@ public:
             insertDoc(writer, values[i]);
         writer->close();
     }
-    
+
     void addDoc(const String& content)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
         insertDoc(writer, content);
         writer->close();
     }
-    
+
     void insertDoc(IndexWriterPtr writer, const String& content)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -145,54 +145,52 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(TermRangeQueryTest, TermRangeQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testExclusive)
+TEST_F(TermRangeQueryTest, testExclusive)
 {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", false, false);
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     searcher->close();
 
     initializeIndex(newCollection<String>(L"A", L"B", L"D"));
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     searcher->close();
 
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testInclusive)
+TEST_F(TermRangeQueryTest, testInclusive)
 {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true);
 
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
     searcher->close();
 
     initializeIndex(newCollection<String>(L"A", L"B", L"D"));
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     searcher->close();
 
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testEqualsHashcode)
+TEST_F(TermRangeQueryTest, testEqualsHashcode)
 {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true);
 
@@ -200,133 +198,131 @@ BOOST_AUTO_TEST_CASE(testEqualsHashcode)
     QueryPtr other = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true);
     other->setBoost(1.0);
 
-    BOOST_CHECK(query->equals(query));
-    BOOST_CHECK(query->equals(other));
-    BOOST_CHECK_EQUAL(query->hashCode(), other->hashCode());
+    EXPECT_TRUE(query->equals(query));
+    EXPECT_TRUE(query->equals(other));
+    EXPECT_EQ(query->hashCode(), other->hashCode());
 
     other->setBoost(2.0);
-    BOOST_CHECK(!query->equals(other));
+    EXPECT_TRUE(!query->equals(other));
 
     other = newLucene<TermRangeQuery>(L"notcontent", L"A", L"C", true, true);
-    BOOST_CHECK(!query->equals(other));
+    EXPECT_TRUE(!query->equals(other));
 
     other = newLucene<TermRangeQuery>(L"content", L"X", L"C", true, true);
-    BOOST_CHECK(!query->equals(other));
+    EXPECT_TRUE(!query->equals(other));
 
     other = newLucene<TermRangeQuery>(L"content", L"A", L"Z", true, true);
-    BOOST_CHECK(!query->equals(other));
+    EXPECT_TRUE(!query->equals(other));
 
     query = newLucene<TermRangeQuery>(L"content", L"", L"C", true, true);
     other = newLucene<TermRangeQuery>(L"content", L"", L"C", true, true);
-    BOOST_CHECK(query->equals(other));
-    BOOST_CHECK_EQUAL(query->hashCode(), other->hashCode());
+    EXPECT_TRUE(query->equals(other));
+    EXPECT_EQ(query->hashCode(), other->hashCode());
 
     query = newLucene<TermRangeQuery>(L"content", L"C", L"", true, true);
     other = newLucene<TermRangeQuery>(L"content", L"C", L"", true, true);
-    BOOST_CHECK(query->equals(other));
-    BOOST_CHECK_EQUAL(query->hashCode(), other->hashCode());
+    EXPECT_TRUE(query->equals(other));
+    EXPECT_EQ(query->hashCode(), other->hashCode());
 
     query = newLucene<TermRangeQuery>(L"content", L"", L"C", true, true);
     other = newLucene<TermRangeQuery>(L"content", L"C", L"", true, true);
-    BOOST_CHECK(!query->equals(other));
+    EXPECT_TRUE(!query->equals(other));
 
     query = newLucene<TermRangeQuery>(L"content", L"A", L"C", false, false);
     other = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true);
-    BOOST_CHECK(!query->equals(other));
+    EXPECT_TRUE(!query->equals(other));
 
     query = newLucene<TermRangeQuery>(L"content", L"A", L"C", false, false);
     other = newLucene<TermRangeQuery>(L"content", L"A", L"C", false, false, newLucene<Collator>(std::locale()));
-    BOOST_CHECK(!query->equals(other));
+    EXPECT_TRUE(!query->equals(other));
 }
 
-BOOST_AUTO_TEST_CASE(testExclusiveCollating)
+TEST_F(TermRangeQueryTest, testExclusiveCollating)
 {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", false, false, newLucene<Collator>(std::locale()));
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     searcher->close();
 
     initializeIndex(newCollection<String>(L"A", L"B", L"D"));
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     searcher->close();
 
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testInclusiveCollating)
+TEST_F(TermRangeQueryTest, testInclusiveCollating)
 {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true, newLucene<Collator>(std::locale()));
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
     searcher->close();
 
     initializeIndex(newCollection<String>(L"A", L"B", L"D"));
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
     searcher->close();
 
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testExclusiveLowerNull)
+TEST_F(TermRangeQueryTest, testExclusiveLowerNull)
 {
     AnalyzerPtr analyzer = newLucene<SingleCharAnalyzer>();
     QueryPtr query = newLucene<TermRangeQuery>(L"content", VariantUtils::null(), L"C", false, false);
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"C", L"D"), analyzer);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     int32_t numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(3, numHits);
+    EXPECT_EQ(3, numHits);
     searcher->close();
-    
+
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"D"), analyzer);
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(3, numHits);
+    EXPECT_EQ(3, numHits);
     searcher->close();
-    
+
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(3, numHits);
+    EXPECT_EQ(3, numHits);
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testInclusiveLowerNull)
+TEST_F(TermRangeQueryTest, testInclusiveLowerNull)
 {
     AnalyzerPtr analyzer = newLucene<SingleCharAnalyzer>();
     QueryPtr query = newLucene<TermRangeQuery>(L"content", VariantUtils::null(), L"C", true, true);
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"C", L"D"), analyzer);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     int32_t numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(4, numHits);
+    EXPECT_EQ(4, numHits);
     searcher->close();
-    
+
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"D"), analyzer);
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(3, numHits);
+    EXPECT_EQ(3, numHits);
     searcher->close();
-    
+
     addDoc(L"C");
     searcher = newLucene<IndexSearcher>(dir, true);
     numHits = searcher->search(query, FilterPtr(), 1000)->totalHits;
-    BOOST_CHECK_EQUAL(4, numHits);
+    EXPECT_EQ(4, numHits);
     searcher->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

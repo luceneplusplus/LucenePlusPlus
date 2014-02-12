@@ -11,10 +11,10 @@
 
 using namespace Lucene;
 
-class DutchStemmerFixture : public BaseTokenStreamFixture
+class DutchStemmerTest : public BaseTokenStreamFixture
 {
 public:
-    virtual ~DutchStemmerFixture()
+    virtual ~DutchStemmerTest()
     {
     }
 
@@ -23,7 +23,7 @@ public:
     {
         checkOneTerm(newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
-    
+
     void checkReuse(AnalyzerPtr a, const String& input, const String& expected)
     {
         checkOneTermReuse(a, input, expected);
@@ -33,9 +33,7 @@ public:
 /// Test the Dutch Stem Filter, which only modifies the term text.
 /// The code states that it uses the snowball algorithm, but tests reveal some differences.
 
-BOOST_FIXTURE_TEST_SUITE(DutchStemmerTest, DutchStemmerFixture)
-
-BOOST_AUTO_TEST_CASE(testWithSnowballExamples)
+TEST_F(DutchStemmerTest, testWithSnowballExamples)
 {
     check(L"lichaamsziek", L"lichaamsziek");
     check(L"lichamelijk", L"licham");
@@ -119,9 +117,9 @@ BOOST_AUTO_TEST_CASE(testWithSnowballExamples)
     check(L"ophouden", L"ophoud");
 }
 
-BOOST_AUTO_TEST_CASE(testReusableTokenStream)
+TEST_F(DutchStemmerTest, testReusableTokenStream)
 {
-    AnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT); 
+    AnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"lichaamsziek", L"lichaamsziek");
     checkReuse(a, L"lichamelijk", L"licham");
     checkReuse(a, L"lichamelijke", L"licham");
@@ -129,7 +127,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
+TEST_F(DutchStemmerTest, testExclusionTableReuse)
 {
     DutchAnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"lichamelijk", L"licham");
@@ -138,5 +136,3 @@ BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
     a->setStemExclusionTable(exclusions);
     checkReuse(a, L"lichamelijk", L"lichamelijk");
 }
-
-BOOST_AUTO_TEST_SUITE_END()

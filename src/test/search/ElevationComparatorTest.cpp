@@ -38,7 +38,7 @@ public:
         this->values = Collection<int32_t>::newInstance(numHits);
         this->bottomVal = 0;
     }
-    
+
     virtual ~ElevationFieldComparator()
     {
     }
@@ -55,27 +55,27 @@ public:
     {
         return values[slot2] - values[slot1]; // values will be small enough that there is no overflow concern
     }
-    
+
     virtual void setBottom(int32_t slot)
     {
         bottomVal = values[slot];
     }
-    
+
     virtual int32_t compareBottom(int32_t doc)
     {
         return docVal(doc) - bottomVal;
     }
-    
+
     virtual void copy(int32_t slot, int32_t doc)
     {
         values[slot] = docVal(doc);
     }
-    
+
     virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
         idIndex = FieldCache::DEFAULT()->getStringIndex(reader, fieldname);
     }
-    
+
     virtual ComparableValue value(int32_t slot)
     {
         return values[slot];
@@ -96,7 +96,7 @@ public:
     {
         this->priority = priority;
     }
-    
+
     virtual ~ElevationComparatorSource()
     {
     }
@@ -111,15 +111,15 @@ public:
     }
 };
 
-class ElevationComparatorFixture : public LuceneTestFixture
+class ElevationComparatorTest : public LuceneTestFixture
 {
 public:
-    ElevationComparatorFixture()
+    ElevationComparatorTest()
     {
         priority = MapStringInt::newInstance();
     }
-    
-    virtual ~ElevationComparatorFixture()
+
+    virtual ~ElevationComparatorTest()
     {
     }
 
@@ -134,7 +134,7 @@ public:
             doc->add(newLucene<Field>(vals[i], vals[i + 1], Field::STORE_YES, Field::INDEX_ANALYZED));
         return doc;
     }
-    
+
     void runTest(IndexSearcherPtr searcher, bool reversed)
     {
         BooleanQueryPtr newq = newLucene<BooleanQuery>(false);
@@ -154,24 +154,24 @@ public:
         TopDocsPtr topDocs = topCollector->topDocs(0, 10);
         int32_t numDocsReturned = topDocs->scoreDocs.size();
 
-        BOOST_CHECK_EQUAL(4, numDocsReturned);
+        EXPECT_EQ(4, numDocsReturned);
 
         // 0 and 3 were elevated
-        BOOST_CHECK_EQUAL(0, topDocs->scoreDocs[0]->doc);
-        BOOST_CHECK_EQUAL(3, topDocs->scoreDocs[1]->doc);
-        
+        EXPECT_EQ(0, topDocs->scoreDocs[0]->doc);
+        EXPECT_EQ(3, topDocs->scoreDocs[1]->doc);
+
         if (reversed)
         {
-            BOOST_CHECK_EQUAL(2, topDocs->scoreDocs[2]->doc);
-            BOOST_CHECK_EQUAL(1, topDocs->scoreDocs[3]->doc);
+            EXPECT_EQ(2, topDocs->scoreDocs[2]->doc);
+            EXPECT_EQ(1, topDocs->scoreDocs[3]->doc);
         }
         else
         {
-            BOOST_CHECK_EQUAL(1, topDocs->scoreDocs[2]->doc);
-            BOOST_CHECK_EQUAL(2, topDocs->scoreDocs[3]->doc);
+            EXPECT_EQ(1, topDocs->scoreDocs[2]->doc);
+            EXPECT_EQ(2, topDocs->scoreDocs[3]->doc);
         }
     }
-    
+
     QueryPtr getElevatedQuery(Collection<String> vals)
     {
         BooleanQueryPtr q = newLucene<BooleanQuery>(false);
@@ -186,9 +186,7 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ElevationComparatorTest, ElevationComparatorFixture)
-
-BOOST_AUTO_TEST_CASE(testSorting)
+TEST_F(ElevationComparatorTest, testSorting)
 {
     DirectoryPtr directory = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -213,5 +211,3 @@ BOOST_AUTO_TEST_CASE(testSorting)
     r->close();
     directory->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

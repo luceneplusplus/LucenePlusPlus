@@ -25,10 +25,10 @@
 
 using namespace Lucene;
 
-class BooleanMinShouldMatchFixture : public LuceneTestFixture
+class BooleanMinShouldMatchTest : public LuceneTestFixture
 {
 public:
-    BooleanMinShouldMatchFixture()
+    BooleanMinShouldMatchTest()
     {
         Collection<String> data = newCollection<String>(
             L"A 1 2 3 4 5 6",
@@ -59,8 +59,8 @@ public:
         r = IndexReader::open(index, true);
         s = newLucene<IndexSearcher>(r);
     }
-    
-    virtual ~BooleanMinShouldMatchFixture()
+
+    virtual ~BooleanMinShouldMatchTest()
     {
     }
 
@@ -73,10 +73,10 @@ public:
     void verifyNrHits(QueryPtr q, int32_t expected)
     {
         Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-        BOOST_CHECK_EQUAL(expected, h.size());
+        EXPECT_EQ(expected, h.size());
         QueryUtils::check(q, s);
     }
-    
+
     /// Random rnd is passed in so that the exact same random query may be created more than once.
     BooleanQueryPtr randBoolQuery(RandomPtr rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
     {
@@ -93,7 +93,7 @@ public:
                 q = newLucene<WildcardQuery>(newLucene<Term>(field, L"w*"));
             else
                 q = randBoolQuery(rnd, allowMust, level - 1, field, vals);
-            
+
             int32_t r = rnd->nextInt(10);
             BooleanClause::Occur occur = BooleanClause::SHOULD;
             if (r < 2)
@@ -105,12 +105,12 @@ public:
                 else
                     occur = BooleanClause::SHOULD;
             }
-            
+
             current->add(q, occur);
         }
         return current;
     }
-    
+
     void minNrCB(RandomPtr rnd, BooleanQueryPtr q)
     {
         Collection<BooleanClausePtr> c = q->getClauses();
@@ -124,9 +124,7 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(BooleanMinShouldMatchTest, BooleanMinShouldMatchFixture)
-
-BOOST_AUTO_TEST_CASE(testAllOptional)
+TEST_F(BooleanMinShouldMatchTest, testAllOptional)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     for (int32_t i = 1; i <= 4; ++i)
@@ -135,7 +133,7 @@ BOOST_AUTO_TEST_CASE(testAllOptional)
     verifyNrHits(q, 2);
 }
 
-BOOST_AUTO_TEST_CASE(testOneReqAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testOneReqAndSomeOptional)
 {
     // one required, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -144,12 +142,12 @@ BOOST_AUTO_TEST_CASE(testOneReqAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"4")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"3")), BooleanClause::SHOULD);
 
-    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional 
+    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional
 
     verifyNrHits(q, 5);
 }
 
-BOOST_AUTO_TEST_CASE(testSomeReqAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testSomeReqAndSomeOptional)
 {
     // two required, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -159,12 +157,12 @@ BOOST_AUTO_TEST_CASE(testSomeReqAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"4")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"3")), BooleanClause::SHOULD);
 
-    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional 
+    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional
 
     verifyNrHits(q, 5);
 }
 
-BOOST_AUTO_TEST_CASE(testOneProhibAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testOneProhibAndSomeOptional)
 {
     // one prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -173,12 +171,12 @@ BOOST_AUTO_TEST_CASE(testOneProhibAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"3")), BooleanClause::MUST_NOT);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"4")), BooleanClause::SHOULD);
 
-    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional 
+    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testSomeProhibAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testSomeProhibAndSomeOptional)
 {
     // two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -188,12 +186,12 @@ BOOST_AUTO_TEST_CASE(testSomeProhibAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"4")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"C")), BooleanClause::MUST_NOT);
 
-    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional 
+    q->setMinimumNumberShouldMatch(2); // 2 of 3 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testOneReqOneProhibAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testOneReqOneProhibAndSomeOptional)
 {
     // one required, one prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -204,12 +202,12 @@ BOOST_AUTO_TEST_CASE(testOneReqOneProhibAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"2")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"1")), BooleanClause::SHOULD);
 
-    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional 
+    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testSomeReqOneProhibAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testSomeReqOneProhibAndSomeOptional)
 {
     // two required, one prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -221,12 +219,12 @@ BOOST_AUTO_TEST_CASE(testSomeReqOneProhibAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"2")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"1")), BooleanClause::SHOULD);
 
-    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional 
+    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testOneReqSomeProhibAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testOneReqSomeProhibAndSomeOptional)
 {
     // one required, two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -238,12 +236,12 @@ BOOST_AUTO_TEST_CASE(testOneReqSomeProhibAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"1")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"C")), BooleanClause::MUST_NOT);
 
-    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional 
+    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testSomeReqSomeProhibAndSomeOptional)
+TEST_F(BooleanMinShouldMatchTest, testSomeReqSomeProhibAndSomeOptional)
 {
     // two required, two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -256,12 +254,12 @@ BOOST_AUTO_TEST_CASE(testSomeReqSomeProhibAndSomeOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"1")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"C")), BooleanClause::MUST_NOT);
 
-    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional 
+    q->setMinimumNumberShouldMatch(3); // 3 of 4 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testMinHigherThenNumOptional)
+TEST_F(BooleanMinShouldMatchTest, testMinHigherThenNumOptional)
 {
     // two required, two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -274,12 +272,12 @@ BOOST_AUTO_TEST_CASE(testMinHigherThenNumOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"1")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"C")), BooleanClause::MUST_NOT);
 
-    q->setMinimumNumberShouldMatch(90); // 90 of 4 optional 
+    q->setMinimumNumberShouldMatch(90); // 90 of 4 optional
 
     verifyNrHits(q, 0);
 }
 
-BOOST_AUTO_TEST_CASE(testMinEqualToNumOptional)
+TEST_F(BooleanMinShouldMatchTest, testMinEqualToNumOptional)
 {
     // two required, two optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -288,12 +286,12 @@ BOOST_AUTO_TEST_CASE(testMinEqualToNumOptional)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"3")), BooleanClause::MUST);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"2")), BooleanClause::SHOULD);
 
-    q->setMinimumNumberShouldMatch(2); // 2 of 2 optional 
+    q->setMinimumNumberShouldMatch(2); // 2 of 2 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testOneOptionalEqualToMin)
+TEST_F(BooleanMinShouldMatchTest, testOneOptionalEqualToMin)
 {
     // two required, one optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
@@ -301,38 +299,38 @@ BOOST_AUTO_TEST_CASE(testOneOptionalEqualToMin)
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"3")), BooleanClause::SHOULD);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"2")), BooleanClause::MUST);
 
-    q->setMinimumNumberShouldMatch(1); // 1 of 1 optional 
+    q->setMinimumNumberShouldMatch(1); // 1 of 1 optional
 
     verifyNrHits(q, 1);
 }
 
-BOOST_AUTO_TEST_CASE(testNoOptionalButMin)
+TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin)
 {
     // two required, no optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"2")), BooleanClause::MUST);
 
-    q->setMinimumNumberShouldMatch(1); // 1 of 0 optional 
+    q->setMinimumNumberShouldMatch(1); // 1 of 0 optional
 
     verifyNrHits(q, 0);
 }
 
-BOOST_AUTO_TEST_CASE(testNoOptionalButMin2)
+TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin2)
 {
     // one required, no optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
 
-    q->setMinimumNumberShouldMatch(1); // 1 of 0 optional 
+    q->setMinimumNumberShouldMatch(1); // 1 of 0 optional
 
     verifyNrHits(q, 0);
 }
 
-BOOST_AUTO_TEST_CASE(testRandomQueries)
+TEST_F(BooleanMinShouldMatchTest, testRandomQueries)
 {
     RandomPtr rnd = newLucene<Random>(17);
-    
+
     String field = L"data";
     Collection<String> vals = Collection<String>::newInstance();
     vals.add(L"1");
@@ -349,33 +347,33 @@ BOOST_AUTO_TEST_CASE(testRandomQueries)
     vals.add(L"X");
     vals.add(L"foo");
     int32_t maxLev = 4;
-    
+
     // increase number of iterations for more complete testing
     for (int32_t i = 0; i < 1000; ++i)
     {
         int32_t lev = rnd->nextInt(maxLev);
         int32_t seed = rnd->nextInt();
-        
+
         RandomPtr rndQuery = newLucene<Random>();
         rndQuery->setSeed(seed);
         BooleanQueryPtr q1 = randBoolQuery(rndQuery, true, lev, field, vals);
         rndQuery->setSeed(seed);
         BooleanQueryPtr q2 = randBoolQuery(rndQuery, true, lev, field, vals);
-        
+
         // only set minimumNumberShouldMatch on the top level query since setting at a lower level can change the score.
         minNrCB(rnd, q2);
 
-        // Can't use Hits because normalized scores will mess things up.  
+        // Can't use Hits because normalized scores will mess things up.
         // The non-sorting version of search() that returns TopDocs will not normalize scores.
         TopDocsPtr top1 = s->search(q1, FilterPtr(), 100);
         TopDocsPtr top2 = s->search(q2, FilterPtr(), 100);
 
         QueryUtils::check(q1, s);
         QueryUtils::check(q2, s);
-        
+
         // The constrained query should be a superset to the unconstrained query.
-        BOOST_CHECK(top2->totalHits <= top1->totalHits);
-        
+        EXPECT_TRUE(top2->totalHits <= top1->totalHits);
+
         for (int32_t hit = 0; hit < top2->totalHits; ++hit)
         {
             int32_t id = top2->scoreDocs[hit]->doc;
@@ -389,14 +387,12 @@ BOOST_AUTO_TEST_CASE(testRandomQueries)
                     found = true;
                     double otherScore = top1->scoreDocs[other]->score;
                     // check if scores match
-                    BOOST_CHECK_CLOSE_FRACTION(otherScore, score, 1.0e-6f);
+                    EXPECT_NEAR(otherScore, score, 1.0e-6f);
                 }
             }
-            
+
             // check if subset
-            BOOST_CHECK(found);
+            EXPECT_TRUE(found);
         }
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

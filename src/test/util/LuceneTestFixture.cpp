@@ -16,7 +16,7 @@ namespace Lucene
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
         ConcurrentMergeScheduler::setTestMode();
     }
-    
+
     LuceneTestFixture::~LuceneTestFixture()
     {
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
@@ -24,7 +24,7 @@ namespace Lucene
         {
             // Clear the failure so that we don't just keep failing subsequent test cases
             ConcurrentMergeScheduler::clearUnhandledExceptions();
-            BOOST_FAIL("ConcurrentMergeScheduler hit unhandled exceptions");
+            FAIL() << "ConcurrentMergeScheduler hit unhandled exceptions";
         }
     }
 }

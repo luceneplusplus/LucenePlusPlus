@@ -24,7 +24,7 @@ public:
     virtual ~SimilarityOne()
     {
     }
-    
+
     LUCENE_CLASS(SimilarityOne);
 
 public:
@@ -35,32 +35,32 @@ public:
 };
 
 /// Test that norms info is preserved during index life - including separate norms, addDocument, addIndexesNoOptimize, optimize.
-class NormTestFixture : public LuceneTestFixture
+class NormsTest : public LuceneTestFixture
 {
 public:
-    NormTestFixture()
+    NormsTest()
     {
         similarityOne = newLucene<SimilarityOne>();
         lastNorm = 0.0;
         normDelta = 0.001;
         numDocNorms = 0;
     }
-    
-    virtual ~NormTestFixture()
+
+    virtual ~NormsTest()
     {
     }
 
 protected:
     static const int32_t NUM_FIELDS;
-    
+
     SimilarityPtr similarityOne;
     int32_t numDocNorms;
-    Collection<double> norms; 
+    Collection<double> norms;
     Collection<double> modifiedNorms;
-    
+
     double lastNorm;
     double normDelta;
-    
+
 public:
     /// return unique norm values that are unchanged by encoding/decoding
     double nextNorm()
@@ -97,7 +97,7 @@ public:
         }
         return d;
     }
-    
+
     void verifyIndex(DirectoryPtr dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
@@ -105,13 +105,13 @@ public:
         {
             String field = L"f" + StringUtils::toString(i);
             ByteArray b = ir->norms(field);
-            BOOST_CHECK_EQUAL(numDocNorms, b.size());
+            EXPECT_EQ(numDocNorms, b.size());
             Collection<double> storedNorms = (i == 1 ? modifiedNorms : norms);
             for (int32_t j = 0; j < b.size(); ++j)
             {
                 double norm = Similarity::decodeNorm(b[j]);
                 double norm1 = storedNorms[j];
-                BOOST_CHECK_EQUAL(norm, norm1); // 0.000001
+                EXPECT_EQ(norm, norm1); // 0.000001
             }
         }
     }
@@ -127,7 +127,7 @@ public:
             iw->addDocument(newDoc());
         iw->close();
     }
-    
+
     void modifyNormsForF1(DirectoryPtr dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
@@ -139,8 +139,8 @@ public:
             double newNorm = modifiedNorms[k];
             modifiedNorms[i] = newNorm;
             modifiedNorms[k] = origNorm;
-            ir->setNorm(i, L"f1", newNorm); 
-            ir->setNorm(k, L"f1", origNorm); 
+            ir->setNorm(i, L"f1", newNorm);
+            ir->setNorm(k, L"f1", origNorm);
         }
         ir->close();
     }
@@ -171,15 +171,13 @@ public:
     }
 };
 
-const int32_t NormTestFixture::NUM_FIELDS = 10;
-
-BOOST_FIXTURE_TEST_SUITE(NormsTest, NormTestFixture)
+const int32_t NormsTest::NUM_FIELDS = 10;
 
 /// Test that norms values are preserved as the index is maintained.
 /// Including separate norms.
-/// Including merging indexes with separate norms. 
-/// Including optimize. 
-BOOST_AUTO_TEST_CASE(testNorms)
+/// Including merging indexes with separate norms.
+/// Including optimize.
+TEST_F(NormsTest, testNorms)
 {
     // test with a single index: index1
     String indexDir1(FileUtils::joinPath(getTempDir(), L"lucenetestindex1"));
@@ -214,7 +212,7 @@ BOOST_AUTO_TEST_CASE(testNorms)
     IndexWriterPtr iw = newLucene<IndexWriter>(dir3, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     iw->setMaxBufferedDocs(5);
     iw->setMergeFactor(3);
-    
+
     iw->addIndexesNoOptimize(newCollection<DirectoryPtr>(dir1, dir2));
     iw->optimize();
     iw->close();
@@ -241,5 +239,3 @@ BOOST_AUTO_TEST_CASE(testNorms)
     dir2->close();
     dir3->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

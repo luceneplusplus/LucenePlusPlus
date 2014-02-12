@@ -28,7 +28,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(MultiSearcherTest, LuceneTestFixture)
+typedef LuceneTestFixture MultiSearcherTest;
 
 static MultiSearcherPtr getMultiSearcherInstance(Collection<SearchablePtr> searchers)
 {
@@ -53,7 +53,7 @@ static void initIndex(DirectoryPtr directory, int32_t numDocs, bool create, cons
     indexWriter->close();
 }
 
-BOOST_AUTO_TEST_CASE(testEmptyIndex)
+TEST_F(MultiSearcherTest, testEmptyIndex)
 {
     // creating two directories for indices
     DirectoryPtr indexStoreA = newLucene<MockRAMDirectory>();
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(testEmptyIndex)
     // performing the search
     Collection<ScoreDocPtr> hits = mSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
     // iterating over the hit documents
     for (int32_t i = 0; i < hits.size(); ++i)
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(testEmptyIndex)
     // performing the same search
     Collection<ScoreDocPtr> hits2 = mSearcher2->search(query, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(4, hits2.size());
+    EXPECT_EQ(4, hits2.size());
 
     // iterating over the hit documents
     for (int32_t i = 0; i < hits2.size(); ++i)
@@ -141,13 +141,13 @@ BOOST_AUTO_TEST_CASE(testEmptyIndex)
     // test the subSearcher() method
     QueryPtr subSearcherQuery = parser->parse(L"id:doc1");
     hits2 = mSearcher2->search(subSearcherQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits2.size());
-    BOOST_CHECK_EQUAL(0, mSearcher2->subSearcher(hits2[0]->doc)); // hit from searchers2[0]
-    BOOST_CHECK_EQUAL(1, mSearcher2->subSearcher(hits2[1]->doc)); // hit from searchers2[1]
+    EXPECT_EQ(2, hits2.size());
+    EXPECT_EQ(0, mSearcher2->subSearcher(hits2[0]->doc)); // hit from searchers2[0]
+    EXPECT_EQ(1, mSearcher2->subSearcher(hits2[1]->doc)); // hit from searchers2[1]
     subSearcherQuery = parser->parse(L"id:doc2");
     hits2 = mSearcher2->search(subSearcherQuery, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits2.size());
-    BOOST_CHECK_EQUAL(1, mSearcher2->subSearcher(hits2[0]->doc));   // hit from searchers2[1]
+    EXPECT_EQ(1, hits2.size());
+    EXPECT_EQ(1, mSearcher2->subSearcher(hits2[0]->doc));   // hit from searchers2[1]
     mSearcher2->close();
 
     //--------------------------------------------------------------------
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(testEmptyIndex)
     // performing the same search
     Collection<ScoreDocPtr> hits3 = mSearcher3->search(query, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(3, hits3.size());
+    EXPECT_EQ(3, hits3.size());
 
 
     // iterating over the hit documents
@@ -184,11 +184,11 @@ BOOST_AUTO_TEST_CASE(testEmptyIndex)
     indexStoreB->close();
 }
 
-BOOST_AUTO_TEST_CASE(testFieldSelector)
+TEST_F(MultiSearcherTest, testFieldSelector)
 {
     RAMDirectoryPtr ramDirectory1 = newLucene<RAMDirectory>();
     RAMDirectoryPtr ramDirectory2 = newLucene<RAMDirectory>();
-    
+
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", L"doc0"));
 
     // Now put the documents in a different index
@@ -199,35 +199,35 @@ BOOST_AUTO_TEST_CASE(testFieldSelector)
     IndexSearcherPtr indexSearcher2 = newLucene<IndexSearcher>(ramDirectory2, true);
 
     MultiSearcherPtr searcher = getMultiSearcherInstance(newCollection<SearchablePtr>(indexSearcher1, indexSearcher2));
-    BOOST_CHECK(searcher);
+    EXPECT_TRUE(searcher);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK(hits);
-    BOOST_CHECK_EQUAL(hits.size(), 2);
+    EXPECT_TRUE(hits);
+    EXPECT_EQ(hits.size(), 2);
     DocumentPtr document = searcher->doc(hits[0]->doc);
-    BOOST_CHECK(document);
-    BOOST_CHECK_EQUAL(document->getFields().size(), 2);
+    EXPECT_TRUE(document);
+    EXPECT_EQ(document->getFields().size(), 2);
     // Should be one document from each directory they both have two fields, contents and other
     HashSet<String> ftl = HashSet<String>::newInstance();
     ftl.add(L"other");
     SetBasedFieldSelectorPtr fs = newLucene<SetBasedFieldSelector>(ftl, HashSet<String>::newInstance());
     document = searcher->doc(hits[0]->doc, fs);
-    BOOST_CHECK(document);
-    BOOST_CHECK_EQUAL(document->getFields().size(), 1);
+    EXPECT_TRUE(document);
+    EXPECT_EQ(document->getFields().size(), 1);
     String value = document->get(L"contents");
-    BOOST_CHECK(value.empty());
+    EXPECT_TRUE(value.empty());
     value = document->get(L"other");
-    BOOST_CHECK(!value.empty());
+    EXPECT_TRUE(!value.empty());
     ftl.clear();
     ftl.add(L"contents");
     fs = newLucene<SetBasedFieldSelector>(ftl, HashSet<String>::newInstance());
     document = searcher->doc(hits[1]->doc, fs);
     value = document->get(L"contents");
-    BOOST_CHECK(!value.empty());
+    EXPECT_TRUE(!value.empty());
     value = document->get(L"other");
-    BOOST_CHECK(value.empty());
+    EXPECT_TRUE(value.empty());
 }
 
-BOOST_AUTO_TEST_CASE(testNormalization)
+TEST_F(MultiSearcherTest, testNormalization)
 {
     int32_t numDocs = 10;
 
@@ -242,11 +242,11 @@ BOOST_AUTO_TEST_CASE(testNormalization)
     indexSearcher1->setDefaultFieldSortScoring(true, true);
 
     Collection<ScoreDocPtr> hits = indexSearcher1->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     // Store the scores for use later
     Collection<double> scores = newCollection<double>(hits[0]->score, hits[1]->score);
-    BOOST_CHECK(scores[0] > scores[1]);
+    EXPECT_TRUE(scores[0] > scores[1]);
 
     indexSearcher1->close();
     ramDirectory1->close();
@@ -268,19 +268,19 @@ BOOST_AUTO_TEST_CASE(testNormalization)
 
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     // The scores should be the same (within reason)
-    BOOST_CHECK_CLOSE_FRACTION(scores[0], hits[0]->score, 1e-6); // This will a document from ramDirectory1
-    BOOST_CHECK_CLOSE_FRACTION(scores[1], hits[1]->score, 1e-6); // This will a document from ramDirectory2
+    EXPECT_NEAR(scores[0], hits[0]->score, 1e-6); // This will a document from ramDirectory1
+    EXPECT_NEAR(scores[1], hits[1]->score, 1e-6); // This will a document from ramDirectory2
 
     // Adding a Sort.RELEVANCE object should not change anything
     hits = searcher->search(query, FilterPtr(), 1000, Sort::RELEVANCE())->scoreDocs;
 
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
-    BOOST_CHECK_CLOSE_FRACTION(scores[0], hits[0]->score, 1e-6); // This will a document from ramDirectory1
-    BOOST_CHECK_CLOSE_FRACTION(scores[1], hits[1]->score, 1e-6); // This will a document from ramDirectory2
+    EXPECT_NEAR(scores[0], hits[0]->score, 1e-6); // This will a document from ramDirectory1
+    EXPECT_NEAR(scores[1], hits[1]->score, 1e-6); // This will a document from ramDirectory2
 
     searcher->close();
 
@@ -296,33 +296,33 @@ namespace TestCustomSimilarity
         virtual ~CustomSimilarity()
         {
         }
-    
+
     public:
         virtual double idf(int32_t docFreq, int32_t numDocs)
         {
             return 100.0;
         }
-        
+
         virtual double coord(int32_t overlap, int32_t maxOverlap)
         {
             return 1.0;
         }
-        
+
         virtual double lengthNorm(const String& fieldName, int32_t numTokens)
         {
             return 1.0;
         }
-        
+
         virtual double queryNorm(double sumOfSquaredWeights)
         {
             return 1.0;
         }
-        
+
         virtual double sloppyFreq(int32_t distance)
         {
             return 1.0;
         }
-        
+
         virtual double tf(double freq)
         {
             return 1.0;
@@ -330,7 +330,7 @@ namespace TestCustomSimilarity
     };
 }
 
-BOOST_AUTO_TEST_CASE(testCustomSimilarity)
+TEST_F(MultiSearcherTest, testCustomSimilarity)
 {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     initIndex(dir, 10, true, L"x"); // documents with two tokens "doc0" and "x", "doc1" and x, etc...
@@ -352,10 +352,10 @@ BOOST_AUTO_TEST_CASE(testCustomSimilarity)
     double scoreN = topDocs->maxScore;
 
     // The scores from the IndexSearcher and Multisearcher should be the same if the same similarity is used.
-    BOOST_CHECK_CLOSE_FRACTION(score1, scoreN, 1e-6);
+    EXPECT_NEAR(score1, scoreN, 1e-6);
 }
 
-BOOST_AUTO_TEST_CASE(testDocFreq)
+TEST_F(MultiSearcherTest, testDocFreq)
 {
     RAMDirectoryPtr dir1 = newLucene<RAMDirectory>();
     RAMDirectoryPtr dir2 = newLucene<RAMDirectory>();
@@ -366,7 +366,5 @@ BOOST_AUTO_TEST_CASE(testDocFreq)
     IndexSearcherPtr searcher2 = newLucene<IndexSearcher>(dir2, true);
 
     MultiSearcherPtr multiSearcher = getMultiSearcherInstance(newCollection<SearchablePtr>(searcher1, searcher2));
-    BOOST_CHECK_EQUAL(15, multiSearcher->docFreq(newLucene<Term>(L"contents", L"x")));
+    EXPECT_EQ(15, multiSearcher->docFreq(newLucene<Term>(L"contents", L"x")));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

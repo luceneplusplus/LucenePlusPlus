@@ -10,15 +10,13 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(CompressionToolsTest, LuceneTestFixture)
+typedef LuceneTestFixture CompressionToolsTest;
 
-BOOST_AUTO_TEST_CASE(testCompressDecompress)
+TEST_F(CompressionToolsTest, testCompressDecompress)
 {
     ByteArray compress(CompressionTools::compressString(L"test compressed string"));
-    BOOST_CHECK(compress.size() > 0);
-    
-    String decompress(CompressionTools::decompressString(compress));
-    BOOST_CHECK_EQUAL(decompress, L"test compressed string");
-}
+    EXPECT_TRUE(compress.size() > 0);
 
-BOOST_AUTO_TEST_SUITE_END()
+    String decompress(CompressionTools::decompressString(compress));
+    EXPECT_EQ(decompress, L"test compressed string");
+}

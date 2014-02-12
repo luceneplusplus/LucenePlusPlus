@@ -20,10 +20,10 @@
 
 using namespace Lucene;
 
-class MultiSearcherRankingFixture : public LuceneTestFixture
+class MultiSearcherRankingTest : public LuceneTestFixture
 {
 public:
-    MultiSearcherRankingFixture()
+    MultiSearcherRankingTest()
     {
         // create MultiSearcher from two separate searchers
         DirectoryPtr d1 = newLucene<RAMDirectory>();
@@ -46,8 +46,8 @@ public:
         iw->close();
         singleSearcher = newLucene<IndexSearcher>(d, true);
     }
-    
-    virtual ~MultiSearcherRankingFixture()
+
+    virtual ~MultiSearcherRankingTest()
     {
     }
 
@@ -66,7 +66,7 @@ public:
         add(L"blueberry strudel", iw);
         add(L"blueberry pizza", iw);
     }
-    
+
     void addCollection2(IndexWriterPtr iw)
     {
         add(L"two blah three", iw);
@@ -77,15 +77,15 @@ public:
         add(L"bluebird foobar pizza", iw);
         add(L"piccadilly circus", iw);
     }
-    
+
     void add(const String& value, IndexWriterPtr iw)
     {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(FIELD_NAME, value, Field::STORE_YES, Field::INDEX_ANALYZED));
         iw->addDocument(d);
     }
-    
-    /// checks if a query yields the same result when executed on a single IndexSearcher containing all 
+
+    /// checks if a query yields the same result when executed on a single IndexSearcher containing all
     /// documents and on MultiSearcher aggregating sub-searchers
     /// @param queryStr  the query to check.
     void checkQuery(const String& queryStr)
@@ -94,54 +94,50 @@ public:
         QueryPtr query = queryParser->parse(queryStr);
         Collection<ScoreDocPtr> multiSearcherHits = multiSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> singleSearcherHits = singleSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
-        BOOST_CHECK_EQUAL(multiSearcherHits.size(), singleSearcherHits.size());
+        EXPECT_EQ(multiSearcherHits.size(), singleSearcherHits.size());
         for (int32_t i = 0; i < multiSearcherHits.size(); ++i)
         {
             DocumentPtr docMulti = multiSearcher->doc(multiSearcherHits[i]->doc);
             DocumentPtr docSingle = singleSearcher->doc(singleSearcherHits[i]->doc);
-            BOOST_CHECK_CLOSE_FRACTION(multiSearcherHits[i]->score, singleSearcherHits[i]->score, 0.001);
-            BOOST_CHECK_EQUAL(docMulti->get(FIELD_NAME), docSingle->get(FIELD_NAME));
+            EXPECT_NEAR(multiSearcherHits[i]->score, singleSearcherHits[i]->score, 0.001);
+            EXPECT_EQ(docMulti->get(FIELD_NAME), docSingle->get(FIELD_NAME));
         }
     }
 };
 
-const String MultiSearcherRankingFixture::FIELD_NAME = L"body";
+const String MultiSearcherRankingTest::FIELD_NAME = L"body";
 
-BOOST_FIXTURE_TEST_SUITE(MultiSearcherRankingTest, MultiSearcherRankingFixture)
-
-BOOST_AUTO_TEST_CASE(testOneTermQuery)
+TEST_F(MultiSearcherRankingTest, testOneTermQuery)
 {
     checkQuery(L"three");
 }
 
-BOOST_AUTO_TEST_CASE(testTwoTermQuery)
+TEST_F(MultiSearcherRankingTest, testTwoTermQuery)
 {
     checkQuery(L"three foo");
 }
 
-BOOST_AUTO_TEST_CASE(testPrefixQuery)
+TEST_F(MultiSearcherRankingTest, testPrefixQuery)
 {
     checkQuery(L"multi*");
 }
 
-BOOST_AUTO_TEST_CASE(testFuzzyQuery)
+TEST_F(MultiSearcherRankingTest, testFuzzyQuery)
 {
     checkQuery(L"multiThree~");
 }
 
-BOOST_AUTO_TEST_CASE(testRangeQuery)
+TEST_F(MultiSearcherRankingTest, testRangeQuery)
 {
     checkQuery(L"{multiA TO multiP}");
 }
 
-BOOST_AUTO_TEST_CASE(testMultiPhraseQuery)
+TEST_F(MultiSearcherRankingTest, testMultiPhraseQuery)
 {
     checkQuery(L"\"blueberry pi*\"");
 }
 
-BOOST_AUTO_TEST_CASE(testNoMatchQuery)
+TEST_F(MultiSearcherRankingTest, testNoMatchQuery)
 {
     checkQuery(L"+three +nomatch");
 }
-
-BOOST_AUTO_TEST_SUITE_END()

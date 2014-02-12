@@ -15,10 +15,10 @@
 
 using namespace Lucene;
 
-class MappingCharFilterTestFixture : public BaseTokenStreamFixture
+class MappingCharFilterTest : public BaseTokenStreamFixture
 {
 public:
-    MappingCharFilterTestFixture()
+    MappingCharFilterTest()
     {
         normMap = newLucene<NormalizeCharMap>();
 
@@ -33,8 +33,8 @@ public:
 
         normMap->add(L"empty", L"");
     }
-    
-    virtual ~MappingCharFilterTestFixture()
+
+    virtual ~MappingCharFilterTest()
     {
     }
 
@@ -42,82 +42,80 @@ public:
     NormalizeCharMapPtr normMap;
 };
 
-BOOST_FIXTURE_TEST_SUITE(MappingCharFilterTest, MappingCharFilterTestFixture)
-
-BOOST_AUTO_TEST_CASE(testReaderReset)
+TEST_F(MappingCharFilterTest, testReaderReset)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"x"));
     CharArray buf = CharArray::newInstance(10);
     int32_t len = cs->read(buf.get(), 0, 10);
-    BOOST_CHECK_EQUAL(1, len);
-    BOOST_CHECK_EQUAL(L'x', buf[0]) ;
+    EXPECT_EQ(1, len);
+    EXPECT_EQ(L'x', buf[0]) ;
     len = cs->read(buf.get(), 0, 10);
-    BOOST_CHECK_EQUAL(-1, len);
+    EXPECT_EQ(-1, len);
 
     // rewind
     cs->reset();
     len = cs->read(buf.get(), 0, 10);
-    BOOST_CHECK_EQUAL(1, len);
-    BOOST_CHECK_EQUAL(L'x', buf[0]) ;
+    EXPECT_EQ(1, len);
+    EXPECT_EQ(L'x', buf[0]) ;
 }
 
-BOOST_AUTO_TEST_CASE(testNothingChange)
+TEST_F(MappingCharFilterTest, testNothingChange)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"x"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"x"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-BOOST_AUTO_TEST_CASE(test1to1)
+TEST_F(MappingCharFilterTest, test1to1)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"h"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"i"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-BOOST_AUTO_TEST_CASE(test1to2)
+TEST_F(MappingCharFilterTest, test1to2)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"j"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"jj"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-BOOST_AUTO_TEST_CASE(test1to3)
+TEST_F(MappingCharFilterTest, test1to3)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"k"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"kkk"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-BOOST_AUTO_TEST_CASE(test2to4)
+TEST_F(MappingCharFilterTest, test2to4)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"ll"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"llll"), newCollection<int32_t>(0), newCollection<int32_t>(2));
 }
 
-BOOST_AUTO_TEST_CASE(test2to1)
+TEST_F(MappingCharFilterTest, test2to1)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"aa"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"a"), newCollection<int32_t>(0), newCollection<int32_t>(2));
 }
 
-BOOST_AUTO_TEST_CASE(test3to1)
+TEST_F(MappingCharFilterTest, test3to1)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"bbb"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"b"), newCollection<int32_t>(0), newCollection<int32_t>(3));
 }
 
-BOOST_AUTO_TEST_CASE(test4to2)
+TEST_F(MappingCharFilterTest, test4to2)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"cccc"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"cc"), newCollection<int32_t>(0), newCollection<int32_t>(4));
 }
 
-BOOST_AUTO_TEST_CASE(test5to0)
+TEST_F(MappingCharFilterTest, test5to0)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"empty"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
@@ -141,12 +139,12 @@ BOOST_AUTO_TEST_CASE(test5to0)
 // cccc,11,15 =>   cc,11,15
 //  bbb,16,19 =>    b,16,19
 //   aa,20,22 =>    a,20,22
-BOOST_AUTO_TEST_CASE(testTokenStream)
+TEST_F(MappingCharFilterTest, testTokenStream)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, CharReader::get(newLucene<StringReader>(L"h i j k ll cccc bbb aa")));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
-    checkTokenStreamContents(ts, newCollection<String>(L"i", L"i", L"jj", L"kkk", L"llll", L"cc", L"b", L"a"), 
-                             newCollection<int32_t>(0, 2, 4, 6, 8, 11, 16, 20), 
+    checkTokenStreamContents(ts, newCollection<String>(L"i", L"i", L"jj", L"kkk", L"llll", L"cc", L"b", L"a"),
+                             newCollection<int32_t>(0, 2, 4, 6, 8, 11, 16, 20),
                              newCollection<int32_t>(1, 3, 5, 7, 10, 15, 19, 22));
 }
 
@@ -160,11 +158,9 @@ BOOST_AUTO_TEST_CASE(testTokenStream)
 // aaaa,0,4 => a,0,4
 //   ll,5,7 => llllllll,5,7
 //    h,8,9 => i,8,9
-BOOST_AUTO_TEST_CASE(testChained)
+TEST_F(MappingCharFilterTest, testChained)
 {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, (CharStreamPtr)newLucene<MappingCharFilter>(normMap, CharReader::get(newLucene<StringReader>(L"aaaa ll h"))));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"a", L"llllllll", L"i"), newCollection<int32_t>(0, 5, 8), newCollection<int32_t>(4, 7, 9));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

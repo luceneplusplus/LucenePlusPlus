@@ -16,7 +16,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(StopFilterTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture StopFilterTest;
 
 static void doTestStopPositons(StopFilterPtr stpf, bool enableIcrements)
 {
@@ -25,15 +25,15 @@ static void doTestStopPositons(StopFilterPtr stpf, bool enableIcrements)
     PositionIncrementAttributePtr posIncrAtt = stpf->getAttribute<PositionIncrementAttribute>();
     for (int32_t i = 0; i < 20; i += 3)
     {
-        BOOST_CHECK(stpf->incrementToken());
+        EXPECT_TRUE(stpf->incrementToken());
         String w = intToEnglish(i);
-        BOOST_CHECK_EQUAL(w, termAtt->term());
-        BOOST_CHECK_EQUAL(enableIcrements ? (i == 0 ? 1 : 3) : 1, posIncrAtt->getPositionIncrement());
+        EXPECT_EQ(w, termAtt->term());
+        EXPECT_EQ(enableIcrements ? (i == 0 ? 1 : 3) : 1, posIncrAtt->getPositionIncrement());
     }
-    BOOST_CHECK(!stpf->incrementToken());
+    EXPECT_TRUE(!stpf->incrementToken());
 }
 
-BOOST_AUTO_TEST_CASE(testExactCase)
+TEST_F(StopFilterTest, testExactCase)
 {
     StringReaderPtr reader = newLucene<StringReader>(L"Now is The Time");
     HashSet<String> stopWords = HashSet<String>::newInstance();
@@ -42,14 +42,14 @@ BOOST_AUTO_TEST_CASE(testExactCase)
     stopWords.add(L"Time");
     TokenStreamPtr stream = newLucene<StopFilter>(false, newLucene<WhitespaceTokenizer>(reader), stopWords, false);
     TermAttributePtr termAtt = stream->getAttribute<TermAttribute>();
-    BOOST_CHECK(stream->incrementToken());
-    BOOST_CHECK_EQUAL(L"Now", termAtt->term());
-    BOOST_CHECK(stream->incrementToken());
-    BOOST_CHECK_EQUAL(L"The", termAtt->term());
-    BOOST_CHECK(!stream->incrementToken());
+    EXPECT_TRUE(stream->incrementToken());
+    EXPECT_EQ(L"Now", termAtt->term());
+    EXPECT_TRUE(stream->incrementToken());
+    EXPECT_EQ(L"The", termAtt->term());
+    EXPECT_TRUE(!stream->incrementToken());
 }
 
-BOOST_AUTO_TEST_CASE(testIgnoreCase)
+TEST_F(StopFilterTest, testIgnoreCase)
 {
     StringReaderPtr reader = newLucene<StringReader>(L"Now is The Time");
     HashSet<String> stopWords = HashSet<String>::newInstance();
@@ -58,12 +58,12 @@ BOOST_AUTO_TEST_CASE(testIgnoreCase)
     stopWords.add(L"Time");
     TokenStreamPtr stream = newLucene<StopFilter>(false, newLucene<WhitespaceTokenizer>(reader), stopWords, true);
     TermAttributePtr termAtt = stream->getAttribute<TermAttribute>();
-    BOOST_CHECK(stream->incrementToken());
-    BOOST_CHECK_EQUAL(L"Now", termAtt->term());
-    BOOST_CHECK(!stream->incrementToken());
+    EXPECT_TRUE(stream->incrementToken());
+    EXPECT_EQ(L"Now", termAtt->term());
+    EXPECT_TRUE(!stream->incrementToken());
 }
 
-BOOST_AUTO_TEST_CASE(testStopPositons)
+TEST_F(StopFilterTest, testStopPositons)
 {
     StringStream buf;
     Collection<String> stopWords = Collection<String>::newInstance();
@@ -101,5 +101,3 @@ BOOST_AUTO_TEST_CASE(testStopPositons)
     StopFilterPtr stpf01 = newLucene<StopFilter>(false, stpf0, stopSet1); // two stop filters concatenated!
     doTestStopPositons(stpf01, true);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

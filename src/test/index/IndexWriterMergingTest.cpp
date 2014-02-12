@@ -16,7 +16,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(IndexWriterMergingTest, LuceneTestFixture)
+typedef LuceneTestFixture IndexWriterMergingTest;
 
 static bool verifyIndex(DirectoryPtr directory, int32_t startAt)
 {
@@ -39,7 +39,7 @@ static void fillIndex(DirectoryPtr dir, int32_t start, int32_t numDocs)
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergeFactor(2);
     writer->setMaxBufferedDocs(2);
-    
+
     for (int32_t i = start; i < (start + numDocs); ++i)
     {
         DocumentPtr temp = newLucene<Document>();
@@ -50,7 +50,7 @@ static void fillIndex(DirectoryPtr dir, int32_t start, int32_t numDocs)
 }
 
 /// Tests that index merging (specifically addIndexesNoOptimize()) doesn't change the index order of documents.
-BOOST_AUTO_TEST_CASE(testIndexWriterMerging)
+TEST_F(IndexWriterMergingTest, testIndexWriterMerging)
 {
     int32_t num = 100;
 
@@ -58,10 +58,10 @@ BOOST_AUTO_TEST_CASE(testIndexWriterMerging)
     DirectoryPtr indexB = newLucene<MockRAMDirectory>();
 
     fillIndex(indexA, 0, num);
-    BOOST_CHECK(!verifyIndex(indexA, 0));
-    
+    EXPECT_TRUE(!verifyIndex(indexA, 0));
+
     fillIndex(indexB, num, num);
-    BOOST_CHECK(!verifyIndex(indexB, num));
+    EXPECT_TRUE(!verifyIndex(indexB, num));
 
     DirectoryPtr merged = newLucene<MockRAMDirectory>();
 
@@ -72,8 +72,6 @@ BOOST_AUTO_TEST_CASE(testIndexWriterMerging)
     writer->optimize();
     writer->close();
 
-    BOOST_CHECK(!verifyIndex(merged, 0));
+    EXPECT_TRUE(!verifyIndex(merged, 0));
     merged->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

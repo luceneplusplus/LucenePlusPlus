@@ -20,10 +20,10 @@
 
 using namespace Lucene;
 
-class ParallelTermEnumTestFixture : public LuceneTestFixture
+class ParallelTermEnumTest : public LuceneTestFixture
 {
 public:
-    ParallelTermEnumTestFixture()
+    ParallelTermEnumTest()
     {
         RAMDirectoryPtr rd1 = newLucene<RAMDirectory>();
         IndexWriterPtr iw1 = newLucene<IndexWriter>(rd1, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -49,8 +49,8 @@ public:
         this->ir1 = IndexReader::open(rd1, true);
         this->ir2 = IndexReader::open(rd2, true);
     }
-    
-    virtual ~ParallelTermEnumTestFixture()
+
+    virtual ~ParallelTermEnumTest()
     {
         ir1->close();
         ir2->close();
@@ -61,9 +61,7 @@ public:
     IndexReaderPtr ir2;
 };
 
-BOOST_FIXTURE_TEST_SUITE(ParallelTermEnumTest, ParallelTermEnumTestFixture)
-
-BOOST_AUTO_TEST_CASE(testParallelTermEnum)
+TEST_F(ParallelTermEnumTest, testParallelTermEnum)
 {
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(ir1);
@@ -72,103 +70,101 @@ BOOST_AUTO_TEST_CASE(testParallelTermEnum)
     TermDocsPtr td = pr->termDocs();
     TermEnumPtr te = pr->terms();
 
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field1:brown", te->term()->toString());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field1:brown", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field1:fox", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field1:fox", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field1:jumps", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field1:jumps", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field1:quick", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field1:quick", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field1:the", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field1:the", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field2:brown", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field2:brown", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field2:fox", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field2:fox", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field2:jumps", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field2:jumps", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field2:quick", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field2:quick", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field2:the", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field2:the", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field3:dog", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field3:dog", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field3:fox", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field3:fox", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field3:jumps", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field3:jumps", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field3:lazy", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field3:lazy", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field3:over", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field3:over", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(te->next());
-    BOOST_CHECK_EQUAL(L"field3:the", te->term()->toString());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(te->next());
+    EXPECT_EQ(L"field3:the", te->term()->toString());
     td->seek(te->term());
-    BOOST_CHECK(td->next());
-    BOOST_CHECK_EQUAL(0, td->doc());
-    BOOST_CHECK(!td->next());
-    BOOST_CHECK(!te->next());
+    EXPECT_TRUE(td->next());
+    EXPECT_EQ(0, td->doc());
+    EXPECT_TRUE(!td->next());
+    EXPECT_TRUE(!te->next());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

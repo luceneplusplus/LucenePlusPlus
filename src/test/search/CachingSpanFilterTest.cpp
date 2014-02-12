@@ -27,7 +27,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(CachingSpanFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture CachingSpanFilterTest;
 
 static IndexReaderPtr refreshReader(IndexReaderPtr reader)
 {
@@ -38,7 +38,7 @@ static IndexReaderPtr refreshReader(IndexReaderPtr reader)
     return reader;
 }
 
-BOOST_AUTO_TEST_CASE(testEnforceDeletions)
+TEST_F(CachingSpanFilterTest, testEnforceDeletions)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
@@ -54,18 +54,18 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     TopDocsPtr docs = searcher->search(newLucene<MatchAllDocsQuery>(), 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     SpanFilterPtr startFilter = newLucene<SpanQueryFilter>(newLucene<SpanTermQuery>(newLucene<Term>(L"id", L"1")));
 
     // ignore deletions
     CachingSpanFilterPtr filter = newLucene<CachingSpanFilter>(startFilter, CachingWrapperFilter::DELETES_IGNORE);
-    
+
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
     ConstantScoreQueryPtr constantScore = newLucene<ConstantScoreQuery>(filter);
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     // now delete the doc, refresh the reader, and see that it's not there
     writer->deleteDocuments(newLucene<Term>(L"id", L"1"));
@@ -74,10 +74,10 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(0, docs->totalHits);
 
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     // force cache to regenerate
     filter = newLucene<CachingSpanFilter>(startFilter, CachingWrapperFilter::DELETES_RECACHE);
@@ -87,21 +87,21 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     constantScore = newLucene<ConstantScoreQuery>(filter);
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
+    EXPECT_EQ(1, docs->totalHits);
 
     // make sure we get a cache hit when we reopen readers that had no new deletions
     IndexReaderPtr newReader = refreshReader(reader);
-    BOOST_CHECK_NE(reader, newReader);
+    EXPECT_NE(reader, newReader);
     reader = newReader;
     searcher = newLucene<IndexSearcher>(reader);
     int32_t missCount = filter->missCount;
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(1, docs->totalHits);
-    BOOST_CHECK_EQUAL(missCount, filter->missCount);
+    EXPECT_EQ(1, docs->totalHits);
+    EXPECT_EQ(missCount, filter->missCount);
 
     // now delete the doc, refresh the reader, and see that it's not there
     writer->deleteDocuments(newLucene<Term>(L"id", L"1"));
@@ -110,10 +110,8 @@ BOOST_AUTO_TEST_CASE(testEnforceDeletions)
     searcher = newLucene<IndexSearcher>(reader);
 
     docs = searcher->search(newLucene<MatchAllDocsQuery>(), filter, 1);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(0, docs->totalHits);
 
     docs = searcher->search(constantScore, 1);
-    BOOST_CHECK_EQUAL(0, docs->totalHits);
+    EXPECT_EQ(0, docs->totalHits);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

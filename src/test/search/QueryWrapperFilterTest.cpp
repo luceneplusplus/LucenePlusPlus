@@ -24,9 +24,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(QueryWrapperFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture QueryWrapperFilterTest;
 
-BOOST_AUTO_TEST_CASE(testBasic)
+TEST_F(QueryWrapperFilterTest, testBasic)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -42,9 +42,9 @@ BOOST_AUTO_TEST_CASE(testBasic)
 
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     TopDocsPtr hits = searcher->search(newLucene<MatchAllDocsQuery>(), qwf, 10);
-    BOOST_CHECK_EQUAL(1, hits->totalHits);
+    EXPECT_EQ(1, hits->totalHits);
     hits = searcher->search(newLucene<MatchAllDocsQuery>(), newLucene<CachingWrapperFilter>(qwf), 10);
-    BOOST_CHECK_EQUAL(1, hits->totalHits);
+    EXPECT_EQ(1, hits->totalHits);
 
     // should not throw exception with complex primitive query
     BooleanQueryPtr booleanQuery = newLucene<BooleanQuery>();
@@ -53,25 +53,23 @@ BOOST_AUTO_TEST_CASE(testBasic)
     qwf = newLucene<QueryWrapperFilter>(termQuery);
 
     hits = searcher->search(newLucene<MatchAllDocsQuery>(), qwf, 10);
-    BOOST_CHECK_EQUAL(1, hits->totalHits);
+    EXPECT_EQ(1, hits->totalHits);
     hits = searcher->search(newLucene<MatchAllDocsQuery>(), newLucene<CachingWrapperFilter>(qwf), 10);
-    BOOST_CHECK_EQUAL(1, hits->totalHits);
+    EXPECT_EQ(1, hits->totalHits);
 
     // should not throw exception with non primitive Query (doesn't implement Query#createWeight)
     qwf = newLucene<QueryWrapperFilter>(newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"valu")));
 
     hits = searcher->search(newLucene<MatchAllDocsQuery>(), qwf, 10);
-    BOOST_CHECK_EQUAL(1, hits->totalHits);
+    EXPECT_EQ(1, hits->totalHits);
     hits = searcher->search(newLucene<MatchAllDocsQuery>(), newLucene<CachingWrapperFilter>(qwf), 10);
-    BOOST_CHECK_EQUAL(1, hits->totalHits);
+    EXPECT_EQ(1, hits->totalHits);
 
     // test a query with no hits
     termQuery = newLucene<TermQuery>(newLucene<Term>(L"field", L"not_exist"));
     qwf = newLucene<QueryWrapperFilter>(termQuery);
     hits = searcher->search(newLucene<MatchAllDocsQuery>(), qwf, 10);
-    BOOST_CHECK_EQUAL(0, hits->totalHits);
+    EXPECT_EQ(0, hits->totalHits);
     hits = searcher->search(newLucene<MatchAllDocsQuery>(), newLucene<CachingWrapperFilter>(qwf), 10);
-    BOOST_CHECK_EQUAL(0, hits->totalHits);
+    EXPECT_EQ(0, hits->totalHits);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

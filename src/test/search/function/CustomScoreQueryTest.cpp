@@ -28,7 +28,7 @@ public:
     CustomAddScoreProvider(IndexReaderPtr reader) : CustomScoreProvider(reader)
     {
     }
-    
+
     virtual ~CustomAddScoreProvider()
     {
     }
@@ -38,7 +38,7 @@ public:
     {
         return subQueryScore + valSrcScore;
     }
-    
+
     virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
     {
         double valSrcScore = valSrcExpl ? valSrcExpl->getValue() : 0.0;
@@ -56,7 +56,7 @@ public:
     CustomAddQuery(QueryPtr q, ValueSourceQueryPtr qValSrc) : CustomScoreQuery(q, qValSrc)
     {
     }
-    
+
     virtual ~CustomAddQuery()
     {
     }
@@ -80,7 +80,7 @@ public:
     CustomMulAddScoreProvider(IndexReaderPtr reader) : CustomScoreProvider(reader)
     {
     }
-    
+
     virtual ~CustomMulAddScoreProvider()
     {
     }
@@ -95,7 +95,7 @@ public:
         // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
         return (subQueryScore + valSrcScores[0]) * valSrcScores[1]; // we know there are two
     }
-    
+
     virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
     {
         if (valSrcExpls.empty())
@@ -121,7 +121,7 @@ public:
     CustomMulAddQuery(QueryPtr q, ValueSourceQueryPtr qValSrc1, ValueSourceQueryPtr qValSrc2) : CustomScoreQuery(q, newCollection<ValueSourceQueryPtr>(qValSrc1, qValSrc2))
     {
     }
-    
+
     virtual ~CustomMulAddQuery()
     {
     }
@@ -146,7 +146,7 @@ public:
     {
         this->values = values;
     }
-    
+
     virtual ~CustomExternalScoreProvider()
     {
     }
@@ -157,7 +157,7 @@ protected:
 public:
     virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore)
     {
-        BOOST_CHECK(doc <= reader->maxDoc());
+        EXPECT_TRUE(doc <= reader->maxDoc());
         return (double)values[doc];
     }
 };
@@ -168,7 +168,7 @@ public:
     CustomExternalQuery(QueryPtr q) : CustomScoreQuery(q)
     {
     }
-    
+
     virtual ~CustomExternalQuery()
     {
     }
@@ -181,19 +181,19 @@ protected:
     }
 };
 
-class CustomScoreQueryFixture : public FunctionFixture
+class CustomScoreQueryTest : public FunctionFixture
 {
 public:
-    CustomScoreQueryFixture() : FunctionFixture(true)
+    CustomScoreQueryTest() : FunctionFixture(true)
     {
     }
-    
-    virtual ~CustomScoreQueryFixture()
+
+    virtual ~CustomScoreQueryTest()
     {
     }
 
 public:
-    /// since custom scoring modifies the order of docs, map results by doc ids so that we can later compare/verify them 
+    /// since custom scoring modifies the order of docs, map results by doc ids so that we can later compare/verify them
     MapIntDouble topDocsToMap(TopDocsPtr td)
     {
         MapIntDouble h = MapIntDouble::newInstance();
@@ -202,35 +202,35 @@ public:
         return h;
     }
 
-    void verifyResults(double boost, IndexSearcherPtr s, MapIntDouble h1, MapIntDouble h2customNeutral, MapIntDouble h3CustomMul, 
+    void verifyResults(double boost, IndexSearcherPtr s, MapIntDouble h1, MapIntDouble h2customNeutral, MapIntDouble h3CustomMul,
                        MapIntDouble h4CustomAdd, MapIntDouble h5CustomMulAdd, QueryPtr q1, QueryPtr q2, QueryPtr q3, QueryPtr q4, QueryPtr q5)
     {
         // verify numbers of matches
-        BOOST_CHECK_EQUAL(h1.size(), h2customNeutral.size());
-        BOOST_CHECK_EQUAL(h1.size(), h3CustomMul.size());
-        BOOST_CHECK_EQUAL(h1.size(), h4CustomAdd.size());
-        BOOST_CHECK_EQUAL(h1.size(), h5CustomMulAdd.size());
-        
+        EXPECT_EQ(h1.size(), h2customNeutral.size());
+        EXPECT_EQ(h1.size(), h3CustomMul.size());
+        EXPECT_EQ(h1.size(), h4CustomAdd.size());
+        EXPECT_EQ(h1.size(), h5CustomMulAdd.size());
+
         // verify scores ratios
         for (MapIntDouble::iterator it = h1.begin(); it != h1.end(); ++it)
         {
             int32_t doc =  it->first;
             double fieldScore = expectedFieldScore(s->getIndexReader()->document(doc)->get(ID_FIELD));
-            BOOST_CHECK(fieldScore > 0);
+            EXPECT_TRUE(fieldScore > 0);
 
             double score1 = it->second;
 
             double score2 = h2customNeutral.get(doc);
-            BOOST_CHECK_CLOSE_FRACTION(boost * score1, score2, TEST_SCORE_TOLERANCE_DELTA);
+            EXPECT_NEAR(boost * score1, score2, TEST_SCORE_TOLERANCE_DELTA);
 
             double score3 = h3CustomMul.get(doc);
-            BOOST_CHECK_CLOSE_FRACTION(boost * fieldScore * score1, score3, TEST_SCORE_TOLERANCE_DELTA);
+            EXPECT_NEAR(boost * fieldScore * score1, score3, TEST_SCORE_TOLERANCE_DELTA);
 
             double score4 = h4CustomAdd.get(doc);
-            BOOST_CHECK_CLOSE_FRACTION(boost * (fieldScore + score1), score4, TEST_SCORE_TOLERANCE_DELTA);
+            EXPECT_NEAR(boost * (fieldScore + score1), score4, TEST_SCORE_TOLERANCE_DELTA);
 
             double score5 = h5CustomMulAdd.get(doc);
-            BOOST_CHECK_CLOSE_FRACTION(boost * fieldScore * (score1 + fieldScore), score5, TEST_SCORE_TOLERANCE_DELTA);
+            EXPECT_NEAR(boost * fieldScore * (score1 + fieldScore), score5, TEST_SCORE_TOLERANCE_DELTA);
         }
     }
 
@@ -239,11 +239,11 @@ public:
     {
         IndexSearcherPtr s = newLucene<IndexSearcher>(dir, true);
         FieldScoreQueryPtr qValSrc = newLucene<FieldScoreQuery>(field, tp); // a query that would score by the field
-        QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, TEXT_FIELD, anlzr); 
+        QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, TEXT_FIELD, anlzr);
         String qtxt = L"first aid text";
 
         // regular (boolean) query.
-        QueryPtr q1 = qp->parse(qtxt); 
+        QueryPtr q1 = qp->parse(qtxt);
 
         // custom query, that should score the same as q1.
         CustomScoreQueryPtr q2CustomNeutral = newLucene<CustomScoreQuery>(q1);
@@ -255,7 +255,7 @@ public:
         q3CustomMul->setBoost(boost);
 
         // custom query, that should add the scores of q1 to that of the field
-        CustomScoreQueryPtr q4CustomAdd = newLucene<CustomAddQuery>(q1,qValSrc); 
+        CustomScoreQueryPtr q4CustomAdd = newLucene<CustomAddQuery>(q1,qValSrc);
         q4CustomAdd->setStrict(true);
         q4CustomAdd->setBoost(boost);
 
@@ -264,7 +264,7 @@ public:
         q5CustomMulAdd->setStrict(true);
         q5CustomMulAdd->setBoost(boost);
 
-        // do al the searches 
+        // do al the searches
         TopDocsPtr td1 = s->search(q1, FilterPtr(), 1000);
         TopDocsPtr td2CustomNeutral = s->search(q2CustomNeutral, FilterPtr(), 1000);
         TopDocsPtr td3CustomMul = s->search(q3CustomMul, FilterPtr(), 1000);
@@ -278,35 +278,33 @@ public:
         MapIntDouble h4CustomAdd = topDocsToMap(td4CustomAdd);
         MapIntDouble h5CustomMulAdd = topDocsToMap(td5CustomMulAdd);
 
-        verifyResults(boost, s, h1, h2CustomNeutral, h3CustomMul, h4CustomAdd, h5CustomMulAdd, 
+        verifyResults(boost, s, h1, h2CustomNeutral, h3CustomMul, h4CustomAdd, h5CustomMulAdd,
                       q1, q2CustomNeutral, q3CustomMul, q4CustomAdd, q5CustomMulAdd);
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(CustomScoreQueryTest, CustomScoreQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testCustomExternalQuery)
+TEST_F(CustomScoreQueryTest, testCustomExternalQuery)
 {
-    QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, TEXT_FIELD, anlzr); 
+    QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, TEXT_FIELD, anlzr);
     String qtxt = L"first aid text"; // from the doc texts in FunctionFixture.
-    QueryPtr q1 = qp->parse(qtxt); 
+    QueryPtr q1 = qp->parse(qtxt);
 
     QueryPtr q = newLucene<CustomExternalQuery>(q1);
-    
+
     IndexSearcherPtr s = newLucene<IndexSearcher>(dir);
     TopDocsPtr hits = s->search(q, 1000);
-    BOOST_CHECK_EQUAL(N_DOCS, hits->totalHits);
+    EXPECT_EQ(N_DOCS, hits->totalHits);
     for (int32_t i = 0; i < N_DOCS; ++i)
     {
         int32_t doc = hits->scoreDocs[i]->doc;
         double score = hits->scoreDocs[i]->score;
-        BOOST_CHECK_CLOSE_FRACTION((double)(1 + (4 * doc) % N_DOCS), score, 0.0001);
+        EXPECT_NEAR((double)(1 + (4 * doc) % N_DOCS), score, 0.0001);
     }
     s->close();
 }
 
 /// Test that CustomScoreQuery of Type.BYTE returns the expected scores.
-BOOST_AUTO_TEST_CASE(testCustomScoreByte)
+TEST_F(CustomScoreQueryTest, testCustomScoreByte)
 {
     // INT field values are small enough to be parsed as byte
     doTestCustomScore(INT_FIELD, FieldScoreQuery::BYTE, 1.0);
@@ -314,7 +312,7 @@ BOOST_AUTO_TEST_CASE(testCustomScoreByte)
 }
 
 /// Test that CustomScoreQuery of Type.INT returns the expected scores.
-BOOST_AUTO_TEST_CASE(testCustomScoreInt)
+TEST_F(CustomScoreQueryTest, testCustomScoreInt)
 {
     // INT field values are small enough to be parsed as int
     doTestCustomScore(INT_FIELD, FieldScoreQuery::INT, 1.0);
@@ -322,7 +320,7 @@ BOOST_AUTO_TEST_CASE(testCustomScoreInt)
 }
 
 /// Test that CustomScoreQuery of Type.DOUBLE returns the expected scores.
-BOOST_AUTO_TEST_CASE(testCustomScoreDouble)
+TEST_F(CustomScoreQueryTest, testCustomScoreDouble)
 {
     // INT field can be parsed as double
     doTestCustomScore(INT_FIELD, FieldScoreQuery::DOUBLE, 1.0);
@@ -331,5 +329,3 @@ BOOST_AUTO_TEST_CASE(testCustomScoreDouble)
     doTestCustomScore(DOUBLE_FIELD, FieldScoreQuery::DOUBLE, 1.0);
     doTestCustomScore(DOUBLE_FIELD, FieldScoreQuery::DOUBLE, 6.0);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

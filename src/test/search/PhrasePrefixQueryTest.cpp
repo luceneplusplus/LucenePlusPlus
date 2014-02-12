@@ -22,9 +22,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(PhrasePrefixQueryTest, LuceneTestFixture)
+typedef LuceneTestFixture PhrasePrefixQueryTest;
 
-BOOST_AUTO_TEST_CASE(testPhrasePrefix)
+TEST_F(PhrasePrefixQueryTest, testPhrasePrefix)
 {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -65,15 +65,13 @@ BOOST_AUTO_TEST_CASE(testPhrasePrefix)
             termsWithPrefix.add(te->term());
     }
     while (te->next());
-    
+
     query1->add(termsWithPrefix);
     query2->add(termsWithPrefix);
 
     Collection<ScoreDocPtr> result = searcher->search(query1, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, result.size());
+    EXPECT_EQ(2, result.size());
 
     result = searcher->search(query2, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, result.size());
+    EXPECT_EQ(0, result.size());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

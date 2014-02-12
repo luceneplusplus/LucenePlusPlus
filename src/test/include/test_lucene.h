@@ -10,7 +10,7 @@
 #include "Lucene.h"
 #include "LuceneContrib.h"
 #include "StringUtils.h"
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
 namespace std
 {
@@ -19,7 +19,7 @@ namespace std
        out << Lucene::StringUtils::toUTF8(s);
        return out;
     }
-} 
+}
 
 namespace Lucene
 {
@@ -31,9 +31,9 @@ namespace Lucene
     DECLARE_SHARED_PTR(MockRAMInputStream)
     DECLARE_SHARED_PTR(MockRAMOutputStream)
     DECLARE_SHARED_PTR(MockFilter)
-    
+
     typedef HashMap<String, FieldPtr> MapStringField;
-        
+
     struct check_exception
     {
         check_exception(LuceneException::ExceptionType type) : checkType(type) {}

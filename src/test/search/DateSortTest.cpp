@@ -22,10 +22,10 @@
 
 using namespace Lucene;
 
-class DateSortFixture : public LuceneTestFixture
+class DateSortTest : public LuceneTestFixture
 {
 public:
-    DateSortFixture()
+    DateSortTest()
     {
         // Create an index writer.
         directory = newLucene<RAMDirectory>();
@@ -34,9 +34,9 @@ public:
         // oldest doc:
         // Add the first document.  text = "Document 1"  dateTime = Oct 10 03:25:22 EDT 2007
         writer->addDocument(createDocument(L"Document 1", 1192001122000LL));
-        // Add the second document.  text = "Document 2"  dateTime = Oct 10 03:25:26 EDT 2007 
+        // Add the second document.  text = "Document 2"  dateTime = Oct 10 03:25:26 EDT 2007
         writer->addDocument(createDocument(L"Document 2", 1192001126000LL));
-        // Add the third document.  text = "Document 3"  dateTime = Oct 11 07:12:13 EDT 2007 
+        // Add the third document.  text = "Document 3"  dateTime = Oct 11 07:12:13 EDT 2007
         writer->addDocument(createDocument(L"Document 3", 1192101133000LL));
         // Add the fourth document.  text = "Document 4"  dateTime = Oct 11 08:02:09 EDT 2007
         writer->addDocument(createDocument(L"Document 4", 1192104129000LL));
@@ -47,15 +47,15 @@ public:
         writer->optimize();
         writer->close();
     }
-    
-    virtual ~DateSortFixture()
+
+    virtual ~DateSortTest()
     {
     }
 
 protected:
     static const String TEXT_FIELD;
     static const String DATE_TIME_FIELD;
-    
+
     DirectoryPtr directory;
 
 public:
@@ -76,12 +76,10 @@ public:
     }
 };
 
-const String DateSortFixture::TEXT_FIELD = L"text";
-const String DateSortFixture::DATE_TIME_FIELD = L"dateTime";
+const String DateSortTest::TEXT_FIELD = L"text";
+const String DateSortTest::DATE_TIME_FIELD = L"dateTime";
 
-BOOST_FIXTURE_TEST_SUITE(DateSortTest, DateSortFixture)
-
-BOOST_AUTO_TEST_CASE(testReverseDateSort)
+TEST_F(DateSortTest, testReverseDateSort)
 {
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
 
@@ -100,7 +98,7 @@ BOOST_AUTO_TEST_CASE(testReverseDateSort)
         actualOrder[i] = text;
     }
     searcher->close();
-    
+
     // Set up the expected order (ie. Document 5, 4, 3, 2, 1).
     Collection<String> expectedOrder = Collection<String>::newInstance(5);
     expectedOrder[0] = L"Document 5";
@@ -109,7 +107,5 @@ BOOST_AUTO_TEST_CASE(testReverseDateSort)
     expectedOrder[3] = L"Document 2";
     expectedOrder[4] = L"Document 1";
 
-    BOOST_CHECK(expectedOrder.equals(actualOrder));
+    EXPECT_TRUE(expectedOrder.equals(actualOrder));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

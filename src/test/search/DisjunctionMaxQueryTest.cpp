@@ -43,22 +43,22 @@ public:
         else
             return 0.0;
     }
-    
+
     virtual double lengthNorm(const String& fieldName, int32_t numTokens)
     {
         return 1.0;
     }
-    
+
     virtual double idf(int32_t docFreq, int32_t numDocs)
     {
         return 1.0;
     }
 };
 
-class DisjunctionMaxQueryFixture : public LuceneTestFixture
+class DisjunctionMaxQueryTest : public LuceneTestFixture
 {
 public:
-    DisjunctionMaxQueryFixture()
+    DisjunctionMaxQueryTest()
     {
         sim = newLucene<DisjunctionMaxSimilarity>();
 
@@ -67,7 +67,7 @@ public:
         writer->setSimilarity(sim);
 
         // hed is the most important field, dek is secondary
-        
+
         // d1 is an "ok" match for: albino elephant
         {
             DocumentPtr d1 = newLucene<Document>();
@@ -76,7 +76,7 @@ public:
             d1->add(newLucene<Field>(L"dek", L"elephant", Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(d1);
         }
-        
+
         // d2 is a "good" match for: albino elephant
         {
             DocumentPtr d2 = newLucene<Document>();
@@ -86,7 +86,7 @@ public:
             d2->add(newLucene<Field>(L"dek", L"elephant", Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(d2);
         }
-        
+
         // d3 is a "better" match for: albino elephant
         {
             DocumentPtr d3 = newLucene<Document>();
@@ -95,7 +95,7 @@ public:
             d3->add(newLucene<Field>(L"hed", L"elephant", Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(d3);
         }
-        
+
         // d4 is the "best" match for: albino elephant
         {
             DocumentPtr d4 = newLucene<Document>();
@@ -105,15 +105,15 @@ public:
             d4->add(newLucene<Field>(L"dek", L"albino", Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(d4);
         }
-        
+
         writer->close();
 
         r = IndexReader::open(index, true);
         s = newLucene<IndexSearcher>(r);
         s->setSimilarity(sim);
     }
-    
-    virtual ~DisjunctionMaxQueryFixture()
+
+    virtual ~DisjunctionMaxQueryTest()
     {
     }
 
@@ -122,7 +122,7 @@ public:
     DirectoryPtr index;
     IndexReaderPtr r;
     IndexSearcherPtr s;
-    
+
     static const double SCORE_COMP_THRESH;
 
 protected:
@@ -130,7 +130,7 @@ protected:
     {
         return newLucene<TermQuery>(newLucene<Term>(f, t));
     }
-    
+
     QueryPtr tq(const String& f, const String& t, double b)
     {
         QueryPtr q = tq(f, t);
@@ -139,11 +139,9 @@ protected:
     }
 };
 
-const double DisjunctionMaxQueryFixture::SCORE_COMP_THRESH = 0.00001;
+const double DisjunctionMaxQueryTest::SCORE_COMP_THRESH = 0.00001;
 
-BOOST_FIXTURE_TEST_SUITE(DisjunctionMaxQueryTest, DisjunctionMaxQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testSkipToFirsttimeMiss)
+TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeMiss)
 {
     DisjunctionMaxQueryPtr dq = newLucene<DisjunctionMaxQuery>(0.0);
     dq->add(tq(L"id", L"d1"));
@@ -153,10 +151,10 @@ BOOST_AUTO_TEST_CASE(testSkipToFirsttimeMiss)
 
     WeightPtr dw = dq->weight(s);
     ScorerPtr ds = dw->scorer(r, true, false);
-    BOOST_CHECK_EQUAL(ds->advance(3), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_EQ(ds->advance(3), DocIdSetIterator::NO_MORE_DOCS);
 }
 
-BOOST_AUTO_TEST_CASE(testSkipToFirsttimeHit)
+TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeHit)
 {
     DisjunctionMaxQueryPtr dq = newLucene<DisjunctionMaxQuery>(0.0);
     dq->add(tq(L"dek", L"albino"));
@@ -166,11 +164,11 @@ BOOST_AUTO_TEST_CASE(testSkipToFirsttimeHit)
 
     WeightPtr dw = dq->weight(s);
     ScorerPtr ds = dw->scorer(r, true, false);
-    BOOST_CHECK_NE(ds->advance(3), DocIdSetIterator::NO_MORE_DOCS);
-    BOOST_CHECK_EQUAL(L"d4", r->document(ds->docID())->get(L"id"));
+    EXPECT_NE(ds->advance(3), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_EQ(L"d4", r->document(ds->docID())->get(L"id"));
 }
 
-BOOST_AUTO_TEST_CASE(testSimpleEqualScores1)
+TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores1)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.0);
     q->add(tq(L"hed", L"albino"));
@@ -179,14 +177,14 @@ BOOST_AUTO_TEST_CASE(testSimpleEqualScores1)
     QueryUtils::check(q, s);
 
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(4, h.size());
-    
+    EXPECT_EQ(4, h.size());
+
     double score = h[0]->score;
     for (int32_t i = 1; i < h.size(); ++i)
-        BOOST_CHECK_CLOSE_FRACTION(score, h[i]->score, SCORE_COMP_THRESH);
+        EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
 }
 
-BOOST_AUTO_TEST_CASE(testSimpleEqualScores2)
+TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores2)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.0);
     q->add(tq(L"dek", L"albino"));
@@ -195,14 +193,14 @@ BOOST_AUTO_TEST_CASE(testSimpleEqualScores2)
     QueryUtils::check(q, s);
 
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, h.size());
-    
+    EXPECT_EQ(3, h.size());
+
     double score = h[0]->score;
     for (int32_t i = 1; i < h.size(); ++i)
-        BOOST_CHECK_CLOSE_FRACTION(score, h[i]->score, SCORE_COMP_THRESH);
+        EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
 }
 
-BOOST_AUTO_TEST_CASE(testSimpleEqualScores3)
+TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores3)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.0);
     q->add(tq(L"hed", L"albino"));
@@ -213,14 +211,14 @@ BOOST_AUTO_TEST_CASE(testSimpleEqualScores3)
     QueryUtils::check(q, s);
 
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(4, h.size());
-    
+    EXPECT_EQ(4, h.size());
+
     double score = h[0]->score;
     for (int32_t i = 1; i < h.size(); ++i)
-        BOOST_CHECK_CLOSE_FRACTION(score, h[i]->score, SCORE_COMP_THRESH);
+        EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
 }
 
-BOOST_AUTO_TEST_CASE(testSimpleTiebreaker)
+TEST_F(DisjunctionMaxQueryTest, testSimpleTiebreaker)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.01);
     q->add(tq(L"dek", L"albino"));
@@ -229,16 +227,16 @@ BOOST_AUTO_TEST_CASE(testSimpleTiebreaker)
     QueryUtils::check(q, s);
 
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, h.size());
-    BOOST_CHECK_EQUAL(L"d2", s->doc(h[0]->doc)->get(L"id"));
+    EXPECT_EQ(3, h.size());
+    EXPECT_EQ(L"d2", s->doc(h[0]->doc)->get(L"id"));
     double score0 = h[0]->score;
     double score1 = h[1]->score;
     double score2 = h[2]->score;
-    BOOST_CHECK(score0 > score1);
-    BOOST_CHECK_CLOSE_FRACTION(score1, score2, SCORE_COMP_THRESH);
+    EXPECT_TRUE(score0 > score1);
+    EXPECT_NEAR(score1, score2, SCORE_COMP_THRESH);
 }
 
-BOOST_AUTO_TEST_CASE(testBooleanRequiredEqualScores)
+TEST_F(DisjunctionMaxQueryTest, testBooleanRequiredEqualScores)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
@@ -255,17 +253,17 @@ BOOST_AUTO_TEST_CASE(testBooleanRequiredEqualScores)
         q->add(q2, BooleanClause::MUST);
         QueryUtils::check(q2, s);
     }
-    
+
     QueryUtils::check(q, s);
-    
+
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, h.size());
+    EXPECT_EQ(3, h.size());
     double score = h[0]->score;
     for (int32_t i = 1; i < h.size(); ++i)
-        BOOST_CHECK_CLOSE_FRACTION(score, h[i]->score, SCORE_COMP_THRESH);
+        EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
 }
 
-BOOST_AUTO_TEST_CASE(testBooleanOptionalNoTiebreaker)
+TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalNoTiebreaker)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
@@ -280,20 +278,20 @@ BOOST_AUTO_TEST_CASE(testBooleanOptionalNoTiebreaker)
         q2->add(tq(L"dek", L"elephant"));
         q->add(q2, BooleanClause::SHOULD);
     }
-    
+
     QueryUtils::check(q, s);
-    
+
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(4, h.size());
+    EXPECT_EQ(4, h.size());
     double score = h[0]->score;
     for (int32_t i = 1; i < h.size() - 1; ++i)
-        BOOST_CHECK_CLOSE_FRACTION(score, h[i]->score, SCORE_COMP_THRESH);
-    BOOST_CHECK_EQUAL(L"d1", s->doc(h[h.size() - 1]->doc)->get(L"id"));
+        EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
+    EXPECT_EQ(L"d1", s->doc(h[h.size() - 1]->doc)->get(L"id"));
     double score1 = h[h.size() - 1]->score;
-    BOOST_CHECK(score > score1);
+    EXPECT_TRUE(score > score1);
 }
 
-BOOST_AUTO_TEST_CASE(testBooleanOptionalWithTiebreaker)
+TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalWithTiebreaker)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
@@ -308,12 +306,12 @@ BOOST_AUTO_TEST_CASE(testBooleanOptionalWithTiebreaker)
         q2->add(tq(L"dek", L"elephant"));
         q->add(q2, BooleanClause::SHOULD);
     }
-    
+
     QueryUtils::check(q, s);
-    
+
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(4, h.size());
-    
+    EXPECT_EQ(4, h.size());
+
     double score0 = h[0]->score;
     double score1 = h[1]->score;
     double score2 = h[2]->score;
@@ -324,17 +322,17 @@ BOOST_AUTO_TEST_CASE(testBooleanOptionalWithTiebreaker)
     String doc2 = s->doc(h[2]->doc)->get(L"id");
     String doc3 = s->doc(h[3]->doc)->get(L"id");
 
-    BOOST_CHECK(doc0 == L"d2" || doc0 == L"d4");
-    BOOST_CHECK(doc1 == L"d2" || doc1 == L"d4");
-    BOOST_CHECK_CLOSE_FRACTION(score0, score1, SCORE_COMP_THRESH);
-    BOOST_CHECK_EQUAL(L"d3", doc2);
-    BOOST_CHECK(score1 > score2);
+    EXPECT_TRUE(doc0 == L"d2" || doc0 == L"d4");
+    EXPECT_TRUE(doc1 == L"d2" || doc1 == L"d4");
+    EXPECT_NEAR(score0, score1, SCORE_COMP_THRESH);
+    EXPECT_EQ(L"d3", doc2);
+    EXPECT_TRUE(score1 > score2);
 
-    BOOST_CHECK_EQUAL(L"d1", doc3);
-    BOOST_CHECK(score2 > score3);
+    EXPECT_EQ(L"d1", doc3);
+    EXPECT_TRUE(score2 > score3);
 }
 
-BOOST_AUTO_TEST_CASE(testBooleanOptionalWithTiebreakerAndBoost)
+TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalWithTiebreakerAndBoost)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
@@ -349,12 +347,12 @@ BOOST_AUTO_TEST_CASE(testBooleanOptionalWithTiebreakerAndBoost)
         q2->add(tq(L"dek", L"elephant"));
         q->add(q2, BooleanClause::SHOULD);
     }
-    
+
     QueryUtils::check(q, s);
-    
+
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(4, h.size());
-    
+    EXPECT_EQ(4, h.size());
+
     double score0 = h[0]->score;
     double score1 = h[1]->score;
     double score2 = h[2]->score;
@@ -365,9 +363,7 @@ BOOST_AUTO_TEST_CASE(testBooleanOptionalWithTiebreakerAndBoost)
     String doc2 = s->doc(h[2]->doc)->get(L"id");
     String doc3 = s->doc(h[3]->doc)->get(L"id");
 
-    BOOST_CHECK(score0 > score1);
-    BOOST_CHECK(score1 > score2);
-    BOOST_CHECK(score2 > score3);
+    EXPECT_TRUE(score0 > score1);
+    EXPECT_TRUE(score1 > score2);
+    EXPECT_TRUE(score2 > score3);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

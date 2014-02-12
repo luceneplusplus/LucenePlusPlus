@@ -19,22 +19,22 @@
 
 using namespace Lucene;
 
-/// Test QueryParser's ability to deal with Analyzers that return more than one token per 
+/// Test QueryParser's ability to deal with Analyzers that return more than one token per
 /// position or that return tokens with a position increment > 1.
-BOOST_FIXTURE_TEST_SUITE(MultiAnalyzerTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture MultiAnalyzerTest;
 
 static int32_t multiToken = 0;
 
 DECLARE_SHARED_PTR(MultiAnalyzer)
-DECLARE_SHARED_PTR(TestFilter)
+DECLARE_SHARED_PTR(MultiAnalyzerTestFilter)
 DECLARE_SHARED_PTR(DumbQueryWrapper)
 DECLARE_SHARED_PTR(DumbQueryParser)
 DECLARE_SHARED_PTR(TestPosIncrementFilter)
 
-class TestFilter : public TokenFilter
+class MultiAnalyzerTestFilter : public TokenFilter
 {
 public:
-    TestFilter(TokenStreamPtr in) : TokenFilter(in)
+    MultiAnalyzerTestFilter(TokenStreamPtr in) : TokenFilter(in)
     {
         prevStartOffset = 0;
         prevEndOffset = 0;
@@ -43,12 +43,12 @@ public:
         offsetAtt = addAttribute<OffsetAttribute>();
         typeAtt = addAttribute<TypeAttribute>();
     }
-    
-    virtual ~TestFilter()
+
+    virtual ~MultiAnalyzerTestFilter()
     {
     }
-    
-    LUCENE_CLASS(TestFilter);
+
+    LUCENE_CLASS(MultiAnalyzerTestFilter);
 
 protected:
     String prevType;
@@ -103,14 +103,14 @@ public:
     virtual ~MultiAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(MultiAnalyzer);
 
 public:
     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, reader);
-        result = newLucene<TestFilter>(result);
+        result = newLucene<MultiAnalyzerTestFilter>(result);
         result = newLucene<LowerCaseFilter>(result);
         return result;
     }
@@ -124,11 +124,11 @@ public:
     {
         this->q = q;
     }
-    
+
     virtual ~DumbQueryWrapper()
     {
     }
-    
+
     LUCENE_CLASS(DumbQueryWrapper);
 
 protected:
@@ -148,11 +148,11 @@ public:
     DumbQueryParser(const String& f, AnalyzerPtr a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
     {
     }
-    
+
     virtual ~DumbQueryParser()
     {
     }
-    
+
     LUCENE_CLASS(DumbQueryParser);
 
 public:
@@ -170,11 +170,11 @@ public:
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
-    
+
     virtual ~TestPosIncrementFilter()
     {
     }
-    
+
     LUCENE_CLASS(TestPosIncrementFilter);
 
 protected:
@@ -213,7 +213,7 @@ public:
     virtual ~PosIncrementAnalyzer()
     {
     }
-    
+
     LUCENE_CLASS(PosIncrementAnalyzer);
 
 public:
@@ -226,75 +226,73 @@ public:
     }
 };
 
-BOOST_AUTO_TEST_CASE(testMultiAnalyzer)
+TEST_F(MultiAnalyzerTest, testMultiAnalyzer)
 {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"", newLucene<MultiAnalyzer>());
 
     // trivial, no multiple tokens
-    BOOST_CHECK_EQUAL(L"foo", qp->parse(L"foo")->toString());
-    BOOST_CHECK_EQUAL(L"foo", qp->parse(L"\"foo\"")->toString());
-    BOOST_CHECK_EQUAL(L"foo foobar", qp->parse(L"foo foobar")->toString());
-    BOOST_CHECK_EQUAL(L"\"foo foobar\"", qp->parse(L"\"foo foobar\"")->toString());
-    BOOST_CHECK_EQUAL(L"\"foo foobar blah\"", qp->parse(L"\"foo foobar blah\"")->toString());
+    EXPECT_EQ(L"foo", qp->parse(L"foo")->toString());
+    EXPECT_EQ(L"foo", qp->parse(L"\"foo\"")->toString());
+    EXPECT_EQ(L"foo foobar", qp->parse(L"foo foobar")->toString());
+    EXPECT_EQ(L"\"foo foobar\"", qp->parse(L"\"foo foobar\"")->toString());
+    EXPECT_EQ(L"\"foo foobar blah\"", qp->parse(L"\"foo foobar blah\"")->toString());
 
     // two tokens at the same position
-    BOOST_CHECK_EQUAL(L"(multi multi2) foo", qp->parse(L"multi foo")->toString());
-    BOOST_CHECK_EQUAL(L"foo (multi multi2)", qp->parse(L"foo multi")->toString());
-    BOOST_CHECK_EQUAL(L"(multi multi2) (multi multi2)", qp->parse(L"multi multi")->toString());
-    BOOST_CHECK_EQUAL(L"+(foo (multi multi2)) +(bar (multi multi2))", qp->parse(L"+(foo multi) +(bar multi)")->toString());
-    BOOST_CHECK_EQUAL(L"+(foo (multi multi2)) field:\"bar (multi multi2)\"", qp->parse(L"+(foo multi) field:\"bar multi\"")->toString());
+    EXPECT_EQ(L"(multi multi2) foo", qp->parse(L"multi foo")->toString());
+    EXPECT_EQ(L"foo (multi multi2)", qp->parse(L"foo multi")->toString());
+    EXPECT_EQ(L"(multi multi2) (multi multi2)", qp->parse(L"multi multi")->toString());
+    EXPECT_EQ(L"+(foo (multi multi2)) +(bar (multi multi2))", qp->parse(L"+(foo multi) +(bar multi)")->toString());
+    EXPECT_EQ(L"+(foo (multi multi2)) field:\"bar (multi multi2)\"", qp->parse(L"+(foo multi) field:\"bar multi\"")->toString());
 
     // phrases
-    BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"", qp->parse(L"\"multi foo\"")->toString());
-    BOOST_CHECK_EQUAL(L"\"foo (multi multi2)\"", qp->parse(L"\"foo multi\"")->toString());
-    BOOST_CHECK_EQUAL(L"\"foo (multi multi2) foobar (multi multi2)\"", qp->parse(L"\"foo multi foobar multi\"")->toString());
+    EXPECT_EQ(L"\"(multi multi2) foo\"", qp->parse(L"\"multi foo\"")->toString());
+    EXPECT_EQ(L"\"foo (multi multi2)\"", qp->parse(L"\"foo multi\"")->toString());
+    EXPECT_EQ(L"\"foo (multi multi2) foobar (multi multi2)\"", qp->parse(L"\"foo multi foobar multi\"")->toString());
 
     // fields
-    BOOST_CHECK_EQUAL(L"(field:multi field:multi2) field:foo", qp->parse(L"field:multi field:foo")->toString());
-    BOOST_CHECK_EQUAL(L"field:\"(multi multi2) foo\"", qp->parse(L"field:\"multi foo\"")->toString());
+    EXPECT_EQ(L"(field:multi field:multi2) field:foo", qp->parse(L"field:multi field:foo")->toString());
+    EXPECT_EQ(L"field:\"(multi multi2) foo\"", qp->parse(L"field:\"multi foo\"")->toString());
 
     // three tokens at one position
-    BOOST_CHECK_EQUAL(L"triplemulti multi3 multi2", qp->parse(L"triplemulti")->toString());
-    BOOST_CHECK_EQUAL(L"foo (triplemulti multi3 multi2) foobar", qp->parse(L"foo triplemulti foobar")->toString());
+    EXPECT_EQ(L"triplemulti multi3 multi2", qp->parse(L"triplemulti")->toString());
+    EXPECT_EQ(L"foo (triplemulti multi3 multi2) foobar", qp->parse(L"foo triplemulti foobar")->toString());
 
     // phrase with non-default slop
-    BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"~10", qp->parse(L"\"multi foo\"~10")->toString());
-    
+    EXPECT_EQ(L"\"(multi multi2) foo\"~10", qp->parse(L"\"multi foo\"~10")->toString());
+
     // phrase with non-default boost
-    BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"^2.0", qp->parse(L"\"multi foo\"^2")->toString());
+    EXPECT_EQ(L"\"(multi multi2) foo\"^2.0", qp->parse(L"\"multi foo\"^2")->toString());
 
     // phrase after changing default slop
     qp->setPhraseSlop(99);
-    BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"~99 bar", qp->parse(L"\"multi foo\" bar")->toString());
-    BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"~99 \"foo bar\"~2", qp->parse(L"\"multi foo\" \"foo bar\"~2")->toString());
+    EXPECT_EQ(L"\"(multi multi2) foo\"~99 bar", qp->parse(L"\"multi foo\" bar")->toString());
+    EXPECT_EQ(L"\"(multi multi2) foo\"~99 \"foo bar\"~2", qp->parse(L"\"multi foo\" \"foo bar\"~2")->toString());
     qp->setPhraseSlop(0);
 
     // non-default operator
     qp->setDefaultOperator(QueryParser::AND_OPERATOR);
-    BOOST_CHECK_EQUAL(L"+(multi multi2) +foo", qp->parse(L"multi foo")->toString());
+    EXPECT_EQ(L"+(multi multi2) +foo", qp->parse(L"multi foo")->toString());
 }
 
-BOOST_AUTO_TEST_CASE(testMultiAnalyzerWithSubclassOfQueryParser)
+TEST_F(MultiAnalyzerTest, testMultiAnalyzerWithSubclassOfQueryParser)
 {
     DumbQueryParserPtr qp = newLucene<DumbQueryParser>(L"", newLucene<MultiAnalyzer>());
 
     qp->setPhraseSlop(99); // modified default slop
 
     // direct call to getFieldQuery to demonstrate difference between phrase and multiphrase with modified default slop
-    BOOST_CHECK_EQUAL(L"\"foo bar\"~99", qp->getFieldQuery(L"", L"foo bar")->toString());
-    BOOST_CHECK_EQUAL(L"\"(multi multi2) bar\"~99", qp->getFieldQuery(L"", L"multi bar")->toString());
+    EXPECT_EQ(L"\"foo bar\"~99", qp->getFieldQuery(L"", L"foo bar")->toString());
+    EXPECT_EQ(L"\"(multi multi2) bar\"~99", qp->getFieldQuery(L"", L"multi bar")->toString());
 
     // ask subclass to parse phrase with modified default slop
-    BOOST_CHECK_EQUAL(L"\"(multi multi2) foo\"~99 bar", qp->parse(L"\"multi foo\" bar")->toString());
+    EXPECT_EQ(L"\"(multi multi2) foo\"~99 bar", qp->parse(L"\"multi foo\" bar")->toString());
 }
 
-BOOST_AUTO_TEST_CASE(testPosIncrementAnalyzer)
+TEST_F(MultiAnalyzerTest, testPosIncrementAnalyzer)
 {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_24, L"", newLucene<PosIncrementAnalyzer>());
-    BOOST_CHECK_EQUAL(L"quick brown", qp->parse(L"the quick brown")->toString());
-    BOOST_CHECK_EQUAL(L"\"quick brown\"", qp->parse(L"\"the quick brown\"")->toString());
-    BOOST_CHECK_EQUAL(L"quick brown fox", qp->parse(L"the quick brown fox")->toString());
-    BOOST_CHECK_EQUAL(L"\"quick brown fox\"", qp->parse(L"\"the quick brown fox\"")->toString());
+    EXPECT_EQ(L"quick brown", qp->parse(L"the quick brown")->toString());
+    EXPECT_EQ(L"\"quick brown\"", qp->parse(L"\"the quick brown\"")->toString());
+    EXPECT_EQ(L"quick brown fox", qp->parse(L"the quick brown fox")->toString());
+    EXPECT_EQ(L"\"quick brown fox\"", qp->parse(L"\"the quick brown fox\"")->toString());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

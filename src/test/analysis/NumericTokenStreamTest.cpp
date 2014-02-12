@@ -13,12 +13,12 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(NumericTokenStreamTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture NumericTokenStreamTest;
 
 static int64_t lvalue = 4573245871874382LL;
 static int32_t ivalue = 123456;
 
-BOOST_AUTO_TEST_CASE(testLongStream)
+TEST_F(NumericTokenStreamTest, testLongStream)
 {
     NumericTokenStreamPtr stream = newLucene<NumericTokenStream>()->setLongValue(lvalue);
     // use getAttribute to test if attributes really exist, if not an IAE will be thrown
@@ -26,14 +26,14 @@ BOOST_AUTO_TEST_CASE(testLongStream)
     TypeAttributePtr typeAtt = stream->getAttribute<TypeAttribute>();
     for (int32_t shift = 0; shift < 64; shift += NumericUtils::PRECISION_STEP_DEFAULT)
     {
-        BOOST_CHECK(stream->incrementToken());
-        BOOST_CHECK_EQUAL(NumericUtils::longToPrefixCoded(lvalue, shift), termAtt->term());
-        BOOST_CHECK_EQUAL(shift == 0 ? NumericTokenStream::TOKEN_TYPE_FULL_PREC() : NumericTokenStream::TOKEN_TYPE_LOWER_PREC(), typeAtt->type());
+        EXPECT_TRUE(stream->incrementToken());
+        EXPECT_EQ(NumericUtils::longToPrefixCoded(lvalue, shift), termAtt->term());
+        EXPECT_EQ(shift == 0 ? NumericTokenStream::TOKEN_TYPE_FULL_PREC() : NumericTokenStream::TOKEN_TYPE_LOWER_PREC(), typeAtt->type());
     }
-    BOOST_CHECK(!stream->incrementToken());
+    EXPECT_TRUE(!stream->incrementToken());
 }
 
-BOOST_AUTO_TEST_CASE(testIntStream)
+TEST_F(NumericTokenStreamTest, testIntStream)
 {
     NumericTokenStreamPtr stream = newLucene<NumericTokenStream>()->setIntValue(ivalue);
     // use getAttribute to test if attributes really exist, if not an IAE will be thrown
@@ -41,18 +41,30 @@ BOOST_AUTO_TEST_CASE(testIntStream)
     TypeAttributePtr typeAtt = stream->getAttribute<TypeAttribute>();
     for (int32_t shift = 0; shift < 32; shift += NumericUtils::PRECISION_STEP_DEFAULT)
     {
-        BOOST_CHECK(stream->incrementToken());
-        BOOST_CHECK_EQUAL(NumericUtils::intToPrefixCoded(ivalue, shift), termAtt->term());
-        BOOST_CHECK_EQUAL(shift == 0 ? NumericTokenStream::TOKEN_TYPE_FULL_PREC() : NumericTokenStream::TOKEN_TYPE_LOWER_PREC(), typeAtt->type());
+        EXPECT_TRUE(stream->incrementToken());
+        EXPECT_EQ(NumericUtils::intToPrefixCoded(ivalue, shift), termAtt->term());
+        EXPECT_EQ(shift == 0 ? NumericTokenStream::TOKEN_TYPE_FULL_PREC() : NumericTokenStream::TOKEN_TYPE_LOWER_PREC(), typeAtt->type());
     }
-    BOOST_CHECK(!stream->incrementToken());
+    EXPECT_TRUE(!stream->incrementToken());
 }
 
-BOOST_AUTO_TEST_CASE(testNotInitialized)
+TEST_F(NumericTokenStreamTest, testNotInitialized)
 {
     NumericTokenStreamPtr stream = newLucene<NumericTokenStream>();
-    BOOST_CHECK_EXCEPTION(stream->reset(), IllegalStateException, check_exception(LuceneException::IllegalState));
-    BOOST_CHECK_EXCEPTION(stream->incrementToken(), IllegalStateException, check_exception(LuceneException::IllegalState));
+    try
+    {
+        stream->reset();
+    }
+    catch (IllegalStateException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalState)(e));
+    }
+    try
+    {
+        stream->incrementToken();
+    }
+    catch (IllegalStateException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalState)(e));
+    }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

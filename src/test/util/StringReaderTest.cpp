@@ -10,65 +10,63 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(StringReaderTest, LuceneTestFixture)
+typedef LuceneTestFixture StringReaderTest;
 
-BOOST_AUTO_TEST_CASE(testStringReaderChar)
+TEST_F(StringReaderTest, testStringReaderChar)
 {
     StringReader reader(L"Test string");
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L'T');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L'e');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L's');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L't');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L' ');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L's');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L't');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L'r');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L'i');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L'n');
-    BOOST_CHECK_EQUAL((wchar_t)reader.read(), L'g');
-    BOOST_CHECK_EQUAL(reader.read(), StringReader::READER_EOF);
+    EXPECT_EQ((wchar_t)reader.read(), L'T');
+    EXPECT_EQ((wchar_t)reader.read(), L'e');
+    EXPECT_EQ((wchar_t)reader.read(), L's');
+    EXPECT_EQ((wchar_t)reader.read(), L't');
+    EXPECT_EQ((wchar_t)reader.read(), L' ');
+    EXPECT_EQ((wchar_t)reader.read(), L's');
+    EXPECT_EQ((wchar_t)reader.read(), L't');
+    EXPECT_EQ((wchar_t)reader.read(), L'r');
+    EXPECT_EQ((wchar_t)reader.read(), L'i');
+    EXPECT_EQ((wchar_t)reader.read(), L'n');
+    EXPECT_EQ((wchar_t)reader.read(), L'g');
+    EXPECT_EQ(reader.read(), StringReader::READER_EOF);
 }
 
-BOOST_AUTO_TEST_CASE(testStringReaderBuffer)
+TEST_F(StringReaderTest, testStringReaderBuffer)
 {
     StringReader reader(L"Longer test string");
-    
+
     wchar_t buffer[50];
-    
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 6), 6);
-    BOOST_CHECK_EQUAL(String(buffer, 6), L"Longer");
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 1), 1);
-    BOOST_CHECK_EQUAL(String(buffer, 1), L" ");
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 4), 4);
-    BOOST_CHECK_EQUAL(String(buffer, 4), L"test");
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 1), 1);
-    BOOST_CHECK_EQUAL(String(buffer, 1), L" ");
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 6), 6);
-    BOOST_CHECK_EQUAL(String(buffer, 6), L"string");
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 1), StringReader::READER_EOF);
+
+    EXPECT_EQ(reader.read(buffer, 0, 6), 6);
+    EXPECT_EQ(String(buffer, 6), L"Longer");
+    EXPECT_EQ(reader.read(buffer, 0, 1), 1);
+    EXPECT_EQ(String(buffer, 1), L" ");
+    EXPECT_EQ(reader.read(buffer, 0, 4), 4);
+    EXPECT_EQ(String(buffer, 4), L"test");
+    EXPECT_EQ(reader.read(buffer, 0, 1), 1);
+    EXPECT_EQ(String(buffer, 1), L" ");
+    EXPECT_EQ(reader.read(buffer, 0, 6), 6);
+    EXPECT_EQ(String(buffer, 6), L"string");
+    EXPECT_EQ(reader.read(buffer, 0, 1), StringReader::READER_EOF);
 }
 
-BOOST_AUTO_TEST_CASE(testStringReaderReset)
+TEST_F(StringReaderTest, testStringReaderReset)
 {
     StringReader reader(L"Longer test string");
-    
+
     wchar_t buffer[50];
-    
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 6), 6);
-    BOOST_CHECK_EQUAL(String(buffer, 6), L"Longer");
+
+    EXPECT_EQ(reader.read(buffer, 0, 6), 6);
+    EXPECT_EQ(String(buffer, 6), L"Longer");
     reader.reset();
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 6), 6);
-    BOOST_CHECK_EQUAL(String(buffer, 6), L"Longer");
+    EXPECT_EQ(reader.read(buffer, 0, 6), 6);
+    EXPECT_EQ(String(buffer, 6), L"Longer");
 }
 
-BOOST_AUTO_TEST_CASE(testStringReaderPastEOF)
+TEST_F(StringReaderTest, testStringReaderPastEOF)
 {
     StringReader reader(L"Short string");
-    
-    wchar_t buffer[50];
-    
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 20), 12);
-    BOOST_CHECK_EQUAL(reader.read(buffer, 0, 1), StringReader::READER_EOF);
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    wchar_t buffer[50];
+
+    EXPECT_EQ(reader.read(buffer, 0, 20), 12);
+    EXPECT_EQ(reader.read(buffer, 0, 1), StringReader::READER_EOF);
+}

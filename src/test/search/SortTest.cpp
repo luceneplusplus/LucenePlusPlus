@@ -37,20 +37,20 @@
 
 using namespace Lucene;
 
-class SortFixture : public LuceneTestFixture
+class SortTest : public LuceneTestFixture
 {
 public:
-    SortFixture()
+    SortTest()
     {
         r = newLucene<Random>();
-        
+
         // document data:
         // the tracer field is used to determine which document was hit the contents field is used to search and sort by relevance
-        // the int field to sort by int the double field to sort by double the string field to sort by string the i18n field 
+        // the int field to sort by int the double field to sort by double the string field to sort by string the i18n field
         // includes accented characters for testing locale-specific sorting
         data = Collection< Collection<String> >::newInstance(14);
         // tracer contents int double string custom i18n long byte encoding
-        
+
         data[0] = newCollection<String>(L"A", L"x a", L"5", L"4.0", L"c", L"A-3", L"p\u00EAche", L"10", L"177", L"J");
         data[1] = newCollection<String>(L"B", L"y a", L"5", L"3.4028235E38", L"i", L"B-10", L"HAT", L"1000000000", L"52", L"I");
         data[2] = newCollection<String>(L"C", L"x a b c", L"2147483647", L"1.0", L"j", L"A-2", L"p\u00E9ch\u00E9", L"99999999", L"66", L"H");
@@ -65,7 +65,7 @@ public:
         data[11] = newCollection<String>(L"X", L"g", L"1", L"0.1", L"", L"", L"", L"", L"", L"");
         data[12] = newCollection<String>(L"Y", L"g", L"1", L"0.2", L"", L"", L"", L"", L"", L"");
         data[13] = newCollection<String>(L"Z", L"f g", L"", L"", L"", L"", L"", L"", L"", L"");
-        
+
         full = getFullIndex();
         searchX = getXIndex();
         searchY = getYIndex();
@@ -77,14 +77,14 @@ public:
         queryG = newLucene<TermQuery>(newLucene<Term>(L"contents", L"g"));
         sort = newLucene<Sort>();
     }
-    
-    virtual ~SortFixture()
+
+    virtual ~SortTest()
     {
     }
 
 protected:
     static const int32_t NUM_STRINGS;
-    
+
     SearcherPtr full;
     SearcherPtr searchX;
     SearcherPtr searchY;
@@ -96,7 +96,7 @@ protected:
     QueryPtr queryG;
     SortPtr sort;
     RandomPtr r;
-    
+
     Collection< Collection<String> > data;
 
 protected:
@@ -104,22 +104,22 @@ protected:
     {
         return getIndex(true, true);
     }
-    
+
     SearcherPtr getXIndex()
     {
         return getIndex(true, false);
     }
-    
+
     SearcherPtr getYIndex()
     {
         return getIndex(false, true);
     }
-    
+
     SearcherPtr getEmptyIndex()
     {
         return getIndex(false, false);
     }
-    
+
     SearcherPtr getIndex(bool even, bool odd)
     {
         RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
@@ -158,7 +158,7 @@ protected:
         s->setDefaultFieldSortScoring(true, true);
         return s;
     }
-    
+
     MapStringDouble getScores(Collection<ScoreDocPtr> hits, SearcherPtr searcher)
     {
         MapStringDouble scoreMap = MapStringDouble::newInstance();
@@ -167,31 +167,31 @@ protected:
         {
             DocumentPtr doc = searcher->doc(hits[i]->doc);
             Collection<String> v = doc->getValues(L"tracer");
-            BOOST_CHECK_EQUAL(v.size(), 1);
+            EXPECT_EQ(v.size(), 1);
             scoreMap.put(v[0], hits[i]->score);
         }
         return scoreMap;
     }
-    
+
     void checkSameValues(MapStringDouble m1, MapStringDouble m2)
     {
         int32_t n = m1.size();
         int32_t m = m2.size();
-        BOOST_CHECK_EQUAL(n, m);
+        EXPECT_EQ(n, m);
         for (MapStringDouble::iterator key = m1.begin(); key != m1.end(); ++key)
         {
             double o1 = m1.get(key->first);
             double o2 = m2.get(key->first);
-            BOOST_CHECK_CLOSE_FRACTION(o1, o2, 1e-6);
+            EXPECT_NEAR(o1, o2, 1e-6);
         }
     }
-    
+
     /// make sure the documents returned by the search match the expected list
     void checkMatches(SearcherPtr searcher, QueryPtr query, SortPtr sort, const String& expectedResult)
     {
         TopDocsPtr hits = searcher->search(query, FilterPtr(), expectedResult.length(), sort);
         Collection<ScoreDocPtr> result = hits->scoreDocs;
-        BOOST_CHECK_EQUAL(hits->totalHits, expectedResult.length());
+        EXPECT_EQ(hits->totalHits, expectedResult.length());
         StringStream buff;
         int32_t n = result.size();
         for (int32_t i = 0; i < n; ++i)
@@ -201,9 +201,9 @@ protected:
             for (int32_t j = 0; j < v.size(); ++j)
                 buff << v[j];
         }
-        BOOST_CHECK_EQUAL(expectedResult, buff.str());
+        EXPECT_EQ(expectedResult, buff.str());
     }
-    
+
     IndexSearcherPtr getFullStrings()
     {
         RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
@@ -226,7 +226,7 @@ protected:
         writer->close();
         return newLucene<IndexSearcher>(indexStore, true);
     }
-    
+
     String getRandomNumberString(int32_t num, int32_t low, int32_t high)
     {
         StringStream buff;
@@ -234,12 +234,12 @@ protected:
             buff << getRandomNumber(low, high);
         return buff.str();
     }
-    
+
     String getRandomCharString(int32_t num)
     {
         return getRandomCharString(num, 48, 122);
     }
-    
+
     String getRandomCharString(int32_t num, int32_t start, int32_t end)
     {
         static const wchar_t* alphanum = L"0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz";
@@ -248,19 +248,19 @@ protected:
             buff << alphanum[getRandomNumber(start, end)];
         return buff.str();
     }
-    
+
     int32_t getRandomNumber(int32_t low, int32_t high)
     {
         return (std::abs(r->nextInt()) % (high - low)) + low;
     }
-    
+
     void checkSaneFieldCaches()
     {
         Collection<FieldCacheEntryPtr> entries = FieldCache::DEFAULT()->getCacheEntries();
         Collection<InsanityPtr> insanity = FieldCacheSanityChecker::checkSanity(entries);
-        BOOST_CHECK_EQUAL(0, insanity.size());
+        EXPECT_EQ(0, insanity.size());
     }
-    
+
     /// runs a variety of sorts useful for multisearchers
     void runMultiSorts(SearcherPtr multi, bool isFull)
     {
@@ -320,10 +320,10 @@ protected:
         sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", SortField::STRING, true)));
         checkMatches(multi, queryF, sort, L"IJZ");
 
-        // up to this point, all of the searches should have "sane" FieldCache behavior, and should have reused 
+        // up to this point, all of the searches should have "sane" FieldCache behavior, and should have reused
         // the cache in several cases
         checkSaneFieldCaches();
-        
+
         // next we'll check Locale based (Collection<String>) for 'string', so purge first
         FieldCache::DEFAULT()->purgeAllCaches();
 
@@ -341,12 +341,10 @@ protected:
     }
 };
 
-const int32_t SortFixture::NUM_STRINGS = 6000;
-
-BOOST_FIXTURE_TEST_SUITE(SortTest, SortFixture)
+const int32_t SortTest::NUM_STRINGS = 6000;
 
 /// test the sorts by score and document number
-BOOST_AUTO_TEST_CASE(testBuiltInSorts)
+TEST_F(SortTest, testBuiltInSorts)
 {
     sort = newLucene<Sort>();
     checkMatches(full, queryX, sort, L"ACEGI");
@@ -358,7 +356,7 @@ BOOST_AUTO_TEST_CASE(testBuiltInSorts)
 }
 
 /// test sorts where the type of field is specified
-BOOST_AUTO_TEST_CASE(testTypedSort)
+TEST_F(SortTest, testTypedSort)
 {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"int", SortField::INT), SortField::FIELD_DOC()));
     checkMatches(full, queryX, sort, L"IGAEC");
@@ -382,7 +380,7 @@ BOOST_AUTO_TEST_CASE(testTypedSort)
 }
 
 /// Test String sorting: small queue to many matches, multi field sort, reverse sort
-BOOST_AUTO_TEST_CASE(testStringSort)
+TEST_F(SortTest, testStringSort)
 {
     IndexSearcherPtr searcher = getFullStrings();
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", SortField::STRING), newLucene<SortField>(L"string2", SortField::STRING, true), SortField::FIELD_DOC()));
@@ -404,18 +402,18 @@ BOOST_AUTO_TEST_CASE(testStringSort)
             {
                 int32_t cmp = v[j].compare(last);
                 if (cmp < 0)
-                    BOOST_FAIL("first field out of order");
+                    FAIL() << "first field out of order";
                 if (cmp == 0) // ensure second field is in reverse order
                 {
                     cmp = v2[j].compare(lastSub);
                     if (cmp > 0)
-                        BOOST_FAIL("second field out of order");
+                        FAIL() << "second field out of order";
                     else if (cmp == 0) // ensure docid is in order
                     {
                         if (result[x]->doc < lastDocId)
-                            BOOST_FAIL("docid out of order");
+                            FAIL() << "docid out of order";
                     }
-                    
+
                 }
             }
             last = v[j];
@@ -434,49 +432,49 @@ namespace TestCustomFieldParserSort
         virtual ~CustomIntParser()
         {
         }
-    
+
     public:
         virtual int32_t parseInt(const String& string)
         {
             return (string[0] - L'A') * 123456;
         }
     };
-    
+
     class CustomDoubleParser : public DoubleParser
     {
     public:
         virtual ~CustomDoubleParser()
         {
         }
-    
+
     public:
         virtual double parseDouble(const String& string)
         {
             return std::sqrt((double)string[0]);
         }
     };
-    
+
     class CustomLongParser : public LongParser
     {
     public:
         virtual ~CustomLongParser()
         {
         }
-    
+
     public:
         virtual int64_t parseLong(const String& string)
         {
             return (string[0] - L'A') * (int64_t)1234567890;
         }
     };
-    
+
     class CustomByteParser : public ByteParser
     {
     public:
         virtual ~CustomByteParser()
         {
         }
-    
+
     public:
         virtual uint8_t parseByte(const String& string)
         {
@@ -485,24 +483,24 @@ namespace TestCustomFieldParserSort
     };
 }
 
-/// Test sorts where the type of field is specified and a custom field parser  is used, that uses a simple char encoding. 
-/// The sorted string contains a character beginning from 'A' that is mapped to a numeric value using some "funny" 
+/// Test sorts where the type of field is specified and a custom field parser  is used, that uses a simple char encoding.
+/// The sorted string contains a character beginning from 'A' that is mapped to a numeric value using some "funny"
 /// algorithm to be different for each data type.
-BOOST_AUTO_TEST_CASE(testCustomFieldParserSort)
+TEST_F(SortTest, testCustomFieldParserSort)
 {
     // since tests explicitly uses different parsers on the same field name we explicitly check/purge the FieldCache between each assertMatch
     FieldCachePtr fc = FieldCache::DEFAULT();
-    
+
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"parser", newLucene<TestCustomFieldParserSort::CustomIntParser>()), SortField::FIELD_DOC()));
     checkMatches(full, queryA, sort, L"JIHGFEDCBA");
     checkSaneFieldCaches();
     fc->purgeAllCaches();
-    
+
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"parser", newLucene<TestCustomFieldParserSort::CustomDoubleParser>()), SortField::FIELD_DOC()));
     checkMatches(full, queryA, sort, L"JIHGFEDCBA");
     checkSaneFieldCaches();
     fc->purgeAllCaches();
-    
+
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"parser", newLucene<TestCustomFieldParserSort::CustomLongParser>()), SortField::FIELD_DOC()));
     checkMatches(full, queryA, sort, L"JIHGFEDCBA");
     checkSaneFieldCaches();
@@ -515,7 +513,7 @@ BOOST_AUTO_TEST_CASE(testCustomFieldParserSort)
 }
 
 /// test sorts when there's nothing in the index
-BOOST_AUTO_TEST_CASE(testEmptyIndex)
+TEST_F(SortTest, testEmptyIndex)
 {
     SearcherPtr empty = getEmptyIndex();
 
@@ -543,14 +541,14 @@ namespace TestNewCustomFieldParserSort
         virtual ~MyIntParser()
         {
         }
-    
+
     public:
         virtual int32_t parseInt(const String& string)
         {
             return (string[0] - L'A') * 123456;
         }
     };
-    
+
     class MyFieldComparator : public FieldComparator
     {
     public:
@@ -559,55 +557,55 @@ namespace TestNewCustomFieldParserSort
             slotValues = Collection<int32_t>::newInstance(numHits);
             bottomValue = 0;
         }
-        
+
         virtual ~MyFieldComparator()
         {
         }
-    
+
     public:
         Collection<int32_t> docValues;
         Collection<int32_t> slotValues;
         int32_t bottomValue;
-    
+
     public:
         virtual void copy(int32_t slot, int32_t doc)
         {
             slotValues[slot] = docValues[doc];
         }
-        
+
         virtual int32_t compare(int32_t slot1, int32_t slot2)
         {
             return slotValues[slot1] - slotValues[slot2];
         }
-        
+
         virtual int32_t compareBottom(int32_t doc)
         {
             return bottomValue - docValues[doc];
         }
-        
+
         virtual void setBottom(int32_t slot)
         {
             bottomValue = slotValues[slot];
         }
-        
+
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
         {
             docValues = FieldCache::DEFAULT()->getInts(reader, L"parser", newLucene<MyIntParser>());
         }
-        
+
         virtual ComparableValue value(int32_t slot)
         {
             return slotValues[slot];
         }
     };
-    
+
     class MyFieldComparatorSource : public FieldComparatorSource
     {
     public:
         virtual ~MyFieldComparatorSource()
         {
         }
-    
+
     public:
         virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed)
         {
@@ -617,14 +615,14 @@ namespace TestNewCustomFieldParserSort
 }
 
 // Test sorting with custom FieldComparator
-BOOST_AUTO_TEST_CASE(testNewCustomFieldParserSort)
+TEST_F(SortTest, testNewCustomFieldParserSort)
 {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"parser", newLucene<TestNewCustomFieldParserSort::MyFieldComparatorSource>())));
     checkMatches(full, queryA, sort, L"JIHGFEDCBA");
 }
 
 /// test sorts in reverse
-BOOST_AUTO_TEST_CASE(testReverseSort)
+TEST_F(SortTest, testReverseSort)
 {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"", SortField::SCORE, true), SortField::FIELD_DOC()));
     checkMatches(full, queryX, sort, L"IEGCA");
@@ -648,7 +646,7 @@ BOOST_AUTO_TEST_CASE(testReverseSort)
 }
 
 /// test sorting when the sort field is empty (undefined) for some of the documents
-BOOST_AUTO_TEST_CASE(testEmptyFieldSort)
+TEST_F(SortTest, testEmptyFieldSort)
 {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", SortField::STRING)));
     checkMatches(full, queryF, sort, L"ZJI");
@@ -694,7 +692,7 @@ BOOST_AUTO_TEST_CASE(testEmptyFieldSort)
 
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"int", SortField::INT), newLucene<SortField>(L"string", SortField::STRING), newLucene<SortField>(L"double", SortField::DOUBLE, true)));
     checkMatches(multiSearcher, queryG, sort, L"ZYXW");
-    
+
     // Don't close the multiSearcher. it would close the full searcher too!
 
     // Do the same for a ParallelMultiSearcher
@@ -708,7 +706,7 @@ BOOST_AUTO_TEST_CASE(testEmptyFieldSort)
 }
 
 /// test sorts using a series of fields
-BOOST_AUTO_TEST_CASE(testSortCombos)
+TEST_F(SortTest, testSortCombos)
 {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"int", SortField::INT), newLucene<SortField>(L"double", SortField::DOUBLE)));
     checkMatches(full, queryX, sort, L"IGEAC");
@@ -721,7 +719,7 @@ BOOST_AUTO_TEST_CASE(testSortCombos)
 }
 
 /// test using a Locale for sorting strings
-BOOST_AUTO_TEST_CASE(testLocaleSort)
+TEST_F(SortTest, testLocaleSort)
 {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", std::locale())));
     checkMatches(full, queryX, sort, L"AIGEC");
@@ -733,21 +731,21 @@ BOOST_AUTO_TEST_CASE(testLocaleSort)
 }
 
 /// test a variety of sorts using more than one searcher
-BOOST_AUTO_TEST_CASE(testMultiSort)
+TEST_F(SortTest, testMultiSort)
 {
     MultiSearcherPtr searcher = newLucene<MultiSearcher>(newCollection<SearchablePtr>(searchX, searchY));
     runMultiSorts(searcher, false);
 }
 
 /// test a variety of sorts using a parallel multisearcher
-BOOST_AUTO_TEST_CASE(testParallelMultiSort)
+TEST_F(SortTest, testParallelMultiSort)
 {
     MultiSearcherPtr searcher = newLucene<ParallelMultiSearcher>(newCollection<SearchablePtr>(searchX, searchY));
     runMultiSorts(searcher, false);
 }
 
 // test that the relevancy scores are the same even if hits are sorted
-BOOST_AUTO_TEST_CASE(testNormalizedScores)
+TEST_F(SortTest, testNormalizedScores)
 {
     // capture relevancy scores
     MapStringDouble scoresX = getScores(full->search(queryX, FilterPtr(), 1000)->scoreDocs, full);
@@ -834,14 +832,14 @@ namespace TestTopDocsScores
         {
             this->docs = docs;
         }
-        
+
         virtual ~TopDocsFilter()
         {
         }
-    
+
     protected:
         TopDocsPtr docs;
-        
+
     public:
         virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
         {
@@ -853,22 +851,22 @@ namespace TestTopDocsScores
     };
 }
 
-BOOST_AUTO_TEST_CASE(testTopDocsScores)
+TEST_F(SortTest, testTopDocsScores)
 {
     SortPtr sort = newLucene<Sort>();
     int32_t numDocs = 10;
 
     // try to pick a query that will result in an unnormalized score greater than 1 to test for correct normalization
     TopDocsPtr docs1 = full->search(queryE, FilterPtr(), numDocs, sort);
-    
+
     // a filter that only allows through the first hit
     FilterPtr filter = newLucene<TestTopDocsScores::TopDocsFilter>(docs1);
 
     TopDocsPtr docs2 = full->search(queryE, filter, numDocs, sort);
-    BOOST_CHECK_CLOSE_FRACTION(docs1->scoreDocs[0]->score, docs2->scoreDocs[0]->score, 1e-6);
+    EXPECT_NEAR(docs1->scoreDocs[0]->score, docs2->scoreDocs[0]->score, 1e-6);
 }
 
-BOOST_AUTO_TEST_CASE(testSortWithoutFillFields)
+TEST_F(SortTest, testSortWithoutFillFields)
 {
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
     for (int32_t i = 0; i < sort.size(); ++i)
@@ -880,11 +878,11 @@ BOOST_AUTO_TEST_CASE(testSortWithoutFillFields)
 
         Collection<ScoreDocPtr> sd = tdc->topDocs()->scoreDocs;
         for (int32_t j = 1; j < sd.size(); ++j)
-            BOOST_CHECK_NE(sd[j]->doc, sd[j - 1]->doc);
+            EXPECT_NE(sd[j]->doc, sd[j - 1]->doc);
     }
 }
 
-BOOST_AUTO_TEST_CASE(testSortWithoutScoreTracking)
+TEST_F(SortTest, testSortWithoutScoreTracking)
 {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
@@ -898,12 +896,12 @@ BOOST_AUTO_TEST_CASE(testSortWithoutScoreTracking)
         TopDocsPtr td = tdc->topDocs();
         Collection<ScoreDocPtr> sd = td->scoreDocs;
         for (int32_t j = 1; j < sd.size(); ++j)
-            BOOST_CHECK(MiscUtils::isNaN(sd[j]->score));
-        BOOST_CHECK(MiscUtils::isNaN(td->maxScore));
+            EXPECT_TRUE(MiscUtils::isNaN(sd[j]->score));
+        EXPECT_TRUE(MiscUtils::isNaN(td->maxScore));
     }
 }
 
-BOOST_AUTO_TEST_CASE(testSortWithScoreNoMaxScoreTracking)
+TEST_F(SortTest, testSortWithScoreNoMaxScoreTracking)
 {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
@@ -917,12 +915,12 @@ BOOST_AUTO_TEST_CASE(testSortWithScoreNoMaxScoreTracking)
         TopDocsPtr td = tdc->topDocs();
         Collection<ScoreDocPtr> sd = td->scoreDocs;
         for (int32_t j = 1; j < sd.size(); ++j)
-            BOOST_CHECK(!MiscUtils::isNaN(sd[j]->score));
-        BOOST_CHECK(MiscUtils::isNaN(td->maxScore));
+            EXPECT_TRUE(!MiscUtils::isNaN(sd[j]->score));
+        EXPECT_TRUE(MiscUtils::isNaN(td->maxScore));
     }
 }
 
-BOOST_AUTO_TEST_CASE(testSortWithScoreAndMaxScoreTracking)
+TEST_F(SortTest, testSortWithScoreAndMaxScoreTracking)
 {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
@@ -936,12 +934,12 @@ BOOST_AUTO_TEST_CASE(testSortWithScoreAndMaxScoreTracking)
         TopDocsPtr td = tdc->topDocs();
         Collection<ScoreDocPtr> sd = td->scoreDocs;
         for (int32_t j = 1; j < sd.size(); ++j)
-            BOOST_CHECK(!MiscUtils::isNaN(sd[j]->score));
-        BOOST_CHECK(!MiscUtils::isNaN(td->maxScore));
+            EXPECT_TRUE(!MiscUtils::isNaN(sd[j]->score));
+        EXPECT_TRUE(!MiscUtils::isNaN(td->maxScore));
     }
 }
 
-BOOST_AUTO_TEST_CASE(testOutOfOrderDocsScoringSort)
+TEST_F(SortTest, testOutOfOrderDocsScoringSort)
 {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
@@ -956,21 +954,21 @@ BOOST_AUTO_TEST_CASE(testOutOfOrderDocsScoringSort)
         newCollection<uint8_t>(true, true, true)
     );
     Collection<String> actualTFCClasses = newCollection<String>(
-        L"OutOfOrderOneComparatorNonScoringCollector", 
-        L"OutOfOrderOneComparatorScoringMaxScoreCollector", 
-        L"OutOfOrderOneComparatorScoringNoMaxScoreCollector", 
-        L"OutOfOrderOneComparatorScoringMaxScoreCollector", 
-        L"OutOfOrderOneComparatorNonScoringCollector", 
-        L"OutOfOrderOneComparatorScoringMaxScoreCollector", 
-        L"OutOfOrderOneComparatorScoringNoMaxScoreCollector", 
+        L"OutOfOrderOneComparatorNonScoringCollector",
+        L"OutOfOrderOneComparatorScoringMaxScoreCollector",
+        L"OutOfOrderOneComparatorScoringNoMaxScoreCollector",
+        L"OutOfOrderOneComparatorScoringMaxScoreCollector",
+        L"OutOfOrderOneComparatorNonScoringCollector",
+        L"OutOfOrderOneComparatorScoringMaxScoreCollector",
+        L"OutOfOrderOneComparatorScoringNoMaxScoreCollector",
         L"OutOfOrderOneComparatorScoringMaxScoreCollector"
     );
-    
+
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
-    // Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2 which delegates to 
+    // Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2 which delegates to
     // BS if there are no mandatory clauses.
     bq->add(newLucene<MatchAllDocsQuery>(), BooleanClause::SHOULD);
-    // Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return the clause 
+    // Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return the clause
     // instead of BQ.
     bq->setMinimumNumberShouldMatch(1);
     for (int32_t i = 0; i < sort.size(); ++i)
@@ -979,18 +977,18 @@ BOOST_AUTO_TEST_CASE(testOutOfOrderDocsScoringSort)
         {
             TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, tfcOptions[j][0] == 1, tfcOptions[j][1] == 1, tfcOptions[j][2] == 1, false);
 
-            BOOST_CHECK_EQUAL(tdc->getClassName(), actualTFCClasses[j]);
-            
+            EXPECT_EQ(tdc->getClassName(), actualTFCClasses[j]);
+
             full->search(bq, tdc);
 
             TopDocsPtr td = tdc->topDocs();
             Collection<ScoreDocPtr> sd = td->scoreDocs;
-            BOOST_CHECK_EQUAL(10, sd.size());
+            EXPECT_EQ(10, sd.size());
         }
     }
 }
 
-BOOST_AUTO_TEST_CASE(testSortWithScoreAndMaxScoreTrackingNoResults)
+TEST_F(SortTest, testSortWithScoreAndMaxScoreTrackingNoResults)
 {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
@@ -998,12 +996,12 @@ BOOST_AUTO_TEST_CASE(testSortWithScoreAndMaxScoreTrackingNoResults)
     {
         TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, true, true, true, true);
         TopDocsPtr td = tdc->topDocs();
-        BOOST_CHECK_EQUAL(0, td->totalHits);
-        BOOST_CHECK(MiscUtils::isNaN(td->maxScore));
+        EXPECT_EQ(0, td->totalHits);
+        EXPECT_TRUE(MiscUtils::isNaN(td->maxScore));
     }
 }
 
-BOOST_AUTO_TEST_CASE(testSortWithStringNoException)
+TEST_F(SortTest, testSortWithStringNoException)
 {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -1021,5 +1019,3 @@ BOOST_AUTO_TEST_CASE(testSortWithStringNoException)
     IndexSearcherPtr is = newLucene<IndexSearcher>(indexStore, true);
     is->search(newLucene<MatchAllDocsQuery>(), FilterPtr(), 500, sort);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

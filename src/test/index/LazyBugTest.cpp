@@ -18,10 +18,10 @@
 
 using namespace Lucene;
 
-class LazyBugTestFixture : public LuceneTestFixture
+class LazyBugTest : public LuceneTestFixture
 {
 public:
-    virtual ~LazyBugTestFixture()
+    virtual ~LazyBugTest()
     {
     }
 
@@ -46,7 +46,7 @@ public:
         }
         return _data;
     }
-    
+
     HashSet<String> dataset()
     {
         static HashSet<String> _dataset;
@@ -57,14 +57,14 @@ public:
         }
         return _dataset;
     }
-    
+
     String MAGIC_FIELD()
     {
         return L"f" + StringUtils::toString((double)NUM_FIELDS / 3);
     }
-    
+
     DECLARE_SHARED_PTR(LazyBugSelector)
-    
+
     class LazyBugSelector : public FieldSelector
     {
     public:
@@ -72,16 +72,16 @@ public:
         {
             this->magicField = magicField;
         }
-        
+
         virtual ~LazyBugSelector()
         {
         }
-        
+
         LUCENE_CLASS(LazyBugSelector);
-    
+
     protected:
         String magicField;
-        
+
     public:
         virtual FieldSelectorResult accept(const String& fieldName)
         {
@@ -91,25 +91,25 @@ public:
                 return FieldSelector::SELECTOR_LAZY_LOAD;
         }
     };
-    
+
     FieldSelectorPtr SELECTOR()
     {
         return newLucene<LazyBugSelector>(MAGIC_FIELD());
     }
-    
+
     DirectoryPtr makeIndex()
     {
         DirectoryPtr dir = newLucene<RAMDirectory>();
         RandomPtr rand = newLucene<Random>();
-        
+
         try
         {
             AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
             IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
-            
+
             writer->setUseCompoundFile(false);
             Collection<String> _data = data();
-            
+
             for (int32_t d = 1; d <= NUM_DOCS; ++d)
             {
                 DocumentPtr doc = newLucene<Document>();
@@ -121,22 +121,22 @@ public:
         }
         catch (LuceneException& e)
         {
-            BOOST_FAIL("Unexpected exception: " << e.getError());
+            boost::throw_exception(RuntimeException(L"Unexpected exception: " + e.getError()));
         }
         return dir;
     }
-    
+
     void doTest(Collection<int32_t> docs)
     {
         DirectoryPtr dir = makeIndex();
         IndexReaderPtr reader = IndexReader::open(dir, true);
         HashSet<String> _dataset = dataset();
-        
+
         for (int32_t i = 0; i < docs.size(); ++i)
         {
             DocumentPtr d = reader->document(docs[i], SELECTOR());
             d->get(MAGIC_FIELD());
-            
+
             Collection<FieldablePtr> fields = d->getFields();
             for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
             {
@@ -144,16 +144,16 @@ public:
                 {
                     String fname = (*field)->name();
                     String fval = (*field)->stringValue();
-                    BOOST_CHECK(!fval.empty());
-                    
+                    EXPECT_TRUE(!fval.empty());
+
                     Collection<String> vals = StringUtils::split(fval, L"#");
-                    BOOST_CHECK_EQUAL(vals.size(), 2);
+                    EXPECT_EQ(vals.size(), 2);
                     if (!_dataset.contains(vals[0]) || !_dataset.contains(vals[1]))
-                        BOOST_FAIL("FIELD:" << fname << ",VAL:" << fval);
+                        FAIL() << "FIELD:" << fname << ",VAL:" << fval;
                 }
                 catch (LuceneException& e)
                 {
-                    BOOST_FAIL("Unexpected exception: " << e.getError());
+                    FAIL() << "Unexpected exception: " << e.getError();
                 }
             }
         }
@@ -161,25 +161,22 @@ public:
     }
 };
 
-const int32_t LazyBugTestFixture::NUM_DOCS = 500;
-const int32_t LazyBugTestFixture::NUM_FIELDS = 100;
+const int32_t LazyBugTest::NUM_DOCS = 500;
+const int32_t LazyBugTest::NUM_FIELDS = 100;
 
 /// Test demonstrating EOF bug on the last field of the last doc if other docs have already been accessed.
-BOOST_FIXTURE_TEST_SUITE(LazyBugTest, LazyBugTestFixture)
 
-BOOST_AUTO_TEST_CASE(testLazyWorks)
+TEST_F(LazyBugTest, testLazyWorks)
 {
     doTest(newCollection<int32_t>(399));
 }
 
-BOOST_AUTO_TEST_CASE(testLazyAlsoWorks)
+TEST_F(LazyBugTest, testLazyAlsoWorks)
 {
     doTest(newCollection<int32_t>(399, 150));
 }
 
-BOOST_AUTO_TEST_CASE(testLazyBroken)
+TEST_F(LazyBugTest, testLazyBroken)
 {
     doTest(newCollection<int32_t>(150, 399));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

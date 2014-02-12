@@ -23,7 +23,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(BooleanPrefixQueryTest, LuceneTestFixture)
+typedef LuceneTestFixture BooleanPrefixQueryTest;
 
 static int32_t getCount(IndexReaderPtr r, QueryPtr q)
 {
@@ -39,12 +39,12 @@ static int32_t getCount(IndexReaderPtr r, QueryPtr q)
     }
     else
     {
-        BOOST_FAIL("unexpected query");
+        boost::throw_exception(RuntimeException(L"unexpected query"));
         return 0;
     }
 }
 
-BOOST_AUTO_TEST_CASE(testMethod)
+TEST_F(BooleanPrefixQueryTest, testMethod)
 {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
 
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(testMethod)
         writer->addDocument(doc);
     }
     writer->close();
-                                           
+
     IndexReaderPtr reader = IndexReader::open(directory, true);
     PrefixQueryPtr query = newLucene<PrefixQuery>(newLucene<Term>(L"category", L"foo"));
     QueryPtr rw1 = query->rewrite(reader);
@@ -67,8 +67,6 @@ BOOST_AUTO_TEST_CASE(testMethod)
     bq->add(query, BooleanClause::MUST);
 
     QueryPtr rw2 = bq->rewrite(reader);
-    
-    BOOST_CHECK_EQUAL(getCount(reader, rw1), getCount(reader, rw2));
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    EXPECT_EQ(getCount(reader, rw1), getCount(reader, rw2));
+}

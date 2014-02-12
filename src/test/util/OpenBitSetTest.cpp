@@ -15,7 +15,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(OpenBitSetTest, LuceneTestFixture)
+typedef LuceneTestFixture OpenBitSetTest;
 
 static RandomPtr randBitSet = newLucene<Random>(123);
 
@@ -23,7 +23,7 @@ static void doGet(BitSetPtr a, OpenBitSetPtr b)
 {
     int32_t max = a->size();
     for (int32_t i = 0; i < max; ++i)
-        BOOST_CHECK_EQUAL(a->get(i), b->get(i));
+        EXPECT_EQ(a->get(i), b->get(i));
 }
 
 static void doNextSetBit(BitSetPtr a, OpenBitSetPtr b)
@@ -34,7 +34,7 @@ static void doNextSetBit(BitSetPtr a, OpenBitSetPtr b)
     {
         aa = a->nextSetBit(aa + 1);
         bb = b->nextSetBit(bb + 1);
-        BOOST_CHECK_EQUAL(aa, bb);
+        EXPECT_EQ(aa, bb);
     }
     while (aa >= 0);
 }
@@ -48,7 +48,7 @@ static void doIterate1(BitSetPtr a, OpenBitSetPtr b)
     {
         aa = a->nextSetBit(aa + 1);
         bb = (randBitSet->nextInt() % 2 == 0) ? iterator->nextDoc() : iterator->advance(bb + 1);
-        BOOST_CHECK_EQUAL(aa == -1 ? DocIdSetIterator::NO_MORE_DOCS : aa, bb);
+        EXPECT_EQ(aa == -1 ? DocIdSetIterator::NO_MORE_DOCS : aa, bb);
     }
     while (aa >= 0);
 }
@@ -62,7 +62,7 @@ static void doIterate2(BitSetPtr a, OpenBitSetPtr b)
     {
         aa = a->nextSetBit(aa + 1);
         bb = (randBitSet->nextInt() % 2 == 0) ? iterator->nextDoc() : iterator->advance(bb + 1);
-        BOOST_CHECK_EQUAL(aa == -1 ? DocIdSetIterator::NO_MORE_DOCS : aa, bb);
+        EXPECT_EQ(aa == -1 ? DocIdSetIterator::NO_MORE_DOCS : aa, bb);
     }
     while (aa >= 0);
 }
@@ -79,13 +79,13 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
 {
     BitSetPtr a0;
     OpenBitSetPtr b0;
-    
+
     for (int32_t i = 0; i < iter; ++i)
     {
         int32_t sz = randBitSet->nextInt(maxSize);
         BitSetPtr a = newLucene<BitSet>(sz);
         OpenBitSetPtr b = newLucene<OpenBitSet>(sz);
-        
+
         // test the various ways of setting bits
         if (sz > 0)
         {
@@ -104,21 +104,21 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
 
                 bool val = b->flipAndGet(idx);
                 bool val2 = b->flipAndGet(idx);
-                BOOST_CHECK_NE(val, val2);
+                EXPECT_NE(val, val2);
 
                 val = b->getAndSet(idx);
-                BOOST_CHECK_EQUAL(val2, val);
-                BOOST_CHECK(b->get(idx));
-                
+                EXPECT_EQ(val2, val);
+                EXPECT_TRUE(b->get(idx));
+
                 if (!val)
                     b->fastClear(idx);
-                BOOST_CHECK_EQUAL(b->get(idx), val);
+                EXPECT_EQ(b->get(idx), val);
             }
         }
 
         // test that the various ways of accessing the bits are equivalent
         doGet(a, b);
-        
+
         // test ranges, including possible extension
         int32_t fromIndex = randBitSet->nextInt(sz + 80);
         int32_t toIndex = fromIndex + randBitSet->nextInt((sz >> 1) + 1);
@@ -126,7 +126,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
         aa->flip(fromIndex, toIndex);
         OpenBitSetPtr bb = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
         bb->flip(fromIndex, toIndex);
-        
+
         doIterate(aa, bb, mode); // a problem here is from flip or doIterate
 
         fromIndex = randBitSet->nextInt(sz + 80);
@@ -146,11 +146,11 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
         bb->set(fromIndex, toIndex);
 
         doNextSetBit(aa, bb); // a problem here is from set() or nextSetBit
-        
+
         if (a0)
         {
-            BOOST_CHECK_EQUAL(a->equals(a0), b->equals(b0));
-            BOOST_CHECK_EQUAL(a->cardinality(), b->cardinality());
+            EXPECT_EQ(a->equals(a0), b->equals(b0));
+            EXPECT_EQ(a->cardinality(), b->cardinality());
 
             BitSetPtr a_and = boost::dynamic_pointer_cast<BitSet>(a->clone());
             a_and->_and(a0);
@@ -162,7 +162,7 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
             a_andn->andNot(a0);
 
             OpenBitSetPtr b_and = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
-            BOOST_CHECK(b->equals(b_and));
+            EXPECT_TRUE(b->equals(b_and));
             b_and->_and(b0);
             OpenBitSetPtr b_or = boost::dynamic_pointer_cast<OpenBitSet>(b->clone());
             b_or->_or(b0);
@@ -175,25 +175,25 @@ static void doRandomSets(int32_t maxSize, int32_t iter, int32_t mode)
             doIterate(a_or, b_or, mode);
             doIterate(a_xor, b_xor, mode);
             doIterate(a_andn, b_andn, mode);
-            
-            BOOST_CHECK_EQUAL(a_and->cardinality(), b_and->cardinality());
-            BOOST_CHECK_EQUAL(a_or->cardinality(), b_or->cardinality());
-            BOOST_CHECK_EQUAL(a_xor->cardinality(), b_xor->cardinality());
-            BOOST_CHECK_EQUAL(a_andn->cardinality(), b_andn->cardinality());
-            
+
+            EXPECT_EQ(a_and->cardinality(), b_and->cardinality());
+            EXPECT_EQ(a_or->cardinality(), b_or->cardinality());
+            EXPECT_EQ(a_xor->cardinality(), b_xor->cardinality());
+            EXPECT_EQ(a_andn->cardinality(), b_andn->cardinality());
+
             // test non-mutating popcounts
-            BOOST_CHECK_EQUAL(b_and->cardinality(), OpenBitSet::intersectionCount(b, b0));
-            BOOST_CHECK_EQUAL(b_or->cardinality(), OpenBitSet::unionCount(b, b0));
-            BOOST_CHECK_EQUAL(b_xor->cardinality(), OpenBitSet::xorCount(b, b0));
-            BOOST_CHECK_EQUAL(b_andn->cardinality(), OpenBitSet::andNotCount(b, b0));
+            EXPECT_EQ(b_and->cardinality(), OpenBitSet::intersectionCount(b, b0));
+            EXPECT_EQ(b_or->cardinality(), OpenBitSet::unionCount(b, b0));
+            EXPECT_EQ(b_xor->cardinality(), OpenBitSet::xorCount(b, b0));
+            EXPECT_EQ(b_andn->cardinality(), OpenBitSet::andNotCount(b, b0));
         }
-        
+
         a0=a;
         b0=b;
     }
 }
 
-BOOST_AUTO_TEST_CASE(testSmall)
+TEST_F(OpenBitSetTest, testSmall)
 {
     randBitSet->setSeed(17);
     doRandomSets(1200, 1000, 1);
@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(testSmall)
 }
 
 /*
-BOOST_AUTO_TEST_CASE(testBig)
+TEST_F(OpenBitSetTest, testBig)
 {
     randBitSet->setSeed(17);
     doRandomSets(2000, 200000, 1);
@@ -209,57 +209,55 @@ BOOST_AUTO_TEST_CASE(testBig)
 }
 */
 
-BOOST_AUTO_TEST_CASE(testEquals)
+TEST_F(OpenBitSetTest, testEquals)
 {
     randBitSet->setSeed(17);
     OpenBitSetPtr b1 = newLucene<OpenBitSet>(1111);
     OpenBitSetPtr b2 = newLucene<OpenBitSet>(2222);
-    BOOST_CHECK(b1->equals(b2));
-    BOOST_CHECK(b2->equals(b1));
+    EXPECT_TRUE(b1->equals(b2));
+    EXPECT_TRUE(b2->equals(b1));
     b1->set(10);
-    BOOST_CHECK(!b1->equals(b2));
-    BOOST_CHECK(!b2->equals(b1));
+    EXPECT_TRUE(!b1->equals(b2));
+    EXPECT_TRUE(!b2->equals(b1));
     b2->set(10);
-    BOOST_CHECK(b1->equals(b2));
-    BOOST_CHECK(b2->equals(b1));
+    EXPECT_TRUE(b1->equals(b2));
+    EXPECT_TRUE(b2->equals(b1));
     b2->set(2221);
-    BOOST_CHECK(!b1->equals(b2));
-    BOOST_CHECK(!b2->equals(b1));
+    EXPECT_TRUE(!b1->equals(b2));
+    EXPECT_TRUE(!b2->equals(b1));
     b1->set(2221);
-    BOOST_CHECK(b1->equals(b2));
-    BOOST_CHECK(b2->equals(b1));
+    EXPECT_TRUE(b1->equals(b2));
+    EXPECT_TRUE(b2->equals(b1));
 }
 
-BOOST_AUTO_TEST_CASE(testBitUtils)
+TEST_F(OpenBitSetTest, testBitUtils)
 {
     randBitSet->setSeed(17);
     int64_t num = 100000;
-    BOOST_CHECK_EQUAL(5, BitUtil::ntz(num));
-    BOOST_CHECK_EQUAL(5, BitUtil::ntz2(num));
-    BOOST_CHECK_EQUAL(5, BitUtil::ntz3(num));
+    EXPECT_EQ(5, BitUtil::ntz(num));
+    EXPECT_EQ(5, BitUtil::ntz2(num));
+    EXPECT_EQ(5, BitUtil::ntz3(num));
 
     num = 10;
-    BOOST_CHECK_EQUAL(1, BitUtil::ntz(num));
-    BOOST_CHECK_EQUAL(1, BitUtil::ntz2(num));
-    BOOST_CHECK_EQUAL(1, BitUtil::ntz3(num));
-    
+    EXPECT_EQ(1, BitUtil::ntz(num));
+    EXPECT_EQ(1, BitUtil::ntz2(num));
+    EXPECT_EQ(1, BitUtil::ntz3(num));
+
     for (int32_t i = 0; i < 64; ++i)
     {
         num = (int64_t)1 << i;
-        BOOST_CHECK_EQUAL(i, BitUtil::ntz(num));
-        BOOST_CHECK_EQUAL(i, BitUtil::ntz2(num));
-        BOOST_CHECK_EQUAL(i, BitUtil::ntz3(num));
+        EXPECT_EQ(i, BitUtil::ntz(num));
+        EXPECT_EQ(i, BitUtil::ntz2(num));
+        EXPECT_EQ(i, BitUtil::ntz3(num));
     }
 }
 
-BOOST_AUTO_TEST_CASE(testHashCodeEquals)
+TEST_F(OpenBitSetTest, testHashCodeEquals)
 {
     OpenBitSetPtr bs1 = newLucene<OpenBitSet>(200);
     OpenBitSetPtr bs2 = newLucene<OpenBitSet>(64);
     bs1->set(3);
-    bs2->set(3);       
-    BOOST_CHECK(bs1->equals(bs2));
-    BOOST_CHECK_EQUAL(bs1->hashCode(), bs2->hashCode());
+    bs2->set(3);
+    EXPECT_TRUE(bs1->equals(bs2));
+    EXPECT_EQ(bs1->hashCode(), bs2->hashCode());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

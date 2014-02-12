@@ -12,7 +12,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(SortedVIntListTest, LuceneTestFixture)
+typedef LuceneTestFixture SortedVIntListTest;
 
 static const int32_t VB1 = 0x7F;
 static const int32_t BIT_SHIFT = 7;
@@ -22,7 +22,7 @@ static const int32_t VB4 = (VB3 << BIT_SHIFT) | VB1;
 
 static int32_t vIntByteSize(int32_t i)
 {
-    BOOST_CHECK(i >= 0);
+    EXPECT_TRUE(i >= 0);
     if (i <= VB1)
         return 1;
     if (i <= VB2)
@@ -56,16 +56,16 @@ static void tstIterator(SortedVIntListPtr vintList, Collection<int32_t> ints)
     DocIdSetIteratorPtr m = vintList->iterator();
     for (int32_t i = 0; i < ints.size(); ++i)
     {
-        BOOST_CHECK(m->nextDoc() != DocIdSetIterator::NO_MORE_DOCS);
-        BOOST_CHECK_EQUAL(ints[i], m->docID());
+        EXPECT_TRUE(m->nextDoc() != DocIdSetIterator::NO_MORE_DOCS);
+        EXPECT_EQ(ints[i], m->docID());
     }
-    BOOST_CHECK_EQUAL(m->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_EQ(m->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
 }
 
 static void tstVIntList(SortedVIntListPtr vintList, Collection<int32_t> ints, int32_t expectedByteSize)
 {
-    BOOST_CHECK_EQUAL(ints.size(), vintList->size());
-    BOOST_CHECK_EQUAL(expectedByteSize, vintList->getByteSize());
+    EXPECT_EQ(ints.size(), vintList->size());
+    EXPECT_EQ(expectedByteSize, vintList->getByteSize());
     tstIterator(vintList, ints);
 }
 
@@ -85,7 +85,7 @@ static void tstViaBitSet(Collection<int32_t> ints, int32_t expectedByteSize)
     tstVIntList(svil, ints, expectedByteSize);
     tstVIntList(newLucene<SortedVIntList>(svil->iterator()), ints, expectedByteSize);
 }
-          
+
 static void tstInts(Collection<int32_t> ints)
 {
     int32_t expectedByteSize = vIntListByteSize(ints);
@@ -114,97 +114,102 @@ static Collection<int32_t> reverseDiffs(Collection<int32_t> ints)
 
 static void tstIllegalArgExc(Collection<int32_t> ints)
 {
-    BOOST_CHECK_EXCEPTION(newLucene<SortedVIntList>(ints), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
+    try
+    {
+        newLucene<SortedVIntList>(ints);
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
 }
 
-BOOST_AUTO_TEST_CASE(test01)
+TEST_F(SortedVIntListTest, test01)
 {
     tstInts(Collection<int32_t>::newInstance());
 }
 
-BOOST_AUTO_TEST_CASE(test02)
+TEST_F(SortedVIntListTest, test02)
 {
     tstInts(newCollection<int32_t>(0));
 }
 
-BOOST_AUTO_TEST_CASE(test04a)
+TEST_F(SortedVIntListTest, test04a)
 {
     tstInts(newCollection<int32_t>(0, VB2 - 1));
 }
 
-BOOST_AUTO_TEST_CASE(test04b)
+TEST_F(SortedVIntListTest, test04b)
 {
     tstInts(newCollection<int32_t>(0, VB2));
 }
 
-BOOST_AUTO_TEST_CASE(test04c)
+TEST_F(SortedVIntListTest, test04c)
 {
     tstInts(newCollection<int32_t>(0, VB2 + 1));
 }
 
-BOOST_AUTO_TEST_CASE(test05)
+TEST_F(SortedVIntListTest, test05)
 {
     tstInts(fibArray(0, 1, 7)); // includes duplicate value 1
 }
 
-BOOST_AUTO_TEST_CASE(test05b)
+TEST_F(SortedVIntListTest, test05b)
 {
     tstInts(reverseDiffs(fibArray(0, 1, 7))); // includes duplicate value 1
 }
 
-BOOST_AUTO_TEST_CASE(test06)
+TEST_F(SortedVIntListTest, test06)
 {
     tstInts(fibArray(1, 2, 45)); // no duplicates, size 46 exceeds max int.
 }
 
-BOOST_AUTO_TEST_CASE(test06b)
+TEST_F(SortedVIntListTest, test06b)
 {
     tstInts(reverseDiffs(fibArray(1, 2, 45))); // includes duplicate value 1
 }
 
-BOOST_AUTO_TEST_CASE(test07a)
+TEST_F(SortedVIntListTest, test07a)
 {
     tstInts(newCollection<int32_t>(0, VB3));
 }
 
-BOOST_AUTO_TEST_CASE(test07b)
+TEST_F(SortedVIntListTest, test07b)
 {
     tstInts(newCollection<int32_t>(1, VB3 + 2));
 }
 
-BOOST_AUTO_TEST_CASE(test07c)
+TEST_F(SortedVIntListTest, test07c)
 {
     tstInts(newCollection<int32_t>(2, VB3 + 4));
 }
 
-BOOST_AUTO_TEST_CASE(test08a)
+TEST_F(SortedVIntListTest, test08a)
 {
     tstInts(newCollection<int32_t>(0, VB4 + 1));
 }
 
-BOOST_AUTO_TEST_CASE(test08b)
+TEST_F(SortedVIntListTest, test08b)
 {
     tstInts(newCollection<int32_t>(1, VB4 + 1));
 }
 
-BOOST_AUTO_TEST_CASE(test08c)
+TEST_F(SortedVIntListTest, test08c)
 {
     tstInts(newCollection<int32_t>(2, VB4 + 1));
 }
 
-BOOST_AUTO_TEST_CASE(test10)
+TEST_F(SortedVIntListTest, test10)
 {
     tstIllegalArgExc(newCollection<int32_t>(-1));
 }
 
-BOOST_AUTO_TEST_CASE(test11)
+TEST_F(SortedVIntListTest, test11)
 {
     tstIllegalArgExc(newCollection<int32_t>(1, 0));
 }
 
-BOOST_AUTO_TEST_CASE(test12)
+TEST_F(SortedVIntListTest, test12)
 {
     tstIllegalArgExc(newCollection<int32_t>(0, 1, 1, 2, 3, 5, 8, 0));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

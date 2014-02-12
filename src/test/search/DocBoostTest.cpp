@@ -19,7 +19,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(DocBoostTest, LuceneTestFixture)
+typedef LuceneTestFixture DocBoostTest;
 
 namespace TestDocBoost
 {
@@ -31,32 +31,32 @@ namespace TestDocBoost
             this->scores = scores;
             this->base = 0;
         }
-        
+
         virtual ~BoostCollector()
         {
         }
-    
+
     public:
         Collection<double> scores;
         int32_t base;
         ScorerPtr scorer;
-    
+
     public:
         virtual void setScorer(ScorerPtr scorer)
         {
             this->scorer = scorer;
         }
-        
+
         virtual void collect(int32_t doc)
         {
             scores[doc + base] = scorer->score();
         }
-        
+
         virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
         {
             base = docBase;
         }
-        
+
         virtual bool acceptsDocsOutOfOrder()
         {
             return true;
@@ -64,7 +64,7 @@ namespace TestDocBoost
     };
 }
 
-BOOST_AUTO_TEST_CASE(testDocBoost)
+TEST_F(DocBoostTest, testDocBoost)
 {
     RAMDirectoryPtr store = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(store, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -95,13 +95,11 @@ BOOST_AUTO_TEST_CASE(testDocBoost)
     Collection<double> scores = Collection<double>::newInstance(4);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(store, true);
     searcher->search(newLucene<TermQuery>(newLucene<Term>(L"field", L"word")), newLucene<TestDocBoost::BoostCollector>(scores));
-    
+
     double lastScore = 0.0;
     for (int32_t i = 0; i < 4; ++i)
     {
-        BOOST_CHECK(scores[i] > lastScore);
+        EXPECT_TRUE(scores[i] > lastScore);
         lastScore = scores[i];
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

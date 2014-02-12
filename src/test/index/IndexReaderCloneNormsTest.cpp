@@ -36,10 +36,10 @@ public:
     }
 };
 
-class IndexReaderCloneNormsTestFixture : public LuceneTestFixture
+class IndexReaderCloneNormsTest : public LuceneTestFixture
 {
 public:
-    IndexReaderCloneNormsTestFixture()
+    IndexReaderCloneNormsTest()
     {
         similarityOne = newLucene<SimilarityOne>();
         anlzr = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
@@ -47,14 +47,14 @@ public:
         lastNorm = 0.0;
         normDelta = 0.001;
     }
-    
-    virtual ~IndexReaderCloneNormsTestFixture()
+
+    virtual ~IndexReaderCloneNormsTest()
     {
     }
 
 protected:
     static const int32_t NUM_FIELDS;
-    
+
     SimilarityPtr similarityOne;
     AnalyzerPtr anlzr;
     int32_t numDocNorms;
@@ -73,8 +73,8 @@ public:
         iw->setUseCompoundFile(true);
         iw->close();
     }
-    
-    void createIndex(DirectoryPtr dir, bool multiSegment) 
+
+    void createIndex(DirectoryPtr dir, bool multiSegment)
     {
         IndexWriter::unlock(dir);
         IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
@@ -95,12 +95,12 @@ public:
 
         IndexReaderPtr r = IndexReader::open(dir, false);
         if (multiSegment)
-            BOOST_CHECK(r->getSequentialSubReaders().size() > 1);
+            EXPECT_TRUE(r->getSequentialSubReaders().size() > 1);
         else
-            BOOST_CHECK_EQUAL(r->getSequentialSubReaders().size(), 1);
+            EXPECT_EQ(r->getSequentialSubReaders().size(), 1);
         r->close();
     }
-    
+
     DocumentPtr createDocument(int32_t n, int32_t numFields)
     {
         StringStream sb;
@@ -114,7 +114,7 @@ public:
             doc->add(newLucene<Field>(L"field" + StringUtils::toString(i + 1), sb.str(), Field::STORE_YES, Field::INDEX_ANALYZED));
         return doc;
     }
-    
+
     /// try cloning and reopening the norms
     void doTestNorms(DirectoryPtr dir)
     {
@@ -134,18 +134,18 @@ public:
         irc3->flush();
         irc3->close();
     }
-    
+
     void modifyNormsForF1(DirectoryPtr dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         modifyNormsForF1(ir);
     }
-    
+
     void modifyNormsForF1(IndexReaderPtr ir)
     {
         int32_t n = ir->maxDoc();
         for (int32_t i = 0; i < n; i += 3) // modify for every third doc
-        { 
+        {
             int32_t k = (i * 3) % modifiedNorms.size();
             double origNorm = modifiedNorms[i];
             double newNorm = modifiedNorms[k];
@@ -155,7 +155,7 @@ public:
             ir->setNorm(k, L"f1", origNorm);
         }
     }
-    
+
     void addDocs(DirectoryPtr dir, int32_t ndocs, bool compound)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, anlzr, false, IndexWriter::MaxFieldLengthLIMITED);
@@ -167,7 +167,7 @@ public:
             iw->addDocument(newDoc());
         iw->close();
     }
-    
+
     DocumentPtr newDoc()
     {
         DocumentPtr d = newLucene<Document>();
@@ -202,40 +202,37 @@ public:
         lastNorm = (norm > 10 ? 0 : norm);
         return norm;
     }
-    
+
     void verifyIndex(DirectoryPtr dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         verifyIndex(ir);
         ir->close();
     }
-    
+
     void verifyIndex(IndexReaderPtr ir)
     {
         for (int32_t i = 0; i < NUM_FIELDS; ++i)
         {
             String field = L"f" + StringUtils::toString(i);
             ByteArray b = ir->norms(field);
-            BOOST_CHECK_EQUAL(numDocNorms, b.size());
+            EXPECT_EQ(numDocNorms, b.size());
             Collection<double> storedNorms = (i == 1 ? modifiedNorms : norms);
             for (int32_t j = 0; j < b.size(); ++j)
             {
                 double norm = Similarity::decodeNorm(b[j]);
                 double norm1 = storedNorms[j];
-                BOOST_CHECK_EQUAL(norm, norm1); // 0.000001 ??
+                EXPECT_EQ(norm, norm1); // 0.000001 ??
             }
         }
     }
 };
 
-const int32_t IndexReaderCloneNormsTestFixture::NUM_FIELDS = 10;
+const int32_t IndexReaderCloneNormsTest::NUM_FIELDS = 10;
 
-/// Tests cloning IndexReader norms
-BOOST_FIXTURE_TEST_SUITE(IndexReaderCloneNormsTest, IndexReaderCloneNormsTestFixture)
-
-/// Test that norms values are preserved as the index is maintained.  Including separate norms. 
+/// Test that norms values are preserved as the index is maintained.  Including separate norms.
 /// Including merging indexes with separate norms. Including optimize.
-BOOST_AUTO_TEST_CASE(testNorms)
+TEST_F(IndexReaderCloneNormsTest, testNorms)
 {
     // test with a single index: index1
     String indexDir1(FileUtils::joinPath(getTempDir(), L"lucenetestindex1"));
@@ -259,14 +256,14 @@ BOOST_AUTO_TEST_CASE(testNorms)
 
     String indexDir2(FileUtils::joinPath(getTempDir(), L"lucenetestindex2"));
     DirectoryPtr dir2 = FSDirectory::open(indexDir2);
-    
+
     createIndex(dir2);
     doTestNorms(dir2);
 
     // add index1 and index2 to a third index: index3
     String indexDir3(FileUtils::joinPath(getTempDir(), L"lucenetestindex3"));
     DirectoryPtr dir3 = FSDirectory::open(indexDir3);
-    
+
     createIndex(dir3);
     IndexWriterPtr iw = newLucene<IndexWriter>(dir3, anlzr, false, IndexWriter::MaxFieldLengthLIMITED);
     iw->setMaxBufferedDocs(5);
@@ -298,7 +295,7 @@ BOOST_AUTO_TEST_CASE(testNorms)
     dir3->close();
 }
 
-BOOST_AUTO_TEST_CASE(testNormsClose)
+TEST_F(IndexReaderCloneNormsTest, testNormsClose)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
@@ -307,15 +304,15 @@ BOOST_AUTO_TEST_CASE(testNormsClose)
     NormPtr r1norm = reader1->_norms.get(L"field1");
     SegmentReaderRefPtr r1BytesRef = r1norm->bytesRef();
     SegmentReaderPtr reader2 = boost::dynamic_pointer_cast<SegmentReader>(reader1->clone());
-    BOOST_CHECK_EQUAL(2, r1norm->bytesRef()->refCount());
+    EXPECT_EQ(2, r1norm->bytesRef()->refCount());
     reader1->close();
-    BOOST_CHECK_EQUAL(1, r1BytesRef->refCount());
+    EXPECT_EQ(1, r1BytesRef->refCount());
     reader2->norms(L"field1");
     reader2->close();
     dir1->close();
 }
 
-BOOST_AUTO_TEST_CASE(testNormsRefCounting)
+TEST_F(IndexReaderCloneNormsTest, testNormsRefCounting)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
@@ -326,33 +323,40 @@ BOOST_AUTO_TEST_CASE(testNormsRefCounting)
     SegmentReaderPtr segmentReader2C = SegmentReader::getOnlySegmentReader(reader2C);
     segmentReader2C->norms(L"field1"); // load the norms for the field
     NormPtr reader2CNorm = segmentReader2C->_norms.get(L"field1");
-    BOOST_CHECK_EQUAL(2, reader2CNorm->bytesRef()->refCount());
+    EXPECT_EQ(2, reader2CNorm->bytesRef()->refCount());
 
     IndexReaderPtr reader3C = boost::dynamic_pointer_cast<IndexReader>(reader2C->clone());
     SegmentReaderPtr segmentReader3C = SegmentReader::getOnlySegmentReader(reader3C);
     NormPtr reader3CCNorm = segmentReader3C->_norms.get(L"field1");
-    BOOST_CHECK_EQUAL(3, reader3CCNorm->bytesRef()->refCount());
+    EXPECT_EQ(3, reader3CCNorm->bytesRef()->refCount());
 
     // edit a norm and the refcount should be 1
     IndexReaderPtr reader4C = boost::dynamic_pointer_cast<IndexReader>(reader3C->clone());
     SegmentReaderPtr segmentReader4C = SegmentReader::getOnlySegmentReader(reader4C);
-    BOOST_CHECK_EQUAL(4, reader3CCNorm->bytesRef()->refCount());
+    EXPECT_EQ(4, reader3CCNorm->bytesRef()->refCount());
     reader4C->setNorm(5, L"field1", 0.33);
-    
-    // generate a cannot update exception in reader1
-    BOOST_CHECK_EXCEPTION(reader3C->setNorm(1, L"field1", 0.99), LockObtainFailedException, check_exception(LuceneException::LockObtainFailed));
 
-    // norm values should be different 
-    BOOST_CHECK_NE(Similarity::decodeNorm(segmentReader3C->norms(L"field1")[5]), Similarity::decodeNorm(segmentReader4C->norms(L"field1")[5]));
+    // generate a cannot update exception in reader1
+    try
+    {
+        reader3C->setNorm(1, L"field1", 0.99);
+    }
+    catch (LockObtainFailedException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
+    }
+
+    // norm values should be different
+    EXPECT_NE(Similarity::decodeNorm(segmentReader3C->norms(L"field1")[5]), Similarity::decodeNorm(segmentReader4C->norms(L"field1")[5]));
     NormPtr reader4CCNorm = segmentReader4C->_norms.get(L"field1");
-    BOOST_CHECK_EQUAL(3, reader3CCNorm->bytesRef()->refCount());
-    BOOST_CHECK_EQUAL(1, reader4CCNorm->bytesRef()->refCount());
+    EXPECT_EQ(3, reader3CCNorm->bytesRef()->refCount());
+    EXPECT_EQ(1, reader4CCNorm->bytesRef()->refCount());
 
     IndexReaderPtr reader5C = boost::dynamic_pointer_cast<IndexReader>(reader4C->clone());
     SegmentReaderPtr segmentReader5C = SegmentReader::getOnlySegmentReader(reader5C);
     NormPtr reader5CCNorm = segmentReader5C->_norms.get(L"field1");
     reader5C->setNorm(5, L"field1", 0.7);
-    BOOST_CHECK_EQUAL(1, reader5CCNorm->bytesRef()->refCount());    
+    EXPECT_EQ(1, reader5CCNorm->bytesRef()->refCount());
 
     reader5C->close();
     reader4C->close();
@@ -361,5 +365,3 @@ BOOST_AUTO_TEST_CASE(testNormsRefCounting)
     reader1->close();
     dir1->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

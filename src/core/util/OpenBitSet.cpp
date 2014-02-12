@@ -18,66 +18,66 @@ namespace Lucene
         MiscUtils::arrayFill(bits.get(), 0, bits.size(), 0LL);
         wlen = bits.size();
     }
-    
+
     OpenBitSet::OpenBitSet(LongArray bits, int32_t numWords)
     {
         this->bits = bits;
         this->wlen = numWords;
     }
-    
+
     OpenBitSet::~OpenBitSet()
     {
     }
-    
+
     DocIdSetIteratorPtr OpenBitSet::iterator()
     {
         return newLucene<OpenBitSetIterator>(bits, wlen);
     }
-    
+
     bool OpenBitSet::isCacheable()
     {
         return true;
     }
-    
+
     int64_t OpenBitSet::capacity()
     {
         return bits.size() << 6;
     }
-    
+
     int64_t OpenBitSet::size()
     {
         return capacity();
     }
-    
+
     bool OpenBitSet::isEmpty()
     {
         return (cardinality() == 0);
     }
-    
+
     LongArray OpenBitSet::getBits()
     {
         return bits;
     }
-    
+
     void OpenBitSet::setBits(LongArray bits)
     {
         this->bits = bits;
     }
-    
+
     int32_t OpenBitSet::getNumWords()
     {
         return wlen;
     }
-    
+
     void OpenBitSet::setNumWords(int32_t numWords)
     {
         this->wlen = numWords;
     }
-    
+
     bool OpenBitSet::get(int32_t index)
     {
         int32_t i = index >> 6; // div 64
-        // signed shift will keep a negative index and force an array-index-out-of-bounds-exception, 
+        // signed shift will keep a negative index and force an array-index-out-of-bounds-exception,
         // removing the need for an explicit check.
         if (i >= bits.size())
             return false;
@@ -85,17 +85,17 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         return ((bits[i] & bitmask) != 0);
     }
-    
+
     bool OpenBitSet::fastGet(int32_t index)
     {
         int32_t i = index >> 6; // div 64
-        // signed shift will keep a negative index and force an array-index-out-of-bounds-exception, 
+        // signed shift will keep a negative index and force an array-index-out-of-bounds-exception,
         // removing the need for an explicit check.
         int32_t bit = (index & 0x3f); // mod 64
         int64_t bitmask = 1LL << bit;
         return ((bits[i] & bitmask) != 0);
     }
-    
+
     bool OpenBitSet::get(int64_t index)
     {
         int32_t i = (int32_t)(index >> 6); // div 64
@@ -105,7 +105,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         return ((bits[i] & bitmask) != 0);
     }
-    
+
     bool OpenBitSet::fastGet(int64_t index)
     {
         int32_t i = (int32_t)(index >> 6); // div 64
@@ -113,14 +113,14 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         return ((bits[i] & bitmask) != 0);
     }
-    
+
     int32_t OpenBitSet::getBit(int32_t index)
     {
         int32_t i = index >> 6; // div 64
         int32_t bit = (index & 0x3f); // mod 64
         return (int32_t)MiscUtils::unsignedShift(bits[i], (int64_t)bit) & 0x01;
     }
-    
+
     void OpenBitSet::set(int64_t index)
     {
         int32_t wordNum = expandingWordNum(index);
@@ -128,7 +128,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] |= bitmask;
     }
-    
+
     void OpenBitSet::fastSet(int32_t index)
     {
         int32_t wordNum = index >> 6; // div 64
@@ -136,7 +136,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] |= bitmask;
     }
-    
+
     void OpenBitSet::fastSet(int64_t index)
     {
         int32_t wordNum = (int32_t)(index >> 6);
@@ -144,7 +144,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] |= bitmask;
     }
-    
+
     void OpenBitSet::set(int64_t startIndex, int64_t endIndex)
     {
         if (endIndex <= startIndex)
@@ -168,7 +168,7 @@ namespace Lucene
         MiscUtils::arrayFill(bits.get(), startWord + 1, endWord, -1LL);
         bits[endWord] |= endmask;
     }
-    
+
     int32_t OpenBitSet::expandingWordNum(int64_t index)
     {
         int32_t wordNum = (int32_t)(index >> 6);
@@ -179,7 +179,7 @@ namespace Lucene
         }
         return wordNum;
     }
-    
+
     void OpenBitSet::fastClear(int32_t index)
     {
         int32_t wordNum = index >> 6;
@@ -187,7 +187,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] &= ~bitmask;
     }
-    
+
     void OpenBitSet::fastClear(int64_t index)
     {
         int32_t wordNum = (int32_t)(index >> 6);
@@ -195,7 +195,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] &= ~bitmask;
     }
-    
+
     void OpenBitSet::clear(int64_t index)
     {
         int32_t wordNum = (int32_t)(index >> 6);
@@ -205,7 +205,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] &= ~bitmask;
     }
-    
+
     void OpenBitSet::clear(int32_t startIndex, int32_t endIndex)
     {
         if (endIndex <= startIndex)
@@ -238,7 +238,7 @@ namespace Lucene
         if (endWord < wlen)
             bits[endWord] &= endmask;
     }
-    
+
     void OpenBitSet::clear(int64_t startIndex, int64_t endIndex)
     {
         if (endIndex <= startIndex)
@@ -271,7 +271,7 @@ namespace Lucene
         if (endWord < wlen)
             bits[endWord] &= endmask;
     }
-    
+
     bool OpenBitSet::getAndSet(int32_t index)
     {
         int32_t wordNum = index >> 6; // div 64
@@ -281,7 +281,7 @@ namespace Lucene
         bits[wordNum] |= bitmask;
         return val;
     }
-    
+
     bool OpenBitSet::getAndSet(int64_t index)
     {
         int32_t wordNum = (int32_t)(index >> 6); // div 64
@@ -291,7 +291,7 @@ namespace Lucene
         bits[wordNum] |= bitmask;
         return val;
     }
-    
+
     void OpenBitSet::fastFlip(int32_t index)
     {
         int32_t wordNum = index >> 6; // div 64
@@ -299,7 +299,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] ^= bitmask;
     }
-    
+
     void OpenBitSet::fastFlip(int64_t index)
     {
         int32_t wordNum = (int32_t)(index >> 6); // div 64
@@ -307,7 +307,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] ^= bitmask;
     }
-    
+
     void OpenBitSet::flip(int64_t index)
     {
         int32_t wordNum = expandingWordNum(index);
@@ -315,7 +315,7 @@ namespace Lucene
         int64_t bitmask = 1LL << bit;
         bits[wordNum] ^= bitmask;
     }
-    
+
     bool OpenBitSet::flipAndGet(int32_t index)
     {
         int32_t wordNum = index >> 6; // div 64
@@ -324,7 +324,7 @@ namespace Lucene
         bits[wordNum] ^= bitmask;
         return ((bits[wordNum] & bitmask) != 0);
     }
-    
+
     bool OpenBitSet::flipAndGet(int64_t index)
     {
         int32_t wordNum = (int32_t)(index >> 6); // div 64
@@ -333,7 +333,7 @@ namespace Lucene
         bits[wordNum] ^= bitmask;
         return ((bits[wordNum] & bitmask) != 0);
     }
-    
+
     void OpenBitSet::flip(int64_t startIndex, int64_t endIndex)
     {
         if (endIndex <= startIndex)
@@ -358,17 +358,17 @@ namespace Lucene
             bits[i] = ~bits[i];
         bits[endWord] ^= endmask;
     }
-    
+
     int64_t OpenBitSet::cardinality()
     {
         return BitUtil::pop_array(bits.get(), 0, wlen);
     }
-    
+
     int64_t OpenBitSet::intersectionCount(OpenBitSetPtr a, OpenBitSetPtr b)
     {
         return BitUtil::pop_intersect(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
     }
-    
+
     int64_t OpenBitSet::unionCount(OpenBitSetPtr a, OpenBitSetPtr b)
     {
         int64_t tot = BitUtil::pop_union(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
@@ -378,7 +378,7 @@ namespace Lucene
             tot += BitUtil::pop_array(a->bits.get(), b->wlen, a->wlen - b->wlen);
         return tot;
     }
-    
+
     int64_t OpenBitSet::andNotCount(OpenBitSetPtr a, OpenBitSetPtr b)
     {
         int64_t tot = BitUtil::pop_andnot(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
@@ -386,7 +386,7 @@ namespace Lucene
             tot += BitUtil::pop_array(a->bits.get(), b->wlen, a->wlen - b->wlen);
         return tot;
     }
-    
+
     int64_t OpenBitSet::xorCount(OpenBitSetPtr a, OpenBitSetPtr b)
     {
         int64_t tot = BitUtil::pop_xor(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
@@ -396,7 +396,7 @@ namespace Lucene
             tot += BitUtil::pop_array(a->bits.get(), b->wlen, a->wlen - b->wlen);
         return tot;
     }
-    
+
     int32_t OpenBitSet::nextSetBit(int32_t index)
     {
         int32_t i = MiscUtils::unsignedShift(index, 6);
@@ -417,7 +417,7 @@ namespace Lucene
 
         return -1;
     }
-    
+
     int64_t OpenBitSet::nextSetBit(int64_t index)
     {
         int32_t i = (int32_t)(index >> 6);
@@ -438,7 +438,7 @@ namespace Lucene
 
         return -1;
     }
-    
+
     LuceneObjectPtr OpenBitSet::clone(LuceneObjectPtr other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<OpenBitSet>();
@@ -448,7 +448,7 @@ namespace Lucene
         MiscUtils::arrayCopy(bits.get(), 0, cloneSet->bits.get(), 0, bits.size());
         return cloneSet;
     }
-    
+
     void OpenBitSet::intersect(OpenBitSetPtr other)
     {
         int32_t newLen= std::min(this->wlen, other->wlen);
@@ -465,7 +465,7 @@ namespace Lucene
         }
         this->wlen = newLen;
     }
-    
+
     void OpenBitSet::_union(OpenBitSetPtr other)
     {
         int32_t newLen = std::max(wlen, other->wlen);
@@ -480,7 +480,7 @@ namespace Lucene
             MiscUtils::arrayCopy(otherArr.get(), this->wlen, thisArr.get(), this->wlen, newLen - this->wlen);
         this->wlen = newLen;
     }
-    
+
     void OpenBitSet::remove(OpenBitSetPtr other)
     {
         int32_t idx = std::min(wlen, other->wlen);
@@ -489,7 +489,7 @@ namespace Lucene
         while (--idx >= 0)
             thisArr[idx] &= ~otherArr[idx];
     }
-    
+
     void OpenBitSet::_xor(OpenBitSetPtr other)
     {
         int32_t newLen = std::max(wlen, other->wlen);
@@ -504,22 +504,22 @@ namespace Lucene
             MiscUtils::arrayCopy(otherArr.get(), this->wlen, thisArr.get(), this->wlen, newLen - this->wlen);
         this->wlen = newLen;
     }
-    
+
     void OpenBitSet::_and(OpenBitSetPtr other)
     {
         intersect(other);
     }
-    
+
     void OpenBitSet::_or(OpenBitSetPtr other)
     {
         _union(other);
     }
-    
+
     void OpenBitSet::andNot(OpenBitSetPtr other)
     {
         remove(other);
     }
-    
+
     bool OpenBitSet::intersects(OpenBitSetPtr other)
     {
         int32_t pos = std::min(this->wlen, other->wlen);
@@ -532,7 +532,7 @@ namespace Lucene
         }
         return false;
     }
-    
+
     void OpenBitSet::ensureCapacityWords(int32_t numWords)
     {
         int32_t length = bits.size();
@@ -547,7 +547,7 @@ namespace Lucene
     {
         ensureCapacityWords(bits2words(numBits));
     }
-    
+
     void OpenBitSet::trimTrailingZeros()
     {
         int32_t idx = wlen - 1;
@@ -555,12 +555,12 @@ namespace Lucene
             --idx;
         wlen = idx + 1;
     }
-    
+
     int32_t OpenBitSet::bits2words(int64_t numBits)
     {
         return (int32_t)(MiscUtils::unsignedShift(numBits - 1, (int64_t)6) + 1);
     }
-    
+
     bool OpenBitSet::equals(LuceneObjectPtr other)
     {
         if (LuceneObject::equals(other))
@@ -578,23 +578,23 @@ namespace Lucene
         }
         else
             a = shared_from_this();
-        
+
         // check for any set bits out of the range of b
         for (int32_t i = a->wlen - 1; i >= b->wlen; --i)
         {
             if (a->bits[i] !=0 )
                 return false;
         }
-        
+
         for (int32_t i = b->wlen - 1; i >= 0; --i)
         {
             if (a->bits[i] != b->bits[i])
                 return false;
         }
-        
+
         return true;
     }
-    
+
     int32_t OpenBitSet::hashCode()
     {
         // Start with a zero hash and use a mix that results in zero if the input is zero.
@@ -605,7 +605,7 @@ namespace Lucene
             hash ^= bits[i];
             hash = (hash << 1) | MiscUtils::unsignedShift(hash, (int64_t)63); // rotate left
         }
-        // Fold leftmost bits into right and add a constant to prevent empty sets from 
+        // Fold leftmost bits into right and add a constant to prevent empty sets from
         // returning 0, which is too common.
         return (int32_t)((hash >> 32) ^ hash) + 0x98761234;
     }

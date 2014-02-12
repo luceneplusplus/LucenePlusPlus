@@ -22,7 +22,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(SpanQueryFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture SpanQueryFilterTest;
 
 static int32_t getDocIdSetSize(DocIdSetPtr docIdSet)
 {
@@ -36,11 +36,11 @@ static int32_t getDocIdSetSize(DocIdSetPtr docIdSet)
 static void checkContainsDocId(DocIdSetPtr docIdSet, int32_t docId)
 {
     DocIdSetIteratorPtr it = docIdSet->iterator();
-    BOOST_CHECK_NE(it->advance(docId), DocIdSetIterator::NO_MORE_DOCS);
-    BOOST_CHECK_EQUAL(it->docID(), docId);
+    EXPECT_NE(it->advance(docId), DocIdSetIterator::NO_MORE_DOCS);
+    EXPECT_EQ(it->docID(), docId);
 }
 
-BOOST_AUTO_TEST_CASE(testFilterWorks)
+TEST_F(SpanQueryFilterTest, testFilterWorks)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE(testFilterWorks)
         document->add(newLucene<Field>(L"field", intToEnglish(i) + L" equals " + intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(document);
     }
-    
+
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
@@ -59,21 +59,19 @@ BOOST_AUTO_TEST_CASE(testFilterWorks)
     SpanQueryFilterPtr filter = newLucene<SpanQueryFilter>(query);
     SpanFilterResultPtr result = filter->bitSpans(reader);
     DocIdSetPtr docIdSet = result->getDocIdSet();
-    BOOST_CHECK(docIdSet);
+    EXPECT_TRUE(docIdSet);
     checkContainsDocId(docIdSet, 10);
     Collection<PositionInfoPtr> spans = result->getPositions();
-    BOOST_CHECK(spans);
+    EXPECT_TRUE(spans);
     int32_t size = getDocIdSetSize(docIdSet);
-    BOOST_CHECK_EQUAL(spans.size(), size);
+    EXPECT_EQ(spans.size(), size);
     for (Collection<PositionInfoPtr>::iterator info = spans.begin(); info != spans.end(); ++info)
     {
-        BOOST_CHECK(*info);
+        EXPECT_TRUE(*info);
         // The doc should indicate the bit is on
         checkContainsDocId(docIdSet, (*info)->getDoc());
         // There should be two positions in each
-        BOOST_CHECK_EQUAL((*info)->getPositions().size(), 2);
+        EXPECT_EQ((*info)->getPositions().size(), 2);
     }
     reader->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

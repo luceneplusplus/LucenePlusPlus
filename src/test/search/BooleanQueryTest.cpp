@@ -22,9 +22,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(BooleanQueryTest, LuceneTestFixture)
+typedef LuceneTestFixture BooleanQueryTest;
 
-BOOST_AUTO_TEST_CASE(testEquality)
+TEST_F(BooleanQueryTest, testEquality)
 {
     BooleanQueryPtr bq1 = newLucene<BooleanQuery>();
     bq1->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"value1")), BooleanClause::SHOULD);
@@ -42,33 +42,40 @@ BOOST_AUTO_TEST_CASE(testEquality)
     nested2->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"nestedvalue2")), BooleanClause::SHOULD);
     bq2->add(nested2, BooleanClause::SHOULD);
 
-    BOOST_CHECK(bq1->equals(bq2));
+    EXPECT_TRUE(bq1->equals(bq2));
 }
 
-BOOST_AUTO_TEST_CASE(testException)
+TEST_F(BooleanQueryTest, testException)
 {
-    BOOST_CHECK_EXCEPTION(BooleanQuery::setMaxClauseCount(0), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
+    try
+    {
+        BooleanQuery::setMaxClauseCount(0);
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
 }
 
-BOOST_AUTO_TEST_CASE(testNullOrSubScorer)
+TEST_F(BooleanQueryTest, testNullOrSubScorer)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", L"a b c d", Field::STORE_NO, Field::INDEX_ANALYZED));
     w->addDocument(doc);
-    
+
     IndexReaderPtr r = w->getReader();
     IndexSearcherPtr s = newLucene<IndexSearcher>(r);
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"a")), BooleanClause::SHOULD);
-    
+
     double score = s->search(q, 10)->getMaxScore();
     QueryPtr subQuery = newLucene<TermQuery>(newLucene<Term>(L"field", L"not_in_index"));
     subQuery->setBoost(0);
     q->add(subQuery, BooleanClause::SHOULD);
     double score2 = s->search(q, 10)->getMaxScore();
-    BOOST_CHECK_CLOSE_FRACTION(score * 0.5, score2, 1e-6);
+    EXPECT_NEAR(score * 0.5, score2, 1e-6);
 
     BooleanQueryPtr qq = boost::dynamic_pointer_cast<BooleanQuery>(q->clone());
     PhraseQueryPtr phrase = newLucene<PhraseQuery>();
@@ -77,35 +84,33 @@ BOOST_AUTO_TEST_CASE(testNullOrSubScorer)
     phrase->setBoost(0);
     qq->add(phrase, BooleanClause::SHOULD);
     score2 = s->search(qq, 10)->getMaxScore();
-    BOOST_CHECK_CLOSE_FRACTION(score * (1.0 / 3), score2, 1e-6);
-    
+    EXPECT_NEAR(score * (1.0 / 3), score2, 1e-6);
+
     // now test BooleanScorer2
     subQuery = newLucene<TermQuery>(newLucene<Term>(L"field", L"b"));
     subQuery->setBoost(0);
     q->add(subQuery, BooleanClause::MUST);
     score2 = s->search(q, 10)->getMaxScore();
-    BOOST_CHECK_CLOSE_FRACTION(score * (2.0 / 3), score2, 1e-6);
+    EXPECT_NEAR(score * (2.0 / 3), score2, 1e-6);
 
     // PhraseQuery with no terms added returns a null scorer
     PhraseQueryPtr pq = newLucene<PhraseQuery>();
     q->add(pq, BooleanClause::SHOULD);
-    BOOST_CHECK_EQUAL(1, s->search(q, 10)->totalHits);
+    EXPECT_EQ(1, s->search(q, 10)->totalHits);
 
     // A required clause which returns null scorer should return null scorer to IndexSearcher.
     q = newLucene<BooleanQuery>();
     pq = newLucene<PhraseQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"a")), BooleanClause::SHOULD);
     q->add(pq, BooleanClause::MUST);
-    BOOST_CHECK_EQUAL(0, s->search(q, 10)->totalHits);
+    EXPECT_EQ(0, s->search(q, 10)->totalHits);
 
     DisjunctionMaxQueryPtr dmq = newLucene<DisjunctionMaxQuery>(1.0);
     dmq->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"a")));
     dmq->add(pq);
-    BOOST_CHECK_EQUAL(1, s->search(dmq, 10)->totalHits);
+    EXPECT_EQ(1, s->search(dmq, 10)->totalHits);
 
     r->close();
     w->close();
     dir->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -22,10 +22,10 @@
 
 using namespace Lucene;
 
-class SpansAdvancedFixture : public LuceneTestFixture
+class SpansAdvancedTest : public LuceneTestFixture
 {
 public:
-    SpansAdvancedFixture()
+    SpansAdvancedTest()
     {
         // create test index
         directory = newLucene<RAMDirectory>();
@@ -37,8 +37,8 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
-    virtual ~SpansAdvancedFixture()
+
+    virtual ~SpansAdvancedTest()
     {
         searcher->close();
         directory->close();
@@ -51,7 +51,7 @@ public:
 protected:
     DirectoryPtr directory;
     IndexSearcherPtr searcher;
-    
+
     void addDocument(IndexWriterPtr writer, const String& id, const String& text)
     {
         DocumentPtr document = newLucene<Document>();
@@ -59,7 +59,7 @@ protected:
         document->add(newLucene<Field>(FIELD_TEXT, text, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(document);
     }
-    
+
     void checkHits(SearcherPtr s, QueryPtr query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores)
     {
         QueryUtils::check(query, s);
@@ -70,30 +70,28 @@ protected:
         TopDocsPtr topdocs = s->search(query, FilterPtr(), 10000);
 
         // did we get the hits we expected
-        BOOST_CHECK_EQUAL(expectedIds.size(), topdocs->totalHits);
-        
+        EXPECT_EQ(expectedIds.size(), topdocs->totalHits);
+
         for (int32_t i = 0; i < topdocs->totalHits; ++i)
         {
             int32_t id = topdocs->scoreDocs[i]->doc;
             double score = topdocs->scoreDocs[i]->score;
             DocumentPtr doc = s->doc(id);
-            BOOST_CHECK_EQUAL(expectedIds[i], doc->get(FIELD_ID));
+            EXPECT_EQ(expectedIds[i], doc->get(FIELD_ID));
             bool scoreEq = (std::abs(expectedScores[i] - score) < tolerance);
             if (scoreEq)
             {
-                BOOST_CHECK_CLOSE_FRACTION(expectedScores[i], score, tolerance);
-                BOOST_CHECK_CLOSE_FRACTION(s->explain(query, id)->getValue(), score, tolerance);
+                EXPECT_NEAR(expectedScores[i], score, tolerance);
+                EXPECT_NEAR(s->explain(query, id)->getValue(), score, tolerance);
             }
         }
     }
 };
 
-const String SpansAdvancedFixture::FIELD_ID = L"ID";
-const String SpansAdvancedFixture::FIELD_TEXT = L"TEXT";
+const String SpansAdvancedTest::FIELD_ID = L"ID";
+const String SpansAdvancedTest::FIELD_TEXT = L"TEXT";
 
-BOOST_FIXTURE_TEST_SUITE(SpansAdvancedTest, SpansAdvancedFixture)
-
-BOOST_AUTO_TEST_CASE(testBooleanQueryWithSpanQueries)
+TEST_F(SpansAdvancedTest, testBooleanQueryWithSpanQueries)
 {
     double expectedScore = 0.3884282;
     QueryPtr spanQuery = newLucene<SpanTermQuery>(newLucene<Term>(FIELD_TEXT, L"work"));
@@ -104,5 +102,3 @@ BOOST_AUTO_TEST_CASE(testBooleanQueryWithSpanQueries)
     Collection<double> expectedScores = newCollection<double>(expectedScore, expectedScore, expectedScore, expectedScore);
     checkHits(searcher, query, L"two span queries", expectedIds, expectedScores);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

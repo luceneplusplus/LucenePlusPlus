@@ -16,7 +16,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(FileSwitchDirectoryTest, LuceneTestFixture)
+typedef LuceneTestFixture FileSwitchDirectoryTest;
 
 static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t numFields)
 {
@@ -41,7 +41,7 @@ static void createIndexNoClose(bool multiSegment, const String& indexName, Index
 }
 
 // Test if writing doc stores to disk and everything else to ram works.
-BOOST_AUTO_TEST_CASE(testBasic)
+TEST_F(FileSwitchDirectoryTest, testBasic)
 {
     HashSet<String> fileExtensions(HashSet<String>::newInstance());
     fileExtensions.add(L"fdt");
@@ -49,37 +49,35 @@ BOOST_AUTO_TEST_CASE(testBasic)
 
     DirectoryPtr primaryDir(newLucene<MockRAMDirectory>());
     RAMDirectoryPtr secondaryDir(newLucene<MockRAMDirectory>());
-    
+
     FileSwitchDirectoryPtr fsd(newLucene<FileSwitchDirectory>(fileExtensions, primaryDir, secondaryDir, true));
     IndexWriterPtr writer(newLucene<IndexWriter>(fsd, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED));
     writer->setUseCompoundFile(false);
     createIndexNoClose(true, L"ram", writer);
     IndexReaderPtr reader = writer->getReader();
-    BOOST_CHECK_EQUAL(reader->maxDoc(), 100);
+    EXPECT_EQ(reader->maxDoc(), 100);
     writer->commit();
     // we should see only fdx,fdt files here
     HashSet<String> files = primaryDir->listAll();
-    BOOST_CHECK(!files.empty());
+    EXPECT_TRUE(!files.empty());
     for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
     {
         String ext = FileSwitchDirectory::getExtension(*file);
-        BOOST_CHECK(fileExtensions.contains(ext));
+        EXPECT_TRUE(fileExtensions.contains(ext));
     }
     files = secondaryDir->listAll();
-    BOOST_CHECK(!files.empty());
+    EXPECT_TRUE(!files.empty());
     // we should not see fdx,fdt files here
     for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
     {
         String ext = FileSwitchDirectory::getExtension(*file);
-        BOOST_CHECK(!fileExtensions.contains(ext));
+        EXPECT_TRUE(!fileExtensions.contains(ext));
     }
     reader->close();
     writer->close();
 
     files = fsd->listAll();
     for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
-        BOOST_CHECK(!file->empty());
+        EXPECT_TRUE(!file->empty());
     fsd->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

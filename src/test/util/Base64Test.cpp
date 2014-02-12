@@ -11,16 +11,16 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(Base64Test, LuceneTestFixture)
+typedef LuceneTestFixture Base64Test;
 
-BOOST_AUTO_TEST_CASE(testEncodeSmall)
+TEST_F(Base64Test, testEncodeSmall)
 {
     SingleString testBinary = "this is test binary";
     String encode = Base64::encode((uint8_t*)testBinary.c_str(), testBinary.length());
-    BOOST_CHECK_EQUAL(encode, L"dGhpcyBpcyB0ZXN0IGJpbmFyeQ==");
+    EXPECT_EQ(encode, L"dGhpcyBpcyB0ZXN0IGJpbmFyeQ==");
 }
 
-BOOST_AUTO_TEST_CASE(testEncodeLarge)
+TEST_F(Base64Test, testEncodeLarge)
 {
     SingleString testBinary = "This is a larger test string that should convert into base64 "
                               "This is a larger test string that should convert into base64 "
@@ -28,26 +28,26 @@ BOOST_AUTO_TEST_CASE(testEncodeLarge)
                               "This is a larger test string that should convert into base64 "
                               "This is a larger test string that should convert into base64";
     String encode = Base64::encode((uint8_t*)testBinary.c_str(), testBinary.length());
-    
+
     String expected = L"VGhpcyBpcyBhIGxhcmdlciB0ZXN0IHN0cmluZyB0aGF0IHNob3VsZCBjb252ZXJ0IGludG8gYmFz"
                       L"ZTY0IFRoaXMgaXMgYSBsYXJnZXIgdGVzdCBzdHJpbmcgdGhhdCBzaG91bGQgY29udmVydCBpbnRv"
                       L"IGJhc2U2NCBUaGlzIGlzIGEgbGFyZ2VyIHRlc3Qgc3RyaW5nIHRoYXQgc2hvdWxkIGNvbnZlcnQg"
                       L"aW50byBiYXNlNjQgVGhpcyBpcyBhIGxhcmdlciB0ZXN0IHN0cmluZyB0aGF0IHNob3VsZCBjb252"
                       L"ZXJ0IGludG8gYmFzZTY0IFRoaXMgaXMgYSBsYXJnZXIgdGVzdCBzdHJpbmcgdGhhdCBzaG91bGQg"
                       L"Y29udmVydCBpbnRvIGJhc2U2NA==";
-    
-    BOOST_CHECK_EQUAL(encode, expected);
+
+    EXPECT_EQ(encode, expected);
 }
 
-BOOST_AUTO_TEST_CASE(testDecodeSmall)
+TEST_F(Base64Test, testDecodeSmall)
 {
     String testString = L"dGhpcyBpcyB0ZXN0IGJpbmFyeQ==";
     ByteArray decode = Base64::decode(testString);
     SingleString decodeBinary((char*)decode.get(), decode.size());
-    BOOST_CHECK_EQUAL(decodeBinary, "this is test binary");
+    EXPECT_EQ(decodeBinary, "this is test binary");
 }
 
-BOOST_AUTO_TEST_CASE(testDecodeLaarge)
+TEST_F(Base64Test, testDecodeLaarge)
 {
     String testString = L"VGhpcyBpcyBhIGxhcmdlciB0ZXN0IHN0cmluZyB0aGF0IHNob3VsZCBjb252ZXJ0IGludG8gYmFz"
                         L"ZTY0IFRoaXMgaXMgYSBsYXJnZXIgdGVzdCBzdHJpbmcgdGhhdCBzaG91bGQgY29udmVydCBpbnRv"
@@ -57,14 +57,12 @@ BOOST_AUTO_TEST_CASE(testDecodeLaarge)
                         L"Y29udmVydCBpbnRvIGJhc2U2NA==";
     ByteArray decode = Base64::decode(testString);
     SingleString decodeBinary((char*)decode.get(), decode.size());
-    
+
     SingleString expected = "This is a larger test string that should convert into base64 "
                             "This is a larger test string that should convert into base64 "
                             "This is a larger test string that should convert into base64 "
                             "This is a larger test string that should convert into base64 "
                             "This is a larger test string that should convert into base64";
-    
-    BOOST_CHECK_EQUAL(decodeBinary, expected);
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    EXPECT_EQ(decodeBinary, expected);
+}

@@ -13,19 +13,19 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(WordlistLoaderTest, LuceneTestFixture)
+typedef LuceneTestFixture WordlistLoaderTest;
 
 static void checkSet(HashSet<String> wordset)
 {
-    BOOST_CHECK_EQUAL(3, wordset.size());
-    BOOST_CHECK(wordset.contains(L"ONE")); // case is not modified
-    BOOST_CHECK(!wordset.contains(L"one")); // case is not modified
-    BOOST_CHECK(wordset.contains(L"two")); // surrounding whitespace is removed
-    BOOST_CHECK(wordset.contains(L"three"));
-    BOOST_CHECK(!wordset.contains(L"four"));
+    EXPECT_EQ(3, wordset.size());
+    EXPECT_TRUE(wordset.contains(L"ONE")); // case is not modified
+    EXPECT_TRUE(!wordset.contains(L"one")); // case is not modified
+    EXPECT_TRUE(wordset.contains(L"two")); // surrounding whitespace is removed
+    EXPECT_TRUE(wordset.contains(L"three"));
+    EXPECT_TRUE(!wordset.contains(L"four"));
 }
 
-BOOST_AUTO_TEST_CASE(testWordlistLoading)
+TEST_F(WordlistLoaderTest, testWordlistLoading)
 {
     String s = L"ONE\n  two \nthree";
     HashSet<String> wordSet1 = WordlistLoader::getWordSet(newLucene<StringReader>(s));
@@ -34,13 +34,11 @@ BOOST_AUTO_TEST_CASE(testWordlistLoading)
     checkSet(wordSet2);
 }
 
-BOOST_AUTO_TEST_CASE(testComments)
+TEST_F(WordlistLoaderTest, testComments)
 {
     String s = L"ONE\n  two \nthree\n#comment";
     HashSet<String> wordSet1 = WordlistLoader::getWordSet(newLucene<StringReader>(s), L"#");
     checkSet(wordSet1);
-    BOOST_CHECK(!wordSet1.contains(L"#comment"));
-    BOOST_CHECK(!wordSet1.contains(L"comment"));
+    EXPECT_TRUE(!wordSet1.contains(L"#comment"));
+    EXPECT_TRUE(!wordSet1.contains(L"comment"));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

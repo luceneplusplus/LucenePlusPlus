@@ -10,47 +10,61 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(NumberToolsTest, LuceneTestFixture)
+typedef LuceneTestFixture NumberToolsTest;
 
-BOOST_AUTO_TEST_CASE(testMinValue)
+TEST_F(NumberToolsTest, testMinValue)
 {
-    BOOST_CHECK_EQUAL(NumberTools::MIN_STRING_VALUE(), L"-0000000000000");
+    EXPECT_EQ(NumberTools::MIN_STRING_VALUE(), L"-0000000000000");
 }
 
-BOOST_AUTO_TEST_CASE(testMaxValue)
+TEST_F(NumberToolsTest, testMaxValue)
 {
-    BOOST_CHECK_EQUAL(NumberTools::MAX_STRING_VALUE(), L"01y2p0ij32e8e7");
+    EXPECT_EQ(NumberTools::MAX_STRING_VALUE(), L"01y2p0ij32e8e7");
 }
 
-BOOST_AUTO_TEST_CASE(testValueSize)
+TEST_F(NumberToolsTest, testValueSize)
 {
-    BOOST_CHECK_EQUAL(NumberTools::STR_SIZE(), 14);
+    EXPECT_EQ(NumberTools::STR_SIZE(), 14);
 }
 
-BOOST_AUTO_TEST_CASE(testLongToString)
+TEST_F(NumberToolsTest, testLongToString)
 {
-    BOOST_CHECK_EQUAL(NumberTools::longToString(LLONG_MIN), L"-0000000000000");
-    BOOST_CHECK_EQUAL(NumberTools::longToString(LLONG_MAX), L"01y2p0ij32e8e7");
-    BOOST_CHECK_EQUAL(NumberTools::longToString(1LL), L"00000000000001");
-    BOOST_CHECK_EQUAL(NumberTools::longToString(999LL), L"000000000000rr");
-    BOOST_CHECK_EQUAL(NumberTools::longToString(34234LL), L"00000000000qey");
-    BOOST_CHECK_EQUAL(NumberTools::longToString(4345325254LL), L"00000001zv3efa");
-    BOOST_CHECK_EQUAL(NumberTools::longToString(986778657657575LL), L"00009ps7uuwdlz");
-    BOOST_CHECK_EQUAL(NumberTools::longToString(23232143543434234LL), L"0006cr3vell8my");
+    EXPECT_EQ(NumberTools::longToString(LLONG_MIN), L"-0000000000000");
+    EXPECT_EQ(NumberTools::longToString(LLONG_MAX), L"01y2p0ij32e8e7");
+    EXPECT_EQ(NumberTools::longToString(1LL), L"00000000000001");
+    EXPECT_EQ(NumberTools::longToString(999LL), L"000000000000rr");
+    EXPECT_EQ(NumberTools::longToString(34234LL), L"00000000000qey");
+    EXPECT_EQ(NumberTools::longToString(4345325254LL), L"00000001zv3efa");
+    EXPECT_EQ(NumberTools::longToString(986778657657575LL), L"00009ps7uuwdlz");
+    EXPECT_EQ(NumberTools::longToString(23232143543434234LL), L"0006cr3vell8my");
 }
 
-BOOST_AUTO_TEST_CASE(testStringToLong)
+TEST_F(NumberToolsTest, testStringToLong)
 {
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"-0000000000000"), LLONG_MIN);
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"01y2p0ij32e8e7"), LLONG_MAX);
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"00000000000001"), 1LL);
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"000000000000rr"), 999LL);
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"00000000000qey"), 34234LL);
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"00000001zv3efa"), 4345325254LL);
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"00009ps7uuwdlz"), 986778657657575LL);
-    BOOST_CHECK_EQUAL(NumberTools::stringToLong(L"0006cr3vell8my"), 23232143543434234LL);
-    BOOST_CHECK_EXCEPTION(NumberTools::stringToLong(L"32132"), LuceneException, check_exception(LuceneException::NumberFormat)); // wrong length
-    BOOST_CHECK_EXCEPTION(NumberTools::stringToLong(L"9006cr3vell8my"), LuceneException, check_exception(LuceneException::NumberFormat)); // wrong prefix
-}
+    EXPECT_EQ(NumberTools::stringToLong(L"-0000000000000"), LLONG_MIN);
+    EXPECT_EQ(NumberTools::stringToLong(L"01y2p0ij32e8e7"), LLONG_MAX);
+    EXPECT_EQ(NumberTools::stringToLong(L"00000000000001"), 1LL);
+    EXPECT_EQ(NumberTools::stringToLong(L"000000000000rr"), 999LL);
+    EXPECT_EQ(NumberTools::stringToLong(L"00000000000qey"), 34234LL);
+    EXPECT_EQ(NumberTools::stringToLong(L"00000001zv3efa"), 4345325254LL);
+    EXPECT_EQ(NumberTools::stringToLong(L"00009ps7uuwdlz"), 986778657657575LL);
+    EXPECT_EQ(NumberTools::stringToLong(L"0006cr3vell8my"), 23232143543434234LL);
 
-BOOST_AUTO_TEST_SUITE_END()
+    try
+    {
+        NumberTools::stringToLong(L"32132");
+    }
+    catch (LuceneException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::NumberFormat)(e)); // wrong length
+    }
+
+    try
+    {
+        NumberTools::stringToLong(L"9006cr3vell8my");
+    }
+    catch (LuceneException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::NumberFormat)(e)); // wrong prefix
+    }
+}

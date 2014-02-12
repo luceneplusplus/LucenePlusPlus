@@ -20,9 +20,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(FieldCacheTermsFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture FieldCacheTermsFilterTest;
 
-BOOST_AUTO_TEST_CASE(testMissingTerms)
+TEST_F(FieldCacheTermsFilterTest, testMissingTerms)
 {
     String fieldName = L"field1";
     MockRAMDirectoryPtr rd = newLucene<MockRAMDirectory>();
@@ -42,16 +42,14 @@ BOOST_AUTO_TEST_CASE(testMissingTerms)
     MatchAllDocsQueryPtr q = newLucene<MatchAllDocsQuery>();
 
     Collection<ScoreDocPtr> results = searcher->search(q, newLucene<FieldCacheTermsFilter>(fieldName, newCollection<String>(L"5")), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, results.size());
+    EXPECT_EQ(0, results.size());
 
     results = searcher->search(q, newLucene<FieldCacheTermsFilter>(fieldName, newCollection<String>(L"10")), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, results.size());
+    EXPECT_EQ(1, results.size());
 
     results = searcher->search(q, newLucene<FieldCacheTermsFilter>(fieldName, newCollection<String>(L"10", L"20")), numDocs)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, results.size());
+    EXPECT_EQ(2, results.size());
 
     reader->close();
     rd->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

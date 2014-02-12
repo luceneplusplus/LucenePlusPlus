@@ -14,23 +14,35 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(IndexWriterLockReleaseTest, LuceneTestFixture)
+typedef LuceneTestFixture IndexWriterLockReleaseTest;
 
-BOOST_AUTO_TEST_CASE(testIndexWriterLockRelease)
+TEST_F(IndexWriterLockReleaseTest, testIndexWriterLockRelease)
 {
     String testDir(getTempDir(L"testIndexWriter"));
     FileUtils::createDirectory(testDir);
-    
+
     DirectoryPtr dir = FSDirectory::open(testDir);
     IndexWriterPtr im;
-    
-    BOOST_CHECK_EXCEPTION(im = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED), FileNotFoundException, check_exception(LuceneException::FileNotFound));
-    
-    BOOST_CHECK_EXCEPTION(im = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED), FileNotFoundException, check_exception(LuceneException::FileNotFound));
-    
+
+    try
+    {
+        im = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
+    }
+    catch (FileNotFoundException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::FileNotFound)(e));
+    }
+
+    try
+    {
+        im = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
+    }
+    catch (FileNotFoundException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::FileNotFound)(e));
+    }
+
     dir->close();
-    
+
     FileUtils::removeDirectory(testDir);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

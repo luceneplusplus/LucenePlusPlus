@@ -15,31 +15,31 @@
 
 using namespace Lucene;
 
-class RussianStemmerFixture : public BaseTokenStreamFixture
+class RussianStemmerTest : public BaseTokenStreamFixture
 {
 public:
-    RussianStemmerFixture()
+    RussianStemmerTest()
     {
         words = Collection<String>::newInstance();
         stems = Collection<String>::newInstance();
-        
+
         String wordsFile(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"russian"), L"wordsUTF8.txt"));
         String stemsFile(FileUtils::joinPath(FileUtils::joinPath(getTestDir(), L"russian"), L"stemsUTF8.txt"));
-        
+
         BufferedReaderPtr inWords = newLucene<BufferedReader>(newLucene<InputStreamReader>(newLucene<FileReader>(wordsFile)));
         String word;
         while (inWords->readLine(word))
             words.add(word);
         inWords->close();
-        
+
         BufferedReaderPtr inStems = newLucene<BufferedReader>(newLucene<InputStreamReader>(newLucene<FileReader>(stemsFile)));
         String stem;
         while (inStems->readLine(stem))
             stems.add(stem);
         inStems->close();
     }
-    
-    virtual ~RussianStemmerFixture()
+
+    virtual ~RussianStemmerTest()
     {
     }
 
@@ -48,16 +48,12 @@ protected:
     Collection<String> stems;
 };
 
-BOOST_FIXTURE_TEST_SUITE(RussianStemTest, RussianStemmerFixture)
-
-BOOST_AUTO_TEST_CASE(testStem)
+TEST_F(RussianStemmerTest, testStem)
 {
-    BOOST_CHECK_EQUAL(words.size(), stems.size());
+    EXPECT_EQ(words.size(), stems.size());
     for (int32_t i = 0; i < words.size(); ++i)
     {
         String realStem = RussianStemmer::stemWord(words[i]);
-        BOOST_CHECK_EQUAL(stems[i], realStem);
+        EXPECT_EQ(stems[i], realStem);
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

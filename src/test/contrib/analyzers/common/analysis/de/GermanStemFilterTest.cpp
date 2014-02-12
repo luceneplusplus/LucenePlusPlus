@@ -11,10 +11,10 @@
 
 using namespace Lucene;
 
-class GermanStemFilterFixture : public BaseTokenStreamFixture
+class GermanStemFilterTest : public BaseTokenStreamFixture
 {
 public:
-    virtual ~GermanStemFilterFixture()
+    virtual ~GermanStemFilterTest()
     {
     }
 
@@ -23,56 +23,54 @@ public:
     {
         checkOneTerm(newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
-    
+
     void checkReuse(AnalyzerPtr a, const String& input, const String& expected)
     {
         checkOneTermReuse(a, input, expected);
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(GermanStemFilterTest, GermanStemFilterFixture)
-
-/// Test the German stemmer. The stemming algorithm is known to work less than perfect, as it doesn't 
+/// Test the German stemmer. The stemming algorithm is known to work less than perfect, as it doesn't
 /// use any word lists with exceptions. We also check some of the cases where the algorithm is wrong.
 
-BOOST_AUTO_TEST_CASE(testStemming)
+TEST_F(GermanStemFilterTest, testStemming)
 {
     const uint8_t haufig[] = {0x68, 0xc3, 0xa4, 0x75, 0x66, 0x69, 0x67};
     check(UTF8_TO_STRING(haufig), L"haufig"); // German special characters are replaced
-    
+
     const uint8_t abschliess1[] = {0x61, 0x62, 0x73, 0x63, 0x68, 0x6c, 0x69, 0x65, 0xc3, 0x9f, 0x65, 0x6e};
     check(UTF8_TO_STRING(abschliess1), L"abschliess"); // here the stemmer works okay, it maps related words to the same stem
-    
+
     const uint8_t abschliess2[] = {0x61, 0x62, 0x73, 0x63, 0x68, 0x6c, 0x69, 0x65, 0xc3, 0x9f, 0x65, 0x6e, 0x64, 0x65, 0x72};
     check(UTF8_TO_STRING(abschliess2), L"abschliess"); // here the stemmer works okay, it maps related words to the same stem
-    
+
     const uint8_t abschliess3[] = {0x61, 0x62, 0x73, 0x63, 0x68, 0x6c, 0x69, 0x65, 0xc3, 0x9f, 0x65, 0x6e, 0x64, 0x65, 0x73};
     check(UTF8_TO_STRING(abschliess3), L"abschliess"); // here the stemmer works okay, it maps related words to the same stem
-    
+
     const uint8_t abschliess4[] = {0x61, 0x62, 0x73, 0x63, 0x68, 0x6c, 0x69, 0x65, 0xc3, 0x9f, 0x65, 0x6e, 0x64, 0x65, 0x6e};
     check(UTF8_TO_STRING(abschliess4), L"abschliess"); // here the stemmer works okay, it maps related words to the same stem
-    
+
     check(L"Tisch", L"tisch");
     check(L"Tische", L"tisch");
     check(L"Tischen", L"tisch");
-    
+
     check(L"Haus", L"hau");
     check(L"Hauses", L"hau");
-    
+
     const uint8_t hau1[] = {0x48, 0xc3, 0xa4, 0x75, 0x73, 0x65, 0x72};
     check(UTF8_TO_STRING(hau1), L"hau");
-    
+
     const uint8_t hau2[] = {0x48, 0xc3, 0xa4, 0x75, 0x73, 0x65, 0x72, 0x6e};
     check(UTF8_TO_STRING(hau2), L"hau");
 
     // Here's a case where overstemming occurs, ie. a word is mapped to the same stem as unrelated words
     check(L"hauen", L"hau");
-    
-    // Here's a case where understemming occurs, i.e. two related words are not mapped to the same stem. 
+
+    // Here's a case where understemming occurs, i.e. two related words are not mapped to the same stem.
     // This is the case with basically all irregular forms
     check(L"Drama", L"drama");
     check(L"Dramen", L"dram");
-    
+
     const uint8_t ausmass[] = {0x41, 0x75, 0x73, 0x6d, 0x61, 0xc3, 0x9f};
     check(UTF8_TO_STRING(ausmass), L"ausmass");
 
@@ -84,22 +82,22 @@ BOOST_AUTO_TEST_CASE(testStemming)
     check(L"xxxxxem", L"xxxxx");
     check(L"xxxxxet", L"xxxxx");
     check(L"xxxxxnd", L"xxxxx");
-    
+
     // The suffixes are also removed when combined
     check(L"xxxxxetende", L"xxxxx");
-    
+
     // Words that are shorter than four charcters are not changed
     check(L"xxe", L"xxe");
-    
+
     // -em and -er are not removed from words shorter than five characters
     check(L"xxem", L"xxem");
     check(L"xxer", L"xxer");
-    
+
     // -nd is not removed from words shorter than six characters
     check(L"xxxnd", L"xxxnd");
 }
 
-BOOST_AUTO_TEST_CASE(testReusableTokenStream)
+TEST_F(GermanStemFilterTest, testReusableTokenStream)
 {
     AnalyzerPtr a = newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"Tisch", L"tisch");
@@ -108,7 +106,7 @@ BOOST_AUTO_TEST_CASE(testReusableTokenStream)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
+TEST_F(GermanStemFilterTest, testExclusionTableReuse)
 {
     GermanAnalyzerPtr a = newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"tischen", L"tisch");
@@ -117,5 +115,3 @@ BOOST_AUTO_TEST_CASE(testExclusionTableReuse)
     a->setStemExclusionTable(exclusions);
     checkReuse(a, L"tischen", L"tischen");
 }
-
-BOOST_AUTO_TEST_SUITE_END()

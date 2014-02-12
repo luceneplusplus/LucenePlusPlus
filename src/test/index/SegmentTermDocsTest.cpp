@@ -22,18 +22,18 @@
 
 using namespace Lucene;
 
-class SegmentTermDocsTestFixture : public LuceneTestFixture, public DocHelper
+class SegmentTermDocsTest : public LuceneTestFixture, public DocHelper
 {
 public:
-    SegmentTermDocsTestFixture()
+    SegmentTermDocsTest()
     {
         testDoc = newLucene<Document>();
         dir = newLucene<RAMDirectory>();
         DocHelper::setupDoc(testDoc);
         info = DocHelper::writeDoc(dir, testDoc);
     }
-    
-    virtual ~SegmentTermDocsTestFixture()
+
+    virtual ~SegmentTermDocsTest()
     {
     }
 
@@ -47,45 +47,45 @@ public:
     {
         // After adding the document, we should be able to read it back in
         SegmentReaderPtr reader = SegmentReader::get(true, info, indexDivisor);
-        BOOST_CHECK(reader);
-        BOOST_CHECK_EQUAL(indexDivisor, reader->getTermInfosIndexDivisor());
+        EXPECT_TRUE(reader);
+        EXPECT_EQ(indexDivisor, reader->getTermInfosIndexDivisor());
         SegmentTermDocsPtr segTermDocs = newLucene<SegmentTermDocs>(reader);
-        BOOST_CHECK(segTermDocs);
+        EXPECT_TRUE(segTermDocs);
         segTermDocs->seek(newLucene<Term>(DocHelper::TEXT_FIELD_2_KEY, L"field"));
         if (segTermDocs->next())
         {
             int32_t docId = segTermDocs->doc();
-            BOOST_CHECK_EQUAL(docId, 0);
+            EXPECT_EQ(docId, 0);
             int32_t freq = segTermDocs->freq();
-            BOOST_CHECK_EQUAL(freq, 3);  
+            EXPECT_EQ(freq, 3);
         }
         reader->close();
     }
-    
+
     void checkBadSeek(int32_t indexDivisor)
     {
         {
             // After adding the document, we should be able to read it back in
             SegmentReaderPtr reader = SegmentReader::get(true, info, indexDivisor);
-            BOOST_CHECK(reader);
+            EXPECT_TRUE(reader);
             SegmentTermDocsPtr segTermDocs = newLucene<SegmentTermDocs>(reader);
-            BOOST_CHECK(segTermDocs);
+            EXPECT_TRUE(segTermDocs);
             segTermDocs->seek(newLucene<Term>(L"textField2", L"bad"));
-            BOOST_CHECK(!segTermDocs->next());
+            EXPECT_TRUE(!segTermDocs->next());
             reader->close();
         }
         {
             // After adding the document, we should be able to read it back in
             SegmentReaderPtr reader = SegmentReader::get(true, info, indexDivisor);
-            BOOST_CHECK(reader);
+            EXPECT_TRUE(reader);
             SegmentTermDocsPtr segTermDocs = newLucene<SegmentTermDocs>(reader);
-            BOOST_CHECK(segTermDocs);
+            EXPECT_TRUE(segTermDocs);
             segTermDocs->seek(newLucene<Term>(L"junk", L"bad"));
-            BOOST_CHECK(!segTermDocs->next());
+            EXPECT_TRUE(!segTermDocs->next());
             reader->close();
         }
     }
-    
+
     void checkSkipTo(int32_t indexDivisor)
     {
         DirectoryPtr dir = newLucene<RAMDirectory>();
@@ -103,7 +103,7 @@ public:
         for (int32_t i = 0; i < 50; ++i)
             addDoc(writer, L"ccc ccc ccc ccc");
 
-        // assure that we deal with a single segment  
+        // assure that we deal with a single segment
         writer->optimize();
         writer->close();
 
@@ -115,103 +115,103 @@ public:
 
         // with next
         tdocs->seek(ta);
-        BOOST_CHECK(tdocs->next());
-        BOOST_CHECK_EQUAL(0, tdocs->doc());
-        BOOST_CHECK_EQUAL(4, tdocs->freq());
-        BOOST_CHECK(tdocs->next());
-        BOOST_CHECK_EQUAL(1, tdocs->doc());
-        BOOST_CHECK_EQUAL(4, tdocs->freq());
-        BOOST_CHECK(tdocs->skipTo(0));
-        BOOST_CHECK_EQUAL(2, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(4));
-        BOOST_CHECK_EQUAL(4, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(9));
-        BOOST_CHECK_EQUAL(9, tdocs->doc());
-        BOOST_CHECK(!tdocs->skipTo(10));
+        EXPECT_TRUE(tdocs->next());
+        EXPECT_EQ(0, tdocs->doc());
+        EXPECT_EQ(4, tdocs->freq());
+        EXPECT_TRUE(tdocs->next());
+        EXPECT_EQ(1, tdocs->doc());
+        EXPECT_EQ(4, tdocs->freq());
+        EXPECT_TRUE(tdocs->skipTo(0));
+        EXPECT_EQ(2, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(4));
+        EXPECT_EQ(4, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(9));
+        EXPECT_EQ(9, tdocs->doc());
+        EXPECT_TRUE(!tdocs->skipTo(10));
 
         // without next
         tdocs->seek(ta);
-        BOOST_CHECK(tdocs->skipTo(0));
-        BOOST_CHECK_EQUAL(0, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(4));
-        BOOST_CHECK_EQUAL(4, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(9));
-        BOOST_CHECK_EQUAL(9, tdocs->doc());
-        BOOST_CHECK(!tdocs->skipTo(10));
+        EXPECT_TRUE(tdocs->skipTo(0));
+        EXPECT_EQ(0, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(4));
+        EXPECT_EQ(4, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(9));
+        EXPECT_EQ(9, tdocs->doc());
+        EXPECT_TRUE(!tdocs->skipTo(10));
 
         // exactly skipInterval documents and therefore with optimization
 
         // with next
         tdocs->seek(tb);
-        BOOST_CHECK(tdocs->next());
-        BOOST_CHECK_EQUAL(10, tdocs->doc());
-        BOOST_CHECK_EQUAL(4, tdocs->freq());
-        BOOST_CHECK(tdocs->next());
-        BOOST_CHECK_EQUAL(11, tdocs->doc());
-        BOOST_CHECK_EQUAL(4, tdocs->freq());
-        BOOST_CHECK(tdocs->skipTo(5));
-        BOOST_CHECK_EQUAL(12, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(15));
-        BOOST_CHECK_EQUAL(15, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(24));
-        BOOST_CHECK_EQUAL(24, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(25));
-        BOOST_CHECK_EQUAL(25, tdocs->doc());
-        BOOST_CHECK(!tdocs->skipTo(26));
+        EXPECT_TRUE(tdocs->next());
+        EXPECT_EQ(10, tdocs->doc());
+        EXPECT_EQ(4, tdocs->freq());
+        EXPECT_TRUE(tdocs->next());
+        EXPECT_EQ(11, tdocs->doc());
+        EXPECT_EQ(4, tdocs->freq());
+        EXPECT_TRUE(tdocs->skipTo(5));
+        EXPECT_EQ(12, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(15));
+        EXPECT_EQ(15, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(24));
+        EXPECT_EQ(24, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(25));
+        EXPECT_EQ(25, tdocs->doc());
+        EXPECT_TRUE(!tdocs->skipTo(26));
 
         // without next
         tdocs->seek(tb);
-        BOOST_CHECK(tdocs->skipTo(5));
-        BOOST_CHECK_EQUAL(10, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(15));
-        BOOST_CHECK_EQUAL(15, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(24));
-        BOOST_CHECK_EQUAL(24, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(25));
-        BOOST_CHECK_EQUAL(25, tdocs->doc());
-        BOOST_CHECK(!tdocs->skipTo(26));
+        EXPECT_TRUE(tdocs->skipTo(5));
+        EXPECT_EQ(10, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(15));
+        EXPECT_EQ(15, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(24));
+        EXPECT_EQ(24, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(25));
+        EXPECT_EQ(25, tdocs->doc());
+        EXPECT_TRUE(!tdocs->skipTo(26));
 
         // much more than skipInterval documents and therefore with optimization
 
         // with next
         tdocs->seek(tc);
-        BOOST_CHECK(tdocs->next());
-        BOOST_CHECK_EQUAL(26, tdocs->doc());
-        BOOST_CHECK_EQUAL(4, tdocs->freq());
-        BOOST_CHECK(tdocs->next());
-        BOOST_CHECK_EQUAL(27, tdocs->doc());
-        BOOST_CHECK_EQUAL(4, tdocs->freq());
-        BOOST_CHECK(tdocs->skipTo(5));
-        BOOST_CHECK_EQUAL(28, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(40));
-        BOOST_CHECK_EQUAL(40, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(57));
-        BOOST_CHECK_EQUAL(57, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(74));
-        BOOST_CHECK_EQUAL(74, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(75));
-        BOOST_CHECK_EQUAL(75, tdocs->doc());
-        BOOST_CHECK(!tdocs->skipTo(76));
+        EXPECT_TRUE(tdocs->next());
+        EXPECT_EQ(26, tdocs->doc());
+        EXPECT_EQ(4, tdocs->freq());
+        EXPECT_TRUE(tdocs->next());
+        EXPECT_EQ(27, tdocs->doc());
+        EXPECT_EQ(4, tdocs->freq());
+        EXPECT_TRUE(tdocs->skipTo(5));
+        EXPECT_EQ(28, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(40));
+        EXPECT_EQ(40, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(57));
+        EXPECT_EQ(57, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(74));
+        EXPECT_EQ(74, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(75));
+        EXPECT_EQ(75, tdocs->doc());
+        EXPECT_TRUE(!tdocs->skipTo(76));
 
         // without next
         tdocs->seek(tc);
-        BOOST_CHECK(tdocs->skipTo(5));
-        BOOST_CHECK_EQUAL(26, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(40));
-        BOOST_CHECK_EQUAL(40, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(57));
-        BOOST_CHECK_EQUAL(57, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(74));
-        BOOST_CHECK_EQUAL(74, tdocs->doc());
-        BOOST_CHECK(tdocs->skipTo(75));
-        BOOST_CHECK_EQUAL(75, tdocs->doc());
-        BOOST_CHECK(!tdocs->skipTo(76));
+        EXPECT_TRUE(tdocs->skipTo(5));
+        EXPECT_EQ(26, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(40));
+        EXPECT_EQ(40, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(57));
+        EXPECT_EQ(57, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(74));
+        EXPECT_EQ(74, tdocs->doc());
+        EXPECT_TRUE(tdocs->skipTo(75));
+        EXPECT_EQ(75, tdocs->doc());
+        EXPECT_TRUE(!tdocs->skipTo(76));
 
         tdocs->close();
         reader->close();
         dir->close();
     }
-    
+
     void addDoc(IndexWriterPtr writer, const String& value)
     {
         DocumentPtr doc = newLucene<Document>();
@@ -220,24 +220,22 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(SegmentTermDocsTest, SegmentTermDocsTestFixture)
-
-BOOST_AUTO_TEST_CASE(testTermDocs)
+TEST_F(SegmentTermDocsTest, testTermDocs)
 {
     checkTermDocs(1);
 }
 
-BOOST_AUTO_TEST_CASE(testBadSeek)
+TEST_F(SegmentTermDocsTest, testBadSeek)
 {
     checkBadSeek(1);
 }
 
-BOOST_AUTO_TEST_CASE(testSkipTo)
+TEST_F(SegmentTermDocsTest, testSkipTo)
 {
     checkSkipTo(1);
 }
 
-BOOST_AUTO_TEST_CASE(testIndexDivisor)
+TEST_F(SegmentTermDocsTest, testIndexDivisor)
 {
     dir = newLucene<MockRAMDirectory>();
     testDoc = newLucene<Document>();
@@ -247,5 +245,3 @@ BOOST_AUTO_TEST_CASE(testIndexDivisor)
     checkBadSeek(2);
     checkSkipTo(2);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

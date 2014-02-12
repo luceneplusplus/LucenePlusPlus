@@ -17,7 +17,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(AnalyzersTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture AnalyzersTest;
 
 static void verifyPayload(TokenStreamPtr ts)
 {
@@ -27,11 +27,11 @@ static void verifyPayload(TokenStreamPtr ts)
         bool hasNext = ts->incrementToken();
         if (!hasNext)
             break;
-        BOOST_CHECK_EQUAL(b, payloadAtt->getPayload()->toByteArray()[0]);
+        EXPECT_EQ(b, payloadAtt->getPayload()->toByteArray()[0]);
     }
 }
 
-BOOST_AUTO_TEST_CASE(testSimple)
+TEST_F(AnalyzersTest, testSimple)
 {
     AnalyzerPtr a = newLucene<SimpleAnalyzer>();
     checkAnalyzesTo(a, L"foo bar FOO BAR", newCollection<String>(L"foo", L"bar", L"foo", L"bar"));
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(testSimple)
     checkAnalyzesTo(a, L"\"QUOTED\" word", newCollection<String>(L"quoted", L"word"));
 }
 
-BOOST_AUTO_TEST_CASE(testNull)
+TEST_F(AnalyzersTest, testNull)
 {
     AnalyzerPtr a = newLucene<WhitespaceAnalyzer>();
     checkAnalyzesTo(a, L"foo bar FOO BAR", newCollection<String>(L"foo", L"bar", L"FOO", L"BAR"));
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(testNull)
     checkAnalyzesTo(a, L"\"QUOTED\" word", newCollection<String>(L"\"QUOTED\"", L"word"));
 }
 
-BOOST_AUTO_TEST_CASE(testStop)
+TEST_F(AnalyzersTest, testStop)
 {
     AnalyzerPtr a = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(a, L"foo bar FOO BAR", newCollection<String>(L"foo", L"bar", L"foo", L"bar"));
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(testStop)
 namespace TestPayloadCopy
 {
     DECLARE_SHARED_PTR(PayloadSetter)
-        
+
     class PayloadSetter : public TokenFilter
     {
     public:
@@ -78,7 +78,7 @@ namespace TestPayloadCopy
             data[0] = 0;
             p = newLucene<Payload>(data, 0, 1);
         }
-        
+
         virtual ~PayloadSetter()
         {
         }
@@ -102,7 +102,7 @@ namespace TestPayloadCopy
 }
 
 /// Make sure old style next() calls result in a new copy of payloads
-BOOST_AUTO_TEST_CASE(testPayloadCopy)
+TEST_F(AnalyzersTest, testPayloadCopy)
 {
     String s = L"how now brown cow";
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(s));
@@ -113,5 +113,3 @@ BOOST_AUTO_TEST_CASE(testPayloadCopy)
     ts = newLucene<TestPayloadCopy::PayloadSetter>(ts);
     verifyPayload(ts);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

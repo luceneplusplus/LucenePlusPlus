@@ -26,14 +26,14 @@ public:
     {
         this->rand = rand;
     }
-    
+
     virtual ~TestFieldSelector()
     {
     }
 
 protected:
     RandomPtr rand;
-    
+
 public:
     virtual FieldSelectorResult accept(const String& fieldName)
     {
@@ -58,7 +58,7 @@ public:
         this->rand = rand;
         this->reader = reader;
     }
-    
+
     virtual ~TestThread()
     {
     }
@@ -80,7 +80,7 @@ public:
         }
         catch (LuceneException& e)
         {
-            BOOST_FAIL("Unexpected exception: " << e.getError());
+            FAIL() << "Unexpected exception: " << e.getError();
         }
     }
 
@@ -91,26 +91,26 @@ public:
         for (int32_t i = 0; i < fields.size(); ++i)
             validateField(fields[i]);
     }
-    
+
     void validateField(FieldablePtr f)
     {
         String val = f->stringValue();
         if (!boost::starts_with(val, L"^") || !boost::ends_with(val, L"$"))
-            BOOST_FAIL("Invalid field");
+            FAIL() << "Invalid field";
     }
 };
 
-class ThreadSafeFixture : public LuceneTestFixture
+class ThreadSafeTest : public LuceneTestFixture
 {
 public:
-    ThreadSafeFixture()
+    ThreadSafeTest()
     {
         r = newLucene<Random>(17);
         dir = newLucene<RAMDirectory>();
         words = StringUtils::split(L"now is the time for all good men to come to the aid of their country", L" ");
     }
-    
-    virtual ~ThreadSafeFixture()
+
+    virtual ~ThreadSafeTest()
     {
     }
 
@@ -143,7 +143,7 @@ public:
         }
         writer->close();
     }
-    
+
     void doTest(int32_t iter, int32_t numThreads)
     {
         Collection<LuceneThreadPtr> threads = Collection<LuceneThreadPtr>::newInstance(numThreads);
@@ -157,13 +157,11 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ThreadSafeTest, ThreadSafeFixture)
-
-BOOST_AUTO_TEST_CASE(testLazyLoadThreadSafety)
+TEST_F(ThreadSafeTest, testLazyLoadThreadSafety)
 {
     // test with field sizes bigger than the buffer of an index input
     buildDir(dir, 15, 5, 2000);
-    
+
     // do many small tests so the thread locals go away in between
     for (int32_t i = 0; i < 100; ++i)
     {
@@ -171,5 +169,3 @@ BOOST_AUTO_TEST_CASE(testLazyLoadThreadSafety)
         doTest(10, 100);
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

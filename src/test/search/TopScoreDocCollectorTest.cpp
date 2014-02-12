@@ -19,9 +19,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(TopScoreDocCollectorTest, LuceneTestFixture)
+typedef LuceneTestFixture TopScoreDocCollectorTest;
 
-BOOST_AUTO_TEST_CASE(testOutOfOrderCollection)
+TEST_F(TopScoreDocCollectorTest, testOutOfOrderCollection)
 {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, AnalyzerPtr(), IndexWriter::MaxFieldLengthUNLIMITED);
@@ -29,31 +29,29 @@ BOOST_AUTO_TEST_CASE(testOutOfOrderCollection)
         writer->addDocument(newLucene<Document>());
     writer->commit();
     writer->close();
-    
+
     Collection<uint8_t> inOrder = newCollection<uint8_t>(false, true);
     Collection<String> actualTSDCClass = newCollection<String>(L"OutOfOrderTopScoreDocCollector", L"InOrderTopScoreDocCollector");
 
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
-    
+
     // Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2
     // which delegates to BS if there are no mandatory clauses.
     bq->add(newLucene<MatchAllDocsQuery>(), BooleanClause::SHOULD);
-    
+
     // Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return the clause instead of BQ.
     bq->setMinimumNumberShouldMatch(1);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     for (int32_t i = 0; i < inOrder.size(); ++i)
     {
         TopDocsCollectorPtr tdc = TopScoreDocCollector::create(3, inOrder[i] == 1);
-        BOOST_CHECK_EQUAL(actualTSDCClass[i], tdc->getClassName());
+        EXPECT_EQ(actualTSDCClass[i], tdc->getClassName());
 
         searcher->search(newLucene<MatchAllDocsQuery>(), tdc);
 
         Collection<ScoreDocPtr> sd = tdc->topDocs()->scoreDocs;
-        BOOST_CHECK_EQUAL(3, sd.size());
+        EXPECT_EQ(3, sd.size());
         for (int32_t j = 0; j < sd.size(); ++j)
-            BOOST_CHECK_EQUAL(j, sd[j]->doc);
+            EXPECT_EQ(j, sd[j]->doc);
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

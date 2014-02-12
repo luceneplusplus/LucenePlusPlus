@@ -8,7 +8,7 @@
 
 namespace Lucene
 {
-    class LuceneGlobalFixture
+    class LuceneGlobalFixture : public testing::Environment
     {
     public:
         /// setup

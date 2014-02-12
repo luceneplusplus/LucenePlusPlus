@@ -32,7 +32,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(StressIndexingTest, LuceneTestFixture)
+typedef LuceneTestFixture StressIndexingTest;
 
 DECLARE_SHARED_PTR(DocsAndWriter)
 
@@ -42,9 +42,9 @@ public:
     virtual ~DocsAndWriter()
     {
     }
-    
+
     LUCENE_CLASS(DocsAndWriter);
-    
+
 public:
     HashMap<String, DocumentPtr> docs;
     IndexWriterPtr writer;
@@ -57,11 +57,11 @@ public:
     {
         rand = newLucene<Random>();
     }
-    
+
     virtual ~MockIndexWriter()
     {
     }
-    
+
     LUCENE_CLASS(MockIndexWriter);
 
 protected:
@@ -105,13 +105,13 @@ public:
         buffer.resize(100);
         r = newLucene<Random>();
     }
-    
+
     virtual ~IndexingThread()
     {
     }
-    
+
     LUCENE_CLASS(IndexingThread);
-    
+
 public:
     IndexWriterPtr w;
     int32_t base;
@@ -126,19 +126,19 @@ public:
     {
         return r->nextInt(limit);
     }
-    
+
     /// start is inclusive and end is exclusive
     int32_t nextInt(int32_t start, int32_t end)
     {
         return start + r->nextInt(end - start);
     }
-    
+
     int32_t addUTF8Token(int32_t start)
     {
         int32_t end = start + nextInt(20);
         if (buffer.size() < 1 + end)
             buffer.resize((int32_t)((double)(1 + end) * 1.25));
-        
+
         for (int32_t i = start; i < end; ++i)
         {
             int32_t t = nextInt(5);
@@ -163,19 +163,19 @@ public:
             else if (t == 4)
                 buffer[i] = (wchar_t)nextInt(0xe000, 0xfff0);
         }
-        
+
         buffer[end] = L' ';
         return 1 + end;
     }
-    
+
     String getString(int32_t tokens)
     {
         tokens = tokens != 0 ? tokens : r->nextInt(4) + 1;
-        
+
         // Half the time make a random UTF8 string
         if (nextInt() % 2 == 1)
             return getUTF8String(tokens);
-        
+
         CharArray arr(CharArray::newInstance(tokens * 2));
         for (int32_t i = 0; i < tokens; ++i)
         {
@@ -184,7 +184,7 @@ public:
         }
         return String(arr.get(), arr.size());
     }
-    
+
     String getUTF8String(int32_t tokens)
     {
         int32_t upto = 0;
@@ -193,19 +193,19 @@ public:
             upto = addUTF8Token(upto);
         return String(buffer.get(), upto);
     }
-    
+
     String getIdString()
     {
         return StringUtils::toString(base + nextInt(range));
     }
-    
+
     void indexDoc()
     {
         DocumentPtr d = newLucene<Document>();
 
-        Collection<FieldPtr> fields = Collection<FieldPtr>::newInstance();      
+        Collection<FieldPtr> fields = Collection<FieldPtr>::newInstance();
         String idString = getIdString();
-        
+
         FieldPtr idField =  newLucene<Field>(newLucene<Term>(L"id", L"")->field(), idString, Field::STORE_YES, Field::INDEX_ANALYZED_NO_NORMS);
         fields.add(idField);
 
@@ -256,25 +256,25 @@ public:
 
         for (int32_t i = 0; i < fields.size(); ++i)
             d->add(fields[i]);
-        
+
         w->updateDocument(newLucene<Term>(L"id", L"")->createTerm(idString), d);
         docs.put(idString, d);
     }
-    
+
     void deleteDoc()
     {
         String idString = getIdString();
         w->deleteDocuments(newLucene<Term>(L"id", L"")->createTerm(idString));
         docs.remove(idString);
     }
-    
+
     void deleteByQuery()
     {
         String idString = getIdString();
         w->deleteDocuments(newLucene<TermQuery>(newLucene<Term>(L"id", L"")->createTerm(idString)));
         docs.remove(idString);
     }
-    
+
     virtual void run()
     {
         try
@@ -293,7 +293,7 @@ public:
         }
         catch (LuceneException& e)
         {
-            BOOST_FAIL("Unexpected exception: " << e.getError());
+            FAIL() << "Unexpected exception: " << e.getError();
         }
     }
 };
@@ -314,7 +314,7 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
     w->setMergeFactor(mergeFactor);
     w->setRAMBufferSizeMB(0.1);
     w->setMaxBufferedDocs(maxBufferedDocs);
-    
+
     Collection<IndexingThreadPtr> threads = Collection<IndexingThreadPtr>::newInstance(numThreads);
     for (int32_t i = 0; i < threads.size(); ++i)
     {
@@ -325,19 +325,19 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
         th->iterations = iterations;
         threads[i] = th;
     }
-    
+
     for (int32_t i = 0; i < threads.size(); ++i)
         threads[i]->start();
     for (int32_t i = 0; i < threads.size(); ++i)
         threads[i]->join();
-    
+
     for (int32_t i = 0; i < threads.size(); ++i)
     {
         IndexingThreadPtr th = threads[i];
         SyncLock syncLock(th);
         docs.putAll(th->docs.begin(), th->docs.end());
     }
-    
+
     checkIndex(dir);
     DocsAndWriterPtr dw = newLucene<DocsAndWriter>();
     dw->docs = docs;
@@ -348,7 +348,7 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
 static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iterations, int32_t range, DirectoryPtr dir)
 {
     HashMap<String, DocumentPtr> docs = HashMap<String, DocumentPtr>::newInstance();
-    
+
     for (int32_t iter = 0; iter < 3; ++iter)
     {
         IndexWriterPtr w = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
@@ -374,9 +374,9 @@ static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iter
             threads[i]->start();
         for (int32_t i = 0; i < threads.size(); ++i)
             threads[i]->join();
-        
+
         w->close();
-        
+
         for (int32_t i = 0; i < threads.size(); ++i)
         {
             IndexingThreadPtr th = threads[i];
@@ -384,9 +384,9 @@ static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iter
             docs.putAll(th->docs.begin(), th->docs.end());
         }
     }
-    
+
     checkIndex(dir);
-    
+
     return docs;
 }
 
@@ -399,10 +399,10 @@ static void indexSerial(HashMap<String, DocumentPtr> docs, DirectoryPtr dir)
     {
         DocumentPtr d = iter->second;
         Collection<FieldablePtr> fields = d->getFields();
-        
+
         // put fields in same order each time
         std::sort(fields.begin(), fields.end(), lessFieldName());
-        
+
         DocumentPtr d1 = newLucene<Document>();
         d1->setBoost(d->getBoost());
         for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
@@ -430,7 +430,7 @@ static void verifyEquals(DirectoryPtr dir1, DirectoryPtr dir2, const String& idF
 
 static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idField)
 {
-    BOOST_CHECK_EQUAL(r1->numDocs(), r2->numDocs());
+    EXPECT_EQ(r1->numDocs(), r2->numDocs());
     bool hasDeletes = !(r1->maxDoc() == r2->maxDoc() && r1->numDocs() == r1->maxDoc());
 
     Collection<int32_t> r2r1 = Collection<int32_t>::newInstance(r2->maxDoc()); // r2 id to r1 id mapping
@@ -446,34 +446,34 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
         TermPtr term = termEnum->term();
         if (!term || term->field() != idField)
             break;
-        
+
         termDocs1->seek(termEnum);
         if (!termDocs1->next())
         {
             // This doc is deleted and wasn't replaced
             termDocs2->seek(termEnum);
-            BOOST_CHECK(!termDocs2->next());
+            EXPECT_TRUE(!termDocs2->next());
             continue;
         }
-        
+
         int32_t id1 = termDocs1->doc();
-        BOOST_CHECK(!termDocs1->next());
+        EXPECT_TRUE(!termDocs1->next());
 
         termDocs2->seek(termEnum);
-        BOOST_CHECK(termDocs2->next());
+        EXPECT_TRUE(termDocs2->next());
         int32_t id2 = termDocs2->doc();
-        BOOST_CHECK(!termDocs2->next());
+        EXPECT_TRUE(!termDocs2->next());
 
         r2r1[id2] = id1;
-        
+
         // verify stored fields are equivalent
-        BOOST_CHECK_NO_THROW(verifyEquals(r1->document(id1), r2->document(id2)));
-        
+        EXPECT_NO_THROW(verifyEquals(r1->document(id1), r2->document(id2)));
+
         // verify term vectors are equivalent
-        BOOST_CHECK_NO_THROW(verifyEquals(r1->getTermFreqVectors(id1), r2->getTermFreqVectors(id2)));
+        EXPECT_NO_THROW(verifyEquals(r1->getTermFreqVectors(id1), r2->getTermFreqVectors(id2)));
     }
     while (termEnum->next());
-    
+
     termEnum->close();
 
     // Verify postings
@@ -488,7 +488,7 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
     {
         TermPtr term1;
         TermPtr term2;
-        
+
         // iterate until we get some docs
         int32_t len1 = 0;
         while (true)
@@ -510,7 +510,7 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
             if (!termEnum1->next())
                 break;
         }
-        
+
         // iterate until we get some docs
         int32_t len2 = 0;
         while (true)
@@ -532,22 +532,22 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
             if (!termEnum2->next())
                 break;
         }
-        
+
         if (!hasDeletes)
-            BOOST_CHECK_EQUAL(termEnum1->docFreq(), termEnum2->docFreq());
-        
-        BOOST_CHECK_EQUAL(len1, len2);
+            EXPECT_EQ(termEnum1->docFreq(), termEnum2->docFreq());
+
+        EXPECT_EQ(len1, len2);
         if (len1 == 0)
             break; // no more terms
 
-        BOOST_CHECK_EQUAL(term1, term2);
+        EXPECT_EQ(term1, term2);
 
         // sort info2 to get it into ascending docid
         std::sort(info2.begin(), info2.begin() + len2);
 
         // now compare
         for (int32_t i = 0; i < len1; ++i)
-            BOOST_CHECK_EQUAL(info1[i], info2[i]);
+            EXPECT_EQ(info1[i], info2[i]);
 
         termEnum1->next();
         termEnum2->next();
@@ -558,20 +558,20 @@ static void verifyEquals(DocumentPtr d1, DocumentPtr d2)
 {
     Collection<FieldablePtr> ff1 = d1->getFields();
     Collection<FieldablePtr> ff2 = d2->getFields();
-    
+
     std::sort(ff1.begin(), ff1.end(), lessFieldName());
     std::sort(ff2.begin(), ff2.end(), lessFieldName());
 
-    BOOST_CHECK_EQUAL(ff1.size(), ff2.size());
-    
+    EXPECT_EQ(ff1.size(), ff2.size());
+
     for (int32_t i = 0; i < ff1.size(); ++i)
     {
         FieldablePtr f1 = ff1[i];
         FieldablePtr f2 = ff2[i];
         if (f1->isBinary())
-            BOOST_CHECK(f2->isBinary());
+            EXPECT_TRUE(f2->isBinary());
         else
-            BOOST_CHECK_EQUAL(f1->stringValue(), f2->stringValue());
+            EXPECT_EQ(f1->stringValue(), f2->stringValue());
     }
 }
 
@@ -579,18 +579,18 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
 {
     if (!d1)
     {
-        BOOST_CHECK(!d2);
+        EXPECT_TRUE(!d2);
         return;
     }
-    
-    BOOST_CHECK(d2);
-    
-    BOOST_CHECK_EQUAL(d1.size(), d2.size());
+
+    EXPECT_TRUE(d2);
+
+    EXPECT_EQ(d1.size(), d2.size());
     for (int32_t i = 0; i < d1.size(); ++i)
     {
         TermFreqVectorPtr v1 = d1[i];
         TermFreqVectorPtr v2 = d2[i];
-        BOOST_CHECK_EQUAL(v1->size(), v2->size());
+        EXPECT_EQ(v1->size(), v2->size());
         int32_t numTerms = v1->size();
         Collection<String> terms1 = v1->getTerms();
         Collection<String> terms2 = v2->getTerms();
@@ -598,32 +598,32 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
         Collection<int32_t> freq2 = v2->getTermFrequencies();
         for (int32_t j = 0; j < numTerms; ++j)
         {
-            BOOST_CHECK_EQUAL(terms1[j], terms2[j]);
-            BOOST_CHECK_EQUAL(freq1[j], freq2[j]);
+            EXPECT_EQ(terms1[j], terms2[j]);
+            EXPECT_EQ(freq1[j], freq2[j]);
         }
         if (boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1))
         {
-            BOOST_CHECK(boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2));
+            EXPECT_TRUE(boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2));
             SegmentTermPositionVectorPtr tpv1 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v1);
             SegmentTermPositionVectorPtr tpv2 = boost::dynamic_pointer_cast<SegmentTermPositionVector>(v2);
             for (int32_t j = 0; j < numTerms; ++j)
             {
                 Collection<int32_t> pos1 = tpv1->getTermPositions(j);
                 Collection<int32_t> pos2 = tpv2->getTermPositions(j);
-                BOOST_CHECK_EQUAL(pos1.size(), pos2.size());
+                EXPECT_EQ(pos1.size(), pos2.size());
                 Collection<TermVectorOffsetInfoPtr> offsets1 = tpv1->getOffsets(j);
                 Collection<TermVectorOffsetInfoPtr> offsets2 = tpv2->getOffsets(j);
                 if (!offsets1)
-                    BOOST_CHECK(!offsets2);
+                    EXPECT_TRUE(!offsets2);
                 else
-                    BOOST_CHECK(offsets2);
+                    EXPECT_TRUE(offsets2);
                 for (int32_t k = 0; k < pos1.size(); ++k)
                 {
-                    BOOST_CHECK_EQUAL(pos1[k], pos2[k]);
+                    EXPECT_EQ(pos1[k], pos2[k]);
                     if (offsets1)
                     {
-                        BOOST_CHECK_EQUAL(offsets1[k]->getStartOffset(), offsets2[k]->getStartOffset());
-                        BOOST_CHECK_EQUAL(offsets1[k]->getEndOffset(), offsets2[k]->getEndOffset());
+                        EXPECT_EQ(offsets1[k]->getStartOffset(), offsets2[k]->getStartOffset());
+                        EXPECT_EQ(offsets1[k]->getEndOffset(), offsets2[k]->getEndOffset());
                     }
                 }
             }
@@ -633,40 +633,40 @@ static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVe
 
 namespace RunStressTest
 {
-    DECLARE_SHARED_PTR(TimedThread)
-    DECLARE_SHARED_PTR(IndexerThread)
-    DECLARE_SHARED_PTR(SearcherThread)
+    DECLARE_SHARED_PTR(StressTimedThread)
+    DECLARE_SHARED_PTR(StressIndexerThread)
+    DECLARE_SHARED_PTR(StressSearcherThread)
 
-    class TimedThread : public LuceneThread
+    class StressTimedThread : public LuceneThread
     {
     public:
-        TimedThread()
+        StressTimedThread()
         {
             this->failed = false;
             this->RUN_TIME_SEC = 6;
             this->rand = newLucene<Random>();
         }
-        
-        virtual ~TimedThread()
+
+        virtual ~StressTimedThread()
         {
         }
-        
-        LUCENE_CLASS(TimedThread);
-        
+
+        LUCENE_CLASS(StressTimedThread);
+
     public:
         bool failed;
 
     protected:
         int32_t RUN_TIME_SEC;
         RandomPtr rand;
-        
+
     public:
         virtual void doWork() = 0;
-        
+
         virtual void run()
         {
             int64_t stopTime = MiscUtils::currentTimeMillis() + 1000 * RUN_TIME_SEC;
-            
+
             try
             {
                 while ((int64_t)MiscUtils::currentTimeMillis() < stopTime && !failed)
@@ -675,30 +675,30 @@ namespace RunStressTest
             catch (LuceneException& e)
             {
                 failed = true;
-                BOOST_FAIL("Unexpected exception: " << e.getError());
+                FAIL() << "Unexpected exception: " << e.getError();
             }
         }
     };
 
-    class IndexerThread : public TimedThread
+    class StressIndexerThread : public StressTimedThread
     {
     public:
-        IndexerThread(IndexWriterPtr writer)
+        StressIndexerThread(IndexWriterPtr writer)
         {
             this->writer = writer;
             this->nextID = 0;
         }
-        
-        virtual ~IndexerThread()
+
+        virtual ~StressIndexerThread()
         {
         }
-        
-        LUCENE_CLASS(IndexerThread);
-        
+
+        LUCENE_CLASS(StressIndexerThread);
+
     public:
         IndexWriterPtr writer;
         int32_t nextID;
-        
+
     public:
         virtual void doWork()
         {
@@ -710,7 +710,7 @@ namespace RunStressTest
                 d->add(newLucene<Field>(L"contents", intToEnglish(rand->nextInt()), Field::STORE_NO, Field::INDEX_ANALYZED));
                 writer->addDocument(d);
             }
-            
+
             // Delete 5 docs
             int32_t deleteID = nextID - 1;
             for (int32_t i = 0; i < 5; ++i)
@@ -721,23 +721,23 @@ namespace RunStressTest
         }
     };
 
-    class SearcherThread : public TimedThread
+    class StressSearcherThread : public StressTimedThread
     {
     public:
-        SearcherThread(DirectoryPtr directory)
+        StressSearcherThread(DirectoryPtr directory)
         {
             this->directory = directory;
         }
-        
-        virtual ~SearcherThread()
+
+        virtual ~StressSearcherThread()
         {
         }
-        
-        LUCENE_CLASS(SearcherThread);
-        
+
+        LUCENE_CLASS(StressSearcherThread);
+
     protected:
         DirectoryPtr directory;
-        
+
     public:
         virtual void doWork()
         {
@@ -754,43 +754,43 @@ static void runStressTest(DirectoryPtr directory, MergeSchedulerPtr mergeSchedul
     IndexWriterPtr modifier = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
 
     modifier->setMaxBufferedDocs(10);
-    
-    Collection<RunStressTest::TimedThreadPtr> threads = Collection<RunStressTest::TimedThreadPtr>::newInstance(4);
+
+    Collection<RunStressTest::StressTimedThreadPtr> threads = Collection<RunStressTest::StressTimedThreadPtr>::newInstance(4);
     int32_t numThread = 0;
-    
+
     if (mergeScheduler)
         modifier->setMergeScheduler(mergeScheduler);
-    
+
     // One modifier that writes 10 docs then removes 5, over and over
-    RunStressTest::IndexerThreadPtr indexerThread1 = newLucene<RunStressTest::IndexerThread>(modifier);
+    RunStressTest::StressIndexerThreadPtr indexerThread1 = newLucene<RunStressTest::StressIndexerThread>(modifier);
     threads[numThread++] = indexerThread1;
     indexerThread1->start();
 
-    RunStressTest::IndexerThreadPtr indexerThread2 = newLucene<RunStressTest::IndexerThread>(modifier);
+    RunStressTest::StressIndexerThreadPtr indexerThread2 = newLucene<RunStressTest::StressIndexerThread>(modifier);
     threads[numThread++] = indexerThread2;
     indexerThread2->start();
 
     // Two searchers that constantly just re-instantiate the searcher
-    RunStressTest::SearcherThreadPtr searcherThread1 = newLucene<RunStressTest::SearcherThread>(directory);
+    RunStressTest::StressSearcherThreadPtr searcherThread1 = newLucene<RunStressTest::StressSearcherThread>(directory);
     threads[numThread++] = searcherThread1;
     searcherThread1->start();
 
-    RunStressTest::SearcherThreadPtr searcherThread2 = newLucene<RunStressTest::SearcherThread>(directory);
+    RunStressTest::StressSearcherThreadPtr searcherThread2 = newLucene<RunStressTest::StressSearcherThread>(directory);
     threads[numThread++] = searcherThread2;
     searcherThread2->start();
-    
+
     for (int32_t i = 0; i < numThread; ++i)
         threads[i]->join();
-    
+
     modifier->close();
-    
-    BOOST_CHECK(!indexerThread1->failed); // hit unexpected exception in indexer1
-    BOOST_CHECK(!indexerThread2->failed); // hit unexpected exception in indexer2
-    BOOST_CHECK(!searcherThread1->failed); // hit unexpected exception in search1
-    BOOST_CHECK(!searcherThread2->failed); // hit unexpected exception in search2
+
+    EXPECT_TRUE(!indexerThread1->failed); // hit unexpected exception in indexer1
+    EXPECT_TRUE(!indexerThread2->failed); // hit unexpected exception in indexer2
+    EXPECT_TRUE(!searcherThread1->failed); // hit unexpected exception in search1
+    EXPECT_TRUE(!searcherThread2->failed); // hit unexpected exception in search2
 }
 
-BOOST_AUTO_TEST_CASE(testStressIndexAndSearching)
+TEST_F(StressIndexingTest, testStressIndexAndSearching)
 {
     // With ConcurrentMergeScheduler, in RAMDir
     DirectoryPtr directory = newLucene<MockRAMDirectory>();
@@ -800,14 +800,14 @@ BOOST_AUTO_TEST_CASE(testStressIndexAndSearching)
     // With ConcurrentMergeScheduler, in FSDir
     String dirPath(FileUtils::joinPath(getTempDir(), L"lucene.test.stress"));
     directory = FSDirectory::open(dirPath);
-    
+
     runStressTest(directory, newLucene<ConcurrentMergeScheduler>());
     directory->close();
 
     FileUtils::removeDirectory(dirPath);
 }
 
-BOOST_AUTO_TEST_CASE(testRandomIWReader)
+TEST_F(StressIndexingTest, testRandomIWReader)
 {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
 
@@ -820,7 +820,7 @@ BOOST_AUTO_TEST_CASE(testRandomIWReader)
     dir->close();
 }
 
-BOOST_AUTO_TEST_CASE(testRandom)
+TEST_F(StressIndexingTest, testRandom)
 {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
@@ -831,7 +831,7 @@ BOOST_AUTO_TEST_CASE(testRandom)
     verifyEquals(dir1, dir2, L"id");
 }
 
-BOOST_AUTO_TEST_CASE(testMultiConfig)
+TEST_F(StressIndexingTest, testMultiConfig)
 {
     RandomPtr r = newLucene<Random>();
     // test lots of smaller different params together
@@ -852,5 +852,3 @@ BOOST_AUTO_TEST_CASE(testMultiConfig)
         verifyEquals(dir1, dir2, L"id");
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()

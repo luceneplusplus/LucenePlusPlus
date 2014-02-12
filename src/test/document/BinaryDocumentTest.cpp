@@ -16,21 +16,28 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(BinaryDocumentTest, LuceneTestFixture)
+typedef LuceneTestFixture BinaryDocumentTest;
 
 static String binaryValStored = L"this text will be stored as a byte array in the index";
 static String binaryValCompressed = L"this text will be also stored and compressed as a byte array in the index";
 
-BOOST_AUTO_TEST_CASE(testBinaryFieldInIndex)
+TEST_F(BinaryDocumentTest, testBinaryFieldInIndex)
 {
     ByteArray binaryStored = ByteArray::newInstance(binaryValStored.length() * sizeof(wchar_t));
     std::wcsncpy((wchar_t*)binaryStored.get(), binaryValStored.c_str(), binaryValStored.length());
-    
+
     FieldablePtr binaryFldStored = newLucene<Field>(L"binaryStored", binaryStored, Field::STORE_YES);
     FieldablePtr stringFldStored = newLucene<Field>(L"stringStored", binaryValStored, Field::STORE_YES, Field::INDEX_NO, Field::TERM_VECTOR_NO);
-    
+
     // binary fields with store off are not allowed
-    BOOST_CHECK_EXCEPTION(newLucene<Field>(L"fail", binaryStored, Field::STORE_NO), IllegalArgumentException, check_exception(LuceneException::IllegalArgument));
+    try
+    {
+        newLucene<Field>(L"fail", binaryStored, Field::STORE_NO);
+    }
+    catch (IllegalArgumentException& e)
+    {
+        EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
+    }
 
     DocumentPtr doc = newLucene<Document>();
 
@@ -38,7 +45,7 @@ BOOST_AUTO_TEST_CASE(testBinaryFieldInIndex)
     doc->add(stringFldStored);
 
     // test for field count
-    BOOST_CHECK_EQUAL(2, doc->getFields().size());
+    EXPECT_EQ(2, doc->getFields().size());
 
     // add the doc to a ram index
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
@@ -49,33 +56,33 @@ BOOST_AUTO_TEST_CASE(testBinaryFieldInIndex)
     // open a reader and fetch the document
     IndexReaderPtr reader = IndexReader::open(dir, false);
     DocumentPtr docFromReader = reader->document(0);
-    BOOST_CHECK(docFromReader);
+    EXPECT_TRUE(docFromReader);
 
     // fetch the binary stored field and compare it's content with the original one
     ByteArray storedTest = docFromReader->getBinaryValue(L"binaryStored");
     String binaryFldStoredTest((wchar_t*)storedTest.get(), storedTest.size() / sizeof(wchar_t));
-    BOOST_CHECK_EQUAL(binaryFldStoredTest, binaryValStored);
+    EXPECT_EQ(binaryFldStoredTest, binaryValStored);
 
     // fetch the string field and compare it's content with the original one
     String stringFldStoredTest = docFromReader->get(L"stringStored");
-    BOOST_CHECK_EQUAL(stringFldStoredTest, binaryValStored);
+    EXPECT_EQ(stringFldStoredTest, binaryValStored);
 
     // delete the document from index
     reader->deleteDocument(0);
-    BOOST_CHECK_EQUAL(0, reader->numDocs());
+    EXPECT_EQ(0, reader->numDocs());
 
     reader->close();
     dir->close();
 }
 
-BOOST_AUTO_TEST_CASE(testCompressionTools)
+TEST_F(BinaryDocumentTest, testCompressionTools)
 {
     ByteArray binaryCompressed = ByteArray::newInstance(binaryValCompressed.length() * sizeof(wchar_t));
     std::wcsncpy((wchar_t*)binaryCompressed.get(), binaryValCompressed.c_str(), binaryValCompressed.length());
-    
+
     FieldablePtr binaryFldCompressed = newLucene<Field>(L"binaryCompressed", CompressionTools::compress(binaryCompressed), Field::STORE_YES);
     FieldablePtr stringFldCompressed = newLucene<Field>(L"stringCompressed", CompressionTools::compressString(binaryValCompressed), Field::STORE_YES);
-    
+
     DocumentPtr doc = newLucene<Document>();
 
     doc->add(binaryFldCompressed);
@@ -90,17 +97,15 @@ BOOST_AUTO_TEST_CASE(testCompressionTools)
     // open a reader and fetch the document
     IndexReaderPtr reader = IndexReader::open(dir, false);
     DocumentPtr docFromReader = reader->document(0);
-    BOOST_CHECK(docFromReader);
+    EXPECT_TRUE(docFromReader);
 
     // fetch the binary compressed field and compare it's content with the original one
     ByteArray compressTest = CompressionTools::decompress(docFromReader->getBinaryValue(L"binaryCompressed"));
     String binaryFldCompressedTest((wchar_t*)compressTest.get(), compressTest.size() / sizeof(wchar_t));
-    BOOST_CHECK_EQUAL(binaryFldCompressedTest, binaryValCompressed);
-    
-    BOOST_CHECK_EQUAL(CompressionTools::decompressString(docFromReader->getBinaryValue(L"stringCompressed")), binaryValCompressed);
+    EXPECT_EQ(binaryFldCompressedTest, binaryValCompressed);
+
+    EXPECT_EQ(CompressionTools::decompressString(docFromReader->getBinaryValue(L"stringCompressed")), binaryValCompressed);
 
     reader->close();
     dir->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

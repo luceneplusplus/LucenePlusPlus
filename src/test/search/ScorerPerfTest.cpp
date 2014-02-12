@@ -33,7 +33,7 @@ public:
         sum = 0;
         docBase = 0;
     }
-    
+
     virtual ~CountingHitCollector()
     {
     }
@@ -47,28 +47,28 @@ public:
     virtual void setScorer(ScorerPtr scorer)
     {
     }
-    
+
     virtual void collect(int32_t doc)
     {
         ++count;
         sum += docBase + doc; // use it to avoid any possibility of being optimized away
     }
-    
+
     int32_t getCount()
     {
         return count;
     }
-    
+
     int32_t getSum()
     {
         return sum;
     }
-    
+
     virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
     {
         this->docBase = docBase;
     }
-    
+
     virtual bool acceptsDocsOutOfOrder()
     {
         return true;
@@ -83,7 +83,7 @@ public:
         this->answer = answer;
         this->pos = -1;
     }
-    
+
     virtual ~MatchingHitCollector()
     {
     }
@@ -109,14 +109,14 @@ public:
     {
         this->rnd = rnd;
     }
-    
+
     virtual ~AddClauseFilter()
     {
     }
 
 protected:
     BitSetPtr rnd;
-    
+
 public:
     virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
     {
@@ -124,16 +124,16 @@ public:
     }
 };
 
-class ScorerPerfFixture : public LuceneTestFixture
+class ScorerPerfTest : public LuceneTestFixture
 {
 public:
-    ScorerPerfFixture()
+    ScorerPerfTest()
     {
         r = newLucene<Random>();
         createDummySearcher();
     }
-    
-    virtual ~ScorerPerfFixture()
+
+    virtual ~ScorerPerfTest()
     {
         s->close();
     }
@@ -154,7 +154,7 @@ public:
         iw->close();
         s = newLucene<IndexSearcher>(rd, true);
     }
-    
+
     BitSetPtr randBitSet(int32_t sz, int32_t numBitsToSet)
     {
         BitSetPtr set = newLucene<BitSet>(sz);
@@ -162,7 +162,7 @@ public:
             set->set(r->nextInt(sz));
         return set;
     }
-    
+
     Collection<BitSetPtr> randBitSets(int32_t numSets, int32_t setSize)
     {
         Collection<BitSetPtr> sets = Collection<BitSetPtr>::newInstance(numSets);
@@ -170,7 +170,7 @@ public:
             sets[i] = randBitSet(setSize, r->nextInt(setSize));
         return sets;
     }
-    
+
     void doConjunctions(int32_t iter, int32_t maxClauses)
     {
         for (int32_t i = 0; i < iter; ++i)
@@ -180,14 +180,14 @@ public:
             BitSetPtr result;
             for (int32_t j = 0; j < numClauses; ++j)
                 result = addClause(bq, result);
-        
+
             CountingHitCollectorPtr hc = newLucene<MatchingHitCollector>(result);
             s->search(bq, hc);
-            
-            BOOST_CHECK_EQUAL(result->cardinality(), hc->getCount());
+
+            EXPECT_EQ(result->cardinality(), hc->getCount());
         }
     }
-    
+
     void doNestedConjunctions(int32_t iter, int32_t maxOuterClauses, int32_t maxClauses)
     {
         for (int32_t i = 0; i < iter; ++i)
@@ -195,7 +195,7 @@ public:
             int32_t oClauses = r->nextInt(maxOuterClauses - 1) + 2;
             BooleanQueryPtr oq = newLucene<BooleanQuery>();
             BitSetPtr result;
-            
+
             for (int32_t o = 0; o < oClauses; ++o)
             {
                 int32_t numClauses = r->nextInt(maxClauses - 1) + 2; // min 2 clauses
@@ -204,14 +204,14 @@ public:
                     result = addClause(bq, result);
                 oq->add(bq, BooleanClause::MUST);
             }
-            
+
             CountingHitCollectorPtr hc = newLucene<MatchingHitCollector>(result);
             s->search(oq, hc);
-            
-            BOOST_CHECK_EQUAL(result->cardinality(), hc->getCount());
+
+            EXPECT_EQ(result->cardinality(), hc->getCount());
         }
     }
-    
+
     BitSetPtr addClause(BooleanQueryPtr bq, BitSetPtr result)
     {
         BitSetPtr rnd = sets[r->nextInt(sets.size())];
@@ -225,14 +225,10 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ScorerPerfTest, ScorerPerfFixture)
-
-BOOST_AUTO_TEST_CASE(testConjunctions)
+TEST_F(ScorerPerfTest, testConjunctions)
 {
     // test many small sets... the bugs will be found on boundary conditions
     sets = randBitSets(1000, 10);
     doConjunctions(10000, 5);
     doNestedConjunctions(10000, 3, 3);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

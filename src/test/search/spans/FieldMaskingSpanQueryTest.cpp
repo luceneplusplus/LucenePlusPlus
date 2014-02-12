@@ -23,10 +23,10 @@
 
 using namespace Lucene;
 
-class FieldMaskingSpanQueryFixture : public LuceneTestFixture
+class FieldMaskingSpanQueryTest : public LuceneTestFixture
 {
 public:
-    FieldMaskingSpanQueryFixture()
+    FieldMaskingSpanQueryTest()
     {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer= newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -47,7 +47,7 @@ public:
             field(L"first", L"sally"),
             field(L"last", L"jones")))
         );
-        
+
         writer->addDocument(doc(newCollection<FieldPtr>(
             field(L"id", L"2"),
             field(L"gender", L"female"),
@@ -87,8 +87,8 @@ public:
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
-    virtual ~FieldMaskingSpanQueryFixture()
+
+    virtual ~FieldMaskingSpanQueryTest()
     {
         searcher->close();
     }
@@ -104,31 +104,29 @@ public:
             doc->add(fields[i]);
         return doc;
     }
-    
+
     FieldPtr field(const String& name, const String& value)
     {
         return newLucene<Field>(name, value, Field::STORE_NO, Field::INDEX_ANALYZED);
     }
-    
+
     void check(SpanQueryPtr q, Collection<int32_t> docs)
     {
         CheckHits::checkHitCollector(q, L"", searcher, docs);
     }
-    
+
     String str(SpansPtr span)
     {
         return str(span->doc(), span->start(), span->end());
     }
-    
+
     String str(int32_t doc, int32_t start, int32_t end)
     {
         return L"s(" + StringUtils::toString(doc) + L"," + StringUtils::toString(start) + L"," + StringUtils::toString(end) + L")";
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(FieldMaskingSpanQueryTest, FieldMaskingSpanQueryFixture)
-
-BOOST_AUTO_TEST_CASE(testRewrite0)
+TEST_F(FieldMaskingSpanQueryTest, testRewrite0)
 {
     SpanQueryPtr q = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
     q->setBoost(8.7654321);
@@ -138,7 +136,7 @@ BOOST_AUTO_TEST_CASE(testRewrite0)
 
     SetTerm terms = SetTerm::newInstance();
     qr->extractTerms(terms);
-    BOOST_CHECK_EQUAL(1, terms.size());
+    EXPECT_EQ(1, terms.size());
 }
 
 namespace TestRewrite
@@ -149,23 +147,23 @@ namespace TestRewrite
         TestableFieldMaskingSpanQuery(SpanQueryPtr maskedQuery, const String& maskedField) : FieldMaskingSpanQuery(maskedQuery, maskedField)
         {
         }
-        
+
         virtual ~TestableFieldMaskingSpanQuery()
         {
         }
-    
+
     public:
         virtual QueryPtr rewrite(IndexReaderPtr reader)
         {
             return newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(
-                newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally")), 
+                newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally")),
                 newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james")))
             );
         }
     };
 }
 
-BOOST_AUTO_TEST_CASE(testRewrite1)
+TEST_F(FieldMaskingSpanQueryTest, testRewrite1)
 {
     // mask an anon SpanQuery class that rewrites to something else.
     SpanQueryPtr q = newLucene<TestRewrite::TestableFieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
@@ -175,10 +173,10 @@ BOOST_AUTO_TEST_CASE(testRewrite1)
 
     SetTerm terms = SetTerm::newInstance();
     qr->extractTerms(terms);
-    BOOST_CHECK_EQUAL(2, terms.size());
+    EXPECT_EQ(2, terms.size());
 }
 
-BOOST_AUTO_TEST_CASE(testRewrite2)
+TEST_F(FieldMaskingSpanQueryTest, testRewrite2)
 {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"smith"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"jones"));
@@ -187,10 +185,10 @@ BOOST_AUTO_TEST_CASE(testRewrite2)
     QueryUtils::checkEqual(q, qr);
     SetTerm terms = SetTerm::newInstance();
     qr->extractTerms(terms);
-    BOOST_CHECK_EQUAL(2, terms.size());
+    EXPECT_EQ(2, terms.size());
 }
 
-BOOST_AUTO_TEST_CASE(testEquality1)
+TEST_F(FieldMaskingSpanQueryTest, testEquality1)
 {
     SpanQueryPtr q1 = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
     SpanQueryPtr q2 = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
@@ -210,14 +208,14 @@ BOOST_AUTO_TEST_CASE(testEquality1)
     QueryUtils::checkEqual(qA, qB);
 }
 
-BOOST_AUTO_TEST_CASE(testNoop0)
+TEST_F(FieldMaskingSpanQueryTest, testNoop0)
 {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally"));
     SpanQueryPtr q = newLucene<FieldMaskingSpanQuery>(q1, L"first");
     check(q, Collection<int32_t>::newInstance());
 }
 
-BOOST_AUTO_TEST_CASE(testNoop1)
+TEST_F(FieldMaskingSpanQueryTest, testNoop1)
 {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"smith"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"jones"));
@@ -227,7 +225,7 @@ BOOST_AUTO_TEST_CASE(testNoop1)
     check(q, newCollection<int32_t>(1, 2));
 }
 
-BOOST_AUTO_TEST_CASE(testSimple1)
+TEST_F(FieldMaskingSpanQueryTest, testSimple1)
 {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"jones"));
@@ -241,7 +239,7 @@ BOOST_AUTO_TEST_CASE(testSimple1)
     check(q, newCollection<int32_t>(0, 2));
 }
 
-BOOST_AUTO_TEST_CASE(testSimple2)
+TEST_F(FieldMaskingSpanQueryTest, testSimple2)
 {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"gender", L"female"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"smith"));
@@ -251,7 +249,7 @@ BOOST_AUTO_TEST_CASE(testSimple2)
     check(q, newCollection<int32_t>(2, 4));
 }
 
-BOOST_AUTO_TEST_CASE(testSpans0)
+TEST_F(FieldMaskingSpanQueryTest, testSpans0)
 {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"gender", L"female"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
@@ -260,37 +258,37 @@ BOOST_AUTO_TEST_CASE(testSpans0)
 
     SpansPtr span = q->getSpans(searcher->getIndexReader());
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(0, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(0, 0, 1), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(1, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(1, 0, 1), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(1, 1, 2), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(1, 1, 2), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(2, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(2, 0, 1), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(2, 1, 2), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(2, 1, 2), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(2, 2, 3), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(2, 2, 3), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(3, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(3, 0, 1), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(4, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(4, 0, 1), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(4, 1, 2), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(4, 1, 2), str(span));
 
-    BOOST_CHECK(!span->next());
+    EXPECT_TRUE(!span->next());
 }
 
-BOOST_AUTO_TEST_CASE(testSpans1)
+TEST_F(FieldMaskingSpanQueryTest, testSpans1)
 {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
@@ -302,16 +300,16 @@ BOOST_AUTO_TEST_CASE(testSpans1)
 
     SpansPtr spanA = qA->getSpans(searcher->getIndexReader());
     SpansPtr spanB = qB->getSpans(searcher->getIndexReader());
-    
+
     while (spanA->next())
     {
-        BOOST_CHECK(spanB->next());
-        BOOST_CHECK_EQUAL(str(spanA), str(spanB));
+        EXPECT_TRUE(spanB->next());
+        EXPECT_EQ(str(spanA), str(spanB));
     }
-    BOOST_CHECK(!(spanB->next()));
+    EXPECT_TRUE(!(spanB->next()));
 }
 
-BOOST_AUTO_TEST_CASE(testSpans2)
+TEST_F(FieldMaskingSpanQueryTest, testSpans2)
 {
     SpanQueryPtr qA1 = newLucene<SpanTermQuery>(newLucene<Term>(L"gender", L"female"));
     SpanQueryPtr qA2 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
@@ -322,22 +320,20 @@ BOOST_AUTO_TEST_CASE(testSpans2)
 
     SpansPtr span = q->getSpans(searcher->getIndexReader());
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(0, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(0, 0, 1), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(1, 1, 2), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(1, 1, 2), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(2, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(2, 0, 1), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(2, 2, 3), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(2, 2, 3), str(span));
 
-    BOOST_CHECK(span->next());
-    BOOST_CHECK_EQUAL(str(3, 0, 1), str(span));
+    EXPECT_TRUE(span->next());
+    EXPECT_EQ(str(3, 0, 1), str(span));
 
-    BOOST_CHECK(!span->next());
+    EXPECT_TRUE(!span->next());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -38,11 +38,11 @@ public:
     ItemizedFilter(const String& field, Collection<int32_t> terms) : FieldCacheTermsFilter(field, int2str(terms))
     {
     }
-    
+
     ItemizedFilter(Collection<int32_t> terms) : FieldCacheTermsFilter(L"KEY", int2str(terms))
     {
     }
-    
+
     virtual ~ItemizedFilter()
     {
     }
@@ -58,20 +58,20 @@ public:
 };
 
 /// TestExplanations subclass focusing on basic query types
-class SimpleExplanationsOfNonMatchesFixture : public ExplanationsFixture
+class SimpleExplanationsOfNonMatchesTest : public ExplanationsFixture
 {
 public:
-    SimpleExplanationsOfNonMatchesFixture()
+    SimpleExplanationsOfNonMatchesTest()
     {
     }
-    
-    virtual ~SimpleExplanationsOfNonMatchesFixture()
+
+    virtual ~SimpleExplanationsOfNonMatchesTest()
     {
     }
 
 public:
     using ExplanationsFixture::qtest;
-    
+
     /// ignore matches and focus on non-matches
     virtual void qtest(QueryPtr q, Collection<int32_t> expDocNrs)
     {
@@ -79,112 +79,110 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(SimpleExplanationsOfNonMatchesTest, SimpleExplanationsOfNonMatchesFixture)
-
-BOOST_AUTO_TEST_CASE(testT1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testT1)
 {
     qtest(L"w1", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testT2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testT2)
 {
     qtest(L"w1^1000", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMA1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMA1)
 {
     qtest(newLucene<MatchAllDocsQuery>(), newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMA2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMA2)
 {
     QueryPtr q = newLucene<MatchAllDocsQuery>();
     q->setBoost(1000);
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testP1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testP1)
 {
     qtest(L"\"w1 w2\"", newCollection<int32_t>(0));
 }
 
-BOOST_AUTO_TEST_CASE(testP2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testP2)
 {
     qtest(L"\"w1 w3\"", newCollection<int32_t>(1, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testP3)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testP3)
 {
     qtest(L"\"w1 w2\"~1", newCollection<int32_t>(0, 1, 2));
 }
 
-BOOST_AUTO_TEST_CASE(testP4)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testP4)
 {
     qtest(L"\"w2 w3\"~1", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testP5)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testP5)
 {
     qtest(L"\"w3 w2\"~1", newCollection<int32_t>(1, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testP6)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testP6)
 {
     qtest(L"\"w3 w2\"~2", newCollection<int32_t>(0, 1, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testP7)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testP7)
 {
     qtest(L"\"w3 w2\"~3", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testFQ1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testFQ1)
 {
     qtest(newLucene<FilteredQuery>(qp->parse(L"w1"), newLucene<ItemizedFilter>(newCollection<int32_t>(0, 1, 2, 3))), newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testFQ2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testFQ2)
 {
     qtest(newLucene<FilteredQuery>(qp->parse(L"w1"), newLucene<ItemizedFilter>(newCollection<int32_t>(0, 2, 3))), newCollection<int32_t>(0, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testFQ3)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testFQ3)
 {
     qtest(newLucene<FilteredQuery>(qp->parse(L"xx"), newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3))), newCollection<int32_t>(3));
 }
 
-BOOST_AUTO_TEST_CASE(testFQ4)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testFQ4)
 {
     qtest(newLucene<FilteredQuery>(qp->parse(L"xx^1000"), newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3))), newCollection<int32_t>(3));
 }
 
-BOOST_AUTO_TEST_CASE(testFQ6)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testFQ6)
 {
     QueryPtr q = newLucene<FilteredQuery>(qp->parse(L"xx"), newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3)));
     q->setBoost(1000);
     qtest(q, newCollection<int32_t>(3));
 }
 
-BOOST_AUTO_TEST_CASE(testCSQ1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testCSQ1)
 {
     QueryPtr q = newLucene<ConstantScoreQuery>(newLucene<ItemizedFilter>(newCollection<int32_t>(0, 1, 2, 3)));
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testCSQ2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testCSQ2)
 {
     QueryPtr q = newLucene<ConstantScoreQuery>(newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3)));
     qtest(q, newCollection<int32_t>(1, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testCSQ3)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testCSQ3)
 {
     QueryPtr q = newLucene<ConstantScoreQuery>(newLucene<ItemizedFilter>(newCollection<int32_t>(0, 2)));
     q->setBoost(1000);
     qtest(q, newCollection<int32_t>(0, 2));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ1)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.0);
     q->add(qp->parse(L"w1"));
@@ -192,7 +190,7 @@ BOOST_AUTO_TEST_CASE(testDMQ1)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ2)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"w1"));
@@ -200,7 +198,7 @@ BOOST_AUTO_TEST_CASE(testDMQ2)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ3)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ3)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"QQ"));
@@ -208,7 +206,7 @@ BOOST_AUTO_TEST_CASE(testDMQ3)
     qtest(q, newCollection<int32_t>(0));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ4)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ4)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"QQ"));
@@ -216,7 +214,7 @@ BOOST_AUTO_TEST_CASE(testDMQ4)
     qtest(q, newCollection<int32_t>(2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ5)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ5)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"yy -QQ"));
@@ -224,7 +222,7 @@ BOOST_AUTO_TEST_CASE(testDMQ5)
     qtest(q, newCollection<int32_t>(2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ6)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ6)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"-yy w3"));
@@ -232,7 +230,7 @@ BOOST_AUTO_TEST_CASE(testDMQ6)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ7)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ7)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"-yy w3"));
@@ -240,7 +238,7 @@ BOOST_AUTO_TEST_CASE(testDMQ7)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ8)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ8)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"yy w5^100"));
@@ -248,7 +246,7 @@ BOOST_AUTO_TEST_CASE(testDMQ8)
     qtest(q, newCollection<int32_t>(0, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testDMQ9)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testDMQ9)
 {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"yy w5^100"));
@@ -256,7 +254,7 @@ BOOST_AUTO_TEST_CASE(testDMQ9)
     qtest(q, newCollection<int32_t>(0, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMPQ1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMPQ1)
 {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1")));
@@ -264,7 +262,7 @@ BOOST_AUTO_TEST_CASE(testMPQ1)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMPQ2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMPQ2)
 {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1")));
@@ -272,7 +270,7 @@ BOOST_AUTO_TEST_CASE(testMPQ2)
     qtest(q, newCollection<int32_t>(0, 1, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMPQ3)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMPQ3)
 {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1", L"xx")));
@@ -280,7 +278,7 @@ BOOST_AUTO_TEST_CASE(testMPQ3)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testMPQ4)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMPQ4)
 {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1")));
@@ -288,7 +286,7 @@ BOOST_AUTO_TEST_CASE(testMPQ4)
     qtest(q, newCollection<int32_t>(0));
 }
 
-BOOST_AUTO_TEST_CASE(testMPQ5)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMPQ5)
 {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1")));
@@ -297,7 +295,7 @@ BOOST_AUTO_TEST_CASE(testMPQ5)
     qtest(q, newCollection<int32_t>(0, 1, 2));
 }
 
-BOOST_AUTO_TEST_CASE(testMPQ6)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testMPQ6)
 {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1", L"w3")));
@@ -306,62 +304,62 @@ BOOST_AUTO_TEST_CASE(testMPQ6)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ1)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ1)
 {
     qtest(L"+w1 +w2", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ2)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ2)
 {
     qtest(L"+yy +w3", newCollection<int32_t>(2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ3)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ3)
 {
     qtest(L"yy +w3", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ4)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ4)
 {
     qtest(L"w1 (-xx w2)", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ5)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ5)
 {
     qtest(L"w1 (+qq w2)", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ6)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ6)
 {
     qtest(L"w1 -(-qq w5)", newCollection<int32_t>(1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ7)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ7)
 {
     qtest(L"+w1 +(qq (xx -w2) (+w3 +w4))", newCollection<int32_t>(0));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ8)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ8)
 {
     qtest(L"+w1 (qq (xx -w2) (+w3 +w4))", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ9)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ9)
 {
     qtest(L"+w1 (qq (-xx w2) -(+w3 +w4))", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ10)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ10)
 {
     qtest(L"+w1 +(qq (-xx w2) -(+w3 +w4))", newCollection<int32_t>(1));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ11)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ11)
 {
     qtest(L"w1 w2^1000.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ14)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ14)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>(true);
     q->add(qp->parse(L"QQQQQ"), BooleanClause::SHOULD);
@@ -369,7 +367,7 @@ BOOST_AUTO_TEST_CASE(testBQ14)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ15)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ15)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>(true);
     q->add(qp->parse(L"QQQQQ"), BooleanClause::MUST_NOT);
@@ -377,7 +375,7 @@ BOOST_AUTO_TEST_CASE(testBQ15)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ16)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ16)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>(true);
     q->add(qp->parse(L"QQQQQ"), BooleanClause::SHOULD);
@@ -385,7 +383,7 @@ BOOST_AUTO_TEST_CASE(testBQ16)
     qtest(q, newCollection<int32_t>(0, 1));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ17)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ17)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>(true);
     q->add(qp->parse(L"w2"), BooleanClause::SHOULD);
@@ -393,12 +391,12 @@ BOOST_AUTO_TEST_CASE(testBQ17)
     qtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ19)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ19)
 {
     qtest(L"-yy w3", newCollection<int32_t>(0, 1));
 }
 
-BOOST_AUTO_TEST_CASE(testBQ20)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testBQ20)
 {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->setMinimumNumberShouldMatch(2);
@@ -410,7 +408,7 @@ BOOST_AUTO_TEST_CASE(testBQ20)
     qtest(q, newCollection<int32_t>(0, 3));
 }
 
-BOOST_AUTO_TEST_CASE(testTermQueryMultiSearcherExplain)
+TEST_F(SimpleExplanationsOfNonMatchesTest, testTermQueryMultiSearcherExplain)
 {
     // creating two directories for indices
     DirectoryPtr indexStoreA = newLucene<MockRAMDirectory>();
@@ -444,33 +442,31 @@ BOOST_AUTO_TEST_CASE(testTermQueryMultiSearcherExplain)
     SearcherPtr mSearcher = newLucene<MultiSearcher>(searchers);
     Collection<ScoreDocPtr> hits = mSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
     ExplanationPtr explain = mSearcher->explain(query, hits[0]->doc);
     String exp = explain->toString();
-    BOOST_CHECK(exp.find(L"maxDocs=3") != String::npos);
-    BOOST_CHECK(exp.find(L"docFreq=3") != String::npos);
+    EXPECT_TRUE(exp.find(L"maxDocs=3") != String::npos);
+    EXPECT_TRUE(exp.find(L"docFreq=3") != String::npos);
 
     query = parser->parse(L"handle:\"1 2\"");
     hits = mSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
     explain = mSearcher->explain(query, hits[0]->doc);
     exp = explain->toString();
-    BOOST_CHECK(exp.find(L"1=3") != String::npos);
-    BOOST_CHECK(exp.find(L"2=3") != String::npos);
+    EXPECT_TRUE(exp.find(L"1=3") != String::npos);
+    EXPECT_TRUE(exp.find(L"2=3") != String::npos);
 
     query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(newLucene<SpanTermQuery>(newLucene<Term>(L"handle", L"1")), newLucene<SpanTermQuery>(newLucene<Term>(L"handle", L"2"))), 0, true);
     hits = mSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
 
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
     explain = mSearcher->explain(query, hits[0]->doc);
     exp = explain->toString();
-    BOOST_CHECK(exp.find(L"1=3") != String::npos);
-    BOOST_CHECK(exp.find(L"2=3") != String::npos);
+    EXPECT_TRUE(exp.find(L"1=3") != String::npos);
+    EXPECT_TRUE(exp.find(L"2=3") != String::npos);
     mSearcher->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -20,12 +20,12 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(MultiValuedNumericRangeQueryTest, LuceneTestFixture)
+typedef LuceneTestFixture MultiValuedNumericRangeQueryTest;
 
 static String pad(int32_t n)
 {
     int32_t intLength = String(L"00000000000").length();
-    
+
     StringStream buf;
     String p = L"0";
     if (n < 0)
@@ -38,10 +38,10 @@ static String pad(int32_t n)
     for (int32_t i = s.length(); i <= intLength; ++i)
         buf << L"0";
     buf << s;
-    return buf.str(); 
+    return buf.str();
 }
 
-BOOST_AUTO_TEST_CASE(testMultiValuedNRQ)
+TEST_F(MultiValuedNumericRangeQueryTest, testMultiValuedNRQ)
 {
     RandomPtr rnd = newLucene<Random>();
 
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(testMultiValuedNRQ)
         writer->addDocument(doc);
     }
     writer->close();
-    
+
     SearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
     for (int32_t i = 0; i < 50; ++i)
     {
@@ -72,9 +72,7 @@ BOOST_AUTO_TEST_CASE(testMultiValuedNRQ)
         NumericRangeQueryPtr tq = NumericRangeQuery::newIntRange(L"trie", lower, upper, true, true);
         TopDocsPtr trTopDocs = searcher->search(cq, 1);
         TopDocsPtr nrTopDocs = searcher->search(tq, 1);
-        BOOST_CHECK_EQUAL(trTopDocs->totalHits, nrTopDocs->totalHits);
+        EXPECT_EQ(trTopDocs->totalHits, nrTopDocs->totalHits);
     }
     searcher->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()

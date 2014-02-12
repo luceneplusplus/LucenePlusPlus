@@ -27,10 +27,10 @@
 
 using namespace Lucene;
 
-class KeywordAnalyzerTestFixture : public BaseTokenStreamFixture
+class KeywordAnalyzerTest : public BaseTokenStreamFixture
 {
 public:
-    KeywordAnalyzerTestFixture()
+    KeywordAnalyzerTest()
     {
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -43,8 +43,8 @@ public:
 
         searcher = newLucene<IndexSearcher>(directory, true);
     }
-    
-    virtual ~KeywordAnalyzerTestFixture()
+
+    virtual ~KeywordAnalyzerTest()
     {
     }
 
@@ -53,9 +53,7 @@ protected:
     IndexSearcherPtr searcher;
 };
 
-BOOST_FIXTURE_TEST_SUITE(KeywordAnalyzerTest, KeywordAnalyzerTestFixture)
-
-BOOST_AUTO_TEST_CASE(testPerFieldAnalyzer)
+TEST_F(KeywordAnalyzerTest, testPerFieldAnalyzer)
 {
     PerFieldAnalyzerWrapperPtr analyzer = newLucene<PerFieldAnalyzerWrapper>(newLucene<SimpleAnalyzer>());
     analyzer->addAnalyzer(L"partnum", newLucene<KeywordAnalyzer>());
@@ -64,11 +62,11 @@ BOOST_AUTO_TEST_CASE(testPerFieldAnalyzer)
     QueryPtr query = queryParser->parse(L"partnum:Q36 AND SPACE");
 
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(L"+partnum:Q36 +space", query->toString(L"description"));
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(L"+partnum:Q36 +space", query->toString(L"description"));
+    EXPECT_EQ(1, hits.size());
 }
 
-BOOST_AUTO_TEST_CASE(testMutipleDocument)
+TEST_F(KeywordAnalyzerTest, testMutipleDocument)
 {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -82,18 +80,16 @@ BOOST_AUTO_TEST_CASE(testMutipleDocument)
 
     IndexReaderPtr reader = IndexReader::open(dir, true);
     TermDocsPtr td = reader->termDocs(newLucene<Term>(L"partnum", L"Q36"));
-    BOOST_CHECK(td->next());
+    EXPECT_TRUE(td->next());
     td = reader->termDocs(newLucene<Term>(L"partnum", L"Q37"));
-    BOOST_CHECK(td->next());
+    EXPECT_TRUE(td->next());
 }
 
-BOOST_AUTO_TEST_CASE(testOffsets)
+TEST_F(KeywordAnalyzerTest, testOffsets)
 {
     TokenStreamPtr stream = newLucene<KeywordAnalyzer>()->tokenStream(L"field", newLucene<StringReader>(L"abcd"));
     OffsetAttributePtr offsetAtt = stream->addAttribute<OffsetAttribute>();
-    BOOST_CHECK(stream->incrementToken());
-    BOOST_CHECK_EQUAL(0, offsetAtt->startOffset());
-    BOOST_CHECK_EQUAL(4, offsetAtt->endOffset());
+    EXPECT_TRUE(stream->incrementToken());
+    EXPECT_EQ(0, offsetAtt->startOffset());
+    EXPECT_EQ(4, offsetAtt->endOffset());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

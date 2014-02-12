@@ -20,9 +20,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(PrefixFilterTest, LuceneTestFixture)
+typedef LuceneTestFixture PrefixFilterTest;
 
-BOOST_AUTO_TEST_CASE(testPrefixFilter)
+TEST_F(PrefixFilterTest, testPrefixFilter)
 {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
 
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(testPrefixFilter)
         doc->add(newLucene<Field>(L"category", categories[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);
     }
-    
+
     writer->close();
 
     // PrefixFilter combined with ConstantScoreQuery
@@ -47,55 +47,53 @@ BOOST_AUTO_TEST_CASE(testPrefixFilter)
     QueryPtr query = newLucene<ConstantScoreQuery>(filter);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(4, hits.size());
+    EXPECT_EQ(4, hits.size());
 
     // test middle of values
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"category", L"/Computers/Mac"));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(2, hits.size());
+    EXPECT_EQ(2, hits.size());
 
     // test start of values
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"category", L"/Computers/Linux"));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
 
     // test end of values
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"category", L"/Computers/Windows"));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
 
     // test non-existent
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"category", L"/Computers/ObsoleteOS"));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
 
     // test non-existent, before values
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"category", L"/Computers/AAA"));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
 
     // test non-existent, after values
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"category", L"/Computers/ZZZ"));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
 
     // test zero length prefix
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"category", L""));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(4, hits.size());
+    EXPECT_EQ(4, hits.size());
 
     // test non existent field
     filter = newLucene<PrefixFilter>(newLucene<Term>(L"nonexistentfield", L"/Computers"));
     query = newLucene<ConstantScoreQuery>(filter);
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(0, hits.size());
+    EXPECT_EQ(0, hits.size());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -19,9 +19,9 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(PrefixQueryTest, LuceneTestFixture)
+typedef LuceneTestFixture PrefixQueryTest;
 
-BOOST_AUTO_TEST_CASE(testPrefixQuery)
+TEST_F(PrefixQueryTest, testPrefixQuery)
 {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
 
@@ -37,17 +37,15 @@ BOOST_AUTO_TEST_CASE(testPrefixQuery)
         doc->add(newLucene<Field>(L"category", categories[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);
     }
-    
+
     writer->close();
-    
+
     PrefixQueryPtr query = newLucene<PrefixQuery>(newLucene<Term>(L"category", L"/Computers"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(3, hits.size());
+    EXPECT_EQ(3, hits.size());
 
     query = newLucene<PrefixQuery>(newLucene<Term>(L"category", L"/Computers/Mac"));
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-    BOOST_CHECK_EQUAL(1, hits.size());
+    EXPECT_EQ(1, hits.size());
 }
-
-BOOST_AUTO_TEST_SUITE_END()

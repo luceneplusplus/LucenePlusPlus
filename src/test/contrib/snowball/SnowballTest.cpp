@@ -11,26 +11,24 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(SnowballTest, BaseTokenStreamFixture)
+typedef BaseTokenStreamFixture SnowballTest;
 
-BOOST_AUTO_TEST_CASE(testEnglish)
+TEST_F(SnowballTest, testEnglish)
 {
     AnalyzerPtr a = newLucene<SnowballAnalyzer>(LuceneVersion::LUCENE_CURRENT, L"english");
     checkAnalyzesTo(a, L"he abhorred accents", newCollection<String>(L"he", L"abhor", L"accent"));
 }
 
-BOOST_AUTO_TEST_CASE(testStopwords)
+TEST_F(SnowballTest, testStopwords)
 {
     AnalyzerPtr a = newLucene<SnowballAnalyzer>(LuceneVersion::LUCENE_CURRENT, L"english", StopAnalyzer::ENGLISH_STOP_WORDS_SET());
     checkAnalyzesTo(a, L"the quick brown fox jumped", newCollection<String>(L"quick", L"brown", L"fox", L"jump"));
 }
 
-BOOST_AUTO_TEST_CASE(testReusableTokenStream)
+TEST_F(SnowballTest, testReusableTokenStream)
 {
     AnalyzerPtr a = newLucene<SnowballAnalyzer>(LuceneVersion::LUCENE_CURRENT, L"english");
-    
+
     checkAnalyzesToReuse(a, L"he abhorred accents", newCollection<String>(L"he", L"abhor", L"accent"));
     checkAnalyzesToReuse(a, L"she abhorred him", newCollection<String>(L"she", L"abhor", L"him"));
 }
-
-BOOST_AUTO_TEST_SUITE_END()

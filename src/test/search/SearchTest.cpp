@@ -19,7 +19,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(SearchTest, LuceneTestFixture)
+typedef LuceneTestFixture SearchTest;
 
 static void doTestSearch(StringStream& out, bool useCompoundFile)
 {
@@ -45,9 +45,9 @@ static void doTestSearch(StringStream& out, bool useCompoundFile)
         writer->addDocument(doc);
     }
     writer->close();
-    
+
     SearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
-    
+
     Collection<String> queries = newCollection<String>(
         L"a b",
         L"\"a b\"",
@@ -63,9 +63,9 @@ static void doTestSearch(StringStream& out, bool useCompoundFile)
     {
         QueryPtr query = parser->parse(queries[j]);
         out << L"Query: " << query->toString(L"contents") << L"\n";
-        
+
         Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-        
+
         out << hits.size() << L" total results\n";
         for (int32_t i = 0; i < hits.size() && i < 10; ++i)
         {
@@ -76,15 +76,13 @@ static void doTestSearch(StringStream& out, bool useCompoundFile)
     searcher->close();
 }
 
-BOOST_AUTO_TEST_CASE(testSearch)
+TEST_F(SearchTest, testSearch)
 {
     StringStream multiFileOutput;
     doTestSearch(multiFileOutput, false);
-    
+
     StringStream singleFileOutput;
     doTestSearch(singleFileOutput, true);
-    
-    BOOST_CHECK_EQUAL(multiFileOutput.str(), singleFileOutput.str());
-}
 
-BOOST_AUTO_TEST_SUITE_END()
+    EXPECT_EQ(multiFileOutput.str(), singleFileOutput.str());
+}

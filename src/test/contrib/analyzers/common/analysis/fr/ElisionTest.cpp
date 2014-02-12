@@ -13,10 +13,10 @@
 
 using namespace Lucene;
 
-class ElisionFixture : public BaseTokenStreamFixture
+class ElisionTest : public BaseTokenStreamFixture
 {
 public:
-    virtual ~ElisionFixture()
+    virtual ~ElisionTest()
     {
     }
 
@@ -31,9 +31,7 @@ public:
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(ElisionTest, ElisionFixture)
-
-BOOST_AUTO_TEST_CASE(testElision)
+TEST_F(ElisionTest, testElision)
 {
     String test = L"Plop, juste pour voir l'embrouille avec O'brian. M'enfin.";
     TokenizerPtr tokenizer = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(test));
@@ -42,9 +40,7 @@ BOOST_AUTO_TEST_CASE(testElision)
     articles.add(L"M");
     TokenFilterPtr filter = newLucene<ElisionFilter>(tokenizer, articles);
     Collection<String> terms = addTerms(filter);
-    BOOST_CHECK_EQUAL(L"embrouille", terms[4]);
-    BOOST_CHECK_EQUAL(L"O'brian", terms[6]);
-    BOOST_CHECK_EQUAL(L"enfin", terms[7]);
+    EXPECT_EQ(L"embrouille", terms[4]);
+    EXPECT_EQ(L"O'brian", terms[6]);
+    EXPECT_EQ(L"enfin", terms[7]);
 }
-
-BOOST_AUTO_TEST_SUITE_END()

@@ -21,7 +21,7 @@
 
 using namespace Lucene;
 
-BOOST_FIXTURE_TEST_SUITE(NRTReaderWithThreadsTest, LuceneTestFixture)
+typedef LuceneTestFixture NRTReaderWithThreadsTest;
 
 DECLARE_SHARED_PTR(RunThread)
 DECLARE_SHARED_PTR(HeavyAtomicInt)
@@ -60,10 +60,10 @@ public:
     {
         value = start;
     }
-    
+
     virtual ~HeavyAtomicInt()
     {
-    
+
     }
 
 protected:
@@ -76,13 +76,13 @@ public:
         value += inc;
         return value;
     }
-    
+
     int32_t incrementAndGet()
     {
         SyncLock syncLock(this);
         return ++value;
     }
-    
+
     int32_t intValue()
     {
         SyncLock syncLock(this);
@@ -103,13 +103,13 @@ public:
         this->seq = seq;
         this->rand = newLucene<Random>();
     }
-    
+
     virtual ~RunThread()
     {
     }
-    
+
     LUCENE_CLASS(RunThread);
-    
+
 public:
     HeavyAtomicIntPtr seq;
     IndexWriterPtr writer;
@@ -150,12 +150,12 @@ public:
         catch (LuceneException& e)
         {
             _run = false;
-            BOOST_FAIL("Unexpected exception: " << e.getError());
+            FAIL() << "Unexpected exception: " << e.getError();
         }
     }
 };
 
-BOOST_AUTO_TEST_CASE(testIndexing)
+TEST_F(NRTReaderWithThreadsTest, testIndexing)
 {
     HeavyAtomicIntPtr seq = newLucene<HeavyAtomicInt>(1);
     DirectoryPtr mainDir = newLucene<MockRAMDirectory>();
@@ -188,5 +188,3 @@ BOOST_AUTO_TEST_CASE(testIndexing)
     writer->close();
     mainDir->close();
 }
-
-BOOST_AUTO_TEST_SUITE_END()
