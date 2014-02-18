@@ -28,12 +28,12 @@ namespace Lucene
     public:
         /// Creates a TokenStream which tokenizes all the text in the provided Reader.  Must be able to handle null
         /// field name for backward compatibility.
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader) = 0;
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) = 0;
 
         /// Creates a TokenStream that is allowed to be re-used from the previous time that the same thread called
         /// this method.  Callers that do not need to use more than one TokenStream at the same time from this analyzer
         /// should use this method for better performance.
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
 
         /// Invoked before indexing a Fieldable instance if terms have already been added to that field.  This allows
         /// custom analyzers to place an automatic position increment gap between Fieldable instances using the same
@@ -51,7 +51,7 @@ namespace Lucene
         ///
         /// @param field the field just indexed
         /// @return offset gap, added to the next token emitted from {@link #tokenStream(String,Reader)}
-        virtual int32_t getOffsetGap(FieldablePtr field);
+        virtual int32_t getOffsetGap(const FieldablePtr& field);
 
         /// Frees persistent resources used by this Analyzer
         virtual void close();
@@ -63,7 +63,7 @@ namespace Lucene
 
         /// Used by Analyzers that implement reusableTokenStream to save a TokenStream for later re-use by the
         /// same thread.
-        virtual void setPreviousTokenStream(LuceneObjectPtr stream);
+        virtual void setPreviousTokenStream(const LuceneObjectPtr& stream);
     };
 }
 

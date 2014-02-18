@@ -25,7 +25,7 @@ namespace Lucene
     {
     }
 
-    TokenStreamPtr TokenSources::getAnyTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, DocumentPtr doc, AnalyzerPtr analyzer)
+    TokenStreamPtr TokenSources::getAnyTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field, const DocumentPtr& doc, const AnalyzerPtr& analyzer)
     {
         TokenStreamPtr ts;
         TermFreqVectorPtr tfv(reader->getTermFreqVector(docId, field));
@@ -40,7 +40,7 @@ namespace Lucene
         return ts;
     }
 
-    TokenStreamPtr TokenSources::getAnyTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, AnalyzerPtr analyzer)
+    TokenStreamPtr TokenSources::getAnyTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field, const AnalyzerPtr& analyzer)
     {
         TokenStreamPtr ts;
         TermFreqVectorPtr tfv(reader->getTermFreqVector(docId, field));
@@ -55,7 +55,7 @@ namespace Lucene
         return ts;
     }
 
-    TokenStreamPtr TokenSources::getTokenStream(TermPositionVectorPtr tpv)
+    TokenStreamPtr TokenSources::getTokenStream(const TermPositionVectorPtr& tpv)
     {
         // assumes the worst and makes no assumptions about token position sequences.
         return getTokenStream(tpv, false);
@@ -71,7 +71,7 @@ namespace Lucene
         }
     };
 
-    TokenStreamPtr TokenSources::getTokenStream(TermPositionVectorPtr tpv, bool tokenPositionsGuaranteedContiguous)
+    TokenStreamPtr TokenSources::getTokenStream(const TermPositionVectorPtr& tpv, bool tokenPositionsGuaranteedContiguous)
     {
         // code to reconstruct the original sequence of Tokens
         Collection<String> terms(tpv->getTerms());
@@ -130,7 +130,7 @@ namespace Lucene
         return newLucene<StoredTokenStream>(tokensInOriginalOrder);
     }
 
-    TokenStreamPtr TokenSources::getTokenStream(IndexReaderPtr reader, int32_t docId, const String& field)
+    TokenStreamPtr TokenSources::getTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field)
     {
         TermFreqVectorPtr tfv(reader->getTermFreqVector(docId, field));
         if (!tfv)
@@ -145,13 +145,13 @@ namespace Lucene
         return TokenStreamPtr();
     }
 
-    TokenStreamPtr TokenSources::getTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, AnalyzerPtr analyzer)
+    TokenStreamPtr TokenSources::getTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field, const AnalyzerPtr& analyzer)
     {
         DocumentPtr doc(reader->document(docId));
         return getTokenStream(doc, field, analyzer);
     }
 
-    TokenStreamPtr TokenSources::getTokenStream(DocumentPtr doc, const String& field, AnalyzerPtr analyzer)
+    TokenStreamPtr TokenSources::getTokenStream(const DocumentPtr& doc, const String& field, const AnalyzerPtr& analyzer)
     {
         String contents(doc->get(field));
         if (contents.empty())
@@ -159,7 +159,7 @@ namespace Lucene
         return getTokenStream(field, contents, analyzer);
     }
 
-    TokenStreamPtr TokenSources::getTokenStream(const String& field, const String& contents, AnalyzerPtr analyzer)
+    TokenStreamPtr TokenSources::getTokenStream(const String& field, const String& contents, const AnalyzerPtr& analyzer)
     {
         return analyzer->tokenStream(field, newLucene<StringReader>(contents));
     }

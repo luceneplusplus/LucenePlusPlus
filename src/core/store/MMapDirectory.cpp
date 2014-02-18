@@ -15,7 +15,7 @@
 
 namespace Lucene
 {
-    MMapDirectory::MMapDirectory(const String& path, LockFactoryPtr lockFactory) : FSDirectory(path, lockFactory)
+    MMapDirectory::MMapDirectory(const String& path, const LockFactoryPtr& lockFactory) : FSDirectory(path, lockFactory)
     {
     }
 
@@ -107,7 +107,7 @@ namespace Lucene
         file.close();
     }
 
-    LuceneObjectPtr MMapIndexInput::clone(LuceneObjectPtr other)
+    LuceneObjectPtr MMapIndexInput::clone(const LuceneObjectPtr& other)
     {
         if (!file.is_open())
             boost::throw_exception(AlreadyClosedException(L"MMapIndexInput already closed"));

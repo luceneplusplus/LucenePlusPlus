@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         RAMInputStream();
-        RAMInputStream(RAMFilePtr f);
+        RAMInputStream(const RAMFilePtr& f);
         virtual ~RAMInputStream();
 
         LUCENE_CLASS(RAMInputStream);
@@ -60,7 +60,7 @@ namespace Lucene
         virtual void seek(int64_t pos);
 
         /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
     protected:
         void switchCurrentBuffer(bool enforceEOF);

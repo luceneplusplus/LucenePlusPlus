@@ -24,7 +24,7 @@ namespace Lucene
     public:
         /// Constructs a Scorer.
         /// @param similarity The Similarity implementation used by this scorer.
-        Scorer(SimilarityPtr similarity);
+        Scorer(const SimilarityPtr& similarity);
         virtual ~Scorer();
 
         LUCENE_CLASS(Scorer);
@@ -38,7 +38,7 @@ namespace Lucene
 
         /// Scores and collects all matching documents.
         /// @param collector The collector to which all matching documents are passed.
-        virtual void score(CollectorPtr collector);
+        virtual void score(const CollectorPtr& collector);
 
         /// Returns the score of the current document matching the query.  Initially invalid, until {@link
         /// #nextDoc()} or {@link #advance(int32_t)} is called the first time, or when called from within
@@ -53,7 +53,7 @@ namespace Lucene
         /// @param max Do not score documents past this.
         /// @param firstDocID The first document ID (ensures {@link #nextDoc()} is called before this method.
         /// @return true if more matching documents may remain.
-        virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
+        virtual bool score(const CollectorPtr& collector, int32_t max, int32_t firstDocID);
 
         friend class BooleanScorer;
         friend class ScoreCachingWrappingScorer;

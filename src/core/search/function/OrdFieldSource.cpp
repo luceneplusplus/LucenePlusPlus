@@ -27,13 +27,13 @@ namespace Lucene
         return L"ord(" + field + L")";
     }
 
-    DocValuesPtr OrdFieldSource::getValues(IndexReaderPtr reader)
+    DocValuesPtr OrdFieldSource::getValues(const IndexReaderPtr& reader)
     {
         Collection<int32_t> arr(FieldCache::DEFAULT()->getStringIndex(reader, field)->order);
         return newLucene<OrdDocValues>(shared_from_this(), arr);
     }
 
-    bool OrdFieldSource::equals(LuceneObjectPtr other)
+    bool OrdFieldSource::equals(const LuceneObjectPtr& other)
     {
         if (!MiscUtils::equalTypes(shared_from_this(), other))
             return false;
@@ -48,7 +48,7 @@ namespace Lucene
         return StringUtils::hashCode(OrdFieldSource::_getClassName()) + StringUtils::hashCode(field);
     }
 
-    OrdDocValues::OrdDocValues(OrdFieldSourcePtr source, Collection<int32_t> arr)
+    OrdDocValues::OrdDocValues(const OrdFieldSourcePtr& source, Collection<int32_t> arr)
     {
         this->_source = source;
         this->arr = arr;

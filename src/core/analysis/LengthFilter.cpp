@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    LengthFilter::LengthFilter(TokenStreamPtr input, int32_t min, int32_t max) : TokenFilter(input)
+    LengthFilter::LengthFilter(const TokenStreamPtr& input, int32_t min, int32_t max) : TokenFilter(input)
     {
         this->min = min;
         this->max = max;

@@ -22,7 +22,7 @@ namespace Lucene
 
         /// Constructs a bit vector from the file name in Directory d,
         /// as written by the {@link #write} method.
-        BitVector(DirectoryPtr d, const String& name);
+        BitVector(const DirectoryPtr& d, const String& name);
 
         virtual ~BitVector();
 
@@ -37,7 +37,7 @@ namespace Lucene
 
     public:
         /// Clone this vector
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Sets the value of bit to one.
         void set(int32_t bit);
@@ -65,7 +65,7 @@ namespace Lucene
 
         /// Writes this vector to the file name in Directory d, in a format that can
         /// be read by the constructor {@link #BitVector(DirectoryPtr, const String&)}.
-        void write(DirectoryPtr d, const String& name);
+        void write(const DirectoryPtr& d, const String& name);
 
         /// Retrieve a subset of this BitVector.
         /// @param start starting index, inclusive
@@ -75,20 +75,20 @@ namespace Lucene
 
     protected:
         /// Write as a bit set.
-        void writeBits(IndexOutputPtr output);
+        void writeBits(const IndexOutputPtr& output);
 
         /// Write as a d-gaps list.
-        void writeDgaps(IndexOutputPtr output);
+        void writeDgaps(const IndexOutputPtr& output);
 
         /// Indicates if the bit vector is sparse and should be saved as a d-gaps list,
         /// or dense, and should be saved as a bit set.
         bool isSparse();
 
         /// Read as a bit set.
-        void readBits(IndexInputPtr input);
+        void readBits(const IndexInputPtr& input);
 
         /// Read as a d-gaps list.
-        void readDgaps(IndexInputPtr input);
+        void readDgaps(const IndexInputPtr& input);
     };
 }
 

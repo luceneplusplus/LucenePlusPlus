@@ -22,7 +22,7 @@ namespace Lucene
 
     public:
         /// Add a new field.
-        virtual FormatPostingsTermsConsumerPtr addField(FieldInfoPtr field) = 0;
+        virtual FormatPostingsTermsConsumerPtr addField(const FieldInfoPtr& field) = 0;
 
         /// Called when we are done adding everything.
         virtual void finish() = 0;

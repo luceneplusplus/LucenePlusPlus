@@ -25,7 +25,7 @@ namespace Lucene
     const int32_t SegmentInfo::CHECK_DIR = 0; // must check dir to see if there are norms/deletions
     const int32_t SegmentInfo::WITHOUT_GEN = 0; // a file name that has no GEN in it.
 
-    SegmentInfo::SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir)
+    SegmentInfo::SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir)
     {
         _sizeInBytes = -1;
         this->name = name;
@@ -42,7 +42,7 @@ namespace Lucene
         hasProx = true;
     }
 
-    SegmentInfo::SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, bool hasSingleNormFile)
+    SegmentInfo::SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile, bool hasSingleNormFile)
     {
         _sizeInBytes = -1;
         this->name = name;
@@ -58,7 +58,7 @@ namespace Lucene
         hasProx = true;
     }
 
-    SegmentInfo::SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, bool hasSingleNormFile,
+    SegmentInfo::SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile, bool hasSingleNormFile,
                              int32_t docStoreOffset, const String& docStoreSegment, bool docStoreIsCompoundFile, bool hasProx)
     {
         _sizeInBytes = -1;
@@ -76,7 +76,7 @@ namespace Lucene
         this->hasProx = hasProx;
     }
 
-    SegmentInfo::SegmentInfo(DirectoryPtr dir, int32_t format, IndexInputPtr input)
+    SegmentInfo::SegmentInfo(const DirectoryPtr& dir, int32_t format, const IndexInputPtr& input)
     {
         _sizeInBytes = -1;
         this->dir = dir;
@@ -153,7 +153,7 @@ namespace Lucene
     {
     }
 
-    void SegmentInfo::reset(SegmentInfoPtr src)
+    void SegmentInfo::reset(const SegmentInfoPtr& src)
     {
         clearFiles();
         name = src->name;
@@ -244,7 +244,7 @@ namespace Lucene
         clearFiles();
     }
 
-    LuceneObjectPtr SegmentInfo::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SegmentInfo::clone(const LuceneObjectPtr& other)
     {
         SegmentInfoPtr si(newLucene<SegmentInfo>(name, docCount, dir));
         si->isCompoundFile = isCompoundFile;
@@ -431,7 +431,7 @@ namespace Lucene
         docStoreIsCompoundFile = isCompoundFile;
     }
 
-    void SegmentInfo::write(IndexOutputPtr output)
+    void SegmentInfo::write(const IndexOutputPtr& output)
     {
         output->writeString(name);
         output->writeInt(docCount);
@@ -576,7 +576,7 @@ namespace Lucene
         _sizeInBytes = -1;
     }
 
-    String SegmentInfo::segString(DirectoryPtr dir)
+    String SegmentInfo::segString(const DirectoryPtr& dir)
     {
         String cfs;
         try
@@ -595,7 +595,7 @@ namespace Lucene
         return name + L":" + cfs + (this->dir == dir ? L"" : L"x") + StringUtils::toString(docCount) + docStore;
     }
 
-    bool SegmentInfo::equals(LuceneObjectPtr other)
+    bool SegmentInfo::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

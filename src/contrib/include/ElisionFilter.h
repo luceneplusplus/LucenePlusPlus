@@ -21,10 +21,10 @@ namespace Lucene
     {
     public:
         /// Constructs an elision filter with standard stop words.
-        ElisionFilter(TokenStreamPtr input);
+        ElisionFilter(const TokenStreamPtr& input);
 
         /// Constructs an elision filter with a Set of stop words
-        ElisionFilter(TokenStreamPtr input, HashSet<String> articles);
+        ElisionFilter(const TokenStreamPtr& input, HashSet<String> articles);
 
         virtual ~ElisionFilter();
 

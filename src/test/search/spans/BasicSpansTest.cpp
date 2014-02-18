@@ -62,12 +62,12 @@ protected:
     IndexSearcherPtr searcher;
 
 public:
-    void checkHits(QueryPtr query, Collection<int32_t> results)
+    void checkHits(const QueryPtr& query, Collection<int32_t> results)
     {
         CheckHits::checkHits(query, L"field", searcher, results);
     }
 
-    bool skipTo(SpansPtr s, int32_t target)
+    bool skipTo(const SpansPtr& s, int32_t target)
     {
         do
         {

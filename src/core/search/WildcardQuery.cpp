@@ -15,7 +15,7 @@
 
 namespace Lucene
 {
-    WildcardQuery::WildcardQuery(TermPtr term)
+    WildcardQuery::WildcardQuery(const TermPtr& term)
     {
         this->term = term;
         String text(term->text());
@@ -29,7 +29,7 @@ namespace Lucene
     {
     }
 
-    FilteredTermEnumPtr WildcardQuery::getEnum(IndexReaderPtr reader)
+    FilteredTermEnumPtr WildcardQuery::getEnum(const IndexReaderPtr& reader)
     {
         if (termContainsWildcard)
             return newLucene<WildcardTermEnum>(reader, getTerm());
@@ -42,7 +42,7 @@ namespace Lucene
         return term;
     }
 
-    QueryPtr WildcardQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr WildcardQuery::rewrite(const IndexReaderPtr& reader)
     {
         if (termIsPrefix)
         {
@@ -64,7 +64,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    LuceneObjectPtr WildcardQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr WildcardQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<WildcardQuery>(term));
         WildcardQueryPtr cloneQuery(boost::dynamic_pointer_cast<WildcardQuery>(clone));
@@ -82,7 +82,7 @@ namespace Lucene
         return result;
     }
 
-    bool WildcardQuery::equals(LuceneObjectPtr other)
+    bool WildcardQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

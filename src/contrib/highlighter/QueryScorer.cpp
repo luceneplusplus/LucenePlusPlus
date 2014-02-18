@@ -15,28 +15,28 @@
 
 namespace Lucene
 {
-    QueryScorer::QueryScorer(QueryPtr query)
+    QueryScorer::QueryScorer(const QueryPtr& query)
     {
         init(query, L"", IndexReaderPtr(), true);
     }
 
-    QueryScorer::QueryScorer(QueryPtr query, const String& field)
+    QueryScorer::QueryScorer(const QueryPtr& query, const String& field)
     {
         init(query, field, IndexReaderPtr(), true);
     }
 
-    QueryScorer::QueryScorer(QueryPtr query, IndexReaderPtr reader, const String& field)
+    QueryScorer::QueryScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& field)
     {
         init(query, field, reader, true);
     }
 
-    QueryScorer::QueryScorer(QueryPtr query, IndexReaderPtr reader, const String& field, const String& defaultField)
+    QueryScorer::QueryScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& field, const String& defaultField)
     {
         this->defaultField = defaultField;
         init(query, field, reader, true);
     }
 
-    QueryScorer::QueryScorer(QueryPtr query, const String& field, const String& defaultField)
+    QueryScorer::QueryScorer(const QueryPtr& query, const String& field, const String& defaultField)
     {
         this->defaultField = defaultField;
         init(query, field, IndexReaderPtr(), true);
@@ -64,7 +64,7 @@ namespace Lucene
     {
     }
 
-    void QueryScorer::init(QueryPtr query, const String& field, IndexReaderPtr reader, bool expandMultiTermQuery)
+    void QueryScorer::init(const QueryPtr& query, const String& field, const IndexReaderPtr& reader, bool expandMultiTermQuery)
     {
         this->totalScore = 0;
         this->maxTermWeight = 0;
@@ -113,7 +113,7 @@ namespace Lucene
         return score;
     }
 
-    TokenStreamPtr QueryScorer::init(TokenStreamPtr tokenStream)
+    TokenStreamPtr QueryScorer::init(const TokenStreamPtr& tokenStream)
     {
         position = -1;
         termAtt = tokenStream->addAttribute<TermAttribute>();
@@ -132,7 +132,7 @@ namespace Lucene
         return fieldWeightedSpanTerms->get(token);
     }
 
-    TokenStreamPtr QueryScorer::initExtractor(TokenStreamPtr tokenStream)
+    TokenStreamPtr QueryScorer::initExtractor(const TokenStreamPtr& tokenStream)
     {
         WeightedSpanTermExtractorPtr qse(newLucene<WeightedSpanTermExtractor>(defaultField));
 
@@ -147,7 +147,7 @@ namespace Lucene
         return TokenStreamPtr();
     }
 
-    void QueryScorer::startFragment(TextFragmentPtr newFragment)
+    void QueryScorer::startFragment(const TextFragmentPtr& newFragment)
     {
         foundTerms = HashSet<String>::newInstance();
         totalScore = 0;

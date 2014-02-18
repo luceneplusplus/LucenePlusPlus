@@ -16,7 +16,7 @@ namespace Lucene
     class ReqOptSumScorer : public Scorer
     {
     public:
-        ReqOptSumScorer(ScorerPtr reqScorer, ScorerPtr optScorer);
+        ReqOptSumScorer(const ScorerPtr& reqScorer, const ScorerPtr& optScorer);
         virtual ~ReqOptSumScorer();
 
         LUCENE_CLASS(ReqOptSumScorer);

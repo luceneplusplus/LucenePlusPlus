@@ -28,7 +28,7 @@ namespace Lucene
         return map.end();
     }
 
-    void MapWeightedSpanTerm::put(const String& key, WeightedSpanTermPtr val)
+    void MapWeightedSpanTerm::put(const String& key, const WeightedSpanTermPtr& val)
     {
         return map.put(key, val);
     }

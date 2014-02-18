@@ -24,7 +24,7 @@ namespace Lucene
     public:
         /// Create a value source query
         /// @param valSrc provides the values defines the function to be used for scoring
-        ValueSourceQuery(ValueSourcePtr valSrc);
+        ValueSourceQuery(const ValueSourcePtr& valSrc);
 
         virtual ~ValueSourceQuery();
 
@@ -36,13 +36,13 @@ namespace Lucene
     public:
         using Query::toString;
 
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
         virtual void extractTerms(SetTerm terms);
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
         virtual String toString(const String& field);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

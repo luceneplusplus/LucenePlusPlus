@@ -25,7 +25,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture DocTest;
 
-static SegmentInfoPtr indexDoc(IndexWriterPtr writer, const String& fileName)
+static SegmentInfoPtr indexDoc(const IndexWriterPtr& writer, const String& fileName)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"contents", newLucene<FileReader>(FileUtils::joinPath(getTestDir(), fileName))));
@@ -34,7 +34,7 @@ static SegmentInfoPtr indexDoc(IndexWriterPtr writer, const String& fileName)
     return writer->newestSegment();
 }
 
-static void printSegment(StringStream& out, SegmentInfoPtr si)
+static void printSegment(StringStream& out, const SegmentInfoPtr& si)
 {
     SegmentReaderPtr reader = SegmentReader::get(true, si, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
 
@@ -72,7 +72,7 @@ static void printSegment(StringStream& out, SegmentInfoPtr si)
     reader->close();
 }
 
-static SegmentInfoPtr merge(SegmentInfoPtr si1, SegmentInfoPtr si2, const String& merged, bool useCompoundFile)
+static SegmentInfoPtr merge(const SegmentInfoPtr& si1, const SegmentInfoPtr& si2, const String& merged, bool useCompoundFile)
 {
     SegmentReaderPtr r1 = SegmentReader::get(true, si1, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
     SegmentReaderPtr r2 = SegmentReader::get(true, si2, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);

@@ -57,7 +57,7 @@ protected:
     SearcherPtr singleSearcher;
 
 public:
-    void addCollection1(IndexWriterPtr iw)
+    void addCollection1(const IndexWriterPtr& iw)
     {
         add(L"one blah three", iw);
         add(L"one foo three multiOne", iw);
@@ -67,7 +67,7 @@ public:
         add(L"blueberry pizza", iw);
     }
 
-    void addCollection2(IndexWriterPtr iw)
+    void addCollection2(const IndexWriterPtr& iw)
     {
         add(L"two blah three", iw);
         add(L"two foo xxx multiTwo", iw);
@@ -78,7 +78,7 @@ public:
         add(L"piccadilly circus", iw);
     }
 
-    void add(const String& value, IndexWriterPtr iw)
+    void add(const String& value, const IndexWriterPtr& iw)
     {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(FIELD_NAME, value, Field::STORE_YES, Field::INDEX_ANALYZED));

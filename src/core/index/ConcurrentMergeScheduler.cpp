@@ -119,7 +119,7 @@ namespace Lucene
         return count;
     }
 
-    void ConcurrentMergeScheduler::merge(IndexWriterPtr writer)
+    void ConcurrentMergeScheduler::merge(const IndexWriterPtr& writer)
     {
         BOOST_ASSERT(!writer->holdsLock());
 
@@ -182,13 +182,13 @@ namespace Lucene
         }
     }
 
-    void ConcurrentMergeScheduler::doMerge(OneMergePtr merge)
+    void ConcurrentMergeScheduler::doMerge(const OneMergePtr& merge)
     {
         TestScope testScope(L"ConcurrentMergeScheduler", L"doMerge");
         IndexWriterPtr(_writer)->merge(merge);
     }
 
-    MergeThreadPtr ConcurrentMergeScheduler::getMergeThread(IndexWriterPtr writer, OneMergePtr merge)
+    MergeThreadPtr ConcurrentMergeScheduler::getMergeThread(const IndexWriterPtr& writer, const OneMergePtr& merge)
     {
         SyncLock syncLock(this);
         MergeThreadPtr thread(newLucene<MergeThread>(shared_from_this(), writer, merge));
@@ -257,7 +257,7 @@ namespace Lucene
         allInstances = Collection<ConcurrentMergeSchedulerPtr>::newInstance();
     }
 
-    MergeThread::MergeThread(ConcurrentMergeSchedulerPtr merger, IndexWriterPtr writer, OneMergePtr startMerge)
+    MergeThread::MergeThread(const ConcurrentMergeSchedulerPtr& merger, const IndexWriterPtr& writer, const OneMergePtr& startMerge)
     {
         this->_merger = merger;
         this->_writer = writer;
@@ -268,7 +268,7 @@ namespace Lucene
     {
     }
 
-    void MergeThread::setRunningMerge(OneMergePtr merge)
+    void MergeThread::setRunningMerge(const OneMergePtr& merge)
     {
         ConcurrentMergeSchedulerPtr merger(_merger);
         SyncLock syncLock(merger);

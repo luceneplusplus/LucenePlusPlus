@@ -25,7 +25,7 @@ namespace Lucene
 {
     const int32_t Highlighter::DEFAULT_MAX_CHARS_TO_ANALYZE = 50 * 1024;
 
-    Highlighter::Highlighter(HighlighterScorerPtr fragmentScorer)
+    Highlighter::Highlighter(const HighlighterScorerPtr& fragmentScorer)
     {
         this->formatter = newLucene<SimpleHTMLFormatter>();
         this->encoder = newLucene<DefaultEncoder>();
@@ -34,7 +34,7 @@ namespace Lucene
         this->textFragmenter = newLucene<SimpleFragmenter>();
     }
 
-    Highlighter::Highlighter(FormatterPtr formatter, HighlighterScorerPtr fragmentScorer)
+    Highlighter::Highlighter(const FormatterPtr& formatter, const HighlighterScorerPtr& fragmentScorer)
     {
         this->formatter = formatter;
         this->encoder = newLucene<DefaultEncoder>();
@@ -43,7 +43,7 @@ namespace Lucene
         this->textFragmenter = newLucene<SimpleFragmenter>();
     }
 
-    Highlighter::Highlighter(FormatterPtr formatter, EncoderPtr encoder, HighlighterScorerPtr fragmentScorer)
+    Highlighter::Highlighter(const FormatterPtr& formatter, const EncoderPtr& encoder, const HighlighterScorerPtr& fragmentScorer)
     {
         this->formatter = formatter;
         this->encoder = encoder;
@@ -56,25 +56,25 @@ namespace Lucene
     {
     }
 
-    String Highlighter::getBestFragment(AnalyzerPtr analyzer, const String& fieldName, const String& text)
+    String Highlighter::getBestFragment(const AnalyzerPtr& analyzer, const String& fieldName, const String& text)
     {
         TokenStreamPtr tokenStream(analyzer->tokenStream(fieldName, newLucene<StringReader>(text)));
         return getBestFragment(tokenStream, text);
     }
 
-    String Highlighter::getBestFragment(TokenStreamPtr tokenStream, const String& text)
+    String Highlighter::getBestFragment(const TokenStreamPtr& tokenStream, const String& text)
     {
         Collection<String> results(getBestFragments(tokenStream,text, 1));
         return results.empty() ? L"" : results[0];
     }
 
-    Collection<String> Highlighter::getBestFragments(AnalyzerPtr analyzer, const String& fieldName, const String& text, int32_t maxNumFragments)
+    Collection<String> Highlighter::getBestFragments(const AnalyzerPtr& analyzer, const String& fieldName, const String& text, int32_t maxNumFragments)
     {
         TokenStreamPtr tokenStream(analyzer->tokenStream(fieldName, newLucene<StringReader>(text)));
         return getBestFragments(tokenStream, text, maxNumFragments);
     }
 
-    Collection<String> Highlighter::getBestFragments(TokenStreamPtr tokenStream, const String& text, int32_t maxNumFragments)
+    Collection<String> Highlighter::getBestFragments(const TokenStreamPtr& tokenStream, const String& text, int32_t maxNumFragments)
     {
         maxNumFragments = std::max((int32_t)1, maxNumFragments); //sanity check
 
@@ -90,20 +90,21 @@ namespace Lucene
         return fragTexts;
     }
 
-    Collection<TextFragmentPtr> Highlighter::getBestTextFragments(TokenStreamPtr tokenStream, const String& text, bool merge, int32_t maxNumFragments)
+    Collection<TextFragmentPtr> Highlighter::getBestTextFragments(const TokenStreamPtr& tokenStream, const String& text, bool merge, int32_t maxNumFragments)
     {
         Collection<TextFragmentPtr> docFrags(Collection<TextFragmentPtr>::newInstance());
         StringBufferPtr newText(newLucene<StringBuffer>());
 
-        TermAttributePtr termAtt(tokenStream->addAttribute<TermAttribute>());
-        OffsetAttributePtr offsetAtt(tokenStream->addAttribute<OffsetAttribute>());
-        tokenStream->addAttribute<PositionIncrementAttribute>();
-        tokenStream->reset();
+        TokenStreamPtr _tokenStream(tokenStream);
+        TermAttributePtr termAtt(_tokenStream->addAttribute<TermAttribute>());
+        OffsetAttributePtr offsetAtt(_tokenStream->addAttribute<OffsetAttribute>());
+        _tokenStream->addAttribute<PositionIncrementAttribute>();
+        _tokenStream->reset();
 
         TextFragmentPtr currentFrag(newLucene<TextFragment>(newText, newText->length(), docFrags.size()));
-        TokenStreamPtr newStream(fragmentScorer->init(tokenStream));
+        TokenStreamPtr newStream(fragmentScorer->init(_tokenStream));
         if (newStream)
-            tokenStream = newStream;
+            _tokenStream = newStream;
         fragmentScorer->startFragment(currentFrag);
         docFrags.add(currentFrag);
 
@@ -113,14 +114,14 @@ namespace Lucene
         LuceneException finally;
         try
         {
-            textFragmenter->start(text, tokenStream);
-            TokenGroupPtr tokenGroup(newLucene<TokenGroup>(tokenStream));
+            textFragmenter->start(text, _tokenStream);
+            TokenGroupPtr tokenGroup(newLucene<TokenGroup>(_tokenStream));
             String tokenText;
             int32_t startOffset = 0;
             int32_t endOffset = 0;
             int32_t lastEndOffset = 0;
 
-            for (bool next = tokenStream->incrementToken(); next && offsetAtt->startOffset() < maxDocCharsToAnalyze; next = tokenStream->incrementToken())
+            for (bool next = _tokenStream->incrementToken(); next && offsetAtt->startOffset() < maxDocCharsToAnalyze; next = _tokenStream->incrementToken())
             {
                 if (offsetAtt->endOffset() > (int32_t)text.length() || offsetAtt->startOffset() > (int32_t)text.length())
                     boost::throw_exception(RuntimeException(L"InvalidTokenOffsets: Token " + termAtt->term() + L" exceeds length of provided text sized " + StringUtils::toString(text.length())));
@@ -205,11 +206,11 @@ namespace Lucene
         {
             finally = e;
         }
-        if (tokenStream)
+        if (_tokenStream)
         {
             try
             {
-                tokenStream->close();
+                _tokenStream->close();
             }
             catch (...)
             {
@@ -286,7 +287,7 @@ namespace Lucene
         }
     }
 
-    String Highlighter::getBestFragments(TokenStreamPtr tokenStream, const String& text, int32_t maxNumFragments, const String& separator)
+    String Highlighter::getBestFragments(const TokenStreamPtr& tokenStream, const String& text, int32_t maxNumFragments, const String& separator)
     {
         Collection<String> sections(getBestFragments(tokenStream, text, maxNumFragments));
         StringStream result;
@@ -314,7 +315,7 @@ namespace Lucene
         return textFragmenter;
     }
 
-    void Highlighter::setTextFragmenter(FragmenterPtr fragmenter)
+    void Highlighter::setTextFragmenter(const FragmenterPtr& fragmenter)
     {
         textFragmenter = fragmenter;
     }
@@ -324,7 +325,7 @@ namespace Lucene
         return fragmentScorer;
     }
 
-    void Highlighter::setFragmentScorer(HighlighterScorerPtr scorer)
+    void Highlighter::setFragmentScorer(const HighlighterScorerPtr& scorer)
     {
         fragmentScorer = scorer;
     }
@@ -334,7 +335,7 @@ namespace Lucene
         return encoder;
     }
 
-    void Highlighter::setEncoder(EncoderPtr encoder)
+    void Highlighter::setEncoder(const EncoderPtr& encoder)
     {
         this->encoder = encoder;
     }

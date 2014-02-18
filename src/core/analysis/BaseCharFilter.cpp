@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    BaseCharFilter::BaseCharFilter(CharStreamPtr in) : CharFilter(in)
+    BaseCharFilter::BaseCharFilter(const CharStreamPtr& in) : CharFilter(in)
     {
         size = 0;
     }

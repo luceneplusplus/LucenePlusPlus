@@ -14,7 +14,7 @@ namespace Lucene
     {
     }
 
-    bool IndexCommit::equals(LuceneObjectPtr other)
+    bool IndexCommit::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

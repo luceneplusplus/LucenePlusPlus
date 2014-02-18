@@ -18,7 +18,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexWriterMergingTest;
 
-static bool verifyIndex(DirectoryPtr directory, int32_t startAt)
+static bool verifyIndex(const DirectoryPtr& directory, int32_t startAt)
 {
     bool fail = false;
     IndexReaderPtr reader = IndexReader::open(directory, true);
@@ -34,7 +34,7 @@ static bool verifyIndex(DirectoryPtr directory, int32_t startAt)
     return fail;
 }
 
-static void fillIndex(DirectoryPtr dir, int32_t start, int32_t numDocs)
+static void fillIndex(const DirectoryPtr& dir, int32_t start, int32_t numDocs)
 {
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergeFactor(2);

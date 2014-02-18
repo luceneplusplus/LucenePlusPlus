@@ -27,7 +27,7 @@ typedef LuceneTestFixture AtomicUpdateTest;
 class MockIndexWriter : public IndexWriter
 {
 public:
-    MockIndexWriter(DirectoryPtr dir, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
+    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
     {
         random = newLucene<Random>();
     }
@@ -97,7 +97,7 @@ const int32_t AtomicTimedThread::RUN_TIME_SEC = 3;
 class AtomicIndexerThread : public AtomicTimedThread
 {
 public:
-    AtomicIndexerThread(IndexWriterPtr writer)
+    AtomicIndexerThread(const IndexWriterPtr& writer)
     {
         this->writer = writer;
     }
@@ -128,7 +128,7 @@ public:
 class AtomicSearcherThread : public AtomicTimedThread
 {
 public:
-    AtomicSearcherThread(DirectoryPtr directory)
+    AtomicSearcherThread(const DirectoryPtr& directory)
     {
         this->directory = directory;
     }
@@ -153,7 +153,7 @@ public:
 };
 
 // Run one indexer and 2 searchers against single index as stress test.
-static void runTest(DirectoryPtr directory)
+static void runTest(const DirectoryPtr& directory)
 {
     Collection<AtomicTimedThreadPtr> threads(Collection<AtomicTimedThreadPtr>::newInstance(4));
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();

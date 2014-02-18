@@ -15,7 +15,7 @@ namespace Lucene
 {
     const int32_t TermScorer::SCORE_CACHE_SIZE = 32;
 
-    TermScorer::TermScorer(WeightPtr weight, TermDocsPtr td, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity)
+    TermScorer::TermScorer(const WeightPtr& weight, const TermDocsPtr& td, const SimilarityPtr& similarity, ByteArray norms) : Scorer(similarity)
     {
         this->weight = weight;
         this->termDocs = td;
@@ -41,12 +41,12 @@ namespace Lucene
         return Similarity::getNormDecoder();
     }
 
-    void TermScorer::score(CollectorPtr collector)
+    void TermScorer::score(const CollectorPtr& collector)
     {
         score(collector, INT_MAX, nextDoc());
     }
 
-    bool TermScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
+    bool TermScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
     {
         // firstDocID is ignored since nextDoc() sets 'doc'
         collector->setScorer(shared_from_this());

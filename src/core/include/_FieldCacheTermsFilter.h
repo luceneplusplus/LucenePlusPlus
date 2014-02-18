@@ -15,7 +15,7 @@ namespace Lucene
     class FieldCacheTermsFilterDocIdSet : public DocIdSet
     {
     public:
-        FieldCacheTermsFilterDocIdSet(Collection<String> terms, StringIndexPtr fcsi);
+        FieldCacheTermsFilterDocIdSet(Collection<String> terms, const StringIndexPtr& fcsi);
         virtual ~FieldCacheTermsFilterDocIdSet();
 
         LUCENE_CLASS(FieldCacheTermsFilterDocIdSet);
@@ -34,7 +34,7 @@ namespace Lucene
     class FieldCacheTermsFilterDocIdSetIterator : public DocIdSetIterator
     {
     public:
-        FieldCacheTermsFilterDocIdSetIterator(StringIndexPtr fcsi, OpenBitSetPtr openBitSet);
+        FieldCacheTermsFilterDocIdSetIterator(const StringIndexPtr& fcsi, const OpenBitSetPtr& openBitSet);
         virtual ~FieldCacheTermsFilterDocIdSetIterator();
 
         LUCENE_CLASS(FieldCacheTermsFilterDocIdSetIterator);

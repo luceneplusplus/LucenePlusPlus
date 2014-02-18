@@ -88,7 +88,7 @@ public:
     using ExplanationsFixture::qtest;
 
     /// ignore matches and focus on non-matches
-    virtual void qtest(QueryPtr q, Collection<int32_t> expDocNrs)
+    virtual void qtest(const QueryPtr& q, Collection<int32_t> expDocNrs)
     {
         CheckHits::checkNoMatchExplanations(q, FIELD, searcher, expDocNrs);
     }

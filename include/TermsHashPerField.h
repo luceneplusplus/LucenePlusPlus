@@ -14,7 +14,7 @@ namespace Lucene
     class TermsHashPerField : public InvertedDocConsumerPerField
     {
     public:
-        TermsHashPerField(DocInverterPerFieldPtr docInverterPerField, TermsHashPerThreadPtr perThread, TermsHashPerThreadPtr nextPerThread, FieldInfoPtr fieldInfo);
+        TermsHashPerField(const DocInverterPerFieldPtr& docInverterPerField, const TermsHashPerThreadPtr& perThread, const TermsHashPerThreadPtr& nextPerThread, const FieldInfoPtr& fieldInfo);
         virtual ~TermsHashPerField();
 
         LUCENE_CLASS(TermsHashPerField);
@@ -62,13 +62,13 @@ namespace Lucene
         /// Called on hitting an aborting exception
         virtual void abort();
 
-        void initReader(ByteSliceReaderPtr reader, RawPostingListPtr p, int32_t stream);
+        void initReader(const ByteSliceReaderPtr& reader, const RawPostingListPtr& p, int32_t stream);
 
         /// Collapse the hash table and sort in-place.
         Collection<RawPostingListPtr> sortPostings();
 
         /// Called before a field instance is being processed
-        virtual void start(FieldablePtr field);
+        virtual void start(const FieldablePtr& field);
 
         /// Called once per field, and is given all Fieldable occurrences for this field in the document.
         virtual bool start(Collection<FieldablePtr> fields, int32_t count);

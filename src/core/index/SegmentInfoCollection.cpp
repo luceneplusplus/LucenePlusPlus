@@ -34,35 +34,35 @@ namespace Lucene
         segmentInfos.clear();
     }
 
-    void SegmentInfoCollection::add(SegmentInfoPtr info)
+    void SegmentInfoCollection::add(const SegmentInfoPtr& info)
     {
         segmentInfos.add(info);
     }
 
-    void SegmentInfoCollection::add(int32_t pos, SegmentInfoPtr info)
+    void SegmentInfoCollection::add(int32_t pos, const SegmentInfoPtr& info)
     {
         segmentInfos.add(pos, info);
     }
 
-    void SegmentInfoCollection::addAll(SegmentInfoCollectionPtr segmentInfos)
+    void SegmentInfoCollection::addAll(const SegmentInfoCollectionPtr& segmentInfos)
     {
         this->segmentInfos.addAll(segmentInfos->segmentInfos.begin(), segmentInfos->segmentInfos.end());
     }
 
-    bool SegmentInfoCollection::equals(SegmentInfoCollectionPtr other)
+    bool SegmentInfoCollection::equals(const SegmentInfoCollectionPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
         return segmentInfos.equals(other->segmentInfos, luceneEquals<SegmentInfoPtr>());
     }
 
-    int32_t SegmentInfoCollection::find(SegmentInfoPtr info)
+    int32_t SegmentInfoCollection::find(const SegmentInfoPtr& info)
     {
         Collection<SegmentInfoPtr>::iterator idx = segmentInfos.find_if(luceneEqualTo<SegmentInfoPtr>(info));
         return idx == segmentInfos.end() ? -1 : std::distance(segmentInfos.begin(), idx);
     }
 
-    bool SegmentInfoCollection::contains(SegmentInfoPtr info)
+    bool SegmentInfoCollection::contains(const SegmentInfoPtr& info)
     {
         return segmentInfos.contains_if(luceneEqualTo<SegmentInfoPtr>(info));
     }
@@ -77,7 +77,7 @@ namespace Lucene
         segmentInfos.remove(segmentInfos.begin() + start, segmentInfos.begin() + end);
     }
 
-    LuceneObjectPtr SegmentInfoCollection::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SegmentInfoCollection::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<SegmentInfoCollection>());
         SegmentInfoCollectionPtr cloneInfos(boost::dynamic_pointer_cast<SegmentInfoCollection>(clone));

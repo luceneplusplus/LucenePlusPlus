@@ -16,7 +16,7 @@ namespace Lucene
     class TermVectorsTermsWriter : public TermsHashConsumer
     {
     public:
-        TermVectorsTermsWriter(DocumentsWriterPtr docWriter);
+        TermVectorsTermsWriter(const DocumentsWriterPtr& docWriter);
         virtual ~TermVectorsTermsWriter();
 
         LUCENE_CLASS(TermVectorsTermsWriter);
@@ -33,10 +33,10 @@ namespace Lucene
         int32_t allocCount;
 
     public:
-        virtual TermsHashConsumerPerThreadPtr addThread(TermsHashPerThreadPtr perThread);
+        virtual TermsHashConsumerPerThreadPtr addThread(const TermsHashPerThreadPtr& perThread);
         virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count);
-        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
-        virtual void closeDocStore(SegmentWriteStatePtr state);
+        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+        virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
         TermVectorsTermsWriterPerDocPtr getPerDoc();
 
@@ -44,9 +44,9 @@ namespace Lucene
         void fill(int32_t docID);
 
         void initTermVectorsWriter();
-        void finishDocument(TermVectorsTermsWriterPerDocPtr perDoc);
+        void finishDocument(const TermVectorsTermsWriterPerDocPtr& perDoc);
         bool freeRAM();
-        void free(TermVectorsTermsWriterPerDocPtr doc);
+        void free(const TermVectorsTermsWriterPerDocPtr& doc);
 
         virtual void abort();
         virtual int32_t bytesPerPosting();
@@ -55,7 +55,7 @@ namespace Lucene
     class TermVectorsTermsWriterPerDoc : public DocWriter
     {
     public:
-        TermVectorsTermsWriterPerDoc(TermVectorsTermsWriterPtr termsWriter = TermVectorsTermsWriterPtr());
+        TermVectorsTermsWriterPerDoc(const TermVectorsTermsWriterPtr& termsWriter = TermVectorsTermsWriterPtr());
         virtual ~TermVectorsTermsWriterPerDoc();
 
         LUCENE_CLASS(TermVectorsTermsWriterPerDoc);

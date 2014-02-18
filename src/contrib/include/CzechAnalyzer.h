@@ -48,14 +48,14 @@ namespace Lucene
         ///
         /// @return A {@link TokenStream} built from {@link StandardTokenizer}, filtered with {@link StandardFilter},
         /// {@link LowerCaseFilter}, and {@link StopFilter}
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
 
         /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the
         /// provided {@link Reader}.
         ///
         /// @return A {@link TokenStream} built from {@link StandardTokenizer}, filtered with {@link StandardFilter},
         /// {@link LowerCaseFilter}, and {@link StopFilter}
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
     };
 
     class LPPCONTRIBAPI CzechAnalyzerSavedStreams : public LuceneObject

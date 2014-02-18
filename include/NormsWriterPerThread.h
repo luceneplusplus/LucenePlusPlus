@@ -14,7 +14,7 @@ namespace Lucene
     class NormsWriterPerThread : public InvertedDocEndConsumerPerThread
     {
     public:
-        NormsWriterPerThread(DocInverterPerThreadPtr docInverterPerThread, NormsWriterPtr normsWriter);
+        NormsWriterPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const NormsWriterPtr& normsWriter);
         virtual ~NormsWriterPerThread();
 
         LUCENE_CLASS(NormsWriterPerThread);
@@ -24,7 +24,7 @@ namespace Lucene
         DocStatePtr docState;
 
     public:
-        virtual InvertedDocEndConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo);
+        virtual InvertedDocEndConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo);
         virtual void abort();
         virtual void startDocument();
         virtual void finishDocument();

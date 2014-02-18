@@ -20,7 +20,7 @@ namespace Lucene
     {
     }
 
-    DocValuesPtr FieldCacheSource::getValues(IndexReaderPtr reader)
+    DocValuesPtr FieldCacheSource::getValues(const IndexReaderPtr& reader)
     {
         return getCachedFieldValues(FieldCache::DEFAULT(), field, reader);
     }
@@ -30,7 +30,7 @@ namespace Lucene
         return field;
     }
 
-    bool FieldCacheSource::equals(LuceneObjectPtr other)
+    bool FieldCacheSource::equals(const LuceneObjectPtr& other)
     {
         FieldCacheSourcePtr otherSource(boost::dynamic_pointer_cast<FieldCacheSource>(other));
         if (!otherSource)

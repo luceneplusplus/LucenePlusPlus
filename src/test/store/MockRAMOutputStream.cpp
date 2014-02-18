@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    MockRAMOutputStream::MockRAMOutputStream(MockRAMDirectoryPtr dir, RAMFilePtr f, const String& name) : RAMOutputStream(f)
+    MockRAMOutputStream::MockRAMOutputStream(const MockRAMDirectoryPtr& dir, const RAMFilePtr& f, const String& name) : RAMOutputStream(f)
     {
         this->first = true;
         this->singleByte = ByteArray::newInstance(1);

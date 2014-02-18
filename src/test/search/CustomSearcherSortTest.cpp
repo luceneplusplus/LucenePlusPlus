@@ -31,12 +31,12 @@ using namespace Lucene;
 class CustomSearcher : public IndexSearcher
 {
 public:
-    CustomSearcher(DirectoryPtr directory, int32_t switcher) : IndexSearcher(directory, true)
+    CustomSearcher(const DirectoryPtr& directory, int32_t switcher) : IndexSearcher(directory, true)
     {
         this->switcher = switcher;
     }
 
-    CustomSearcher(IndexReaderPtr r, int32_t switcher) : IndexSearcher(r)
+    CustomSearcher(const IndexReaderPtr& r, int32_t switcher) : IndexSearcher(r)
     {
         this->switcher = switcher;
     }
@@ -49,7 +49,7 @@ protected:
     int32_t switcher;
 
 public:
-    virtual TopFieldDocsPtr search(QueryPtr query, FilterPtr filter, int32_t n, SortPtr sort)
+    virtual TopFieldDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n, const SortPtr& sort)
     {
         BooleanQueryPtr bq = newLucene<BooleanQuery>();
         bq->add(query, BooleanClause::MUST);
@@ -57,7 +57,7 @@ public:
         return IndexSearcher::search(bq, filter, n, sort);
     }
 
-    virtual TopDocsPtr search(QueryPtr query, FilterPtr filter, int32_t n)
+    virtual TopDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n)
     {
         BooleanQueryPtr bq = newLucene<BooleanQuery>();
         bq->add(query, BooleanClause::MUST);
@@ -116,7 +116,7 @@ public:
     }
 
     /// make sure the documents returned by the search match the expected list
-    void matchHits(SearcherPtr searcher, SortPtr sort)
+    void matchHits(const SearcherPtr& searcher, const SortPtr& sort)
     {
         // make a query without sorting first
         Collection<ScoreDocPtr> hitsByRank = searcher->search(query, FilterPtr(), 1000)->scoreDocs;

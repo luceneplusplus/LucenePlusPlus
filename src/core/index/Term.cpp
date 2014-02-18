@@ -34,7 +34,7 @@ namespace Lucene
         return newLucene<Term>(_field, text);
     }
 
-    bool Term::equals(LuceneObjectPtr other)
+    bool Term::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -57,7 +57,7 @@ namespace Lucene
         return result;
     }
 
-    int32_t Term::compareTo(LuceneObjectPtr other)
+    int32_t Term::compareTo(const LuceneObjectPtr& other)
     {
         TermPtr otherTerm(boost::static_pointer_cast<Term>(other));
         if (_field == otherTerm->_field)

@@ -31,7 +31,7 @@ namespace Lucene
         /// @param required The list of required scorers.
         /// @param prohibited The list of prohibited scorers.
         /// @param optional The list of optional scorers.
-        BooleanScorer2(SimilarityPtr similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> required, Collection<ScorerPtr> prohibited, Collection<ScorerPtr> optional);
+        BooleanScorer2(const SimilarityPtr& similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> required, Collection<ScorerPtr> prohibited, Collection<ScorerPtr> optional);
 
         virtual ~BooleanScorer2();
 
@@ -55,9 +55,9 @@ namespace Lucene
 
         /// Scores and collects all matching documents.
         /// @param collector The collector to which all matching documents are passed through.
-        virtual void score(CollectorPtr collector);
+        virtual void score(const CollectorPtr& collector);
 
-        virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
+        virtual bool score(const CollectorPtr& collector, int32_t max, int32_t firstDocID);
         virtual int32_t docID();
         virtual int32_t nextDoc();
         virtual double score();
@@ -66,7 +66,7 @@ namespace Lucene
     protected:
         ScorerPtr countingDisjunctionSumScorer(Collection<ScorerPtr> scorers, int32_t minNrShouldMatch);
         ScorerPtr countingConjunctionSumScorer(Collection<ScorerPtr> requiredScorers);
-        ScorerPtr dualConjunctionSumScorer(ScorerPtr req1, ScorerPtr req2);
+        ScorerPtr dualConjunctionSumScorer(const ScorerPtr& req1, const ScorerPtr& req2);
 
         /// Returns the scorer to be used for match counting and score summing.  Uses requiredScorers, optionalScorers
         /// and prohibitedScorers.
@@ -77,7 +77,7 @@ namespace Lucene
         /// Returns the scorer to be used for match counting and score summing.  Uses the given required scorer and
         /// the prohibitedScorers.
         /// @param requiredCountingSumScorer A required scorer already built.
-        ScorerPtr addProhibitedScorers(ScorerPtr requiredCountingSumScorer);
+        ScorerPtr addProhibitedScorers(const ScorerPtr& requiredCountingSumScorer);
 
         friend class CountingDisjunctionSumScorer;
         friend class CountingConjunctionSumScorer;
@@ -86,7 +86,7 @@ namespace Lucene
     class Coordinator : public LuceneObject
     {
     public:
-        Coordinator(BooleanScorer2Ptr scorer);
+        Coordinator(const BooleanScorer2Ptr& scorer);
         virtual ~Coordinator();
 
         LUCENE_CLASS(Coordinator);
@@ -107,7 +107,7 @@ namespace Lucene
     class SingleMatchScorer : public Scorer
     {
     public:
-        SingleMatchScorer(ScorerPtr scorer, CoordinatorPtr coordinator);
+        SingleMatchScorer(const ScorerPtr& scorer, const CoordinatorPtr& coordinator);
         virtual ~SingleMatchScorer();
 
         LUCENE_CLASS(SingleMatchScorer);
@@ -128,7 +128,7 @@ namespace Lucene
     class CountingDisjunctionSumScorer : public DisjunctionSumScorer
     {
     public:
-        CountingDisjunctionSumScorer(BooleanScorer2Ptr scorer, Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers);
+        CountingDisjunctionSumScorer(const BooleanScorer2Ptr& scorer, Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers);
         virtual ~CountingDisjunctionSumScorer();
 
         LUCENE_CLASS(CountingDisjunctionSumScorer);
@@ -149,7 +149,7 @@ namespace Lucene
     class CountingConjunctionSumScorer : public ConjunctionScorer
     {
     public:
-        CountingConjunctionSumScorer(BooleanScorer2Ptr scorer, SimilarityPtr similarity, Collection<ScorerPtr> scorers);
+        CountingConjunctionSumScorer(const BooleanScorer2Ptr& scorer, const SimilarityPtr& similarity, Collection<ScorerPtr> scorers);
         virtual ~CountingConjunctionSumScorer();
 
         LUCENE_CLASS(CountingConjunctionSumScorer);

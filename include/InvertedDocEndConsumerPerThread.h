@@ -20,7 +20,7 @@ namespace Lucene
 
     public:
         virtual void startDocument() = 0;
-        virtual InvertedDocEndConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo) = 0;
+        virtual InvertedDocEndConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo) = 0;
         virtual void finishDocument() = 0;
         virtual void abort() = 0;
     };

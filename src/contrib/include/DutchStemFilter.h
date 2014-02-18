@@ -24,14 +24,14 @@ namespace Lucene
     class LPPCONTRIBAPI DutchStemFilter : public TokenFilter
     {
     public:
-        DutchStemFilter(TokenStreamPtr input);
+        DutchStemFilter(const TokenStreamPtr& input);
 
         /// Builds a DutchStemFilter that uses an exclusion table.
-        DutchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable);
+        DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable);
 
         /// Builds a DutchStemFilter that uses an exclusion table and dictionary of word stem
         /// pairs, that overrule the algorithm.
-        DutchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable, MapStringString stemdictionary);
+        DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable, MapStringString stemdictionary);
 
         virtual ~DutchStemFilter();
 
@@ -48,7 +48,7 @@ namespace Lucene
         virtual bool incrementToken();
 
         /// Set a alternative/custom {@link DutchStemmer} for this filter.
-        void setStemmer(DutchStemmerPtr stemmer);
+        void setStemmer(const DutchStemmerPtr& stemmer);
 
         /// Set an alternative exclusion list for this filter.
         void setExclusionSet(HashSet<String> exclusiontable);

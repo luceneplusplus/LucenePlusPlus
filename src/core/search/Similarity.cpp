@@ -59,7 +59,7 @@ namespace Lucene
         return NORM_TABLE();
     }
 
-    double Similarity::computeNorm(const String& fieldName, FieldInvertStatePtr state)
+    double Similarity::computeNorm(const String& fieldName, const FieldInvertStatePtr& state)
     {
         return (double)(state->getBoost() * lengthNorm(fieldName, state->getLength()));
     }
@@ -74,7 +74,7 @@ namespace Lucene
         return tf((double)freq);
     }
 
-    IDFExplanationPtr Similarity::idfExplain(TermPtr term, SearcherPtr searcher)
+    IDFExplanationPtr Similarity::idfExplain(const TermPtr& term, const SearcherPtr& searcher)
     {
         int32_t df = searcher->docFreq(term);
         int32_t max = searcher->maxDoc();
@@ -82,7 +82,7 @@ namespace Lucene
         return newLucene<SimilarityIDFExplanation>(df, max, _idf);
     }
 
-    IDFExplanationPtr Similarity::idfExplain(Collection<TermPtr> terms, SearcherPtr searcher)
+    IDFExplanationPtr Similarity::idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher)
     {
         int32_t max = searcher->maxDoc();
         double _idf = 0.0;

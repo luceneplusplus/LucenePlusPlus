@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    NumericRangeFilter::NumericRangeFilter(NumericRangeQueryPtr query) : MultiTermQueryWrapperFilter(query)
+    NumericRangeFilter::NumericRangeFilter(const NumericRangeQueryPtr& query) : MultiTermQueryWrapperFilter(query)
     {
     }
 

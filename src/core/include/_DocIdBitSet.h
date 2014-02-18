@@ -14,7 +14,7 @@ namespace Lucene
     class DocIdBitSetIterator : public DocIdSetIterator
     {
     public:
-        DocIdBitSetIterator(BitSetPtr bitSet);
+        DocIdBitSetIterator(const BitSetPtr& bitSet);
         virtual ~DocIdBitSetIterator();
 
         LUCENE_CLASS(DocIdBitSetIterator);

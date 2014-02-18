@@ -46,7 +46,7 @@ namespace Lucene
         0x876541, 0x876542, 0x8765421, 0x876543, 0x8765431, 0x8765432, static_cast<int32_t>(0x87654321)
     };
 
-    OpenBitSetIterator::OpenBitSetIterator(OpenBitSetPtr bitSet)
+    OpenBitSetIterator::OpenBitSetIterator(const OpenBitSetPtr& bitSet)
     {
         arr = bitSet->getBits();
         words = bitSet->getNumWords();

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    DocFieldConsumersPerField::DocFieldConsumersPerField(DocFieldConsumersPerThreadPtr perThread, DocFieldConsumerPerFieldPtr one, DocFieldConsumerPerFieldPtr two)
+    DocFieldConsumersPerField::DocFieldConsumersPerField(const DocFieldConsumersPerThreadPtr& perThread, const DocFieldConsumerPerFieldPtr& one, const DocFieldConsumerPerFieldPtr& two)
     {
         this->_perThread = perThread;
         this->one = one;

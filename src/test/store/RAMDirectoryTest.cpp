@@ -63,7 +63,7 @@ protected:
 class TestRAMDirectoryThread : public LuceneThread
 {
 public:
-    TestRAMDirectoryThread(IndexWriterPtr writer, int32_t num)
+    TestRAMDirectoryThread(const IndexWriterPtr& writer, int32_t num)
     {
         this->writer = writer;
         this->num = num;

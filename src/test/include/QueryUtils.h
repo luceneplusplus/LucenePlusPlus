@@ -18,21 +18,21 @@ namespace Lucene
 
     public:
         /// Check the types of things query objects should be able to do.
-        static void check(QueryPtr q);
+        static void check(const QueryPtr& q);
 
         /// Check very basic hashCode and equals
-        static void checkHashEquals(QueryPtr q);
+        static void checkHashEquals(const QueryPtr& q);
 
-        static void checkEqual(QueryPtr q1, QueryPtr q2);
-        static void checkUnequal(QueryPtr q1, QueryPtr q2);
+        static void checkEqual(const QueryPtr& q1, const QueryPtr& q2);
+        static void checkUnequal(const QueryPtr& q1, const QueryPtr& q2);
 
         /// Deep check that explanations of a query 'score' correctly
-        static void checkExplanations(QueryPtr q, SearcherPtr s);
+        static void checkExplanations(const QueryPtr& q, const SearcherPtr& s);
 
         /// Various query sanity checks on a searcher, some checks are only done
         /// for types of IndexSearcher.
-        static void check(QueryPtr q1, SearcherPtr s);
-        static void check(QueryPtr q1, SearcherPtr s, bool wrap);
+        static void check(const QueryPtr& q1, const SearcherPtr& s);
+        static void check(const QueryPtr& q1, const SearcherPtr& s, bool wrap);
 
         /// Given an IndexSearcher, returns a new IndexSearcher whose IndexReader is a MultiReader
         /// containing the Reader of the original IndexSearcher, as well as several "empty"
@@ -41,7 +41,7 @@ namespace Lucene
         /// @param s the searcher to wrap.
         /// @param edge if negative, s will be the first sub; if 0, s will be in the middle, if
         /// positive s will be the last sub
-        static IndexSearcherPtr wrapUnderlyingReader(IndexSearcherPtr s, int32_t edge);
+        static IndexSearcherPtr wrapUnderlyingReader(const IndexSearcherPtr& s, int32_t edge);
 
         /// Given a Searcher, returns a new MultiSearcher wrapping the the original Searcher, as well
         /// as several "empty" IndexSearchers - some of which will have deleted documents in them.
@@ -49,16 +49,16 @@ namespace Lucene
         /// @param s the Searcher to wrap
         /// @param edge if negative, s will be the first sub; if 0, s will be in hte middle, if positive
         /// s will be the last sub
-        static MultiSearcherPtr wrapSearcher(SearcherPtr s, int32_t edge);
+        static MultiSearcherPtr wrapSearcher(const SearcherPtr& s, int32_t edge);
 
         static RAMDirectoryPtr makeEmptyIndex(int32_t numDeletedDocs);
 
         /// Alternate scorer skipTo(), skipTo(), next(), next(), skipTo(), skipTo(), etc and ensure
         /// a hitcollector receives same docs and scores
-        static void checkSkipTo(QueryPtr q, IndexSearcherPtr s);
+        static void checkSkipTo(const QueryPtr& q, const IndexSearcherPtr& s);
 
         /// Check that first skip on just created scorers always goes to the right doc
-        static void checkFirstSkipTo(QueryPtr q, IndexSearcherPtr s);
+        static void checkFirstSkipTo(const QueryPtr& q, const IndexSearcherPtr& s);
     };
 }
 

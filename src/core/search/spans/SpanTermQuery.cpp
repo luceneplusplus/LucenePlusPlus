@@ -13,7 +13,7 @@
 
 namespace Lucene
 {
-    SpanTermQuery::SpanTermQuery(TermPtr term)
+    SpanTermQuery::SpanTermQuery(const TermPtr& term)
     {
         this->term = term;
     }
@@ -56,7 +56,7 @@ namespace Lucene
         return result;
     }
 
-    bool SpanTermQuery::equals(LuceneObjectPtr other)
+    bool SpanTermQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -77,7 +77,7 @@ namespace Lucene
         return true;
     }
 
-    LuceneObjectPtr SpanTermQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SpanTermQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanTermQuery>(term));
         SpanTermQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanTermQuery>(clone));
@@ -85,7 +85,7 @@ namespace Lucene
         return spanFirstQuery;
     }
 
-    SpansPtr SpanTermQuery::getSpans(IndexReaderPtr reader)
+    SpansPtr SpanTermQuery::getSpans(const IndexReaderPtr& reader)
     {
         return newLucene<TermSpans>(reader->termPositions(term), term);
     }

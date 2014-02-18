@@ -22,7 +22,7 @@ using namespace Lucene;
 class TestFieldSelector : public FieldSelector
 {
 public:
-    TestFieldSelector(RandomPtr rand)
+    TestFieldSelector(const RandomPtr& rand)
     {
         this->rand = rand;
     }
@@ -52,7 +52,7 @@ public:
 class TestThread : public LuceneThread
 {
 public:
-    TestThread(int32_t iter, RandomPtr rand, IndexReaderPtr reader)
+    TestThread(int32_t iter, const RandomPtr& rand, const IndexReaderPtr& reader)
     {
         this->iter = iter;
         this->rand = rand;
@@ -92,7 +92,7 @@ public:
             validateField(fields[i]);
     }
 
-    void validateField(FieldablePtr f)
+    void validateField(const FieldablePtr& f)
     {
         String val = f->stringValue();
         if (!boost::starts_with(val, L"^") || !boost::ends_with(val, L"$"))
@@ -121,7 +121,7 @@ public:
     Collection<String> words;
 
 public:
-    void buildDir(DirectoryPtr dir, int32_t numDocs, int32_t maxFields, int32_t maxFieldLen)
+    void buildDir(const DirectoryPtr& dir, int32_t numDocs, int32_t maxFields, int32_t maxFieldLen)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         writer->setMaxBufferedDocs(10);

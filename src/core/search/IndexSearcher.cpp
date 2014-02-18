@@ -19,17 +19,17 @@
 
 namespace Lucene
 {
-    IndexSearcher::IndexSearcher(DirectoryPtr path, bool readOnly)
+    IndexSearcher::IndexSearcher(const DirectoryPtr& path, bool readOnly)
     {
         ConstructSearcher(IndexReader::open(path, readOnly), true);
     }
 
-    IndexSearcher::IndexSearcher(IndexReaderPtr reader)
+    IndexSearcher::IndexSearcher(const IndexReaderPtr& reader)
     {
         ConstructSearcher(reader, false);
     }
 
-    IndexSearcher::IndexSearcher(IndexReaderPtr reader, Collection<IndexReaderPtr> subReaders, Collection<int32_t> docStarts)
+    IndexSearcher::IndexSearcher(const IndexReaderPtr& reader, Collection<IndexReaderPtr> subReaders, Collection<int32_t> docStarts)
     {
         this->fieldSortDoTrackScores = false;
         this->fieldSortDoMaxScore = false;
@@ -43,7 +43,7 @@ namespace Lucene
     {
     }
 
-    void IndexSearcher::ConstructSearcher(IndexReaderPtr reader, bool closeReader)
+    void IndexSearcher::ConstructSearcher(const IndexReaderPtr& reader, bool closeReader)
     {
         this->fieldSortDoTrackScores = false;
         this->fieldSortDoMaxScore = false;
@@ -62,7 +62,7 @@ namespace Lucene
         }
     }
 
-    void IndexSearcher::gatherSubReaders(Collection<IndexReaderPtr> allSubReaders, IndexReaderPtr reader)
+    void IndexSearcher::gatherSubReaders(Collection<IndexReaderPtr> allSubReaders, const IndexReaderPtr& reader)
     {
         ReaderUtil::gatherSubReaders(allSubReaders, reader);
     }
@@ -78,7 +78,7 @@ namespace Lucene
             reader->close();
     }
 
-    int32_t IndexSearcher::docFreq(TermPtr term)
+    int32_t IndexSearcher::docFreq(const TermPtr& term)
     {
         return reader->docFreq(term);
     }
@@ -88,7 +88,7 @@ namespace Lucene
         return reader->document(n);
     }
 
-    DocumentPtr IndexSearcher::doc(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr IndexSearcher::doc(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         return reader->document(n, fieldSelector);
     }
@@ -98,7 +98,7 @@ namespace Lucene
         return reader->maxDoc();
     }
 
-    TopDocsPtr IndexSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n)
+    TopDocsPtr IndexSearcher::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n)
     {
         if (n <= 0)
             boost::throw_exception(IllegalArgumentException(L"n must be > 0"));
@@ -107,19 +107,19 @@ namespace Lucene
         return collector->topDocs();
     }
 
-    TopFieldDocsPtr IndexSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
+    TopFieldDocsPtr IndexSearcher::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort)
     {
         return search(weight, filter, n, sort, true);
     }
 
-    TopFieldDocsPtr IndexSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort, bool fillFields)
+    TopFieldDocsPtr IndexSearcher::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort, bool fillFields)
     {
         TopFieldCollectorPtr collector(TopFieldCollector::create(sort, std::min(n, reader->maxDoc()), fillFields, fieldSortDoTrackScores, fieldSortDoMaxScore, !weight->scoresDocsOutOfOrder()));
         search(weight, filter, collector);
         return boost::dynamic_pointer_cast<TopFieldDocs>(collector->topDocs());
     }
 
-    void IndexSearcher::search(WeightPtr weight, FilterPtr filter, CollectorPtr results)
+    void IndexSearcher::search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results)
     {
         if (!filter)
         {
@@ -141,7 +141,7 @@ namespace Lucene
         }
     }
 
-    void IndexSearcher::searchWithFilter(IndexReaderPtr reader, WeightPtr weight, FilterPtr filter, CollectorPtr collector)
+    void IndexSearcher::searchWithFilter(const IndexReaderPtr& reader, const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& collector)
     {
         BOOST_ASSERT(filter);
 
@@ -188,7 +188,7 @@ namespace Lucene
         }
     }
 
-    QueryPtr IndexSearcher::rewrite(QueryPtr original)
+    QueryPtr IndexSearcher::rewrite(const QueryPtr& original)
     {
         QueryPtr query(original);
         for (QueryPtr rewrittenQuery(query->rewrite(reader)); rewrittenQuery != query; rewrittenQuery = query->rewrite(reader))
@@ -196,7 +196,7 @@ namespace Lucene
         return query;
     }
 
-    ExplanationPtr IndexSearcher::explain(WeightPtr weight, int32_t doc)
+    ExplanationPtr IndexSearcher::explain(const WeightPtr& weight, int32_t doc)
     {
         int32_t n = ReaderUtil::subIndex(doc, docStarts);
         int32_t deBasedDoc = doc - docStarts[n];

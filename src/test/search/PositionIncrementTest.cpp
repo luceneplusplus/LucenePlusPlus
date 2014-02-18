@@ -92,7 +92,7 @@ namespace TestSetPosition
         }
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             return newLucene<SetPositionTokenStream>();
         }
@@ -116,7 +116,7 @@ namespace TestSetPosition
         WhitespaceAnalyzerPtr a;
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             TokenStreamPtr ts = a->tokenStream(fieldName, reader);
             return newLucene<StopFilter>(enablePositionIncrements, ts, newLucene<CharArraySet>(newCollection<String>(L"stop"), true));
@@ -261,7 +261,7 @@ namespace TestPayloadsPos0
     class TestPayloadFilter : public TokenFilter
     {
     public:
-        TestPayloadFilter(TokenStreamPtr input, const String& fieldName) : TokenFilter(input)
+        TestPayloadFilter(const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input)
         {
             this->fieldName = fieldName;
             this->pos = 0;
@@ -312,7 +312,7 @@ namespace TestPayloadsPos0
         }
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
             return newLucene<TestPayloadFilter>(result, fieldName);

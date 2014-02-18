@@ -465,7 +465,7 @@ namespace Lucene
         /// @param field Field name
         /// @param state Current processing state for this field
         /// @return The calculated float norm
-        virtual double computeNorm(const String& fieldName, FieldInvertStatePtr state);
+        virtual double computeNorm(const String& fieldName, const FieldInvertStatePtr& state);
 
         /// Computes the normalization value for a field given the total number of terms contained in a field.
         /// These values, together with field boosts, are stored in an index and multiplied into scores for hits
@@ -559,7 +559,7 @@ namespace Lucene
         /// @param term The term in question
         /// @param searcher The document collection being searched
         /// @return An IDFExplain object that includes both an idf score factor and an explanation for the term.
-        virtual IDFExplanationPtr idfExplain(TermPtr term, SearcherPtr searcher);
+        virtual IDFExplanationPtr idfExplain(const TermPtr& term, const SearcherPtr& searcher);
 
         /// Computes a score factor for a phrase.
         ///
@@ -569,7 +569,7 @@ namespace Lucene
         /// @param searcher The document collection being searched
         /// @return An IDFExplain object that includes both an idf score factor for the phrase and an explanation
         /// for each term.
-        virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, SearcherPtr searcher);
+        virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher);
 
         /// Computes a score factor based on a term's document frequency (the number of documents which contain the
         /// term).  This value is multiplied by the {@link #tf(int32_t)} factor for each term in the query and these

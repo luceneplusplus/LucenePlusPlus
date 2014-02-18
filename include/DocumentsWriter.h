@@ -54,7 +54,7 @@ namespace Lucene
     class DocumentsWriter : public LuceneObject
     {
     public:
-        DocumentsWriter(DirectoryPtr directory, IndexWriterPtr writer, IndexingChainPtr indexingChain);
+        DocumentsWriter(const DirectoryPtr& directory, const IndexWriterPtr& writer, const IndexingChainPtr& indexingChain);
         virtual ~DocumentsWriter();
 
         LUCENE_CLASS(DocumentsWriter);
@@ -200,10 +200,10 @@ namespace Lucene
         bool hasProx();
 
         /// If non-null, various details of indexing are printed here.
-        void setInfoStream(InfoStreamPtr infoStream);
+        void setInfoStream(const InfoStreamPtr& infoStream);
 
         void setMaxFieldLength(int32_t maxFieldLength);
-        void setSimilarity(SimilarityPtr similarity);
+        void setSimilarity(const SimilarityPtr& similarity);
 
         /// Set how much RAM we can use before flushing.
         void setRAMBufferSizeMB(double mb);
@@ -276,24 +276,24 @@ namespace Lucene
         /// Returns a free (idle) ThreadState that may be used for indexing this one document.  This call also
         /// pauses if a flush is pending.  If delTerm is non-null then we buffer this deleted term after the
         /// thread state has been acquired.
-        DocumentsWriterThreadStatePtr getThreadState(DocumentPtr doc, TermPtr delTerm);
+        DocumentsWriterThreadStatePtr getThreadState(const DocumentPtr& doc, const TermPtr& delTerm);
 
         /// Returns true if the caller (IndexWriter) should now flush.
-        bool addDocument(DocumentPtr doc, AnalyzerPtr analyzer);
+        bool addDocument(const DocumentPtr& doc, const AnalyzerPtr& analyzer);
 
-        bool updateDocument(TermPtr t, DocumentPtr doc, AnalyzerPtr analyzer);
-        bool updateDocument(DocumentPtr doc, AnalyzerPtr analyzer, TermPtr delTerm);
+        bool updateDocument(const TermPtr& t, const DocumentPtr& doc, const AnalyzerPtr& analyzer);
+        bool updateDocument(const DocumentPtr& doc, const AnalyzerPtr& analyzer, const TermPtr& delTerm);
 
         int32_t getNumBufferedDeleteTerms(); // for testing
         MapTermNum getBufferedDeleteTerms(); // for testing
 
         /// Called whenever a merge has completed and the merged segments had deletions
-        void remapDeletes(SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergeDocCount);
+        void remapDeletes(const SegmentInfosPtr& infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, const OneMergePtr& merge, int32_t mergeDocCount);
 
         bool bufferDeleteTerms(Collection<TermPtr> terms);
-        bool bufferDeleteTerm(TermPtr term);
+        bool bufferDeleteTerm(const TermPtr& term);
         bool bufferDeleteQueries(Collection<QueryPtr> queries);
-        bool bufferDeleteQuery(QueryPtr query);
+        bool bufferDeleteQuery(const QueryPtr& query);
         bool deletesFull();
         bool doApplyDeletes();
 
@@ -301,7 +301,7 @@ namespace Lucene
         int32_t getMaxBufferedDeleteTerms();
 
         bool hasDeletes();
-        bool applyDeletes(SegmentInfosPtr infos);
+        bool applyDeletes(const SegmentInfosPtr& infos);
         bool doBalanceRAM();
 
         void waitForWaitQueue();
@@ -334,22 +334,22 @@ namespace Lucene
 
         bool allThreadsIdle();
 
-        void waitReady(DocumentsWriterThreadStatePtr state);
+        void waitReady(const DocumentsWriterThreadStatePtr& state);
 
         bool timeToFlushDeletes();
 
         // used only by assert
-        bool checkDeleteTerm(TermPtr term);
+        bool checkDeleteTerm(const TermPtr& term);
 
-        bool applyDeletes(IndexReaderPtr reader, int32_t docIDStart);
-        void addDeleteTerm(TermPtr term, int32_t docCount);
+        bool applyDeletes(const IndexReaderPtr& reader, int32_t docIDStart);
+        void addDeleteTerm(const TermPtr& term, int32_t docCount);
 
         /// Buffer a specific docID for deletion.  Currently only used when we hit a exception when adding a document
         void addDeleteDocID(int32_t docID);
-        void addDeleteQuery(QueryPtr query, int32_t docID);
+        void addDeleteQuery(const QueryPtr& query, int32_t docID);
 
         /// Does the synchronized work to finish/flush the inverted document.
-        void finishDocument(DocumentsWriterThreadStatePtr perThread, DocWriterPtr docWriter);
+        void finishDocument(const DocumentsWriterThreadStatePtr& perThread, const DocWriterPtr& docWriter);
 
         friend class WaitQueue;
     };
@@ -383,7 +383,7 @@ namespace Lucene
     class PerDocBuffer : public RAMFile
     {
     public:
-        PerDocBuffer(DocumentsWriterPtr docWriter);
+        PerDocBuffer(const DocumentsWriterPtr& docWriter);
         virtual ~PerDocBuffer();
 
         LUCENE_CLASS(PerDocBuffer);
@@ -419,7 +419,7 @@ namespace Lucene
         virtual void abort() = 0;
         virtual int64_t sizeInBytes() = 0;
 
-        virtual void setNext(DocWriterPtr next);
+        virtual void setNext(const DocWriterPtr& next);
     };
 
     /// The IndexingChain must define the {@link #getChain(DocumentsWriter)} method which returns the DocConsumer
@@ -432,7 +432,7 @@ namespace Lucene
         LUCENE_CLASS(IndexingChain);
 
     public:
-        virtual DocConsumerPtr getChain(DocumentsWriterPtr documentsWriter) = 0;
+        virtual DocConsumerPtr getChain(const DocumentsWriterPtr& documentsWriter) = 0;
     };
 
     /// This is the current indexing chain:
@@ -457,7 +457,7 @@ namespace Lucene
         LUCENE_CLASS(DefaultIndexingChain);
 
     public:
-        virtual DocConsumerPtr getChain(DocumentsWriterPtr documentsWriter);
+        virtual DocConsumerPtr getChain(const DocumentsWriterPtr& documentsWriter);
     };
 
     class SkipDocWriter : public DocWriter
@@ -476,7 +476,7 @@ namespace Lucene
     class WaitQueue : public LuceneObject
     {
     public:
-        WaitQueue(DocumentsWriterPtr docWriter);
+        WaitQueue(const DocumentsWriterPtr& docWriter);
         virtual ~WaitQueue();
 
         LUCENE_CLASS(WaitQueue);
@@ -496,16 +496,16 @@ namespace Lucene
         bool doResume();
         bool doPause();
         void abort();
-        bool add(DocWriterPtr doc);
+        bool add(const DocWriterPtr& doc);
 
     protected:
-        void writeDocument(DocWriterPtr doc);
+        void writeDocument(const DocWriterPtr& doc);
     };
 
     class ByteBlockAllocator : public ByteBlockPoolAllocatorBase
     {
     public:
-        ByteBlockAllocator(DocumentsWriterPtr docWriter, int32_t blockSize);
+        ByteBlockAllocator(const DocumentsWriterPtr& docWriter, int32_t blockSize);
         virtual ~ByteBlockAllocator();
 
         LUCENE_CLASS(ByteBlockAllocator);

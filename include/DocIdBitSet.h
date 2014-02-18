@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         DocIdBitSet();
-        DocIdBitSet(BitSetPtr bitSet);
+        DocIdBitSet(const BitSetPtr& bitSet);
 
         virtual ~DocIdBitSet();
 
@@ -34,9 +34,9 @@ namespace Lucene
         /// Returns the underlying BitSet.
         BitSetPtr getBitSet();
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

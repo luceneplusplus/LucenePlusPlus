@@ -157,7 +157,7 @@ TEST_F(DirectoryTest, testDontCreate)
     FileUtils::removeDirectory(path);
 }
 
-void checkDirectoryFilter(DirectoryPtr dir)
+void checkDirectoryFilter(const DirectoryPtr& dir)
 {
     String name(L"file");
     dir->createOutput(name)->close();

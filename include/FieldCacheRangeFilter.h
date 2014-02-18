@@ -38,7 +38,7 @@ namespace Lucene
     class LPPAPI FieldCacheRangeFilter : public Filter
     {
     public:
-        FieldCacheRangeFilter(const String& field, ParserPtr parser, bool includeLower, bool includeUpper);
+        FieldCacheRangeFilter(const String& field, const ParserPtr& parser, bool includeLower, bool includeUpper);
         virtual ~FieldCacheRangeFilter();
 
         LUCENE_CLASS(FieldCacheRangeFilter);
@@ -62,7 +62,7 @@ namespace Lucene
         /// Creates a numeric range filter using {@link FieldCache#getBytes(IndexReaderPtr, String, ByteParserPtr)}. This
         /// works with all byte fields containing exactly one numeric term in the field.  The range can be half-open by
         /// setting one of the values to null.
-        static FieldCacheRangeFilterPtr newByteRange(const String& field, ByteParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newByteRange(const String& field, const ByteParserPtr& parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
 
         /// Creates a numeric range filter using {@link FieldCache#getInts(IndexReaderPtr, String)}. This works with all
         /// int fields containing exactly one numeric term in the field. The range can be half-open by setting one of the
@@ -72,7 +72,7 @@ namespace Lucene
         /// Creates a numeric range filter using {@link FieldCache#getInts(IndexReaderPtr, String, IntParserPtr)}. This
         /// works with all int fields containing exactly one numeric term in the field.  The range can be half-open by
         /// setting one of the values to null.
-        static FieldCacheRangeFilterPtr newIntRange(const String& field, IntParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newIntRange(const String& field, const IntParserPtr& parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
 
         /// Creates a numeric range filter using {@link FieldCache#getLongs(IndexReaderPtr, String)}. This works with all
         /// long fields containing exactly one numeric term in the field. The range can be half-open by setting one of the
@@ -82,7 +82,7 @@ namespace Lucene
         /// Creates a numeric range filter using {@link FieldCache#getLongs(IndexReaderPtr, String, LongParserPtr)}. This
         /// works with all long fields containing exactly one numeric term in the field.  The range can be half-open by
         /// setting one of the values to null.
-        static FieldCacheRangeFilterPtr newLongRange(const String& field, LongParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newLongRange(const String& field, const LongParserPtr& parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
 
         /// Creates a numeric range filter using {@link FieldCache#getDoubles(IndexReaderPtr, String)}. This works with all
         /// long fields containing exactly one numeric term in the field. The range can be half-open by setting one of the
@@ -92,10 +92,10 @@ namespace Lucene
         /// Creates a numeric range filter using {@link FieldCache#getDoubles(IndexReaderPtr, String, DoubleParserPtr)}. This
         /// works with all long fields containing exactly one numeric term in the field.  The range can be half-open by
         /// setting one of the values to null.
-        static FieldCacheRangeFilterPtr newDoubleRange(const String& field, DoubleParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
+        static FieldCacheRangeFilterPtr newDoubleRange(const String& field, const DoubleParserPtr& parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
 
         virtual String toString() = 0;
-        virtual bool equals(LuceneObjectPtr other) = 0;
+        virtual bool equals(const LuceneObjectPtr& other) = 0;
         virtual int32_t hashCode() = 0;
 
         /// Returns the field name for this filter

@@ -39,7 +39,7 @@ namespace Lucene
         /// of the parse.
         /// @param tokenImage This is a reference to the "tokenImage" array of the generated parser within
         /// which the parse error occurred.
-        static String parseError(QueryParserTokenPtr currentToken, Collection< Collection<int32_t> > expectedTokenSequences,
+        static String parseError(const QueryParserTokenPtr& currentToken, Collection< Collection<int32_t> > expectedTokenSequences,
                                  Collection<String> tokenImage);
 
 

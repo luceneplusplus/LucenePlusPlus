@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    MultiLevelSkipListReader::MultiLevelSkipListReader(IndexInputPtr skipStream, int32_t maxSkipLevels, int32_t skipInterval)
+    MultiLevelSkipListReader::MultiLevelSkipListReader(const IndexInputPtr& skipStream, int32_t maxSkipLevels, int32_t skipInterval)
     {
         this->numberOfLevelsToBuffer = 1;
         this->numberOfSkipLevels = 0;
@@ -190,7 +190,7 @@ namespace Lucene
         lastChildPointer = childPointer[level];
     }
 
-    SkipBuffer::SkipBuffer(IndexInputPtr input, int32_t length)
+    SkipBuffer::SkipBuffer(const IndexInputPtr& input, int32_t length)
     {
         pos = 0;
         data = ByteArray::newInstance(length);

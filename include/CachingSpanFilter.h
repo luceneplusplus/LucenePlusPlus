@@ -18,7 +18,7 @@ namespace Lucene
     {
     public:
         /// New deletions always result in a cache miss, by default ({@link CachingWrapperFilter#RECACHE}.
-        CachingSpanFilter(SpanFilterPtr filter, CachingWrapperFilter::DeletesMode deletesMode = CachingWrapperFilter::DELETES_RECACHE);
+        CachingSpanFilter(const SpanFilterPtr& filter, CachingWrapperFilter::DeletesMode deletesMode = CachingWrapperFilter::DELETES_RECACHE);
         virtual ~CachingSpanFilter();
 
         LUCENE_CLASS(CachingSpanFilter);
@@ -33,15 +33,15 @@ namespace Lucene
         int32_t missCount;
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
-        virtual SpanFilterResultPtr bitSpans(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+        virtual SpanFilterResultPtr bitSpans(const IndexReaderPtr& reader);
 
         virtual String toString();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
     protected:
-        SpanFilterResultPtr getCachedResult(IndexReaderPtr reader);
+        SpanFilterResultPtr getCachedResult(const IndexReaderPtr& reader);
     };
 }
 

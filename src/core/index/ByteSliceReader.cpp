@@ -26,7 +26,7 @@ namespace Lucene
     {
     }
 
-    void ByteSliceReader::init(ByteBlockPoolPtr pool, int32_t startIndex, int32_t endIndex)
+    void ByteSliceReader::init(const ByteBlockPoolPtr& pool, int32_t startIndex, int32_t endIndex)
     {
         BOOST_ASSERT(endIndex - startIndex >= 0);
         BOOST_ASSERT(startIndex >= 0);
@@ -67,7 +67,7 @@ namespace Lucene
         return buffer[upto++];
     }
 
-    int64_t ByteSliceReader::writeTo(IndexOutputPtr out)
+    int64_t ByteSliceReader::writeTo(const IndexOutputPtr& out)
     {
         int64_t size = 0;
         while (true)

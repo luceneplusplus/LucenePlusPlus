@@ -47,10 +47,10 @@ namespace Lucene
         virtual String getField();
         virtual void extractTerms(SetTerm terms);
         virtual String toString(const String& field);
-        virtual SpansPtr getSpans(IndexReaderPtr reader);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual bool equals(LuceneObjectPtr other);
+        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

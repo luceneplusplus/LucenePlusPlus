@@ -43,8 +43,8 @@ namespace Lucene
 
     public:
         virtual String description();
-        virtual DocValuesPtr getValues(IndexReaderPtr reader);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual DocValuesPtr getValues(const IndexReaderPtr& reader);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

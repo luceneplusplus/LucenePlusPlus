@@ -17,7 +17,7 @@ namespace Lucene
     class LPPAPI NearSpansUnordered : public Spans
     {
     public:
-        NearSpansUnordered(SpanNearQueryPtr query, IndexReaderPtr reader);
+        NearSpansUnordered(const SpanNearQueryPtr& query, const IndexReaderPtr& reader);
         virtual ~NearSpansUnordered();
 
         LUCENE_CLASS(NearSpansUnordered);
@@ -58,7 +58,7 @@ namespace Lucene
     protected:
         SpansCellPtr min();
         void initList(bool next);
-        void addToList(SpansCellPtr cell);
+        void addToList(const SpansCellPtr& cell);
         void firstToLast();
         void queueToList();
         void listToQueue();

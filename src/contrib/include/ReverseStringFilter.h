@@ -22,13 +22,13 @@ namespace Lucene
         /// Create a new ReverseStringFilter that reverses all tokens in the supplied {@link TokenStream}.
         ///
         /// The reversed tokens will not be marked.
-        ReverseStringFilter(TokenStreamPtr input);
+        ReverseStringFilter(const TokenStreamPtr& input);
 
         /// Create a new ReverseStringFilter that reverses and marks all tokens in the supplied {@link
         /// TokenStream}.
         ///
         /// The reversed tokens will be prepended (marked) by the marker character.
-        ReverseStringFilter(TokenStreamPtr input, wchar_t marker);
+        ReverseStringFilter(const TokenStreamPtr& input, wchar_t marker);
 
         virtual ~ReverseStringFilter();
 

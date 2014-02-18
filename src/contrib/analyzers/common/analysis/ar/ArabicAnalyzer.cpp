@@ -103,7 +103,7 @@ namespace Lucene
         return stopSet;
     }
 
-    TokenStreamPtr ArabicAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr ArabicAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<ArabicLetterTokenizer>(reader);
         result = newLucene<LowerCaseFilter>(result);
@@ -114,7 +114,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr ArabicAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr ArabicAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         ArabicAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ArabicAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

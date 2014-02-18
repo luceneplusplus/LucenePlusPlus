@@ -15,7 +15,7 @@ namespace Lucene
     class DefaultSkipListWriter : public MultiLevelSkipListWriter
     {
     public:
-        DefaultSkipListWriter(int32_t skipInterval, int32_t numberOfSkipLevels, int32_t docCount, IndexOutputPtr freqOutput, IndexOutputPtr proxOutput);
+        DefaultSkipListWriter(int32_t skipInterval, int32_t numberOfSkipLevels, int32_t docCount, const IndexOutputPtr& freqOutput, const IndexOutputPtr& proxOutput);
         virtual ~DefaultSkipListWriter();
 
         LUCENE_CLASS(DefaultSkipListWriter);
@@ -36,15 +36,15 @@ namespace Lucene
         int64_t curProxPointer;
 
     public:
-        void setFreqOutput(IndexOutputPtr freqOutput);
-        void setProxOutput(IndexOutputPtr proxOutput);
+        void setFreqOutput(const IndexOutputPtr& freqOutput);
+        void setProxOutput(const IndexOutputPtr& proxOutput);
 
         /// Sets the values for the current skip data.
         void setSkipData(int32_t doc, bool storePayloads, int32_t payloadLength);
 
     protected:
         virtual void resetSkip();
-        virtual void writeSkipData(int32_t level, IndexOutputPtr skipBuffer);
+        virtual void writeSkipData(int32_t level, const IndexOutputPtr& skipBuffer);
 
         friend class FormatPostingsTermsWriter;
     };

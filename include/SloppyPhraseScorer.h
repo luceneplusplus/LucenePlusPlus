@@ -14,7 +14,7 @@ namespace Lucene
     class SloppyPhraseScorer : public PhraseScorer
     {
     public:
-        SloppyPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, int32_t slop, ByteArray norms);
+        SloppyPhraseScorer(const WeightPtr& weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, const SimilarityPtr& similarity, int32_t slop, ByteArray norms);
         virtual ~SloppyPhraseScorer();
 
         LUCENE_CLASS(SloppyPhraseScorer);
@@ -43,7 +43,7 @@ namespace Lucene
     protected:
         /// Flip pp2 and pp in the queue: pop until finding pp2, insert back all but pp2, insert pp back.
         /// Assumes: pp!=pp2, pp2 in pq, pp not in pq.  Called only when there are repeating pps.
-        PhrasePositionsPtr flip(PhrasePositionsPtr pp, PhrasePositionsPtr pp2);
+        PhrasePositionsPtr flip(const PhrasePositionsPtr& pp, const PhrasePositionsPtr& pp2);
 
         /// Init PhrasePositions in place.
         /// There is a one time initialization for this scorer:
@@ -62,7 +62,7 @@ namespace Lucene
         /// of the same word would go elsewhere in the matched doc.
         /// @return null if differ (i.e. valid) otherwise return the higher offset PhrasePositions out of the first
         /// two PPs found to not differ.
-        PhrasePositionsPtr termPositionsDiffer(PhrasePositionsPtr pp);
+        PhrasePositionsPtr termPositionsDiffer(const PhrasePositionsPtr& pp);
     };
 }
 

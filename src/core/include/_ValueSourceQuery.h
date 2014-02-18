@@ -15,7 +15,7 @@ namespace Lucene
     class ValueSourceWeight : public Weight
     {
     public:
-        ValueSourceWeight(ValueSourceQueryPtr query, SearcherPtr searcher);
+        ValueSourceWeight(const ValueSourceQueryPtr& query, const SearcherPtr& searcher);
         virtual ~ValueSourceWeight();
 
         LUCENE_CLASS(ValueSourceWeight);
@@ -31,8 +31,8 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
     };
 
     /// A scorer that (simply) matches all documents, and scores each document with the value of the value
@@ -41,7 +41,7 @@ namespace Lucene
     class ValueSourceScorer : public Scorer
     {
     public:
-        ValueSourceScorer(SimilarityPtr similarity, IndexReaderPtr reader, ValueSourceWeightPtr weight);
+        ValueSourceScorer(const SimilarityPtr& similarity, const IndexReaderPtr& reader, const ValueSourceWeightPtr& weight);
         virtual ~ValueSourceScorer();
 
         LUCENE_CLASS(ValueSourceScorer);

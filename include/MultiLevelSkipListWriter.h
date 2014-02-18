@@ -60,7 +60,7 @@ namespace Lucene
         /// Writes the buffered skip lists to the given output.
         /// @param output the IndexOutput the skip lists shall be written to
         /// @return the pointer the skip list starts
-        int64_t writeSkip(IndexOutputPtr output);
+        int64_t writeSkip(const IndexOutputPtr& output);
 
     protected:
         void init();
@@ -69,7 +69,7 @@ namespace Lucene
         /// Subclasses must implement the actual skip data encoding in this method.
         /// @param level the level skip data shall be writing for
         /// @param skipBuffer the skip buffer to write to
-        virtual void writeSkipData(int32_t level, IndexOutputPtr skipBuffer) = 0;
+        virtual void writeSkipData(int32_t level, const IndexOutputPtr& skipBuffer) = 0;
     };
 }
 

@@ -11,13 +11,13 @@
 
 namespace Lucene
 {
-    FrenchStemFilter::FrenchStemFilter(TokenStreamPtr input) : TokenFilter(input)
+    FrenchStemFilter::FrenchStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         stemmer = newLucene<FrenchStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
 
-    FrenchStemFilter::FrenchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
+    FrenchStemFilter::FrenchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<FrenchStemmer>();
         termAtt = addAttribute<TermAttribute>();
@@ -47,7 +47,7 @@ namespace Lucene
             return false;
     }
 
-    void FrenchStemFilter::setStemmer(FrenchStemmerPtr stemmer)
+    void FrenchStemFilter::setStemmer(const FrenchStemmerPtr& stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;

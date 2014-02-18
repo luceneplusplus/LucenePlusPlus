@@ -53,7 +53,7 @@ public:
 class MockIndexWriter : public IndexWriter
 {
 public:
-    MockIndexWriter(DirectoryPtr dir, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
+    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
     {
         rand = newLucene<Random>();
     }
@@ -298,13 +298,13 @@ public:
     }
 };
 
-static void verifyEquals(IndexReaderPtr r1, DirectoryPtr dir2, const String& idField);
-static void verifyEquals(DirectoryPtr dir1, DirectoryPtr dir2, const String& idField);
-static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idField);
-static void verifyEquals(DocumentPtr d1, DocumentPtr d2);
+static void verifyEquals(const IndexReaderPtr& r1, const DirectoryPtr& dir2, const String& idField);
+static void verifyEquals(const DirectoryPtr& dir1, const DirectoryPtr& dir2, const String& idField);
+static void verifyEquals(const IndexReaderPtr& r1, const IndexReaderPtr& r2, const String& idField);
+static void verifyEquals(const DocumentPtr& d1, const DocumentPtr& d2);
 static void verifyEquals(Collection<TermFreqVectorPtr> d1, Collection<TermFreqVectorPtr> d2);
 
-static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iterations, int32_t range, DirectoryPtr dir)
+static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iterations, int32_t range, const DirectoryPtr& dir)
 {
     HashMap<String, DocumentPtr> docs = HashMap<String, DocumentPtr>::newInstance();
     IndexWriterPtr w = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
@@ -345,7 +345,7 @@ static DocsAndWriterPtr indexRandomIWReader(int32_t numThreads, int32_t iteratio
     return dw;
 }
 
-static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iterations, int32_t range, DirectoryPtr dir)
+static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iterations, int32_t range, const DirectoryPtr& dir)
 {
     HashMap<String, DocumentPtr> docs = HashMap<String, DocumentPtr>::newInstance();
 
@@ -390,7 +390,7 @@ static HashMap<String, DocumentPtr> indexRandom(int32_t numThreads, int32_t iter
     return docs;
 }
 
-static void indexSerial(HashMap<String, DocumentPtr> docs, DirectoryPtr dir)
+static void indexSerial(HashMap<String, DocumentPtr> docs, const DirectoryPtr& dir)
 {
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
 
@@ -412,14 +412,14 @@ static void indexSerial(HashMap<String, DocumentPtr> docs, DirectoryPtr dir)
     w->close();
 }
 
-static void verifyEquals(IndexReaderPtr r1, DirectoryPtr dir2, const String& idField)
+static void verifyEquals(const IndexReaderPtr& r1, const DirectoryPtr& dir2, const String& idField)
 {
     IndexReaderPtr r2 = IndexReader::open(dir2, true);
     verifyEquals(r1, r2, idField);
     r2->close();
 }
 
-static void verifyEquals(DirectoryPtr dir1, DirectoryPtr dir2, const String& idField)
+static void verifyEquals(const DirectoryPtr& dir1, const DirectoryPtr& dir2, const String& idField)
 {
     IndexReaderPtr r1 = IndexReader::open(dir1, true);
     IndexReaderPtr r2 = IndexReader::open(dir2, true);
@@ -428,7 +428,7 @@ static void verifyEquals(DirectoryPtr dir1, DirectoryPtr dir2, const String& idF
     r2->close();
 }
 
-static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idField)
+static void verifyEquals(const IndexReaderPtr& r1, const IndexReaderPtr& r2, const String& idField)
 {
     EXPECT_EQ(r1->numDocs(), r2->numDocs());
     bool hasDeletes = !(r1->maxDoc() == r2->maxDoc() && r1->numDocs() == r1->maxDoc());
@@ -554,7 +554,7 @@ static void verifyEquals(IndexReaderPtr r1, IndexReaderPtr r2, const String& idF
     }
 }
 
-static void verifyEquals(DocumentPtr d1, DocumentPtr d2)
+static void verifyEquals(const DocumentPtr& d1, const DocumentPtr& d2)
 {
     Collection<FieldablePtr> ff1 = d1->getFields();
     Collection<FieldablePtr> ff2 = d2->getFields();
@@ -683,7 +683,7 @@ namespace RunStressTest
     class StressIndexerThread : public StressTimedThread
     {
     public:
-        StressIndexerThread(IndexWriterPtr writer)
+        StressIndexerThread(const IndexWriterPtr& writer)
         {
             this->writer = writer;
             this->nextID = 0;
@@ -724,7 +724,7 @@ namespace RunStressTest
     class StressSearcherThread : public StressTimedThread
     {
     public:
-        StressSearcherThread(DirectoryPtr directory)
+        StressSearcherThread(const DirectoryPtr& directory)
         {
             this->directory = directory;
         }
@@ -748,7 +748,7 @@ namespace RunStressTest
 }
 
 /// Run one indexer and 2 searchers against single index as stress test.
-static void runStressTest(DirectoryPtr directory, MergeSchedulerPtr mergeScheduler)
+static void runStressTest(const DirectoryPtr& directory, const MergeSchedulerPtr& mergeScheduler)
 {
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
     IndexWriterPtr modifier = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);

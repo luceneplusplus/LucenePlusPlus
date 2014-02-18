@@ -22,13 +22,13 @@ namespace Lucene
     {
     public:
         /// Construct a new LowerCaseTokenizer.
-        LowerCaseTokenizer(ReaderPtr input);
+        LowerCaseTokenizer(const ReaderPtr& input);
 
         /// Construct a new LowerCaseTokenizer using a given {@link AttributeSource}.
-        LowerCaseTokenizer(AttributeSourcePtr source, ReaderPtr input);
+        LowerCaseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
         /// Construct a new LowerCaseTokenizer using a given {@link AttributeFactory}.
-        LowerCaseTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        LowerCaseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~LowerCaseTokenizer();
 

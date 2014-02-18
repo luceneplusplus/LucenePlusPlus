@@ -31,7 +31,7 @@ namespace Lucene
     {
     }
 
-    TermsHashConsumerPerThreadPtr FreqProxTermsWriter::addThread(TermsHashPerThreadPtr perThread)
+    TermsHashConsumerPerThreadPtr FreqProxTermsWriter::addThread(const TermsHashPerThreadPtr& perThread)
     {
         return newLucene<FreqProxTermsWriterPerThread>(perThread);
     }
@@ -63,7 +63,7 @@ namespace Lucene
         }
     }
 
-    void FreqProxTermsWriter::closeDocStore(SegmentWriteStatePtr state)
+    void FreqProxTermsWriter::closeDocStore(const SegmentWriteStatePtr& state)
     {
     }
 
@@ -71,7 +71,7 @@ namespace Lucene
     {
     }
 
-    void FreqProxTermsWriter::flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
+    void FreqProxTermsWriter::flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
     {
         // Gather all FieldData's that have postings, across all ThreadStates
         Collection<FreqProxTermsWriterPerFieldPtr> allFields(Collection<FreqProxTermsWriterPerFieldPtr>::newInstance());
@@ -144,7 +144,7 @@ namespace Lucene
         consumer->finish();
     }
 
-    void FreqProxTermsWriter::appendPostings(Collection<FreqProxTermsWriterPerFieldPtr> fields, FormatPostingsFieldsConsumerPtr consumer)
+    void FreqProxTermsWriter::appendPostings(Collection<FreqProxTermsWriterPerFieldPtr> fields, const FormatPostingsFieldsConsumerPtr& consumer)
     {
         TestScope testScope(L"FreqProxTermsWriter", L"appendPostings");
         int32_t numFields = fields.size();

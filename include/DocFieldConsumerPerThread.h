@@ -21,7 +21,7 @@ namespace Lucene
     public:
         virtual void startDocument() = 0;
         virtual DocWriterPtr finishDocument() = 0;
-        virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi) = 0;
+        virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi) = 0;
         virtual void abort() = 0;
     };
 }

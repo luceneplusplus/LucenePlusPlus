@@ -52,12 +52,12 @@ namespace Lucene
 
         /// Adds a term to the end of the query phrase.
         /// The relative position of the term is the one immediately after the last term added.
-        void add(TermPtr term);
+        void add(const TermPtr& term);
 
         /// Adds a term to the end of the query phrase.
         /// The relative position of the term within the phrase is specified explicitly.  This allows eg. phrases
         /// with more than one term at the same position or phrases with gaps (eg. in connection with stopwords).
-        void add(TermPtr term, int32_t position);
+        void add(const TermPtr& term, int32_t position);
 
         /// Returns the set of terms in this phrase.
         Collection<TermPtr> getTerms();
@@ -65,15 +65,15 @@ namespace Lucene
         /// Returns the relative positions of terms in this phrase.
         Collection<int32_t> getPositions();
 
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
         virtual void extractTerms(SetTerm terms);
 
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         friend class PhraseWeight;
     };

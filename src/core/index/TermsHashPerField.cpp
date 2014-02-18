@@ -24,7 +24,7 @@
 
 namespace Lucene
 {
-    TermsHashPerField::TermsHashPerField(DocInverterPerFieldPtr docInverterPerField, TermsHashPerThreadPtr perThread, TermsHashPerThreadPtr nextPerThread, FieldInfoPtr fieldInfo)
+    TermsHashPerField::TermsHashPerField(const DocInverterPerFieldPtr& docInverterPerField, const TermsHashPerThreadPtr& perThread, const TermsHashPerThreadPtr& nextPerThread, const FieldInfoPtr& fieldInfo)
     {
         this->_docInverterPerField = docInverterPerField;
         this->_perThread = perThread;
@@ -101,7 +101,7 @@ namespace Lucene
             nextPerField->abort();
     }
 
-    void TermsHashPerField::initReader(ByteSliceReaderPtr reader, RawPostingListPtr p, int32_t stream)
+    void TermsHashPerField::initReader(const ByteSliceReaderPtr& reader, const RawPostingListPtr& p, int32_t stream)
     {
         BOOST_ASSERT(stream < streamCount);
         IntArray ints(intPool->buffers[p->intStart >> DocumentsWriter::INT_BLOCK_SHIFT]);
@@ -195,7 +195,7 @@ namespace Lucene
         return (text[pos] == UTF8Base::UNICODE_TERMINATOR);
     }
 
-    void TermsHashPerField::start(FieldablePtr field)
+    void TermsHashPerField::start(const FieldablePtr& field)
     {
         termAtt = fieldState->attributeSource->addAttribute<TermAttribute>();
         consumer->start(field);

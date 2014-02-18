@@ -18,7 +18,7 @@
 
 namespace Lucene
 {
-    MultiTermQueryWrapperFilter::MultiTermQueryWrapperFilter(MultiTermQueryPtr query)
+    MultiTermQueryWrapperFilter::MultiTermQueryWrapperFilter(const MultiTermQueryPtr& query)
     {
         this->query = query;
     }
@@ -33,7 +33,7 @@ namespace Lucene
         return query->toString();
     }
 
-    bool MultiTermQueryWrapperFilter::equals(LuceneObjectPtr other)
+    bool MultiTermQueryWrapperFilter::equals(const LuceneObjectPtr& other)
     {
         if (Filter::equals(other))
             return true;
@@ -62,7 +62,7 @@ namespace Lucene
         query->clearTotalNumberOfTerms();
     }
 
-    DocIdSetPtr MultiTermQueryWrapperFilter::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr MultiTermQueryWrapperFilter::getDocIdSet(const IndexReaderPtr& reader)
     {
         TermEnumPtr enumerator(query->getEnum(reader));
         OpenBitSetPtr bitSet;

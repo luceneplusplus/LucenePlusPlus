@@ -47,7 +47,7 @@ namespace Lucene
         _endOffset = 0;
     }
 
-    bool OffsetAttribute::equals(LuceneObjectPtr other)
+    bool OffsetAttribute::equals(const LuceneObjectPtr& other)
     {
         if (Attribute::equals(other))
             return true;
@@ -66,13 +66,13 @@ namespace Lucene
         return code;
     }
 
-    void OffsetAttribute::copyTo(AttributePtr target)
+    void OffsetAttribute::copyTo(const AttributePtr& target)
     {
         OffsetAttributePtr targetOffsetAttribute(boost::dynamic_pointer_cast<OffsetAttribute>(target));
         targetOffsetAttribute->setOffset(_startOffset, _endOffset);
     }
 
-    LuceneObjectPtr OffsetAttribute::clone(LuceneObjectPtr other)
+    LuceneObjectPtr OffsetAttribute::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<OffsetAttribute>();
         OffsetAttributePtr cloneAttribute(boost::dynamic_pointer_cast<OffsetAttribute>(Attribute::clone(clone)));

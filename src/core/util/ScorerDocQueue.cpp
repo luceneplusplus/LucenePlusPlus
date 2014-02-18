@@ -25,13 +25,13 @@ namespace Lucene
     {
     }
 
-    void ScorerDocQueue::put(ScorerPtr scorer)
+    void ScorerDocQueue::put(const ScorerPtr& scorer)
     {
         heap[++_size] = newLucene<HeapedScorerDoc>(scorer);
         upHeap();
     }
 
-    bool ScorerDocQueue::insert(ScorerPtr scorer)
+    bool ScorerDocQueue::insert(const ScorerPtr& scorer)
     {
         if (_size < maxSize)
         {
@@ -158,13 +158,13 @@ namespace Lucene
         topHSD = heap[1];
     }
 
-    HeapedScorerDoc::HeapedScorerDoc(ScorerPtr scorer)
+    HeapedScorerDoc::HeapedScorerDoc(const ScorerPtr& scorer)
     {
         this->scorer = scorer;
         this->doc = scorer->docID();
     }
 
-    HeapedScorerDoc::HeapedScorerDoc(ScorerPtr scorer, int32_t doc)
+    HeapedScorerDoc::HeapedScorerDoc(const ScorerPtr& scorer, int32_t doc)
     {
         this->scorer = scorer;
         this->doc = doc;

@@ -94,15 +94,15 @@ namespace Lucene
 
     public:
         /// Adds the fields above to a document
-        void setupDoc(DocumentPtr doc);
+        void setupDoc(const DocumentPtr& doc);
 
         /// Writes the document to the directory using a segment named "test"; returns the SegmentInfo describing the new segment
-        SegmentInfoPtr writeDoc(DirectoryPtr dir, DocumentPtr doc);
+        SegmentInfoPtr writeDoc(const DirectoryPtr& dir, const DocumentPtr& doc);
 
         /// Writes the document to the directory using the analyzer and the similarity score; returns the SegmentInfo describing the new segment
-        SegmentInfoPtr writeDoc(DirectoryPtr dir, AnalyzerPtr analyzer, SimilarityPtr similarity, DocumentPtr doc);
+        SegmentInfoPtr writeDoc(const DirectoryPtr& dir, const AnalyzerPtr& analyzer, const SimilarityPtr& similarity, const DocumentPtr& doc);
 
-        int32_t numFields(DocumentPtr doc);
+        int32_t numFields(const DocumentPtr& doc);
 
     protected:
         /// One-time setup to initialise static members

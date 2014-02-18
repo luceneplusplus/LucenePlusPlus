@@ -17,7 +17,7 @@ namespace Lucene
     class DocInverterPerField : public DocFieldConsumerPerField
     {
     public:
-        DocInverterPerField(DocInverterPerThreadPtr perThread, FieldInfoPtr fieldInfo);
+        DocInverterPerField(const DocInverterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
         virtual ~DocInverterPerField();
 
         LUCENE_CLASS(DocInverterPerField);

@@ -20,12 +20,12 @@ namespace Lucene
     public:
         /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
         /// and the searcher)
-        QueryTermScorer(QueryPtr query);
+        QueryTermScorer(const QueryPtr& query);
 
         /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
         /// and the searcher)
         /// @param fieldName the Field name which is used to match Query terms
-        QueryTermScorer(QueryPtr query, const String& fieldName);
+        QueryTermScorer(const QueryPtr& query, const String& fieldName);
 
         /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
         /// and the searcher)
@@ -33,7 +33,7 @@ namespace Lucene
         /// a) score selected fragments better
         /// b) use graded highlights eg set font color intensity
         /// @param fieldName the field on which Inverse Document Frequency (IDF) calculations are based
-        QueryTermScorer(QueryPtr query, IndexReaderPtr reader, const String& fieldName);
+        QueryTermScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& fieldName);
 
         /// @param weightedTerms an array of pre-created {@link WeightedTerm}s
         QueryTermScorer(Collection<WeightedTermPtr> weightedTerms);
@@ -57,8 +57,8 @@ namespace Lucene
         void ConstructQueryTermScorer(Collection<WeightedTermPtr> weightedTerms);
 
     public:
-        virtual TokenStreamPtr init(TokenStreamPtr tokenStream);
-        virtual void startFragment(TextFragmentPtr newFragment);
+        virtual TokenStreamPtr init(const TokenStreamPtr& tokenStream);
+        virtual void startFragment(const TextFragmentPtr& newFragment);
         virtual double getTokenScore();
         virtual double getFragmentScore();
         virtual void allFragmentsProcessed();

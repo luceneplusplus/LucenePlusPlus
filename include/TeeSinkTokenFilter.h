@@ -63,7 +63,7 @@ namespace Lucene
     {
     public:
         /// Instantiates a new TeeSinkTokenFilter.
-        TeeSinkTokenFilter(TokenStreamPtr input);
+        TeeSinkTokenFilter(const TokenStreamPtr& input);
         virtual ~TeeSinkTokenFilter();
 
         LUCENE_CLASS(TeeSinkTokenFilter);
@@ -78,11 +78,11 @@ namespace Lucene
         /// Returns a new {@link SinkTokenStream} that receives all tokens consumed by this stream that pass
         /// the supplied filter.
         /// @see SinkFilter
-        SinkTokenStreamPtr newSinkTokenStream(SinkFilterPtr filter);
+        SinkTokenStreamPtr newSinkTokenStream(const SinkFilterPtr& filter);
 
         /// Adds a {@link SinkTokenStream} created by another TeeSinkTokenFilter to this one. The supplied stream will
         /// also receive all consumed tokens.  This method can be used to pass tokens from two different tees to one sink.
-        void addSinkTokenStream(SinkTokenStreamPtr sink);
+        void addSinkTokenStream(const SinkTokenStreamPtr& sink);
 
         /// TeeSinkTokenFilter passes all tokens to the added sinks when itself is consumed. To be sure, that all tokens
         /// from the input stream are passed to the sinks, you can call this methods.  This instance is exhausted after this,
@@ -102,7 +102,7 @@ namespace Lucene
 
     public:
         /// Returns true, if the current state of the passed-in {@link AttributeSource} shall be stored in the sink.
-        virtual bool accept(AttributeSourcePtr source) = 0;
+        virtual bool accept(const AttributeSourcePtr& source) = 0;
 
         /// Called by {@link SinkTokenStream#reset()}. This method does nothing by default and can optionally be overridden.
         virtual void reset();
@@ -116,14 +116,14 @@ namespace Lucene
         LUCENE_CLASS(AcceptAllSinkFilter);
 
     public:
-        virtual bool accept(AttributeSourcePtr source);
+        virtual bool accept(const AttributeSourcePtr& source);
     };
 
     /// A filter that decides which {@link AttributeSource} states to store in the sink.
     class LPPAPI SinkTokenStream : public TokenStream
     {
     public:
-        SinkTokenStream(AttributeSourcePtr source, SinkFilterPtr filter);
+        SinkTokenStream(const AttributeSourcePtr& source, const SinkFilterPtr& filter);
         virtual ~SinkTokenStream();
 
         LUCENE_CLASS(SinkTokenStream);
@@ -136,9 +136,9 @@ namespace Lucene
         SinkFilterPtr filter;
 
     protected:
-        bool accept(AttributeSourcePtr source);
-        void addState(AttributeSourceStatePtr state);
-        void setFinalState(AttributeSourceStatePtr finalState);
+        bool accept(const AttributeSourcePtr& source);
+        void addState(const AttributeSourceStatePtr& state);
+        void setFinalState(const AttributeSourceStatePtr& finalState);
 
     public:
         virtual bool incrementToken();

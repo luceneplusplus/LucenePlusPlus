@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    SnowballFilter::SnowballFilter(TokenStreamPtr input, const String& name) : TokenFilter(input)
+    SnowballFilter::SnowballFilter(const TokenStreamPtr& input, const String& name) : TokenFilter(input)
     {
         stemmer = sb_stemmer_new(StringUtils::toUTF8(name).c_str(), "UTF_8");
         if (stemmer == NULL)

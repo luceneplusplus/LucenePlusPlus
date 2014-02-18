@@ -35,7 +35,7 @@ namespace Lucene
     protected:
         static const Collection<String> DOC_TEXT_LINES();
 
-        void addDoc(IndexWriterPtr iw, int32_t i);
+        void addDoc(const IndexWriterPtr& iw, int32_t i);
         String id2String(int32_t scoreAndID);
         String textLine(int32_t docNum);
 

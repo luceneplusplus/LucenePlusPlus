@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    PorterStemFilter::PorterStemFilter(TokenStreamPtr input) : TokenFilter(input)
+    PorterStemFilter::PorterStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         stemmer = newLucene<PorterStemmer>();
         termAtt = addAttribute<TermAttribute>();

@@ -14,7 +14,7 @@ namespace Lucene
     class MySegmentTermDocs : public SegmentTermDocs
     {
     public:
-        MySegmentTermDocs(SegmentReaderPtr p);
+        MySegmentTermDocs(const SegmentReaderPtr& p);
         virtual ~MySegmentTermDocs();
 
         LUCENE_CLASS(MySegmentTermDocs);
@@ -23,7 +23,7 @@ namespace Lucene
         int32_t delCount;
 
     public:
-        virtual void seek(TermPtr term);
+        virtual void seek(const TermPtr& term);
         virtual void skippingDoc();
     };
 }

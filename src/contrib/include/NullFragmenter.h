@@ -20,7 +20,7 @@ namespace Lucene
         LUCENE_CLASS(NullFragmenter);
 
     public:
-        virtual void start(const String& originalText, TokenStreamPtr tokenStream);
+        virtual void start(const String& originalText, const TokenStreamPtr& tokenStream);
         virtual bool isNewFragment();
     };
 }

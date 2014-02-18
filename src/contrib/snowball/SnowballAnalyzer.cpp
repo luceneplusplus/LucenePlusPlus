@@ -31,7 +31,7 @@ namespace Lucene
     {
     }
 
-    TokenStreamPtr SnowballAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr SnowballAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
         result = newLucene<StandardFilter>(result);
@@ -42,7 +42,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr SnowballAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr SnowballAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         SnowballAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<SnowballAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

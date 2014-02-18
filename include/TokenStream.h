@@ -48,10 +48,10 @@ namespace Lucene
         TokenStream();
 
         /// A TokenStream that uses the same attributes as the supplied one.
-        TokenStream(AttributeSourcePtr input);
+        TokenStream(const AttributeSourcePtr& input);
 
         /// A TokenStream using the supplied AttributeFactory for creating new {@link Attribute} instances.
-        TokenStream(AttributeFactoryPtr factory);
+        TokenStream(const AttributeFactoryPtr& factory);
 
     public:
         virtual ~TokenStream();

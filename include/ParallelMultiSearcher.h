@@ -27,15 +27,15 @@ namespace Lucene
     public:
         /// Executes each {@link Searchable}'s docFreq() in its own thread and waits for each search to
         /// complete and merge the results back together.
-        virtual int32_t docFreq(TermPtr term);
+        virtual int32_t docFreq(const TermPtr& term);
 
         /// A search implementation which executes each {@link Searchable} in its own thread and waits
         /// for each search to complete and merge the results back together.
-        virtual TopDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n);
+        virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n);
 
         /// A search implementation allowing sorting which spans a new thread for each Searchable, waits
         /// for each search to complete and merges the results back together.
-        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort);
+        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort);
     };
 }
 

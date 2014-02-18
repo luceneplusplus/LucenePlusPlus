@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    PrefixFilter::PrefixFilter(TermPtr prefix) : MultiTermQueryWrapperFilter(newLucene<PrefixQuery>(prefix))
+    PrefixFilter::PrefixFilter(const TermPtr& prefix) : MultiTermQueryWrapperFilter(newLucene<PrefixQuery>(prefix))
     {
     }
 

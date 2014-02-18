@@ -33,11 +33,11 @@ namespace Lucene
 
     public:
         int32_t size();
-        void update(BufferedDeletesPtr in);
+        void update(const BufferedDeletesPtr& in);
         void clear();
         void addBytesUsed(int64_t b);
         bool any();
-        void remap(MergeDocIDRemapperPtr mapper, SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergedDocCount);
+        void remap(const MergeDocIDRemapperPtr& mapper, const SegmentInfosPtr& infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, const OneMergePtr& merge, int32_t mergedDocCount);
     };
 
     /// Number of documents a delete term applies to.

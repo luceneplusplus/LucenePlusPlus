@@ -14,7 +14,7 @@ namespace Lucene
     class IntBlockPool : public LuceneObject
     {
     public:
-        IntBlockPool(DocumentsWriterPtr docWriter, bool trackAllocations);
+        IntBlockPool(const DocumentsWriterPtr& docWriter, bool trackAllocations);
         virtual ~IntBlockPool();
 
         LUCENE_CLASS(IntBlockPool);

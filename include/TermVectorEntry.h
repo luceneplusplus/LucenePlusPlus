@@ -40,7 +40,7 @@ namespace Lucene
         void setOffsets(Collection<TermVectorOffsetInfoPtr> offsets);
         void setPositions(Collection<int32_t> positions);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
         virtual String toString();
     };

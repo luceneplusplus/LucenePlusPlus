@@ -23,7 +23,7 @@ namespace Lucene
     class ByteBlockPool : public LuceneObject
     {
     public:
-        ByteBlockPool(ByteBlockPoolAllocatorBasePtr allocator, bool trackAllocations);
+        ByteBlockPool(const ByteBlockPoolAllocatorBasePtr& allocator, bool trackAllocations);
         virtual ~ByteBlockPool();
 
         LUCENE_CLASS(ByteBlockPool);

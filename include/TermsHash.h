@@ -18,7 +18,7 @@ namespace Lucene
     class TermsHash : public InvertedDocConsumer
     {
     public:
-        TermsHash(DocumentsWriterPtr docWriter, bool trackAllocations, TermsHashConsumerPtr consumer, TermsHashPtr nextTermsHash);
+        TermsHash(const DocumentsWriterPtr& docWriter, bool trackAllocations, const TermsHashConsumerPtr& consumer, const TermsHashPtr& nextTermsHash);
         virtual ~TermsHash();
 
         LUCENE_CLASS(TermsHash);
@@ -38,23 +38,23 @@ namespace Lucene
 
     public:
         /// Add a new thread
-        virtual InvertedDocConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread);
-        virtual TermsHashPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPerThreadPtr primaryPerThread);
+        virtual InvertedDocConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread);
+        virtual TermsHashPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPerThreadPtr& primaryPerThread);
 
-        virtual void setFieldInfos(FieldInfosPtr fieldInfos);
+        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
         /// Abort (called after hitting AbortException)
         /// NOTE: do not make this sync'd; it's not necessary (DW ensures all other threads are idle), and it
         /// leads to deadlock
         virtual void abort();
 
-        void shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
+        void shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
         /// Close doc stores
-        virtual void closeDocStore(SegmentWriteStatePtr state);
+        virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
         /// Flush a new segment
-        virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
+        virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
         /// Attempt to free RAM, returning true if any RAM was freed
         virtual bool freeRAM();

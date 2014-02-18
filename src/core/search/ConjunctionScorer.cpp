@@ -18,7 +18,7 @@ namespace Lucene
         }
     };
 
-    ConjunctionScorer::ConjunctionScorer(SimilarityPtr similarity, Collection<ScorerPtr> scorers) : Scorer(similarity)
+    ConjunctionScorer::ConjunctionScorer(const SimilarityPtr& similarity, Collection<ScorerPtr> scorers) : Scorer(similarity)
     {
         this->lastDoc = -1;
         this->scorers = scorers;

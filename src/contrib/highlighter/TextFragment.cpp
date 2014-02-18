@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    TextFragment::TextFragment(StringBufferPtr markedUpText, int32_t textStartPos, int32_t fragNum)
+    TextFragment::TextFragment(const StringBufferPtr& markedUpText, int32_t textStartPos, int32_t fragNum)
     {
         this->markedUpText = markedUpText;
         this->textStartPos = textStartPos;
@@ -32,13 +32,13 @@ namespace Lucene
         return score;
     }
 
-    void TextFragment::merge(TextFragmentPtr frag2)
+    void TextFragment::merge(const TextFragmentPtr& frag2)
     {
         textEndPos = frag2->textEndPos;
         score = std::max(score, frag2->score);
     }
 
-    bool TextFragment::follows(TextFragmentPtr fragment)
+    bool TextFragment::follows(const TextFragmentPtr& fragment)
     {
         return (textStartPos == fragment->textEndPos);
     }

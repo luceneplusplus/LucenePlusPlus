@@ -45,7 +45,7 @@ static DocumentPtr createDocument(int32_t n, int32_t numFields)
     return doc;
 }
 
-static void createIndex(DirectoryPtr dir, bool multiSegment)
+static void createIndex(const DirectoryPtr& dir, bool multiSegment)
 {
     IndexWriter::unlock(dir);
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
@@ -72,12 +72,12 @@ static void createIndex(DirectoryPtr dir, bool multiSegment)
     r->close();
 }
 
-static bool isReadOnly(IndexReaderPtr r)
+static bool isReadOnly(const IndexReaderPtr& r)
 {
     return (MiscUtils::typeOf<ReadOnlySegmentReader>(r) || MiscUtils::typeOf<ReadOnlyDirectoryReader>(r));
 }
 
-static bool deleteWorked(int32_t doc, IndexReaderPtr r)
+static bool deleteWorked(int32_t doc, const IndexReaderPtr& r)
 {
     bool exception = false;
     try
@@ -98,7 +98,7 @@ static bool deleteWorked(int32_t doc, IndexReaderPtr r)
 /// 4. Verify the norms are not the same on each reader
 /// 5. Verify the doc deleted is only in the cloned reader
 /// 6. Try to delete a document in the original reader, an exception should be thrown
-static void performDefaultTests(IndexReaderPtr r1)
+static void performDefaultTests(const IndexReaderPtr& r1)
 {
     double norm1 = Similarity::decodeNorm(r1->norms(L"field1")[4]);
 
@@ -123,7 +123,7 @@ static void performDefaultTests(IndexReaderPtr r1)
     pr1Clone->close();
 }
 
-static void modifyIndex(int32_t i, DirectoryPtr dir)
+static void modifyIndex(int32_t i, const DirectoryPtr& dir)
 {
     switch (i)
     {
@@ -179,12 +179,12 @@ static void modifyIndex(int32_t i, DirectoryPtr dir)
     }
 }
 
-static void checkDelDocsRefCountEquals(int32_t refCount, SegmentReaderPtr reader)
+static void checkDelDocsRefCountEquals(int32_t refCount, const SegmentReaderPtr& reader)
 {
     EXPECT_EQ(refCount, reader->deletedDocsRef->refCount());
 }
 
-static void checkDocDeleted(SegmentReaderPtr reader, SegmentReaderPtr reader2, int32_t doc)
+static void checkDocDeleted(const SegmentReaderPtr& reader, const SegmentReaderPtr& reader2, int32_t doc)
 {
     EXPECT_EQ(reader->isDeleted(doc), reader2->isDeleted(doc));
 }

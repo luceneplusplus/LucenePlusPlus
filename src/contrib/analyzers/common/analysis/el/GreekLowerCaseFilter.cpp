@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    GreekLowerCaseFilter::GreekLowerCaseFilter(TokenStreamPtr input) : TokenFilter(input)
+    GreekLowerCaseFilter::GreekLowerCaseFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         termAtt = addAttribute<TermAttribute>();
     }

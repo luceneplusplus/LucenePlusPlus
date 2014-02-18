@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    DocFieldConsumers::DocFieldConsumers(DocFieldConsumerPtr one, DocFieldConsumerPtr two)
+    DocFieldConsumers::DocFieldConsumers(const DocFieldConsumerPtr& one, const DocFieldConsumerPtr& two)
     {
         freeCount = 0;
         allocCount = 0;
@@ -26,14 +26,14 @@ namespace Lucene
     {
     }
 
-    void DocFieldConsumers::setFieldInfos(FieldInfosPtr fieldInfos)
+    void DocFieldConsumers::setFieldInfos(const FieldInfosPtr& fieldInfos)
     {
         DocFieldConsumer::setFieldInfos(fieldInfos);
         one->setFieldInfos(fieldInfos);
         two->setFieldInfos(fieldInfos);
     }
 
-    void DocFieldConsumers::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
+    void DocFieldConsumers::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
     {
         MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField oneThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
         MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField twoThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
@@ -57,7 +57,7 @@ namespace Lucene
         two->flush(twoThreadsAndFields, state);
     }
 
-    void DocFieldConsumers::closeDocStore(SegmentWriteStatePtr state)
+    void DocFieldConsumers::closeDocStore(const SegmentWriteStatePtr& state)
     {
         LuceneException finally;
         try
@@ -84,7 +84,7 @@ namespace Lucene
         return (one->freeRAM() || two->freeRAM());
     }
 
-    DocFieldConsumerPerThreadPtr DocFieldConsumers::addThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread)
+    DocFieldConsumerPerThreadPtr DocFieldConsumers::addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread)
     {
         return newLucene<DocFieldConsumersPerThread>(docFieldProcessorPerThread, shared_from_this(), one->addThread(docFieldProcessorPerThread), two->addThread(docFieldProcessorPerThread));
     }
@@ -108,14 +108,14 @@ namespace Lucene
             return docFreeList[--freeCount];
     }
 
-    void DocFieldConsumers::freePerDoc(DocFieldConsumersPerDocPtr perDoc)
+    void DocFieldConsumers::freePerDoc(const DocFieldConsumersPerDocPtr& perDoc)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(freeCount < docFreeList.size());
         docFreeList[freeCount++] = perDoc;
     }
 
-    DocFieldConsumersPerDoc::DocFieldConsumersPerDoc(DocFieldConsumersPtr fieldConsumers)
+    DocFieldConsumersPerDoc::DocFieldConsumersPerDoc(const DocFieldConsumersPtr& fieldConsumers)
     {
         this->_fieldConsumers = fieldConsumers;
     }

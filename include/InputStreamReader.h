@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// Create an InputStreamReader that uses the utf8 charset.
-        InputStreamReader(ReaderPtr reader);
+        InputStreamReader(const ReaderPtr& reader);
         virtual ~InputStreamReader();
 
         LUCENE_CLASS(InputStreamReader);

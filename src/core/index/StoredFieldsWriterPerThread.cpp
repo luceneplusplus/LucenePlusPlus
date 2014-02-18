@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    StoredFieldsWriterPerThread::StoredFieldsWriterPerThread(DocStatePtr docState, StoredFieldsWriterPtr storedFieldsWriter)
+    StoredFieldsWriterPerThread::StoredFieldsWriterPerThread(const DocStatePtr& docState, const StoredFieldsWriterPtr& storedFieldsWriter)
     {
         this->_storedFieldsWriter = storedFieldsWriter;
         this->docState = docState;
@@ -34,7 +34,7 @@ namespace Lucene
         }
     }
 
-    void StoredFieldsWriterPerThread::addField(FieldablePtr field, FieldInfoPtr fieldInfo)
+    void StoredFieldsWriterPerThread::addField(const FieldablePtr& field, const FieldInfoPtr& fieldInfo)
     {
         if (!doc)
         {

@@ -16,7 +16,7 @@ namespace Lucene
     class NormsWriterPerField : public InvertedDocEndConsumerPerField
     {
     public:
-        NormsWriterPerField(DocInverterPerFieldPtr docInverterPerField, NormsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo);
+        NormsWriterPerField(const DocInverterPerFieldPtr& docInverterPerField, const NormsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
         virtual ~NormsWriterPerField();
 
         LUCENE_CLASS(NormsWriterPerField);
@@ -38,7 +38,7 @@ namespace Lucene
         virtual void abort();
 
         /// Compare two objects
-        virtual int32_t compareTo(LuceneObjectPtr other);
+        virtual int32_t compareTo(const LuceneObjectPtr& other);
 
         virtual void finish();
     };

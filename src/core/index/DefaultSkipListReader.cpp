@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    DefaultSkipListReader::DefaultSkipListReader(IndexInputPtr skipStream, int32_t maxSkipLevels, int32_t skipInterval)
+    DefaultSkipListReader::DefaultSkipListReader(const IndexInputPtr& skipStream, int32_t maxSkipLevels, int32_t skipInterval)
         : MultiLevelSkipListReader(skipStream, maxSkipLevels, skipInterval)
     {
         currentFieldStoresPayloads = false;
@@ -74,7 +74,7 @@ namespace Lucene
         lastPayloadLength = payloadLength[level];
     }
 
-    int32_t DefaultSkipListReader::readSkipData(int32_t level, IndexInputPtr skipStream)
+    int32_t DefaultSkipListReader::readSkipData(int32_t level, const IndexInputPtr& skipStream)
     {
         int32_t delta;
         if (currentFieldStoresPayloads)

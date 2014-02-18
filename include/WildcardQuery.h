@@ -21,7 +21,7 @@ namespace Lucene
     class LPPAPI WildcardQuery : public MultiTermQuery
     {
     public:
-        WildcardQuery(TermPtr term);
+        WildcardQuery(const TermPtr& term);
         virtual ~WildcardQuery();
 
         LUCENE_CLASS(WildcardQuery);
@@ -37,17 +37,17 @@ namespace Lucene
         /// Returns the pattern term.
         TermPtr getTerm();
 
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
     protected:
-        virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
+        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
     };
 }
 

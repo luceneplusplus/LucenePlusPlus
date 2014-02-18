@@ -98,21 +98,21 @@ namespace Lucene
 
         /// Returns a IndexReader reading the index in the given Directory, with readOnly = true.
         /// @param directory the index directory
-        static IndexReaderPtr open(DirectoryPtr directory);
+        static IndexReaderPtr open(const DirectoryPtr& directory);
 
         /// Returns an IndexReader reading the index in the given Directory.  You should pass readOnly = true, since it
         /// gives much better concurrent performance, unless you intend to do write operations (delete documents or change
         /// norms) with the reader.
         /// @param directory the index directory
         /// @param readOnly true if no changes (deletions, norms) will be made with this IndexReader
-        static IndexReaderPtr open(DirectoryPtr directory, bool readOnly);
+        static IndexReaderPtr open(const DirectoryPtr& directory, bool readOnly);
 
         /// Returns an IndexReader reading the index in the given {@link IndexCommit}.  You should pass readOnly = true,
         /// since it gives much better concurrent performance, unless you intend to do write operations (delete documents
         /// or change norms) with the reader.
         /// @param commit the commit point to open
         /// @param readOnly true if no changes (deletions, norms) will be made with this IndexReader
-        static IndexReaderPtr open(IndexCommitPtr commit, bool readOnly);
+        static IndexReaderPtr open(const IndexCommitPtr& commit, bool readOnly);
 
         /// Returns an IndexReader reading the index in the given Directory, with a custom {@link IndexDeletionPolicy}.
         /// You should pass readOnly=true, since it gives much better concurrent performance, unless you intend to do write
@@ -121,7 +121,7 @@ namespace Lucene
         /// @param deletionPolicy a custom deletion policy (only used if you use this reader to perform
         /// deletes or to set norms); see {@link IndexWriter} for details.
         /// @param readOnly true if no changes (deletions, norms) will be made with this IndexReader
-        static IndexReaderPtr open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, bool readOnly);
+        static IndexReaderPtr open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly);
 
         /// Returns an IndexReader reading the index in the given Directory, with a custom {@link IndexDeletionPolicy}.
         /// You should pass readOnly=true, since it gives much better concurrent performance, unless you intend to do write
@@ -136,7 +136,7 @@ namespace Lucene
         /// N*termIndexInterval terms in the index is loaded into memory.  By setting this to a value > 1
         /// you can reduce memory usage, at the expense of higher latency when loading a TermInfo.  The
         /// default value is 1.  Set this to -1 to skip loading the terms index entirely.
-        static IndexReaderPtr open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
+        static IndexReaderPtr open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
 
         /// Returns an IndexReader reading the index in the given Directory, using a specific commit and with a custom
         /// {@link IndexDeletionPolicy}.  You should pass readOnly=true, since it gives much better concurrent performance,
@@ -146,7 +146,7 @@ namespace Lucene
         /// @param deletionPolicy a custom deletion policy (only used if you use this reader to perform
         /// deletes or to set norms); see {@link IndexWriter} for details.
         /// @param readOnly true if no changes (deletions, norms) will be made with this IndexReader
-        static IndexReaderPtr open(IndexCommitPtr commit, IndexDeletionPolicyPtr deletionPolicy, bool readOnly);
+        static IndexReaderPtr open(const IndexCommitPtr& commit, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly);
 
         /// Returns an IndexReader reading the index in the given Directory, using a specific commit and with a custom {@link
         /// IndexDeletionPolicy}.  You should pass readOnly=true, since it gives much better concurrent performance, unless
@@ -161,7 +161,7 @@ namespace Lucene
         /// be set per reader.  When set to N, then one in every N * termIndexInterval terms in the index is loaded into
         /// memory.  By setting this to a value > 1 you can reduce memory usage, at the expense of higher latency when loading
         /// a TermInfo.  The default value is 1.  Set this to -1 to skip loading the terms index entirely.
-        static IndexReaderPtr open(IndexCommitPtr commit, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
+        static IndexReaderPtr open(const IndexCommitPtr& commit, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
 
         /// Refreshes an IndexReader if the index has changed since this instance was (re)opened.
         ///
@@ -205,7 +205,7 @@ namespace Lucene
         /// Reopen this reader on a specific commit point.  This always returns a readOnly reader.  If the specified commit
         /// point matches what this reader is already on, and this reader is already readOnly, then this same instance is
         /// returned; if it is not already readOnly, a readOnly clone is returned.
-        virtual IndexReaderPtr reopen(IndexCommitPtr commit);
+        virtual IndexReaderPtr reopen(const IndexCommitPtr& commit);
 
         /// Efficiently clones the IndexReader (sharing most internal state).
         ///
@@ -215,10 +215,10 @@ namespace Lucene
         ///
         /// Like {@link #reopen()}, it's safe to make changes to either the original or the cloned reader: all shared mutable
         /// state obeys "copy on write" semantics to ensure the changes are not seen by other readers.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Clones the IndexReader and optionally changes readOnly.  A readOnly reader cannot open a writable reader.
-        virtual LuceneObjectPtr clone(bool openReadOnly, LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(bool openReadOnly, const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Returns the directory associated with this index.  The default implementation returns the directory specified by
         /// subclasses when delegating to the IndexReader(Directory) constructor, or throws an UnsupportedOperation exception
@@ -227,18 +227,18 @@ namespace Lucene
 
         /// Returns the time the index in the named directory was last modified.  Do not use this to check
         /// whether the reader is still up-to-date, use {@link #isCurrent()} instead.
-        static int64_t lastModified(DirectoryPtr directory2);
+        static int64_t lastModified(const DirectoryPtr& directory2);
 
         /// Reads version number from segments files. The version number is initialized with a timestamp
         /// and then increased by one for each change of the index.
         /// @param directory where the index resides.
         /// @return version number.
-        static int64_t getCurrentVersion(DirectoryPtr directory);
+        static int64_t getCurrentVersion(const DirectoryPtr& directory);
 
         /// Reads commitUserData, previously passed to {@link IndexWriter#commit(MapStringString)}, from
         /// current index segments file.  This will return null if {@link IndexWriter#commit(MapStringString)}
         /// has never been called for this index.
-        static MapStringString getCommitUserData(DirectoryPtr directory);
+        static MapStringString getCommitUserData(const DirectoryPtr& directory);
 
         /// Version number when this IndexReader was opened. Not implemented in the IndexReader base class.
         ///
@@ -307,18 +307,18 @@ namespace Lucene
         /// @param docNumber The number of the document to load the vector for
         /// @param field The name of the field to load
         /// @param mapper The {@link TermVectorMapper} to process the vector.  Must not be null.
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper) = 0;
+        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper) = 0;
 
         /// Map all the term vectors for all fields in a Document
         /// @param docNumber The number of the document to load the vector for
         /// @param mapper The {@link TermVectorMapper} to process the vector.  Must not be null.
-        virtual void getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper) = 0;
+        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper) = 0;
 
         /// Returns true if an index exists at the specified directory.  If the directory does not exist or
         /// if there is no index in it.
         /// @param directory the directory to check for an index
         /// @return true if an index exists; false otherwise
-        static bool indexExists(DirectoryPtr directory);
+        static bool indexExists(const DirectoryPtr& directory);
 
         /// Returns the number of documents in this index.
         virtual int32_t numDocs() = 0;
@@ -358,7 +358,7 @@ namespace Lucene
         /// @see FieldSelector
         /// @see SetBasedFieldSelector
         /// @see LoadFirstFieldSelector
-        virtual DocumentPtr document(int32_t n, FieldSelectorPtr fieldSelector) = 0;
+        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector) = 0;
 
         /// Returns true if document n has been deleted
         virtual bool isDeleted(int32_t n) = 0;
@@ -409,17 +409,17 @@ namespace Lucene
         /// exist, the enumeration is positioned at the first term greater than the supplied term.
         /// The enumeration is ordered by Term::compareTo(). Each term is greater than all that precede
         /// it in the enumeration.
-        virtual TermEnumPtr terms(TermPtr t) = 0;
+        virtual TermEnumPtr terms(const TermPtr& t) = 0;
 
         /// Returns the number of documents containing the term t.
-        virtual int32_t docFreq(TermPtr t) = 0;
+        virtual int32_t docFreq(const TermPtr& t) = 0;
 
         /// Returns an enumeration of all the documents which contain term.  For each document, the
         /// document number, the frequency of the term in that document is also provided, for use in
         /// search scoring.  If term is null, then all non-deleted docs are returned with freq=1.
         /// The enumeration is ordered by document number.  Each document number is greater than all
         /// that precede it in the enumeration.
-        virtual TermDocsPtr termDocs(TermPtr term);
+        virtual TermDocsPtr termDocs(const TermPtr& term);
 
         /// Returns an unpositioned {@link TermDocs} enumerator.
         virtual TermDocsPtr termDocs() = 0;
@@ -431,7 +431,7 @@ namespace Lucene
         /// This positional information facilitates phrase and proximity searching.
         /// The enumeration is ordered by document number.  Each document number is greater than all
         /// that precede it in the enumeration.
-        virtual TermPositionsPtr termPositions(TermPtr term);
+        virtual TermPositionsPtr termPositions(const TermPtr& term);
 
         /// Returns an unpositioned {@link TermPositions} enumerator.
         virtual TermPositionsPtr termPositions() = 0;
@@ -449,7 +449,7 @@ namespace Lucene
         /// as its text and passes it to this method.  See {@link #deleteDocument(int)} for information
         /// about when this deletion will become effective.
         /// @return the number of documents deleted
-        virtual int32_t deleteDocuments(TermPtr term);
+        virtual int32_t deleteDocuments(const TermPtr& term);
 
         /// Undeletes all documents currently marked as deleted in this index.
         virtual void undeleteAll();
@@ -492,7 +492,7 @@ namespace Lucene
         /// There must be at least one commit in the Directory, else this method throws an exception.
         /// Note that if a commit is in progress while this method is running, that commit may or may not
         /// be returned array.
-        static Collection<IndexCommitPtr> listCommits(DirectoryPtr dir);
+        static Collection<IndexCommitPtr> listCommits(const DirectoryPtr& dir);
 
         /// Returns the sequential sub readers that this reader is logically composed of.  For example,
         /// IndexSearcher uses this API to drive searching by one sub reader at a time.  If this reader is
@@ -523,7 +523,7 @@ namespace Lucene
     protected:
         void ensureOpen();
 
-        static IndexReaderPtr open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, IndexCommitPtr commit, bool readOnly, int32_t termInfosIndexDivisor);
+        static IndexReaderPtr open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& commit, bool readOnly, int32_t termInfosIndexDivisor);
 
         /// Implements setNorm in subclass.
         virtual void doSetNorm(int32_t doc, const String& field, uint8_t value) = 0;

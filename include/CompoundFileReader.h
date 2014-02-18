@@ -18,8 +18,8 @@ namespace Lucene
     class CompoundFileReader : public Directory
     {
     public:
-        CompoundFileReader(DirectoryPtr dir, const String& name);
-        CompoundFileReader(DirectoryPtr dir, const String& name, int32_t readBufferSize);
+        CompoundFileReader(const DirectoryPtr& dir, const String& name);
+        CompoundFileReader(const DirectoryPtr& dir, const String& name, int32_t readBufferSize);
         virtual ~CompoundFileReader();
 
         LUCENE_CLASS(CompoundFileReader);
@@ -45,7 +45,7 @@ namespace Lucene
         MapStringFileEntryPtr entries;
 
     protected:
-        void ConstructReader(DirectoryPtr dir, const String& name, int32_t readBufferSize);
+        void ConstructReader(const DirectoryPtr& dir, const String& name, int32_t readBufferSize);
 
     public:
         DirectoryPtr getDirectory();
@@ -87,8 +87,8 @@ namespace Lucene
     {
     public:
         CSIndexInput();
-        CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length);
-        CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length, int32_t readBufferSize);
+        CSIndexInput(const IndexInputPtr& base, int64_t fileOffset, int64_t length);
+        CSIndexInput(const IndexInputPtr& base, int64_t fileOffset, int64_t length, int32_t readBufferSize);
         virtual ~CSIndexInput();
 
         LUCENE_CLASS(CSIndexInput);
@@ -105,7 +105,7 @@ namespace Lucene
         virtual int64_t length();
 
         /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
     protected:
         /// Implements buffer refill.  Reads bytes from the current position in the input.

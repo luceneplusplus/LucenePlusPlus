@@ -161,19 +161,19 @@ namespace Lucene
 
         /// Returns the popcount or cardinality of the intersection of the two sets.
         /// Neither set is modified.
-        static int64_t intersectionCount(OpenBitSetPtr a, OpenBitSetPtr b);
+        static int64_t intersectionCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b);
 
         /// Returns the popcount or cardinality of the union of the two sets.
         /// Neither set is modified.
-        static int64_t unionCount(OpenBitSetPtr a, OpenBitSetPtr b);
+        static int64_t unionCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b);
 
         /// Returns the popcount or cardinality of "a and not b" or "intersection(a, not(b))".
         /// Neither set is modified.
-        static int64_t andNotCount(OpenBitSetPtr a, OpenBitSetPtr b);
+        static int64_t andNotCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b);
 
         /// Returns the popcount or cardinality of the exclusive-or of the two sets.
         /// Neither set is modified.
-        static int64_t xorCount(OpenBitSetPtr a, OpenBitSetPtr b);
+        static int64_t xorCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b);
 
         /// Returns the index of the first set bit starting at the index specified.
         /// -1 is returned if there are no more set bits.
@@ -183,31 +183,31 @@ namespace Lucene
         /// -1 is returned if there are no more set bits.
         int64_t nextSetBit(int64_t index);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// this = this AND other
-        void intersect(OpenBitSetPtr other);
+        void intersect(const OpenBitSetPtr& other);
 
         /// this = this OR other
-        void _union(OpenBitSetPtr other);
+        void _union(const OpenBitSetPtr& other);
 
         /// Remove all elements set in other. this = this AND_NOT other
-        void remove(OpenBitSetPtr other);
+        void remove(const OpenBitSetPtr& other);
 
         /// this = this XOR other
-        void _xor(OpenBitSetPtr other);
+        void _xor(const OpenBitSetPtr& other);
 
         /// see {@link intersect}
-        void _and(OpenBitSetPtr other);
+        void _and(const OpenBitSetPtr& other);
 
         /// see {@link union}
-        void _or(OpenBitSetPtr other);
+        void _or(const OpenBitSetPtr& other);
 
         /// see {@link remove}
-        void andNot(OpenBitSetPtr other);
+        void andNot(const OpenBitSetPtr& other);
 
         /// Returns true if the sets have any elements in common
-        bool intersects(OpenBitSetPtr other);
+        bool intersects(const OpenBitSetPtr& other);
 
         /// Expand the LongArray with the size given as a number of words (64 bit longs).
         /// getNumWords() is unchanged by this call.
@@ -224,7 +224,7 @@ namespace Lucene
         static int32_t bits2words(int64_t numBits);
 
         /// Returns true if both sets have the same bits set
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         virtual int32_t hashCode();
 

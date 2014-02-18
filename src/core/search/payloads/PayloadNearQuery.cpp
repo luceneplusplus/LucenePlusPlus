@@ -22,7 +22,7 @@ namespace Lucene
         this->function = newLucene<AveragePayloadFunction>();
     }
 
-    PayloadNearQuery::PayloadNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, PayloadFunctionPtr function) : SpanNearQuery(clauses, slop, inOrder)
+    PayloadNearQuery::PayloadNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, const PayloadFunctionPtr& function) : SpanNearQuery(clauses, slop, inOrder)
     {
         fieldName = clauses[0]->getField(); // all clauses must have same field
         this->function = function;
@@ -32,12 +32,12 @@ namespace Lucene
     {
     }
 
-    WeightPtr PayloadNearQuery::createWeight(SearcherPtr searcher)
+    WeightPtr PayloadNearQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<PayloadNearSpanWeight>(shared_from_this(), searcher);
     }
 
-    LuceneObjectPtr PayloadNearQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr PayloadNearQuery::clone(const LuceneObjectPtr& other)
     {
         int32_t sz = clauses.size();
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
@@ -64,7 +64,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool PayloadNearQuery::equals(LuceneObjectPtr other)
+    bool PayloadNearQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -96,7 +96,7 @@ namespace Lucene
         return result;
     }
 
-    PayloadNearSpanWeight::PayloadNearSpanWeight(SpanQueryPtr query, SearcherPtr searcher) : SpanWeight(query, searcher)
+    PayloadNearSpanWeight::PayloadNearSpanWeight(const SpanQueryPtr& query, const SearcherPtr& searcher) : SpanWeight(query, searcher)
     {
     }
 
@@ -104,12 +104,12 @@ namespace Lucene
     {
     }
 
-    ScorerPtr PayloadNearSpanWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr PayloadNearSpanWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<PayloadNearSpanScorer>(query->getSpans(reader), shared_from_this(), similarity, reader->norms(query->getField()));
     }
 
-    PayloadNearSpanScorer::PayloadNearSpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
+    PayloadNearSpanScorer::PayloadNearSpanScorer(const SpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
     {
         this->spans = spans;
         this->payloadScore = 0.0;

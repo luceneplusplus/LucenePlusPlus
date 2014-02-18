@@ -15,7 +15,7 @@
 
 namespace Lucene
 {
-    SimpleFSDirectory::SimpleFSDirectory(const String& path, LockFactoryPtr lockFactory) : FSDirectory(path, lockFactory)
+    SimpleFSDirectory::SimpleFSDirectory(const String& path, const LockFactoryPtr& lockFactory) : FSDirectory(path, lockFactory)
     {
     }
 
@@ -161,7 +161,7 @@ namespace Lucene
         return file->isValid();
     }
 
-    LuceneObjectPtr SimpleFSIndexInput::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SimpleFSIndexInput::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = BufferedIndexInput::clone(other ? other : newLucene<SimpleFSIndexInput>());
         SimpleFSIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<SimpleFSIndexInput>(clone));

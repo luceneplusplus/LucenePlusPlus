@@ -36,7 +36,7 @@ namespace Lucene
         return defaultNorm;
     }
 
-    InvertedDocEndConsumerPerThreadPtr NormsWriter::addThread(DocInverterPerThreadPtr docInverterPerThread)
+    InvertedDocEndConsumerPerThreadPtr NormsWriter::addThread(const DocInverterPerThreadPtr& docInverterPerThread)
     {
         return newLucene<NormsWriterPerThread>(docInverterPerThread, shared_from_this());
     }
@@ -49,12 +49,12 @@ namespace Lucene
     {
     }
 
-    void NormsWriter::setFieldInfos(FieldInfosPtr fieldInfos)
+    void NormsWriter::setFieldInfos(const FieldInfosPtr& fieldInfos)
     {
         this->fieldInfos = fieldInfos;
     }
 
-    void NormsWriter::flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
+    void NormsWriter::flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
     {
         MapFieldInfoCollectionNormsWriterPerField byField(MapFieldInfoCollectionNormsWriterPerField::newInstance());
 
@@ -183,7 +183,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    void NormsWriter::closeDocStore(SegmentWriteStatePtr state)
+    void NormsWriter::closeDocStore(const SegmentWriteStatePtr& state)
     {
     }
 }

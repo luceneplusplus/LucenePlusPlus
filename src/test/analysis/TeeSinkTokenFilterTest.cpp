@@ -30,7 +30,7 @@ public:
     }
 
 public:
-    virtual bool accept(AttributeSourcePtr source)
+    virtual bool accept(const AttributeSourcePtr& source)
     {
         TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
         return boost::iequals(termAtt->term(), L"The");
@@ -45,7 +45,7 @@ public:
     }
 
 public:
-    virtual bool accept(AttributeSourcePtr source)
+    virtual bool accept(const AttributeSourcePtr& source)
     {
         TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
         return boost::iequals(termAtt->term(), L"Dogs");
@@ -133,7 +133,7 @@ namespace TestPerformance
     class ModuloTokenFilter : public TokenFilter
     {
     public:
-        ModuloTokenFilter(TokenStreamPtr input, int32_t mc) : TokenFilter(input)
+        ModuloTokenFilter(const TokenStreamPtr& input, int32_t mc) : TokenFilter(input)
         {
             modCount = mc;
             count = 0;
@@ -177,7 +177,7 @@ namespace TestPerformance
         int32_t count;
 
     public:
-        virtual bool accept(AttributeSourcePtr source)
+        virtual bool accept(const AttributeSourcePtr& source)
         {
             bool b = (source && count % modCount == 0);
             ++count;

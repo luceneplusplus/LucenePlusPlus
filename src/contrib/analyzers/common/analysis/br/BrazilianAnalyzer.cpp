@@ -76,7 +76,7 @@ namespace Lucene
         setPreviousTokenStream(LuceneObjectPtr()); // force a new stemmer to be created
     }
 
-    TokenStreamPtr BrazilianAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr BrazilianAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
         result = newLucene<LowerCaseFilter>(result);
@@ -86,7 +86,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr BrazilianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr BrazilianAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         BrazilianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<BrazilianAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

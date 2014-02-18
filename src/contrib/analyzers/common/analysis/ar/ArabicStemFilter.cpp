@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    ArabicStemFilter::ArabicStemFilter(TokenStreamPtr input) : TokenFilter(input)
+    ArabicStemFilter::ArabicStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         stemmer = newLucene<ArabicStemmer>();
         termAtt = addAttribute<TermAttribute>();

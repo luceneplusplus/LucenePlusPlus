@@ -17,7 +17,7 @@ namespace Lucene
     class LPPAPI CharFilter : public CharStream
     {
     protected:
-        CharFilter(CharStreamPtr in);
+        CharFilter(const CharStreamPtr& in);
     public:
         virtual ~CharFilter();
 

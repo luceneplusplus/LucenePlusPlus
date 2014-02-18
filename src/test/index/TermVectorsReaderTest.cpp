@@ -58,7 +58,7 @@ public:
     int32_t endOffset;
 
 public:
-    int32_t compareTo(TestTokenPtr other)
+    int32_t compareTo(const TestTokenPtr& other)
     {
         return (pos - other->pos);
     }
@@ -131,7 +131,7 @@ protected:
     Collection<TestTokenPtr> tokens;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<MyTokenStream>(tokens);
     }

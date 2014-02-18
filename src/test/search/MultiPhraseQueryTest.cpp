@@ -27,14 +27,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture MultiPhraseQueryTest;
 
-static void add(const String& s, IndexWriterPtr writer)
+static void add(const String& s, const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"body", s, Field::STORE_YES, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void add(const String& s, const String& type, IndexWriterPtr writer)
+static void add(const String& s, const String& type, const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"body", s, Field::STORE_YES, Field::INDEX_ANALYZED));

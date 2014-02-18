@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    SpanQueryFilter::SpanQueryFilter(SpanQueryPtr query)
+    SpanQueryFilter::SpanQueryFilter(const SpanQueryPtr& query)
     {
         this->query = query;
     }
@@ -23,13 +23,13 @@ namespace Lucene
     {
     }
 
-    DocIdSetPtr SpanQueryFilter::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr SpanQueryFilter::getDocIdSet(const IndexReaderPtr& reader)
     {
         SpanFilterResultPtr result(bitSpans(reader));
         return result->getDocIdSet();
     }
 
-    SpanFilterResultPtr SpanQueryFilter::bitSpans(IndexReaderPtr reader)
+    SpanFilterResultPtr SpanQueryFilter::bitSpans(const IndexReaderPtr& reader)
     {
         OpenBitSetPtr bits(newLucene<OpenBitSet>(reader->maxDoc()));
         SpansPtr spans(query->getSpans(reader));
@@ -61,7 +61,7 @@ namespace Lucene
         return L"SpanQueryFilter(" + query->toString() + L")";
     }
 
-    bool SpanQueryFilter::equals(LuceneObjectPtr other)
+    bool SpanQueryFilter::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

@@ -14,12 +14,12 @@ namespace Lucene
     {
     }
 
-    TokenStreamPtr KeywordAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr KeywordAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<KeywordTokenizer>(reader);
     }
 
-    TokenStreamPtr KeywordAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr KeywordAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
         if (!tokenizer)

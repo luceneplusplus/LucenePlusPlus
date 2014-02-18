@@ -21,7 +21,7 @@ namespace Lucene
     class LPPCONTRIBAPI ChineseFilter : public TokenFilter
     {
     public:
-        ChineseFilter(TokenStreamPtr input);
+        ChineseFilter(const TokenStreamPtr& input);
         virtual ~ChineseFilter();
 
         LUCENE_CLASS(ChineseFilter);

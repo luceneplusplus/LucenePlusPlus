@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    CachingWrapperFilter::CachingWrapperFilter(FilterPtr filter, DeletesMode deletesMode)
+    CachingWrapperFilter::CachingWrapperFilter(const FilterPtr& filter, DeletesMode deletesMode)
     {
         this->filter = filter;
         this->cache = newLucene<FilterCacheDocIdSet>(deletesMode);
@@ -24,7 +24,7 @@ namespace Lucene
     {
     }
 
-    DocIdSetPtr CachingWrapperFilter::docIdSetToCache(DocIdSetPtr docIdSet, IndexReaderPtr reader)
+    DocIdSetPtr CachingWrapperFilter::docIdSetToCache(const DocIdSetPtr& docIdSet, const IndexReaderPtr& reader)
     {
         if (!docIdSet)
         {
@@ -42,7 +42,7 @@ namespace Lucene
         }
     }
 
-    DocIdSetPtr CachingWrapperFilter::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr CachingWrapperFilter::getDocIdSet(const IndexReaderPtr& reader)
     {
         LuceneObjectPtr coreKey = reader->getFieldCacheKey();
         LuceneObjectPtr delCoreKey = reader->hasDeletions() ? reader->getDeletesCacheKey() : coreKey;
@@ -70,7 +70,7 @@ namespace Lucene
         return L"CachingWrapperFilter(" + filter->toString() + L")";
     }
 
-    bool CachingWrapperFilter::equals(LuceneObjectPtr other)
+    bool CachingWrapperFilter::equals(const LuceneObjectPtr& other)
     {
         if (Filter::equals(other))
             return true;
@@ -96,7 +96,7 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr FilterCache::get(IndexReaderPtr reader, LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey)
+    LuceneObjectPtr FilterCache::get(const IndexReaderPtr& reader, const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey)
     {
         SyncLock syncLock(this);
 
@@ -133,7 +133,7 @@ namespace Lucene
         return value;
     }
 
-    void FilterCache::put(LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey, LuceneObjectPtr value)
+    void FilterCache::put(const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey, const LuceneObjectPtr& value)
     {
         SyncLock syncLock(this);
 
@@ -156,12 +156,12 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr FilterCacheDocIdSet::mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value)
+    LuceneObjectPtr FilterCacheDocIdSet::mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value)
     {
         return newLucene<FilteredCacheDocIdSet>(reader, boost::dynamic_pointer_cast<DocIdSet>(value));
     }
 
-    FilteredCacheDocIdSet::FilteredCacheDocIdSet(IndexReaderPtr reader, DocIdSetPtr innerSet) : FilteredDocIdSet(innerSet)
+    FilteredCacheDocIdSet::FilteredCacheDocIdSet(const IndexReaderPtr& reader, const DocIdSetPtr& innerSet) : FilteredDocIdSet(innerSet)
     {
         this->reader = reader;
     }

@@ -13,13 +13,13 @@ namespace Lucene
     {
     }
 
-    void TermDocs::seek(TermPtr term)
+    void TermDocs::seek(const TermPtr& term)
     {
         BOOST_ASSERT(false);
         // override
     }
 
-    void TermDocs::seek(TermEnumPtr termEnum)
+    void TermDocs::seek(const TermEnumPtr& termEnum)
     {
         BOOST_ASSERT(false);
         // override

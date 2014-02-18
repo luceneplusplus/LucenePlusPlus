@@ -28,12 +28,12 @@ namespace Lucene
         /// @return either a {@link TokenStream} that the Highlighter should continue using (eg
         /// if you read the tokenSream in this method) or null to continue using the same {@link
         /// TokenStream} that was passed in.
-        virtual TokenStreamPtr init(TokenStreamPtr tokenStream);
+        virtual TokenStreamPtr init(const TokenStreamPtr& tokenStream);
 
         /// Called when a new fragment is started for consideration.
         ///
         /// @param newFragment the fragment that will be scored next
-        virtual void startFragment(TextFragmentPtr newFragment);
+        virtual void startFragment(const TextFragmentPtr& newFragment);
 
         /// Called for each token in the current fragment. The {@link Highlighter} will increment
         /// the {@link TokenStream} passed to init on every call.

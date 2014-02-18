@@ -33,7 +33,7 @@ namespace Lucene
         ///
         /// NOTE: this does not compute scores by default; use {@link IndexSearcher#setDefaultFieldSortScoring}
         /// to enable scoring.
-        virtual TopFieldDocsPtr search(QueryPtr query, FilterPtr filter, int32_t n, SortPtr sort);
+        virtual TopFieldDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n, const SortPtr& sort);
 
         /// Lower-level search API.
         ///
@@ -45,7 +45,7 @@ namespace Lucene
         ///
         /// Note: The score passed to this method is a raw score.  In other words, the score will not necessarily
         /// be a double whose value is between 0 and 1.
-        virtual void search(QueryPtr query, CollectorPtr results);
+        virtual void search(const QueryPtr& query, const CollectorPtr& results);
 
         /// Lower-level search API.
         ///
@@ -59,23 +59,23 @@ namespace Lucene
         /// @param query To match documents
         /// @param filter If non-null, used to permit documents to be collected.
         /// @param results To receive hits
-        virtual void search(QueryPtr query, FilterPtr filter, CollectorPtr results);
+        virtual void search(const QueryPtr& query, const FilterPtr& filter, const CollectorPtr& results);
 
         /// Finds the top n hits for query, applying filter if non-null.
-        virtual TopDocsPtr search(QueryPtr query, FilterPtr filter, int32_t n);
+        virtual TopDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n);
 
         /// Finds the top n hits for query.
-        virtual TopDocsPtr search(QueryPtr query, int32_t n);
+        virtual TopDocsPtr search(const QueryPtr& query, int32_t n);
 
         /// Returns an Explanation that describes how doc scored against query.
         ///
         /// This is intended to be used in developing Similarity implementations, and for good performance,
         /// should not be displayed with every hit.  Computing an explanation is as expensive as executing the
         /// query over the entire index.
-        virtual ExplanationPtr explain(QueryPtr query, int32_t doc);
+        virtual ExplanationPtr explain(const QueryPtr& query, int32_t doc);
 
         /// Set the Similarity implementation used by this Searcher.
-        virtual void setSimilarity(SimilarityPtr similarity);
+        virtual void setSimilarity(const SimilarityPtr& similarity);
 
         /// Return the Similarity implementation used by this Searcher.
         ///
@@ -84,21 +84,21 @@ namespace Lucene
 
         virtual Collection<int32_t> docFreqs(Collection<TermPtr> terms);
 
-        virtual void search(WeightPtr weight, FilterPtr filter, CollectorPtr results) = 0;
+        virtual void search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results) = 0;
         virtual void close() = 0;
-        virtual int32_t docFreq(TermPtr term) = 0;
+        virtual int32_t docFreq(const TermPtr& term) = 0;
         virtual int32_t maxDoc() = 0;
-        virtual TopDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n) = 0;
+        virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n) = 0;
         virtual DocumentPtr doc(int32_t n) = 0;
-        virtual DocumentPtr doc(int32_t n, FieldSelectorPtr fieldSelector) = 0;
-        virtual QueryPtr rewrite(QueryPtr query) = 0;
-        virtual ExplanationPtr explain(WeightPtr weight, int32_t doc) = 0;
-        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort) = 0;
+        virtual DocumentPtr doc(int32_t n, const FieldSelectorPtr& fieldSelector) = 0;
+        virtual QueryPtr rewrite(const QueryPtr& query) = 0;
+        virtual ExplanationPtr explain(const WeightPtr& weight, int32_t doc) = 0;
+        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort) = 0;
 
     protected:
         /// Creates a weight for query.
         /// @return New weight
-        virtual WeightPtr createWeight(QueryPtr query);
+        virtual WeightPtr createWeight(const QueryPtr& query);
     };
 }
 

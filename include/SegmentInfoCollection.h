@@ -27,16 +27,16 @@ namespace Lucene
         int32_t size();
         bool empty();
         void clear();
-        void add(SegmentInfoPtr info);
-        void add(int32_t pos, SegmentInfoPtr info);
-        void addAll(SegmentInfoCollectionPtr segmentInfos);
-        bool equals(SegmentInfoCollectionPtr other);
-        int32_t find(SegmentInfoPtr info);
-        bool contains(SegmentInfoPtr info);
+        void add(const SegmentInfoPtr& info);
+        void add(int32_t pos, const SegmentInfoPtr& info);
+        void addAll(const SegmentInfoCollectionPtr& segmentInfos);
+        bool equals(const SegmentInfoCollectionPtr& other);
+        int32_t find(const SegmentInfoPtr& info);
+        bool contains(const SegmentInfoPtr& info);
         void remove(int32_t pos);
         void remove(int32_t start, int32_t end);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

@@ -20,7 +20,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CrashTest;
 
-static IndexWriterPtr initIndex(MockRAMDirectoryPtr dir)
+static IndexWriterPtr initIndex(const MockRAMDirectoryPtr& dir)
 {
     dir->setLockFactory(NoLockFactory::getNoLockFactory());
 
@@ -43,7 +43,7 @@ static IndexWriterPtr initIndex()
     return initIndex(newLucene<MockRAMDirectory>());
 }
 
-static void crash(IndexWriterPtr writer)
+static void crash(const IndexWriterPtr& writer)
 {
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     ConcurrentMergeSchedulerPtr cms = boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler());

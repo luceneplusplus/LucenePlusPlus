@@ -23,7 +23,7 @@ namespace Lucene
         // override
     }
 
-    LuceneObjectPtr LuceneObject::clone(LuceneObjectPtr other)
+    LuceneObjectPtr LuceneObject::clone(const LuceneObjectPtr& other)
     {
         if (!other)
             boost::throw_exception(UnsupportedOperationException(L"clone must not be null"));
@@ -35,12 +35,12 @@ namespace Lucene
         return (int32_t)(int64_t)this;
     }
 
-    bool LuceneObject::equals(LuceneObjectPtr other)
+    bool LuceneObject::equals(const LuceneObjectPtr& other)
     {
         return (other && this == other.get());
     }
 
-    int32_t LuceneObject::compareTo(LuceneObjectPtr other)
+    int32_t LuceneObject::compareTo(const LuceneObjectPtr& other)
     {
         return (int32_t)(this - other.get());
     }

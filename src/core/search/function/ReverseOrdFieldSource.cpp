@@ -27,7 +27,7 @@ namespace Lucene
         return L"rord(" + field + L")";
     }
 
-    DocValuesPtr ReverseOrdFieldSource::getValues(IndexReaderPtr reader)
+    DocValuesPtr ReverseOrdFieldSource::getValues(const IndexReaderPtr& reader)
     {
         StringIndexPtr sindex(FieldCache::DEFAULT()->getStringIndex(reader, field));
         Collection<int32_t> arr(sindex->order);
@@ -35,7 +35,7 @@ namespace Lucene
         return newLucene<ReverseOrdDocValues>(shared_from_this(), arr, end);
     }
 
-    bool ReverseOrdFieldSource::equals(LuceneObjectPtr other)
+    bool ReverseOrdFieldSource::equals(const LuceneObjectPtr& other)
     {
         if (!MiscUtils::equalTypes(shared_from_this(), other))
             return false;
@@ -50,7 +50,7 @@ namespace Lucene
         return StringUtils::hashCode(ReverseOrdFieldSource::_getClassName()) + StringUtils::hashCode(field);
     }
 
-    ReverseOrdDocValues::ReverseOrdDocValues(ReverseOrdFieldSourcePtr source, Collection<int32_t> arr, int32_t end)
+    ReverseOrdDocValues::ReverseOrdDocValues(const ReverseOrdFieldSourcePtr& source, Collection<int32_t> arr, int32_t end)
     {
         this->_source = source;
         this->arr = arr;

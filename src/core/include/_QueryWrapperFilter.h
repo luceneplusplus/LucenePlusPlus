@@ -14,7 +14,7 @@ namespace Lucene
     class QueryWrapperFilterDocIdSet : public DocIdSet
     {
     public:
-        QueryWrapperFilterDocIdSet(IndexReaderPtr reader, WeightPtr weight);
+        QueryWrapperFilterDocIdSet(const IndexReaderPtr& reader, const WeightPtr& weight);
         virtual ~QueryWrapperFilterDocIdSet();
 
         LUCENE_CLASS(QueryWrapperFilterDocIdSet);

@@ -25,7 +25,7 @@ namespace Lucene
         /// Create a new MMapDirectory for the named location.
         /// @param path the path of the directory.
         /// @param lockFactory the lock factory to use, or null for the default ({@link NativeFSLockFactory})
-        MMapDirectory(const String& path, LockFactoryPtr lockFactory = LockFactoryPtr());
+        MMapDirectory(const String& path, const LockFactoryPtr& lockFactory = LockFactoryPtr());
 
         virtual ~MMapDirectory();
 

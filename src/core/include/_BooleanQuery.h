@@ -15,7 +15,7 @@ namespace Lucene
     class BooleanWeight : public Weight
     {
     public:
-        BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher);
+        BooleanWeight(const BooleanQueryPtr& query, const SearcherPtr& searcher);
         virtual ~BooleanWeight();
 
         LUCENE_CLASS(BooleanWeight);
@@ -32,8 +32,8 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
         virtual bool scoresDocsOutOfOrder();
     };
 
@@ -41,7 +41,7 @@ namespace Lucene
     class SimilarityDisableCoord : public SimilarityDelegator
     {
     public:
-        SimilarityDisableCoord(SimilarityPtr delegee);
+        SimilarityDisableCoord(const SimilarityPtr& delegee);
         virtual ~SimilarityDisableCoord();
 
         LUCENE_CLASS(SimilarityDisableCoord);

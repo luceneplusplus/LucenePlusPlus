@@ -16,7 +16,7 @@
 
 namespace Lucene
 {
-    TopFieldCollector::TopFieldCollector(HitQueueBasePtr pq, int32_t numHits, bool fillFields) : TopDocsCollector(pq)
+    TopFieldCollector::TopFieldCollector(const HitQueueBasePtr& pq, int32_t numHits, bool fillFields) : TopDocsCollector(pq)
     {
         this->numHits = numHits;
         this->fillFields = fillFields;
@@ -37,7 +37,7 @@ namespace Lucene
         return _EMPTY_SCOREDOCS;
     }
 
-    TopFieldCollectorPtr TopFieldCollector::create(SortPtr sort, int32_t numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
+    TopFieldCollectorPtr TopFieldCollector::create(const SortPtr& sort, int32_t numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
     {
         if (sort->fields.empty())
             boost::throw_exception(IllegalArgumentException(L"Sort must contain at least one field"));
@@ -128,7 +128,7 @@ namespace Lucene
         return false;
     }
 
-    OneComparatorNonScoringCollector::OneComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : TopFieldCollector(queue, numHits, fillFields)
+    OneComparatorNonScoringCollector::OneComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : TopFieldCollector(queue, numHits, fillFields)
     {
     }
 
@@ -180,18 +180,18 @@ namespace Lucene
         }
     }
 
-    void OneComparatorNonScoringCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void OneComparatorNonScoringCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
         comparator->setNextReader(reader, docBase);
     }
 
-    void OneComparatorNonScoringCollector::setScorer(ScorerPtr scorer)
+    void OneComparatorNonScoringCollector::setScorer(const ScorerPtr& scorer)
     {
         comparator->setScorer(scorer);
     }
 
-    OutOfOrderOneComparatorNonScoringCollector::OutOfOrderOneComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : OneComparatorNonScoringCollector(queue, numHits, fillFields)
+    OutOfOrderOneComparatorNonScoringCollector::OutOfOrderOneComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : OneComparatorNonScoringCollector(queue, numHits, fillFields)
     {
     }
 
@@ -231,7 +231,7 @@ namespace Lucene
         return true;
     }
 
-    OneComparatorScoringNoMaxScoreCollector::OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : OneComparatorNonScoringCollector(queue, numHits, fillFields)
+    OneComparatorScoringNoMaxScoreCollector::OneComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : OneComparatorNonScoringCollector(queue, numHits, fillFields)
     {
     }
 
@@ -281,13 +281,13 @@ namespace Lucene
         }
     }
 
-    void OneComparatorScoringNoMaxScoreCollector::setScorer(ScorerPtr scorer)
+    void OneComparatorScoringNoMaxScoreCollector::setScorer(const ScorerPtr& scorer)
     {
         this->scorer = scorer;
         comparator->setScorer(scorer);
     }
 
-    OutOfOrderOneComparatorScoringNoMaxScoreCollector::OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : OneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields)
+    OutOfOrderOneComparatorScoringNoMaxScoreCollector::OutOfOrderOneComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : OneComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields)
     {
     }
 
@@ -333,7 +333,7 @@ namespace Lucene
         return true;
     }
 
-    OneComparatorScoringMaxScoreCollector::OneComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : OneComparatorNonScoringCollector(queue, numHits, fillFields)
+    OneComparatorScoringMaxScoreCollector::OneComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : OneComparatorNonScoringCollector(queue, numHits, fillFields)
     {
         // Must set maxScore to NEG_INF, or otherwise std::max always returns NaN.
         this->maxScore = -std::numeric_limits<double>::infinity();
@@ -382,13 +382,13 @@ namespace Lucene
         }
     }
 
-    void OneComparatorScoringMaxScoreCollector::setScorer(ScorerPtr scorer)
+    void OneComparatorScoringMaxScoreCollector::setScorer(const ScorerPtr& scorer)
     {
         this->scorer = scorer;
         OneComparatorNonScoringCollector::setScorer(scorer);
     }
 
-    OutOfOrderOneComparatorScoringMaxScoreCollector::OutOfOrderOneComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : OneComparatorScoringMaxScoreCollector(queue, numHits, fillFields)
+    OutOfOrderOneComparatorScoringMaxScoreCollector::OutOfOrderOneComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : OneComparatorScoringMaxScoreCollector(queue, numHits, fillFields)
     {
     }
 
@@ -431,7 +431,7 @@ namespace Lucene
         return true;
     }
 
-    MultiComparatorNonScoringCollector::MultiComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : TopFieldCollector(queue, numHits, fillFields)
+    MultiComparatorNonScoringCollector::MultiComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : TopFieldCollector(queue, numHits, fillFields)
     {
     }
 
@@ -507,21 +507,21 @@ namespace Lucene
         }
     }
 
-    void MultiComparatorNonScoringCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void MultiComparatorNonScoringCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
         for (Collection<FieldComparatorPtr>::iterator cmp = comparators.begin(); cmp != comparators.end(); ++cmp)
             (*cmp)->setNextReader(reader, docBase);
     }
 
-    void MultiComparatorNonScoringCollector::setScorer(ScorerPtr scorer)
+    void MultiComparatorNonScoringCollector::setScorer(const ScorerPtr& scorer)
     {
         // set the scorer on all comparators
         for (Collection<FieldComparatorPtr>::iterator cmp = comparators.begin(); cmp != comparators.end(); ++cmp)
             (*cmp)->setScorer(scorer);
     }
 
-    OutOfOrderMultiComparatorNonScoringCollector::OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : MultiComparatorNonScoringCollector(queue, numHits, fillFields)
+    OutOfOrderMultiComparatorNonScoringCollector::OutOfOrderMultiComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : MultiComparatorNonScoringCollector(queue, numHits, fillFields)
     {
     }
 
@@ -590,7 +590,7 @@ namespace Lucene
         return true;
     }
 
-    MultiComparatorScoringMaxScoreCollector::MultiComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : MultiComparatorNonScoringCollector(queue, numHits, fillFields)
+    MultiComparatorScoringMaxScoreCollector::MultiComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : MultiComparatorNonScoringCollector(queue, numHits, fillFields)
     {
         // Must set maxScore to NEG_INF, or otherwise std::max always returns NaN.
         this->maxScore = -std::numeric_limits<double>::infinity();
@@ -663,13 +663,13 @@ namespace Lucene
         }
     }
 
-    void MultiComparatorScoringMaxScoreCollector::setScorer(ScorerPtr scorer)
+    void MultiComparatorScoringMaxScoreCollector::setScorer(const ScorerPtr& scorer)
     {
         this->_scorer = scorer;
         MultiComparatorNonScoringCollector::setScorer(scorer);
     }
 
-    OutOfOrderMultiComparatorScoringMaxScoreCollector::OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : MultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields)
+    OutOfOrderMultiComparatorScoringMaxScoreCollector::OutOfOrderMultiComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : MultiComparatorScoringMaxScoreCollector(queue, numHits, fillFields)
     {
     }
 
@@ -741,7 +741,7 @@ namespace Lucene
         return true;
     }
 
-    MultiComparatorScoringNoMaxScoreCollector::MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : MultiComparatorNonScoringCollector(queue, numHits, fillFields)
+    MultiComparatorScoringNoMaxScoreCollector::MultiComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : MultiComparatorNonScoringCollector(queue, numHits, fillFields)
     {
     }
 
@@ -814,13 +814,13 @@ namespace Lucene
         }
     }
 
-    void MultiComparatorScoringNoMaxScoreCollector::setScorer(ScorerPtr scorer)
+    void MultiComparatorScoringNoMaxScoreCollector::setScorer(const ScorerPtr& scorer)
     {
         this->_scorer = scorer;
         MultiComparatorNonScoringCollector::setScorer(scorer);
     }
 
-    OutOfOrderMultiComparatorScoringNoMaxScoreCollector::OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields) : MultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields)
+    OutOfOrderMultiComparatorScoringNoMaxScoreCollector::OutOfOrderMultiComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields) : MultiComparatorScoringNoMaxScoreCollector(queue, numHits, fillFields)
     {
     }
 
@@ -889,7 +889,7 @@ namespace Lucene
         }
     }
 
-    void OutOfOrderMultiComparatorScoringNoMaxScoreCollector::setScorer(ScorerPtr scorer)
+    void OutOfOrderMultiComparatorScoringNoMaxScoreCollector::setScorer(const ScorerPtr& scorer)
     {
         this->_scorer = scorer;
         MultiComparatorScoringNoMaxScoreCollector::setScorer(scorer);

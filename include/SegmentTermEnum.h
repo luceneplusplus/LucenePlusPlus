@@ -15,7 +15,7 @@ namespace Lucene
     {
     public:
         SegmentTermEnum();
-        SegmentTermEnum(IndexInputPtr i, FieldInfosPtr fis, bool isi);
+        SegmentTermEnum(const IndexInputPtr& i, const FieldInfosPtr& fis, bool isi);
         virtual ~SegmentTermEnum();
 
         LUCENE_CLASS(SegmentTermEnum);
@@ -43,15 +43,15 @@ namespace Lucene
         int32_t maxSkipLevels;
 
     public:
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        void seek(int64_t pointer, int64_t p, TermPtr t, TermInfoPtr ti);
+        void seek(int64_t pointer, int64_t p, const TermPtr& t, const TermInfoPtr& ti);
 
         /// Increments the enumeration to the next element.  True if one exists.
         virtual bool next();
 
         /// Optimized scan, without allocating new terms. Return number of invocations to next().
-        int32_t scanTo(TermPtr term);
+        int32_t scanTo(const TermPtr& term);
 
         /// Returns the current Term in the enumeration.
         /// Initially invalid, valid after next() called for the first time.
@@ -66,7 +66,7 @@ namespace Lucene
 
         /// Sets the argument to the current TermInfo in the enumeration.
         /// Initially invalid, valid after next() called for the first time.
-        void termInfo(TermInfoPtr ti);
+        void termInfo(const TermInfoPtr& ti);
 
         /// Returns the docFreq of the current Term in the enumeration.
         /// Initially invalid, valid after next() called for the first time.

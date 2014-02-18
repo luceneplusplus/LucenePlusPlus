@@ -14,7 +14,7 @@ namespace Lucene
     class StoredFieldsWriterPerThread : public LuceneObject
     {
     public:
-        StoredFieldsWriterPerThread(DocStatePtr docState, StoredFieldsWriterPtr storedFieldsWriter);
+        StoredFieldsWriterPerThread(const DocStatePtr& docState, const StoredFieldsWriterPtr& storedFieldsWriter);
         virtual ~StoredFieldsWriterPerThread();
 
         LUCENE_CLASS(StoredFieldsWriterPerThread);
@@ -28,7 +28,7 @@ namespace Lucene
 
     public:
         void startDocument();
-        void addField(FieldablePtr field, FieldInfoPtr fieldInfo);
+        void addField(const FieldablePtr& field, const FieldInfoPtr& fieldInfo);
         DocWriterPtr finishDocument();
         void abort();
     };

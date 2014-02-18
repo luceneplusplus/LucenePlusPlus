@@ -364,12 +364,12 @@ namespace Lucene
         return BitUtil::pop_array(bits.get(), 0, wlen);
     }
 
-    int64_t OpenBitSet::intersectionCount(OpenBitSetPtr a, OpenBitSetPtr b)
+    int64_t OpenBitSet::intersectionCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b)
     {
         return BitUtil::pop_intersect(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
     }
 
-    int64_t OpenBitSet::unionCount(OpenBitSetPtr a, OpenBitSetPtr b)
+    int64_t OpenBitSet::unionCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b)
     {
         int64_t tot = BitUtil::pop_union(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
         if (a->wlen < b->wlen)
@@ -379,7 +379,7 @@ namespace Lucene
         return tot;
     }
 
-    int64_t OpenBitSet::andNotCount(OpenBitSetPtr a, OpenBitSetPtr b)
+    int64_t OpenBitSet::andNotCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b)
     {
         int64_t tot = BitUtil::pop_andnot(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
         if (a->wlen > b->wlen)
@@ -387,7 +387,7 @@ namespace Lucene
         return tot;
     }
 
-    int64_t OpenBitSet::xorCount(OpenBitSetPtr a, OpenBitSetPtr b)
+    int64_t OpenBitSet::xorCount(const OpenBitSetPtr& a, const OpenBitSetPtr& b)
     {
         int64_t tot = BitUtil::pop_xor(a->bits.get(), b->bits.get(), 0, std::min(a->wlen, b->wlen));
         if (a->wlen < b->wlen)
@@ -439,7 +439,7 @@ namespace Lucene
         return -1;
     }
 
-    LuceneObjectPtr OpenBitSet::clone(LuceneObjectPtr other)
+    LuceneObjectPtr OpenBitSet::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<OpenBitSet>();
         OpenBitSetPtr cloneSet(boost::dynamic_pointer_cast<OpenBitSet>(LuceneObject::clone(clone)));
@@ -449,7 +449,7 @@ namespace Lucene
         return cloneSet;
     }
 
-    void OpenBitSet::intersect(OpenBitSetPtr other)
+    void OpenBitSet::intersect(const OpenBitSetPtr& other)
     {
         int32_t newLen= std::min(this->wlen, other->wlen);
         LongArray thisArr = this->bits;
@@ -466,7 +466,7 @@ namespace Lucene
         this->wlen = newLen;
     }
 
-    void OpenBitSet::_union(OpenBitSetPtr other)
+    void OpenBitSet::_union(const OpenBitSetPtr& other)
     {
         int32_t newLen = std::max(wlen, other->wlen);
         ensureCapacityWords(newLen);
@@ -481,7 +481,7 @@ namespace Lucene
         this->wlen = newLen;
     }
 
-    void OpenBitSet::remove(OpenBitSetPtr other)
+    void OpenBitSet::remove(const OpenBitSetPtr& other)
     {
         int32_t idx = std::min(wlen, other->wlen);
         LongArray thisArr = this->bits;
@@ -490,7 +490,7 @@ namespace Lucene
             thisArr[idx] &= ~otherArr[idx];
     }
 
-    void OpenBitSet::_xor(OpenBitSetPtr other)
+    void OpenBitSet::_xor(const OpenBitSetPtr& other)
     {
         int32_t newLen = std::max(wlen, other->wlen);
         ensureCapacityWords(newLen);
@@ -505,22 +505,22 @@ namespace Lucene
         this->wlen = newLen;
     }
 
-    void OpenBitSet::_and(OpenBitSetPtr other)
+    void OpenBitSet::_and(const OpenBitSetPtr& other)
     {
         intersect(other);
     }
 
-    void OpenBitSet::_or(OpenBitSetPtr other)
+    void OpenBitSet::_or(const OpenBitSetPtr& other)
     {
         _union(other);
     }
 
-    void OpenBitSet::andNot(OpenBitSetPtr other)
+    void OpenBitSet::andNot(const OpenBitSetPtr& other)
     {
         remove(other);
     }
 
-    bool OpenBitSet::intersects(OpenBitSetPtr other)
+    bool OpenBitSet::intersects(const OpenBitSetPtr& other)
     {
         int32_t pos = std::min(this->wlen, other->wlen);
         LongArray thisArr = this->bits;
@@ -561,7 +561,7 @@ namespace Lucene
         return (int32_t)(MiscUtils::unsignedShift(numBits - 1, (int64_t)6) + 1);
     }
 
-    bool OpenBitSet::equals(LuceneObjectPtr other)
+    bool OpenBitSet::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

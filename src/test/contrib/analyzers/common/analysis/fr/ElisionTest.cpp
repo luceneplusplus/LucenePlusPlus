@@ -21,7 +21,7 @@ public:
     }
 
 public:
-    Collection<String> addTerms(TokenFilterPtr filter)
+    Collection<String> addTerms(const TokenFilterPtr& filter)
     {
         Collection<String> terms = Collection<String>::newInstance();
         TermAttributePtr termAtt = filter->getAttribute<TermAttribute>();

@@ -15,7 +15,7 @@ namespace Lucene
     class LPPAPI PrefixFilter : public MultiTermQueryWrapperFilter
     {
     public:
-        PrefixFilter(TermPtr prefix);
+        PrefixFilter(const TermPtr& prefix);
         virtual ~PrefixFilter();
 
         LUCENE_CLASS(PrefixFilter);

@@ -52,12 +52,12 @@ namespace Lucene
         ///
         /// If subreaders are shared, then the reference count of those readers is increased to ensure that the
         /// subreaders remain open until the last referring reader is closed.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
         virtual TermFreqVectorPtr getTermFreqVector(int32_t docNumber, const String& field);
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper);
-        virtual void getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
 
         virtual bool isOptimized();
 
@@ -69,7 +69,7 @@ namespace Lucene
 
         /// Get the {@link Document} at the n'th position. The {@link FieldSelector} may be used to determine
         /// what {@link Field}s to load and how they should be loaded.
-        virtual DocumentPtr document(int32_t n, FieldSelectorPtr fieldSelector);
+        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
 
         /// Returns true if document n has been deleted
         virtual bool isDeleted(int32_t n);
@@ -90,10 +90,10 @@ namespace Lucene
         virtual TermEnumPtr terms();
 
         /// Returns an enumeration of all terms starting at a given term.
-        virtual TermEnumPtr terms(TermPtr t);
+        virtual TermEnumPtr terms(const TermPtr& t);
 
         /// Returns the number of documents containing the term t.
-        virtual int32_t docFreq(TermPtr t);
+        virtual int32_t docFreq(const TermPtr& t);
 
         /// Returns an unpositioned {@link TermDocs} enumerator.
         virtual TermDocsPtr termDocs();

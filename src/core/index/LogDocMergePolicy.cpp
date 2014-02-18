@@ -12,7 +12,7 @@ namespace Lucene
     /// Default minimum segment size.  @see setMinMergeDocs
     const int32_t LogDocMergePolicy::DEFAULT_MIN_MERGE_DOCS = 1000;
 
-    LogDocMergePolicy::LogDocMergePolicy(IndexWriterPtr writer) : LogMergePolicy(writer)
+    LogDocMergePolicy::LogDocMergePolicy(const IndexWriterPtr& writer) : LogMergePolicy(writer)
     {
         minMergeSize = DEFAULT_MIN_MERGE_DOCS;
 
@@ -24,7 +24,7 @@ namespace Lucene
     {
     }
 
-    int64_t LogDocMergePolicy::size(SegmentInfoPtr info)
+    int64_t LogDocMergePolicy::size(const SegmentInfoPtr& info)
     {
         return sizeDocs(info);
     }

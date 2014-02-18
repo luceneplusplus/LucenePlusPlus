@@ -16,8 +16,8 @@ namespace Lucene
     class LPPCONTRIBAPI BrazilianStemFilter : public TokenFilter
     {
     public:
-        BrazilianStemFilter(TokenStreamPtr input);
-        BrazilianStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable);
+        BrazilianStemFilter(const TokenStreamPtr& input);
+        BrazilianStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable);
 
         virtual ~BrazilianStemFilter();
 

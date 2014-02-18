@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    SegmentTermPositions::SegmentTermPositions(SegmentReaderPtr parent) : SegmentTermDocs(parent)
+    SegmentTermPositions::SegmentTermPositions(const SegmentReaderPtr& parent) : SegmentTermDocs(parent)
     {
         this->proxCount = 0;
         this->position = 0;
@@ -28,7 +28,7 @@ namespace Lucene
     {
     }
 
-    void SegmentTermPositions::seek(TermInfoPtr ti, TermPtr term)
+    void SegmentTermPositions::seek(const TermInfoPtr& ti, const TermPtr& term)
     {
         SegmentTermDocs::seek(ti, term);
         if (ti)

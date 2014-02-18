@@ -27,7 +27,7 @@ namespace Lucene
         /// Implemented as state->getBoost() * lengthNorm(numTerms), where numTerms is {@link
         /// FieldInvertState#getLength()} if {@link #setDiscountOverlaps} is false, else it's {@link
         /// FieldInvertState#getLength()} - {@link FieldInvertState#getNumOverlap()}.
-        virtual double computeNorm(const String& fieldName, FieldInvertStatePtr state);
+        virtual double computeNorm(const String& fieldName, const FieldInvertStatePtr& state);
 
         /// Implemented as 1 / sqrt(numTerms).
         virtual double lengthNorm(const String& fieldName, int32_t numTokens);

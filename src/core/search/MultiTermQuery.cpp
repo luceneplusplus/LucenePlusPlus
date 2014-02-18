@@ -89,7 +89,7 @@ namespace Lucene
         numberOfTerms += inc;
     }
 
-    QueryPtr MultiTermQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr MultiTermQuery::rewrite(const IndexReaderPtr& reader)
     {
         return rewriteMethod->rewrite(reader, shared_from_this());
     }
@@ -99,12 +99,12 @@ namespace Lucene
         return rewriteMethod;
     }
 
-    void MultiTermQuery::setRewriteMethod(RewriteMethodPtr method)
+    void MultiTermQuery::setRewriteMethod(const RewriteMethodPtr& method)
     {
         rewriteMethod = method;
     }
 
-    LuceneObjectPtr MultiTermQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr MultiTermQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = Query::clone(other);
         MultiTermQueryPtr cloneQuery(boost::dynamic_pointer_cast<MultiTermQuery>(clone));
@@ -123,7 +123,7 @@ namespace Lucene
         return result;
     }
 
-    bool MultiTermQuery::equals(LuceneObjectPtr other)
+    bool MultiTermQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -149,7 +149,7 @@ namespace Lucene
     {
     }
 
-    QueryPtr ConstantScoreFilterRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
+    QueryPtr ConstantScoreFilterRewrite::rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query)
     {
         QueryPtr result(newLucene<ConstantScoreQuery>(newLucene<MultiTermQueryWrapperFilter>(query)));
         result->setBoost(query->getBoost());
@@ -160,7 +160,7 @@ namespace Lucene
     {
     }
 
-    QueryPtr ScoringBooleanQueryRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
+    QueryPtr ScoringBooleanQueryRewrite::rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query)
     {
         FilteredTermEnumPtr enumerator(query->getEnum(reader));
         BooleanQueryPtr result(newLucene<BooleanQuery>(true));
@@ -195,7 +195,7 @@ namespace Lucene
     {
     }
 
-    QueryPtr ConstantScoreBooleanQueryRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
+    QueryPtr ConstantScoreBooleanQueryRewrite::rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query)
     {
         // strip the scores off
         QueryPtr result(newLucene<ConstantScoreQuery>(newLucene<QueryWrapperFilter>(ScoringBooleanQueryRewrite::rewrite(reader, query))));
@@ -240,7 +240,7 @@ namespace Lucene
         return docCountPercent;
     }
 
-    QueryPtr ConstantScoreAutoRewrite::rewrite(IndexReaderPtr reader, MultiTermQueryPtr query)
+    QueryPtr ConstantScoreAutoRewrite::rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query)
     {
         // Get the enum and start visiting terms.  If we exhaust the enum before hitting either of the
         // cutoffs, we use ConstantBooleanQueryRewrite; else ConstantFilterRewrite
@@ -305,7 +305,7 @@ namespace Lucene
         return (int32_t)(prime * termCountCutoff + MiscUtils::doubleToLongBits(docCountPercent));
     }
 
-    bool ConstantScoreAutoRewrite::equals(LuceneObjectPtr other)
+    bool ConstantScoreAutoRewrite::equals(const LuceneObjectPtr& other)
     {
         if (RewriteMethod::equals(other))
             return true;

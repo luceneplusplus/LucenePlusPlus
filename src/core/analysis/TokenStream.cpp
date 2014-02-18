@@ -13,11 +13,11 @@ namespace Lucene
     {
     }
 
-    TokenStream::TokenStream(AttributeSourcePtr input) : AttributeSource(input)
+    TokenStream::TokenStream(const AttributeSourcePtr& input) : AttributeSource(input)
     {
     }
 
-    TokenStream::TokenStream(AttributeFactoryPtr factory) : AttributeSource(factory)
+    TokenStream::TokenStream(const AttributeFactoryPtr& factory) : AttributeSource(factory)
     {
     }
 

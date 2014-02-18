@@ -16,7 +16,7 @@ namespace Lucene
 
     int64_t TimeLimitingCollector::resolution = TimeLimitingCollector::DEFAULT_RESOLUTION;
 
-    TimeLimitingCollector::TimeLimitingCollector(CollectorPtr collector, int64_t timeAllowed)
+    TimeLimitingCollector::TimeLimitingCollector(const CollectorPtr& collector, int64_t timeAllowed)
     {
         this->DEFAULT_GREEDY = false;
         this->greedy = DEFAULT_GREEDY;
@@ -86,13 +86,13 @@ namespace Lucene
         collector->collect(doc);
     }
 
-    void TimeLimitingCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void TimeLimitingCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         collector->setNextReader(reader, docBase);
         this->docBase = docBase;
     }
 
-    void TimeLimitingCollector::setScorer(ScorerPtr scorer)
+    void TimeLimitingCollector::setScorer(const ScorerPtr& scorer)
     {
         collector->setScorer(scorer);
     }

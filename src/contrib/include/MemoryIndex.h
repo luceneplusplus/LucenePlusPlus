@@ -31,7 +31,7 @@ namespace Lucene
     ///
     /// For example as in
     /// <pre>
-    /// double score = search(const String& text, QueryPtr query)
+    /// double score = search(const String& text, const QueryPtr& query)
     /// </pre>
     ///
     /// Each instance can hold at most one Lucene "document", with a document containing zero or more
@@ -121,7 +121,7 @@ namespace Lucene
         /// @param fieldName A name to be associated with the text
         /// @param text The text to tokenize and index.
         /// @param analyzer The analyzer to use for tokenization
-        void addField(const String& fieldName, const String& text, AnalyzerPtr analyzer);
+        void addField(const String& fieldName, const String& text, const AnalyzerPtr& analyzer);
 
         /// Iterates over the given token stream and adds the resulting terms to the index;
         /// Equivalent to adding a tokenized, indexed, termVectorStored, unstored, Lucene {@link
@@ -132,7 +132,7 @@ namespace Lucene
         /// @param stream The token stream to retrieve tokens from.
         /// @param boost The boost factor for hits for this field.
         /// @see Field#setBoost(double)
-        void addField(const String& fieldName, TokenStreamPtr stream, double boost = 1.0);
+        void addField(const String& fieldName, const TokenStreamPtr& stream, double boost = 1.0);
 
         /// Creates and returns a searcher that can be used to execute arbitrary Lucene queries
         /// and to collect the resulting query results as hits.
@@ -144,7 +144,7 @@ namespace Lucene
         /// @param query An arbitrary Lucene query to run against this index
         /// @return the relevance score of the matchmaking; A number in the range [0.0 .. 1.0],
         /// with 0.0 indicating no match. The higher the number the better the match.
-        double search(QueryPtr query);
+        double search(const QueryPtr& query);
 
     protected:
         int32_t numPositions(Collection<int32_t> positions);
@@ -211,7 +211,7 @@ namespace Lucene
     class LPPCONTRIBAPI MemoryIndexReader : public IndexReader
     {
     public:
-        MemoryIndexReader(MemoryIndexPtr memoryIndex);
+        MemoryIndexReader(const MemoryIndexPtr& memoryIndex);
         virtual ~MemoryIndexReader();
 
         LUCENE_CLASS(MemoryIndexReader);
@@ -233,17 +233,17 @@ namespace Lucene
         MemoryIndexInfoPtr getInfo(int32_t pos);
 
         SimilarityPtr getSimilarity();
-        void setSearcher(SearcherPtr searcher);
+        void setSearcher(const SearcherPtr& searcher);
 
     public:
-        virtual int32_t docFreq(TermPtr t);
+        virtual int32_t docFreq(const TermPtr& t);
         virtual TermEnumPtr terms();
-        virtual TermEnumPtr terms(TermPtr t);
+        virtual TermEnumPtr terms(const TermPtr& t);
         virtual TermPositionsPtr termPositions();
         virtual TermDocsPtr termDocs();
         virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper);
-        virtual void getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
         virtual TermFreqVectorPtr getTermFreqVector(int32_t docNumber, const String& field);
         virtual ByteArray norms(const String& field);
         virtual void norms(const String& field, ByteArray norms, int32_t offset);
@@ -251,7 +251,7 @@ namespace Lucene
         virtual int32_t numDocs();
         virtual int32_t maxDoc();
         virtual DocumentPtr document(int32_t n);
-        virtual DocumentPtr document(int32_t n, FieldSelectorPtr fieldSelector);
+        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
         virtual bool isDeleted(int32_t n);
         virtual bool hasDeletions();
         virtual void doDelete(int32_t docNum);
@@ -269,7 +269,7 @@ namespace Lucene
     class LPPCONTRIBAPI MemoryIndexTermEnum : public TermEnum
     {
     public:
-        MemoryIndexTermEnum(MemoryIndexReaderPtr reader, int32_t ix, int32_t jx);
+        MemoryIndexTermEnum(const MemoryIndexReaderPtr& reader, int32_t ix, int32_t jx);
         virtual ~MemoryIndexTermEnum();
 
         LUCENE_CLASS(MemoryIndexTermEnum);
@@ -286,7 +286,7 @@ namespace Lucene
         virtual void close();
 
     protected:
-        TermPtr createTerm(MemoryIndexInfoPtr info, int32_t pos, const String& text);
+        TermPtr createTerm(const MemoryIndexInfoPtr& info, int32_t pos, const String& text);
     };
 
     class LPPCONTRIBAPI MemoryIndexCollector : public Collector
@@ -303,15 +303,15 @@ namespace Lucene
 
     public:
         virtual void collect(int32_t doc);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
         virtual bool acceptsDocsOutOfOrder();
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
     };
 
     class LPPCONTRIBAPI MemoryIndexTermPositions : public TermPositions, public LuceneObject
     {
     public:
-        MemoryIndexTermPositions(MemoryIndexReaderPtr reader);
+        MemoryIndexTermPositions(const MemoryIndexReaderPtr& reader);
         virtual ~MemoryIndexTermPositions();
 
         LUCENE_CLASS(MemoryIndexTermPositions);
@@ -324,8 +324,8 @@ namespace Lucene
         TermPtr term;
 
     public:
-        virtual void seek(TermPtr term);
-        virtual void seek(TermEnumPtr termEnum);
+        virtual void seek(const TermPtr& term);
+        virtual void seek(const TermEnumPtr& termEnum);
         virtual int32_t doc();
         virtual int32_t freq();
         virtual bool next();
@@ -342,7 +342,7 @@ namespace Lucene
     class MemoryIndexTermPositionVector : public TermPositionVector, public LuceneObject
     {
     public:
-        MemoryIndexTermPositionVector(MemoryIndexReaderPtr reader, MemoryIndexInfoPtr info, const String& fieldName);
+        MemoryIndexTermPositionVector(const MemoryIndexReaderPtr& reader, const MemoryIndexInfoPtr& info, const String& fieldName);
         virtual ~MemoryIndexTermPositionVector();
 
         LUCENE_CLASS(MemoryIndexTermPositionVector);

@@ -13,17 +13,17 @@
 
 namespace Lucene
 {
-    FuzzyTermEnum::FuzzyTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity, int32_t prefixLength)
+    FuzzyTermEnum::FuzzyTermEnum(const IndexReaderPtr& reader, const TermPtr& term, double minSimilarity, int32_t prefixLength)
     {
         ConstructTermEnum(reader, term, minSimilarity, prefixLength);
     }
 
-    FuzzyTermEnum::FuzzyTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity)
+    FuzzyTermEnum::FuzzyTermEnum(const IndexReaderPtr& reader, const TermPtr& term, double minSimilarity)
     {
         ConstructTermEnum(reader, term, minSimilarity, FuzzyQuery::defaultPrefixLength);
     }
 
-    FuzzyTermEnum::FuzzyTermEnum(IndexReaderPtr reader, TermPtr term)
+    FuzzyTermEnum::FuzzyTermEnum(const IndexReaderPtr& reader, const TermPtr& term)
     {
         ConstructTermEnum(reader, term, FuzzyQuery::defaultMinSimilarity(), FuzzyQuery::defaultPrefixLength);
     }
@@ -32,7 +32,7 @@ namespace Lucene
     {
     }
 
-    void FuzzyTermEnum::ConstructTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity, int32_t prefixLength)
+    void FuzzyTermEnum::ConstructTermEnum(const IndexReaderPtr& reader, const TermPtr& term, double minSimilarity, int32_t prefixLength)
     {
         if (minSimilarity >= 1.0)
             boost::throw_exception(IllegalArgumentException(L"minimumSimilarity cannot be greater than or equal to 1"));
@@ -62,7 +62,7 @@ namespace Lucene
         setEnum(reader->terms(newLucene<Term>(searchTerm->field(), prefix)));
     }
 
-    bool FuzzyTermEnum::termCompare(TermPtr term)
+    bool FuzzyTermEnum::termCompare(const TermPtr& term)
     {
         if (field == term->field() && boost::starts_with(term->text(), prefix))
         {

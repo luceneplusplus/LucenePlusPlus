@@ -14,7 +14,7 @@ namespace Lucene
     class ReverseOrdDocValues : public DocValues
     {
     public:
-        ReverseOrdDocValues(ReverseOrdFieldSourcePtr source, Collection<int32_t> arr, int32_t end);
+        ReverseOrdDocValues(const ReverseOrdFieldSourcePtr& source, Collection<int32_t> arr, int32_t end);
         virtual ~ReverseOrdDocValues();
 
         LUCENE_CLASS(ReverseOrdDocValues);

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    CachingTokenFilter::CachingTokenFilter(TokenStreamPtr input) : TokenFilter(input)
+    CachingTokenFilter::CachingTokenFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
     }
 

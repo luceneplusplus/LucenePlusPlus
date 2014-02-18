@@ -18,7 +18,7 @@ namespace Lucene
     class DisjunctionMaxScorer : public Scorer
     {
     public:
-        DisjunctionMaxScorer(double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers);
+        DisjunctionMaxScorer(double tieBreakerMultiplier, const SimilarityPtr& similarity, Collection<ScorerPtr> subScorers, int32_t numScorers);
         virtual ~DisjunctionMaxScorer();
 
         LUCENE_CLASS(DisjunctionMaxScorer);

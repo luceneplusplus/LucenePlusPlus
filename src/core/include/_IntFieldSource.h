@@ -14,7 +14,7 @@ namespace Lucene
     class IntDocValues : public DocValues
     {
     public:
-        IntDocValues(IntFieldSourcePtr source, Collection<int32_t> arr);
+        IntDocValues(const IntFieldSourcePtr& source, Collection<int32_t> arr);
         virtual ~IntDocValues();
 
         LUCENE_CLASS(IntDocValues);

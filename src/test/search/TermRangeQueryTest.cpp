@@ -26,7 +26,7 @@ using namespace Lucene;
 class SingleCharTokenizer : public Tokenizer
 {
 public:
-    SingleCharTokenizer(ReaderPtr r) : Tokenizer(r)
+    SingleCharTokenizer(const ReaderPtr& r) : Tokenizer(r)
     {
         termAtt = addAttribute<TermAttribute>();
         buffer = CharArray::newInstance(1);
@@ -63,7 +63,7 @@ public:
         }
     }
 
-    virtual void reset(ReaderPtr input)
+    virtual void reset(const ReaderPtr& input)
     {
         Tokenizer::reset(input);
         done = false;
@@ -78,7 +78,7 @@ public:
     }
 
 public:
-    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenizerPtr tokenizer = boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream());
         if (!tokenizer)
@@ -91,7 +91,7 @@ public:
         return tokenizer;
     }
 
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<SingleCharTokenizer>(reader);
     }
@@ -120,7 +120,7 @@ public:
         initializeIndex(values, newLucene<WhitespaceAnalyzer>());
     }
 
-    void initializeIndex(Collection<String> values, AnalyzerPtr analyzer)
+    void initializeIndex(Collection<String> values, const AnalyzerPtr& analyzer)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
         for (int32_t i = 0; i < values.size(); ++i)
@@ -135,7 +135,7 @@ public:
         writer->close();
     }
 
-    void insertDoc(IndexWriterPtr writer, const String& content)
+    void insertDoc(const IndexWriterPtr& writer, const String& content)
     {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", L"id" + StringUtils::toString(docCount), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));

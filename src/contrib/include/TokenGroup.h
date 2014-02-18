@@ -16,7 +16,7 @@ namespace Lucene
     class LPPCONTRIBAPI TokenGroup : public LuceneObject
     {
     public:
-        TokenGroup(TokenStreamPtr tokenStream);
+        TokenGroup(const TokenStreamPtr& tokenStream);
         virtual ~TokenGroup();
 
         LUCENE_CLASS(TokenGroup);

@@ -15,14 +15,14 @@ namespace Lucene
     {
     }
 
-    TokenStreamPtr ChineseAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr ChineseAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<ChineseTokenizer>(reader);
         result = newLucene<ChineseFilter>(result);
         return result;
     }
 
-    TokenStreamPtr ChineseAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr ChineseAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         ChineseAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<ChineseAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

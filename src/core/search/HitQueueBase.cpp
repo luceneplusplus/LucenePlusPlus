@@ -24,12 +24,12 @@ namespace Lucene
         queue = newLucene<PriorityQueueScoreDocs>(shared_from_this(), queueSize);
     }
 
-    ScoreDocPtr HitQueueBase::add(ScoreDocPtr scoreDoc)
+    ScoreDocPtr HitQueueBase::add(const ScoreDocPtr& scoreDoc)
     {
         return queue->add(scoreDoc);
     }
 
-    ScoreDocPtr HitQueueBase::addOverflow(ScoreDocPtr scoreDoc)
+    ScoreDocPtr HitQueueBase::addOverflow(const ScoreDocPtr& scoreDoc)
     {
         return queue->addOverflow(scoreDoc);
     }
@@ -69,7 +69,7 @@ namespace Lucene
         return ScoreDocPtr();
     }
 
-    PriorityQueueScoreDocs::PriorityQueueScoreDocs(HitQueueBasePtr hitQueue, int32_t size) : PriorityQueue<ScoreDocPtr>(size)
+    PriorityQueueScoreDocs::PriorityQueueScoreDocs(const HitQueueBasePtr& hitQueue, int32_t size) : PriorityQueue<ScoreDocPtr>(size)
     {
         _hitQueue = hitQueue;
     }

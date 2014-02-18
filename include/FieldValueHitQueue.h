@@ -48,7 +48,7 @@ namespace Lucene
         /// @param entry The Entry used to create a FieldDoc
         /// @return The newly created FieldDoc
         /// @see Searchable#search(WeightPtr, FilterPtr, int32_t, SortPtr)
-        FieldDocPtr fillFields(FieldValueHitQueueEntryPtr entry);
+        FieldDocPtr fillFields(const FieldValueHitQueueEntryPtr& entry);
 
         /// Returns the SortFields being used by this hit queue.
         Collection<SortFieldPtr> getFields();

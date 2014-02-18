@@ -25,7 +25,7 @@ typedef BaseTokenStreamFixture CachingTokenFilterTest;
 
 static Collection<String> tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
 
-static void checkTokens(TokenStreamPtr stream)
+static void checkTokens(const TokenStreamPtr& stream)
 {
     int32_t count = 0;
 

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    SegmentWriteState::SegmentWriteState(DocumentsWriterPtr docWriter, DirectoryPtr directory, const String& segmentName,
+    SegmentWriteState::SegmentWriteState(const DocumentsWriterPtr& docWriter, const DirectoryPtr& directory, const String& segmentName,
                                          const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore,
                                          int32_t termIndexInterval)
     {

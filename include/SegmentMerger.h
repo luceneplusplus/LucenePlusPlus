@@ -20,8 +20,8 @@ namespace Lucene
     class SegmentMerger : public LuceneObject
     {
     public:
-        SegmentMerger(DirectoryPtr dir, const String& name);
-        SegmentMerger(IndexWriterPtr writer, const String& name, OneMergePtr merge);
+        SegmentMerger(const DirectoryPtr& dir, const String& name);
+        SegmentMerger(const IndexWriterPtr& writer, const String& name, const OneMergePtr& merge);
         virtual ~SegmentMerger();
 
         LUCENE_CLASS(SegmentMerger);
@@ -64,7 +64,7 @@ namespace Lucene
         bool hasProx();
 
         /// Add an IndexReader to the collection of readers that are to be merged
-        void add(IndexReaderPtr reader);
+        void add(const IndexReaderPtr& reader);
 
         /// @param i The index of the reader to return
         /// @return The i'th reader to be merged
@@ -92,30 +92,30 @@ namespace Lucene
         Collection<int32_t> getDelCounts();
 
     protected:
-        void addIndexed(IndexReaderPtr reader, FieldInfosPtr fInfos, HashSet<String> names, bool storeTermVectors,
+        void addIndexed(const IndexReaderPtr& reader, const FieldInfosPtr& fInfos, HashSet<String> names, bool storeTermVectors,
                         bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool storePayloads,
                         bool omitTFAndPositions);
 
         void setMatchingSegmentReaders();
-        int32_t copyFieldsWithDeletions(FieldsWriterPtr fieldsWriter, IndexReaderPtr reader, FieldsReaderPtr matchingFieldsReader);
-        int32_t copyFieldsNoDeletions(FieldsWriterPtr fieldsWriter, IndexReaderPtr reader, FieldsReaderPtr matchingFieldsReader);
+        int32_t copyFieldsWithDeletions(const FieldsWriterPtr& fieldsWriter, const IndexReaderPtr& reader, const FieldsReaderPtr& matchingFieldsReader);
+        int32_t copyFieldsNoDeletions(const FieldsWriterPtr& fieldsWriter, const IndexReaderPtr& reader, const FieldsReaderPtr& matchingFieldsReader);
 
         /// Merge the TermVectors from each of the segments into the new one.
         void mergeVectors();
 
-        void copyVectorsWithDeletions(TermVectorsWriterPtr termVectorsWriter, TermVectorsReaderPtr matchingVectorsReader, IndexReaderPtr reader);
-        void copyVectorsNoDeletions(TermVectorsWriterPtr termVectorsWriter, TermVectorsReaderPtr matchingVectorsReader, IndexReaderPtr reader);
+        void copyVectorsWithDeletions(const TermVectorsWriterPtr& termVectorsWriter, const TermVectorsReaderPtr& matchingVectorsReader, const IndexReaderPtr& reader);
+        void copyVectorsNoDeletions(const TermVectorsWriterPtr& termVectorsWriter, const TermVectorsReaderPtr& matchingVectorsReader, const IndexReaderPtr& reader);
 
         void mergeTerms();
 
-        void mergeTermInfos(FormatPostingsFieldsConsumerPtr consumer);
+        void mergeTermInfos(const FormatPostingsFieldsConsumerPtr& consumer);
 
         /// Process postings from multiple segments all positioned on the same term. Writes out merged entries
         /// into freqOutput and the proxOutput streams.
         /// @param smis array of segments
         /// @param n number of cells in the array actually occupied
         /// @return number of documents across all segments where this term was found
-        int32_t appendPostings(FormatPostingsTermsConsumerPtr termsConsumer, Collection<SegmentMergeInfoPtr> smis, int32_t n);
+        int32_t appendPostings(const FormatPostingsTermsConsumerPtr& termsConsumer, Collection<SegmentMergeInfoPtr> smis, int32_t n);
 
         void mergeNorms();
     };
@@ -123,7 +123,7 @@ namespace Lucene
     class CheckAbort : public LuceneObject
     {
     public:
-        CheckAbort(OneMergePtr merge, DirectoryPtr dir);
+        CheckAbort(const OneMergePtr& merge, const DirectoryPtr& dir);
         virtual ~CheckAbort();
 
         LUCENE_CLASS(CheckAbort);

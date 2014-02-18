@@ -22,7 +22,7 @@ namespace Lucene
     {
     public:
         /// Creates a new instance of the provider class for the given {@link IndexReader}.
-        CustomScoreProvider(IndexReaderPtr reader);
+        CustomScoreProvider(const IndexReaderPtr& reader);
 
         virtual ~CustomScoreProvider();
 
@@ -78,7 +78,7 @@ namespace Lucene
         /// @param subQueryExpl explanation for the sub-query part.
         /// @param valSrcExpls explanation for the value source part.
         /// @return an explanation for the custom score
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
+        virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
 
         /// Explain the custom score.  Whenever overriding {@link #customScore(int32_t, double, double)},
         /// this method should also be overridden to provide the correct explanation for the part of the custom scoring.
@@ -86,7 +86,7 @@ namespace Lucene
         /// @param subQueryExpl explanation for the sub-query part.
         /// @param valSrcExpl explanation for the value source part.
         /// @return an explanation for the custom score
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl);
+        virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, const ExplanationPtr& valSrcExpl);
     };
 }
 

@@ -24,9 +24,9 @@ namespace Lucene
         virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
         virtual void finish() = 0;
         virtual void skippingLongTerm() = 0;
-        virtual void start(FieldablePtr field) = 0;
-        virtual void newTerm(RawPostingListPtr p) = 0;
-        virtual void addTerm(RawPostingListPtr p) = 0;
+        virtual void start(const FieldablePtr& field) = 0;
+        virtual void newTerm(const RawPostingListPtr& p) = 0;
+        virtual void addTerm(const RawPostingListPtr& p) = 0;
         virtual int32_t getStreamCount() = 0;
     };
 }

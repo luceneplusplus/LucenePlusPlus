@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         /// Construct a SpanFirstQuery matching spans in match whose end position is less than or equal to end.
-        SpanFirstQuery(SpanQueryPtr match, int32_t end);
+        SpanFirstQuery(const SpanQueryPtr& match, int32_t end);
         virtual ~SpanFirstQuery();
 
         LUCENE_CLASS(SpanFirstQuery);
@@ -37,12 +37,12 @@ namespace Lucene
 
         virtual String getField();
         virtual String toString(const String& field);
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual void extractTerms(SetTerm terms);
-        virtual SpansPtr getSpans(IndexReaderPtr reader);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         friend class FirstSpans;

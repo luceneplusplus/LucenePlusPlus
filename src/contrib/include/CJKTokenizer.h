@@ -28,9 +28,9 @@ namespace Lucene
     class LPPCONTRIBAPI CJKTokenizer : public Tokenizer
     {
     public:
-        CJKTokenizer(ReaderPtr input);
-        CJKTokenizer(AttributeSourcePtr source, ReaderPtr input);
-        CJKTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        CJKTokenizer(const ReaderPtr& input);
+        CJKTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
+        CJKTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~CJKTokenizer();
 
@@ -94,7 +94,7 @@ namespace Lucene
         virtual bool incrementToken();
         virtual void end();
         virtual void reset();
-        virtual void reset(ReaderPtr input);
+        virtual void reset(const ReaderPtr& input);
     };
 }
 

@@ -28,7 +28,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    String QueryParseError::parseError(QueryParserTokenPtr currentToken, Collection< Collection<int32_t> > expectedTokenSequences,
+    String QueryParseError::parseError(const QueryParserTokenPtr& currentToken, Collection< Collection<int32_t> > expectedTokenSequences,
                                        Collection<String> tokenImage)
     {
         StringStream expected;

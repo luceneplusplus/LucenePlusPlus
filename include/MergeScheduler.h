@@ -22,7 +22,7 @@ namespace Lucene
 
     public:
         /// Run the merges provided by {@link IndexWriter#getNextMerge()}.
-        virtual void merge(IndexWriterPtr writer) = 0;
+        virtual void merge(const IndexWriterPtr& writer) = 0;
 
         /// Close this MergeScheduler.
         virtual void close() = 0;

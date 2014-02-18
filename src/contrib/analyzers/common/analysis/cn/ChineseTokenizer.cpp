@@ -18,15 +18,15 @@ namespace Lucene
     const int32_t ChineseTokenizer::MAX_WORD_LEN = 255;
     const int32_t ChineseTokenizer::IO_BUFFER_SIZE = 1024;
 
-    ChineseTokenizer::ChineseTokenizer(ReaderPtr input) : Tokenizer(input)
+    ChineseTokenizer::ChineseTokenizer(const ReaderPtr& input) : Tokenizer(input)
     {
     }
 
-    ChineseTokenizer::ChineseTokenizer(AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source, input)
+    ChineseTokenizer::ChineseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : Tokenizer(source, input)
     {
     }
 
-    ChineseTokenizer::ChineseTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory, input)
+    ChineseTokenizer::ChineseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : Tokenizer(factory, input)
     {
     }
 
@@ -130,7 +130,7 @@ namespace Lucene
         dataLen = 0;
     }
 
-    void ChineseTokenizer::reset(ReaderPtr input)
+    void ChineseTokenizer::reset(const ReaderPtr& input)
     {
         Tokenizer::reset(input);
         reset();

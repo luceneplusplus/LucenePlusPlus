@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    SpanScorer::SpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity)
+    SpanScorer::SpanScorer(const SpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms) : Scorer(similarity)
     {
         this->spans = spans;
         this->norms = norms;

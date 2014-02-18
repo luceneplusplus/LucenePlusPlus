@@ -20,7 +20,7 @@ namespace Lucene
         /// Create a TimeLimitedCollector wrapper over another {@link Collector} with a specified timeout.
         /// @param collector the wrapped {@link Collector}
         /// @param timeAllowed max time allowed for collecting hits after which TimeExceeded exception is thrown
-        TimeLimitingCollector(CollectorPtr collector, int64_t timeAllowed);
+        TimeLimitingCollector(const CollectorPtr& collector, int64_t timeAllowed);
 
         virtual ~TimeLimitingCollector();
 
@@ -82,8 +82,8 @@ namespace Lucene
         /// passed, in which case it throws an exception.
         virtual void collect(int32_t doc);
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+        virtual void setScorer(const ScorerPtr& scorer);
         virtual bool acceptsDocsOutOfOrder();
 
     protected:

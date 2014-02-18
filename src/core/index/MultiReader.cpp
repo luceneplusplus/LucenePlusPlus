@@ -51,7 +51,7 @@ namespace Lucene
         return doReopen(false);
     }
 
-    LuceneObjectPtr MultiReader::clone(LuceneObjectPtr other)
+    LuceneObjectPtr MultiReader::clone(const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
         try
@@ -146,14 +146,14 @@ namespace Lucene
         return subReaders[i]->getTermFreqVector(docNumber - starts[i], field);
     }
 
-    void MultiReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
+    void MultiReader::getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
         subReaders[i]->getTermFreqVector(docNumber - starts[i], field, mapper);
     }
 
-    void MultiReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
+    void MultiReader::getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
@@ -187,7 +187,7 @@ namespace Lucene
         return _maxDoc;
     }
 
-    DocumentPtr MultiReader::document(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr MultiReader::document(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         ensureOpen();
         int32_t i = readerIndex(n); // find segment num
@@ -291,13 +291,13 @@ namespace Lucene
         return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, TermPtr());
     }
 
-    TermEnumPtr MultiReader::terms(TermPtr t)
+    TermEnumPtr MultiReader::terms(const TermPtr& t)
     {
         ensureOpen();
         return newLucene<MultiTermEnum>(shared_from_this(), subReaders, starts, t);
     }
 
-    int32_t MultiReader::docFreq(TermPtr t)
+    int32_t MultiReader::docFreq(const TermPtr& t)
     {
         ensureOpen();
         int32_t total = 0; // sum freqs in segments

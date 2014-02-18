@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    CharBlockPool::CharBlockPool(DocumentsWriterPtr docWriter)
+    CharBlockPool::CharBlockPool(const DocumentsWriterPtr& docWriter)
     {
         numBuffer = 0;
         bufferUpto = -1;

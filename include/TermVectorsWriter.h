@@ -14,7 +14,7 @@ namespace Lucene
     class TermVectorsWriter : public LuceneObject
     {
     public:
-        TermVectorsWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fieldInfos);
+        TermVectorsWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fieldInfos);
         virtual ~TermVectorsWriter();
 
         LUCENE_CLASS(TermVectorsWriter);
@@ -33,7 +33,7 @@ namespace Lucene
 
         /// Do a bulk copy of numDocs documents from reader to our streams.  This is used to expedite merging,
         /// if the field numbers are congruent.
-        void addRawDocuments(TermVectorsReaderPtr reader, Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t numDocs);
+        void addRawDocuments(const TermVectorsReaderPtr& reader, Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t numDocs);
 
         /// Close all streams.
         void close();

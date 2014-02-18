@@ -18,7 +18,7 @@
 
 namespace Lucene
 {
-    PayloadTermQuery::PayloadTermQuery(TermPtr term, PayloadFunctionPtr function, bool includeSpanScore) : SpanTermQuery(term)
+    PayloadTermQuery::PayloadTermQuery(const TermPtr& term, const PayloadFunctionPtr& function, bool includeSpanScore) : SpanTermQuery(term)
     {
         this->function = function;
         this->includeSpanScore = includeSpanScore;
@@ -28,12 +28,12 @@ namespace Lucene
     {
     }
 
-    WeightPtr PayloadTermQuery::createWeight(SearcherPtr searcher)
+    WeightPtr PayloadTermQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<PayloadTermWeight>(shared_from_this(), searcher);
     }
 
-    LuceneObjectPtr PayloadTermQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr PayloadTermQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<PayloadTermQuery>(term, function, includeSpanScore));
         PayloadTermQueryPtr termQuery(boost::dynamic_pointer_cast<PayloadTermQuery>(clone));
@@ -42,7 +42,7 @@ namespace Lucene
         return termQuery;
     }
 
-    bool PayloadTermQuery::equals(LuceneObjectPtr other)
+    bool PayloadTermQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -74,7 +74,7 @@ namespace Lucene
         return result;
     }
 
-    PayloadTermWeight::PayloadTermWeight(PayloadTermQueryPtr query, SearcherPtr searcher) : SpanWeight(query, searcher)
+    PayloadTermWeight::PayloadTermWeight(const PayloadTermQueryPtr& query, const SearcherPtr& searcher) : SpanWeight(query, searcher)
     {
     }
 
@@ -82,12 +82,12 @@ namespace Lucene
     {
     }
 
-    ScorerPtr PayloadTermWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr PayloadTermWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<PayloadTermSpanScorer>(boost::dynamic_pointer_cast<TermSpans>(query->getSpans(reader)), shared_from_this(), similarity, reader->norms(query->getField()));
     }
 
-    PayloadTermSpanScorer::PayloadTermSpanScorer(TermSpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
+    PayloadTermSpanScorer::PayloadTermSpanScorer(const TermSpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms) : SpanScorer(spans, weight, similarity, norms)
     {
         positions = spans->getPositions();
         payload = ByteArray::newInstance(256);
@@ -120,7 +120,7 @@ namespace Lucene
         return more || (freq != 0);
     }
 
-    void PayloadTermSpanScorer::processPayload(SimilarityPtr similarity)
+    void PayloadTermSpanScorer::processPayload(const SimilarityPtr& similarity)
     {
         if (positions->isPayloadAvailable())
         {

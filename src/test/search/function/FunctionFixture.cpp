@@ -79,7 +79,7 @@ namespace Lucene
         return _DOC_TEXT_LINES;
     }
 
-    void FunctionFixture::addDoc(IndexWriterPtr iw, int32_t i)
+    void FunctionFixture::addDoc(const IndexWriterPtr& iw, int32_t i)
     {
         DocumentPtr d = newLucene<Document>();
         int32_t scoreAndID = i + 1;

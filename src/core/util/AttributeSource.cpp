@@ -40,7 +40,7 @@ namespace Lucene
         this->factory = AttributeFactory::DEFAULT_ATTRIBUTE_FACTORY();
     }
 
-    AttributeSource::AttributeSource(AttributeSourcePtr input)
+    AttributeSource::AttributeSource(const AttributeSourcePtr& input)
     {
         if (!input)
             boost::throw_exception(IllegalArgumentException(L"input AttributeSource must not be null"));
@@ -48,7 +48,7 @@ namespace Lucene
         this->factory = input->factory;
     }
 
-    AttributeSource::AttributeSource(AttributeFactoryPtr factory)
+    AttributeSource::AttributeSource(const AttributeFactoryPtr& factory)
     {
         this->attributes = MapStringAttribute::newInstance();
         this->factory = factory;
@@ -63,7 +63,7 @@ namespace Lucene
         return this->factory;
     }
 
-    void AttributeSource::addAttribute(const String& className, AttributePtr attrImpl)
+    void AttributeSource::addAttribute(const String& className, const AttributePtr& attrImpl)
     {
         // invalidate state to force recomputation in captureState()
         currentState.reset();
@@ -123,20 +123,21 @@ namespace Lucene
         return boost::dynamic_pointer_cast<AttributeSourceState>(currentState->clone());
     }
 
-    void AttributeSource::restoreState(AttributeSourceStatePtr state)
+    void AttributeSource::restoreState(const AttributeSourceStatePtr& state)
     {
-        if (!state)
+        AttributeSourceStatePtr _state(state);
+        if (!_state)
             return;
 
         do
         {
-            MapStringAttribute::iterator attrImpl = attributes.find(state->attribute->getClassName());
+            MapStringAttribute::iterator attrImpl = attributes.find(_state->attribute->getClassName());
             if (attrImpl == attributes.end())
                 boost::throw_exception(IllegalArgumentException(L"State contains an AttributeImpl that is not in this AttributeSource"));
-            state->attribute->copyTo(attrImpl->second);
-            state = state->next;
+            _state->attribute->copyTo(attrImpl->second);
+            _state = _state->next;
         }
-        while (state);
+        while (_state);
     }
 
     int32_t AttributeSource::hashCode()
@@ -147,7 +148,7 @@ namespace Lucene
         return code;
     }
 
-    bool AttributeSource::equals(LuceneObjectPtr other)
+    bool AttributeSource::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -248,7 +249,7 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr AttributeSourceState::clone(LuceneObjectPtr other)
+    LuceneObjectPtr AttributeSourceState::clone(const LuceneObjectPtr& other)
     {
         AttributeSourceStatePtr clone(newLucene<AttributeSourceState>());
         clone->attribute = boost::dynamic_pointer_cast<Attribute>(attribute->clone());

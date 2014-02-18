@@ -17,7 +17,7 @@ namespace Lucene
     class ReaderPool : public LuceneObject
     {
     public:
-        ReaderPool(IndexWriterPtr writer);
+        ReaderPool(const IndexWriterPtr& writer);
         virtual ~ReaderPool();
 
         LUCENE_CLASS(ReaderPool);
@@ -29,17 +29,17 @@ namespace Lucene
     public:
         /// Forcefully clear changes for the specified segments, and remove from the pool.
         /// This is called on successful merge.
-        void clear(SegmentInfosPtr infos);
+        void clear(const SegmentInfosPtr& infos);
 
         /// used only by asserts
-        bool infoIsLive(SegmentInfoPtr info);
-        SegmentInfoPtr mapToLive(SegmentInfoPtr info);
+        bool infoIsLive(const SegmentInfoPtr& info);
+        SegmentInfoPtr mapToLive(const SegmentInfoPtr& info);
 
         /// Release the segment reader (i.e. decRef it and close if there are no more references.
-        void release(SegmentReaderPtr sr);
+        void release(const SegmentReaderPtr& sr);
 
         /// Release the segment reader (i.e. decRef it and close if there are no more references.
-        void release(SegmentReaderPtr sr, bool drop);
+        void release(const SegmentReaderPtr& sr, bool drop);
 
         /// Remove all our references to readers, and commits any pending changes.
         void close();
@@ -49,18 +49,18 @@ namespace Lucene
 
         /// Returns a ref to a clone.  NOTE: this clone is not enrolled in the pool, so you should
         /// simply close() it when you're done (ie, do not call release()).
-        IndexReaderPtr getReadOnlyClone(const SegmentInfoPtr info, bool doOpenStores, int32_t termInfosIndexDivisor);
+        IndexReaderPtr getReadOnlyClone(const SegmentInfoPtr& info, bool doOpenStores, int32_t termInfosIndexDivisor);
 
         /// Obtain a SegmentReader from the readerPool.  The reader must be returned by calling
         /// {@link #release(SegmentReader)}
-        SegmentReaderPtr get(SegmentInfoPtr info, bool doOpenStores);
+        SegmentReaderPtr get(const SegmentInfoPtr& info, bool doOpenStores);
 
         /// Obtain a SegmentReader from the readerPool.  The reader must be returned by calling
         /// {@link #release(SegmentReader)}
-        SegmentReaderPtr get(SegmentInfoPtr info, bool doOpenStores, int32_t readBufferSize, int32_t termsIndexDivisor);
+        SegmentReaderPtr get(const SegmentInfoPtr& info, bool doOpenStores, int32_t readBufferSize, int32_t termsIndexDivisor);
 
         /// Returns a ref
-        SegmentReaderPtr getIfExists(SegmentInfoPtr info);
+        SegmentReaderPtr getIfExists(const SegmentInfoPtr& info);
     };
 }
 

@@ -27,7 +27,7 @@ namespace Lucene
     class CompoundFileWriter : public LuceneObject
     {
     public:
-        CompoundFileWriter(DirectoryPtr dir, const String& name, CheckAbortPtr checkAbort = CheckAbortPtr());
+        CompoundFileWriter(const DirectoryPtr& dir, const String& name, const CheckAbortPtr& checkAbort = CheckAbortPtr());
         virtual ~CompoundFileWriter();
 
         LUCENE_CLASS(CompoundFileWriter);
@@ -71,7 +71,7 @@ namespace Lucene
     protected:
         /// Copy the contents of the file with specified extension into the provided output stream.
         /// Use the provided buffer for moving data to reduce memory allocation.
-        void copyFile(const FileEntry& source, IndexOutputPtr os, ByteArray buffer);
+        void copyFile(const FileEntry& source, const IndexOutputPtr& os, ByteArray buffer);
     };
 }
 

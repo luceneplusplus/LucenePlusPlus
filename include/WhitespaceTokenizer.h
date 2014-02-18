@@ -17,13 +17,13 @@ namespace Lucene
     {
     public:
         /// Construct a new WhitespaceTokenizer.
-        WhitespaceTokenizer(ReaderPtr input);
+        WhitespaceTokenizer(const ReaderPtr& input);
 
         /// Construct a new WhitespaceTokenizer using a given {@link AttributeSource}.
-        WhitespaceTokenizer(AttributeSourcePtr source, ReaderPtr input);
+        WhitespaceTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
         /// Construct a new WhitespaceTokenizer using a given {@link AttributeSource.AttributeFactory}.
-        WhitespaceTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        WhitespaceTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~WhitespaceTokenizer();
 

@@ -68,7 +68,7 @@ const int32_t TransactionsTimedThread::RUN_TIME_SEC = 6;
 class TransactionsIndexerThread : public TransactionsTimedThread
 {
 public:
-    TransactionsIndexerThread(SynchronizePtr lock, DirectoryPtr dir1, DirectoryPtr dir2)
+    TransactionsIndexerThread(const SynchronizePtr& lock, const DirectoryPtr& dir1, const DirectoryPtr& dir2)
     {
         this->lock = lock;
         this->dir1 = dir1;
@@ -151,7 +151,7 @@ public:
         writer2->close();
     }
 
-    void update(IndexWriterPtr writer)
+    void update(const IndexWriterPtr& writer)
     {
         // Add 10 docs
         for (int32_t j = 0; j < 10; ++j)
@@ -175,7 +175,7 @@ public:
 class TransactionsSearcherThread : public TransactionsTimedThread
 {
 public:
-    TransactionsSearcherThread(SynchronizePtr lock, DirectoryPtr dir1, DirectoryPtr dir2)
+    TransactionsSearcherThread(const SynchronizePtr& lock, const DirectoryPtr& dir1, const DirectoryPtr& dir2)
     {
         this->lock = lock;
         this->dir1 = dir1;
@@ -228,14 +228,14 @@ protected:
     RandomPtr random;
 
 public:
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (doFail && random->nextInt() % 10 <= 3)
             boost::throw_exception(IOException(L"now failing randomly but on purpose"));
     }
 };
 
-static void initIndex(DirectoryPtr dir)
+static void initIndex(const DirectoryPtr& dir)
 {
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     RandomPtr random = newLucene<Random>();

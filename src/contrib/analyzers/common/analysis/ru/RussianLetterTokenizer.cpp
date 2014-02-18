@@ -11,15 +11,15 @@
 
 namespace Lucene
 {
-    RussianLetterTokenizer::RussianLetterTokenizer(ReaderPtr input) : CharTokenizer(input)
+    RussianLetterTokenizer::RussianLetterTokenizer(const ReaderPtr& input) : CharTokenizer(input)
     {
     }
 
-    RussianLetterTokenizer::RussianLetterTokenizer(AttributeSourcePtr source, ReaderPtr input) : CharTokenizer(source, input)
+    RussianLetterTokenizer::RussianLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input)
     {
     }
 
-    RussianLetterTokenizer::RussianLetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : CharTokenizer(factory, input)
+    RussianLetterTokenizer::RussianLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input)
     {
     }
 

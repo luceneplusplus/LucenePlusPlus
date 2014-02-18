@@ -26,7 +26,7 @@ namespace Lucene
     {
     public:
         /// Create a cached double field source with a specific string-to-double parser.
-        DoubleFieldSource(const String& field, DoubleParserPtr parser = DoubleParserPtr());
+        DoubleFieldSource(const String& field, const DoubleParserPtr& parser = DoubleParserPtr());
         virtual ~DoubleFieldSource();
 
         LUCENE_CLASS(DoubleFieldSource);
@@ -36,15 +36,15 @@ namespace Lucene
 
     public:
         virtual String description();
-        virtual DocValuesPtr getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader);
-        virtual bool cachedFieldSourceEquals(FieldCacheSourcePtr other);
+        virtual DocValuesPtr getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader);
+        virtual bool cachedFieldSourceEquals(const FieldCacheSourcePtr& other);
         virtual int32_t cachedFieldSourceHashCode();
     };
 
     class DoubleDocValues : public DocValues
     {
     public:
-        DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr);
+        DoubleDocValues(const DoubleFieldSourcePtr& source, Collection<double> arr);
         virtual ~DoubleDocValues();
 
         LUCENE_CLASS(DoubleDocValues);

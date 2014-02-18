@@ -17,7 +17,7 @@ namespace Lucene
     public:
         /// Construct an empty output buffer.
         RAMOutputStream();
-        RAMOutputStream(RAMFilePtr f);
+        RAMOutputStream(const RAMFilePtr& f);
         virtual ~RAMOutputStream();
 
         LUCENE_CLASS(RAMOutputStream);
@@ -35,7 +35,7 @@ namespace Lucene
 
     public:
         /// Copy the current contents of this buffer to the named output.
-        void writeTo(IndexOutputPtr out);
+        void writeTo(const IndexOutputPtr& out);
 
         /// Resets this to an empty file.
         void reset();

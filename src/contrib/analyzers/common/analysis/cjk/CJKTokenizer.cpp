@@ -32,15 +32,15 @@ namespace Lucene
 
     const int32_t CJKTokenizer::IO_BUFFER_SIZE = 256;
 
-    CJKTokenizer::CJKTokenizer(ReaderPtr input) : Tokenizer(input)
+    CJKTokenizer::CJKTokenizer(const ReaderPtr& input) : Tokenizer(input)
     {
     }
 
-    CJKTokenizer::CJKTokenizer(AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source, input)
+    CJKTokenizer::CJKTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : Tokenizer(source, input)
     {
     }
 
-    CJKTokenizer::CJKTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory, input)
+    CJKTokenizer::CJKTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : Tokenizer(factory, input)
     {
     }
 
@@ -270,7 +270,7 @@ namespace Lucene
         tokenType = WORD_TYPE;
     }
 
-    void CJKTokenizer::reset(ReaderPtr input)
+    void CJKTokenizer::reset(const ReaderPtr& input)
     {
         Tokenizer::reset(input);
         reset();

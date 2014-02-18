@@ -32,7 +32,7 @@ namespace Lucene
         return numTerms + queries.size() + docIDs.size();
     }
 
-    void BufferedDeletes::update(BufferedDeletesPtr in)
+    void BufferedDeletes::update(const BufferedDeletesPtr& in)
     {
         numTerms += in->numTerms;
         bytesUsed += in->bytesUsed;
@@ -61,7 +61,7 @@ namespace Lucene
         return (!terms.empty() || !docIDs.empty() || !queries.empty());
     }
 
-    void BufferedDeletes::remap(MergeDocIDRemapperPtr mapper, SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergedDocCount)
+    void BufferedDeletes::remap(const MergeDocIDRemapperPtr& mapper, const SegmentInfosPtr& infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, const OneMergePtr& merge, int32_t mergedDocCount)
     {
         SyncLock syncLock(this);
 

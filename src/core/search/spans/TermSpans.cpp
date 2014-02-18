@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    TermSpans::TermSpans(TermPositionsPtr positions, TermPtr term)
+    TermSpans::TermSpans(const TermPositionsPtr& positions, const TermPtr& term)
     {
         this->positions = positions;
         this->term = term;

@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    Scorer::Scorer(SimilarityPtr similarity)
+    Scorer::Scorer(const SimilarityPtr& similarity)
     {
         this->similarity = similarity;
     }
@@ -24,7 +24,7 @@ namespace Lucene
         return similarity;
     }
 
-    void Scorer::score(CollectorPtr collector)
+    void Scorer::score(const CollectorPtr& collector)
     {
         collector->setScorer(shared_from_this());
         int32_t doc;
@@ -32,7 +32,7 @@ namespace Lucene
             collector->collect(doc);
     }
 
-    bool Scorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
+    bool Scorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
     {
         collector->setScorer(shared_from_this());
         int32_t doc = firstDocID;

@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// Construct a SpanTermQuery matching the named term's spans.
-        SpanTermQuery(TermPtr term);
+        SpanTermQuery(const TermPtr& term);
         virtual ~SpanTermQuery();
 
         LUCENE_CLASS(SpanTermQuery);
@@ -34,9 +34,9 @@ namespace Lucene
         virtual void extractTerms(SetTerm terms);
         virtual String toString(const String& field);
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual SpansPtr getSpans(IndexReaderPtr reader);
+        virtual bool equals(const LuceneObjectPtr& other);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
     };
 }
 

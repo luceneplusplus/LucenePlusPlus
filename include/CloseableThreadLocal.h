@@ -37,7 +37,7 @@ namespace Lucene
             return initial;
         }
 
-        void set(localDataPtr data)
+        void set(const localDataPtr& data)
         {
             SyncLock syncLock(this);
             localData.put(LuceneThread::currentId(), data);

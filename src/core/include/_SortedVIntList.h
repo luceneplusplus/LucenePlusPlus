@@ -14,7 +14,7 @@ namespace Lucene
     class SortedDocIdSetIterator : public DocIdSetIterator
     {
     public:
-        SortedDocIdSetIterator(SortedVIntListPtr list);
+        SortedDocIdSetIterator(const SortedVIntListPtr& list);
         virtual ~SortedDocIdSetIterator();
 
         LUCENE_CLASS(SortedDocIdSetIterator);

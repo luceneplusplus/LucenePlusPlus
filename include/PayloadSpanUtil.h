@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         /// @param reader That contains doc with payloads to extract
-        PayloadSpanUtil(IndexReaderPtr reader);
+        PayloadSpanUtil(const IndexReaderPtr& reader);
 
         virtual ~PayloadSpanUtil();
 
@@ -29,11 +29,11 @@ namespace Lucene
     public:
         /// Query should be rewritten for wild/fuzzy support.
         /// @return payloads Collection
-        Collection<ByteArray> getPayloadsForQuery(QueryPtr query);
+        Collection<ByteArray> getPayloadsForQuery(const QueryPtr& query);
 
     protected:
-        void queryToSpanQuery(QueryPtr query, Collection<ByteArray> payloads);
-        void getPayloads(Collection<ByteArray> payloads, SpanQueryPtr query);
+        void queryToSpanQuery(const QueryPtr& query, Collection<ByteArray> payloads);
+        void getPayloads(Collection<ByteArray> payloads, const SpanQueryPtr& query);
     };
 }
 

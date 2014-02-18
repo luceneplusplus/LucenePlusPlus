@@ -49,7 +49,7 @@ namespace Lucene
         virtual Collection<ExplanationPtr> getDetails();
 
         /// Adds a sub-node to this explanation node.
-        virtual void addDetail(ExplanationPtr detail);
+        virtual void addDetail(const ExplanationPtr& detail);
 
         /// Render an explanation as text.
         virtual String toString();

@@ -18,7 +18,7 @@
 
 namespace Lucene
 {
-    TermQuery::TermQuery(TermPtr term)
+    TermQuery::TermQuery(const TermPtr& term)
     {
         this->term = term;
     }
@@ -32,7 +32,7 @@ namespace Lucene
         return term;
     }
 
-    WeightPtr TermQuery::createWeight(SearcherPtr searcher)
+    WeightPtr TermQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<TermWeight>(shared_from_this(), searcher);
     }
@@ -51,7 +51,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool TermQuery::equals(LuceneObjectPtr other)
+    bool TermQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -68,7 +68,7 @@ namespace Lucene
         return MiscUtils::doubleToIntBits(getBoost()) ^ term->hashCode();
     }
 
-    LuceneObjectPtr TermQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr TermQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermQuery>(term);
         TermQueryPtr cloneQuery(boost::dynamic_pointer_cast<TermQuery>(Query::clone(clone)));
@@ -76,7 +76,7 @@ namespace Lucene
         return cloneQuery;
     }
 
-    TermWeight::TermWeight(TermQueryPtr query, SearcherPtr searcher)
+    TermWeight::TermWeight(const TermQueryPtr& query, const SearcherPtr& searcher)
     {
         this->query = query;
         this->similarity = query->getSimilarity(searcher);
@@ -121,13 +121,13 @@ namespace Lucene
         value = queryWeight * idf; // idf for document
     }
 
-    ScorerPtr TermWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr TermWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         TermDocsPtr termDocs(reader->termDocs(query->term));
         return termDocs ? newLucene<TermScorer>(shared_from_this(), termDocs, similarity, reader->norms(query->term->field())) : ScorerPtr();
     }
 
-    ExplanationPtr TermWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr TermWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         ComplexExplanationPtr result(newLucene<ComplexExplanation>());
         result->setDescription(L"weight(" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");

@@ -42,7 +42,7 @@ namespace Lucene
         /// @see WordlistLoader#getWordSet(ReaderPtr, const String&)
         /// @param matchVersion Lucene version to match.
         /// @param stopwords Reader to read stop words from.
-        StandardAnalyzer(LuceneVersion::Version matchVersion, ReaderPtr stopwords);
+        StandardAnalyzer(LuceneVersion::Version matchVersion, const ReaderPtr& stopwords);
 
         virtual ~StandardAnalyzer();
 
@@ -70,7 +70,7 @@ namespace Lucene
     public:
         /// Constructs a {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link LowerCaseFilter}
         /// and a {@link StopFilter}.
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
 
         /// Set maximum allowed token length.  If a token is seen that exceeds this length then it is discarded.  This setting
         /// only takes effect the next time tokenStream or reusableTokenStream is called.
@@ -79,7 +79,7 @@ namespace Lucene
         /// @see #setMaxTokenLength
         int32_t getMaxTokenLength();
 
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
     };
 }
 

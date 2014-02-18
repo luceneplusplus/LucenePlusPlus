@@ -66,42 +66,42 @@ namespace Lucene
             boost::throw_exception(AlreadyClosedException(L"this IndexReader is closed"));
     }
 
-    IndexReaderPtr IndexReader::open(DirectoryPtr directory)
+    IndexReaderPtr IndexReader::open(const DirectoryPtr& directory)
     {
         return open(directory, IndexDeletionPolicyPtr(), IndexCommitPtr(), true, DEFAULT_TERMS_INDEX_DIVISOR);
     }
 
-    IndexReaderPtr IndexReader::open(DirectoryPtr directory, bool readOnly)
+    IndexReaderPtr IndexReader::open(const DirectoryPtr& directory, bool readOnly)
     {
         return open(directory, IndexDeletionPolicyPtr(), IndexCommitPtr(), readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
 
-    IndexReaderPtr IndexReader::open(IndexCommitPtr commit, bool readOnly)
+    IndexReaderPtr IndexReader::open(const IndexCommitPtr& commit, bool readOnly)
     {
         return open(commit->getDirectory(), IndexDeletionPolicyPtr(), commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
 
-    IndexReaderPtr IndexReader::open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, bool readOnly)
+    IndexReaderPtr IndexReader::open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly)
     {
         return open(directory, deletionPolicy, IndexCommitPtr(), readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
 
-    IndexReaderPtr IndexReader::open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
+    IndexReaderPtr IndexReader::open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
     {
         return open(directory, deletionPolicy, IndexCommitPtr(), readOnly, termInfosIndexDivisor);
     }
 
-    IndexReaderPtr IndexReader::open(IndexCommitPtr commit, IndexDeletionPolicyPtr deletionPolicy, bool readOnly)
+    IndexReaderPtr IndexReader::open(const IndexCommitPtr& commit, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly)
     {
         return open(commit->getDirectory(), deletionPolicy, commit, readOnly, DEFAULT_TERMS_INDEX_DIVISOR);
     }
 
-    IndexReaderPtr IndexReader::open(IndexCommitPtr commit, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
+    IndexReaderPtr IndexReader::open(const IndexCommitPtr& commit, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
     {
         return open(commit->getDirectory(), deletionPolicy, commit, readOnly, termInfosIndexDivisor);
     }
 
-    IndexReaderPtr IndexReader::open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, IndexCommitPtr commit, bool readOnly, int32_t termInfosIndexDivisor)
+    IndexReaderPtr IndexReader::open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& commit, bool readOnly, int32_t termInfosIndexDivisor)
     {
         return DirectoryReader::open(directory, deletionPolicy, commit, readOnly, termInfosIndexDivisor);
     }
@@ -120,14 +120,14 @@ namespace Lucene
         return IndexReaderPtr();
     }
 
-    IndexReaderPtr IndexReader::reopen(IndexCommitPtr commit)
+    IndexReaderPtr IndexReader::reopen(const IndexCommitPtr& commit)
     {
         SyncLock syncLock(this);
         boost::throw_exception(UnsupportedOperationException(L"This reader does not support reopen(IndexCommit)."));
         return IndexReaderPtr();
     }
 
-    LuceneObjectPtr IndexReader::clone(LuceneObjectPtr other)
+    LuceneObjectPtr IndexReader::clone(const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
         if (!other)
@@ -135,7 +135,7 @@ namespace Lucene
         return other;
     }
 
-    LuceneObjectPtr IndexReader::clone(bool openReadOnly, LuceneObjectPtr other)
+    LuceneObjectPtr IndexReader::clone(bool openReadOnly, const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
         if (!other)
@@ -150,17 +150,17 @@ namespace Lucene
         return DirectoryPtr();
     }
 
-    int64_t IndexReader::lastModified(DirectoryPtr directory2)
+    int64_t IndexReader::lastModified(const DirectoryPtr& directory2)
     {
         return newLucene<FindSegmentsModified>(newLucene<SegmentInfos>(), directory2)->run();
     }
 
-    int64_t IndexReader::getCurrentVersion(DirectoryPtr directory)
+    int64_t IndexReader::getCurrentVersion(const DirectoryPtr& directory)
     {
         return SegmentInfos::readCurrentVersion(directory);
     }
 
-    MapStringString IndexReader::getCommitUserData(DirectoryPtr directory)
+    MapStringString IndexReader::getCommitUserData(const DirectoryPtr& directory)
     {
         return SegmentInfos::readCurrentUserData(directory);
     }
@@ -189,7 +189,7 @@ namespace Lucene
         return false;
     }
 
-    bool IndexReader::indexExists(DirectoryPtr directory)
+    bool IndexReader::indexExists(const DirectoryPtr& directory)
     {
         return (SegmentInfos::getCurrentSegmentGeneration(directory) != -1);
     }
@@ -233,7 +233,7 @@ namespace Lucene
         setNorm(doc, field, Similarity::encodeNorm(value));
     }
 
-    TermDocsPtr IndexReader::termDocs(TermPtr term)
+    TermDocsPtr IndexReader::termDocs(const TermPtr& term)
     {
         ensureOpen();
         TermDocsPtr _termDocs(termDocs());
@@ -241,7 +241,7 @@ namespace Lucene
         return _termDocs;
     }
 
-    TermPositionsPtr IndexReader::termPositions(TermPtr term)
+    TermPositionsPtr IndexReader::termPositions(const TermPtr& term)
     {
         ensureOpen();
         TermPositionsPtr _termPositions(termPositions());
@@ -258,7 +258,7 @@ namespace Lucene
         doDelete(docNum);
     }
 
-    int32_t IndexReader::deleteDocuments(TermPtr term)
+    int32_t IndexReader::deleteDocuments(const TermPtr& term)
     {
         ensureOpen();
         TermDocsPtr docs(termDocs(term));
@@ -416,7 +416,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    Collection<IndexCommitPtr> IndexReader::listCommits(DirectoryPtr dir)
+    Collection<IndexCommitPtr> IndexReader::listCommits(const DirectoryPtr& dir)
     {
         return DirectoryReader::listCommits(dir);
     }
@@ -448,7 +448,7 @@ namespace Lucene
         return 0;
     }
 
-    FindSegmentsModified::FindSegmentsModified(SegmentInfosPtr infos, DirectoryPtr directory) : FindSegmentsFileT<uint64_t>(infos, directory)
+    FindSegmentsModified::FindSegmentsModified(const SegmentInfosPtr& infos, const DirectoryPtr& directory) : FindSegmentsFileT<uint64_t>(infos, directory)
     {
         result = 0;
     }

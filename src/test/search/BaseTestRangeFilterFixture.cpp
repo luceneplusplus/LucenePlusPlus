@@ -44,7 +44,7 @@ namespace Lucene
     {
     }
 
-    void BaseTestRangeFilterFixture::build(TestIndexPtr index)
+    void BaseTestRangeFilterFixture::build(const TestIndexPtr& index)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(index->index, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         for (int32_t d = minId; d <= maxId; ++d)

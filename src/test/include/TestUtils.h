@@ -24,10 +24,10 @@ namespace Lucene
     String getTempDir(const String& desc);
 
     /// Wait for concurrent merge to finish
-    void syncConcurrentMerges(IndexWriterPtr writer);
+    void syncConcurrentMerges(const IndexWriterPtr& writer);
 
     /// Wait for concurrent merge to finish
-    void syncConcurrentMerges(MergeSchedulerPtr ms);
+    void syncConcurrentMerges(const MergeSchedulerPtr& ms);
 
     /// Return English representation of given integer
     String intToEnglish(int32_t i);
@@ -37,7 +37,7 @@ namespace Lucene
 
     /// This runs the CheckIndex tool on the index in.
     /// If any issues are hit, a RuntimeException is thrown; else, true is returned.
-    bool checkIndex(DirectoryPtr dir);
+    bool checkIndex(const DirectoryPtr& dir);
 }
 
 #endif

@@ -31,7 +31,7 @@ static bool mergeCalled = false;
 static bool mergeThreadCreated = false;
 static bool excCalled = false;
 
-static void checkNoUnreferencedFiles(DirectoryPtr dir)
+static void checkNoUnreferencedFiles(const DirectoryPtr& dir)
 {
     HashSet<String> _startFiles = dir->listAll();
     SegmentInfosPtr infos = newLucene<SegmentInfos>();
@@ -83,7 +83,7 @@ namespace TestFlushException
             this->doFail = false;
         }
 
-        virtual void eval(MockRAMDirectoryPtr dir)
+        virtual void eval(const MockRAMDirectoryPtr& dir)
         {
             if (this->doFail && mainThread == LuceneThread::currentId() && TestPoint::getTestPoint(L"doFlush"))
             {
@@ -98,7 +98,7 @@ namespace TestFlushException
     class TestableIndexWriter : public IndexWriter
     {
     public:
-        TestableIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        TestableIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
         }
 
@@ -308,7 +308,7 @@ namespace TestSubclassConcurrentMergeScheduler
         }
 
     public:
-        virtual void eval(MockRAMDirectoryPtr dir)
+        virtual void eval(const MockRAMDirectoryPtr& dir)
         {
             if (TestPoint::getTestPoint(L"doMerge"))
                 boost::throw_exception(IOException(L"now failing during merge"));
@@ -318,7 +318,7 @@ namespace TestSubclassConcurrentMergeScheduler
     class MyMergeThread : public MergeThread
     {
     public:
-        MyMergeThread(ConcurrentMergeSchedulerPtr merger, IndexWriterPtr writer, OneMergePtr startMerge) : MergeThread(merger, writer, startMerge)
+        MyMergeThread(const ConcurrentMergeSchedulerPtr& merger, const IndexWriterPtr& writer, const OneMergePtr& startMerge) : MergeThread(merger, writer, startMerge)
         {
             mergeThreadCreated = true;
         }
@@ -338,7 +338,7 @@ namespace TestSubclassConcurrentMergeScheduler
         LUCENE_CLASS(MyMergeScheduler);
 
     protected:
-        virtual MergeThreadPtr getMergeThread(IndexWriterPtr writer, OneMergePtr merge)
+        virtual MergeThreadPtr getMergeThread(const IndexWriterPtr& writer, const OneMergePtr& merge)
         {
             MergeThreadPtr thread = newLucene<MyMergeThread>(shared_from_this(), writer, merge);
             thread->setThreadPriority(getMergeThreadPriority());
@@ -350,7 +350,7 @@ namespace TestSubclassConcurrentMergeScheduler
             excCalled = true;
         }
 
-        virtual void doMerge(OneMergePtr merge)
+        virtual void doMerge(const OneMergePtr& merge)
         {
             mergeCalled = true;
             ConcurrentMergeScheduler::doMerge(merge);

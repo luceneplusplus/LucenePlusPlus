@@ -19,7 +19,7 @@
 
 namespace Lucene
 {
-    FreqProxFieldMergeState::FreqProxFieldMergeState(FreqProxTermsWriterPerFieldPtr field)
+    FreqProxFieldMergeState::FreqProxFieldMergeState(const FreqProxTermsWriterPerFieldPtr& field)
     {
         this->numPostings = 0;
         this->textOffset = 0;

@@ -25,7 +25,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture FuzzyQueryTest;
 
-static void addDoc(const String& text, IndexWriterPtr writer)
+static void addDoc(const String& text, const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", text, Field::STORE_YES, Field::INDEX_ANALYZED));

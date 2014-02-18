@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    LuceneSignal::LuceneSignal(SynchronizePtr objectLock)
+    LuceneSignal::LuceneSignal(const SynchronizePtr& objectLock)
     {
         this->objectLock = objectLock;
     }
@@ -19,7 +19,7 @@ namespace Lucene
     {
     }
 
-    void LuceneSignal::createSignal(LuceneSignalPtr& signal, SynchronizePtr objectLock)
+    void LuceneSignal::createSignal(LuceneSignalPtr& signal, const SynchronizePtr& objectLock)
     {
         static boost::mutex lockMutex;
         boost::mutex::scoped_lock syncLock(lockMutex);

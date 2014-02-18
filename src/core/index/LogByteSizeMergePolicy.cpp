@@ -16,7 +16,7 @@ namespace Lucene
     /// Default maximum segment size.  A segment of this size or larger will never be merged.
     const double LogByteSizeMergePolicy::DEFAULT_MAX_MERGE_MB = DBL_MAX;
 
-    LogByteSizeMergePolicy::LogByteSizeMergePolicy(IndexWriterPtr writer) : LogMergePolicy(writer)
+    LogByteSizeMergePolicy::LogByteSizeMergePolicy(const IndexWriterPtr& writer) : LogMergePolicy(writer)
     {
         minMergeSize = (int64_t)(DEFAULT_MIN_MERGE_MB * 1024 * 1024);
         maxMergeSize = DEFAULT_MAX_MERGE_MB == DBL_MAX ? std::numeric_limits<int64_t>::max() : (int64_t)(DEFAULT_MAX_MERGE_MB * 1024 * 1024);
@@ -26,7 +26,7 @@ namespace Lucene
     {
     }
 
-    int64_t LogByteSizeMergePolicy::size(SegmentInfoPtr info)
+    int64_t LogByteSizeMergePolicy::size(const SegmentInfoPtr& info)
     {
         return sizeBytes(info);
     }

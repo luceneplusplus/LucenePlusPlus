@@ -29,7 +29,7 @@ namespace Lucene
     {
     }
 
-    void QueryUtils::check(QueryPtr q)
+    void QueryUtils::check(const QueryPtr& q)
     {
         checkHashEquals(q);
     }
@@ -47,7 +47,7 @@ namespace Lucene
             return L"My Whacky Query";
         }
 
-        virtual bool equals(LuceneObjectPtr other)
+        virtual bool equals(const LuceneObjectPtr& other)
         {
             if (!MiscUtils::typeOf<WhackyQuery>(other))
                 return false;
@@ -55,7 +55,7 @@ namespace Lucene
         }
     };
 
-    void QueryUtils::checkHashEquals(QueryPtr q)
+    void QueryUtils::checkHashEquals(const QueryPtr& q)
     {
         QueryPtr q2 = boost::dynamic_pointer_cast<Query>(q->clone());
         checkEqual(q, q2);
@@ -70,13 +70,13 @@ namespace Lucene
         checkUnequal(q, whacky);
     }
 
-    void QueryUtils::checkEqual(QueryPtr q1, QueryPtr q2)
+    void QueryUtils::checkEqual(const QueryPtr& q1, const QueryPtr& q2)
     {
         EXPECT_TRUE(q1->equals(q2));
         EXPECT_EQ(q1->hashCode(), q2->hashCode());
     }
 
-    void QueryUtils::checkUnequal(QueryPtr q1, QueryPtr q2)
+    void QueryUtils::checkUnequal(const QueryPtr& q1, const QueryPtr& q2)
     {
         EXPECT_TRUE(!q1->equals(q2));
         EXPECT_TRUE(!q2->equals(q1));
@@ -86,17 +86,17 @@ namespace Lucene
         EXPECT_NE(q1->hashCode(), q2->hashCode());
     }
 
-    void QueryUtils::checkExplanations(QueryPtr q, SearcherPtr s)
+    void QueryUtils::checkExplanations(const QueryPtr& q, const SearcherPtr& s)
     {
         CheckHits::checkExplanations(q, L"", s, true);
     }
 
-    void QueryUtils::check(QueryPtr q1, SearcherPtr s)
+    void QueryUtils::check(const QueryPtr& q1, const SearcherPtr& s)
     {
         check(q1, s, true);
     }
 
-    void QueryUtils::check(QueryPtr q1, SearcherPtr s, bool wrap)
+    void QueryUtils::check(const QueryPtr& q1, const SearcherPtr& s, bool wrap)
     {
         check(q1);
         if (s)
@@ -126,7 +126,7 @@ namespace Lucene
         }
     }
 
-    IndexSearcherPtr QueryUtils::wrapUnderlyingReader(IndexSearcherPtr s, int32_t edge)
+    IndexSearcherPtr QueryUtils::wrapUnderlyingReader(const IndexSearcherPtr& s, int32_t edge)
     {
         IndexReaderPtr r = s->getIndexReader();
 
@@ -152,7 +152,7 @@ namespace Lucene
         return out;
     }
 
-    MultiSearcherPtr QueryUtils::wrapSearcher(SearcherPtr s, int32_t edge)
+    MultiSearcherPtr QueryUtils::wrapSearcher(const SearcherPtr& s, int32_t edge)
     {
         // we can't put deleted docs before the nested reader, because it will through off the docIds
         Collection<SearchablePtr> searchers = newCollection<SearchablePtr>(
@@ -202,7 +202,7 @@ namespace Lucene
         class SkipCollector : public Collector
         {
         public:
-            SkipCollector(QueryPtr q, IndexSearcherPtr s, Collection<int32_t> lastDoc, Collection<int32_t> order, Collection<int32_t> opidx, Collection<IndexReaderPtr> lastReader)
+            SkipCollector(const QueryPtr& q, const IndexSearcherPtr& s, Collection<int32_t> lastDoc, Collection<int32_t> order, Collection<int32_t> opidx, Collection<IndexReaderPtr> lastReader)
             {
                 this->q = q;
                 this->s = s;
@@ -229,7 +229,7 @@ namespace Lucene
             Collection<IndexReaderPtr> lastReader;
 
         public:
-            virtual void setScorer(ScorerPtr scorer)
+            virtual void setScorer(const ScorerPtr& scorer)
             {
                 this->sc = scorer;
             }
@@ -281,7 +281,7 @@ namespace Lucene
                 }
             }
 
-            virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+            virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
             {
                 // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
                 if (lastReader[0])
@@ -307,7 +307,7 @@ namespace Lucene
         };
     }
 
-    void QueryUtils::checkSkipTo(QueryPtr q, IndexSearcherPtr s)
+    void QueryUtils::checkSkipTo(const QueryPtr& q, const IndexSearcherPtr& s)
     {
         if (q->weight(s)->scoresDocsOutOfOrder())
             return; // in this case order of skipTo() might differ from that of next().
@@ -354,7 +354,7 @@ namespace Lucene
         class SkipCollector : public Collector
         {
         public:
-            SkipCollector(QueryPtr q, IndexSearcherPtr s, Collection<int32_t> lastDoc, Collection<IndexReaderPtr> lastReader)
+            SkipCollector(const QueryPtr& q, const IndexSearcherPtr& s, Collection<int32_t> lastDoc, Collection<IndexReaderPtr> lastReader)
             {
                 this->q = q;
                 this->s = s;
@@ -376,7 +376,7 @@ namespace Lucene
             IndexReaderPtr reader;
 
         public:
-            virtual void setScorer(ScorerPtr scorer)
+            virtual void setScorer(const ScorerPtr& scorer)
             {
                 this->scorer = scorer;
             }
@@ -398,7 +398,7 @@ namespace Lucene
                 lastDoc[0] = doc;
             }
 
-            virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+            virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
             {
                 // confirm that skipping beyond the last doc, on the previous reader, hits NO_MORE_DOCS
                 if (lastReader[0])
@@ -425,7 +425,7 @@ namespace Lucene
         };
     }
 
-    void QueryUtils::checkFirstSkipTo(QueryPtr q, IndexSearcherPtr s)
+    void QueryUtils::checkFirstSkipTo(const QueryPtr& q, const IndexSearcherPtr& s)
     {
         Collection<int32_t> lastDoc = newCollection<int32_t>(-1);
         Collection<IndexReaderPtr> lastReader = Collection<IndexReaderPtr>::newInstance(1);

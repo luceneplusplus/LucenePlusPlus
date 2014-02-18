@@ -19,7 +19,7 @@ namespace Lucene
     {
     public:
         /// Constructs from a Reader.
-        FastCharStream(ReaderPtr reader);
+        FastCharStream(const ReaderPtr& reader);
         virtual ~FastCharStream();
 
         LUCENE_CLASS(FastCharStream);

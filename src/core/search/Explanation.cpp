@@ -57,7 +57,7 @@ namespace Lucene
         return Collection<ExplanationPtr>::newInstance(this->details.begin(), this->details.end());
     }
 
-    void Explanation::addDetail(ExplanationPtr detail)
+    void Explanation::addDetail(const ExplanationPtr& detail)
     {
         if (!details)
             details = Collection<ExplanationPtr>::newInstance();

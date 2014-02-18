@@ -49,7 +49,7 @@ namespace Lucene
         RandomPtr random;
 
     protected:
-        void build(TestIndexPtr index);
+        void build(const TestIndexPtr& index);
         String pad(int32_t n);
     };
 }

@@ -25,17 +25,17 @@ namespace Lucene
         FieldInfosPtr fieldInfos;
 
     public:
-        virtual InvertedDocEndConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread);
+        virtual InvertedDocEndConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread);
         virtual void abort();
 
         // We only write the _X.nrm file at flush
         virtual void files(HashSet<String> files);
 
-        virtual void setFieldInfos(FieldInfosPtr fieldInfos);
+        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
         /// Produce _X.nrm if any document had a field with norms not disabled
-        virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
-        virtual void closeDocStore(SegmentWriteStatePtr state);
+        virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+        virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
     protected:
         static uint8_t getDefaultNorm();

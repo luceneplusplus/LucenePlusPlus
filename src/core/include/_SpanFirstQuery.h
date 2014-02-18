@@ -14,7 +14,7 @@ namespace Lucene
     class FirstSpans : public Spans
     {
     public:
-        FirstSpans(SpanFirstQueryPtr query, SpansPtr spans);
+        FirstSpans(const SpanFirstQueryPtr& query, const SpansPtr& spans);
         virtual ~FirstSpans();
 
         LUCENE_CLASS(FirstSpans);

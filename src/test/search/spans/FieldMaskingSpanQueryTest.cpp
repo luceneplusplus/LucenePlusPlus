@@ -110,12 +110,12 @@ public:
         return newLucene<Field>(name, value, Field::STORE_NO, Field::INDEX_ANALYZED);
     }
 
-    void check(SpanQueryPtr q, Collection<int32_t> docs)
+    void check(const SpanQueryPtr& q, Collection<int32_t> docs)
     {
         CheckHits::checkHitCollector(q, L"", searcher, docs);
     }
 
-    String str(SpansPtr span)
+    String str(const SpansPtr& span)
     {
         return str(span->doc(), span->start(), span->end());
     }
@@ -144,7 +144,7 @@ namespace TestRewrite
     class TestableFieldMaskingSpanQuery : public FieldMaskingSpanQuery
     {
     public:
-        TestableFieldMaskingSpanQuery(SpanQueryPtr maskedQuery, const String& maskedField) : FieldMaskingSpanQuery(maskedQuery, maskedField)
+        TestableFieldMaskingSpanQuery(const SpanQueryPtr& maskedQuery, const String& maskedField) : FieldMaskingSpanQuery(maskedQuery, maskedField)
         {
         }
 
@@ -153,7 +153,7 @@ namespace TestRewrite
         }
 
     public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader)
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader)
         {
             return newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(
                 newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally")),

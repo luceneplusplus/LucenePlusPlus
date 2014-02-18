@@ -45,7 +45,7 @@ static DocumentPtr createDocument(const String& contents1, const String& content
     return document;
 }
 
-static void initIndex(DirectoryPtr directory, int32_t numDocs, bool create, const String& contents2)
+static void initIndex(const DirectoryPtr& directory, int32_t numDocs, bool create, const String& contents2)
 {
     IndexWriterPtr indexWriter = newLucene<IndexWriter>(directory, newLucene<KeywordAnalyzer>(), create, IndexWriter::MaxFieldLengthLIMITED);
     for (int32_t i = 0; i < numDocs; ++i)

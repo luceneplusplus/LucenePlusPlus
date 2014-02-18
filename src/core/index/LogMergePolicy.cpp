@@ -25,7 +25,7 @@ namespace Lucene
     /// Default noCFSRatio.  If a merge's size is >= 10% of the index, then we disable compound file for it.
     const double LogMergePolicy::DEFAULT_NO_CFS_RATIO = 0.1;
 
-    LogMergePolicy::LogMergePolicy(IndexWriterPtr writer) : MergePolicy(writer)
+    LogMergePolicy::LogMergePolicy(const IndexWriterPtr& writer) : MergePolicy(writer)
     {
         mergeFactor = DEFAULT_MERGE_FACTOR;
         noCFSRatio = DEFAULT_NO_CFS_RATIO;
@@ -86,12 +86,12 @@ namespace Lucene
         _useCompoundFile = useCompoundFile;
     }
 
-    bool LogMergePolicy::useCompoundFile(SegmentInfosPtr segments, SegmentInfoPtr newSegment)
+    bool LogMergePolicy::useCompoundFile(const SegmentInfosPtr& segments, const SegmentInfoPtr& newSegment)
     {
         return _useCompoundFile;
     }
 
-    bool LogMergePolicy::useCompoundDocStore(SegmentInfosPtr segments)
+    bool LogMergePolicy::useCompoundDocStore(const SegmentInfosPtr& segments)
     {
         return _useCompoundDocStore;
     }
@@ -120,7 +120,7 @@ namespace Lucene
     {
     }
 
-    int64_t LogMergePolicy::sizeDocs(SegmentInfoPtr info)
+    int64_t LogMergePolicy::sizeDocs(const SegmentInfoPtr& info)
     {
         if (calibrateSizeByDeletes)
         {
@@ -131,7 +131,7 @@ namespace Lucene
             return info->docCount;
     }
 
-    int64_t LogMergePolicy::sizeBytes(SegmentInfoPtr info)
+    int64_t LogMergePolicy::sizeBytes(const SegmentInfoPtr& info)
     {
         int64_t byteSize = info->sizeInBytes();
         if (calibrateSizeByDeletes)
@@ -144,7 +144,7 @@ namespace Lucene
             return byteSize;
     }
 
-    bool LogMergePolicy::isOptimized(SegmentInfosPtr infos, int32_t maxNumSegments, SetSegmentInfo segmentsToOptimize)
+    bool LogMergePolicy::isOptimized(const SegmentInfosPtr& infos, int32_t maxNumSegments, SetSegmentInfo segmentsToOptimize)
     {
         int32_t numSegments = infos->size();
         int32_t numToOptimize = 0;
@@ -161,14 +161,14 @@ namespace Lucene
         return (numToOptimize <= maxNumSegments && (numToOptimize != 1 || isOptimized(optimizeInfo)));
     }
 
-    bool LogMergePolicy::isOptimized(SegmentInfoPtr info)
+    bool LogMergePolicy::isOptimized(const SegmentInfoPtr& info)
     {
         IndexWriterPtr writer(_writer);
         bool hasDeletions = (writer->numDeletedDocs(info) > 0);
         return (!hasDeletions && !info->hasSeparateNorms() && info->dir == writer->getDirectory() && (info->getUseCompoundFile() == _useCompoundFile || noCFSRatio < 1.0));
     }
 
-    MergeSpecificationPtr LogMergePolicy::findMergesForOptimize(SegmentInfosPtr segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize)
+    MergeSpecificationPtr LogMergePolicy::findMergesForOptimize(const SegmentInfosPtr& segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize)
     {
         MergeSpecificationPtr spec;
 
@@ -247,7 +247,7 @@ namespace Lucene
         return spec;
     }
 
-    MergeSpecificationPtr LogMergePolicy::findMergesToExpungeDeletes(SegmentInfosPtr segmentInfos)
+    MergeSpecificationPtr LogMergePolicy::findMergesToExpungeDeletes(const SegmentInfosPtr& segmentInfos)
     {
         int32_t numSegments = segmentInfos->size();
 
@@ -291,7 +291,7 @@ namespace Lucene
         return spec;
     }
 
-    MergeSpecificationPtr LogMergePolicy::findMerges(SegmentInfosPtr segmentInfos)
+    MergeSpecificationPtr LogMergePolicy::findMerges(const SegmentInfosPtr& segmentInfos)
     {
         int32_t numSegments = segmentInfos->size();
         message(L"findMerges: " + StringUtils::toString(numSegments) + L" segments");
@@ -383,7 +383,7 @@ namespace Lucene
         return spec;
     }
 
-    OneMergePtr LogMergePolicy::makeOneMerge(SegmentInfosPtr infos, SegmentInfosPtr infosToMerge)
+    OneMergePtr LogMergePolicy::makeOneMerge(const SegmentInfosPtr& infos, const SegmentInfosPtr& infosToMerge)
     {
         bool doCFS;
         if (!_useCompoundFile)

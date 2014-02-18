@@ -17,7 +17,7 @@
 
 namespace Lucene
 {
-    DocInverter::DocInverter(InvertedDocConsumerPtr consumer, InvertedDocEndConsumerPtr endConsumer)
+    DocInverter::DocInverter(const InvertedDocConsumerPtr& consumer, const InvertedDocEndConsumerPtr& endConsumer)
     {
         this->consumer = consumer;
         this->endConsumer = endConsumer;
@@ -27,14 +27,14 @@ namespace Lucene
     {
     }
 
-    void DocInverter::setFieldInfos(FieldInfosPtr fieldInfos)
+    void DocInverter::setFieldInfos(const FieldInfosPtr& fieldInfos)
     {
         DocFieldConsumer::setFieldInfos(fieldInfos);
         consumer->setFieldInfos(fieldInfos);
         endConsumer->setFieldInfos(fieldInfos);
     }
 
-    void DocInverter::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
+    void DocInverter::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
     {
         MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField childThreadsAndFields(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField::newInstance());
         MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField endChildThreadsAndFields(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField::newInstance());
@@ -58,7 +58,7 @@ namespace Lucene
         endConsumer->flush(endChildThreadsAndFields, state);
     }
 
-    void DocInverter::closeDocStore(SegmentWriteStatePtr state)
+    void DocInverter::closeDocStore(const SegmentWriteStatePtr& state)
     {
         consumer->closeDocStore(state);
         endConsumer->closeDocStore(state);
@@ -75,7 +75,7 @@ namespace Lucene
         return consumer->freeRAM();
     }
 
-    DocFieldConsumerPerThreadPtr DocInverter::addThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread)
+    DocFieldConsumerPerThreadPtr DocInverter::addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread)
     {
         return newLucene<DocInverterPerThread>(docFieldProcessorPerThread, shared_from_this());
     }

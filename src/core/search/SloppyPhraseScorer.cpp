@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    SloppyPhraseScorer::SloppyPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, int32_t slop, ByteArray norms) : PhraseScorer(weight, tps, offsets, similarity, norms)
+    SloppyPhraseScorer::SloppyPhraseScorer(const WeightPtr& weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, const SimilarityPtr& similarity, int32_t slop, ByteArray norms) : PhraseScorer(weight, tps, offsets, similarity, norms)
     {
         this->slop = slop;
         this->checkedRepeats = false;
@@ -63,7 +63,7 @@ namespace Lucene
         return freq;
     }
 
-    PhrasePositionsPtr SloppyPhraseScorer::flip(PhrasePositionsPtr pp, PhrasePositionsPtr pp2)
+    PhrasePositionsPtr SloppyPhraseScorer::flip(const PhrasePositionsPtr& pp, const PhrasePositionsPtr& pp2)
     {
         int32_t n = 0;
         PhrasePositionsPtr pp3;
@@ -161,7 +161,7 @@ namespace Lucene
         return end;
     }
 
-    PhrasePositionsPtr SloppyPhraseScorer::termPositionsDiffer(PhrasePositionsPtr pp)
+    PhrasePositionsPtr SloppyPhraseScorer::termPositionsDiffer(const PhrasePositionsPtr& pp)
     {
         // Efficiency note: a more efficient implementation could keep a map between repeating pp's, so that if
         // pp1a, pp1b, pp1c are repeats term1, and pp2a, pp2b are repeats of term2, pp2a would only be checked

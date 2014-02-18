@@ -362,7 +362,7 @@ TEST_F(BufferedIndexInputTest, testReadByte)
         EXPECT_EQ(input->readByte(), byten(i));
 }
 
-void checkReadBytes(IndexInputPtr input, int32_t size, int32_t pos)
+void checkReadBytes(const IndexInputPtr& input, int32_t size, int32_t pos)
 {
     // Just to see that "offset" is treated properly in readBytes(), we add an arbitrary offset at
     // the beginning of the array
@@ -381,7 +381,7 @@ void checkReadBytes(IndexInputPtr input, int32_t size, int32_t pos)
         EXPECT_EQ(byten(pos + i), buffer[offset + i]);
 }
 
-void runReadBytes(IndexInputPtr input, int32_t bufferSize)
+void runReadBytes(const IndexInputPtr& input, int32_t bufferSize)
 {
     int32_t pos = 0;
     RandomPtr random = newLucene<Random>();
@@ -425,7 +425,7 @@ void runReadBytes(IndexInputPtr input, int32_t bufferSize)
     }
 }
 
-void runReadBytesAndClose(IndexInputPtr input, int32_t bufferSize)
+void runReadBytesAndClose(const IndexInputPtr& input, int32_t bufferSize)
 {
     LuceneException finally;
     try

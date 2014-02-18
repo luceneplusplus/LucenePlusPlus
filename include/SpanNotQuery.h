@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// Construct a SpanNotQuery matching spans from include which have no overlap with spans from exclude.
-        SpanNotQuery(SpanQueryPtr include, SpanQueryPtr exclude);
+        SpanNotQuery(const SpanQueryPtr& include, const SpanQueryPtr& exclude);
         virtual ~SpanNotQuery();
 
         LUCENE_CLASS(SpanNotQuery);
@@ -37,11 +37,11 @@ namespace Lucene
         virtual String getField();
         virtual void extractTerms(SetTerm terms);
         virtual String toString(const String& field);
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual SpansPtr getSpans(IndexReaderPtr reader);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

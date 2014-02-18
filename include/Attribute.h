@@ -41,15 +41,15 @@ namespace Lucene
         /// All values used for computation of {@link #hashCode()} should be checked here for equality.
         ///
         /// see also {@link LuceneObject#equals(Object)}
-        virtual bool equals(LuceneObjectPtr other) = 0;
+        virtual bool equals(const LuceneObjectPtr& other) = 0;
 
         /// Copies the values from this Attribute into the passed-in target attribute. The target implementation
         /// must support all the Attributes this implementation supports.
-        virtual void copyTo(AttributePtr target) = 0;
+        virtual void copyTo(const AttributePtr& target) = 0;
 
         /// Shallow clone. Subclasses must override this if they need to clone any members deeply.
         /// @param base clone reference - null when called initially, then set in top virtual override.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr()) = 0;
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr()) = 0;
     };
 }
 

@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    DocFieldProcessorPerField::DocFieldProcessorPerField(DocFieldProcessorPerThreadPtr perThread, FieldInfoPtr fieldInfo)
+    DocFieldProcessorPerField::DocFieldProcessorPerField(const DocFieldProcessorPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo)
     {
         lastGen = -1;
         fieldCount = 0;

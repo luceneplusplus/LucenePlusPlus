@@ -24,11 +24,11 @@ namespace Lucene
         CachingWrapperFilter::DeletesMode deletesMode;
 
     public:
-        virtual LuceneObjectPtr get(IndexReaderPtr reader, LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey);
-        virtual void put(LuceneObjectPtr coreKey, LuceneObjectPtr delCoreKey, LuceneObjectPtr value);
+        virtual LuceneObjectPtr get(const IndexReaderPtr& reader, const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey);
+        virtual void put(const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey, const LuceneObjectPtr& value);
 
     protected:
-        virtual LuceneObjectPtr mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value) = 0;
+        virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value) = 0;
     };
 
     class FilterCacheDocIdSet : public FilterCache
@@ -40,13 +40,13 @@ namespace Lucene
         LUCENE_CLASS(FilterCacheDocIdSet);
 
     protected:
-        virtual LuceneObjectPtr mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value);
+        virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value);
     };
 
     class FilteredCacheDocIdSet : public FilteredDocIdSet
     {
     public:
-        FilteredCacheDocIdSet(IndexReaderPtr reader, DocIdSetPtr innerSet);
+        FilteredCacheDocIdSet(const IndexReaderPtr& reader, const DocIdSetPtr& innerSet);
         virtual ~FilteredCacheDocIdSet();
 
         LUCENE_CLASS(FilteredCacheDocIdSet);

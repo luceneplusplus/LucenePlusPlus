@@ -41,7 +41,7 @@ namespace Lucene
         this->_count = -1;
     }
 
-    BitVector::BitVector(DirectoryPtr d, const String& name)
+    BitVector::BitVector(const DirectoryPtr& d, const String& name)
     {
         IndexInputPtr input(d->openInput(name));
         LuceneException finally;
@@ -65,7 +65,7 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr BitVector::clone(LuceneObjectPtr other)
+    LuceneObjectPtr BitVector::clone(const LuceneObjectPtr& other)
     {
         ByteArray copyBits(ByteArray::newInstance(bits.size()));
         MiscUtils::arrayCopy(bits.get(), 0, copyBits.get(), 0, bits.size());
@@ -142,7 +142,7 @@ namespace Lucene
         return c;
     }
 
-    void BitVector::write(DirectoryPtr d, const String& name)
+    void BitVector::write(const DirectoryPtr& d, const String& name)
     {
         TestScope testScope(L"BitVector", L"write");
         IndexOutputPtr output(d->createOutput(name));
@@ -162,14 +162,14 @@ namespace Lucene
         finally.throwException();
     }
 
-    void BitVector::writeBits(IndexOutputPtr output)
+    void BitVector::writeBits(const IndexOutputPtr& output)
     {
         output->writeInt(size()); // write size
         output->writeInt(count()); // write count
         output->writeBytes(bits.get(), bits.size());
     }
 
-    void BitVector::writeDgaps(IndexOutputPtr output)
+    void BitVector::writeDgaps(const IndexOutputPtr& output)
     {
         output->writeInt(-1); // mark using d-gaps
         output->writeInt(size()); // write size
@@ -210,7 +210,7 @@ namespace Lucene
         return factor * (4 + (8 + 40) * count()) < size();
     }
 
-    void BitVector::readBits(IndexInputPtr input)
+    void BitVector::readBits(const IndexInputPtr& input)
     {
         _count = input->readInt(); // read count
         bits = ByteArray::newInstance((_size >> 3) + 1); // allocate bits
@@ -218,7 +218,7 @@ namespace Lucene
         input->readBytes(bits.get(), 0, bits.size());
     }
 
-    void BitVector::readDgaps(IndexInputPtr input)
+    void BitVector::readDgaps(const IndexInputPtr& input)
     {
         _size = input->readInt(); // (re)read size
         _count = input->readInt(); // read count

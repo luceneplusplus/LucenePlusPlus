@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         /// Create a buffering character-input stream.
-        BufferedReader(ReaderPtr reader, int32_t size = READER_BUFFER);
+        BufferedReader(const ReaderPtr& reader, int32_t size = READER_BUFFER);
         virtual ~BufferedReader();
 
         LUCENE_CLASS(BufferedReader);

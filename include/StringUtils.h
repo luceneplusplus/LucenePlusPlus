@@ -25,7 +25,7 @@ namespace Lucene
         static int32_t toUnicode(const uint8_t* utf8, int32_t length, CharArray unicode);
 
         /// Convert uft8 buffer into unicode.
-        static int32_t toUnicode(const uint8_t* utf8, int32_t length, UnicodeResultPtr unicodeResult);
+        static int32_t toUnicode(const uint8_t* utf8, int32_t length, const UnicodeResultPtr& unicodeResult);
 
         /// Convert uft8 buffer into unicode.
         static String toUnicode(const uint8_t* utf8, int32_t length);
@@ -37,7 +37,7 @@ namespace Lucene
         static int32_t toUTF8(const wchar_t* unicode, int32_t length, ByteArray utf8);
 
         /// Convert unicode buffer into uft8.
-        static int32_t toUTF8(const wchar_t* unicode, int32_t length, UTF8ResultPtr utf8Result);
+        static int32_t toUTF8(const wchar_t* unicode, int32_t length, const UTF8ResultPtr& utf8Result);
 
         /// Convert unicode buffer into uft8.
         static SingleString toUTF8(const wchar_t* unicode, int32_t length);

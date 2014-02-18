@@ -17,7 +17,7 @@
 
 namespace Lucene
 {
-    TermsHashPerThread::TermsHashPerThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPtr termsHash, TermsHashPtr nextTermsHash, TermsHashPerThreadPtr primaryPerThread)
+    TermsHashPerThread::TermsHashPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPtr& termsHash, const TermsHashPtr& nextTermsHash, const TermsHashPerThreadPtr& primaryPerThread)
     {
         this->freePostings = Collection<RawPostingListPtr>::newInstance(256);
         this->freePostingsCount = 0;
@@ -58,7 +58,7 @@ namespace Lucene
             nextPerThread = nextTermsHash->addThread(docInverterPerThread, shared_from_this());
     }
 
-    InvertedDocConsumerPerFieldPtr TermsHashPerThread::addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo)
+    InvertedDocConsumerPerFieldPtr TermsHashPerThread::addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo)
     {
         return newLucene<TermsHashPerField>(docInverterPerField, shared_from_this(), nextPerThread, fieldInfo);
     }

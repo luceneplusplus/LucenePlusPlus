@@ -19,7 +19,7 @@ namespace Lucene
     {
     }
 
-    double DefaultSimilarity::computeNorm(const String& fieldName, FieldInvertStatePtr state)
+    double DefaultSimilarity::computeNorm(const String& fieldName, const FieldInvertStatePtr& state)
     {
         int32_t numTerms;
         if (discountOverlaps)

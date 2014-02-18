@@ -17,7 +17,7 @@ namespace Lucene
     class LPPAPI OpenBitSetIterator : public DocIdSetIterator
     {
     public:
-        OpenBitSetIterator(OpenBitSetPtr bitSet);
+        OpenBitSetIterator(const OpenBitSetPtr& bitSet);
         OpenBitSetIterator(LongArray bits, int32_t numWords);
         virtual ~OpenBitSetIterator();
 

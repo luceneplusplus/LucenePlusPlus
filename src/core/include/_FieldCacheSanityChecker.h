@@ -15,7 +15,7 @@ namespace Lucene
     class ReaderField : public LuceneObject
     {
     public:
-        ReaderField(LuceneObjectPtr readerKey, const String& fieldName);
+        ReaderField(const LuceneObjectPtr& readerKey, const String& fieldName);
         virtual ~ReaderField();
 
         LUCENE_CLASS(ReaderField);
@@ -26,7 +26,7 @@ namespace Lucene
 
     public:
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual String toString();
     };
 }

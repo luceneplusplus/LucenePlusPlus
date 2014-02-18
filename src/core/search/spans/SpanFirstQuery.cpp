@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    SpanFirstQuery::SpanFirstQuery(SpanQueryPtr match, int32_t end)
+    SpanFirstQuery::SpanFirstQuery(const SpanQueryPtr& match, int32_t end)
     {
         this->match = match;
         this->end = end;
@@ -44,7 +44,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    LuceneObjectPtr SpanFirstQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SpanFirstQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanFirstQuery>(boost::dynamic_pointer_cast<SpanQuery>(match->clone()), end));
         SpanFirstQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanFirstQuery>(clone));
@@ -59,12 +59,12 @@ namespace Lucene
         match->extractTerms(terms);
     }
 
-    SpansPtr SpanFirstQuery::getSpans(IndexReaderPtr reader)
+    SpansPtr SpanFirstQuery::getSpans(const IndexReaderPtr& reader)
     {
         return newLucene<FirstSpans>(shared_from_this(), match->getSpans(reader));
     }
 
-    QueryPtr SpanFirstQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr SpanFirstQuery::rewrite(const IndexReaderPtr& reader)
     {
         SpanFirstQueryPtr clone;
         SpanQueryPtr rewritten(boost::dynamic_pointer_cast<SpanQuery>(match->rewrite(reader)));
@@ -80,7 +80,7 @@ namespace Lucene
             return shared_from_this(); // no clauses rewrote
     }
 
-    bool SpanFirstQuery::equals(LuceneObjectPtr other)
+    bool SpanFirstQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -100,7 +100,7 @@ namespace Lucene
         return result;
     }
 
-    FirstSpans::FirstSpans(SpanFirstQueryPtr query, SpansPtr spans)
+    FirstSpans::FirstSpans(const SpanFirstQueryPtr& query, const SpansPtr& spans)
     {
         this->query = query;
         this->spans = spans;

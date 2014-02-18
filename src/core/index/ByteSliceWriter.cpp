@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    ByteSliceWriter::ByteSliceWriter(ByteBlockPoolPtr pool)
+    ByteSliceWriter::ByteSliceWriter(const ByteBlockPoolPtr& pool)
     {
         this->pool = pool;
         upto = 0;

@@ -22,7 +22,7 @@ namespace Lucene
         ///
         /// After calling the constructor the enumeration is already pointing to the first valid term if such
         /// a term exists.
-        WildcardTermEnum(IndexReaderPtr reader, TermPtr term);
+        WildcardTermEnum(const IndexReaderPtr& reader, const TermPtr& term);
 
         virtual ~WildcardTermEnum();
 
@@ -46,7 +46,7 @@ namespace Lucene
         static bool wildcardEquals(const String& pattern, int32_t patternIdx, const String& string, int32_t stringIdx);
 
     protected:
-        virtual bool termCompare(TermPtr term);
+        virtual bool termCompare(const TermPtr& term);
         virtual bool endEnum();
     };
 }

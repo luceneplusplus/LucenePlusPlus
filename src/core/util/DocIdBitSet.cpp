@@ -15,7 +15,7 @@ namespace Lucene
     {
     }
 
-    DocIdBitSet::DocIdBitSet(BitSetPtr bitSet)
+    DocIdBitSet::DocIdBitSet(const BitSetPtr& bitSet)
     {
         this->bitSet = bitSet;
     }
@@ -39,7 +39,7 @@ namespace Lucene
         return bitSet;
     }
 
-    bool DocIdBitSet::equals(LuceneObjectPtr other)
+    bool DocIdBitSet::equals(const LuceneObjectPtr& other)
     {
         if (DocIdSet::equals(other))
             return true;
@@ -52,7 +52,7 @@ namespace Lucene
         return bitSet->hashCode();
     }
 
-    LuceneObjectPtr DocIdBitSet::clone(LuceneObjectPtr other)
+    LuceneObjectPtr DocIdBitSet::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<DocIdBitSet>();
         DocIdBitSetPtr cloneBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(LuceneObject::clone(clone)));
@@ -60,7 +60,7 @@ namespace Lucene
         return cloneBitSet;
     }
 
-    DocIdBitSetIterator::DocIdBitSetIterator(BitSetPtr bitSet)
+    DocIdBitSetIterator::DocIdBitSetIterator(const BitSetPtr& bitSet)
     {
         this->bitSet = bitSet;
         this->docId = -1;

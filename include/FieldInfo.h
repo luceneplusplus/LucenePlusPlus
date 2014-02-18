@@ -36,7 +36,7 @@ namespace Lucene
         bool storePayloads; // whether this field stores payloads together with term positions
 
     public:
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         void update(bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector,
                     bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions);

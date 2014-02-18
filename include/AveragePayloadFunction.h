@@ -25,7 +25,7 @@ namespace Lucene
                                     double currentScore, double currentPayloadScore);
         virtual double docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore);
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
     };
 }
 

@@ -28,7 +28,7 @@ namespace Lucene
 
         /// Sets up a RAMDirectory, and adds documents (using intToEnglish()) with two fields: field and multiField
         /// and analyzes them using the PayloadHelperAnalyzer
-        static IndexSearcherPtr setUp(SimilarityPtr similarity, int32_t numDocs);
+        static IndexSearcherPtr setUp(const SimilarityPtr& similarity, int32_t numDocs);
     };
 }
 

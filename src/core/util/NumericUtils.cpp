@@ -162,17 +162,17 @@ namespace Lucene
         return sortableLongToDouble(prefixCodedToLong(val));
     }
 
-    void NumericUtils::splitLongRange(LongRangeBuilderPtr builder, int32_t precisionStep, int64_t minBound, int64_t maxBound)
+    void NumericUtils::splitLongRange(const LongRangeBuilderPtr& builder, int32_t precisionStep, int64_t minBound, int64_t maxBound)
     {
         splitRange(builder, 64, precisionStep, minBound, maxBound);
     }
 
-    void NumericUtils::splitIntRange(IntRangeBuilderPtr builder, int32_t precisionStep, int32_t minBound, int32_t maxBound)
+    void NumericUtils::splitIntRange(const IntRangeBuilderPtr& builder, int32_t precisionStep, int32_t minBound, int32_t maxBound)
     {
         splitRange(builder, 32, precisionStep, (int64_t)minBound, (int64_t)maxBound);
     }
 
-    void NumericUtils::splitRange(LuceneObjectPtr builder, int32_t valSize, int32_t precisionStep, int64_t minBound, int64_t maxBound)
+    void NumericUtils::splitRange(const LuceneObjectPtr& builder, int32_t valSize, int32_t precisionStep, int64_t minBound, int64_t maxBound)
     {
         if (precisionStep < 1)
             boost::throw_exception(IllegalArgumentException(L"precisionStep must be >=1"));
@@ -208,7 +208,7 @@ namespace Lucene
         }
     }
 
-    void NumericUtils::addRange(LuceneObjectPtr builder, int32_t valSize, int64_t minBound, int64_t maxBound, int32_t shift)
+    void NumericUtils::addRange(const LuceneObjectPtr& builder, int32_t valSize, int64_t minBound, int64_t maxBound, int32_t shift)
     {
         // for the max bound set all lower bits (that were shifted away): this is important for testing or other
         // usages of the splitted range (eg. to reconstruct the full range). The prefixEncoding will remove the

@@ -16,7 +16,7 @@
 
 namespace Lucene
 {
-    FieldCacheRangeFilter::FieldCacheRangeFilter(const String& field, ParserPtr parser, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilter::FieldCacheRangeFilter(const String& field, const ParserPtr& parser, bool includeLower, bool includeUpper)
     {
         this->field = field;
         this->parser = parser;
@@ -38,7 +38,7 @@ namespace Lucene
         return newByteRange(field, ByteParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
 
-    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newByteRange(const String& field, ByteParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newByteRange(const String& field, const ByteParserPtr& parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterByte>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }
@@ -48,7 +48,7 @@ namespace Lucene
         return newIntRange(field, IntParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
 
-    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newIntRange(const String& field, IntParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newIntRange(const String& field, const IntParserPtr& parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterInt>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }
@@ -58,7 +58,7 @@ namespace Lucene
         return newLongRange(field, LongParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
 
-    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newLongRange(const String& field, LongParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newLongRange(const String& field, const LongParserPtr& parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterLong>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }
@@ -68,7 +68,7 @@ namespace Lucene
         return newDoubleRange(field, DoubleParserPtr(), lowerVal, upperVal, includeLower, includeUpper);
     }
 
-    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newDoubleRange(const String& field, DoubleParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterPtr FieldCacheRangeFilter::newDoubleRange(const String& field, const DoubleParserPtr& parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
     {
         return newLucene<FieldCacheRangeFilterDouble>(field, parser, lowerVal, upperVal, includeLower, includeUpper);
     }
@@ -93,7 +93,7 @@ namespace Lucene
         return parser;
     }
 
-    FieldCacheRangeFilterString::FieldCacheRangeFilterString(const String& field, ParserPtr parser, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterString::FieldCacheRangeFilterString(const String& field, const ParserPtr& parser, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper)
         : FieldCacheRangeFilter(field, parser, includeLower, includeUpper)
     {
         this->lowerVal = lowerVal;
@@ -104,7 +104,7 @@ namespace Lucene
     {
     }
 
-    DocIdSetPtr FieldCacheRangeFilterString::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr FieldCacheRangeFilterString::getDocIdSet(const IndexReaderPtr& reader)
     {
         StringIndexPtr fcsi(FieldCache::DEFAULT()->getStringIndex(reader, field));
         int32_t lowerPoint = fcsi->binarySearchLookup(lowerVal);
@@ -159,7 +159,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool FieldCacheRangeFilterString::equals(LuceneObjectPtr other)
+    bool FieldCacheRangeFilterString::equals(const LuceneObjectPtr& other)
     {
         if (Filter::equals(other))
             return true;
@@ -186,7 +186,7 @@ namespace Lucene
         return code;
     }
 
-    FieldCacheRangeFilterByte::FieldCacheRangeFilterByte(const String& field, ParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterByte::FieldCacheRangeFilterByte(const String& field, const ParserPtr& parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper)
         : FieldCacheRangeFilterNumeric<uint8_t>(field, parser, lowerVal, upperVal, UCHAR_MAX, includeLower, includeUpper)
     {
     }
@@ -195,12 +195,12 @@ namespace Lucene
     {
     }
 
-    Collection<uint8_t> FieldCacheRangeFilterByte::getValues(IndexReaderPtr reader)
+    Collection<uint8_t> FieldCacheRangeFilterByte::getValues(const IndexReaderPtr& reader)
     {
         return FieldCache::DEFAULT()->getBytes(reader, field, boost::static_pointer_cast<ByteParser>(parser));
     }
 
-    FieldCacheRangeFilterInt::FieldCacheRangeFilterInt(const String& field, ParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterInt::FieldCacheRangeFilterInt(const String& field, const ParserPtr& parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper)
         : FieldCacheRangeFilterNumeric<int32_t>(field, parser, lowerVal, upperVal, INT_MAX, includeLower, includeUpper)
     {
     }
@@ -209,12 +209,12 @@ namespace Lucene
     {
     }
 
-    Collection<int32_t> FieldCacheRangeFilterInt::getValues(IndexReaderPtr reader)
+    Collection<int32_t> FieldCacheRangeFilterInt::getValues(const IndexReaderPtr& reader)
     {
         return FieldCache::DEFAULT()->getInts(reader, field, boost::static_pointer_cast<IntParser>(parser));
     }
 
-    FieldCacheRangeFilterLong::FieldCacheRangeFilterLong(const String& field, ParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterLong::FieldCacheRangeFilterLong(const String& field, const ParserPtr& parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper)
         : FieldCacheRangeFilterNumeric<int64_t>(field, parser, lowerVal, upperVal, std::numeric_limits<int64_t>::max(), includeLower, includeUpper)
     {
     }
@@ -223,12 +223,12 @@ namespace Lucene
     {
     }
 
-    Collection<int64_t> FieldCacheRangeFilterLong::getValues(IndexReaderPtr reader)
+    Collection<int64_t> FieldCacheRangeFilterLong::getValues(const IndexReaderPtr& reader)
     {
         return FieldCache::DEFAULT()->getLongs(reader, field, boost::static_pointer_cast<LongParser>(parser));
     }
 
-    FieldCacheRangeFilterDouble::FieldCacheRangeFilterDouble(const String& field, ParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
+    FieldCacheRangeFilterDouble::FieldCacheRangeFilterDouble(const String& field, const ParserPtr& parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper)
         : FieldCacheRangeFilterNumeric<double>(field, parser, lowerVal, upperVal, std::numeric_limits<double>::infinity(), includeLower, includeUpper)
     {
     }
@@ -237,7 +237,7 @@ namespace Lucene
     {
     }
 
-    DocIdSetPtr FieldCacheRangeFilterDouble::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr FieldCacheRangeFilterDouble::getDocIdSet(const IndexReaderPtr& reader)
     {
         if (!includeLower && lowerVal > 0.0 && MiscUtils::isInfinite(lowerVal))
             return DocIdSet::EMPTY_DOCIDSET();
@@ -256,12 +256,12 @@ namespace Lucene
         return newLucene< FieldCacheDocIdSetNumeric<double> >(reader, (inclusiveLowerPoint <= 0 && inclusiveUpperPoint >= 0), getValues(reader), inclusiveLowerPoint, inclusiveUpperPoint);
     }
 
-    Collection<double> FieldCacheRangeFilterDouble::getValues(IndexReaderPtr reader)
+    Collection<double> FieldCacheRangeFilterDouble::getValues(const IndexReaderPtr& reader)
     {
         return FieldCache::DEFAULT()->getDoubles(reader, field, boost::static_pointer_cast<DoubleParser>(parser));
     }
 
-    FieldCacheDocIdSet::FieldCacheDocIdSet(IndexReaderPtr reader, bool mayUseTermDocs)
+    FieldCacheDocIdSet::FieldCacheDocIdSet(const IndexReaderPtr& reader, bool mayUseTermDocs)
     {
         this->reader = reader;
         this->mayUseTermDocs = mayUseTermDocs;
@@ -299,7 +299,7 @@ namespace Lucene
         }
     }
 
-    FieldCacheDocIdSetString::FieldCacheDocIdSetString(IndexReaderPtr reader, bool mayUseTermDocs, StringIndexPtr fcsi, int32_t inclusiveLowerPoint, int32_t inclusiveUpperPoint) : FieldCacheDocIdSet(reader, mayUseTermDocs)
+    FieldCacheDocIdSetString::FieldCacheDocIdSetString(const IndexReaderPtr& reader, bool mayUseTermDocs, const StringIndexPtr& fcsi, int32_t inclusiveLowerPoint, int32_t inclusiveUpperPoint) : FieldCacheDocIdSet(reader, mayUseTermDocs)
     {
         this->fcsi = fcsi;
         this->inclusiveLowerPoint = inclusiveLowerPoint;
@@ -317,7 +317,7 @@ namespace Lucene
         return (fcsi->order[doc] >= inclusiveLowerPoint && fcsi->order[doc] <= inclusiveUpperPoint);
     }
 
-    FieldDocIdSetIteratorTermDocs::FieldDocIdSetIteratorTermDocs(FieldCacheDocIdSetPtr cacheDocIdSet, TermDocsPtr termDocs)
+    FieldDocIdSetIteratorTermDocs::FieldDocIdSetIteratorTermDocs(const FieldCacheDocIdSetPtr& cacheDocIdSet, const TermDocsPtr& termDocs)
     {
         this->_cacheDocIdSet = cacheDocIdSet;
         this->termDocs = termDocs;
@@ -367,7 +367,7 @@ namespace Lucene
         return doc;
     }
 
-    FieldDocIdSetIteratorIncrement::FieldDocIdSetIteratorIncrement(FieldCacheDocIdSetPtr cacheDocIdSet)
+    FieldDocIdSetIteratorIncrement::FieldDocIdSetIteratorIncrement(const FieldCacheDocIdSetPtr& cacheDocIdSet)
     {
         this->_cacheDocIdSet = cacheDocIdSet;
         this->doc = -1;

@@ -24,13 +24,13 @@ namespace Lucene
     /// Example marker character: U+200F (RIGHT-TO-LEFT MARK)
     const wchar_t ReverseStringFilter::RTL_DIRECTION_MARKER = (wchar_t)0x200f;
 
-    ReverseStringFilter::ReverseStringFilter(TokenStreamPtr input) : TokenFilter(input)
+    ReverseStringFilter::ReverseStringFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         this->marker = NOMARKER;
         termAtt = addAttribute<TermAttribute>();
     }
 
-    ReverseStringFilter::ReverseStringFilter(TokenStreamPtr input, wchar_t marker) : TokenFilter(input)
+    ReverseStringFilter::ReverseStringFilter(const TokenStreamPtr& input, wchar_t marker) : TokenFilter(input)
     {
         this->marker = marker;
         termAtt = addAttribute<TermAttribute>();

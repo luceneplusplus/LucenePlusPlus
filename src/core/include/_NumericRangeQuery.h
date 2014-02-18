@@ -20,7 +20,7 @@ namespace Lucene
     class NumericRangeTermEnum : public FilteredTermEnum
     {
     public:
-        NumericRangeTermEnum(NumericRangeQueryPtr query, IndexReaderPtr reader);
+        NumericRangeTermEnum(const NumericRangeQueryPtr& query, const IndexReaderPtr& reader);
         virtual ~NumericRangeTermEnum();
 
         LUCENE_CLASS(NumericRangeTermEnum);
@@ -46,12 +46,12 @@ namespace Lucene
         virtual bool endEnum();
 
         /// This is a dummy, it is not used by this class.
-        virtual void setEnum(TermEnumPtr actualEnum);
+        virtual void setEnum(const TermEnumPtr& actualEnum);
 
         /// Compares if current upper bound is reached, this also updates the term count for statistics.
         /// In contrast to {@link FilteredTermEnum}, a return value of false ends iterating the current enum
         /// and forwards to the next sub-range.
-        virtual bool termCompare(TermPtr term);
+        virtual bool termCompare(const TermPtr& term);
     };
 
     class NumericLongRangeBuilder : public LongRangeBuilder

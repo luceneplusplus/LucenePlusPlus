@@ -24,10 +24,10 @@ namespace Lucene
     class LPPCONTRIBAPI FrenchStemFilter : public TokenFilter
     {
     public:
-        FrenchStemFilter(TokenStreamPtr input);
+        FrenchStemFilter(const TokenStreamPtr& input);
 
         /// Builds a FrenchStemFilter that uses an exclusion table.
-        FrenchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable);
+        FrenchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable);
 
         virtual ~FrenchStemFilter();
 
@@ -44,7 +44,7 @@ namespace Lucene
         virtual bool incrementToken();
 
         /// Set a alternative/custom {@link FrenchStemmer} for this filter.
-        void setStemmer(FrenchStemmerPtr stemmer);
+        void setStemmer(const FrenchStemmerPtr& stemmer);
 
         /// Set an alternative exclusion list for this filter.
         void setExclusionSet(HashSet<String> exclusiontable);

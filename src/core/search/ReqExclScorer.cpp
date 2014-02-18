@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    ReqExclScorer::ReqExclScorer(ScorerPtr reqScorer, DocIdSetIteratorPtr exclDisi) : Scorer(SimilarityPtr()) // No similarity used.
+    ReqExclScorer::ReqExclScorer(const ScorerPtr& reqScorer, const DocIdSetIteratorPtr& exclDisi) : Scorer(SimilarityPtr()) // No similarity used.
     {
         this->reqScorer = reqScorer;
         this->exclDisi = exclDisi;

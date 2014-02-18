@@ -46,7 +46,7 @@ static int32_t vIntListByteSize(Collection<int32_t> ints)
     return byteSize;
 }
 
-static void tstIterator(SortedVIntListPtr vintList, Collection<int32_t> ints)
+static void tstIterator(const SortedVIntListPtr& vintList, Collection<int32_t> ints)
 {
     for (int32_t i = 0; i < ints.size(); ++i)
     {
@@ -62,7 +62,7 @@ static void tstIterator(SortedVIntListPtr vintList, Collection<int32_t> ints)
     EXPECT_EQ(m->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
 }
 
-static void tstVIntList(SortedVIntListPtr vintList, Collection<int32_t> ints, int32_t expectedByteSize)
+static void tstVIntList(const SortedVIntListPtr& vintList, Collection<int32_t> ints, int32_t expectedByteSize)
 {
     EXPECT_EQ(ints.size(), vintList->size());
     EXPECT_EQ(expectedByteSize, vintList->getByteSize());

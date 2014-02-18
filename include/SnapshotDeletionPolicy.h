@@ -14,7 +14,7 @@ namespace Lucene
     class LPPAPI SnapshotDeletionPolicy : public IndexDeletionPolicy
     {
     public:
-        SnapshotDeletionPolicy(IndexDeletionPolicyPtr primary);
+        SnapshotDeletionPolicy(const IndexDeletionPolicyPtr& primary);
         virtual ~SnapshotDeletionPolicy();
 
         LUCENE_CLASS(SnapshotDeletionPolicy);

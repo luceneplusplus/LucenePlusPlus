@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    ExactPhraseScorer::ExactPhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms) : PhraseScorer(weight, tps, offsets, similarity, norms)
+    ExactPhraseScorer::ExactPhraseScorer(const WeightPtr& weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, const SimilarityPtr& similarity, ByteArray norms) : PhraseScorer(weight, tps, offsets, similarity, norms)
     {
     }
 

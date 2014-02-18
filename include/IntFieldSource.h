@@ -25,7 +25,7 @@ namespace Lucene
     {
     public:
         /// Create a cached int field source with a specific string-to-int parser.
-        IntFieldSource(const String& field, IntParserPtr parser = IntParserPtr());
+        IntFieldSource(const String& field, const IntParserPtr& parser = IntParserPtr());
         virtual ~IntFieldSource();
 
         LUCENE_CLASS(IntFieldSource);
@@ -35,8 +35,8 @@ namespace Lucene
 
     public:
         virtual String description();
-        virtual DocValuesPtr getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader);
-        virtual bool cachedFieldSourceEquals(FieldCacheSourcePtr other);
+        virtual DocValuesPtr getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader);
+        virtual bool cachedFieldSourceEquals(const FieldCacheSourcePtr& other);
         virtual int32_t cachedFieldSourceHashCode();
     };
 }

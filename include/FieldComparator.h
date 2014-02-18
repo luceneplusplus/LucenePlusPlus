@@ -79,11 +79,11 @@ namespace Lucene
         ///
         /// @param reader current reader
         /// @param docBase docBase of this reader
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase) = 0;
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) = 0;
 
         /// Sets the Scorer to use in case a document's score is needed.
         /// @param scorer Scorer instance that you should use to obtain the current hit's score, if necessary.
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
 
         /// Return the actual value in the slot.
         /// @param slot the value
@@ -143,7 +143,7 @@ namespace Lucene
     class LPPAPI ByteComparator : public NumericComparator<uint8_t>
     {
     public:
-        ByteComparator(int32_t numHits, const String& field, ParserPtr parser);
+        ByteComparator(int32_t numHits, const String& field, const ParserPtr& parser);
         virtual ~ByteComparator();
 
         LUCENE_CLASS(ByteComparator);
@@ -152,7 +152,7 @@ namespace Lucene
         ByteParserPtr parser;
 
     public:
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
     };
 
     /// Sorts by ascending docID
@@ -170,14 +170,14 @@ namespace Lucene
     public:
         virtual int32_t compareBottom(int32_t doc);
         virtual void copy(int32_t slot, int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
     };
 
     /// Parses field's values as double (using {@link FieldCache#getDoubles} and sorts by ascending value
     class LPPAPI DoubleComparator : public NumericComparator<double>
     {
     public:
-        DoubleComparator(int32_t numHits, const String& field, ParserPtr parser);
+        DoubleComparator(int32_t numHits, const String& field, const ParserPtr& parser);
         virtual ~DoubleComparator();
 
         LUCENE_CLASS(DoubleComparator);
@@ -188,14 +188,14 @@ namespace Lucene
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
     };
 
     /// Parses field's values as int (using {@link FieldCache#getInts} and sorts by ascending value
     class LPPAPI IntComparator : public NumericComparator<int32_t>
     {
     public:
-        IntComparator(int32_t numHits, const String& field, ParserPtr parser);
+        IntComparator(int32_t numHits, const String& field, const ParserPtr& parser);
         virtual ~IntComparator();
 
         LUCENE_CLASS(IntComparator);
@@ -206,14 +206,14 @@ namespace Lucene
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
     };
 
     /// Parses field's values as long (using {@link FieldCache#getLongs} and sorts by ascending value
     class LPPAPI LongComparator : public NumericComparator<int64_t>
     {
     public:
-        LongComparator(int32_t numHits, const String& field, ParserPtr parser);
+        LongComparator(int32_t numHits, const String& field, const ParserPtr& parser);
         virtual ~LongComparator();
 
         LUCENE_CLASS(LongComparator);
@@ -224,7 +224,7 @@ namespace Lucene
     public:
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
     };
 
     /// Sorts by descending relevance.  NOTE: if you are sorting only by descending relevance and then secondarily
@@ -245,8 +245,8 @@ namespace Lucene
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
         virtual void copy(int32_t slot, int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+        virtual void setScorer(const ScorerPtr& scorer);
     };
 
     /// Sorts by a field's value using the Collator for a given Locale.
@@ -269,7 +269,7 @@ namespace Lucene
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
         virtual void copy(int32_t slot, int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
         virtual void setBottom(int32_t slot);
         virtual ComparableValue value(int32_t slot);
     };
@@ -307,7 +307,7 @@ namespace Lucene
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
         virtual void copy(int32_t slot, int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
         virtual void setBottom(int32_t slot);
         virtual ComparableValue value(int32_t slot);
         virtual Collection<String> getValues();
@@ -339,7 +339,7 @@ namespace Lucene
         virtual int32_t compare(int32_t slot1, int32_t slot2);
         virtual int32_t compareBottom(int32_t doc);
         virtual void copy(int32_t slot, int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
         virtual void setBottom(int32_t slot);
         virtual ComparableValue value(int32_t slot);
     };

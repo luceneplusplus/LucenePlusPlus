@@ -79,7 +79,7 @@ namespace TestFilteredDocIdSet
     class TestFilteredDocIdSet : public FilteredDocIdSet
     {
     public:
-        TestFilteredDocIdSet(DocIdSetPtr innerSet) : FilteredDocIdSet(innerSet)
+        TestFilteredDocIdSet(const DocIdSetPtr& innerSet) : FilteredDocIdSet(innerSet)
         {
         }
 
@@ -124,7 +124,7 @@ namespace TestNullDocIdSet
         }
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
         {
             return DocIdSetPtr();
         }

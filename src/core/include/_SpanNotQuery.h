@@ -14,7 +14,7 @@ namespace Lucene
     class NotSpans : public Spans
     {
     public:
-        NotSpans(SpanNotQueryPtr query, SpansPtr includeSpans, SpansPtr excludeSpans);
+        NotSpans(const SpanNotQueryPtr& query, const SpansPtr& includeSpans, const SpansPtr& excludeSpans);
         virtual ~NotSpans();
 
         LUCENE_CLASS(NotSpans);

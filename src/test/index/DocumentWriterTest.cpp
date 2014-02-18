@@ -106,7 +106,7 @@ namespace TestPositionIncrementGap
         LUCENE_CLASS(TestableAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             return newLucene<WhitespaceTokenizer>(reader);
         }
@@ -151,7 +151,7 @@ namespace TestTokenReuse
     class TestableTokenFilter : public TokenFilter
     {
     public:
-        TestableTokenFilter(ReaderPtr reader) : TokenFilter(newLucene<WhitespaceTokenizer>(reader))
+        TestableTokenFilter(const ReaderPtr& reader) : TokenFilter(newLucene<WhitespaceTokenizer>(reader))
         {
             first = true;
             termAtt = addAttribute<TermAttribute>();
@@ -217,7 +217,7 @@ namespace TestTokenReuse
         LUCENE_CLASS(TestableAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             return newLucene<TestableTokenFilter>(reader);
         }

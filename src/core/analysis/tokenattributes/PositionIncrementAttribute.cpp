@@ -41,7 +41,7 @@ namespace Lucene
         this->positionIncrement = 1;
     }
 
-    bool PositionIncrementAttribute::equals(LuceneObjectPtr other)
+    bool PositionIncrementAttribute::equals(const LuceneObjectPtr& other)
     {
         if (Attribute::equals(other))
             return true;
@@ -58,13 +58,13 @@ namespace Lucene
         return positionIncrement;
     }
 
-    void PositionIncrementAttribute::copyTo(AttributePtr target)
+    void PositionIncrementAttribute::copyTo(const AttributePtr& target)
     {
         PositionIncrementAttributePtr targetPositionIncrementAttribute(boost::dynamic_pointer_cast<PositionIncrementAttribute>(target));
         targetPositionIncrementAttribute->setPositionIncrement(positionIncrement);
     }
 
-    LuceneObjectPtr PositionIncrementAttribute::clone(LuceneObjectPtr other)
+    LuceneObjectPtr PositionIncrementAttribute::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<PositionIncrementAttribute>();
         PositionIncrementAttributePtr cloneAttribute(boost::dynamic_pointer_cast<PositionIncrementAttribute>(Attribute::clone(clone)));

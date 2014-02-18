@@ -75,7 +75,7 @@ namespace Lucene
     protected:
         // this will be executed when one of the threads is available
         template <typename FUNC>
-        void execute(FUNC func, FuturePtr future)
+        void execute(FUNC func, const FuturePtr& future)
         {
             future->set(func());
             future->notifyAll();

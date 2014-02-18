@@ -11,20 +11,20 @@
 
 namespace Lucene
 {
-    DutchStemFilter::DutchStemFilter(TokenStreamPtr input) : TokenFilter(input)
+    DutchStemFilter::DutchStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         stemmer = newLucene<DutchStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
 
-    DutchStemFilter::DutchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
+    DutchStemFilter::DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<DutchStemmer>();
         termAtt = addAttribute<TermAttribute>();
         this->exclusions = exclusiontable;
     }
 
-    DutchStemFilter::DutchStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable, MapStringString stemdictionary) : TokenFilter(input)
+    DutchStemFilter::DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable, MapStringString stemdictionary) : TokenFilter(input)
     {
         stemmer = newLucene<DutchStemmer>();
         termAtt = addAttribute<TermAttribute>();
@@ -56,7 +56,7 @@ namespace Lucene
             return false;
     }
 
-    void DutchStemFilter::setStemmer(DutchStemmerPtr stemmer)
+    void DutchStemFilter::setStemmer(const DutchStemmerPtr& stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;

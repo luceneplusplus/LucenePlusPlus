@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    MultipleTermPositions::MultipleTermPositions(IndexReaderPtr indexReader, Collection<TermPtr> terms)
+    MultipleTermPositions::MultipleTermPositions(const IndexReaderPtr& indexReader, Collection<TermPtr> terms)
     {
         Collection<TermPositionsPtr> termPositions(Collection<TermPositionsPtr>::newInstance());
 
@@ -97,12 +97,12 @@ namespace Lucene
             termPositionsQueue->pop()->close();
     }
 
-    void MultipleTermPositions::seek(TermPtr term)
+    void MultipleTermPositions::seek(const TermPtr& term)
     {
         boost::throw_exception(UnsupportedOperationException());
     }
 
-    void MultipleTermPositions::seek(TermEnumPtr termEnum)
+    void MultipleTermPositions::seek(const TermEnumPtr& termEnum)
     {
         boost::throw_exception(UnsupportedOperationException());
     }

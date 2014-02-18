@@ -22,7 +22,7 @@ namespace Lucene
         double score;
 
     public:
-        int32_t compareTo(ScoreTermPtr other);
+        int32_t compareTo(const ScoreTermPtr& other);
     };
 
     class ScoreTermQueue : public PriorityQueue<ScoreTermPtr>

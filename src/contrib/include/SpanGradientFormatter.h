@@ -24,7 +24,7 @@ namespace Lucene
         LUCENE_CLASS(SpanGradientFormatter);
 
     public:
-        virtual String highlightTerm(const String& originalText, TokenGroupPtr tokenGroup);
+        virtual String highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup);
     };
 }
 

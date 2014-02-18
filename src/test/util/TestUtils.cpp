@@ -50,12 +50,12 @@ namespace Lucene
         return FileUtils::joinPath(getTempDir(), desc + L"." + StringUtils::toString(randomTest->nextInt()));
     }
 
-    void syncConcurrentMerges(IndexWriterPtr writer)
+    void syncConcurrentMerges(const IndexWriterPtr& writer)
     {
         syncConcurrentMerges(writer->getMergeScheduler());
     }
 
-    void syncConcurrentMerges(MergeSchedulerPtr ms)
+    void syncConcurrentMerges(const MergeSchedulerPtr& ms)
     {
         if (MiscUtils::typeOf<ConcurrentMergeScheduler>(ms))
             boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(ms)->sync();
@@ -170,7 +170,7 @@ namespace Lucene
         return english;
     }
 
-    bool checkIndex(DirectoryPtr dir)
+    bool checkIndex(const DirectoryPtr& dir)
     {
         CheckIndexPtr checker = newLucene<CheckIndex>(dir);
         IndexStatusPtr indexStatus = checker->checkIndex();

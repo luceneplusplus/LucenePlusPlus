@@ -68,7 +68,7 @@ protected:
     DirectoryPtr directory;
 
 public:
-    void setupDoc(DocumentPtr doc, const String& text)
+    void setupDoc(const DocumentPtr& doc, const String& text)
     {
         doc->add(newLucene<Field>(L"field2", text, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
         doc->add(newLucene<Field>(L"field", text, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_YES));

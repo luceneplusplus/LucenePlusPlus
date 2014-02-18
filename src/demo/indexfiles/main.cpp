@@ -37,7 +37,7 @@ DocumentPtr fileDocument(const String& docFile)
     return doc;
 }
 
-void indexDocs(IndexWriterPtr writer, const String& sourceDir)
+void indexDocs(const IndexWriterPtr& writer, const String& sourceDir)
 {
     HashSet<String> dirList(HashSet<String>::newInstance());
     if (!FileUtils::listDirectory(sourceDir, false, dirList))

@@ -25,7 +25,7 @@ using namespace Lucene;
 class OptimizeThread : public LuceneThread
 {
 public:
-    OptimizeThread(int32_t numIter, int32_t iterFinal, int32_t iFinal, IndexWriterPtr writer, IndexWriterPtr writerFinal)
+    OptimizeThread(int32_t numIter, int32_t iterFinal, int32_t iFinal, const IndexWriterPtr& writer, const IndexWriterPtr& writerFinal)
     {
         this->numIter = numIter;
         this->iterFinal = iterFinal;
@@ -94,7 +94,7 @@ protected:
     AnalyzerPtr analyzer;
 
 public:
-    void runTest(DirectoryPtr directory, MergeSchedulerPtr merger)
+    void runTest(const DirectoryPtr& directory, const MergeSchedulerPtr& merger)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
         writer->setMaxBufferedDocs(2);

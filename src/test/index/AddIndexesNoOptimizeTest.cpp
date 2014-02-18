@@ -24,14 +24,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture AddIndexesNoOptimizeTest;
 
-static IndexWriterPtr newWriter(DirectoryPtr dir, bool create)
+static IndexWriterPtr newWriter(const DirectoryPtr& dir, bool create)
 {
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), create, IndexWriter::MaxFieldLengthUNLIMITED);
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
     return writer;
 }
 
-static void addDocs(IndexWriterPtr writer, int32_t numDocs)
+static void addDocs(const IndexWriterPtr& writer, int32_t numDocs)
 {
     for (int32_t i = 0; i < numDocs; ++i)
     {
@@ -41,7 +41,7 @@ static void addDocs(IndexWriterPtr writer, int32_t numDocs)
     }
 }
 
-static void addDocs2(IndexWriterPtr writer, int32_t numDocs)
+static void addDocs2(const IndexWriterPtr& writer, int32_t numDocs)
 {
     for (int32_t i = 0; i < numDocs; ++i)
     {
@@ -51,7 +51,7 @@ static void addDocs2(IndexWriterPtr writer, int32_t numDocs)
     }
 }
 
-static void verifyNumDocs(DirectoryPtr dir, int32_t numDocs)
+static void verifyNumDocs(const DirectoryPtr& dir, int32_t numDocs)
 {
     IndexReaderPtr reader = IndexReader::open(dir, true);
     EXPECT_EQ(reader->maxDoc(), numDocs);
@@ -59,7 +59,7 @@ static void verifyNumDocs(DirectoryPtr dir, int32_t numDocs)
     reader->close();
 }
 
-static void verifyTermDocs(DirectoryPtr dir, TermPtr term, int32_t numDocs)
+static void verifyTermDocs(const DirectoryPtr& dir, const TermPtr& term, int32_t numDocs)
 {
     IndexReaderPtr reader = IndexReader::open(dir, true);
     TermDocsPtr termDocs = reader->termDocs(term);
@@ -70,7 +70,7 @@ static void verifyTermDocs(DirectoryPtr dir, TermPtr term, int32_t numDocs)
     reader->close();
 }
 
-static void setUpDirs(DirectoryPtr dir, DirectoryPtr aux)
+static void setUpDirs(const DirectoryPtr& dir, const DirectoryPtr& aux)
 {
     IndexWriterPtr writer;
 

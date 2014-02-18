@@ -54,7 +54,7 @@ namespace Lucene
     {
     }
 
-    String GradientFormatter::highlightTerm(const String& originalText, TokenGroupPtr tokenGroup)
+    String GradientFormatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup)
     {
         if (tokenGroup->getTotalScore() == 0)
             return originalText;

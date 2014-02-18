@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    DocumentsWriterThreadState::DocumentsWriterThreadState(DocumentsWriterPtr docWriter)
+    DocumentsWriterThreadState::DocumentsWriterThreadState(const DocumentsWriterPtr& docWriter)
     {
         this->_docWriter = docWriter;
     }

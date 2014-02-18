@@ -59,20 +59,21 @@ namespace Lucene
         }
     }
 
-    void WeightedSpanTermExtractor::extract(QueryPtr query, MapWeightedSpanTermPtr terms)
+    void WeightedSpanTermExtractor::extract(const QueryPtr& query, const MapWeightedSpanTermPtr& terms)
     {
-        if (MiscUtils::typeOf<BooleanQuery>(query))
+        QueryPtr _query(query);
+        if (MiscUtils::typeOf<BooleanQuery>(_query))
         {
-            Collection<BooleanClausePtr> queryClauses(boost::dynamic_pointer_cast<BooleanQuery>(query)->getClauses());
+            Collection<BooleanClausePtr> queryClauses(boost::dynamic_pointer_cast<BooleanQuery>(_query)->getClauses());
             for (int32_t i = 0; i < queryClauses.size(); ++i)
             {
                 if (!queryClauses[i]->isProhibited())
                     extract(queryClauses[i]->getQuery(), terms);
             }
         }
-        else if (MiscUtils::typeOf<PhraseQuery>(query))
+        else if (MiscUtils::typeOf<PhraseQuery>(_query))
         {
-            PhraseQueryPtr phraseQuery(boost::dynamic_pointer_cast<PhraseQuery>(query));
+            PhraseQueryPtr phraseQuery(boost::dynamic_pointer_cast<PhraseQuery>(_query));
             Collection<TermPtr> phraseQueryTerms(phraseQuery->getTerms());
             Collection<SpanQueryPtr> clauses(Collection<SpanQueryPtr>::newInstance(phraseQueryTerms.size()));
             for (int32_t i = 0; i < phraseQueryTerms.size(); ++i)
@@ -100,41 +101,41 @@ namespace Lucene
             bool inorder = (slop == 0);
 
             SpanNearQueryPtr sp(newLucene<SpanNearQuery>(clauses, slop, inorder));
-            sp->setBoost(query->getBoost());
+            sp->setBoost(_query->getBoost());
             extractWeightedSpanTerms(terms, sp);
         }
-        else if (MiscUtils::typeOf<TermQuery>(query))
-            extractWeightedTerms(terms, query);
-        else if (MiscUtils::typeOf<SpanQuery>(query))
-            extractWeightedSpanTerms(terms, boost::dynamic_pointer_cast<SpanQuery>(query));
-        else if (MiscUtils::typeOf<FilteredQuery>(query))
-            extract(boost::dynamic_pointer_cast<FilteredQuery>(query)->getQuery(), terms);
-        else if (MiscUtils::typeOf<DisjunctionMaxQuery>(query))
+        else if (MiscUtils::typeOf<TermQuery>(_query))
+            extractWeightedTerms(terms, _query);
+        else if (MiscUtils::typeOf<SpanQuery>(_query))
+            extractWeightedSpanTerms(terms, boost::dynamic_pointer_cast<SpanQuery>(_query));
+        else if (MiscUtils::typeOf<FilteredQuery>(_query))
+            extract(boost::dynamic_pointer_cast<FilteredQuery>(_query)->getQuery(), terms);
+        else if (MiscUtils::typeOf<DisjunctionMaxQuery>(_query))
         {
-            DisjunctionMaxQueryPtr dmq(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(query));
+            DisjunctionMaxQueryPtr dmq(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(_query));
             for (Collection<QueryPtr>::iterator q = dmq->begin(); q != dmq->end(); ++q)
                 extract(*q, terms);
         }
-        else if (MiscUtils::typeOf<MultiTermQuery>(query) && expandMultiTermQuery)
+        else if (MiscUtils::typeOf<MultiTermQuery>(_query) && expandMultiTermQuery)
         {
-            MultiTermQueryPtr mtq(boost::dynamic_pointer_cast<MultiTermQuery>(query));
+            MultiTermQueryPtr mtq(boost::dynamic_pointer_cast<MultiTermQuery>(_query));
             if (mtq->getRewriteMethod() != MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE())
             {
                 mtq = boost::dynamic_pointer_cast<MultiTermQuery>(mtq->clone());
                 mtq->setRewriteMethod(MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE());
-                query = mtq;
+                _query = mtq;
             }
             FakeReaderPtr fReader(newLucene<FakeReader>());
             MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE()->rewrite(fReader, mtq);
             if (!fReader->field.empty())
             {
                 IndexReaderPtr ir(getReaderForField(fReader->field));
-                extract(query->rewrite(ir), terms);
+                extract(_query->rewrite(ir), terms);
             }
         }
-        else if (MiscUtils::typeOf<MultiPhraseQuery>(query))
+        else if (MiscUtils::typeOf<MultiPhraseQuery>(_query))
         {
-            MultiPhraseQueryPtr mpq(boost::dynamic_pointer_cast<MultiPhraseQuery>(query));
+            MultiPhraseQueryPtr mpq(boost::dynamic_pointer_cast<MultiPhraseQuery>(_query));
             Collection< Collection<TermPtr> > termArrays(mpq->getTermArrays());
             Collection<int32_t> positions(mpq->getPositions());
             if (!positions.empty())
@@ -178,13 +179,13 @@ namespace Lucene
                 bool inorder = (slop == 0);
 
                 SpanNearQueryPtr sp(newLucene<SpanNearQuery>(clauses, slop + positionGaps, inorder));
-                sp->setBoost(query->getBoost());
+                sp->setBoost(_query->getBoost());
                 extractWeightedSpanTerms(terms, sp);
             }
         }
     }
 
-    void WeightedSpanTermExtractor::extractWeightedSpanTerms(MapWeightedSpanTermPtr terms, SpanQueryPtr spanQuery)
+    void WeightedSpanTermExtractor::extractWeightedSpanTerms(const MapWeightedSpanTermPtr& terms, const SpanQueryPtr& spanQuery)
     {
         HashSet<String> fieldNames(HashSet<String>::newInstance());
         if (fieldName.empty())
@@ -254,7 +255,7 @@ namespace Lucene
         }
     }
 
-    void WeightedSpanTermExtractor::extractWeightedTerms(MapWeightedSpanTermPtr terms, QueryPtr query)
+    void WeightedSpanTermExtractor::extractWeightedTerms(const MapWeightedSpanTermPtr& terms, const QueryPtr& query)
     {
         SetTerm nonWeightedTerms(SetTerm::newInstance());
         query->extractTerms(nonWeightedTerms);
@@ -294,12 +295,12 @@ namespace Lucene
         return reader;
     }
 
-    MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTerms(QueryPtr query, TokenStreamPtr tokenStream)
+    MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTerms(const QueryPtr& query, const TokenStreamPtr& tokenStream)
     {
         return getWeightedSpanTerms(query, tokenStream, L"");
     }
 
-    MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTerms(QueryPtr query, TokenStreamPtr tokenStream, const String& fieldName)
+    MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTerms(const QueryPtr& query, const TokenStreamPtr& tokenStream, const String& fieldName)
     {
         if (!fieldName.empty())
             this->fieldName = fieldName;
@@ -323,7 +324,7 @@ namespace Lucene
         return terms;
     }
 
-    MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTermsWithScores(QueryPtr query, TokenStreamPtr tokenStream, const String& fieldName, IndexReaderPtr reader)
+    MapWeightedSpanTermPtr WeightedSpanTermExtractor::getWeightedSpanTermsWithScores(const QueryPtr& query, const TokenStreamPtr& tokenStream, const String& fieldName, const IndexReaderPtr& reader)
     {
         if (!fieldName.empty())
             this->fieldName = fieldName;
@@ -358,7 +359,7 @@ namespace Lucene
         return terms;
     }
 
-    void WeightedSpanTermExtractor::collectSpanQueryFields(SpanQueryPtr spanQuery, HashSet<String> fieldNames)
+    void WeightedSpanTermExtractor::collectSpanQueryFields(const SpanQueryPtr& spanQuery, HashSet<String> fieldNames)
     {
         if (MiscUtils::typeOf<FieldMaskingSpanQuery>(spanQuery))
             collectSpanQueryFields(boost::dynamic_pointer_cast<FieldMaskingSpanQuery>(spanQuery)->getMaskedQuery(), fieldNames);
@@ -382,7 +383,7 @@ namespace Lucene
             fieldNames.add(spanQuery->getField());
     }
 
-    bool WeightedSpanTermExtractor::mustRewriteQuery(SpanQueryPtr spanQuery)
+    bool WeightedSpanTermExtractor::mustRewriteQuery(const SpanQueryPtr& spanQuery)
     {
         if (!expandMultiTermQuery)
             return false; // Will throw UnsupportedOperationException in case of a SpanRegexQuery.
@@ -450,7 +451,7 @@ namespace Lucene
     {
     }
 
-    void PositionCheckingMap::put(const String& key, WeightedSpanTermPtr val)
+    void PositionCheckingMap::put(const String& key, const WeightedSpanTermPtr& val)
     {
         MapStringWeightedSpanTerm::iterator prev = map.find(key);
         if (prev == map.end())
@@ -483,7 +484,7 @@ namespace Lucene
         return _EMPTY_MEMORY_INDEX_READER;
     }
 
-    TermEnumPtr FakeReader::terms(TermPtr t)
+    TermEnumPtr FakeReader::terms(const TermPtr& t)
     {
         // only set first fieldname
         if (t && field.empty())

@@ -11,14 +11,14 @@
 
 namespace Lucene
 {
-    MappingCharFilter::MappingCharFilter(NormalizeCharMapPtr normMap, CharStreamPtr in) : BaseCharFilter(in)
+    MappingCharFilter::MappingCharFilter(const NormalizeCharMapPtr& normMap, const CharStreamPtr& in) : BaseCharFilter(in)
     {
         this->normMap = normMap;
         this->charPointer = 0;
         this->nextCharCounter = 0;
     }
 
-    MappingCharFilter::MappingCharFilter(NormalizeCharMapPtr normMap, ReaderPtr in) : BaseCharFilter(CharReader::get(in))
+    MappingCharFilter::MappingCharFilter(const NormalizeCharMapPtr& normMap, const ReaderPtr& in) : BaseCharFilter(CharReader::get(in))
     {
         this->normMap = normMap;
         this->charPointer = 0;
@@ -85,7 +85,7 @@ namespace Lucene
         buffer.add((wchar_t)c);
     }
 
-    NormalizeCharMapPtr MappingCharFilter::match(NormalizeCharMapPtr map)
+    NormalizeCharMapPtr MappingCharFilter::match(const NormalizeCharMapPtr& map)
     {
         NormalizeCharMapPtr result;
         if (map->submap)

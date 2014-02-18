@@ -16,7 +16,7 @@ namespace Lucene
     class DocInverter : public DocFieldConsumer
     {
     public:
-        DocInverter(InvertedDocConsumerPtr consumer, InvertedDocEndConsumerPtr endConsumer);
+        DocInverter(const InvertedDocConsumerPtr& consumer, const InvertedDocEndConsumerPtr& endConsumer);
         virtual ~DocInverter();
 
         LUCENE_CLASS(DocInverter);
@@ -26,13 +26,13 @@ namespace Lucene
         InvertedDocEndConsumerPtr endConsumer;
 
     public:
-        virtual void setFieldInfos(FieldInfosPtr fieldInfos);
+        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
         /// Called when DocumentsWriter decides to create a new segment
-        virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
+        virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
         /// Called when DocumentsWriter decides to close the doc stores
-        virtual void closeDocStore(SegmentWriteStatePtr state);
+        virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
         /// Called when an aborting exception is hit
         virtual void abort();
@@ -41,7 +41,7 @@ namespace Lucene
         virtual bool freeRAM();
 
         /// Add a new thread
-        virtual DocFieldConsumerPerThreadPtr addThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread);
+        virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread);
     };
 }
 

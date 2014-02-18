@@ -25,7 +25,7 @@ namespace Lucene
         bufferLength = 0;
     }
 
-    RAMOutputStream::RAMOutputStream(RAMFilePtr f)
+    RAMOutputStream::RAMOutputStream(const RAMFilePtr& f)
     {
         file = f;
 
@@ -40,7 +40,7 @@ namespace Lucene
     {
     }
 
-    void RAMOutputStream::writeTo(IndexOutputPtr out)
+    void RAMOutputStream::writeTo(const IndexOutputPtr& out)
     {
         flush();
         int64_t end = file->length;

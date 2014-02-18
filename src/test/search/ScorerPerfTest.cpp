@@ -44,7 +44,7 @@ public:
     int32_t docBase;
 
 public:
-    virtual void setScorer(ScorerPtr scorer)
+    virtual void setScorer(const ScorerPtr& scorer)
     {
     }
 
@@ -64,7 +64,7 @@ public:
         return sum;
     }
 
-    virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
     }
@@ -78,7 +78,7 @@ public:
 class MatchingHitCollector : public CountingHitCollector
 {
 public:
-    MatchingHitCollector(BitSetPtr answer)
+    MatchingHitCollector(const BitSetPtr& answer)
     {
         this->answer = answer;
         this->pos = -1;
@@ -105,7 +105,7 @@ public:
 class AddClauseFilter : public Filter
 {
 public:
-    AddClauseFilter(BitSetPtr rnd)
+    AddClauseFilter(const BitSetPtr& rnd)
     {
         this->rnd = rnd;
     }
@@ -118,7 +118,7 @@ protected:
     BitSetPtr rnd;
 
 public:
-    virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
     {
         return newLucene<DocIdBitSet>(rnd);
     }
@@ -212,16 +212,17 @@ public:
         }
     }
 
-    BitSetPtr addClause(BooleanQueryPtr bq, BitSetPtr result)
+    BitSetPtr addClause(const BooleanQueryPtr& bq, const BitSetPtr& result)
     {
         BitSetPtr rnd = sets[r->nextInt(sets.size())];
         QueryPtr q = newLucene<ConstantScoreQuery>(newLucene<AddClauseFilter>(rnd));
         bq->add(q, BooleanClause::MUST);
-        if (!result)
-            result = boost::dynamic_pointer_cast<BitSet>(rnd->clone());
+        BitSetPtr _result(result);
+        if (!_result)
+            _result = boost::dynamic_pointer_cast<BitSet>(rnd->clone());
         else
-            result->_and(rnd);
-        return result;
+            _result->_and(rnd);
+        return _result;
     }
 };
 

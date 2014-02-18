@@ -27,7 +27,7 @@ DECLARE_SHARED_PTR(TestTermPositions)
 class TestTermEnum : public FilterTermEnum
 {
 public:
-    TestTermEnum(TermEnumPtr termEnum) : FilterTermEnum(termEnum)
+    TestTermEnum(const TermEnumPtr& termEnum) : FilterTermEnum(termEnum)
     {
     }
 
@@ -53,7 +53,7 @@ public:
 class TestTermPositions : public FilterTermPositions
 {
 public:
-    TestTermPositions(TermPositionsPtr in) : FilterTermPositions(in)
+    TestTermPositions(const TermPositionsPtr& in) : FilterTermPositions(in)
     {
     }
 
@@ -78,7 +78,7 @@ public:
 class TestReader : public FilterIndexReader
 {
 public:
-    TestReader(IndexReaderPtr reader) : FilterIndexReader(reader)
+    TestReader(const IndexReaderPtr& reader) : FilterIndexReader(reader)
     {
     }
 

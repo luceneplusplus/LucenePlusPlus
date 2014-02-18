@@ -24,7 +24,7 @@ namespace Lucene
         bool _wasCalled;
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
 
         void clear();
         bool wasCalled();

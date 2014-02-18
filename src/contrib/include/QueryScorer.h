@@ -19,27 +19,27 @@ namespace Lucene
     {
     public:
         /// @param query Query to use for highlighting
-        QueryScorer(QueryPtr query);
+        QueryScorer(const QueryPtr& query);
 
         /// @param query Query to use for highlighting
         /// @param field Field to highlight - pass empty string to ignore fields
-        QueryScorer(QueryPtr query, const String& field);
+        QueryScorer(const QueryPtr& query, const String& field);
 
         /// @param query Query to use for highlighting
         /// @param reader {@link IndexReader} to use for quasi tf/idf scoring
         /// @param field Field to highlight - pass empty string to ignore fields
-        QueryScorer(QueryPtr query, IndexReaderPtr reader, const String& field);
+        QueryScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& field);
 
         /// @param query Query to use for highlighting
         /// @param reader {@link IndexReader} to use for quasi tf/idf scoring
         /// @param field Field to highlight - pass empty string to ignore fields
         /// @param defaultField
-        QueryScorer(QueryPtr query, IndexReaderPtr reader, const String& field, const String& defaultField);
+        QueryScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& field, const String& defaultField);
 
         /// @param query Query to use for highlighting
         /// @param field Field to highlight - pass empty string to ignore fields
         /// @param defaultField
-        QueryScorer(QueryPtr query, const String& field, const String& defaultField);
+        QueryScorer(const QueryPtr& query, const String& field, const String& defaultField);
 
         /// @param weightedTerms an array of pre-created {@link WeightedSpanTerm}s
         QueryScorer(Collection<WeightedSpanTermPtr> weightedTerms);
@@ -65,8 +65,8 @@ namespace Lucene
         bool wrapToCaching;
 
     protected:
-        void init(QueryPtr query, const String& field, IndexReaderPtr reader, bool expandMultiTermQuery);
-        TokenStreamPtr initExtractor(TokenStreamPtr tokenStream);
+        void init(const QueryPtr& query, const String& field, const IndexReaderPtr& reader, bool expandMultiTermQuery);
+        TokenStreamPtr initExtractor(const TokenStreamPtr& tokenStream);
 
     public:
         virtual double getFragmentScore();
@@ -75,9 +75,9 @@ namespace Lucene
         virtual double getMaxTermWeight();
 
         virtual double getTokenScore();
-        virtual TokenStreamPtr init(TokenStreamPtr tokenStream);
+        virtual TokenStreamPtr init(const TokenStreamPtr& tokenStream);
         virtual WeightedSpanTermPtr getWeightedSpanTerm(const String& token);
-        virtual void startFragment(TextFragmentPtr newFragment);
+        virtual void startFragment(const TextFragmentPtr& newFragment);
 
         /// @return true if multi-term queries should be expanded
         virtual bool isExpandMultiTermQuery();

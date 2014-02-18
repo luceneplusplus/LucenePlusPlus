@@ -19,7 +19,7 @@ namespace Lucene
     {
     protected:
         /// Construct a token stream filtering the given input.
-        TokenFilter(TokenStreamPtr input);
+        TokenFilter(const TokenStreamPtr& input);
 
     public:
         virtual ~TokenFilter();

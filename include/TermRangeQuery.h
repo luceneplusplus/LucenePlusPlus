@@ -76,13 +76,13 @@ namespace Lucene
         /// Returns the collator used to determine range inclusion, if any.
         CollatorPtr getCollator();
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual String toString(const String& field);
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
     protected:
-        virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
+        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
     };
 }
 

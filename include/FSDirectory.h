@@ -32,7 +32,7 @@ namespace Lucene
         /// Create a new FSDirectory for the named location (ctor for subclasses).
         /// @param path the path of the directory.
         /// @param lockFactory the lock factory to use, or null for the default ({@link NativeFSLockFactory})
-        FSDirectory(const String& path, LockFactoryPtr lockFactory);
+        FSDirectory(const String& path, const LockFactoryPtr& lockFactory);
 
     public:
         virtual ~FSDirectory();
@@ -58,7 +58,7 @@ namespace Lucene
         static FSDirectoryPtr open(const String& path);
 
         /// Just like {@link #open(File)}, but allows you to also specify a custom {@link LockFactory}.
-        static FSDirectoryPtr open(const String& path, LockFactoryPtr lockFactory);
+        static FSDirectoryPtr open(const String& path, const LockFactoryPtr& lockFactory);
 
         /// Lists all files (not subdirectories) in the directory.
         /// @throws NoSuchDirectoryException if the directory does not exist, or does exist but is not a directory.

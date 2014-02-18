@@ -85,7 +85,7 @@ namespace Lucene
         MiscUtils::arrayCopy(this->data.get(), this->offset, target.get(), targetOffset, this->_length);
     }
 
-    LuceneObjectPtr Payload::clone(LuceneObjectPtr other)
+    LuceneObjectPtr Payload::clone(const LuceneObjectPtr& other)
     {
         // Start with a shallow copy of data
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Payload>());
@@ -109,7 +109,7 @@ namespace Lucene
         return clonePayload;
     }
 
-    bool Payload::equals(LuceneObjectPtr other)
+    bool Payload::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

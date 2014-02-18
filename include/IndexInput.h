@@ -114,7 +114,7 @@ namespace Lucene
         ///
         /// Subclasses must ensure that clones may be positioned at different points
         /// in the input from each other and from the stream they were cloned from.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Read string map as a series of key/value pairs.
         virtual MapStringString readStringStringMap();

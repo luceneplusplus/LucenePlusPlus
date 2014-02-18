@@ -19,11 +19,11 @@ namespace Lucene
         LUCENE_CLASS(InvertedDocEndConsumer);
 
     public:
-        virtual InvertedDocEndConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread) = 0;
-        virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, SegmentWriteStatePtr state) = 0;
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
+        virtual InvertedDocEndConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread) = 0;
+        virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
+        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
         virtual void abort() = 0;
-        virtual void setFieldInfos(FieldInfosPtr fieldInfos) = 0;
+        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos) = 0;
     };
 }
 

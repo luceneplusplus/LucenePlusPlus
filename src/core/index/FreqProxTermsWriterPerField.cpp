@@ -19,7 +19,7 @@
 
 namespace Lucene
 {
-    FreqProxTermsWriterPerField::FreqProxTermsWriterPerField(TermsHashPerFieldPtr termsHashPerField, FreqProxTermsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo)
+    FreqProxTermsWriterPerField::FreqProxTermsWriterPerField(const TermsHashPerFieldPtr& termsHashPerField, const FreqProxTermsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo)
     {
         this->hasPayloads = false;
         this->_termsHashPerField = termsHashPerField;
@@ -47,7 +47,7 @@ namespace Lucene
     {
     }
 
-    int32_t FreqProxTermsWriterPerField::compareTo(LuceneObjectPtr other)
+    int32_t FreqProxTermsWriterPerField::compareTo(const LuceneObjectPtr& other)
     {
         return fieldInfo->name.compare(boost::static_pointer_cast<FreqProxTermsWriterPerField>(other)->fieldInfo->name);
     }
@@ -69,7 +69,7 @@ namespace Lucene
         return false;
     }
 
-    void FreqProxTermsWriterPerField::start(FieldablePtr field)
+    void FreqProxTermsWriterPerField::start(const FieldablePtr& field)
     {
         if (fieldState->attributeSource->hasAttribute<PayloadAttribute>())
             payloadAttribute = fieldState->attributeSource->getAttribute<PayloadAttribute>();
@@ -77,7 +77,7 @@ namespace Lucene
             payloadAttribute.reset();
     }
 
-    void FreqProxTermsWriterPerField::writeProx(FreqProxTermsWriterPostingListPtr p, int32_t proxCode)
+    void FreqProxTermsWriterPerField::writeProx(const FreqProxTermsWriterPostingListPtr& p, int32_t proxCode)
     {
         PayloadPtr payload;
         if (payloadAttribute)
@@ -97,7 +97,7 @@ namespace Lucene
         p->lastPosition = fieldState->position;
     }
 
-    void FreqProxTermsWriterPerField::newTerm(RawPostingListPtr p)
+    void FreqProxTermsWriterPerField::newTerm(const RawPostingListPtr& p)
     {
         // First time we're seeing this term since the last flush
         BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.newTerm start"));
@@ -113,7 +113,7 @@ namespace Lucene
         }
     }
 
-    void FreqProxTermsWriterPerField::addTerm(RawPostingListPtr p)
+    void FreqProxTermsWriterPerField::addTerm(const RawPostingListPtr& p)
     {
         BOOST_ASSERT(docState->testPoint(L"FreqProxTermsWriterPerField.addTerm start"));
 

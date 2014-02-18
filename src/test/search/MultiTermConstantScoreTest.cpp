@@ -78,28 +78,28 @@ public:
         return query;
     }
 
-    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, RewriteMethodPtr method)
+    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, const RewriteMethodPtr& method)
     {
         TermRangeQueryPtr query = newLucene<TermRangeQuery>(f, l, h, il, ih);
         query->setRewriteMethod(method);
         return query;
     }
 
-    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, CollatorPtr c)
+    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, const CollatorPtr& c)
     {
         TermRangeQueryPtr query = newLucene<TermRangeQuery>(f, l, h, il, ih, c);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
 
-    QueryPtr cspq(TermPtr prefix)
+    QueryPtr cspq(const TermPtr& prefix)
     {
         PrefixQueryPtr query = newLucene<PrefixQuery>(prefix);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
 
-    QueryPtr cswcq(TermPtr wild)
+    QueryPtr cswcq(const TermPtr& wild)
     {
         WildcardQueryPtr query = newLucene<WildcardQuery>(wild);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
@@ -170,7 +170,7 @@ namespace TestBoost
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -180,7 +180,7 @@ namespace TestBoost
             EXPECT_EQ(1.0, scorer->score());
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
             base = docBase;
         }

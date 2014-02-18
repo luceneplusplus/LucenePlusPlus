@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    OpenBitSetDISI::OpenBitSetDISI(DocIdSetIteratorPtr disi, int32_t maxSize) : OpenBitSet(maxSize)
+    OpenBitSetDISI::OpenBitSetDISI(const DocIdSetIteratorPtr& disi, int32_t maxSize) : OpenBitSet(maxSize)
     {
         inPlaceOr(disi);
     }
@@ -22,7 +22,7 @@ namespace Lucene
     {
     }
 
-    void OpenBitSetDISI::inPlaceOr(DocIdSetIteratorPtr disi)
+    void OpenBitSetDISI::inPlaceOr(const DocIdSetIteratorPtr& disi)
     {
         int32_t doc;
         int32_t _size = size();
@@ -30,7 +30,7 @@ namespace Lucene
             set(doc);
     }
 
-    void OpenBitSetDISI::inPlaceAnd(DocIdSetIteratorPtr disi)
+    void OpenBitSetDISI::inPlaceAnd(const DocIdSetIteratorPtr& disi)
     {
         int32_t bitSetDoc = nextSetBit((int32_t)0);
         int32_t disiDoc;
@@ -43,7 +43,7 @@ namespace Lucene
             clear((int64_t)bitSetDoc, size());
     }
 
-    void OpenBitSetDISI::inPlaceNot(DocIdSetIteratorPtr disi)
+    void OpenBitSetDISI::inPlaceNot(const DocIdSetIteratorPtr& disi)
     {
         int32_t doc;
         int32_t _size = size();
@@ -51,7 +51,7 @@ namespace Lucene
             clear(doc);
     }
 
-    void OpenBitSetDISI::inPlaceXor(DocIdSetIteratorPtr disi)
+    void OpenBitSetDISI::inPlaceXor(const DocIdSetIteratorPtr& disi)
     {
         int32_t doc;
         int32_t _size = size();

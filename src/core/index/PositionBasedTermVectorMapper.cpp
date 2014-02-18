@@ -69,7 +69,7 @@ namespace Lucene
     {
     }
 
-    void TermVectorsPositionInfo::addTerm(const String& term, TermVectorOffsetInfoPtr info)
+    void TermVectorsPositionInfo::addTerm(const String& term, const TermVectorOffsetInfoPtr& info)
     {
         terms.add(term);
         if (offsets)

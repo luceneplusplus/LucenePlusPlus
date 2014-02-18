@@ -62,7 +62,7 @@ namespace Lucene
         return newLucene<SpanFirstQuery>(st(s), b);
     }
 
-    SpanNotQueryPtr ExplanationsFixture::snot(SpanQueryPtr i, SpanQueryPtr e)
+    SpanNotQueryPtr ExplanationsFixture::snot(const SpanQueryPtr& i, const SpanQueryPtr& e)
     {
         return newLucene<SpanNotQuery>(i, e);
     }
@@ -72,7 +72,7 @@ namespace Lucene
         return sor(st(s), st(e));
     }
 
-    SpanOrQueryPtr ExplanationsFixture::sor(SpanQueryPtr s, SpanQueryPtr e)
+    SpanOrQueryPtr ExplanationsFixture::sor(const SpanQueryPtr& s, const SpanQueryPtr& e)
     {
         return newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(s, e));
     }
@@ -82,7 +82,7 @@ namespace Lucene
         return sor(st(s), st(m), st(e));
     }
 
-    SpanOrQueryPtr ExplanationsFixture::sor(SpanQueryPtr s, SpanQueryPtr m, SpanQueryPtr e)
+    SpanOrQueryPtr ExplanationsFixture::sor(const SpanQueryPtr& s, const SpanQueryPtr& m, const SpanQueryPtr& e)
     {
         return newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(s, m, e));
     }
@@ -92,7 +92,7 @@ namespace Lucene
         return snear(st(s), st(e), slop, inOrder);
     }
 
-    SpanNearQueryPtr ExplanationsFixture::snear(SpanQueryPtr s, SpanQueryPtr e, int32_t slop, bool inOrder)
+    SpanNearQueryPtr ExplanationsFixture::snear(const SpanQueryPtr& s, const SpanQueryPtr& e, int32_t slop, bool inOrder)
     {
         return newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(s, e), slop, inOrder);
     }
@@ -102,7 +102,7 @@ namespace Lucene
         return snear(st(s), st(m), st(e), slop, inOrder);
     }
 
-    SpanNearQueryPtr ExplanationsFixture::snear(SpanQueryPtr s, SpanQueryPtr m, SpanQueryPtr e, int32_t slop, bool inOrder)
+    SpanNearQueryPtr ExplanationsFixture::snear(const SpanQueryPtr& s, const SpanQueryPtr& m, const SpanQueryPtr& e, int32_t slop, bool inOrder)
     {
         return newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(s, m, e), slop, inOrder);
     }
@@ -112,7 +112,7 @@ namespace Lucene
         return optB(makeQuery(q));
     }
 
-    QueryPtr ExplanationsFixture::optB(QueryPtr q)
+    QueryPtr ExplanationsFixture::optB(const QueryPtr& q)
     {
         BooleanQueryPtr bq = newLucene<BooleanQuery>(true);
         bq->add(q, BooleanClause::SHOULD);
@@ -125,7 +125,7 @@ namespace Lucene
         return reqB(makeQuery(q));
     }
 
-    QueryPtr ExplanationsFixture::reqB(QueryPtr q)
+    QueryPtr ExplanationsFixture::reqB(const QueryPtr& q)
     {
         BooleanQueryPtr bq = newLucene<BooleanQuery>(true);
         bq->add(q, BooleanClause::MUST);
@@ -146,12 +146,12 @@ namespace Lucene
         qtest(makeQuery(queryText), expDocNrs);
     }
 
-    void ExplanationsFixture::qtest(QueryPtr q, Collection<int32_t> expDocNrs)
+    void ExplanationsFixture::qtest(const QueryPtr& q, Collection<int32_t> expDocNrs)
     {
         CheckHits::checkHitCollector(q, FIELD, searcher, expDocNrs);
     }
 
-    void ExplanationsFixture::bqtest(QueryPtr q, Collection<int32_t> expDocNrs)
+    void ExplanationsFixture::bqtest(const QueryPtr& q, Collection<int32_t> expDocNrs)
     {
         qtest(reqB(q), expDocNrs);
         qtest(optB(q), expDocNrs);

@@ -61,7 +61,7 @@ namespace Lucene
         Collection<TermVectorOffsetInfoPtr> offsets;
 
     public:
-        void addTerm(const String& term, TermVectorOffsetInfoPtr info);
+        void addTerm(const String& term, const TermVectorOffsetInfoPtr& info);
 
         /// @return The position of the term
         int32_t getPosition();

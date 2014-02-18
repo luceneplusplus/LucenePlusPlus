@@ -13,17 +13,17 @@
 
 namespace Lucene
 {
-    QueryTermScorer::QueryTermScorer(QueryPtr query)
+    QueryTermScorer::QueryTermScorer(const QueryPtr& query)
     {
         ConstructQueryTermScorer(QueryTermExtractor::getTerms(query));
     }
 
-    QueryTermScorer::QueryTermScorer(QueryPtr query, const String& fieldName)
+    QueryTermScorer::QueryTermScorer(const QueryPtr& query, const String& fieldName)
     {
         ConstructQueryTermScorer(QueryTermExtractor::getTerms(query, false, fieldName));
     }
 
-    QueryTermScorer::QueryTermScorer(QueryPtr query, IndexReaderPtr reader, const String& fieldName)
+    QueryTermScorer::QueryTermScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& fieldName)
     {
         ConstructQueryTermScorer(QueryTermExtractor::getIdfWeightedTerms(query, reader, fieldName));
     }
@@ -55,13 +55,13 @@ namespace Lucene
         }
     }
 
-    TokenStreamPtr QueryTermScorer::init(TokenStreamPtr tokenStream)
+    TokenStreamPtr QueryTermScorer::init(const TokenStreamPtr& tokenStream)
     {
         termAtt = tokenStream->addAttribute<TermAttribute>();
         return TokenStreamPtr();
     }
 
-    void QueryTermScorer::startFragment(TextFragmentPtr newFragment)
+    void QueryTermScorer::startFragment(const TextFragmentPtr& newFragment)
     {
         uniqueTermsInFragment = HashSet<String>::newInstance();
         currentTextFragment = newFragment;

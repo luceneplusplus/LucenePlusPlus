@@ -34,7 +34,7 @@ public:
     }
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<WhitespaceTokenizer>(reader);
     }

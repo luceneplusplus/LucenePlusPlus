@@ -10,15 +10,15 @@
 
 namespace Lucene
 {
-    LowerCaseTokenizer::LowerCaseTokenizer(ReaderPtr input) : LetterTokenizer(input)
+    LowerCaseTokenizer::LowerCaseTokenizer(const ReaderPtr& input) : LetterTokenizer(input)
     {
     }
 
-    LowerCaseTokenizer::LowerCaseTokenizer(AttributeSourcePtr source, ReaderPtr input) : LetterTokenizer(source, input)
+    LowerCaseTokenizer::LowerCaseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : LetterTokenizer(source, input)
     {
     }
 
-    LowerCaseTokenizer::LowerCaseTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : LetterTokenizer(factory, input)
+    LowerCaseTokenizer::LowerCaseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : LetterTokenizer(factory, input)
     {
     }
 

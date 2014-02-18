@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    DisjunctionMaxScorer::DisjunctionMaxScorer(double tieBreakerMultiplier, SimilarityPtr similarity, Collection<ScorerPtr> subScorers, int32_t numScorers) : Scorer(similarity)
+    DisjunctionMaxScorer::DisjunctionMaxScorer(double tieBreakerMultiplier, const SimilarityPtr& similarity, Collection<ScorerPtr> subScorers, int32_t numScorers) : Scorer(similarity)
     {
         this->doc = -1;
         this->tieBreakerMultiplier = tieBreakerMultiplier;

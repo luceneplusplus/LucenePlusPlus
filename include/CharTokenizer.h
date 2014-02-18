@@ -15,9 +15,9 @@ namespace Lucene
     class LPPAPI CharTokenizer : public Tokenizer
     {
     public:
-        CharTokenizer(ReaderPtr input);
-        CharTokenizer(AttributeSourcePtr source, ReaderPtr input);
-        CharTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        CharTokenizer(const ReaderPtr& input);
+        CharTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
+        CharTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
         virtual ~CharTokenizer();
 
         LUCENE_CLASS(CharTokenizer);
@@ -37,7 +37,7 @@ namespace Lucene
     public:
         virtual bool incrementToken();
         virtual void end();
-        virtual void reset(ReaderPtr input);
+        virtual void reset(const ReaderPtr& input);
 
     protected:
         /// Returns true if a character should be included in a token.  This tokenizer generates as tokens adjacent

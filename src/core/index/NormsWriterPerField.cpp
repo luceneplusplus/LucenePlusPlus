@@ -15,7 +15,7 @@
 
 namespace Lucene
 {
-    NormsWriterPerField::NormsWriterPerField(DocInverterPerFieldPtr docInverterPerField, NormsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo)
+    NormsWriterPerField::NormsWriterPerField(const DocInverterPerFieldPtr& docInverterPerField, const NormsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo)
     {
         docIDs = Collection<int32_t>::newInstance(1);
         norms = ByteArray::newInstance(1);
@@ -44,7 +44,7 @@ namespace Lucene
         upto = 0;
     }
 
-    int32_t NormsWriterPerField::compareTo(LuceneObjectPtr other)
+    int32_t NormsWriterPerField::compareTo(const LuceneObjectPtr& other)
     {
         return fieldInfo->name.compare(boost::static_pointer_cast<NormsWriterPerField>(other)->fieldInfo->name);
     }

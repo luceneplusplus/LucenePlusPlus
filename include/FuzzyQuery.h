@@ -27,9 +27,9 @@ namespace Lucene
         /// length as the query term is considered similar to the query term if the edit distance between
         /// both terms is less than length(term) * 0.5
         /// @param prefixLength Length of common (non-fuzzy) prefix
-        FuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength);
-        FuzzyQuery(TermPtr term, double minimumSimilarity);
-        FuzzyQuery(TermPtr term);
+        FuzzyQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength);
+        FuzzyQuery(const TermPtr& term, double minimumSimilarity);
+        FuzzyQuery(const TermPtr& term);
 
         virtual ~FuzzyQuery();
 
@@ -60,18 +60,18 @@ namespace Lucene
         /// Returns the pattern term.
         TermPtr getTerm();
 
-        virtual void setRewriteMethod(RewriteMethodPtr method);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual void setRewriteMethod(const RewriteMethodPtr& method);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual String toString(const String& field);
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
     protected:
-        void ConstructQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength);
+        void ConstructQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength);
 
-        virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
+        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
     };
 }
 

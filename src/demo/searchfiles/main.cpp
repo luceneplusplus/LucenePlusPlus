@@ -22,7 +22,7 @@ using namespace Lucene;
 class OneNormsReader : public FilterIndexReader
 {
 public:
-    OneNormsReader(IndexReaderPtr in, const String& field) : FilterIndexReader(in)
+    OneNormsReader(const IndexReaderPtr& in, const String& field) : FilterIndexReader(in)
     {
         this->field = field;
     }
@@ -47,7 +47,7 @@ public:
 /// When the query is executed for the first time, then only enough results are collected to fill 5 result
 /// pages. If the user wants to page beyond this limit, then the query is executed another time and all
 /// hits are collected.
-static void doPagingSearch(SearcherPtr searcher, QueryPtr query, int32_t hitsPerPage, bool raw, bool interactive)
+static void doPagingSearch(const SearcherPtr& searcher, const QueryPtr& query, int32_t hitsPerPage, bool raw, bool interactive)
 {
     // Collect enough docs to show 5 pages
     TopScoreDocCollectorPtr collector = TopScoreDocCollector::create(5 * hitsPerPage, false);
@@ -190,12 +190,12 @@ public:
         return true;
     }
 
-    virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
     }
 
-    virtual void setScorer(ScorerPtr scorer)
+    virtual void setScorer(const ScorerPtr& scorer)
     {
         this->scorer = scorer;
     }
@@ -206,7 +206,7 @@ public:
 ///
 /// This simulates the streaming search use case, where all hits are supposed to be processed, regardless
 /// of their relevance.
-static void doStreamingSearch(SearcherPtr searcher, QueryPtr query)
+static void doStreamingSearch(const SearcherPtr& searcher, const QueryPtr& query)
 {
     searcher->search(query, newLucene<StreamingHitCollector>());
 }

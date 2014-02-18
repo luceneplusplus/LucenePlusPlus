@@ -26,11 +26,11 @@ namespace Lucene
 
     public:
         /// Sets this to the data for a term.  The enumeration is reset to the start of the data for this term.
-        virtual void seek(TermPtr term) = 0;
+        virtual void seek(const TermPtr& term) = 0;
 
         /// Sets this to the data for the current term in a {@link TermEnum}.
         /// This may be optimized in some implementations.
-        virtual void seek(TermEnumPtr termEnum) = 0;
+        virtual void seek(const TermEnumPtr& termEnum) = 0;
 
         /// Returns the current document number.  This is invalid until {@link #next()} is called for the first time.
         virtual int32_t doc() = 0;

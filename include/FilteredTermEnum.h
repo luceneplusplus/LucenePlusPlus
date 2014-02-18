@@ -48,14 +48,14 @@ namespace Lucene
 
     protected:
         /// Equality compare on the term
-        virtual bool termCompare(TermPtr term) = 0;
+        virtual bool termCompare(const TermPtr& term) = 0;
 
         /// Indicates the end of the enumeration has been reached
         virtual bool endEnum() = 0;
 
         /// Use this method to set the actual TermEnum (eg. in ctor), it will be automatically positioned
         /// on the first matching term.
-        virtual void setEnum(TermEnumPtr actualEnum);
+        virtual void setEnum(const TermEnumPtr& actualEnum);
     };
 }
 

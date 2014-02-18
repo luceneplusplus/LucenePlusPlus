@@ -16,7 +16,7 @@ namespace Lucene
     class LPPCONTRIBAPI ArabicNormalizationFilter : public TokenFilter
     {
     public:
-        ArabicNormalizationFilter(TokenStreamPtr input);
+        ArabicNormalizationFilter(const TokenStreamPtr& input);
         virtual ~ArabicNormalizationFilter();
 
         LUCENE_CLASS(ArabicNormalizationFilter);

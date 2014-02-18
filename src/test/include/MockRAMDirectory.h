@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         MockRAMDirectory();
-        MockRAMDirectory(DirectoryPtr dir);
+        MockRAMDirectory(const DirectoryPtr& dir);
         virtual ~MockRAMDirectory();
 
         LUCENE_CLASS(MockRAMDirectory);
@@ -90,7 +90,7 @@ namespace Lucene
         virtual void close();
 
         /// Add a Failure object to the list of objects to be evaluated at every potential failure point
-        void failOn(MockDirectoryFailurePtr fail);
+        void failOn(const MockDirectoryFailurePtr& fail);
 
         /// Iterate through the failures list, giving each object a chance to throw an IO exception.
         void maybeThrowDeterministicException();
@@ -114,7 +114,7 @@ namespace Lucene
 
     public:
         /// eval is called on the first write of every new file.
-        virtual void eval(MockRAMDirectoryPtr dir);
+        virtual void eval(const MockRAMDirectoryPtr& dir);
 
         /// reset should set the state of the failure to its default (freshly constructed) state. Reset is convenient
         /// for tests that want to create one failure object and then reuse it in multiple cases. This, combined with

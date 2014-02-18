@@ -34,7 +34,7 @@ namespace Lucene
         /// Most of the time this is safe, because the filter will be AND'd with a Query that fully enforces
         /// deletions.  If instead you need this filter to always enforce deletions, pass either {@link
         /// DeletesMode#RECACHE} or {@link DeletesMode#DYNAMIC}.
-        CachingWrapperFilter(FilterPtr filter, DeletesMode deletesMode = DELETES_IGNORE);
+        CachingWrapperFilter(const FilterPtr& filter, DeletesMode deletesMode = DELETES_IGNORE);
 
         virtual ~CachingWrapperFilter();
 
@@ -55,13 +55,13 @@ namespace Lucene
         ///
         /// This implementation returns the given {@link DocIdSet}, if {@link DocIdSet#isCacheable} returns
         /// true, else it copies the {@link DocIdSetIterator} into an {@link OpenBitSetDISI}.
-        DocIdSetPtr docIdSetToCache(DocIdSetPtr docIdSet, IndexReaderPtr reader);
+        DocIdSetPtr docIdSetToCache(const DocIdSetPtr& docIdSet, const IndexReaderPtr& reader);
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
 
         virtual String toString();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

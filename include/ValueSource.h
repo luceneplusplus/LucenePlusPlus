@@ -28,7 +28,7 @@ namespace Lucene
         /// Return the DocValues used by the function query.
         /// @param reader The IndexReader used to read these values.  If any caching is involved, that caching
         /// would also be IndexReader based.
-        virtual DocValuesPtr getValues(IndexReaderPtr reader) = 0;
+        virtual DocValuesPtr getValues(const IndexReaderPtr& reader) = 0;
 
         /// Description of field, used in explain()
         virtual String description() = 0;
@@ -36,7 +36,7 @@ namespace Lucene
         virtual String toString();
 
         /// Needed for possible caching of query results - used by {@link ValueSourceQuery#equals(LuceneObjectPtr)}.
-        virtual bool equals(LuceneObjectPtr other) = 0;
+        virtual bool equals(const LuceneObjectPtr& other) = 0;
 
         /// Needed for possible caching of query results - used by {@link ValueSourceQuery#hashCode()}.
         virtual int32_t hashCode() = 0;

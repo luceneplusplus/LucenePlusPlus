@@ -17,7 +17,7 @@ namespace Lucene
     const int32_t ByteBlockPool::nextLevelArray[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 9};
     const int32_t ByteBlockPool::levelSizeArray[] = {5, 14, 20, 30, 40, 40, 80, 80, 120, 200};
 
-    ByteBlockPool::ByteBlockPool(ByteBlockPoolAllocatorBasePtr allocator, bool trackAllocations)
+    ByteBlockPool::ByteBlockPool(const ByteBlockPoolAllocatorBasePtr& allocator, bool trackAllocations)
     {
         buffers = Collection<ByteArray>::newInstance(10);
         bufferUpto = -1;

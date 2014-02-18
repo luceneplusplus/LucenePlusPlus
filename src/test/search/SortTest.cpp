@@ -159,7 +159,7 @@ protected:
         return s;
     }
 
-    MapStringDouble getScores(Collection<ScoreDocPtr> hits, SearcherPtr searcher)
+    MapStringDouble getScores(Collection<ScoreDocPtr> hits, const SearcherPtr& searcher)
     {
         MapStringDouble scoreMap = MapStringDouble::newInstance();
         int32_t n = hits.size();
@@ -187,7 +187,7 @@ protected:
     }
 
     /// make sure the documents returned by the search match the expected list
-    void checkMatches(SearcherPtr searcher, QueryPtr query, SortPtr sort, const String& expectedResult)
+    void checkMatches(const SearcherPtr& searcher, const QueryPtr& query, const SortPtr& sort, const String& expectedResult)
     {
         TopDocsPtr hits = searcher->search(query, FilterPtr(), expectedResult.length(), sort);
         Collection<ScoreDocPtr> result = hits->scoreDocs;
@@ -262,7 +262,7 @@ protected:
     }
 
     /// runs a variety of sorts useful for multisearchers
-    void runMultiSorts(SearcherPtr multi, bool isFull)
+    void runMultiSorts(const SearcherPtr& multi, bool isFull)
     {
         sort->setSort(SortField::FIELD_DOC());
         String expected = isFull ? L"ABCDEFGHIJ" : L"ACEGIBDFHJ";
@@ -588,7 +588,7 @@ namespace TestNewCustomFieldParserSort
             bottomValue = slotValues[slot];
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
             docValues = FieldCache::DEFAULT()->getInts(reader, L"parser", newLucene<MyIntParser>());
         }
@@ -828,7 +828,7 @@ namespace TestTopDocsScores
     class TopDocsFilter : public Filter
     {
     public:
-        TopDocsFilter(TopDocsPtr docs)
+        TopDocsFilter(const TopDocsPtr& docs)
         {
             this->docs = docs;
         }
@@ -841,7 +841,7 @@ namespace TestTopDocsScores
         TopDocsPtr docs;
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
         {
             BitSetPtr bs = newLucene<BitSet>(reader->maxDoc());
             bs->set((uint32_t)0, (uint32_t)reader->maxDoc());

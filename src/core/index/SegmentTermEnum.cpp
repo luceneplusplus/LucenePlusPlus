@@ -33,7 +33,7 @@ namespace Lucene
         maxSkipLevels = 0;
     }
 
-    SegmentTermEnum::SegmentTermEnum(IndexInputPtr i, FieldInfosPtr fis, bool isi)
+    SegmentTermEnum::SegmentTermEnum(const IndexInputPtr& i, const FieldInfosPtr& fis, bool isi)
     {
         format = 0;
         termBuffer = newLucene<TermBuffer>();
@@ -111,7 +111,7 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr SegmentTermEnum::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SegmentTermEnum::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<SegmentTermEnum>();
         SegmentTermEnumPtr cloneEnum(boost::dynamic_pointer_cast<SegmentTermEnum>(TermEnum::clone(clone)));
@@ -136,7 +136,7 @@ namespace Lucene
         return cloneEnum;
     }
 
-    void SegmentTermEnum::seek(int64_t pointer, int64_t p, TermPtr t, TermInfoPtr ti)
+    void SegmentTermEnum::seek(int64_t pointer, int64_t p, const TermPtr& t, const TermInfoPtr& ti)
     {
         input->seek(pointer);
         position = p;
@@ -177,7 +177,7 @@ namespace Lucene
         return true;
     }
 
-    int32_t SegmentTermEnum::scanTo(TermPtr term)
+    int32_t SegmentTermEnum::scanTo(const TermPtr& term)
     {
         scanBuffer->set(term);
         int32_t count = 0;
@@ -201,7 +201,7 @@ namespace Lucene
         return newLucene<TermInfo>(_termInfo);
     }
 
-    void SegmentTermEnum::termInfo(TermInfoPtr ti)
+    void SegmentTermEnum::termInfo(const TermInfoPtr& ti)
     {
         ti->set(_termInfo);
     }

@@ -51,7 +51,7 @@ namespace Lucene
         virtual int32_t hashCode() = 0;
 
         /// Return whether two objects are equal
-        virtual bool equals(LuceneObjectPtr other) = 0;
+        virtual bool equals(const LuceneObjectPtr& other) = 0;
     };
 }
 

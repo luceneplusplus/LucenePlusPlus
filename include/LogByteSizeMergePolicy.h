@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI LogByteSizeMergePolicy : public LogMergePolicy
     {
     public:
-        LogByteSizeMergePolicy(IndexWriterPtr writer);
+        LogByteSizeMergePolicy(const IndexWriterPtr& writer);
         virtual ~LogByteSizeMergePolicy();
 
         LUCENE_CLASS(LogByteSizeMergePolicy);
@@ -30,7 +30,7 @@ namespace Lucene
         static const double DEFAULT_MAX_MERGE_MB;
 
     protected:
-        virtual int64_t size(SegmentInfoPtr info);
+        virtual int64_t size(const SegmentInfoPtr& info);
 
     public:
         /// Determines the largest segment (measured by total byte size of the segment's files, in MB)

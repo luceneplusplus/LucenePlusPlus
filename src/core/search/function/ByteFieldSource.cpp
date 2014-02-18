@@ -13,7 +13,7 @@
 
 namespace Lucene
 {
-    ByteFieldSource::ByteFieldSource(const String& field, ByteParserPtr parser) : FieldCacheSource(field)
+    ByteFieldSource::ByteFieldSource(const String& field, const ByteParserPtr& parser) : FieldCacheSource(field)
     {
         this->parser = parser;
     }
@@ -27,13 +27,13 @@ namespace Lucene
         return L"byte(" + FieldCacheSource::description() + L")";
     }
 
-    DocValuesPtr ByteFieldSource::getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader)
+    DocValuesPtr ByteFieldSource::getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader)
     {
         Collection<uint8_t> arr(cache->getBytes(reader, field, parser));
         return newLucene<ByteDocValues>(shared_from_this(), arr);
     }
 
-    bool ByteFieldSource::cachedFieldSourceEquals(FieldCacheSourcePtr other)
+    bool ByteFieldSource::cachedFieldSourceEquals(const FieldCacheSourcePtr& other)
     {
         if (!MiscUtils::equalTypes(shared_from_this(), other))
             return false;
@@ -48,7 +48,7 @@ namespace Lucene
         return StringUtils::hashCode(parser ? ByteParser::_getClassName() : ByteFieldSource::_getClassName());
     }
 
-    ByteDocValues::ByteDocValues(ByteFieldSourcePtr source, Collection<uint8_t> arr)
+    ByteDocValues::ByteDocValues(const ByteFieldSourcePtr& source, Collection<uint8_t> arr)
     {
         this->_source = source;
         this->arr = arr;

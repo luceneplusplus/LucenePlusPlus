@@ -45,7 +45,7 @@ static RAMDirectoryPtr getIndexStore(const String& field, Collection<String> con
     return indexStore;
 }
 
-static void checkMatches(IndexSearcherPtr searcher, QueryPtr q, int32_t expectedMatches)
+static void checkMatches(const IndexSearcherPtr& searcher, const QueryPtr& q, int32_t expectedMatches)
 {
     Collection<ScoreDocPtr> result = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(expectedMatches, result.size());

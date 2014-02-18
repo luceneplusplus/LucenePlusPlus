@@ -52,7 +52,7 @@ protected:
     DirectoryPtr directory;
     IndexSearcherPtr searcher;
 
-    void addDocument(IndexWriterPtr writer, const String& id, const String& text)
+    void addDocument(const IndexWriterPtr& writer, const String& id, const String& text)
     {
         DocumentPtr document = newLucene<Document>();
         document->add(newLucene<Field>(FIELD_ID, id, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
@@ -60,7 +60,7 @@ protected:
         writer->addDocument(document);
     }
 
-    void checkHits(SearcherPtr s, QueryPtr query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores)
+    void checkHits(const SearcherPtr& s, const QueryPtr& query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores)
     {
         QueryUtils::check(query, s);
 

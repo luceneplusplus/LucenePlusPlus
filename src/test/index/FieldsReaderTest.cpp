@@ -61,7 +61,7 @@ DECLARE_SHARED_PTR(FaultyIndexInput)
 class FaultyIndexInput : public BufferedIndexInput
 {
 public:
-    FaultyIndexInput(IndexInputPtr delegate)
+    FaultyIndexInput(const IndexInputPtr& delegate)
     {
         this->delegate = delegate;
         count = 0;
@@ -100,7 +100,7 @@ public:
         delegate->close();
     }
 
-    virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr())
     {
         return newLucene<FaultyIndexInput>(boost::dynamic_pointer_cast<IndexInput>(delegate->clone()));
     }

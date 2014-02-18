@@ -134,7 +134,7 @@ public:
         checkAllQueries(memory, ramdir, analyzer);
     }
 
-    void checkAllQueries(MemoryIndexPtr memory, RAMDirectoryPtr ramdir, AnalyzerPtr analyzer)
+    void checkAllQueries(const MemoryIndexPtr& memory, const RAMDirectoryPtr& ramdir, const AnalyzerPtr& analyzer)
     {
         IndexSearcherPtr ram = newLucene<IndexSearcher>(ramdir);
         IndexSearcherPtr mem = memory->createSearcher();

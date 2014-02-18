@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    CompoundFileWriter::CompoundFileWriter(DirectoryPtr dir, const String& name, CheckAbortPtr checkAbort)
+    CompoundFileWriter::CompoundFileWriter(const DirectoryPtr& dir, const String& name, const CheckAbortPtr& checkAbort)
     {
         if (!dir)
             boost::throw_exception(IllegalArgumentException(L"directory cannot be empty"));
@@ -138,7 +138,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    void CompoundFileWriter::copyFile(const FileEntry& source, IndexOutputPtr os, ByteArray buffer)
+    void CompoundFileWriter::copyFile(const FileEntry& source, const IndexOutputPtr& os, ByteArray buffer)
     {
         IndexInputPtr is;
         DirectoryPtr directory(_directory);

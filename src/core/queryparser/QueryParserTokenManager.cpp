@@ -45,7 +45,7 @@ namespace Lucene
     const int64_t QueryParserTokenManager::jjtoToken[] = {0x3ffffff01LL};
     const int64_t QueryParserTokenManager::jjtoSkip[] = {0x80LL};
 
-    QueryParserTokenManager::QueryParserTokenManager(QueryParserCharStreamPtr stream)
+    QueryParserTokenManager::QueryParserTokenManager(const QueryParserCharStreamPtr& stream)
     {
         debugStream = newLucene<InfoStreamOut>();
         jjrounds = IntArray::newInstance(36);
@@ -60,7 +60,7 @@ namespace Lucene
         input_stream = stream;
     }
 
-    QueryParserTokenManager::QueryParserTokenManager(QueryParserCharStreamPtr stream, int32_t lexState)
+    QueryParserTokenManager::QueryParserTokenManager(const QueryParserCharStreamPtr& stream, int32_t lexState)
     {
         debugStream = newLucene<InfoStreamOut>();
         jjrounds = IntArray::newInstance(36);
@@ -80,7 +80,7 @@ namespace Lucene
     {
     }
 
-    void QueryParserTokenManager::setDebugStream(InfoStreamPtr debugStream)
+    void QueryParserTokenManager::setDebugStream(const InfoStreamPtr& debugStream)
     {
         this->debugStream = debugStream;
     }
@@ -1154,7 +1154,7 @@ namespace Lucene
         }
     }
 
-    void QueryParserTokenManager::ReInit(QueryParserCharStreamPtr stream)
+    void QueryParserTokenManager::ReInit(const QueryParserCharStreamPtr& stream)
     {
         jjmatchedPos = 0;
         jjnewStateCnt = 0;
@@ -1170,7 +1170,7 @@ namespace Lucene
             jjrounds[i] = 0x80000000;
     }
 
-    void QueryParserTokenManager::ReInit(QueryParserCharStreamPtr stream, int32_t lexState)
+    void QueryParserTokenManager::ReInit(const QueryParserCharStreamPtr& stream, int32_t lexState)
     {
         ReInit(stream);
         SwitchTo(lexState);

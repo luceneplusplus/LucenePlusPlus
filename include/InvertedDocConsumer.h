@@ -23,21 +23,21 @@ namespace Lucene
 
     public:
         /// Add a new thread
-        virtual InvertedDocConsumerPerThreadPtr addThread(DocInverterPerThreadPtr docInverterPerThread) = 0;
+        virtual InvertedDocConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread) = 0;
 
         /// Abort (called after hitting AbortException)
         virtual void abort() = 0;
 
         /// Flush a new segment
-        virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state) = 0;
+        virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
 
         /// Close doc stores
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
+        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
 
         /// Attempt to free RAM, returning true if any RAM was freed
         virtual bool freeRAM() = 0;
 
-        virtual void setFieldInfos(FieldInfosPtr fieldInfos);
+        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
     };
 }
 

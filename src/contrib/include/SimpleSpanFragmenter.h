@@ -17,11 +17,11 @@ namespace Lucene
     {
     public:
         /// @param queryScorer QueryScorer that was used to score hits
-        SimpleSpanFragmenter(QueryScorerPtr queryScorer);
+        SimpleSpanFragmenter(const QueryScorerPtr& queryScorer);
 
         /// @param queryScorer QueryScorer that was used to score hits
         /// @param fragmentSize size in bytes of each fragment
-        SimpleSpanFragmenter(QueryScorerPtr queryScorer, int32_t fragmentSize);
+        SimpleSpanFragmenter(const QueryScorerPtr& queryScorer, int32_t fragmentSize);
 
         virtual ~SimpleSpanFragmenter();
 
@@ -42,7 +42,7 @@ namespace Lucene
 
     public:
         virtual bool isNewFragment();
-        virtual void start(const String& originalText, TokenStreamPtr tokenStream);
+        virtual void start(const String& originalText, const TokenStreamPtr& tokenStream);
     };
 }
 

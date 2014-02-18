@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    NearSpansOrdered::NearSpansOrdered(SpanNearQueryPtr spanNearQuery, IndexReaderPtr reader, bool collectPayloads)
+    NearSpansOrdered::NearSpansOrdered(const SpanNearQueryPtr& spanNearQuery, const IndexReaderPtr& reader, bool collectPayloads)
     {
         if (spanNearQuery->getClauses().size() < 2)
             boost::throw_exception(IllegalArgumentException(L"Less than 2 clauses: " + spanNearQuery->toString()));
@@ -161,7 +161,7 @@ namespace Lucene
         return true;
     }
 
-    bool NearSpansOrdered::docSpansOrdered(SpansPtr spans1, SpansPtr spans2)
+    bool NearSpansOrdered::docSpansOrdered(const SpansPtr& spans1, const SpansPtr& spans2)
     {
         BOOST_ASSERT(spans1->doc() == spans2->doc());
         int32_t start1 = spans1->start();

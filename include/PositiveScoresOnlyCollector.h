@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI PositiveScoresOnlyCollector : public Collector
     {
     public:
-        PositiveScoresOnlyCollector(CollectorPtr c);
+        PositiveScoresOnlyCollector(const CollectorPtr& c);
         virtual ~PositiveScoresOnlyCollector();
 
         LUCENE_CLASS(PositiveScoresOnlyCollector);
@@ -27,8 +27,8 @@ namespace Lucene
 
     public:
         virtual void collect(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+        virtual void setScorer(const ScorerPtr& scorer);
         virtual bool acceptsDocsOutOfOrder();
     };
 }

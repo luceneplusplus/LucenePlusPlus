@@ -23,15 +23,15 @@ namespace Lucene
         ByteArray payloadBuffer;
 
     public:
-        virtual TermsHashConsumerPerThreadPtr addThread(TermsHashPerThreadPtr perThread);
+        virtual TermsHashConsumerPerThreadPtr addThread(const TermsHashPerThreadPtr& perThread);
         virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count);
-        virtual void closeDocStore(SegmentWriteStatePtr state);
+        virtual void closeDocStore(const SegmentWriteStatePtr& state);
         virtual void abort();
-        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
+        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
         /// Walk through all unique text tokens (Posting instances) found in this field and serialize them
         /// into a single RAM segment.
-        void appendPostings(Collection<FreqProxTermsWriterPerFieldPtr> fields, FormatPostingsFieldsConsumerPtr consumer);
+        void appendPostings(Collection<FreqProxTermsWriterPerFieldPtr> fields, const FormatPostingsFieldsConsumerPtr& consumer);
 
         virtual int32_t bytesPerPosting();
 

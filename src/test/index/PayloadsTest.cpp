@@ -67,7 +67,7 @@ public:
 class PayloadFilter : public TokenFilter
 {
 public:
-    PayloadFilter(TokenStreamPtr in, ByteArray data, int32_t offset, int32_t length) : TokenFilter(in)
+    PayloadFilter(const TokenStreamPtr& in, ByteArray data, int32_t offset, int32_t length) : TokenFilter(in)
     {
         this->payload = newLucene<Payload>();
         this->data = data;
@@ -139,7 +139,7 @@ public:
         fieldToData.put(field, payload);
     }
 
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         PayloadDataPtr payload = fieldToData.get(fieldName);
         TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(reader);
@@ -295,7 +295,7 @@ TEST_F(PayloadsTest, testPayloadFieldBit)
 
 /// Builds an index with payloads in the given Directory and performs different
 /// tests to verify the payload encoding
-static void encodingTest(DirectoryPtr dir)
+static void encodingTest(const DirectoryPtr& dir)
 {
     PayloadAnalyzerPtr analyzer = newLucene<PayloadAnalyzer>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -520,7 +520,7 @@ namespace TestThreadSafety
     class PoolingPayloadTokenStream : public TokenStream
     {
     public:
-        PoolingPayloadTokenStream(ByteArrayPoolPtr pool)
+        PoolingPayloadTokenStream(const ByteArrayPoolPtr& pool)
         {
             this->pool = pool;
             payload = pool->get();
@@ -567,7 +567,7 @@ namespace TestThreadSafety
     class IngesterThread : public LuceneThread
     {
     public:
-        IngesterThread(int32_t numDocs, ByteArrayPoolPtr pool, IndexWriterPtr writer)
+        IngesterThread(int32_t numDocs, const ByteArrayPoolPtr& pool, const IndexWriterPtr& writer)
         {
             this->numDocs = numDocs;
             this->pool = pool;

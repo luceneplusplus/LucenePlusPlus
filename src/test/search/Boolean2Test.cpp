@@ -127,7 +127,7 @@ public:
     }
 
     /// Random rnd is passed in so that the exact same random query may be created more than once.
-    BooleanQueryPtr randBoolQuery(RandomPtr rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
+    BooleanQueryPtr randBoolQuery(const RandomPtr& rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
     {
         BooleanQueryPtr current = newLucene<BooleanQuery>(rnd->nextInt() < 0);
         for (int32_t i = 0; i < rnd->nextInt(vals.size()) + 1; ++i)

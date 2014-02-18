@@ -15,19 +15,19 @@ namespace Lucene
     class PayloadTermWeight : public SpanWeight
     {
     public:
-        PayloadTermWeight(PayloadTermQueryPtr query, SearcherPtr searcher);
+        PayloadTermWeight(const PayloadTermQueryPtr& query, const SearcherPtr& searcher);
         virtual ~PayloadTermWeight();
 
         LUCENE_CLASS(PayloadTermWeight);
 
     public:
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
     };
 
     class PayloadTermSpanScorer : public SpanScorer
     {
     public:
-        PayloadTermSpanScorer(TermSpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms);
+        PayloadTermSpanScorer(const TermSpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms);
         virtual ~PayloadTermSpanScorer();
 
         LUCENE_CLASS(PayloadTermSpanScorer);
@@ -44,7 +44,7 @@ namespace Lucene
     protected:
         virtual bool setFreqCurrentDoc();
 
-        void processPayload(SimilarityPtr similarity);
+        void processPayload(const SimilarityPtr& similarity);
 
         /// Returns the SpanScorer score only.
         ///

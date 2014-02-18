@@ -15,7 +15,7 @@ namespace Lucene
     class StoredFieldsWriter : public LuceneObject
     {
     public:
-        StoredFieldsWriter(DocumentsWriterPtr docWriter, FieldInfosPtr fieldInfos);
+        StoredFieldsWriter(const DocumentsWriterPtr& docWriter, const FieldInfosPtr& fieldInfos);
         virtual ~StoredFieldsWriter();
 
         LUCENE_CLASS(StoredFieldsWriter);
@@ -31,18 +31,18 @@ namespace Lucene
         int32_t allocCount;
 
     public:
-        StoredFieldsWriterPerThreadPtr addThread(DocStatePtr docState);
-        void flush(SegmentWriteStatePtr state);
-        void closeDocStore(SegmentWriteStatePtr state);
+        StoredFieldsWriterPerThreadPtr addThread(const DocStatePtr& docState);
+        void flush(const SegmentWriteStatePtr& state);
+        void closeDocStore(const SegmentWriteStatePtr& state);
         StoredFieldsWriterPerDocPtr getPerDoc();
         void abort();
 
         /// Fills in any hole in the docIDs
         void fill(int32_t docID);
 
-        void finishDocument(StoredFieldsWriterPerDocPtr perDoc);
+        void finishDocument(const StoredFieldsWriterPerDocPtr& perDoc);
         bool freeRAM();
-        void free(StoredFieldsWriterPerDocPtr perDoc);
+        void free(const StoredFieldsWriterPerDocPtr& perDoc);
 
     protected:
         void initFieldsWriter();
@@ -51,7 +51,7 @@ namespace Lucene
     class StoredFieldsWriterPerDoc : public DocWriter
     {
     public:
-        StoredFieldsWriterPerDoc(StoredFieldsWriterPtr fieldsWriter);
+        StoredFieldsWriterPerDoc(const StoredFieldsWriterPtr& fieldsWriter);
         virtual ~StoredFieldsWriterPerDoc();
 
         LUCENE_CLASS(StoredFieldsWriterPerDoc);

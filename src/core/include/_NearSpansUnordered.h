@@ -16,7 +16,7 @@ namespace Lucene
     class SpansCell : public Spans
     {
     public:
-        SpansCell(NearSpansUnorderedPtr unordered, SpansPtr spans, int32_t index);
+        SpansCell(const NearSpansUnorderedPtr& unordered, const SpansPtr& spans, int32_t index);
         virtual ~SpansCell();
 
         LUCENE_CLASS(SpansCell);

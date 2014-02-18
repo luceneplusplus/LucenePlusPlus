@@ -27,19 +27,19 @@ namespace Lucene
     /// @deprecated this solves a bug where HOSTs that end with '.' are identified as ACRONYMs.
     const int32_t StandardTokenizer::ACRONYM_DEP = 8;
 
-    StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input)
+    StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, const ReaderPtr& input)
     {
         this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
 
-    StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source)
+    StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, const AttributeSourcePtr& source, const ReaderPtr& input) : Tokenizer(source)
     {
         this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
     }
 
-    StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory)
+    StandardTokenizer::StandardTokenizer(LuceneVersion::Version matchVersion, const AttributeFactoryPtr& factory, const ReaderPtr& input) : Tokenizer(factory)
     {
         this->scanner = newLucene<StandardTokenizerImpl>(input);
         init(input, matchVersion);
@@ -69,7 +69,7 @@ namespace Lucene
         return _TOKEN_TYPES;
     }
 
-    void StandardTokenizer::init(ReaderPtr input, LuceneVersion::Version matchVersion)
+    void StandardTokenizer::init(const ReaderPtr& input, LuceneVersion::Version matchVersion)
     {
         replaceInvalidAcronym = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_24);
         maxTokenLength = StandardAnalyzer::DEFAULT_MAX_TOKEN_LENGTH;
@@ -140,7 +140,7 @@ namespace Lucene
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
 
-    void StandardTokenizer::reset(ReaderPtr input)
+    void StandardTokenizer::reset(const ReaderPtr& input)
     {
         Tokenizer::reset(input);
         scanner->reset(input);

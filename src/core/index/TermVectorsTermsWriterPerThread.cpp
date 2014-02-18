@@ -16,7 +16,7 @@
 
 namespace Lucene
 {
-    TermVectorsTermsWriterPerThread::TermVectorsTermsWriterPerThread(TermsHashPerThreadPtr termsHashPerThread, TermVectorsTermsWriterPtr termsWriter)
+    TermVectorsTermsWriterPerThread::TermVectorsTermsWriterPerThread(const TermsHashPerThreadPtr& termsHashPerThread, const TermVectorsTermsWriterPtr& termsWriter)
     {
         utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
         this->vectorSliceReader = newLucene<ByteSliceReader>();
@@ -46,7 +46,7 @@ namespace Lucene
         return returnDoc;
     }
 
-    TermsHashConsumerPerFieldPtr TermVectorsTermsWriterPerThread::addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo)
+    TermsHashConsumerPerFieldPtr TermVectorsTermsWriterPerThread::addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo)
     {
         return newLucene<TermVectorsTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
     }
@@ -66,7 +66,7 @@ namespace Lucene
         return true;
     }
 
-    bool TermVectorsTermsWriterPerThread::vectorFieldsInOrder(FieldInfoPtr fi)
+    bool TermVectorsTermsWriterPerThread::vectorFieldsInOrder(const FieldInfoPtr& fi)
     {
         bool inOrder = lastVectorFieldName.empty() ? true : (lastVectorFieldName < fi->name);
         lastVectorFieldName = fi->name;

@@ -24,7 +24,7 @@ namespace Lucene
     {
     public:
         /// @param innerSet Underlying DocIdSet
-        FilteredDocIdSet(DocIdSetPtr innerSet);
+        FilteredDocIdSet(const DocIdSetPtr& innerSet);
         virtual ~FilteredDocIdSet();
 
         LUCENE_CLASS(FilteredDocIdSet);

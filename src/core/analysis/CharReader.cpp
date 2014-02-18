@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    CharReader::CharReader(ReaderPtr in)
+    CharReader::CharReader(const ReaderPtr& in)
     {
         input = in;
     }
@@ -18,7 +18,7 @@ namespace Lucene
     {
     }
 
-    CharStreamPtr CharReader::get(ReaderPtr input)
+    CharStreamPtr CharReader::get(const ReaderPtr& input)
     {
         CharStreamPtr charStream(boost::dynamic_pointer_cast<CharStream>(input));
         return charStream ? charStream : newLucene<CharReader>(input);

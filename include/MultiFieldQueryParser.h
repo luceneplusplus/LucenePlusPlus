@@ -37,7 +37,7 @@ namespace Lucene
         ///
         /// In other words, all the query's terms must appear, but it doesn't matter in what fields they
         /// appear.
-        MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer, MapStringDouble boosts);
+        MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, const AnalyzerPtr& analyzer, MapStringDouble boosts);
 
         /// Creates a MultiFieldQueryParser.  It will, when parse(String query) is called, construct a
         /// query like this (assuming the query consists of two terms and you specify the two fields
@@ -53,7 +53,7 @@ namespace Lucene
         ///
         /// In other words, all the query's terms must appear, but it doesn't matter in what fields they
         /// appear.
-        MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer);
+        MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, const AnalyzerPtr& analyzer);
 
         virtual ~MultiFieldQueryParser();
 
@@ -76,7 +76,7 @@ namespace Lucene
         /// @param queries Queries strings to parse
         /// @param fields Fields to search on
         /// @param analyzer Analyzer to use
-        static QueryPtr parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, AnalyzerPtr analyzer);
+        static QueryPtr parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, const AnalyzerPtr& analyzer);
 
         /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as
         /// required, and others as prohibited.
@@ -98,7 +98,7 @@ namespace Lucene
         /// @param fields Fields to search on
         /// @param flags Flags describing the fields
         /// @param analyzer Analyzer to use
-        static QueryPtr parse(LuceneVersion::Version matchVersion, const String& query, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer);
+        static QueryPtr parse(LuceneVersion::Version matchVersion, const String& query, Collection<String> fields, Collection<BooleanClause::Occur> flags, const AnalyzerPtr& analyzer);
 
         /// Parses a query, searching on the fields specified.  Use this if you need to specify certain fields as
         /// required, and others as prohibited.
@@ -121,12 +121,12 @@ namespace Lucene
         /// @param fields Fields to search on
         /// @param flags Flags describing the fields
         /// @param analyzer Analyzer to use
-        static QueryPtr parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer);
+        static QueryPtr parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, Collection<BooleanClause::Occur> flags, const AnalyzerPtr& analyzer);
 
     protected:
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText, int32_t slop);
         virtual QueryPtr getFieldQuery(const String& field, const String& queryText);
-        void applySlop(QueryPtr query, int32_t slop);
+        void applySlop(const QueryPtr& query, int32_t slop);
 
         virtual QueryPtr getFuzzyQuery(const String& field, const String& termStr, double minSimilarity);
         virtual QueryPtr getPrefixQuery(const String& field, const String& termStr);

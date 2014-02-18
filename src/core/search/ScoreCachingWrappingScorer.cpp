@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    ScoreCachingWrappingScorer::ScoreCachingWrappingScorer(ScorerPtr scorer) : Scorer(scorer->getSimilarity())
+    ScoreCachingWrappingScorer::ScoreCachingWrappingScorer(const ScorerPtr& scorer) : Scorer(scorer->getSimilarity())
     {
         this->curDoc = -1;
         this->curScore = 0.0;
@@ -20,7 +20,7 @@ namespace Lucene
     {
     }
 
-    bool ScoreCachingWrappingScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
+    bool ScoreCachingWrappingScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
     {
         return ScorerPtr(_scorer)->score(collector, max, firstDocID);
     }
@@ -52,7 +52,7 @@ namespace Lucene
         return ScorerPtr(_scorer)->nextDoc();
     }
 
-    void ScoreCachingWrappingScorer::score(CollectorPtr collector)
+    void ScoreCachingWrappingScorer::score(const CollectorPtr& collector)
     {
         ScorerPtr(_scorer)->score(collector);
     }

@@ -29,7 +29,7 @@ namespace Lucene
         /// false for those that should not and Spans for where the true docs match.
         /// @param reader The {@link IndexReader} to load position and DocIdSet information from
         /// @return A {@link SpanFilterResult}
-        virtual SpanFilterResultPtr bitSpans(IndexReaderPtr reader) = 0;
+        virtual SpanFilterResultPtr bitSpans(const IndexReaderPtr& reader) = 0;
     };
 }
 

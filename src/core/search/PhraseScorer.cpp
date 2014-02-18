@@ -13,7 +13,7 @@
 
 namespace Lucene
 {
-    PhraseScorer::PhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms) : Scorer(similarity)
+    PhraseScorer::PhraseScorer(const WeightPtr& weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, const SimilarityPtr& similarity, ByteArray norms) : Scorer(similarity)
     {
         this->firstTime = true;
         this->more = true;

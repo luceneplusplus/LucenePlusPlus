@@ -19,14 +19,14 @@ typedef LuceneTestFixture OpenBitSetTest;
 
 static RandomPtr randBitSet = newLucene<Random>(123);
 
-static void doGet(BitSetPtr a, OpenBitSetPtr b)
+static void doGet(const BitSetPtr& a, const OpenBitSetPtr& b)
 {
     int32_t max = a->size();
     for (int32_t i = 0; i < max; ++i)
         EXPECT_EQ(a->get(i), b->get(i));
 }
 
-static void doNextSetBit(BitSetPtr a, OpenBitSetPtr b)
+static void doNextSetBit(const BitSetPtr& a, const OpenBitSetPtr& b)
 {
     int32_t aa = -1;
     int32_t bb = -1;
@@ -39,7 +39,7 @@ static void doNextSetBit(BitSetPtr a, OpenBitSetPtr b)
     while (aa >= 0);
 }
 
-static void doIterate1(BitSetPtr a, OpenBitSetPtr b)
+static void doIterate1(const BitSetPtr& a, const OpenBitSetPtr& b)
 {
     int32_t aa = -1;
     int32_t bb = -1;
@@ -53,7 +53,7 @@ static void doIterate1(BitSetPtr a, OpenBitSetPtr b)
     while (aa >= 0);
 }
 
-static void doIterate2(BitSetPtr a, OpenBitSetPtr b)
+static void doIterate2(const BitSetPtr& a, const OpenBitSetPtr& b)
 {
     int32_t aa = -1;
     int32_t bb = -1;
@@ -67,7 +67,7 @@ static void doIterate2(BitSetPtr a, OpenBitSetPtr b)
     while (aa >= 0);
 }
 
-static void doIterate(BitSetPtr a, OpenBitSetPtr b, int32_t mode)
+static void doIterate(const BitSetPtr& a, const OpenBitSetPtr& b, int32_t mode)
 {
     if (mode == 1)
         doIterate1(a, b);

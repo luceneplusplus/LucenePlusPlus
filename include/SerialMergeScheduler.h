@@ -22,7 +22,7 @@ namespace Lucene
     public:
         /// Just do the merges in sequence. We do this "synchronized" so that even if the application is using
         /// multiple threads, only one merge may run at a time.
-        virtual void merge(IndexWriterPtr writer);
+        virtual void merge(const IndexWriterPtr& writer);
 
         /// Close this MergeScheduler.
         virtual void close();

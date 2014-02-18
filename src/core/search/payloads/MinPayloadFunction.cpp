@@ -16,7 +16,7 @@ namespace Lucene
     }
 
     double MinPayloadFunction::currentScore(int32_t docId, const String& field, int32_t start, int32_t end,
-                                                int32_t numPayloadsSeen, double currentScore, double currentPayloadScore)
+                                            int32_t numPayloadsSeen, double currentScore, double currentPayloadScore)
     {
         if (numPayloadsSeen == 0)
             return currentPayloadScore;
@@ -37,7 +37,7 @@ namespace Lucene
         return result;
     }
 
-    bool MinPayloadFunction::equals(LuceneObjectPtr other)
+    bool MinPayloadFunction::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

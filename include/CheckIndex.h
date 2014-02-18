@@ -21,7 +21,7 @@ namespace Lucene
     {
     public:
         /// Create a new CheckIndex on the directory.
-        CheckIndex(DirectoryPtr dir);
+        CheckIndex(const DirectoryPtr& dir);
         virtual ~CheckIndex();
 
         LUCENE_CLASS(CheckIndex);
@@ -34,7 +34,7 @@ namespace Lucene
 
     public:
         /// Set infoStream where messages should go.  If null, no messages are printed
-        void setInfoStream(InfoStreamPtr out);
+        void setInfoStream(const InfoStreamPtr& out);
 
         /// Returns a {@link IndexStatus} instance detailing the state of the index.
         ///
@@ -61,7 +61,7 @@ namespace Lucene
         /// segments from the index. BE CAREFUL.
         ///
         /// WARNING: Make sure you only call this when the index is not opened  by any writer.
-        void fixIndex(IndexStatusPtr result);
+        void fixIndex(const IndexStatusPtr& result);
 
         static bool testAsserts();
         static bool assertsOn();
@@ -93,16 +93,16 @@ namespace Lucene
         void msg(const String& msg);
 
         /// Test field norms.
-        FieldNormStatusPtr testFieldNorms(Collection<String> fieldNames, SegmentReaderPtr reader);
+        FieldNormStatusPtr testFieldNorms(Collection<String> fieldNames, const SegmentReaderPtr& reader);
 
         /// Test the term index.
-        TermIndexStatusPtr testTermIndex(SegmentInfoPtr info, SegmentReaderPtr reader);
+        TermIndexStatusPtr testTermIndex(const SegmentInfoPtr& info, const SegmentReaderPtr& reader);
 
         /// Test stored fields for a segment.
-        StoredFieldStatusPtr testStoredFields(SegmentInfoPtr info, SegmentReaderPtr reader);
+        StoredFieldStatusPtr testStoredFields(const SegmentInfoPtr& info, const SegmentReaderPtr& reader);
 
         /// Test term vectors for a segment.
-        TermVectorStatusPtr testTermVectors(SegmentInfoPtr info, SegmentReaderPtr reader);
+        TermVectorStatusPtr testTermVectors(const SegmentInfoPtr& info, const SegmentReaderPtr& reader);
     };
 
     /// Returned from {@link #checkIndex()} detailing the health and status of the index.

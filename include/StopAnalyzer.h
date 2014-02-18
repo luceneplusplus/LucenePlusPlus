@@ -28,7 +28,7 @@ namespace Lucene
         StopAnalyzer(LuceneVersion::Version matchVersion, const String& stopwordsFile);
 
         /// Builds an analyzer with the stop words from the given reader.
-        StopAnalyzer(LuceneVersion::Version matchVersion, ReaderPtr stopwords);
+        StopAnalyzer(LuceneVersion::Version matchVersion, const ReaderPtr& stopwords);
 
         virtual ~StopAnalyzer();
 
@@ -44,8 +44,8 @@ namespace Lucene
         /// An unmodifiable set containing some common English words that are usually not useful for searching.
         static const HashSet<String> ENGLISH_STOP_WORDS_SET();
 
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
     };
 }
 

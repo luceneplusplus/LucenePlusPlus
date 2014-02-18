@@ -16,7 +16,7 @@ namespace Lucene
     public:
         /// @param queryTerms The original list of terms from the query, can contain duplicates
         QueryTermVector(Collection<String> queryTerms);
-        QueryTermVector(const String& queryString, AnalyzerPtr analyzer);
+        QueryTermVector(const String& queryString, const AnalyzerPtr& analyzer);
 
         virtual ~QueryTermVector();
 

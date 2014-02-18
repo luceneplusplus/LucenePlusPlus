@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    PrefixTermEnum::PrefixTermEnum(IndexReaderPtr reader, TermPtr prefix)
+    PrefixTermEnum::PrefixTermEnum(const IndexReaderPtr& reader, const TermPtr& prefix)
     {
         this->_endEnum = false;
         this->prefix = prefix;
@@ -39,7 +39,7 @@ namespace Lucene
         return prefix;
     }
 
-    bool PrefixTermEnum::termCompare(TermPtr term)
+    bool PrefixTermEnum::termCompare(const TermPtr& term)
     {
         if (term->field() == prefix->field() && boost::starts_with(term->text(), prefix->text()))
             return true;

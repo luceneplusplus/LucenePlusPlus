@@ -17,7 +17,7 @@ namespace Lucene
     public:
         /// @param docIdSet The DocIdSet for the Filter
         /// @param positions A List of {@link PositionInfo} objects
-        SpanFilterResult(DocIdSetPtr docIdSet, Collection<PositionInfoPtr> positions);
+        SpanFilterResult(const DocIdSetPtr& docIdSet, Collection<PositionInfoPtr> positions);
 
         virtual ~SpanFilterResult();
 

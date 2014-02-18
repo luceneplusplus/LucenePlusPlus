@@ -20,8 +20,8 @@ namespace Lucene
         LUCENE_CLASS(SimpleAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
     };
 }
 

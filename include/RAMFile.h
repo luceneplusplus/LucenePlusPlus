@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         RAMFile(); // File used as buffer, in no RAMDirectory
-        RAMFile(RAMDirectoryPtr directory);
+        RAMFile(const RAMDirectoryPtr& directory);
         virtual ~RAMFile();
 
         LUCENE_CLASS(RAMFile);

@@ -27,7 +27,7 @@ static const String HIGH_PRIORITY = L"high";
 static const String MED_PRIORITY = L"medium";
 static const String LOW_PRIORITY = L"low";
 
-static void printHits(StringStream& out, Collection<ScoreDocPtr> hits, SearcherPtr searcher)
+static void printHits(StringStream& out, Collection<ScoreDocPtr> hits, const SearcherPtr& searcher)
 {
     out << hits.size() << L" total results\n";
     for (int32_t i = 0; i < hits.size(); ++i)
@@ -40,7 +40,7 @@ static void printHits(StringStream& out, Collection<ScoreDocPtr> hits, SearcherP
     }
 }
 
-static void checkHits(Collection<ScoreDocPtr> hits, int32_t expectedCount, SearcherPtr searcher)
+static void checkHits(Collection<ScoreDocPtr> hits, int32_t expectedCount, const SearcherPtr& searcher)
 {
     EXPECT_EQ(expectedCount, hits.size());
     for (int32_t i = 0; i < hits.size(); ++i)

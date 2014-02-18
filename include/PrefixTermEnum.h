@@ -18,7 +18,7 @@ namespace Lucene
     class LPPAPI PrefixTermEnum : public FilteredTermEnum
     {
     public:
-        PrefixTermEnum(IndexReaderPtr reader, TermPtr prefix);
+        PrefixTermEnum(const IndexReaderPtr& reader, const TermPtr& prefix);
         virtual ~PrefixTermEnum();
 
         LUCENE_CLASS(PrefixTermEnum);
@@ -32,7 +32,7 @@ namespace Lucene
 
     protected:
         virtual bool endEnum();
-        virtual bool termCompare(TermPtr term);
+        virtual bool termCompare(const TermPtr& term);
 
         TermPtr getPrefixTerm();
     };

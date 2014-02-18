@@ -26,7 +26,7 @@ namespace Lucene
         /// interested in from tokenStream and then access the values in {@link #isNewFragment()}.
         /// @param originalText the original source text.
         /// @param tokenStream the {@link TokenStream} to be fragmented.
-        virtual void start(const String& originalText, TokenStreamPtr tokenStream);
+        virtual void start(const String& originalText, const TokenStreamPtr& tokenStream);
 
         /// Test to see if this token from the stream should be held in a new TextFragment.
         /// Every time this is called, the TokenStream passed to start(String, TokenStream)

@@ -20,12 +20,12 @@ namespace Lucene
 
     public:
         /// Returns the matches for this query in an index.  Used internally to search for spans.
-        virtual SpansPtr getSpans(IndexReaderPtr reader) = 0;
+        virtual SpansPtr getSpans(const IndexReaderPtr& reader) = 0;
 
         /// Returns the name of the field matched by this query.
         virtual String getField() = 0;
 
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
     };
 }
 

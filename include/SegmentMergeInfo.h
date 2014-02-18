@@ -14,7 +14,7 @@ namespace Lucene
     class SegmentMergeInfo : public LuceneObject
     {
     public:
-        SegmentMergeInfo(int32_t b, TermEnumPtr te, IndexReaderPtr r);
+        SegmentMergeInfo(int32_t b, const TermEnumPtr& te, const IndexReaderPtr& r);
         virtual ~SegmentMergeInfo();
 
         LUCENE_CLASS(SegmentMergeInfo);

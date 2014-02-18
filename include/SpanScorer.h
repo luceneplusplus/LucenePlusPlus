@@ -15,7 +15,7 @@ namespace Lucene
     class LPPAPI SpanScorer : public Scorer
     {
     public:
-        SpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms);
+        SpanScorer(const SpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms);
         virtual ~SpanScorer();
 
         LUCENE_CLASS(SpanScorer);

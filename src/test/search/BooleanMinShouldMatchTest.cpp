@@ -70,7 +70,7 @@ public:
     IndexSearcherPtr s;
 
 public:
-    void verifyNrHits(QueryPtr q, int32_t expected)
+    void verifyNrHits(const QueryPtr& q, int32_t expected)
     {
         Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
         EXPECT_EQ(expected, h.size());
@@ -78,7 +78,7 @@ public:
     }
 
     /// Random rnd is passed in so that the exact same random query may be created more than once.
-    BooleanQueryPtr randBoolQuery(RandomPtr rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
+    BooleanQueryPtr randBoolQuery(const RandomPtr& rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
     {
         BooleanQueryPtr current = newLucene<BooleanQuery>(rnd->nextInt() < 0);
         for (int32_t i = 0; i < rnd->nextInt(vals.size()) + 1; ++i)
@@ -111,7 +111,7 @@ public:
         return current;
     }
 
-    void minNrCB(RandomPtr rnd, BooleanQueryPtr q)
+    void minNrCB(const RandomPtr& rnd, const BooleanQueryPtr& q)
     {
         Collection<BooleanClausePtr> c = q->getClauses();
         int32_t opt = 0;

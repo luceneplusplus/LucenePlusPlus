@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    BooleanClause::BooleanClause(QueryPtr query, Occur occur)
+    BooleanClause::BooleanClause(const QueryPtr& query, Occur occur)
     {
         this->query = query;
         this->occur = occur;
@@ -35,7 +35,7 @@ namespace Lucene
         return query;
     }
 
-    void BooleanClause::setQuery(QueryPtr query)
+    void BooleanClause::setQuery(const QueryPtr& query)
     {
         this->query = query;
     }
@@ -50,7 +50,7 @@ namespace Lucene
         return (occur == MUST);
     }
 
-    bool BooleanClause::equals(LuceneObjectPtr other)
+    bool BooleanClause::equals(const LuceneObjectPtr& other)
     {
         BooleanClausePtr otherBooleanClause(boost::dynamic_pointer_cast<BooleanClause>(other));
         if (!otherBooleanClause)

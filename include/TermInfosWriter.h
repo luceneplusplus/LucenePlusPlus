@@ -16,8 +16,8 @@ namespace Lucene
     class TermInfosWriter : public LuceneObject
     {
     public:
-        TermInfosWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval);
-        TermInfosWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval, bool isIndex);
+        TermInfosWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fis, int32_t interval);
+        TermInfosWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fis, int32_t interval, bool isIndex);
         virtual ~TermInfosWriter();
 
         LUCENE_CLASS(TermInfosWriter);
@@ -70,17 +70,17 @@ namespace Lucene
     public:
         virtual void initialize();
 
-        void add(TermPtr term, TermInfoPtr ti);
+        void add(const TermPtr& term, const TermInfoPtr& ti);
 
         /// Adds a new <<fieldNumber, termBytes>, TermInfo> pair to the set.  Term must be lexicographically
         /// greater than all previous Terms added. TermInfo pointers must be positive and greater than all previous.
-        void add(int32_t fieldNumber, ByteArray termBytes, int32_t termBytesLength, TermInfoPtr ti);
+        void add(int32_t fieldNumber, ByteArray termBytes, int32_t termBytesLength, const TermInfoPtr& ti);
 
         /// Called to complete TermInfos creation.
         void close();
 
     protected:
-        void initialize(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval, bool isi);
+        void initialize(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fis, int32_t interval, bool isi);
 
         /// Currently used only by assert statements
         bool initUnicodeResults();

@@ -27,12 +27,12 @@ namespace Lucene
         return FieldCache::DEFAULT();
     }
 
-    DocIdSetPtr FieldCacheTermsFilter::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr FieldCacheTermsFilter::getDocIdSet(const IndexReaderPtr& reader)
     {
         return newLucene<FieldCacheTermsFilterDocIdSet>(terms, getFieldCache()->getStringIndex(reader, field));
     }
 
-    FieldCacheTermsFilterDocIdSet::FieldCacheTermsFilterDocIdSet(Collection<String> terms, StringIndexPtr fcsi)
+    FieldCacheTermsFilterDocIdSet::FieldCacheTermsFilterDocIdSet(Collection<String> terms, const StringIndexPtr& fcsi)
     {
         this->fcsi = fcsi;
         openBitSet = newLucene<OpenBitSet>(this->fcsi->lookup.size());
@@ -58,7 +58,7 @@ namespace Lucene
         return true;
     }
 
-    FieldCacheTermsFilterDocIdSetIterator::FieldCacheTermsFilterDocIdSetIterator(StringIndexPtr fcsi, OpenBitSetPtr openBitSet)
+    FieldCacheTermsFilterDocIdSetIterator::FieldCacheTermsFilterDocIdSetIterator(const StringIndexPtr& fcsi, const OpenBitSetPtr& openBitSet)
     {
         this->fcsi = fcsi;
         this->openBitSet = openBitSet;

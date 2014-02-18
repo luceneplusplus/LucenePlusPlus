@@ -13,7 +13,7 @@ namespace Lucene
     {
     }
 
-    void TermsHashConsumer::setFieldInfos(FieldInfosPtr fieldInfos)
+    void TermsHashConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos)
     {
         this->fieldInfos = fieldInfos;
     }

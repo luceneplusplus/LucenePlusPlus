@@ -61,7 +61,7 @@ public:
         return lastDocCollected;
     }
 
-    virtual void setScorer(ScorerPtr scorer)
+    virtual void setScorer(const ScorerPtr& scorer)
     {
         // scorer is not needed
     }
@@ -77,7 +77,7 @@ public:
         lastDocCollected = docId;
     }
 
-    virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
     }
@@ -171,7 +171,7 @@ protected:
     QueryPtr query;
 
 public:
-    void add(const String& value, IndexWriterPtr writer)
+    void add(const String& value, const IndexWriterPtr& writer)
     {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(FIELD_NAME, value, Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -301,14 +301,14 @@ public:
         return StringUtils::toString(maxTime(multiThreaded)) + L" = " + buf.str();
     }
 
-    CollectorPtr createTimedCollector(MyHitCollectorPtr hc, int64_t timeAllowed, bool greedy)
+    CollectorPtr createTimedCollector(const MyHitCollectorPtr& hc, int64_t timeAllowed, bool greedy)
     {
         TimeLimitingCollectorPtr res = newLucene<TimeLimitingCollector>(hc, timeAllowed);
         res->setGreedy(greedy); // set to true to make sure at least one doc is collected.
         return res;
     }
 
-    void search(CollectorPtr collector)
+    void search(const CollectorPtr& collector)
     {
         searcher->search(query, collector);
     }

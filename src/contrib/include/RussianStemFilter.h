@@ -21,7 +21,7 @@ namespace Lucene
     class LPPCONTRIBAPI RussianStemFilter : public TokenFilter
     {
     public:
-        RussianStemFilter(TokenStreamPtr input);
+        RussianStemFilter(const TokenStreamPtr& input);
 
         virtual ~RussianStemFilter();
 
@@ -37,7 +37,7 @@ namespace Lucene
         virtual bool incrementToken();
 
         /// Set a alternative/custom {@link RussianStemmer} for this filter.
-        void setStemmer(RussianStemmerPtr stemmer);
+        void setStemmer(const RussianStemmerPtr& stemmer);
     };
 }
 

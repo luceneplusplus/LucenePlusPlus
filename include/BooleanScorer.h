@@ -30,7 +30,7 @@ namespace Lucene
     class BooleanScorer : public Scorer
     {
     public:
-        BooleanScorer(SimilarityPtr similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers);
+        BooleanScorer(const SimilarityPtr& similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers);
         virtual ~BooleanScorer();
 
         LUCENE_CLASS(BooleanScorer);
@@ -50,21 +50,21 @@ namespace Lucene
 
     protected:
         // firstDocID is ignored since nextDoc() initializes 'current'
-        virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
+        virtual bool score(const CollectorPtr& collector, int32_t max, int32_t firstDocID);
 
     public:
         virtual int32_t advance(int32_t target);
         virtual int32_t docID();
         virtual int32_t nextDoc();
         virtual double score();
-        virtual void score(CollectorPtr collector);
+        virtual void score(const CollectorPtr& collector);
         virtual String toString();
     };
 
     class BooleanScorerCollector : public Collector
     {
     public:
-        BooleanScorerCollector(int32_t mask, BucketTablePtr bucketTable);
+        BooleanScorerCollector(int32_t mask, const BucketTablePtr& bucketTable);
         virtual ~BooleanScorerCollector();
 
         LUCENE_CLASS(BooleanScorerCollector);
@@ -76,8 +76,8 @@ namespace Lucene
 
     public:
         virtual void collect(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+        virtual void setScorer(const ScorerPtr& scorer);
         virtual bool acceptsDocsOutOfOrder();
     };
 
@@ -143,7 +143,7 @@ namespace Lucene
     class SubScorer : public LuceneObject
     {
     public:
-        SubScorer(ScorerPtr scorer, bool required, bool prohibited, CollectorPtr collector, SubScorerPtr next);
+        SubScorer(const ScorerPtr& scorer, bool required, bool prohibited, const CollectorPtr& collector, const SubScorerPtr& next);
         virtual ~SubScorer();
 
         LUCENE_CLASS(SubScorer);

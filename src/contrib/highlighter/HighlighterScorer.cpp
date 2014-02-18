@@ -13,13 +13,13 @@ namespace Lucene
     {
     }
 
-    TokenStreamPtr HighlighterScorer::init(TokenStreamPtr tokenStream)
+    TokenStreamPtr HighlighterScorer::init(const TokenStreamPtr& tokenStream)
     {
         BOOST_ASSERT(false);
         return TokenStreamPtr(); // override
     }
 
-    void HighlighterScorer::startFragment(TextFragmentPtr newFragment)
+    void HighlighterScorer::startFragment(const TextFragmentPtr& newFragment)
     {
         BOOST_ASSERT(false);
         // override

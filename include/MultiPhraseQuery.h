@@ -42,7 +42,7 @@ namespace Lucene
 
         /// Add a single term at the next position in the phrase.
         /// @see PhraseQuery#add(Term)
-        void add(TermPtr term);
+        void add(const TermPtr& term);
 
         /// Add multiple terms at the next position in the phrase.  Any of the terms may match.
         /// @see PhraseQuery#add(Term)
@@ -59,15 +59,15 @@ namespace Lucene
         Collection<int32_t> getPositions();
 
         virtual void extractTerms(SetTerm terms);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
     protected:
         int32_t termArraysHashCode();

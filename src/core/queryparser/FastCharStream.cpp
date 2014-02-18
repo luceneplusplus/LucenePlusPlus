@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    FastCharStream::FastCharStream(ReaderPtr reader)
+    FastCharStream::FastCharStream(const ReaderPtr& reader)
     {
         input = reader;
         bufferLength = 0;

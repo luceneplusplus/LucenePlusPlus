@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    ASCIIFoldingFilter::ASCIIFoldingFilter(TokenStreamPtr input) : TokenFilter(input)
+    ASCIIFoldingFilter::ASCIIFoldingFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         output = CharArray::newInstance(512);
         outputPos = 0;

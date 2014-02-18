@@ -25,7 +25,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture BooleanPrefixQueryTest;
 
-static int32_t getCount(IndexReaderPtr r, QueryPtr q)
+static int32_t getCount(const IndexReaderPtr& r, const QueryPtr& q)
 {
     if (MiscUtils::typeOf<BooleanQuery>(q))
         return boost::dynamic_pointer_cast<BooleanQuery>(q)->getClauses().size();

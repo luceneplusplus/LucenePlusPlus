@@ -71,7 +71,7 @@ namespace Lucene
         }
     }
 
-    int64_t MultiLevelSkipListWriter::writeSkip(IndexOutputPtr output)
+    int64_t MultiLevelSkipListWriter::writeSkip(const IndexOutputPtr& output)
     {
         int64_t skipPointer = output->getFilePointer();
         if (!skipBuffer || skipBuffer.empty())

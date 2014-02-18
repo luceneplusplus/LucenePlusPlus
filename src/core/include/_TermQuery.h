@@ -14,7 +14,7 @@ namespace Lucene
     class TermWeight : public Weight
     {
     public:
-        TermWeight(TermQueryPtr query, SearcherPtr searcher);
+        TermWeight(const TermQueryPtr& query, const SearcherPtr& searcher);
         virtual ~TermWeight();
 
         LUCENE_CLASS(TermWeight);
@@ -34,8 +34,8 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
     };
 }
 

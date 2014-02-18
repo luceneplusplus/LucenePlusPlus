@@ -29,13 +29,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CachingSpanFilterTest;
 
-static IndexReaderPtr refreshReader(IndexReaderPtr reader)
+static IndexReaderPtr refreshReader(const IndexReaderPtr& reader)
 {
-    IndexReaderPtr oldReader = reader;
-    reader = reader->reopen();
-    if (reader != oldReader)
+    IndexReaderPtr _reader(reader);
+    IndexReaderPtr oldReader = _reader;
+    _reader = _reader->reopen();
+    if (_reader != oldReader)
         oldReader->close();
-    return reader;
+    return _reader;
 }
 
 TEST_F(CachingSpanFilterTest, testEnforceDeletions)

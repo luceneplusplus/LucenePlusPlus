@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    SingleTermEnum::SingleTermEnum(IndexReaderPtr reader, TermPtr singleTerm)
+    SingleTermEnum::SingleTermEnum(const IndexReaderPtr& reader, const TermPtr& singleTerm)
     {
         this->_endEnum = false;
         this->singleTerm = singleTerm;
@@ -32,7 +32,7 @@ namespace Lucene
         return _endEnum;
     }
 
-    bool SingleTermEnum::termCompare(TermPtr term)
+    bool SingleTermEnum::termCompare(const TermPtr& term)
     {
         if (term->equals(singleTerm))
             return true;

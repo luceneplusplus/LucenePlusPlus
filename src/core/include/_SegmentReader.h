@@ -15,7 +15,7 @@ namespace Lucene
     class CoreReaders : public LuceneObject
     {
     public:
-        CoreReaders(SegmentReaderPtr origInstance, DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, int32_t termsIndexDivisor);
+        CoreReaders(const SegmentReaderPtr& origInstance, const DirectoryPtr& dir, const SegmentInfoPtr& si, int32_t readBufferSize, int32_t termsIndexDivisor);
         virtual ~CoreReaders();
 
         LUCENE_CLASS(CoreReaders);
@@ -57,9 +57,9 @@ namespace Lucene
         /// NOTE: only called from IndexWriter when a near real-time reader is opened, or applyDeletes is run,
         /// sharing a segment that's still being merged.  This method is not fully thread safe, and relies on the
         /// synchronization in IndexWriter
-        void loadTermsIndex(SegmentInfoPtr si, int32_t termsIndexDivisor);
+        void loadTermsIndex(const SegmentInfoPtr& si, int32_t termsIndexDivisor);
 
-        void openDocStores(SegmentInfoPtr si);
+        void openDocStores(const SegmentInfoPtr& si);
 
         void decRef();
 
@@ -70,7 +70,7 @@ namespace Lucene
     class FieldsReaderLocal : public CloseableThreadLocal<FieldsReader>
     {
     public:
-        FieldsReaderLocal(SegmentReaderPtr reader);
+        FieldsReaderLocal(const SegmentReaderPtr& reader);
 
     protected:
         SegmentReaderWeakPtr _reader;
@@ -107,7 +107,7 @@ namespace Lucene
     {
     public:
         Norm();
-        Norm(SegmentReaderPtr reader, IndexInputPtr in, int32_t number, int64_t normSeek);
+        Norm(const SegmentReaderPtr& reader, const IndexInputPtr& in, int32_t number, int64_t normSeek);
         virtual ~Norm();
 
         LUCENE_CLASS(Norm);
@@ -147,10 +147,10 @@ namespace Lucene
         ByteArray copyOnWrite();
 
         /// Returns a copy of this Norm instance that shares IndexInput & bytes with the original one
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Flush all pending changes to the next generation separate norms file.
-        void reWrite(SegmentInfoPtr si);
+        void reWrite(const SegmentInfoPtr& si);
 
     protected:
         void closeInput();

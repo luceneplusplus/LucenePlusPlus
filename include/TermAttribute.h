@@ -75,9 +75,9 @@ namespace Lucene
 
         virtual int32_t hashCode();
         virtual void clear();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual bool equals(LuceneObjectPtr other);
-        virtual void copyTo(AttributePtr target);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual bool equals(const LuceneObjectPtr& other);
+        virtual void copyTo(const AttributePtr& target);
 
     protected:
         /// Allocates a buffer char[] of at least newSize, without preserving the existing content.  Its always

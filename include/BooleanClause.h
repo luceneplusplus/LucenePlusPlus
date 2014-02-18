@@ -32,7 +32,7 @@ namespace Lucene
         };
 
     public:
-        BooleanClause(QueryPtr query, Occur occur);
+        BooleanClause(const QueryPtr& query, Occur occur);
         virtual ~BooleanClause();
 
         LUCENE_CLASS(BooleanClause);
@@ -47,12 +47,12 @@ namespace Lucene
         void setOccur(Occur occur);
 
         QueryPtr getQuery();
-        void setQuery(QueryPtr query);
+        void setQuery(const QueryPtr& query);
 
         bool isProhibited();
         bool isRequired();
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
         virtual String toString();
     };

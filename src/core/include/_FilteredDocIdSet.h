@@ -15,7 +15,7 @@ namespace Lucene
     class DefaultFilteredDocIdSetIterator : public FilteredDocIdSetIterator
     {
     public:
-        DefaultFilteredDocIdSetIterator(FilteredDocIdSetPtr filtered, DocIdSetIteratorPtr innerIter);
+        DefaultFilteredDocIdSetIterator(const FilteredDocIdSetPtr& filtered, const DocIdSetIteratorPtr& innerIter);
         virtual ~DefaultFilteredDocIdSetIterator();
 
         LUCENE_CLASS(DefaultFilteredDocIdSetIterator);

@@ -88,7 +88,7 @@ namespace Lucene
         }
     }
 
-    void IndexOutput::copyBytes(IndexInputPtr input, int64_t numBytes)
+    void IndexOutput::copyBytes(const IndexInputPtr& input, int64_t numBytes)
     {
         BOOST_ASSERT(numBytes >= 0);
         int64_t left = numBytes;

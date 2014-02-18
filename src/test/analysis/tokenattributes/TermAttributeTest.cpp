@@ -13,7 +13,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture TermAttributeTest;
 
-static AttributePtr checkCloneIsEqual(AttributePtr att)
+static AttributePtr checkCloneIsEqual(const AttributePtr& att)
 {
     AttributePtr clone = boost::dynamic_pointer_cast<Attribute>(att->clone());
     EXPECT_TRUE(att->equals(clone));
@@ -22,7 +22,7 @@ static AttributePtr checkCloneIsEqual(AttributePtr att)
 }
 
 template <class ATTR>
-static AttributePtr checkCopyIsEqual(AttributePtr att)
+static AttributePtr checkCopyIsEqual(const AttributePtr& att)
 {
     AttributePtr copy = newLucene<ATTR>();
     att->copyTo(copy);

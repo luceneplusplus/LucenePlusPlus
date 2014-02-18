@@ -24,7 +24,7 @@ DECLARE_SHARED_PTR(MultiThreadTermVectorsReader)
 class MultiThreadTermVectorsReader : public LuceneThread
 {
 public:
-    MultiThreadTermVectorsReader(IndexReaderPtr reader)
+    MultiThreadTermVectorsReader(const IndexReaderPtr& reader)
     {
         this->reader = reader;
         timeElapsed = 0;
@@ -128,7 +128,7 @@ protected:
     int32_t numThreads;
 
 public:
-    void testTermPositionVectors(IndexReaderPtr reader, int32_t threadCount)
+    void testTermPositionVectors(const IndexReaderPtr& reader, int32_t threadCount)
     {
         Collection<MultiThreadTermVectorsReaderPtr> mtr = Collection<MultiThreadTermVectorsReaderPtr>::newInstance(threadCount);
         for (int32_t i = 0; i < threadCount; ++i)

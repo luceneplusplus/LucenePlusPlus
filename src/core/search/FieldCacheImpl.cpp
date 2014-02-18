@@ -41,7 +41,7 @@ namespace Lucene
         initialize();
     }
 
-    void FieldCacheImpl::purge(IndexReaderPtr r)
+    void FieldCacheImpl::purge(const IndexReaderPtr& r)
     {
         for (MapStringCache::iterator cache = caches.begin(); cache != caches.end(); ++cache)
             cache->second->purge(r);
@@ -67,57 +67,57 @@ namespace Lucene
         return result;
     }
 
-    Collection<uint8_t> FieldCacheImpl::getBytes(IndexReaderPtr reader, const String& field)
+    Collection<uint8_t> FieldCacheImpl::getBytes(const IndexReaderPtr& reader, const String& field)
     {
         return getBytes(reader, field, ByteParserPtr());
     }
 
-    Collection<uint8_t> FieldCacheImpl::getBytes(IndexReaderPtr reader, const String& field, ByteParserPtr parser)
+    Collection<uint8_t> FieldCacheImpl::getBytes(const IndexReaderPtr& reader, const String& field, const ByteParserPtr& parser)
     {
         return VariantUtils::get< Collection<uint8_t> >(caches.get(CACHE_BYTE)->get(reader, newLucene<Entry>(field, parser)));
     }
 
-    Collection<int32_t> FieldCacheImpl::getInts(IndexReaderPtr reader, const String& field)
+    Collection<int32_t> FieldCacheImpl::getInts(const IndexReaderPtr& reader, const String& field)
     {
         return getInts(reader, field, IntParserPtr());
     }
 
-    Collection<int32_t> FieldCacheImpl::getInts(IndexReaderPtr reader, const String& field, IntParserPtr parser)
+    Collection<int32_t> FieldCacheImpl::getInts(const IndexReaderPtr& reader, const String& field, const IntParserPtr& parser)
     {
         return VariantUtils::get< Collection<int32_t> >(caches.get(CACHE_INT)->get(reader, newLucene<Entry>(field, parser)));
     }
 
-    Collection<int64_t> FieldCacheImpl::getLongs(IndexReaderPtr reader, const String& field)
+    Collection<int64_t> FieldCacheImpl::getLongs(const IndexReaderPtr& reader, const String& field)
     {
         return getLongs(reader, field, LongParserPtr());
     }
 
-    Collection<int64_t> FieldCacheImpl::getLongs(IndexReaderPtr reader, const String& field, LongParserPtr parser)
+    Collection<int64_t> FieldCacheImpl::getLongs(const IndexReaderPtr& reader, const String& field, const LongParserPtr& parser)
     {
         return VariantUtils::get< Collection<int64_t> >(caches.get(CACHE_LONG)->get(reader, newLucene<Entry>(field, parser)));
     }
 
-    Collection<double> FieldCacheImpl::getDoubles(IndexReaderPtr reader, const String& field)
+    Collection<double> FieldCacheImpl::getDoubles(const IndexReaderPtr& reader, const String& field)
     {
         return getDoubles(reader, field, DoubleParserPtr());
     }
 
-    Collection<double> FieldCacheImpl::getDoubles(IndexReaderPtr reader, const String& field, DoubleParserPtr parser)
+    Collection<double> FieldCacheImpl::getDoubles(const IndexReaderPtr& reader, const String& field, const DoubleParserPtr& parser)
     {
         return VariantUtils::get< Collection<double> >(caches.get(CACHE_DOUBLE)->get(reader, newLucene<Entry>(field, parser)));
     }
 
-    Collection<String> FieldCacheImpl::getStrings(IndexReaderPtr reader, const String& field)
+    Collection<String> FieldCacheImpl::getStrings(const IndexReaderPtr& reader, const String& field)
     {
         return VariantUtils::get< Collection<String> >(caches.get(CACHE_STRING)->get(reader, newLucene<Entry>(field, ParserPtr())));
     }
 
-    StringIndexPtr FieldCacheImpl::getStringIndex(IndexReaderPtr reader, const String& field)
+    StringIndexPtr FieldCacheImpl::getStringIndex(const IndexReaderPtr& reader, const String& field)
     {
         return VariantUtils::get< StringIndexPtr >(caches.get(CACHE_STRING_INDEX)->get(reader, newLucene<Entry>(field, ParserPtr())));
     }
 
-    void FieldCacheImpl::setInfoStream(InfoStreamPtr stream)
+    void FieldCacheImpl::setInfoStream(const InfoStreamPtr& stream)
     {
         infoStream = stream;
     }
@@ -137,7 +137,7 @@ namespace Lucene
     {
     }
 
-    bool Entry::equals(LuceneObjectPtr other)
+    bool Entry::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -156,7 +156,7 @@ namespace Lucene
         return StringUtils::hashCode(field) ^ VariantUtils::hashCode(custom);
     }
 
-    Cache::Cache(FieldCachePtr wrapper)
+    Cache::Cache(const FieldCachePtr& wrapper)
     {
         this->_wrapper = wrapper;
         this->readerCache = WeakMapLuceneObjectMapEntryAny::newInstance();
@@ -166,14 +166,14 @@ namespace Lucene
     {
     }
 
-    void Cache::purge(IndexReaderPtr r)
+    void Cache::purge(const IndexReaderPtr& r)
     {
         LuceneObjectPtr readerKey(r->getFieldCacheKey());
         SyncLock cacheLock(&readerCache);
         readerCache.remove(readerKey);
     }
 
-    boost::any Cache::get(IndexReaderPtr reader, EntryPtr key)
+    boost::any Cache::get(const IndexReaderPtr& reader, const EntryPtr& key)
     {
         MapEntryAny innerCache;
         boost::any value;
@@ -222,7 +222,7 @@ namespace Lucene
         return value;
     }
 
-    void Cache::printNewInsanity(InfoStreamPtr infoStream, boost::any value)
+    void Cache::printNewInsanity(const InfoStreamPtr& infoStream, boost::any value)
     {
         Collection<InsanityPtr> insanities(FieldCacheSanityChecker::checkSanity(FieldCachePtr(_wrapper)));
         for (Collection<InsanityPtr>::iterator insanity = insanities.begin(); insanity != insanities.end(); ++insanity)
@@ -240,7 +240,7 @@ namespace Lucene
         }
     }
 
-    ByteCache::ByteCache(FieldCachePtr wrapper) : Cache(wrapper)
+    ByteCache::ByteCache(const FieldCachePtr& wrapper) : Cache(wrapper)
     {
     }
 
@@ -248,7 +248,7 @@ namespace Lucene
     {
     }
 
-    boost::any ByteCache::createValue(IndexReaderPtr reader, EntryPtr key)
+    boost::any ByteCache::createValue(const IndexReaderPtr& reader, const EntryPtr& key)
     {
         EntryPtr entry(key);
         String field(entry->field);
@@ -286,7 +286,7 @@ namespace Lucene
         return retArray;
     }
 
-    IntCache::IntCache(FieldCachePtr wrapper) : Cache(wrapper)
+    IntCache::IntCache(const FieldCachePtr& wrapper) : Cache(wrapper)
     {
     }
 
@@ -294,7 +294,7 @@ namespace Lucene
     {
     }
 
-    boost::any IntCache::createValue(IndexReaderPtr reader, EntryPtr key)
+    boost::any IntCache::createValue(const IndexReaderPtr& reader, const EntryPtr& key)
     {
         EntryPtr entry(key);
         String field(entry->field);
@@ -348,7 +348,7 @@ namespace Lucene
         return retArray;
     }
 
-    LongCache::LongCache(FieldCachePtr wrapper) : Cache(wrapper)
+    LongCache::LongCache(const FieldCachePtr& wrapper) : Cache(wrapper)
     {
     }
 
@@ -356,7 +356,7 @@ namespace Lucene
     {
     }
 
-    boost::any LongCache::createValue(IndexReaderPtr reader, EntryPtr key)
+    boost::any LongCache::createValue(const IndexReaderPtr& reader, const EntryPtr& key)
     {
         EntryPtr entry(key);
         String field(entry->field);
@@ -410,7 +410,7 @@ namespace Lucene
         return retArray;
     }
 
-    DoubleCache::DoubleCache(FieldCachePtr wrapper) : Cache(wrapper)
+    DoubleCache::DoubleCache(const FieldCachePtr& wrapper) : Cache(wrapper)
     {
     }
 
@@ -418,7 +418,7 @@ namespace Lucene
     {
     }
 
-    boost::any DoubleCache::createValue(IndexReaderPtr reader, EntryPtr key)
+    boost::any DoubleCache::createValue(const IndexReaderPtr& reader, const EntryPtr& key)
     {
         EntryPtr entry(key);
         String field(entry->field);
@@ -472,7 +472,7 @@ namespace Lucene
         return retArray;
     }
 
-    StringCache::StringCache(FieldCachePtr wrapper) : Cache(wrapper)
+    StringCache::StringCache(const FieldCachePtr& wrapper) : Cache(wrapper)
     {
     }
 
@@ -480,7 +480,7 @@ namespace Lucene
     {
     }
 
-    boost::any StringCache::createValue(IndexReaderPtr reader, EntryPtr key)
+    boost::any StringCache::createValue(const IndexReaderPtr& reader, const EntryPtr& key)
     {
         EntryPtr entry(key);
         String field(entry->field);
@@ -512,7 +512,7 @@ namespace Lucene
         return retArray;
     }
 
-    StringIndexCache::StringIndexCache(FieldCachePtr wrapper) : Cache(wrapper)
+    StringIndexCache::StringIndexCache(const FieldCachePtr& wrapper) : Cache(wrapper)
     {
     }
 
@@ -520,7 +520,7 @@ namespace Lucene
     {
     }
 
-    boost::any StringIndexCache::createValue(IndexReaderPtr reader, EntryPtr key)
+    boost::any StringIndexCache::createValue(const IndexReaderPtr& reader, const EntryPtr& key)
     {
         EntryPtr entry(key);
         String field(entry->field);
@@ -577,7 +577,7 @@ namespace Lucene
         return newLucene<StringIndex>(retArray, mterms);
     }
 
-    FieldCacheEntryImpl::FieldCacheEntryImpl(LuceneObjectPtr readerKey, const String& fieldName, int32_t cacheType, boost::any custom, boost::any value)
+    FieldCacheEntryImpl::FieldCacheEntryImpl(const LuceneObjectPtr& readerKey, const String& fieldName, int32_t cacheType, boost::any custom, boost::any value)
     {
         this->readerKey = readerKey;
         this->fieldName = fieldName;

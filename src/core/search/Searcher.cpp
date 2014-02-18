@@ -21,37 +21,37 @@ namespace Lucene
     {
     }
 
-    TopFieldDocsPtr Searcher::search(QueryPtr query, FilterPtr filter, int32_t n, SortPtr sort)
+    TopFieldDocsPtr Searcher::search(const QueryPtr& query, const FilterPtr& filter, int32_t n, const SortPtr& sort)
     {
         return search(createWeight(query), filter, n, sort);
     }
 
-    void Searcher::search(QueryPtr query, CollectorPtr results)
+    void Searcher::search(const QueryPtr& query, const CollectorPtr& results)
     {
         search(createWeight(query), FilterPtr(), results);
     }
 
-    void Searcher::search(QueryPtr query, FilterPtr filter, CollectorPtr results)
+    void Searcher::search(const QueryPtr& query, const FilterPtr& filter, const CollectorPtr& results)
     {
         search(createWeight(query), filter, results);
     }
 
-    TopDocsPtr Searcher::search(QueryPtr query, FilterPtr filter, int32_t n)
+    TopDocsPtr Searcher::search(const QueryPtr& query, const FilterPtr& filter, int32_t n)
     {
         return search(createWeight(query), filter, n);
     }
 
-    TopDocsPtr Searcher::search(QueryPtr query, int32_t n)
+    TopDocsPtr Searcher::search(const QueryPtr& query, int32_t n)
     {
         return search(query, FilterPtr(), n);
     }
 
-    ExplanationPtr Searcher::explain(QueryPtr query, int32_t doc)
+    ExplanationPtr Searcher::explain(const QueryPtr& query, int32_t doc)
     {
         return explain(createWeight(query), doc);
     }
 
-    void Searcher::setSimilarity(SimilarityPtr similarity)
+    void Searcher::setSimilarity(const SimilarityPtr& similarity)
     {
         this->similarity = similarity;
     }
@@ -61,7 +61,7 @@ namespace Lucene
         return this->similarity;
     }
 
-    WeightPtr Searcher::createWeight(QueryPtr query)
+    WeightPtr Searcher::createWeight(const QueryPtr& query)
     {
         return query->weight(shared_from_this());
     }

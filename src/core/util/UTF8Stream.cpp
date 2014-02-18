@@ -185,7 +185,7 @@ namespace Lucene
         #endif
     }
 
-    UTF8EncoderStream::UTF8EncoderStream(ReaderPtr reader) : UTF8Encoder(NULL, NULL)
+    UTF8EncoderStream::UTF8EncoderStream(const ReaderPtr& reader) : UTF8Encoder(NULL, NULL)
     {
         this->reader = reader;
     }
@@ -334,7 +334,7 @@ namespace Lucene
         #endif
     }
 
-    UTF8DecoderStream::UTF8DecoderStream(ReaderPtr reader)  : UTF8Decoder(NULL, NULL)
+    UTF8DecoderStream::UTF8DecoderStream(const ReaderPtr& reader)  : UTF8Decoder(NULL, NULL)
     {
         this->reader = reader;
     }

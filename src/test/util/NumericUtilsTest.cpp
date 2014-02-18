@@ -378,7 +378,7 @@ TEST_F(NumericUtilsTest, testLongExtremeValues)
     );
 }
 
-static int64_t randomLong(RandomPtr random)
+static int64_t randomLong(const RandomPtr& random)
 {
     int64_t val;
     switch (random->nextInt(4))
@@ -410,7 +410,7 @@ static int64_t randomLong(RandomPtr random)
     return val;
 }
 
-static void executeOneRandomSplit(RandomPtr random)
+static void executeOneRandomSplit(const RandomPtr& random)
 {
     int64_t lower = randomLong(random);
     int64_t len = (int64_t)random->nextInt(16384 * 1024); // not too large bitsets, else OOME!

@@ -14,7 +14,7 @@ namespace Lucene
     class MyCommitPoint : public IndexCommit
     {
     public:
-        MyCommitPoint(SnapshotDeletionPolicyPtr deletionPolicy, IndexCommitPtr cp);
+        MyCommitPoint(const SnapshotDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& cp);
         virtual ~MyCommitPoint();
 
         LUCENE_CLASS(MyCommitPoint);

@@ -56,7 +56,7 @@ DECLARE_SHARED_PTR(ExceptionsIndexerThread)
 class ExceptionsIndexerThread : public LuceneThread
 {
 public:
-    ExceptionsIndexerThread(IndexWriterPtr writer, IndexWriterExceptionsTest* fixture)
+    ExceptionsIndexerThread(const IndexWriterPtr& writer, IndexWriterExceptionsTest* fixture)
     {
         this->writer = writer;
         this->fixture = fixture;
@@ -142,7 +142,7 @@ public:
 class MockIndexWriter : public IndexWriter
 {
 public:
-    MockIndexWriter(DirectoryPtr dir, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
+    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
     {
         this->r = newLucene<Random>(17);
     }

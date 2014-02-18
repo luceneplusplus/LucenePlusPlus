@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI SimilarityDelegator : public Similarity
     {
     public:
-        SimilarityDelegator(SimilarityPtr delegee);
+        SimilarityDelegator(const SimilarityPtr& delegee);
         virtual ~SimilarityDelegator();
 
         LUCENE_CLASS(SimilarityDelegator);
@@ -25,7 +25,7 @@ namespace Lucene
         SimilarityPtr delegee;
 
     public:
-        virtual double computeNorm(const String& field, FieldInvertStatePtr state);
+        virtual double computeNorm(const String& field, const FieldInvertStatePtr& state);
         virtual double lengthNorm(const String& fieldName, int32_t numTokens);
         virtual double queryNorm(double sumOfSquaredWeights);
         virtual double tf(double freq);

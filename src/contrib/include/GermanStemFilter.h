@@ -20,10 +20,10 @@ namespace Lucene
     class LPPCONTRIBAPI GermanStemFilter : public TokenFilter
     {
     public:
-        GermanStemFilter(TokenStreamPtr input);
+        GermanStemFilter(const TokenStreamPtr& input);
 
         /// Builds a GermanStemFilter that uses an exclusion table.
-        GermanStemFilter(TokenStreamPtr input, HashSet<String> exclusionSet);
+        GermanStemFilter(const TokenStreamPtr& input, HashSet<String> exclusionSet);
 
         virtual ~GermanStemFilter();
 
@@ -40,7 +40,7 @@ namespace Lucene
         virtual bool incrementToken();
 
         /// Set a alternative/custom {@link GermanStemmer} for this filter.
-        void setStemmer(GermanStemmerPtr stemmer);
+        void setStemmer(const GermanStemmerPtr& stemmer);
 
         /// Set an alternative exclusion list for this filter.
         void setExclusionSet(HashSet<String> exclusionSet);

@@ -20,7 +20,7 @@ namespace Lucene
         /// @param td An iterator over the documents matching the Term.
         /// @param similarity The Similarity implementation to be used for score computations.
         /// @param norms The field norms of the document fields for the Term.
-        TermScorer(WeightPtr weight, TermDocsPtr td, SimilarityPtr similarity, ByteArray norms);
+        TermScorer(const WeightPtr& weight, const TermDocsPtr& td, const SimilarityPtr& similarity, ByteArray norms);
 
         virtual ~TermScorer();
 
@@ -42,7 +42,7 @@ namespace Lucene
         Collection<double> scoreCache;
 
     public:
-        virtual void score(CollectorPtr collector);
+        virtual void score(const CollectorPtr& collector);
         virtual int32_t docID();
 
         /// Advances to the next document matching the query.
@@ -65,7 +65,7 @@ namespace Lucene
     protected:
         static const Collection<double> SIM_NORM_DECODER();
 
-        virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
+        virtual bool score(const CollectorPtr& collector, int32_t max, int32_t firstDocID);
     };
 }
 

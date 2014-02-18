@@ -13,7 +13,7 @@
 
 namespace Lucene
 {
-    BooleanScorer2::BooleanScorer2(SimilarityPtr similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> required, Collection<ScorerPtr> prohibited, Collection<ScorerPtr> optional) : Scorer(similarity)
+    BooleanScorer2::BooleanScorer2(const SimilarityPtr& similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> required, Collection<ScorerPtr> prohibited, Collection<ScorerPtr> optional) : Scorer(similarity)
     {
         this->minNrShouldMatch = minNrShouldMatch;
         this->requiredScorers = required;
@@ -51,7 +51,7 @@ namespace Lucene
         return newLucene<CountingConjunctionSumScorer>(shared_from_this(), Similarity::getDefault(), requiredScorers);
     }
 
-    ScorerPtr BooleanScorer2::dualConjunctionSumScorer(ScorerPtr req1, ScorerPtr req2)
+    ScorerPtr BooleanScorer2::dualConjunctionSumScorer(const ScorerPtr& req1, const ScorerPtr& req2)
     {
         Collection<ScorerPtr> scorers(newCollection<ScorerPtr>(req1, req2));
 
@@ -97,19 +97,19 @@ namespace Lucene
         }
     }
 
-    ScorerPtr BooleanScorer2::addProhibitedScorers(ScorerPtr requiredCountingSumScorer)
+    ScorerPtr BooleanScorer2::addProhibitedScorers(const ScorerPtr& requiredCountingSumScorer)
     {
         return prohibitedScorers.empty() ? requiredCountingSumScorer : newLucene<ReqExclScorer>(requiredCountingSumScorer, (prohibitedScorers.size() == 1 ? prohibitedScorers[0] : newLucene<DisjunctionSumScorer>(prohibitedScorers)));
     }
 
-    void BooleanScorer2::score(CollectorPtr collector)
+    void BooleanScorer2::score(const CollectorPtr& collector)
     {
         collector->setScorer(shared_from_this());
         while ((doc = countingSumScorer->nextDoc()) != NO_MORE_DOCS)
             collector->collect(doc);
     }
 
-    bool BooleanScorer2::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
+    bool BooleanScorer2::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
     {
         doc = firstDocID;
         collector->setScorer(shared_from_this());
@@ -145,7 +145,7 @@ namespace Lucene
         return doc;
     }
 
-    Coordinator::Coordinator(BooleanScorer2Ptr scorer)
+    Coordinator::Coordinator(const BooleanScorer2Ptr& scorer)
     {
         _scorer = scorer;
         maxCoord = 0;
@@ -164,7 +164,7 @@ namespace Lucene
             coordFactors[i] = sim->coord(i, maxCoord);
     }
 
-    SingleMatchScorer::SingleMatchScorer(ScorerPtr scorer, CoordinatorPtr coordinator) : Scorer(scorer->getSimilarity())
+    SingleMatchScorer::SingleMatchScorer(const ScorerPtr& scorer, const CoordinatorPtr& coordinator) : Scorer(scorer->getSimilarity())
     {
         lastScoredDoc = -1;
         lastDocScore = std::numeric_limits<double>::quiet_NaN();
@@ -206,7 +206,7 @@ namespace Lucene
         return scorer->advance(target);
     }
 
-    CountingDisjunctionSumScorer::CountingDisjunctionSumScorer(BooleanScorer2Ptr scorer, Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers) : DisjunctionSumScorer(subScorers, minimumNrMatchers)
+    CountingDisjunctionSumScorer::CountingDisjunctionSumScorer(const BooleanScorer2Ptr& scorer, Collection<ScorerPtr> subScorers, int32_t minimumNrMatchers) : DisjunctionSumScorer(subScorers, minimumNrMatchers)
     {
         _scorer = scorer;
         lastScoredDoc = -1;
@@ -232,7 +232,7 @@ namespace Lucene
         return lastDocScore;
     }
 
-    CountingConjunctionSumScorer::CountingConjunctionSumScorer(BooleanScorer2Ptr scorer, SimilarityPtr similarity, Collection<ScorerPtr> scorers) : ConjunctionScorer(similarity, scorers)
+    CountingConjunctionSumScorer::CountingConjunctionSumScorer(const BooleanScorer2Ptr& scorer, const SimilarityPtr& similarity, Collection<ScorerPtr> scorers) : ConjunctionScorer(similarity, scorers)
     {
         _scorer = scorer;
         lastScoredDoc = -1;

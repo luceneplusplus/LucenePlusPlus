@@ -30,7 +30,7 @@ namespace Lucene
     {
     }
 
-    void SimpleFragmenter::start(const String& originalText, TokenStreamPtr tokenStream)
+    void SimpleFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
     {
         offsetAtt = tokenStream->addAttribute<OffsetAttribute>();
         currentNumFrags = 1;

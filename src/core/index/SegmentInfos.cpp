@@ -94,7 +94,7 @@ namespace Lucene
         return max;
     }
 
-    int64_t SegmentInfos::getCurrentSegmentGeneration(DirectoryPtr directory)
+    int64_t SegmentInfos::getCurrentSegmentGeneration(const DirectoryPtr& directory)
     {
         try
         {
@@ -111,7 +111,7 @@ namespace Lucene
         return IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", getCurrentSegmentGeneration(files));
     }
 
-    String SegmentInfos::getCurrentSegmentFileName(DirectoryPtr directory)
+    String SegmentInfos::getCurrentSegmentFileName(const DirectoryPtr& directory)
     {
         return IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", getCurrentSegmentGeneration(directory));
     }
@@ -137,7 +137,7 @@ namespace Lucene
         return IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", generation == -1 ? 1 : generation + 1);
     }
 
-    void SegmentInfos::read(DirectoryPtr directory, const String& segmentFileName)
+    void SegmentInfos::read(const DirectoryPtr& directory, const String& segmentFileName)
     {
         bool success = false;
 
@@ -216,14 +216,14 @@ namespace Lucene
         finally.throwException();
     }
 
-    void SegmentInfos::read(DirectoryPtr directory)
+    void SegmentInfos::read(const DirectoryPtr& directory)
     {
         lastGeneration = -1;
         generation = lastGeneration;
         newLucene<FindSegmentsRead>(shared_from_this(), directory)->run();
     }
 
-    void SegmentInfos::write(DirectoryPtr directory)
+    void SegmentInfos::write(const DirectoryPtr& directory)
     {
         String segmentFileName(getNextSegmentFileName());
 
@@ -281,7 +281,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    LuceneObjectPtr SegmentInfos::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SegmentInfos::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = SegmentInfoCollection::clone(other ? other : newLucene<SegmentInfos>());
         SegmentInfosPtr cloneInfos(boost::dynamic_pointer_cast<SegmentInfos>(clone));
@@ -312,7 +312,7 @@ namespace Lucene
         return lastGeneration;
     }
 
-    int64_t SegmentInfos::readCurrentVersion(DirectoryPtr directory)
+    int64_t SegmentInfos::readCurrentVersion(const DirectoryPtr& directory)
     {
         // Fully read the segments file: this ensures that it's completely written so that if IndexWriter.prepareCommit has been called
         // (but not yet commit), then the reader will still see itself as current.
@@ -321,14 +321,14 @@ namespace Lucene
         return sis->getVersion();
     }
 
-    MapStringString SegmentInfos::readCurrentUserData(DirectoryPtr directory)
+    MapStringString SegmentInfos::readCurrentUserData(const DirectoryPtr& directory)
     {
         SegmentInfosPtr sis(newLucene<SegmentInfos>());
         sis->read(directory);
         return sis->getUserData();
     }
 
-    void SegmentInfos::setInfoStream(InfoStreamPtr infoStream)
+    void SegmentInfos::setInfoStream(const InfoStreamPtr& infoStream)
     {
         SegmentInfos::infoStream = infoStream;
     }
@@ -374,7 +374,7 @@ namespace Lucene
             *infoStream << L"SIS [" << message << L"]\n";
     }
 
-    FindSegmentsFile::FindSegmentsFile(SegmentInfosPtr infos, DirectoryPtr directory)
+    FindSegmentsFile::FindSegmentsFile(const SegmentInfosPtr& infos, const DirectoryPtr& directory)
     {
         this->_segmentInfos = infos;
         this->directory = directory;
@@ -384,7 +384,7 @@ namespace Lucene
     {
     }
 
-    void FindSegmentsFile::doRun(IndexCommitPtr commit)
+    void FindSegmentsFile::doRun(const IndexCommitPtr& commit)
     {
         if (commit)
         {
@@ -569,7 +569,7 @@ namespace Lucene
         }
     }
 
-    FindSegmentsRead::FindSegmentsRead(SegmentInfosPtr infos, DirectoryPtr directory) : FindSegmentsFileT<int64_t>(infos, directory)
+    FindSegmentsRead::FindSegmentsRead(const SegmentInfosPtr& infos, const DirectoryPtr& directory) : FindSegmentsFileT<int64_t>(infos, directory)
     {
         result = 0;
     }
@@ -591,14 +591,14 @@ namespace Lucene
         return infos;
     }
 
-    void SegmentInfos::updateGeneration(SegmentInfosPtr other)
+    void SegmentInfos::updateGeneration(const SegmentInfosPtr& other)
     {
         lastGeneration = other->lastGeneration;
         generation = other->generation;
         version = other->version;
     }
 
-    void SegmentInfos::rollbackCommit(DirectoryPtr dir)
+    void SegmentInfos::rollbackCommit(const DirectoryPtr& dir)
     {
         if (pendingSegnOutput)
         {
@@ -623,7 +623,7 @@ namespace Lucene
         }
     }
 
-    void SegmentInfos::prepareCommit(DirectoryPtr dir)
+    void SegmentInfos::prepareCommit(const DirectoryPtr& dir)
     {
         TestScope testScope(L"SegmentInfos", L"prepareCommit");
         if (pendingSegnOutput)
@@ -631,7 +631,7 @@ namespace Lucene
         write(dir);
     }
 
-    HashSet<String> SegmentInfos::files(DirectoryPtr dir, bool includeSegmentsFile)
+    HashSet<String> SegmentInfos::files(const DirectoryPtr& dir, bool includeSegmentsFile)
     {
         HashSet<String> files(HashSet<String>::newInstance());
         if (includeSegmentsFile)
@@ -647,7 +647,7 @@ namespace Lucene
         return files;
     }
 
-    void SegmentInfos::finishCommit(DirectoryPtr dir)
+    void SegmentInfos::finishCommit(const DirectoryPtr& dir)
     {
         if (!pendingSegnOutput)
             boost::throw_exception(IllegalStateException(L"prepareCommit was not called"));
@@ -716,13 +716,13 @@ namespace Lucene
         }
     }
 
-    void SegmentInfos::commit(DirectoryPtr dir)
+    void SegmentInfos::commit(const DirectoryPtr& dir)
     {
         prepareCommit(dir);
         finishCommit(dir);
     }
 
-    String SegmentInfos::segString(DirectoryPtr directory)
+    String SegmentInfos::segString(const DirectoryPtr& directory)
     {
         SyncLock syncLock(this);
         String buffer;
@@ -750,14 +750,14 @@ namespace Lucene
             userData = data;
     }
 
-    void SegmentInfos::replace(SegmentInfosPtr other)
+    void SegmentInfos::replace(const SegmentInfosPtr& other)
     {
         segmentInfos.clear();
         segmentInfos.addAll(other->segmentInfos.begin(), other->segmentInfos.end());
         lastGeneration = other->lastGeneration;
     }
 
-    bool SegmentInfos::hasExternalSegments(DirectoryPtr dir)
+    bool SegmentInfos::hasExternalSegments(const DirectoryPtr& dir)
     {
         for (Collection<SegmentInfoPtr>::iterator seginfo = segmentInfos.begin(); seginfo != segmentInfos.end(); ++seginfo)
         {

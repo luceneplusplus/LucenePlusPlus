@@ -65,7 +65,7 @@ public:
 class TermDocsPerfTestAnalyzer : public Analyzer
 {
 public:
-    TermDocsPerfTestAnalyzer(RepeatingTokenStreamPtr ts, RandomPtr random, int32_t maxTF, double percentDocs)
+    TermDocsPerfTestAnalyzer(const RepeatingTokenStreamPtr& ts, const RandomPtr& random, int32_t maxTF, double percentDocs)
     {
         this->ts = ts;
         this->random = random;
@@ -86,7 +86,7 @@ protected:
     double percentDocs;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         if (random->nextDouble() < percentDocs)
             ts->num = random->nextInt(maxTF) + 1;
@@ -96,7 +96,7 @@ public:
     }
 };
 
-static void addDocs(DirectoryPtr dir, int32_t numDocs, const String& field, const String& val, int32_t maxTF, double percentDocs)
+static void addDocs(const DirectoryPtr& dir, int32_t numDocs, const String& field, const String& val, int32_t maxTF, double percentDocs)
 {
     RepeatingTokenStreamPtr ts = newLucene<RepeatingTokenStream>(val);
     RandomPtr random = newLucene<Random>();

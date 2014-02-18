@@ -17,7 +17,7 @@ namespace Lucene
     class LPPCONTRIBAPI GreekLowerCaseFilter : public TokenFilter
     {
     public:
-        GreekLowerCaseFilter(TokenStreamPtr input);
+        GreekLowerCaseFilter(const TokenStreamPtr& input);
         virtual ~GreekLowerCaseFilter();
 
         LUCENE_CLASS(GreekLowerCaseFilter);

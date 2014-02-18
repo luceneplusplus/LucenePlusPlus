@@ -58,7 +58,7 @@ protected:
     IndexSearcherPtr searcher;
 
 public:
-    int32_t search(QueryPtr q)
+    int32_t search(const QueryPtr& q)
     {
         QueryUtils::check(q, searcher);
         return searcher->search(q, FilterPtr(), 1000)->totalHits;

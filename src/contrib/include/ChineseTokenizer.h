@@ -29,9 +29,9 @@ namespace Lucene
     class LPPCONTRIBAPI ChineseTokenizer : public Tokenizer
     {
     public:
-        ChineseTokenizer(ReaderPtr input);
-        ChineseTokenizer(AttributeSourcePtr source, ReaderPtr input);
-        ChineseTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        ChineseTokenizer(const ReaderPtr& input);
+        ChineseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
+        ChineseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~ChineseTokenizer();
 
@@ -70,7 +70,7 @@ namespace Lucene
         virtual bool incrementToken();
         virtual void end();
         virtual void reset();
-        virtual void reset(ReaderPtr input);
+        virtual void reset(const ReaderPtr& input);
 
     protected:
         void push(wchar_t c);

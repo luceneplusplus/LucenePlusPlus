@@ -20,7 +20,7 @@ namespace Lucene
         processTerms(queryTerms);
     }
 
-    QueryTermVector::QueryTermVector(const String& queryString, AnalyzerPtr analyzer)
+    QueryTermVector::QueryTermVector(const String& queryString, const AnalyzerPtr& analyzer)
     {
         terms = Collection<String>::newInstance();
         termFreqs = Collection<int32_t>::newInstance();

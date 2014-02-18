@@ -29,7 +29,7 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr FieldInfo::clone(LuceneObjectPtr other)
+    LuceneObjectPtr FieldInfo::clone(const LuceneObjectPtr& other)
     {
         return newLucene<FieldInfo>(name, isIndexed, number, storeTermVector, storePositionWithTermVector,
                                     storeOffsetWithTermVector, omitNorms, storePayloads, omitTermFreqAndPositions);

@@ -32,7 +32,7 @@ static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t nu
     return doc;
 }
 
-static void createIndexNoClose(bool multiSegment, const String& indexName, IndexWriterPtr writer)
+static void createIndexNoClose(bool multiSegment, const String& indexName, const IndexWriterPtr& writer)
 {
     for (int32_t i = 0; i < 100; ++i)
         writer->addDocument(createDocument(i, indexName, 4));

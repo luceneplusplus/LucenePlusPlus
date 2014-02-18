@@ -16,7 +16,7 @@ namespace Lucene
         setSort(SortField::FIELD_SCORE());
     }
 
-    Sort::Sort(SortFieldPtr field)
+    Sort::Sort(const SortFieldPtr& field)
     {
         setSort(field);
     }
@@ -52,7 +52,7 @@ namespace Lucene
         return _INDEXORDER;
     }
 
-    void Sort::setSort(SortFieldPtr field)
+    void Sort::setSort(const SortFieldPtr& field)
     {
         this->fields = newCollection<SortFieldPtr>(field);
     }
@@ -79,7 +79,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool Sort::equals(LuceneObjectPtr other)
+    bool Sort::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    IntBlockPool::IntBlockPool(DocumentsWriterPtr docWriter, bool trackAllocations)
+    IntBlockPool::IntBlockPool(const DocumentsWriterPtr& docWriter, bool trackAllocations)
     {
         this->buffers = Collection<IntArray>::newInstance(10);
         this->bufferUpto = -1;

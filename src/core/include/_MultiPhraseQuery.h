@@ -14,7 +14,7 @@ namespace Lucene
     class MultiPhraseWeight : public Weight
     {
     public:
-        MultiPhraseWeight(MultiPhraseQueryPtr query, SearcherPtr searcher);
+        MultiPhraseWeight(const MultiPhraseQueryPtr& query, const SearcherPtr& searcher);
         virtual ~MultiPhraseWeight();
 
         LUCENE_CLASS(MultiPhraseWeight);
@@ -32,8 +32,8 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
     };
 }
 

@@ -134,7 +134,7 @@ namespace Lucene
         return (value != value);
     }
 
-    bool MiscUtils::equalTypes(LuceneObjectPtr first, LuceneObjectPtr second)
+    bool MiscUtils::equalTypes(const LuceneObjectPtr& first, const LuceneObjectPtr& second)
     {
         return (typeid(*first) == typeid(*second));
     }

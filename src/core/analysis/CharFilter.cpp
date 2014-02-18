@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    CharFilter::CharFilter(CharStreamPtr in)
+    CharFilter::CharFilter(const CharStreamPtr& in)
     {
         input = in;
     }

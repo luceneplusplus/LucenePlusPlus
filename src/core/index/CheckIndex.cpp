@@ -26,7 +26,7 @@ namespace Lucene
 {
     bool CheckIndex::_assertsOn = false;
 
-    CheckIndex::CheckIndex(DirectoryPtr dir)
+    CheckIndex::CheckIndex(const DirectoryPtr& dir)
     {
         this->dir = dir;
     }
@@ -35,7 +35,7 @@ namespace Lucene
     {
     }
 
-    void CheckIndex::setInfoStream(InfoStreamPtr out)
+    void CheckIndex::setInfoStream(const InfoStreamPtr& out)
     {
         infoStream = out;
     }
@@ -320,7 +320,7 @@ namespace Lucene
         return result;
     }
 
-    FieldNormStatusPtr CheckIndex::testFieldNorms(Collection<String> fieldNames, SegmentReaderPtr reader)
+    FieldNormStatusPtr CheckIndex::testFieldNorms(Collection<String> fieldNames, const SegmentReaderPtr& reader)
     {
         FieldNormStatusPtr status(newLucene<FieldNormStatus>());
 
@@ -350,7 +350,7 @@ namespace Lucene
         return status;
     }
 
-    TermIndexStatusPtr CheckIndex::testTermIndex(SegmentInfoPtr info, SegmentReaderPtr reader)
+    TermIndexStatusPtr CheckIndex::testTermIndex(const SegmentInfoPtr& info, const SegmentReaderPtr& reader)
     {
         TermIndexStatusPtr status(newLucene<TermIndexStatus>());
 
@@ -459,7 +459,7 @@ namespace Lucene
         return status;
     }
 
-    StoredFieldStatusPtr CheckIndex::testStoredFields(SegmentInfoPtr info, SegmentReaderPtr reader)
+    StoredFieldStatusPtr CheckIndex::testStoredFields(const SegmentInfoPtr& info, const SegmentReaderPtr& reader)
     {
         StoredFieldStatusPtr status(newLucene<StoredFieldStatus>());
 
@@ -498,7 +498,7 @@ namespace Lucene
         return status;
     }
 
-    TermVectorStatusPtr CheckIndex::testTermVectors(SegmentInfoPtr info, SegmentReaderPtr reader)
+    TermVectorStatusPtr CheckIndex::testTermVectors(const SegmentInfoPtr& info, const SegmentReaderPtr& reader)
     {
         TermVectorStatusPtr status(newLucene<TermVectorStatus>());
 
@@ -529,7 +529,7 @@ namespace Lucene
         return status;
     }
 
-    void CheckIndex::fixIndex(IndexStatusPtr result)
+    void CheckIndex::fixIndex(const IndexStatusPtr& result)
     {
         if (result->partial)
             boost::throw_exception(IllegalArgumentException(L"can only fix an index that was fully checked (this status checked a subset of segments)"));
@@ -737,7 +737,7 @@ namespace Lucene
     {
     }
 
-    MySegmentTermDocs::MySegmentTermDocs(SegmentReaderPtr p) : SegmentTermDocs(p)
+    MySegmentTermDocs::MySegmentTermDocs(const SegmentReaderPtr& p) : SegmentTermDocs(p)
     {
         delCount = 0;
     }
@@ -746,7 +746,7 @@ namespace Lucene
     {
     }
 
-    void MySegmentTermDocs::seek(TermPtr term)
+    void MySegmentTermDocs::seek(const TermPtr& term)
     {
         SegmentTermDocs::seek(term);
         delCount = 0;

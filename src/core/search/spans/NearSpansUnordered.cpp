@@ -13,7 +13,7 @@
 
 namespace Lucene
 {
-    NearSpansUnordered::NearSpansUnordered(SpanNearQueryPtr query, IndexReaderPtr reader)
+    NearSpansUnordered::NearSpansUnordered(const SpanNearQueryPtr& query, const IndexReaderPtr& reader)
     {
         this->query = query;
         this->reader = reader;
@@ -201,7 +201,7 @@ namespace Lucene
         }
     }
 
-    void NearSpansUnordered::addToList(SpansCellPtr cell)
+    void NearSpansUnordered::addToList(const SpansCellPtr& cell)
     {
         if (last) // add next to end of list
             last->_next = cell;
@@ -239,7 +239,7 @@ namespace Lucene
         return ((min()->doc() == max->doc()) && ((max->end() - min()->start() - totalLength) <= slop));
     }
 
-    SpansCell::SpansCell(NearSpansUnorderedPtr unordered, SpansPtr spans, int32_t index)
+    SpansCell::SpansCell(const NearSpansUnorderedPtr& unordered, const SpansPtr& spans, int32_t index)
     {
         this->_unordered = unordered;
         this->spans = spans;

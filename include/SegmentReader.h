@@ -62,22 +62,22 @@ namespace Lucene
         using IndexReader::document;
         using IndexReader::termPositions;
 
-        static SegmentReaderPtr get(bool readOnly, SegmentInfoPtr si, int32_t termInfosIndexDivisor);
-        static SegmentReaderPtr get(bool readOnly, DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, bool doOpenStores, int32_t termInfosIndexDivisor);
+        static SegmentReaderPtr get(bool readOnly, const SegmentInfoPtr& si, int32_t termInfosIndexDivisor);
+        static SegmentReaderPtr get(bool readOnly, const DirectoryPtr& dir, const SegmentInfoPtr& si, int32_t readBufferSize, bool doOpenStores, int32_t termInfosIndexDivisor);
 
         void openDocStores();
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual LuceneObjectPtr clone(bool openReadOnly, LuceneObjectPtr other = LuceneObjectPtr());
-        SegmentReaderPtr reopenSegment(SegmentInfoPtr si, bool doClone, bool openReadOnly);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(bool openReadOnly, const LuceneObjectPtr& other = LuceneObjectPtr());
+        SegmentReaderPtr reopenSegment(const SegmentInfoPtr& si, bool doClone, bool openReadOnly);
 
-        static bool hasDeletions(SegmentInfoPtr si);
+        static bool hasDeletions(const SegmentInfoPtr& si);
 
         /// Returns true if any documents have been deleted
         virtual bool hasDeletions();
 
-        static bool usesCompoundFile(SegmentInfoPtr si);
-        static bool hasSeparateNorms(SegmentInfoPtr si);
+        static bool usesCompoundFile(const SegmentInfoPtr& si);
+        static bool hasSeparateNorms(const SegmentInfoPtr& si);
 
         HashSet<String> files();
 
@@ -85,16 +85,16 @@ namespace Lucene
         virtual TermEnumPtr terms();
 
         /// Returns an enumeration of all terms starting at a given term.
-        virtual TermEnumPtr terms(TermPtr t);
+        virtual TermEnumPtr terms(const TermPtr& t);
 
         /// Get the {@link Document} at the n'th position.
-        virtual DocumentPtr document(int32_t n, FieldSelectorPtr fieldSelector);
+        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
 
         /// Returns true if document n has been deleted
         virtual bool isDeleted(int32_t n);
 
         /// Returns an enumeration of all the documents which contain term.
-        virtual TermDocsPtr termDocs(TermPtr term);
+        virtual TermDocsPtr termDocs(const TermPtr& term);
 
         /// Returns an unpositioned {@link TermDocs} enumerator.
         virtual TermDocsPtr termDocs();
@@ -103,7 +103,7 @@ namespace Lucene
         virtual TermPositionsPtr termPositions();
 
         /// Returns the number of documents containing the term t.
-        virtual int32_t docFreq(TermPtr t);
+        virtual int32_t docFreq(const TermPtr& t);
 
         /// Returns the number of documents in this index.
         virtual int32_t numDocs();
@@ -139,10 +139,10 @@ namespace Lucene
 
         /// Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays
         /// of the {@link TermFreqVector}.
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
 
         /// Map all the term vectors for all fields in a Document
-        virtual void getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
 
         /// Return an array of term frequency vectors for the specified document.  The array contains a vector for
         /// each vectorized field in the document.  Each vector vector contains term numbers and frequencies for all
@@ -154,7 +154,7 @@ namespace Lucene
 
         /// Return the SegmentInfo of the segment this reader is reading.
         SegmentInfoPtr getSegmentInfo();
-        void setSegmentInfo(SegmentInfoPtr info);
+        void setSegmentInfo(const SegmentInfoPtr& info);
 
         void startCommit();
         void rollbackCommit();
@@ -170,8 +170,8 @@ namespace Lucene
         /// Returns the number of unique terms (across all fields) in this reader.
         virtual int64_t getUniqueTermCount();
 
-        static SegmentReaderPtr getOnlySegmentReader(DirectoryPtr dir);
-        static SegmentReaderPtr getOnlySegmentReader(IndexReaderPtr reader);
+        static SegmentReaderPtr getOnlySegmentReader(const DirectoryPtr& dir);
+        static SegmentReaderPtr getOnlySegmentReader(const IndexReaderPtr& reader);
 
         virtual int32_t getTermInfosIndexDivisor();
 
@@ -187,7 +187,7 @@ namespace Lucene
         /// Clones the deleteDocs BitVector.  May be overridden by subclasses.
         /// @param bv BitVector to clone
         /// @return New BitVector
-        virtual BitVectorPtr cloneDeletedDocs(BitVectorPtr bv);
+        virtual BitVectorPtr cloneDeletedDocs(const BitVectorPtr& bv);
 
         /// Implements commit.
         virtual void doCommit(MapStringString commitUserData);
@@ -210,7 +210,7 @@ namespace Lucene
         /// Implements setNorm in subclass.
         virtual void doSetNorm(int32_t doc, const String& field, uint8_t value);
 
-        void openNorms(DirectoryPtr cfsDir, int32_t readBufferSize);
+        void openNorms(const DirectoryPtr& cfsDir, int32_t readBufferSize);
 
         friend class ReaderPool;
         friend class IndexWriter;

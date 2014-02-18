@@ -40,7 +40,7 @@ static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t nu
     return doc;
 }
 
-static int32_t count(TermPtr t, IndexReaderPtr r)
+static int32_t count(const TermPtr& t, const IndexReaderPtr& r)
 {
     int32_t count = 0;
     TermDocsPtr td = r->termDocs(t);
@@ -93,7 +93,7 @@ public:
 class RunThread : public LuceneThread
 {
 public:
-    RunThread(int32_t type, IndexWriterPtr writer, HeavyAtomicIntPtr seq)
+    RunThread(int32_t type, const IndexWriterPtr& writer, const HeavyAtomicIntPtr& seq)
     {
         this->_run = true;
         this->delCount = 0;

@@ -28,24 +28,26 @@ namespace Lucene
     const int32_t FSDirectory::DEFAULT_READ_CHUNK_SIZE = 100 * 1024 * 1024; // 100mb
     #endif
 
-    FSDirectory::FSDirectory(const String& path, LockFactoryPtr lockFactory)
+    FSDirectory::FSDirectory(const String& path, const LockFactoryPtr& lockFactory)
     {
         checked = false;
         chunkSize = DEFAULT_READ_CHUNK_SIZE;
 
+        LockFactoryPtr _lockFactory(lockFactory);
+
         // new ctors use always NativeFSLockFactory as default
-        if (!lockFactory)
-            lockFactory = newLucene<NativeFSLockFactory>();
+        if (!_lockFactory)
+            _lockFactory = newLucene<NativeFSLockFactory>();
         directory = path;
 
         if (FileUtils::fileExists(directory) && !FileUtils::isDirectory(directory))
             boost::throw_exception(NoSuchDirectoryException(L"File '" + directory + L"' exists but is not a directory"));
 
-        setLockFactory(lockFactory);
+        setLockFactory(_lockFactory);
 
         // for filesystem based LockFactory, delete the lockPrefix if the locks are placed
         // in index dir. if no index dir is given, set ourselves
-        FSLockFactoryPtr lf(boost::dynamic_pointer_cast<FSLockFactory>(lockFactory));
+        FSLockFactoryPtr lf(boost::dynamic_pointer_cast<FSLockFactory>(_lockFactory));
 
         if (lf)
         {
@@ -68,7 +70,7 @@ namespace Lucene
         return open(path, LockFactoryPtr());
     }
 
-    FSDirectoryPtr FSDirectory::open(const String& path, LockFactoryPtr lockFactory)
+    FSDirectoryPtr FSDirectory::open(const String& path, const LockFactoryPtr& lockFactory)
     {
         return newLucene<SimpleFSDirectory>(path, lockFactory);
     }

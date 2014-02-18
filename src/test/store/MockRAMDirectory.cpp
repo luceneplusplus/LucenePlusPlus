@@ -26,7 +26,7 @@ namespace Lucene
         init();
     }
 
-    MockRAMDirectory::MockRAMDirectory(DirectoryPtr dir) : RAMDirectory(dir)
+    MockRAMDirectory::MockRAMDirectory(const DirectoryPtr& dir) : RAMDirectory(dir)
     {
         maxSize = 0;
         maxUsedSize = 0;
@@ -277,7 +277,7 @@ namespace Lucene
         }
     }
 
-    void MockRAMDirectory::failOn(MockDirectoryFailurePtr fail)
+    void MockRAMDirectory::failOn(const MockDirectoryFailurePtr& fail)
     {
         SyncLock syncLock(this);
         if (!failures)
@@ -304,7 +304,7 @@ namespace Lucene
     {
     }
 
-    void MockDirectoryFailure::eval(MockRAMDirectoryPtr dir)
+    void MockDirectoryFailure::eval(const MockRAMDirectoryPtr& dir)
     {
     }
 

@@ -19,7 +19,7 @@ namespace Lucene
     class DocFieldProcessorPerThread : public DocConsumerPerThread
     {
     public:
-        DocFieldProcessorPerThread(DocumentsWriterThreadStatePtr threadState, DocFieldProcessorPtr docFieldProcessor);
+        DocFieldProcessorPerThread(const DocumentsWriterThreadStatePtr& threadState, const DocFieldProcessorPtr& docFieldProcessor);
         virtual ~DocFieldProcessorPerThread();
 
         LUCENE_CLASS(DocFieldProcessorPerThread);
@@ -50,12 +50,12 @@ namespace Lucene
         Collection<DocFieldConsumerPerFieldPtr> fields();
 
         // If there are fields we've seen but did not see again in the last run, then free them up.
-        void trimFields(SegmentWriteStatePtr state);
+        void trimFields(const SegmentWriteStatePtr& state);
 
         virtual DocWriterPtr processDocument();
 
         DocFieldProcessorPerThreadPerDocPtr getPerDoc();
-        void freePerDoc(DocFieldProcessorPerThreadPerDocPtr perDoc);
+        void freePerDoc(const DocFieldProcessorPerThreadPerDocPtr& perDoc);
 
     protected:
         void rehash();
@@ -64,7 +64,7 @@ namespace Lucene
     class DocFieldProcessorPerThreadPerDoc : public DocWriter
     {
     public:
-        DocFieldProcessorPerThreadPerDoc(DocFieldProcessorPerThreadPtr docProcessor);
+        DocFieldProcessorPerThreadPerDoc(const DocFieldProcessorPerThreadPtr& docProcessor);
         virtual ~DocFieldProcessorPerThreadPerDoc();
 
         LUCENE_CLASS(DocFieldProcessorPerThreadPerDoc);

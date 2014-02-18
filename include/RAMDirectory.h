@@ -29,9 +29,9 @@ namespace Lucene
         /// original Directory (it is a complete copy).  Any subsequent changes to the
         /// original Directory will not be visible in the RAMDirectory instance.
         /// @param dir a Directory value
-        RAMDirectory(DirectoryPtr dir);
+        RAMDirectory(const DirectoryPtr& dir);
 
-        RAMDirectory(DirectoryPtr dir, bool closeDir);
+        RAMDirectory(const DirectoryPtr& dir, bool closeDir);
 
         virtual ~RAMDirectory();
 

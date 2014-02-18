@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    TeeSinkTokenFilter::TeeSinkTokenFilter(TokenStreamPtr input) : TokenFilter(input)
+    TeeSinkTokenFilter::TeeSinkTokenFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         this->sinks = Collection<SinkTokenStreamPtr>::newInstance();
     }
@@ -30,14 +30,14 @@ namespace Lucene
         return newSinkTokenStream(ACCEPT_ALL_FILTER);
     }
 
-    SinkTokenStreamPtr TeeSinkTokenFilter::newSinkTokenStream(SinkFilterPtr filter)
+    SinkTokenStreamPtr TeeSinkTokenFilter::newSinkTokenStream(const SinkFilterPtr& filter)
     {
         SinkTokenStreamPtr sink(newLucene<SinkTokenStream>(this->cloneAttributes(), filter));
         this->sinks.add(sink);
         return sink;
     }
 
-    void TeeSinkTokenFilter::addSinkTokenStream(SinkTokenStreamPtr sink)
+    void TeeSinkTokenFilter::addSinkTokenStream(const SinkTokenStreamPtr& sink)
     {
         // check that sink has correct factory
         if (this->getAttributeFactory() != sink->getAttributeFactory())
@@ -104,12 +104,12 @@ namespace Lucene
     {
     }
 
-    bool AcceptAllSinkFilter::accept(AttributeSourcePtr source)
+    bool AcceptAllSinkFilter::accept(const AttributeSourcePtr& source)
     {
         return true;
     }
 
-    SinkTokenStream::SinkTokenStream(AttributeSourcePtr source, SinkFilterPtr filter) : TokenStream(source)
+    SinkTokenStream::SinkTokenStream(const AttributeSourcePtr& source, const SinkFilterPtr& filter) : TokenStream(source)
     {
         this->filter = filter;
         this->cachedStates = Collection<AttributeSourceStatePtr>::newInstance();
@@ -121,19 +121,19 @@ namespace Lucene
     {
     }
 
-    bool SinkTokenStream::accept(AttributeSourcePtr source)
+    bool SinkTokenStream::accept(const AttributeSourcePtr& source)
     {
         return filter->accept(source);
     }
 
-    void SinkTokenStream::addState(AttributeSourceStatePtr state)
+    void SinkTokenStream::addState(const AttributeSourceStatePtr& state)
     {
         if (initIterator)
             boost::throw_exception(IllegalStateException(L"The tee must be consumed before sinks are consumed."));
         cachedStates.add(state);
     }
 
-    void SinkTokenStream::setFinalState(AttributeSourceStatePtr finalState)
+    void SinkTokenStream::setFinalState(const AttributeSourceStatePtr& finalState)
     {
         this->finalState = finalState;
     }

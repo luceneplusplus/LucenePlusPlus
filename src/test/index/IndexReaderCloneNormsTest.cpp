@@ -64,7 +64,7 @@ protected:
     double normDelta;
 
 public:
-    void createIndex(DirectoryPtr dir)
+    void createIndex(const DirectoryPtr& dir)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, anlzr, true, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);
@@ -74,7 +74,7 @@ public:
         iw->close();
     }
 
-    void createIndex(DirectoryPtr dir, bool multiSegment)
+    void createIndex(const DirectoryPtr& dir, bool multiSegment)
     {
         IndexWriter::unlock(dir);
         IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
@@ -116,7 +116,7 @@ public:
     }
 
     /// try cloning and reopening the norms
-    void doTestNorms(DirectoryPtr dir)
+    void doTestNorms(const DirectoryPtr& dir)
     {
         addDocs(dir, 12, true);
         IndexReaderPtr ir = IndexReader::open(dir, false);
@@ -135,13 +135,13 @@ public:
         irc3->close();
     }
 
-    void modifyNormsForF1(DirectoryPtr dir)
+    void modifyNormsForF1(const DirectoryPtr& dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         modifyNormsForF1(ir);
     }
 
-    void modifyNormsForF1(IndexReaderPtr ir)
+    void modifyNormsForF1(const IndexReaderPtr& ir)
     {
         int32_t n = ir->maxDoc();
         for (int32_t i = 0; i < n; i += 3) // modify for every third doc
@@ -156,7 +156,7 @@ public:
         }
     }
 
-    void addDocs(DirectoryPtr dir, int32_t ndocs, bool compound)
+    void addDocs(const DirectoryPtr& dir, int32_t ndocs, bool compound)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, anlzr, false, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);
@@ -203,14 +203,14 @@ public:
         return norm;
     }
 
-    void verifyIndex(DirectoryPtr dir)
+    void verifyIndex(const DirectoryPtr& dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         verifyIndex(ir);
         ir->close();
     }
 
-    void verifyIndex(IndexReaderPtr ir)
+    void verifyIndex(const IndexReaderPtr& ir)
     {
         for (int32_t i = 0; i < NUM_FIELDS; ++i)
         {

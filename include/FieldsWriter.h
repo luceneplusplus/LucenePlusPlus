@@ -14,8 +14,8 @@ namespace Lucene
     class FieldsWriter : public LuceneObject
     {
     public:
-        FieldsWriter(DirectoryPtr d, const String& segment, FieldInfosPtr fn);
-        FieldsWriter(IndexOutputPtr fdx, IndexOutputPtr fdt, FieldInfosPtr fn);
+        FieldsWriter(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn);
+        FieldsWriter(const IndexOutputPtr& fdx, const IndexOutputPtr& fdt, const FieldInfosPtr& fn);
         virtual ~FieldsWriter();
 
         LUCENE_CLASS(FieldsWriter);
@@ -40,22 +40,22 @@ namespace Lucene
         static const int32_t FORMAT_CURRENT;
 
     public:
-        void setFieldsStream(IndexOutputPtr stream);
+        void setFieldsStream(const IndexOutputPtr& stream);
 
         /// Writes the contents of buffer into the fields stream and adds a new entry for this document into the index
         /// stream.  This assumes the buffer was already written in the correct fields format.
-        void flushDocument(int32_t numStoredFields, RAMOutputStreamPtr buffer);
+        void flushDocument(int32_t numStoredFields, const RAMOutputStreamPtr& buffer);
 
         void skipDocument();
         void flush();
         void close();
-        void writeField(FieldInfoPtr fi, FieldablePtr field);
+        void writeField(const FieldInfoPtr& fi, const FieldablePtr& field);
 
         /// Bulk write a contiguous series of documents.  The lengths array is the length (in bytes) of each raw document.
         /// The stream IndexInput is the fieldsStream from which we should bulk-copy all bytes.
-        void addRawDocuments(IndexInputPtr stream, Collection<int32_t> lengths, int32_t numDocs);
+        void addRawDocuments(const IndexInputPtr& stream, Collection<int32_t> lengths, int32_t numDocs);
 
-        void addDocument(DocumentPtr doc);
+        void addDocument(const DocumentPtr& doc);
     };
 }
 

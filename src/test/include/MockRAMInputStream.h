@@ -18,7 +18,7 @@ namespace Lucene
     public:
         /// Construct an empty output buffer.
         MockRAMInputStream();
-        MockRAMInputStream(MockRAMDirectoryPtr dir, const String& name, RAMFilePtr f);
+        MockRAMInputStream(const MockRAMDirectoryPtr& dir, const String& name, const RAMFilePtr& f);
         virtual ~MockRAMInputStream();
 
         LUCENE_CLASS(MockRAMInputStream);
@@ -31,7 +31,7 @@ namespace Lucene
     public:
         virtual void close();
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

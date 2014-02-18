@@ -25,7 +25,7 @@
 
 namespace Lucene
 {
-    TermVectorsTermsWriterPerField::TermVectorsTermsWriterPerField(TermsHashPerFieldPtr termsHashPerField, TermVectorsTermsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo)
+    TermVectorsTermsWriterPerField::TermVectorsTermsWriterPerField(const TermsHashPerFieldPtr& termsHashPerField, const TermVectorsTermsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo)
     {
         this->doVectors = false;
         this->doVectorPositions = false;
@@ -206,7 +206,7 @@ namespace Lucene
         maxNumPostings = 0;
     }
 
-    void TermVectorsTermsWriterPerField::start(FieldablePtr field)
+    void TermVectorsTermsWriterPerField::start(const FieldablePtr& field)
     {
         if (doVectorOffsets)
             offsetAttribute = FieldInvertStatePtr(_fieldState)->attributeSource->addAttribute<OffsetAttribute>();
@@ -214,7 +214,7 @@ namespace Lucene
             offsetAttribute.reset();
     }
 
-    void TermVectorsTermsWriterPerField::newTerm(RawPostingListPtr p0)
+    void TermVectorsTermsWriterPerField::newTerm(const RawPostingListPtr& p0)
     {
         BOOST_ASSERT(DocStatePtr(_docState)->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
 
@@ -242,7 +242,7 @@ namespace Lucene
         }
     }
 
-    void TermVectorsTermsWriterPerField::addTerm(RawPostingListPtr p0)
+    void TermVectorsTermsWriterPerField::addTerm(const RawPostingListPtr& p0)
     {
         BOOST_ASSERT(DocStatePtr(_docState)->testPoint(L"TermVectorsTermsWriterPerField.newTerm start"));
 

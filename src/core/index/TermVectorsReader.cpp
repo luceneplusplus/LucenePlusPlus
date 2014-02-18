@@ -43,12 +43,12 @@ namespace Lucene
         this->format = 0;
     }
 
-    TermVectorsReader::TermVectorsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos)
+    TermVectorsReader::TermVectorsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fieldInfos)
     {
         ConstructReader(d, segment, fieldInfos, BufferedIndexInput::BUFFER_SIZE, -1, 0);
     }
 
-    TermVectorsReader::TermVectorsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
+    TermVectorsReader::TermVectorsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
     {
         ConstructReader(d, segment, fieldInfos, readBufferSize, docStoreOffset, size);
     }
@@ -57,7 +57,7 @@ namespace Lucene
     {
     }
 
-    void TermVectorsReader::ConstructReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
+    void TermVectorsReader::ConstructReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
     {
         this->_size = 0;
         this->numTotalDocs = 0;
@@ -198,7 +198,7 @@ namespace Lucene
         }
     }
 
-    int32_t TermVectorsReader::checkValidFormat(IndexInputPtr in)
+    int32_t TermVectorsReader::checkValidFormat(const IndexInputPtr& in)
     {
         int32_t format = in->readInt();
         if (format > FORMAT_CURRENT)
@@ -258,7 +258,7 @@ namespace Lucene
         return _size;
     }
 
-    void TermVectorsReader::get(int32_t docNum, const String& field, TermVectorMapperPtr mapper)
+    void TermVectorsReader::get(int32_t docNum, const String& field, const TermVectorMapperPtr& mapper)
     {
         if (tvx)
         {
@@ -374,7 +374,7 @@ namespace Lucene
         return result;
     }
 
-    void TermVectorsReader::get(int32_t docNumber, TermVectorMapperPtr mapper)
+    void TermVectorsReader::get(int32_t docNumber, const TermVectorMapperPtr& mapper)
     {
         // Check if no term vectors are available for this segment at all
         if (tvx)
@@ -410,13 +410,13 @@ namespace Lucene
         return res;
     }
 
-    void TermVectorsReader::readTermVectors(Collection<String> fields, Collection<int64_t> tvfPointers, TermVectorMapperPtr mapper)
+    void TermVectorsReader::readTermVectors(Collection<String> fields, Collection<int64_t> tvfPointers, const TermVectorMapperPtr& mapper)
     {
         for (int32_t i = 0; i < fields.size(); ++i)
             readTermVector(fields[i], tvfPointers[i], mapper);
     }
 
-    void TermVectorsReader::readTermVector(const String& field, int64_t tvfPointer, TermVectorMapperPtr mapper)
+    void TermVectorsReader::readTermVector(const String& field, int64_t tvfPointer, const TermVectorMapperPtr& mapper)
     {
         // Now read the data from specified position.  We don't need to offset by the FORMAT here since
         // the pointer already includes the offset
@@ -541,7 +541,7 @@ namespace Lucene
         }
     }
 
-    LuceneObjectPtr TermVectorsReader::clone(LuceneObjectPtr other)
+    LuceneObjectPtr TermVectorsReader::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermVectorsReader>();
         TermVectorsReaderPtr cloneReader(boost::dynamic_pointer_cast<TermVectorsReader>(LuceneObject::clone(clone)));

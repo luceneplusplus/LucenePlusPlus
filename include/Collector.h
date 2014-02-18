@@ -51,7 +51,7 @@ namespace Lucene
     /// class MyCollector : public Collector
     /// {
     /// public:
-    ///     MyCollector(BitSetPtr bits)
+    ///     MyCollector(const BitSetPtr& bits)
     ///     {
     ///         this->bits = bits;
     ///         this->docBase = 0;
@@ -62,7 +62,7 @@ namespace Lucene
     ///     int32_t docBase;
     ///
     /// public:
-    ///     virtual void setScorer(ScorerPtr scorer)
+    ///     virtual void setScorer(const ScorerPtr& scorer)
     ///     {
     ///         // ignore scorer
     ///     }
@@ -72,7 +72,7 @@ namespace Lucene
     ///         bits->set(doc + docBase);
     ///     }
     ///
-    ///     virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+    ///     virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     ///     {
     ///         this->docBase = docBase;
     ///     }
@@ -107,7 +107,7 @@ namespace Lucene
         /// Called before successive calls to {@link #collect(int32_t)}. Implementations that need the score
         /// of the current document (passed-in to {@link #collect(int32_t)}), should save the passed-in Scorer
         /// and call scorer.score() when needed.
-        virtual void setScorer(ScorerPtr scorer) = 0;
+        virtual void setScorer(const ScorerPtr& scorer) = 0;
 
         /// Called once for every document matching a query, with the unbased document number.
         ///
@@ -121,7 +121,7 @@ namespace Lucene
         /// in {@link #collect(int32_t)}.
         /// @param reader next IndexReader
         /// @param docBase
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase) = 0;
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) = 0;
 
         /// Return true if this collector does not require the matching docIDs to be delivered in int sort
         /// order (smallest to largest) to {@link #collect}.

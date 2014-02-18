@@ -46,7 +46,7 @@ static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t nu
     return doc;
 }
 
-static void createIndexNoClose(bool multiSegment, const String& indexName, IndexWriterPtr w)
+static void createIndexNoClose(bool multiSegment, const String& indexName, const IndexWriterPtr& w)
 {
     for (int32_t i = 0; i < 100; ++i)
         w->addDocument(createDocument(i, indexName, 4));
@@ -54,7 +54,7 @@ static void createIndexNoClose(bool multiSegment, const String& indexName, Index
         w->optimize();
 }
 
-static int32_t count(TermPtr t, IndexReaderPtr r)
+static int32_t count(const TermPtr& t, const IndexReaderPtr& r)
 {
     int32_t count = 0;
     TermDocsPtr td = r->termDocs(t);
@@ -70,7 +70,7 @@ static int32_t count(TermPtr t, IndexReaderPtr r)
 class TestableIndexWriter : public IndexWriter
 {
 public:
-    TestableIndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl) : IndexWriter(d, a, mfl)
+    TestableIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, int32_t mfl) : IndexWriter(d, a, mfl)
     {
     }
 
@@ -124,7 +124,7 @@ public:
 class AddDirectoriesThread : public LuceneThread
 {
 public:
-    AddDirectoriesThread(AddDirectoriesThreadsPtr addDirectories, int32_t numIter)
+    AddDirectoriesThread(const AddDirectoriesThreadsPtr& addDirectories, int32_t numIter)
     {
         this->_addDirectories = addDirectories;
         this->numIter = numIter;
@@ -147,7 +147,7 @@ public:
 class AddDirectoriesThreads : public LuceneObject
 {
 public:
-    AddDirectoriesThreads(int32_t numDirs, IndexWriterPtr mainWriter)
+    AddDirectoriesThreads(int32_t numDirs, const IndexWriterPtr& mainWriter)
     {
         this->numDirs = numDirs;
         this->mainWriter = mainWriter;
@@ -567,7 +567,7 @@ namespace TestMergeWarmer
         int32_t warmCount;
 
     public:
-        virtual void warm(IndexReaderPtr reader)
+        virtual void warm(const IndexReaderPtr& reader)
         {
             ++warmCount;
         }
@@ -678,7 +678,7 @@ namespace TestDuringAddIndexes
     class AddIndexesThread : public LuceneThread
     {
     public:
-        AddIndexesThread(int64_t endTime, IndexWriterPtr writer,  Collection<DirectoryPtr> dirs)
+        AddIndexesThread(int64_t endTime, const IndexWriterPtr& writer,  Collection<DirectoryPtr> dirs)
         {
             this->endTime = endTime;
             this->writer = writer;
@@ -774,7 +774,7 @@ namespace TestDuringAddDelete
     class AddDeleteThread : public LuceneThread
     {
     public:
-        AddDeleteThread(int64_t endTime, IndexWriterPtr writer)
+        AddDeleteThread(int64_t endTime, const IndexWriterPtr& writer)
         {
             this->endTime = endTime;
             this->writer = writer;
@@ -939,7 +939,7 @@ namespace TestSegmentWarmer
         LUCENE_CLASS(SegmentWarmer);
 
     public:
-        virtual void warm(IndexReaderPtr reader)
+        virtual void warm(const IndexReaderPtr& reader)
         {
             IndexSearcherPtr s = newLucene<IndexSearcher>(reader);
             TopDocsPtr hits = s->search(newLucene<TermQuery>(newLucene<Term>(L"foo", L"bar")), 10);

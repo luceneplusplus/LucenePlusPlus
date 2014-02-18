@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    FileSwitchDirectory::FileSwitchDirectory(HashSet<String> primaryExtensions, DirectoryPtr primaryDir, DirectoryPtr secondaryDir, bool doClose)
+    FileSwitchDirectory::FileSwitchDirectory(HashSet<String> primaryExtensions, const DirectoryPtr& primaryDir, const DirectoryPtr& secondaryDir, bool doClose)
     {
         this->primaryExtensions = primaryExtensions;
         this->primaryDir = primaryDir;

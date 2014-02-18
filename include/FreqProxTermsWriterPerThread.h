@@ -14,7 +14,7 @@ namespace Lucene
     class FreqProxTermsWriterPerThread : public TermsHashConsumerPerThread
     {
     public:
-        FreqProxTermsWriterPerThread(TermsHashPerThreadPtr perThread);
+        FreqProxTermsWriterPerThread(const TermsHashPerThreadPtr& perThread);
         virtual ~FreqProxTermsWriterPerThread();
 
         LUCENE_CLASS(FreqProxTermsWriterPerThread);
@@ -24,7 +24,7 @@ namespace Lucene
         DocStatePtr docState;
 
     public:
-        virtual TermsHashConsumerPerFieldPtr addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo);
+        virtual TermsHashConsumerPerFieldPtr addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo);
         virtual void startDocument();
         virtual DocWriterPtr finishDocument();
         virtual void abort();

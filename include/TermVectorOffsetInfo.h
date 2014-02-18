@@ -40,7 +40,7 @@ namespace Lucene
 
         /// Two TermVectorOffsetInfos are equals if both the start and end offsets are the same.
         /// @return true if both {@link #getStartOffset()} and {@link #getEndOffset()} are the same for both objects.
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         virtual int32_t hashCode();
     };

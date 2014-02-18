@@ -20,7 +20,7 @@
 
 namespace Lucene
 {
-    DocInverterPerThread::DocInverterPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, DocInverterPtr docInverter)
+    DocInverterPerThread::DocInverterPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocInverterPtr& docInverter)
     {
         this->fieldState = newLucene<FieldInvertState>();
         this->stringReader = newLucene<ReusableStringReader>();
@@ -74,7 +74,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    DocFieldConsumerPerFieldPtr DocInverterPerThread::addField(FieldInfoPtr fi)
+    DocFieldConsumerPerFieldPtr DocInverterPerThread::addField(const FieldInfoPtr& fi)
     {
         return newLucene<DocInverterPerField>(shared_from_this(), fi);
     }

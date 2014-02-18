@@ -14,7 +14,7 @@ namespace Lucene
     class CharBlockPool : public LuceneObject
     {
     public:
-        CharBlockPool(DocumentsWriterPtr docWriter);
+        CharBlockPool(const DocumentsWriterPtr& docWriter);
         virtual ~CharBlockPool();
 
         LUCENE_CLASS(CharBlockPool);

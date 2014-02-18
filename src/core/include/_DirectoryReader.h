@@ -14,7 +14,7 @@ namespace Lucene
     class FindSegmentsOpen : public FindSegmentsFileT<IndexReaderPtr>
     {
     public:
-        FindSegmentsOpen(bool readOnly, IndexDeletionPolicyPtr deletionPolicy, int32_t termInfosIndexDivisor, SegmentInfosPtr infos, DirectoryPtr directory);
+        FindSegmentsOpen(bool readOnly, const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor, const SegmentInfosPtr& infos, const DirectoryPtr& directory);
         virtual ~FindSegmentsOpen();
 
         LUCENE_CLASS(FindSegmentsOpen);
@@ -31,7 +31,7 @@ namespace Lucene
     class FindSegmentsReopen : public FindSegmentsFileT<DirectoryReaderPtr>
     {
     public:
-        FindSegmentsReopen(DirectoryReaderPtr reader, bool openReadOnly, SegmentInfosPtr infos, DirectoryPtr directory);
+        FindSegmentsReopen(const DirectoryReaderPtr& reader, bool openReadOnly, const SegmentInfosPtr& infos, const DirectoryPtr& directory);
         virtual ~FindSegmentsReopen();
 
         LUCENE_CLASS(FindSegmentsReopen);

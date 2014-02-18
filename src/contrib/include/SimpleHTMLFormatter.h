@@ -32,7 +32,7 @@ namespace Lucene
         String postTag;
 
     public:
-        virtual String highlightTerm(const String& originalText, TokenGroupPtr tokenGroup);
+        virtual String highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup);
     };
 }
 

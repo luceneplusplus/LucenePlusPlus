@@ -30,7 +30,7 @@ namespace Lucene
         OffsetAttributePtr offsetAtt;
 
     public:
-        virtual void start(const String& originalText, TokenStreamPtr tokenStream);
+        virtual void start(const String& originalText, const TokenStreamPtr& tokenStream);
         virtual bool isNewFragment();
 
         /// @return size in number of characters of each fragment

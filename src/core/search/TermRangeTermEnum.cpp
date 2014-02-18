@@ -14,8 +14,8 @@
 
 namespace Lucene
 {
-    TermRangeTermEnum::TermRangeTermEnum(IndexReaderPtr reader, const String& field, StringValue lowerTermText,
-                                         StringValue upperTermText, bool includeLower, bool includeUpper, CollatorPtr collator)
+    TermRangeTermEnum::TermRangeTermEnum(const IndexReaderPtr& reader, const String& field, StringValue lowerTermText,
+                                         StringValue upperTermText, bool includeLower, bool includeUpper, const CollatorPtr& collator)
     {
         this->collator = collator;
         this->_endEnum = false;
@@ -50,7 +50,7 @@ namespace Lucene
         return _endEnum;
     }
 
-    bool TermRangeTermEnum::termCompare(TermPtr term)
+    bool TermRangeTermEnum::termCompare(const TermPtr& term)
     {
         if (!collator)
         {

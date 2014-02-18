@@ -59,7 +59,7 @@ namespace Lucene
         return (lockThread == LuceneThread::currentId() && recursionCount > 0);
     }
 
-    SyncLock::SyncLock(SynchronizePtr sync, int32_t timeout)
+    SyncLock::SyncLock(const SynchronizePtr& sync, int32_t timeout)
     {
         this->sync = sync;
         lock(timeout);

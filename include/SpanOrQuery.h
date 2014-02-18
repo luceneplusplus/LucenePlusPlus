@@ -33,12 +33,12 @@ namespace Lucene
 
         virtual String getField();
         virtual void extractTerms(SetTerm terms);
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
         virtual String toString(const String& field);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual SpansPtr getSpans(IndexReaderPtr reader);
+        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
 
         friend class OrSpans;
     };

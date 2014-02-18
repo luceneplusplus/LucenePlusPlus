@@ -14,13 +14,13 @@
 
 namespace Lucene
 {
-    MultiFieldQueryParser::MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer, MapStringDouble boosts) : QueryParser(matchVersion, L"", analyzer)
+    MultiFieldQueryParser::MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, const AnalyzerPtr& analyzer, MapStringDouble boosts) : QueryParser(matchVersion, L"", analyzer)
     {
         this->boosts = boosts;
         this->fields = fields;
     }
 
-    MultiFieldQueryParser::MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, AnalyzerPtr analyzer) : QueryParser(matchVersion, L"", analyzer)
+    MultiFieldQueryParser::MultiFieldQueryParser(LuceneVersion::Version matchVersion, Collection<String> fields, const AnalyzerPtr& analyzer) : QueryParser(matchVersion, L"", analyzer)
     {
         this->fields = fields;
     }
@@ -65,7 +65,7 @@ namespace Lucene
         return getFieldQuery(field, queryText, 0);
     }
 
-    void MultiFieldQueryParser::applySlop(QueryPtr query, int32_t slop)
+    void MultiFieldQueryParser::applySlop(const QueryPtr& query, int32_t slop)
     {
         if (MiscUtils::typeOf<PhraseQuery>(query))
             boost::dynamic_pointer_cast<PhraseQuery>(query)->setSlop(slop);
@@ -121,7 +121,7 @@ namespace Lucene
         return QueryParser::getRangeQuery(field, part1, part2, inclusive);
     }
 
-    QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, AnalyzerPtr analyzer)
+    QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, const AnalyzerPtr& analyzer)
     {
         if (queries.size() != fields.size())
             boost::throw_exception(IllegalArgumentException(L"queries.size() != fields.size()"));
@@ -136,7 +136,7 @@ namespace Lucene
         return booleanQuery;
     }
 
-    QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, const String& query, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer)
+    QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, const String& query, Collection<String> fields, Collection<BooleanClause::Occur> flags, const AnalyzerPtr& analyzer)
     {
         if (fields.size() != flags.size())
             boost::throw_exception(IllegalArgumentException(L"fields.size() != flags.size()"));
@@ -151,7 +151,7 @@ namespace Lucene
         return booleanQuery;
     }
 
-    QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, Collection<BooleanClause::Occur> flags, AnalyzerPtr analyzer)
+    QueryPtr MultiFieldQueryParser::parse(LuceneVersion::Version matchVersion, Collection<String> queries, Collection<String> fields, Collection<BooleanClause::Occur> flags, const AnalyzerPtr& analyzer)
     {
         if (queries.size() != fields.size() || fields.size() != flags.size())
             boost::throw_exception(IllegalArgumentException(L"queries, fields, and flags array have have different length"));

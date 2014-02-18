@@ -21,13 +21,13 @@ namespace Lucene
     {
     public:
         /// Construct a new ArabicLetterTokenizer.
-        ArabicLetterTokenizer(ReaderPtr input);
+        ArabicLetterTokenizer(const ReaderPtr& input);
 
         /// Construct a new ArabicLetterTokenizer using a given {@link AttributeSource}.
-        ArabicLetterTokenizer(AttributeSourcePtr source, ReaderPtr input);
+        ArabicLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
         /// Construct a new ArabicLetterTokenizer using a given {@link AttributeFactory}.
-        ArabicLetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        ArabicLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~ArabicLetterTokenizer();
 

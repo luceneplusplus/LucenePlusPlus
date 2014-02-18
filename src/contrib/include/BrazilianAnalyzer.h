@@ -56,7 +56,7 @@ namespace Lucene
         ///
         /// @return A {@link TokenStream} built from a {@link StandardTokenizer} filtered with
         /// {@link LowerCaseFilter}, {@link StandardFilter}, {@link StopFilter}, and {@link BrazilianStemFilter}.
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
 
         /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the
         /// provided {@link Reader}.
@@ -64,7 +64,7 @@ namespace Lucene
         /// @return A {@link TokenStream} built from an {@link BrazilianLetterTokenizer} filtered with
         /// {@link LowerCaseFilter}, {@link StopFilter}, {@link BrazilianNormalizationFilter} and
         /// {@link BrazilianStemFilter}.
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
     };
 
     class LPPCONTRIBAPI BrazilianAnalyzerSavedStreams : public LuceneObject

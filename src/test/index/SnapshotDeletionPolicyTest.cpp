@@ -26,7 +26,7 @@ using namespace Lucene;
 class SnapshotThread : public LuceneThread
 {
 public:
-    SnapshotThread(int64_t stopTime, IndexWriterPtr writer)
+    SnapshotThread(int64_t stopTime, const IndexWriterPtr& writer)
     {
         this->stopTime = stopTime;
         this->writer = writer;
@@ -85,7 +85,7 @@ public:
     ByteArray buffer;
 
 public:
-    void runTest(DirectoryPtr dir)
+    void runTest(const DirectoryPtr& dir)
     {
         // Run for ~1 seconds
         int64_t stopTime = MiscUtils::currentTimeMillis() + 1000;
@@ -124,7 +124,7 @@ public:
     /// Example showing how to use the SnapshotDeletionPolicy to take a backup.  This method does not
     /// really do a backup; instead, it reads every byte of every file just to test that the files
     /// indeed exist and are readable even while the index is changing.
-    void backupIndex(DirectoryPtr dir, SnapshotDeletionPolicyPtr dp)
+    void backupIndex(const DirectoryPtr& dir, const SnapshotDeletionPolicyPtr& dp)
     {
         // To backup an index we first take a snapshot
         LuceneException finally;
@@ -143,7 +143,7 @@ public:
         finally.throwException();
     }
 
-    void copyFiles(DirectoryPtr dir, IndexCommitPtr cp)
+    void copyFiles(const DirectoryPtr& dir, const IndexCommitPtr& cp)
     {
         // While we hold the snapshot, and nomatter how long we take to do the backup, the IndexWriter will
         // never delete the files in the snapshot
@@ -157,7 +157,7 @@ public:
         }
     }
 
-    void readFile(DirectoryPtr dir, const String& name)
+    void readFile(const DirectoryPtr& dir, const String& name)
     {
         IndexInputPtr input = dir->openInput(name);
 
@@ -185,7 +185,7 @@ public:
         finally.throwException();
     }
 
-    void checkNoUnreferencedFiles(DirectoryPtr dir)
+    void checkNoUnreferencedFiles(const DirectoryPtr& dir)
     {
         HashSet<String> _startFiles = dir->listAll();
         SegmentInfosPtr infos = newLucene<SegmentInfos>();

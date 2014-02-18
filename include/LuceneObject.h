@@ -43,16 +43,16 @@ namespace Lucene
 
         /// Return clone of this object
         /// @param other clone reference - null when called initially, then set in top virtual override.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Return hash code for this object.
         virtual int32_t hashCode();
 
         /// Return whether two objects are equal
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         /// Compare two objects
-        virtual int32_t compareTo(LuceneObjectPtr other);
+        virtual int32_t compareTo(const LuceneObjectPtr& other);
 
         /// Returns a string representation of the object
         virtual String toString();

@@ -43,7 +43,7 @@ namespace TestSetNorm
         Collection<double> scores;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -53,7 +53,7 @@ namespace TestSetNorm
             scores[doc + base] = scorer->score();
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
             base = docBase;
         }

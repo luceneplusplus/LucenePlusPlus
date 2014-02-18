@@ -15,7 +15,7 @@ namespace Lucene
     const int32_t CharTokenizer::MAX_WORD_LEN = 255;
     const int32_t CharTokenizer::IO_BUFFER_SIZE = 4096;
 
-    CharTokenizer::CharTokenizer(ReaderPtr input) : Tokenizer(input)
+    CharTokenizer::CharTokenizer(const ReaderPtr& input) : Tokenizer(input)
     {
         offset = 0;
         bufferIndex = 0;
@@ -26,7 +26,7 @@ namespace Lucene
         termAtt = addAttribute<TermAttribute>();
     }
 
-    CharTokenizer::CharTokenizer(AttributeSourcePtr source, ReaderPtr input) : Tokenizer(source, input)
+    CharTokenizer::CharTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : Tokenizer(source, input)
     {
         offset = 0;
         bufferIndex = 0;
@@ -37,7 +37,7 @@ namespace Lucene
         termAtt = addAttribute<TermAttribute>();
     }
 
-    CharTokenizer::CharTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : Tokenizer(factory, input)
+    CharTokenizer::CharTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : Tokenizer(factory, input)
     {
         offset = 0;
         bufferIndex = 0;
@@ -111,7 +111,7 @@ namespace Lucene
         offsetAtt->setOffset(finalOffset, finalOffset);
     }
 
-    void CharTokenizer::reset(ReaderPtr input)
+    void CharTokenizer::reset(const ReaderPtr& input)
     {
         Tokenizer::reset(input);
         bufferIndex = 0;

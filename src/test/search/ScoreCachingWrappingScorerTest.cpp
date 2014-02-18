@@ -97,11 +97,11 @@ namespace TestGetScores
             ++idx;
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
         }
 
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = newLucene<ScoreCachingWrappingScorer>(scorer);
         }

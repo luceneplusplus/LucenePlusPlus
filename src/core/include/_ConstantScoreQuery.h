@@ -14,7 +14,7 @@ namespace Lucene
     class ConstantWeight : public Weight
     {
     public:
-        ConstantWeight(ConstantScoreQueryPtr constantScorer, SearcherPtr searcher);
+        ConstantWeight(const ConstantScoreQueryPtr& constantScorer, const SearcherPtr& searcher);
         virtual ~ConstantWeight();
 
         LUCENE_CLASS(ConstantWeight);
@@ -30,14 +30,14 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
     };
 
     class ConstantScorer : public Scorer
     {
     public:
-        ConstantScorer(ConstantScoreQueryPtr constantScorer, SimilarityPtr similarity, IndexReaderPtr reader, WeightPtr w);
+        ConstantScorer(const ConstantScoreQueryPtr& constantScorer, const SimilarityPtr& similarity, const IndexReaderPtr& reader, const WeightPtr& w);
         virtual ~ConstantScorer();
 
         LUCENE_CLASS(ConstantScorer);

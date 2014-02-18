@@ -65,7 +65,7 @@ namespace Lucene
         bool isValid();
 
         /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 
     class OutputFile : public LuceneObject

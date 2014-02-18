@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    MergeDocIDRemapper::MergeDocIDRemapper(SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergedDocCount)
+    MergeDocIDRemapper::MergeDocIDRemapper(const SegmentInfosPtr& infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, const OneMergePtr& merge, int32_t mergedDocCount)
     {
         this->docMaps = docMaps;
         SegmentInfoPtr firstSegment(merge->segments->info(0));

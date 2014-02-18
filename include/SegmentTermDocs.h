@@ -14,7 +14,7 @@ namespace Lucene
     class SegmentTermDocs : public TermPositions, public LuceneObject
     {
     public:
-        SegmentTermDocs(SegmentReaderPtr parent);
+        SegmentTermDocs(const SegmentReaderPtr& parent);
         virtual ~SegmentTermDocs();
 
         LUCENE_CLASS(SegmentTermDocs);
@@ -43,12 +43,12 @@ namespace Lucene
 
     public:
         /// Sets this to the data for a term.
-        virtual void seek(TermPtr term);
+        virtual void seek(const TermPtr& term);
 
         /// Sets this to the data for the current term in a {@link TermEnum}.
-        virtual void seek(TermEnumPtr termEnum);
+        virtual void seek(const TermEnumPtr& termEnum);
 
-        virtual void seek(TermInfoPtr ti, TermPtr term);
+        virtual void seek(const TermInfoPtr& ti, const TermPtr& term);
 
         virtual void close();
 
@@ -69,7 +69,7 @@ namespace Lucene
 
         /// Used for testing
         virtual IndexInputPtr freqStream();
-        virtual void freqStream(IndexInputPtr freqStream);
+        virtual void freqStream(const IndexInputPtr& freqStream);
 
     protected:
         virtual void skippingDoc();

@@ -40,7 +40,7 @@ namespace Lucene
         enablePositionIncrements = StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion);
     }
 
-    StopAnalyzer::StopAnalyzer(LuceneVersion::Version matchVersion, ReaderPtr stopwords)
+    StopAnalyzer::StopAnalyzer(LuceneVersion::Version matchVersion, const ReaderPtr& stopwords)
     {
         stopWords = WordlistLoader::getWordSet(stopwords);
         enablePositionIncrements = StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion);
@@ -58,12 +58,12 @@ namespace Lucene
         return __ENGLISH_STOP_WORDS_SET;
     }
 
-    TokenStreamPtr StopAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr StopAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<StopFilter>(enablePositionIncrements, newLucene<LowerCaseTokenizer>(reader), stopWords);
     }
 
-    TokenStreamPtr StopAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr StopAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         StopAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<StopAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

@@ -188,7 +188,7 @@ namespace Lucene
     /// Lexical states
     const int32_t StandardTokenizerImpl::YYINITIAL = 0;
 
-    StandardTokenizerImpl::StandardTokenizerImpl(ReaderPtr in)
+    StandardTokenizerImpl::StandardTokenizerImpl(const ReaderPtr& in)
     {
         this->zzState = 0;
         this->zzLexicalState = YYINITIAL;
@@ -333,7 +333,7 @@ namespace Lucene
         return _yychar;
     }
 
-    void StandardTokenizerImpl::reset(ReaderPtr r)
+    void StandardTokenizerImpl::reset(const ReaderPtr& r)
     {
         // reset to default buffer size, if buffer has grown
         if (zzBuffer.size() > ZZ_BUFFERSIZE)
@@ -341,12 +341,12 @@ namespace Lucene
         yyreset(r);
     }
 
-    void StandardTokenizerImpl::getText(TokenPtr t)
+    void StandardTokenizerImpl::getText(const TokenPtr& t)
     {
         t->setTermBuffer(zzBuffer.get(), zzStartRead, zzMarkedPos - zzStartRead);
     }
 
-    void StandardTokenizerImpl::getText(TermAttributePtr t)
+    void StandardTokenizerImpl::getText(const TermAttributePtr& t)
     {
         t->setTermBuffer(zzBuffer.get(), zzStartRead, zzMarkedPos - zzStartRead);
     }
@@ -391,7 +391,7 @@ namespace Lucene
             zzReader->close();
     }
 
-    void StandardTokenizerImpl::yyreset(ReaderPtr reader)
+    void StandardTokenizerImpl::yyreset(const ReaderPtr& reader)
     {
         zzReader = reader;
         zzAtBOL = true;

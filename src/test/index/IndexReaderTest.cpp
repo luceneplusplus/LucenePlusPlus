@@ -41,7 +41,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexReaderTest;
 
-static void addDocumentWithFields(IndexWriterPtr writer)
+static void addDocumentWithFields(const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"keyword", L"test1", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
@@ -51,7 +51,7 @@ static void addDocumentWithFields(IndexWriterPtr writer)
     writer->addDocument(doc);
 }
 
-static void addDocumentWithDifferentFields(IndexWriterPtr writer)
+static void addDocumentWithDifferentFields(const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"keyword2", L"test1", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
@@ -61,7 +61,7 @@ static void addDocumentWithDifferentFields(IndexWriterPtr writer)
     writer->addDocument(doc);
 }
 
-static void addDocumentWithTermVectorFields(IndexWriterPtr writer)
+static void addDocumentWithTermVectorFields(const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"tvnot", L"tvnot", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO));
@@ -72,14 +72,14 @@ static void addDocumentWithTermVectorFields(IndexWriterPtr writer)
     writer->addDocument(doc);
 }
 
-static void addDoc(IndexWriterPtr writer, const String& value)
+static void addDoc(const IndexWriterPtr& writer, const String& value)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", value, Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void checkTermDocsCount(IndexReaderPtr reader, TermPtr term, int32_t expected)
+static void checkTermDocsCount(const IndexReaderPtr& reader, const TermPtr& term, int32_t expected)
 {
     TermDocsPtr tdocs;
 

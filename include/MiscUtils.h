@@ -123,13 +123,13 @@ namespace Lucene
 
         /// Return whether given Lucene object is of a specified type
         template <typename TYPE>
-        static bool typeOf(LuceneObjectPtr object)
+        static bool typeOf(const LuceneObjectPtr& object)
         {
             return boost::dynamic_pointer_cast<TYPE>(object).get() != NULL;
         }
 
         /// Return whether given Lucene objects are of equal type.
-        static bool equalTypes(LuceneObjectPtr first, LuceneObjectPtr second);
+        static bool equalTypes(const LuceneObjectPtr& first, const LuceneObjectPtr& second);
 
         /// Perform unsigned right-shift (left bits are zero filled)
         static int64_t unsignedShift(int64_t num, int64_t shift);

@@ -36,7 +36,7 @@ namespace Lucene
     public:
         /// Initialize the deleter: find all previous commits in the Directory, incref the files they reference, call
         /// the policy to let it delete commits.  This will remove any files not referenced by any of the commits.
-        IndexFileDeleter(DirectoryPtr directory, IndexDeletionPolicyPtr policy, SegmentInfosPtr segmentInfos, InfoStreamPtr infoStream, DocumentsWriterPtr docWriter, HashSet<String> synced);
+        IndexFileDeleter(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& policy, const SegmentInfosPtr& segmentInfos, const InfoStreamPtr& infoStream, const DocumentsWriterPtr& docWriter, HashSet<String> synced);
         virtual ~IndexFileDeleter();
 
         LUCENE_CLASS(IndexFileDeleter);
@@ -85,7 +85,7 @@ namespace Lucene
         RefCountPtr getRefCount(const String& fileName);
 
     public:
-        void setInfoStream(InfoStreamPtr infoStream);
+        void setInfoStream(const InfoStreamPtr& infoStream);
 
         SegmentInfosPtr getLastSegmentInfos();
 
@@ -108,14 +108,14 @@ namespace Lucene
         ///
         /// If this is a commit, we also call the policy to give it a chance to remove other commits.  If any
         /// commits are removed, we decref their files as well.
-        void checkpoint(SegmentInfosPtr segmentInfos, bool isCommit);
+        void checkpoint(const SegmentInfosPtr& segmentInfos, bool isCommit);
 
-        void incRef(SegmentInfosPtr segmentInfos, bool isCommit);
+        void incRef(const SegmentInfosPtr& segmentInfos, bool isCommit);
         void incRef(HashSet<String> files);
         void incRef(const String& fileName);
         void decRef(HashSet<String> files);
         void decRef(const String& fileName);
-        void decRef(SegmentInfosPtr segmentInfos);
+        void decRef(const SegmentInfosPtr& segmentInfos);
 
         bool exists(const String& fileName);
 
@@ -151,7 +151,7 @@ namespace Lucene
     class CommitPoint : public IndexCommit
     {
     public:
-        CommitPoint(Collection<CommitPointPtr> commitsToDelete, DirectoryPtr directory, SegmentInfosPtr segmentInfos);
+        CommitPoint(Collection<CommitPointPtr> commitsToDelete, const DirectoryPtr& directory, const SegmentInfosPtr& segmentInfos);
         virtual ~CommitPoint();
 
         LUCENE_CLASS(CommitPoint);
@@ -197,7 +197,7 @@ namespace Lucene
 
         virtual bool isDeleted();
 
-        virtual int32_t compareTo(LuceneObjectPtr other);
+        virtual int32_t compareTo(const LuceneObjectPtr& other);
     };
 }
 

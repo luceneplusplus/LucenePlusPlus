@@ -58,12 +58,12 @@ namespace Lucene
         return collator;
     }
 
-    FilteredTermEnumPtr TermRangeQuery::getEnum(IndexReaderPtr reader)
+    FilteredTermEnumPtr TermRangeQuery::getEnum(const IndexReaderPtr& reader)
     {
         return newLucene<TermRangeTermEnum>(reader, field, lowerTerm, upperTerm, includeLower, includeUpper, collator);
     }
 
-    LuceneObjectPtr TermRangeQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr TermRangeQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<TermRangeQuery>(field, lowerTerm, upperTerm, includeLower, includeUpper, collator));
         TermRangeQueryPtr cloneQuery(boost::dynamic_pointer_cast<TermRangeQuery>(clone));
@@ -96,7 +96,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool TermRangeQuery::equals(LuceneObjectPtr other)
+    bool TermRangeQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

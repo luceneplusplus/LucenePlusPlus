@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights.
-        DisjunctionMaxWeight(DisjunctionMaxQueryPtr query, SearcherPtr searcher);
+        DisjunctionMaxWeight(const DisjunctionMaxQueryPtr& query, const SearcherPtr& searcher);
         virtual ~DisjunctionMaxWeight();
 
         LUCENE_CLASS(DisjunctionMaxWeight);
@@ -44,10 +44,10 @@ namespace Lucene
         virtual void normalize(double norm);
 
         /// Create the scorer used to score our associated DisjunctionMaxQuery
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
 
         /// Explain the score we computed for doc
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
     };
 }
 

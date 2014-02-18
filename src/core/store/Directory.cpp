@@ -48,7 +48,7 @@ namespace Lucene
             lockFactory->clearLock(name);
     }
 
-    void Directory::setLockFactory(LockFactoryPtr lockFactory)
+    void Directory::setLockFactory(const LockFactoryPtr& lockFactory)
     {
         BOOST_ASSERT(lockFactory);
         this->lockFactory = lockFactory;
@@ -70,7 +70,7 @@ namespace Lucene
         return LuceneObject::toString() + L" lockFactory=" + getLockFactory()->toString();
     }
 
-    void Directory::copy(DirectoryPtr src, DirectoryPtr dest, bool closeDirSrc)
+    void Directory::copy(const DirectoryPtr& src, const DirectoryPtr& dest, bool closeDirSrc)
     {
         HashSet<String> files(src->listAll());
 

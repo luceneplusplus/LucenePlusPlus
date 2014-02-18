@@ -23,21 +23,21 @@ namespace Lucene
     public:
         /// Create a CustomScoreQuery over input subQuery.
         /// @param subQuery the sub query whose scored is being customed. Must not be null.
-        CustomScoreQuery(QueryPtr subQuery);
+        CustomScoreQuery(const QueryPtr& subQuery);
 
         /// Create a CustomScoreQuery over input subQuery and a {@link ValueSourceQuery}.
         /// @param subQuery the sub query whose score is being customized. Must not be null.
         /// @param valSrcQuery a value source query whose scores are used in the custom score computation. For
         /// most simple/convenient use case this would be a {@link FieldScoreQuery}.  This parameter is
         /// optional - it can be null.
-        CustomScoreQuery(QueryPtr subQuery, ValueSourceQueryPtr valSrcQuery);
+        CustomScoreQuery(const QueryPtr& subQuery, const ValueSourceQueryPtr& valSrcQuery);
 
         /// Create a CustomScoreQuery over input subQuery and a {@link ValueSourceQuery}.
         /// @param subQuery the sub query whose score is being customized. Must not be null.
         /// @param valSrcQueries value source queries whose scores are used in the custom score computation.
         /// For most simple/convenient use case these would be {@link FieldScoreQueries}.  This parameter is
         /// optional - it can be null or even an empty array.
-        CustomScoreQuery(QueryPtr subQuery, Collection<ValueSourceQueryPtr> valSrcQueries);
+        CustomScoreQuery(const QueryPtr& subQuery, Collection<ValueSourceQueryPtr> valSrcQueries);
 
         virtual ~CustomScoreQuery();
 
@@ -51,11 +51,11 @@ namespace Lucene
     public:
         using Query::toString;
 
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
         virtual void extractTerms(SetTerm terms);
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual String toString(const String& field);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         /// Compute a custom score by the subQuery score and a number of ValueSourceQuery scores.
@@ -86,7 +86,7 @@ namespace Lucene
         /// search (since Lucene 2.9).
         /// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider}
         /// for the given {@link IndexReader}.
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
+        virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
 
         /// Explain the custom score.
         ///
@@ -96,9 +96,9 @@ namespace Lucene
         /// search (since Lucene 2.9).
         /// Please override {@link #getCustomScoreProvider} and return a subclass of {@link CustomScoreProvider}
         /// for the given {@link IndexReader}.
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl);
+        virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, const ExplanationPtr& valSrcExpl);
 
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
         /// Checks if this is strict custom scoring.  In strict custom scoring, the ValueSource part does not
         /// participate in weight normalization.  This may be useful when one wants full control over how scores
@@ -117,12 +117,12 @@ namespace Lucene
         virtual String name();
 
     protected:
-        void ConstructQuery(QueryPtr subQuery, Collection<ValueSourceQueryPtr> valSrcQueries);
+        void ConstructQuery(const QueryPtr& subQuery, Collection<ValueSourceQueryPtr> valSrcQueries);
 
         /// Returns a {@link CustomScoreProvider} that calculates the custom scores for the given {@link
         /// IndexReader}.  The default implementation returns a default implementation as specified in
         /// the docs of {@link CustomScoreProvider}.
-        virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader);
+        virtual CustomScoreProviderPtr getCustomScoreProvider(const IndexReaderPtr& reader);
 
         friend class CustomWeight;
         friend class CustomScorer;

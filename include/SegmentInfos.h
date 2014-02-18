@@ -86,13 +86,13 @@ namespace Lucene
         String getNextSegmentFileName();
 
         /// Read a particular segmentFileName.  Note that this may throw an IOException if a commit is in process.
-        void read(DirectoryPtr directory, const String& segmentFileName);
+        void read(const DirectoryPtr& directory, const String& segmentFileName);
 
         /// This version of read uses the retry logic (for lock-less commits) to find the right segments file to load.
-        void read(DirectoryPtr directory);
+        void read(const DirectoryPtr& directory);
 
         /// Returns a copy of this instance, also copying each SegmentInfo.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Version number when this SegmentInfos was generated.
         int64_t getVersion();
@@ -104,49 +104,49 @@ namespace Lucene
         SegmentInfosPtr range(int32_t first, int32_t last);
 
         /// Carry over generation numbers from another SegmentInfos.
-        void updateGeneration(SegmentInfosPtr other);
+        void updateGeneration(const SegmentInfosPtr& other);
 
-        void rollbackCommit(DirectoryPtr dir);
+        void rollbackCommit(const DirectoryPtr& dir);
 
         /// Call this to start a commit.  This writes the new segments file, but writes an invalid checksum at the end, so
         /// that it is not visible to readers.  Once this is called you must call.
         /// {@link #finishCommit} to complete the commit or
         /// {@link #rollbackCommit} to abort it.
-        void prepareCommit(DirectoryPtr dir);
+        void prepareCommit(const DirectoryPtr& dir);
 
         /// Returns all file names referenced by SegmentInfo instances matching the provided Directory (ie files associated
         /// with any "external" segments are skipped). The returned collection is recomputed on each invocation.
-        HashSet<String> files(DirectoryPtr dir, bool includeSegmentsFile);
+        HashSet<String> files(const DirectoryPtr& dir, bool includeSegmentsFile);
 
-        void finishCommit(DirectoryPtr dir);
+        void finishCommit(const DirectoryPtr& dir);
 
         /// Writes & syncs to the Directory dir, taking care to remove the segments file on exception.
-        void commit(DirectoryPtr dir);
+        void commit(const DirectoryPtr& dir);
 
-        String segString(DirectoryPtr directory);
+        String segString(const DirectoryPtr& directory);
         MapStringString getUserData();
         void setUserData(MapStringString data);
 
         /// Replaces all segments in this instance, but keeps generation, version, counter so that future commits remain
         /// write once.
-        void replace(SegmentInfosPtr other);
+        void replace(const SegmentInfosPtr& other);
 
-        bool hasExternalSegments(DirectoryPtr dir);
+        bool hasExternalSegments(const DirectoryPtr& dir);
 
         static int64_t getCurrentSegmentGeneration(HashSet<String> files);
-        static int64_t getCurrentSegmentGeneration(DirectoryPtr directory);
+        static int64_t getCurrentSegmentGeneration(const DirectoryPtr& directory);
         static String getCurrentSegmentFileName(HashSet<String> files);
-        static String getCurrentSegmentFileName(DirectoryPtr directory);
+        static String getCurrentSegmentFileName(const DirectoryPtr& directory);
         static int64_t generationFromSegmentsFileName(const String& fileName);
 
         /// Current version number from segments file.
-        static int64_t readCurrentVersion(DirectoryPtr directory);
+        static int64_t readCurrentVersion(const DirectoryPtr& directory);
 
         /// Returns userData from latest segments file.
-        static MapStringString readCurrentUserData(DirectoryPtr directory);
+        static MapStringString readCurrentUserData(const DirectoryPtr& directory);
 
         /// If non-null, information about retries when loading the segments file will be printed to this.
-        static void setInfoStream(InfoStreamPtr infoStream);
+        static void setInfoStream(const InfoStreamPtr& infoStream);
 
         /// Set how many times to try loading the segments.gen file contents to determine current segment generation.  This file
         /// is only referenced when the primary method (listing the directory) fails.
@@ -174,7 +174,7 @@ namespace Lucene
         static void message(const String& message);
 
     protected:
-        void write(DirectoryPtr directory);
+        void write(const DirectoryPtr& directory);
 
         friend class FindSegmentsFile;
     };

@@ -14,7 +14,7 @@ namespace Lucene
     class SegmentTermPositions : public SegmentTermDocs
     {
     public:
-        SegmentTermPositions(SegmentReaderPtr parent);
+        SegmentTermPositions(const SegmentReaderPtr& parent);
         virtual ~SegmentTermPositions();
 
         LUCENE_CLASS(SegmentTermPositions);
@@ -37,7 +37,7 @@ namespace Lucene
     public:
         using SegmentTermDocs::seek;
 
-        virtual void seek(TermInfoPtr ti, TermPtr term);
+        virtual void seek(const TermInfoPtr& ti, const TermPtr& term);
         virtual void close();
 
         /// Returns next position in the current document.

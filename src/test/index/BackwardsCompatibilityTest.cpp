@@ -45,7 +45,7 @@ static void rmDir(const String& dirName)
     FileUtils::removeDirectory(FileUtils::joinPath(getTempDir(), dirName));
 }
 
-static void addDoc(IndexWriterPtr writer, int32_t id)
+static void addDoc(const IndexWriterPtr& writer, int32_t id)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -68,7 +68,7 @@ static void addDoc(IndexWriterPtr writer, int32_t id)
     writer->addDocument(doc);
 }
 
-static void addNoProxDoc(IndexWriterPtr writer)
+static void addNoProxDoc(const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     FieldPtr f = newLucene<Field>(L"content3", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED);
@@ -159,7 +159,7 @@ namespace CheckCompressedFields
     };
 }
 
-void checkCompressedFields29(DirectoryPtr dir, bool shouldStillBeCompressed)
+void checkCompressedFields29(const DirectoryPtr& dir, bool shouldStillBeCompressed)
 {
     int32_t count = 0;
     static String TEXT_TO_COMPRESS = L"this is a compressed field and should appear in 3.0 as an uncompressed field after merge";
@@ -238,7 +238,7 @@ void checkCompressedFields29(DirectoryPtr dir, bool shouldStillBeCompressed)
     finally.throwException();
 }
 
-static void testHits(Collection<ScoreDocPtr> hits, int32_t expectedCount, IndexReaderPtr reader)
+static void testHits(Collection<ScoreDocPtr> hits, int32_t expectedCount, const IndexReaderPtr& reader)
 {
     int32_t hitCount = hits.size();
     EXPECT_EQ(expectedCount, hitCount);

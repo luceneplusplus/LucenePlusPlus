@@ -56,7 +56,7 @@ namespace Lucene
 
         /// Add a subquery to this disjunction
         /// @param query the disjunct added
-        void add(QueryPtr query);
+        void add(const QueryPtr& query);
 
         /// Add a collection of disjuncts to this disjunction
         void add(Collection<QueryPtr> disjuncts);
@@ -66,16 +66,16 @@ namespace Lucene
         Collection<QueryPtr>::iterator end();
 
         /// Create the Weight used to score us
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
         /// Optimize our representation and our subqueries representations
         /// @param reader the IndexReader we query
         /// @return an optimized copy of us (which may not be a copy if there is nothing to optimize)
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
         /// Create a shallow copy of us - used in rewriting if necessary
         /// @return a copy of us (but reuse, don't copy, our subqueries)
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Adds all terms occurring in this query to the terms set.
         virtual void extractTerms(SetTerm terms);
@@ -87,7 +87,7 @@ namespace Lucene
 
         /// @return true if other is a DisjunctionMaxQuery with the same boost and the same subqueries, in the
         /// same order, as us
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         virtual int32_t hashCode();
 

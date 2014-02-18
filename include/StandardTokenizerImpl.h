@@ -16,7 +16,7 @@ namespace Lucene
     public:
         /// Creates a new scanner
         /// @param in the Reader to read input from.
-        StandardTokenizerImpl(ReaderPtr in);
+        StandardTokenizerImpl(const ReaderPtr& in);
 
         virtual ~StandardTokenizerImpl();
 
@@ -136,13 +136,13 @@ namespace Lucene
         int32_t yychar();
 
         /// Resets the Tokenizer to a new Reader.
-        void reset(ReaderPtr r);
+        void reset(const ReaderPtr& r);
 
         /// Fills Lucene token with the current token text.
-        void getText(TokenPtr t);
+        void getText(const TokenPtr& t);
 
         /// Fills TermAttribute with the current token text.
-        void getText(TermAttributePtr t);
+        void getText(const TermAttributePtr& t);
 
         /// Closes the input stream.
         void yyclose();
@@ -153,7 +153,7 @@ namespace Lucene
         /// Lexical state is set to ZZ_INITIAL.
         ///
         /// @param reader the new input stream.
-        void yyreset(ReaderPtr reader);
+        void yyreset(const ReaderPtr& reader);
 
         /// Returns the current lexical state.
         int32_t yystate();

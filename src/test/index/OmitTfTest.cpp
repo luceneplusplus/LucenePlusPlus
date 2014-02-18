@@ -92,7 +92,7 @@ public:
         return 1.0;
     }
 
-    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, SearcherPtr searcher)
+    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher)
     {
         return newLucene<SimpleIDFExplanation>();
     }
@@ -122,7 +122,7 @@ protected:
     int32_t docBase;
 
 public:
-    virtual void setScorer(ScorerPtr scorer)
+    virtual void setScorer(const ScorerPtr& scorer)
     {
     }
 
@@ -132,7 +132,7 @@ public:
         sum += doc + docBase; // use it to avoid any possibility of being optimized away
     }
 
-    virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
     }
@@ -143,7 +143,7 @@ public:
     }
 };
 
-static void checkNoPrx(DirectoryPtr dir)
+static void checkNoPrx(const DirectoryPtr& dir)
 {
     HashSet<String> files = dir->listAll();
     for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
@@ -331,7 +331,7 @@ namespace TestBasic
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -349,7 +349,7 @@ namespace TestBasic
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -367,7 +367,7 @@ namespace TestBasic
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -386,7 +386,7 @@ namespace TestBasic
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }

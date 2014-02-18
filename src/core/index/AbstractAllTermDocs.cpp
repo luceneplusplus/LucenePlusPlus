@@ -19,7 +19,7 @@ namespace Lucene
     {
     }
 
-    void AbstractAllTermDocs::seek(TermPtr term)
+    void AbstractAllTermDocs::seek(const TermPtr& term)
     {
         if (!term)
             _doc = -1;
@@ -27,7 +27,7 @@ namespace Lucene
             boost::throw_exception(UnsupportedOperationException());
     }
 
-    void AbstractAllTermDocs::seek(TermEnumPtr termEnum)
+    void AbstractAllTermDocs::seek(const TermEnumPtr& termEnum)
     {
         boost::throw_exception(UnsupportedOperationException());
     }

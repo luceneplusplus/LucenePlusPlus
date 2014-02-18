@@ -38,7 +38,7 @@ namespace Lucene
         ///
         /// @param name The name of the field
         /// @param reader The reader with the content
-        Field(const String& name, ReaderPtr reader);
+        Field(const String& name, const ReaderPtr& reader);
 
         /// Create a tokenized and indexed field that is not stored, optionally with storing term vectors.  The
         /// Reader is read only when the Document is added to the index, ie. you may not close the Reader until
@@ -47,7 +47,7 @@ namespace Lucene
         /// @param name The name of the field
         /// @param reader The reader with the content
         /// @param termVector Whether term vector should be stored
-        Field(const String& name, ReaderPtr reader, TermVector termVector);
+        Field(const String& name, const ReaderPtr& reader, TermVector termVector);
 
         /// Create a tokenized and indexed field that is not stored. Term vectors will not be stored. This is useful
         /// for pre-analyzed fields.  The TokenStream is read only when the Document is added to the index, ie. you
@@ -55,7 +55,7 @@ namespace Lucene
         ///
         /// @param name The name of the field
         /// @param tokenStream The TokenStream with the content
-        Field(const String& name, TokenStreamPtr tokenStream);
+        Field(const String& name, const TokenStreamPtr& tokenStream);
 
         /// Create a tokenized and indexed field that is not stored, optionally with storing term vectors.  This is
         /// useful for pre-analyzed fields.  The TokenStream is read only when the Document is added to the index,
@@ -64,7 +64,7 @@ namespace Lucene
         /// @param name The name of the field
         /// @param tokenStream The TokenStream with the content
         /// @param termVector Whether term vector should be stored
-        Field(const String& name, TokenStreamPtr tokenStream, TermVector termVector);
+        Field(const String& name, const TokenStreamPtr& tokenStream, TermVector termVector);
 
         /// Create a stored field with binary value. Optionally the value may be compressed.
         ///
@@ -132,7 +132,7 @@ namespace Lucene
         virtual void setValue(const String& value);
 
         /// Change the value of this field.
-        virtual void setValue(ReaderPtr value);
+        virtual void setValue(const ReaderPtr& value);
 
         /// Change the value of this field.
         virtual void setValue(ByteArray value);
@@ -142,12 +142,12 @@ namespace Lucene
 
         /// Sets the token stream to be used for indexing and causes isIndexed() and isTokenized() to return
         /// true.  May be combined with stored values from stringValue() or getBinaryValue()
-        virtual void setTokenStream(TokenStreamPtr tokenStream);
+        virtual void setTokenStream(const TokenStreamPtr& tokenStream);
 
     protected:
         void ConstructField(const String& name, const String& value, Store store, Index index, TermVector termVector);
-        void ConstructField(const String& name, ReaderPtr reader, TermVector termVector);
-        void ConstructField(const String& name, TokenStreamPtr tokenStream, TermVector termVector);
+        void ConstructField(const String& name, const ReaderPtr& reader, TermVector termVector);
+        void ConstructField(const String& name, const TokenStreamPtr& tokenStream, TermVector termVector);
         void ConstructField(const String& name, ByteArray value, int32_t offset, int32_t length, Store store);
     };
 }

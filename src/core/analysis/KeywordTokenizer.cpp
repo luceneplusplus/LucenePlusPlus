@@ -14,22 +14,22 @@ namespace Lucene
 {
     const int32_t KeywordTokenizer::DEFAULT_BUFFER_SIZE = 256;
 
-    KeywordTokenizer::KeywordTokenizer(ReaderPtr input) : Tokenizer(input)
+    KeywordTokenizer::KeywordTokenizer(const ReaderPtr& input) : Tokenizer(input)
     {
         init(DEFAULT_BUFFER_SIZE);
     }
 
-    KeywordTokenizer::KeywordTokenizer(ReaderPtr input, int32_t bufferSize) : Tokenizer(input)
+    KeywordTokenizer::KeywordTokenizer(const ReaderPtr& input, int32_t bufferSize) : Tokenizer(input)
     {
         init(bufferSize);
     }
 
-    KeywordTokenizer::KeywordTokenizer(AttributeSourcePtr source, ReaderPtr input, int32_t bufferSize) : Tokenizer(source, input)
+    KeywordTokenizer::KeywordTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input, int32_t bufferSize) : Tokenizer(source, input)
     {
         init(bufferSize);
     }
 
-    KeywordTokenizer::KeywordTokenizer(AttributeFactoryPtr factory, ReaderPtr input, int32_t bufferSize) : Tokenizer(factory, input)
+    KeywordTokenizer::KeywordTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input, int32_t bufferSize) : Tokenizer(factory, input)
     {
         init(bufferSize);
     }

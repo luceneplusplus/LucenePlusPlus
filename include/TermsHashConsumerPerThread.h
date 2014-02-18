@@ -21,7 +21,7 @@ namespace Lucene
     public:
         virtual void startDocument() = 0;
         virtual DocWriterPtr finishDocument() = 0;
-        virtual TermsHashConsumerPerFieldPtr addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo) = 0;
+        virtual TermsHashConsumerPerFieldPtr addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo) = 0;
         virtual void abort() = 0;
     };
 }

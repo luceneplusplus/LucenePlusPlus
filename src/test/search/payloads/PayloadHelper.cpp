@@ -29,7 +29,7 @@ namespace Lucene
     class PayloadHelperFilter : public TokenFilter
     {
     public:
-        PayloadHelperFilter(TokenStreamPtr input, const String& fieldName) : TokenFilter(input)
+        PayloadHelperFilter(const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input)
         {
             this->numSeen = 0;
             this->fieldName = fieldName;
@@ -78,7 +78,7 @@ namespace Lucene
         LUCENE_CLASS(PayloadHelperAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
             result = newLucene<PayloadHelperFilter>(result, fieldName);
@@ -123,7 +123,7 @@ namespace Lucene
         return _payloadMultiField2;
     }
 
-    IndexSearcherPtr PayloadHelper::setUp(SimilarityPtr similarity, int32_t numDocs)
+    IndexSearcherPtr PayloadHelper::setUp(const SimilarityPtr& similarity, int32_t numDocs)
     {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         PayloadHelperAnalyzerPtr analyzer = newLucene<PayloadHelperAnalyzer>();

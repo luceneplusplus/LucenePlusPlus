@@ -15,7 +15,7 @@ namespace Lucene
     class LPPAPI SpanWeight : public Weight
     {
     public:
-        SpanWeight(SpanQueryPtr query, SearcherPtr searcher);
+        SpanWeight(const SpanQueryPtr& query, const SearcherPtr& searcher);
         virtual ~SpanWeight();
 
         LUCENE_CLASS(SpanWeight);
@@ -36,8 +36,8 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
 
         friend class PayloadNearSpanScorer;
         friend class PayloadTermSpanScorer;

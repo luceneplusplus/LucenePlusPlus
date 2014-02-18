@@ -56,12 +56,12 @@ namespace Lucene
         fieldsReaderLocal = newLucene<FieldsReaderLocal>(shared_from_this());
     }
 
-    SegmentReaderPtr SegmentReader::get(bool readOnly, SegmentInfoPtr si, int32_t termInfosIndexDivisor)
+    SegmentReaderPtr SegmentReader::get(bool readOnly, const SegmentInfoPtr& si, int32_t termInfosIndexDivisor)
     {
         return get(readOnly, si->dir, si, BufferedIndexInput::BUFFER_SIZE, true, termInfosIndexDivisor);
     }
 
-    SegmentReaderPtr SegmentReader::get(bool readOnly, DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, bool doOpenStores, int32_t termInfosIndexDivisor)
+    SegmentReaderPtr SegmentReader::get(bool readOnly, const DirectoryPtr& dir, const SegmentInfoPtr& si, int32_t readBufferSize, bool doOpenStores, int32_t termInfosIndexDivisor)
     {
         SegmentReaderPtr instance(readOnly ? newLucene<ReadOnlySegmentReader>() : newLucene<SegmentReader>());
         instance->readOnly = readOnly;
@@ -131,12 +131,12 @@ namespace Lucene
         return cloneBytes;
     }
 
-    BitVectorPtr SegmentReader::cloneDeletedDocs(BitVectorPtr bv)
+    BitVectorPtr SegmentReader::cloneDeletedDocs(const BitVectorPtr& bv)
     {
         return boost::dynamic_pointer_cast<BitVector>(bv->clone());
     }
 
-    LuceneObjectPtr SegmentReader::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SegmentReader::clone(const LuceneObjectPtr& other)
     {
         try
         {
@@ -149,13 +149,13 @@ namespace Lucene
         return LuceneObjectPtr();
     }
 
-    LuceneObjectPtr SegmentReader::clone(bool openReadOnly, LuceneObjectPtr other)
+    LuceneObjectPtr SegmentReader::clone(bool openReadOnly, const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
         return reopenSegment(si, true, openReadOnly);
     }
 
-    SegmentReaderPtr SegmentReader::reopenSegment(SegmentInfoPtr si, bool doClone, bool openReadOnly)
+    SegmentReaderPtr SegmentReader::reopenSegment(const SegmentInfoPtr& si, bool doClone, bool openReadOnly)
     {
         SyncLock syncLock(this);
 
@@ -367,7 +367,7 @@ namespace Lucene
             core->decRef();
     }
 
-    bool SegmentReader::hasDeletions(SegmentInfoPtr si)
+    bool SegmentReader::hasDeletions(const SegmentInfoPtr& si)
     {
         // Don't call ensureOpen() here (it could affect performance)
         return si->hasDeletions();
@@ -379,12 +379,12 @@ namespace Lucene
         return deletedDocs.get() != NULL;
     }
 
-    bool SegmentReader::usesCompoundFile(SegmentInfoPtr si)
+    bool SegmentReader::usesCompoundFile(const SegmentInfoPtr& si)
     {
         return si->getUseCompoundFile();
     }
 
-    bool SegmentReader::hasSeparateNorms(SegmentInfoPtr si)
+    bool SegmentReader::hasSeparateNorms(const SegmentInfoPtr& si)
     {
         return si->hasSeparateNorms();
     }
@@ -441,7 +441,7 @@ namespace Lucene
         return core->getTermsReader()->terms();
     }
 
-    TermEnumPtr SegmentReader::terms(TermPtr t)
+    TermEnumPtr SegmentReader::terms(const TermPtr& t)
     {
         ensureOpen();
         return core->getTermsReader()->terms(t);
@@ -452,7 +452,7 @@ namespace Lucene
         return core->fieldInfos;
     }
 
-    DocumentPtr SegmentReader::document(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr SegmentReader::document(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         ensureOpen();
         return getFieldsReader()->doc(n, fieldSelector);
@@ -464,7 +464,7 @@ namespace Lucene
         return (deletedDocs && deletedDocs->get(n));
     }
 
-    TermDocsPtr SegmentReader::termDocs(TermPtr term)
+    TermDocsPtr SegmentReader::termDocs(const TermPtr& term)
     {
         if (!term)
             return newLucene<AllTermDocs>(shared_from_this());
@@ -484,7 +484,7 @@ namespace Lucene
         return newLucene<SegmentTermPositions>(shared_from_this());
     }
 
-    int32_t SegmentReader::docFreq(TermPtr t)
+    int32_t SegmentReader::docFreq(const TermPtr& t)
     {
         ensureOpen();
         TermInfoPtr ti(core->getTermsReader()->get(t));
@@ -587,7 +587,7 @@ namespace Lucene
         norm->bytes(norms.get(), offset, maxDoc());
     }
 
-    void SegmentReader::openNorms(DirectoryPtr cfsDir, int32_t readBufferSize)
+    void SegmentReader::openNorms(const DirectoryPtr& cfsDir, int32_t readBufferSize)
     {
         int64_t nextNormSeek = SegmentMerger::NORMS_HEADER_LENGTH; // skip header (header unused for now)
         int32_t _maxDoc = maxDoc();
@@ -710,7 +710,7 @@ namespace Lucene
         return termVectorsReader->get(docNumber, field);
     }
 
-    void SegmentReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
+    void SegmentReader::getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         FieldInfoPtr fi(core->fieldInfos->fieldInfo(field));
@@ -724,7 +724,7 @@ namespace Lucene
         termVectorsReader->get(docNumber, field, mapper);
     }
 
-    void SegmentReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
+    void SegmentReader::getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
 
@@ -756,7 +756,7 @@ namespace Lucene
         return si;
     }
 
-    void SegmentReader::setSegmentInfo(SegmentInfoPtr info)
+    void SegmentReader::setSegmentInfo(const SegmentInfoPtr& info)
     {
         si = info;
     }
@@ -805,12 +805,12 @@ namespace Lucene
         return core->getTermsReader()->size();
     }
 
-    SegmentReaderPtr SegmentReader::getOnlySegmentReader(DirectoryPtr dir)
+    SegmentReaderPtr SegmentReader::getOnlySegmentReader(const DirectoryPtr& dir)
     {
         return getOnlySegmentReader(IndexReader::open(dir, false));
     }
 
-    SegmentReaderPtr SegmentReader::getOnlySegmentReader(IndexReaderPtr reader)
+    SegmentReaderPtr SegmentReader::getOnlySegmentReader(const IndexReaderPtr& reader)
     {
         SegmentReaderPtr segmentReader(boost::dynamic_pointer_cast<SegmentReader>(reader));
         if (segmentReader)
@@ -835,7 +835,7 @@ namespace Lucene
         return core->termsIndexDivisor;
     }
 
-    CoreReaders::CoreReaders(SegmentReaderPtr origInstance, DirectoryPtr dir, SegmentInfoPtr si, int32_t readBufferSize, int32_t termsIndexDivisor)
+    CoreReaders::CoreReaders(const SegmentReaderPtr& origInstance, const DirectoryPtr& dir, const SegmentInfoPtr& si, int32_t readBufferSize, int32_t termsIndexDivisor)
     {
         ref = newLucene<SegmentReaderRef>();
 
@@ -926,7 +926,7 @@ namespace Lucene
         return tis.get() != NULL;
     }
 
-    void CoreReaders::loadTermsIndex(SegmentInfoPtr si, int32_t termsIndexDivisor)
+    void CoreReaders::loadTermsIndex(const SegmentInfoPtr& si, int32_t termsIndexDivisor)
     {
         SyncLock syncLock(this);
         if (!tis)
@@ -981,7 +981,7 @@ namespace Lucene
         }
     }
 
-    void CoreReaders::openDocStores(SegmentInfoPtr si)
+    void CoreReaders::openDocStores(const SegmentInfoPtr& si)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(si->name == segment);
@@ -1036,7 +1036,7 @@ namespace Lucene
         }
     }
 
-    FieldsReaderLocal::FieldsReaderLocal(SegmentReaderPtr reader)
+    FieldsReaderLocal::FieldsReaderLocal(const SegmentReaderPtr& reader)
     {
         this->_reader = reader;
     }
@@ -1091,7 +1091,7 @@ namespace Lucene
         this->number = 0;
     }
 
-    Norm::Norm(SegmentReaderPtr reader, IndexInputPtr in, int32_t number, int64_t normSeek)
+    Norm::Norm(const SegmentReaderPtr& reader, const IndexInputPtr& in, int32_t number, int64_t normSeek)
     {
         this->_reader = reader;
         this->refCount = 1;
@@ -1266,7 +1266,7 @@ namespace Lucene
         return _bytes;
     }
 
-    LuceneObjectPtr Norm::clone(LuceneObjectPtr other)
+    LuceneObjectPtr Norm::clone(const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
 
@@ -1311,7 +1311,7 @@ namespace Lucene
         return cloneNorm;
     }
 
-    void Norm::reWrite(SegmentInfoPtr si)
+    void Norm::reWrite(const SegmentInfoPtr& si)
     {
         BOOST_ASSERT(refCount > 0 && (!origNorm || origNorm->refCount > 0));
 

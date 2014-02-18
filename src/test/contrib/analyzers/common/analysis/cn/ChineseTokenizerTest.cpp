@@ -25,7 +25,7 @@ public:
     }
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<ChineseTokenizer>(reader);
     }
@@ -41,7 +41,7 @@ public:
     }
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<ChineseFilter>(newLucene<WhitespaceTokenizer>(reader));
     }

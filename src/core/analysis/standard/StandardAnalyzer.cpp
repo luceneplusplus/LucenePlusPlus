@@ -34,7 +34,7 @@ namespace Lucene
         ConstructAnalyser(matchVersion, WordlistLoader::getWordSet(stopwords));
     }
 
-    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, ReaderPtr stopwords)
+    StandardAnalyzer::StandardAnalyzer(LuceneVersion::Version matchVersion, const ReaderPtr& stopwords)
     {
         ConstructAnalyser(matchVersion, WordlistLoader::getWordSet(stopwords));
     }
@@ -52,7 +52,7 @@ namespace Lucene
         this->maxTokenLength = DEFAULT_MAX_TOKEN_LENGTH;
     }
 
-    TokenStreamPtr StandardAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr StandardAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         StandardTokenizerPtr tokenStream(newLucene<StandardTokenizer>(matchVersion, reader));
         tokenStream->setMaxTokenLength(maxTokenLength);
@@ -72,7 +72,7 @@ namespace Lucene
         return maxTokenLength;
     }
 
-    TokenStreamPtr StandardAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr StandardAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         StandardAnalyzerSavedStreamsPtr streams = boost::dynamic_pointer_cast<StandardAnalyzerSavedStreams>(getPreviousTokenStream());
         if (!streams)

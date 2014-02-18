@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    SpanNotQuery::SpanNotQuery(SpanQueryPtr include, SpanQueryPtr exclude)
+    SpanNotQuery::SpanNotQuery(const SpanQueryPtr& include, const SpanQueryPtr& exclude)
     {
         this->include = include;
         this->exclude = exclude;
@@ -52,7 +52,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    LuceneObjectPtr SpanNotQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SpanNotQuery::clone(const LuceneObjectPtr& other)
     {
         SpanNotQueryPtr spanNotQuery(newLucene<SpanNotQuery>(boost::dynamic_pointer_cast<SpanQuery>(include->clone()),
                                      boost::dynamic_pointer_cast<SpanQuery>(exclude->clone())));
@@ -60,12 +60,12 @@ namespace Lucene
         return spanNotQuery;
     }
 
-    SpansPtr SpanNotQuery::getSpans(IndexReaderPtr reader)
+    SpansPtr SpanNotQuery::getSpans(const IndexReaderPtr& reader)
     {
         return newLucene<NotSpans>(shared_from_this(), include->getSpans(reader), exclude->getSpans(reader));
     }
 
-    QueryPtr SpanNotQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr SpanNotQuery::rewrite(const IndexReaderPtr& reader)
     {
         SpanNotQueryPtr clone;
         SpanQueryPtr rewrittenInclude(boost::dynamic_pointer_cast<SpanQuery>(include->rewrite(reader)));
@@ -89,7 +89,7 @@ namespace Lucene
             return shared_from_this(); // no clauses rewrote
     }
 
-    bool SpanNotQuery::equals(LuceneObjectPtr other)
+    bool SpanNotQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -111,7 +111,7 @@ namespace Lucene
         return result;
     }
 
-    NotSpans::NotSpans(SpanNotQueryPtr query, SpansPtr includeSpans, SpansPtr excludeSpans)
+    NotSpans::NotSpans(const SpanNotQueryPtr& query, const SpansPtr& includeSpans, const SpansPtr& excludeSpans)
     {
         this->query = query;
         this->includeSpans = includeSpans;

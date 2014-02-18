@@ -101,7 +101,7 @@ namespace Lucene
 
     const int32_t DocumentsWriter::PER_DOC_BLOCK_SIZE = 1024;
 
-    DocumentsWriter::DocumentsWriter(DirectoryPtr directory, IndexWriterPtr writer, IndexingChainPtr indexingChain)
+    DocumentsWriter::DocumentsWriter(const DirectoryPtr& directory,  const IndexWriterPtr& writer, const IndexingChainPtr& indexingChain)
     {
         this->threadStates = Collection<DocumentsWriterThreadStatePtr>::newInstance();
         this->threadBindings = MapThreadDocumentsWriterThreadState::newInstance();
@@ -195,7 +195,7 @@ namespace Lucene
         return docFieldProcessor ? docFieldProcessor->fieldInfos->hasProx() : true;
     }
 
-    void DocumentsWriter::setInfoStream(InfoStreamPtr infoStream)
+    void DocumentsWriter::setInfoStream(const InfoStreamPtr& infoStream)
     {
         SyncLock syncLock(this);
         this->infoStream = infoStream;
@@ -211,7 +211,7 @@ namespace Lucene
             (*threadState)->docState->maxFieldLength = maxFieldLength;
     }
 
-    void DocumentsWriter::setSimilarity(SimilarityPtr similarity)
+    void DocumentsWriter::setSimilarity(const SimilarityPtr& similarity)
     {
         SyncLock syncLock(this);
         this->similarity = similarity;
@@ -628,7 +628,7 @@ namespace Lucene
         }
     }
 
-    DocumentsWriterThreadStatePtr DocumentsWriter::getThreadState(DocumentPtr doc, TermPtr delTerm)
+    DocumentsWriterThreadStatePtr DocumentsWriter::getThreadState(const DocumentPtr& doc, const TermPtr& delTerm)
     {
         SyncLock syncLock(this);
         // First, find a thread state.  If this thread already has affinity to a specific ThreadState, use that one again.
@@ -715,17 +715,17 @@ namespace Lucene
         return state;
     }
 
-    bool DocumentsWriter::addDocument(DocumentPtr doc, AnalyzerPtr analyzer)
+    bool DocumentsWriter::addDocument(const DocumentPtr& doc, const AnalyzerPtr& analyzer)
     {
         return updateDocument(doc, analyzer, TermPtr());
     }
 
-    bool DocumentsWriter::updateDocument(TermPtr t, DocumentPtr doc, AnalyzerPtr analyzer)
+    bool DocumentsWriter::updateDocument(const TermPtr& t, const DocumentPtr& doc, const AnalyzerPtr& analyzer)
     {
         return updateDocument(doc, analyzer, t);
     }
 
-    bool DocumentsWriter::updateDocument(DocumentPtr doc, AnalyzerPtr analyzer, TermPtr delTerm)
+    bool DocumentsWriter::updateDocument(const DocumentPtr& doc, const AnalyzerPtr& analyzer, const TermPtr& delTerm)
     {
         // This call is synchronized but fast
         DocumentsWriterThreadStatePtr state(getThreadState(doc, delTerm));
@@ -824,7 +824,7 @@ namespace Lucene
         return deletesInRAM->terms;
     }
 
-    void DocumentsWriter::remapDeletes(SegmentInfosPtr infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, OneMergePtr merge, int32_t mergeDocCount)
+    void DocumentsWriter::remapDeletes(const SegmentInfosPtr& infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, const OneMergePtr& merge, int32_t mergeDocCount)
     {
         SyncLock syncLock(this);
         if (!docMaps)
@@ -838,7 +838,7 @@ namespace Lucene
         flushedDocCount -= mapper->docShift;
     }
 
-    void DocumentsWriter::waitReady(DocumentsWriterThreadStatePtr state)
+    void DocumentsWriter::waitReady(const DocumentsWriterThreadStatePtr& state)
     {
         SyncLock syncLock(this);
         while (!closed && ((state && !state->isIdle) || pauseThreads != 0 || flushPending || aborting))
@@ -856,7 +856,7 @@ namespace Lucene
         return timeToFlushDeletes();
     }
 
-    bool DocumentsWriter::bufferDeleteTerm(TermPtr term)
+    bool DocumentsWriter::bufferDeleteTerm(const TermPtr& term)
     {
         SyncLock syncLock(this);
         waitReady(DocumentsWriterThreadStatePtr());
@@ -873,7 +873,7 @@ namespace Lucene
         return timeToFlushDeletes();
     }
 
-    bool DocumentsWriter::bufferDeleteQuery(QueryPtr query)
+    bool DocumentsWriter::bufferDeleteQuery(const QueryPtr& query)
     {
         SyncLock syncLock(this);
         waitReady(DocumentsWriterThreadStatePtr());
@@ -909,7 +909,7 @@ namespace Lucene
         return ((bufferIsFull || deletesFull()) && setFlushPending());
     }
 
-    bool DocumentsWriter::checkDeleteTerm(TermPtr term)
+    bool DocumentsWriter::checkDeleteTerm(const TermPtr& term)
     {
         if (term)
             BOOST_ASSERT(!lastDeleteTerm || term->compareTo(lastDeleteTerm) > 0);
@@ -933,7 +933,7 @@ namespace Lucene
         return deletesFlushed->any();
     }
 
-    bool DocumentsWriter::applyDeletes(SegmentInfosPtr infos)
+    bool DocumentsWriter::applyDeletes(const SegmentInfosPtr& infos)
     {
         SyncLock syncLock(this);
         if (!hasDeletes())
@@ -979,7 +979,7 @@ namespace Lucene
         return any;
     }
 
-    bool DocumentsWriter::applyDeletes(IndexReaderPtr reader, int32_t docIDStart)
+    bool DocumentsWriter::applyDeletes(const IndexReaderPtr& reader, int32_t docIDStart)
     {
         SyncLock syncLock(this);
         int32_t docEnd = docIDStart + reader->maxDoc();
@@ -1047,7 +1047,7 @@ namespace Lucene
         return any;
     }
 
-    void DocumentsWriter::addDeleteTerm(TermPtr term, int32_t docCount)
+    void DocumentsWriter::addDeleteTerm(const TermPtr& term, int32_t docCount)
     {
         SyncLock syncLock(this);
         NumPtr num(deletesInRAM->terms.get(term));
@@ -1068,7 +1068,7 @@ namespace Lucene
         deletesInRAM->addBytesUsed(BYTES_PER_DEL_DOCID);
     }
 
-    void DocumentsWriter::addDeleteQuery(QueryPtr query, int32_t docID)
+    void DocumentsWriter::addDeleteQuery(const QueryPtr& query, int32_t docID)
     {
         SyncLock syncLock(this);
         deletesInRAM->queries.put(query, flushedDocCount + docID);
@@ -1083,7 +1083,7 @@ namespace Lucene
                 numBytesAlloc >= freeTrigger));
     }
 
-    void DocumentsWriter::finishDocument(DocumentsWriterThreadStatePtr perThread, DocWriterPtr docWriter)
+    void DocumentsWriter::finishDocument(const DocumentsWriterThreadStatePtr& perThread, const DocWriterPtr& docWriter)
     {
         if (doBalanceRAM())
         {
@@ -1369,7 +1369,7 @@ namespace Lucene
         analyzer.reset();
     }
 
-    PerDocBuffer::PerDocBuffer(DocumentsWriterPtr docWriter)
+    PerDocBuffer::PerDocBuffer(const DocumentsWriterPtr& docWriter)
     {
         _docWriter = docWriter;
     }
@@ -1409,7 +1409,7 @@ namespace Lucene
     {
     }
 
-    void DocWriter::setNext(DocWriterPtr next)
+    void DocWriter::setNext(const DocWriterPtr& next)
     {
         this->next = next;
     }
@@ -1422,7 +1422,7 @@ namespace Lucene
     {
     }
 
-    DocConsumerPtr DefaultIndexingChain::getChain(DocumentsWriterPtr documentsWriter)
+    DocConsumerPtr DefaultIndexingChain::getChain(const DocumentsWriterPtr& documentsWriter)
     {
         TermsHashConsumerPtr termVectorsWriter(newLucene<TermVectorsTermsWriter>(documentsWriter));
         TermsHashConsumerPtr freqProxWriter(newLucene<FreqProxTermsWriter>());
@@ -1452,7 +1452,7 @@ namespace Lucene
         return 0;
     }
 
-    WaitQueue::WaitQueue(DocumentsWriterPtr docWriter)
+    WaitQueue::WaitQueue(const DocumentsWriterPtr& docWriter)
     {
         this->_docWriter = docWriter;
         waiting = Collection<DocWriterPtr>::newInstance(10);
@@ -1505,7 +1505,7 @@ namespace Lucene
         numWaiting = 0;
     }
 
-    void WaitQueue::writeDocument(DocWriterPtr doc)
+    void WaitQueue::writeDocument(const DocWriterPtr& doc)
     {
         DocumentsWriterPtr docWriter(_docWriter);
         BOOST_ASSERT(doc == DocumentsWriterPtr(docWriter)->skipDocWriter || nextWriteDocID == doc->docID);
@@ -1531,22 +1531,23 @@ namespace Lucene
         finally.throwException();
     }
 
-    bool WaitQueue::add(DocWriterPtr doc)
+    bool WaitQueue::add(const DocWriterPtr& doc)
     {
+        DocWriterPtr _doc(doc);
         SyncLock syncLock(this);
-        BOOST_ASSERT(doc->docID >= nextWriteDocID);
-        if (doc->docID == nextWriteDocID)
+        BOOST_ASSERT(_doc->docID >= nextWriteDocID);
+        if (_doc->docID == nextWriteDocID)
         {
-            writeDocument(doc);
+            writeDocument(_doc);
             while (true)
             {
-                doc = waiting[nextWriteLoc];
-                if (doc)
+                _doc = waiting[nextWriteLoc];
+                if (_doc)
                 {
                     --numWaiting;
                     waiting[nextWriteLoc].reset();
-                    waitingBytes -= doc->sizeInBytes();
-                    writeDocument(doc);
+                    waitingBytes -= _doc->sizeInBytes();
+                    writeDocument(_doc);
                 }
                 else
                     break;
@@ -1557,7 +1558,7 @@ namespace Lucene
             // I finished before documents that were added before me.  This can easily happen when I am a small doc
             // and the docs before me were large, or just due to luck in the thread scheduling.  Just add myself to
             // the queue and when that large doc finishes, it will flush me
-            int32_t gap = doc->docID - nextWriteDocID;
+            int32_t gap = _doc->docID - nextWriteDocID;
             if (gap >= waiting.size())
             {
                 // Grow queue
@@ -1567,7 +1568,7 @@ namespace Lucene
                 MiscUtils::arrayCopy(waiting.begin(), 0, newArray.begin(), waiting.size() - nextWriteLoc, nextWriteLoc);
                 nextWriteLoc = 0;
                 waiting = newArray;
-                gap = doc->docID - nextWriteDocID;
+                gap = _doc->docID - nextWriteDocID;
             }
 
             int32_t loc = nextWriteLoc + gap;
@@ -1579,15 +1580,15 @@ namespace Lucene
 
             // Nobody should be in my spot!
             BOOST_ASSERT(!waiting[loc]);
-            waiting[loc] = doc;
+            waiting[loc] = _doc;
             ++numWaiting;
-            waitingBytes += doc->sizeInBytes();
+            waitingBytes += _doc->sizeInBytes();
         }
 
         return doPause();
     }
 
-    ByteBlockAllocator::ByteBlockAllocator(DocumentsWriterPtr docWriter, int32_t blockSize)
+    ByteBlockAllocator::ByteBlockAllocator(const DocumentsWriterPtr& docWriter, int32_t blockSize)
     {
         this->blockSize = blockSize;
         this->freeByteBlocks = Collection<ByteArray>::newInstance();

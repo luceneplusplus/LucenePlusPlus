@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    PersianNormalizationFilter::PersianNormalizationFilter(TokenStreamPtr input) : TokenFilter(input)
+    PersianNormalizationFilter::PersianNormalizationFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         normalizer = newLucene<PersianNormalizer>();
         termAtt = addAttribute<TermAttribute>();

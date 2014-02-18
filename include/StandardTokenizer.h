@@ -36,13 +36,13 @@ namespace Lucene
     public:
         /// Creates a new instance of the {@link StandardTokenizer}.  Attaches the input to the newly created scanner.
         /// @param input The input reader
-        StandardTokenizer(LuceneVersion::Version matchVersion, ReaderPtr input);
+        StandardTokenizer(LuceneVersion::Version matchVersion, const ReaderPtr& input);
 
         /// Creates a new StandardTokenizer with a given {@link AttributeSource}.
-        StandardTokenizer(LuceneVersion::Version matchVersion, AttributeSourcePtr source, ReaderPtr input);
+        StandardTokenizer(LuceneVersion::Version matchVersion, const AttributeSourcePtr& source, const ReaderPtr& input);
 
         /// Creates a new StandardTokenizer with a given {@link AttributeSource.AttributeFactory}
-        StandardTokenizer(LuceneVersion::Version matchVersion, AttributeFactoryPtr factory, ReaderPtr input);
+        StandardTokenizer(LuceneVersion::Version matchVersion, const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~StandardTokenizer();
 
@@ -78,7 +78,7 @@ namespace Lucene
         static const Collection<String> TOKEN_TYPES();
 
     protected:
-        void init(ReaderPtr input, LuceneVersion::Version matchVersion);
+        void init(const ReaderPtr& input, LuceneVersion::Version matchVersion);
 
     public:
         /// Set the max allowed token length.  Any token longer than this is skipped.
@@ -92,7 +92,7 @@ namespace Lucene
 
         virtual void end();
 
-        virtual void reset(ReaderPtr input);
+        virtual void reset(const ReaderPtr& input);
 
         /// @return true if StandardTokenizer now returns these tokens as Hosts, otherwise false
         /// @deprecated Remove in 3.X and make true the only valid value

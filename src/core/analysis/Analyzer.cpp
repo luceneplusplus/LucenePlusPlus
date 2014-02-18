@@ -14,7 +14,7 @@ namespace Lucene
     {
     }
 
-    TokenStreamPtr Analyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr Analyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return tokenStream(fieldName, reader);
     }
@@ -24,7 +24,7 @@ namespace Lucene
         return tokenStreams.get();
     }
 
-    void Analyzer::setPreviousTokenStream(LuceneObjectPtr stream)
+    void Analyzer::setPreviousTokenStream(const LuceneObjectPtr& stream)
     {
         tokenStreams.set(stream);
     }
@@ -34,7 +34,7 @@ namespace Lucene
         return 0;
     }
 
-    int32_t Analyzer::getOffsetGap(FieldablePtr field)
+    int32_t Analyzer::getOffsetGap(const FieldablePtr& field)
     {
         return field->isTokenized() ? 1 : 0;
     }

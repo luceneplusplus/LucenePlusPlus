@@ -31,7 +31,7 @@ namespace Lucene
         return boost;
     }
 
-    void Document::add(FieldablePtr field)
+    void Document::add(const FieldablePtr& field)
     {
         fields.add(field);
     }

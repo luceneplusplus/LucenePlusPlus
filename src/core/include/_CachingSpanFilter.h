@@ -20,7 +20,7 @@ namespace Lucene
         LUCENE_CLASS(FilterCacheSpanFilterResult);
 
     protected:
-        virtual LuceneObjectPtr mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value);
+        virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value);
     };
 }
 

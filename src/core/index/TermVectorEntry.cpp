@@ -64,7 +64,7 @@ namespace Lucene
         this->positions = positions;
     }
 
-    bool TermVectorEntry::equals(LuceneObjectPtr other)
+    bool TermVectorEntry::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

@@ -38,8 +38,8 @@ namespace Lucene
         /// NOTE: The instances returned by this method pre-allocate a full array of length numHits.
         static TopScoreDocCollectorPtr create(int32_t numHits, bool docsScoredInOrder);
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+        virtual void setScorer(const ScorerPtr& scorer);
 
     protected:
         virtual TopDocsPtr newTopDocs(Collection<ScoreDocPtr> results, int32_t start);

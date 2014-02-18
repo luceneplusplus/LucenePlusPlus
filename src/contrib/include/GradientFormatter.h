@@ -43,7 +43,7 @@ namespace Lucene
         int32_t bgBMax;
 
     public:
-        virtual String highlightTerm(const String& originalText, TokenGroupPtr tokenGroup);
+        virtual String highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup);
 
     protected:
         String getForegroundColorString(double score);

@@ -54,7 +54,7 @@ namespace Lucene
         0x0, 0x0, 0x0, 0x0, 0x0, 0x3, 0x0, 0x3, 0x0, 0x0, 0x0, 0x0
     };
 
-    QueryParser::QueryParser(LuceneVersion::Version matchVersion, const String& field, AnalyzerPtr analyzer)
+    QueryParser::QueryParser(LuceneVersion::Version matchVersion, const String& field, const AnalyzerPtr& analyzer)
     {
         ConstructParser(newLucene<FastCharStream>(newLucene<StringReader>(L"")), QueryParserTokenManagerPtr());
         this->analyzer = analyzer;
@@ -62,12 +62,12 @@ namespace Lucene
         this->enablePositionIncrements = LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
     }
 
-    QueryParser::QueryParser(QueryParserCharStreamPtr stream)
+    QueryParser::QueryParser(const QueryParserCharStreamPtr& stream)
     {
         ConstructParser(stream, QueryParserTokenManagerPtr());
     }
 
-    QueryParser::QueryParser(QueryParserTokenManagerPtr tokenMgr)
+    QueryParser::QueryParser(const QueryParserTokenManagerPtr& tokenMgr)
     {
         ConstructParser(QueryParserCharStreamPtr(), tokenMgr);
     }
@@ -76,7 +76,7 @@ namespace Lucene
     {
     }
 
-    void QueryParser::ConstructParser(QueryParserCharStreamPtr stream, QueryParserTokenManagerPtr tokenMgr)
+    void QueryParser::ConstructParser(const QueryParserCharStreamPtr& stream, const QueryParserTokenManagerPtr& tokenMgr)
     {
         _operator = OR_OPERATOR;
         lowercaseExpandedTerms = true;
@@ -208,7 +208,7 @@ namespace Lucene
         return lowercaseExpandedTerms;
     }
 
-    void QueryParser::setMultiTermRewriteMethod(RewriteMethodPtr method)
+    void QueryParser::setMultiTermRewriteMethod(const RewriteMethodPtr& method)
     {
         multiTermRewriteMethod = method;
     }
@@ -268,7 +268,7 @@ namespace Lucene
         return resolution->second;
     }
 
-    void QueryParser::setRangeCollator(CollatorPtr rc)
+    void QueryParser::setRangeCollator(const CollatorPtr& rc)
     {
         rangeCollator = rc;
     }
@@ -278,7 +278,7 @@ namespace Lucene
         return rangeCollator;
     }
 
-    void QueryParser::addClause(Collection<BooleanClausePtr> clauses, int32_t conj, int32_t mods, QueryPtr q)
+    void QueryParser::addClause(Collection<BooleanClausePtr> clauses, int32_t conj, int32_t mods, const QueryPtr& q)
     {
         bool required = false;
         bool prohibited = false;
@@ -589,12 +589,12 @@ namespace Lucene
         return newLucene<BooleanQuery>(disableCoord);
     }
 
-    BooleanClausePtr QueryParser::newBooleanClause(QueryPtr q, BooleanClause::Occur occur)
+    BooleanClausePtr QueryParser::newBooleanClause(const QueryPtr& q, BooleanClause::Occur occur)
     {
         return newLucene<BooleanClause>(q, occur);
     }
 
-    QueryPtr QueryParser::newTermQuery(TermPtr term)
+    QueryPtr QueryParser::newTermQuery(const TermPtr& term)
     {
         return newLucene<TermQuery>(term);
     }
@@ -609,14 +609,14 @@ namespace Lucene
         return newLucene<MultiPhraseQuery>();
     }
 
-    QueryPtr QueryParser::newPrefixQuery(TermPtr prefix)
+    QueryPtr QueryParser::newPrefixQuery(const TermPtr& prefix)
     {
         PrefixQueryPtr query(newLucene<PrefixQuery>(prefix));
         query->setRewriteMethod(multiTermRewriteMethod);
         return query;
     }
 
-    QueryPtr QueryParser::newFuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength)
+    QueryPtr QueryParser::newFuzzyQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength)
     {
         // FuzzyQuery doesn't yet allow constant score rewrite
         return newLucene<FuzzyQuery>(term, minimumSimilarity, prefixLength);
@@ -634,7 +634,7 @@ namespace Lucene
         return newLucene<MatchAllDocsQuery>();
     }
 
-    QueryPtr QueryParser::newWildcardQuery(TermPtr term)
+    QueryPtr QueryParser::newWildcardQuery(const TermPtr& term)
     {
         WildcardQueryPtr query(newLucene<WildcardQuery>(term));
         query->setRewriteMethod(multiTermRewriteMethod);
@@ -1293,7 +1293,7 @@ namespace Lucene
         return false;
     }
 
-    void QueryParser::ReInit(QueryParserCharStreamPtr stream)
+    void QueryParser::ReInit(const QueryParserCharStreamPtr& stream)
     {
         token_source->ReInit(stream);
         token = newLucene<QueryParserToken>();
@@ -1305,7 +1305,7 @@ namespace Lucene
             jj_2_rtns[i] = newInstance<JJCalls>();
     }
 
-    void QueryParser::ReInit(QueryParserTokenManagerPtr tokenMgr)
+    void QueryParser::ReInit(const QueryParserTokenManagerPtr& tokenMgr)
     {
         token_source = tokenMgr;
         token = newLucene<QueryParserToken>();

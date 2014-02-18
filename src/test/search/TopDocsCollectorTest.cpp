@@ -62,12 +62,12 @@ protected:
         pq->addOverflow(newLucene<ScoreDoc>(doc + base, scores[idx++]));
     }
 
-    virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         base = docBase;
     }
 
-    virtual void setScorer(ScorerPtr scorer)
+    virtual void setScorer(const ScorerPtr& scorer)
     {
         // Don't do anything. Assign scores in random
     }

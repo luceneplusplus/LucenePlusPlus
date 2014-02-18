@@ -17,10 +17,10 @@ namespace Lucene
     {
     public:
         /// Used only by clone
-        FieldsReader(FieldInfosPtr fieldInfos, int32_t numTotalDocs, int32_t size, int32_t format, int32_t formatSize,
-                     int32_t docStoreOffset, IndexInputPtr cloneableFieldsStream, IndexInputPtr cloneableIndexStream);
-        FieldsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn);
-        FieldsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn, int32_t readBufferSize, int32_t docStoreOffset = -1, int32_t size = 0);
+        FieldsReader(const FieldInfosPtr& fieldInfos, int32_t numTotalDocs, int32_t size, int32_t format, int32_t formatSize,
+                     int32_t docStoreOffset, const IndexInputPtr& cloneableFieldsStream, const IndexInputPtr& cloneableIndexStream);
+        FieldsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn);
+        FieldsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn, int32_t readBufferSize, int32_t docStoreOffset = -1, int32_t size = 0);
 
         virtual ~FieldsReader();
 
@@ -53,7 +53,7 @@ namespace Lucene
     public:
         /// Returns a cloned FieldsReader that shares open IndexInputs with the original one.  It is the caller's job not to
         /// close the original FieldsReader until all clones are called (eg, currently SegmentReader manages this logic).
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Closes the underlying {@link IndexInput} streams, including any ones associated with a lazy implementation of a
         /// Field.  This means that the Fields values will not be accessible.
@@ -63,14 +63,14 @@ namespace Lucene
 
         bool canReadRawDocs();
 
-        DocumentPtr doc(int32_t n, FieldSelectorPtr fieldSelector);
+        DocumentPtr doc(int32_t n, const FieldSelectorPtr& fieldSelector);
 
         /// Returns the length in bytes of each raw document in a contiguous range of length numDocs starting with startDocID.
         /// Returns the IndexInput (the fieldStream), already seeked to the starting point for startDocID.
         IndexInputPtr rawDocs(Collection<int32_t> lengths, int32_t startDocID, int32_t numDocs);
 
     protected:
-        void ConstructReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn, int32_t readBufferSize, int32_t docStoreOffset, int32_t size);
+        void ConstructReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn, int32_t readBufferSize, int32_t docStoreOffset, int32_t size);
 
         void ensureOpen();
 
@@ -81,13 +81,13 @@ namespace Lucene
         void skipField(bool binary, bool compressed);
         void skipField(bool binary, bool compressed, int32_t toRead);
 
-        void addFieldLazy(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize);
-        void addField(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize);
+        void addFieldLazy(const DocumentPtr& doc, const FieldInfoPtr& fi, bool binary, bool compressed, bool tokenize);
+        void addField(const DocumentPtr& doc, const FieldInfoPtr& fi, bool binary, bool compressed, bool tokenize);
 
         /// Add the size of field as a byte[] containing the 4 bytes of the integer byte size (high order byte first; char = 2 bytes).
         /// Read just the size - caller must skip the field content to continue reading fields.  Return the size in bytes or chars,
         /// depending on field type.
-        int32_t addFieldSize(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed);
+        int32_t addFieldSize(const DocumentPtr& doc, const FieldInfoPtr& fi, bool binary, bool compressed);
 
         ByteArray uncompress(ByteArray b);
         String uncompressString(ByteArray b);
@@ -98,8 +98,8 @@ namespace Lucene
     class LazyField : public AbstractField
     {
     public:
-        LazyField(FieldsReaderPtr reader, const String& name, Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed);
-        LazyField(FieldsReaderPtr reader, const String& name, Store store, Index index, TermVector termVector, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed);
+        LazyField(const FieldsReaderPtr& reader, const String& name, Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed);
+        LazyField(const FieldsReaderPtr& reader, const String& name, Store store, Index index, TermVector termVector, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed);
         virtual ~LazyField();
 
         LUCENE_CLASS(LazyField);

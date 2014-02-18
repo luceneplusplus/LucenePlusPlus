@@ -20,12 +20,12 @@ namespace Lucene
     {
     }
 
-    Collection<WeightedTermPtr> QueryTermExtractor::getTerms(QueryPtr query)
+    Collection<WeightedTermPtr> QueryTermExtractor::getTerms(const QueryPtr& query)
     {
         return getTerms(query, false);
     }
 
-    Collection<WeightedTermPtr> QueryTermExtractor::getIdfWeightedTerms(QueryPtr query, IndexReaderPtr reader, const String& fieldName)
+    Collection<WeightedTermPtr> QueryTermExtractor::getIdfWeightedTerms(const QueryPtr& query, const IndexReaderPtr& reader, const String& fieldName)
     {
         Collection<WeightedTermPtr> terms(getTerms(query, false, fieldName));
         int32_t totalNumDocs = reader->numDocs();
@@ -49,21 +49,21 @@ namespace Lucene
         return terms;
     }
 
-    Collection<WeightedTermPtr> QueryTermExtractor::getTerms(QueryPtr query, bool prohibited, const String& fieldName)
+    Collection<WeightedTermPtr> QueryTermExtractor::getTerms(const QueryPtr& query, bool prohibited, const String& fieldName)
     {
         SetWeightedTerm terms(SetWeightedTerm::newInstance());
         getTerms(query, terms, prohibited, fieldName);
         return Collection<WeightedTermPtr>::newInstance(terms.begin(), terms.end());
     }
 
-    Collection<WeightedTermPtr> QueryTermExtractor::getTerms(QueryPtr query, bool prohibited)
+    Collection<WeightedTermPtr> QueryTermExtractor::getTerms(const QueryPtr& query, bool prohibited)
     {
         SetWeightedTerm terms(SetWeightedTerm::newInstance());
         getTerms(query, terms, prohibited, L"");
         return Collection<WeightedTermPtr>::newInstance(terms.begin(), terms.end());
     }
 
-    void QueryTermExtractor::getTerms(QueryPtr query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
+    void QueryTermExtractor::getTerms(const QueryPtr& query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
     {
         try
         {
@@ -88,7 +88,7 @@ namespace Lucene
         }
     }
 
-    void QueryTermExtractor::getTermsFromBooleanQuery(BooleanQueryPtr query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
+    void QueryTermExtractor::getTermsFromBooleanQuery(const BooleanQueryPtr& query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
     {
         Collection<BooleanClausePtr> queryClauses(query->getClauses());
         for (int32_t i = 0; i < queryClauses.size(); ++i)
@@ -98,7 +98,7 @@ namespace Lucene
         }
     }
 
-    void QueryTermExtractor::getTermsFromFilteredQuery(FilteredQueryPtr query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
+    void QueryTermExtractor::getTermsFromFilteredQuery(const FilteredQueryPtr& query, SetWeightedTerm terms, bool prohibited, const String& fieldName)
     {
         getTerms(query->getQuery(), terms, prohibited, fieldName);
     }

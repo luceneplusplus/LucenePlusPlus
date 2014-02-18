@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    DefaultSkipListWriter::DefaultSkipListWriter(int32_t skipInterval, int32_t numberOfSkipLevels, int32_t docCount, IndexOutputPtr freqOutput, IndexOutputPtr proxOutput) : MultiLevelSkipListWriter(skipInterval, numberOfSkipLevels, docCount)
+    DefaultSkipListWriter::DefaultSkipListWriter(int32_t skipInterval, int32_t numberOfSkipLevels, int32_t docCount, const IndexOutputPtr& freqOutput, const IndexOutputPtr& proxOutput) : MultiLevelSkipListWriter(skipInterval, numberOfSkipLevels, docCount)
     {
         curDoc = 0;
         curStorePayloads = false;
@@ -32,12 +32,12 @@ namespace Lucene
     {
     }
 
-    void DefaultSkipListWriter::setFreqOutput(IndexOutputPtr freqOutput)
+    void DefaultSkipListWriter::setFreqOutput(const IndexOutputPtr& freqOutput)
     {
         this->freqOutput = freqOutput;
     }
 
-    void DefaultSkipListWriter::setProxOutput(IndexOutputPtr proxOutput)
+    void DefaultSkipListWriter::setProxOutput(const IndexOutputPtr& proxOutput)
     {
         this->proxOutput = proxOutput;
     }
@@ -62,7 +62,7 @@ namespace Lucene
             MiscUtils::arrayFill(lastSkipProxPointer.begin(), 0, lastSkipProxPointer.size(), proxOutput->getFilePointer());
     }
 
-    void DefaultSkipListWriter::writeSkipData(int32_t level, IndexOutputPtr skipBuffer)
+    void DefaultSkipListWriter::writeSkipData(int32_t level, const IndexOutputPtr& skipBuffer)
     {
         // To efficiently store payloads in the posting lists we do not store the length of
         // every payload. Instead we omit the length for a payload if the previous payload had

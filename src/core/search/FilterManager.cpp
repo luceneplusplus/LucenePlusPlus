@@ -57,7 +57,7 @@ namespace Lucene
         this->cleanSleepTime = cleanSleepTime;
     }
 
-    FilterPtr FilterManager::getFilter(FilterPtr filter)
+    FilterPtr FilterManager::getFilter(const FilterPtr& filter)
     {
         SyncLock parentLock(&cache);
         FilterItemPtr fi(cache.get(filter->hashCode()));
@@ -70,7 +70,7 @@ namespace Lucene
         return filter;
     }
 
-    FilterItem::FilterItem(FilterPtr filter)
+    FilterItem::FilterItem(const FilterPtr& filter)
     {
         this->filter = filter;
         this->timestamp = MiscUtils::currentTimeMillis();
@@ -80,7 +80,7 @@ namespace Lucene
     {
     }
 
-    FilterCleaner::FilterCleaner(FilterManagerPtr manager)
+    FilterCleaner::FilterCleaner(const FilterManagerPtr& manager)
     {
         _manager = manager;
         running = true;

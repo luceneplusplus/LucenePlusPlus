@@ -24,7 +24,7 @@ namespace Lucene
     class LPPAPI LogMergePolicy : public MergePolicy
     {
     public:
-        LogMergePolicy(IndexWriterPtr writer);
+        LogMergePolicy(const IndexWriterPtr& writer);
         virtual ~LogMergePolicy();
 
         LUCENE_CLASS(LogMergePolicy);
@@ -78,7 +78,7 @@ namespace Lucene
         void setMergeFactor(int32_t mergeFactor);
 
         /// Returns true if a newly flushed (not from merge) segment should use the compound file format.
-        virtual bool useCompoundFile(SegmentInfosPtr segments, SegmentInfoPtr newSegment);
+        virtual bool useCompoundFile(const SegmentInfosPtr& segments, const SegmentInfoPtr& newSegment);
 
         /// Sets whether compound file format should be used for newly flushed and newly merged segments.
         void setUseCompoundFile(bool useCompoundFile);
@@ -88,7 +88,7 @@ namespace Lucene
         bool getUseCompoundFile();
 
         /// Returns true if the doc store files should use the compound file format.
-        virtual bool useCompoundDocStore(SegmentInfosPtr segments);
+        virtual bool useCompoundDocStore(const SegmentInfosPtr& segments);
 
         /// Sets whether compound file format should be used for newly flushed and newly merged doc store
         /// segment files (term vectors and stored fields).
@@ -113,17 +113,17 @@ namespace Lucene
         /// one segment in the index, where that segment has no deletions pending nor separate norms, and it is in
         /// compound file format if the current useCompoundFile setting is true.  This method returns multiple merges
         /// (mergeFactor at a time) so the {@link MergeScheduler} in use may make use of concurrency.
-        virtual MergeSpecificationPtr findMergesForOptimize(SegmentInfosPtr segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize);
+        virtual MergeSpecificationPtr findMergesForOptimize(const SegmentInfosPtr& segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize);
 
         /// Finds merges necessary to expunge all deletes from the index.  We simply merge adjacent segments that have
         /// deletes, up to mergeFactor at a time.
-        virtual MergeSpecificationPtr findMergesToExpungeDeletes(SegmentInfosPtr segmentInfos);
+        virtual MergeSpecificationPtr findMergesToExpungeDeletes(const SegmentInfosPtr& segmentInfos);
 
         /// Checks if any merges are now necessary and returns a {@link MergePolicy.MergeSpecification} if so.  A merge
         /// is necessary when there are more than {@link #setMergeFactor} segments at a given level.  When multiple
         /// levels have too many segments, this method will return multiple merges, allowing the {@link MergeScheduler}
         /// to use concurrency.
-        virtual MergeSpecificationPtr findMerges(SegmentInfosPtr segmentInfos);
+        virtual MergeSpecificationPtr findMerges(const SegmentInfosPtr& segmentInfos);
 
         /// Determines the largest segment (measured by document count) that may be merged with other segments.
         /// Small values (eg., less than 10,000) are best for interactive indexing, as this limits the length of
@@ -143,18 +143,18 @@ namespace Lucene
         bool verbose();
         void message(const String& message);
 
-        virtual int64_t size(SegmentInfoPtr info) = 0;
+        virtual int64_t size(const SegmentInfoPtr& info) = 0;
 
-        int64_t sizeDocs(SegmentInfoPtr info);
-        int64_t sizeBytes(SegmentInfoPtr info);
+        int64_t sizeDocs(const SegmentInfoPtr& info);
+        int64_t sizeBytes(const SegmentInfoPtr& info);
 
-        bool isOptimized(SegmentInfosPtr infos, int32_t maxNumSegments, SetSegmentInfo segmentsToOptimize);
+        bool isOptimized(const SegmentInfosPtr& infos, int32_t maxNumSegments, SetSegmentInfo segmentsToOptimize);
 
         /// Returns true if this single info is optimized (has no pending norms or deletes, is in the same dir as the
         /// writer, and matches the current compound file setting
-        bool isOptimized(SegmentInfoPtr info);
+        bool isOptimized(const SegmentInfoPtr& info);
 
-        OneMergePtr makeOneMerge(SegmentInfosPtr infos, SegmentInfosPtr infosToMerge);
+        OneMergePtr makeOneMerge(const SegmentInfosPtr& infos, const SegmentInfosPtr& infosToMerge);
     };
 }
 

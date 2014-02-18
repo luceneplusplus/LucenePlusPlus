@@ -130,18 +130,18 @@ namespace Lucene
         /// Splits a int64_t range recursively.  You may implement a builder that adds clauses to a {@link BooleanQuery}
         /// for each call to its {@link LongRangeBuilder#addRange(String,String)} method.
         /// This method is used by {@link NumericRangeQuery}.
-        static void splitLongRange(LongRangeBuilderPtr builder, int32_t precisionStep, int64_t minBound, int64_t maxBound);
+        static void splitLongRange(const LongRangeBuilderPtr& builder, int32_t precisionStep, int64_t minBound, int64_t maxBound);
 
         /// Splits an int32_t range recursively.  You may implement a builder that adds clauses to a {@link BooleanQuery}
         /// for each call to its {@link IntRangeBuilder#addRange(String,String)} method.
         /// This method is used by {@link NumericRangeQuery}.
-        static void splitIntRange(IntRangeBuilderPtr builder, int32_t precisionStep, int32_t minBound, int32_t maxBound);
+        static void splitIntRange(const IntRangeBuilderPtr& builder, int32_t precisionStep, int32_t minBound, int32_t maxBound);
 
         /// This helper does the splitting for both 32 and 64 bit.
-        static void splitRange(LuceneObjectPtr builder, int32_t valSize, int32_t precisionStep, int64_t minBound, int64_t maxBound);
+        static void splitRange(const LuceneObjectPtr& builder, int32_t valSize, int32_t precisionStep, int64_t minBound, int64_t maxBound);
 
         /// Helper that delegates to correct range builder
-        static void addRange(LuceneObjectPtr builder, int32_t valSize, int64_t minBound, int64_t maxBound, int32_t shift);
+        static void addRange(const LuceneObjectPtr& builder, int32_t valSize, int64_t minBound, int64_t maxBound, int32_t shift);
     };
 
     /// Callback for {@link #splitLongRange}.  You need to overwrite only one of the methods.

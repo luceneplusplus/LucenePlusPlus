@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    TopDocsCollector::TopDocsCollector(HitQueueBasePtr pq)
+    TopDocsCollector::TopDocsCollector(const HitQueueBasePtr& pq)
     {
         this->pq = pq;
         this->totalHits = 0;

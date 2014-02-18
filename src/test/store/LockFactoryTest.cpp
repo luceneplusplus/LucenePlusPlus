@@ -32,7 +32,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture LockFactoryTest;
 
-static void addDoc(IndexWriterPtr writer)
+static void addDoc(const IndexWriterPtr& writer)
 {
     DocumentPtr doc(newLucene<Document>());
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -131,7 +131,7 @@ namespace LockFactoryTestNS
     class WriterThread : public LuceneThread
     {
     public:
-        WriterThread(int32_t numIteration, DirectoryPtr dir)
+        WriterThread(int32_t numIteration, const DirectoryPtr& dir)
         {
             this->numIteration = numIteration;
             this->dir = dir;
@@ -211,7 +211,7 @@ namespace LockFactoryTestNS
     class LockFactorySearcherThread : public LuceneThread
     {
     public:
-        LockFactorySearcherThread(int32_t numIteration, DirectoryPtr dir)
+        LockFactorySearcherThread(int32_t numIteration, const DirectoryPtr& dir)
         {
             this->numIteration = numIteration;
             this->dir = dir;
@@ -278,7 +278,7 @@ namespace LockFactoryTestNS
     };
 }
 
-static void _testStressLocks(LockFactoryPtr lockFactory, const String& indexDir)
+static void _testStressLocks(const LockFactoryPtr& lockFactory, const String& indexDir)
 {
     FSDirectoryPtr fs1 = FSDirectory::open(indexDir, lockFactory);
 

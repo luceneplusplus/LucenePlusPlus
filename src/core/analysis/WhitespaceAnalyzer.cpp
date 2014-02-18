@@ -14,12 +14,12 @@ namespace Lucene
     {
     }
 
-    TokenStreamPtr WhitespaceAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr WhitespaceAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<WhitespaceTokenizer>(reader);
     }
 
-    TokenStreamPtr WhitespaceAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr WhitespaceAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
         if (!tokenizer)

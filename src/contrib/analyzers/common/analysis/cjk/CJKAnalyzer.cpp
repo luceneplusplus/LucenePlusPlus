@@ -46,12 +46,12 @@ namespace Lucene
         return stopSet;
     }
 
-    TokenStreamPtr CJKAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr CJKAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<StopFilter>(StopFilter::getEnablePositionIncrementsVersionDefault(matchVersion), newLucene<CJKTokenizer>(reader), stoptable);
     }
 
-    TokenStreamPtr CJKAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr CJKAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         CJKAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<CJKAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

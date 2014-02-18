@@ -42,13 +42,13 @@ namespace Lucene
         return toString(L"");
     }
 
-    WeightPtr Query::createWeight(SearcherPtr searcher)
+    WeightPtr Query::createWeight(const SearcherPtr& searcher)
     {
         boost::throw_exception(UnsupportedOperationException());
         return WeightPtr();
     }
 
-    WeightPtr Query::weight(SearcherPtr searcher)
+    WeightPtr Query::weight(const SearcherPtr& searcher)
     {
         QueryPtr query(searcher->rewrite(shared_from_this()));
         WeightPtr weight(query->createWeight(searcher));
@@ -60,7 +60,7 @@ namespace Lucene
         return weight;
     }
 
-    QueryPtr Query::rewrite(IndexReaderPtr reader)
+    QueryPtr Query::rewrite(const IndexReaderPtr& reader)
     {
         return shared_from_this();
     }
@@ -120,12 +120,12 @@ namespace Lucene
         return result;
     }
 
-    SimilarityPtr Query::getSimilarity(SearcherPtr searcher)
+    SimilarityPtr Query::getSimilarity(const SearcherPtr& searcher)
     {
         return searcher->getSimilarity();
     }
 
-    LuceneObjectPtr Query::clone(LuceneObjectPtr other)
+    LuceneObjectPtr Query::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = LuceneObject::clone(other ? other : newLucene<Query>());
         QueryPtr cloneQuery(boost::dynamic_pointer_cast<Query>(clone));
@@ -141,7 +141,7 @@ namespace Lucene
         return result;
     }
 
-    bool Query::equals(LuceneObjectPtr other)
+    bool Query::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

@@ -75,7 +75,7 @@ namespace Lucene
         setPreviousTokenStream(LuceneObjectPtr()); // force a new stemmer to be created
     }
 
-    TokenStreamPtr DutchAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr DutchAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
         result = newLucene<StandardFilter>(result);
@@ -84,7 +84,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr DutchAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr DutchAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         DutchAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<DutchAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

@@ -49,13 +49,13 @@ namespace Lucene
 
     public:
         /// Add an IndexReader.
-        void add(IndexReaderPtr reader);
+        void add(const IndexReaderPtr& reader);
 
         /// Add an IndexReader whose stored fields will not be returned.  This can accelerate search when stored
         /// fields are only needed from a subset of the IndexReaders.
-        void add(IndexReaderPtr reader, bool ignoreStoredFields);
+        void add(const IndexReaderPtr& reader, bool ignoreStoredFields);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Tries to reopen the subreaders.
         ///
@@ -84,7 +84,7 @@ namespace Lucene
         virtual bool isDeleted(int32_t n);
 
         /// Get the {@link Document} at the n'th position.
-        virtual DocumentPtr document(int32_t n, FieldSelectorPtr fieldSelector);
+        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
 
         /// Return an array of term frequency vectors for the specified document.
         virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
@@ -94,10 +94,10 @@ namespace Lucene
 
         /// Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays
         /// of the {@link TermFreqVector}.
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
 
         /// Map all the term vectors for all fields in a Document
-        virtual void getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
 
         /// Returns true if there are norms stored for this field.
         virtual bool hasNorms(const String& field);
@@ -118,23 +118,23 @@ namespace Lucene
         /// exist, the enumeration is positioned at the first term greater than the supplied term.
         /// The enumeration is ordered by Term::compareTo(). Each term is greater than all that precede
         /// it in the enumeration.
-        virtual TermEnumPtr terms(TermPtr t);
+        virtual TermEnumPtr terms(const TermPtr& t);
 
         /// Returns the number of documents containing the term t.
-        virtual int32_t docFreq(TermPtr t);
+        virtual int32_t docFreq(const TermPtr& t);
 
         /// Returns an enumeration of all the documents which contain term.  For each document, the
         /// document number, the frequency of the term in that document is also provided, for use in
         /// search scoring.  If term is null, then all non-deleted docs are returned with freq=1.
         /// The enumeration is ordered by document number.  Each document number is greater than all
         /// that precede it in the enumeration.
-        virtual TermDocsPtr termDocs(TermPtr term);
+        virtual TermDocsPtr termDocs(const TermPtr& term);
 
         /// Returns an unpositioned {@link TermDocs} enumerator.
         virtual TermDocsPtr termDocs();
 
         /// Returns an enumeration of all the documents which contain term.
-        virtual TermPositionsPtr termPositions(TermPtr term);
+        virtual TermPositionsPtr termPositions(const TermPtr& term);
 
         /// Returns an unpositioned {@link TermPositions} enumerator.
         virtual TermPositionsPtr termPositions();

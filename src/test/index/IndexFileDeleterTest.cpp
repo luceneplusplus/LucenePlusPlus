@@ -25,7 +25,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexFileDeleterTest;
 
-static void addDoc(IndexWriterPtr writer, int32_t id)
+static void addDoc(const IndexWriterPtr& writer, int32_t id)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -33,7 +33,7 @@ static void addDoc(IndexWriterPtr writer, int32_t id)
     writer->addDocument(doc);
 }
 
-static void copyFile(DirectoryPtr dir, const String& src, const String& dest)
+static void copyFile(const DirectoryPtr& dir, const String& src, const String& dest)
 {
     IndexInputPtr in = dir->openInput(src);
     IndexOutputPtr out = dir->createOutput(dest);

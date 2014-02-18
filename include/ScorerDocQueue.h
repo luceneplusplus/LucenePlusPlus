@@ -30,12 +30,12 @@ namespace Lucene
     public:
         /// Adds a Scorer to a ScorerDocQueue in log(size) time.  If one tries to add more Scorers than maxSize
         /// ArrayIndexOutOfBound exception is thrown.
-        void put(ScorerPtr scorer);
+        void put(const ScorerPtr& scorer);
 
         /// Adds a Scorer to the ScorerDocQueue in log(size) time if either the ScorerDocQueue is not full, or
         /// not lessThan(scorer, top()).
         /// @return true if scorer is added, false otherwise.
-        bool insert(ScorerPtr scorer);
+        bool insert(const ScorerPtr& scorer);
 
         /// Returns the least Scorer of the ScorerDocQueue in constant time. Should not be used when the queue
         /// is empty.

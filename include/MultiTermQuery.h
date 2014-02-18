@@ -95,22 +95,22 @@ namespace Lucene
         /// @see #getTotalNumberOfTerms
         void clearTotalNumberOfTerms();
 
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
         /// @see #setRewriteMethod
         virtual RewriteMethodPtr getRewriteMethod();
 
         /// Sets the rewrite method to be used when executing the query.  You can use one of the four core methods,
         /// or implement your own subclass of {@link RewriteMethod}.
-        virtual void setRewriteMethod(RewriteMethodPtr method);
+        virtual void setRewriteMethod(const RewriteMethodPtr& method);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
     protected:
         /// Construct the enumeration to be used, expanding the pattern term.
-        virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader) = 0;
+        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader) = 0;
 
         void incTotalNumberOfTerms(int32_t inc);
 
@@ -127,7 +127,7 @@ namespace Lucene
         LUCENE_CLASS(RewriteMethod);
 
     public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query) = 0;
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query) = 0;
     };
 
     /// A rewrite method that tries to pick the best constant-score rewrite method based on term and document
@@ -170,10 +170,10 @@ namespace Lucene
         /// @see #setDocCountPercent
         virtual double getDocCountPercent();
 
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
 
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
     };
 }
 

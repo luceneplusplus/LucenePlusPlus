@@ -30,7 +30,7 @@ namespace Lucene
     // switch to a new format!
     const int32_t FieldsWriter::FORMAT_CURRENT = FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS;
 
-    FieldsWriter::FieldsWriter(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
+    FieldsWriter::FieldsWriter(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn)
     {
         fieldInfos = fn;
 
@@ -91,7 +91,7 @@ namespace Lucene
         doClose = true;
     }
 
-    FieldsWriter::FieldsWriter(IndexOutputPtr fdx, IndexOutputPtr fdt, FieldInfosPtr fn)
+    FieldsWriter::FieldsWriter(const IndexOutputPtr& fdx, const IndexOutputPtr& fdt, const FieldInfosPtr& fn)
     {
         fieldInfos = fn;
         fieldsStream = fdt;
@@ -103,12 +103,12 @@ namespace Lucene
     {
     }
 
-    void FieldsWriter::setFieldsStream(IndexOutputPtr stream)
+    void FieldsWriter::setFieldsStream(const IndexOutputPtr& stream)
     {
         this->fieldsStream = stream;
     }
 
-    void FieldsWriter::flushDocument(int32_t numStoredFields, RAMOutputStreamPtr buffer)
+    void FieldsWriter::flushDocument(int32_t numStoredFields, const RAMOutputStreamPtr& buffer)
     {
         TestScope testScope(L"FieldsWriter", L"flushDocument");
         indexStream->writeLong(fieldsStream->getFilePointer());
@@ -162,7 +162,7 @@ namespace Lucene
         }
     }
 
-    void FieldsWriter::writeField(FieldInfoPtr fi, FieldablePtr field)
+    void FieldsWriter::writeField(const FieldInfoPtr& fi, const FieldablePtr& field)
     {
         fieldsStream->writeVInt(fi->number);
         uint8_t bits = 0;
@@ -186,7 +186,7 @@ namespace Lucene
             fieldsStream->writeString(field->stringValue());
     }
 
-    void FieldsWriter::addRawDocuments(IndexInputPtr stream, Collection<int32_t> lengths, int32_t numDocs)
+    void FieldsWriter::addRawDocuments(const IndexInputPtr& stream, Collection<int32_t> lengths, int32_t numDocs)
     {
         int64_t position = fieldsStream->getFilePointer();
         int64_t start = position;
@@ -199,7 +199,7 @@ namespace Lucene
         BOOST_ASSERT(fieldsStream->getFilePointer() == position);
     }
 
-    void FieldsWriter::addDocument(DocumentPtr doc)
+    void FieldsWriter::addDocument(const DocumentPtr& doc)
     {
         indexStream->writeLong(fieldsStream->getFilePointer());
 

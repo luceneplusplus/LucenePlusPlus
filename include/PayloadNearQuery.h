@@ -26,7 +26,7 @@ namespace Lucene
     {
     public:
         PayloadNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder);
-        PayloadNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, PayloadFunctionPtr function);
+        PayloadNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, const PayloadFunctionPtr& function);
 
         virtual ~PayloadNearQuery();
 
@@ -39,11 +39,11 @@ namespace Lucene
     public:
         using SpanNearQuery::toString;
 
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual String toString(const String& field);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         friend class PayloadNearSpanWeight;
@@ -53,19 +53,19 @@ namespace Lucene
     class LPPAPI PayloadNearSpanWeight : public SpanWeight
     {
     public:
-        PayloadNearSpanWeight(SpanQueryPtr query, SearcherPtr searcher);
+        PayloadNearSpanWeight(const SpanQueryPtr& query, const SearcherPtr& searcher);
         virtual ~PayloadNearSpanWeight();
 
         LUCENE_CLASS(PayloadNearSpanWeight);
 
     public:
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
     };
 
     class LPPAPI PayloadNearSpanScorer : public SpanScorer
     {
     public:
-        PayloadNearSpanScorer(SpansPtr spans, WeightPtr weight, SimilarityPtr similarity, ByteArray norms);
+        PayloadNearSpanScorer(const SpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms);
         virtual ~PayloadNearSpanScorer();
 
         LUCENE_CLASS(PayloadNearSpanScorer);

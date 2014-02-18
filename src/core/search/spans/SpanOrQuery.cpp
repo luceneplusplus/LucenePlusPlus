@@ -46,7 +46,7 @@ namespace Lucene
             (*clause)->extractTerms(terms);
     }
 
-    LuceneObjectPtr SpanOrQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SpanOrQuery::clone(const LuceneObjectPtr& other)
     {
         int32_t sz = clauses.size();
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
@@ -59,7 +59,7 @@ namespace Lucene
         return spanOrQuery;
     }
 
-    QueryPtr SpanOrQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr SpanOrQuery::rewrite(const IndexReaderPtr& reader)
     {
         SpanOrQueryPtr clone;
         for (int32_t i = 0; i < clauses.size(); ++i)
@@ -93,7 +93,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool SpanOrQuery::equals(LuceneObjectPtr other)
+    bool SpanOrQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -118,7 +118,7 @@ namespace Lucene
         return result;
     }
 
-    SpansPtr SpanOrQuery::getSpans(IndexReaderPtr reader)
+    SpansPtr SpanOrQuery::getSpans(const IndexReaderPtr& reader)
     {
         if (clauses.size() == 1) // optimize 1-clause case
             return clauses[0]->getSpans(reader);
@@ -146,7 +146,7 @@ namespace Lucene
             return (first->doc() < second->doc());
     }
 
-    OrSpans::OrSpans(SpanOrQueryPtr query, IndexReaderPtr reader)
+    OrSpans::OrSpans(const SpanOrQueryPtr& query, const IndexReaderPtr& reader)
     {
         this->query = query;
         this->reader = reader;

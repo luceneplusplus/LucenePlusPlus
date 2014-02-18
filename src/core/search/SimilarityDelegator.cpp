@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    SimilarityDelegator::SimilarityDelegator(SimilarityPtr delegee)
+    SimilarityDelegator::SimilarityDelegator(const SimilarityPtr& delegee)
     {
         this->delegee = delegee;
     }
@@ -18,7 +18,7 @@ namespace Lucene
     {
     }
 
-    double SimilarityDelegator::computeNorm(const String& fieldName, FieldInvertStatePtr state)
+    double SimilarityDelegator::computeNorm(const String& fieldName, const FieldInvertStatePtr& state)
     {
         return delegee->computeNorm(fieldName, state);
     }

@@ -80,7 +80,7 @@ namespace Lucene
         /// of LockFactory should only be used for one directory (ie, do not share a single instance across multiple
         /// Directories).
         /// @param lockFactory instance of {@link LockFactory}.
-        void setLockFactory(LockFactoryPtr lockFactory);
+        void setLockFactory(const LockFactoryPtr& lockFactory);
 
         /// Get the LockFactory that this Directory instance is using for its locking implementation.  Note that this
         /// may be null for Directory implementations that provide their own locking implementation.
@@ -99,7 +99,7 @@ namespace Lucene
         /// @param src source directory.
         /// @param dest destination directory.
         /// @param closeDirSrc if true, call {@link #close()} method on source directory.
-        static void copy(DirectoryPtr src, DirectoryPtr dest, bool closeDirSrc);
+        static void copy(const DirectoryPtr& src, const DirectoryPtr& dest, bool closeDirSrc);
 
     protected:
         /// @throws AlreadyClosed if this Directory is closed.

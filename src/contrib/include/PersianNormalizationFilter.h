@@ -16,7 +16,7 @@ namespace Lucene
     class LPPCONTRIBAPI PersianNormalizationFilter : public TokenFilter
     {
     public:
-        PersianNormalizationFilter(TokenStreamPtr input);
+        PersianNormalizationFilter(const TokenStreamPtr& input);
         virtual ~PersianNormalizationFilter();
 
         LUCENE_CLASS(PersianNormalizationFilter);

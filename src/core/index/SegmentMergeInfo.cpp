@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    SegmentMergeInfo::SegmentMergeInfo(int32_t b, TermEnumPtr te, IndexReaderPtr r)
+    SegmentMergeInfo::SegmentMergeInfo(int32_t b, const TermEnumPtr& te, const IndexReaderPtr& r)
     {
         base = b;
         _reader = r;

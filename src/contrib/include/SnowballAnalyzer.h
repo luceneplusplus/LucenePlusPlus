@@ -39,11 +39,11 @@ namespace Lucene
     public:
         /// Constructs a {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link LowerCaseFilter},
         /// a {@link StopFilter} and a {@link SnowballFilter}.
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
 
         /// Returns a (possibly reused) {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link
         /// LowerCaseFilter}, a {@link StopFilter} and a {@link SnowballFilter}.
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, ReaderPtr reader);
+        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
     };
 
     class LPPCONTRIBAPI SnowballAnalyzerSavedStreams : public LuceneObject

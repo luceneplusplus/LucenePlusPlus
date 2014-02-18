@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    MergePolicy::MergePolicy(IndexWriterPtr writer)
+    MergePolicy::MergePolicy(const IndexWriterPtr& writer)
     {
         this->_writer = writer;
     }
@@ -21,7 +21,7 @@ namespace Lucene
     {
     }
 
-    OneMerge::OneMerge(SegmentInfosPtr segments, bool useCompoundFile)
+    OneMerge::OneMerge(const SegmentInfosPtr& segments, bool useCompoundFile)
     {
         mergeDocStores = false;
         optimize = false;
@@ -65,14 +65,14 @@ namespace Lucene
         return aborted;
     }
 
-    void OneMerge::checkAborted(DirectoryPtr dir)
+    void OneMerge::checkAborted(const DirectoryPtr& dir)
     {
         SyncLock syncLock(this);
         if (aborted)
             boost::throw_exception(MergeAbortedException(L"merge is aborted: " + segString(dir)));
     }
 
-    String OneMerge::segString(DirectoryPtr dir)
+    String OneMerge::segString(const DirectoryPtr& dir)
     {
         StringStream buffer;
         int32_t numSegments = segments->size();
@@ -100,12 +100,12 @@ namespace Lucene
     {
     }
 
-    void MergeSpecification::add(OneMergePtr merge)
+    void MergeSpecification::add(const OneMergePtr& merge)
     {
         merges.add(merge);
     }
 
-    String MergeSpecification::segString(DirectoryPtr dir)
+    String MergeSpecification::segString(const DirectoryPtr& dir)
     {
         String seg(L"MergeSpec:\n");
         int32_t i = 1;

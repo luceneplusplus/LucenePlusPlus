@@ -90,7 +90,7 @@ namespace Lucene
         void writeChars(const String& s, int32_t start, int32_t length);
 
         /// Copy numBytes bytes from input to ourself.
-        void copyBytes(IndexInputPtr input, int64_t numBytes);
+        void copyBytes(const IndexInputPtr& input, int64_t numBytes);
 
         /// Set the file length. By default, this method does nothing (it's optional for a Directory to implement it).
         /// But, certain Directory implementations (for example @see FSDirectory) can use this to inform the underlying IO

@@ -21,7 +21,7 @@ namespace Lucene
     class PhraseScorer : public Scorer
     {
     public:
-        PhraseScorer(WeightPtr weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, SimilarityPtr similarity, ByteArray norms);
+        PhraseScorer(const WeightPtr& weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, const SimilarityPtr& similarity, ByteArray norms);
         virtual ~PhraseScorer();
 
         LUCENE_CLASS(PhraseScorer);

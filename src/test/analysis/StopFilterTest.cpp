@@ -18,7 +18,7 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture StopFilterTest;
 
-static void doTestStopPositons(StopFilterPtr stpf, bool enableIcrements)
+static void doTestStopPositons(const StopFilterPtr& stpf, bool enableIcrements)
 {
     stpf->setEnablePositionIncrements(enableIcrements);
     TermAttributePtr termAtt = stpf->getAttribute<TermAttribute>();

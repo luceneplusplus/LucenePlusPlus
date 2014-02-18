@@ -19,7 +19,7 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture AnalyzersTest;
 
-static void verifyPayload(TokenStreamPtr ts)
+static void verifyPayload(const TokenStreamPtr& ts)
 {
     PayloadAttributePtr payloadAtt = ts->getAttribute<PayloadAttribute>();
     for (uint8_t b = 1; ; ++b)
@@ -71,7 +71,7 @@ namespace TestPayloadCopy
     class PayloadSetter : public TokenFilter
     {
     public:
-        PayloadSetter(TokenStreamPtr input) : TokenFilter(input)
+        PayloadSetter(const TokenStreamPtr& input) : TokenFilter(input)
         {
             payloadAtt = addAttribute<PayloadAttribute>();
             data = ByteArray::newInstance(1);

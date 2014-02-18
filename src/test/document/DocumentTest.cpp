@@ -38,7 +38,7 @@ static DocumentPtr makeDocumentWithFields()
     return doc;
 }
 
-static void checkDocument(DocumentPtr doc, bool fromIndex)
+static void checkDocument(const DocumentPtr& doc, bool fromIndex)
 {
     Collection<String> keywordFieldValues = doc->getValues(L"keyword");
     Collection<String> textFieldValues = doc->getValues(L"text");

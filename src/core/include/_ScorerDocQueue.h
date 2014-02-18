@@ -14,8 +14,8 @@ namespace Lucene
     class HeapedScorerDoc : public LuceneObject
     {
     public:
-        HeapedScorerDoc(ScorerPtr scorer);
-        HeapedScorerDoc(ScorerPtr scorer, int32_t doc);
+        HeapedScorerDoc(const ScorerPtr& scorer);
+        HeapedScorerDoc(const ScorerPtr& scorer, int32_t doc);
         virtual ~HeapedScorerDoc();
 
         LUCENE_CLASS(HeapedScorerDoc);

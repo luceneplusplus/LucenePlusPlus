@@ -24,7 +24,7 @@ namespace Lucene
         setLockFactory(newLucene<SingleInstanceLockFactory>());
     }
 
-    RAMDirectory::RAMDirectory(DirectoryPtr dir)
+    RAMDirectory::RAMDirectory(const DirectoryPtr& dir)
     {
         this->fileMap = MapStringRAMFile::newInstance();
         this->_sizeInBytes = 0;
@@ -34,7 +34,7 @@ namespace Lucene
         setLockFactory(newLucene<SingleInstanceLockFactory>());
     }
 
-    RAMDirectory::RAMDirectory(DirectoryPtr dir, bool closeDir)
+    RAMDirectory::RAMDirectory(const DirectoryPtr& dir, bool closeDir)
     {
         this->fileMap = MapStringRAMFile::newInstance();
         this->_sizeInBytes = 0;

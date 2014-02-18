@@ -17,7 +17,7 @@ typedef LuceneTestFixture CharFilterTest;
 class CharFilter1 : public CharFilter
 {
 public:
-    CharFilter1(CharStreamPtr in) : CharFilter(in)
+    CharFilter1(const CharStreamPtr& in) : CharFilter(in)
     {
     }
 
@@ -35,7 +35,7 @@ protected:
 class CharFilter2 : public CharFilter
 {
 public:
-    CharFilter2(CharStreamPtr in) : CharFilter(in)
+    CharFilter2(const CharStreamPtr& in) : CharFilter(in)
     {
     }
 

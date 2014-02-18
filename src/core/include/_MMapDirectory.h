@@ -53,7 +53,7 @@ namespace Lucene
         virtual void close();
 
         /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

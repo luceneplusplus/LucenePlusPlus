@@ -20,8 +20,8 @@ namespace Lucene
         LUCENE_CLASS(HitQueueBase);
 
     public:
-        virtual ScoreDocPtr add(ScoreDocPtr scoreDoc);
-        virtual ScoreDocPtr addOverflow(ScoreDocPtr scoreDoc);
+        virtual ScoreDocPtr add(const ScoreDocPtr& scoreDoc);
+        virtual ScoreDocPtr addOverflow(const ScoreDocPtr& scoreDoc);
         virtual ScoreDocPtr top();
         virtual ScoreDocPtr pop();
         virtual ScoreDocPtr updateTop();
@@ -46,7 +46,7 @@ namespace Lucene
     class LPPAPI PriorityQueueScoreDocs : public PriorityQueue<ScoreDocPtr>
     {
     public:
-        PriorityQueueScoreDocs(HitQueueBasePtr hitQueue, int32_t size);
+        PriorityQueueScoreDocs(const HitQueueBasePtr& hitQueue, int32_t size);
         virtual ~PriorityQueueScoreDocs();
 
         LUCENE_CLASS(PriorityQueueScoreDocs);

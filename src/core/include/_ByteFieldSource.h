@@ -14,7 +14,7 @@ namespace Lucene
     class ByteDocValues : public DocValues
     {
     public:
-        ByteDocValues(ByteFieldSourcePtr source, Collection<uint8_t> arr);
+        ByteDocValues(const ByteFieldSourcePtr& source, Collection<uint8_t> arr);
         virtual ~ByteDocValues();
 
         LUCENE_CLASS(ByteDocValues);

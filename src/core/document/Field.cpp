@@ -22,22 +22,22 @@ namespace Lucene
         ConstructField(name, value, store, index, termVector);
     }
 
-    Field::Field(const String& name, ReaderPtr reader)
+    Field::Field(const String& name, const ReaderPtr& reader)
     {
         ConstructField(name, reader, TERM_VECTOR_NO);
     }
 
-    Field::Field(const String& name, ReaderPtr reader, TermVector termVector)
+    Field::Field(const String& name, const ReaderPtr& reader, TermVector termVector)
     {
         ConstructField(name, reader, termVector);
     }
 
-    Field::Field(const String& name, TokenStreamPtr tokenStream)
+    Field::Field(const String& name, const TokenStreamPtr& tokenStream)
     {
         ConstructField(name, tokenStream, TERM_VECTOR_NO);
     }
 
-    Field::Field(const String& name, TokenStreamPtr tokenStream, TermVector termVector)
+    Field::Field(const String& name, const TokenStreamPtr& tokenStream, TermVector termVector)
     {
         ConstructField(name, tokenStream, termVector);
     }
@@ -75,7 +75,7 @@ namespace Lucene
         setStoreTermVector(termVector);
     }
 
-    void Field::ConstructField(const String& name, ReaderPtr reader, TermVector termVector)
+    void Field::ConstructField(const String& name, const ReaderPtr& reader, TermVector termVector)
     {
         this->_name = name;
         this->fieldsData = reader;
@@ -87,7 +87,7 @@ namespace Lucene
         setStoreTermVector(termVector);
     }
 
-    void Field::ConstructField(const String& name, TokenStreamPtr tokenStream, TermVector termVector)
+    void Field::ConstructField(const String& name, const TokenStreamPtr& tokenStream, TermVector termVector)
     {
         this->_name = name;
         this->fieldsData = VariantUtils::null();
@@ -145,7 +145,7 @@ namespace Lucene
         fieldsData = value;
     }
 
-    void Field::setValue(ReaderPtr value)
+    void Field::setValue(const ReaderPtr& value)
     {
         if (_isBinary)
             boost::throw_exception(IllegalArgumentException(L"cannot set a Reader value on a binary field"));
@@ -172,7 +172,7 @@ namespace Lucene
         binaryOffset = offset;
     }
 
-    void Field::setTokenStream(TokenStreamPtr tokenStream)
+    void Field::setTokenStream(const TokenStreamPtr& tokenStream)
     {
         this->_isIndexed = true;
         this->_isTokenized = true;

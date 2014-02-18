@@ -16,7 +16,7 @@ namespace Lucene
     class LPPCONTRIBAPI RussianLowerCaseFilter : public TokenFilter
     {
     public:
-        RussianLowerCaseFilter(TokenStreamPtr input);
+        RussianLowerCaseFilter(const TokenStreamPtr& input);
 
         virtual ~RussianLowerCaseFilter();
 

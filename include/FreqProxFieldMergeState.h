@@ -15,7 +15,7 @@ namespace Lucene
     class FreqProxFieldMergeState : public LuceneObject
     {
     public:
-        FreqProxFieldMergeState(FreqProxTermsWriterPerFieldPtr field);
+        FreqProxFieldMergeState(const FreqProxTermsWriterPerFieldPtr& field);
         virtual ~FreqProxFieldMergeState();
 
         LUCENE_CLASS(FreqProxFieldMergeState);

@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    ISOLatin1AccentFilter::ISOLatin1AccentFilter(TokenStreamPtr input) : TokenFilter(input)
+    ISOLatin1AccentFilter::ISOLatin1AccentFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         output = CharArray::newInstance(256);
         outputPos = 0;

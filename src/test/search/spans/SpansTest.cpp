@@ -78,12 +78,12 @@ public:
         return newLucene<SpanTermQuery>(newLucene<Term>(field, text));
     }
 
-    void checkHits(QueryPtr query, Collection<int32_t> results)
+    void checkHits(const QueryPtr& query, Collection<int32_t> results)
     {
         CheckHits::checkHits(query, field, searcher, results);
     }
 
-    void orderedSlopTest3SQ(SpanQueryPtr q1, SpanQueryPtr q2, SpanQueryPtr q3, int32_t slop, Collection<int32_t> expectedDocs)
+    void orderedSlopTest3SQ(const SpanQueryPtr& q1, const SpanQueryPtr& q2, const SpanQueryPtr& q3, int32_t slop, Collection<int32_t> expectedDocs)
     {
         bool ordered = true;
         SpanNearQueryPtr snq = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(q1, q2, q3), slop, ordered);
@@ -113,7 +113,7 @@ public:
         return newLucene<SpanOrQuery>(sqa)->getSpans(searcher->getIndexReader());
     }
 
-    void checkNextSpans(SpansPtr spans, int32_t doc, int32_t start, int32_t end)
+    void checkNextSpans(const SpansPtr& spans, int32_t doc, int32_t start, int32_t end)
     {
         EXPECT_TRUE(spans->next());
         EXPECT_EQ(doc, spans->doc());
@@ -121,7 +121,7 @@ public:
         EXPECT_EQ(end, spans->end());
     }
 
-    void addDoc(IndexWriterPtr writer, const String& id, const String& text)
+    void addDoc(const IndexWriterPtr& writer, const String& id, const String& text)
     {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", id, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
@@ -129,7 +129,7 @@ public:
         writer->addDocument(doc);
     }
 
-    int32_t hitCount(SearcherPtr searcher, const String& word)
+    int32_t hitCount(const SearcherPtr& searcher, const String& word)
     {
         return searcher->search(newLucene<TermQuery>(newLucene<Term>(L"text", word)), 10)->totalHits;
     }
@@ -418,7 +418,7 @@ namespace TestSpanScorerZeroSloppyFreq
     class SloppyFreqSpanNearQuery : public SpanNearQuery
     {
     public:
-        SloppyFreqSpanNearQuery(SimilarityPtr sim, Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder) : SpanNearQuery(clauses, slop, inOrder)
+        SloppyFreqSpanNearQuery(const SimilarityPtr& sim, Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder) : SpanNearQuery(clauses, slop, inOrder)
         {
             this->sim = sim;
         }
@@ -431,7 +431,7 @@ namespace TestSpanScorerZeroSloppyFreq
         SimilarityPtr sim;
 
     public:
-        virtual SimilarityPtr getSimilarity(SearcherPtr searcher)
+        virtual SimilarityPtr getSimilarity(const SearcherPtr& searcher)
         {
             return sim;
         }

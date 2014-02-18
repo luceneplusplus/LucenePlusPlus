@@ -259,20 +259,20 @@ namespace Lucene
         virtual PayloadPtr getPayload();
 
         /// Sets this Token's payload.
-        virtual void setPayload(PayloadPtr payload);
+        virtual void setPayload(const PayloadPtr& payload);
 
         virtual String toString();
 
         /// Resets the term text, payload, flags, and positionIncrement, startOffset, endOffset and token type to default.
         virtual void clear();
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Makes a clone, but replaces the term buffer and start/end offset in the process.  This is more efficient than
         /// doing a full clone (and then calling setTermBuffer) because it saves a wasted copy of the old termBuffer.
         TokenPtr clone(CharArray newTermBuffer, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         /// Shorthand for calling {@link #clear}, {@link #setTermBuffer(char[], int, int)}, {@link #setStartOffset},
@@ -306,15 +306,15 @@ namespace Lucene
         TokenPtr reinit(const String& newTerm, int32_t newTermOffset, int32_t newTermLength, int32_t newStartOffset, int32_t newEndOffset);
 
         /// Copy the prototype token's fields into this one. Note: Payloads are shared.
-        void reinit(TokenPtr prototype);
+        void reinit(const TokenPtr& prototype);
 
         /// Copy the prototype token's fields into this one, with a different term. Note: Payloads are shared.
-        void reinit(TokenPtr prototype, const String& newTerm);
+        void reinit(const TokenPtr& prototype, const String& newTerm);
 
         /// Copy the prototype token's fields into this one, with a different term. Note: Payloads are shared.
-        void reinit(TokenPtr prototype, CharArray newTermBuffer, int32_t offset, int32_t length);
+        void reinit(const TokenPtr& prototype, CharArray newTermBuffer, int32_t offset, int32_t length);
 
-        virtual void copyTo(AttributePtr target);
+        virtual void copyTo(const AttributePtr& target);
 
         /// Convenience factory that returns Token as implementation for the basic attributes
         static AttributeFactoryPtr TOKEN_ATTRIBUTE_FACTORY();
@@ -339,7 +339,7 @@ namespace Lucene
     class LPPAPI TokenAttributeFactory : public AttributeFactory
     {
     public:
-        TokenAttributeFactory(AttributeFactoryPtr delegate);
+        TokenAttributeFactory(const AttributeFactoryPtr& delegate);
         virtual ~TokenAttributeFactory();
 
         LUCENE_CLASS(TokenAttributeFactory);
@@ -349,7 +349,7 @@ namespace Lucene
 
     public:
         virtual AttributePtr createAttributeInstance(const String& className);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

@@ -32,13 +32,13 @@ namespace Lucene
         int32_t endIndex;
 
     public:
-        void init(ByteBlockPoolPtr pool, int32_t startIndex, int32_t endIndex);
+        void init(const ByteBlockPoolPtr& pool, int32_t startIndex, int32_t endIndex);
         bool eof();
 
         /// Reads and returns a single byte.
         virtual uint8_t readByte();
 
-        int64_t writeTo(IndexOutputPtr out);
+        int64_t writeTo(const IndexOutputPtr& out);
 
         void nextSlice();
 

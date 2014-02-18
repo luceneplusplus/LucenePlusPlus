@@ -212,7 +212,7 @@ public:
         dir->close();
     }
 
-    void addDoc(IndexWriterPtr writer, const String& value)
+    void addDoc(const IndexWriterPtr& writer, const String& value)
     {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"content", value, Field::STORE_NO, Field::INDEX_ANALYZED));

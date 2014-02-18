@@ -13,7 +13,7 @@ namespace Lucene
     {
     }
 
-    void FilteredTermEnum::setEnum(TermEnumPtr actualEnum)
+    void FilteredTermEnum::setEnum(const TermEnumPtr& actualEnum)
     {
         this->actualEnum = actualEnum;
         // Find the first term that matches

@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    CustomScoreProvider::CustomScoreProvider(IndexReaderPtr reader)
+    CustomScoreProvider::CustomScoreProvider(const IndexReaderPtr& reader)
     {
         this->reader = reader;
     }
@@ -36,7 +36,7 @@ namespace Lucene
         return subQueryScore * valSrcScore;
     }
 
-    ExplanationPtr CustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
+    ExplanationPtr CustomScoreProvider::customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
     {
         if (valSrcExpls.size() == 1)
             return customExplain(doc, subQueryExpl, valSrcExpls[0]);
@@ -52,7 +52,7 @@ namespace Lucene
         return exp;
     }
 
-    ExplanationPtr CustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
+    ExplanationPtr CustomScoreProvider::customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, const ExplanationPtr& valSrcExpl)
     {
         double valSrcScore = 1;
         if (valSrcExpl)

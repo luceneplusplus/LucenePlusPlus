@@ -16,8 +16,8 @@ namespace Lucene
     class ParallelTermEnum : public TermEnum
     {
     public:
-        ParallelTermEnum(ParallelReaderPtr reader);
-        ParallelTermEnum(ParallelReaderPtr reader, TermPtr term);
+        ParallelTermEnum(const ParallelReaderPtr& reader);
+        ParallelTermEnum(const ParallelReaderPtr& reader, const TermPtr& term);
         virtual ~ParallelTermEnum();
 
         LUCENE_CLASS(ParallelTermEnum);
@@ -47,8 +47,8 @@ namespace Lucene
     class ParallelTermDocs : public TermPositions, public LuceneObject
     {
     public:
-        ParallelTermDocs(ParallelReaderPtr reader);
-        ParallelTermDocs(ParallelReaderPtr reader, TermPtr term);
+        ParallelTermDocs(const ParallelReaderPtr& reader);
+        ParallelTermDocs(const ParallelReaderPtr& reader, const TermPtr& term);
         virtual ~ParallelTermDocs();
 
         LUCENE_CLASS(ParallelTermDocs);
@@ -60,8 +60,8 @@ namespace Lucene
     public:
         virtual int32_t doc();
         virtual int32_t freq();
-        virtual void seek(TermPtr term);
-        virtual void seek(TermEnumPtr termEnum);
+        virtual void seek(const TermPtr& term);
+        virtual void seek(const TermEnumPtr& termEnum);
         virtual bool next();
         virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
         virtual bool skipTo(int32_t target);
@@ -71,14 +71,14 @@ namespace Lucene
     class ParallelTermPositions : public ParallelTermDocs
     {
     public:
-        ParallelTermPositions(ParallelReaderPtr reader);
-        ParallelTermPositions(ParallelReaderPtr reader, TermPtr term);
+        ParallelTermPositions(const ParallelReaderPtr& reader);
+        ParallelTermPositions(const ParallelReaderPtr& reader, const TermPtr& term);
         virtual ~ParallelTermPositions();
 
         LUCENE_CLASS(ParallelTermPositions);
 
     public:
-        virtual void seek(TermPtr term);
+        virtual void seek(const TermPtr& term);
         virtual int32_t nextPosition();
         virtual int32_t getPayloadLength();
         virtual ByteArray getPayload(ByteArray data, int32_t offset);

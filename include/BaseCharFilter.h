@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI BaseCharFilter : public CharFilter
     {
     public:
-        BaseCharFilter(CharStreamPtr in);
+        BaseCharFilter(const CharStreamPtr& in);
         virtual ~BaseCharFilter();
 
         LUCENE_CLASS(BaseCharFilter);

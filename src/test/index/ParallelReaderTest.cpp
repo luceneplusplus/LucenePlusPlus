@@ -107,7 +107,7 @@ public:
         return dir2;
     }
 
-    void queryTest(QueryPtr query)
+    void queryTest(const QueryPtr& query)
     {
         Collection<ScoreDocPtr> parallelHits = parallel->search(query, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> singleHits = single->search(query, FilterPtr(), 1000)->scoreDocs;

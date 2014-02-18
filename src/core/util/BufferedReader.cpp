@@ -12,7 +12,7 @@ namespace Lucene
 {
     const int32_t BufferedReader::READER_BUFFER = 8192;
 
-    BufferedReader::BufferedReader(ReaderPtr reader, int32_t size)
+    BufferedReader::BufferedReader(const ReaderPtr& reader, int32_t size)
     {
         this->reader = reader;
         this->bufferSize = size;

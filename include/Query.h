@@ -66,14 +66,14 @@ namespace Lucene
 
         /// Constructs an appropriate Weight implementation for this query.
         /// Only implemented by primitive queries, which re-write to themselves.
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
         /// Constructs and initializes a Weight for a top-level query.
-        virtual WeightPtr weight(SearcherPtr searcher);
+        virtual WeightPtr weight(const SearcherPtr& searcher);
 
         /// Called to re-write queries into primitive queries.  For example, a PrefixQuery will be rewritten
         /// into a BooleanQuery that consists of TermQuerys.
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
         /// Called when re-writing queries under MultiSearcher.
         ///
@@ -96,13 +96,13 @@ namespace Lucene
         /// Returns the Similarity implementation to be used for this query.  Subclasses may override this method
         /// to specify their own Similarity implementation, perhaps one that delegates through that of the Searcher.
         /// By default the Searcher's Similarity implementation is returned.
-        virtual SimilarityPtr getSimilarity(SearcherPtr searcher);
+        virtual SimilarityPtr getSimilarity(const SearcherPtr& searcher);
 
         /// Returns a clone of this query.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         /// Return given boost value as a string.
         String boostString();

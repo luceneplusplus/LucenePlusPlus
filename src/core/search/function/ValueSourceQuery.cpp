@@ -17,7 +17,7 @@
 
 namespace Lucene
 {
-    ValueSourceQuery::ValueSourceQuery(ValueSourcePtr valSrc)
+    ValueSourceQuery::ValueSourceQuery(const ValueSourcePtr& valSrc)
     {
         this->valSrc = valSrc;
     }
@@ -26,7 +26,7 @@ namespace Lucene
     {
     }
 
-    QueryPtr ValueSourceQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr ValueSourceQuery::rewrite(const IndexReaderPtr& reader)
     {
         return shared_from_this();
     }
@@ -36,7 +36,7 @@ namespace Lucene
         // no terms involved here
     }
 
-    WeightPtr ValueSourceQuery::createWeight(SearcherPtr searcher)
+    WeightPtr ValueSourceQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<ValueSourceWeight>(shared_from_this(), searcher);
     }
@@ -46,7 +46,7 @@ namespace Lucene
         return valSrc->toString() + boostString();
     }
 
-    bool ValueSourceQuery::equals(LuceneObjectPtr other)
+    bool ValueSourceQuery::equals(const LuceneObjectPtr& other)
     {
         ValueSourceQueryPtr otherQuery(boost::dynamic_pointer_cast<ValueSourceQuery>(other));
         if (!otherQuery)
@@ -59,7 +59,7 @@ namespace Lucene
         return (StringUtils::hashCode(ValueSourceQuery::_getClassName()) + valSrc->hashCode()) ^ MiscUtils::doubleToIntBits(getBoost());
     }
 
-    LuceneObjectPtr ValueSourceQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr ValueSourceQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<ValueSourceQuery>(valSrc);
         ValueSourceQueryPtr cloneQuery(boost::dynamic_pointer_cast<ValueSourceQuery>(Query::clone(clone)));
@@ -67,7 +67,7 @@ namespace Lucene
         return cloneQuery;
     }
 
-    ValueSourceWeight::ValueSourceWeight(ValueSourceQueryPtr query, SearcherPtr searcher)
+    ValueSourceWeight::ValueSourceWeight(const ValueSourceQueryPtr& query, const SearcherPtr& searcher)
     {
         this->query = query;
         this->similarity = query->getSimilarity(searcher);
@@ -99,12 +99,12 @@ namespace Lucene
         queryWeight *= queryNorm;
     }
 
-    ScorerPtr ValueSourceWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr ValueSourceWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<ValueSourceScorer>(similarity, reader, shared_from_this());
     }
 
-    ExplanationPtr ValueSourceWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr ValueSourceWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         DocValuesPtr vals(query->valSrc->getValues(reader));
         double sc = queryWeight * vals->doubleVal(doc);
@@ -117,7 +117,7 @@ namespace Lucene
         return result;
     }
 
-    ValueSourceScorer::ValueSourceScorer(SimilarityPtr similarity, IndexReaderPtr reader, ValueSourceWeightPtr weight) : Scorer(similarity)
+    ValueSourceScorer::ValueSourceScorer(const SimilarityPtr& similarity, const IndexReaderPtr& reader, const ValueSourceWeightPtr& weight) : Scorer(similarity)
     {
         this->weight = weight;
         this->qWeight = weight->getValue();

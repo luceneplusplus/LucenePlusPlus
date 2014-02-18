@@ -15,7 +15,7 @@ namespace Lucene
     class FilterItem : public LuceneObject
     {
     public:
-        FilterItem(FilterPtr filter);
+        FilterItem(const FilterPtr& filter);
         virtual ~FilterItem();
 
         LUCENE_CLASS(FilterItem);
@@ -37,7 +37,7 @@ namespace Lucene
     class FilterCleaner : public LuceneThread
     {
     public:
-        FilterCleaner(FilterManagerPtr manager);
+        FilterCleaner(const FilterManagerPtr& manager);
         virtual ~FilterCleaner();
 
         LUCENE_CLASS(FilterCleaner);

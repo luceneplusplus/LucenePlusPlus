@@ -64,7 +64,7 @@ namespace Lucene
         /// Note that add like the removeField(s) methods only makes sense prior to adding a document to an index.
         /// These methods cannot be used to change the content of an existing index! In order to achieve this, a
         /// document has to be deleted from an index and a new changed version of that document has to be added.
-        void add(FieldablePtr field);
+        void add(const FieldablePtr& field);
 
         /// Removes field with the specified name from the document.  If multiple fields exist with this name, this
         /// method removes the first field that has been added.  If there is no field with the specified name, the

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    SpanFilterResult::SpanFilterResult(DocIdSetPtr docIdSet, Collection<PositionInfoPtr> positions)
+    SpanFilterResult::SpanFilterResult(const DocIdSetPtr& docIdSet, Collection<PositionInfoPtr> positions)
     {
         this->docIdSet = docIdSet;
         this->positions = positions;

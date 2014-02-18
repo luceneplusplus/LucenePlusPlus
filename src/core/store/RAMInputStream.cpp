@@ -26,7 +26,7 @@ namespace Lucene
         bufferLength = 0;
     }
 
-    RAMInputStream::RAMInputStream(RAMFilePtr f)
+    RAMInputStream::RAMInputStream(const RAMFilePtr& f)
     {
         file = f;
         _length = file->length;
@@ -122,7 +122,7 @@ namespace Lucene
         bufferPosition = (int32_t)(pos % BUFFER_SIZE);
     }
 
-    LuceneObjectPtr RAMInputStream::clone(LuceneObjectPtr other)
+    LuceneObjectPtr RAMInputStream::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<RAMInputStream>());
         RAMInputStreamPtr cloneInputStream(boost::dynamic_pointer_cast<RAMInputStream>(clone));

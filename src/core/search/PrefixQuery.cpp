@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    PrefixQuery::PrefixQuery(TermPtr prefix)
+    PrefixQuery::PrefixQuery(const TermPtr& prefix)
     {
         this->prefix = prefix;
     }
@@ -26,7 +26,7 @@ namespace Lucene
         return prefix;
     }
 
-    FilteredTermEnumPtr PrefixQuery::getEnum(IndexReaderPtr reader)
+    FilteredTermEnumPtr PrefixQuery::getEnum(const IndexReaderPtr& reader)
     {
         return newLucene<PrefixTermEnum>(reader, prefix);
     }
@@ -40,7 +40,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    LuceneObjectPtr PrefixQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr PrefixQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<PrefixQuery>(prefix));
         PrefixQueryPtr cloneQuery(boost::dynamic_pointer_cast<PrefixQuery>(clone));
@@ -56,7 +56,7 @@ namespace Lucene
         return result;
     }
 
-    bool PrefixQuery::equals(LuceneObjectPtr other)
+    bool PrefixQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

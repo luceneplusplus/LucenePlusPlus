@@ -56,12 +56,12 @@ namespace Lucene
         return newLucene<TopDocs>(totalHits, results, maxScore);
     }
 
-    void TopScoreDocCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void TopScoreDocCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
     }
 
-    void TopScoreDocCollector::setScorer(ScorerPtr scorer)
+    void TopScoreDocCollector::setScorer(const ScorerPtr& scorer)
     {
         this->_scorer = scorer;
     }

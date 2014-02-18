@@ -21,14 +21,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexWriterMergePolicyTest;
 
-static void addDoc(IndexWriterPtr writer)
+static void addDoc(const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void checkInvariants(IndexWriterPtr writer)
+static void checkInvariants(const IndexWriterPtr& writer)
 {
     writer->waitForMerges();
     int32_t maxBufferedDocs = writer->getMaxBufferedDocs();

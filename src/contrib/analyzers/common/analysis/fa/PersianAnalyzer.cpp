@@ -219,7 +219,7 @@ namespace Lucene
         return stopSet;
     }
 
-    TokenStreamPtr PersianAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr PersianAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<ArabicLetterTokenizer>(reader);
         result = newLucene<LowerCaseFilter>(result);
@@ -231,7 +231,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr PersianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr PersianAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         PersianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<PersianAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

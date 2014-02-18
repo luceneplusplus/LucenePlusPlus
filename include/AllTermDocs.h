@@ -14,7 +14,7 @@ namespace Lucene
     class AllTermDocs : public AbstractAllTermDocs
     {
     public:
-        AllTermDocs(SegmentReaderPtr parent);
+        AllTermDocs(const SegmentReaderPtr& parent);
         virtual ~AllTermDocs();
 
         LUCENE_CLASS(AllTermDocs);

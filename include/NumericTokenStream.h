@@ -64,12 +64,12 @@ namespace Lucene
         /// Creates a token stream for numeric values with the specified precisionStep using the given {@link
         /// AttributeSource}.  The stream is not yet initialized, before using set a value using the various
         /// setValue() methods.
-        NumericTokenStream(AttributeSourcePtr source, int32_t precisionStep);
+        NumericTokenStream(const AttributeSourcePtr& source, int32_t precisionStep);
 
         /// Creates a token stream for numeric values with the specified precisionStep using the given {@link
         /// AttributeFactory}.  The stream is not yet initialized, before using set a value using the various
         /// setValue() methods.
-        NumericTokenStream(AttributeFactoryPtr factory, int32_t precisionStep);
+        NumericTokenStream(const AttributeFactoryPtr& factory, int32_t precisionStep);
 
         virtual ~NumericTokenStream();
 

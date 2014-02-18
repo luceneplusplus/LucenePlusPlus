@@ -36,7 +36,7 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"precisionStep must be >=1"));
     }
 
-    NumericTokenStream::NumericTokenStream(AttributeSourcePtr source, int32_t precisionStep) : TokenStream(source)
+    NumericTokenStream::NumericTokenStream(const AttributeSourcePtr& source, int32_t precisionStep) : TokenStream(source)
     {
         this->shift = 0;
         this->valSize = 0;
@@ -48,7 +48,7 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"precisionStep must be >=1"));
     }
 
-    NumericTokenStream::NumericTokenStream(AttributeFactoryPtr factory, int32_t precisionStep) : TokenStream(factory)
+    NumericTokenStream::NumericTokenStream(const AttributeFactoryPtr& factory, int32_t precisionStep) : TokenStream(factory)
     {
         this->shift = 0;
         this->valSize = 0;

@@ -21,7 +21,7 @@ namespace Lucene
     class LPPAPI ISOLatin1AccentFilter : public TokenFilter
     {
     public:
-        ISOLatin1AccentFilter(TokenStreamPtr input);
+        ISOLatin1AccentFilter(const TokenStreamPtr& input);
         virtual ~ISOLatin1AccentFilter();
 
         LUCENE_CLASS(ISOLatin1AccentFilter);

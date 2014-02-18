@@ -39,7 +39,7 @@ public:
     }
 
 public:
-    virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
     {
         BitSetPtr bitset = newLucene<BitSet>(5);
         bitset->set((uint32_t)0, (uint32_t)5);
@@ -55,7 +55,7 @@ public:
     }
 
 public:
-    virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
     {
         BitSetPtr bitset = newLucene<BitSet>(5);
         bitset->set(1);
@@ -80,7 +80,7 @@ protected:
     int32_t doc;
 
 public:
-    virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
     {
         BitSetPtr bits = newLucene<BitSet>(reader->maxDoc());
         bits->set(doc);
@@ -147,7 +147,7 @@ public:
         return newLucene<StaticFilterB>();
     }
 
-    void checkScoreEquals(QueryPtr q1, QueryPtr q2)
+    void checkScoreEquals(const QueryPtr& q1, const QueryPtr& q2)
     {
         Collection<ScoreDocPtr> hits1 = searcher->search(q1, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> hits2 = searcher->search (q2, FilterPtr(), 1000)->scoreDocs;

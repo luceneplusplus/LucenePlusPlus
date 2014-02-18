@@ -27,9 +27,9 @@ namespace Lucene
         /// @param term Pattern term.
         /// @param minSimilarity Minimum required similarity for terms from the reader. Default value is 0.5.
         /// @param prefixLength Length of required common prefix. Default value is 0.
-        FuzzyTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity, int32_t prefixLength);
-        FuzzyTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity);
-        FuzzyTermEnum(IndexReaderPtr reader, TermPtr term);
+        FuzzyTermEnum(const IndexReaderPtr& reader, const TermPtr& term, double minSimilarity, int32_t prefixLength);
+        FuzzyTermEnum(const IndexReaderPtr& reader, const TermPtr& term, double minSimilarity);
+        FuzzyTermEnum(const IndexReaderPtr& reader, const TermPtr& term);
 
         virtual ~FuzzyTermEnum();
 
@@ -57,11 +57,11 @@ namespace Lucene
         virtual void close();
 
     protected:
-        void ConstructTermEnum(IndexReaderPtr reader, TermPtr term, double minSimilarity, int32_t prefixLength);
+        void ConstructTermEnum(const IndexReaderPtr& reader, const TermPtr& term, double minSimilarity, int32_t prefixLength);
 
         /// The termCompare method in FuzzyTermEnum uses Levenshtein distance to calculate the distance between
         /// the given term and the comparing term.
-        virtual bool termCompare(TermPtr term);
+        virtual bool termCompare(const TermPtr& term);
 
         ///
         /// Compute Levenshtein distance

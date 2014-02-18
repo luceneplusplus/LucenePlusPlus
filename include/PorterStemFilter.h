@@ -22,7 +22,7 @@ namespace Lucene
     /// class MyAnalyzer : public Analyzer
     /// {
     /// public:
-    ///     virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    ///     virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     ///     {
     ///         return newLucene<PorterStemFilter>(newLucene<LowerCaseTokenizer>(reader));
     ///     }
@@ -31,7 +31,7 @@ namespace Lucene
     class LPPAPI PorterStemFilter : public TokenFilter
     {
     public:
-        PorterStemFilter(TokenStreamPtr input);
+        PorterStemFilter(const TokenStreamPtr& input);
         virtual ~PorterStemFilter();
 
         LUCENE_CLASS(PorterStemFilter);

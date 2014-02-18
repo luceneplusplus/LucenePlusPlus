@@ -16,7 +16,7 @@ namespace Lucene
     class ByteSliceWriter : public LuceneObject
     {
     public:
-        ByteSliceWriter(ByteBlockPoolPtr pool);
+        ByteSliceWriter(const ByteBlockPoolPtr& pool);
         virtual ~ByteSliceWriter();
 
         LUCENE_CLASS(ByteSliceWriter);

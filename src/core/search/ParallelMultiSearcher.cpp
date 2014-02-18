@@ -25,7 +25,7 @@ namespace Lucene
     {
     }
 
-    int32_t ParallelMultiSearcher::docFreq(TermPtr term)
+    int32_t ParallelMultiSearcher::docFreq(const TermPtr& term)
     {
         ThreadPoolPtr threadPool(ThreadPool::getInstance());
         Collection<FuturePtr> searchThreads(Collection<FuturePtr>::newInstance(searchables.size()));
@@ -37,7 +37,7 @@ namespace Lucene
         return docFreq;
     }
 
-    TopDocsPtr ParallelMultiSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n)
+    TopDocsPtr ParallelMultiSearcher::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n)
     {
         HitQueuePtr hq(newLucene<HitQueue>(n, false));
         SynchronizePtr lock(newInstance<Synchronize>());
@@ -67,7 +67,7 @@ namespace Lucene
         return newLucene<TopDocs>(totalHits, scoreDocs, maxScore);
     }
 
-    TopFieldDocsPtr ParallelMultiSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
+    TopFieldDocsPtr ParallelMultiSearcher::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort)
     {
         if (!sort)
              boost::throw_exception(NullPointerException(L"sort must not be null"));

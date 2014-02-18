@@ -23,7 +23,7 @@ namespace Lucene
     {
     INTERNAL:
         /// Wrap a {@link MultiTermQuery} as a Filter.
-        MultiTermQueryWrapperFilter(MultiTermQueryPtr query);
+        MultiTermQueryWrapperFilter(const MultiTermQueryPtr& query);
 
     public:
         virtual ~MultiTermQueryWrapperFilter();
@@ -35,7 +35,7 @@ namespace Lucene
 
     public:
         virtual String toString();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         /// Return the number of unique terms visited during execution of the filter.  If there are many of them,
@@ -52,7 +52,7 @@ namespace Lucene
         void clearTotalNumberOfTerms();
 
         /// Returns a DocIdSet with documents that should be permitted in search results.
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
     };
 }
 

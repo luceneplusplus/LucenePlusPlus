@@ -19,9 +19,9 @@ namespace Lucene
         LUCENE_CLASS(DocConsumer);
 
     public:
-        virtual DocConsumerPerThreadPtr addThread(DocumentsWriterThreadStatePtr perThread) = 0;
-        virtual void flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state) = 0;
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
+        virtual DocConsumerPerThreadPtr addThread(const DocumentsWriterThreadStatePtr& perThread) = 0;
+        virtual void flush(Collection<DocConsumerPerThreadPtr> threads, const SegmentWriteStatePtr& state) = 0;
+        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
         virtual void abort() = 0;
         virtual bool freeRAM() = 0;
     };

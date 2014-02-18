@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    TokenFilter::TokenFilter(TokenStreamPtr input) : TokenStream(input)
+    TokenFilter::TokenFilter(const TokenStreamPtr& input) : TokenStream(input)
     {
         this->input = input;
     }

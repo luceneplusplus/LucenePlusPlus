@@ -101,7 +101,7 @@ public:
 class PayloadTermFilter : public TokenFilter
 {
 public:
-    PayloadTermFilter(ByteArray payloadField, ByteArray payloadMultiField1, ByteArray payloadMultiField2, TokenStreamPtr input, const String& fieldName) : TokenFilter(input)
+    PayloadTermFilter(ByteArray payloadField, ByteArray payloadMultiField1, ByteArray payloadMultiField2, const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input)
     {
         this->payloadField = payloadField;
         this->payloadMultiField1 = payloadMultiField1;
@@ -170,7 +170,7 @@ protected:
     ByteArray payloadMultiField2;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
         result = newLucene<PayloadTermFilter>(payloadField, payloadMultiField1, payloadMultiField2, result, fieldName);

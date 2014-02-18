@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI MultipleTermPositions : public TermPositions, public LuceneObject
     {
     public:
-        MultipleTermPositions(IndexReaderPtr indexReader, Collection<TermPtr> terms);
+        MultipleTermPositions(const IndexReaderPtr& indexReader, Collection<TermPtr> terms);
         virtual ~MultipleTermPositions();
 
         LUCENE_CLASS(MultipleTermPositions);
@@ -36,10 +36,10 @@ namespace Lucene
         virtual void close();
 
         /// Not implemented.
-        virtual void seek(TermPtr term);
+        virtual void seek(const TermPtr& term);
 
         /// Not implemented.
-        virtual void seek(TermEnumPtr termEnum);
+        virtual void seek(const TermEnumPtr& termEnum);
 
         /// Not implemented.
         virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);

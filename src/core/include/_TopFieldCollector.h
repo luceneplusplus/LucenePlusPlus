@@ -15,7 +15,7 @@ namespace Lucene
     class OneComparatorNonScoringCollector : public TopFieldCollector
     {
     public:
-        OneComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OneComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OneComparatorNonScoringCollector();
 
         LUCENE_CLASS(OneComparatorNonScoringCollector);
@@ -28,8 +28,8 @@ namespace Lucene
         virtual void initialize();
         virtual void updateBottom(int32_t doc);
         virtual void collect(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+        virtual void setScorer(const ScorerPtr& scorer);
     };
 
     /// Implements a TopFieldCollector over one SortField criteria, without tracking document scores and maxScore,
@@ -37,7 +37,7 @@ namespace Lucene
     class OutOfOrderOneComparatorNonScoringCollector : public OneComparatorNonScoringCollector
     {
     public:
-        OutOfOrderOneComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OutOfOrderOneComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OutOfOrderOneComparatorNonScoringCollector();
 
         LUCENE_CLASS(OutOfOrderOneComparatorNonScoringCollector);
@@ -51,7 +51,7 @@ namespace Lucene
     class OneComparatorScoringNoMaxScoreCollector : public OneComparatorNonScoringCollector
     {
     public:
-        OneComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OneComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OneComparatorScoringNoMaxScoreCollector();
 
         LUCENE_CLASS(OneComparatorScoringNoMaxScoreCollector);
@@ -62,7 +62,7 @@ namespace Lucene
     public:
         virtual void updateBottom(int32_t doc, double score);
         virtual void collect(int32_t doc);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
     };
 
     /// Implements a TopFieldCollector over one SortField criteria, while tracking document scores but no maxScore,
@@ -70,7 +70,7 @@ namespace Lucene
     class OutOfOrderOneComparatorScoringNoMaxScoreCollector : public OneComparatorScoringNoMaxScoreCollector
     {
     public:
-        OutOfOrderOneComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OutOfOrderOneComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OutOfOrderOneComparatorScoringNoMaxScoreCollector();
 
         LUCENE_CLASS(OutOfOrderOneComparatorScoringNoMaxScoreCollector);
@@ -84,7 +84,7 @@ namespace Lucene
     class OneComparatorScoringMaxScoreCollector : public OneComparatorNonScoringCollector
     {
     public:
-        OneComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OneComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OneComparatorScoringMaxScoreCollector();
 
         LUCENE_CLASS(OneComparatorScoringMaxScoreCollector);
@@ -95,7 +95,7 @@ namespace Lucene
     public:
         virtual void updateBottom(int32_t doc, double score);
         virtual void collect(int32_t doc);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
     };
 
     /// Implements a TopFieldCollector over one SortField criteria, with tracking document scores and maxScore,
@@ -103,7 +103,7 @@ namespace Lucene
     class OutOfOrderOneComparatorScoringMaxScoreCollector : public OneComparatorScoringMaxScoreCollector
     {
     public:
-        OutOfOrderOneComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OutOfOrderOneComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OutOfOrderOneComparatorScoringMaxScoreCollector();
 
         LUCENE_CLASS(OutOfOrderOneComparatorScoringMaxScoreCollector);
@@ -117,7 +117,7 @@ namespace Lucene
     class MultiComparatorNonScoringCollector : public TopFieldCollector
     {
     public:
-        MultiComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        MultiComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~MultiComparatorNonScoringCollector();
 
         LUCENE_CLASS(MultiComparatorNonScoringCollector);
@@ -130,15 +130,15 @@ namespace Lucene
         virtual void initialize();
         virtual void updateBottom(int32_t doc);
         virtual void collect(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+        virtual void setScorer(const ScorerPtr& scorer);
     };
 
     /// Implements a TopFieldCollector over multiple SortField criteria, without tracking document scores and maxScore.
     class OutOfOrderMultiComparatorNonScoringCollector : public MultiComparatorNonScoringCollector
     {
     public:
-        OutOfOrderMultiComparatorNonScoringCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OutOfOrderMultiComparatorNonScoringCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OutOfOrderMultiComparatorNonScoringCollector();
 
         LUCENE_CLASS(OutOfOrderMultiComparatorNonScoringCollector);
@@ -152,7 +152,7 @@ namespace Lucene
     class MultiComparatorScoringMaxScoreCollector : public MultiComparatorNonScoringCollector
     {
     public:
-        MultiComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        MultiComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~MultiComparatorScoringMaxScoreCollector();
 
         LUCENE_CLASS(MultiComparatorScoringMaxScoreCollector);
@@ -163,14 +163,14 @@ namespace Lucene
     public:
         virtual void updateBottom(int32_t doc, double score);
         virtual void collect(int32_t doc);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
     };
 
     /// Implements a TopFieldCollector over multiple SortField criteria, without tracking document scores and maxScore.
     class OutOfOrderMultiComparatorScoringMaxScoreCollector : public MultiComparatorScoringMaxScoreCollector
     {
     public:
-        OutOfOrderMultiComparatorScoringMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OutOfOrderMultiComparatorScoringMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OutOfOrderMultiComparatorScoringMaxScoreCollector();
 
         LUCENE_CLASS(OutOfOrderMultiComparatorScoringMaxScoreCollector);
@@ -184,7 +184,7 @@ namespace Lucene
     class MultiComparatorScoringNoMaxScoreCollector : public MultiComparatorNonScoringCollector
     {
     public:
-        MultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        MultiComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~MultiComparatorScoringNoMaxScoreCollector();
 
         LUCENE_CLASS(MultiComparatorScoringNoMaxScoreCollector);
@@ -195,7 +195,7 @@ namespace Lucene
     public:
         virtual void updateBottom(int32_t doc, double score);
         virtual void collect(int32_t doc);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
     };
 
     /// Implements a TopFieldCollector over multiple SortField criteria, with tracking document scores and maxScore,
@@ -203,14 +203,14 @@ namespace Lucene
     class OutOfOrderMultiComparatorScoringNoMaxScoreCollector : public MultiComparatorScoringNoMaxScoreCollector
     {
     public:
-        OutOfOrderMultiComparatorScoringNoMaxScoreCollector(FieldValueHitQueuePtr queue, int32_t numHits, bool fillFields);
+        OutOfOrderMultiComparatorScoringNoMaxScoreCollector(const FieldValueHitQueuePtr& queue, int32_t numHits, bool fillFields);
         virtual ~OutOfOrderMultiComparatorScoringNoMaxScoreCollector();
 
         LUCENE_CLASS(OutOfOrderMultiComparatorScoringNoMaxScoreCollector);
 
     public:
         virtual void collect(int32_t doc);
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
         virtual bool acceptsDocsOutOfOrder();
     };
 }

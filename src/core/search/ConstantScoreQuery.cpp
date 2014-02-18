@@ -15,7 +15,7 @@
 
 namespace Lucene
 {
-    ConstantScoreQuery::ConstantScoreQuery(FilterPtr filter)
+    ConstantScoreQuery::ConstantScoreQuery(const FilterPtr& filter)
     {
         this->filter = filter;
     }
@@ -29,7 +29,7 @@ namespace Lucene
         return filter;
     }
 
-    QueryPtr ConstantScoreQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr ConstantScoreQuery::rewrite(const IndexReaderPtr& reader)
     {
         return shared_from_this();
     }
@@ -39,7 +39,7 @@ namespace Lucene
         // OK to not add any terms when used for MultiSearcher, but may not be OK for highlighting
     }
 
-    WeightPtr ConstantScoreQuery::createWeight(SearcherPtr searcher)
+    WeightPtr ConstantScoreQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<ConstantWeight>(shared_from_this(), searcher);
     }
@@ -49,7 +49,7 @@ namespace Lucene
         return L"ConstantScore(" + filter->toString() + (getBoost() == 1.0 ? L")" : L"^" + StringUtils::toString(getBoost()));
     }
 
-    bool ConstantScoreQuery::equals(LuceneObjectPtr other)
+    bool ConstantScoreQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -67,7 +67,7 @@ namespace Lucene
         return filter->hashCode() + MiscUtils::doubleToIntBits(getBoost());
     }
 
-    LuceneObjectPtr ConstantScoreQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr ConstantScoreQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<ConstantScoreQuery>(filter);
         ConstantScoreQueryPtr cloneQuery(boost::dynamic_pointer_cast<ConstantScoreQuery>(Query::clone(clone)));
@@ -75,7 +75,7 @@ namespace Lucene
         return cloneQuery;
     }
 
-    ConstantWeight::ConstantWeight(ConstantScoreQueryPtr constantScorer, SearcherPtr searcher)
+    ConstantWeight::ConstantWeight(const ConstantScoreQueryPtr& constantScorer, const SearcherPtr& searcher)
     {
         this->constantScorer = constantScorer;
         this->similarity = constantScorer->getSimilarity(searcher);
@@ -109,12 +109,12 @@ namespace Lucene
         queryWeight *= this->queryNorm;
     }
 
-    ScorerPtr ConstantWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr ConstantWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<ConstantScorer>(constantScorer, similarity, reader, shared_from_this());
     }
 
-    ExplanationPtr ConstantWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr ConstantWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         ConstantScorerPtr cs(newLucene<ConstantScorer>(constantScorer, similarity, reader, shared_from_this()));
         bool exists = (cs->docIdSetIterator->advance(doc) == doc);
@@ -138,7 +138,7 @@ namespace Lucene
         return result;
     }
 
-    ConstantScorer::ConstantScorer(ConstantScoreQueryPtr constantScorer, SimilarityPtr similarity, IndexReaderPtr reader, WeightPtr w) : Scorer(similarity)
+    ConstantScorer::ConstantScorer(const ConstantScoreQueryPtr& constantScorer, const SimilarityPtr& similarity, const IndexReaderPtr& reader, const WeightPtr& w) : Scorer(similarity)
     {
         doc = -1;
         theScore = w->getValue();

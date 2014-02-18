@@ -43,7 +43,7 @@ namespace Lucene
         return slop;
     }
 
-    void MultiPhraseQuery::add(TermPtr term)
+    void MultiPhraseQuery::add(const TermPtr& term)
     {
         add(newCollection<TermPtr>(term));
     }
@@ -88,7 +88,7 @@ namespace Lucene
         }
     }
 
-    QueryPtr MultiPhraseQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr MultiPhraseQuery::rewrite(const IndexReaderPtr& reader)
     {
         if (termArrays.size() == 1) // optimize one-term case
         {
@@ -103,7 +103,7 @@ namespace Lucene
             return shared_from_this();
     }
 
-    WeightPtr MultiPhraseQuery::createWeight(SearcherPtr searcher)
+    WeightPtr MultiPhraseQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<MultiPhraseWeight>(shared_from_this(), searcher);
     }
@@ -142,7 +142,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool MultiPhraseQuery::equals(LuceneObjectPtr other)
+    bool MultiPhraseQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -184,7 +184,7 @@ namespace Lucene
         return first.equals(second, equalTermArrays());
     }
 
-    LuceneObjectPtr MultiPhraseQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr MultiPhraseQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<MultiPhraseQuery>();
         MultiPhraseQueryPtr cloneQuery(boost::dynamic_pointer_cast<MultiPhraseQuery>(Query::clone(clone)));
@@ -195,7 +195,7 @@ namespace Lucene
         return cloneQuery;
     }
 
-    MultiPhraseWeight::MultiPhraseWeight(MultiPhraseQueryPtr query, SearcherPtr searcher)
+    MultiPhraseWeight::MultiPhraseWeight(const MultiPhraseQueryPtr& query, const SearcherPtr& searcher)
     {
         this->query = query;
         this->similarity = query->getSimilarity(searcher);
@@ -240,7 +240,7 @@ namespace Lucene
         value = queryWeight * idf; // idf for document
     }
 
-    ScorerPtr MultiPhraseWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr MultiPhraseWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         if (query->termArrays.empty()) // optimize zero-term case
             return ScorerPtr();
@@ -268,7 +268,7 @@ namespace Lucene
             return newLucene<SloppyPhraseScorer>(shared_from_this(), tps, query->getPositions(), similarity, query->slop, reader->norms(query->field));
     }
 
-    ExplanationPtr MultiPhraseWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr MultiPhraseWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         ComplexExplanationPtr result(newLucene<ComplexExplanation>());
         result->setDescription(L"weight(" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");

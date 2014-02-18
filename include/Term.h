@@ -44,14 +44,14 @@ namespace Lucene
         /// @return A new Term
         TermPtr createTerm(const String& text);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         /// Compares two terms, returning a negative integer if this term belongs before the argument, zero
         /// if this term is equal to the argument, and a positive integer if this term belongs after the argument.
         ///
         /// The ordering of terms is first by field, then by text.
-        virtual int32_t compareTo(LuceneObjectPtr other);
+        virtual int32_t compareTo(const LuceneObjectPtr& other);
 
         void set(const String& fld, const String& txt);
 

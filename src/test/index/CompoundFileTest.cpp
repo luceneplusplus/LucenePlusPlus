@@ -43,7 +43,7 @@ protected:
 
 public:
     /// Creates a file of the specified size with random data.
-    void createRandomFile(DirectoryPtr dir, const String& name, int32_t size)
+    void createRandomFile(const DirectoryPtr& dir, const String& name, int32_t size)
     {
         IndexOutputPtr os = dir->createOutput(name);
         RandomPtr r = newLucene<Random>();
@@ -52,7 +52,7 @@ public:
         os->close();
     }
 
-    void createSequenceFile(DirectoryPtr dir, const String& name, uint8_t start, int32_t size)
+    void createSequenceFile(const DirectoryPtr& dir, const String& name, uint8_t start, int32_t size)
     {
         IndexOutputPtr os = dir->createOutput(name);
         for (int32_t i = 0; i < size; ++i)
@@ -63,7 +63,7 @@ public:
         os->close();
     }
 
-    void checkSameStreams(IndexInputPtr expected, IndexInputPtr test)
+    void checkSameStreams(const IndexInputPtr& expected, const IndexInputPtr& test)
     {
         EXPECT_TRUE(expected);
         EXPECT_TRUE(test);
@@ -84,7 +84,7 @@ public:
         }
     }
 
-    void checkSameStreams(IndexInputPtr expected, IndexInputPtr actual, int64_t seekTo)
+    void checkSameStreams(const IndexInputPtr& expected, const IndexInputPtr& actual, int64_t seekTo)
     {
         if (seekTo >= 0 && seekTo < (int64_t)expected->length())
         {
@@ -94,7 +94,7 @@ public:
         }
     }
 
-    void checkSameSeekBehavior(IndexInputPtr expected, IndexInputPtr actual)
+    void checkSameSeekBehavior(const IndexInputPtr& expected, const IndexInputPtr& actual)
     {
         // seek to 0
         int64_t point = 0;
@@ -143,7 +143,7 @@ public:
         cw->close();
     }
 
-    bool isCSIndexInputOpen(IndexInputPtr is)
+    bool isCSIndexInputOpen(const IndexInputPtr& is)
     {
         if (MiscUtils::typeOf<CSIndexInput>(is))
         {
@@ -154,7 +154,7 @@ public:
             return false;
     }
 
-    bool isSimpleFSIndexInputOpen(IndexInputPtr is)
+    bool isSimpleFSIndexInputOpen(const IndexInputPtr& is)
     {
         if (MiscUtils::typeOf<SimpleFSIndexInput>(is))
         {

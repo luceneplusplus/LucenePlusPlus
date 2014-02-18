@@ -167,7 +167,7 @@ public:
         w->close();
     }
 
-    void checkExpecteds(BitSetPtr expecteds)
+    void checkExpecteds(const BitSetPtr& expecteds)
     {
         IndexReaderPtr r = IndexReader::open(dir, true);
 

@@ -58,7 +58,7 @@ namespace TestEmptyBucketWithMoreDocs
     class EmptyScorer : public Scorer
     {
     public:
-        EmptyScorer(SimilarityPtr similarity) : Scorer(similarity)
+        EmptyScorer(const SimilarityPtr& similarity) : Scorer(similarity)
         {
             doc = -1;
         }

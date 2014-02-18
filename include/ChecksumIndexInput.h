@@ -17,7 +17,7 @@ namespace Lucene
     class LPPAPI ChecksumIndexInput : public IndexInput
     {
     public:
-        ChecksumIndexInput(IndexInputPtr main);
+        ChecksumIndexInput(const IndexInputPtr& main);
         virtual ~ChecksumIndexInput();
 
         LUCENE_CLASS(ChecksumIndexInput);
@@ -56,7 +56,7 @@ namespace Lucene
         virtual int64_t length();
 
         /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

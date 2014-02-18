@@ -78,7 +78,7 @@ public:
         return query;
     }
 
-    double checkPhraseQuery(DocumentPtr doc, PhraseQueryPtr query, int32_t slop, int32_t expectedNumResults)
+    double checkPhraseQuery(const DocumentPtr& doc, const PhraseQueryPtr& query, int32_t slop, int32_t expectedNumResults)
     {
         query->setSlop(slop);
 

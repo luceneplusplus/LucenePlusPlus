@@ -15,7 +15,7 @@ namespace Lucene
     class FindSegmentsFile : public LuceneObject
     {
     public:
-        FindSegmentsFile(SegmentInfosPtr infos, DirectoryPtr directory);
+        FindSegmentsFile(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
         virtual ~FindSegmentsFile();
 
         LUCENE_CLASS(FindSegmentsFile);
@@ -25,7 +25,7 @@ namespace Lucene
         DirectoryPtr directory;
 
     public:
-        void doRun(IndexCommitPtr commit = IndexCommitPtr());
+        void doRun(const IndexCommitPtr& commit = IndexCommitPtr());
         virtual void runBody(const String& segmentFileName) = 0;
     };
 
@@ -33,14 +33,14 @@ namespace Lucene
     class FindSegmentsFileT : public FindSegmentsFile
     {
     public:
-        FindSegmentsFileT(SegmentInfosPtr infos, DirectoryPtr directory) : FindSegmentsFile(infos, directory) {}
+        FindSegmentsFileT(const SegmentInfosPtr& infos, const DirectoryPtr& directory) : FindSegmentsFile(infos, directory) {}
         virtual ~FindSegmentsFileT() {}
 
     protected:
         TYPE result;
 
     public:
-        virtual TYPE run(IndexCommitPtr commit = IndexCommitPtr())
+        virtual TYPE run(const IndexCommitPtr& commit = IndexCommitPtr())
         {
             doRun(commit);
             return result;
@@ -60,7 +60,7 @@ namespace Lucene
     class FindSegmentsRead : public FindSegmentsFileT<int64_t>
     {
     public:
-        FindSegmentsRead(SegmentInfosPtr infos, DirectoryPtr directory);
+        FindSegmentsRead(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
         virtual ~FindSegmentsRead();
 
         LUCENE_CLASS(FindSegmentsRead);

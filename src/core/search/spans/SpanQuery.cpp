@@ -14,7 +14,7 @@ namespace Lucene
     {
     }
 
-    WeightPtr SpanQuery::createWeight(SearcherPtr searcher)
+    WeightPtr SpanQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<SpanWeight>(shared_from_this(), searcher);
     }

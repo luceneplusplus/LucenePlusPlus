@@ -61,7 +61,7 @@ namespace Lucene
 
         /// Quick and dirty convenience method
         /// @see #check
-        static Collection<InsanityPtr> checkSanity(FieldCachePtr cache);
+        static Collection<InsanityPtr> checkSanity(const FieldCachePtr& cache);
 
         /// Quick and dirty convenience method that instantiates an instance with "good defaults" and uses it to
         /// test the CacheEntrys.
@@ -89,7 +89,7 @@ namespace Lucene
 
         /// Checks if the seed is an IndexReader, and if so will walk the hierarchy of subReaders building up a
         /// list of the objects returned by obj.getFieldCacheKey()
-        Collection<LuceneObjectPtr> getAllDecendentReaderKeys(LuceneObjectPtr seed);
+        Collection<LuceneObjectPtr> getAllDecendentReaderKeys(const LuceneObjectPtr& seed);
     };
 
     /// Simple container for a collection of related CacheEntry objects that in conjunction with each other

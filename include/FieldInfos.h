@@ -23,7 +23,7 @@ namespace Lucene
         /// Construct a FieldInfos object using the directory and the name of the file IndexInput
         /// @param d The directory to open the IndexInput from
         /// @param name The name of the file to open the IndexInput from in the Directory
-        FieldInfos(DirectoryPtr d, const String& name);
+        FieldInfos(const DirectoryPtr& d, const String& name);
 
         virtual ~FieldInfos();
 
@@ -53,10 +53,10 @@ namespace Lucene
 
     public:
         /// Returns a deep clone of this FieldInfos instance.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         /// Adds field info for a Document.
-        void add(DocumentPtr doc);
+        void add(const DocumentPtr& doc);
 
         /// Returns true if any fields do not omitTermFreqAndPositions
         bool hasProx();
@@ -137,14 +137,14 @@ namespace Lucene
 
         bool hasVectors();
 
-        void write(DirectoryPtr d, const String& name);
-        void write(IndexOutputPtr output);
+        void write(const DirectoryPtr& d, const String& name);
+        void write(const IndexOutputPtr& output);
 
     protected:
         FieldInfoPtr addInternal(const String& name, bool isIndexed, bool storeTermVector, bool storePositionWithTermVector,
                                  bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions);
 
-        void read(IndexInputPtr input, const String& fileName);
+        void read(const IndexInputPtr& input, const String& fileName);
     };
 }
 

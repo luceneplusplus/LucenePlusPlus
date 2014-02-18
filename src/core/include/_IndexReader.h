@@ -14,7 +14,7 @@ namespace Lucene
     class FindSegmentsModified : public FindSegmentsFileT<uint64_t>
     {
     public:
-        FindSegmentsModified(SegmentInfosPtr infos, DirectoryPtr directory);
+        FindSegmentsModified(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
         virtual ~FindSegmentsModified();
 
         LUCENE_CLASS(FindSegmentsModified);

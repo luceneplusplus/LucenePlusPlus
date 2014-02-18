@@ -18,7 +18,7 @@ namespace TestEqualsHashCode
     class TestIndexCommit1 : public IndexCommit
     {
     public:
-        TestIndexCommit1(DirectoryPtr dir)
+        TestIndexCommit1(const DirectoryPtr& dir)
         {
             this->dir = dir;
         }
@@ -84,7 +84,7 @@ namespace TestEqualsHashCode
     class TestIndexCommit2 : public TestIndexCommit1
     {
     public:
-        TestIndexCommit2(DirectoryPtr dir) : TestIndexCommit1(dir)
+        TestIndexCommit2(const DirectoryPtr& dir) : TestIndexCommit1(dir)
         {
         }
 

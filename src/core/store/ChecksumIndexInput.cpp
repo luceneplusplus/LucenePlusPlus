@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    ChecksumIndexInput::ChecksumIndexInput(IndexInputPtr main)
+    ChecksumIndexInput::ChecksumIndexInput(const IndexInputPtr& main)
     {
         this->main = main;
     }
@@ -56,7 +56,7 @@ namespace Lucene
         return main->length();
     }
 
-    LuceneObjectPtr ChecksumIndexInput::clone(LuceneObjectPtr other)
+    LuceneObjectPtr ChecksumIndexInput::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<ChecksumIndexInput>(main));
         ChecksumIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<ChecksumIndexInput>(clone));

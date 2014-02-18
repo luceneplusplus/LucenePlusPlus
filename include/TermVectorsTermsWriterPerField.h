@@ -14,7 +14,7 @@ namespace Lucene
     class TermVectorsTermsWriterPerField : public TermsHashConsumerPerField
     {
     public:
-        TermVectorsTermsWriterPerField(TermsHashPerFieldPtr termsHashPerField, TermVectorsTermsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo);
+        TermVectorsTermsWriterPerField(const TermsHashPerFieldPtr& termsHashPerField, const TermVectorsTermsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
         virtual ~TermVectorsTermsWriterPerField();
 
         LUCENE_CLASS(TermVectorsTermsWriterPerField);
@@ -45,9 +45,9 @@ namespace Lucene
 
         void shrinkHash();
 
-        virtual void start(FieldablePtr field);
-        virtual void newTerm(RawPostingListPtr p0);
-        virtual void addTerm(RawPostingListPtr p0);
+        virtual void start(const FieldablePtr& field);
+        virtual void newTerm(const RawPostingListPtr& p0);
+        virtual void addTerm(const RawPostingListPtr& p0);
         virtual void skippingLongTerm();
     };
 }

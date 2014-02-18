@@ -27,7 +27,7 @@
 
 namespace Lucene
 {
-    DocFieldProcessorPerThread::DocFieldProcessorPerThread(DocumentsWriterThreadStatePtr threadState, DocFieldProcessorPtr docFieldProcessor)
+    DocFieldProcessorPerThread::DocFieldProcessorPerThread(const DocumentsWriterThreadStatePtr& threadState, const DocFieldProcessorPtr& docFieldProcessor)
     {
         _fields = Collection<DocFieldProcessorPerFieldPtr>::newInstance(1);
         fieldHash = Collection<DocFieldProcessorPerFieldPtr>::newInstance(2);
@@ -88,7 +88,7 @@ namespace Lucene
         return fields;
     }
 
-    void DocFieldProcessorPerThread::trimFields(SegmentWriteStatePtr state)
+    void DocFieldProcessorPerThread::trimFields(const SegmentWriteStatePtr& state)
     {
         for (Collection<DocFieldProcessorPerFieldPtr>::iterator perField = fieldHash.begin(); perField != fieldHash.end(); ++perField)
         {
@@ -284,14 +284,14 @@ namespace Lucene
             return docFreeList[--freeCount];
     }
 
-    void DocFieldProcessorPerThread::freePerDoc(DocFieldProcessorPerThreadPerDocPtr perDoc)
+    void DocFieldProcessorPerThread::freePerDoc(const DocFieldProcessorPerThreadPerDocPtr& perDoc)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(freeCount < docFreeList.size());
         docFreeList[freeCount++] = perDoc;
     }
 
-    DocFieldProcessorPerThreadPerDoc::DocFieldProcessorPerThreadPerDoc(DocFieldProcessorPerThreadPtr docProcessor)
+    DocFieldProcessorPerThreadPerDoc::DocFieldProcessorPerThreadPerDoc(const DocFieldProcessorPerThreadPtr& docProcessor)
     {
         this->_docProcessor = docProcessor;
     }

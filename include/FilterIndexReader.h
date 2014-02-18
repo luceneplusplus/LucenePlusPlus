@@ -26,7 +26,7 @@ namespace Lucene
         ///
         /// Note that base reader is closed if this FilterIndexReader is closed.
         /// @param in specified base reader.
-        FilterIndexReader(IndexReaderPtr in);
+        FilterIndexReader(const IndexReaderPtr& in);
 
         virtual ~FilterIndexReader();
 
@@ -39,21 +39,21 @@ namespace Lucene
         virtual DirectoryPtr directory();
         virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
         virtual TermFreqVectorPtr getTermFreqVector(int32_t docNumber, const String& field);
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper);
-        virtual void getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
+        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
         virtual int32_t numDocs();
         virtual int32_t maxDoc();
-        virtual DocumentPtr document(int32_t n, FieldSelectorPtr fieldSelector);
+        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
         virtual bool isDeleted(int32_t n);
         virtual bool hasDeletions();
         virtual bool hasNorms(const String& field);
         virtual ByteArray norms(const String& field);
         virtual void norms(const String& field, ByteArray norms, int32_t offset);
         virtual TermEnumPtr terms();
-        virtual TermEnumPtr terms(TermPtr t);
-        virtual int32_t docFreq(TermPtr t);
+        virtual TermEnumPtr terms(const TermPtr& t);
+        virtual int32_t docFreq(const TermPtr& t);
         virtual TermDocsPtr termDocs();
-        virtual TermDocsPtr termDocs(TermPtr term);
+        virtual TermDocsPtr termDocs(const TermPtr& term);
         virtual TermPositionsPtr termPositions();
         virtual HashSet<String> getFieldNames(FieldOption fieldOption);
         virtual int64_t getVersion();
@@ -81,7 +81,7 @@ namespace Lucene
     class LPPAPI FilterTermDocs : public TermPositions, public LuceneObject
     {
     public:
-        FilterTermDocs(TermDocsPtr in);
+        FilterTermDocs(const TermDocsPtr& in);
         virtual ~FilterTermDocs();
 
         LUCENE_CLASS(FilterTermDocs);
@@ -90,8 +90,8 @@ namespace Lucene
         TermDocsPtr in;
 
     public:
-        virtual void seek(TermPtr term);
-        virtual void seek(TermEnumPtr termEnum);
+        virtual void seek(const TermPtr& term);
+        virtual void seek(const TermEnumPtr& termEnum);
         virtual int32_t doc();
         virtual int32_t freq();
         virtual bool next();
@@ -104,7 +104,7 @@ namespace Lucene
     class LPPAPI FilterTermPositions : public FilterTermDocs
     {
     public:
-        FilterTermPositions(TermPositionsPtr in);
+        FilterTermPositions(const TermPositionsPtr& in);
         virtual ~FilterTermPositions();
 
         LUCENE_CLASS(FilterTermPositions);
@@ -120,7 +120,7 @@ namespace Lucene
     class LPPAPI FilterTermEnum : public TermEnum
     {
     public:
-        FilterTermEnum(TermEnumPtr in);
+        FilterTermEnum(const TermEnumPtr& in);
         virtual ~FilterTermEnum();
 
         LUCENE_CLASS(FilterTermEnum);

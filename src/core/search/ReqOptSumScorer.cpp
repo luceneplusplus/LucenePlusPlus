@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    ReqOptSumScorer::ReqOptSumScorer(ScorerPtr reqScorer, ScorerPtr optScorer) : Scorer(SimilarityPtr()) // No similarity used.
+    ReqOptSumScorer::ReqOptSumScorer(const ScorerPtr& reqScorer, const ScorerPtr& optScorer) : Scorer(SimilarityPtr()) // No similarity used.
     {
         this->reqScorer = reqScorer;
         this->optScorer = optScorer;

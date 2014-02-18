@@ -33,17 +33,17 @@ namespace Lucene
 
         /// Create a SortedVIntList from a BitSet.
         /// @param bits A bit set representing a set of integers.
-        SortedVIntList(BitSetPtr bits);
+        SortedVIntList(const BitSetPtr& bits);
 
         /// Create a SortedVIntList from an OpenBitSet.
         /// @param bits A bit set representing a set of integers.
-        SortedVIntList(OpenBitSetPtr bits);
+        SortedVIntList(const OpenBitSetPtr& bits);
 
         /// Create a SortedVIntList.
         /// @param docIdSetIterator An iterator providing document numbers as a set of integers.
         /// This DocIdSetIterator is iterated completely when this constructor is called and it must provide the
         /// integers in non decreasing order.
-        SortedVIntList(DocIdSetIteratorPtr docIdSetIterator);
+        SortedVIntList(const DocIdSetIteratorPtr& docIdSetIterator);
 
         virtual ~SortedVIntList();
 

@@ -212,18 +212,18 @@ namespace Lucene
         }
     }
 
-    void DocHelper::setupDoc(DocumentPtr doc)
+    void DocHelper::setupDoc(const DocumentPtr& doc)
     {
         for (Collection<FieldPtr>::iterator field = fields.begin(); field != fields.end(); ++field)
             doc->add(*field);
     }
 
-    SegmentInfoPtr DocHelper::writeDoc(DirectoryPtr dir, DocumentPtr doc)
+    SegmentInfoPtr DocHelper::writeDoc(const DirectoryPtr& dir, const DocumentPtr& doc)
     {
         return writeDoc(dir, newLucene<WhitespaceAnalyzer>(), Similarity::getDefault(), doc);
     }
 
-    SegmentInfoPtr DocHelper::writeDoc(DirectoryPtr dir, AnalyzerPtr analyzer, SimilarityPtr similarity, DocumentPtr doc)
+    SegmentInfoPtr DocHelper::writeDoc(const DirectoryPtr& dir, const AnalyzerPtr& analyzer, const SimilarityPtr& similarity, const DocumentPtr& doc)
     {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, IndexWriter::MaxFieldLengthLIMITED);
         writer->setSimilarity(similarity);
@@ -234,7 +234,7 @@ namespace Lucene
         return info;
     }
 
-    int32_t DocHelper::numFields(DocumentPtr doc)
+    int32_t DocHelper::numFields(const DocumentPtr& doc)
     {
         return doc->getFields().size();
     }

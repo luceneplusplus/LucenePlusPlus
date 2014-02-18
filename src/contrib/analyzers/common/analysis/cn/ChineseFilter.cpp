@@ -21,7 +21,7 @@ namespace Lucene
         L"they", L"this", L"to", L"was", L"will", L"with"
     };
 
-    ChineseFilter::ChineseFilter(TokenStreamPtr input) : TokenFilter(input)
+    ChineseFilter::ChineseFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         stopTable = HashSet<String>::newInstance(STOP_WORDS, STOP_WORDS + SIZEOF_ARRAY(STOP_WORDS));
         termAtt = addAttribute<TermAttribute>();

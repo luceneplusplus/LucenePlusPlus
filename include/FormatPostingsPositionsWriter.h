@@ -14,7 +14,7 @@ namespace Lucene
     class FormatPostingsPositionsWriter : public FormatPostingsPositionsConsumer
     {
     public:
-        FormatPostingsPositionsWriter(SegmentWriteStatePtr state, FormatPostingsDocsWriterPtr parent);
+        FormatPostingsPositionsWriter(const SegmentWriteStatePtr& state, const FormatPostingsDocsWriterPtr& parent);
         virtual ~FormatPostingsPositionsWriter();
 
         LUCENE_CLASS(FormatPostingsPositionsWriter);
@@ -33,7 +33,7 @@ namespace Lucene
         /// Add a new position & payload
         virtual void addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength);
 
-        void setField(FieldInfoPtr fieldInfo);
+        void setField(const FieldInfoPtr& fieldInfo);
 
         /// Called when we are done adding positions & payloads
         virtual void finish();

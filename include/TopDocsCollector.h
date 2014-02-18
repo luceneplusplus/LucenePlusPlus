@@ -21,7 +21,7 @@ namespace Lucene
     class LPPAPI TopDocsCollector : public Collector
     {
     public:
-        TopDocsCollector(HitQueueBasePtr pq);
+        TopDocsCollector(const HitQueueBasePtr& pq);
         virtual ~TopDocsCollector();
 
         LUCENE_CLASS(TopDocsCollector);

@@ -18,12 +18,12 @@ namespace Lucene
         return LuceneObject::hashCode();
     }
 
-    bool Attribute::equals(LuceneObjectPtr other)
+    bool Attribute::equals(const LuceneObjectPtr& other)
     {
         return LuceneObject::equals(other);
     }
 
-    LuceneObjectPtr Attribute::clone(LuceneObjectPtr other)
+    LuceneObjectPtr Attribute::clone(const LuceneObjectPtr& other)
     {
         return LuceneObject::clone(other);
     }

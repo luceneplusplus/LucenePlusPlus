@@ -18,7 +18,7 @@ namespace Lucene
 {
     const int32_t SimpleSpanFragmenter::DEFAULT_FRAGMENT_SIZE = 100;
 
-    SimpleSpanFragmenter::SimpleSpanFragmenter(QueryScorerPtr queryScorer)
+    SimpleSpanFragmenter::SimpleSpanFragmenter(const QueryScorerPtr& queryScorer)
     {
         this->currentNumFrags = 0;
         this->position = -1;
@@ -29,7 +29,7 @@ namespace Lucene
         this->fragmentSize = DEFAULT_FRAGMENT_SIZE;
     }
 
-    SimpleSpanFragmenter::SimpleSpanFragmenter(QueryScorerPtr queryScorer, int32_t fragmentSize)
+    SimpleSpanFragmenter::SimpleSpanFragmenter(const QueryScorerPtr& queryScorer, int32_t fragmentSize)
     {
         this->currentNumFrags = 0;
         this->position = -1;
@@ -77,7 +77,7 @@ namespace Lucene
         return isNewFrag;
     }
 
-    void SimpleSpanFragmenter::start(const String& originalText, TokenStreamPtr tokenStream)
+    void SimpleSpanFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
     {
         position = -1;
         currentNumFrags = 1;

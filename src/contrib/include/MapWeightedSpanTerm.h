@@ -27,7 +27,7 @@ namespace Lucene
     public:
         virtual MapStringWeightedSpanTerm::iterator begin();
         virtual MapStringWeightedSpanTerm::iterator end();
-        virtual void put(const String& key, WeightedSpanTermPtr val);
+        virtual void put(const String& key, const WeightedSpanTermPtr& val);
         virtual WeightedSpanTermPtr get(const String& key) const;
         virtual void clear();
     };

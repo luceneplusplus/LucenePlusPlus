@@ -14,7 +14,7 @@ namespace Lucene
     class FreqProxTermsWriterPerField : public TermsHashConsumerPerField
     {
     public:
-        FreqProxTermsWriterPerField(TermsHashPerFieldPtr termsHashPerField, FreqProxTermsWriterPerThreadPtr perThread, FieldInfoPtr fieldInfo);
+        FreqProxTermsWriterPerField(const TermsHashPerFieldPtr& termsHashPerField, const FreqProxTermsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
         virtual ~FreqProxTermsWriterPerField();
 
         LUCENE_CLASS(FreqProxTermsWriterPerField);
@@ -33,13 +33,13 @@ namespace Lucene
         virtual int32_t getStreamCount();
         virtual void finish();
         virtual void skippingLongTerm();
-        virtual int32_t compareTo(LuceneObjectPtr other);
+        virtual int32_t compareTo(const LuceneObjectPtr& other);
         void reset();
         virtual bool start(Collection<FieldablePtr> fields, int32_t count);
-        virtual void start(FieldablePtr field);
-        void writeProx(FreqProxTermsWriterPostingListPtr p, int32_t proxCode);
-        virtual void newTerm(RawPostingListPtr p);
-        virtual void addTerm(RawPostingListPtr p);
+        virtual void start(const FieldablePtr& field);
+        void writeProx(const FreqProxTermsWriterPostingListPtr& p, int32_t proxCode);
+        virtual void newTerm(const RawPostingListPtr& p);
+        virtual void addTerm(const RawPostingListPtr& p);
         void abort();
     };
 }

@@ -15,7 +15,7 @@
 
 namespace Lucene
 {
-    SpanWeight::SpanWeight(SpanQueryPtr query, SearcherPtr searcher)
+    SpanWeight::SpanWeight(const SpanQueryPtr& query, const SearcherPtr& searcher)
     {
         this->similarity = query->getSimilarity(searcher);
         this->query = query;
@@ -57,12 +57,12 @@ namespace Lucene
         value = queryWeight * idf; // idf for document
     }
 
-    ScorerPtr SpanWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr SpanWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<SpanScorer>(query->getSpans(reader), shared_from_this(), similarity, reader->norms(query->getField()));
     }
 
-    ExplanationPtr SpanWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr SpanWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         ComplexExplanationPtr result(newLucene<ComplexExplanation>());
         result->setDescription(L"weight(" + query->toString() + L" in " + StringUtils::toString(doc) + L"), product of:");

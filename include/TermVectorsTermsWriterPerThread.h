@@ -14,7 +14,7 @@ namespace Lucene
     class TermVectorsTermsWriterPerThread : public TermsHashConsumerPerThread
     {
     public:
-        TermVectorsTermsWriterPerThread(TermsHashPerThreadPtr termsHashPerThread, TermVectorsTermsWriterPtr termsWriter);
+        TermVectorsTermsWriterPerThread(const TermsHashPerThreadPtr& termsHashPerThread, const TermVectorsTermsWriterPtr& termsWriter);
         virtual ~TermVectorsTermsWriterPerThread();
 
         LUCENE_CLASS(TermVectorsTermsWriterPerThread);
@@ -32,12 +32,12 @@ namespace Lucene
     public:
         virtual void startDocument();
         virtual DocWriterPtr finishDocument();
-        virtual TermsHashConsumerPerFieldPtr addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo);
+        virtual TermsHashConsumerPerFieldPtr addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo);
         virtual void abort();
 
         /// Called only by assert
         bool clearLastVectorFieldName();
-        bool vectorFieldsInOrder(FieldInfoPtr fi);
+        bool vectorFieldsInOrder(const FieldInfoPtr& fi);
     };
 }
 

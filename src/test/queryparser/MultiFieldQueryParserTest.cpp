@@ -33,7 +33,7 @@ DECLARE_SHARED_PTR(MultiFieldQueryParserTestFilter)
 class MultiFieldQueryParserTestFilter : public TokenFilter
 {
 public:
-    MultiFieldQueryParserTestFilter(TokenStreamPtr in) : TokenFilter(in)
+    MultiFieldQueryParserTestFilter(const TokenStreamPtr& in) : TokenFilter(in)
     {
         termAtt = addAttribute<TermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
@@ -97,7 +97,7 @@ public:
 
 public:
     // Filters LowerCaseTokenizer with StopFilter.
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<MultiFieldQueryParserTestFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
@@ -138,7 +138,7 @@ protected:
     StandardAnalyzerPtr standardAnalyzer;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         if (fieldName == L"f1")
             return newLucene<EmptyTokenStream>();

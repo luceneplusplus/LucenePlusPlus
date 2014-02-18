@@ -32,7 +32,7 @@ namespace Lucene
     class LPPAPI MergePolicy : public LuceneObject
     {
     public:
-        MergePolicy(IndexWriterPtr writer);
+        MergePolicy(const IndexWriterPtr& writer);
         virtual ~MergePolicy();
 
         LUCENE_CLASS(MergePolicy);
@@ -45,7 +45,7 @@ namespace Lucene
         /// this whenever there is a change to the segments. This call is always synchronized on the {@link
         /// IndexWriter} instance so only one thread at a time will call this method.
         /// @param segmentInfos the total set of segments in the index
-        virtual MergeSpecificationPtr findMerges(SegmentInfosPtr segmentInfos) = 0;
+        virtual MergeSpecificationPtr findMerges(const SegmentInfosPtr& segmentInfos) = 0;
 
         /// Determine what set of merge operations is necessary in order to optimize the index. {@link
         /// IndexWriter} calls this when its {@link IndexWriter#optimize()} method is called. This call is
@@ -55,20 +55,20 @@ namespace Lucene
         /// @param maxSegmentCount requested maximum number of segments in the index (currently this is always 1)
         /// @param segmentsToOptimize contains the specific SegmentInfo instances that must be merged away.
         /// This may be a subset of all SegmentInfos.
-        virtual MergeSpecificationPtr findMergesForOptimize(SegmentInfosPtr segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize) = 0;
+        virtual MergeSpecificationPtr findMergesForOptimize(const SegmentInfosPtr& segmentInfos, int32_t maxSegmentCount, SetSegmentInfo segmentsToOptimize) = 0;
 
         /// Determine what set of merge operations is necessary in order to expunge all deletes from the index.
         /// @param segmentInfos the total set of segments in the index
-        virtual MergeSpecificationPtr findMergesToExpungeDeletes(SegmentInfosPtr segmentInfos) = 0;
+        virtual MergeSpecificationPtr findMergesToExpungeDeletes(const SegmentInfosPtr& segmentInfos) = 0;
 
         /// Release all resources for the policy.
         virtual void close() = 0;
 
         /// Returns true if a newly flushed (not from merge) segment should use the compound file format.
-        virtual bool useCompoundFile(SegmentInfosPtr segments, SegmentInfoPtr newSegment) = 0;
+        virtual bool useCompoundFile(const SegmentInfosPtr& segments, const SegmentInfoPtr& newSegment) = 0;
 
         /// Returns true if the doc store files should use the compound file format.
-        virtual bool useCompoundDocStore(SegmentInfosPtr segments) = 0;
+        virtual bool useCompoundDocStore(const SegmentInfosPtr& segments) = 0;
     };
 
     /// OneMerge provides the information necessary to perform  an individual primitive merge operation,
@@ -77,7 +77,7 @@ namespace Lucene
     class LPPAPI OneMerge : public LuceneObject
     {
     public:
-        OneMerge(SegmentInfosPtr segments, bool useCompoundFile);
+        OneMerge(const SegmentInfosPtr& segments, bool useCompoundFile);
         virtual ~OneMerge();
 
         LUCENE_CLASS(OneMerge);
@@ -111,9 +111,9 @@ namespace Lucene
         /// Returns true if this merge was aborted.
         bool isAborted();
 
-        void checkAborted(DirectoryPtr dir);
+        void checkAborted(const DirectoryPtr& dir);
 
-        String segString(DirectoryPtr dir);
+        String segString(const DirectoryPtr& dir);
     };
 
     /// A MergeSpecification instance provides the information necessary to perform multiple merges.
@@ -130,8 +130,8 @@ namespace Lucene
         Collection<OneMergePtr> merges;
 
     public:
-        void add(OneMergePtr merge);
-        String segString(DirectoryPtr dir);
+        void add(const OneMergePtr& merge);
+        String segString(const DirectoryPtr& dir);
     };
 }
 

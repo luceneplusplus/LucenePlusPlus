@@ -19,7 +19,7 @@ namespace Lucene
     class LPPAPI CachingTokenFilter : public TokenFilter
     {
     public:
-        CachingTokenFilter(TokenStreamPtr input);
+        CachingTokenFilter(const TokenStreamPtr& input);
         virtual ~CachingTokenFilter();
 
         LUCENE_CLASS(CachingTokenFilter);

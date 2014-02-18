@@ -13,13 +13,13 @@ namespace Lucene
 {
     const wchar_t ElisionFilter::apostrophes[] = {L'\'', L'\x2019'};
 
-    ElisionFilter::ElisionFilter(TokenStreamPtr input) : TokenFilter(input)
+    ElisionFilter::ElisionFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         articles = newLucene<CharArraySet>(newCollection<String>(L"l", L"m", L"t", L"qu", L"n", L"s", L"j"), true);
         termAtt = addAttribute<TermAttribute>();
     }
 
-    ElisionFilter::ElisionFilter(TokenStreamPtr input, HashSet<String> articles) : TokenFilter(input)
+    ElisionFilter::ElisionFilter(const TokenStreamPtr& input, HashSet<String> articles) : TokenFilter(input)
     {
         setArticles(articles);
         termAtt = addAttribute<TermAttribute>();

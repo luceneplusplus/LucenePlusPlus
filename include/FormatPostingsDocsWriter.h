@@ -15,7 +15,7 @@ namespace Lucene
     class FormatPostingsDocsWriter : public FormatPostingsDocsConsumer
     {
     public:
-        FormatPostingsDocsWriter(SegmentWriteStatePtr state, FormatPostingsTermsWriterPtr parent);
+        FormatPostingsDocsWriter(const SegmentWriteStatePtr& state, const FormatPostingsTermsWriterPtr& parent);
         virtual ~FormatPostingsDocsWriter();
 
         LUCENE_CLASS(FormatPostingsDocsWriter);
@@ -43,7 +43,7 @@ namespace Lucene
     public:
         virtual void initialize();
 
-        void setField(FieldInfoPtr fieldInfo);
+        void setField(const FieldInfoPtr& fieldInfo);
 
         /// Adds a new doc in this term.  If this returns null then we just skip consuming positions/payloads.
         virtual FormatPostingsPositionsConsumerPtr addDoc(int32_t docID, int32_t termDocFreq);

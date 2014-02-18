@@ -34,7 +34,7 @@ namespace Lucene
         return result;
     }
 
-    bool AveragePayloadFunction::equals(LuceneObjectPtr other)
+    bool AveragePayloadFunction::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

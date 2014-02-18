@@ -14,7 +14,7 @@ namespace Lucene
     class FormatPostingsTermsWriter : public FormatPostingsTermsConsumer
     {
     public:
-        FormatPostingsTermsWriter(SegmentWriteStatePtr state, FormatPostingsFieldsWriterPtr parent);
+        FormatPostingsTermsWriter(const SegmentWriteStatePtr& state, const FormatPostingsFieldsWriterPtr& parent);
         virtual ~FormatPostingsTermsWriter();
 
         LUCENE_CLASS(FormatPostingsTermsWriter);
@@ -35,7 +35,7 @@ namespace Lucene
     public:
         virtual void initialize();
 
-        void setField(FieldInfoPtr fieldInfo);
+        void setField(const FieldInfoPtr& fieldInfo);
 
         /// Adds a new term in this field
         virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start);

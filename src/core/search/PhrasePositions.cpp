@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    PhrasePositions::PhrasePositions(TermPositionsPtr t, int32_t o)
+    PhrasePositions::PhrasePositions(const TermPositionsPtr& t, int32_t o)
     {
         doc = 0;
         position = 0;

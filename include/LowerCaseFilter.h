@@ -15,7 +15,7 @@ namespace Lucene
     class LPPAPI LowerCaseFilter : public TokenFilter
     {
     public:
-        LowerCaseFilter(TokenStreamPtr input);
+        LowerCaseFilter(const TokenStreamPtr& input);
         virtual ~LowerCaseFilter();
 
         LUCENE_CLASS(LowerCaseFilter);

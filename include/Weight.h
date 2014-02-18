@@ -38,7 +38,7 @@ namespace Lucene
         /// @param reader sub-reader containing the give doc
         /// @param doc
         /// @return an Explanation for the score
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc) = 0;
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc) = 0;
 
         /// The query that this concerns.
         virtual QueryPtr getQuery() = 0;
@@ -66,7 +66,7 @@ namespace Lucene
         /// @param topScorer If true, {@link Scorer#score(CollectorPtr)} will be called; if false, {@link
         /// Scorer#nextDoc()} and/or {@link Scorer#advance(int)} will be called.
         /// @return a {@link Scorer} which scores documents in/out-of order.
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer) = 0;
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer) = 0;
 
         /// The sum of squared weights of contained query clauses.
         virtual double sumOfSquaredWeights() = 0;

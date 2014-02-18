@@ -16,7 +16,7 @@ namespace Lucene
 {
     const int32_t TermInfosReader::DEFAULT_CACHE_SIZE = 1024;
 
-    TermInfosReader::TermInfosReader(DirectoryPtr dir, const String& seg, FieldInfosPtr fis, int32_t readBufferSize, int32_t indexDivisor)
+    TermInfosReader::TermInfosReader(const DirectoryPtr& dir, const String& seg, const FieldInfosPtr& fis, int32_t readBufferSize, int32_t indexDivisor)
     {
         bool success = false;
 
@@ -125,24 +125,24 @@ namespace Lucene
         return resources;
     }
 
-    int32_t TermInfosReader::getIndexOffset(TermPtr term)
+    int32_t TermInfosReader::getIndexOffset(const TermPtr& term)
     {
         // binary search indexTerms
         Collection<TermPtr>::iterator indexTerm = std::upper_bound(indexTerms.begin(), indexTerms.end(), term, luceneCompare<TermPtr>());
         return (std::distance(indexTerms.begin(), indexTerm) - 1);
     }
 
-    void TermInfosReader::seekEnum(SegmentTermEnumPtr enumerator, int32_t indexOffset)
+    void TermInfosReader::seekEnum(const SegmentTermEnumPtr& enumerator, int32_t indexOffset)
     {
         enumerator->seek(indexPointers[indexOffset], ((int64_t)indexOffset * (int64_t)totalIndexInterval) - 1, indexTerms[indexOffset], indexInfos[indexOffset]);
     }
 
-    TermInfoPtr TermInfosReader::get(TermPtr term)
+    TermInfoPtr TermInfosReader::get(const TermPtr& term)
     {
         return get(term, true);
     }
 
-    TermInfoPtr TermInfosReader::get(TermPtr term, bool useCache)
+    TermInfoPtr TermInfosReader::get(const TermPtr& term, bool useCache)
     {
         if (_size == 0)
             return TermInfoPtr();
@@ -212,7 +212,7 @@ namespace Lucene
             boost::throw_exception(IllegalStateException(L"terms index was not loaded when this reader was created"));
     }
 
-    int64_t TermInfosReader::getPosition(TermPtr term)
+    int64_t TermInfosReader::getPosition(const TermPtr& term)
     {
         if (_size == 0)
             return -1;
@@ -235,7 +235,7 @@ namespace Lucene
         return boost::static_pointer_cast<SegmentTermEnum>(origEnum->clone());
     }
 
-    SegmentTermEnumPtr TermInfosReader::terms(TermPtr term)
+    SegmentTermEnumPtr TermInfosReader::terms(const TermPtr& term)
     {
         // don't use the cache in this call because we want to reposition the enumeration
         get(term, false);

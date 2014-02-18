@@ -34,7 +34,7 @@ DECLARE_SHARED_PTR(TestPosIncrementFilter)
 class MultiAnalyzerTestFilter : public TokenFilter
 {
 public:
-    MultiAnalyzerTestFilter(TokenStreamPtr in) : TokenFilter(in)
+    MultiAnalyzerTestFilter(const TokenStreamPtr& in) : TokenFilter(in)
     {
         prevStartOffset = 0;
         prevEndOffset = 0;
@@ -107,7 +107,7 @@ public:
     LUCENE_CLASS(MultiAnalyzer);
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, reader);
         result = newLucene<MultiAnalyzerTestFilter>(result);
@@ -120,7 +120,7 @@ public:
 class DumbQueryWrapper : public Query
 {
 public:
-    DumbQueryWrapper(QueryPtr q)
+    DumbQueryWrapper(const QueryPtr& q)
     {
         this->q = q;
     }
@@ -145,7 +145,7 @@ public:
 class DumbQueryParser : public QueryParser
 {
 public:
-    DumbQueryParser(const String& f, AnalyzerPtr a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
+    DumbQueryParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
     {
     }
 
@@ -165,7 +165,7 @@ public:
 class TestPosIncrementFilter : public TokenFilter
 {
 public:
-    TestPosIncrementFilter(TokenStreamPtr in) : TokenFilter(in)
+    TestPosIncrementFilter(const TokenStreamPtr& in) : TokenFilter(in)
     {
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
@@ -217,7 +217,7 @@ public:
     LUCENE_CLASS(PosIncrementAnalyzer);
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, reader);
         result = newLucene<TestPosIncrementFilter>(result);

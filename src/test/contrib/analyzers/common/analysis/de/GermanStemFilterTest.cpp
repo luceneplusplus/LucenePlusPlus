@@ -24,7 +24,7 @@ public:
         checkOneTerm(newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
 
-    void checkReuse(AnalyzerPtr a, const String& input, const String& expected)
+    void checkReuse(const AnalyzerPtr& a, const String& input, const String& expected)
     {
         checkOneTermReuse(a, input, expected);
     }

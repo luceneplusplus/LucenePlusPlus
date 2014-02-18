@@ -19,7 +19,7 @@ namespace Lucene
         PayloadAttribute();
 
         /// Initialize this attribute with the given payload.
-        PayloadAttribute(PayloadPtr payload);
+        PayloadAttribute(const PayloadPtr& payload);
 
         virtual ~PayloadAttribute();
 
@@ -35,13 +35,13 @@ namespace Lucene
         virtual PayloadPtr getPayload();
 
         /// Sets this Token's payload.
-        virtual void setPayload(PayloadPtr payload);
+        virtual void setPayload(const PayloadPtr& payload);
 
         virtual void clear();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual bool equals(LuceneObjectPtr other);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual void copyTo(AttributePtr target);
+        virtual void copyTo(const AttributePtr& target);
     };
 }
 

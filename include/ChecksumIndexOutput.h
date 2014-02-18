@@ -17,7 +17,7 @@ namespace Lucene
     class LPPAPI ChecksumIndexOutput : public IndexOutput
     {
     public:
-        ChecksumIndexOutput(IndexOutputPtr main);
+        ChecksumIndexOutput(const IndexOutputPtr& main);
         virtual ~ChecksumIndexOutput();
 
         LUCENE_CLASS(ChecksumIndexOutput);

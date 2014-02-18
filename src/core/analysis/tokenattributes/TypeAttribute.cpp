@@ -50,7 +50,7 @@ namespace Lucene
         _type = DEFAULT_TYPE();
     }
 
-    bool TypeAttribute::equals(LuceneObjectPtr other)
+    bool TypeAttribute::equals(const LuceneObjectPtr& other)
     {
         if (Attribute::equals(other))
             return true;
@@ -67,12 +67,12 @@ namespace Lucene
         return StringUtils::hashCode(_type);
     }
 
-    void TypeAttribute::copyTo(AttributePtr target)
+    void TypeAttribute::copyTo(const AttributePtr& target)
     {
         boost::dynamic_pointer_cast<TypeAttribute>(target)->setType(_type);
     }
 
-    LuceneObjectPtr TypeAttribute::clone(LuceneObjectPtr other)
+    LuceneObjectPtr TypeAttribute::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TypeAttribute>();
         TypeAttributePtr cloneAttribute(boost::dynamic_pointer_cast<TypeAttribute>(Attribute::clone(clone)));

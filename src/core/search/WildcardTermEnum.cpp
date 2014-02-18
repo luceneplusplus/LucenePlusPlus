@@ -15,7 +15,7 @@ namespace Lucene
     const wchar_t WildcardTermEnum::WILDCARD_STRING = L'*';
     const wchar_t WildcardTermEnum::WILDCARD_CHAR = L'?';
 
-    WildcardTermEnum::WildcardTermEnum(IndexReaderPtr reader, TermPtr term)
+    WildcardTermEnum::WildcardTermEnum(const IndexReaderPtr& reader, const TermPtr& term)
     {
         _endEnum = false;
         searchTerm = term;
@@ -40,7 +40,7 @@ namespace Lucene
     {
     }
 
-    bool WildcardTermEnum::termCompare(TermPtr term)
+    bool WildcardTermEnum::termCompare(const TermPtr& term)
     {
         if (field == term->field())
         {

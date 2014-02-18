@@ -63,7 +63,7 @@ protected:
     SegmentReaderPtr reader2;
 
 public:
-    void checkNorms(IndexReaderPtr reader)
+    void checkNorms(const IndexReaderPtr& reader)
     {
         // test omit norms
         for (int32_t i = 0; i < DocHelper::fields.size(); ++i)

@@ -49,17 +49,17 @@ namespace Lucene
         bool get(uint32_t bitIndex) const;
         bool fastGet(uint32_t bitIndex) const;
         int32_t nextSetBit(uint32_t fromIndex) const;
-        void _and(BitSetPtr set);
-        void _or(BitSetPtr set);
-        void _xor(BitSetPtr set);
-        void andNot(BitSetPtr set);
-        bool intersectsBitSet(BitSetPtr set) const;
+        void _and(const BitSetPtr& set);
+        void _or(const BitSetPtr& set);
+        void _xor(const BitSetPtr& set);
+        void andNot(const BitSetPtr& set);
+        bool intersectsBitSet(const BitSetPtr& set) const;
         uint32_t cardinality();
         void resize(uint32_t size);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

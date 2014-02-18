@@ -14,7 +14,7 @@ namespace Lucene
     class DocFieldConsumersPerField : public DocFieldConsumerPerField
     {
     public:
-        DocFieldConsumersPerField(DocFieldConsumersPerThreadPtr perThread, DocFieldConsumerPerFieldPtr one, DocFieldConsumerPerFieldPtr two);
+        DocFieldConsumersPerField(const DocFieldConsumersPerThreadPtr& perThread, const DocFieldConsumerPerFieldPtr& one, const DocFieldConsumerPerFieldPtr& two);
         virtual ~DocFieldConsumersPerField();
 
         LUCENE_CLASS(DocFieldConsumersPerField);

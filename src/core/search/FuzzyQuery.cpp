@@ -18,17 +18,17 @@ namespace Lucene
 {
     const int32_t FuzzyQuery::defaultPrefixLength = 0;
 
-    FuzzyQuery::FuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength)
+    FuzzyQuery::FuzzyQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength)
     {
         ConstructQuery(term, minimumSimilarity, prefixLength);
     }
 
-    FuzzyQuery::FuzzyQuery(TermPtr term, double minimumSimilarity)
+    FuzzyQuery::FuzzyQuery(const TermPtr& term, double minimumSimilarity)
     {
         ConstructQuery(term, minimumSimilarity, defaultPrefixLength);
     }
 
-    FuzzyQuery::FuzzyQuery(TermPtr term)
+    FuzzyQuery::FuzzyQuery(const TermPtr& term)
     {
         ConstructQuery(term, defaultMinSimilarity(), defaultPrefixLength);
     }
@@ -37,7 +37,7 @@ namespace Lucene
     {
     }
 
-    void FuzzyQuery::ConstructQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength)
+    void FuzzyQuery::ConstructQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength)
     {
         this->term = term;
 
@@ -71,7 +71,7 @@ namespace Lucene
         return prefixLength;
     }
 
-    FilteredTermEnumPtr FuzzyQuery::getEnum(IndexReaderPtr reader)
+    FilteredTermEnumPtr FuzzyQuery::getEnum(const IndexReaderPtr& reader)
     {
         return newLucene<FuzzyTermEnum>(reader, getTerm(), minimumSimilarity, prefixLength);
     }
@@ -81,12 +81,12 @@ namespace Lucene
         return term;
     }
 
-    void FuzzyQuery::setRewriteMethod(RewriteMethodPtr method)
+    void FuzzyQuery::setRewriteMethod(const RewriteMethodPtr& method)
     {
         boost::throw_exception(UnsupportedOperationException(L"FuzzyQuery cannot change rewrite method"));
     }
 
-    QueryPtr FuzzyQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr FuzzyQuery::rewrite(const IndexReaderPtr& reader)
     {
         if (!termLongEnough) // can only match if it's exact
             return newLucene<TermQuery>(term);
@@ -136,7 +136,7 @@ namespace Lucene
         return query;
     }
 
-    LuceneObjectPtr FuzzyQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr FuzzyQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<FuzzyQuery>(term));
         FuzzyQueryPtr cloneQuery(boost::dynamic_pointer_cast<FuzzyQuery>(clone));
@@ -166,7 +166,7 @@ namespace Lucene
         return result;
     }
 
-    bool FuzzyQuery::equals(LuceneObjectPtr other)
+    bool FuzzyQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -195,7 +195,7 @@ namespace Lucene
     {
     }
 
-    int32_t ScoreTerm::compareTo(ScoreTermPtr other)
+    int32_t ScoreTerm::compareTo(const ScoreTermPtr& other)
     {
         if (this->score == other->score)
             return other->term->compareTo(this->term);

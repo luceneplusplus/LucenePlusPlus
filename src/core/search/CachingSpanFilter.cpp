@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    CachingSpanFilter::CachingSpanFilter(SpanFilterPtr filter, CachingWrapperFilter::DeletesMode deletesMode)
+    CachingSpanFilter::CachingSpanFilter(const SpanFilterPtr& filter, CachingWrapperFilter::DeletesMode deletesMode)
     {
         this->filter = filter;
         if (deletesMode == CachingWrapperFilter::DELETES_DYNAMIC)
@@ -26,13 +26,13 @@ namespace Lucene
     {
     }
 
-    DocIdSetPtr CachingSpanFilter::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr CachingSpanFilter::getDocIdSet(const IndexReaderPtr& reader)
     {
         SpanFilterResultPtr result(getCachedResult(reader));
         return result ? result->getDocIdSet() : DocIdSetPtr();
     }
 
-    SpanFilterResultPtr CachingSpanFilter::getCachedResult(IndexReaderPtr reader)
+    SpanFilterResultPtr CachingSpanFilter::getCachedResult(const IndexReaderPtr& reader)
     {
         LuceneObjectPtr coreKey = reader->getFieldCacheKey();
         LuceneObjectPtr delCoreKey = reader->hasDeletions() ? reader->getDeletesCacheKey() : coreKey;
@@ -52,7 +52,7 @@ namespace Lucene
         return result;
     }
 
-    SpanFilterResultPtr CachingSpanFilter::bitSpans(IndexReaderPtr reader)
+    SpanFilterResultPtr CachingSpanFilter::bitSpans(const IndexReaderPtr& reader)
     {
         return getCachedResult(reader);
     }
@@ -62,7 +62,7 @@ namespace Lucene
         return L"CachingSpanFilter(" + filter->toString() + L")";
     }
 
-    bool CachingSpanFilter::equals(LuceneObjectPtr other)
+    bool CachingSpanFilter::equals(const LuceneObjectPtr& other)
     {
         if (SpanFilter::equals(other))
             return true;
@@ -87,7 +87,7 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr FilterCacheSpanFilterResult::mergeDeletes(IndexReaderPtr reader, LuceneObjectPtr value)
+    LuceneObjectPtr FilterCacheSpanFilterResult::mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value)
     {
         boost::throw_exception(IllegalStateException(L"DeletesMode::DYNAMIC is not supported"));
         return LuceneObjectPtr();

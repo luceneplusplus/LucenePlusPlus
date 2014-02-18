@@ -18,7 +18,7 @@ namespace Lucene
         LUCENE_CLASS(ConstantScoreFilterRewrite);
 
     public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
     };
 
     class ScoringBooleanQueryRewrite : public RewriteMethod
@@ -28,7 +28,7 @@ namespace Lucene
         LUCENE_CLASS(ScoringBooleanQueryRewrite);
 
     public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
     };
 
     class ConstantScoreBooleanQueryRewrite : public ScoringBooleanQueryRewrite
@@ -38,7 +38,7 @@ namespace Lucene
         LUCENE_CLASS(ConstantScoreBooleanQueryRewrite);
 
     public:
-        virtual QueryPtr rewrite(IndexReaderPtr reader, MultiTermQueryPtr query);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
     };
 
     class ConstantScoreAutoRewriteDefault : public ConstantScoreAutoRewrite

@@ -15,8 +15,8 @@ namespace Lucene
     {
     public:
         TermVectorsReader();
-        TermVectorsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos);
-        TermVectorsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos,
+        TermVectorsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fieldInfos);
+        TermVectorsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fieldInfos,
                           int32_t readBufferSize, int32_t docStoreOffset = -1, int32_t size = 0);
         virtual ~TermVectorsReader();
 
@@ -74,7 +74,7 @@ namespace Lucene
         /// @return The number of documents in the reader
         int32_t size();
 
-        void get(int32_t docNum, const String& field, TermVectorMapperPtr mapper);
+        void get(int32_t docNum, const String& field, const TermVectorMapperPtr& mapper);
 
         /// Retrieve the term vector for the given document and field
         /// @param docNum The document number to retrieve the vector for
@@ -89,16 +89,16 @@ namespace Lucene
         /// @return All term frequency vectors
         Collection<TermFreqVectorPtr> get(int32_t docNum);
 
-        void get(int32_t docNumber, TermVectorMapperPtr mapper);
+        void get(int32_t docNumber, const TermVectorMapperPtr& mapper);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
     protected:
-        void ConstructReader(DirectoryPtr d, const String& segment, FieldInfosPtr fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size);
+        void ConstructReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fieldInfos, int32_t readBufferSize, int32_t docStoreOffset, int32_t size);
 
         void seekTvx(int32_t docNum);
 
-        int32_t checkValidFormat(IndexInputPtr in);
+        int32_t checkValidFormat(const IndexInputPtr& in);
 
         /// Reads the String[] fields; you have to pre-seek tvd to the right point
         Collection<String> readFields(int32_t fieldCount);
@@ -107,12 +107,12 @@ namespace Lucene
         Collection<int64_t> readTvfPointers(int32_t fieldCount);
 
         Collection<TermFreqVectorPtr> readTermVectors(int32_t docNum, Collection<String> fields, Collection<int64_t> tvfPointers);
-        void readTermVectors(Collection<String> fields, Collection<int64_t> tvfPointers, TermVectorMapperPtr mapper);
+        void readTermVectors(Collection<String> fields, Collection<int64_t> tvfPointers, const TermVectorMapperPtr& mapper);
 
         /// @param field The field to read in
         /// @param tvfPointer The pointer within the tvf file where we should start reading
         /// @param mapper The mapper used to map the TermVector
-        void readTermVector(const String& field, int64_t tvfPointer, TermVectorMapperPtr mapper);
+        void readTermVector(const String& field, int64_t tvfPointer, const TermVectorMapperPtr& mapper);
     };
 
     /// Models the existing parallel array structure

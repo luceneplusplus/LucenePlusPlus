@@ -22,7 +22,7 @@
 
 namespace Lucene
 {
-    PayloadSpanUtil::PayloadSpanUtil(IndexReaderPtr reader)
+    PayloadSpanUtil::PayloadSpanUtil(const IndexReaderPtr& reader)
     {
         this->reader = reader;
     }
@@ -31,14 +31,14 @@ namespace Lucene
     {
     }
 
-    Collection<ByteArray> PayloadSpanUtil::getPayloadsForQuery(QueryPtr query)
+    Collection<ByteArray> PayloadSpanUtil::getPayloadsForQuery(const QueryPtr& query)
     {
         Collection<ByteArray> payloads(Collection<ByteArray>::newInstance());
         queryToSpanQuery(query, payloads);
         return payloads;
     }
 
-    void PayloadSpanUtil::queryToSpanQuery(QueryPtr query, Collection<ByteArray> payloads)
+    void PayloadSpanUtil::queryToSpanQuery(const QueryPtr& query, Collection<ByteArray> payloads)
     {
         if (MiscUtils::typeOf<BooleanQuery>(query))
         {
@@ -149,7 +149,7 @@ namespace Lucene
         }
     }
 
-    void PayloadSpanUtil::getPayloads(Collection<ByteArray> payloads, SpanQueryPtr query)
+    void PayloadSpanUtil::getPayloads(Collection<ByteArray> payloads, const SpanQueryPtr& query)
     {
         SpansPtr spans(query->getSpans(reader));
 

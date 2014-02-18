@@ -64,7 +64,7 @@ namespace Lucene
 
         virtual void sync();
 
-        virtual void merge(IndexWriterPtr writer);
+        virtual void merge(const IndexWriterPtr& writer);
 
         /// Used for testing
         static bool anyUnhandledExceptions();
@@ -84,9 +84,9 @@ namespace Lucene
         virtual int32_t mergeThreadCount();
 
         /// Does the actual merge, by calling {@link IndexWriter#merge}
-        virtual void doMerge(OneMergePtr merge);
+        virtual void doMerge(const OneMergePtr& merge);
 
-        virtual MergeThreadPtr getMergeThread(IndexWriterPtr writer, OneMergePtr merge);
+        virtual MergeThreadPtr getMergeThread(const IndexWriterPtr& writer, const OneMergePtr& merge);
 
         /// Called when an exception is hit in a background merge thread
         virtual void handleMergeException(const LuceneException& exc);

@@ -18,7 +18,7 @@ namespace Lucene
     class LPPCONTRIBAPI SnowballFilter : public TokenFilter
     {
     public:
-        SnowballFilter(TokenStreamPtr input, const String& name);
+        SnowballFilter(const TokenStreamPtr& input, const String& name);
         virtual ~SnowballFilter();
 
         LUCENE_CLASS(SnowballFilter);

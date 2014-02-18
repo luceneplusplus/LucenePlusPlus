@@ -26,13 +26,13 @@ namespace Lucene
     /// NOTE: always change this if you switch to a new format.
     const int32_t TermInfosWriter::FORMAT_CURRENT = TermInfosWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES;
 
-    TermInfosWriter::TermInfosWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval)
+    TermInfosWriter::TermInfosWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fis, int32_t interval)
     {
         initialize(directory, segment, fis, interval, false);
         otherWriter = newLucene<TermInfosWriter>(directory, segment, fis, interval, true);
     }
 
-    TermInfosWriter::TermInfosWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval, bool isIndex)
+    TermInfosWriter::TermInfosWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fis, int32_t interval, bool isIndex)
     {
         initialize(directory, segment, fis, interval, isIndex);
     }
@@ -50,7 +50,7 @@ namespace Lucene
         }
     }
 
-    void TermInfosWriter::initialize(DirectoryPtr directory, const String& segment, FieldInfosPtr fis, int32_t interval, bool isi)
+    void TermInfosWriter::initialize(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fis, int32_t interval, bool isi)
     {
         lastTi = newLucene<TermInfo>();
         utf8Result = newLucene<UTF8Result>();
@@ -74,7 +74,7 @@ namespace Lucene
         BOOST_ASSERT(initUnicodeResults());
     }
 
-    void TermInfosWriter::add(TermPtr term, TermInfoPtr ti)
+    void TermInfosWriter::add(const TermPtr& term, const TermInfoPtr& ti)
     {
         StringUtils::toUTF8(term->_text.c_str(), term->_text.size(), utf8Result);
         add(fieldInfos->fieldNumber(term->_field), utf8Result->result, utf8Result->length, ti);
@@ -112,7 +112,7 @@ namespace Lucene
         return (unicodeResult1->length - unicodeResult2->length);
     }
 
-    void TermInfosWriter::add(int32_t fieldNumber, ByteArray termBytes, int32_t termBytesLength, TermInfoPtr ti)
+    void TermInfosWriter::add(int32_t fieldNumber, ByteArray termBytes, int32_t termBytesLength, const TermInfoPtr& ti)
     {
         // terms out of order?
         BOOST_ASSERT(compareToLastTerm(fieldNumber, termBytes, termBytesLength) < 0 || (isIndex && termBytesLength == 0 && lastTermBytesLength == 0));

@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    ArabicNormalizationFilter::ArabicNormalizationFilter(TokenStreamPtr input) : TokenFilter(input)
+    ArabicNormalizationFilter::ArabicNormalizationFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         normalizer = newLucene<ArabicNormalizer>();
         termAtt = addAttribute<TermAttribute>();

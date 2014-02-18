@@ -39,7 +39,7 @@ DECLARE_SHARED_PTR(PayloadSpansAnalyzer)
 class PayloadSpansFilter : public TokenFilter
 {
 public:
-    PayloadSpansFilter(TokenStreamPtr input, const String& fieldName) : TokenFilter(input)
+    PayloadSpansFilter(const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input)
     {
         this->fieldName = fieldName;
         this->pos = 0;
@@ -107,7 +107,7 @@ public:
     LUCENE_CLASS(PayloadSpansAnalyzer);
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
         result = newLucene<PayloadSpansFilter>(result, fieldName);
@@ -135,7 +135,7 @@ protected:
     IndexReaderPtr indexReader;
 
 public:
-    void checkSpans(SpansPtr spans, int32_t expectedNumSpans, int32_t expectedNumPayloads, int32_t expectedPayloadLength, int32_t expectedFirstByte)
+    void checkSpans(const SpansPtr& spans, int32_t expectedNumSpans, int32_t expectedNumPayloads, int32_t expectedPayloadLength, int32_t expectedFirstByte)
     {
         EXPECT_TRUE(spans);
         int32_t seen = 0;
@@ -162,7 +162,7 @@ public:
         EXPECT_EQ(seen, expectedNumSpans);
     }
 
-    void checkSpans(SpansPtr spans, int32_t numSpans, Collection<int32_t> numPayloads)
+    void checkSpans(const SpansPtr& spans, int32_t numSpans, Collection<int32_t> numPayloads)
     {
         int32_t cnt = 0;
         while (spans->next())

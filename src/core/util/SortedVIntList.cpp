@@ -40,7 +40,7 @@ namespace Lucene
         bytes.resize(lastBytePos);
     }
 
-    SortedVIntList::SortedVIntList(BitSetPtr bits)
+    SortedVIntList::SortedVIntList(const BitSetPtr& bits)
     {
         lastInt = 0;
         initBytes();
@@ -53,7 +53,7 @@ namespace Lucene
         bytes.resize(lastBytePos);
     }
 
-    SortedVIntList::SortedVIntList(OpenBitSetPtr bits)
+    SortedVIntList::SortedVIntList(const OpenBitSetPtr& bits)
     {
         lastInt = 0;
         initBytes();
@@ -66,7 +66,7 @@ namespace Lucene
         bytes.resize(lastBytePos);
     }
 
-    SortedVIntList::SortedVIntList(DocIdSetIteratorPtr docIdSetIterator)
+    SortedVIntList::SortedVIntList(const DocIdSetIteratorPtr& docIdSetIterator)
     {
         lastInt = 0;
         initBytes();
@@ -130,7 +130,7 @@ namespace Lucene
         return newLucene<SortedDocIdSetIterator>(shared_from_this());
     }
 
-    SortedDocIdSetIterator::SortedDocIdSetIterator(SortedVIntListPtr list)
+    SortedDocIdSetIterator::SortedDocIdSetIterator(const SortedVIntListPtr& list)
     {
         _list = list;
         bytePos = 0;

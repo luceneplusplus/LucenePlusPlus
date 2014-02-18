@@ -24,7 +24,7 @@ namespace Lucene
     class LPPAPI NumericRangeFilter : public MultiTermQueryWrapperFilter
     {
     public:
-        NumericRangeFilter(NumericRangeQueryPtr query);
+        NumericRangeFilter(const NumericRangeQueryPtr& query);
         virtual ~NumericRangeFilter();
 
         LUCENE_CLASS(NumericRangeFilter);

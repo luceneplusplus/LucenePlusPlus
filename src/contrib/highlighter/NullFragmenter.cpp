@@ -13,7 +13,7 @@ namespace Lucene
     {
     }
 
-    void NullFragmenter::start(const String& originalText, TokenStreamPtr tokenStream)
+    void NullFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
     {
     }
 

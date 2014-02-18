@@ -100,7 +100,7 @@ namespace Lucene
         return stopSet;
     }
 
-    TokenStreamPtr CzechAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr CzechAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
         result = newLucene<LowerCaseFilter>(result);
@@ -109,7 +109,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr CzechAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr CzechAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         CzechAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<CzechAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

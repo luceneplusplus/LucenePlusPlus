@@ -21,7 +21,7 @@ namespace Lucene
     {
     public:
         /// Constructs a filter which only matches documents matching query.
-        QueryWrapperFilter(QueryPtr query);
+        QueryWrapperFilter(const QueryPtr& query);
 
         virtual ~QueryWrapperFilter();
 
@@ -31,9 +31,9 @@ namespace Lucene
         QueryPtr query;
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
         virtual String toString();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

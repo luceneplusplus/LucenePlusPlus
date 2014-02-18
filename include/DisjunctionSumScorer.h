@@ -51,7 +51,7 @@ namespace Lucene
     public:
         virtual void initialize();
 
-        virtual void score(CollectorPtr collector);
+        virtual void score(const CollectorPtr& collector);
         virtual int32_t nextDoc();
 
         /// Returns the score of the current document matching the query. Initially invalid, until {@link #next()}
@@ -80,7 +80,7 @@ namespace Lucene
         /// @param collector The collector to which all matching documents are passed through.
         /// @param max Do not score documents past this.
         /// @return true if more matching documents may remain.
-        virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
+        virtual bool score(const CollectorPtr& collector, int32_t max, int32_t firstDocID);
 
         /// Advance all subscorers after the current document determined by the top of the scorerDocQueue.  Repeat
         /// until at least the minimum number of subscorers match on the same document and all subscorers are after

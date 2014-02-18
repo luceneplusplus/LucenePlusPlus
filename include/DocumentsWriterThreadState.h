@@ -17,7 +17,7 @@ namespace Lucene
     class DocumentsWriterThreadState : public LuceneObject
     {
     public:
-        DocumentsWriterThreadState(DocumentsWriterPtr docWriter);
+        DocumentsWriterThreadState(const DocumentsWriterPtr& docWriter);
         virtual ~DocumentsWriterThreadState();
 
         LUCENE_CLASS(DocumentsWriterThreadState);

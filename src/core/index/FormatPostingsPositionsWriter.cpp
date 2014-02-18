@@ -19,7 +19,7 @@
 
 namespace Lucene
 {
-    FormatPostingsPositionsWriter::FormatPostingsPositionsWriter(SegmentWriteStatePtr state, FormatPostingsDocsWriterPtr parent)
+    FormatPostingsPositionsWriter::FormatPostingsPositionsWriter(const SegmentWriteStatePtr& state, const FormatPostingsDocsWriterPtr& parent)
     {
         lastPosition = 0;
         storePayloads = false;
@@ -73,7 +73,7 @@ namespace Lucene
             out->writeVInt(delta);
     }
 
-    void FormatPostingsPositionsWriter::setField(FieldInfoPtr fieldInfo)
+    void FormatPostingsPositionsWriter::setField(const FieldInfoPtr& fieldInfo)
     {
         omitTermFreqAndPositions = fieldInfo->omitTermFreqAndPositions;
         storePayloads = omitTermFreqAndPositions ? false : fieldInfo->storePayloads;

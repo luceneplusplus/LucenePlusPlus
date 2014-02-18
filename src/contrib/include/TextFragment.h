@@ -16,7 +16,7 @@ namespace Lucene
     class LPPCONTRIBAPI TextFragment : public LuceneObject
     {
     public:
-        TextFragment(StringBufferPtr markedUpText, int32_t textStartPos, int32_t fragNum);
+        TextFragment(const StringBufferPtr& markedUpText, int32_t textStartPos, int32_t fragNum);
         virtual ~TextFragment();
 
         LUCENE_CLASS(TextFragment);
@@ -33,10 +33,10 @@ namespace Lucene
         double getScore();
 
         /// @param frag2 Fragment to be merged into this one
-        void merge(TextFragmentPtr frag2);
+        void merge(const TextFragmentPtr& frag2);
 
         /// @return true if this fragment follows the one passed
-        bool follows(TextFragmentPtr fragment);
+        bool follows(const TextFragmentPtr& fragment);
 
         /// @return the fragment sequence number
         int32_t getFragNum();

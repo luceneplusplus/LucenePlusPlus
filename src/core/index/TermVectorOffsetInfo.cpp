@@ -47,7 +47,7 @@ namespace Lucene
         this->startOffset = startOffset;
     }
 
-    bool TermVectorOffsetInfo::equals(LuceneObjectPtr other)
+    bool TermVectorOffsetInfo::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

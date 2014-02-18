@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    ChecksumIndexOutput::ChecksumIndexOutput(IndexOutputPtr main)
+    ChecksumIndexOutput::ChecksumIndexOutput(const IndexOutputPtr& main)
     {
         this->main = main;
     }

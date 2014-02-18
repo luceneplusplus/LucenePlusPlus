@@ -15,7 +15,7 @@ namespace Lucene
     class DocFieldProcessorPerField : public LuceneObject
     {
     public:
-        DocFieldProcessorPerField(DocFieldProcessorPerThreadPtr perThread, FieldInfoPtr fieldInfo);
+        DocFieldProcessorPerField(const DocFieldProcessorPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
         virtual ~DocFieldProcessorPerField();
 
         LUCENE_CLASS(DocFieldProcessorPerField);

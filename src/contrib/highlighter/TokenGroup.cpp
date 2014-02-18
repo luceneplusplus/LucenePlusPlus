@@ -15,7 +15,7 @@ namespace Lucene
 {
     const int32_t TokenGroup::MAX_NUM_TOKENS_PER_GROUP = 50;
 
-    TokenGroup::TokenGroup(TokenStreamPtr tokenStream)
+    TokenGroup::TokenGroup(const TokenStreamPtr& tokenStream)
     {
         offsetAtt = tokenStream->addAttribute<OffsetAttribute>();
         termAtt = tokenStream->addAttribute<TermAttribute>();

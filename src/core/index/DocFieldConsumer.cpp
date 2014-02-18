@@ -13,7 +13,7 @@ namespace Lucene
     {
     }
 
-    void DocFieldConsumer::setFieldInfos(FieldInfosPtr fieldInfos)
+    void DocFieldConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos)
     {
         this->fieldInfos = fieldInfos;
     }

@@ -18,7 +18,7 @@ namespace Lucene
         /// Create a new SimpleFSDirectory for the named location  and {@link NativeFSLockFactory}.
         /// @param path the path of the directory.
         /// @param lockFactory the lock factory to use, or null for the default ({@link NativeFSLockFactory})
-        SimpleFSDirectory(const String& path, LockFactoryPtr lockFactory = LockFactoryPtr());
+        SimpleFSDirectory(const String& path, const LockFactoryPtr& lockFactory = LockFactoryPtr());
         virtual ~SimpleFSDirectory();
 
         LUCENE_CLASS(SimpleFSDirectory);

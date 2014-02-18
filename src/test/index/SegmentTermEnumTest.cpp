@@ -22,14 +22,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture SegmentTermEnumTest;
 
-static void addDoc(IndexWriterPtr writer, const String& value)
+static void addDoc(const IndexWriterPtr& writer, const String& value)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", value, Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void verifyDocFreq(DirectoryPtr dir)
+static void verifyDocFreq(const DirectoryPtr& dir)
 {
     IndexReaderPtr reader = IndexReader::open(dir, true);
 

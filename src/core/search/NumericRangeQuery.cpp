@@ -96,7 +96,7 @@ namespace Lucene
         return newNumericRange(field, NumericUtils::PRECISION_STEP_DEFAULT, min, max, minInclusive, maxInclusive);
     }
 
-    FilteredTermEnumPtr NumericRangeQuery::getEnum(IndexReaderPtr reader)
+    FilteredTermEnumPtr NumericRangeQuery::getEnum(const IndexReaderPtr& reader)
     {
         return newLucene<NumericRangeTermEnum>(shared_from_this(), reader);
     }
@@ -126,7 +126,7 @@ namespace Lucene
         return min;
     }
 
-    LuceneObjectPtr NumericRangeQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr NumericRangeQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = MultiTermQuery::clone(other ? other : newLucene<NumericRangeQuery>(field, precisionStep, valSize, min, max, minInclusive, maxInclusive));
         NumericRangeQueryPtr cloneQuery(boost::dynamic_pointer_cast<NumericRangeQuery>(clone));
@@ -160,7 +160,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool NumericRangeQuery::equals(LuceneObjectPtr other)
+    bool NumericRangeQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -190,7 +190,7 @@ namespace Lucene
         return hash + (MiscUtils::hashCode(minInclusive) ^ 0x14fa55fb) + (MiscUtils::hashCode(maxInclusive) ^ 0x733fa5fe);
     }
 
-    NumericRangeTermEnum::NumericRangeTermEnum(NumericRangeQueryPtr query, IndexReaderPtr reader)
+    NumericRangeTermEnum::NumericRangeTermEnum(const NumericRangeQueryPtr& query, const IndexReaderPtr& reader)
     {
         this->_query = query;
         this->reader = reader;
@@ -285,12 +285,12 @@ namespace Lucene
         return false;
     }
 
-    void NumericRangeTermEnum::setEnum(TermEnumPtr actualEnum)
+    void NumericRangeTermEnum::setEnum(const TermEnumPtr& actualEnum)
     {
         boost::throw_exception(UnsupportedOperationException(L"not implemented"));
     }
 
-    bool NumericRangeTermEnum::termCompare(TermPtr term)
+    bool NumericRangeTermEnum::termCompare(const TermPtr& term)
     {
         return (term->field() == NumericRangeQueryPtr(_query)->field && term->text().compare(currentUpperBound) <= 0);
     }

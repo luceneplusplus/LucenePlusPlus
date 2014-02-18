@@ -78,9 +78,9 @@ namespace Lucene
         void copyTo(ByteArray target, int32_t targetOffset);
 
         /// Clones this payload by creating a copy of the underlying byte array.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

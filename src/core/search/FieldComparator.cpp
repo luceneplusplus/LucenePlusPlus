@@ -16,13 +16,13 @@ namespace Lucene
     {
     }
 
-    void FieldComparator::setScorer(ScorerPtr scorer)
+    void FieldComparator::setScorer(const ScorerPtr& scorer)
     {
         // Empty implementation since most comparators don't need the score.
         // This can be overridden by those that need it.
     }
 
-    ByteComparator::ByteComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<uint8_t>(numHits, field)
+    ByteComparator::ByteComparator(int32_t numHits, const String& field, const ParserPtr& parser) : NumericComparator<uint8_t>(numHits, field)
     {
         this->parser = boost::static_pointer_cast<ByteParser>(parser);
     }
@@ -31,7 +31,7 @@ namespace Lucene
     {
     }
 
-    void ByteComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void ByteComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         currentReaderValues = FieldCache::DEFAULT()->getBytes(reader, field, parser);
     }
@@ -56,12 +56,12 @@ namespace Lucene
         values[slot] = docBase + doc;
     }
 
-    void DocComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void DocComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         this->docBase = docBase;
     }
 
-    DoubleComparator::DoubleComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<double>(numHits, field)
+    DoubleComparator::DoubleComparator(int32_t numHits, const String& field, const ParserPtr& parser) : NumericComparator<double>(numHits, field)
     {
         this->parser = boost::static_pointer_cast<DoubleParser>(parser);
     }
@@ -83,12 +83,12 @@ namespace Lucene
         return bottom > v2 ? 1 : (bottom < v2 ? -1 : 0);
     }
 
-    void DoubleComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void DoubleComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         currentReaderValues = FieldCache::DEFAULT()->getDoubles(reader, field, parser);
     }
 
-    IntComparator::IntComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<int32_t>(numHits, field)
+    IntComparator::IntComparator(int32_t numHits, const String& field, const ParserPtr& parser) : NumericComparator<int32_t>(numHits, field)
     {
         this->parser = boost::static_pointer_cast<IntParser>(parser);
     }
@@ -110,12 +110,12 @@ namespace Lucene
         return bottom > v2 ? 1 : (bottom < v2 ? -1 : 0);
     }
 
-    void IntComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void IntComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         currentReaderValues = FieldCache::DEFAULT()->getInts(reader, field, parser);
     }
 
-    LongComparator::LongComparator(int32_t numHits, const String& field, ParserPtr parser) : NumericComparator<int64_t>(numHits, field)
+    LongComparator::LongComparator(int32_t numHits, const String& field, const ParserPtr& parser) : NumericComparator<int64_t>(numHits, field)
     {
         this->parser = boost::static_pointer_cast<LongParser>(parser);
     }
@@ -137,7 +137,7 @@ namespace Lucene
         return bottom > v2 ? 1 : (bottom < v2 ? -1 : 0);
     }
 
-    void LongComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void LongComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         currentReaderValues = FieldCache::DEFAULT()->getLongs(reader, field, parser);
     }
@@ -168,11 +168,11 @@ namespace Lucene
         values[slot] = scorer->score();
     }
 
-    void RelevanceComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void RelevanceComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
     }
 
-    void RelevanceComparator::setScorer(ScorerPtr scorer)
+    void RelevanceComparator::setScorer(const ScorerPtr& scorer)
     {
         this->scorer = newLucene<ScoreCachingWrappingScorer>(scorer);
     }
@@ -202,7 +202,7 @@ namespace Lucene
         values[slot] = currentReaderValues[doc];
     }
 
-    void StringComparatorLocale::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void StringComparatorLocale::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         currentReaderValues = FieldCache::DEFAULT()->getStrings(reader, field);
     }
@@ -303,7 +303,7 @@ namespace Lucene
         readerGen[slot] = currentReaderGen;
     }
 
-    void StringOrdValComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void StringOrdValComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         StringIndexPtr currentReaderValues(FieldCache::DEFAULT()->getStringIndex(reader, field));
         ++currentReaderGen;
@@ -373,7 +373,7 @@ namespace Lucene
         values[slot] = currentReaderValues[doc];
     }
 
-    void StringValComparator::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void StringValComparator::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         currentReaderValues = FieldCache::DEFAULT()->getStrings(reader, field);
     }

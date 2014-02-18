@@ -84,7 +84,7 @@ namespace TestSimilarity
             return 1.0;
         }
 
-        virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, SearcherPtr searcher)
+        virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher)
         {
             return newLucene<SimpleIDFExplanation>();
         }
@@ -101,7 +101,7 @@ namespace TestSimilarity
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -111,7 +111,7 @@ namespace TestSimilarity
             EXPECT_EQ(1.0, scorer->score());
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
         }
 
@@ -138,7 +138,7 @@ namespace TestSimilarity
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -148,7 +148,7 @@ namespace TestSimilarity
             EXPECT_EQ((double)doc + (double)base + 1.0, scorer->score());
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
             base = docBase;
         }
@@ -176,7 +176,7 @@ namespace TestSimilarity
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -186,7 +186,7 @@ namespace TestSimilarity
             EXPECT_EQ(expectedScore, scorer->score());
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
         }
 

@@ -33,7 +33,7 @@ namespace Lucene
         /// results. NOTE: null can be returned if no documents will be accepted by this Filter.
         ///
         /// @see DocIdBitSet
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader) = 0;
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) = 0;
     };
 }
 

@@ -11,15 +11,15 @@
 
 namespace Lucene
 {
-    ArabicLetterTokenizer::ArabicLetterTokenizer(ReaderPtr input) : LetterTokenizer(input)
+    ArabicLetterTokenizer::ArabicLetterTokenizer(const ReaderPtr& input) : LetterTokenizer(input)
     {
     }
 
-    ArabicLetterTokenizer::ArabicLetterTokenizer(AttributeSourcePtr source, ReaderPtr input) : LetterTokenizer(source, input)
+    ArabicLetterTokenizer::ArabicLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : LetterTokenizer(source, input)
     {
     }
 
-    ArabicLetterTokenizer::ArabicLetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : LetterTokenizer(factory, input)
+    ArabicLetterTokenizer::ArabicLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : LetterTokenizer(factory, input)
     {
     }
 

@@ -62,7 +62,7 @@ namespace Lucene
         /// keep a persistent version around and allow the caching filter to do its job.
         /// @param filter The input filter
         /// @return The cached version of the filter
-        FilterPtr getFilter(FilterPtr filter);
+        FilterPtr getFilter(const FilterPtr& filter);
 
         friend class FilterCleaner;
     };

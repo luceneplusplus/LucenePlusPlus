@@ -51,7 +51,7 @@ DECLARE_SHARED_PTR(TestParser)
 class QueryParserTestFilter : public TokenFilter
 {
 public:
-    QueryParserTestFilter(TokenStreamPtr in) : TokenFilter(in)
+    QueryParserTestFilter(const TokenStreamPtr& in) : TokenFilter(in)
     {
         termAtt = addAttribute<TermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
@@ -116,7 +116,7 @@ public:
 
 public:
     // Filters LowerCaseTokenizer with StopFilter.
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<QueryParserTestFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
@@ -125,7 +125,7 @@ public:
 class TestParser : public QueryParser
 {
 public:
-    TestParser(const String& f, AnalyzerPtr a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
+    TestParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
     {
     }
 
@@ -166,21 +166,22 @@ public:
 protected:
     int32_t originalMaxClauses;
 
-    QueryParserPtr getParser(AnalyzerPtr a)
+    QueryParserPtr getParser(const AnalyzerPtr& a)
     {
-        if (!a)
-            a = newLucene<SimpleAnalyzer>();
-        QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", a);
+        AnalyzerPtr _a(a);
+        if (!_a)
+            _a = newLucene<SimpleAnalyzer>();
+        QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", _a);
         qp->setDefaultOperator(QueryParser::OR_OPERATOR);
         return qp;
     }
 
-    QueryPtr getQuery(const String& query, AnalyzerPtr a)
+    QueryPtr getQuery(const String& query, const AnalyzerPtr& a)
     {
         return getParser(a)->parse(query);
     }
 
-    void checkQueryEquals(const String& query, AnalyzerPtr a, const String& result)
+    void checkQueryEquals(const String& query, const AnalyzerPtr& a, const String& result)
     {
         QueryPtr q = getQuery(query, a);
         String s = q->toString(L"field");
@@ -188,7 +189,7 @@ protected:
             FAIL() << "Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
     }
 
-    void checkQueryEquals(QueryParserPtr qp, const String& field, const String& query, const String& result)
+    void checkQueryEquals(const QueryParserPtr& qp, const String& field, const String& query, const String& result)
     {
         QueryPtr q = qp->parse(query);
         String s = q->toString(field);
@@ -228,7 +229,7 @@ protected:
             FAIL() << "WildcardQuery \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
     }
 
-    void checkEscapedQueryEquals(const String& query, AnalyzerPtr a, const String& result)
+    void checkEscapedQueryEquals(const String& query, const AnalyzerPtr& a, const String& result)
     {
         class TestableQueryParser : public QueryParser
         {
@@ -241,16 +242,17 @@ protected:
             FAIL() << "Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(escapedQuery) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
     }
 
-    QueryPtr getQueryDOA(const String& query, AnalyzerPtr a)
+    QueryPtr getQueryDOA(const String& query, const AnalyzerPtr& a)
     {
-        if (!a)
-            a = newLucene<SimpleAnalyzer>();
-        QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", a);
+        AnalyzerPtr _a(a);
+        if (!_a)
+            _a = newLucene<SimpleAnalyzer>();
+        QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", _a);
         qp->setDefaultOperator(QueryParser::AND_OPERATOR);
         return qp->parse(query);
     }
 
-    void checkQueryEqualsDOA(const String& query, AnalyzerPtr a, const String& result)
+    void checkQueryEqualsDOA(const String& query, const AnalyzerPtr& a, const String& result)
     {
         QueryPtr q = getQueryDOA(query, a);
         String s = q->toString(L"field");
@@ -258,7 +260,7 @@ protected:
             FAIL() << "Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
     }
 
-    void addDateDoc(const String& content, boost::posix_time::ptime date, IndexWriterPtr iw)
+    void addDateDoc(const String& content, boost::posix_time::ptime date, const IndexWriterPtr& iw)
     {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(L"f", content, Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -266,7 +268,7 @@ protected:
         iw->addDocument(d);
     }
 
-    void checkHits(int32_t expected, const String& query, IndexSearcherPtr is)
+    void checkHits(int32_t expected, const String& query, const IndexSearcherPtr& is)
     {
         QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"date", newLucene<WhitespaceAnalyzer>());
         qp->setLocale(std::locale());
@@ -796,7 +798,7 @@ namespace TestStarParsing
     class StarParser : public QueryParser
     {
     public:
-        StarParser(const String& f, AnalyzerPtr a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
+        StarParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
         {
             type = Collection<int32_t>::newInstance(1);
         }

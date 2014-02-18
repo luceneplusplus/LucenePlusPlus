@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// Build a filter that removes words that are too long or too short from the text.
-        LengthFilter(TokenStreamPtr input, int32_t min, int32_t max);
+        LengthFilter(const TokenStreamPtr& input, int32_t min, int32_t max);
         virtual ~LengthFilter();
 
         LUCENE_CLASS(LengthFilter);

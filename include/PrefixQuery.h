@@ -19,7 +19,7 @@ namespace Lucene
     {
     public:
         /// Constructs a query for terms starting with prefix.
-        PrefixQuery(TermPtr prefix);
+        PrefixQuery(const TermPtr& prefix);
 
         virtual ~PrefixQuery();
 
@@ -37,12 +37,12 @@ namespace Lucene
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual int32_t hashCode();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
     protected:
-        virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
+        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
     };
 }
 

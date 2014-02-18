@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    StandardFilter::StandardFilter(TokenStreamPtr input) : TokenFilter(input)
+    StandardFilter::StandardFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         termAtt = addAttribute<TermAttribute>();
         typeAtt = addAttribute<TypeAttribute>();

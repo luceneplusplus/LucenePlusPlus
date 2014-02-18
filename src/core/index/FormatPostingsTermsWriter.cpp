@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    FormatPostingsTermsWriter::FormatPostingsTermsWriter(SegmentWriteStatePtr state, FormatPostingsFieldsWriterPtr parent)
+    FormatPostingsTermsWriter::FormatPostingsTermsWriter(const SegmentWriteStatePtr& state, const FormatPostingsFieldsWriterPtr& parent)
     {
         currentTermStart = 0;
         freqStart = 0;
@@ -34,7 +34,7 @@ namespace Lucene
         docsWriter = newLucene<FormatPostingsDocsWriter>(state, shared_from_this());
     }
 
-    void FormatPostingsTermsWriter::setField(FieldInfoPtr fieldInfo)
+    void FormatPostingsTermsWriter::setField(const FieldInfoPtr& fieldInfo)
     {
         this->fieldInfo = fieldInfo;
         docsWriter->setField(fieldInfo);

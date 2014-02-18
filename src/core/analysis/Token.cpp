@@ -242,7 +242,7 @@ namespace Lucene
         return this->payload;
     }
 
-    void Token::setPayload(PayloadPtr payload)
+    void Token::setPayload(const PayloadPtr& payload)
     {
         this->payload = payload;
     }
@@ -276,7 +276,7 @@ namespace Lucene
         _type = DEFAULT_TYPE();
     }
 
-    LuceneObjectPtr Token::clone(LuceneObjectPtr other)
+    LuceneObjectPtr Token::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = Attribute::clone(other ? other : newLucene<Token>());
         TokenPtr cloneToken(boost::dynamic_pointer_cast<Token>(clone));
@@ -310,7 +310,7 @@ namespace Lucene
         return clone;
     }
 
-    bool Token::equals(LuceneObjectPtr other)
+    bool Token::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -426,7 +426,7 @@ namespace Lucene
         return shared_from_this();
     }
 
-    void Token::reinit(TokenPtr prototype)
+    void Token::reinit(const TokenPtr& prototype)
     {
         prototype->initTermBuffer();
         setTermBuffer(prototype->_termBuffer.get(), 0, prototype->_termLength);
@@ -438,7 +438,7 @@ namespace Lucene
         payload = prototype->payload;
     }
 
-    void Token::reinit(TokenPtr prototype, const String& newTerm)
+    void Token::reinit(const TokenPtr& prototype, const String& newTerm)
     {
         setTermBuffer(newTerm);
         positionIncrement = prototype->positionIncrement;
@@ -449,7 +449,7 @@ namespace Lucene
         payload = prototype->payload;
     }
 
-    void Token::reinit(TokenPtr prototype, CharArray newTermBuffer, int32_t offset, int32_t length)
+    void Token::reinit(const TokenPtr& prototype, CharArray newTermBuffer, int32_t offset, int32_t length)
     {
         setTermBuffer(newTermBuffer.get(), offset, length);
         positionIncrement = prototype->positionIncrement;
@@ -460,7 +460,7 @@ namespace Lucene
         payload = prototype->payload;
     }
 
-    void Token::copyTo(AttributePtr target)
+    void Token::copyTo(const AttributePtr& target)
     {
         TokenPtr targetToken(boost::dynamic_pointer_cast<Token>(target));
         if (targetToken)
@@ -505,7 +505,7 @@ namespace Lucene
         return _TOKEN_ATTRIBUTE_FACTORY;
     }
 
-    TokenAttributeFactory::TokenAttributeFactory(AttributeFactoryPtr delegate)
+    TokenAttributeFactory::TokenAttributeFactory(const AttributeFactoryPtr& delegate)
     {
         this->delegate = delegate;
     }
@@ -519,7 +519,7 @@ namespace Lucene
         return newLucene<Token>();
     }
 
-    bool TokenAttributeFactory::equals(LuceneObjectPtr other)
+    bool TokenAttributeFactory::equals(const LuceneObjectPtr& other)
     {
         if (AttributeFactory::equals(other))
             return true;

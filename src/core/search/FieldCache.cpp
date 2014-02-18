@@ -108,67 +108,67 @@ namespace Lucene
         return _NUMERIC_UTILS_DOUBLE_PARSER;
     }
 
-    Collection<uint8_t> FieldCache::getBytes(IndexReaderPtr reader, const String& field)
+    Collection<uint8_t> FieldCache::getBytes(const IndexReaderPtr& reader, const String& field)
     {
         BOOST_ASSERT(false);
         return Collection<uint8_t>(); // override
     }
 
-    Collection<uint8_t> FieldCache::getBytes(IndexReaderPtr reader, const String& field, ByteParserPtr parser)
+    Collection<uint8_t> FieldCache::getBytes(const IndexReaderPtr& reader, const String& field, const ByteParserPtr& parser)
     {
         BOOST_ASSERT(false);
         return Collection<uint8_t>(); // override
     }
 
-    Collection<int32_t> FieldCache::getInts(IndexReaderPtr reader, const String& field)
+    Collection<int32_t> FieldCache::getInts(const IndexReaderPtr& reader, const String& field)
     {
         BOOST_ASSERT(false);
         return Collection<int32_t>(); // override
     }
 
-    Collection<int32_t> FieldCache::getInts(IndexReaderPtr reader, const String& field, IntParserPtr parser)
+    Collection<int32_t> FieldCache::getInts(const IndexReaderPtr& reader, const String& field, const IntParserPtr& parser)
     {
         BOOST_ASSERT(false);
         return Collection<int32_t>(); // override
     }
 
-    Collection<int64_t> FieldCache::getLongs(IndexReaderPtr reader, const String& field)
+    Collection<int64_t> FieldCache::getLongs(const IndexReaderPtr& reader, const String& field)
     {
         BOOST_ASSERT(false);
         return Collection<int64_t>(); // override
     }
 
-    Collection<int64_t> FieldCache::getLongs(IndexReaderPtr reader, const String& field, LongParserPtr parser)
+    Collection<int64_t> FieldCache::getLongs(const IndexReaderPtr& reader, const String& field, const LongParserPtr& parser)
     {
         BOOST_ASSERT(false);
         return Collection<int64_t>(); // override
     }
 
-    Collection<double> FieldCache::getDoubles(IndexReaderPtr reader, const String& field)
+    Collection<double> FieldCache::getDoubles(const IndexReaderPtr& reader, const String& field)
     {
         BOOST_ASSERT(false);
         return Collection<double>(); // override
     }
 
-    Collection<double> FieldCache::getDoubles(IndexReaderPtr reader, const String& field, DoubleParserPtr parser)
+    Collection<double> FieldCache::getDoubles(const IndexReaderPtr& reader, const String& field, const DoubleParserPtr& parser)
     {
         BOOST_ASSERT(false);
         return Collection<double>(); // override
     }
 
-    Collection<String> FieldCache::getStrings(IndexReaderPtr reader, const String& field)
+    Collection<String> FieldCache::getStrings(const IndexReaderPtr& reader, const String& field)
     {
         BOOST_ASSERT(false);
         return Collection<String>(); // override
     }
 
-    StringIndexPtr FieldCache::getStringIndex(IndexReaderPtr reader, const String& field)
+    StringIndexPtr FieldCache::getStringIndex(const IndexReaderPtr& reader, const String& field)
     {
         BOOST_ASSERT(false);
         return StringIndexPtr(); // override
     }
 
-    void FieldCache::setInfoStream(InfoStreamPtr stream)
+    void FieldCache::setInfoStream(const InfoStreamPtr& stream)
     {
         BOOST_ASSERT(false);
         // override

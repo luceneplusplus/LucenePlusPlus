@@ -13,7 +13,7 @@ namespace Lucene
     {
     }
 
-    void InvertedDocConsumer::setFieldInfos(FieldInfosPtr fieldInfos)
+    void InvertedDocConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos)
     {
         this->fieldInfos = fieldInfos;
     }

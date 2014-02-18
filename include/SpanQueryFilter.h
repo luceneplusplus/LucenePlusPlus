@@ -22,7 +22,7 @@ namespace Lucene
     public:
         /// Constructs a filter which only matches documents matching query.
         /// @param query The {@link SpanQuery} to use as the basis for the Filter.
-        SpanQueryFilter(SpanQueryPtr query = SpanQueryPtr());
+        SpanQueryFilter(const SpanQueryPtr& query = SpanQueryPtr());
 
         virtual ~SpanQueryFilter();
 
@@ -32,13 +32,13 @@ namespace Lucene
         SpanQueryPtr query;
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
-        virtual SpanFilterResultPtr bitSpans(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+        virtual SpanFilterResultPtr bitSpans(const IndexReaderPtr& reader);
 
         SpanQueryPtr getQuery();
 
         virtual String toString();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

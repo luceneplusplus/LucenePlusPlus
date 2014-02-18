@@ -29,7 +29,7 @@ namespace Lucene
     {
     }
 
-    String SimpleHTMLFormatter::highlightTerm(const String& originalText, TokenGroupPtr tokenGroup)
+    String SimpleHTMLFormatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup)
     {
         if (tokenGroup->getTotalScore() == 0)
             return originalText;

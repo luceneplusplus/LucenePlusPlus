@@ -18,7 +18,7 @@ namespace Lucene
     class LPPAPI SingleTermEnum : public FilteredTermEnum
     {
     public:
-        SingleTermEnum(IndexReaderPtr reader, TermPtr singleTerm);
+        SingleTermEnum(const IndexReaderPtr& reader, const TermPtr& singleTerm);
         virtual ~SingleTermEnum();
 
         LUCENE_CLASS(SingleTermEnum);
@@ -32,7 +32,7 @@ namespace Lucene
 
     protected:
         virtual bool endEnum();
-        virtual bool termCompare(TermPtr term);
+        virtual bool termCompare(const TermPtr& term);
     };
 }
 

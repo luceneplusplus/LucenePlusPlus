@@ -19,7 +19,7 @@ namespace Lucene
         this->lastModified = MiscUtils::currentTimeMillis();
     }
 
-    RAMFile::RAMFile(RAMDirectoryPtr directory)
+    RAMFile::RAMFile(const RAMDirectoryPtr& directory)
     {
         this->buffers = Collection<ByteArray>::newInstance();
         this->length = 0;

@@ -17,7 +17,7 @@
 
 namespace Lucene
 {
-    DocFieldProcessor::DocFieldProcessor(DocumentsWriterPtr docWriter, DocFieldConsumerPtr consumer)
+    DocFieldProcessor::DocFieldProcessor(const DocumentsWriterPtr& docWriter, const DocFieldConsumerPtr& consumer)
     {
         this->fieldInfos = newLucene<FieldInfos>();
         this->_docWriter = docWriter;
@@ -30,13 +30,13 @@ namespace Lucene
     {
     }
 
-    void DocFieldProcessor::closeDocStore(SegmentWriteStatePtr state)
+    void DocFieldProcessor::closeDocStore(const SegmentWriteStatePtr& state)
     {
         consumer->closeDocStore(state);
         fieldsWriter->closeDocStore(state);
     }
 
-    void DocFieldProcessor::flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state)
+    void DocFieldProcessor::flush(Collection<DocConsumerPerThreadPtr> threads, const SegmentWriteStatePtr& state)
     {
         TestScope testScope(L"DocFieldProcessor", L"flush");
         MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField childThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
@@ -68,7 +68,7 @@ namespace Lucene
         return consumer->freeRAM();
     }
 
-    DocConsumerPerThreadPtr DocFieldProcessor::addThread(DocumentsWriterThreadStatePtr perThread)
+    DocConsumerPerThreadPtr DocFieldProcessor::addThread(const DocumentsWriterThreadStatePtr& perThread)
     {
         return newLucene<DocFieldProcessorPerThread>(perThread, shared_from_this());
     }

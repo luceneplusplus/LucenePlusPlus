@@ -15,8 +15,8 @@ namespace Lucene
     class LPPAPI QueryParserTokenManager : public QueryParserConstants, public LuceneObject
     {
     public:
-        QueryParserTokenManager(QueryParserCharStreamPtr stream);
-        QueryParserTokenManager(QueryParserCharStreamPtr stream, int32_t lexState);
+        QueryParserTokenManager(const QueryParserCharStreamPtr& stream);
+        QueryParserTokenManager(const QueryParserCharStreamPtr& stream, int32_t lexState);
 
         virtual ~QueryParserTokenManager();
 
@@ -58,13 +58,13 @@ namespace Lucene
 
     public:
         /// Set debug output.
-        void setDebugStream(InfoStreamPtr debugStream);
+        void setDebugStream(const InfoStreamPtr& debugStream);
 
         /// Reinitialise parser.
-        void ReInit(QueryParserCharStreamPtr stream);
+        void ReInit(const QueryParserCharStreamPtr& stream);
 
         /// Reinitialise parser.
-        void ReInit(QueryParserCharStreamPtr stream, int32_t lexState);
+        void ReInit(const QueryParserCharStreamPtr& stream, int32_t lexState);
 
         /// Switch to specified lex state.
         void SwitchTo(int32_t lexState);

@@ -69,7 +69,7 @@ namespace Lucene
     class UTF8EncoderStream : public UTF8Encoder
     {
     public:
-        UTF8EncoderStream(ReaderPtr reader);
+        UTF8EncoderStream(const ReaderPtr& reader);
         virtual ~UTF8EncoderStream();
 
         LUCENE_CLASS(UTF8EncoderStream);
@@ -110,7 +110,7 @@ namespace Lucene
     class UTF8DecoderStream : public UTF8Decoder
     {
     public:
-        UTF8DecoderStream(ReaderPtr reader);
+        UTF8DecoderStream(const ReaderPtr& reader);
         virtual ~UTF8DecoderStream();
 
         LUCENE_CLASS(UTF8DecoderStream);

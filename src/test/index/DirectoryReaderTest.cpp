@@ -122,7 +122,7 @@ protected:
         return reader;
     }
 
-    void checkNorms(IndexReaderPtr reader)
+    void checkNorms(const IndexReaderPtr& reader)
     {
         for (Collection<FieldPtr>::iterator field = DocHelper::fields.begin(); field != DocHelper::fields.end(); ++field)
         {
@@ -145,7 +145,7 @@ protected:
         }
     }
 
-    void addDoc(RAMDirectoryPtr ramDir1, const String& s, bool create)
+    void addDoc(const RAMDirectoryPtr& ramDir1, const String& s, bool create)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(ramDir1, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), create, IndexWriter::MaxFieldLengthLIMITED);
         DocumentPtr doc = newLucene<Document>();

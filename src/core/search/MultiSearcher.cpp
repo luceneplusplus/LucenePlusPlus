@@ -56,7 +56,7 @@ namespace Lucene
             (*searchable)->close();
     }
 
-    int32_t MultiSearcher::docFreq(TermPtr term)
+    int32_t MultiSearcher::docFreq(const TermPtr& term)
     {
         int32_t docFreq = 0;
         for (Collection<SearchablePtr>::iterator searchable = searchables.begin(); searchable != searchables.end(); ++searchable)
@@ -70,7 +70,7 @@ namespace Lucene
         return searchables[i]->doc(n - starts[i]); // dispatch to searcher
     }
 
-    DocumentPtr MultiSearcher::doc(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr MultiSearcher::doc(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         int32_t i = subSearcher(n); // find searcher index
         return searchables[i]->doc(n - starts[i], fieldSelector); // dispatch to searcher
@@ -91,7 +91,7 @@ namespace Lucene
         return _maxDoc;
     }
 
-    TopDocsPtr MultiSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n)
+    TopDocsPtr MultiSearcher::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n)
     {
         HitQueuePtr hq(newLucene<HitQueue>(n, false));
         int32_t totalHits = 0;
@@ -111,7 +111,7 @@ namespace Lucene
         return newLucene<TopDocs>(totalHits, scoreDocs, maxScore);
     }
 
-    TopFieldDocsPtr MultiSearcher::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
+    TopFieldDocsPtr MultiSearcher::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort)
     {
         FieldDocSortedHitQueuePtr hq(newLucene<FieldDocSortedHitQueue>(n));
         int32_t totalHits = 0;
@@ -132,7 +132,7 @@ namespace Lucene
         return newLucene<TopFieldDocs>(totalHits, scoreDocs, hq->getFields(), maxScore);
     }
 
-    void MultiSearcher::search(WeightPtr weight, FilterPtr filter, CollectorPtr results)
+    void MultiSearcher::search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results)
     {
         for (int32_t i = 0; i < searchables.size(); ++i)
         {
@@ -142,7 +142,7 @@ namespace Lucene
         }
     }
 
-    QueryPtr MultiSearcher::rewrite(QueryPtr query)
+    QueryPtr MultiSearcher::rewrite(const QueryPtr& query)
     {
         Collection<QueryPtr> queries(Collection<QueryPtr>::newInstance(searchables.size()));
         for (int32_t i = 0; i < searchables.size(); ++i)
@@ -150,13 +150,13 @@ namespace Lucene
         return queries[0]->combine(queries);
     }
 
-    ExplanationPtr MultiSearcher::explain(WeightPtr weight, int32_t doc)
+    ExplanationPtr MultiSearcher::explain(const WeightPtr& weight, int32_t doc)
     {
         int32_t i = subSearcher(doc); // find searcher index
         return searchables[i]->explain(weight, doc - starts[i]); // dispatch to searcher
     }
 
-    WeightPtr MultiSearcher::createWeight(QueryPtr query)
+    WeightPtr MultiSearcher::createWeight(const QueryPtr& query)
     {
         // step 1
         QueryPtr rewrittenQuery(rewrite(query));
@@ -186,7 +186,7 @@ namespace Lucene
         return rewrittenQuery->weight(cacheSim);
     }
 
-    CachedDfSource::CachedDfSource(MapTermInt dfMap, int32_t maxDoc, SimilarityPtr similarity)
+    CachedDfSource::CachedDfSource(MapTermInt dfMap, int32_t maxDoc, const SimilarityPtr& similarity)
     {
         this->dfMap = dfMap;
         this->_maxDoc = maxDoc;
@@ -197,7 +197,7 @@ namespace Lucene
     {
     }
 
-    int32_t CachedDfSource::docFreq(TermPtr term)
+    int32_t CachedDfSource::docFreq(const TermPtr& term)
     {
         MapTermInt::iterator df = dfMap.find(term);
         if (df == dfMap.end())
@@ -218,7 +218,7 @@ namespace Lucene
         return _maxDoc;
     }
 
-    QueryPtr CachedDfSource::rewrite(QueryPtr query)
+    QueryPtr CachedDfSource::rewrite(const QueryPtr& query)
     {
         // This is a bit of a hack. We know that a query which creates a Weight based on this Dummy-Searcher is
         // always already rewritten (see preparedWeight()).  Therefore we just return the unmodified query here.
@@ -236,37 +236,37 @@ namespace Lucene
         return DocumentPtr();
     }
 
-    DocumentPtr CachedDfSource::doc(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr CachedDfSource::doc(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         boost::throw_exception(UnsupportedOperationException());
         return DocumentPtr();
     }
 
-    ExplanationPtr CachedDfSource::explain(WeightPtr weight, int32_t doc)
+    ExplanationPtr CachedDfSource::explain(const WeightPtr& weight, int32_t doc)
     {
         boost::throw_exception(UnsupportedOperationException());
         return ExplanationPtr();
     }
 
-    void CachedDfSource::search(WeightPtr weight, FilterPtr filter, CollectorPtr results)
+    void CachedDfSource::search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results)
     {
         boost::throw_exception(UnsupportedOperationException());
     }
 
-    TopDocsPtr CachedDfSource::search(WeightPtr weight, FilterPtr filter, int32_t n)
+    TopDocsPtr CachedDfSource::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n)
     {
         boost::throw_exception(UnsupportedOperationException());
         return TopDocsPtr();
     }
 
-    TopFieldDocsPtr CachedDfSource::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
+    TopFieldDocsPtr CachedDfSource::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort)
     {
         boost::throw_exception(UnsupportedOperationException());
         return TopFieldDocsPtr();
     }
 
-    MultiSearcherCallableNoSort::MultiSearcherCallableNoSort(SynchronizePtr lock, SearchablePtr searchable, WeightPtr weight,
-                                                             FilterPtr filter, int32_t nDocs, HitQueuePtr hq, int32_t i,
+    MultiSearcherCallableNoSort::MultiSearcherCallableNoSort(const SynchronizePtr& lock, const SearchablePtr& searchable, const WeightPtr& weight,
+                                                             const FilterPtr& filter, int32_t nDocs, const HitQueuePtr& hq, int32_t i,
                                                              Collection<int32_t> starts)
     {
         this->lock = lock;
@@ -299,9 +299,9 @@ namespace Lucene
         return docs;
     }
 
-    MultiSearcherCallableWithSort::MultiSearcherCallableWithSort(SynchronizePtr lock, SearchablePtr searchable, WeightPtr weight,
-                                                                 FilterPtr filter, int32_t nDocs, FieldDocSortedHitQueuePtr hq,
-                                                                 SortPtr sort, int32_t i, Collection<int32_t> starts)
+    MultiSearcherCallableWithSort::MultiSearcherCallableWithSort(const SynchronizePtr& lock, const SearchablePtr& searchable, const WeightPtr& weight,
+                                                                 const FilterPtr& filter, int32_t nDocs, const FieldDocSortedHitQueuePtr& hq,
+                                                                 const SortPtr& sort, int32_t i, Collection<int32_t> starts)
     {
         this->lock = lock;
         this->searchable = searchable;
@@ -356,7 +356,7 @@ namespace Lucene
         return docs;
     }
 
-    MultiSearcherCollector::MultiSearcherCollector(CollectorPtr collector, int32_t start)
+    MultiSearcherCollector::MultiSearcherCollector(const CollectorPtr& collector, int32_t start)
     {
         this->collector = collector;
         this->start = start;
@@ -366,7 +366,7 @@ namespace Lucene
     {
     }
 
-    void MultiSearcherCollector::setScorer(ScorerPtr scorer)
+    void MultiSearcherCollector::setScorer(const ScorerPtr& scorer)
     {
         collector->setScorer(scorer);
     }
@@ -376,7 +376,7 @@ namespace Lucene
         collector->collect(doc);
     }
 
-    void MultiSearcherCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void MultiSearcherCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         collector->setNextReader(reader, start + docBase);
     }

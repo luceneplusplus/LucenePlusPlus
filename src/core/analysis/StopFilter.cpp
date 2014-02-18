@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, HashSet<String> stopWords, bool ignoreCase) : TokenFilter(input)
+    StopFilter::StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, HashSet<String> stopWords, bool ignoreCase) : TokenFilter(input)
     {
         this->stopWords = newLucene<CharArraySet>(stopWords, ignoreCase);
         this->enablePositionIncrements = enablePositionIncrements;
@@ -20,7 +20,7 @@ namespace Lucene
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
 
-    StopFilter::StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords, bool ignoreCase) : TokenFilter(input)
+    StopFilter::StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, const CharArraySetPtr& stopWords, bool ignoreCase) : TokenFilter(input)
     {
         this->stopWords = stopWords;
         this->enablePositionIncrements = enablePositionIncrements;

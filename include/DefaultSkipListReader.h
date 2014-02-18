@@ -15,7 +15,7 @@ namespace Lucene
     class DefaultSkipListReader : public MultiLevelSkipListReader
     {
     public:
-        DefaultSkipListReader(IndexInputPtr skipStream, int32_t maxSkipLevels, int32_t skipInterval);
+        DefaultSkipListReader(const IndexInputPtr& skipStream, int32_t maxSkipLevels, int32_t skipInterval);
         virtual ~DefaultSkipListReader();
 
         LUCENE_CLASS(DefaultSkipListReader);
@@ -53,7 +53,7 @@ namespace Lucene
         virtual void setLastSkipData(int32_t level);
 
         /// Subclasses must implement the actual skip data encoding in this method.
-        virtual int32_t readSkipData(int32_t level, IndexInputPtr skipStream);
+        virtual int32_t readSkipData(int32_t level, const IndexInputPtr& skipStream);
     };
 }
 

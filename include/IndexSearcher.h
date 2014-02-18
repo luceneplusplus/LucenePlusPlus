@@ -28,13 +28,13 @@ namespace Lucene
         /// documents or change norms) with the underlying IndexReader.
         /// @param path Directory where IndexReader will be opened
         /// @param readOnly If true, the underlying IndexReader will be opened readOnly
-        IndexSearcher(DirectoryPtr path, bool readOnly = true);
+        IndexSearcher(const DirectoryPtr& path, bool readOnly = true);
 
         /// Creates a searcher searching the provided index.
-        IndexSearcher(IndexReaderPtr reader);
+        IndexSearcher(const IndexReaderPtr& reader);
 
         /// Directly specify the reader, subReaders and their docID starts.
-        IndexSearcher(IndexReaderPtr reader, Collection<IndexReaderPtr> subReaders, Collection<int32_t> docStarts);
+        IndexSearcher(const IndexReaderPtr& reader, Collection<IndexReaderPtr> subReaders, Collection<int32_t> docStarts);
 
         virtual ~IndexSearcher();
 
@@ -57,20 +57,20 @@ namespace Lucene
         IndexReaderPtr getIndexReader();
 
         /// Note that the underlying IndexReader is not closed, if IndexSearcher was constructed with
-        /// IndexSearcher(IndexReaderPtr reader).  If the IndexReader was supplied implicitly by specifying a
+        /// IndexSearcher(const IndexReaderPtr& reader).  If the IndexReader was supplied implicitly by specifying a
         /// directory, then the IndexReader gets closed.
         virtual void close();
 
-        virtual int32_t docFreq(TermPtr term);
+        virtual int32_t docFreq(const TermPtr& term);
         virtual DocumentPtr doc(int32_t n);
-        virtual DocumentPtr doc(int32_t n, FieldSelectorPtr fieldSelector);
+        virtual DocumentPtr doc(int32_t n, const FieldSelectorPtr& fieldSelector);
         virtual int32_t maxDoc();
 
         using Searcher::search;
         using Searcher::explain;
 
-        virtual TopDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n);
-        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort);
+        virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n);
+        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort);
 
         /// Just like {@link #search(WeightPtr, FilterPtr, int32_t, SortPtr)}, but you choose whether or not the
         /// fields in the returned {@link FieldDoc} instances should be set by specifying fillFields.
@@ -78,11 +78,11 @@ namespace Lucene
         /// NOTE: this does not compute scores by default.  If you need scores, create a {@link TopFieldCollector}
         /// instance by calling {@link TopFieldCollector#create} and then pass that to {@link #search(WeightPtr,
         /// FilterPtr, CollectorPtr)}.
-        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort, bool fillFields);
+        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort, bool fillFields);
 
-        virtual void search(WeightPtr weight, FilterPtr filter, CollectorPtr results);
-        virtual QueryPtr rewrite(QueryPtr query);
-        virtual ExplanationPtr explain(WeightPtr weight, int32_t doc);
+        virtual void search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results);
+        virtual QueryPtr rewrite(const QueryPtr& query);
+        virtual ExplanationPtr explain(const WeightPtr& weight, int32_t doc);
 
         /// By default, no scores are computed when sorting by field (using {@link #search(QueryPtr, FilterPtr,
         /// int32_t, SortPtr)}).  You can change that, per IndexSearcher instance, by calling this method.  Note
@@ -93,9 +93,9 @@ namespace Lucene
         virtual void setDefaultFieldSortScoring(bool doTrackScores, bool doMaxScore);
 
     protected:
-        void ConstructSearcher(IndexReaderPtr reader, bool closeReader);
-        void gatherSubReaders(Collection<IndexReaderPtr> allSubReaders, IndexReaderPtr reader);
-        void searchWithFilter(IndexReaderPtr reader, WeightPtr weight, FilterPtr filter, CollectorPtr collector);
+        void ConstructSearcher(const IndexReaderPtr& reader, bool closeReader);
+        void gatherSubReaders(Collection<IndexReaderPtr> allSubReaders, const IndexReaderPtr& reader);
+        void searchWithFilter(const IndexReaderPtr& reader, const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& collector);
     };
 }
 

@@ -21,7 +21,7 @@ namespace Lucene
     class LPPAPI FileSwitchDirectory : public Directory
     {
     public:
-        FileSwitchDirectory(HashSet<String> primaryExtensions, DirectoryPtr primaryDir, DirectoryPtr secondaryDir, bool doClose);
+        FileSwitchDirectory(HashSet<String> primaryExtensions, const DirectoryPtr& primaryDir, const DirectoryPtr& secondaryDir, bool doClose);
         virtual ~FileSwitchDirectory();
 
         LUCENE_CLASS(FileSwitchDirectory);

@@ -22,7 +22,7 @@ namespace Lucene
     {
     }
 
-    Collection<InsanityPtr> FieldCacheSanityChecker::checkSanity(FieldCachePtr cache)
+    Collection<InsanityPtr> FieldCacheSanityChecker::checkSanity(const FieldCachePtr& cache)
     {
         return checkSanity(cache->getCacheEntries());
     }
@@ -178,7 +178,7 @@ namespace Lucene
         return insanity;
     }
 
-    Collection<LuceneObjectPtr> FieldCacheSanityChecker::getAllDecendentReaderKeys(LuceneObjectPtr seed)
+    Collection<LuceneObjectPtr> FieldCacheSanityChecker::getAllDecendentReaderKeys(const LuceneObjectPtr& seed)
     {
         Collection<LuceneObjectPtr> all(Collection<LuceneObjectPtr>::newInstance()); // will grow as we iter
         all.add(seed);
@@ -198,7 +198,7 @@ namespace Lucene
         return all;
     }
 
-    ReaderField::ReaderField(LuceneObjectPtr readerKey, const String& fieldName)
+    ReaderField::ReaderField(const LuceneObjectPtr& readerKey, const String& fieldName)
     {
         this->readerKey = readerKey;
         this->fieldName = fieldName;
@@ -213,7 +213,7 @@ namespace Lucene
         return readerKey->hashCode() * StringUtils::hashCode(fieldName);
     }
 
-    bool ReaderField::equals(LuceneObjectPtr other)
+    bool ReaderField::equals(const LuceneObjectPtr& other)
     {
         ReaderFieldPtr otherReaderField(boost::dynamic_pointer_cast<ReaderField>(other));
         if (!otherReaderField)

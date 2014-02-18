@@ -28,7 +28,7 @@ namespace Lucene
         /// @param parser Instance of a {@link Parser}, which must subclass one of the existing numeric parsers from
         /// {@link FieldCache}. Sort type is inferred by testing which numeric parser the parser subclasses.
         /// @param reverse True if natural order should be reversed.
-        SortField(const String& field, ParserPtr parser, bool reverse = false);
+        SortField(const String& field, const ParserPtr& parser, bool reverse = false);
 
         /// Creates a sort, possibly in reverse, by terms in the given field sorted according to the given locale.
         /// @param field  Name of field to sort by, cannot be null.
@@ -40,7 +40,7 @@ namespace Lucene
         /// @param field Name of field to sort by; cannot be null.
         /// @param comparator Returns a comparator for sorting hits.
         /// @param reverse True if natural order should be reversed.
-        SortField(const String& field, FieldComparatorSourcePtr comparator, bool reverse = false);
+        SortField(const String& field, const FieldComparatorSourcePtr& comparator, bool reverse = false);
 
         virtual ~SortField();
 
@@ -128,7 +128,7 @@ namespace Lucene
 
         /// Returns true if other is equal to this.  If a {@link FieldComparatorSource} or {@link Parser} was provided,
         /// it must properly implement equals (unless a singleton is always used).
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         virtual int32_t hashCode();
 

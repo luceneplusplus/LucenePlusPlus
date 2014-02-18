@@ -52,7 +52,7 @@ namespace Lucene
         virtual bool isOptimized() = 0;
 
         /// Two IndexCommits are equal if both their Directory and versions are equal.
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         virtual int32_t hashCode();
 

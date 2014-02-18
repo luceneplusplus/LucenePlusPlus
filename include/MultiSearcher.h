@@ -38,9 +38,9 @@ namespace Lucene
         Collection<SearchablePtr> getSearchables();
 
         virtual void close();
-        virtual int32_t docFreq(TermPtr term);
+        virtual int32_t docFreq(const TermPtr& term);
         virtual DocumentPtr doc(int32_t n);
-        virtual DocumentPtr doc(int32_t n, FieldSelectorPtr fieldSelector);
+        virtual DocumentPtr doc(int32_t n, const FieldSelectorPtr& fieldSelector);
 
         /// Returns index of the searcher for document n in the array used to construct this searcher.
         int32_t subSearcher(int32_t n);
@@ -49,11 +49,11 @@ namespace Lucene
         int32_t subDoc(int32_t n);
 
         virtual int32_t maxDoc();
-        virtual TopDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n);
-        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort);
-        virtual void search(WeightPtr weight, FilterPtr filter, CollectorPtr results);
-        virtual QueryPtr rewrite(QueryPtr query);
-        virtual ExplanationPtr explain(WeightPtr weight, int32_t doc);
+        virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n);
+        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort);
+        virtual void search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results);
+        virtual QueryPtr rewrite(const QueryPtr& query);
+        virtual ExplanationPtr explain(const WeightPtr& weight, int32_t doc);
 
     protected:
         Collection<int32_t> getStarts();
@@ -71,7 +71,7 @@ namespace Lucene
         /// Steps 1-4 are done here, 5+6 in the search() methods
         ///
         /// @return rewritten queries
-        virtual WeightPtr createWeight(QueryPtr query);
+        virtual WeightPtr createWeight(const QueryPtr& query);
     };
 }
 

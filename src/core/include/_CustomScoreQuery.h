@@ -17,7 +17,7 @@ namespace Lucene
     class DefaultCustomScoreProvider : public CustomScoreProvider
     {
     public:
-        DefaultCustomScoreProvider(CustomScoreQueryPtr customQuery, IndexReaderPtr reader);
+        DefaultCustomScoreProvider(const CustomScoreQueryPtr& customQuery, const IndexReaderPtr& reader);
         virtual ~DefaultCustomScoreProvider();
 
         LUCENE_CLASS(DefaultCustomScoreProvider);
@@ -28,14 +28,14 @@ namespace Lucene
     public:
         virtual double customScore(int32_t doc, double subQueryScore, Collection<double> valSrcScores);
         virtual double customScore(int32_t doc, double subQueryScore, double valSrcScore);
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
-        virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl);
+        virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, Collection<ExplanationPtr> valSrcExpls);
+        virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, const ExplanationPtr& valSrcExpl);
     };
 
     class CustomWeight : public Weight
     {
     public:
-        CustomWeight(CustomScoreQueryPtr query, SearcherPtr searcher);
+        CustomWeight(const CustomScoreQueryPtr& query, const SearcherPtr& searcher);
         virtual ~CustomWeight();
 
         LUCENE_CLASS(CustomWeight);
@@ -52,19 +52,19 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
         virtual bool scoresDocsOutOfOrder();
 
     protected:
-        ExplanationPtr doExplain(IndexReaderPtr reader, int32_t doc);
+        ExplanationPtr doExplain(const IndexReaderPtr& reader, int32_t doc);
     };
 
     /// A scorer that applies a (callback) function on scores of the subQuery.
     class CustomScorer : public Scorer
     {
     public:
-        CustomScorer(SimilarityPtr similarity, IndexReaderPtr reader, CustomWeightPtr weight, ScorerPtr subQueryScorer, Collection<ScorerPtr> valSrcScorers);
+        CustomScorer(const SimilarityPtr& similarity, const IndexReaderPtr& reader, const CustomWeightPtr& weight, const ScorerPtr& subQueryScorer, Collection<ScorerPtr> valSrcScorers);
         virtual ~CustomScorer();
 
         LUCENE_CLASS(CustomScorer);

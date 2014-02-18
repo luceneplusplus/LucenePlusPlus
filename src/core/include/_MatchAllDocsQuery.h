@@ -15,7 +15,7 @@ namespace Lucene
     class MatchAllDocsWeight : public Weight
     {
     public:
-        MatchAllDocsWeight(MatchAllDocsQueryPtr query, SearcherPtr searcher);
+        MatchAllDocsWeight(const MatchAllDocsQueryPtr& query, const SearcherPtr& searcher);
         virtual ~MatchAllDocsWeight();
 
         LUCENE_CLASS(MatchAllDocsWeight);
@@ -32,14 +32,14 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
     };
 
     class MatchAllScorer : public Scorer
     {
     public:
-        MatchAllScorer(MatchAllDocsQueryPtr query, IndexReaderPtr reader, SimilarityPtr similarity, WeightPtr weight, ByteArray norms);
+        MatchAllScorer(const MatchAllDocsQueryPtr& query, const IndexReaderPtr& reader, const SimilarityPtr& similarity, const WeightPtr& weight, ByteArray norms);
         virtual ~MatchAllScorer();
 
         LUCENE_CLASS(MatchAllScorer);

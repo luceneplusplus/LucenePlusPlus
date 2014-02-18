@@ -38,20 +38,20 @@ namespace Lucene
         String field;
 
     public:
-        virtual DocValuesPtr getValues(IndexReaderPtr reader);
+        virtual DocValuesPtr getValues(const IndexReaderPtr& reader);
         virtual String description();
 
         /// Return cached DocValues for input field and reader.
         /// @param cache FieldCache so that values of a field are loaded once per reader (RAM allowing)
         /// @param field Field for which values are required.
         /// @see ValueSource
-        virtual DocValuesPtr getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader) = 0;
+        virtual DocValuesPtr getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader) = 0;
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         /// Check if equals to another {@link FieldCacheSource}, already knowing that cache and field are equal.
-        virtual bool cachedFieldSourceEquals(FieldCacheSourcePtr other) = 0;
+        virtual bool cachedFieldSourceEquals(const FieldCacheSourcePtr& other) = 0;
 
         /// Return a hash code of a {@link FieldCacheSource}, without the hash-codes of the field and the cache
         /// (those are taken care of elsewhere).

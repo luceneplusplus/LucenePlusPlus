@@ -41,7 +41,7 @@ namespace Lucene
     const uint8_t SegmentMerger::NORMS_HEADER[] = {'N', 'R', 'M', static_cast<uint8_t>(-1) };
     const int32_t SegmentMerger::NORMS_HEADER_LENGTH = 4;
 
-    SegmentMerger::SegmentMerger(DirectoryPtr dir, const String& name)
+    SegmentMerger::SegmentMerger(const DirectoryPtr& dir, const String& name)
     {
         readers = Collection<IndexReaderPtr>::newInstance();
         termIndexInterval = IndexWriter::DEFAULT_TERM_INDEX_INTERVAL;
@@ -54,7 +54,7 @@ namespace Lucene
         checkAbort = newLucene<CheckAbortNull>();
     }
 
-    SegmentMerger::SegmentMerger(IndexWriterPtr writer, const String& name, OneMergePtr merge)
+    SegmentMerger::SegmentMerger(const IndexWriterPtr& writer, const String& name, const OneMergePtr& merge)
     {
         readers = Collection<IndexReaderPtr>::newInstance();
         mergedDocs = 0;
@@ -80,7 +80,7 @@ namespace Lucene
         return fieldInfos->hasProx();
     }
 
-    void SegmentMerger::add(IndexReaderPtr reader)
+    void SegmentMerger::add(const IndexReaderPtr& reader)
     {
         readers.add(reader);
     }
@@ -168,7 +168,7 @@ namespace Lucene
         return files;
     }
 
-    void SegmentMerger::addIndexed(IndexReaderPtr reader, FieldInfosPtr fInfos, HashSet<String> names,
+    void SegmentMerger::addIndexed(const IndexReaderPtr& reader, const FieldInfosPtr& fInfos, HashSet<String> names,
                                    bool storeTermVectors, bool storePositionWithTermVector,
                                    bool storeOffsetWithTermVector, bool storePayloads, bool omitTFAndPositions)
     {
@@ -308,7 +308,7 @@ namespace Lucene
         return docCount;
     }
 
-    int32_t SegmentMerger::copyFieldsWithDeletions(FieldsWriterPtr fieldsWriter, IndexReaderPtr reader, FieldsReaderPtr matchingFieldsReader)
+    int32_t SegmentMerger::copyFieldsWithDeletions(const FieldsWriterPtr& fieldsWriter, const IndexReaderPtr& reader, const FieldsReaderPtr& matchingFieldsReader)
     {
         int32_t docCount = 0;
         int32_t maxDoc = reader->maxDoc();
@@ -365,7 +365,7 @@ namespace Lucene
         return docCount;
     }
 
-    int32_t SegmentMerger::copyFieldsNoDeletions(FieldsWriterPtr fieldsWriter, IndexReaderPtr reader, FieldsReaderPtr matchingFieldsReader)
+    int32_t SegmentMerger::copyFieldsNoDeletions(const FieldsWriterPtr& fieldsWriter, const IndexReaderPtr& reader, const FieldsReaderPtr& matchingFieldsReader)
     {
         int32_t docCount = 0;
         int32_t maxDoc = reader->maxDoc();
@@ -439,7 +439,7 @@ namespace Lucene
         }
     }
 
-    void SegmentMerger::copyVectorsWithDeletions(TermVectorsWriterPtr termVectorsWriter, TermVectorsReaderPtr matchingVectorsReader, IndexReaderPtr reader)
+    void SegmentMerger::copyVectorsWithDeletions(const TermVectorsWriterPtr& termVectorsWriter, const TermVectorsReaderPtr& matchingVectorsReader, const IndexReaderPtr& reader)
     {
         int32_t maxDoc = reader->maxDoc();
         if (matchingVectorsReader)
@@ -492,7 +492,7 @@ namespace Lucene
         }
     }
 
-    void SegmentMerger::copyVectorsNoDeletions(TermVectorsWriterPtr termVectorsWriter, TermVectorsReaderPtr matchingVectorsReader, IndexReaderPtr reader)
+    void SegmentMerger::copyVectorsNoDeletions(const TermVectorsWriterPtr& termVectorsWriter, const TermVectorsReaderPtr& matchingVectorsReader, const IndexReaderPtr& reader)
     {
         int32_t maxDoc = reader->maxDoc();
         if (matchingVectorsReader)
@@ -543,7 +543,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    void SegmentMerger::mergeTermInfos(FormatPostingsFieldsConsumerPtr consumer)
+    void SegmentMerger::mergeTermInfos(const FormatPostingsFieldsConsumerPtr& consumer)
     {
         int32_t base = 0;
         int32_t readerCount = readers.size();
@@ -628,7 +628,7 @@ namespace Lucene
         return delCounts;
     }
 
-    int32_t SegmentMerger::appendPostings(FormatPostingsTermsConsumerPtr termsConsumer, Collection<SegmentMergeInfoPtr> smis, int32_t n)
+    int32_t SegmentMerger::appendPostings(const FormatPostingsTermsConsumerPtr& termsConsumer, Collection<SegmentMergeInfoPtr> smis, int32_t n)
     {
         FormatPostingsDocsConsumerPtr docConsumer(termsConsumer->addTerm(smis[0]->term->_text));
         int32_t df = 0;
@@ -733,7 +733,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    CheckAbort::CheckAbort(OneMergePtr merge, DirectoryPtr dir)
+    CheckAbort::CheckAbort(const OneMergePtr& merge, const DirectoryPtr& dir)
     {
         workCount = 0;
         this->merge = merge;

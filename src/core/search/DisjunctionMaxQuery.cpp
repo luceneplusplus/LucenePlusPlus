@@ -34,7 +34,7 @@ namespace Lucene
     {
     }
 
-    void DisjunctionMaxQuery::add(QueryPtr query)
+    void DisjunctionMaxQuery::add(const QueryPtr& query)
     {
         disjuncts.add(query);
     }
@@ -54,12 +54,12 @@ namespace Lucene
         return disjuncts.end();
     }
 
-    WeightPtr DisjunctionMaxQuery::createWeight(SearcherPtr searcher)
+    WeightPtr DisjunctionMaxQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<DisjunctionMaxWeight>(shared_from_this(), searcher);
     }
 
-    QueryPtr DisjunctionMaxQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr DisjunctionMaxQuery::rewrite(const IndexReaderPtr& reader)
     {
         int32_t numDisjunctions = disjuncts.size();
         if (numDisjunctions == 1)
@@ -89,7 +89,7 @@ namespace Lucene
         return clone ? clone : shared_from_this();
     }
 
-    LuceneObjectPtr DisjunctionMaxQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr DisjunctionMaxQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<DisjunctionMaxQuery>());
         DisjunctionMaxQueryPtr cloneQuery(boost::dynamic_pointer_cast<DisjunctionMaxQuery>(clone));
@@ -124,7 +124,7 @@ namespace Lucene
         return buffer;
     }
 
-    bool DisjunctionMaxQuery::equals(LuceneObjectPtr other)
+    bool DisjunctionMaxQuery::equals(const LuceneObjectPtr& other)
     {
         if (!Query::equals(other))
             return false;
@@ -141,7 +141,7 @@ namespace Lucene
         return MiscUtils::doubleToIntBits(getBoost()) + MiscUtils::doubleToIntBits(tieBreakerMultiplier) + MiscUtils::hashCode(disjuncts.begin(), disjuncts.end(), MiscUtils::hashLucene<QueryPtr>);
     }
 
-    DisjunctionMaxWeight::DisjunctionMaxWeight(DisjunctionMaxQueryPtr query, SearcherPtr searcher)
+    DisjunctionMaxWeight::DisjunctionMaxWeight(const DisjunctionMaxQueryPtr& query, const SearcherPtr& searcher)
     {
         this->query = query;
         this->similarity = searcher->getSimilarity();
@@ -185,7 +185,7 @@ namespace Lucene
             (*wt)->normalize(norm);
     }
 
-    ScorerPtr DisjunctionMaxWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr DisjunctionMaxWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         Collection<ScorerPtr> scorers(Collection<ScorerPtr>::newInstance(weights.size()));
         int32_t idx = 0;
@@ -201,7 +201,7 @@ namespace Lucene
         return result;
     }
 
-    ExplanationPtr DisjunctionMaxWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr DisjunctionMaxWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         if (query->disjuncts.size() == 1)
             return weights[0]->explain(reader, doc);

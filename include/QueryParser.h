@@ -74,13 +74,13 @@ namespace Lucene
         /// @param matchVersion Lucene version to match.
         /// @param field The default field for query terms.
         /// @param analyzer Used to find terms in the query text.
-        QueryParser(LuceneVersion::Version matchVersion, const String& field, AnalyzerPtr analyzer);
+        QueryParser(LuceneVersion::Version matchVersion, const String& field, const AnalyzerPtr& analyzer);
 
         /// Constructor with user supplied QueryParserCharStream.
-        QueryParser(QueryParserCharStreamPtr stream);
+        QueryParser(const QueryParserCharStreamPtr& stream);
 
         /// Constructor with generated Token Manager.
-        QueryParser(QueryParserTokenManagerPtr tokenMgr);
+        QueryParser(const QueryParserTokenManagerPtr& tokenMgr);
 
         virtual ~QueryParser();
 
@@ -245,7 +245,7 @@ namespace Lucene
         /// any "TooManyClauses" exception.  However, if your application really needs to use the old-
         /// fashioned BooleanQuery expansion rewriting and the above points are not relevant then use this
         /// to change the rewrite method.
-        void setMultiTermRewriteMethod(RewriteMethodPtr method);
+        void setMultiTermRewriteMethod(const RewriteMethodPtr& method);
 
         /// @see #setMultiTermRewriteMethod
         RewriteMethodPtr getMultiTermRewriteMethod();
@@ -277,7 +277,7 @@ namespace Lucene
         /// single index Term in the Field referenced by lowerTerm and/or upperTerm to be examined.  Depending
         /// on the number of index Terms in this Field, the operation could be very slow.
         /// @param rc The collator to use when constructing RangeQuerys
-        void setRangeCollator(CollatorPtr rc);
+        void setRangeCollator(const CollatorPtr& rc);
 
         /// @return the collator used to determine index term inclusion in ranges for RangeQuerys.
         CollatorPtr getRangeCollator();
@@ -298,10 +298,10 @@ namespace Lucene
         virtual QueryPtr ParseTerm(const String& field);
 
         /// Reinitialise.
-        virtual void ReInit(QueryParserCharStreamPtr stream);
+        virtual void ReInit(const QueryParserCharStreamPtr& stream);
 
         /// Reinitialise.
-        virtual void ReInit(QueryParserTokenManagerPtr tokenMgr);
+        virtual void ReInit(const QueryParserTokenManagerPtr& tokenMgr);
 
         /// Get the next Token.
         virtual QueryParserTokenPtr getNextToken();
@@ -320,9 +320,9 @@ namespace Lucene
 
     protected:
         /// Construct query parser with supplied QueryParserCharStream or TokenManager
-        void ConstructParser(QueryParserCharStreamPtr stream, QueryParserTokenManagerPtr tokenMgr);
+        void ConstructParser(const QueryParserCharStreamPtr& stream, const QueryParserTokenManagerPtr& tokenMgr);
 
-        virtual void addClause(Collection<BooleanClausePtr> clauses, int32_t conj, int32_t mods, QueryPtr q);
+        virtual void addClause(Collection<BooleanClausePtr> clauses, int32_t conj, int32_t mods, const QueryPtr& q);
 
         /// Use the analyzer to get all the tokens, and then build a TermQuery, PhraseQuery, or nothing
         /// based on the term count.
@@ -343,12 +343,12 @@ namespace Lucene
         /// @param q sub query
         /// @param occur how this clause should occur when matching documents
         /// @return new BooleanClause instance
-        BooleanClausePtr newBooleanClause(QueryPtr q, BooleanClause::Occur occur);
+        BooleanClausePtr newBooleanClause(const QueryPtr& q, BooleanClause::Occur occur);
 
         /// Builds a new TermQuery instance
         /// @param term term
         /// @return new TermQuery instance
-        QueryPtr newTermQuery(TermPtr term);
+        QueryPtr newTermQuery(const TermPtr& term);
 
         /// Builds a new PhraseQuery instance
         /// @return new PhraseQuery instance
@@ -361,14 +361,14 @@ namespace Lucene
         /// Builds a new PrefixQuery instance
         /// @param prefix Prefix term
         /// @return new PrefixQuery instance
-        QueryPtr newPrefixQuery(TermPtr prefix);
+        QueryPtr newPrefixQuery(const TermPtr& prefix);
 
         /// Builds a new FuzzyQuery instance
         /// @param term Term
         /// @param minimumSimilarity minimum similarity
         /// @param prefixLength prefix length
         /// @return new FuzzyQuery Instance
-        QueryPtr newFuzzyQuery(TermPtr term, double minimumSimilarity, int32_t prefixLength);
+        QueryPtr newFuzzyQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength);
 
         /// Builds a new TermRangeQuery instance
         /// @param field Field
@@ -385,7 +385,7 @@ namespace Lucene
         /// Builds a new WildcardQuery instance
         /// @param t wildcard term
         /// @return new WildcardQuery instance
-        QueryPtr newWildcardQuery(TermPtr term);
+        QueryPtr newWildcardQuery(const TermPtr& term);
 
         /// Factory method for generating query, given a set of clauses.  By default creates a boolean query
         /// composed of clauses passed in.

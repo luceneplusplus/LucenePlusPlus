@@ -15,7 +15,7 @@ namespace Lucene
     class FilteredQueryWeight : public Weight
     {
     public:
-        FilteredQueryWeight(FilteredQueryPtr query, WeightPtr weight, SimilarityPtr similarity);
+        FilteredQueryWeight(const FilteredQueryPtr& query, const WeightPtr& weight, const SimilarityPtr& similarity);
         virtual ~FilteredQueryWeight();
 
         LUCENE_CLASS(FilteredQueryWeight);
@@ -30,9 +30,9 @@ namespace Lucene
         virtual double getValue();
         virtual double sumOfSquaredWeights();
         virtual void normalize(double norm);
-        virtual ExplanationPtr explain(IndexReaderPtr reader, int32_t doc);
+        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
         virtual QueryPtr getQuery();
-        virtual ScorerPtr scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer);
+        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
 
         friend class FilteredQueryWeightScorer;
     };
@@ -40,7 +40,7 @@ namespace Lucene
     class FilteredQueryWeightScorer : public Scorer
     {
     public:
-        FilteredQueryWeightScorer(FilteredQueryWeightPtr weight, ScorerPtr scorer, DocIdSetIteratorPtr docIdSetIterator, SimilarityPtr similarity);
+        FilteredQueryWeightScorer(const FilteredQueryWeightPtr& weight, const ScorerPtr& scorer, const DocIdSetIteratorPtr& docIdSetIterator, const SimilarityPtr& similarity);
         virtual ~FilteredQueryWeightScorer();
 
         LUCENE_CLASS(FilteredQueryWeightScorer);

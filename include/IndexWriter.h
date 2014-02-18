@@ -90,14 +90,14 @@ namespace Lucene
     class LPPAPI IndexWriter : public LuceneObject
     {
     protected:
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexingChainPtr indexingChain, IndexCommitPtr commit);
+        IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl, const IndexingChainPtr& indexingChain, const IndexCommitPtr& commit);
 
     public:
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl);
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl);
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl);
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl);
-        IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexCommitPtr commit);
+        IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl);
+        IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, int32_t mfl);
+        IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl);
+        IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl);
+        IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl, const IndexCommitPtr& commit);
         virtual ~IndexWriter();
 
         LUCENE_CLASS(IndexWriter);
@@ -298,7 +298,7 @@ namespace Lucene
 
         /// Obtain the number of deleted docs for a pooled reader. If the reader isn't being pooled,
         /// the segmentInfo's delCount is returned.
-        virtual int32_t numDeletedDocs(SegmentInfoPtr info);
+        virtual int32_t numDeletedDocs(const SegmentInfoPtr& info);
 
         virtual void acquireWrite();
         virtual void releaseWrite();
@@ -331,7 +331,7 @@ namespace Lucene
         virtual void setUseCompoundFile(bool value);
 
         /// Set the Similarity implementation used by this IndexWriter.
-        virtual void setSimilarity(SimilarityPtr similarity);
+        virtual void setSimilarity(const SimilarityPtr& similarity);
 
         /// Return the Similarity implementation used by this IndexWriter.
         /// This defaults to the current value of {@link Similarity#getDefault()}.
@@ -360,14 +360,14 @@ namespace Lucene
         virtual int32_t getTermIndexInterval();
 
         /// Set the merge policy used by this writer.
-        virtual void setMergePolicy(MergePolicyPtr mp);
+        virtual void setMergePolicy(const MergePolicyPtr& mp);
 
         /// Returns the current MergePolicy in use by this writer.
         /// @see #setMergePolicy
         virtual MergePolicyPtr getMergePolicy();
 
         /// Set the merge scheduler used by this writer.
-        virtual void setMergeScheduler(MergeSchedulerPtr mergeScheduler);
+        virtual void setMergeScheduler(const MergeSchedulerPtr& mergeScheduler);
 
         /// Returns the current MergePolicy in use by this writer.
         /// @see #setMergePolicy
@@ -498,7 +498,7 @@ namespace Lucene
 
         /// If non-null, this will be the default infoStream used by a newly instantiated IndexWriter.
         /// @see #setInfoStream
-        static void setDefaultInfoStream(InfoStreamPtr infoStream);
+        static void setDefaultInfoStream(const InfoStreamPtr& infoStream);
 
         /// Returns the current default infoStream for newly instantiated IndexWriters.
         /// @see #setDefaultInfoStream
@@ -506,7 +506,7 @@ namespace Lucene
 
         /// If non-null, information about merges, deletes and a message when maxFieldLength is reached
         /// will be printed to this.
-        virtual void setInfoStream(InfoStreamPtr infoStream);
+        virtual void setInfoStream(const InfoStreamPtr& infoStream);
 
         /// Returns the current infoStream in use by this writer.
         /// @see #setInfoStream
@@ -601,7 +601,7 @@ namespace Lucene
         /// IllegalArgument exception will be thrown.
         ///
         /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
-        virtual void addDocument(DocumentPtr doc);
+        virtual void addDocument(const DocumentPtr& doc);
 
         /// Adds a document to this index, using the provided analyzer instead of the value of {@link
         /// #getAnalyzer()}.  If the document contains more than {@link #setMaxFieldLength(int32_t)} terms
@@ -611,14 +611,14 @@ namespace Lucene
         /// exception, and flushing/merging temporary free space requirements.
         ///
         /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
-        virtual void addDocument(DocumentPtr doc, AnalyzerPtr analyzer);
+        virtual void addDocument(const DocumentPtr& doc, const AnalyzerPtr& analyzer);
 
         /// Deletes the document(s) containing term.
         ///
         /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
         ///
         /// @param term the term to identify the documents to be deleted
-        virtual void deleteDocuments(TermPtr term);
+        virtual void deleteDocuments(const TermPtr& term);
 
         /// Deletes the document(s) containing any of the terms. All deletes are flushed at the same time.
         ///
@@ -632,7 +632,7 @@ namespace Lucene
         /// NOTE: if this method hits an std::bad_alloc you should immediately close the writer.
         ///
         /// @param query the query to identify the documents to be deleted
-        virtual void deleteDocuments(QueryPtr query);
+        virtual void deleteDocuments(const QueryPtr& query);
 
         /// Deletes the document(s) matching any of the provided queries.  All deletes are flushed at
         /// the same time.
@@ -650,7 +650,7 @@ namespace Lucene
         ///
         /// @param term the term to identify the document(s) to be deleted
         /// @param doc the document to be added
-        virtual void updateDocument(TermPtr term, DocumentPtr doc);
+        virtual void updateDocument(const TermPtr& term, const DocumentPtr& doc);
 
         /// Updates a document by first deleting the document(s) containing term and then adding the new
         /// document.  The delete and then add are atomic as seen by a reader on the same index (flush
@@ -661,7 +661,7 @@ namespace Lucene
         /// @param term the term to identify the document(s) to be deleted
         /// @param doc the document to be added
         /// @param analyzer the analyzer to use when analyzing the document
-        virtual void updateDocument(TermPtr term, DocumentPtr doc, AnalyzerPtr analyzer);
+        virtual void updateDocument(const TermPtr& term, const DocumentPtr& doc, const AnalyzerPtr& analyzer);
 
         virtual int32_t getSegmentCount();
         virtual int32_t getNumBufferedDocuments();
@@ -891,24 +891,24 @@ namespace Lucene
         virtual int32_t numRamDocs();
 
         /// Merges the indicated segments, replacing them in the stack with a single segment.
-        virtual void merge(OneMergePtr merge);
+        virtual void merge(const OneMergePtr& merge);
 
         /// Hook that's called when the specified merge is complete.
-        virtual void mergeSuccess(OneMergePtr merge);
+        virtual void mergeSuccess(const OneMergePtr& merge);
 
         /// Checks whether this merge involves any segments already participating in a merge.  If not, this
         /// merge is "registered", meaning we record that its segments are now participating in a merge,
         /// and true is returned.  Else (the merge conflicts) false is returned.
-        virtual bool registerMerge(OneMergePtr merge);
+        virtual bool registerMerge(const OneMergePtr& merge);
 
         /// Does initial setup for a merge, which is fast but holds the synchronized lock on IndexWriter
         /// instance.
-        virtual void mergeInit(OneMergePtr merge);
+        virtual void mergeInit(const OneMergePtr& merge);
 
         /// Does finishing for a merge, which is fast but holds the synchronized lock on IndexWriter instance.
-        virtual void mergeFinish(OneMergePtr merge);
+        virtual void mergeFinish(const OneMergePtr& merge);
 
-        virtual void addMergeException(OneMergePtr merge);
+        virtual void addMergeException(const OneMergePtr& merge);
 
         /// For test purposes.
         virtual int32_t getBufferedDeleteTermsSize();
@@ -923,15 +923,15 @@ namespace Lucene
 
         /// Returns true if the index in the named directory is currently locked.
         /// @param directory the directory to check for a lock
-        static bool isLocked(DirectoryPtr directory);
+        static bool isLocked(const DirectoryPtr& directory);
 
         /// Forcibly unlocks the index in the named directory.
         /// Caution: this should only be used by failure recovery code, when it is known that no other process
         /// nor thread is in fact currently accessing this index.
-        static void unlock(DirectoryPtr directory);
+        static void unlock(const DirectoryPtr& directory);
 
         /// Set the merged segment warmer.  See {@link IndexReaderWarmer}.
-        virtual void setMergedSegmentWarmer(IndexReaderWarmerPtr warmer);
+        virtual void setMergedSegmentWarmer(const IndexReaderWarmerPtr& warmer);
 
         /// Returns the current merged segment warmer.  See {@link IndexReaderWarmer}.
         virtual IndexReaderWarmerPtr getMergedSegmentWarmer();
@@ -951,19 +951,19 @@ namespace Lucene
         ///   startMergeInit
         virtual bool testPoint(const String& name);
 
-        virtual bool nrtIsCurrent(SegmentInfosPtr infos);
+        virtual bool nrtIsCurrent(const SegmentInfosPtr& infos);
         virtual bool isClosed();
 
     protected:
         virtual void ensureOpen(bool includePendingClose);
         virtual void ensureOpen();
-        virtual void setMessageID(InfoStreamPtr infoStream);
+        virtual void setMessageID(const InfoStreamPtr& infoStream);
 
         /// Casts current mergePolicy to LogMergePolicy, and throws an exception if the
         /// mergePolicy is not a LogMergePolicy.
         virtual LogMergePolicyPtr getLogMergePolicy();
 
-        virtual void setRollbackSegmentInfos(SegmentInfosPtr infos);
+        virtual void setRollbackSegmentInfos(const SegmentInfosPtr& infos);
 
         /// If we are flushing by doc count (not by RAM usage), and using LogDocMergePolicy then push
         /// maxBufferedDocs down as its minMergeDocs, to keep backwards compatibility.
@@ -1046,34 +1046,34 @@ namespace Lucene
         virtual bool doFlush(bool flushDocStores, bool flushDeletes);
         virtual bool doFlushInternal(bool flushDocStores, bool flushDeletes);
 
-        virtual int32_t ensureContiguousMerge(OneMergePtr merge);
+        virtual int32_t ensureContiguousMerge(const OneMergePtr& merge);
 
         /// Carefully merges deletes for the segments we just merged.  This is tricky because, although merging
         /// will clear all deletes (compacts the documents), new deletes may have been flushed to the segments
         /// since the merge was started.  This method "carries over" such new deletes onto the newly merged
         /// segment, and saves the resulting deletes file (incrementing the delete generation for merge.info).
         /// If no deletes were flushed, no new deletes file is saved.
-        virtual void commitMergedDeletes(OneMergePtr merge, SegmentReaderPtr mergeReader);
-        virtual bool commitMerge(OneMergePtr merge, SegmentMergerPtr merger, int32_t mergedDocCount, SegmentReaderPtr mergedReader);
+        virtual void commitMergedDeletes(const OneMergePtr& merge, const SegmentReaderPtr& mergeReader);
+        virtual bool commitMerge(const OneMergePtr& merge, const SegmentMergerPtr& merger, int32_t mergedDocCount, const SegmentReaderPtr& mergedReader);
 
-        virtual LuceneException handleMergeException(const LuceneException& exc, OneMergePtr merge);
+        virtual LuceneException handleMergeException(const LuceneException& exc, const OneMergePtr& merge);
 
-        virtual void _mergeInit(OneMergePtr merge);
+        virtual void _mergeInit(const OneMergePtr& merge);
 
-        virtual void setDiagnostics(SegmentInfoPtr info, const String& source);
-        virtual void setDiagnostics(SegmentInfoPtr info, const String& source, MapStringString details);
+        virtual void setDiagnostics(const SegmentInfoPtr& info, const String& source);
+        virtual void setDiagnostics(const SegmentInfoPtr& info, const String& source, MapStringString details);
 
-        virtual void setMergeDocStoreIsCompoundFile(OneMergePtr merge);
-        virtual void closeMergeReaders(OneMergePtr merge, bool suppressExceptions);
+        virtual void setMergeDocStoreIsCompoundFile(const OneMergePtr& merge);
+        virtual void closeMergeReaders(const OneMergePtr& merge, bool suppressExceptions);
 
         /// Does the actual (time-consuming) work of the merge, but without holding synchronized lock on
         /// IndexWriter instance.
-        virtual int32_t mergeMiddle(OneMergePtr merge);
+        virtual int32_t mergeMiddle(const OneMergePtr& merge);
 
         /// Apply buffered deletes to all segments.
         virtual bool applyDeletes();
 
-        virtual String segString(SegmentInfosPtr infos);
+        virtual String segString(const SegmentInfosPtr& infos);
 
         virtual bool startSync(const String& fileName, HashSet<String> pending);
         virtual void finishSync(const String& fileName, bool success);
@@ -1106,7 +1106,7 @@ namespace Lucene
         LUCENE_CLASS(IndexReaderWarmer);
 
     public:
-        virtual void warm(IndexReaderPtr reader) = 0;
+        virtual void warm(const IndexReaderPtr& reader) = 0;
     };
 }
 

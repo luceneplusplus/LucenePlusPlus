@@ -42,7 +42,7 @@ namespace Lucene
     class LPPAPI ASCIIFoldingFilter : public TokenFilter
     {
     public:
-        ASCIIFoldingFilter(TokenStreamPtr input);
+        ASCIIFoldingFilter(const TokenStreamPtr& input);
         virtual ~ASCIIFoldingFilter();
 
         LUCENE_CLASS(ASCIIFoldingFilter);

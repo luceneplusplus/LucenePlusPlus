@@ -11,15 +11,15 @@
 
 namespace Lucene
 {
-    LetterTokenizer::LetterTokenizer(ReaderPtr input) : CharTokenizer(input)
+    LetterTokenizer::LetterTokenizer(const ReaderPtr& input) : CharTokenizer(input)
     {
     }
 
-    LetterTokenizer::LetterTokenizer(AttributeSourcePtr source, ReaderPtr input) : CharTokenizer(source, input)
+    LetterTokenizer::LetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input)
     {
     }
 
-    LetterTokenizer::LetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : CharTokenizer(factory, input)
+    LetterTokenizer::LetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input)
     {
     }
 

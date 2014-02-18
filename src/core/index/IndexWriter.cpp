@@ -69,7 +69,7 @@ namespace Lucene
     /// Sets the maximum field length to {@link #DEFAULT_MAX_FIELD_LENGTH}
     const int32_t IndexWriter::MaxFieldLengthLIMITED = IndexWriter::DEFAULT_MAX_FIELD_LENGTH;
 
-    IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl)
+    IndexWriter::IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl)
     {
         this->directory = d;
         this->analyzer = a;
@@ -77,7 +77,7 @@ namespace Lucene
         this->maxFieldLength = mfl;
     }
 
-    IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, int32_t mfl)
+    IndexWriter::IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, int32_t mfl)
     {
         this->directory = d;
         this->analyzer = a;
@@ -85,7 +85,7 @@ namespace Lucene
         this->maxFieldLength = mfl;
     }
 
-    IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl)
+    IndexWriter::IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl)
     {
         this->directory = d;
         this->analyzer = a;
@@ -94,7 +94,7 @@ namespace Lucene
         this->maxFieldLength = mfl;
     }
 
-    IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl)
+    IndexWriter::IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl)
     {
         this->directory = d;
         this->analyzer = a;
@@ -103,7 +103,7 @@ namespace Lucene
         this->maxFieldLength = mfl;
     }
 
-    IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexingChainPtr indexingChain, IndexCommitPtr commit)
+    IndexWriter::IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl, const IndexingChainPtr& indexingChain, const IndexCommitPtr& commit)
     {
         this->directory = d;
         this->analyzer = a;
@@ -114,7 +114,7 @@ namespace Lucene
         this->indexCommit = commit;
     }
 
-    IndexWriter::IndexWriter(DirectoryPtr d, AnalyzerPtr a, IndexDeletionPolicyPtr deletionPolicy, int32_t mfl, IndexCommitPtr commit)
+    IndexWriter::IndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, const IndexDeletionPolicyPtr& deletionPolicy, int32_t mfl, const IndexCommitPtr& commit)
     {
         this->directory = d;
         this->analyzer = a;
@@ -319,7 +319,7 @@ namespace Lucene
         return r;
     }
 
-    int32_t IndexWriter::numDeletedDocs(SegmentInfoPtr info)
+    int32_t IndexWriter::numDeletedDocs(const SegmentInfoPtr& info)
     {
         SegmentReaderPtr reader(readerPool->getIfExists(info));
         int32_t deletedDocs = 0;
@@ -416,7 +416,7 @@ namespace Lucene
         }
     }
 
-    void IndexWriter::setMessageID(InfoStreamPtr infoStream)
+    void IndexWriter::setMessageID(const InfoStreamPtr& infoStream)
     {
         SyncLock syncLock(this);
         if (infoStream && messageID == -1)
@@ -447,7 +447,7 @@ namespace Lucene
         getLogMergePolicy()->setUseCompoundDocStore(value);
     }
 
-    void IndexWriter::setSimilarity(SimilarityPtr similarity)
+    void IndexWriter::setSimilarity(const SimilarityPtr& similarity)
     {
         ensureOpen();
         this->similarity = similarity;
@@ -473,7 +473,7 @@ namespace Lucene
         return termIndexInterval;
     }
 
-    void IndexWriter::setRollbackSegmentInfos(SegmentInfosPtr infos)
+    void IndexWriter::setRollbackSegmentInfos(const SegmentInfosPtr& infos)
     {
         SyncLock syncLock(this);
         rollbackSegmentInfos = boost::dynamic_pointer_cast<SegmentInfos>(infos->clone());
@@ -484,7 +484,7 @@ namespace Lucene
             rollbackSegments.put(rollbackSegmentInfos->info(i), i);
     }
 
-    void IndexWriter::setMergePolicy(MergePolicyPtr mp)
+    void IndexWriter::setMergePolicy(const MergePolicyPtr& mp)
     {
         ensureOpen();
         if (!mp)
@@ -504,7 +504,7 @@ namespace Lucene
         return mergePolicy;
     }
 
-    void IndexWriter::setMergeScheduler(MergeSchedulerPtr mergeScheduler)
+    void IndexWriter::setMergeScheduler(const MergeSchedulerPtr& mergeScheduler)
     {
         SyncLock syncLock(this);
         ensureOpen();
@@ -648,7 +648,7 @@ namespace Lucene
         return getLogMergePolicy()->getMergeFactor();
     }
 
-    void IndexWriter::setDefaultInfoStream(InfoStreamPtr infoStream)
+    void IndexWriter::setDefaultInfoStream(const InfoStreamPtr& infoStream)
     {
         IndexWriter::defaultInfoStream = infoStream;
     }
@@ -658,7 +658,7 @@ namespace Lucene
         return IndexWriter::defaultInfoStream;
     }
 
-    void IndexWriter::setInfoStream(InfoStreamPtr infoStream)
+    void IndexWriter::setInfoStream(const InfoStreamPtr& infoStream)
     {
         ensureOpen();
         setMessageID(infoStream);
@@ -965,12 +965,12 @@ namespace Lucene
         return false;
     }
 
-    void IndexWriter::addDocument(DocumentPtr doc)
+    void IndexWriter::addDocument(const DocumentPtr& doc)
     {
         addDocument(doc, analyzer);
     }
 
-    void IndexWriter::addDocument(DocumentPtr doc, AnalyzerPtr analyzer)
+    void IndexWriter::addDocument(const DocumentPtr& doc, const AnalyzerPtr& analyzer)
     {
         ensureOpen();
         bool doFlush = false;
@@ -1012,7 +1012,7 @@ namespace Lucene
         }
     }
 
-    void IndexWriter::deleteDocuments(TermPtr term)
+    void IndexWriter::deleteDocuments(const TermPtr& term)
     {
         ensureOpen();
         try
@@ -1042,7 +1042,7 @@ namespace Lucene
         }
     }
 
-    void IndexWriter::deleteDocuments(QueryPtr query)
+    void IndexWriter::deleteDocuments(const QueryPtr& query)
     {
         ensureOpen();
         bool doFlush = docWriter->bufferDeleteQuery(query);
@@ -1058,13 +1058,13 @@ namespace Lucene
             flush(true, false, false);
     }
 
-    void IndexWriter::updateDocument(TermPtr term, DocumentPtr doc)
+    void IndexWriter::updateDocument(const TermPtr& term, const DocumentPtr& doc)
     {
         ensureOpen();
         updateDocument(term, doc, getAnalyzer());
     }
 
-    void IndexWriter::updateDocument(TermPtr term, DocumentPtr doc, AnalyzerPtr analyzer)
+    void IndexWriter::updateDocument(const TermPtr& term, const DocumentPtr& doc, const AnalyzerPtr& analyzer)
     {
         ensureOpen();
         try
@@ -2463,7 +2463,7 @@ namespace Lucene
         return docWriter->getNumDocsInRAM();
     }
 
-    int32_t IndexWriter::ensureContiguousMerge(OneMergePtr merge)
+    int32_t IndexWriter::ensureContiguousMerge(const OneMergePtr& merge)
     {
         int32_t first = segmentInfos->find(merge->segments->info(0));
         if (first == -1)
@@ -2488,7 +2488,7 @@ namespace Lucene
         return first;
     }
 
-    void IndexWriter::commitMergedDeletes(OneMergePtr merge, SegmentReaderPtr mergeReader)
+    void IndexWriter::commitMergedDeletes(const OneMergePtr& merge, const SegmentReaderPtr& mergeReader)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(testPoint(L"startCommitMergeDeletes"));
@@ -2560,7 +2560,7 @@ namespace Lucene
         mergeReader->_hasChanges = (delCount > 0);
     }
 
-    bool IndexWriter::commitMerge(OneMergePtr merge, SegmentMergerPtr merger, int32_t mergedDocCount, SegmentReaderPtr mergedReader)
+    bool IndexWriter::commitMerge(const OneMergePtr& merge, const SegmentMergerPtr& merger, int32_t mergedDocCount, const SegmentReaderPtr& mergedReader)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(testPoint(L"startCommitMerge"));
@@ -2615,7 +2615,7 @@ namespace Lucene
         return true;
     }
 
-    LuceneException IndexWriter::handleMergeException(const LuceneException& exc, OneMergePtr merge)
+    LuceneException IndexWriter::handleMergeException(const LuceneException& exc, const OneMergePtr& merge)
     {
         if (infoStream)
             message(L"handleMergeException: merge=" + merge->segString(directory) + L" exc=" + exc.getError());
@@ -2642,7 +2642,7 @@ namespace Lucene
         return LuceneException();
     }
 
-    void IndexWriter::merge(OneMergePtr merge)
+    void IndexWriter::merge(const OneMergePtr& merge)
     {
         bool success = false;
 
@@ -2697,12 +2697,12 @@ namespace Lucene
         }
     }
 
-    void IndexWriter::mergeSuccess(OneMergePtr merge)
+    void IndexWriter::mergeSuccess(const OneMergePtr& merge)
     {
         // override
     }
 
-    bool IndexWriter::registerMerge(OneMergePtr merge)
+    bool IndexWriter::registerMerge(const OneMergePtr& merge)
     {
         SyncLock syncLock(this);
 
@@ -2753,7 +2753,7 @@ namespace Lucene
         return true;
     }
 
-    void IndexWriter::mergeInit(OneMergePtr merge)
+    void IndexWriter::mergeInit(const OneMergePtr& merge)
     {
         SyncLock syncLock(this);
         bool success = false;
@@ -2773,7 +2773,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    void IndexWriter::_mergeInit(OneMergePtr merge)
+    void IndexWriter::_mergeInit(const OneMergePtr& merge)
     {
         SyncLock syncLock(this);
         bool test = testPoint(L"startMergeInit");
@@ -2897,12 +2897,12 @@ namespace Lucene
         mergingSegments.add(merge->info);
     }
 
-    void IndexWriter::setDiagnostics(SegmentInfoPtr info, const String& source)
+    void IndexWriter::setDiagnostics(const SegmentInfoPtr& info, const String& source)
     {
         setDiagnostics(info, source, MapStringString());
     }
 
-    void IndexWriter::setDiagnostics(SegmentInfoPtr info, const String& source, MapStringString details)
+    void IndexWriter::setDiagnostics(const SegmentInfoPtr& info, const String& source, MapStringString details)
     {
         MapStringString diagnostics(MapStringString::newInstance());
         diagnostics.put(L"source", source);
@@ -2913,7 +2913,7 @@ namespace Lucene
         info->setDiagnostics(diagnostics);
     }
 
-    void IndexWriter::mergeFinish(OneMergePtr merge)
+    void IndexWriter::mergeFinish(const OneMergePtr& merge)
     {
         SyncLock syncLock(this);
         // Optimize, addIndexes or finishMerges may be waiting on merges to finish.
@@ -2934,7 +2934,7 @@ namespace Lucene
         runningMerges.remove(merge);
     }
 
-    void IndexWriter::setMergeDocStoreIsCompoundFile(OneMergePtr merge)
+    void IndexWriter::setMergeDocStoreIsCompoundFile(const OneMergePtr& merge)
     {
         SyncLock syncLock(this);
 
@@ -2955,7 +2955,7 @@ namespace Lucene
         }
     }
 
-    void IndexWriter::closeMergeReaders(OneMergePtr merge, bool suppressExceptions)
+    void IndexWriter::closeMergeReaders(const OneMergePtr& merge, bool suppressExceptions)
     {
         SyncLock syncLock(this);
 
@@ -3013,7 +3013,7 @@ namespace Lucene
         }
     }
 
-    int32_t IndexWriter::mergeMiddle(OneMergePtr merge)
+    int32_t IndexWriter::mergeMiddle(const OneMergePtr& merge)
     {
         merge->checkAborted(directory);
 
@@ -3222,7 +3222,7 @@ namespace Lucene
         return mergedDocCount;
     }
 
-    void IndexWriter::addMergeException(OneMergePtr merge)
+    void IndexWriter::addMergeException(const OneMergePtr& merge)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(!merge->getException().isNull());
@@ -3282,7 +3282,7 @@ namespace Lucene
         return segString(segmentInfos);
     }
 
-    String IndexWriter::segString(SegmentInfosPtr infos)
+    String IndexWriter::segString(const SegmentInfosPtr& infos)
     {
         SyncLock syncLock(this);
         StringStream buffer;
@@ -3581,17 +3581,17 @@ namespace Lucene
         BOOST_ASSERT(testPoint(L"finishStartCommit"));
     }
 
-    bool IndexWriter::isLocked(DirectoryPtr directory)
+    bool IndexWriter::isLocked(const DirectoryPtr& directory)
     {
         return directory->makeLock(WRITE_LOCK_NAME)->isLocked();
     }
 
-    void IndexWriter::unlock(DirectoryPtr directory)
+    void IndexWriter::unlock(const DirectoryPtr& directory)
     {
         directory->makeLock(IndexWriter::WRITE_LOCK_NAME)->release();
     }
 
-    void IndexWriter::setMergedSegmentWarmer(IndexReaderWarmerPtr warmer)
+    void IndexWriter::setMergedSegmentWarmer(const IndexReaderWarmerPtr& warmer)
     {
         mergedSegmentWarmer = warmer;
     }
@@ -3614,7 +3614,7 @@ namespace Lucene
         return true;
     }
 
-    bool IndexWriter::nrtIsCurrent(SegmentInfosPtr infos)
+    bool IndexWriter::nrtIsCurrent(const SegmentInfosPtr& infos)
     {
         SyncLock syncLock(this);
         if (!infos->equals(segmentInfos))
@@ -3637,7 +3637,7 @@ namespace Lucene
         return closed;
     }
 
-    ReaderPool::ReaderPool(IndexWriterPtr writer)
+    ReaderPool::ReaderPool(const IndexWriterPtr& writer)
     {
         readerMap = MapSegmentInfoSegmentReader::newInstance();
         _indexWriter = writer;
@@ -3647,7 +3647,7 @@ namespace Lucene
     {
     }
 
-    void ReaderPool::clear(SegmentInfosPtr infos)
+    void ReaderPool::clear(const SegmentInfosPtr& infos)
     {
         SyncLock syncLock(this);
         if (!infos)
@@ -3666,7 +3666,7 @@ namespace Lucene
         }
     }
 
-    bool ReaderPool::infoIsLive(SegmentInfoPtr info)
+    bool ReaderPool::infoIsLive(const SegmentInfoPtr& info)
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
@@ -3676,22 +3676,23 @@ namespace Lucene
         return true;
     }
 
-    SegmentInfoPtr ReaderPool::mapToLive(SegmentInfoPtr info)
+    SegmentInfoPtr ReaderPool::mapToLive(const SegmentInfoPtr& info)
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
         int32_t idx = indexWriter->segmentInfos->find(info);
+        SegmentInfoPtr _info(info);
         if (idx != -1)
-            info = indexWriter->segmentInfos->info(idx);
-        return info;
+            _info = indexWriter->segmentInfos->info(idx);
+        return _info;
     }
 
-    void ReaderPool::release(SegmentReaderPtr sr)
+    void ReaderPool::release(const SegmentReaderPtr& sr)
     {
         release(sr, false);
     }
 
-    void ReaderPool::release(SegmentReaderPtr sr, bool drop)
+    void ReaderPool::release(const SegmentReaderPtr& sr, bool drop)
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
@@ -3778,7 +3779,7 @@ namespace Lucene
         }
     }
 
-    IndexReaderPtr ReaderPool::getReadOnlyClone(SegmentInfoPtr info, bool doOpenStores, int32_t termInfosIndexDivisor)
+    IndexReaderPtr ReaderPool::getReadOnlyClone(const SegmentInfoPtr& info, bool doOpenStores, int32_t termInfosIndexDivisor)
     {
         SyncLock syncLock(this);
         SegmentReaderPtr sr(get(info, doOpenStores, BufferedIndexInput::BUFFER_SIZE, termInfosIndexDivisor));
@@ -3797,12 +3798,12 @@ namespace Lucene
         return clone;
     }
 
-    SegmentReaderPtr ReaderPool::get(SegmentInfoPtr info, bool doOpenStores)
+    SegmentReaderPtr ReaderPool::get(const SegmentInfoPtr& info, bool doOpenStores)
     {
         return get(info, doOpenStores, BufferedIndexInput::BUFFER_SIZE, IndexWriterPtr(_indexWriter)->readerTermsIndexDivisor);
     }
 
-    SegmentReaderPtr ReaderPool::get(SegmentInfoPtr info, bool doOpenStores, int32_t readBufferSize, int32_t termsIndexDivisor)
+    SegmentReaderPtr ReaderPool::get(const SegmentInfoPtr& info, bool doOpenStores, int32_t readBufferSize, int32_t termsIndexDivisor)
     {
         SyncLock syncLock(this);
         IndexWriterPtr indexWriter(_indexWriter);
@@ -3842,7 +3843,7 @@ namespace Lucene
         return sr;
     }
 
-    SegmentReaderPtr ReaderPool::getIfExists(SegmentInfoPtr info)
+    SegmentReaderPtr ReaderPool::getIfExists(const SegmentInfoPtr& info)
     {
         SyncLock syncLock(this);
         SegmentReaderPtr sr(readerMap.get(info));

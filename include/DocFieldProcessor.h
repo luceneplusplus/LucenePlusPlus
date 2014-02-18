@@ -17,7 +17,7 @@ namespace Lucene
     class DocFieldProcessor : public DocConsumer
     {
     public:
-        DocFieldProcessor(DocumentsWriterPtr docWriter, DocFieldConsumerPtr consumer);
+        DocFieldProcessor(const DocumentsWriterPtr& docWriter, const DocFieldConsumerPtr& consumer);
         virtual ~DocFieldProcessor();
 
         LUCENE_CLASS(DocFieldProcessor);
@@ -29,11 +29,11 @@ namespace Lucene
         StoredFieldsWriterPtr fieldsWriter;
 
     public:
-        virtual void closeDocStore(SegmentWriteStatePtr state);
-        virtual void flush(Collection<DocConsumerPerThreadPtr> threads, SegmentWriteStatePtr state);
+        virtual void closeDocStore(const SegmentWriteStatePtr& state);
+        virtual void flush(Collection<DocConsumerPerThreadPtr> threads, const SegmentWriteStatePtr& state);
         virtual void abort();
         virtual bool freeRAM();
-        virtual DocConsumerPerThreadPtr addThread(DocumentsWriterThreadStatePtr perThread);
+        virtual DocConsumerPerThreadPtr addThread(const DocumentsWriterThreadStatePtr& perThread);
     };
 }
 

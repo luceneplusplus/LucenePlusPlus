@@ -24,7 +24,7 @@ namespace Lucene
         /// Filter::getDocIdSet() will be called every time this query is used in a search.
         /// @param query Query to be filtered, cannot be null.
         /// @param filter Filter to apply to query results, cannot be null.
-        FilteredQuery(QueryPtr query, FilterPtr filter);
+        FilteredQuery(const QueryPtr& query, const FilterPtr& filter);
 
         virtual ~FilteredQuery();
 
@@ -39,10 +39,10 @@ namespace Lucene
 
         /// Returns a Weight that applies the filter to the enclosed query's Weight.
         /// This is accomplished by overriding the Scorer returned by the Weight.
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
         /// Rewrites the wrapped query.
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
         QueryPtr getQuery();
         FilterPtr getFilter();
@@ -52,9 +52,9 @@ namespace Lucene
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         friend class FilteredQueryWeight;
     };

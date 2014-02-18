@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         /// @param innerIter Underlying DocIdSetIterator.
-        FilteredDocIdSetIterator(DocIdSetIteratorPtr innerIter);
+        FilteredDocIdSetIterator(const DocIdSetIteratorPtr& innerIter);
         virtual ~FilteredDocIdSetIterator();
 
         LUCENE_CLASS(FilteredDocIdSetIterator);

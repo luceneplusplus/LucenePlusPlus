@@ -42,7 +42,7 @@ namespace TestDocBoost
         ScorerPtr scorer;
 
     public:
-        virtual void setScorer(ScorerPtr scorer)
+        virtual void setScorer(const ScorerPtr& scorer)
         {
             this->scorer = scorer;
         }
@@ -52,7 +52,7 @@ namespace TestDocBoost
             scores[doc + base] = scorer->score();
         }
 
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
         {
             base = docBase;
         }

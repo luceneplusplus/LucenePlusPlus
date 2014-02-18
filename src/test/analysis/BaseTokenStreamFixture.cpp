@@ -37,7 +37,7 @@ namespace Lucene
         clearCalled = true;
     }
 
-    bool CheckClearAttributesAttribute::equals(LuceneObjectPtr other)
+    bool CheckClearAttributesAttribute::equals(const LuceneObjectPtr& other)
     {
         if (Attribute::equals(other))
             return true;
@@ -54,13 +54,13 @@ namespace Lucene
         return 76137213 ^ (clearCalled ? 1231 : 1237);
     }
 
-    void CheckClearAttributesAttribute::copyTo(AttributePtr target)
+    void CheckClearAttributesAttribute::copyTo(const AttributePtr& target)
     {
         CheckClearAttributesAttributePtr clearAttribute(boost::dynamic_pointer_cast<CheckClearAttributesAttribute>(target));
         clearAttribute->clear();
     }
 
-    LuceneObjectPtr CheckClearAttributesAttribute::clone(LuceneObjectPtr other)
+    LuceneObjectPtr CheckClearAttributesAttribute::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<CheckClearAttributesAttribute>();
         CheckClearAttributesAttributePtr cloneAttribute(boost::dynamic_pointer_cast<CheckClearAttributesAttribute>(Attribute::clone(clone)));
@@ -72,7 +72,7 @@ namespace Lucene
     {
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets,
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets,
                                                           Collection<String> types, Collection<int32_t> posIncrements, int32_t finalOffset)
     {
         EXPECT_TRUE(output);
@@ -136,109 +136,109 @@ namespace Lucene
         ts->close();
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output)
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output)
     {
         checkTokenStreamContents(ts, output, Collection<int32_t>(), Collection<int32_t>(), Collection<String>(), Collection<int32_t>(), -1);
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output, Collection<String> types)
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output, Collection<String> types)
     {
         checkTokenStreamContents(ts, output, Collection<int32_t>(), Collection<int32_t>(), types, Collection<int32_t>(), -1);
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output, Collection<int32_t> posIncrements)
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output, Collection<int32_t> posIncrements)
     {
         checkTokenStreamContents(ts, output, Collection<int32_t>(), Collection<int32_t>(), Collection<String>(), posIncrements, -1);
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets)
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets)
     {
         checkTokenStreamContents(ts, output, startOffsets, endOffsets, Collection<String>(), Collection<int32_t>(), -1);
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, int32_t finalOffset)
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, int32_t finalOffset)
     {
         checkTokenStreamContents(ts, output, startOffsets, endOffsets, Collection<String>(), Collection<int32_t>(), finalOffset);
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements)
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements)
     {
         checkTokenStreamContents(ts, output, startOffsets, endOffsets, Collection<String>(), posIncrements, -1);
     }
 
-    void BaseTokenStreamFixture::checkTokenStreamContents(TokenStreamPtr ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements, int32_t finalOffset)
+    void BaseTokenStreamFixture::checkTokenStreamContents(const TokenStreamPtr& ts, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements, int32_t finalOffset)
     {
         checkTokenStreamContents(ts, output, startOffsets, endOffsets, Collection<String>(), posIncrements, finalOffset);
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesTo(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets,
+    void BaseTokenStreamFixture::checkAnalyzesTo(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets,
                                                  Collection<int32_t> endOffsets, Collection<String> types, Collection<int32_t> posIncrements)
     {
         checkTokenStreamContents(analyzer->tokenStream(L"dummy", newLucene<StringReader>(input)), output, startOffsets, endOffsets, types, posIncrements, (int32_t)input.length());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesTo(AnalyzerPtr analyzer, const String& input, Collection<String> output)
+    void BaseTokenStreamFixture::checkAnalyzesTo(const AnalyzerPtr& analyzer, const String& input, Collection<String> output)
     {
         checkAnalyzesTo(analyzer, input, output, Collection<int32_t>(), Collection<int32_t>(), Collection<String>(), Collection<int32_t>());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesTo(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<String> types)
+    void BaseTokenStreamFixture::checkAnalyzesTo(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<String> types)
     {
         checkAnalyzesTo(analyzer, input, output, Collection<int32_t>(), Collection<int32_t>(), types, Collection<int32_t>());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesTo(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> posIncrements)
+    void BaseTokenStreamFixture::checkAnalyzesTo(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> posIncrements)
     {
         checkAnalyzesTo(analyzer, input, output, Collection<int32_t>(), Collection<int32_t>(), Collection<String>(), posIncrements);
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesTo(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets)
+    void BaseTokenStreamFixture::checkAnalyzesTo(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets)
     {
         checkAnalyzesTo(analyzer, input, output, startOffsets, endOffsets, Collection<String>(), Collection<int32_t>());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesTo(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements)
+    void BaseTokenStreamFixture::checkAnalyzesTo(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements)
     {
         checkAnalyzesTo(analyzer, input, output, startOffsets, endOffsets, Collection<String>(), posIncrements);
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesToReuse(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets,
+    void BaseTokenStreamFixture::checkAnalyzesToReuse(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets,
                                                       Collection<int32_t> endOffsets, Collection<String> types, Collection<int32_t> posIncrements)
     {
         checkTokenStreamContents(analyzer->reusableTokenStream(L"dummy", newLucene<StringReader>(input)), output, startOffsets, endOffsets, types, posIncrements, (int32_t)input.length());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesToReuse(AnalyzerPtr analyzer, const String& input, Collection<String> output)
+    void BaseTokenStreamFixture::checkAnalyzesToReuse(const AnalyzerPtr& analyzer, const String& input, Collection<String> output)
     {
         checkAnalyzesToReuse(analyzer, input, output, Collection<int32_t>(), Collection<int32_t>(), Collection<String>(), Collection<int32_t>());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesToReuse(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<String> types)
+    void BaseTokenStreamFixture::checkAnalyzesToReuse(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<String> types)
     {
         checkAnalyzesToReuse(analyzer, input, output, Collection<int32_t>(), Collection<int32_t>(), types, Collection<int32_t>());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesToReuse(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> posIncrements)
+    void BaseTokenStreamFixture::checkAnalyzesToReuse(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> posIncrements)
     {
         checkAnalyzesToReuse(analyzer, input, output, Collection<int32_t>(), Collection<int32_t>(), Collection<String>(), posIncrements);
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesToReuse(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets)
+    void BaseTokenStreamFixture::checkAnalyzesToReuse(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets)
     {
         checkAnalyzesToReuse(analyzer, input, output, startOffsets, endOffsets, Collection<String>(), Collection<int32_t>());
     }
 
-    void BaseTokenStreamFixture::checkAnalyzesToReuse(AnalyzerPtr analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements)
+    void BaseTokenStreamFixture::checkAnalyzesToReuse(const AnalyzerPtr& analyzer, const String& input, Collection<String> output, Collection<int32_t> startOffsets, Collection<int32_t> endOffsets, Collection<int32_t> posIncrements)
     {
         checkAnalyzesToReuse(analyzer, input, output, startOffsets, endOffsets, Collection<String>(), posIncrements);
     }
 
-    void BaseTokenStreamFixture::checkOneTerm(AnalyzerPtr analyzer, const String& input, const String& expected)
+    void BaseTokenStreamFixture::checkOneTerm(const AnalyzerPtr& analyzer, const String& input, const String& expected)
     {
         checkAnalyzesTo(analyzer, input, newCollection<String>(expected));
     }
 
-    void BaseTokenStreamFixture::checkOneTermReuse(AnalyzerPtr analyzer, const String& input, const String& expected)
+    void BaseTokenStreamFixture::checkOneTermReuse(const AnalyzerPtr& analyzer, const String& input, const String& expected)
     {
         checkAnalyzesToReuse(analyzer, input, newCollection<String>(expected));
     }

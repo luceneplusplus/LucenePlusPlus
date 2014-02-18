@@ -18,7 +18,7 @@ namespace Lucene
     class FieldCacheRangeFilterString : public FieldCacheRangeFilter
     {
     public:
-        FieldCacheRangeFilterString(const String& field, ParserPtr parser, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper);
+        FieldCacheRangeFilterString(const String& field, const ParserPtr& parser, const String& lowerVal, const String& upperVal, bool includeLower, bool includeUpper);
         virtual ~FieldCacheRangeFilterString();
 
         LUCENE_CLASS(FieldCacheRangeFilterString);
@@ -28,17 +28,17 @@ namespace Lucene
         String upperVal;
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
 
         virtual String toString();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 
     class FieldCacheDocIdSet : public DocIdSet
     {
     public:
-        FieldCacheDocIdSet(IndexReaderPtr reader, bool mayUseTermDocs);
+        FieldCacheDocIdSet(const IndexReaderPtr& reader, bool mayUseTermDocs);
         virtual ~FieldCacheDocIdSet();
 
         LUCENE_CLASS(FieldCacheDocIdSet);
@@ -61,7 +61,7 @@ namespace Lucene
     class FieldCacheDocIdSetNumeric : public FieldCacheDocIdSet
     {
     public:
-        FieldCacheDocIdSetNumeric(IndexReaderPtr reader, bool mayUseTermDocs, Collection<TYPE> values, TYPE inclusiveLowerPoint, TYPE inclusiveUpperPoint) : FieldCacheDocIdSet(reader, mayUseTermDocs)
+        FieldCacheDocIdSetNumeric(const IndexReaderPtr& reader, bool mayUseTermDocs, Collection<TYPE> values, TYPE inclusiveLowerPoint, TYPE inclusiveUpperPoint) : FieldCacheDocIdSet(reader, mayUseTermDocs)
         {
             this->values = values;
             this->inclusiveLowerPoint = inclusiveLowerPoint;
@@ -90,7 +90,7 @@ namespace Lucene
     class FieldCacheRangeFilterNumeric : public FieldCacheRangeFilter
     {
     public:
-        FieldCacheRangeFilterNumeric(const String& field, ParserPtr parser, TYPE lowerVal, TYPE upperVal, TYPE maxVal, bool includeLower, bool includeUpper) : FieldCacheRangeFilter(field, parser, includeLower, includeUpper)
+        FieldCacheRangeFilterNumeric(const String& field, const ParserPtr& parser, TYPE lowerVal, TYPE upperVal, TYPE maxVal, bool includeLower, bool includeUpper) : FieldCacheRangeFilter(field, parser, includeLower, includeUpper)
         {
             this->lowerVal = lowerVal;
             this->upperVal = upperVal;
@@ -107,7 +107,7 @@ namespace Lucene
         TYPE maxVal;
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
         {
             if (!includeLower && lowerVal == maxVal)
                 return DocIdSet::EMPTY_DOCIDSET();
@@ -124,7 +124,7 @@ namespace Lucene
             return newLucene< FieldCacheDocIdSetNumeric<TYPE> >(reader, (inclusiveLowerPoint <= 0 && inclusiveUpperPoint >= 0), getValues(reader), inclusiveLowerPoint, inclusiveUpperPoint);
         }
 
-        virtual Collection<TYPE> getValues(IndexReaderPtr reader) = 0;
+        virtual Collection<TYPE> getValues(const IndexReaderPtr& reader) = 0;
 
         virtual String toString()
         {
@@ -135,7 +135,7 @@ namespace Lucene
             return buffer.str();
         }
 
-        virtual bool equals(LuceneObjectPtr other)
+        virtual bool equals(const LuceneObjectPtr& other)
         {
             if (Filter::equals(other))
                 return true;
@@ -166,56 +166,56 @@ namespace Lucene
     class FieldCacheRangeFilterByte : public FieldCacheRangeFilterNumeric<uint8_t>
     {
     public:
-        FieldCacheRangeFilterByte(const String& field, ParserPtr parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
+        FieldCacheRangeFilterByte(const String& field, const ParserPtr& parser, uint8_t lowerVal, uint8_t upperVal, bool includeLower, bool includeUpper);
         virtual ~FieldCacheRangeFilterByte();
 
         LUCENE_CLASS(FieldCacheRangeFilterByte);
 
     public:
-        virtual Collection<uint8_t> getValues(IndexReaderPtr reader);
+        virtual Collection<uint8_t> getValues(const IndexReaderPtr& reader);
     };
 
     class FieldCacheRangeFilterInt : public FieldCacheRangeFilterNumeric<int32_t>
     {
     public:
-        FieldCacheRangeFilterInt(const String& field, ParserPtr parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
+        FieldCacheRangeFilterInt(const String& field, const ParserPtr& parser, int32_t lowerVal, int32_t upperVal, bool includeLower, bool includeUpper);
         virtual ~FieldCacheRangeFilterInt();
 
         LUCENE_CLASS(FieldCacheRangeFilterInt);
 
     public:
-        virtual Collection<int32_t> getValues(IndexReaderPtr reader);
+        virtual Collection<int32_t> getValues(const IndexReaderPtr& reader);
     };
 
     class FieldCacheRangeFilterLong : public FieldCacheRangeFilterNumeric<int64_t>
     {
     public:
-        FieldCacheRangeFilterLong(const String& field, ParserPtr parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
+        FieldCacheRangeFilterLong(const String& field, const ParserPtr& parser, int64_t lowerVal, int64_t upperVal, bool includeLower, bool includeUpper);
         virtual ~FieldCacheRangeFilterLong();
 
         LUCENE_CLASS(FieldCacheRangeFilterLong);
 
     public:
-        virtual Collection<int64_t> getValues(IndexReaderPtr reader);
+        virtual Collection<int64_t> getValues(const IndexReaderPtr& reader);
     };
 
     class FieldCacheRangeFilterDouble : public FieldCacheRangeFilterNumeric<double>
     {
     public:
-        FieldCacheRangeFilterDouble(const String& field, ParserPtr parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
+        FieldCacheRangeFilterDouble(const String& field, const ParserPtr& parser, double lowerVal, double upperVal, bool includeLower, bool includeUpper);
         virtual ~FieldCacheRangeFilterDouble();
 
         LUCENE_CLASS(FieldCacheRangeFilterDouble);
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
-        virtual Collection<double> getValues(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+        virtual Collection<double> getValues(const IndexReaderPtr& reader);
     };
 
     class FieldCacheDocIdSetString : public FieldCacheDocIdSet
     {
     public:
-        FieldCacheDocIdSetString(IndexReaderPtr reader, bool mayUseTermDocs, StringIndexPtr fcsi, int32_t inclusiveLowerPoint, int32_t inclusiveUpperPoint);
+        FieldCacheDocIdSetString(const IndexReaderPtr& reader, bool mayUseTermDocs, const StringIndexPtr& fcsi, int32_t inclusiveLowerPoint, int32_t inclusiveUpperPoint);
         virtual ~FieldCacheDocIdSetString();
 
         LUCENE_CLASS(FieldCacheDocIdSetString);
@@ -233,7 +233,7 @@ namespace Lucene
     class FieldDocIdSetIteratorTermDocs : public DocIdSetIterator
     {
     public:
-        FieldDocIdSetIteratorTermDocs(FieldCacheDocIdSetPtr cacheDocIdSet, TermDocsPtr termDocs);
+        FieldDocIdSetIteratorTermDocs(const FieldCacheDocIdSetPtr& cacheDocIdSet, const TermDocsPtr& termDocs);
         virtual ~FieldDocIdSetIteratorTermDocs();
 
         LUCENE_CLASS(FieldDocIdSetIteratorTermDocs);
@@ -254,7 +254,7 @@ namespace Lucene
     class FieldDocIdSetIteratorIncrement : public DocIdSetIterator
     {
     public:
-        FieldDocIdSetIteratorIncrement(FieldCacheDocIdSetPtr cacheDocIdSet);
+        FieldDocIdSetIteratorIncrement(const FieldCacheDocIdSetPtr& cacheDocIdSet);
         virtual ~FieldDocIdSetIteratorIncrement();
 
         LUCENE_CLASS(FieldDocIdSetIteratorIncrement);

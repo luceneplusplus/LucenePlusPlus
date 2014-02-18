@@ -71,7 +71,7 @@ public:
         return makeQuery(L"w1", L"w2", L"w3", 1, true);
     }
 
-    String str(SpansPtr span)
+    String str(const SpansPtr& span)
     {
         return str(span->doc(), span->start(), span->end());
     }

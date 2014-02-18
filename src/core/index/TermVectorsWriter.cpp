@@ -19,7 +19,7 @@
 
 namespace Lucene
 {
-    TermVectorsWriter::TermVectorsWriter(DirectoryPtr directory, const String& segment, FieldInfosPtr fieldInfos)
+    TermVectorsWriter::TermVectorsWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fieldInfos)
     {
         utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
 
@@ -159,7 +159,7 @@ namespace Lucene
             tvd->writeVInt(0);
     }
 
-    void TermVectorsWriter::addRawDocuments(TermVectorsReaderPtr reader, Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t numDocs)
+    void TermVectorsWriter::addRawDocuments(const TermVectorsReaderPtr& reader, Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t numDocs)
     {
         int64_t tvdPosition = tvd->getFilePointer();
         int64_t tvfPosition = tvf->getFilePointer();

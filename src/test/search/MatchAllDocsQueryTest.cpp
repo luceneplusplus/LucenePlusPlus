@@ -25,7 +25,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture MatchAllDocsQueryTest;
 
-static void addDoc(const String& text, IndexWriterPtr iw, double boost)
+static void addDoc(const String& text, const IndexWriterPtr& iw, double boost)
 {
     DocumentPtr doc = newLucene<Document>();
     FieldPtr f = newLucene<Field>(L"key", text, Field::STORE_YES, Field::INDEX_ANALYZED);

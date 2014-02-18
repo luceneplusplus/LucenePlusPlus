@@ -71,7 +71,7 @@ public:
         values[slot] = docVal(doc);
     }
 
-    virtual void setNextReader(IndexReaderPtr reader, int32_t docBase)
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         idIndex = FieldCache::DEFAULT()->getStringIndex(reader, fieldname);
     }
@@ -135,7 +135,7 @@ public:
         return doc;
     }
 
-    void runTest(IndexSearcherPtr searcher, bool reversed)
+    void runTest(const IndexSearcherPtr& searcher, bool reversed)
     {
         BooleanQueryPtr newq = newLucene<BooleanQuery>(false);
         TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"title", L"ipod"));

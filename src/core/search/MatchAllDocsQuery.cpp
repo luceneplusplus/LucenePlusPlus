@@ -25,7 +25,7 @@ namespace Lucene
     {
     }
 
-    WeightPtr MatchAllDocsQuery::createWeight(SearcherPtr searcher)
+    WeightPtr MatchAllDocsQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<MatchAllDocsWeight>(shared_from_this(), searcher);
     }
@@ -41,7 +41,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool MatchAllDocsQuery::equals(LuceneObjectPtr other)
+    bool MatchAllDocsQuery::equals(const LuceneObjectPtr& other)
     {
         return Query::equals(other);
     }
@@ -51,7 +51,7 @@ namespace Lucene
         return MiscUtils::doubleToIntBits(getBoost()) ^ 0x1aa71190;
     }
 
-    LuceneObjectPtr MatchAllDocsQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr MatchAllDocsQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<MatchAllDocsQuery>();
         MatchAllDocsQueryPtr cloneQuery(boost::dynamic_pointer_cast<MatchAllDocsQuery>(Query::clone(clone)));
@@ -59,7 +59,7 @@ namespace Lucene
         return cloneQuery;
     }
 
-    MatchAllDocsWeight::MatchAllDocsWeight(MatchAllDocsQueryPtr query, SearcherPtr searcher)
+    MatchAllDocsWeight::MatchAllDocsWeight(const MatchAllDocsQueryPtr& query, const SearcherPtr& searcher)
     {
         this->query = query;
         this->similarity = searcher->getSimilarity();
@@ -100,12 +100,12 @@ namespace Lucene
         queryWeight *= this->queryNorm;
     }
 
-    ScorerPtr MatchAllDocsWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr MatchAllDocsWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         return newLucene<MatchAllScorer>(query, reader, similarity, shared_from_this(), !query->normsField.empty() ? reader->norms(query->normsField) : ByteArray());
     }
 
-    ExplanationPtr MatchAllDocsWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr MatchAllDocsWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         // explain query weight
         ExplanationPtr queryExpl(newLucene<ComplexExplanation>(true, getValue(), L"MatchAllDocsQuery, product of:"));
@@ -115,7 +115,7 @@ namespace Lucene
         return queryExpl;
     }
 
-    MatchAllScorer::MatchAllScorer(MatchAllDocsQueryPtr query, IndexReaderPtr reader, SimilarityPtr similarity, WeightPtr weight, ByteArray norms) : Scorer(similarity)
+    MatchAllScorer::MatchAllScorer(const MatchAllDocsQueryPtr& query, const IndexReaderPtr& reader, const SimilarityPtr& similarity, const WeightPtr& weight, ByteArray norms) : Scorer(similarity)
     {
         this->query = query;
         this->termDocs = reader->termDocs(TermPtr());

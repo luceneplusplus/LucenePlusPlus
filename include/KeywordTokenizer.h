@@ -15,10 +15,10 @@ namespace Lucene
     class LPPAPI KeywordTokenizer : public Tokenizer
     {
     public:
-        KeywordTokenizer(ReaderPtr input);
-        KeywordTokenizer(ReaderPtr input, int32_t bufferSize);
-        KeywordTokenizer(AttributeSourcePtr source, ReaderPtr input, int32_t bufferSize);
-        KeywordTokenizer(AttributeFactoryPtr factory, ReaderPtr input, int32_t bufferSize);
+        KeywordTokenizer(const ReaderPtr& input);
+        KeywordTokenizer(const ReaderPtr& input, int32_t bufferSize);
+        KeywordTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input, int32_t bufferSize);
+        KeywordTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input, int32_t bufferSize);
 
         virtual ~KeywordTokenizer();
 

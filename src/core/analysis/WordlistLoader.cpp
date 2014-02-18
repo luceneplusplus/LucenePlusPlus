@@ -36,7 +36,7 @@ namespace Lucene
         return result;
     }
 
-    HashSet<String> WordlistLoader::getWordSet(ReaderPtr reader, const String& comment)
+    HashSet<String> WordlistLoader::getWordSet(const ReaderPtr& reader, const String& comment)
     {
         HashSet<String> result(HashSet<String>::newInstance());
         LuceneException finally;

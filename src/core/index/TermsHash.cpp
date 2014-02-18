@@ -18,7 +18,7 @@
 
 namespace Lucene
 {
-    TermsHash::TermsHash(DocumentsWriterPtr docWriter, bool trackAllocations, TermsHashConsumerPtr consumer, TermsHashPtr nextTermsHash)
+    TermsHash::TermsHash(const DocumentsWriterPtr& docWriter, bool trackAllocations, const TermsHashConsumerPtr& consumer, const TermsHashPtr& nextTermsHash)
     {
         this->postingsFreeCount = 0;
         this->postingsAllocCount = 0;
@@ -38,17 +38,17 @@ namespace Lucene
     {
     }
 
-    InvertedDocConsumerPerThreadPtr TermsHash::addThread(DocInverterPerThreadPtr docInverterPerThread)
+    InvertedDocConsumerPerThreadPtr TermsHash::addThread(const DocInverterPerThreadPtr& docInverterPerThread)
     {
         return newLucene<TermsHashPerThread>(docInverterPerThread, shared_from_this(), nextTermsHash, TermsHashPerThreadPtr());
     }
 
-    TermsHashPerThreadPtr TermsHash::addThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPerThreadPtr primaryPerThread)
+    TermsHashPerThreadPtr TermsHash::addThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPerThreadPtr& primaryPerThread)
     {
         return newLucene<TermsHashPerThread>(docInverterPerThread, shared_from_this(), nextTermsHash, primaryPerThread);
     }
 
-    void TermsHash::setFieldInfos(FieldInfosPtr fieldInfos)
+    void TermsHash::setFieldInfos(const FieldInfosPtr& fieldInfos)
     {
         this->fieldInfos = fieldInfos;
         consumer->setFieldInfos(fieldInfos);
@@ -61,7 +61,7 @@ namespace Lucene
             nextTermsHash->abort();
     }
 
-    void TermsHash::shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
+    void TermsHash::shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
     {
         BOOST_ASSERT(postingsFreeCount == postingsAllocCount);
 
@@ -79,7 +79,7 @@ namespace Lucene
         }
     }
 
-    void TermsHash::closeDocStore(SegmentWriteStatePtr state)
+    void TermsHash::closeDocStore(const SegmentWriteStatePtr& state)
     {
         SyncLock syncLock(this);
         consumer->closeDocStore(state);
@@ -87,7 +87,7 @@ namespace Lucene
             nextTermsHash->closeDocStore(state);
     }
 
-    void TermsHash::flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
+    void TermsHash::flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
     {
         SyncLock syncLock(this);
         MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField childThreadsAndFields(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField::newInstance());

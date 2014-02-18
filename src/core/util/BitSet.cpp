@@ -161,7 +161,7 @@ namespace Lucene
         return next == bitset_type::npos ? -1 : next;
     }
 
-    void BitSet::_and(BitSetPtr set)
+    void BitSet::_and(const BitSetPtr& set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         for (bitset_type::size_type i = 0; i < minBlocks; ++i)
@@ -170,7 +170,7 @@ namespace Lucene
             std::fill(bitSet.m_bits.begin() + minBlocks, bitSet.m_bits.end(), bitset_type::block_type(0));
     }
 
-    void BitSet::_or(BitSetPtr set)
+    void BitSet::_or(const BitSetPtr& set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         if (set->bitSet.size() > bitSet.size())
@@ -181,7 +181,7 @@ namespace Lucene
             std::copy(set->bitSet.m_bits.begin() + minBlocks, set->bitSet.m_bits.end(), bitSet.m_bits.begin() + minBlocks);
     }
 
-    void BitSet::_xor(BitSetPtr set)
+    void BitSet::_xor(const BitSetPtr& set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         if (set->bitSet.size() > bitSet.size())
@@ -192,14 +192,14 @@ namespace Lucene
             std::copy(set->bitSet.m_bits.begin() + minBlocks, set->bitSet.m_bits.end(), bitSet.m_bits.begin() + minBlocks);
     }
 
-    void BitSet::andNot(BitSetPtr set)
+    void BitSet::andNot(const BitSetPtr& set)
     {
         bitset_type::size_type minBlocks = std::min(bitSet.num_blocks(), set->bitSet.num_blocks());
         for (bitset_type::size_type i = 0; i < minBlocks; ++i)
             bitSet.m_bits[i] &= ~set->bitSet.m_bits[i];
     }
 
-    bool BitSet::intersectsBitSet(BitSetPtr set) const
+    bool BitSet::intersectsBitSet(const BitSetPtr& set) const
     {
         return bitSet.intersects(set->bitSet);
     }
@@ -221,7 +221,7 @@ namespace Lucene
             bitSet.m_bits.back() &= ~(~static_cast<bitset_type::block_type>(0) << extra_bits);
     }
 
-    bool BitSet::equals(LuceneObjectPtr other)
+    bool BitSet::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;
@@ -262,7 +262,7 @@ namespace Lucene
         return (int32_t)((hash >> 32) ^ hash) + 0x98761234;
     }
 
-    LuceneObjectPtr BitSet::clone(LuceneObjectPtr other)
+    LuceneObjectPtr BitSet::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<BitSet>();
         BitSetPtr cloneBitSet(boost::dynamic_pointer_cast<BitSet>(LuceneObject::clone(clone)));

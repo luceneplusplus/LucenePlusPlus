@@ -74,7 +74,7 @@ namespace Lucene
         Sort();
 
         /// Sorts by the criteria in the given SortField.
-        Sort(SortFieldPtr field);
+        Sort(const SortFieldPtr& field);
 
         /// Sorts in succession by the criteria in each SortField.
         Sort(Collection<SortFieldPtr> fields);
@@ -97,7 +97,7 @@ namespace Lucene
         static SortPtr INDEXORDER();
 
         /// Sets the sort to the given criteria.
-        void setSort(SortFieldPtr field);
+        void setSort(const SortFieldPtr& field);
 
         /// Sets the sort to the given criteria in succession.
         void setSort(Collection<SortFieldPtr> fields);
@@ -107,7 +107,7 @@ namespace Lucene
         Collection<SortFieldPtr> getSort();
 
         virtual String toString();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
     };
 }

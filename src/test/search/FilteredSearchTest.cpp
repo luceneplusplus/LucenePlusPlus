@@ -45,7 +45,7 @@ protected:
     int32_t index;
 
 public:
-    virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
     {
         OpenBitSetPtr set = newLucene<OpenBitSet>();
         int32_t limit = docBase + reader->maxDoc();
@@ -69,7 +69,7 @@ public:
 
 static const String FIELD = L"category";
 
-static void searchFiltered(IndexWriterPtr writer, DirectoryPtr directory, FilterPtr filter, bool optimize)
+static void searchFiltered(const IndexWriterPtr& writer, const DirectoryPtr& directory, const FilterPtr& filter, bool optimize)
 {
     for (int32_t i = 0; i < 60; ++i)
     {

@@ -14,7 +14,7 @@ namespace Lucene
     class TermsHashPerThread : public InvertedDocConsumerPerThread
     {
     public:
-        TermsHashPerThread(DocInverterPerThreadPtr docInverterPerThread, TermsHashPtr termsHash, TermsHashPtr nextTermsHash, TermsHashPerThreadPtr primaryPerThread);
+        TermsHashPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPtr& termsHash, const TermsHashPtr& nextTermsHash, const TermsHashPerThreadPtr& primaryPerThread);
         virtual ~TermsHashPerThread();
 
         LUCENE_CLASS(TermsHashPerThread);
@@ -39,7 +39,7 @@ namespace Lucene
     public:
         virtual void initialize();
 
-        virtual InvertedDocConsumerPerFieldPtr addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo);
+        virtual InvertedDocConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo);
         virtual void abort();
 
         /// perField calls this when it needs more postings

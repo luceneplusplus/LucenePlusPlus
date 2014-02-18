@@ -98,7 +98,7 @@ public:
         return d;
     }
 
-    void verifyIndex(DirectoryPtr dir)
+    void verifyIndex(const DirectoryPtr& dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         for (int32_t i = 0; i < NUM_FIELDS; ++i)
@@ -116,7 +116,7 @@ public:
         }
     }
 
-    void addDocs(DirectoryPtr dir, int32_t ndocs, bool compound)
+    void addDocs(const DirectoryPtr& dir, int32_t ndocs, bool compound)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);
@@ -128,7 +128,7 @@ public:
         iw->close();
     }
 
-    void modifyNormsForF1(DirectoryPtr dir)
+    void modifyNormsForF1(const DirectoryPtr& dir)
     {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         int32_t n = ir->maxDoc();
@@ -145,7 +145,7 @@ public:
         ir->close();
     }
 
-    void doTestNorms(DirectoryPtr dir)
+    void doTestNorms(const DirectoryPtr& dir)
     {
         for (int32_t i = 0; i < 5; ++i)
         {
@@ -160,7 +160,7 @@ public:
         }
     }
 
-    void createIndex(DirectoryPtr dir)
+    void createIndex(const DirectoryPtr& dir)
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);

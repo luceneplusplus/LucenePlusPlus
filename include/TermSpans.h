@@ -15,7 +15,7 @@ namespace Lucene
     class LPPAPI TermSpans : public Spans
     {
     public:
-        TermSpans(TermPositionsPtr positions, TermPtr term);
+        TermSpans(const TermPositionsPtr& positions, const TermPtr& term);
         virtual ~TermSpans();
 
         LUCENE_CLASS(TermSpans);

@@ -16,7 +16,7 @@ namespace Lucene
     class DocFieldConsumers : public DocFieldConsumer
     {
     public:
-        DocFieldConsumers(DocFieldConsumerPtr one, DocFieldConsumerPtr two);
+        DocFieldConsumers(const DocFieldConsumerPtr& one, const DocFieldConsumerPtr& two);
         virtual ~DocFieldConsumers();
 
         LUCENE_CLASS(DocFieldConsumers);
@@ -30,28 +30,28 @@ namespace Lucene
         int32_t allocCount;
 
     public:
-        virtual void setFieldInfos(FieldInfosPtr fieldInfos);
+        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
         /// Called when DocumentsWriter decides to create a new segment
-        virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, SegmentWriteStatePtr state);
+        virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
         /// Called when DocumentsWriter decides to close the doc stores
-        virtual void closeDocStore(SegmentWriteStatePtr state);
+        virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
         /// Called when DocumentsWriter is using too much RAM.
         virtual bool freeRAM();
 
         /// Add a new thread
-        virtual DocFieldConsumerPerThreadPtr addThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread);
+        virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread);
 
         DocFieldConsumersPerDocPtr getPerDoc();
-        void freePerDoc(DocFieldConsumersPerDocPtr perDoc);
+        void freePerDoc(const DocFieldConsumersPerDocPtr& perDoc);
     };
 
     class DocFieldConsumersPerDoc : public DocWriter
     {
     public:
-        DocFieldConsumersPerDoc(DocFieldConsumersPtr fieldConsumers);
+        DocFieldConsumersPerDoc(const DocFieldConsumersPtr& fieldConsumers);
         virtual ~DocFieldConsumersPerDoc();
 
         LUCENE_CLASS(DocFieldConsumersPerDoc);

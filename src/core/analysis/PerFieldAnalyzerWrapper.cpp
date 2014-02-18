@@ -10,13 +10,13 @@
 
 namespace Lucene
 {
-    PerFieldAnalyzerWrapper::PerFieldAnalyzerWrapper(AnalyzerPtr defaultAnalyzer)
+    PerFieldAnalyzerWrapper::PerFieldAnalyzerWrapper(const AnalyzerPtr& defaultAnalyzer)
     {
         this->defaultAnalyzer = defaultAnalyzer;
         this->analyzerMap = MapStringAnalyzer::newInstance();
     }
 
-    PerFieldAnalyzerWrapper::PerFieldAnalyzerWrapper(AnalyzerPtr defaultAnalyzer, MapStringAnalyzer fieldAnalyzers)
+    PerFieldAnalyzerWrapper::PerFieldAnalyzerWrapper(const AnalyzerPtr& defaultAnalyzer, MapStringAnalyzer fieldAnalyzers)
     {
         this->defaultAnalyzer = defaultAnalyzer;
         this->analyzerMap = MapStringAnalyzer::newInstance();
@@ -28,12 +28,12 @@ namespace Lucene
     {
     }
 
-    void PerFieldAnalyzerWrapper::addAnalyzer(const String& fieldName, AnalyzerPtr analyzer)
+    void PerFieldAnalyzerWrapper::addAnalyzer(const String& fieldName, const AnalyzerPtr& analyzer)
     {
         analyzerMap.put(fieldName, analyzer);
     }
 
-    TokenStreamPtr PerFieldAnalyzerWrapper::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr PerFieldAnalyzerWrapper::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         AnalyzerPtr analyzer(analyzerMap.get(fieldName));
         if (!analyzer)
@@ -41,7 +41,7 @@ namespace Lucene
         return analyzer->tokenStream(fieldName, reader);
     }
 
-    TokenStreamPtr PerFieldAnalyzerWrapper::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr PerFieldAnalyzerWrapper::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         AnalyzerPtr analyzer(analyzerMap.get(fieldName));
         if (!analyzer)
@@ -57,7 +57,7 @@ namespace Lucene
         return analyzer->getPositionIncrementGap(fieldName);
     }
 
-    int32_t PerFieldAnalyzerWrapper::getOffsetGap(FieldablePtr field)
+    int32_t PerFieldAnalyzerWrapper::getOffsetGap(const FieldablePtr& field)
     {
         AnalyzerPtr analyzer(analyzerMap.get(field->name()));
         if (!analyzer)

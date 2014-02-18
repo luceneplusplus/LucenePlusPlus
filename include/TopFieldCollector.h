@@ -17,7 +17,7 @@ namespace Lucene
     class LPPAPI TopFieldCollector : public TopDocsCollector
     {
     public:
-        TopFieldCollector(HitQueueBasePtr pq, int32_t numHits, bool fillFields);
+        TopFieldCollector(const HitQueueBasePtr& pq, int32_t numHits, bool fillFields);
         virtual ~TopFieldCollector();
 
         LUCENE_CLASS(TopFieldCollector);
@@ -53,7 +53,7 @@ namespace Lucene
         /// @param docsScoredInOrder Specifies whether documents are scored in doc Id order or not by the given
         /// {@link Scorer} in {@link #setScorer(ScorerPtr)}.
         /// @return a {@link TopFieldCollector} instance which will sort the results by the sort criteria.
-        static TopFieldCollectorPtr create(SortPtr sort, int32_t numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder);
+        static TopFieldCollectorPtr create(const SortPtr& sort, int32_t numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder);
 
         virtual void add(int32_t slot, int32_t doc, double score);
 

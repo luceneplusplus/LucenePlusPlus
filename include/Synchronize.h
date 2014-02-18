@@ -45,7 +45,7 @@ namespace Lucene
     class LPPAPI SyncLock
     {
     public:
-        SyncLock(SynchronizePtr sync, int32_t timeout = 0);
+        SyncLock(const SynchronizePtr& sync, int32_t timeout = 0);
 
         template <class OBJECT>
         SyncLock(OBJECT object, int32_t timeout = 0)

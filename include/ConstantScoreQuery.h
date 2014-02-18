@@ -18,7 +18,7 @@ namespace Lucene
     class LPPAPI ConstantScoreQuery : public Query
     {
     public:
-        ConstantScoreQuery(FilterPtr filter);
+        ConstantScoreQuery(const FilterPtr& filter);
         virtual ~ConstantScoreQuery();
 
         LUCENE_CLASS(ConstantScoreQuery);
@@ -32,17 +32,17 @@ namespace Lucene
         /// Returns the encapsulated filter
         FilterPtr getFilter();
 
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
         virtual void extractTerms(SetTerm terms);
 
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         friend class ConstantWeight;
         friend class ConstantScorer;

@@ -11,13 +11,13 @@
 
 namespace Lucene
 {
-    BrazilianStemFilter::BrazilianStemFilter(TokenStreamPtr input) : TokenFilter(input)
+    BrazilianStemFilter::BrazilianStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         stemmer = newLucene<BrazilianStemmer>();
         termAtt = addAttribute<TermAttribute>();
     }
 
-    BrazilianStemFilter::BrazilianStemFilter(TokenStreamPtr input, HashSet<String> exclusiontable) : TokenFilter(input)
+    BrazilianStemFilter::BrazilianStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable) : TokenFilter(input)
     {
         stemmer = newLucene<BrazilianStemmer>();
         termAtt = addAttribute<TermAttribute>();

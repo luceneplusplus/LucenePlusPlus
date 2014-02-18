@@ -32,8 +32,8 @@ namespace Lucene
         /// @param includeUpper If true, the upperTerm is included in the range.
         /// @param collator The collator to use to collate index Terms, to determine their membership in the range
         /// bounded by lowerTerm and upperTerm.
-        TermRangeTermEnum(IndexReaderPtr reader, const String& field, StringValue lowerTermText, StringValue upperTermText,
-                          bool includeLower, bool includeUpper, CollatorPtr collator);
+        TermRangeTermEnum(const IndexReaderPtr& reader, const String& field, StringValue lowerTermText, StringValue upperTermText,
+                          bool includeLower, bool includeUpper, const CollatorPtr& collator);
 
         virtual ~TermRangeTermEnum();
 
@@ -53,7 +53,7 @@ namespace Lucene
 
     protected:
         virtual bool endEnum();
-        virtual bool termCompare(TermPtr term);
+        virtual bool termCompare(const TermPtr& term);
     };
 }
 

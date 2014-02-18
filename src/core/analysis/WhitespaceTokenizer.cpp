@@ -11,15 +11,15 @@
 
 namespace Lucene
 {
-    WhitespaceTokenizer::WhitespaceTokenizer(ReaderPtr input) : CharTokenizer(input)
+    WhitespaceTokenizer::WhitespaceTokenizer(const ReaderPtr& input) : CharTokenizer(input)
     {
     }
 
-    WhitespaceTokenizer::WhitespaceTokenizer(AttributeSourcePtr source, ReaderPtr input) : CharTokenizer(source, input)
+    WhitespaceTokenizer::WhitespaceTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input)
     {
     }
 
-    WhitespaceTokenizer::WhitespaceTokenizer(AttributeFactoryPtr factory, ReaderPtr input) : CharTokenizer(factory, input)
+    WhitespaceTokenizer::WhitespaceTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input)
     {
     }
 

@@ -25,7 +25,7 @@ using namespace Lucene;
 class CustomAddScoreProvider : public CustomScoreProvider
 {
 public:
-    CustomAddScoreProvider(IndexReaderPtr reader) : CustomScoreProvider(reader)
+    CustomAddScoreProvider(const IndexReaderPtr& reader) : CustomScoreProvider(reader)
     {
     }
 
@@ -39,7 +39,7 @@ public:
         return subQueryScore + valSrcScore;
     }
 
-    virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
+    virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, const ExplanationPtr& valSrcExpl)
     {
         double valSrcScore = valSrcExpl ? valSrcExpl->getValue() : 0.0;
         ExplanationPtr exp = newLucene<Explanation>(valSrcScore + subQueryExpl->getValue(), L"custom score: sum of:");
@@ -53,7 +53,7 @@ public:
 class CustomAddQuery : public CustomScoreQuery
 {
 public:
-    CustomAddQuery(QueryPtr q, ValueSourceQueryPtr qValSrc) : CustomScoreQuery(q, qValSrc)
+    CustomAddQuery(const QueryPtr& q, const ValueSourceQueryPtr& qValSrc) : CustomScoreQuery(q, qValSrc)
     {
     }
 
@@ -68,7 +68,7 @@ public:
     }
 
 protected:
-    virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader)
+    virtual CustomScoreProviderPtr getCustomScoreProvider(const IndexReaderPtr& reader)
     {
         return newLucene<CustomAddScoreProvider>(reader);
     }
@@ -77,7 +77,7 @@ protected:
 class CustomMulAddScoreProvider : public CustomScoreProvider
 {
 public:
-    CustomMulAddScoreProvider(IndexReaderPtr reader) : CustomScoreProvider(reader)
+    CustomMulAddScoreProvider(const IndexReaderPtr& reader) : CustomScoreProvider(reader)
     {
     }
 
@@ -96,7 +96,7 @@ public:
         return (subQueryScore + valSrcScores[0]) * valSrcScores[1]; // we know there are two
     }
 
-    virtual ExplanationPtr customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
+    virtual ExplanationPtr customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
     {
         if (valSrcExpls.empty())
             return subQueryExpl;
@@ -118,7 +118,7 @@ public:
 class CustomMulAddQuery : public CustomScoreQuery
 {
 public:
-    CustomMulAddQuery(QueryPtr q, ValueSourceQueryPtr qValSrc1, ValueSourceQueryPtr qValSrc2) : CustomScoreQuery(q, newCollection<ValueSourceQueryPtr>(qValSrc1, qValSrc2))
+    CustomMulAddQuery(const QueryPtr& q, const ValueSourceQueryPtr& qValSrc1, const ValueSourceQueryPtr& qValSrc2) : CustomScoreQuery(q, newCollection<ValueSourceQueryPtr>(qValSrc1, qValSrc2))
     {
     }
 
@@ -133,7 +133,7 @@ public:
     }
 
 protected:
-    virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader)
+    virtual CustomScoreProviderPtr getCustomScoreProvider(const IndexReaderPtr& reader)
     {
         return newLucene<CustomMulAddScoreProvider>(reader);
     }
@@ -142,7 +142,7 @@ protected:
 class CustomExternalScoreProvider : public CustomScoreProvider
 {
 public:
-    CustomExternalScoreProvider(IndexReaderPtr reader, Collection<int32_t> values) : CustomScoreProvider(reader)
+    CustomExternalScoreProvider(const IndexReaderPtr& reader, Collection<int32_t> values) : CustomScoreProvider(reader)
     {
         this->values = values;
     }
@@ -165,7 +165,7 @@ public:
 class CustomExternalQuery : public CustomScoreQuery
 {
 public:
-    CustomExternalQuery(QueryPtr q) : CustomScoreQuery(q)
+    CustomExternalQuery(const QueryPtr& q) : CustomScoreQuery(q)
     {
     }
 
@@ -174,7 +174,7 @@ public:
     }
 
 protected:
-    virtual CustomScoreProviderPtr getCustomScoreProvider(IndexReaderPtr reader)
+    virtual CustomScoreProviderPtr getCustomScoreProvider(const IndexReaderPtr& reader)
     {
         Collection<int32_t> values = FieldCache::DEFAULT()->getInts(reader, FunctionFixture::INT_FIELD);
         return newLucene<CustomExternalScoreProvider>(reader, values);
@@ -194,7 +194,7 @@ public:
 
 public:
     /// since custom scoring modifies the order of docs, map results by doc ids so that we can later compare/verify them
-    MapIntDouble topDocsToMap(TopDocsPtr td)
+    MapIntDouble topDocsToMap(const TopDocsPtr& td)
     {
         MapIntDouble h = MapIntDouble::newInstance();
         for (int32_t i = 0; i < td->totalHits; ++i)

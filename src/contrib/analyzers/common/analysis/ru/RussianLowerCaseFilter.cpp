@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    RussianLowerCaseFilter::RussianLowerCaseFilter(TokenStreamPtr input) : TokenFilter(input)
+    RussianLowerCaseFilter::RussianLowerCaseFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         termAtt = addAttribute<TermAttribute>();
     }

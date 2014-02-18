@@ -71,7 +71,7 @@ namespace HighlighterTestNS
         HighlighterTest* fixture;
 
     public:
-        virtual String highlightTerm(const String& originalText, TokenGroupPtr tokenGroup);
+        virtual String highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup);
     };
 }
 
@@ -150,7 +150,7 @@ public:
     static const String NUMERIC_FIELD_NAME;
 
 public:
-    void addDoc(IndexWriterPtr writer, const String& text)
+    void addDoc(const IndexWriterPtr& writer, const String& text)
     {
         DocumentPtr doc = newLucene<Document>();
         FieldPtr field = newLucene<Field>(FIELD_NAME, text, Field::STORE_YES, Field::INDEX_ANALYZED);
@@ -158,7 +158,7 @@ public:
         writer->addDocument(doc);
     }
 
-    String highlightField(QueryPtr query, const String& fieldName, const String& text)
+    String highlightField(const QueryPtr& query, const String& fieldName, const String& text)
     {
         TokenStreamPtr tokenStream = newLucene<StandardAnalyzer>(TEST_VERSION)->tokenStream(fieldName, newLucene<StringReader>(text));
         // Assuming "<B>", "</B>" used to highlight
@@ -180,7 +180,7 @@ public:
         doSearching(query);
     }
 
-    void doSearching(QueryPtr unReWrittenQuery)
+    void doSearching(const QueryPtr& unReWrittenQuery)
     {
         searcher = newLucene<IndexSearcher>(ramDir, true);
         // for any multi-term queries to work (prefix, wildcard, range,fuzzy etc) you must use a rewritten query
@@ -272,7 +272,7 @@ namespace HighlighterTestNS
     {
     }
 
-    String TestFormatter::highlightTerm(const String& originalText, TokenGroupPtr tokenGroup)
+    String TestFormatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup)
     {
         if (tokenGroup->getTotalScore() <= 0)
             return originalText;
@@ -309,12 +309,12 @@ namespace HighlighterTestNS
         FragmenterPtr frag;
 
     public:
-        virtual HighlighterPtr getHighlighter(QueryPtr query, const String& fieldName, TokenStreamPtr stream, FormatterPtr formatter)
+        virtual HighlighterPtr getHighlighter(const QueryPtr& query, const String& fieldName, const TokenStreamPtr& stream, const FormatterPtr& formatter)
         {
             return getHighlighter(query, fieldName, stream, formatter, true);
         }
 
-        virtual HighlighterPtr getHighlighter(QueryPtr query, const String& fieldName, TokenStreamPtr stream, FormatterPtr formatter, bool expanMultiTerm)
+        virtual HighlighterPtr getHighlighter(const QueryPtr& query, const String& fieldName, const TokenStreamPtr& stream, const FormatterPtr& formatter, bool expanMultiTerm)
         {
             HighlighterScorerPtr scorer;
             if (mode == QUERY)
@@ -331,7 +331,7 @@ namespace HighlighterTestNS
             return newLucene<Highlighter>(formatter, scorer);
         }
 
-        virtual HighlighterPtr getHighlighter(Collection<WeightedTermPtr> weightedTerms, FormatterPtr formatter)
+        virtual HighlighterPtr getHighlighter(Collection<WeightedTermPtr> weightedTerms, const FormatterPtr& formatter)
         {
             if (mode == QUERY)
             {
@@ -347,7 +347,7 @@ namespace HighlighterTestNS
             return HighlighterPtr();
         }
 
-        virtual void doStandardHighlights(AnalyzerPtr analyzer, IndexSearcherPtr searcher, TopDocsPtr hits, QueryPtr query, FormatterPtr formatter, Collection<String> expected, bool expandMT = false)
+        virtual void doStandardHighlights(const AnalyzerPtr& analyzer, const IndexSearcherPtr& searcher, const TopDocsPtr& hits, const QueryPtr& query, const FormatterPtr& formatter, Collection<String> expected, bool expandMT = false)
         {
             Collection<String> results = Collection<String>::newInstance();
 
@@ -1594,7 +1594,7 @@ namespace TestOverlapAnalyzer
     class SynonymTokenizer : public TokenStream
     {
     public:
-        SynonymTokenizer(TokenStreamPtr realStream, MapStringString synonyms)
+        SynonymTokenizer(const TokenStreamPtr& realStream, MapStringString synonyms)
         {
             this->realStream = realStream;
             this->synonyms = synonyms;
@@ -1685,7 +1685,7 @@ namespace TestOverlapAnalyzer
         MapStringString synonyms;
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             LowerCaseTokenizerPtr stream = newLucene<LowerCaseTokenizer>(reader);
             stream->addAttribute<TermAttribute>();
@@ -2053,7 +2053,7 @@ namespace TestEncoding
         }
 
     public:
-        virtual void startFragment(TextFragmentPtr newFragment)
+        virtual void startFragment(const TextFragmentPtr& newFragment)
         {
         }
 
@@ -2067,7 +2067,7 @@ namespace TestEncoding
             return 1.0;
         }
 
-        virtual TokenStreamPtr init(TokenStreamPtr tokenStream)
+        virtual TokenStreamPtr init(const TokenStreamPtr& tokenStream)
         {
             return TokenStreamPtr();
         }

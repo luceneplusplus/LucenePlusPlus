@@ -33,7 +33,7 @@ typedef LuceneTestFixture MultiLevelSkipListTest;
 class MultiLevelSkipListPayloadFilter : public TokenFilter
 {
 public:
-    MultiLevelSkipListPayloadFilter(TokenStreamPtr input) : TokenFilter(input)
+    MultiLevelSkipListPayloadFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         payloadAtt = addAttribute<PayloadAttribute>();
     }
@@ -49,7 +49,7 @@ public:
     PayloadAttributePtr payloadAtt;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<MultiLevelSkipListPayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
@@ -79,7 +79,7 @@ public:
     LUCENE_CLASS(MultiLevelSkipListPayloadAnalyzer);
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         return newLucene<MultiLevelSkipListPayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
@@ -90,7 +90,7 @@ static int32_t counter = 0;
 class CountingStream : public IndexInput
 {
 public:
-    CountingStream(IndexInputPtr input)
+    CountingStream(const IndexInputPtr& input)
     {
         this->input = input;
     }
@@ -137,13 +137,13 @@ public:
         return input->length();
     }
 
-    LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
+    LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr())
     {
         return newLucene<CountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
     }
 };
 
-static void checkSkipTo(TermPositionsPtr tp, int32_t target, int32_t maxCounter)
+static void checkSkipTo(const TermPositionsPtr& tp, int32_t target, int32_t maxCounter)
 {
     tp->skipTo(target);
     if (maxCounter < counter)

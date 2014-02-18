@@ -12,7 +12,7 @@
 
 namespace Lucene
 {
-    DoubleFieldSource::DoubleFieldSource(const String& field, DoubleParserPtr parser) : FieldCacheSource(field)
+    DoubleFieldSource::DoubleFieldSource(const String& field, const DoubleParserPtr& parser) : FieldCacheSource(field)
     {
         this->parser = parser;
     }
@@ -26,13 +26,13 @@ namespace Lucene
         return L"double(" + FieldCacheSource::description() + L")";
     }
 
-    DocValuesPtr DoubleFieldSource::getCachedFieldValues(FieldCachePtr cache, const String& field, IndexReaderPtr reader)
+    DocValuesPtr DoubleFieldSource::getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader)
     {
         Collection<double> arr(cache->getDoubles(reader, field, parser));
         return newLucene<DoubleDocValues>(shared_from_this(), arr);
     }
 
-    bool DoubleFieldSource::cachedFieldSourceEquals(FieldCacheSourcePtr other)
+    bool DoubleFieldSource::cachedFieldSourceEquals(const FieldCacheSourcePtr& other)
     {
         if (!MiscUtils::equalTypes(shared_from_this(), other))
             return false;
@@ -47,7 +47,7 @@ namespace Lucene
         return StringUtils::hashCode(parser ? DoubleParser::_getClassName() : DoubleFieldSource::_getClassName());
     }
 
-    DoubleDocValues::DoubleDocValues(DoubleFieldSourcePtr source, Collection<double> arr)
+    DoubleDocValues::DoubleDocValues(const DoubleFieldSourcePtr& source, Collection<double> arr)
     {
         this->_source = source;
         this->arr = arr;

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    TermInfo::TermInfo(TermInfoPtr ti)
+    TermInfo::TermInfo(const TermInfoPtr& ti)
     {
         set(ti);
     }
@@ -34,7 +34,7 @@ namespace Lucene
         this->skipOffset = skipOffset;
     }
 
-    void TermInfo::set(TermInfoPtr ti)
+    void TermInfo::set(const TermInfoPtr& ti)
     {
         docFreq = ti->docFreq;
         freqPointer = ti->freqPointer;

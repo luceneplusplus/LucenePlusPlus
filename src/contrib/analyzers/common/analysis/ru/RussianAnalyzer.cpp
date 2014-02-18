@@ -91,7 +91,7 @@ namespace Lucene
         return stopSet;
     }
 
-    TokenStreamPtr RussianAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr RussianAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<RussianLetterTokenizer>(reader);
         result = newLucene<LowerCaseFilter>(result);
@@ -100,7 +100,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr RussianAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr RussianAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         RussianAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<RussianAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

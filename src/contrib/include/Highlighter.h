@@ -17,9 +17,9 @@ namespace Lucene
     class LPPCONTRIBAPI Highlighter : public LuceneObject
     {
     public:
-        Highlighter(HighlighterScorerPtr fragmentScorer);
-        Highlighter(FormatterPtr formatter, HighlighterScorerPtr fragmentScorer);
-        Highlighter(FormatterPtr formatter, EncoderPtr encoder, HighlighterScorerPtr fragmentScorer);
+        Highlighter(const HighlighterScorerPtr& fragmentScorer);
+        Highlighter(const FormatterPtr& formatter, const HighlighterScorerPtr& fragmentScorer);
+        Highlighter(const FormatterPtr& formatter, const EncoderPtr& encoder, const HighlighterScorerPtr& fragmentScorer);
 
         virtual ~Highlighter();
 
@@ -43,7 +43,7 @@ namespace Lucene
         /// @param text Text to highlight terms in
         /// @param fieldName Name of field used to influence analyzer's tokenization policy
         /// @return highlighted text fragment or null if no terms found
-        String getBestFragment(AnalyzerPtr analyzer, const String& fieldName, const String& text);
+        String getBestFragment(const AnalyzerPtr& analyzer, const String& fieldName, const String& text);
 
         /// Highlights chosen terms in a text, extracting the most relevant section.  The document text is
         /// analyzed in chunks to record hit statistics across the document. After accumulating stats, the
@@ -55,7 +55,7 @@ namespace Lucene
         /// original text position data in the Lucene index but this support is not currently available.
         /// @param text Text to highlight terms in
         /// @return highlighted text fragment or null if no terms found
-        String getBestFragment(TokenStreamPtr tokenStream, const String& text);
+        String getBestFragment(const TokenStreamPtr& tokenStream, const String& text);
 
         /// Highlights chosen terms in a text, extracting the most relevant sections.  This is a convenience
         /// method that calls {@link #getBestFragments(TokenStreamPtr, const String&, int32_t)}
@@ -65,7 +65,7 @@ namespace Lucene
         /// @param text Text to highlight terms in
         /// @param maxNumFragments The maximum number of fragments.
         /// @return highlighted text fragments (between 0 and maxNumFragments number of fragments)
-        Collection<String> getBestFragments(AnalyzerPtr analyzer, const String& fieldName, const String& text, int32_t maxNumFragments);
+        Collection<String> getBestFragments(const AnalyzerPtr& analyzer, const String& fieldName, const String& text, int32_t maxNumFragments);
 
         /// Highlights chosen terms in a text, extracting the most relevant sections.  The document text is
         /// analyzed in chunks to record hit statistics across the document. After accumulating stats, the
@@ -75,11 +75,11 @@ namespace Lucene
         /// @param text Text to highlight terms in
         /// @param maxNumFragments The maximum number of fragments.
         /// @return highlighted Text fragments (between 0 and maxNumFragments number of fragments)
-        Collection<String> getBestFragments(TokenStreamPtr tokenStream, const String& text, int32_t maxNumFragments);
+        Collection<String> getBestFragments(const TokenStreamPtr& tokenStream, const String& text, int32_t maxNumFragments);
 
         /// Low level api to get the most relevant (formatted) sections of the document.
         /// This method has been made public to allow visibility of score information held in TextFragment objects.
-        Collection<TextFragmentPtr> getBestTextFragments(TokenStreamPtr tokenStream, const String& text, bool merge, int32_t maxNumFragments);
+        Collection<TextFragmentPtr> getBestTextFragments(const TokenStreamPtr& tokenStream, const String& text, bool merge, int32_t maxNumFragments);
 
         /// Improves readability of a score-sorted list of TextFragments by merging any fragments that were
         /// contiguous in the original text into one larger fragment with the correct order.  This will leave
@@ -97,20 +97,20 @@ namespace Lucene
         /// @param maxNumFragments The maximum number of fragments.
         /// @param separator The separator used to intersperse the document fragments (typically "...")
         /// @return highlighted text
-        String getBestFragments(TokenStreamPtr tokenStream, const String& text, int32_t maxNumFragments, const String& separator);
+        String getBestFragments(const TokenStreamPtr& tokenStream, const String& text, int32_t maxNumFragments, const String& separator);
 
         int32_t getMaxDocCharsToAnalyze();
         void setMaxDocCharsToAnalyze(int32_t maxDocCharsToAnalyze);
         FragmenterPtr getTextFragmenter();
-        void setTextFragmenter(FragmenterPtr fragmenter);
+        void setTextFragmenter(const FragmenterPtr& fragmenter);
 
         /// @return Object used to score each text fragment
         HighlighterScorerPtr getFragmentScorer();
 
-        void setFragmentScorer(HighlighterScorerPtr scorer);
+        void setFragmentScorer(const HighlighterScorerPtr& scorer);
 
         EncoderPtr getEncoder();
-        void setEncoder(EncoderPtr encoder);
+        void setEncoder(const EncoderPtr& encoder);
     };
 
     class LPPCONTRIBAPI FragmentQueue : public PriorityQueue<TextFragmentPtr>

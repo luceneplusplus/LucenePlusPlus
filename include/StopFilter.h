@@ -26,8 +26,8 @@ namespace Lucene
         /// @param input Input TokenStream
         /// @param stopWords A Set of Strings or char[] or any other toString()-able set representing the stopwords
         /// @param ignoreCase if true, all words are lower cased first
-        StopFilter(bool enablePositionIncrements, TokenStreamPtr input, HashSet<String> stopWords, bool ignoreCase = false);
-        StopFilter(bool enablePositionIncrements, TokenStreamPtr input, CharArraySetPtr stopWords, bool ignoreCase = false);
+        StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, HashSet<String> stopWords, bool ignoreCase = false);
+        StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, const CharArraySetPtr& stopWords, bool ignoreCase = false);
 
         virtual ~StopFilter();
 

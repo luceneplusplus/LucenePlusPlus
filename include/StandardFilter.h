@@ -16,7 +16,7 @@ namespace Lucene
     {
     public:
         /// Construct filtering input.
-        StandardFilter(TokenStreamPtr input);
+        StandardFilter(const TokenStreamPtr& input);
         virtual ~StandardFilter();
 
         LUCENE_CLASS(StandardFilter);

@@ -58,7 +58,7 @@ namespace Lucene
     public:
         FieldCachePtr getFieldCache();
 
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader);
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
     };
 }
 

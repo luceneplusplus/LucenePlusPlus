@@ -39,26 +39,26 @@ namespace Lucene
         ///
         /// @param query Query to extract Terms from
         /// @param terms Map to place created WeightedSpanTerms in
-        void extract(QueryPtr query, MapWeightedSpanTermPtr terms);
+        void extract(const QueryPtr& query, const MapWeightedSpanTermPtr& terms);
 
         /// Fills a Map with {@link WeightedSpanTerm}s using the terms from the supplied SpanQuery.
         ///
         /// @param terms Map to place created WeightedSpanTerms in.
         /// @param spanQuery SpanQuery to extract Terms from
-        void extractWeightedSpanTerms(MapWeightedSpanTermPtr terms, SpanQueryPtr spanQuery);
+        void extractWeightedSpanTerms(const MapWeightedSpanTermPtr& terms, const SpanQueryPtr& spanQuery);
 
         /// Fills a Map with {@link WeightedSpanTerm}s using the terms from the supplied Query.
         /// @param terms Map to place created WeightedSpanTerms in
         /// @param query Query to extract Terms from
-        void extractWeightedTerms(MapWeightedSpanTermPtr terms, QueryPtr query);
+        void extractWeightedTerms(const MapWeightedSpanTermPtr& terms, const QueryPtr& query);
 
         /// Necessary to implement matches for queries against defaultField
         bool fieldNameComparator(const String& fieldNameToCheck);
 
         IndexReaderPtr getReaderForField(const String& field);
 
-        void collectSpanQueryFields(SpanQueryPtr spanQuery, HashSet<String> fieldNames);
-        bool mustRewriteQuery(SpanQueryPtr spanQuery);
+        void collectSpanQueryFields(const SpanQueryPtr& spanQuery, HashSet<String> fieldNames);
+        bool mustRewriteQuery(const SpanQueryPtr& spanQuery);
 
     public:
         /// Creates a Map of WeightedSpanTerms from the given Query and TokenStream.
@@ -66,7 +66,7 @@ namespace Lucene
         /// @param query That caused hit
         /// @param tokenStream Of text to be highlighted
         /// @return Map containing WeightedSpanTerms
-        MapWeightedSpanTermPtr getWeightedSpanTerms(QueryPtr query, TokenStreamPtr tokenStream);
+        MapWeightedSpanTermPtr getWeightedSpanTerms(const QueryPtr& query, const TokenStreamPtr& tokenStream);
 
         /// Creates a Map of WeightedSpanTerms from the given Query and TokenStream.
         ///
@@ -74,7 +74,7 @@ namespace Lucene
         /// @param tokenStream Of text to be highlighted
         /// @param fieldName Restricts Term's used based on field name
         /// @return Map containing WeightedSpanTerms
-        MapWeightedSpanTermPtr getWeightedSpanTerms(QueryPtr query, TokenStreamPtr tokenStream, const String& fieldName);
+        MapWeightedSpanTermPtr getWeightedSpanTerms(const QueryPtr& query, const TokenStreamPtr& tokenStream, const String& fieldName);
 
         /// Creates a Map of WeightedSpanTerms from the given Query and TokenStream.  Uses a supplied
         /// IndexReader to properly weight terms (for gradient highlighting).
@@ -84,7 +84,7 @@ namespace Lucene
         /// @param fieldName Restricts Term's used based on field name
         /// @param reader To use for scoring
         /// @return Map containing WeightedSpanTerms
-        MapWeightedSpanTermPtr getWeightedSpanTermsWithScores(QueryPtr query, TokenStreamPtr tokenStream, const String& fieldName, IndexReaderPtr reader);
+        MapWeightedSpanTermPtr getWeightedSpanTermsWithScores(const QueryPtr& query, const TokenStreamPtr& tokenStream, const String& fieldName, const IndexReaderPtr& reader);
 
         bool getExpandMultiTermQuery();
         void setExpandMultiTermQuery(bool expandMultiTermQuery);
@@ -108,7 +108,7 @@ namespace Lucene
         LUCENE_CLASS(PositionCheckingMap);
 
     public:
-        virtual void put(const String& key, WeightedSpanTermPtr val);
+        virtual void put(const String& key, const WeightedSpanTermPtr& val);
     };
 
     /// A fake IndexReader class to extract the field from a MultiTermQuery
@@ -127,7 +127,7 @@ namespace Lucene
         static IndexReaderPtr EMPTY_MEMORY_INDEX_READER();
 
     public:
-        virtual TermEnumPtr terms(TermPtr t);
+        virtual TermEnumPtr terms(const TermPtr& t);
     };
 }
 

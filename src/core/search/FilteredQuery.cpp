@@ -14,7 +14,7 @@
 
 namespace Lucene
 {
-    FilteredQuery::FilteredQuery(QueryPtr query, FilterPtr filter)
+    FilteredQuery::FilteredQuery(const QueryPtr& query, const FilterPtr& filter)
     {
         this->query = query;
         this->filter = filter;
@@ -24,14 +24,14 @@ namespace Lucene
     {
     }
 
-    WeightPtr FilteredQuery::createWeight(SearcherPtr searcher)
+    WeightPtr FilteredQuery::createWeight(const SearcherPtr& searcher)
     {
         WeightPtr weight(query->createWeight(searcher));
         SimilarityPtr similarity(query->getSimilarity(searcher));
         return newLucene<FilteredQueryWeight>(shared_from_this(), weight, similarity);
     }
 
-    QueryPtr FilteredQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr FilteredQuery::rewrite(const IndexReaderPtr& reader)
     {
         QueryPtr rewritten(query->rewrite(reader));
         if (rewritten != query)
@@ -66,7 +66,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool FilteredQuery::equals(LuceneObjectPtr other)
+    bool FilteredQuery::equals(const LuceneObjectPtr& other)
     {
         FilteredQueryPtr otherFilteredQuery(boost::dynamic_pointer_cast<FilteredQuery>(other));
         if (!otherFilteredQuery)
@@ -79,7 +79,7 @@ namespace Lucene
         return query->hashCode() ^ filter->hashCode() + MiscUtils::doubleToIntBits(getBoost());
     }
 
-    LuceneObjectPtr FilteredQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr FilteredQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<FilteredQuery>(query, filter);
         FilteredQueryPtr cloneQuery(boost::dynamic_pointer_cast<FilteredQuery>(Query::clone(clone)));
@@ -88,7 +88,7 @@ namespace Lucene
         return cloneQuery;
     }
 
-    FilteredQueryWeight::FilteredQueryWeight(FilteredQueryPtr query, WeightPtr weight, SimilarityPtr similarity)
+    FilteredQueryWeight::FilteredQueryWeight(const FilteredQueryPtr& query, const WeightPtr& weight, const SimilarityPtr& similarity)
     {
         this->query = query;
         this->weight = weight;
@@ -116,7 +116,7 @@ namespace Lucene
         value = weight->getValue() * query->getBoost();
     }
 
-    ExplanationPtr FilteredQueryWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr FilteredQueryWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         ExplanationPtr inner(weight->explain(reader, doc));
         if (query->getBoost() !=1)
@@ -146,7 +146,7 @@ namespace Lucene
         return query;
     }
 
-    ScorerPtr FilteredQueryWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr FilteredQueryWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         ScorerPtr scorer(weight->scorer(reader, true, false));
         if (!scorer)
@@ -160,7 +160,7 @@ namespace Lucene
         return newLucene<FilteredQueryWeightScorer>(shared_from_this(), scorer, docIdSetIterator, similarity);
     }
 
-    FilteredQueryWeightScorer::FilteredQueryWeightScorer(FilteredQueryWeightPtr weight, ScorerPtr scorer, DocIdSetIteratorPtr docIdSetIterator, SimilarityPtr similarity) : Scorer(similarity)
+    FilteredQueryWeightScorer::FilteredQueryWeightScorer(const FilteredQueryWeightPtr& weight, const ScorerPtr& scorer, const DocIdSetIteratorPtr& docIdSetIterator, const SimilarityPtr& similarity) : Scorer(similarity)
     {
         this->weight = weight;
         this->scorer = scorer;

@@ -24,12 +24,12 @@ namespace Lucene
     public:
         virtual int32_t bytesPerPosting() = 0;
         virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count) = 0;
-        virtual TermsHashConsumerPerThreadPtr addThread(TermsHashPerThreadPtr perThread) = 0;
-        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, SegmentWriteStatePtr state) = 0;
+        virtual TermsHashConsumerPerThreadPtr addThread(const TermsHashPerThreadPtr& perThread) = 0;
+        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
         virtual void abort() = 0;
-        virtual void closeDocStore(SegmentWriteStatePtr state) = 0;
+        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
 
-        virtual void setFieldInfos(FieldInfosPtr fieldInfos);
+        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
     };
 }
 

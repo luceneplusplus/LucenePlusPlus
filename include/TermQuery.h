@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         /// Constructs a query for the term.
-        TermQuery(TermPtr term);
+        TermQuery(const TermPtr& term);
 
         virtual ~TermQuery();
 
@@ -32,15 +32,15 @@ namespace Lucene
         /// Returns the term of this query.
         TermPtr getTerm();
 
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
         virtual void extractTerms(SetTerm terms);
 
         /// Prints a user-readable version of this query.
         virtual String toString(const String& field);
 
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         friend class TermWeight;
     };

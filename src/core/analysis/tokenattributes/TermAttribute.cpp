@@ -125,7 +125,7 @@ namespace Lucene
         _termLength = 0;
     }
 
-    LuceneObjectPtr TermAttribute::clone(LuceneObjectPtr other)
+    LuceneObjectPtr TermAttribute::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = Attribute::clone(other ? other : newLucene<TermAttribute>());
         TermAttributePtr cloneAttribute(boost::dynamic_pointer_cast<TermAttribute>(clone));
@@ -138,7 +138,7 @@ namespace Lucene
         return cloneAttribute;
     }
 
-    bool TermAttribute::equals(LuceneObjectPtr other)
+    bool TermAttribute::equals(const LuceneObjectPtr& other)
     {
         if (Attribute::equals(other))
             return true;
@@ -158,7 +158,7 @@ namespace Lucene
         return false;
     }
 
-    void TermAttribute::copyTo(AttributePtr target)
+    void TermAttribute::copyTo(const AttributePtr& target)
     {
         initTermBuffer();
         TermAttributePtr targetTermAttribute(boost::dynamic_pointer_cast<TermAttribute>(target));

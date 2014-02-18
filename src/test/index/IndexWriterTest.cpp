@@ -59,14 +59,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexWriterTest;
 
-static void addDoc(IndexWriterPtr writer)
+static void addDoc(const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void addDocWithIndex(IndexWriterPtr writer, int32_t index)
+static void addDocWithIndex(const IndexWriterPtr& writer, int32_t index)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa " + StringUtils::toString(index), Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -74,7 +74,7 @@ static void addDocWithIndex(IndexWriterPtr writer, int32_t index)
     writer->addDocument(doc);
 }
 
-static void checkNoUnreferencedFiles(DirectoryPtr dir)
+static void checkNoUnreferencedFiles(const DirectoryPtr& dir)
 {
     HashSet<String> _startFiles = dir->listAll();
     SegmentInfosPtr infos = newLucene<SegmentInfos>();
@@ -115,7 +115,7 @@ public:
     int32_t count;
 
 public:
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (this->doFail)
         {
@@ -146,7 +146,7 @@ protected:
     bool onlyOnce;
 
 public:
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (doFail)
         {
@@ -177,7 +177,7 @@ protected:
     bool onlyOnce;
 
 public:
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (doFail)
         {
@@ -208,7 +208,7 @@ protected:
     bool onlyOnce;
 
 public:
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (doFail)
         {
@@ -239,7 +239,7 @@ public:
     bool didFail;
 
 public:
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (doFail)
         {
@@ -270,7 +270,7 @@ public:
     bool fail2;
 
 public:
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         bool isCommit = TestPoint::getTestPoint(L"SegmentInfos", L"prepareCommit");
         bool isDelete = TestPoint::getTestPoint(L"MockRAMDirectory", L"deleteFile");
@@ -294,7 +294,7 @@ public:
 class CrashingFilter : public TokenFilter
 {
 public:
-    CrashingFilter(const String& fieldName, TokenStreamPtr input) : TokenFilter(input)
+    CrashingFilter(const String& fieldName, const TokenStreamPtr& input) : TokenFilter(input)
     {
         this->count = 0;
         this->fieldName = fieldName;
@@ -330,7 +330,7 @@ DECLARE_SHARED_PTR(IndexerThread)
 class IndexerThread : public LuceneThread
 {
 public:
-    IndexerThread(IndexWriterPtr writer, bool noErrors)
+    IndexerThread(const IndexWriterPtr& writer, bool noErrors)
     {
         this->writer = writer;
         this->noErrors = noErrors;
@@ -431,7 +431,7 @@ const int32_t RunAddIndexesThreads::NUM_THREADS = 5;
 class RunAddThread : public LuceneThread
 {
 public:
-    RunAddThread(RunAddIndexesThreadsPtr runAdd, int32_t numIter, int32_t numCopy, DirectoryPtr dir)
+    RunAddThread(const RunAddIndexesThreadsPtr& runAdd, int32_t numIter, int32_t numCopy, const DirectoryPtr& dir)
     {
         this->_runAdd = runAdd;
         this->numIter = numIter;
@@ -1855,7 +1855,7 @@ namespace TestFlushWithNoMerging
     class TestableIndexWriter : public IndexWriter
     {
     public:
-        TestableIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        TestableIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
         }
 
@@ -2030,7 +2030,7 @@ namespace TestMaxThreadPriority
         LUCENE_CLASS(MyMergeScheduler);
 
     public:
-        virtual void merge(IndexWriterPtr writer)
+        virtual void merge(const IndexWriterPtr& writer)
         {
             while (true)
             {
@@ -2071,7 +2071,7 @@ namespace TestExceptionFromTokenStream
     class ExceptionTokenFilter : public TokenFilter
     {
     public:
-        ExceptionTokenFilter(TokenStreamPtr input) : TokenFilter(input)
+        ExceptionTokenFilter(const TokenStreamPtr& input) : TokenFilter(input)
         {
             count = 0;
         }
@@ -2104,7 +2104,7 @@ namespace TestExceptionFromTokenStream
         LUCENE_CLASS(ExceptionAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             return newLucene<ExceptionTokenFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, reader));
         }
@@ -2201,7 +2201,7 @@ namespace TestDocumentsWriterExceptions
         LUCENE_CLASS(CrashAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             return newLucene<CrashingFilter>(fieldName, newLucene<WhitespaceTokenizer>(reader));
         }
@@ -2303,7 +2303,7 @@ namespace TestDocumentsWriterExceptionThreads
         LUCENE_CLASS(CrashAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             return newLucene<CrashingFilter>(fieldName, newLucene<WhitespaceTokenizer>(reader));
         }
@@ -2312,7 +2312,7 @@ namespace TestDocumentsWriterExceptionThreads
     class ExceptionThread : public LuceneThread
     {
     public:
-        ExceptionThread(IndexWriterPtr writer, int32_t numIter, int32_t finalI)
+        ExceptionThread(const IndexWriterPtr& writer, int32_t numIter, int32_t finalI)
         {
             this->writer = writer;
             this->numIter = numIter;
@@ -2504,7 +2504,7 @@ namespace TestNoWaitClose
     class NoWaitThread : public LuceneThread
     {
     public:
-        NoWaitThread(IndexWriterPtr finalWriter, DocumentPtr doc)
+        NoWaitThread(const IndexWriterPtr& finalWriter, const DocumentPtr& doc)
         {
             this->finalWriter = finalWriter;
             this->doc = doc;
@@ -2760,7 +2760,7 @@ TEST_F(IndexWriterTest, testImmediateDiskFullWithThreads)
     }
 }
 
-static void _testSingleThreadFailure(MockDirectoryFailurePtr failure)
+static void _testSingleThreadFailure(const MockDirectoryFailurePtr& failure)
 {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
@@ -2788,7 +2788,7 @@ static void _testSingleThreadFailure(MockDirectoryFailurePtr failure)
     writer->close(false);
 }
 
-static void _testMultipleThreadsFailure(MockDirectoryFailurePtr failure)
+static void _testMultipleThreadsFailure(const MockDirectoryFailurePtr& failure)
 {
     int32_t NUM_THREADS = 3;
 
@@ -3347,7 +3347,7 @@ namespace TestExceptionDocumentsWriterInit
     class MockIndexWriter : public IndexWriter
     {
     public:
-        MockIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        MockIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
             doFail = false;
         }
@@ -3399,7 +3399,7 @@ namespace TestExceptionJustBeforeFlush
     class MockIndexWriter : public IndexWriter
     {
     public:
-        MockIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        MockIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
             doFail = false;
         }
@@ -3432,7 +3432,7 @@ namespace TestExceptionJustBeforeFlush
         LUCENE_CLASS(CrashAnalyzer);
 
     public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
         {
             return newLucene<CrashingFilter>(fieldName, newLucene<WhitespaceTokenizer>(reader));
         }
@@ -3473,7 +3473,7 @@ namespace TestExceptionOnMergeInit
     class MockIndexWriter : public IndexWriter
     {
     public:
-        MockIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        MockIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
             doFail = false;
             failed = false;
@@ -3536,7 +3536,7 @@ namespace TestDoBeforeAfterFlush
     class MockIndexWriter : public IndexWriter
     {
     public:
-        MockIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        MockIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
             afterWasCalled = false;
             beforeWasCalled = false;
@@ -4080,7 +4080,7 @@ namespace TestRollbackExceptionHang
     class MockIndexWriter : public IndexWriter
     {
     public:
-        MockIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        MockIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
             doFail = false;
         }
@@ -4233,7 +4233,7 @@ namespace TestOutOfMemoryErrorCausesCloseToFail
     class MemoryIndexWriter : public IndexWriter
     {
     public:
-        MemoryIndexWriter(DirectoryPtr d, AnalyzerPtr a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
+        MemoryIndexWriter(const DirectoryPtr& d, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(d, a, create, mfl)
         {
             thrown = false;
         }
@@ -4705,7 +4705,7 @@ namespace TestCommitThreadSafety
     class CommitThread : public LuceneThread
     {
     public:
-        CommitThread(int32_t finalI, IndexWriterPtr writer, DirectoryPtr dir, int64_t endTime)
+        CommitThread(int32_t finalI, const IndexWriterPtr& writer, const DirectoryPtr& dir, int64_t endTime)
         {
             this->finalI = finalI;
             this->writer = writer;
@@ -4800,7 +4800,7 @@ namespace TestCorruptionAfterDiskFullDuringMerge
         bool didFail2;
 
     public:
-        virtual void eval(MockRAMDirectoryPtr dir)
+        virtual void eval(const MockRAMDirectoryPtr& dir)
         {
             if (!doFail)
                 return;

@@ -14,7 +14,7 @@ namespace Lucene
     class MergeThread : public LuceneThread
     {
     public:
-        MergeThread(ConcurrentMergeSchedulerPtr merger, IndexWriterPtr writer, OneMergePtr startMerge);
+        MergeThread(const ConcurrentMergeSchedulerPtr& merger, const IndexWriterPtr& writer, const OneMergePtr& startMerge);
         virtual ~MergeThread();
 
         LUCENE_CLASS(MergeThread);
@@ -26,7 +26,7 @@ namespace Lucene
         OneMergePtr runningMerge;
 
     public:
-        void setRunningMerge(OneMergePtr merge);
+        void setRunningMerge(const OneMergePtr& merge);
         OneMergePtr getRunningMerge();
         void setThreadPriority(int32_t pri);
         virtual void run();

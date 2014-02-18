@@ -9,12 +9,12 @@
 
 namespace Lucene
 {
-    CompoundFileReader::CompoundFileReader(DirectoryPtr dir, const String& name)
+    CompoundFileReader::CompoundFileReader(const DirectoryPtr& dir, const String& name)
     {
         ConstructReader(dir, name, BufferedIndexInput::BUFFER_SIZE);
     }
 
-    CompoundFileReader::CompoundFileReader(DirectoryPtr dir, const String& name, int32_t readBufferSize)
+    CompoundFileReader::CompoundFileReader(const DirectoryPtr& dir, const String& name, int32_t readBufferSize)
     {
         ConstructReader(dir, name, readBufferSize);
     }
@@ -23,7 +23,7 @@ namespace Lucene
     {
     }
 
-    void CompoundFileReader::ConstructReader(DirectoryPtr dir, const String& name, int32_t readBufferSize)
+    void CompoundFileReader::ConstructReader(const DirectoryPtr& dir, const String& name, int32_t readBufferSize)
     {
         directory = dir;
         fileName = name;
@@ -182,14 +182,14 @@ namespace Lucene
         _length = 0;
     }
 
-    CSIndexInput::CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length) : BufferedIndexInput(BufferedIndexInput::BUFFER_SIZE)
+    CSIndexInput::CSIndexInput(const IndexInputPtr& base, int64_t fileOffset, int64_t length) : BufferedIndexInput(BufferedIndexInput::BUFFER_SIZE)
     {
         this->base = boost::dynamic_pointer_cast<IndexInput>(base->clone());
         this->fileOffset = fileOffset;
         this->_length = length;
     }
 
-    CSIndexInput::CSIndexInput(IndexInputPtr base, int64_t fileOffset, int64_t length, int32_t readBufferSize) : BufferedIndexInput(readBufferSize)
+    CSIndexInput::CSIndexInput(const IndexInputPtr& base, int64_t fileOffset, int64_t length, int32_t readBufferSize) : BufferedIndexInput(readBufferSize)
     {
         this->base = boost::dynamic_pointer_cast<IndexInput>(base->clone());
         this->fileOffset = fileOffset;
@@ -223,7 +223,7 @@ namespace Lucene
         return _length;
     }
 
-    LuceneObjectPtr CSIndexInput::clone(LuceneObjectPtr other)
+    LuceneObjectPtr CSIndexInput::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<CSIndexInput>();
         CSIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<CSIndexInput>(BufferedIndexInput::clone(clone)));

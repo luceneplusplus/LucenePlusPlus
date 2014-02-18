@@ -21,7 +21,7 @@
 
 namespace Lucene
 {
-    TermVectorsTermsWriter::TermVectorsTermsWriter(DocumentsWriterPtr docWriter)
+    TermVectorsTermsWriter::TermVectorsTermsWriter(const DocumentsWriterPtr& docWriter)
     {
         this->freeCount = 0;
         this->lastDocID = 0;
@@ -34,7 +34,7 @@ namespace Lucene
     {
     }
 
-    TermsHashConsumerPerThreadPtr TermVectorsTermsWriter::addThread(TermsHashPerThreadPtr perThread)
+    TermsHashConsumerPerThreadPtr TermVectorsTermsWriter::addThread(const TermsHashPerThreadPtr& perThread)
     {
         return newLucene<TermVectorsTermsWriterPerThread>(perThread, shared_from_this());
     }
@@ -46,7 +46,7 @@ namespace Lucene
             postings[i] = newLucene<TermVectorsTermsWriterPostingList>();
     }
 
-    void TermVectorsTermsWriter::flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, SegmentWriteStatePtr state)
+    void TermVectorsTermsWriter::flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
     {
         SyncLock syncLock(this);
 
@@ -81,7 +81,7 @@ namespace Lucene
         }
     }
 
-    void TermVectorsTermsWriter::closeDocStore(SegmentWriteStatePtr state)
+    void TermVectorsTermsWriter::closeDocStore(const SegmentWriteStatePtr& state)
     {
         SyncLock syncLock(this);
         if (tvx)
@@ -180,7 +180,7 @@ namespace Lucene
         }
     }
 
-    void TermVectorsTermsWriter::finishDocument(TermVectorsTermsWriterPerDocPtr perDoc)
+    void TermVectorsTermsWriter::finishDocument(const TermVectorsTermsWriterPerDocPtr& perDoc)
     {
         SyncLock syncLock(this);
         DocumentsWriterPtr docWriter(_docWriter);
@@ -265,7 +265,7 @@ namespace Lucene
         lastDocID = 0;
     }
 
-    void TermVectorsTermsWriter::free(TermVectorsTermsWriterPerDocPtr doc)
+    void TermVectorsTermsWriter::free(const TermVectorsTermsWriterPerDocPtr& doc)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(freeCount < docFreeList.size());
@@ -277,7 +277,7 @@ namespace Lucene
         return (RawPostingList::BYTES_SIZE + 3 * DocumentsWriter::INT_NUM_BYTE);
     }
 
-    TermVectorsTermsWriterPerDoc::TermVectorsTermsWriterPerDoc(TermVectorsTermsWriterPtr termsWriter)
+    TermVectorsTermsWriterPerDoc::TermVectorsTermsWriterPerDoc(const TermVectorsTermsWriterPtr& termsWriter)
     {
         this->_termsWriter = termsWriter;
         buffer = DocumentsWriterPtr(termsWriter->_docWriter)->newPerDocBuffer();

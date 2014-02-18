@@ -20,13 +20,13 @@ namespace Lucene
     {
     public:
         /// Construct a new LetterTokenizer.
-        LetterTokenizer(ReaderPtr input);
+        LetterTokenizer(const ReaderPtr& input);
 
         /// Construct a new LetterTokenizer using a given {@link AttributeSource}.
-        LetterTokenizer(AttributeSourcePtr source, ReaderPtr input);
+        LetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
         /// Construct a new LetterTokenizer using a given {@link AttributeFactory}.
-        LetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        LetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~LetterTokenizer();
 

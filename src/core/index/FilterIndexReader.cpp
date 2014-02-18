@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    FilterIndexReader::FilterIndexReader(IndexReaderPtr in)
+    FilterIndexReader::FilterIndexReader(const IndexReaderPtr& in)
     {
         this->in = in;
     }
@@ -36,13 +36,13 @@ namespace Lucene
         return in->getTermFreqVector(docNumber, field);
     }
 
-    void FilterIndexReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
+    void FilterIndexReader::getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         in->getTermFreqVector(docNumber, field, mapper);
     }
 
-    void FilterIndexReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
+    void FilterIndexReader::getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         in->getTermFreqVector(docNumber, mapper);
@@ -60,7 +60,7 @@ namespace Lucene
         return in->maxDoc();
     }
 
-    DocumentPtr FilterIndexReader::document(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr FilterIndexReader::document(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         ensureOpen();
         return in->document(n, fieldSelector);
@@ -112,13 +112,13 @@ namespace Lucene
         return in->terms();
     }
 
-    TermEnumPtr FilterIndexReader::terms(TermPtr t)
+    TermEnumPtr FilterIndexReader::terms(const TermPtr& t)
     {
         ensureOpen();
         return in->terms(t);
     }
 
-    int32_t FilterIndexReader::docFreq(TermPtr t)
+    int32_t FilterIndexReader::docFreq(const TermPtr& t)
     {
         ensureOpen();
         return in->docFreq(t);
@@ -130,7 +130,7 @@ namespace Lucene
         return in->termDocs();
     }
 
-    TermDocsPtr FilterIndexReader::termDocs(TermPtr term)
+    TermDocsPtr FilterIndexReader::termDocs(const TermPtr& term)
     {
         ensureOpen();
         return in->termDocs(term);
@@ -200,7 +200,7 @@ namespace Lucene
         return in->getDeletesCacheKey();
     }
 
-    FilterTermDocs::FilterTermDocs(TermDocsPtr in)
+    FilterTermDocs::FilterTermDocs(const TermDocsPtr& in)
     {
         this->in = in;
     }
@@ -209,12 +209,12 @@ namespace Lucene
     {
     }
 
-    void FilterTermDocs::seek(TermPtr term)
+    void FilterTermDocs::seek(const TermPtr& term)
     {
         in->seek(term);
     }
 
-    void FilterTermDocs::seek(TermEnumPtr termEnum)
+    void FilterTermDocs::seek(const TermEnumPtr& termEnum)
     {
         in->seek(termEnum);
     }
@@ -249,7 +249,7 @@ namespace Lucene
         in->close();
     }
 
-    FilterTermPositions::FilterTermPositions(TermPositionsPtr in) : FilterTermDocs(in)
+    FilterTermPositions::FilterTermPositions(const TermPositionsPtr& in) : FilterTermDocs(in)
     {
     }
 
@@ -277,7 +277,7 @@ namespace Lucene
         return boost::static_pointer_cast<TermPositions>(in)->isPayloadAvailable();
     }
 
-    FilterTermEnum::FilterTermEnum(TermEnumPtr in)
+    FilterTermEnum::FilterTermEnum(const TermEnumPtr& in)
     {
         this->in = in;
     }

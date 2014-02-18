@@ -29,7 +29,7 @@
 
 namespace Lucene
 {
-    DirectoryReader::DirectoryReader(DirectoryPtr directory, SegmentInfosPtr sis, IndexDeletionPolicyPtr deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
+    DirectoryReader::DirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor)
     {
         normsCache = MapStringByteArray::newInstance();
         _maxDoc = 0;
@@ -91,7 +91,7 @@ namespace Lucene
         _initialize(readers);
     }
 
-    DirectoryReader::DirectoryReader(IndexWriterPtr writer, SegmentInfosPtr infos, int32_t termInfosIndexDivisor)
+    DirectoryReader::DirectoryReader(const IndexWriterPtr& writer, const SegmentInfosPtr& infos, int32_t termInfosIndexDivisor)
     {
         normsCache = MapStringByteArray::newInstance();
         _maxDoc = 0;
@@ -166,7 +166,7 @@ namespace Lucene
         _initialize(readers);
     }
 
-    DirectoryReader::DirectoryReader(DirectoryPtr directory, SegmentInfosPtr infos, Collection<SegmentReaderPtr> oldReaders,
+    DirectoryReader::DirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos, Collection<SegmentReaderPtr> oldReaders,
                                      Collection<int32_t> oldStarts, MapStringByteArray oldNormsCache, bool readOnly,
                                      bool doClone, int32_t termInfosIndexDivisor)
     {
@@ -338,12 +338,12 @@ namespace Lucene
             maxIndexVersion = SegmentInfos::readCurrentVersion(_directory);
     }
 
-    IndexReaderPtr DirectoryReader::open(DirectoryPtr directory, IndexDeletionPolicyPtr deletionPolicy, IndexCommitPtr commit, bool readOnly, int32_t termInfosIndexDivisor)
+    IndexReaderPtr DirectoryReader::open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& commit, bool readOnly, int32_t termInfosIndexDivisor)
     {
         return newLucene<FindSegmentsOpen>(readOnly, deletionPolicy, termInfosIndexDivisor, newLucene<SegmentInfos>(), directory)->run(commit);
     }
 
-    LuceneObjectPtr DirectoryReader::clone(LuceneObjectPtr other)
+    LuceneObjectPtr DirectoryReader::clone(const LuceneObjectPtr& other)
     {
         try
         {
@@ -356,7 +356,7 @@ namespace Lucene
         return DirectoryReaderPtr();
     }
 
-    LuceneObjectPtr DirectoryReader::clone(bool openReadOnly, LuceneObjectPtr other)
+    LuceneObjectPtr DirectoryReader::clone(bool openReadOnly, const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
         DirectoryReaderPtr newReader(doReopen(boost::dynamic_pointer_cast<SegmentInfos>(segmentInfos->clone()), true, openReadOnly));
@@ -392,12 +392,12 @@ namespace Lucene
         return doReopen(openReadOnly, IndexCommitPtr());
     }
 
-    IndexReaderPtr DirectoryReader::reopen(IndexCommitPtr commit)
+    IndexReaderPtr DirectoryReader::reopen(const IndexCommitPtr& commit)
     {
         return doReopen(true, commit);
     }
 
-    IndexReaderPtr DirectoryReader::doReopenFromWriter(bool openReadOnly, IndexCommitPtr commit)
+    IndexReaderPtr DirectoryReader::doReopenFromWriter(bool openReadOnly, const IndexCommitPtr& commit)
     {
         BOOST_ASSERT(readOnly);
 
@@ -410,7 +410,7 @@ namespace Lucene
         return IndexWriterPtr(_writer)->getReader();
     }
 
-    IndexReaderPtr DirectoryReader::doReopen(bool openReadOnly, IndexCommitPtr commit)
+    IndexReaderPtr DirectoryReader::doReopen(bool openReadOnly, const IndexCommitPtr& commit)
     {
         ensureOpen();
 
@@ -425,7 +425,7 @@ namespace Lucene
             return doReopenNoWriter(openReadOnly, commit);
     }
 
-    IndexReaderPtr DirectoryReader::doReopenNoWriter(bool openReadOnly, IndexCommitPtr commit)
+    IndexReaderPtr DirectoryReader::doReopenNoWriter(bool openReadOnly, const IndexCommitPtr& commit)
     {
         SyncLock syncLock(this);
         if (!commit)
@@ -474,7 +474,7 @@ namespace Lucene
         return newLucene<FindSegmentsReopen>(shared_from_this(), openReadOnly, newLucene<SegmentInfos>(), _directory)->run(commit);
     }
 
-    DirectoryReaderPtr DirectoryReader::doReopen(SegmentInfosPtr infos, bool doClone, bool openReadOnly)
+    DirectoryReaderPtr DirectoryReader::doReopen(const SegmentInfosPtr& infos, bool doClone, bool openReadOnly)
     {
         SyncLock syncLock(this);
         if (openReadOnly)
@@ -503,14 +503,14 @@ namespace Lucene
         return subReaders[i]->getTermFreqVector(docNumber - starts[i], field);
     }
 
-    void DirectoryReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
+    void DirectoryReader::getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
         subReaders[i]->getTermFreqVector(docNumber - starts[i], field, mapper);
     }
 
-    void DirectoryReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
+    void DirectoryReader::getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         int32_t i = readerIndex(docNumber); // find segment num
@@ -544,7 +544,7 @@ namespace Lucene
         return _maxDoc;
     }
 
-    DocumentPtr DirectoryReader::document(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr DirectoryReader::document(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         ensureOpen();
         int32_t i = readerIndex(n); // find segment num
@@ -652,13 +652,13 @@ namespace Lucene
         return newLucene<MultiTermEnum>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts, TermPtr());
     }
 
-    TermEnumPtr DirectoryReader::terms(TermPtr t)
+    TermEnumPtr DirectoryReader::terms(const TermPtr& t)
     {
         ensureOpen();
         return newLucene<MultiTermEnum>(shared_from_this(), Collection<IndexReaderPtr>::newInstance(subReaders.begin(), subReaders.end()), starts, t);
     }
 
-    int32_t DirectoryReader::docFreq(TermPtr t)
+    int32_t DirectoryReader::docFreq(const TermPtr& t)
     {
         ensureOpen();
         int32_t total = 0; // sum freqs in segments
@@ -883,7 +883,7 @@ namespace Lucene
         return newLucene<ReaderCommit>(segmentInfos, _directory);
     }
 
-    Collection<IndexCommitPtr> DirectoryReader::listCommits(DirectoryPtr dir)
+    Collection<IndexCommitPtr> DirectoryReader::listCommits(const DirectoryPtr& dir)
     {
         HashSet<String> files(dir->listAll());
 
@@ -920,7 +920,7 @@ namespace Lucene
         return commits;
     }
 
-    FindSegmentsOpen::FindSegmentsOpen(bool readOnly, IndexDeletionPolicyPtr deletionPolicy, int32_t termInfosIndexDivisor, SegmentInfosPtr infos, DirectoryPtr directory) : FindSegmentsFileT<IndexReaderPtr>(infos, directory)
+    FindSegmentsOpen::FindSegmentsOpen(bool readOnly, const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor, const SegmentInfosPtr& infos, const DirectoryPtr& directory) : FindSegmentsFileT<IndexReaderPtr>(infos, directory)
     {
         this->readOnly = readOnly;
         this->deletionPolicy = deletionPolicy;
@@ -941,7 +941,7 @@ namespace Lucene
             return newLucene<DirectoryReader>(directory, segmentInfos, deletionPolicy, false, termInfosIndexDivisor);
     }
 
-    FindSegmentsReopen::FindSegmentsReopen(DirectoryReaderPtr reader, bool openReadOnly, SegmentInfosPtr infos, DirectoryPtr directory) : FindSegmentsFileT<DirectoryReaderPtr>(infos, directory)
+    FindSegmentsReopen::FindSegmentsReopen(const DirectoryReaderPtr& reader, bool openReadOnly, const SegmentInfosPtr& infos, const DirectoryPtr& directory) : FindSegmentsFileT<DirectoryReaderPtr>(infos, directory)
     {
         this->_reader = reader;
         this->openReadOnly = openReadOnly;
@@ -958,7 +958,7 @@ namespace Lucene
         return DirectoryReaderPtr(_reader)->doReopen(segmentInfos, false, openReadOnly);
     }
 
-    MultiTermEnum::MultiTermEnum(IndexReaderPtr topReader, Collection<IndexReaderPtr> readers, Collection<int32_t> starts, TermPtr t)
+    MultiTermEnum::MultiTermEnum(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> readers, Collection<int32_t> starts, const TermPtr& t)
     {
         _docFreq = 0;
         this->_topReader = topReader;
@@ -1043,7 +1043,7 @@ namespace Lucene
         queue->close();
     }
 
-    MultiTermDocs::MultiTermDocs(IndexReaderPtr topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s)
+    MultiTermDocs::MultiTermDocs(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s)
     {
         this->_topReader = topReader;
         readers = r;
@@ -1067,7 +1067,7 @@ namespace Lucene
         return current->freq();
     }
 
-    void MultiTermDocs::seek(TermPtr term)
+    void MultiTermDocs::seek(const TermPtr& term)
     {
         this->term = term;
         this->base = 0;
@@ -1078,7 +1078,7 @@ namespace Lucene
         this->matchingSegmentPos = 0;
     }
 
-    void MultiTermDocs::seek(TermEnumPtr termEnum)
+    void MultiTermDocs::seek(const TermEnumPtr& termEnum)
     {
         seek(termEnum->term());
         MultiTermEnumPtr multiTermEnum(boost::dynamic_pointer_cast<MultiTermEnum>(termEnum));
@@ -1197,7 +1197,7 @@ namespace Lucene
         return result;
     }
 
-    TermDocsPtr MultiTermDocs::termDocs(IndexReaderPtr reader)
+    TermDocsPtr MultiTermDocs::termDocs(const IndexReaderPtr& reader)
     {
         return term ? reader->termDocs() : reader->termDocs(TermPtr());
     }
@@ -1211,7 +1211,7 @@ namespace Lucene
         }
     }
 
-    MultiTermPositions::MultiTermPositions(IndexReaderPtr topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s) : MultiTermDocs(topReader, r, s)
+    MultiTermPositions::MultiTermPositions(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s) : MultiTermDocs(topReader, r, s)
     {
     }
 
@@ -1219,7 +1219,7 @@ namespace Lucene
     {
     }
 
-    TermDocsPtr MultiTermPositions::termDocs(IndexReaderPtr reader)
+    TermDocsPtr MultiTermPositions::termDocs(const IndexReaderPtr& reader)
     {
         return reader->termPositions();
     }
@@ -1244,7 +1244,7 @@ namespace Lucene
         return boost::static_pointer_cast<TermPositions>(current)->isPayloadAvailable();
     }
 
-    ReaderCommit::ReaderCommit(SegmentInfosPtr infos, DirectoryPtr dir)
+    ReaderCommit::ReaderCommit(const SegmentInfosPtr& infos, const DirectoryPtr& dir)
     {
         segmentsFileName = infos->getCurrentSegmentFileName();
         this->dir = dir;

@@ -19,7 +19,7 @@ namespace Lucene
     {
     }
 
-    String SpanGradientFormatter::highlightTerm(const String& originalText, TokenGroupPtr tokenGroup)
+    String SpanGradientFormatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup)
     {
         if (tokenGroup->getTotalScore() == 0)
             return originalText;

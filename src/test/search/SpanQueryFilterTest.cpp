@@ -24,7 +24,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture SpanQueryFilterTest;
 
-static int32_t getDocIdSetSize(DocIdSetPtr docIdSet)
+static int32_t getDocIdSetSize(const DocIdSetPtr& docIdSet)
 {
     int32_t size = 0;
     DocIdSetIteratorPtr it = docIdSet->iterator();
@@ -33,7 +33,7 @@ static int32_t getDocIdSetSize(DocIdSetPtr docIdSet)
     return size;
 }
 
-static void checkContainsDocId(DocIdSetPtr docIdSet, int32_t docId)
+static void checkContainsDocId(const DocIdSetPtr& docIdSet, int32_t docId)
 {
     DocIdSetIteratorPtr it = docIdSet->iterator();
     EXPECT_NE(it->advance(docId), DocIdSetIterator::NO_MORE_DOCS);

@@ -25,7 +25,7 @@ namespace Lucene
     /// Change to true to see details of reference counts when infoStream != null
     bool IndexFileDeleter::VERBOSE_REF_COUNTS = false;
 
-    IndexFileDeleter::IndexFileDeleter(DirectoryPtr directory, IndexDeletionPolicyPtr policy, SegmentInfosPtr segmentInfos, InfoStreamPtr infoStream, DocumentsWriterPtr docWriter, HashSet<String> synced)
+    IndexFileDeleter::IndexFileDeleter(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& policy, const SegmentInfosPtr& segmentInfos, const InfoStreamPtr& infoStream, const DocumentsWriterPtr& docWriter, HashSet<String> synced)
     {
         this->lastFiles = Collection< HashSet<String> >::newInstance();
         this->commits = Collection<IndexCommitPtr>::newInstance();
@@ -149,7 +149,7 @@ namespace Lucene
     {
     }
 
-    void IndexFileDeleter::setInfoStream(InfoStreamPtr infoStream)
+    void IndexFileDeleter::setInfoStream(const InfoStreamPtr& infoStream)
     {
         this->infoStream = infoStream;
     }
@@ -256,7 +256,7 @@ namespace Lucene
         }
     }
 
-    void IndexFileDeleter::checkpoint(SegmentInfosPtr segmentInfos, bool isCommit)
+    void IndexFileDeleter::checkpoint(const SegmentInfosPtr& segmentInfos, bool isCommit)
     {
         if (infoStream)
             message(L"now checkpoint \"" + segmentInfos->getCurrentSegmentFileName() + L"\" [" + StringUtils::toString(segmentInfos->size()) + L" segments; isCommit = " + StringUtils::toString(isCommit) + L"]");
@@ -305,7 +305,7 @@ namespace Lucene
         }
     }
 
-    void IndexFileDeleter::incRef(SegmentInfosPtr segmentInfos, bool isCommit)
+    void IndexFileDeleter::incRef(const SegmentInfosPtr& segmentInfos, bool isCommit)
     {
         // If this is a commit point, also incRef the segments_N file
         HashSet<String> files(segmentInfos->files(directory, isCommit));
@@ -352,7 +352,7 @@ namespace Lucene
         }
     }
 
-    void IndexFileDeleter::decRef(SegmentInfosPtr segmentInfos)
+    void IndexFileDeleter::decRef(const SegmentInfosPtr& segmentInfos)
     {
         decRef(segmentInfos->files(directory, false));
     }
@@ -445,7 +445,7 @@ namespace Lucene
         return --count;
     }
 
-    CommitPoint::CommitPoint(Collection<CommitPointPtr> commitsToDelete, DirectoryPtr directory, SegmentInfosPtr segmentInfos)
+    CommitPoint::CommitPoint(Collection<CommitPointPtr> commitsToDelete, const DirectoryPtr& directory, const SegmentInfosPtr& segmentInfos)
     {
         deleted = false;
 
@@ -521,7 +521,7 @@ namespace Lucene
         return deleted;
     }
 
-    int32_t CommitPoint::compareTo(LuceneObjectPtr other)
+    int32_t CommitPoint::compareTo(const LuceneObjectPtr& other)
     {
         CommitPointPtr otherCommit(boost::static_pointer_cast<CommitPoint>(other));
         if (gen < otherCommit->gen)

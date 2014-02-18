@@ -174,13 +174,13 @@ namespace Lucene
         /// Returns the upper value of this range query
         NumericValue getMax();
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual String toString(const String& field);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
     protected:
-        virtual FilteredTermEnumPtr getEnum(IndexReaderPtr reader);
+        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
 
         friend class NumericRangeTermEnum;
     };

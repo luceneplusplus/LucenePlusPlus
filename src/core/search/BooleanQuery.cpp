@@ -45,7 +45,7 @@ namespace Lucene
         return disableCoord;
     }
 
-    SimilarityPtr BooleanQuery::getSimilarity(SearcherPtr searcher)
+    SimilarityPtr BooleanQuery::getSimilarity(const SearcherPtr& searcher)
     {
         SimilarityPtr result(Query::getSimilarity(searcher));
         if (disableCoord) // disable coord as requested
@@ -63,12 +63,12 @@ namespace Lucene
         return minNrShouldMatch;
     }
 
-    void BooleanQuery::add(QueryPtr query, BooleanClause::Occur occur)
+    void BooleanQuery::add(const QueryPtr& query, BooleanClause::Occur occur)
     {
         add(newLucene<BooleanClause>(query, occur));
     }
 
-    void BooleanQuery::add(BooleanClausePtr clause)
+    void BooleanQuery::add(const BooleanClausePtr& clause)
     {
         if (clauses.size() >= maxClauseCount)
             boost::throw_exception(TooManyClausesException(L"maxClauseCount is set to " + StringUtils::toString(maxClauseCount)));
@@ -90,12 +90,12 @@ namespace Lucene
         return clauses.end();
     }
 
-    WeightPtr BooleanQuery::createWeight(SearcherPtr searcher)
+    WeightPtr BooleanQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<BooleanWeight>(shared_from_this(), searcher);
     }
 
-    QueryPtr BooleanQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr BooleanQuery::rewrite(const IndexReaderPtr& reader)
     {
         if (minNrShouldMatch == 0 && clauses.size() == 1) // optimize 1-clause queries
         {
@@ -140,7 +140,7 @@ namespace Lucene
             (*clause)->getQuery()->extractTerms(terms);
     }
 
-    LuceneObjectPtr BooleanQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr BooleanQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<BooleanQuery>());
         BooleanQueryPtr cloneQuery(boost::dynamic_pointer_cast<BooleanQuery>(clone));
@@ -198,7 +198,7 @@ namespace Lucene
         return buffer;
     }
 
-    bool BooleanQuery::equals(LuceneObjectPtr other)
+    bool BooleanQuery::equals(const LuceneObjectPtr& other)
     {
         BooleanQueryPtr otherQuery(boost::dynamic_pointer_cast<BooleanQuery>(other));
         if (!otherQuery)
@@ -215,7 +215,7 @@ namespace Lucene
                getMinimumNumberShouldMatch() + (disableCoord ? 17 : 0);
     }
 
-    BooleanWeight::BooleanWeight(BooleanQueryPtr query, SearcherPtr searcher)
+    BooleanWeight::BooleanWeight(const BooleanQueryPtr& query, const SearcherPtr& searcher)
     {
         this->query = query;
         this->similarity = query->getSimilarity(searcher);
@@ -267,7 +267,7 @@ namespace Lucene
         }
     }
 
-    ExplanationPtr BooleanWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr BooleanWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         int32_t minShouldMatch = query->getMinimumNumberShouldMatch();
         ComplexExplanationPtr sumExpl(newLucene<ComplexExplanation>());
@@ -340,7 +340,7 @@ namespace Lucene
         }
     }
 
-    ScorerPtr BooleanWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr BooleanWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         Collection<ScorerPtr> required(Collection<ScorerPtr>::newInstance());
         Collection<ScorerPtr> prohibited(Collection<ScorerPtr>::newInstance());
@@ -400,7 +400,7 @@ namespace Lucene
         return true;
     }
 
-    SimilarityDisableCoord::SimilarityDisableCoord(SimilarityPtr delegee) : SimilarityDelegator(delegee)
+    SimilarityDisableCoord::SimilarityDisableCoord(const SimilarityPtr& delegee) : SimilarityDelegator(delegee)
     {
     }
 

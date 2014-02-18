@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    SnapshotDeletionPolicy::SnapshotDeletionPolicy(IndexDeletionPolicyPtr primary)
+    SnapshotDeletionPolicy::SnapshotDeletionPolicy(const IndexDeletionPolicyPtr& primary)
     {
         this->primary = primary;
     }
@@ -62,7 +62,7 @@ namespace Lucene
         return myCommits;
     }
 
-    MyCommitPoint::MyCommitPoint(SnapshotDeletionPolicyPtr deletionPolicy, IndexCommitPtr cp)
+    MyCommitPoint::MyCommitPoint(const SnapshotDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& cp)
     {
         this->_deletionPolicy = deletionPolicy;
         this->cp = cp;

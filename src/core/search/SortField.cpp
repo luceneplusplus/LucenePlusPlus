@@ -54,7 +54,7 @@ namespace Lucene
         this->reverse = reverse;
     }
 
-    SortField::SortField(const String& field, ParserPtr parser, bool reverse)
+    SortField::SortField(const String& field, const ParserPtr& parser, bool reverse)
     {
         if (boost::dynamic_pointer_cast<IntParser>(parser))
             initFieldType(field, INT);
@@ -77,7 +77,7 @@ namespace Lucene
         this->reverse = reverse;
     }
 
-    SortField::SortField(const String& field, FieldComparatorSourcePtr comparator, bool reverse)
+    SortField::SortField(const String& field, const FieldComparatorSourcePtr& comparator, bool reverse)
     {
         initFieldType(field, CUSTOM);
         this->comparatorSource = comparator;
@@ -199,7 +199,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool SortField::equals(LuceneObjectPtr other)
+    bool SortField::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

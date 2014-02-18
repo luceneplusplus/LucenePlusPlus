@@ -87,7 +87,7 @@ namespace Lucene
         return stopSet;
     }
 
-    TokenStreamPtr GreekAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr GreekAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
         result = newLucene<GreekLowerCaseFilter>(result);
@@ -95,7 +95,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr GreekAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr GreekAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         GreekAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<GreekAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

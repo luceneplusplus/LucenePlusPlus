@@ -15,7 +15,7 @@ namespace Lucene
     class PhrasePositions : public LuceneObject
     {
     public:
-        PhrasePositions(TermPositionsPtr t, int32_t o);
+        PhrasePositions(const TermPositionsPtr& t, int32_t o);
         virtual ~PhrasePositions();
 
         LUCENE_CLASS(PhrasePositions);

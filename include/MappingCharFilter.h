@@ -17,10 +17,10 @@ namespace Lucene
     {
     public:
         /// Default constructor that takes a {@link CharStream}.
-        MappingCharFilter(NormalizeCharMapPtr normMap, CharStreamPtr in);
+        MappingCharFilter(const NormalizeCharMapPtr& normMap, const CharStreamPtr& in);
 
         /// Easy-use constructor that takes a {@link Reader}.
-        MappingCharFilter(NormalizeCharMapPtr normMap, ReaderPtr in);
+        MappingCharFilter(const NormalizeCharMapPtr& normMap, const ReaderPtr& in);
 
         virtual ~MappingCharFilter();
 
@@ -41,7 +41,7 @@ namespace Lucene
         int32_t nextChar();
         void pushChar(int32_t c);
         void pushLastChar(int32_t c);
-        NormalizeCharMapPtr match(NormalizeCharMapPtr map);
+        NormalizeCharMapPtr match(const NormalizeCharMapPtr& map);
     };
 }
 

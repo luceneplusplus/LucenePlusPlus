@@ -31,7 +31,7 @@ namespace Lucene
     class LPPAPI NearSpansOrdered : public Spans
     {
     public:
-        NearSpansOrdered(SpanNearQueryPtr spanNearQuery, IndexReaderPtr reader, bool collectPayloads = true);
+        NearSpansOrdered(const SpanNearQueryPtr& spanNearQuery, const IndexReaderPtr& reader, bool collectPayloads = true);
         virtual ~NearSpansOrdered();
 
         LUCENE_CLASS(NearSpansOrdered);
@@ -71,7 +71,7 @@ namespace Lucene
         /// Check whether two Spans in the same document are ordered.
         /// @return true if spans1 starts before spans2 or the spans start at the same position, and
         /// spans1 ends before spans2.
-        static bool docSpansOrdered(SpansPtr spans1, SpansPtr spans2);
+        static bool docSpansOrdered(const SpansPtr& spans1, const SpansPtr& spans2);
 
         virtual String toString();
 

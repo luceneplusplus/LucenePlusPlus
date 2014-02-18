@@ -22,9 +22,9 @@
 
 namespace Lucene
 {
-    FieldsReader::FieldsReader(FieldInfosPtr fieldInfos, int32_t numTotalDocs, int32_t size, int32_t format,
-                               int32_t formatSize, int32_t docStoreOffset, IndexInputPtr cloneableFieldsStream,
-                               IndexInputPtr cloneableIndexStream)
+    FieldsReader::FieldsReader(const FieldInfosPtr& fieldInfos, int32_t numTotalDocs, int32_t size, int32_t format,
+                               int32_t formatSize, int32_t docStoreOffset, const IndexInputPtr& cloneableFieldsStream,
+                               const IndexInputPtr& cloneableIndexStream)
     {
         closed = false;
         isOriginal = false;
@@ -40,12 +40,12 @@ namespace Lucene
         indexStream = boost::dynamic_pointer_cast<IndexInput>(cloneableIndexStream->clone());
     }
 
-    FieldsReader::FieldsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn)
+    FieldsReader::FieldsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn)
     {
         ConstructReader(d, segment, fn, BufferedIndexInput::BUFFER_SIZE, -1, 0);
     }
 
-    FieldsReader::FieldsReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
+    FieldsReader::FieldsReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
     {
         ConstructReader(d, segment, fn, readBufferSize, docStoreOffset, size);
     }
@@ -54,7 +54,7 @@ namespace Lucene
     {
     }
 
-    void FieldsReader::ConstructReader(DirectoryPtr d, const String& segment, FieldInfosPtr fn, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
+    void FieldsReader::ConstructReader(const DirectoryPtr& d, const String& segment, const FieldInfosPtr& fn, int32_t readBufferSize, int32_t docStoreOffset, int32_t size)
     {
         bool success = false;
         isOriginal = true;
@@ -121,7 +121,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    LuceneObjectPtr FieldsReader::clone(LuceneObjectPtr other)
+    LuceneObjectPtr FieldsReader::clone(const LuceneObjectPtr& other)
     {
         ensureOpen();
         return newLucene<FieldsReader>(fieldInfos, numTotalDocs, _size, format, formatSize, docStoreOffset, cloneableFieldsStream, cloneableIndexStream);
@@ -171,7 +171,7 @@ namespace Lucene
         return (format >= FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS);
     }
 
-    DocumentPtr FieldsReader::doc(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr FieldsReader::doc(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         seekIndex(n);
         int64_t position = indexStream->readLong();
@@ -255,7 +255,7 @@ namespace Lucene
         }
     }
 
-    void FieldsReader::addFieldLazy(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize)
+    void FieldsReader::addFieldLazy(const DocumentPtr& doc, const FieldInfoPtr& fi, bool binary, bool compressed, bool tokenize)
     {
         if (binary)
         {
@@ -299,7 +299,7 @@ namespace Lucene
         }
     }
 
-    void FieldsReader::addField(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed, bool tokenize)
+    void FieldsReader::addField(const DocumentPtr& doc, const FieldInfoPtr& fi, bool binary, bool compressed, bool tokenize)
     {
         // we have a binary stored field, and it may be compressed
         if (binary)
@@ -340,7 +340,7 @@ namespace Lucene
         }
     }
 
-    int32_t FieldsReader::addFieldSize(DocumentPtr doc, FieldInfoPtr fi, bool binary, bool compressed)
+    int32_t FieldsReader::addFieldSize(const DocumentPtr& doc, const FieldInfoPtr& fi, bool binary, bool compressed)
     {
         int32_t size = fieldsStream->readVInt();
         int32_t bytesize = (binary || compressed) ? size : 2 * size;
@@ -379,7 +379,7 @@ namespace Lucene
         return L"";
     }
 
-    LazyField::LazyField(FieldsReaderPtr reader, const String& name, Field::Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) :
+    LazyField::LazyField(const FieldsReaderPtr& reader, const String& name, Field::Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) :
         AbstractField(name, store, Field::INDEX_NO, Field::TERM_VECTOR_NO)
     {
         this->_reader = reader;
@@ -392,7 +392,7 @@ namespace Lucene
         this->isCompressed = isCompressed;
     }
 
-    LazyField::LazyField(FieldsReaderPtr reader, const String& name, Field::Store store, Field::Index index, Field::TermVector termVector, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) :
+    LazyField::LazyField(const FieldsReaderPtr& reader, const String& name, Field::Store store, Field::Index index, Field::TermVector termVector, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) :
         AbstractField(name, store, index, termVector)
     {
         this->_reader = reader;

@@ -28,8 +28,8 @@ namespace Lucene
         int32_t _doc;
 
     public:
-        virtual void seek(TermPtr term);
-        virtual void seek(TermEnumPtr termEnum);
+        virtual void seek(const TermPtr& term);
+        virtual void seek(const TermEnumPtr& termEnum);
         virtual int32_t doc();
         virtual int32_t freq();
         virtual bool next();

@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    NormsWriterPerThread::NormsWriterPerThread(DocInverterPerThreadPtr docInverterPerThread, NormsWriterPtr normsWriter)
+    NormsWriterPerThread::NormsWriterPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const NormsWriterPtr& normsWriter)
     {
         this->_normsWriter = normsWriter;
         docState = docInverterPerThread->docState;
@@ -21,7 +21,7 @@ namespace Lucene
     {
     }
 
-    InvertedDocEndConsumerPerFieldPtr NormsWriterPerThread::addField(DocInverterPerFieldPtr docInverterPerField, FieldInfoPtr fieldInfo)
+    InvertedDocEndConsumerPerFieldPtr NormsWriterPerThread::addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo)
     {
         return newLucene<NormsWriterPerField>(docInverterPerField, shared_from_this(), fieldInfo);
     }

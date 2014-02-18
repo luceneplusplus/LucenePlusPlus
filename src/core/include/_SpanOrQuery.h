@@ -27,7 +27,7 @@ namespace Lucene
     class OrSpans : public Spans
     {
     public:
-        OrSpans(SpanOrQueryPtr query, IndexReaderPtr reader);
+        OrSpans(const SpanOrQueryPtr& query, const IndexReaderPtr& reader);
         virtual ~OrSpans();
 
         LUCENE_CLASS(OrSpans);

@@ -49,11 +49,11 @@ namespace Lucene
         AttributeSource();
 
         /// An AttributeSource that uses the same attributes as the supplied one.
-        AttributeSource(AttributeSourcePtr input);
+        AttributeSource(const AttributeSourcePtr& input);
 
         /// An AttributeSource using the supplied {@link AttributeFactory} for creating new {@link Attribute}
         /// instances.
-        AttributeSource(AttributeFactoryPtr factory);
+        AttributeSource(const AttributeFactoryPtr& factory);
 
         virtual ~AttributeSource();
 
@@ -86,7 +86,7 @@ namespace Lucene
         }
 
         /// Adds a custom Attribute instance.
-        void addAttribute(const String& className, AttributePtr attrImpl);
+        void addAttribute(const String& className, const AttributePtr& attrImpl);
 
         /// Returns true if this AttributeSource has any attributes.
         bool hasAttributes();
@@ -126,13 +126,13 @@ namespace Lucene
         /// In other words, if for example the targetStream contains an OffsetAttribute, but this state doesn't, then
         /// the value of the OffsetAttribute remains unchanged. It might be desirable to reset its value to the default,
         /// in which case the caller should first call {@link TokenStream#clearAttributes()} on the targetStream.
-        void restoreState(AttributeSourceStatePtr state);
+        void restoreState(const AttributeSourceStatePtr& state);
 
         /// Return hash code for this object.
         virtual int32_t hashCode();
 
         /// Return whether two objects are equal
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         /// Returns a string representation of the object
         virtual String toString();
@@ -183,7 +183,7 @@ namespace Lucene
         AttributeSourceStatePtr next;
 
     public:
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         friend class AttributeSource;
     };

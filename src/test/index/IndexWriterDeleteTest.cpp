@@ -52,7 +52,7 @@ public:
         return shared_from_this();
     }
 
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (sawMaybe && !failed)
         {
@@ -95,7 +95,7 @@ public:
         return shared_from_this();
     }
 
-    virtual void eval(MockRAMDirectoryPtr dir)
+    virtual void eval(const MockRAMDirectoryPtr& dir)
     {
         if (!failed)
         {
@@ -105,7 +105,7 @@ public:
     }
 };
 
-static int32_t getHitCount(DirectoryPtr dir, TermPtr term)
+static int32_t getHitCount(const DirectoryPtr& dir, const TermPtr& term)
 {
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
     int32_t hitCount = searcher->search(newLucene<TermQuery>(term), FilterPtr(), 1000)->totalHits;
@@ -113,7 +113,7 @@ static int32_t getHitCount(DirectoryPtr dir, TermPtr term)
     return hitCount;
 }
 
-static void addDoc(IndexWriterPtr modifier, int32_t id, int32_t value)
+static void addDoc(const IndexWriterPtr& modifier, int32_t id, int32_t value)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -122,7 +122,7 @@ static void addDoc(IndexWriterPtr modifier, int32_t id, int32_t value)
     modifier->addDocument(doc);
 }
 
-static void updateDoc(IndexWriterPtr modifier, int32_t id, int32_t value)
+static void updateDoc(const IndexWriterPtr& modifier, int32_t id, int32_t value)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -131,7 +131,7 @@ static void updateDoc(IndexWriterPtr modifier, int32_t id, int32_t value)
     modifier->updateDocument(newLucene<Term>(L"id", StringUtils::toString(id)), doc);
 }
 
-static void checkNoUnreferencedFiles(DirectoryPtr dir)
+static void checkNoUnreferencedFiles(const DirectoryPtr& dir)
 {
     HashSet<String> _startFiles = dir->listAll();
     SegmentInfosPtr infos = newLucene<SegmentInfos>();

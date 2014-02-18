@@ -30,7 +30,7 @@ namespace Lucene
         return decodeLength == Reader::READER_EOF ? 0 : decodeLength;
     }
 
-    int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, UnicodeResultPtr unicodeResult)
+    int32_t StringUtils::toUnicode(const uint8_t* utf8, int32_t length, const UnicodeResultPtr& unicodeResult)
     {
         if (length == 0)
             unicodeResult->length = 0;
@@ -66,7 +66,7 @@ namespace Lucene
         return encodeLength == Reader::READER_EOF ? 0 : encodeLength;
     }
 
-    int32_t StringUtils::toUTF8(const wchar_t* unicode, int32_t length, UTF8ResultPtr utf8Result)
+    int32_t StringUtils::toUTF8(const wchar_t* unicode, int32_t length, const UTF8ResultPtr& utf8Result)
     {
         if (length == 0)
             utf8Result->length = 0;

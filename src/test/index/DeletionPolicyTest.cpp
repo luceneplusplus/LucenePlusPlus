@@ -53,7 +53,7 @@ static void verifyCommitOrder(Collection<IndexCommitPtr> commits)
     }
 }
 
-static void addDoc(IndexWriterPtr writer)
+static void addDoc(const IndexWriterPtr& writer)
 {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -212,7 +212,7 @@ protected:
 class ExpirationTimeDeletionPolicy : public IndexDeletionPolicy
 {
 public:
-    ExpirationTimeDeletionPolicy(DirectoryPtr dir, double seconds)
+    ExpirationTimeDeletionPolicy(const DirectoryPtr& dir, double seconds)
     {
         this->dir = dir;
         this->expirationTimeSeconds = seconds;

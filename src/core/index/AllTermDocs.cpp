@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    AllTermDocs::AllTermDocs(SegmentReaderPtr parent) : AbstractAllTermDocs(parent->maxDoc())
+    AllTermDocs::AllTermDocs(const SegmentReaderPtr& parent) : AbstractAllTermDocs(parent->maxDoc())
     {
         SyncLock parentLock(parent);
         this->_deletedDocs = parent->deletedDocs;

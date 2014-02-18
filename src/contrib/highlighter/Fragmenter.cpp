@@ -13,7 +13,7 @@ namespace Lucene
     {
     }
 
-    void Fragmenter::start(const String& originalText, TokenStreamPtr tokenStream)
+    void Fragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
     {
         BOOST_ASSERT(false);
         // override

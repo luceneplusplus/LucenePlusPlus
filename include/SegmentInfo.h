@@ -16,11 +16,11 @@ namespace Lucene
     class LPPAPI SegmentInfo : public LuceneObject
     {
     public:
-        SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir);
+        SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir);
 
-        SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile, bool hasSingleNormFile);
+        SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile, bool hasSingleNormFile);
 
-        SegmentInfo(const String& name, int32_t docCount, DirectoryPtr dir, bool isCompoundFile,
+        SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile,
                     bool hasSingleNormFile, int32_t docStoreOffset, const String& docStoreSegment,
                     bool docStoreIsCompoundFile, bool hasProx);
 
@@ -28,7 +28,7 @@ namespace Lucene
         /// @param dir directory to load from.
         /// @param format format of the segments info file.
         /// @param input input handle to read segment info from.
-        SegmentInfo(DirectoryPtr dir, int32_t format, IndexInputPtr input);
+        SegmentInfo(const DirectoryPtr& dir, int32_t format, const IndexInputPtr& input);
 
         virtual ~SegmentInfo();
 
@@ -95,7 +95,7 @@ namespace Lucene
 
     public:
         /// Copy everything from src SegmentInfo into our instance.
-        void reset(SegmentInfoPtr src);
+        void reset(const SegmentInfoPtr& src);
 
         void setDiagnostics(MapStringString diagnostics);
         MapStringString getDiagnostics();
@@ -109,7 +109,7 @@ namespace Lucene
         void advanceDelGen();
         void clearDelGen();
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
         String getDelFileName();
 
@@ -145,7 +145,7 @@ namespace Lucene
         void setDocStore(int32_t offset, const String& segment, bool isCompoundFile);
 
         /// Save this segment's info.
-        void write(IndexOutputPtr output);
+        void write(const IndexOutputPtr& output);
 
         void setHasProx(bool hasProx);
         bool getHasProx();
@@ -155,10 +155,10 @@ namespace Lucene
         HashSet<String> files();
 
         /// Used for debugging.
-        String segString(DirectoryPtr dir);
+        String segString(const DirectoryPtr& dir);
 
         /// We consider another SegmentInfo instance equal if it has the same dir and same name.
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
 
         virtual int32_t hashCode();
 

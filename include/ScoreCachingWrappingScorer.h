@@ -23,7 +23,7 @@ namespace Lucene
     {
     public:
         /// Creates a new instance by wrapping the given scorer.
-        ScoreCachingWrappingScorer(ScorerPtr scorer);
+        ScoreCachingWrappingScorer(const ScorerPtr& scorer);
         virtual ~ScoreCachingWrappingScorer();
 
         LUCENE_CLASS(ScoreCachingWrappingScorer);
@@ -38,11 +38,11 @@ namespace Lucene
         virtual double score();
         virtual int32_t docID();
         virtual int32_t nextDoc();
-        virtual void score(CollectorPtr collector);
+        virtual void score(const CollectorPtr& collector);
         virtual int32_t advance(int32_t target);
 
     protected:
-        virtual bool score(CollectorPtr collector, int32_t max, int32_t firstDocID);
+        virtual bool score(const CollectorPtr& collector, int32_t max, int32_t firstDocID);
     };
 }
 

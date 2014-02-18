@@ -146,7 +146,7 @@ namespace Lucene
         return map;
     }
 
-    LuceneObjectPtr IndexInput::clone(LuceneObjectPtr other)
+    LuceneObjectPtr IndexInput::clone(const LuceneObjectPtr& other)
     {
         IndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<IndexInput>(LuceneObject::clone(other)));
         cloneIndexInput->preUTF8Strings = preUTF8Strings;

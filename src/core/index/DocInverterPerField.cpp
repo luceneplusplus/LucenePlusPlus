@@ -27,7 +27,7 @@
 
 namespace Lucene
 {
-    DocInverterPerField::DocInverterPerField(DocInverterPerThreadPtr perThread, FieldInfoPtr fieldInfo)
+    DocInverterPerField::DocInverterPerField(const DocInverterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo)
     {
         this->_perThread = perThread;
         this->fieldInfo = fieldInfo;

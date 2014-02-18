@@ -30,14 +30,14 @@ namespace Lucene
         /// @param doc The document to fall back on.
         /// @param analyzer The analyzer to use for creating the TokenStream if the vector doesn't exist.
         /// @return The {@link TokenStream} for the {@link Fieldable} on the {@link Document}
-        static TokenStreamPtr getAnyTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, DocumentPtr doc, AnalyzerPtr analyzer);
+        static TokenStreamPtr getAnyTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field, const DocumentPtr& doc, const AnalyzerPtr& analyzer);
 
         /// A convenience method that tries a number of approaches to getting a token stream.  The cost of finding there
         /// are no termVectors in the index is minimal (1000 invocations still registers 0 ms). So this "lazy" (flexible?)
         /// approach to coding is probably acceptable
-        static TokenStreamPtr getAnyTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, AnalyzerPtr analyzer);
+        static TokenStreamPtr getAnyTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field, const AnalyzerPtr& analyzer);
 
-        static TokenStreamPtr getTokenStream(TermPositionVectorPtr tpv);
+        static TokenStreamPtr getTokenStream(const TermPositionVectorPtr& tpv);
 
         /// Low level api.
         /// Returns a token stream or null if no offset info available in index.  This can be used to feed the highlighter
@@ -61,12 +61,12 @@ namespace Lucene
         /// @param tpv
         /// @param tokenPositionsGuaranteedContiguous true if the token position numbers have no overlaps or gaps. If looking
         /// to eek out the last drops of performance, set to true.  If in doubt, set to false.
-        static TokenStreamPtr getTokenStream(TermPositionVectorPtr tpv, bool tokenPositionsGuaranteedContiguous);
+        static TokenStreamPtr getTokenStream(const TermPositionVectorPtr& tpv, bool tokenPositionsGuaranteedContiguous);
 
-        static TokenStreamPtr getTokenStream(IndexReaderPtr reader, int32_t docId, const String& field);
-        static TokenStreamPtr getTokenStream(IndexReaderPtr reader, int32_t docId, const String& field, AnalyzerPtr analyzer);
-        static TokenStreamPtr getTokenStream(DocumentPtr doc, const String& field, AnalyzerPtr analyzer);
-        static TokenStreamPtr getTokenStream(const String& field, const String& contents, AnalyzerPtr analyzer);
+        static TokenStreamPtr getTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field);
+        static TokenStreamPtr getTokenStream(const IndexReaderPtr& reader, int32_t docId, const String& field, const AnalyzerPtr& analyzer);
+        static TokenStreamPtr getTokenStream(const DocumentPtr& doc, const String& field, const AnalyzerPtr& analyzer);
+        static TokenStreamPtr getTokenStream(const String& field, const String& contents, const AnalyzerPtr& analyzer);
     };
 
     /// an object used to iterate across an array of tokens

@@ -53,7 +53,7 @@ namespace Lucene
         bool isCoordDisabled();
 
         /// Implement coord disabling.
-        virtual SimilarityPtr getSimilarity(SearcherPtr searcher);
+        virtual SimilarityPtr getSimilarity(const SearcherPtr& searcher);
 
         /// Specifies a minimum number of the optional BooleanClauses which must be satisfied.
         ///
@@ -71,11 +71,11 @@ namespace Lucene
 
         /// Adds a clause to a boolean query.
         /// @see #getMaxClauseCount()
-        void add(QueryPtr query, BooleanClause::Occur occur);
+        void add(const QueryPtr& query, BooleanClause::Occur occur);
 
         /// Adds a clause to a boolean query.
         /// @see #getMaxClauseCount()
-        void add(BooleanClausePtr clause);
+        void add(const BooleanClausePtr& clause);
 
         /// Returns the set of clauses in this query.
         Collection<BooleanClausePtr> getClauses();
@@ -84,15 +84,15 @@ namespace Lucene
         Collection<BooleanClausePtr>::iterator begin();
         Collection<BooleanClausePtr>::iterator end();
 
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
         virtual void extractTerms(SetTerm terms);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
         virtual String toString(const String& field);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         friend class BooleanWeight;

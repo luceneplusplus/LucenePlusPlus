@@ -52,7 +52,7 @@ namespace Lucene
     class LPPAPI FieldMaskingSpanQuery : public SpanQuery
     {
     public:
-        FieldMaskingSpanQuery(SpanQueryPtr maskedQuery, const String& maskedField);
+        FieldMaskingSpanQuery(const SpanQueryPtr& maskedQuery, const String& maskedField);
         virtual ~FieldMaskingSpanQuery();
 
         LUCENE_CLASS(FieldMaskingSpanQuery);
@@ -66,18 +66,18 @@ namespace Lucene
 
         virtual String getField();
         SpanQueryPtr getMaskedQuery();
-        virtual SpansPtr getSpans(IndexReaderPtr reader);
+        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
         virtual void extractTerms(SetTerm terms);
-        virtual WeightPtr createWeight(SearcherPtr searcher);
-        virtual SimilarityPtr getSimilarity(SearcherPtr searcher);
-        virtual QueryPtr rewrite(IndexReaderPtr reader);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
+        virtual SimilarityPtr getSimilarity(const SearcherPtr& searcher);
+        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
         virtual String toString(const String& field);
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         /// Returns a clone of this query.
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

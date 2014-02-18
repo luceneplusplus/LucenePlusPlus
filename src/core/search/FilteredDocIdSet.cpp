@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    FilteredDocIdSet::FilteredDocIdSet(DocIdSetPtr innerSet)
+    FilteredDocIdSet::FilteredDocIdSet(const DocIdSetPtr& innerSet)
     {
         this->innerSet = innerSet;
     }
@@ -29,7 +29,7 @@ namespace Lucene
         return newLucene<DefaultFilteredDocIdSetIterator>(shared_from_this(), innerSet->iterator());
     }
 
-    DefaultFilteredDocIdSetIterator::DefaultFilteredDocIdSetIterator(FilteredDocIdSetPtr filtered, DocIdSetIteratorPtr innerIter) : FilteredDocIdSetIterator(innerIter)
+    DefaultFilteredDocIdSetIterator::DefaultFilteredDocIdSetIterator(const FilteredDocIdSetPtr& filtered, const DocIdSetIteratorPtr& innerIter) : FilteredDocIdSetIterator(innerIter)
     {
         this->filtered = filtered;
     }

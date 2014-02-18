@@ -17,7 +17,7 @@ namespace Lucene
     class CachedDfSource : public Searcher
     {
     public:
-        CachedDfSource(MapTermInt dfMap, int32_t maxDoc, SimilarityPtr similarity);
+        CachedDfSource(MapTermInt dfMap, int32_t maxDoc, const SimilarityPtr& similarity);
         virtual ~CachedDfSource();
 
         LUCENE_CLASS(CachedDfSource);
@@ -27,25 +27,25 @@ namespace Lucene
         int32_t _maxDoc; // document count
 
     public:
-        virtual int32_t docFreq(TermPtr term);
+        virtual int32_t docFreq(const TermPtr& term);
         virtual Collection<int32_t> docFreqs(Collection<TermPtr> terms);
         virtual int32_t maxDoc();
-        virtual QueryPtr rewrite(QueryPtr query);
+        virtual QueryPtr rewrite(const QueryPtr& query);
         virtual void close();
         virtual DocumentPtr doc(int32_t n);
-        virtual DocumentPtr doc(int32_t n, FieldSelectorPtr fieldSelector);
-        virtual ExplanationPtr explain(WeightPtr weight, int32_t doc);
-        virtual void search(WeightPtr weight, FilterPtr filter, CollectorPtr results);
-        virtual TopDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n);
-        virtual TopFieldDocsPtr search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort);
+        virtual DocumentPtr doc(int32_t n, const FieldSelectorPtr& fieldSelector);
+        virtual ExplanationPtr explain(const WeightPtr& weight, int32_t doc);
+        virtual void search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results);
+        virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n);
+        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort);
     };
 
     /// A subclass for searching a single searchable
     class MultiSearcherCallableNoSort : public LuceneObject
     {
     public:
-        MultiSearcherCallableNoSort(SynchronizePtr lock, SearchablePtr searchable, WeightPtr weight, FilterPtr filter, int32_t nDocs,
-                                    HitQueuePtr hq, int32_t i, Collection<int32_t> starts);
+        MultiSearcherCallableNoSort(const SynchronizePtr& lock, const SearchablePtr& searchable, const WeightPtr& weight, const FilterPtr& filter, int32_t nDocs,
+                                    const HitQueuePtr& hq, int32_t i, Collection<int32_t> starts);
         virtual ~MultiSearcherCallableNoSort();
 
         LUCENE_CLASS(MultiSearcherCallableNoSort);
@@ -68,8 +68,8 @@ namespace Lucene
     class MultiSearcherCallableWithSort : public LuceneObject
     {
     public:
-        MultiSearcherCallableWithSort(SynchronizePtr lock, SearchablePtr searchable, WeightPtr weight, FilterPtr filter,
-                                      int32_t nDocs, FieldDocSortedHitQueuePtr hq, SortPtr sort, int32_t i, Collection<int32_t> starts);
+        MultiSearcherCallableWithSort(const SynchronizePtr& lock, const SearchablePtr& searchable, const WeightPtr& weight, const FilterPtr& filter,
+                                      int32_t nDocs, const FieldDocSortedHitQueuePtr& hq, const SortPtr& sort, int32_t i, Collection<int32_t> starts);
         virtual ~MultiSearcherCallableWithSort();
 
         LUCENE_CLASS(MultiSearcherCallableWithSort);
@@ -92,7 +92,7 @@ namespace Lucene
     class MultiSearcherCollector : public Collector
     {
     public:
-        MultiSearcherCollector(CollectorPtr collector, int32_t start);
+        MultiSearcherCollector(const CollectorPtr& collector, int32_t start);
         virtual ~MultiSearcherCollector();
 
         LUCENE_CLASS(MultiSearcherCollector);
@@ -102,9 +102,9 @@ namespace Lucene
         int32_t start;
 
     public:
-        virtual void setScorer(ScorerPtr scorer);
+        virtual void setScorer(const ScorerPtr& scorer);
         virtual void collect(int32_t doc);
-        virtual void setNextReader(IndexReaderPtr reader, int32_t docBase);
+        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
         virtual bool acceptsDocsOutOfOrder();
     };
 }

@@ -24,19 +24,19 @@ namespace Lucene
         Tokenizer();
 
         /// Construct a token stream processing the given input.
-        Tokenizer(ReaderPtr input);
+        Tokenizer(const ReaderPtr& input);
 
         /// Construct a tokenizer with null input using the given AttributeFactory.
-        Tokenizer(AttributeFactoryPtr factory);
+        Tokenizer(const AttributeFactoryPtr& factory);
 
         /// Construct a token stream processing the given input using the given AttributeFactory.
-        Tokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        Tokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         /// Construct a token stream processing the given input using the given AttributeSource.
-        Tokenizer(AttributeSourcePtr source);
+        Tokenizer(const AttributeSourcePtr& source);
 
         /// Construct a token stream processing the given input using the given AttributeSource.
-        Tokenizer(AttributeSourcePtr source, ReaderPtr input);
+        Tokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
     public:
         virtual ~Tokenizer();
@@ -63,7 +63,7 @@ namespace Lucene
 
         /// Reset the tokenizer to a new reader.  Typically, an analyzer (in its reusableTokenStream method) will
         /// use this to re-use a previously created tokenizer.
-        virtual void reset(ReaderPtr input);
+        virtual void reset(const ReaderPtr& input);
     };
 }
 

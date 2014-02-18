@@ -14,7 +14,7 @@ namespace Lucene
     {
     }
 
-    void SerialMergeScheduler::merge(IndexWriterPtr writer)
+    void SerialMergeScheduler::merge(const IndexWriterPtr& writer)
     {
         SyncLock syncLock(this);
         while (true)

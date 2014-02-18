@@ -34,7 +34,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CachingWrapperFilterTest;
 
-static void checkDocIdSetCacheable(IndexReaderPtr reader, FilterPtr filter, bool shouldCacheable)
+static void checkDocIdSetCacheable(const IndexReaderPtr& reader, const FilterPtr& filter, bool shouldCacheable)
 {
     CachingWrapperFilterPtr cacher = newLucene<CachingWrapperFilter>(filter);
     DocIdSetPtr originalSet = filter->getDocIdSet(reader);
@@ -47,13 +47,14 @@ static void checkDocIdSetCacheable(IndexReaderPtr reader, FilterPtr filter, bool
         EXPECT_TRUE(MiscUtils::typeOf<OpenBitSetDISI>(cachedSet));
 }
 
-static IndexReaderPtr refreshReader(IndexReaderPtr reader)
+static IndexReaderPtr refreshReader(const IndexReaderPtr& reader)
 {
-    IndexReaderPtr oldReader = reader;
-    reader = reader->reopen();
-    if (reader != oldReader)
+    IndexReaderPtr _reader(reader);
+    IndexReaderPtr oldReader = _reader;
+    _reader = _reader->reopen();
+    if (_reader != oldReader)
         oldReader->close();
-    return reader;
+    return _reader;
 }
 
 TEST_F(CachingWrapperFilterTest, testCachingWorks)
@@ -92,7 +93,7 @@ namespace TestNullDocIdSet
         }
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
         {
             return DocIdSetPtr();
         }
@@ -139,7 +140,7 @@ namespace TestNullDocIdSetIterator
         }
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
         {
             return newLucene<NullDocIdSetIterator>();
         }
@@ -172,7 +173,7 @@ namespace TestIsCacheable
         }
 
     public:
-        virtual DocIdSetPtr getDocIdSet(IndexReaderPtr reader)
+        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
         {
             return newLucene<OpenBitSet>();
         }

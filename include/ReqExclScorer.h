@@ -19,7 +19,7 @@ namespace Lucene
         /// Construct a ReqExclScorer.
         /// @param reqScorer The scorer that must match, except where
         /// @param exclDisi indicates exclusion.
-        ReqExclScorer(ScorerPtr reqScorer, DocIdSetIteratorPtr exclDisi);
+        ReqExclScorer(const ScorerPtr& reqScorer, const DocIdSetIteratorPtr& exclDisi);
         virtual ~ReqExclScorer();
 
         LUCENE_CLASS(ReqExclScorer);

@@ -50,7 +50,7 @@ namespace Lucene
         return reverseMul;
     }
 
-    FieldDocPtr FieldValueHitQueue::fillFields(FieldValueHitQueueEntryPtr entry)
+    FieldDocPtr FieldValueHitQueue::fillFields(const FieldValueHitQueueEntryPtr& entry)
     {
         int32_t n = comparators.size();
         Collection<ComparableValue> fields(Collection<ComparableValue>::newInstance(n));

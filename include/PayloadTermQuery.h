@@ -21,7 +21,7 @@ namespace Lucene
     class LPPAPI PayloadTermQuery : public SpanTermQuery
     {
     public:
-        PayloadTermQuery(TermPtr term, PayloadFunctionPtr function, bool includeSpanScore = true);
+        PayloadTermQuery(const TermPtr& term, const PayloadFunctionPtr& function, bool includeSpanScore = true);
         virtual ~PayloadTermQuery();
 
         LUCENE_CLASS(PayloadTermQuery);
@@ -31,10 +31,10 @@ namespace Lucene
         bool includeSpanScore;
 
     public:
-        virtual WeightPtr createWeight(SearcherPtr searcher);
+        virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
-        virtual bool equals(LuceneObjectPtr other);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
 
         friend class PayloadTermWeight;

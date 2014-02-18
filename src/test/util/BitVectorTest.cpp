@@ -15,7 +15,7 @@ typedef LuceneTestFixture BitVectorTest;
 
 static const int32_t subsetPattern[] = {1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1};
 
-static bool compareBitVectors(BitVectorPtr bv, BitVectorPtr compare)
+static bool compareBitVectors(const BitVectorPtr& bv, const BitVectorPtr& compare)
 {
     for (int32_t i = 0; i < bv->size(); ++i)
     {

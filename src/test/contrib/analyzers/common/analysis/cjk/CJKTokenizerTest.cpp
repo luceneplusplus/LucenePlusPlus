@@ -52,7 +52,7 @@ public:
         checkAnalyzesTo(analyzer, str, terms, startOffsets, endOffsets, types, Collection<int32_t>());
     }
 
-    void checkCJKTokenReusable(AnalyzerPtr analyzer, const String& str, Collection<TestToken> out_tokens)
+    void checkCJKTokenReusable(const AnalyzerPtr& analyzer, const String& str, Collection<TestToken> out_tokens)
     {
         Collection<String> terms = Collection<String>::newInstance(out_tokens.size());
         Collection<int32_t> startOffsets = Collection<int32_t>::newInstance(out_tokens.size());

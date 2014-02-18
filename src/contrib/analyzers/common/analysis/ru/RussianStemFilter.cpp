@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    RussianStemFilter::RussianStemFilter(TokenStreamPtr input) : TokenFilter(input)
+    RussianStemFilter::RussianStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
     {
         stemmer = newLucene<RussianStemmer>();
         termAtt = addAttribute<TermAttribute>();
@@ -35,7 +35,7 @@ namespace Lucene
             return false;
     }
 
-    void RussianStemFilter::setStemmer(RussianStemmerPtr stemmer)
+    void RussianStemFilter::setStemmer(const RussianStemmerPtr& stemmer)
     {
         if (stemmer)
             this->stemmer = stemmer;

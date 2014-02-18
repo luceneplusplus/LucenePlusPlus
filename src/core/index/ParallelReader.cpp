@@ -33,13 +33,13 @@ namespace Lucene
     {
     }
 
-    void ParallelReader::add(IndexReaderPtr reader)
+    void ParallelReader::add(const IndexReaderPtr& reader)
     {
         ensureOpen();
         add(reader, false);
     }
 
-    void ParallelReader::add(IndexReaderPtr reader, bool ignoreStoredFields)
+    void ParallelReader::add(const IndexReaderPtr& reader, bool ignoreStoredFields)
     {
         ensureOpen();
         if (readers.empty())
@@ -78,7 +78,7 @@ namespace Lucene
         decrefOnClose.add(incRefReaders);
     }
 
-    LuceneObjectPtr ParallelReader::clone(LuceneObjectPtr other)
+    LuceneObjectPtr ParallelReader::clone(const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
         try
@@ -218,7 +218,7 @@ namespace Lucene
         _hasDeletions = false;
     }
 
-    DocumentPtr ParallelReader::document(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr ParallelReader::document(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         ensureOpen();
         DocumentPtr result(newLucene<Document>());
@@ -273,7 +273,7 @@ namespace Lucene
         return reader == fieldToReader.end() ? TermFreqVectorPtr() : reader->second->getTermFreqVector(docNumber, field);
     }
 
-    void ParallelReader::getTermFreqVector(int32_t docNumber, const String& field, TermVectorMapperPtr mapper)
+    void ParallelReader::getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         MapStringIndexReader::iterator reader = fieldToReader.find(field);
@@ -281,7 +281,7 @@ namespace Lucene
             reader->second->getTermFreqVector(docNumber, field, mapper);
     }
 
-    void ParallelReader::getTermFreqVector(int32_t docNumber, TermVectorMapperPtr mapper)
+    void ParallelReader::getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper)
     {
         ensureOpen();
         for (MapStringIndexReader::iterator entry = fieldToReader.begin(); entry != fieldToReader.end(); ++entry)
@@ -324,20 +324,20 @@ namespace Lucene
         return newLucene<ParallelTermEnum>(shared_from_this());
     }
 
-    TermEnumPtr ParallelReader::terms(TermPtr t)
+    TermEnumPtr ParallelReader::terms(const TermPtr& t)
     {
         ensureOpen();
         return newLucene<ParallelTermEnum>(shared_from_this(), t);
     }
 
-    int32_t ParallelReader::docFreq(TermPtr t)
+    int32_t ParallelReader::docFreq(const TermPtr& t)
     {
         ensureOpen();
         MapStringIndexReader::iterator reader = fieldToReader.find(t->field());
         return reader == fieldToReader.end() ? 0 : reader->second->docFreq(t);
     }
 
-    TermDocsPtr ParallelReader::termDocs(TermPtr term)
+    TermDocsPtr ParallelReader::termDocs(const TermPtr& term)
     {
         ensureOpen();
         return newLucene<ParallelTermDocs>(shared_from_this(), term);
@@ -349,7 +349,7 @@ namespace Lucene
         return newLucene<ParallelTermDocs>(shared_from_this());
     }
 
-    TermPositionsPtr ParallelReader::termPositions(TermPtr term)
+    TermPositionsPtr ParallelReader::termPositions(const TermPtr& term)
     {
         ensureOpen();
         return newLucene<ParallelTermPositions>(shared_from_this(), term);
@@ -428,7 +428,7 @@ namespace Lucene
         return fieldSet;
     }
 
-    ParallelTermEnum::ParallelTermEnum(ParallelReaderPtr reader)
+    ParallelTermEnum::ParallelTermEnum(const ParallelReaderPtr& reader)
     {
         this->setIterator = false;
         this->_reader = reader;
@@ -439,7 +439,7 @@ namespace Lucene
             this->termEnum = reader->fieldToReader[field]->terms();
     }
 
-    ParallelTermEnum::ParallelTermEnum(ParallelReaderPtr reader, TermPtr term)
+    ParallelTermEnum::ParallelTermEnum(const ParallelReaderPtr& reader, const TermPtr& term)
     {
         this->setIterator = false;
         this->_reader = reader;
@@ -504,12 +504,12 @@ namespace Lucene
             termEnum->close();
     }
 
-    ParallelTermDocs::ParallelTermDocs(ParallelReaderPtr reader)
+    ParallelTermDocs::ParallelTermDocs(const ParallelReaderPtr& reader)
     {
         this->_reader = reader;
     }
 
-    ParallelTermDocs::ParallelTermDocs(ParallelReaderPtr reader, TermPtr term)
+    ParallelTermDocs::ParallelTermDocs(const ParallelReaderPtr& reader, const TermPtr& term)
     {
         this->_reader = reader;
         if (!term)
@@ -532,14 +532,14 @@ namespace Lucene
         return termDocs->freq();
     }
 
-    void ParallelTermDocs::seek(TermPtr term)
+    void ParallelTermDocs::seek(const TermPtr& term)
     {
         ParallelReaderPtr reader(_reader);
         MapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());
         termDocs = indexReader != reader->fieldToReader.end() ? indexReader->second->termDocs(term) : TermDocsPtr();
     }
 
-    void ParallelTermDocs::seek(TermEnumPtr termEnum)
+    void ParallelTermDocs::seek(const TermEnumPtr& termEnum)
     {
         seek(termEnum->term());
     }
@@ -565,11 +565,11 @@ namespace Lucene
             termDocs->close();
     }
 
-    ParallelTermPositions::ParallelTermPositions(ParallelReaderPtr reader) : ParallelTermDocs(reader)
+    ParallelTermPositions::ParallelTermPositions(const ParallelReaderPtr& reader) : ParallelTermDocs(reader)
     {
     }
 
-    ParallelTermPositions::ParallelTermPositions(ParallelReaderPtr reader, TermPtr term) : ParallelTermDocs(reader)
+    ParallelTermPositions::ParallelTermPositions(const ParallelReaderPtr& reader, const TermPtr& term) : ParallelTermDocs(reader)
     {
         seek(term);
     }
@@ -578,7 +578,7 @@ namespace Lucene
     {
     }
 
-    void ParallelTermPositions::seek(TermPtr term)
+    void ParallelTermPositions::seek(const TermPtr& term)
     {
         ParallelReaderPtr reader(_reader);
         MapStringIndexReader::iterator indexReader = reader->fieldToReader.find(term->field());

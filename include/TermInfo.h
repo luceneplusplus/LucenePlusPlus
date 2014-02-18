@@ -15,7 +15,7 @@ namespace Lucene
     class TermInfo : public LuceneObject
     {
     public:
-        TermInfo(TermInfoPtr ti);
+        TermInfo(const TermInfoPtr& ti);
         TermInfo(int32_t df = 0, int64_t fp = 0, int64_t pp = 0);
         virtual ~TermInfo();
 
@@ -30,7 +30,7 @@ namespace Lucene
 
     public:
         void set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset);
-        void set(TermInfoPtr ti);
+        void set(const TermInfoPtr& ti);
     };
 }
 

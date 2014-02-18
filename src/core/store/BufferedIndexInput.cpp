@@ -178,7 +178,7 @@ namespace Lucene
         }
     }
 
-    LuceneObjectPtr BufferedIndexInput::clone(LuceneObjectPtr other)
+    LuceneObjectPtr BufferedIndexInput::clone(const LuceneObjectPtr& other)
     {
         BufferedIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<BufferedIndexInput>(IndexInput::clone(other)));
         cloneIndexInput->bufferSize = bufferSize;

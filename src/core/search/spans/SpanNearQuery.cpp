@@ -75,7 +75,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    SpansPtr SpanNearQuery::getSpans(IndexReaderPtr reader)
+    SpansPtr SpanNearQuery::getSpans(const IndexReaderPtr& reader)
     {
         if (clauses.empty()) // optimize 0-clause case
             return newLucene<SpanOrQuery>(getClauses())->getSpans(reader);
@@ -88,7 +88,7 @@ namespace Lucene
                 : boost::static_pointer_cast<Spans>(newLucene<NearSpansUnordered>(shared_from_this(), reader));
     }
 
-    QueryPtr SpanNearQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr SpanNearQuery::rewrite(const IndexReaderPtr& reader)
     {
         SpanNearQueryPtr clone;
         for (int32_t i = 0; i < clauses.size(); ++i)
@@ -108,7 +108,7 @@ namespace Lucene
             return shared_from_this(); // no clauses rewrote
     }
 
-    LuceneObjectPtr SpanNearQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr SpanNearQuery::clone(const LuceneObjectPtr& other)
     {
         int32_t sz = clauses.size();
         Collection<SpanQueryPtr> newClauses(Collection<SpanQueryPtr>::newInstance(sz));
@@ -121,7 +121,7 @@ namespace Lucene
         return spanNearQuery;
     }
 
-    bool SpanNearQuery::equals(LuceneObjectPtr other)
+    bool SpanNearQuery::equals(const LuceneObjectPtr& other)
     {
         if (LuceneObject::equals(other))
             return true;

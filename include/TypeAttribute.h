@@ -36,10 +36,10 @@ namespace Lucene
         void setType(const String& type);
 
         virtual void clear();
-        virtual bool equals(LuceneObjectPtr other);
+        virtual bool equals(const LuceneObjectPtr& other);
         virtual int32_t hashCode();
-        virtual void copyTo(AttributePtr target);
-        virtual LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr());
+        virtual void copyTo(const AttributePtr& target);
+        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
     };
 }
 

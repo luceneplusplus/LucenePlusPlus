@@ -17,13 +17,13 @@ namespace Lucene
     {
     public:
         /// Construct a new RussianLetterTokenizer.
-        RussianLetterTokenizer(ReaderPtr input);
+        RussianLetterTokenizer(const ReaderPtr& input);
 
         /// Construct a new RussianLetterTokenizer using a given {@link AttributeSource}.
-        RussianLetterTokenizer(AttributeSourcePtr source, ReaderPtr input);
+        RussianLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
         /// Construct a new RussianLetterTokenizer using a given {@link AttributeFactory}.
-        RussianLetterTokenizer(AttributeFactoryPtr factory, ReaderPtr input);
+        RussianLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
         virtual ~RussianLetterTokenizer();
 

@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    FilteredDocIdSetIterator::FilteredDocIdSetIterator(DocIdSetIteratorPtr innerIter)
+    FilteredDocIdSetIterator::FilteredDocIdSetIterator(const DocIdSetIteratorPtr& innerIter)
     {
         if (!innerIter)
             boost::throw_exception(IllegalArgumentException(L"null iterator"));

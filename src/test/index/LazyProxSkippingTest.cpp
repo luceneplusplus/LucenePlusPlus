@@ -31,7 +31,7 @@ DECLARE_SHARED_PTR(SeeksCountingStream)
 class SeeksCountingStream : public IndexInput
 {
 public:
-    SeeksCountingStream(IndexInputPtr input)
+    SeeksCountingStream(const IndexInputPtr& input)
     {
         this->input = input;
     }
@@ -73,7 +73,7 @@ public:
         return input->length();
     }
 
-    LuceneObjectPtr clone(LuceneObjectPtr other = LuceneObjectPtr())
+    LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr())
     {
         return newLucene<SeeksCountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
     }

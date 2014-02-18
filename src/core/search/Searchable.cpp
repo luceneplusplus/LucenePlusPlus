@@ -9,7 +9,7 @@
 
 namespace Lucene
 {
-    void Searchable::search(WeightPtr weight, FilterPtr filter, CollectorPtr collector)
+    void Searchable::search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& collector)
     {
         BOOST_ASSERT(false);
         // override
@@ -21,7 +21,7 @@ namespace Lucene
         // override
     }
 
-    int32_t Searchable::docFreq(TermPtr term)
+    int32_t Searchable::docFreq(const TermPtr& term)
     {
         BOOST_ASSERT(false);
         return 0; // override
@@ -39,7 +39,7 @@ namespace Lucene
         return 0; // override
     }
 
-    TopDocsPtr Searchable::search(WeightPtr weight, FilterPtr filter, int32_t n)
+    TopDocsPtr Searchable::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n)
     {
         BOOST_ASSERT(false);
         return TopDocsPtr(); // override
@@ -51,25 +51,25 @@ namespace Lucene
         return DocumentPtr(); // override
     }
 
-    DocumentPtr Searchable::doc(int32_t n, FieldSelectorPtr fieldSelector)
+    DocumentPtr Searchable::doc(int32_t n, const FieldSelectorPtr& fieldSelector)
     {
         BOOST_ASSERT(false);
         return DocumentPtr(); // override
     }
 
-    QueryPtr Searchable::rewrite(QueryPtr query)
+    QueryPtr Searchable::rewrite(const QueryPtr& query)
     {
         BOOST_ASSERT(false);
         return QueryPtr(); // override
     }
 
-    ExplanationPtr Searchable::explain(WeightPtr weight, int32_t doc)
+    ExplanationPtr Searchable::explain(const WeightPtr& weight, int32_t doc)
     {
         BOOST_ASSERT(false);
         return ExplanationPtr(); // override
     }
 
-    TopFieldDocsPtr Searchable::search(WeightPtr weight, FilterPtr filter, int32_t n, SortPtr sort)
+    TopFieldDocsPtr Searchable::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort)
     {
         BOOST_ASSERT(false);
         return TopFieldDocsPtr(); // override

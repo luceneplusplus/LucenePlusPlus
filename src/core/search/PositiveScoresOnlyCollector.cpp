@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    PositiveScoresOnlyCollector::PositiveScoresOnlyCollector(CollectorPtr collector)
+    PositiveScoresOnlyCollector::PositiveScoresOnlyCollector(const CollectorPtr& collector)
     {
         this->collector = collector;
     }
@@ -25,12 +25,12 @@ namespace Lucene
             collector->collect(doc);
     }
 
-    void PositiveScoresOnlyCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void PositiveScoresOnlyCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         collector->setNextReader(reader, docBase);
     }
 
-    void PositiveScoresOnlyCollector::setScorer(ScorerPtr scorer)
+    void PositiveScoresOnlyCollector::setScorer(const ScorerPtr& scorer)
     {
         // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call score() also.
         this->scorer = newLucene<ScoreCachingWrappingScorer>(scorer);

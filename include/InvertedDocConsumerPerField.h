@@ -24,7 +24,7 @@ namespace Lucene
         virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
 
         /// Called before a field instance is being processed
-        virtual void start(FieldablePtr field) = 0;
+        virtual void start(const FieldablePtr& field) = 0;
 
         /// Called once per inverted token
         virtual void add() = 0;

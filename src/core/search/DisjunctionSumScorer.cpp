@@ -47,14 +47,14 @@ namespace Lucene
         }
     }
 
-    void DisjunctionSumScorer::score(CollectorPtr collector)
+    void DisjunctionSumScorer::score(const CollectorPtr& collector)
     {
         collector->setScorer(shared_from_this());
         while (nextDoc() != NO_MORE_DOCS)
             collector->collect(currentDoc);
     }
 
-    bool DisjunctionSumScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
+    bool DisjunctionSumScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
     {
         // firstDocID is ignored since nextDoc() sets 'currentDoc'
         collector->setScorer(shared_from_this());

@@ -18,7 +18,7 @@
 
 namespace Lucene
 {
-    StoredFieldsWriter::StoredFieldsWriter(DocumentsWriterPtr docWriter, FieldInfosPtr fieldInfos)
+    StoredFieldsWriter::StoredFieldsWriter(const DocumentsWriterPtr& docWriter, const FieldInfosPtr& fieldInfos)
     {
         lastDocID = 0;
         docFreeList = Collection<StoredFieldsWriterPerDocPtr>::newInstance(1);
@@ -33,12 +33,12 @@ namespace Lucene
     {
     }
 
-    StoredFieldsWriterPerThreadPtr StoredFieldsWriter::addThread(DocStatePtr docState)
+    StoredFieldsWriterPerThreadPtr StoredFieldsWriter::addThread(const DocStatePtr& docState)
     {
         return newLucene<StoredFieldsWriterPerThread>(docState, shared_from_this());
     }
 
-    void StoredFieldsWriter::flush(SegmentWriteStatePtr state)
+    void StoredFieldsWriter::flush(const SegmentWriteStatePtr& state)
     {
         SyncLock syncLock(this);
         if (state->numDocsInStore > 0)
@@ -72,7 +72,7 @@ namespace Lucene
         }
     }
 
-    void StoredFieldsWriter::closeDocStore(SegmentWriteStatePtr state)
+    void StoredFieldsWriter::closeDocStore(const SegmentWriteStatePtr& state)
     {
         SyncLock syncLock(this);
         int32_t inc = state->numDocsInStore - lastDocID;
@@ -156,7 +156,7 @@ namespace Lucene
         }
     }
 
-    void StoredFieldsWriter::finishDocument(StoredFieldsWriterPerDocPtr perDoc)
+    void StoredFieldsWriter::finishDocument(const StoredFieldsWriterPerDocPtr& perDoc)
     {
         SyncLock syncLock(this);
         IndexWriterPtr writer(DocumentsWriterPtr(_docWriter)->_writer);
@@ -178,7 +178,7 @@ namespace Lucene
         return false;
     }
 
-    void StoredFieldsWriter::free(StoredFieldsWriterPerDocPtr perDoc)
+    void StoredFieldsWriter::free(const StoredFieldsWriterPerDocPtr& perDoc)
     {
         SyncLock syncLock(this);
         BOOST_ASSERT(freeCount < docFreeList.size());
@@ -188,7 +188,7 @@ namespace Lucene
         docFreeList[freeCount++] = perDoc;
     }
 
-    StoredFieldsWriterPerDoc::StoredFieldsWriterPerDoc(StoredFieldsWriterPtr fieldsWriter)
+    StoredFieldsWriterPerDoc::StoredFieldsWriterPerDoc(const StoredFieldsWriterPtr& fieldsWriter)
     {
         this->_fieldsWriter = fieldsWriter;
         buffer = DocumentsWriterPtr(fieldsWriter->_docWriter)->newPerDocBuffer();

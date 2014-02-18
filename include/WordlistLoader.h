@@ -36,7 +36,7 @@ namespace Lucene
         /// @param reader Reader containing the wordlist
         /// @param comment The comment string to ignore
         /// @return A set with the file's words
-        static HashSet<String> getWordSet(ReaderPtr reader, const String& comment = EmptyString);
+        static HashSet<String> getWordSet(const ReaderPtr& reader, const String& comment = EmptyString);
 
         /// Reads a stem dictionary. Each line contains:
         /// <pre>word\tstem</pre>

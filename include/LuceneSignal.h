@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI LuceneSignal
     {
     public:
-        LuceneSignal(SynchronizePtr objectLock = SynchronizePtr());
+        LuceneSignal(const SynchronizePtr& objectLock = SynchronizePtr());
         virtual ~LuceneSignal();
 
     protected:
@@ -26,7 +26,7 @@ namespace Lucene
 
     public:
         /// create a new LuceneSignal instance atomically.
-        static void createSignal(LuceneSignalPtr& signal, SynchronizePtr objectLock);
+        static void createSignal(LuceneSignalPtr& signal, const SynchronizePtr& objectLock);
 
         /// Wait for signal using an optional timeout.
         void wait(int32_t timeout = 0);

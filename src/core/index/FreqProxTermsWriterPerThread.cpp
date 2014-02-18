@@ -11,7 +11,7 @@
 
 namespace Lucene
 {
-    FreqProxTermsWriterPerThread::FreqProxTermsWriterPerThread(TermsHashPerThreadPtr perThread)
+    FreqProxTermsWriterPerThread::FreqProxTermsWriterPerThread(const TermsHashPerThreadPtr& perThread)
     {
         docState = perThread->docState;
         _termsHashPerThread = perThread;
@@ -21,7 +21,7 @@ namespace Lucene
     {
     }
 
-    TermsHashConsumerPerFieldPtr FreqProxTermsWriterPerThread::addField(TermsHashPerFieldPtr termsHashPerField, FieldInfoPtr fieldInfo)
+    TermsHashConsumerPerFieldPtr FreqProxTermsWriterPerThread::addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo)
     {
         return newLucene<FreqProxTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
     }

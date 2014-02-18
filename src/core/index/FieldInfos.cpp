@@ -39,7 +39,7 @@ namespace Lucene
         byName = MapStringFieldInfo::newInstance();
     }
 
-    FieldInfos::FieldInfos(DirectoryPtr d, const String& name)
+    FieldInfos::FieldInfos(const DirectoryPtr& d, const String& name)
     {
         format = 0;
         byNumber = Collection<FieldInfoPtr>::newInstance();
@@ -86,7 +86,7 @@ namespace Lucene
     {
     }
 
-    LuceneObjectPtr FieldInfos::clone(LuceneObjectPtr other)
+    LuceneObjectPtr FieldInfos::clone(const LuceneObjectPtr& other)
     {
         SyncLock syncLock(this);
         FieldInfosPtr fis(newLucene<FieldInfos>());
@@ -99,7 +99,7 @@ namespace Lucene
         return fis;
     }
 
-    void FieldInfos::add(DocumentPtr doc)
+    void FieldInfos::add(const DocumentPtr& doc)
     {
         SyncLock syncLock(this);
         Collection<FieldablePtr> fields(doc->getFields());
@@ -216,7 +216,7 @@ namespace Lucene
         return false;
     }
 
-    void FieldInfos::write(DirectoryPtr d, const String& name)
+    void FieldInfos::write(const DirectoryPtr& d, const String& name)
     {
         IndexOutputPtr output(d->createOutput(name));
         LuceneException finally;
@@ -232,7 +232,7 @@ namespace Lucene
         finally.throwException();
     }
 
-    void FieldInfos::write(IndexOutputPtr output)
+    void FieldInfos::write(const IndexOutputPtr& output)
     {
         output->writeVInt(CURRENT_FORMAT);
         output->writeVInt(size());
@@ -259,7 +259,7 @@ namespace Lucene
         }
     }
 
-    void FieldInfos::read(IndexInputPtr input, const String& fileName)
+    void FieldInfos::read(const IndexInputPtr& input, const String& fileName)
     {
         int32_t firstInt = input->readVInt();
         format = firstInt < 0 ? firstInt : FORMAT_PRE; // This is a real format?

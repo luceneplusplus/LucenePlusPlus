@@ -78,7 +78,7 @@ namespace Lucene
         setPreviousTokenStream(LuceneObjectPtr()); // force a new stemmer to be created
     }
 
-    TokenStreamPtr FrenchAnalyzer::tokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr FrenchAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<StandardTokenizer>(matchVersion, reader);
         result = newLucene<StandardFilter>(result);
@@ -89,7 +89,7 @@ namespace Lucene
         return result;
     }
 
-    TokenStreamPtr FrenchAnalyzer::reusableTokenStream(const String& fieldName, ReaderPtr reader)
+    TokenStreamPtr FrenchAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         FrenchAnalyzerSavedStreamsPtr streams(boost::dynamic_pointer_cast<FrenchAnalyzerSavedStreams>(getPreviousTokenStream()));
         if (!streams)

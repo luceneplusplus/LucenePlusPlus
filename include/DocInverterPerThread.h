@@ -17,7 +17,7 @@ namespace Lucene
     class DocInverterPerThread : public DocFieldConsumerPerThread
     {
     public:
-        DocInverterPerThread(DocFieldProcessorPerThreadPtr docFieldProcessorPerThread, DocInverterPtr docInverter);
+        DocInverterPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocInverterPtr& docInverter);
         virtual ~DocInverterPerThread();
 
         LUCENE_CLASS(DocInverterPerThread);
@@ -39,7 +39,7 @@ namespace Lucene
         virtual void startDocument();
         virtual DocWriterPtr finishDocument();
         virtual void abort();
-        virtual DocFieldConsumerPerFieldPtr addField(FieldInfoPtr fi);
+        virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi);
     };
 
     class SingleTokenAttributeSource : public AttributeSource

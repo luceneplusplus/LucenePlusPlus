@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI LogDocMergePolicy : public LogMergePolicy
     {
     public:
-        LogDocMergePolicy(IndexWriterPtr writer);
+        LogDocMergePolicy(const IndexWriterPtr& writer);
         virtual ~LogDocMergePolicy();
 
         LUCENE_CLASS(LogDocMergePolicy);
@@ -26,7 +26,7 @@ namespace Lucene
         static const int32_t DEFAULT_MIN_MERGE_DOCS;
 
     protected:
-        virtual int64_t size(SegmentInfoPtr info);
+        virtual int64_t size(const SegmentInfoPtr& info);
 
     public:
         /// Sets the minimum size for the lowest level segments. Any segments below this size are considered

@@ -15,7 +15,7 @@ namespace Lucene
     {
     }
 
-    PayloadAttribute::PayloadAttribute(PayloadPtr payload)
+    PayloadAttribute::PayloadAttribute(const PayloadPtr& payload)
     {
         this->payload = payload;
     }
@@ -34,7 +34,7 @@ namespace Lucene
         return this->payload;
     }
 
-    void PayloadAttribute::setPayload(PayloadPtr payload)
+    void PayloadAttribute::setPayload(const PayloadPtr& payload)
     {
         this->payload = payload;
     }
@@ -44,7 +44,7 @@ namespace Lucene
         payload.reset();
     }
 
-    LuceneObjectPtr PayloadAttribute::clone(LuceneObjectPtr other)
+    LuceneObjectPtr PayloadAttribute::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = Attribute::clone(other ? other : newLucene<PayloadAttribute>());
         PayloadAttributePtr cloneAttribute(boost::dynamic_pointer_cast<PayloadAttribute>(clone));
@@ -53,7 +53,7 @@ namespace Lucene
         return cloneAttribute;
     }
 
-    bool PayloadAttribute::equals(LuceneObjectPtr other)
+    bool PayloadAttribute::equals(const LuceneObjectPtr& other)
     {
         if (Attribute::equals(other))
             return true;
@@ -74,7 +74,7 @@ namespace Lucene
         return payload ? payload->hashCode() : 0;
     }
 
-    void PayloadAttribute::copyTo(AttributePtr target)
+    void PayloadAttribute::copyTo(const AttributePtr& target)
     {
         PayloadAttributePtr targetPayloadAttribute(boost::dynamic_pointer_cast<PayloadAttribute>(target));
         targetPayloadAttribute->setPayload(payload ? boost::dynamic_pointer_cast<Payload>(payload->clone()) : PayloadPtr());

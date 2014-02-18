@@ -21,7 +21,7 @@
 
 namespace Lucene
 {
-    SegmentTermDocs::SegmentTermDocs(SegmentReaderPtr parent)
+    SegmentTermDocs::SegmentTermDocs(const SegmentReaderPtr& parent)
     {
         this->_parent = parent;
         this->count = 0;
@@ -48,13 +48,13 @@ namespace Lucene
     {
     }
 
-    void SegmentTermDocs::seek(TermPtr term)
+    void SegmentTermDocs::seek(const TermPtr& term)
     {
         TermInfoPtr ti(SegmentReaderPtr(_parent)->core->getTermsReader()->get(term));
         seek(ti, term);
     }
 
-    void SegmentTermDocs::seek(TermEnumPtr termEnum)
+    void SegmentTermDocs::seek(const TermEnumPtr& termEnum)
     {
         TermInfoPtr ti;
         TermPtr term;
@@ -77,7 +77,7 @@ namespace Lucene
         seek(ti, term);
     }
 
-    void SegmentTermDocs::seek(TermInfoPtr ti, TermPtr term)
+    void SegmentTermDocs::seek(const TermInfoPtr& ti, const TermPtr& term)
     {
         count = 0;
         FieldInfoPtr fi(SegmentReaderPtr(_parent)->core->fieldInfos->fieldInfo(term->_field));
@@ -243,7 +243,7 @@ namespace Lucene
         return _freqStream;
     }
 
-    void SegmentTermDocs::freqStream(IndexInputPtr freqStream)
+    void SegmentTermDocs::freqStream(const IndexInputPtr& freqStream)
     {
         _freqStream = freqStream;
     }

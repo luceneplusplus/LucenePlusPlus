@@ -10,7 +10,7 @@
 
 namespace Lucene
 {
-    BooleanScorer::BooleanScorer(SimilarityPtr similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers) : Scorer(similarity)
+    BooleanScorer::BooleanScorer(const SimilarityPtr& similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers) : Scorer(similarity)
     {
         this->bucketTable = newLucene<BucketTable>();
         this->maxCoord = 1;
@@ -53,7 +53,7 @@ namespace Lucene
     {
     }
 
-    bool BooleanScorer::score(CollectorPtr collector, int32_t max, int32_t firstDocID)
+    bool BooleanScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
     {
         bool more = false;
         BucketPtr tmp;
@@ -174,7 +174,7 @@ namespace Lucene
         return current->score * coordFactors[current->coord];
     }
 
-    void BooleanScorer::score(CollectorPtr collector)
+    void BooleanScorer::score(const CollectorPtr& collector)
     {
         score(collector, INT_MAX, nextDoc());
     }
@@ -189,7 +189,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    BooleanScorerCollector::BooleanScorerCollector(int32_t mask, BucketTablePtr bucketTable)
+    BooleanScorerCollector::BooleanScorerCollector(int32_t mask, const BucketTablePtr& bucketTable)
     {
         this->mask = mask;
         this->_bucketTable = bucketTable;
@@ -228,12 +228,12 @@ namespace Lucene
         }
     }
 
-    void BooleanScorerCollector::setNextReader(IndexReaderPtr reader, int32_t docBase)
+    void BooleanScorerCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
     {
         // not needed by this implementation
     }
 
-    void BooleanScorerCollector::setScorer(ScorerPtr scorer)
+    void BooleanScorerCollector::setScorer(const ScorerPtr& scorer)
     {
         this->_scorer = scorer;
     }
@@ -307,7 +307,7 @@ namespace Lucene
         return SIZE;
     }
 
-    SubScorer::SubScorer(ScorerPtr scorer, bool required, bool prohibited, CollectorPtr collector, SubScorerPtr next)
+    SubScorer::SubScorer(const ScorerPtr& scorer, bool required, bool prohibited, const CollectorPtr& collector, const SubScorerPtr& next)
     {
         this->scorer = scorer;
         this->required = required;

@@ -16,7 +16,7 @@ namespace Lucene
     class LPPAPI CharReader : public CharStream
     {
     public:
-        CharReader(ReaderPtr in);
+        CharReader(const ReaderPtr& in);
         virtual ~CharReader();
 
         LUCENE_CLASS(CharReader);
@@ -27,7 +27,7 @@ namespace Lucene
     public:
         using CharStream::read;
 
-        static CharStreamPtr get(ReaderPtr input);
+        static CharStreamPtr get(const ReaderPtr& input);
 
         virtual int32_t correctOffset(int32_t currentOff);
         virtual void close();

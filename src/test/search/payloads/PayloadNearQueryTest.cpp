@@ -91,7 +91,7 @@ public:
         return 1.0;
     }
 
-    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, SearcherPtr searcher)
+    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher)
     {
         return newLucene<BoostingNearIDFExplanation>();
     }
@@ -100,7 +100,7 @@ public:
 class PayloadNearFilter : public TokenFilter
 {
 public:
-    PayloadNearFilter(ByteArray payload2, ByteArray payload4, TokenStreamPtr input, const String& fieldName) : TokenFilter(input)
+    PayloadNearFilter(ByteArray payload2, ByteArray payload4, const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input)
     {
         this->payload2 = payload2;
         this->payload4 = payload4;
@@ -159,7 +159,7 @@ protected:
     ByteArray payload4;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, ReaderPtr reader)
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
     {
         TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
         result = newLucene<PayloadNearFilter>(payload2, payload4, result, fieldName);

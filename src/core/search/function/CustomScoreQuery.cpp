@@ -14,12 +14,12 @@
 
 namespace Lucene
 {
-    CustomScoreQuery::CustomScoreQuery(QueryPtr subQuery)
+    CustomScoreQuery::CustomScoreQuery(const QueryPtr& subQuery)
     {
         ConstructQuery(subQuery, Collection<ValueSourceQueryPtr>::newInstance());
     }
 
-    CustomScoreQuery::CustomScoreQuery(QueryPtr subQuery, ValueSourceQueryPtr valSrcQuery)
+    CustomScoreQuery::CustomScoreQuery(const QueryPtr& subQuery, const ValueSourceQueryPtr& valSrcQuery)
     {
         Collection<ValueSourceQueryPtr> valSrcQueries(Collection<ValueSourceQueryPtr>::newInstance());
         if (valSrcQuery)
@@ -27,7 +27,7 @@ namespace Lucene
         ConstructQuery(subQuery, valSrcQueries);
     }
 
-    CustomScoreQuery::CustomScoreQuery(QueryPtr subQuery, Collection<ValueSourceQueryPtr> valSrcQueries)
+    CustomScoreQuery::CustomScoreQuery(const QueryPtr& subQuery, Collection<ValueSourceQueryPtr> valSrcQueries)
     {
         ConstructQuery(subQuery, valSrcQueries);
     }
@@ -36,7 +36,7 @@ namespace Lucene
     {
     }
 
-    void CustomScoreQuery::ConstructQuery(QueryPtr subQuery, Collection<ValueSourceQueryPtr> valSrcQueries)
+    void CustomScoreQuery::ConstructQuery(const QueryPtr& subQuery, Collection<ValueSourceQueryPtr> valSrcQueries)
     {
         this->strict = false;
         this->subQuery = subQuery;
@@ -45,7 +45,7 @@ namespace Lucene
             boost::throw_exception(IllegalArgumentException(L"<subquery> must not be null!"));
     }
 
-    QueryPtr CustomScoreQuery::rewrite(IndexReaderPtr reader)
+    QueryPtr CustomScoreQuery::rewrite(const IndexReaderPtr& reader)
     {
         CustomScoreQueryPtr cloneQuery;
 
@@ -77,7 +77,7 @@ namespace Lucene
             (*srcQuery)->extractTerms(terms);
     }
 
-    LuceneObjectPtr CustomScoreQuery::clone(LuceneObjectPtr other)
+    LuceneObjectPtr CustomScoreQuery::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = Query::clone(other ? other : newLucene<CustomScoreQuery>(subQuery));
         CustomScoreQueryPtr cloneQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(clone));
@@ -99,7 +99,7 @@ namespace Lucene
         return buffer.str();
     }
 
-    bool CustomScoreQuery::equals(LuceneObjectPtr other)
+    bool CustomScoreQuery::equals(const LuceneObjectPtr& other)
     {
         CustomScoreQueryPtr otherQuery(boost::dynamic_pointer_cast<CustomScoreQuery>(other));
         if (!otherQuery)
@@ -116,7 +116,7 @@ namespace Lucene
                MiscUtils::doubleToIntBits(getBoost()) ^ (strict ? 1234 : 4321);
     }
 
-    CustomScoreProviderPtr CustomScoreQuery::getCustomScoreProvider(IndexReaderPtr reader)
+    CustomScoreProviderPtr CustomScoreQuery::getCustomScoreProvider(const IndexReaderPtr& reader)
     {
         // when deprecated methods are removed, do not extend class here, just return new default CustomScoreProvider
         return newLucene<DefaultCustomScoreProvider>(shared_from_this(), reader);
@@ -139,7 +139,7 @@ namespace Lucene
         return subQueryScore * valSrcScore;
     }
 
-    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
+    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
     {
         if (valSrcExpls.size() == 1)
             return customExplain(doc, subQueryExpl, valSrcExpls[0]);
@@ -155,7 +155,7 @@ namespace Lucene
         return exp;
     }
 
-    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
+    ExplanationPtr CustomScoreQuery::customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, const ExplanationPtr& valSrcExpl)
     {
         double valSrcScore = 1;
         if (valSrcExpl)
@@ -166,7 +166,7 @@ namespace Lucene
         return exp;
     }
 
-    WeightPtr CustomScoreQuery::createWeight(SearcherPtr searcher)
+    WeightPtr CustomScoreQuery::createWeight(const SearcherPtr& searcher)
     {
         return newLucene<CustomWeight>(shared_from_this(), searcher);
     }
@@ -186,7 +186,7 @@ namespace Lucene
         return L"custom";
     }
 
-    DefaultCustomScoreProvider::DefaultCustomScoreProvider(CustomScoreQueryPtr customQuery, IndexReaderPtr reader) : CustomScoreProvider(reader)
+    DefaultCustomScoreProvider::DefaultCustomScoreProvider(const CustomScoreQueryPtr& customQuery, const IndexReaderPtr& reader) : CustomScoreProvider(reader)
     {
         _customQuery = customQuery;
     }
@@ -205,17 +205,17 @@ namespace Lucene
         return CustomScoreQueryPtr(_customQuery)->customScore(doc, subQueryScore, valSrcScore);
     }
 
-    ExplanationPtr DefaultCustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
+    ExplanationPtr DefaultCustomScoreProvider::customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, Collection<ExplanationPtr> valSrcExpls)
     {
         return CustomScoreQueryPtr(_customQuery)->customExplain(doc, subQueryExpl, valSrcExpls);
     }
 
-    ExplanationPtr DefaultCustomScoreProvider::customExplain(int32_t doc, ExplanationPtr subQueryExpl, ExplanationPtr valSrcExpl)
+    ExplanationPtr DefaultCustomScoreProvider::customExplain(int32_t doc, const ExplanationPtr& subQueryExpl, const ExplanationPtr& valSrcExpl)
     {
         return CustomScoreQueryPtr(_customQuery)->customExplain(doc, subQueryExpl, valSrcExpl);
     }
 
-    CustomWeight::CustomWeight(CustomScoreQueryPtr query, SearcherPtr searcher)
+    CustomWeight::CustomWeight(const CustomScoreQueryPtr& query, const SearcherPtr& searcher)
     {
         this->query = query;
         this->similarity = query->getSimilarity(searcher);
@@ -267,7 +267,7 @@ namespace Lucene
         }
     }
 
-    ScorerPtr CustomWeight::scorer(IndexReaderPtr reader, bool scoreDocsInOrder, bool topScorer)
+    ScorerPtr CustomWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
     {
         // Pass true for "scoresDocsInOrder", because we require in-order scoring, even if caller does not,
         // since we call advance on the valSrcScorers.  Pass false for "topScorer" because we will not invoke
@@ -281,13 +281,13 @@ namespace Lucene
         return newLucene<CustomScorer>(similarity, reader, shared_from_this(), subQueryScorer, valSrcScorers);
     }
 
-    ExplanationPtr CustomWeight::explain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr CustomWeight::explain(const IndexReaderPtr& reader, int32_t doc)
     {
         ExplanationPtr explain(doExplain(reader, doc));
         return explain ? explain : newLucene<Explanation>(0.0, L"no matching docs");
     }
 
-    ExplanationPtr CustomWeight::doExplain(IndexReaderPtr reader, int32_t doc)
+    ExplanationPtr CustomWeight::doExplain(const IndexReaderPtr& reader, int32_t doc)
     {
         ExplanationPtr subQueryExpl(subQueryWeight->explain(reader, doc));
         if (!subQueryExpl->isMatch())
@@ -309,7 +309,7 @@ namespace Lucene
         return false;
     }
 
-    CustomScorer::CustomScorer(SimilarityPtr similarity, IndexReaderPtr reader, CustomWeightPtr weight, ScorerPtr subQueryScorer, Collection<ScorerPtr> valSrcScorers) : Scorer(similarity)
+    CustomScorer::CustomScorer(const SimilarityPtr& similarity, const IndexReaderPtr& reader, const CustomWeightPtr& weight, const ScorerPtr& subQueryScorer, Collection<ScorerPtr> valSrcScorers) : Scorer(similarity)
     {
         this->qWeight = weight->getValue();
         this->subQueryScorer = subQueryScorer;

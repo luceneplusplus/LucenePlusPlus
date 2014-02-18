@@ -26,7 +26,7 @@ namespace Lucene
     {
     }
 
-    int32_t TermBuffer::compareTo(LuceneObjectPtr other)
+    int32_t TermBuffer::compareTo(const LuceneObjectPtr& other)
     {
         TermBufferPtr otherTermBuffer(boost::static_pointer_cast<TermBuffer>(other));
         if (field == otherTermBuffer->field)
@@ -53,7 +53,7 @@ namespace Lucene
         preUTF8Strings = true;
     }
 
-    void TermBuffer::read(IndexInputPtr input, FieldInfosPtr fieldInfos)
+    void TermBuffer::read(const IndexInputPtr& input, const FieldInfosPtr& fieldInfos)
     {
         this->term.reset(); // invalidate cache
         int32_t start = input->readVInt();
@@ -74,7 +74,7 @@ namespace Lucene
         this->field = fieldInfos->fieldName(input->readVInt());
     }
 
-    void TermBuffer::set(TermPtr term)
+    void TermBuffer::set(const TermPtr& term)
     {
         if (!term)
         {
@@ -89,7 +89,7 @@ namespace Lucene
         this->term = term;
     }
 
-    void TermBuffer::set(TermBufferPtr other)
+    void TermBuffer::set(const TermBufferPtr& other)
     {
         text->copyText(other->text);
         field = other->field;
@@ -114,7 +114,7 @@ namespace Lucene
         return term;
     }
 
-    LuceneObjectPtr TermBuffer::clone(LuceneObjectPtr other)
+    LuceneObjectPtr TermBuffer::clone(const LuceneObjectPtr& other)
     {
         LuceneObjectPtr clone = other ? other : newLucene<TermBuffer>();
         TermBufferPtr cloneBuffer(boost::dynamic_pointer_cast<TermBuffer>(LuceneObject::clone(clone)));

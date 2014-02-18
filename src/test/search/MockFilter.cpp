@@ -20,7 +20,7 @@ namespace Lucene
     {
     }
 
-    DocIdSetPtr MockFilter::getDocIdSet(IndexReaderPtr reader)
+    DocIdSetPtr MockFilter::getDocIdSet(const IndexReaderPtr& reader)
     {
         _wasCalled = true;
         return newLucene<DocIdBitSet>(newLucene<BitSet>());
