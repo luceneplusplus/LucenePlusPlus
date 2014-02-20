@@ -567,7 +567,9 @@ namespace Lucene
                 kind = 0x7fffffff;
             }
             ++curPos;
-            if ((i = jjnewStateCnt) == (startsAt = 36 - (jjnewStateCnt = startsAt)))
+            i = jjnewStateCnt;
+            jjnewStateCnt = startsAt;
+            if (i == (startsAt = 36 - jjnewStateCnt))
                 return curPos;
             try
             {
@@ -790,7 +792,9 @@ namespace Lucene
                 kind = 0x7fffffff;
             }
             ++curPos;
-            if ((i = jjnewStateCnt) == (startsAt = 7 - (jjnewStateCnt = startsAt)))
+            i = jjnewStateCnt;
+            jjnewStateCnt = startsAt;
+            if (i == (startsAt = 7 - jjnewStateCnt))
                 return curPos;
             try
             {
@@ -879,7 +883,9 @@ namespace Lucene
                 kind = 0x7fffffff;
             }
             ++curPos;
-            if ((i = jjnewStateCnt) == (startsAt = 3 - (jjnewStateCnt = startsAt)))
+            i = jjnewStateCnt;
+            jjnewStateCnt = startsAt;
+            if (i == (startsAt = 3 - jjnewStateCnt))
                 return curPos;
             try
             {
@@ -1102,7 +1108,9 @@ namespace Lucene
                 kind = 0x7fffffff;
             }
             ++curPos;
-            if ((i = jjnewStateCnt) == (startsAt = 7 - (jjnewStateCnt = startsAt)))
+            i = jjnewStateCnt;
+            jjnewStateCnt = startsAt;
+            if (i == (startsAt = 7 - jjnewStateCnt))
                 return curPos;
             try
             {

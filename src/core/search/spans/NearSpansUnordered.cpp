@@ -271,7 +271,7 @@ namespace Lucene
             length = end() - start();
             unordered->totalLength += length; // add new length
 
-            if (!unordered->max || doc() > unordered->max->doc() || (doc() == unordered->max->doc()) && (end() > unordered->max->end()))
+            if (!unordered->max || doc() > unordered->max->doc() || ((doc() == unordered->max->doc()) && (end() > unordered->max->end())))
                 unordered->max = shared_from_this();
         }
         unordered->more = condition;

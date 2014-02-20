@@ -479,7 +479,7 @@ namespace Lucene
         if (b[k] == L'e')
         {
             int32_t a = m();
-            if (a > 1 || a == 1 && !cvc(k - 1))
+            if (a > 1 || (a == 1 && !cvc(k - 1)))
                 --k;
         }
         if (b[k] == L'l' && doublec(k) && m() > 1)

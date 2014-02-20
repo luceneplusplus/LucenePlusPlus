@@ -138,7 +138,7 @@ namespace Lucene
             for (Collection<PhrasePositionsPtr>::iterator pp = repeats.begin(); pp != repeats.end(); ++pp)
             {
                 PhrasePositionsPtr pp2;
-                while (pp2 = termPositionsDiffer(*pp))
+                while ((pp2 = termPositionsDiffer(*pp)))
                 {
                     if (!pp2->nextPosition()) // out of pps that do not differ, advance the pp with higher offset
                         return -1; // ran out of a term - done
