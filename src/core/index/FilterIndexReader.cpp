@@ -8,301 +8,247 @@
 #include "FilterIndexReader.h"
 #include "FieldCache.h"
 
-namespace Lucene
-{
-    FilterIndexReader::FilterIndexReader(const IndexReaderPtr& in)
-    {
-        this->in = in;
-    }
+namespace Lucene {
 
-    FilterIndexReader::~FilterIndexReader()
-    {
-    }
+FilterIndexReader::FilterIndexReader(const IndexReaderPtr& in) {
+    this->in = in;
+}
 
-    DirectoryPtr FilterIndexReader::directory()
-    {
-        return in->directory();
-    }
+FilterIndexReader::~FilterIndexReader() {
+}
 
-    Collection<TermFreqVectorPtr> FilterIndexReader::getTermFreqVectors(int32_t docNumber)
-    {
-        ensureOpen();
-        return in->getTermFreqVectors(docNumber);
-    }
+DirectoryPtr FilterIndexReader::directory() {
+    return in->directory();
+}
 
-    TermFreqVectorPtr FilterIndexReader::getTermFreqVector(int32_t docNumber, const String& field)
-    {
-        ensureOpen();
-        return in->getTermFreqVector(docNumber, field);
-    }
+Collection<TermFreqVectorPtr> FilterIndexReader::getTermFreqVectors(int32_t docNumber) {
+    ensureOpen();
+    return in->getTermFreqVectors(docNumber);
+}
 
-    void FilterIndexReader::getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper)
-    {
-        ensureOpen();
-        in->getTermFreqVector(docNumber, field, mapper);
-    }
+TermFreqVectorPtr FilterIndexReader::getTermFreqVector(int32_t docNumber, const String& field) {
+    ensureOpen();
+    return in->getTermFreqVector(docNumber, field);
+}
 
-    void FilterIndexReader::getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper)
-    {
-        ensureOpen();
-        in->getTermFreqVector(docNumber, mapper);
-    }
+void FilterIndexReader::getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper) {
+    ensureOpen();
+    in->getTermFreqVector(docNumber, field, mapper);
+}
 
-    int32_t FilterIndexReader::numDocs()
-    {
-        // Don't call ensureOpen() here (it could affect performance)
-        return in->numDocs();
-    }
+void FilterIndexReader::getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper) {
+    ensureOpen();
+    in->getTermFreqVector(docNumber, mapper);
+}
 
-    int32_t FilterIndexReader::maxDoc()
-    {
-        // Don't call ensureOpen() here (it could affect performance)
-        return in->maxDoc();
-    }
+int32_t FilterIndexReader::numDocs() {
+    // Don't call ensureOpen() here (it could affect performance)
+    return in->numDocs();
+}
 
-    DocumentPtr FilterIndexReader::document(int32_t n, const FieldSelectorPtr& fieldSelector)
-    {
-        ensureOpen();
-        return in->document(n, fieldSelector);
-    }
+int32_t FilterIndexReader::maxDoc() {
+    // Don't call ensureOpen() here (it could affect performance)
+    return in->maxDoc();
+}
 
-    bool FilterIndexReader::isDeleted(int32_t n)
-    {
-        // Don't call ensureOpen() here (it could affect performance)
-        return in->isDeleted(n);
-    }
+DocumentPtr FilterIndexReader::document(int32_t n, const FieldSelectorPtr& fieldSelector) {
+    ensureOpen();
+    return in->document(n, fieldSelector);
+}
 
-    bool FilterIndexReader::hasDeletions()
-    {
-        // Don't call ensureOpen() here (it could affect performance)
-        return in->hasDeletions();
-    }
+bool FilterIndexReader::isDeleted(int32_t n) {
+    // Don't call ensureOpen() here (it could affect performance)
+    return in->isDeleted(n);
+}
 
-    void FilterIndexReader::doUndeleteAll()
-    {
-        in->undeleteAll();
-    }
+bool FilterIndexReader::hasDeletions() {
+    // Don't call ensureOpen() here (it could affect performance)
+    return in->hasDeletions();
+}
 
-    bool FilterIndexReader::hasNorms(const String& field)
-    {
-        ensureOpen();
-        return in->hasNorms(field);
-    }
+void FilterIndexReader::doUndeleteAll() {
+    in->undeleteAll();
+}
 
-    ByteArray FilterIndexReader::norms(const String& field)
-    {
-        ensureOpen();
-        return in->norms(field);
-    }
+bool FilterIndexReader::hasNorms(const String& field) {
+    ensureOpen();
+    return in->hasNorms(field);
+}
 
-    void FilterIndexReader::norms(const String& field, ByteArray norms, int32_t offset)
-    {
-        ensureOpen();
-        in->norms(field, norms, offset);
-    }
+ByteArray FilterIndexReader::norms(const String& field) {
+    ensureOpen();
+    return in->norms(field);
+}
 
-    void FilterIndexReader::doSetNorm(int32_t doc, const String& field, uint8_t value)
-    {
-        in->setNorm(doc, field, value);
-    }
+void FilterIndexReader::norms(const String& field, ByteArray norms, int32_t offset) {
+    ensureOpen();
+    in->norms(field, norms, offset);
+}
 
-    TermEnumPtr FilterIndexReader::terms()
-    {
-        ensureOpen();
-        return in->terms();
-    }
+void FilterIndexReader::doSetNorm(int32_t doc, const String& field, uint8_t value) {
+    in->setNorm(doc, field, value);
+}
 
-    TermEnumPtr FilterIndexReader::terms(const TermPtr& t)
-    {
-        ensureOpen();
-        return in->terms(t);
-    }
+TermEnumPtr FilterIndexReader::terms() {
+    ensureOpen();
+    return in->terms();
+}
 
-    int32_t FilterIndexReader::docFreq(const TermPtr& t)
-    {
-        ensureOpen();
-        return in->docFreq(t);
-    }
+TermEnumPtr FilterIndexReader::terms(const TermPtr& t) {
+    ensureOpen();
+    return in->terms(t);
+}
 
-    TermDocsPtr FilterIndexReader::termDocs()
-    {
-        ensureOpen();
-        return in->termDocs();
-    }
+int32_t FilterIndexReader::docFreq(const TermPtr& t) {
+    ensureOpen();
+    return in->docFreq(t);
+}
 
-    TermDocsPtr FilterIndexReader::termDocs(const TermPtr& term)
-    {
-        ensureOpen();
-        return in->termDocs(term);
-    }
+TermDocsPtr FilterIndexReader::termDocs() {
+    ensureOpen();
+    return in->termDocs();
+}
 
-    TermPositionsPtr FilterIndexReader::termPositions()
-    {
-        ensureOpen();
-        return in->termPositions();
-    }
+TermDocsPtr FilterIndexReader::termDocs(const TermPtr& term) {
+    ensureOpen();
+    return in->termDocs(term);
+}
 
-    void FilterIndexReader::doDelete(int32_t docNum)
-    {
-        in->deleteDocument(docNum);
-    }
+TermPositionsPtr FilterIndexReader::termPositions() {
+    ensureOpen();
+    return in->termPositions();
+}
 
-    void FilterIndexReader::doCommit(MapStringString commitUserData)
-    {
-        in->commit(commitUserData);
-    }
+void FilterIndexReader::doDelete(int32_t docNum) {
+    in->deleteDocument(docNum);
+}
 
-    void FilterIndexReader::doClose()
-    {
-        in->close();
+void FilterIndexReader::doCommit(MapStringString commitUserData) {
+    in->commit(commitUserData);
+}
 
-        // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is
-        // generally not a good idea)
-        FieldCache::DEFAULT()->purge(shared_from_this());
-    }
+void FilterIndexReader::doClose() {
+    in->close();
 
-    HashSet<String> FilterIndexReader::getFieldNames(FieldOption fieldOption)
-    {
-        ensureOpen();
-        return in->getFieldNames(fieldOption);
-    }
+    // NOTE: only needed in case someone had asked for FieldCache for top-level reader (which is
+    // generally not a good idea)
+    FieldCache::DEFAULT()->purge(shared_from_this());
+}
 
-    int64_t FilterIndexReader::getVersion()
-    {
-        ensureOpen();
-        return in->getVersion();
-    }
+HashSet<String> FilterIndexReader::getFieldNames(FieldOption fieldOption) {
+    ensureOpen();
+    return in->getFieldNames(fieldOption);
+}
 
-    bool FilterIndexReader::isCurrent()
-    {
-        ensureOpen();
-        return in->isCurrent();
-    }
+int64_t FilterIndexReader::getVersion() {
+    ensureOpen();
+    return in->getVersion();
+}
 
-    bool FilterIndexReader::isOptimized()
-    {
-        ensureOpen();
-        return in->isOptimized();
-    }
+bool FilterIndexReader::isCurrent() {
+    ensureOpen();
+    return in->isCurrent();
+}
 
-    Collection<IndexReaderPtr> FilterIndexReader::getSequentialSubReaders()
-    {
-        return in->getSequentialSubReaders();
-    }
+bool FilterIndexReader::isOptimized() {
+    ensureOpen();
+    return in->isOptimized();
+}
 
-    LuceneObjectPtr FilterIndexReader::getFieldCacheKey()
-    {
-        return in->getFieldCacheKey();
-    }
+Collection<IndexReaderPtr> FilterIndexReader::getSequentialSubReaders() {
+    return in->getSequentialSubReaders();
+}
 
-    LuceneObjectPtr FilterIndexReader::getDeletesCacheKey()
-    {
-        return in->getDeletesCacheKey();
-    }
+LuceneObjectPtr FilterIndexReader::getFieldCacheKey() {
+    return in->getFieldCacheKey();
+}
 
-    FilterTermDocs::FilterTermDocs(const TermDocsPtr& in)
-    {
-        this->in = in;
-    }
+LuceneObjectPtr FilterIndexReader::getDeletesCacheKey() {
+    return in->getDeletesCacheKey();
+}
 
-    FilterTermDocs::~FilterTermDocs()
-    {
-    }
+FilterTermDocs::FilterTermDocs(const TermDocsPtr& in) {
+    this->in = in;
+}
 
-    void FilterTermDocs::seek(const TermPtr& term)
-    {
-        in->seek(term);
-    }
+FilterTermDocs::~FilterTermDocs() {
+}
 
-    void FilterTermDocs::seek(const TermEnumPtr& termEnum)
-    {
-        in->seek(termEnum);
-    }
+void FilterTermDocs::seek(const TermPtr& term) {
+    in->seek(term);
+}
 
-    int32_t FilterTermDocs::doc()
-    {
-        return in->doc();
-    }
+void FilterTermDocs::seek(const TermEnumPtr& termEnum) {
+    in->seek(termEnum);
+}
 
-    int32_t FilterTermDocs::freq()
-    {
-        return in->freq();
-    }
+int32_t FilterTermDocs::doc() {
+    return in->doc();
+}
 
-    bool FilterTermDocs::next()
-    {
-        return in->next();
-    }
+int32_t FilterTermDocs::freq() {
+    return in->freq();
+}
 
-    int32_t FilterTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs)
-    {
-        return in->read(docs, freqs);
-    }
+bool FilterTermDocs::next() {
+    return in->next();
+}
 
-    bool FilterTermDocs::skipTo(int32_t target)
-    {
-        return in->skipTo(target);
-    }
+int32_t FilterTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+    return in->read(docs, freqs);
+}
 
-    void FilterTermDocs::close()
-    {
-        in->close();
-    }
+bool FilterTermDocs::skipTo(int32_t target) {
+    return in->skipTo(target);
+}
 
-    FilterTermPositions::FilterTermPositions(const TermPositionsPtr& in) : FilterTermDocs(in)
-    {
-    }
+void FilterTermDocs::close() {
+    in->close();
+}
 
-    FilterTermPositions::~FilterTermPositions()
-    {
-    }
+FilterTermPositions::FilterTermPositions(const TermPositionsPtr& in) : FilterTermDocs(in) {
+}
 
-    int32_t FilterTermPositions::nextPosition()
-    {
-        return boost::static_pointer_cast<TermPositions>(in)->nextPosition();
-    }
+FilterTermPositions::~FilterTermPositions() {
+}
 
-    int32_t FilterTermPositions::getPayloadLength()
-    {
-        return boost::static_pointer_cast<TermPositions>(in)->getPayloadLength();
-    }
+int32_t FilterTermPositions::nextPosition() {
+    return boost::static_pointer_cast<TermPositions>(in)->nextPosition();
+}
 
-    ByteArray FilterTermPositions::getPayload(ByteArray data, int32_t offset)
-    {
-        return boost::static_pointer_cast<TermPositions>(in)->getPayload(data, offset);
-    }
+int32_t FilterTermPositions::getPayloadLength() {
+    return boost::static_pointer_cast<TermPositions>(in)->getPayloadLength();
+}
 
-    bool FilterTermPositions::isPayloadAvailable()
-    {
-        return boost::static_pointer_cast<TermPositions>(in)->isPayloadAvailable();
-    }
+ByteArray FilterTermPositions::getPayload(ByteArray data, int32_t offset) {
+    return boost::static_pointer_cast<TermPositions>(in)->getPayload(data, offset);
+}
 
-    FilterTermEnum::FilterTermEnum(const TermEnumPtr& in)
-    {
-        this->in = in;
-    }
+bool FilterTermPositions::isPayloadAvailable() {
+    return boost::static_pointer_cast<TermPositions>(in)->isPayloadAvailable();
+}
 
-    FilterTermEnum::~FilterTermEnum()
-    {
-    }
+FilterTermEnum::FilterTermEnum(const TermEnumPtr& in) {
+    this->in = in;
+}
 
-    bool FilterTermEnum::next()
-    {
-        return in->next();
-    }
+FilterTermEnum::~FilterTermEnum() {
+}
 
-    TermPtr FilterTermEnum::term()
-    {
-        return in->term();
-    }
+bool FilterTermEnum::next() {
+    return in->next();
+}
 
-    int32_t FilterTermEnum::docFreq()
-    {
-        return in->docFreq();
-    }
+TermPtr FilterTermEnum::term() {
+    return in->term();
+}
 
-    void FilterTermEnum::close()
-    {
-        in->close();
-    }
+int32_t FilterTermEnum::docFreq() {
+    return in->docFreq();
+}
+
+void FilterTermEnum::close() {
+    in->close();
+}
+
 }

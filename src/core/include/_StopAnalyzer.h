@@ -9,20 +9,20 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Filters LowerCaseTokenizer with StopFilter.
-    class StopAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~StopAnalyzerSavedStreams();
+namespace Lucene {
 
-        LUCENE_CLASS(StopAnalyzerSavedStreams);
+/// Filters LowerCaseTokenizer with StopFilter.
+class StopAnalyzerSavedStreams : public LuceneObject {
+public:
+    virtual ~StopAnalyzerSavedStreams();
 
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
-    };
+    LUCENE_CLASS(StopAnalyzerSavedStreams);
+
+public:
+    TokenizerPtr source;
+    TokenStreamPtr result;
+};
+
 }
 
 #endif

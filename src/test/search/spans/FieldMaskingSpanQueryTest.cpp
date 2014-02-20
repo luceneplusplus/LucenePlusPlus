@@ -23,73 +23,70 @@
 
 using namespace Lucene;
 
-class FieldMaskingSpanQueryTest : public LuceneTestFixture
-{
+class FieldMaskingSpanQueryTest : public LuceneTestFixture {
 public:
-    FieldMaskingSpanQueryTest()
-    {
+    FieldMaskingSpanQueryTest() {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer= newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
         writer->addDocument(doc(newCollection<FieldPtr>(
-            field(L"id", L"0"),
-            field(L"gender", L"male"),
-            field(L"first", L"james"),
-            field(L"last", L"jones")))
-        );
+                                    field(L"id", L"0"),
+                                    field(L"gender", L"male"),
+                                    field(L"first", L"james"),
+                                    field(L"last", L"jones")))
+                           );
 
         writer->addDocument(doc(newCollection<FieldPtr>(
-            field(L"id", L"1"),
-            field(L"gender", L"male"),
-            field(L"first", L"james"),
-            field(L"last", L"smith"),
-            field(L"gender", L"female"),
-            field(L"first", L"sally"),
-            field(L"last", L"jones")))
-        );
+                                    field(L"id", L"1"),
+                                    field(L"gender", L"male"),
+                                    field(L"first", L"james"),
+                                    field(L"last", L"smith"),
+                                    field(L"gender", L"female"),
+                                    field(L"first", L"sally"),
+                                    field(L"last", L"jones")))
+                           );
 
         writer->addDocument(doc(newCollection<FieldPtr>(
-            field(L"id", L"2"),
-            field(L"gender", L"female"),
-            field(L"first", L"greta"),
-            field(L"last", L"jones"),
-            field(L"gender", L"female"),
-            field(L"first", L"sally"),
-            field(L"last", L"smith"),
-            field(L"gender", L"male"),
-            field(L"first", L"james"),
-            field(L"last", L"jones")))
-        );
+                                    field(L"id", L"2"),
+                                    field(L"gender", L"female"),
+                                    field(L"first", L"greta"),
+                                    field(L"last", L"jones"),
+                                    field(L"gender", L"female"),
+                                    field(L"first", L"sally"),
+                                    field(L"last", L"smith"),
+                                    field(L"gender", L"male"),
+                                    field(L"first", L"james"),
+                                    field(L"last", L"jones")))
+                           );
 
         writer->addDocument(doc(newCollection<FieldPtr>(
-            field(L"id", L"3"),
-            field(L"gender", L"female"),
-            field(L"first", L"lisa"),
-            field(L"last", L"jones"),
-            field(L"gender", L"male"),
-            field(L"first", L"bob"),
-            field(L"last", L"costas")))
-        );
+                                    field(L"id", L"3"),
+                                    field(L"gender", L"female"),
+                                    field(L"first", L"lisa"),
+                                    field(L"last", L"jones"),
+                                    field(L"gender", L"male"),
+                                    field(L"first", L"bob"),
+                                    field(L"last", L"costas")))
+                           );
 
         writer->addDocument(doc(newCollection<FieldPtr>(
-            field(L"id", L"4"),
-            field(L"gender", L"female"),
-            field(L"first", L"sally"),
-            field(L"last", L"smith"),
-            field(L"gender", L"female"),
-            field(L"first", L"linda"),
-            field(L"last", L"dixit"),
-            field(L"gender", L"male"),
-            field(L"first", L"bubba"),
-            field(L"last", L"jones")))
-        );
+                                    field(L"id", L"4"),
+                                    field(L"gender", L"female"),
+                                    field(L"first", L"sally"),
+                                    field(L"last", L"smith"),
+                                    field(L"gender", L"female"),
+                                    field(L"first", L"linda"),
+                                    field(L"last", L"dixit"),
+                                    field(L"gender", L"male"),
+                                    field(L"first", L"bubba"),
+                                    field(L"last", L"jones")))
+                           );
 
         writer->close();
         searcher = newLucene<IndexSearcher>(directory, true);
     }
 
-    virtual ~FieldMaskingSpanQueryTest()
-    {
+    virtual ~FieldMaskingSpanQueryTest() {
         searcher->close();
     }
 
@@ -97,37 +94,32 @@ protected:
     IndexSearcherPtr searcher;
 
 public:
-    DocumentPtr doc(Collection<FieldPtr> fields)
-    {
+    DocumentPtr doc(Collection<FieldPtr> fields) {
         DocumentPtr doc = newLucene<Document>();
-        for (int32_t i = 0; i < fields.size(); ++i)
+        for (int32_t i = 0; i < fields.size(); ++i) {
             doc->add(fields[i]);
+        }
         return doc;
     }
 
-    FieldPtr field(const String& name, const String& value)
-    {
+    FieldPtr field(const String& name, const String& value) {
         return newLucene<Field>(name, value, Field::STORE_NO, Field::INDEX_ANALYZED);
     }
 
-    void check(const SpanQueryPtr& q, Collection<int32_t> docs)
-    {
+    void check(const SpanQueryPtr& q, Collection<int32_t> docs) {
         CheckHits::checkHitCollector(q, L"", searcher, docs);
     }
 
-    String str(const SpansPtr& span)
-    {
+    String str(const SpansPtr& span) {
         return str(span->doc(), span->start(), span->end());
     }
 
-    String str(int32_t doc, int32_t start, int32_t end)
-    {
+    String str(int32_t doc, int32_t start, int32_t end) {
         return L"s(" + StringUtils::toString(doc) + L"," + StringUtils::toString(start) + L"," + StringUtils::toString(end) + L")";
     }
 };
 
-TEST_F(FieldMaskingSpanQueryTest, testRewrite0)
-{
+TEST_F(FieldMaskingSpanQueryTest, testRewrite0) {
     SpanQueryPtr q = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
     q->setBoost(8.7654321);
     SpanQueryPtr qr = boost::dynamic_pointer_cast<SpanQuery>(searcher->rewrite(q));
@@ -139,32 +131,28 @@ TEST_F(FieldMaskingSpanQueryTest, testRewrite0)
     EXPECT_EQ(1, terms.size());
 }
 
-namespace TestRewrite
-{
-    class TestableFieldMaskingSpanQuery : public FieldMaskingSpanQuery
-    {
-    public:
-        TestableFieldMaskingSpanQuery(const SpanQueryPtr& maskedQuery, const String& maskedField) : FieldMaskingSpanQuery(maskedQuery, maskedField)
-        {
-        }
+namespace TestRewrite {
 
-        virtual ~TestableFieldMaskingSpanQuery()
-        {
-        }
+class TestableFieldMaskingSpanQuery : public FieldMaskingSpanQuery {
+public:
+    TestableFieldMaskingSpanQuery(const SpanQueryPtr& maskedQuery, const String& maskedField) : FieldMaskingSpanQuery(maskedQuery, maskedField) {
+    }
 
-    public:
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader)
-        {
-            return newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(
-                newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally")),
-                newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james")))
-            );
-        }
-    };
+    virtual ~TestableFieldMaskingSpanQuery() {
+    }
+
+public:
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader) {
+        return newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(
+                                          newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally")),
+                                          newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james")))
+                                     );
+    }
+};
+
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testRewrite1)
-{
+TEST_F(FieldMaskingSpanQueryTest, testRewrite1) {
     // mask an anon SpanQuery class that rewrites to something else.
     SpanQueryPtr q = newLucene<TestRewrite::TestableFieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
     SpanQueryPtr qr = boost::dynamic_pointer_cast<SpanQuery>(searcher->rewrite(q));
@@ -176,8 +164,7 @@ TEST_F(FieldMaskingSpanQueryTest, testRewrite1)
     EXPECT_EQ(2, terms.size());
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testRewrite2)
-{
+TEST_F(FieldMaskingSpanQueryTest, testRewrite2) {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"smith"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"jones"));
     SpanQueryPtr q = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(q1, newLucene<FieldMaskingSpanQuery>(q2, L"last")), 1, true);
@@ -188,8 +175,7 @@ TEST_F(FieldMaskingSpanQueryTest, testRewrite2)
     EXPECT_EQ(2, terms.size());
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testEquality1)
-{
+TEST_F(FieldMaskingSpanQueryTest, testEquality1) {
     SpanQueryPtr q1 = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
     SpanQueryPtr q2 = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"first");
     SpanQueryPtr q3 = newLucene<FieldMaskingSpanQuery>(newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally")), L"XXXXX");
@@ -208,15 +194,13 @@ TEST_F(FieldMaskingSpanQueryTest, testEquality1)
     QueryUtils::checkEqual(qA, qB);
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testNoop0)
-{
+TEST_F(FieldMaskingSpanQueryTest, testNoop0) {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"sally"));
     SpanQueryPtr q = newLucene<FieldMaskingSpanQuery>(q1, L"first");
     check(q, Collection<int32_t>::newInstance());
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testNoop1)
-{
+TEST_F(FieldMaskingSpanQueryTest, testNoop1) {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"smith"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"jones"));
     SpanQueryPtr q = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(q1, newLucene<FieldMaskingSpanQuery>(q2, L"last")), 0, true);
@@ -225,8 +209,7 @@ TEST_F(FieldMaskingSpanQueryTest, testNoop1)
     check(q, newCollection<int32_t>(1, 2));
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testSimple1)
-{
+TEST_F(FieldMaskingSpanQueryTest, testSimple1) {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"jones"));
     SpanQueryPtr q = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(q1, newLucene<FieldMaskingSpanQuery>(q2, L"first")), -1, false);
@@ -239,8 +222,7 @@ TEST_F(FieldMaskingSpanQueryTest, testSimple1)
     check(q, newCollection<int32_t>(0, 2));
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testSimple2)
-{
+TEST_F(FieldMaskingSpanQueryTest, testSimple2) {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"gender", L"female"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"last", L"smith"));
     SpanQueryPtr q = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(q1, newLucene<FieldMaskingSpanQuery>(q2, L"gender")), -1, false);
@@ -249,8 +231,7 @@ TEST_F(FieldMaskingSpanQueryTest, testSimple2)
     check(q, newCollection<int32_t>(2, 4));
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testSpans0)
-{
+TEST_F(FieldMaskingSpanQueryTest, testSpans0) {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"gender", L"female"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
     SpanQueryPtr q = newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(q1, newLucene<FieldMaskingSpanQuery>(q2, L"gender")));
@@ -288,8 +269,7 @@ TEST_F(FieldMaskingSpanQueryTest, testSpans0)
     EXPECT_TRUE(!span->next());
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testSpans1)
-{
+TEST_F(FieldMaskingSpanQueryTest, testSpans1) {
     SpanQueryPtr q1 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"sally"));
     SpanQueryPtr q2 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
     SpanQueryPtr qA = newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(q1, q2));
@@ -301,16 +281,14 @@ TEST_F(FieldMaskingSpanQueryTest, testSpans1)
     SpansPtr spanA = qA->getSpans(searcher->getIndexReader());
     SpansPtr spanB = qB->getSpans(searcher->getIndexReader());
 
-    while (spanA->next())
-    {
+    while (spanA->next()) {
         EXPECT_TRUE(spanB->next());
         EXPECT_EQ(str(spanA), str(spanB));
     }
     EXPECT_TRUE(!(spanB->next()));
 }
 
-TEST_F(FieldMaskingSpanQueryTest, testSpans2)
-{
+TEST_F(FieldMaskingSpanQueryTest, testSpans2) {
     SpanQueryPtr qA1 = newLucene<SpanTermQuery>(newLucene<Term>(L"gender", L"female"));
     SpanQueryPtr qA2 = newLucene<SpanTermQuery>(newLucene<Term>(L"first", L"james"));
     SpanQueryPtr qA = newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(qA1, newLucene<FieldMaskingSpanQuery>(qA2, L"gender")));

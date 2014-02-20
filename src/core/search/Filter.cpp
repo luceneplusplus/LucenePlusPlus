@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "Filter.h"
 
-namespace Lucene
-{
-    Filter::~Filter()
-    {
-    }
+namespace Lucene {
+
+Filter::~Filter() {
+}
+
 }

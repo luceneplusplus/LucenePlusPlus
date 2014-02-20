@@ -15,68 +15,59 @@
 #include "DocInverterPerField.h"
 #include "DocInverterPerThread.h"
 
-namespace Lucene
-{
-    DocInverter::DocInverter(const InvertedDocConsumerPtr& consumer, const InvertedDocEndConsumerPtr& endConsumer)
-    {
-        this->consumer = consumer;
-        this->endConsumer = endConsumer;
-    }
+namespace Lucene {
 
-    DocInverter::~DocInverter()
-    {
-    }
+DocInverter::DocInverter(const InvertedDocConsumerPtr& consumer, const InvertedDocEndConsumerPtr& endConsumer) {
+    this->consumer = consumer;
+    this->endConsumer = endConsumer;
+}
 
-    void DocInverter::setFieldInfos(const FieldInfosPtr& fieldInfos)
-    {
-        DocFieldConsumer::setFieldInfos(fieldInfos);
-        consumer->setFieldInfos(fieldInfos);
-        endConsumer->setFieldInfos(fieldInfos);
-    }
+DocInverter::~DocInverter() {
+}
 
-    void DocInverter::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
-    {
-        MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField childThreadsAndFields(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField::newInstance());
-        MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField endChildThreadsAndFields(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField::newInstance());
+void DocInverter::setFieldInfos(const FieldInfosPtr& fieldInfos) {
+    DocFieldConsumer::setFieldInfos(fieldInfos);
+    consumer->setFieldInfos(fieldInfos);
+    endConsumer->setFieldInfos(fieldInfos);
+}
 
-        for (MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry)
-        {
-            Collection<InvertedDocConsumerPerFieldPtr> childFields(Collection<InvertedDocConsumerPerFieldPtr>::newInstance());
-            Collection<InvertedDocEndConsumerPerFieldPtr> endChildFields(Collection<InvertedDocEndConsumerPerFieldPtr>::newInstance());
+void DocInverter::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) {
+    MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField childThreadsAndFields(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField::newInstance());
+    MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField endChildThreadsAndFields(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField::newInstance());
 
-            for (Collection<DocFieldConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
-            {
-                childFields.add(boost::static_pointer_cast<DocInverterPerField>(*perField)->consumer);
-                endChildFields.add(boost::static_pointer_cast<DocInverterPerField>(*perField)->endConsumer);
-            }
+    for (MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry) {
+        Collection<InvertedDocConsumerPerFieldPtr> childFields(Collection<InvertedDocConsumerPerFieldPtr>::newInstance());
+        Collection<InvertedDocEndConsumerPerFieldPtr> endChildFields(Collection<InvertedDocEndConsumerPerFieldPtr>::newInstance());
 
-            childThreadsAndFields.put(boost::static_pointer_cast<DocInverterPerThread>(entry->first)->consumer, childFields);
-            endChildThreadsAndFields.put(boost::static_pointer_cast<DocInverterPerThread>(entry->first)->endConsumer, endChildFields);
+        for (Collection<DocFieldConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField) {
+            childFields.add(boost::static_pointer_cast<DocInverterPerField>(*perField)->consumer);
+            endChildFields.add(boost::static_pointer_cast<DocInverterPerField>(*perField)->endConsumer);
         }
 
-        consumer->flush(childThreadsAndFields, state);
-        endConsumer->flush(endChildThreadsAndFields, state);
+        childThreadsAndFields.put(boost::static_pointer_cast<DocInverterPerThread>(entry->first)->consumer, childFields);
+        endChildThreadsAndFields.put(boost::static_pointer_cast<DocInverterPerThread>(entry->first)->endConsumer, endChildFields);
     }
 
-    void DocInverter::closeDocStore(const SegmentWriteStatePtr& state)
-    {
-        consumer->closeDocStore(state);
-        endConsumer->closeDocStore(state);
-    }
+    consumer->flush(childThreadsAndFields, state);
+    endConsumer->flush(endChildThreadsAndFields, state);
+}
 
-    void DocInverter::abort()
-    {
-        consumer->abort();
-        endConsumer->abort();
-    }
+void DocInverter::closeDocStore(const SegmentWriteStatePtr& state) {
+    consumer->closeDocStore(state);
+    endConsumer->closeDocStore(state);
+}
 
-    bool DocInverter::freeRAM()
-    {
-        return consumer->freeRAM();
-    }
+void DocInverter::abort() {
+    consumer->abort();
+    endConsumer->abort();
+}
 
-    DocFieldConsumerPerThreadPtr DocInverter::addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread)
-    {
-        return newLucene<DocInverterPerThread>(docFieldProcessorPerThread, shared_from_this());
-    }
+bool DocInverter::freeRAM() {
+    return consumer->freeRAM();
+}
+
+DocFieldConsumerPerThreadPtr DocInverter::addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread) {
+    return newLucene<DocInverterPerThread>(docFieldProcessorPerThread, shared_from_this());
+}
+
 }

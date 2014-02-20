@@ -6,16 +6,16 @@
 
 #include "test_lucene.h"
 
-namespace Lucene
-{
-    class LuceneGlobalFixture : public testing::Environment
-    {
-    public:
-        /// setup
-        LuceneGlobalFixture();
+namespace Lucene {
 
-        /// teardown
-        virtual ~LuceneGlobalFixture();
-    };
+class LuceneGlobalFixture : public testing::Environment {
+public:
+    /// setup
+    LuceneGlobalFixture();
+
+    /// teardown
+    virtual ~LuceneGlobalFixture();
+};
+
 }
 

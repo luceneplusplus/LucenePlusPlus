@@ -27,11 +27,9 @@
 
 using namespace Lucene;
 
-class KeywordAnalyzerTest : public BaseTokenStreamFixture
-{
+class KeywordAnalyzerTest : public BaseTokenStreamFixture {
 public:
-    KeywordAnalyzerTest()
-    {
+    KeywordAnalyzerTest() {
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         DocumentPtr doc = newLucene<Document>();
@@ -44,8 +42,7 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
     }
 
-    virtual ~KeywordAnalyzerTest()
-    {
+    virtual ~KeywordAnalyzerTest() {
     }
 
 protected:
@@ -53,8 +50,7 @@ protected:
     IndexSearcherPtr searcher;
 };
 
-TEST_F(KeywordAnalyzerTest, testPerFieldAnalyzer)
-{
+TEST_F(KeywordAnalyzerTest, testPerFieldAnalyzer) {
     PerFieldAnalyzerWrapperPtr analyzer = newLucene<PerFieldAnalyzerWrapper>(newLucene<SimpleAnalyzer>());
     analyzer->addAnalyzer(L"partnum", newLucene<KeywordAnalyzer>());
 
@@ -66,8 +62,7 @@ TEST_F(KeywordAnalyzerTest, testPerFieldAnalyzer)
     EXPECT_EQ(1, hits.size());
 }
 
-TEST_F(KeywordAnalyzerTest, testMutipleDocument)
-{
+TEST_F(KeywordAnalyzerTest, testMutipleDocument) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -85,8 +80,7 @@ TEST_F(KeywordAnalyzerTest, testMutipleDocument)
     EXPECT_TRUE(td->next());
 }
 
-TEST_F(KeywordAnalyzerTest, testOffsets)
-{
+TEST_F(KeywordAnalyzerTest, testOffsets) {
     TokenStreamPtr stream = newLucene<KeywordAnalyzer>()->tokenStream(L"field", newLucene<StringReader>(L"abcd"));
     OffsetAttributePtr offsetAtt = stream->addAttribute<OffsetAttribute>();
     EXPECT_TRUE(stream->incrementToken());

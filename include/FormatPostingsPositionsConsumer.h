@@ -9,22 +9,22 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class FormatPostingsPositionsConsumer : public LuceneObject
-    {
-    public:
-        virtual ~FormatPostingsPositionsConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsPositionsConsumer);
+class FormatPostingsPositionsConsumer : public LuceneObject {
+public:
+    virtual ~FormatPostingsPositionsConsumer();
 
-    public:
-        /// Add a new position & payload.  If payloadLength > 0 you must read those bytes from the IndexInput.
-        virtual void addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength) = 0;
+    LUCENE_CLASS(FormatPostingsPositionsConsumer);
 
-        /// Called when we are done adding positions & payloads.
-        virtual void finish() = 0;
-    };
+public:
+    /// Add a new position & payload.  If payloadLength > 0 you must read those bytes from the IndexInput.
+    virtual void addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength) = 0;
+
+    /// Called when we are done adding positions & payloads.
+    virtual void finish() = 0;
+};
+
 }
 
 #endif

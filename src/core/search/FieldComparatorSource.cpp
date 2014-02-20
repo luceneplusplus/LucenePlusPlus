@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "FieldComparatorSource.h"
 
-namespace Lucene
-{
-    FieldComparatorSource::~FieldComparatorSource()
-    {
-    }
+namespace Lucene {
+
+FieldComparatorSource::~FieldComparatorSource() {
+}
+
 }

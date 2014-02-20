@@ -12,68 +12,61 @@
 #include "OpenBitSet.h"
 #include "IndexReader.h"
 
-namespace Lucene
-{
-    SpanQueryFilter::SpanQueryFilter(const SpanQueryPtr& query)
-    {
-        this->query = query;
-    }
+namespace Lucene {
 
-    SpanQueryFilter::~SpanQueryFilter()
-    {
-    }
+SpanQueryFilter::SpanQueryFilter(const SpanQueryPtr& query) {
+    this->query = query;
+}
 
-    DocIdSetPtr SpanQueryFilter::getDocIdSet(const IndexReaderPtr& reader)
-    {
-        SpanFilterResultPtr result(bitSpans(reader));
-        return result->getDocIdSet();
-    }
+SpanQueryFilter::~SpanQueryFilter() {
+}
 
-    SpanFilterResultPtr SpanQueryFilter::bitSpans(const IndexReaderPtr& reader)
-    {
-        OpenBitSetPtr bits(newLucene<OpenBitSet>(reader->maxDoc()));
-        SpansPtr spans(query->getSpans(reader));
-        Collection<PositionInfoPtr> tmp(Collection<PositionInfoPtr>::newInstance());
-        int32_t currentDoc = -1;
-        PositionInfoPtr currentInfo;
-        while (spans->next())
-        {
-            int32_t doc = spans->doc();
-            bits->set(doc);
-            if (currentDoc != doc)
-            {
-                currentInfo = newLucene<PositionInfo>(doc);
-                tmp.add(currentInfo);
-                currentDoc = doc;
-            }
-            currentInfo->addPosition(spans->start(), spans->end());
+DocIdSetPtr SpanQueryFilter::getDocIdSet(const IndexReaderPtr& reader) {
+    SpanFilterResultPtr result(bitSpans(reader));
+    return result->getDocIdSet();
+}
+
+SpanFilterResultPtr SpanQueryFilter::bitSpans(const IndexReaderPtr& reader) {
+    OpenBitSetPtr bits(newLucene<OpenBitSet>(reader->maxDoc()));
+    SpansPtr spans(query->getSpans(reader));
+    Collection<PositionInfoPtr> tmp(Collection<PositionInfoPtr>::newInstance());
+    int32_t currentDoc = -1;
+    PositionInfoPtr currentInfo;
+    while (spans->next()) {
+        int32_t doc = spans->doc();
+        bits->set(doc);
+        if (currentDoc != doc) {
+            currentInfo = newLucene<PositionInfo>(doc);
+            tmp.add(currentInfo);
+            currentDoc = doc;
         }
-        return newLucene<SpanFilterResult>(bits, tmp);
+        currentInfo->addPosition(spans->start(), spans->end());
+    }
+    return newLucene<SpanFilterResult>(bits, tmp);
+}
+
+SpanQueryPtr SpanQueryFilter::getQuery() {
+    return query;
+}
+
+String SpanQueryFilter::toString() {
+    return L"SpanQueryFilter(" + query->toString() + L")";
+}
+
+bool SpanQueryFilter::equals(const LuceneObjectPtr& other) {
+    if (LuceneObject::equals(other)) {
+        return true;
     }
 
-    SpanQueryPtr SpanQueryFilter::getQuery()
-    {
-        return query;
+    SpanQueryFilterPtr otherSpanQueryFilter(boost::dynamic_pointer_cast<SpanQueryFilter>(other));
+    if (!otherSpanQueryFilter) {
+        return false;
     }
+    return query->equals(otherSpanQueryFilter->query);
+}
 
-    String SpanQueryFilter::toString()
-    {
-        return L"SpanQueryFilter(" + query->toString() + L")";
-    }
+int32_t SpanQueryFilter::hashCode() {
+    return query->hashCode() ^ 0x923f64b9;
+}
 
-    bool SpanQueryFilter::equals(const LuceneObjectPtr& other)
-    {
-        if (LuceneObject::equals(other))
-            return true;
-
-        SpanQueryFilterPtr otherSpanQueryFilter(boost::dynamic_pointer_cast<SpanQueryFilter>(other));
-        if (!otherSpanQueryFilter)
-            return false;
-        return query->equals(otherSpanQueryFilter->query);
-    }
-
-    int32_t SpanQueryFilter::hashCode()
-    {
-        return query->hashCode() ^ 0x923f64b9;
-    }
 }

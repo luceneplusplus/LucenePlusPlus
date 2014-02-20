@@ -10,63 +10,55 @@
 #include "TermAttribute.h"
 #include "PositionIncrementAttribute.h"
 
-namespace Lucene
-{
-    StopFilter::StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, HashSet<String> stopWords, bool ignoreCase) : TokenFilter(input)
-    {
-        this->stopWords = newLucene<CharArraySet>(stopWords, ignoreCase);
-        this->enablePositionIncrements = enablePositionIncrements;
-        termAtt = addAttribute<TermAttribute>();
-        posIncrAtt = addAttribute<PositionIncrementAttribute>();
-    }
+namespace Lucene {
 
-    StopFilter::StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, const CharArraySetPtr& stopWords, bool ignoreCase) : TokenFilter(input)
-    {
-        this->stopWords = stopWords;
-        this->enablePositionIncrements = enablePositionIncrements;
-        termAtt = addAttribute<TermAttribute>();
-        posIncrAtt = addAttribute<PositionIncrementAttribute>();
-    }
+StopFilter::StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, HashSet<String> stopWords, bool ignoreCase) : TokenFilter(input) {
+    this->stopWords = newLucene<CharArraySet>(stopWords, ignoreCase);
+    this->enablePositionIncrements = enablePositionIncrements;
+    termAtt = addAttribute<TermAttribute>();
+    posIncrAtt = addAttribute<PositionIncrementAttribute>();
+}
 
-    StopFilter::~StopFilter()
-    {
-    }
+StopFilter::StopFilter(bool enablePositionIncrements, const TokenStreamPtr& input, const CharArraySetPtr& stopWords, bool ignoreCase) : TokenFilter(input) {
+    this->stopWords = stopWords;
+    this->enablePositionIncrements = enablePositionIncrements;
+    termAtt = addAttribute<TermAttribute>();
+    posIncrAtt = addAttribute<PositionIncrementAttribute>();
+}
 
-    HashSet<String> StopFilter::makeStopSet(Collection<String> stopWords)
-    {
-        return HashSet<String>::newInstance(stopWords.begin(), stopWords.end());
-    }
+StopFilter::~StopFilter() {
+}
 
-    bool StopFilter::incrementToken()
-    {
-        // return the first non-stop word found
-        int32_t skippedPositions = 0;
-        while (input->incrementToken())
-        {
-            if (!stopWords->contains(termAtt->termBufferArray(), 0, termAtt->termLength()))
-            {
-                if (enablePositionIncrements)
-                    posIncrAtt->setPositionIncrement(posIncrAtt->getPositionIncrement() + skippedPositions);
-                return true;
+HashSet<String> StopFilter::makeStopSet(Collection<String> stopWords) {
+    return HashSet<String>::newInstance(stopWords.begin(), stopWords.end());
+}
+
+bool StopFilter::incrementToken() {
+    // return the first non-stop word found
+    int32_t skippedPositions = 0;
+    while (input->incrementToken()) {
+        if (!stopWords->contains(termAtt->termBufferArray(), 0, termAtt->termLength())) {
+            if (enablePositionIncrements) {
+                posIncrAtt->setPositionIncrement(posIncrAtt->getPositionIncrement() + skippedPositions);
             }
-            skippedPositions += posIncrAtt->getPositionIncrement();
+            return true;
         }
-        // reached EOS -- return false
-        return false;
+        skippedPositions += posIncrAtt->getPositionIncrement();
     }
+    // reached EOS -- return false
+    return false;
+}
 
-    bool StopFilter::getEnablePositionIncrementsVersionDefault(LuceneVersion::Version matchVersion)
-    {
-        return LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
-    }
+bool StopFilter::getEnablePositionIncrementsVersionDefault(LuceneVersion::Version matchVersion) {
+    return LuceneVersion::onOrAfter(matchVersion, LuceneVersion::LUCENE_29);
+}
 
-    bool StopFilter::getEnablePositionIncrements()
-    {
-        return enablePositionIncrements;
-    }
+bool StopFilter::getEnablePositionIncrements() {
+    return enablePositionIncrements;
+}
 
-    void StopFilter::setEnablePositionIncrements(bool enable)
-    {
-        this->enablePositionIncrements = enable;
-    }
+void StopFilter::setEnablePositionIncrements(bool enable) {
+    this->enablePositionIncrements = enable;
+}
+
 }

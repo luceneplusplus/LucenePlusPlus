@@ -9,70 +9,70 @@
 
 #include "MultiTermQuery.h"
 
-namespace Lucene
-{
-    /// Implements the fuzzy search query.  The similarity measurement is based on the Levenshtein (edit
-    /// distance) algorithm.
-    ///
-    /// Warning: this query is not very scalable with its default prefix length of 0 - in this case, *every*
-    /// term will be enumerated and cause an edit score calculation.
-    class LPPAPI FuzzyQuery : public MultiTermQuery
-    {
-    public:
-        /// Create a new FuzzyQuery that will match terms with a similarity of at least minimumSimilarity
-        /// to term.  If a prefixLength > 0 is specified, a common prefix of that length is also required.
-        /// @param term The term to search for
-        /// @param minimumSimilarity A value between 0 and 1 to set the required similarity between the query
-        /// term and the matching terms.  For example, for a minimumSimilarity of 0.5 a term of the same
-        /// length as the query term is considered similar to the query term if the edit distance between
-        /// both terms is less than length(term) * 0.5
-        /// @param prefixLength Length of common (non-fuzzy) prefix
-        FuzzyQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength);
-        FuzzyQuery(const TermPtr& term, double minimumSimilarity);
-        FuzzyQuery(const TermPtr& term);
+namespace Lucene {
 
-        virtual ~FuzzyQuery();
+/// Implements the fuzzy search query.  The similarity measurement is based on the Levenshtein (edit
+/// distance) algorithm.
+///
+/// Warning: this query is not very scalable with its default prefix length of 0 - in this case, *every*
+/// term will be enumerated and cause an edit score calculation.
+class LPPAPI FuzzyQuery : public MultiTermQuery {
+public:
+    /// Create a new FuzzyQuery that will match terms with a similarity of at least minimumSimilarity
+    /// to term.  If a prefixLength > 0 is specified, a common prefix of that length is also required.
+    /// @param term The term to search for
+    /// @param minimumSimilarity A value between 0 and 1 to set the required similarity between the query
+    /// term and the matching terms.  For example, for a minimumSimilarity of 0.5 a term of the same
+    /// length as the query term is considered similar to the query term if the edit distance between
+    /// both terms is less than length(term) * 0.5
+    /// @param prefixLength Length of common (non-fuzzy) prefix
+    FuzzyQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength);
+    FuzzyQuery(const TermPtr& term, double minimumSimilarity);
+    FuzzyQuery(const TermPtr& term);
 
-        LUCENE_CLASS(FuzzyQuery);
+    virtual ~FuzzyQuery();
 
-    protected:
-        double minimumSimilarity;
-        int32_t prefixLength;
-        bool termLongEnough;
+    LUCENE_CLASS(FuzzyQuery);
 
-        TermPtr term;
+protected:
+    double minimumSimilarity;
+    int32_t prefixLength;
+    bool termLongEnough;
 
-    public:
-        static double defaultMinSimilarity();
-        static const int32_t defaultPrefixLength;
+    TermPtr term;
 
-    public:
-        using MultiTermQuery::toString;
+public:
+    static double defaultMinSimilarity();
+    static const int32_t defaultPrefixLength;
 
-        /// Returns the minimum similarity that is required for this query to match.
-        /// @return float value between 0.0 and 1.0
-        double getMinSimilarity();
+public:
+    using MultiTermQuery::toString;
 
-        /// Returns the non-fuzzy prefix length. This is the number of characters at the start of a term that
-        /// must be identical (not fuzzy) to the query term if the query is to match that term.
-        int32_t getPrefixLength();
+    /// Returns the minimum similarity that is required for this query to match.
+    /// @return float value between 0.0 and 1.0
+    double getMinSimilarity();
 
-        /// Returns the pattern term.
-        TermPtr getTerm();
+    /// Returns the non-fuzzy prefix length. This is the number of characters at the start of a term that
+    /// must be identical (not fuzzy) to the query term if the query is to match that term.
+    int32_t getPrefixLength();
 
-        virtual void setRewriteMethod(const RewriteMethodPtr& method);
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    /// Returns the pattern term.
+    TermPtr getTerm();
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual String toString(const String& field);
-        virtual int32_t hashCode();
-        virtual bool equals(const LuceneObjectPtr& other);
+    virtual void setRewriteMethod(const RewriteMethodPtr& method);
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
-    protected:
-        void ConstructQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual String toString(const String& field);
+    virtual int32_t hashCode();
+    virtual bool equals(const LuceneObjectPtr& other);
 
-        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
-    };
+protected:
+    void ConstructQuery(const TermPtr& term, double minimumSimilarity, int32_t prefixLength);
+
+    virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
+};
+
 }
 
 #endif

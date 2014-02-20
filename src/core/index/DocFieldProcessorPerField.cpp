@@ -10,23 +10,21 @@
 #include "DocFieldConsumerPerThread.h"
 #include "DocFieldConsumerPerField.h"
 
-namespace Lucene
-{
-    DocFieldProcessorPerField::DocFieldProcessorPerField(const DocFieldProcessorPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo)
-    {
-        lastGen = -1;
-        fieldCount = 0;
-        fields = Collection<FieldablePtr>::newInstance(1);
-        this->consumer = perThread->consumer->addField(fieldInfo);
-        this->fieldInfo = fieldInfo;
-    }
+namespace Lucene {
 
-    DocFieldProcessorPerField::~DocFieldProcessorPerField()
-    {
-    }
+DocFieldProcessorPerField::DocFieldProcessorPerField(const DocFieldProcessorPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo) {
+    lastGen = -1;
+    fieldCount = 0;
+    fields = Collection<FieldablePtr>::newInstance(1);
+    this->consumer = perThread->consumer->addField(fieldInfo);
+    this->fieldInfo = fieldInfo;
+}
 
-    void DocFieldProcessorPerField::abort()
-    {
-        consumer->abort();
-    }
+DocFieldProcessorPerField::~DocFieldProcessorPerField() {
+}
+
+void DocFieldProcessorPerField::abort() {
+    consumer->abort();
+}
+
 }

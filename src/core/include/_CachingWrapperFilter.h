@@ -9,54 +9,52 @@
 
 #include "FilteredDocIdSet.h"
 
-namespace Lucene
-{
-    class FilterCache : public LuceneObject
-    {
-    public:
-        FilterCache(CachingWrapperFilter::DeletesMode deletesMode);
-        virtual ~FilterCache();
+namespace Lucene {
 
-        LUCENE_CLASS(FilterCache);
+class FilterCache : public LuceneObject {
+public:
+    FilterCache(CachingWrapperFilter::DeletesMode deletesMode);
+    virtual ~FilterCache();
 
-    public:
-        WeakMapObjectObject cache;
-        CachingWrapperFilter::DeletesMode deletesMode;
+    LUCENE_CLASS(FilterCache);
 
-    public:
-        virtual LuceneObjectPtr get(const IndexReaderPtr& reader, const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey);
-        virtual void put(const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey, const LuceneObjectPtr& value);
+public:
+    WeakMapObjectObject cache;
+    CachingWrapperFilter::DeletesMode deletesMode;
 
-    protected:
-        virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value) = 0;
-    };
+public:
+    virtual LuceneObjectPtr get(const IndexReaderPtr& reader, const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey);
+    virtual void put(const LuceneObjectPtr& coreKey, const LuceneObjectPtr& delCoreKey, const LuceneObjectPtr& value);
 
-    class FilterCacheDocIdSet : public FilterCache
-    {
-    public:
-        FilterCacheDocIdSet(CachingWrapperFilter::DeletesMode deletesMode);
-        virtual ~FilterCacheDocIdSet();
+protected:
+    virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value) = 0;
+};
 
-        LUCENE_CLASS(FilterCacheDocIdSet);
+class FilterCacheDocIdSet : public FilterCache {
+public:
+    FilterCacheDocIdSet(CachingWrapperFilter::DeletesMode deletesMode);
+    virtual ~FilterCacheDocIdSet();
 
-    protected:
-        virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value);
-    };
+    LUCENE_CLASS(FilterCacheDocIdSet);
 
-    class FilteredCacheDocIdSet : public FilteredDocIdSet
-    {
-    public:
-        FilteredCacheDocIdSet(const IndexReaderPtr& reader, const DocIdSetPtr& innerSet);
-        virtual ~FilteredCacheDocIdSet();
+protected:
+    virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value);
+};
 
-        LUCENE_CLASS(FilteredCacheDocIdSet);
+class FilteredCacheDocIdSet : public FilteredDocIdSet {
+public:
+    FilteredCacheDocIdSet(const IndexReaderPtr& reader, const DocIdSetPtr& innerSet);
+    virtual ~FilteredCacheDocIdSet();
 
-    protected:
-        IndexReaderPtr reader;
+    LUCENE_CLASS(FilteredCacheDocIdSet);
 
-    protected:
-        virtual bool match(int32_t docid);
-    };
+protected:
+    IndexReaderPtr reader;
+
+protected:
+    virtual bool match(int32_t docid);
+};
+
 }
 
 #endif

@@ -9,36 +9,36 @@
 
 #include "Lock.h"
 
-namespace Lucene
-{
-    class SingleInstanceLock : public Lock
-    {
-    public:
-        SingleInstanceLock(HashSet<String> locks, const String& lockName);
-        virtual ~SingleInstanceLock();
+namespace Lucene {
 
-        LUCENE_CLASS(SingleInstanceLock);
+class SingleInstanceLock : public Lock {
+public:
+    SingleInstanceLock(HashSet<String> locks, const String& lockName);
+    virtual ~SingleInstanceLock();
 
-    protected:
-        HashSet<String> locks;
-        String lockName;
+    LUCENE_CLASS(SingleInstanceLock);
 
-    public:
-        /// Attempts to obtain exclusive access and immediately return
-        /// upon success or failure.
-        /// @return true if exclusive access is obtained.
-        virtual bool obtain();
+protected:
+    HashSet<String> locks;
+    String lockName;
 
-        /// Releases exclusive access.
-        virtual void release();
+public:
+    /// Attempts to obtain exclusive access and immediately return
+    /// upon success or failure.
+    /// @return true if exclusive access is obtained.
+    virtual bool obtain();
 
-        /// Returns true if the resource is currently locked. Note that
-        /// one must still call {@link #obtain()} before using the resource.
-        virtual bool isLocked();
+    /// Releases exclusive access.
+    virtual void release();
 
-        /// Returns derived object name.
-        virtual String toString();
-    };
+    /// Returns true if the resource is currently locked. Note that
+    /// one must still call {@link #obtain()} before using the resource.
+    virtual bool isLocked();
+
+    /// Returns derived object name.
+    virtual String toString();
+};
+
 }
 
 #endif

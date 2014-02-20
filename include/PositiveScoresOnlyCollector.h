@@ -9,28 +9,28 @@
 
 #include "Collector.h"
 
-namespace Lucene
-{
-    /// A {@link Collector} implementation which wraps another {@link Collector} and makes sure only
-    /// documents with scores > 0 are collected.
-    class LPPAPI PositiveScoresOnlyCollector : public Collector
-    {
-    public:
-        PositiveScoresOnlyCollector(const CollectorPtr& c);
-        virtual ~PositiveScoresOnlyCollector();
+namespace Lucene {
 
-        LUCENE_CLASS(PositiveScoresOnlyCollector);
+/// A {@link Collector} implementation which wraps another {@link Collector} and makes sure only
+/// documents with scores > 0 are collected.
+class LPPAPI PositiveScoresOnlyCollector : public Collector {
+public:
+    PositiveScoresOnlyCollector(const CollectorPtr& c);
+    virtual ~PositiveScoresOnlyCollector();
 
-    protected:
-        CollectorPtr collector;
-        ScorerPtr scorer;
+    LUCENE_CLASS(PositiveScoresOnlyCollector);
 
-    public:
-        virtual void collect(int32_t doc);
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
-        virtual void setScorer(const ScorerPtr& scorer);
-        virtual bool acceptsDocsOutOfOrder();
-    };
+protected:
+    CollectorPtr collector;
+    ScorerPtr scorer;
+
+public:
+    virtual void collect(int32_t doc);
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase);
+    virtual void setScorer(const ScorerPtr& scorer);
+    virtual bool acceptsDocsOutOfOrder();
+};
+
 }
 
 #endif

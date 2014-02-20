@@ -9,46 +9,38 @@
 #include "InfoStream.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    InfoStream::InfoStream()
-    {
-    }
+namespace Lucene {
 
-    InfoStream::~InfoStream()
-    {
-    }
+InfoStream::InfoStream() {
+}
 
-    InfoStreamFile::InfoStreamFile(const String& path) : file(path)
-    {
-    }
+InfoStream::~InfoStream() {
+}
 
-    InfoStreamFile::~InfoStreamFile()
-    {
-    }
+InfoStreamFile::InfoStreamFile(const String& path) : file(path) {
+}
 
-    InfoStreamFile& InfoStreamFile::operator<< (const String& t)
-    {
-        file << t;
-        return *this;
-    }
+InfoStreamFile::~InfoStreamFile() {
+}
 
-    InfoStreamOut::~InfoStreamOut()
-    {
-    }
+InfoStreamFile& InfoStreamFile::operator<< (const String& t) {
+    file << t;
+    return *this;
+}
 
-    InfoStreamOut& InfoStreamOut::operator<< (const String& t)
-    {
-        std::wcout << t;
-        return *this;
-    }
+InfoStreamOut::~InfoStreamOut() {
+}
 
-    InfoStreamNull::~InfoStreamNull()
-    {
-    }
+InfoStreamOut& InfoStreamOut::operator<< (const String& t) {
+    std::wcout << t;
+    return *this;
+}
 
-    InfoStreamNull& InfoStreamNull::operator<< (const String& t)
-    {
-        return *this;
-    }
+InfoStreamNull::~InfoStreamNull() {
+}
+
+InfoStreamNull& InfoStreamNull::operator<< (const String& t) {
+    return *this;
+}
+
 }

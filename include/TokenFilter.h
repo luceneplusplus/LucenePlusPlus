@@ -9,38 +9,38 @@
 
 #include "TokenStream.h"
 
-namespace Lucene
-{
-    /// A TokenFilter is a TokenStream whose input is another TokenStream.
-    ///
-    /// This is an abstract class; subclasses must override {@link #incrementToken()}.
-    /// @see TokenStream
-    class LPPAPI TokenFilter : public TokenStream
-    {
-    protected:
-        /// Construct a token stream filtering the given input.
-        TokenFilter(const TokenStreamPtr& input);
+namespace Lucene {
 
-    public:
-        virtual ~TokenFilter();
+/// A TokenFilter is a TokenStream whose input is another TokenStream.
+///
+/// This is an abstract class; subclasses must override {@link #incrementToken()}.
+/// @see TokenStream
+class LPPAPI TokenFilter : public TokenStream {
+protected:
+    /// Construct a token stream filtering the given input.
+    TokenFilter(const TokenStreamPtr& input);
 
-        LUCENE_CLASS(TokenFilter);
+public:
+    virtual ~TokenFilter();
 
-    protected:
-        /// The source of tokens for this filter.
-        TokenStreamPtr input;
+    LUCENE_CLASS(TokenFilter);
 
-    public:
-        /// Performs end-of-stream operations, if any, and calls then end() on the input TokenStream.
-        /// NOTE: Be sure to call TokenFilter::end() first when overriding this method.
-        virtual void end();
+protected:
+    /// The source of tokens for this filter.
+    TokenStreamPtr input;
 
-        /// Close the input TokenStream.
-        virtual void close();
+public:
+    /// Performs end-of-stream operations, if any, and calls then end() on the input TokenStream.
+    /// NOTE: Be sure to call TokenFilter::end() first when overriding this method.
+    virtual void end();
 
-        /// Reset the filter as well as the input TokenStream.
-        virtual void reset();
-    };
+    /// Close the input TokenStream.
+    virtual void close();
+
+    /// Reset the filter as well as the input TokenStream.
+    virtual void reset();
+};
+
 }
 
 #endif

@@ -9,34 +9,34 @@
 
 #include "Weight.h"
 
-namespace Lucene
-{
-    class TermWeight : public Weight
-    {
-    public:
-        TermWeight(const TermQueryPtr& query, const SearcherPtr& searcher);
-        virtual ~TermWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(TermWeight);
+class TermWeight : public Weight {
+public:
+    TermWeight(const TermQueryPtr& query, const SearcherPtr& searcher);
+    virtual ~TermWeight();
 
-    protected:
-        TermQueryPtr query;
-        SimilarityPtr similarity;
-        double value;
-        double idf;
-        double queryNorm;
-        double queryWeight;
-        IDFExplanationPtr idfExp;
+    LUCENE_CLASS(TermWeight);
 
-    public:
-        virtual String toString();
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
-    };
+protected:
+    TermQueryPtr query;
+    SimilarityPtr similarity;
+    double value;
+    double idf;
+    double queryNorm;
+    double queryWeight;
+    IDFExplanationPtr idfExp;
+
+public:
+    virtual String toString();
+    virtual QueryPtr getQuery();
+    virtual double getValue();
+    virtual double sumOfSquaredWeights();
+    virtual void normalize(double norm);
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+};
+
 }
 
 #endif

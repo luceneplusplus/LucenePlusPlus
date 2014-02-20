@@ -19,20 +19,18 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture AnalyzersTest;
 
-static void verifyPayload(const TokenStreamPtr& ts)
-{
+static void verifyPayload(const TokenStreamPtr& ts) {
     PayloadAttributePtr payloadAtt = ts->getAttribute<PayloadAttribute>();
-    for (uint8_t b = 1; ; ++b)
-    {
+    for (uint8_t b = 1; ; ++b) {
         bool hasNext = ts->incrementToken();
-        if (!hasNext)
+        if (!hasNext) {
             break;
+        }
         EXPECT_EQ(b, payloadAtt->getPayload()->toByteArray()[0]);
     }
 }
 
-TEST_F(AnalyzersTest, testSimple)
-{
+TEST_F(AnalyzersTest, testSimple) {
     AnalyzerPtr a = newLucene<SimpleAnalyzer>();
     checkAnalyzesTo(a, L"foo bar FOO BAR", newCollection<String>(L"foo", L"bar", L"foo", L"bar"));
     checkAnalyzesTo(a, L"foo      bar .  FOO <> BAR", newCollection<String>(L"foo", L"bar", L"foo", L"bar"));
@@ -44,8 +42,7 @@ TEST_F(AnalyzersTest, testSimple)
     checkAnalyzesTo(a, L"\"QUOTED\" word", newCollection<String>(L"quoted", L"word"));
 }
 
-TEST_F(AnalyzersTest, testNull)
-{
+TEST_F(AnalyzersTest, testNull) {
     AnalyzerPtr a = newLucene<WhitespaceAnalyzer>();
     checkAnalyzesTo(a, L"foo bar FOO BAR", newCollection<String>(L"foo", L"bar", L"FOO", L"BAR"));
     checkAnalyzesTo(a, L"foo      bar .  FOO <> BAR", newCollection<String>(L"foo", L"bar", L".", L"FOO", L"<>", L"BAR"));
@@ -57,53 +54,49 @@ TEST_F(AnalyzersTest, testNull)
     checkAnalyzesTo(a, L"\"QUOTED\" word", newCollection<String>(L"\"QUOTED\"", L"word"));
 }
 
-TEST_F(AnalyzersTest, testStop)
-{
+TEST_F(AnalyzersTest, testStop) {
     AnalyzerPtr a = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(a, L"foo bar FOO BAR", newCollection<String>(L"foo", L"bar", L"foo", L"bar"));
     checkAnalyzesTo(a, L"foo a bar such FOO THESE BAR", newCollection<String>(L"foo", L"bar", L"foo", L"bar"));
 }
 
-namespace TestPayloadCopy
-{
-    DECLARE_SHARED_PTR(PayloadSetter)
+namespace TestPayloadCopy {
 
-    class PayloadSetter : public TokenFilter
-    {
-    public:
-        PayloadSetter(const TokenStreamPtr& input) : TokenFilter(input)
-        {
-            payloadAtt = addAttribute<PayloadAttribute>();
-            data = ByteArray::newInstance(1);
-            data[0] = 0;
-            p = newLucene<Payload>(data, 0, 1);
+DECLARE_SHARED_PTR(PayloadSetter)
+
+class PayloadSetter : public TokenFilter {
+public:
+    PayloadSetter(const TokenStreamPtr& input) : TokenFilter(input) {
+        payloadAtt = addAttribute<PayloadAttribute>();
+        data = ByteArray::newInstance(1);
+        data[0] = 0;
+        p = newLucene<Payload>(data, 0, 1);
+    }
+
+    virtual ~PayloadSetter() {
+    }
+
+public:
+    PayloadAttributePtr payloadAtt;
+    ByteArray data;
+    PayloadPtr p;
+
+public:
+    virtual bool incrementToken() {
+        bool hasNext = input->incrementToken();
+        if (!hasNext) {
+            return false;
         }
+        payloadAtt->setPayload(p); // reuse the payload / byte[]
+        data[0]++;
+        return true;
+    }
+};
 
-        virtual ~PayloadSetter()
-        {
-        }
-
-    public:
-        PayloadAttributePtr payloadAtt;
-        ByteArray data;
-        PayloadPtr p;
-
-    public:
-        virtual bool incrementToken()
-        {
-            bool hasNext = input->incrementToken();
-            if (!hasNext)
-                return false;
-            payloadAtt->setPayload(p); // reuse the payload / byte[]
-            data[0]++;
-            return true;
-        }
-    };
 }
 
 /// Make sure old style next() calls result in a new copy of payloads
-TEST_F(AnalyzersTest, testPayloadCopy)
-{
+TEST_F(AnalyzersTest, testPayloadCopy) {
     String s = L"how now brown cow";
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(s));
     ts = newLucene<TestPayloadCopy::PayloadSetter>(ts);

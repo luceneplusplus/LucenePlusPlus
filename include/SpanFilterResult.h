@@ -9,71 +9,69 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// The results of a SpanQueryFilter.  Wraps the BitSet and the position information from the SpanQuery
-    class LPPAPI SpanFilterResult : public LuceneObject
-    {
-    public:
-        /// @param docIdSet The DocIdSet for the Filter
-        /// @param positions A List of {@link PositionInfo} objects
-        SpanFilterResult(const DocIdSetPtr& docIdSet, Collection<PositionInfoPtr> positions);
+namespace Lucene {
 
-        virtual ~SpanFilterResult();
+/// The results of a SpanQueryFilter.  Wraps the BitSet and the position information from the SpanQuery
+class LPPAPI SpanFilterResult : public LuceneObject {
+public:
+    /// @param docIdSet The DocIdSet for the Filter
+    /// @param positions A List of {@link PositionInfo} objects
+    SpanFilterResult(const DocIdSetPtr& docIdSet, Collection<PositionInfoPtr> positions);
 
-        LUCENE_CLASS(SpanFilterResult);
+    virtual ~SpanFilterResult();
 
-    protected:
-        DocIdSetPtr docIdSet;
-        Collection<PositionInfoPtr> positions; // Spans spans
+    LUCENE_CLASS(SpanFilterResult);
 
-    public:
-        /// The first entry in the array corresponds to the first "on" bit.  Entries are increasing by
-        /// document order.
-        /// @return A List of PositionInfo objects
-        Collection<PositionInfoPtr> getPositions();
+protected:
+    DocIdSetPtr docIdSet;
+    Collection<PositionInfoPtr> positions; // Spans spans
 
-        /// Returns the docIdSet
-        DocIdSetPtr getDocIdSet();
-    };
+public:
+    /// The first entry in the array corresponds to the first "on" bit.  Entries are increasing by
+    /// document order.
+    /// @return A List of PositionInfo objects
+    Collection<PositionInfoPtr> getPositions();
 
-    class LPPAPI PositionInfo : public LuceneObject
-    {
-    public:
-        PositionInfo(int32_t doc);
-        virtual ~PositionInfo();
+    /// Returns the docIdSet
+    DocIdSetPtr getDocIdSet();
+};
 
-        LUCENE_CLASS(PositionInfo);
+class LPPAPI PositionInfo : public LuceneObject {
+public:
+    PositionInfo(int32_t doc);
+    virtual ~PositionInfo();
 
-    protected:
-        int32_t doc;
-        Collection<StartEndPtr> positions;
+    LUCENE_CLASS(PositionInfo);
 
-    public:
-        void addPosition(int32_t start, int32_t end);
-        int32_t getDoc();
-        Collection<StartEndPtr> getPositions();
-    };
+protected:
+    int32_t doc;
+    Collection<StartEndPtr> positions;
 
-    class LPPAPI StartEnd : public LuceneObject
-    {
-    public:
-        StartEnd(int32_t start, int32_t end);
-        virtual ~StartEnd();
+public:
+    void addPosition(int32_t start, int32_t end);
+    int32_t getDoc();
+    Collection<StartEndPtr> getPositions();
+};
 
-        LUCENE_CLASS(StartEnd);
+class LPPAPI StartEnd : public LuceneObject {
+public:
+    StartEnd(int32_t start, int32_t end);
+    virtual ~StartEnd();
 
-    protected:
-        int32_t start;
-        int32_t end;
+    LUCENE_CLASS(StartEnd);
 
-    public:
-        /// @return The end position of this match
-        int32_t getEnd();
+protected:
+    int32_t start;
+    int32_t end;
 
-        /// @return The start position of this match
-        int32_t getStart();
-    };
+public:
+    /// @return The end position of this match
+    int32_t getEnd();
+
+    /// @return The start position of this match
+    int32_t getStart();
+};
+
 }
 
 #endif

@@ -10,29 +10,29 @@
 #include "test_lucene.h"
 #include "RAMInputStream.h"
 
-namespace Lucene
-{
-    /// Used by MockRAMDirectory to create an input stream that keeps track of when it's been closed.
-    class MockRAMInputStream : public RAMInputStream
-    {
-    public:
-        /// Construct an empty output buffer.
-        MockRAMInputStream();
-        MockRAMInputStream(const MockRAMDirectoryPtr& dir, const String& name, const RAMFilePtr& f);
-        virtual ~MockRAMInputStream();
+namespace Lucene {
 
-        LUCENE_CLASS(MockRAMInputStream);
+/// Used by MockRAMDirectory to create an input stream that keeps track of when it's been closed.
+class MockRAMInputStream : public RAMInputStream {
+public:
+    /// Construct an empty output buffer.
+    MockRAMInputStream();
+    MockRAMInputStream(const MockRAMDirectoryPtr& dir, const String& name, const RAMFilePtr& f);
+    virtual ~MockRAMInputStream();
 
-    protected:
-        MockRAMDirectoryWeakPtr _dir;
-        String name;
-        bool isClone;
+    LUCENE_CLASS(MockRAMInputStream);
 
-    public:
-        virtual void close();
+protected:
+    MockRAMDirectoryWeakPtr _dir;
+    String name;
+    bool isClone;
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+public:
+    virtual void close();
+
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

@@ -9,41 +9,40 @@
 
 #include "LuceneTestFixture.h"
 
-namespace Lucene
-{
-    class FunctionFixture : public LuceneTestFixture
-    {
-    public:
-        FunctionFixture(bool doMultiSegment);
-        virtual ~FunctionFixture();
+namespace Lucene {
 
-    public:
-        static const double TEST_SCORE_TOLERANCE_DELTA;
+class FunctionFixture : public LuceneTestFixture {
+public:
+    FunctionFixture(bool doMultiSegment);
+    virtual ~FunctionFixture();
 
-    public:
-        static const int32_t N_DOCS;
+public:
+    static const double TEST_SCORE_TOLERANCE_DELTA;
 
-        static const String ID_FIELD;
-        static const String TEXT_FIELD;
-        static const String INT_FIELD;
-        static const String DOUBLE_FIELD;
+public:
+    static const int32_t N_DOCS;
 
-        bool doMultiSegment;
-        DirectoryPtr dir;
-        AnalyzerPtr anlzr;
+    static const String ID_FIELD;
+    static const String TEXT_FIELD;
+    static const String INT_FIELD;
+    static const String DOUBLE_FIELD;
 
-    protected:
-        static const Collection<String> DOC_TEXT_LINES();
+    bool doMultiSegment;
+    DirectoryPtr dir;
+    AnalyzerPtr anlzr;
 
-        void addDoc(const IndexWriterPtr& iw, int32_t i);
-        String id2String(int32_t scoreAndID);
-        String textLine(int32_t docNum);
+protected:
+    static const Collection<String> DOC_TEXT_LINES();
 
-        double expectedFieldScore(const String& docIDFieldVal);
+    void addDoc(const IndexWriterPtr& iw, int32_t i);
+    String id2String(int32_t scoreAndID);
+    String textLine(int32_t docNum);
 
-        bool equalCollectionValues(CollectionValue first, CollectionValue second);
-    };
+    double expectedFieldScore(const String& docIDFieldVal);
+
+    bool equalCollectionValues(CollectionValue first, CollectionValue second);
+};
+
 }
-
 
 #endif

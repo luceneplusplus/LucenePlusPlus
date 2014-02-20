@@ -9,41 +9,41 @@
 
 #include "Query.h"
 
-namespace Lucene
-{
-    /// A Query that matches documents containing a term.  This may be combined with other terms with a
-    /// {@link BooleanQuery}.
-    class LPPAPI TermQuery : public Query
-    {
-    public:
-        /// Constructs a query for the term.
-        TermQuery(const TermPtr& term);
+namespace Lucene {
 
-        virtual ~TermQuery();
+/// A Query that matches documents containing a term.  This may be combined with other terms with a
+/// {@link BooleanQuery}.
+class LPPAPI TermQuery : public Query {
+public:
+    /// Constructs a query for the term.
+    TermQuery(const TermPtr& term);
 
-        LUCENE_CLASS(TermQuery);
+    virtual ~TermQuery();
 
-    protected:
-        TermPtr term;
+    LUCENE_CLASS(TermQuery);
 
-    public:
-        using Query::toString;
+protected:
+    TermPtr term;
 
-        /// Returns the term of this query.
-        TermPtr getTerm();
+public:
+    using Query::toString;
 
-        virtual WeightPtr createWeight(const SearcherPtr& searcher);
-        virtual void extractTerms(SetTerm terms);
+    /// Returns the term of this query.
+    TermPtr getTerm();
 
-        /// Prints a user-readable version of this query.
-        virtual String toString(const String& field);
+    virtual WeightPtr createWeight(const SearcherPtr& searcher);
+    virtual void extractTerms(SetTerm terms);
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    /// Prints a user-readable version of this query.
+    virtual String toString(const String& field);
 
-        friend class TermWeight;
-    };
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+    friend class TermWeight;
+};
+
 }
 
 #endif

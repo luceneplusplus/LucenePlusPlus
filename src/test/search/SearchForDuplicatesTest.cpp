@@ -27,34 +27,27 @@ static const String HIGH_PRIORITY = L"high";
 static const String MED_PRIORITY = L"medium";
 static const String LOW_PRIORITY = L"low";
 
-static void printHits(StringStream& out, Collection<ScoreDocPtr> hits, const SearcherPtr& searcher)
-{
+static void printHits(StringStream& out, Collection<ScoreDocPtr> hits, const SearcherPtr& searcher) {
     out << hits.size() << L" total results\n";
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
-        if (i < 10 || (i > 94 && i < 105))
-        {
+    for (int32_t i = 0; i < hits.size(); ++i) {
+        if (i < 10 || (i > 94 && i < 105)) {
             DocumentPtr doc = searcher->doc(hits[i]->doc);
             out << i << L" " << doc->get(ID_FIELD) << L"\n";
         }
     }
 }
 
-static void checkHits(Collection<ScoreDocPtr> hits, int32_t expectedCount, const SearcherPtr& searcher)
-{
+static void checkHits(Collection<ScoreDocPtr> hits, int32_t expectedCount, const SearcherPtr& searcher) {
     EXPECT_EQ(expectedCount, hits.size());
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
-        if (i < 10 || (i > 94 && i < 105))
-        {
+    for (int32_t i = 0; i < hits.size(); ++i) {
+        if (i < 10 || (i > 94 && i < 105)) {
             DocumentPtr doc = searcher->doc(hits[i]->doc);
             EXPECT_EQ(StringUtils::toString(i), doc->get(ID_FIELD));
         }
     }
 }
 
-static void doTest(StringStream& out, bool useCompoundFile)
-{
+static void doTest(StringStream& out, bool useCompoundFile) {
     DirectoryPtr directory = newLucene<RAMDirectory>();
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -63,8 +56,7 @@ static void doTest(StringStream& out, bool useCompoundFile)
 
     int32_t MAX_DOCS = 225;
 
-    for (int32_t j = 0; j < MAX_DOCS; ++j)
-    {
+    for (int32_t j = 0; j < MAX_DOCS; ++j) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(PRIORITY_FIELD, HIGH_PRIORITY, Field::STORE_YES, Field::INDEX_ANALYZED));
         doc->add(newLucene<Field>(ID_FIELD, StringUtils::toString(j), Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -101,8 +93,7 @@ static void doTest(StringStream& out, bool useCompoundFile)
     searcher->close();
 }
 
-TEST_F(SearchForDuplicatesTest, testRun)
-{
+TEST_F(SearchForDuplicatesTest, testRun) {
     StringStream multiFileOutput;
     doTest(multiFileOutput, false);
 

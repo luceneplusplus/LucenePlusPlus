@@ -28,16 +28,13 @@ using namespace Lucene;
 DECLARE_SHARED_PTR(SeeksCountingStream)
 
 /// Simply extends IndexInput in a way that we are able to count the number of invocations of seek()
-class SeeksCountingStream : public IndexInput
-{
+class SeeksCountingStream : public IndexInput {
 public:
-    SeeksCountingStream(const IndexInputPtr& input)
-    {
+    SeeksCountingStream(const IndexInputPtr& input) {
         this->input = input;
     }
 
-    virtual ~SeeksCountingStream()
-    {
+    virtual ~SeeksCountingStream() {
     }
 
     LUCENE_CLASS(SeeksCountingStream);
@@ -46,52 +43,42 @@ protected:
     IndexInputPtr input;
 
 public:
-    virtual uint8_t readByte()
-    {
+    virtual uint8_t readByte() {
         return input->readByte();
     }
 
-    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length)
-    {
+    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length) {
         input->readBytes(b, offset, length);
     }
 
-    virtual void close()
-    {
+    virtual void close() {
         input->close();
     }
 
-    virtual int64_t getFilePointer()
-    {
+    virtual int64_t getFilePointer() {
         return input->getFilePointer();
     }
 
     virtual void seek(int64_t pos); // implemented below
 
-    virtual int64_t length()
-    {
+    virtual int64_t length() {
         return input->length();
     }
 
-    LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr())
-    {
+    LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr()) {
         return newLucene<SeeksCountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
     }
 };
 
-class SeekCountingDirectory : public RAMDirectory
-{
+class SeekCountingDirectory : public RAMDirectory {
 public:
-    virtual ~SeekCountingDirectory()
-    {
+    virtual ~SeekCountingDirectory() {
     }
 
 public:
-    virtual IndexInputPtr openInput(const String& name)
-    {
+    virtual IndexInputPtr openInput(const String& name) {
         IndexInputPtr ii = RAMDirectory::openInput(name);
-        if (boost::ends_with(name, L".prx"))
-        {
+        if (boost::ends_with(name, L".prx")) {
             // we decorate the proxStream with a wrapper class that allows to count the number of calls of seek()
             ii = newLucene<SeeksCountingStream>(ii);
         }
@@ -99,11 +86,9 @@ public:
     }
 };
 
-class LazyProxSkippingTest : public LuceneTestFixture
-{
+class LazyProxSkippingTest : public LuceneTestFixture {
 public:
-    LazyProxSkippingTest()
-    {
+    LazyProxSkippingTest() {
         seeksCounter = 0;
         field = L"tokens";
         term1 = L"xx";
@@ -111,8 +96,7 @@ public:
         term3 = L"zz";
     }
 
-    virtual ~LazyProxSkippingTest()
-    {
+    virtual ~LazyProxSkippingTest() {
     }
 
 protected:
@@ -127,30 +111,23 @@ public:
     static int32_t seeksCounter;
 
 public:
-    void createIndex(int32_t numHits)
-    {
+    void createIndex(int32_t numHits) {
         int32_t numDocs = 500;
 
         DirectoryPtr directory = newLucene<SeekCountingDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         writer->setUseCompoundFile(false);
         writer->setMaxBufferedDocs(10);
-        for (int32_t i = 0; i < numDocs; ++i)
-        {
+        for (int32_t i = 0; i < numDocs; ++i) {
             DocumentPtr doc = newLucene<Document>();
             String content;
-            if (i % (numDocs / numHits) == 0)
-            {
+            if (i % (numDocs / numHits) == 0) {
                 // add a document that matches the query "term1 term2"
                 content = term1 + L" " + term2;
-            }
-            else if (i % 15 == 0)
-            {
+            } else if (i % 15 == 0) {
                 // add a document that only contains term1
                 content = term1 + L" " + term1;
-            }
-            else
-            {
+            } else {
                 // add a document that contains term2 but not term 1
                 content = term3 + L" " + term2;
             }
@@ -167,8 +144,7 @@ public:
         searcher = newLucene<IndexSearcher>(reader);
     }
 
-    Collection<ScoreDocPtr> search()
-    {
+    Collection<ScoreDocPtr> search() {
         // create PhraseQuery "term1 term2" and search
         PhraseQueryPtr pq = newLucene<PhraseQuery>();
         pq->add(newLucene<Term>(field, term1));
@@ -176,8 +152,7 @@ public:
         return searcher->search(pq, FilterPtr(), 1000)->scoreDocs;
     }
 
-    void performTest(int32_t numHits)
-    {
+    void performTest(int32_t numHits) {
         createIndex(numHits);
         seeksCounter = 0;
         Collection<ScoreDocPtr> hits = search();
@@ -192,27 +167,23 @@ public:
 
 int32_t LazyProxSkippingTest::seeksCounter = 0;
 
-void SeeksCountingStream::seek(int64_t pos)
-{
+void SeeksCountingStream::seek(int64_t pos) {
     ++LazyProxSkippingTest::seeksCounter;
     input->seek(pos);
 }
 
 /// Tests lazy skipping on the proximity file.
 
-TEST_F(LazyProxSkippingTest, testLazySkipping)
-{
+TEST_F(LazyProxSkippingTest, testLazySkipping) {
     // test whether only the minimum amount of seeks() are performed
     performTest(5);
     performTest(10);
 }
 
-TEST_F(LazyProxSkippingTest, testSeek)
-{
+TEST_F(LazyProxSkippingTest, testSeek) {
     DirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < 10; ++i)
-    {
+    for (int32_t i = 0; i < 10; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(field, L"a b", Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
@@ -222,15 +193,13 @@ TEST_F(LazyProxSkippingTest, testSeek)
     IndexReaderPtr reader = IndexReader::open(directory, true);
     TermPositionsPtr tp = reader->termPositions();
     tp->seek(newLucene<Term>(field, L"b"));
-    for (int32_t i = 0; i < 10; ++i)
-    {
+    for (int32_t i = 0; i < 10; ++i) {
         tp->next();
         EXPECT_EQ(tp->doc(), i);
         EXPECT_EQ(tp->nextPosition(), 1);
     }
     tp->seek(newLucene<Term>(field, L"a"));
-    for (int32_t i = 0; i < 10; ++i)
-    {
+    for (int32_t i = 0; i < 10; ++i) {
         tp->next();
         EXPECT_EQ(tp->doc(), i);
         EXPECT_EQ(tp->nextPosition(), 0);

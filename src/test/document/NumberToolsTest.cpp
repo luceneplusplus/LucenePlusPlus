@@ -12,23 +12,19 @@ using namespace Lucene;
 
 typedef LuceneTestFixture NumberToolsTest;
 
-TEST_F(NumberToolsTest, testMinValue)
-{
+TEST_F(NumberToolsTest, testMinValue) {
     EXPECT_EQ(NumberTools::MIN_STRING_VALUE(), L"-0000000000000");
 }
 
-TEST_F(NumberToolsTest, testMaxValue)
-{
+TEST_F(NumberToolsTest, testMaxValue) {
     EXPECT_EQ(NumberTools::MAX_STRING_VALUE(), L"01y2p0ij32e8e7");
 }
 
-TEST_F(NumberToolsTest, testValueSize)
-{
+TEST_F(NumberToolsTest, testValueSize) {
     EXPECT_EQ(NumberTools::STR_SIZE(), 14);
 }
 
-TEST_F(NumberToolsTest, testLongToString)
-{
+TEST_F(NumberToolsTest, testLongToString) {
     EXPECT_EQ(NumberTools::longToString(LLONG_MIN), L"-0000000000000");
     EXPECT_EQ(NumberTools::longToString(LLONG_MAX), L"01y2p0ij32e8e7");
     EXPECT_EQ(NumberTools::longToString(1LL), L"00000000000001");
@@ -39,8 +35,7 @@ TEST_F(NumberToolsTest, testLongToString)
     EXPECT_EQ(NumberTools::longToString(23232143543434234LL), L"0006cr3vell8my");
 }
 
-TEST_F(NumberToolsTest, testStringToLong)
-{
+TEST_F(NumberToolsTest, testStringToLong) {
     EXPECT_EQ(NumberTools::stringToLong(L"-0000000000000"), LLONG_MIN);
     EXPECT_EQ(NumberTools::stringToLong(L"01y2p0ij32e8e7"), LLONG_MAX);
     EXPECT_EQ(NumberTools::stringToLong(L"00000000000001"), 1LL);
@@ -50,21 +45,15 @@ TEST_F(NumberToolsTest, testStringToLong)
     EXPECT_EQ(NumberTools::stringToLong(L"00009ps7uuwdlz"), 986778657657575LL);
     EXPECT_EQ(NumberTools::stringToLong(L"0006cr3vell8my"), 23232143543434234LL);
 
-    try
-    {
+    try {
         NumberTools::stringToLong(L"32132");
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::NumberFormat)(e)); // wrong length
     }
 
-    try
-    {
+    try {
         NumberTools::stringToLong(L"9006cr3vell8my");
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::NumberFormat)(e)); // wrong prefix
     }
 }

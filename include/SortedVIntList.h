@@ -9,80 +9,80 @@
 
 #include "DocIdSet.h"
 
-namespace Lucene
-{
-    /// Stores and iterate on sorted integers in compressed form in RAM.
-    ///
-    /// The code for compressing the differences between ascending integers was borrowed from {@link IndexInput}
-    /// and {@link IndexOutput}.
-    ///
-    /// NOTE: this class assumes the stored integers are doc Ids (hence why it extends {@link DocIdSet}). Therefore
-    /// its {@link #iterator()} assumes {@link DocIdSetIterator#NO_MORE_DOCS} can be used as sentinel.  If you
-    /// intend to use this value, then make sure it's not used during search flow.
-    class LPPAPI SortedVIntList : public DocIdSet
-    {
-    public:
-        /// Create a SortedVIntList from all elements of an array of integers.
-        /// @param sortedInts A sorted array of non negative integers.
-        SortedVIntList(Collection<int32_t> sortedInts);
+namespace Lucene {
 
-        /// Create a SortedVIntList from an array of integers.
-        /// @param sortedInts A sorted array of non negative integers.
-        /// @param inputSize The number of integers to be used from the array.
-        SortedVIntList(Collection<int32_t> sortedInts, int32_t inputSize);
+/// Stores and iterate on sorted integers in compressed form in RAM.
+///
+/// The code for compressing the differences between ascending integers was borrowed from {@link IndexInput}
+/// and {@link IndexOutput}.
+///
+/// NOTE: this class assumes the stored integers are doc Ids (hence why it extends {@link DocIdSet}). Therefore
+/// its {@link #iterator()} assumes {@link DocIdSetIterator#NO_MORE_DOCS} can be used as sentinel.  If you
+/// intend to use this value, then make sure it's not used during search flow.
+class LPPAPI SortedVIntList : public DocIdSet {
+public:
+    /// Create a SortedVIntList from all elements of an array of integers.
+    /// @param sortedInts A sorted array of non negative integers.
+    SortedVIntList(Collection<int32_t> sortedInts);
 
-        /// Create a SortedVIntList from a BitSet.
-        /// @param bits A bit set representing a set of integers.
-        SortedVIntList(const BitSetPtr& bits);
+    /// Create a SortedVIntList from an array of integers.
+    /// @param sortedInts A sorted array of non negative integers.
+    /// @param inputSize The number of integers to be used from the array.
+    SortedVIntList(Collection<int32_t> sortedInts, int32_t inputSize);
 
-        /// Create a SortedVIntList from an OpenBitSet.
-        /// @param bits A bit set representing a set of integers.
-        SortedVIntList(const OpenBitSetPtr& bits);
+    /// Create a SortedVIntList from a BitSet.
+    /// @param bits A bit set representing a set of integers.
+    SortedVIntList(const BitSetPtr& bits);
 
-        /// Create a SortedVIntList.
-        /// @param docIdSetIterator An iterator providing document numbers as a set of integers.
-        /// This DocIdSetIterator is iterated completely when this constructor is called and it must provide the
-        /// integers in non decreasing order.
-        SortedVIntList(const DocIdSetIteratorPtr& docIdSetIterator);
+    /// Create a SortedVIntList from an OpenBitSet.
+    /// @param bits A bit set representing a set of integers.
+    SortedVIntList(const OpenBitSetPtr& bits);
 
-        virtual ~SortedVIntList();
+    /// Create a SortedVIntList.
+    /// @param docIdSetIterator An iterator providing document numbers as a set of integers.
+    /// This DocIdSetIterator is iterated completely when this constructor is called and it must provide the
+    /// integers in non decreasing order.
+    SortedVIntList(const DocIdSetIteratorPtr& docIdSetIterator);
 
-        LUCENE_CLASS(SortedVIntList);
+    virtual ~SortedVIntList();
 
-    public:
-        /// When a BitSet has fewer than 1 in BITS2VINTLIST_SIZE bits set, a SortedVIntList representing the
-        /// index numbers of the set bits will be smaller than that BitSet.
-        static const int32_t BITS2VINTLIST_SIZE;
+    LUCENE_CLASS(SortedVIntList);
 
-    protected:
-        static const int32_t VB1;
-        static const int32_t BIT_SHIFT;
-        static const int32_t MAX_BYTES_PER_INT;
+public:
+    /// When a BitSet has fewer than 1 in BITS2VINTLIST_SIZE bits set, a SortedVIntList representing the
+    /// index numbers of the set bits will be smaller than that BitSet.
+    static const int32_t BITS2VINTLIST_SIZE;
 
-        int32_t _size;
-        ByteArray bytes;
-        int32_t lastBytePos;
-        int32_t lastInt;
+protected:
+    static const int32_t VB1;
+    static const int32_t BIT_SHIFT;
+    static const int32_t MAX_BYTES_PER_INT;
 
-    public:
-        /// @return The total number of sorted integers.
-        int32_t size();
+    int32_t _size;
+    ByteArray bytes;
+    int32_t lastBytePos;
+    int32_t lastInt;
 
-        /// @return The size of the byte array storing the compressed sorted integers.
-        int32_t getByteSize();
+public:
+    /// @return The total number of sorted integers.
+    int32_t size();
 
-        /// This DocIdSet implementation is cacheable.
-        virtual bool isCacheable();
+    /// @return The size of the byte array storing the compressed sorted integers.
+    int32_t getByteSize();
 
-        /// @return An iterator over the sorted integers.
-        virtual DocIdSetIteratorPtr iterator();
+    /// This DocIdSet implementation is cacheable.
+    virtual bool isCacheable();
 
-    protected:
-        void initBytes();
-        void addInt(int32_t nextInt);
+    /// @return An iterator over the sorted integers.
+    virtual DocIdSetIteratorPtr iterator();
 
-        friend class SortedDocIdSetIterator;
-    };
+protected:
+    void initBytes();
+    void addInt(int32_t nextInt);
+
+    friend class SortedDocIdSetIterator;
+};
+
 }
 
 #endif

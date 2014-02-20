@@ -9,37 +9,31 @@
 #include "NormsWriterPerField.h"
 #include "DocInverterPerThread.h"
 
-namespace Lucene
-{
-    NormsWriterPerThread::NormsWriterPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const NormsWriterPtr& normsWriter)
-    {
-        this->_normsWriter = normsWriter;
-        docState = docInverterPerThread->docState;
-    }
+namespace Lucene {
 
-    NormsWriterPerThread::~NormsWriterPerThread()
-    {
-    }
+NormsWriterPerThread::NormsWriterPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const NormsWriterPtr& normsWriter) {
+    this->_normsWriter = normsWriter;
+    docState = docInverterPerThread->docState;
+}
 
-    InvertedDocEndConsumerPerFieldPtr NormsWriterPerThread::addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo)
-    {
-        return newLucene<NormsWriterPerField>(docInverterPerField, shared_from_this(), fieldInfo);
-    }
+NormsWriterPerThread::~NormsWriterPerThread() {
+}
 
-    void NormsWriterPerThread::abort()
-    {
-    }
+InvertedDocEndConsumerPerFieldPtr NormsWriterPerThread::addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo) {
+    return newLucene<NormsWriterPerField>(docInverterPerField, shared_from_this(), fieldInfo);
+}
 
-    void NormsWriterPerThread::startDocument()
-    {
-    }
+void NormsWriterPerThread::abort() {
+}
 
-    void NormsWriterPerThread::finishDocument()
-    {
-    }
+void NormsWriterPerThread::startDocument() {
+}
 
-    bool NormsWriterPerThread::freeRAM()
-    {
-        return false;
-    }
+void NormsWriterPerThread::finishDocument() {
+}
+
+bool NormsWriterPerThread::freeRAM() {
+    return false;
+}
+
 }

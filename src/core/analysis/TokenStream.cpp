@@ -7,34 +7,28 @@
 #include "LuceneInc.h"
 #include "TokenStream.h"
 
-namespace Lucene
-{
-    TokenStream::TokenStream()
-    {
-    }
+namespace Lucene {
 
-    TokenStream::TokenStream(const AttributeSourcePtr& input) : AttributeSource(input)
-    {
-    }
+TokenStream::TokenStream() {
+}
 
-    TokenStream::TokenStream(const AttributeFactoryPtr& factory) : AttributeSource(factory)
-    {
-    }
+TokenStream::TokenStream(const AttributeSourcePtr& input) : AttributeSource(input) {
+}
 
-    TokenStream::~TokenStream()
-    {
-    }
+TokenStream::TokenStream(const AttributeFactoryPtr& factory) : AttributeSource(factory) {
+}
 
-    void TokenStream::end()
-    {
-        // do nothing by default
-    }
+TokenStream::~TokenStream() {
+}
 
-    void TokenStream::reset()
-    {
-    }
+void TokenStream::end() {
+    // do nothing by default
+}
 
-    void TokenStream::close()
-    {
-    }
+void TokenStream::reset() {
+}
+
+void TokenStream::close() {
+}
+
 }

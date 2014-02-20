@@ -9,38 +9,36 @@
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
-namespace Lucene
-{
-    bool CharFolder::lowerCache = CharFolder::fillLower();
-    bool CharFolder::upperCache = CharFolder::fillUpper();
-    wchar_t CharFolder::lowerChars[CHAR_MAX - CHAR_MIN + 1];
-    wchar_t CharFolder::upperChars[CHAR_MAX - CHAR_MIN + 1];
+namespace Lucene {
 
-    CharFolder::~CharFolder()
-    {
-    }
+bool CharFolder::lowerCache = CharFolder::fillLower();
+bool CharFolder::upperCache = CharFolder::fillUpper();
+wchar_t CharFolder::lowerChars[CHAR_MAX - CHAR_MIN + 1];
+wchar_t CharFolder::upperChars[CHAR_MAX - CHAR_MIN + 1];
 
-    wchar_t CharFolder::toLower(wchar_t ch)
-    {
-        return (ch > CHAR_MIN && ch < CHAR_MAX) ? lowerChars[ch - CHAR_MIN] : UnicodeUtil::toLower(ch);
-    }
+CharFolder::~CharFolder() {
+}
 
-    wchar_t CharFolder::toUpper(wchar_t ch)
-    {
-        return (ch > CHAR_MIN && ch < CHAR_MAX) ? upperChars[ch - CHAR_MIN] : UnicodeUtil::toUpper(ch);
-    }
+wchar_t CharFolder::toLower(wchar_t ch) {
+    return (ch > CHAR_MIN && ch < CHAR_MAX) ? lowerChars[ch - CHAR_MIN] : UnicodeUtil::toLower(ch);
+}
 
-    bool CharFolder::fillLower()
-    {
-        for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
-            lowerChars[index - CHAR_MIN] = UnicodeUtil::toLower((wchar_t)index);
-        return true;
-    }
+wchar_t CharFolder::toUpper(wchar_t ch) {
+    return (ch > CHAR_MIN && ch < CHAR_MAX) ? upperChars[ch - CHAR_MIN] : UnicodeUtil::toUpper(ch);
+}
 
-    bool CharFolder::fillUpper()
-    {
-        for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index)
-            upperChars[index - CHAR_MIN] = UnicodeUtil::toUpper((wchar_t)index);
-        return true;
+bool CharFolder::fillLower() {
+    for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index) {
+        lowerChars[index - CHAR_MIN] = UnicodeUtil::toLower((wchar_t)index);
     }
+    return true;
+}
+
+bool CharFolder::fillUpper() {
+    for (int32_t index = CHAR_MIN; index < CHAR_MAX; ++index) {
+        upperChars[index - CHAR_MIN] = UnicodeUtil::toUpper((wchar_t)index);
+    }
+    return true;
+}
+
 }

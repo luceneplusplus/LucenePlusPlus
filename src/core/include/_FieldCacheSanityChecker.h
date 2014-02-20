@@ -9,26 +9,26 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Simple pair object for using "readerKey + fieldName" a Map key
-    class ReaderField : public LuceneObject
-    {
-    public:
-        ReaderField(const LuceneObjectPtr& readerKey, const String& fieldName);
-        virtual ~ReaderField();
+namespace Lucene {
 
-        LUCENE_CLASS(ReaderField);
+/// Simple pair object for using "readerKey + fieldName" a Map key
+class ReaderField : public LuceneObject {
+public:
+    ReaderField(const LuceneObjectPtr& readerKey, const String& fieldName);
+    virtual ~ReaderField();
 
-    public:
-        LuceneObjectPtr readerKey;
-        String fieldName;
+    LUCENE_CLASS(ReaderField);
 
-    public:
-        virtual int32_t hashCode();
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual String toString();
-    };
+public:
+    LuceneObjectPtr readerKey;
+    String fieldName;
+
+public:
+    virtual int32_t hashCode();
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual String toString();
+};
+
 }
 
 #endif

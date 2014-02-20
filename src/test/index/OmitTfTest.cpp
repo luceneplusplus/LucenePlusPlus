@@ -31,85 +31,69 @@ typedef LuceneTestFixture OmitTfTest;
 
 DECLARE_SHARED_PTR(CountingHitCollector)
 
-class SimpleIDFExplanation : public IDFExplanation
-{
+class SimpleIDFExplanation : public IDFExplanation {
 public:
-    virtual ~SimpleIDFExplanation()
-    {
+    virtual ~SimpleIDFExplanation() {
     }
 
     LUCENE_CLASS(SimpleIDFExplanation);
 
 public:
-    virtual double getIdf()
-    {
+    virtual double getIdf() {
         return 1.0;
     }
 
-    virtual String explain()
-    {
+    virtual String explain() {
         return L"Inexplicable";
     }
 };
 
-class SimpleSimilarity : public Similarity
-{
+class SimpleSimilarity : public Similarity {
 public:
-    virtual ~SimpleSimilarity()
-    {
+    virtual ~SimpleSimilarity() {
     }
 
     LUCENE_CLASS(SimpleSimilarity);
 
 public:
-    virtual double lengthNorm(const String& fieldName, int32_t numTokens)
-    {
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
         return 1.0;
     }
 
-    virtual double queryNorm(double sumOfSquaredWeights)
-    {
+    virtual double queryNorm(double sumOfSquaredWeights) {
         return 1.0;
     }
 
-    virtual double tf(double freq)
-    {
+    virtual double tf(double freq) {
         return freq;
     }
 
-    virtual double sloppyFreq(int32_t distance)
-    {
+    virtual double sloppyFreq(int32_t distance) {
         return 2.0;
     }
 
-    virtual double idf(int32_t docFreq, int32_t numDocs)
-    {
+    virtual double idf(int32_t docFreq, int32_t numDocs) {
         return 1.0;
     }
 
-    virtual double coord(int32_t overlap, int32_t maxOverlap)
-    {
+    virtual double coord(int32_t overlap, int32_t maxOverlap) {
         return 1.0;
     }
 
-    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher)
-    {
+    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher) {
         return newLucene<SimpleIDFExplanation>();
     }
 };
 
-class CountingHitCollector : public Collector
-{
+class CountingHitCollector : public Collector {
 public:
-    CountingHitCollector()
-    {
+    CountingHitCollector() {
         count = 0;
         sum = 0;
         docBase = -1;
     }
 
-    virtual ~CountingHitCollector()
-    {
+    virtual ~CountingHitCollector() {
     }
 
     LUCENE_CLASS(CountingHitCollector);
@@ -122,37 +106,32 @@ protected:
     int32_t docBase;
 
 public:
-    virtual void setScorer(const ScorerPtr& scorer)
-    {
+    virtual void setScorer(const ScorerPtr& scorer) {
     }
 
-    virtual void collect(int32_t doc)
-    {
+    virtual void collect(int32_t doc) {
         ++count;
         sum += doc + docBase; // use it to avoid any possibility of being optimized away
     }
 
-    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-    {
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
         this->docBase = docBase;
     }
 
-    virtual bool acceptsDocsOutOfOrder()
-    {
+    virtual bool acceptsDocsOutOfOrder() {
         return true;
     }
 };
 
-static void checkNoPrx(const DirectoryPtr& dir)
-{
+static void checkNoPrx(const DirectoryPtr& dir) {
     HashSet<String> files = dir->listAll();
-    for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file)
+    for (HashSet<String>::iterator file = files.begin(); file != files.end(); ++file) {
         EXPECT_TRUE(!boost::ends_with(*file, L".prx"));
+    }
 }
 
 /// Tests whether the DocumentWriter correctly enable the omitTermFreqAndPositions bit in the FieldInfo
-TEST_F(OmitTfTest, testOmitTermFreqAndPositions)
-{
+TEST_F(OmitTfTest, testOmitTermFreqAndPositions) {
     DirectoryPtr ram = newLucene<MockRAMDirectory>();
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     IndexWriterPtr writer = newLucene<IndexWriter>(ram, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -196,8 +175,7 @@ TEST_F(OmitTfTest, testOmitTermFreqAndPositions)
 }
 
 /// Tests whether merging of docs that have different omitTermFreqAndPositions for the same field works
-TEST_F(OmitTfTest, testMixedMerge)
-{
+TEST_F(OmitTfTest, testMixedMerge) {
     DirectoryPtr ram = newLucene<MockRAMDirectory>();
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     IndexWriterPtr writer = newLucene<IndexWriter>(ram, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -214,8 +192,9 @@ TEST_F(OmitTfTest, testMixedMerge)
     f2->setOmitTermFreqAndPositions(true);
     d->add(f2);
 
-    for (int32_t i = 0; i < 30; ++i)
+    for (int32_t i = 0; i < 30; ++i) {
         writer->addDocument(d);
+    }
 
     // now we add another document which has term freq for field f2 and not for f1 and verify if the SegmentMerger keep things constant
     d = newLucene<Document>();
@@ -227,8 +206,9 @@ TEST_F(OmitTfTest, testMixedMerge)
     f2->setOmitTermFreqAndPositions(false);
     d->add(f2);
 
-    for (int32_t i = 0; i < 30; ++i)
+    for (int32_t i = 0; i < 30; ++i) {
         writer->addDocument(d);
+    }
 
     // force merge
     writer->optimize();
@@ -248,8 +228,7 @@ TEST_F(OmitTfTest, testMixedMerge)
 
 /// Make sure first adding docs that do not omitTermFreqAndPositions for field X, then adding docs that do
 /// omitTermFreqAndPositions for that same field
-TEST_F(OmitTfTest, testMixedRAM)
-{
+TEST_F(OmitTfTest, testMixedRAM) {
     DirectoryPtr ram = newLucene<MockRAMDirectory>();
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     IndexWriterPtr writer = newLucene<IndexWriter>(ram, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -265,13 +244,15 @@ TEST_F(OmitTfTest, testMixedRAM)
     FieldPtr f2 = newLucene<Field>(L"f2", L"This field has NO Tf in all docs", Field::STORE_NO, Field::INDEX_ANALYZED);
     d->add(f2);
 
-    for (int32_t i = 0; i < 5; ++i)
+    for (int32_t i = 0; i < 5; ++i) {
         writer->addDocument(d);
+    }
 
     f2->setOmitTermFreqAndPositions(true);
 
-    for (int32_t i = 0; i < 20; ++i)
+    for (int32_t i = 0; i < 20; ++i) {
         writer->addDocument(d);
+    }
 
     // force merge
     writer->optimize();
@@ -291,8 +272,7 @@ TEST_F(OmitTfTest, testMixedRAM)
 }
 
 /// Verifies no *.prx exists when all fields omit term freq
-TEST_F(OmitTfTest, testNoPrxFile)
-{
+TEST_F(OmitTfTest, testNoPrxFile) {
     DirectoryPtr ram = newLucene<MockRAMDirectory>();
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     IndexWriterPtr writer = newLucene<IndexWriter>(ram, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -306,8 +286,9 @@ TEST_F(OmitTfTest, testNoPrxFile)
     f1->setOmitTermFreqAndPositions(true);
     d->add(f1);
 
-    for (int32_t i = 0; i < 30; ++i)
+    for (int32_t i = 0; i < 30; ++i) {
         writer->addDocument(d);
+    }
 
     writer->commit();
 
@@ -323,85 +304,73 @@ TEST_F(OmitTfTest, testNoPrxFile)
     ram->close();
 }
 
-namespace TestBasic
-{
-    class CountingHitCollectorQ1 : public CountingHitCollector
-    {
-    protected:
-        ScorerPtr scorer;
+namespace TestBasic {
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+class CountingHitCollectorQ1 : public CountingHitCollector {
+protected:
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ(scorer->score(), 1.0);
-            CountingHitCollector::collect(doc);
-        }
-    };
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-    class CountingHitCollectorQ2 : public CountingHitCollector
-    {
-    protected:
-        ScorerPtr scorer;
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ(scorer->score(), 1.0);
+        CountingHitCollector::collect(doc);
+    }
+};
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+class CountingHitCollectorQ2 : public CountingHitCollector {
+protected:
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ(scorer->score(), 1.0 + (double)doc);
-            CountingHitCollector::collect(doc);
-        }
-    };
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-    class CountingHitCollectorQ3 : public CountingHitCollector
-    {
-    protected:
-        ScorerPtr scorer;
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ(scorer->score(), 1.0 + (double)doc);
+        CountingHitCollector::collect(doc);
+    }
+};
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+class CountingHitCollectorQ3 : public CountingHitCollector {
+protected:
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ(scorer->score(), 1.0);
-            EXPECT_NE(doc % 2, 0);
-            CountingHitCollector::collect(doc);
-        }
-    };
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-    class CountingHitCollectorQ4 : public CountingHitCollector
-    {
-    protected:
-        ScorerPtr scorer;
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ(scorer->score(), 1.0);
+        EXPECT_NE(doc % 2, 0);
+        CountingHitCollector::collect(doc);
+    }
+};
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+class CountingHitCollectorQ4 : public CountingHitCollector {
+protected:
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ(scorer->score(), 1.0);
-            EXPECT_EQ(doc % 2, 0);
-            CountingHitCollector::collect(doc);
-        }
-    };
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
+
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ(scorer->score(), 1.0);
+        EXPECT_EQ(doc % 2, 0);
+        CountingHitCollector::collect(doc);
+    }
+};
+
 }
 
-TEST_F(OmitTfTest, testBasic)
-{
+TEST_F(OmitTfTest, testBasic) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -411,8 +380,7 @@ TEST_F(OmitTfTest, testBasic)
     writer->setSimilarity(newLucene<SimpleSimilarity>());
 
     StringStream sb;
-    for (int32_t i = 0; i < 30; ++i)
-    {
+    for (int32_t i = 0; i < 30; ++i) {
         DocumentPtr d = newLucene<Document>();
         sb << L"term ";
         String content  = sb.str();

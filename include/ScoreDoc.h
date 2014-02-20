@@ -9,29 +9,29 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Expert: Returned by low-level search implementations.
-    /// @see TopDocs
-    class LPPAPI ScoreDoc : public LuceneObject
-    {
-    public:
-        ScoreDoc(int32_t doc, double score);
-        virtual ~ScoreDoc();
+namespace Lucene {
 
-        LUCENE_CLASS(ScoreDoc);
+/// Expert: Returned by low-level search implementations.
+/// @see TopDocs
+class LPPAPI ScoreDoc : public LuceneObject {
+public:
+    ScoreDoc(int32_t doc, double score);
+    virtual ~ScoreDoc();
 
-    public:
-        /// The score of this document for the query.
-        double score;
+    LUCENE_CLASS(ScoreDoc);
 
-        /// A hit document's number.
-        /// @see Searcher#doc(int32_t)
-        int32_t doc;
+public:
+    /// The score of this document for the query.
+    double score;
 
-    public:
-        virtual String toString();
-    };
+    /// A hit document's number.
+    /// @see Searcher#doc(int32_t)
+    int32_t doc;
+
+public:
+    virtual String toString();
+};
+
 }
 
 #endif

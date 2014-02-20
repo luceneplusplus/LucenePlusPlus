@@ -8,30 +8,26 @@
 #include "PhraseQueue.h"
 #include "PhrasePositions.h"
 
-namespace Lucene
-{
-    PhraseQueue::PhraseQueue(int32_t size) : PriorityQueue<PhrasePositionsPtr>(size)
-    {
-    }
+namespace Lucene {
 
-    PhraseQueue::~PhraseQueue()
-    {
-    }
+PhraseQueue::PhraseQueue(int32_t size) : PriorityQueue<PhrasePositionsPtr>(size) {
+}
 
-    bool PhraseQueue::lessThan(const PhrasePositionsPtr& first, const PhrasePositionsPtr& second)
-    {
-        if (first->doc == second->doc)
-        {
-            if (first->position == second->position)
-            {
-                // same doc and pp.position, so decide by actual term positions.
-                // rely on: pp.position == tp.position - offset.
-                return first->offset < second->offset;
-            }
-            else
-                return first->position < second->position;
+PhraseQueue::~PhraseQueue() {
+}
+
+bool PhraseQueue::lessThan(const PhrasePositionsPtr& first, const PhrasePositionsPtr& second) {
+    if (first->doc == second->doc) {
+        if (first->position == second->position) {
+            // same doc and pp.position, so decide by actual term positions.
+            // rely on: pp.position == tp.position - offset.
+            return first->offset < second->offset;
+        } else {
+            return first->position < second->position;
         }
-        else
-            return first->doc < second->doc;
+    } else {
+        return first->doc < second->doc;
     }
+}
+
 }

@@ -9,37 +9,37 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class DocFieldConsumer : public LuceneObject
-    {
-    public:
-        virtual ~DocFieldConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldConsumer);
+class DocFieldConsumer : public LuceneObject {
+public:
+    virtual ~DocFieldConsumer();
 
-    protected:
-        FieldInfosPtr fieldInfos;
+    LUCENE_CLASS(DocFieldConsumer);
 
-    public:
-        /// Called when DocumentsWriter decides to create a new segment
-        virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
+protected:
+    FieldInfosPtr fieldInfos;
 
-        /// Called when DocumentsWriter decides to close the doc stores
-        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
+public:
+    /// Called when DocumentsWriter decides to create a new segment
+    virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
 
-        /// Called when an aborting exception is hit
-        virtual void abort() = 0;
+    /// Called when DocumentsWriter decides to close the doc stores
+    virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
 
-        /// Add a new thread
-        virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread) = 0;
+    /// Called when an aborting exception is hit
+    virtual void abort() = 0;
 
-        /// Called when DocumentsWriter is using too much RAM.  The consumer should free RAM, if possible, returning
-        /// true if any RAM was in fact freed.
-        virtual bool freeRAM() = 0;
+    /// Add a new thread
+    virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread) = 0;
 
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
-    };
+    /// Called when DocumentsWriter is using too much RAM.  The consumer should free RAM, if possible, returning
+    /// true if any RAM was in fact freed.
+    virtual bool freeRAM() = 0;
+
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
+};
+
 }
 
 #endif

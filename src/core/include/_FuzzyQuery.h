@@ -9,33 +9,32 @@
 
 #include "PriorityQueue.h"
 
-namespace Lucene
-{
-    class ScoreTerm : public LuceneObject
-    {
-    public:
-        virtual ~ScoreTerm();
-        LUCENE_CLASS(ScoreTerm);
+namespace Lucene {
 
-    public:
-        TermPtr term;
-        double score;
+class ScoreTerm : public LuceneObject {
+public:
+    virtual ~ScoreTerm();
+    LUCENE_CLASS(ScoreTerm);
 
-    public:
-        int32_t compareTo(const ScoreTermPtr& other);
-    };
+public:
+    TermPtr term;
+    double score;
 
-    class ScoreTermQueue : public PriorityQueue<ScoreTermPtr>
-    {
-    public:
-        ScoreTermQueue(int32_t size);
-        virtual ~ScoreTermQueue();
+public:
+    int32_t compareTo(const ScoreTermPtr& other);
+};
 
-        LUCENE_CLASS(ScoreTermQueue);
+class ScoreTermQueue : public PriorityQueue<ScoreTermPtr> {
+public:
+    ScoreTermQueue(int32_t size);
+    virtual ~ScoreTermQueue();
 
-    protected:
-        virtual bool lessThan(const ScoreTermPtr& first, const ScoreTermPtr& second);
-    };
+    LUCENE_CLASS(ScoreTermQueue);
+
+protected:
+    virtual bool lessThan(const ScoreTermPtr& first, const ScoreTermPtr& second);
+};
+
 }
 
 #endif

@@ -9,21 +9,21 @@
 
 #include "SegmentReader.h"
 
-namespace Lucene
-{
-    class ReadOnlySegmentReader : public SegmentReader
-    {
-    public:
-        virtual ~ReadOnlySegmentReader();
+namespace Lucene {
 
-        LUCENE_CLASS(ReadOnlySegmentReader);
+class ReadOnlySegmentReader : public SegmentReader {
+public:
+    virtual ~ReadOnlySegmentReader();
 
-    public:
-        static void noWrite();
+    LUCENE_CLASS(ReadOnlySegmentReader);
 
-        virtual void acquireWriteLock();
-        virtual bool isDeleted(int32_t n);
-    };
+public:
+    static void noWrite();
+
+    virtual void acquireWriteLock();
+    virtual bool isDeleted(int32_t n);
+};
+
 }
 
 #endif

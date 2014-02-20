@@ -39,19 +39,16 @@ DECLARE_SHARED_PTR(PayloadData)
 DECLARE_SHARED_PTR(PayloadFilter)
 DECLARE_SHARED_PTR(PayloadAnalyzer)
 
-class PayloadData : public LuceneObject
-{
+class PayloadData : public LuceneObject {
 public:
-    PayloadData(int32_t skip, ByteArray data, int32_t offset, int32_t length)
-    {
+    PayloadData(int32_t skip, ByteArray data, int32_t offset, int32_t length) {
         this->numFieldInstancesToSkip = skip;
         this->data = data;
         this->offset = offset;
         this->length = length;
     }
 
-    virtual ~PayloadData()
-    {
+    virtual ~PayloadData() {
     }
 
     LUCENE_CLASS(PayloadData);
@@ -64,11 +61,9 @@ public:
 };
 
 /// This Filter adds payloads to the tokens.
-class PayloadFilter : public TokenFilter
-{
+class PayloadFilter : public TokenFilter {
 public:
-    PayloadFilter(const TokenStreamPtr& in, ByteArray data, int32_t offset, int32_t length) : TokenFilter(in)
-    {
+    PayloadFilter(const TokenStreamPtr& in, ByteArray data, int32_t offset, int32_t length) : TokenFilter(in) {
         this->payload = newLucene<Payload>();
         this->data = data;
         this->length = length;
@@ -76,8 +71,7 @@ public:
         this->payloadAtt = addAttribute<PayloadAttribute>();
     }
 
-    virtual ~PayloadFilter()
-    {
+    virtual ~PayloadFilter() {
     }
 
     LUCENE_CLASS(PayloadFilter);
@@ -90,36 +84,30 @@ public:
     PayloadAttributePtr payloadAtt;
 
 public:
-    virtual bool incrementToken()
-    {
+    virtual bool incrementToken() {
         bool hasNext = input->incrementToken();
-        if (hasNext)
-        {
-            if (offset + length <= data.size())
-            {
+        if (hasNext) {
+            if (offset + length <= data.size()) {
                 PayloadPtr p = newLucene<Payload>();
                 payloadAtt->setPayload(p);
                 p->setData(data, offset, length);
                 offset += length;
-            }
-            else
+            } else {
                 payloadAtt->setPayload(PayloadPtr());
+            }
         }
         return hasNext;
     }
 };
 
 /// This Analyzer uses an WhitespaceTokenizer and PayloadFilter.
-class PayloadAnalyzer : public Analyzer
-{
+class PayloadAnalyzer : public Analyzer {
 public:
-    PayloadAnalyzer()
-    {
+    PayloadAnalyzer() {
         fieldToData = HashMap<String, PayloadDataPtr>::newInstance();
     }
 
-    virtual ~PayloadAnalyzer()
-    {
+    virtual ~PayloadAnalyzer() {
     }
 
     LUCENE_CLASS(PayloadAnalyzer);
@@ -128,55 +116,49 @@ public:
     HashMap<String, PayloadDataPtr> fieldToData;
 
 public:
-    void setPayloadData(const String& field, ByteArray data, int32_t offset, int32_t length)
-    {
+    void setPayloadData(const String& field, ByteArray data, int32_t offset, int32_t length) {
         fieldToData.put(field, newLucene<PayloadData>(0, data, offset, length));
     }
 
-    void setPayloadData(const String& field, int32_t numFieldInstancesToSkip, ByteArray data, int32_t offset, int32_t length)
-    {
+    void setPayloadData(const String& field, int32_t numFieldInstancesToSkip, ByteArray data, int32_t offset, int32_t length) {
         PayloadDataPtr payload = newLucene<PayloadData>(numFieldInstancesToSkip, data, offset, length);
         fieldToData.put(field, payload);
     }
 
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         PayloadDataPtr payload = fieldToData.get(fieldName);
         TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(reader);
-        if (payload)
-        {
-            if (payload->numFieldInstancesToSkip == 0)
+        if (payload) {
+            if (payload->numFieldInstancesToSkip == 0) {
                 ts = newLucene<PayloadFilter>(ts, payload->data, payload->offset, payload->length);
-            else
+            } else {
                 --payload->numFieldInstancesToSkip;
+            }
         }
         return ts;
     }
 };
 
-static void generateRandomData(ByteArray data)
-{
+static void generateRandomData(ByteArray data) {
     std::generate(data.get(), data.get() + data.size(), rand);
 }
 
-static ByteArray generateRandomData(int32_t n)
-{
+static ByteArray generateRandomData(int32_t n) {
     ByteArray data(ByteArray::newInstance(n));
     generateRandomData(data);
     return data;
 }
 
-static Collection<TermPtr> generateTerms(const String& fieldName, int32_t n)
-{
+static Collection<TermPtr> generateTerms(const String& fieldName, int32_t n) {
     int32_t maxDigits = (int32_t)(std::log((double)n) / std::log(10.0));
     Collection<TermPtr> terms = Collection<TermPtr>::newInstance(n);
-    for (int32_t i = 0; i < n; ++i)
-    {
+    for (int32_t i = 0; i < n; ++i) {
         StringStream sb;
         sb << L"t";
         int32_t zeros = maxDigits - (int32_t)(std::log((double)i) / std::log(10.0));
-        for (int32_t j = 0; j < zeros; ++j)
+        for (int32_t j = 0; j < zeros; ++j) {
             sb << L"0";
+        }
         sb << i;
         terms[i] = newLucene<Term>(fieldName, sb.str());
     }
@@ -184,8 +166,7 @@ static Collection<TermPtr> generateTerms(const String& fieldName, int32_t n)
 }
 
 /// Simple tests to test the Payload class
-TEST_F(PayloadsTest, testPayload)
-{
+TEST_F(PayloadsTest, testPayload) {
     ByteArray testData(ByteArray::newInstance(15));
     uint8_t input[15] = { 'T', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 't', 'e', 's', 't', '!' };
     std::memcpy(testData.get(), input, 15);
@@ -194,47 +175,43 @@ TEST_F(PayloadsTest, testPayload)
 
     // test copyTo()
     ByteArray target(ByteArray::newInstance(testData.size() - 1));
-    try
-    {
+    try {
         payload->copyTo(target, 0);
-    }
-    catch (IndexOutOfBoundsException& e)
-    {
+    } catch (IndexOutOfBoundsException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
     }
 
     target.resize(testData.size() + 3);
     payload->copyTo(target, 3);
 
-    for (int32_t i = 0; i < testData.size(); ++i)
+    for (int32_t i = 0; i < testData.size(); ++i) {
         EXPECT_EQ(testData[i], target[i + 3]);
+    }
 
     // test toByteArray()
     target = payload->toByteArray();
     EXPECT_TRUE(testData.equals(target));
 
     // test byteAt()
-    for (int32_t i = 0; i < testData.size(); ++i)
+    for (int32_t i = 0; i < testData.size(); ++i) {
         EXPECT_EQ(payload->byteAt(i), testData[i]);
-
-    try
-    {
-        payload->byteAt(testData.size() + 1);
     }
-    catch (IndexOutOfBoundsException& e)
-    {
+
+    try {
+        payload->byteAt(testData.size() + 1);
+    } catch (IndexOutOfBoundsException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
     }
 
     PayloadPtr clone = boost::dynamic_pointer_cast<Payload>(payload->clone());
     EXPECT_EQ(payload->length(), clone->length());
-    for (int32_t i = 0; i < payload->length(); ++i)
+    for (int32_t i = 0; i < payload->length(); ++i) {
         EXPECT_EQ(payload->byteAt(i), clone->byteAt(i));
+    }
 }
 
 /// Tests whether the DocumentWriter and SegmentMerger correctly enable the payload bit in the FieldInfo
-TEST_F(PayloadsTest, testPayloadFieldBit)
-{
+TEST_F(PayloadsTest, testPayloadFieldBit) {
     DirectoryPtr ram = newLucene<RAMDirectory>();
     PayloadAnalyzerPtr analyzer = newLucene<PayloadAnalyzer>();
     IndexWriterPtr writer = newLucene<IndexWriter>(ram, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -295,8 +272,7 @@ TEST_F(PayloadsTest, testPayloadFieldBit)
 
 /// Builds an index with payloads in the given Directory and performs different
 /// tests to verify the payload encoding
-static void encodingTest(const DirectoryPtr& dir)
-{
+static void encodingTest(const DirectoryPtr& dir) {
     PayloadAnalyzerPtr analyzer = newLucene<PayloadAnalyzer>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -310,8 +286,9 @@ static void encodingTest(const DirectoryPtr& dir)
     // create content for the test documents with just a few terms
     Collection<TermPtr> terms = generateTerms(fieldName, numTerms);
     StringStream sb;
-    for (Collection<TermPtr>::iterator term = terms.begin(); term != terms.end(); ++term)
+    for (Collection<TermPtr>::iterator term = terms.begin(); term != terms.end(); ++term) {
         sb << (*term)->text() << L" ";
+    }
     String content = sb.str();
 
     int32_t payloadDataLength = numTerms * numDocs * 2 + numTerms * numDocs * (numDocs - 1) / 2;
@@ -323,8 +300,7 @@ static void encodingTest(const DirectoryPtr& dir)
     // add the same document multiple times to have the same payload lengths for all
     // occurrences within two consecutive skip intervals
     int32_t offset = 0;
-    for (int32_t i = 0; i < 2 * numDocs; ++i)
-    {
+    for (int32_t i = 0; i < 2 * numDocs; ++i) {
         analyzer->setPayloadData(fieldName, payloadData, offset, 1);
         offset += numTerms;
         writer->addDocument(d);
@@ -333,8 +309,7 @@ static void encodingTest(const DirectoryPtr& dir)
     // make sure we create more than one segment to test merging
     writer->commit();
 
-    for (int32_t i = 0; i < numDocs; ++i)
-    {
+    for (int32_t i = 0; i < numDocs; ++i) {
         analyzer->setPayloadData(fieldName, payloadData, offset, i);
         offset += i * numTerms;
         writer->addDocument(d);
@@ -350,19 +325,18 @@ static void encodingTest(const DirectoryPtr& dir)
     ByteArray verifyPayloadData(ByteArray::newInstance(payloadDataLength));
     offset = 0;
     Collection<TermPositionsPtr> tps = Collection<TermPositionsPtr>::newInstance(numTerms);
-    for (int32_t i = 0; i < numTerms; ++i)
+    for (int32_t i = 0; i < numTerms; ++i) {
         tps[i] = reader->termPositions(terms[i]);
+    }
 
-    while (tps[0]->next())
-    {
-        for (int32_t i = 1; i < numTerms; ++i)
+    while (tps[0]->next()) {
+        for (int32_t i = 1; i < numTerms; ++i) {
             tps[i]->next();
+        }
         int32_t freq = tps[0]->freq();
 
-        for (int32_t i = 0; i < freq; ++i)
-        {
-            for (int32_t j = 0; j < numTerms; ++j)
-            {
+        for (int32_t i = 0; i < freq; ++i) {
+            for (int32_t j = 0; j < numTerms; ++j) {
                 tps[j]->nextPosition();
                 tps[j]->getPayload(verifyPayloadData, offset);
                 offset += tps[j]->getPayloadLength();
@@ -370,8 +344,9 @@ static void encodingTest(const DirectoryPtr& dir)
         }
     }
 
-    for (int32_t i = 0; i < numTerms; ++i)
+    for (int32_t i = 0; i < numTerms; ++i) {
         tps[i]->close();
+    }
 
     EXPECT_TRUE(payloadData.equals(verifyPayloadData));
 
@@ -412,12 +387,9 @@ static void encodingTest(const DirectoryPtr& dir)
     tp->getPayload(ByteArray(), 0);
 
     // it is forbidden to call getPayload() more than once without calling nextPosition()
-    try
-    {
+    try {
         tp->getPayload(ByteArray(), 0);
-    }
-    catch (IOException& e)
-    {
+    } catch (IOException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IO)(e));
     }
 
@@ -455,8 +427,7 @@ static void encodingTest(const DirectoryPtr& dir)
 }
 
 /// Tests if payloads are correctly stored and loaded using both RamDirectory and FSDirectory
-TEST_F(PayloadsTest, testPayloadsEncoding)
-{
+TEST_F(PayloadsTest, testPayloadsEncoding) {
     // first perform the test using a RAMDirectory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     encodingTest(dir);
@@ -468,145 +439,127 @@ TEST_F(PayloadsTest, testPayloadsEncoding)
     FileUtils::removeDirectory(dirName);
 }
 
-namespace TestThreadSafety
-{
-    DECLARE_SHARED_PTR(ByteArrayPool)
+namespace TestThreadSafety {
 
-    class ByteArrayPool : public LuceneObject
-    {
-    public:
-        ByteArrayPool(int32_t capacity, int32_t size)
-        {
-            pool = Collection<ByteArray>::newInstance();
-            for (int32_t i = 0; i < capacity; ++i)
-                pool.add(ByteArray::newInstance(size));
+DECLARE_SHARED_PTR(ByteArrayPool)
+
+class ByteArrayPool : public LuceneObject {
+public:
+    ByteArrayPool(int32_t capacity, int32_t size) {
+        pool = Collection<ByteArray>::newInstance();
+        for (int32_t i = 0; i < capacity; ++i) {
+            pool.add(ByteArray::newInstance(size));
         }
+    }
 
-        virtual ~ByteArrayPool()
-        {
+    virtual ~ByteArrayPool() {
+    }
+
+    LUCENE_CLASS(ByteArrayPool);
+
+public:
+    Collection<ByteArray> pool;
+
+public:
+    String bytesToString(ByteArray bytes) {
+        SyncLock syncLock(this);
+        return Base64::encode(bytes);
+    }
+
+    ByteArray get() {
+        SyncLock syncLock(this);
+        return pool.removeFirst();
+    }
+
+    void release(ByteArray b) {
+        SyncLock syncLock(this);
+        pool.add(b);
+    }
+
+    int32_t size() {
+        SyncLock syncLock(this);
+        return pool.size();
+    }
+};
+
+class PoolingPayloadTokenStream : public TokenStream {
+public:
+    PoolingPayloadTokenStream(const ByteArrayPoolPtr& pool) {
+        this->pool = pool;
+        payload = pool->get();
+        generateRandomData(payload);
+        term = pool->bytesToString(payload);
+        first = true;
+        payloadAtt = addAttribute<PayloadAttribute>();
+        termAtt = addAttribute<TermAttribute>();
+    }
+
+    virtual ~PoolingPayloadTokenStream() {
+    }
+
+    LUCENE_CLASS(PoolingPayloadTokenStream);
+
+public:
+    ByteArray payload;
+    bool first;
+    ByteArrayPoolPtr pool;
+    String term;
+
+    TermAttributePtr termAtt;
+    PayloadAttributePtr payloadAtt;
+
+public:
+    virtual bool incrementToken() {
+        if (!first) {
+            return false;
         }
+        first = false;
+        clearAttributes();
+        termAtt->setTermBuffer(term);
+        payloadAtt->setPayload(newLucene<Payload>(payload));
+        return true;
+    }
 
-        LUCENE_CLASS(ByteArrayPool);
+    virtual void close() {
+        pool->release(payload);
+    }
+};
 
-    public:
-        Collection<ByteArray> pool;
+class IngesterThread : public LuceneThread {
+public:
+    IngesterThread(int32_t numDocs, const ByteArrayPoolPtr& pool, const IndexWriterPtr& writer) {
+        this->numDocs = numDocs;
+        this->pool = pool;
+        this->writer = writer;
+    }
 
-    public:
-        String bytesToString(ByteArray bytes)
-        {
-            SyncLock syncLock(this);
-            return Base64::encode(bytes);
-        }
+    virtual ~IngesterThread() {
+    }
 
-        ByteArray get()
-        {
-            SyncLock syncLock(this);
-            return pool.removeFirst();
-        }
+    LUCENE_CLASS(IngesterThread);
 
-        void release(ByteArray b)
-        {
-            SyncLock syncLock(this);
-            pool.add(b);
-        }
+protected:
+    int32_t numDocs;
+    ByteArrayPoolPtr pool;
+    IndexWriterPtr writer;
 
-        int32_t size()
-        {
-            SyncLock syncLock(this);
-            return pool.size();
-        }
-    };
-
-    class PoolingPayloadTokenStream : public TokenStream
-    {
-    public:
-        PoolingPayloadTokenStream(const ByteArrayPoolPtr& pool)
-        {
-            this->pool = pool;
-            payload = pool->get();
-            generateRandomData(payload);
-            term = pool->bytesToString(payload);
-            first = true;
-            payloadAtt = addAttribute<PayloadAttribute>();
-            termAtt = addAttribute<TermAttribute>();
-        }
-
-        virtual ~PoolingPayloadTokenStream()
-        {
-        }
-
-        LUCENE_CLASS(PoolingPayloadTokenStream);
-
-    public:
-        ByteArray payload;
-        bool first;
-        ByteArrayPoolPtr pool;
-        String term;
-
-        TermAttributePtr termAtt;
-        PayloadAttributePtr payloadAtt;
-
-    public:
-        virtual bool incrementToken()
-        {
-            if (!first)
-                return false;
-            first = false;
-            clearAttributes();
-            termAtt->setTermBuffer(term);
-            payloadAtt->setPayload(newLucene<Payload>(payload));
-            return true;
-        }
-
-        virtual void close()
-        {
-            pool->release(payload);
-        }
-    };
-
-    class IngesterThread : public LuceneThread
-    {
-    public:
-        IngesterThread(int32_t numDocs, const ByteArrayPoolPtr& pool, const IndexWriterPtr& writer)
-        {
-            this->numDocs = numDocs;
-            this->pool = pool;
-            this->writer = writer;
-        }
-
-        virtual ~IngesterThread()
-        {
-        }
-
-        LUCENE_CLASS(IngesterThread);
-
-    protected:
-        int32_t numDocs;
-        ByteArrayPoolPtr pool;
-        IndexWriterPtr writer;
-
-    public:
-        virtual void run()
-        {
-            try
-            {
-                for (int32_t j = 0; j < numDocs; ++j)
-                {
-                    DocumentPtr d = newLucene<Document>();
-                    d->add(newLucene<Field>(L"test", newLucene<PoolingPayloadTokenStream>(pool)));
-                    writer->addDocument(d);
-                }
+public:
+    virtual void run() {
+        try {
+            for (int32_t j = 0; j < numDocs; ++j) {
+                DocumentPtr d = newLucene<Document>();
+                d->add(newLucene<Field>(L"test", newLucene<PoolingPayloadTokenStream>(pool)));
+                writer->addDocument(d);
             }
-            catch (LuceneException& e)
-            {
-                FAIL() << "Unexpected exception: " << e.getError();
-            }
+        } catch (LuceneException& e) {
+            FAIL() << "Unexpected exception: " << e.getError();
         }
-    };
+    }
+};
+
 }
 
-TEST_F(PayloadsTest, testThreadSafety)
-{
+TEST_F(PayloadsTest, testThreadSafety) {
     int32_t numThreads = 5;
     int32_t numDocs = 50;
     TestThreadSafety::ByteArrayPoolPtr pool = newLucene<TestThreadSafety::ByteArrayPool>(numThreads, 5);
@@ -615,26 +568,23 @@ TEST_F(PayloadsTest, testThreadSafety)
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
 
     Collection<LuceneThreadPtr> ingesters = Collection<LuceneThreadPtr>::newInstance(numThreads);
-    for (int32_t i = 0; i < numThreads; ++i)
-    {
+    for (int32_t i = 0; i < numThreads; ++i) {
         ingesters[i] = newLucene<TestThreadSafety::IngesterThread>(numDocs, pool, writer);
         ingesters[i]->start();
     }
 
-    for (int32_t i = 0; i < numThreads; ++i)
+    for (int32_t i = 0; i < numThreads; ++i) {
         ingesters[i]->join();
+    }
 
     writer->close();
     IndexReaderPtr reader = IndexReader::open(dir, true);
     TermEnumPtr terms = reader->terms();
-    while (terms->next())
-    {
+    while (terms->next()) {
         TermPositionsPtr tp = reader->termPositions(terms->term());
-        while (tp->next())
-        {
+        while (tp->next()) {
             int32_t freq = tp->freq();
-            for (int32_t i = 0; i < freq; ++i)
-            {
+            for (int32_t i = 0; i < freq; ++i) {
                 tp->nextPosition();
                 EXPECT_EQ(pool->bytesToString(tp->getPayload(ByteArray::newInstance(5), 0)), terms->term()->text());
             }

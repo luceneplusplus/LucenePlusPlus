@@ -25,11 +25,9 @@
 
 using namespace Lucene;
 
-class FieldsReaderTest : public LuceneTestFixture, public DocHelper
-{
+class FieldsReaderTest : public LuceneTestFixture, public DocHelper {
 public:
-    FieldsReaderTest()
-    {
+    FieldsReaderTest() {
         dir = newLucene<RAMDirectory>();
         testDoc = newLucene<Document>();
         fieldInfos = newLucene<FieldInfos>();
@@ -41,8 +39,7 @@ public:
         writer->close();
     }
 
-    virtual ~FieldsReaderTest()
-    {
+    virtual ~FieldsReaderTest() {
     }
 
 protected:
@@ -58,17 +55,14 @@ String FieldsReaderTest::TEST_SEGMENT_NAME = L"_0";
 DECLARE_SHARED_PTR(FaultyFSDirectory)
 DECLARE_SHARED_PTR(FaultyIndexInput)
 
-class FaultyIndexInput : public BufferedIndexInput
-{
+class FaultyIndexInput : public BufferedIndexInput {
 public:
-    FaultyIndexInput(const IndexInputPtr& delegate)
-    {
+    FaultyIndexInput(const IndexInputPtr& delegate) {
         this->delegate = delegate;
         count = 0;
     }
 
-    virtual ~FaultyIndexInput()
-    {
+    virtual ~FaultyIndexInput() {
     }
 
     LUCENE_CLASS(FaultyIndexInput);
@@ -79,53 +73,45 @@ public:
     int32_t count;
 
 public:
-    virtual void readInternal(uint8_t* b, int32_t offset, int32_t length)
-    {
+    virtual void readInternal(uint8_t* b, int32_t offset, int32_t length) {
         simOutage();
         delegate->readBytes(b, offset, length);
     }
 
-    virtual void seekInternal(int64_t pos)
-    {
+    virtual void seekInternal(int64_t pos) {
         delegate->seek(pos);
     }
 
-    virtual int64_t length()
-    {
+    virtual int64_t length() {
         return delegate->length();
     }
 
-    virtual void close()
-    {
+    virtual void close() {
         delegate->close();
     }
 
-    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr())
-    {
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr()) {
         return newLucene<FaultyIndexInput>(boost::dynamic_pointer_cast<IndexInput>(delegate->clone()));
     }
 
 protected:
-    void simOutage()
-    {
-        if (doFail && count++ % 2 == 1)
+    void simOutage() {
+        if (doFail && count++ % 2 == 1) {
             boost::throw_exception(IOException(L"Simulated network outage"));
+        }
     }
 };
 
 bool FaultyIndexInput::doFail = false;
 
-class FaultyFSDirectory : public Directory
-{
+class FaultyFSDirectory : public Directory {
 public:
-    FaultyFSDirectory(const String& dir)
-    {
+    FaultyFSDirectory(const String& dir) {
         fsDir = FSDirectory::open(dir);
         lockFactory = fsDir->getLockFactory();
     }
 
-    virtual ~FaultyFSDirectory()
-    {
+    virtual ~FaultyFSDirectory() {
     }
 
     LUCENE_CLASS(FaultyFSDirectory);
@@ -134,62 +120,51 @@ public:
     FSDirectoryPtr fsDir;
 
 public:
-    virtual IndexInputPtr openInput(const String& name)
-    {
+    virtual IndexInputPtr openInput(const String& name) {
         return newLucene<FaultyIndexInput>(fsDir->openInput(name));
     }
 
-    virtual HashSet<String> listAll()
-    {
+    virtual HashSet<String> listAll() {
         return fsDir->listAll();
     }
 
-    virtual bool fileExists(const String& name)
-    {
+    virtual bool fileExists(const String& name) {
         return fsDir->fileExists(name);
     }
 
-    virtual uint64_t fileModified(const String& name)
-    {
+    virtual uint64_t fileModified(const String& name) {
         return fsDir->fileModified(name);
     }
 
-    virtual void touchFile(const String& name)
-    {
+    virtual void touchFile(const String& name) {
         fsDir->touchFile(name);
     }
 
-    virtual void deleteFile(const String& name)
-    {
+    virtual void deleteFile(const String& name) {
         fsDir->deleteFile(name);
     }
 
-    virtual int64_t fileLength(const String& name)
-    {
+    virtual int64_t fileLength(const String& name) {
         return fsDir->fileLength(name);
     }
 
-    virtual IndexOutputPtr createOutput(const String& name)
-    {
+    virtual IndexOutputPtr createOutput(const String& name) {
         return fsDir->createOutput(name);
     }
 
-    virtual void close()
-    {
+    virtual void close() {
         fsDir->close();
     }
 };
 
-static void checkSizeEquals(int32_t size, const uint8_t* sizebytes)
-{
+static void checkSizeEquals(int32_t size, const uint8_t* sizebytes) {
     EXPECT_EQ((uint8_t)MiscUtils::unsignedShift(size, 24), sizebytes[0]);
     EXPECT_EQ((uint8_t)MiscUtils::unsignedShift(size, 16), sizebytes[1]);
     EXPECT_EQ((uint8_t)MiscUtils::unsignedShift(size, 8), sizebytes[2]);
     EXPECT_EQ((uint8_t)size, sizebytes[3]);
 }
 
-TEST_F(FieldsReaderTest, testFieldsReader)
-{
+TEST_F(FieldsReaderTest, testFieldsReader) {
     EXPECT_TRUE(dir);
     EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
@@ -226,8 +201,7 @@ TEST_F(FieldsReaderTest, testFieldsReader)
     reader->close();
 }
 
-TEST_F(FieldsReaderTest, testLazyFields)
-{
+TEST_F(FieldsReaderTest, testLazyFields) {
     EXPECT_TRUE(dir);
     EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
@@ -274,8 +248,7 @@ TEST_F(FieldsReaderTest, testLazyFields)
     EXPECT_TRUE(bytes.equals(DocHelper::LAZY_FIELD_BINARY_BYTES));
 }
 
-TEST_F(FieldsReaderTest, testLazyFieldsAfterClose)
-{
+TEST_F(FieldsReaderTest, testLazyFieldsAfterClose) {
     EXPECT_TRUE(dir);
     EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
@@ -296,18 +269,14 @@ TEST_F(FieldsReaderTest, testLazyFieldsAfterClose)
     EXPECT_TRUE(field);
     EXPECT_TRUE(field->isLazy());
     reader->close();
-    try
-    {
+    try {
         field->stringValue();
-    }
-    catch (AlreadyClosedException& e)
-    {
+    } catch (AlreadyClosedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
     }
 }
 
-TEST_F(FieldsReaderTest, testLoadFirst)
-{
+TEST_F(FieldsReaderTest, testLoadFirst) {
     EXPECT_TRUE(dir);
     EXPECT_TRUE(fieldInfos);
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
@@ -318,8 +287,7 @@ TEST_F(FieldsReaderTest, testLoadFirst)
     EXPECT_TRUE(doc);
     int32_t count = 0;
     Collection<FieldablePtr> fields = doc->getFields();
-    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-    {
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
         EXPECT_TRUE(*field);
         String sv = (*field)->stringValue();
         EXPECT_TRUE(!sv.empty());
@@ -330,8 +298,7 @@ TEST_F(FieldsReaderTest, testLoadFirst)
 
 /// Not really a test per se, but we should have some way of assessing whether this is worthwhile.
 /// Must test using a File based directory.
-TEST_F(FieldsReaderTest, testLazyPerformance)
-{
+TEST_F(FieldsReaderTest, testLazyPerformance) {
     String path(FileUtils::joinPath(getTempDir(), L"lazyDir"));
     FSDirectoryPtr tmpDir = FSDirectory::open(path);
     EXPECT_TRUE(tmpDir);
@@ -350,8 +317,7 @@ TEST_F(FieldsReaderTest, testLazyPerformance)
     lazyFieldNames.add(DocHelper::LARGE_LAZY_FIELD_KEY);
     SetBasedFieldSelectorPtr fieldSelector = newLucene<SetBasedFieldSelector>(HashSet<String>::newInstance(), lazyFieldNames);
 
-    for (int32_t i = 0; i < length; ++i)
-    {
+    for (int32_t i = 0; i < length; ++i) {
         reader = newLucene<FieldsReader>(tmpDir, TEST_SEGMENT_NAME, fieldInfos);
         EXPECT_TRUE(reader);
         EXPECT_TRUE(reader->size() == 1);
@@ -387,34 +353,32 @@ TEST_F(FieldsReaderTest, testLazyPerformance)
     FileUtils::removeDirectory(path);
 }
 
-namespace TestLoadSize
-{
-    DECLARE_SHARED_PTR(TestableFieldSelector)
+namespace TestLoadSize {
 
-    class TestableFieldSelector : public FieldSelector
-    {
-    public:
-        virtual ~TestableFieldSelector()
-        {
+DECLARE_SHARED_PTR(TestableFieldSelector)
+
+class TestableFieldSelector : public FieldSelector {
+public:
+    virtual ~TestableFieldSelector() {
+    }
+
+    LUCENE_CLASS(TestableFieldSelector);
+
+public:
+    virtual FieldSelectorResult accept(const String& fieldName) {
+        if (fieldName == DocHelper::TEXT_FIELD_1_KEY || fieldName == DocHelper::LAZY_FIELD_BINARY_KEY) {
+            return FieldSelector::SELECTOR_SIZE;
+        } else if (fieldName == DocHelper::TEXT_FIELD_3_KEY) {
+            return FieldSelector::SELECTOR_LOAD;
+        } else {
+            return FieldSelector::SELECTOR_NO_LOAD;
         }
+    }
+};
 
-        LUCENE_CLASS(TestableFieldSelector);
-
-    public:
-        virtual FieldSelectorResult accept(const String& fieldName)
-        {
-            if (fieldName == DocHelper::TEXT_FIELD_1_KEY || fieldName == DocHelper::LAZY_FIELD_BINARY_KEY)
-                return FieldSelector::SELECTOR_SIZE;
-            else if (fieldName == DocHelper::TEXT_FIELD_3_KEY)
-                return FieldSelector::SELECTOR_LOAD;
-            else
-                return FieldSelector::SELECTOR_NO_LOAD;
-        }
-    };
 }
 
-TEST_F(FieldsReaderTest, testLoadSize)
-{
+TEST_F(FieldsReaderTest, testLoadSize) {
     FieldsReaderPtr reader = newLucene<FieldsReader>(dir, TEST_SEGMENT_NAME, fieldInfos);
     DocumentPtr doc = reader->doc(0, newLucene<TestLoadSize::TestableFieldSelector>());
 
@@ -431,17 +395,16 @@ TEST_F(FieldsReaderTest, testLoadSize)
     reader->close();
 }
 
-TEST_F(FieldsReaderTest, testExceptions)
-{
+TEST_F(FieldsReaderTest, testExceptions) {
     String indexDir(FileUtils::joinPath(getTempDir(), L"testfieldswriterexceptions"));
 
     LuceneException finally;
-    try
-    {
+    try {
         DirectoryPtr dir = newLucene<FaultyFSDirectory>(indexDir);
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        for (int32_t i = 0; i < 2; ++i)
+        for (int32_t i = 0; i < 2; ++i) {
             writer->addDocument(testDoc);
+        }
         writer->optimize();
         writer->close();
 
@@ -451,31 +414,22 @@ TEST_F(FieldsReaderTest, testExceptions)
 
         bool exc = false;
 
-        for (int32_t i = 0; i < 2; ++i)
-        {
-            try
-            {
+        for (int32_t i = 0; i < 2; ++i) {
+            try {
                 reader->document(i);
-            }
-            catch (IOException&)
-            {
+            } catch (IOException&) {
                 exc = true; // expected
             }
-            try
-            {
+            try {
                 reader->document(i);
-            }
-            catch (IOException&)
-            {
+            } catch (IOException&) {
                 exc = true; // expected
             }
         }
         EXPECT_TRUE(exc);
         reader->close();
         dir->close();
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         finally = e;
     }
     FileUtils::removeDirectory(indexDir);

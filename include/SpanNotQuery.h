@@ -9,41 +9,41 @@
 
 #include "SpanQuery.h"
 
-namespace Lucene
-{
-    /// Removes matches which overlap with another SpanQuery.
-    class LPPAPI SpanNotQuery : public SpanQuery
-    {
-    public:
-        /// Construct a SpanNotQuery matching spans from include which have no overlap with spans from exclude.
-        SpanNotQuery(const SpanQueryPtr& include, const SpanQueryPtr& exclude);
-        virtual ~SpanNotQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanNotQuery);
+/// Removes matches which overlap with another SpanQuery.
+class LPPAPI SpanNotQuery : public SpanQuery {
+public:
+    /// Construct a SpanNotQuery matching spans from include which have no overlap with spans from exclude.
+    SpanNotQuery(const SpanQueryPtr& include, const SpanQueryPtr& exclude);
+    virtual ~SpanNotQuery();
 
-    protected:
-        SpanQueryPtr include;
-        SpanQueryPtr exclude;
+    LUCENE_CLASS(SpanNotQuery);
 
-    public:
-        using SpanQuery::toString;
+protected:
+    SpanQueryPtr include;
+    SpanQueryPtr exclude;
 
-        /// Return the SpanQuery whose matches are filtered.
-        SpanQueryPtr getInclude();
+public:
+    using SpanQuery::toString;
 
-        /// Return the SpanQuery whose matches must not overlap those returned.
-        SpanQueryPtr getExclude();
+    /// Return the SpanQuery whose matches are filtered.
+    SpanQueryPtr getInclude();
 
-        virtual String getField();
-        virtual void extractTerms(SetTerm terms);
-        virtual String toString(const String& field);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    /// Return the SpanQuery whose matches must not overlap those returned.
+    SpanQueryPtr getExclude();
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-    };
+    virtual String getField();
+    virtual void extractTerms(SetTerm terms);
+    virtual String toString(const String& field);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+};
+
 }
 
 #endif

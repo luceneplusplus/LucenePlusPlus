@@ -20,11 +20,9 @@
 
 using namespace Lucene;
 
-class BooleanOrTest : public LuceneTestFixture
-{
+class BooleanOrTest : public LuceneTestFixture {
 public:
-    BooleanOrTest()
-    {
+    BooleanOrTest() {
         t1 = newLucene<TermQuery>(newLucene<Term>(FIELD_T, L"files"));
         t2 = newLucene<TermQuery>(newLucene<Term>(FIELD_T, L"deleting"));
         c1 = newLucene<TermQuery>(newLucene<Term>(FIELD_C, L"production"));
@@ -42,8 +40,7 @@ public:
         searcher = newLucene<IndexSearcher>(rd, true);
     }
 
-    virtual ~BooleanOrTest()
-    {
+    virtual ~BooleanOrTest() {
     }
 
 protected:
@@ -58,8 +55,7 @@ protected:
     IndexSearcherPtr searcher;
 
 public:
-    int32_t search(const QueryPtr& q)
-    {
+    int32_t search(const QueryPtr& q) {
         QueryUtils::check(q, searcher);
         return searcher->search(q, FilterPtr(), 1000)->totalHits;
     }
@@ -68,16 +64,14 @@ public:
 const String BooleanOrTest::FIELD_T = L"T";
 const String BooleanOrTest::FIELD_C = L"C";
 
-TEST_F(BooleanOrTest, testElements)
-{
+TEST_F(BooleanOrTest, testElements) {
     EXPECT_EQ(1, search(t1));
     EXPECT_EQ(1, search(t2));
     EXPECT_EQ(1, search(c1));
     EXPECT_EQ(1, search(c2));
 }
 
-TEST_F(BooleanOrTest, testFlat)
-{
+TEST_F(BooleanOrTest, testFlat) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
     q->add(newLucene<BooleanClause>(t2, BooleanClause::SHOULD));
@@ -86,8 +80,7 @@ TEST_F(BooleanOrTest, testFlat)
     EXPECT_EQ(1, search(q));
 }
 
-TEST_F(BooleanOrTest, testParenthesisMust)
-{
+TEST_F(BooleanOrTest, testParenthesisMust) {
     BooleanQueryPtr q3 = newLucene<BooleanQuery>();
     q3->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
     q3->add(newLucene<BooleanClause>(t2, BooleanClause::SHOULD));
@@ -100,8 +93,7 @@ TEST_F(BooleanOrTest, testParenthesisMust)
     EXPECT_EQ(1, search(q2));
 }
 
-TEST_F(BooleanOrTest, testParenthesisMust2)
-{
+TEST_F(BooleanOrTest, testParenthesisMust2) {
     BooleanQueryPtr q3 = newLucene<BooleanQuery>();
     q3->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
     q3->add(newLucene<BooleanClause>(t2, BooleanClause::SHOULD));
@@ -114,8 +106,7 @@ TEST_F(BooleanOrTest, testParenthesisMust2)
     EXPECT_EQ(1, search(q2));
 }
 
-TEST_F(BooleanOrTest, testParenthesisShould)
-{
+TEST_F(BooleanOrTest, testParenthesisShould) {
     BooleanQueryPtr q3 = newLucene<BooleanQuery>();
     q3->add(newLucene<BooleanClause>(t1, BooleanClause::SHOULD));
     q3->add(newLucene<BooleanClause>(t2, BooleanClause::SHOULD));

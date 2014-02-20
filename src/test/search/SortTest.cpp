@@ -37,11 +37,9 @@
 
 using namespace Lucene;
 
-class SortTest : public LuceneTestFixture
-{
+class SortTest : public LuceneTestFixture {
 public:
-    SortTest()
-    {
+    SortTest() {
         r = newLucene<Random>();
 
         // document data:
@@ -78,8 +76,7 @@ public:
         sort = newLucene<Sort>();
     }
 
-    virtual ~SortTest()
-    {
+    virtual ~SortTest() {
     }
 
 protected:
@@ -100,55 +97,56 @@ protected:
     Collection< Collection<String> > data;
 
 protected:
-    SearcherPtr getFullIndex()
-    {
+    SearcherPtr getFullIndex() {
         return getIndex(true, true);
     }
 
-    SearcherPtr getXIndex()
-    {
+    SearcherPtr getXIndex() {
         return getIndex(true, false);
     }
 
-    SearcherPtr getYIndex()
-    {
+    SearcherPtr getYIndex() {
         return getIndex(false, true);
     }
 
-    SearcherPtr getEmptyIndex()
-    {
+    SearcherPtr getEmptyIndex() {
         return getIndex(false, false);
     }
 
-    SearcherPtr getIndex(bool even, bool odd)
-    {
+    SearcherPtr getIndex(bool even, bool odd) {
         RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         writer->setMaxBufferedDocs(2);
         writer->setMergeFactor(1000);
-        for (int32_t i = 0; i < data.size(); ++i)
-        {
-            if (((i % 2) == 0 && even) || ((i % 2) == 1 && odd))
-            {
+        for (int32_t i = 0; i < data.size(); ++i) {
+            if (((i % 2) == 0 && even) || ((i % 2) == 1 && odd)) {
                 DocumentPtr doc = newLucene<Document>();
                 doc->add(newLucene<Field>(L"tracer", data[i][0], Field::STORE_YES, Field::INDEX_NO));
                 doc->add(newLucene<Field>(L"contents", data[i][1], Field::STORE_NO, Field::INDEX_ANALYZED));
-                if (!data[i][2].empty())
+                if (!data[i][2].empty()) {
                     doc->add(newLucene<Field>(L"int", data[i][2], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-                if (!data[i][3].empty())
+                }
+                if (!data[i][3].empty()) {
                     doc->add(newLucene<Field>(L"double", data[i][3], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-                if (!data[i][4].empty())
+                }
+                if (!data[i][4].empty()) {
                     doc->add(newLucene<Field>(L"string", data[i][4], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-                if (!data[i][5].empty())
+                }
+                if (!data[i][5].empty()) {
                     doc->add(newLucene<Field>(L"custom", data[i][5], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-                if (!data[i][6].empty())
+                }
+                if (!data[i][6].empty()) {
                     doc->add(newLucene<Field>(L"i18n", data[i][6], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-                if (!data[i][7].empty())
+                }
+                if (!data[i][7].empty()) {
                     doc->add(newLucene<Field>(L"long", data[i][7], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-                if (!data[i][8].empty())
+                }
+                if (!data[i][8].empty()) {
                     doc->add(newLucene<Field>(L"byte", data[i][8], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-                if (!data[i][9].empty())
+                }
+                if (!data[i][9].empty()) {
                     doc->add(newLucene<Field>(L"parser", data[i][9], Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+                }
                 doc->setBoost(2); // produce some scores above 1.0
                 writer->addDocument(doc);
             }
@@ -159,12 +157,10 @@ protected:
         return s;
     }
 
-    MapStringDouble getScores(Collection<ScoreDocPtr> hits, const SearcherPtr& searcher)
-    {
+    MapStringDouble getScores(Collection<ScoreDocPtr> hits, const SearcherPtr& searcher) {
         MapStringDouble scoreMap = MapStringDouble::newInstance();
         int32_t n = hits.size();
-        for (int32_t i = 0; i < n; ++i)
-        {
+        for (int32_t i = 0; i < n; ++i) {
             DocumentPtr doc = searcher->doc(hits[i]->doc);
             Collection<String> v = doc->getValues(L"tracer");
             EXPECT_EQ(v.size(), 1);
@@ -173,13 +169,11 @@ protected:
         return scoreMap;
     }
 
-    void checkSameValues(MapStringDouble m1, MapStringDouble m2)
-    {
+    void checkSameValues(MapStringDouble m1, MapStringDouble m2) {
         int32_t n = m1.size();
         int32_t m = m2.size();
         EXPECT_EQ(n, m);
-        for (MapStringDouble::iterator key = m1.begin(); key != m1.end(); ++key)
-        {
+        for (MapStringDouble::iterator key = m1.begin(); key != m1.end(); ++key) {
             double o1 = m1.get(key->first);
             double o2 = m2.get(key->first);
             EXPECT_NEAR(o1, o2, 1e-6);
@@ -187,31 +181,28 @@ protected:
     }
 
     /// make sure the documents returned by the search match the expected list
-    void checkMatches(const SearcherPtr& searcher, const QueryPtr& query, const SortPtr& sort, const String& expectedResult)
-    {
+    void checkMatches(const SearcherPtr& searcher, const QueryPtr& query, const SortPtr& sort, const String& expectedResult) {
         TopDocsPtr hits = searcher->search(query, FilterPtr(), expectedResult.length(), sort);
         Collection<ScoreDocPtr> result = hits->scoreDocs;
         EXPECT_EQ(hits->totalHits, expectedResult.length());
         StringStream buff;
         int32_t n = result.size();
-        for (int32_t i = 0; i < n; ++i)
-        {
+        for (int32_t i = 0; i < n; ++i) {
             DocumentPtr doc = searcher->doc(result[i]->doc);
             Collection<String> v = doc->getValues(L"tracer");
-            for (int32_t j = 0; j < v.size(); ++j)
+            for (int32_t j = 0; j < v.size(); ++j) {
                 buff << v[j];
+            }
         }
         EXPECT_EQ(expectedResult, buff.str());
     }
 
-    IndexSearcherPtr getFullStrings()
-    {
+    IndexSearcherPtr getFullStrings() {
         RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         writer->setMaxBufferedDocs(4);
         writer->setMergeFactor(97);
-        for (int32_t i = 0; i < NUM_STRINGS; ++i)
-        {
+        for (int32_t i = 0; i < NUM_STRINGS; ++i) {
             DocumentPtr doc = newLucene<Document>();
             String num = getRandomCharString(getRandomNumber(2, 8), 48, 52);
             doc->add(newLucene<Field>(L"tracer", num, Field::STORE_YES, Field::INDEX_NO));
@@ -227,43 +218,39 @@ protected:
         return newLucene<IndexSearcher>(indexStore, true);
     }
 
-    String getRandomNumberString(int32_t num, int32_t low, int32_t high)
-    {
+    String getRandomNumberString(int32_t num, int32_t low, int32_t high) {
         StringStream buff;
-        for (int32_t i = 0; i < num; ++i)
+        for (int32_t i = 0; i < num; ++i) {
             buff << getRandomNumber(low, high);
+        }
         return buff.str();
     }
 
-    String getRandomCharString(int32_t num)
-    {
+    String getRandomCharString(int32_t num) {
         return getRandomCharString(num, 48, 122);
     }
 
-    String getRandomCharString(int32_t num, int32_t start, int32_t end)
-    {
+    String getRandomCharString(int32_t num, int32_t start, int32_t end) {
         static const wchar_t* alphanum = L"0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz";
         StringStream buff;
-        for (int32_t i = 0; i < num; ++i)
+        for (int32_t i = 0; i < num; ++i) {
             buff << alphanum[getRandomNumber(start, end)];
+        }
         return buff.str();
     }
 
-    int32_t getRandomNumber(int32_t low, int32_t high)
-    {
+    int32_t getRandomNumber(int32_t low, int32_t high) {
         return (std::abs(r->nextInt()) % (high - low)) + low;
     }
 
-    void checkSaneFieldCaches()
-    {
+    void checkSaneFieldCaches() {
         Collection<FieldCacheEntryPtr> entries = FieldCache::DEFAULT()->getCacheEntries();
         Collection<InsanityPtr> insanity = FieldCacheSanityChecker::checkSanity(entries);
         EXPECT_EQ(0, insanity.size());
     }
 
     /// runs a variety of sorts useful for multisearchers
-    void runMultiSorts(const SearcherPtr& multi, bool isFull)
-    {
+    void runMultiSorts(const SearcherPtr& multi, bool isFull) {
         sort->setSort(SortField::FIELD_DOC());
         String expected = isFull ? L"ABCDEFGHIJ" : L"ACEGIBDFHJ";
         checkMatches(multi, queryA, sort, expected);
@@ -344,8 +331,7 @@ protected:
 const int32_t SortTest::NUM_STRINGS = 6000;
 
 /// test the sorts by score and document number
-TEST_F(SortTest, testBuiltInSorts)
-{
+TEST_F(SortTest, testBuiltInSorts) {
     sort = newLucene<Sort>();
     checkMatches(full, queryX, sort, L"ACEGI");
     checkMatches(full, queryY, sort, L"BDFHJ");
@@ -356,8 +342,7 @@ TEST_F(SortTest, testBuiltInSorts)
 }
 
 /// test sorts where the type of field is specified
-TEST_F(SortTest, testTypedSort)
-{
+TEST_F(SortTest, testTypedSort) {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"int", SortField::INT), SortField::FIELD_DOC()));
     checkMatches(full, queryX, sort, L"IGAEC");
     checkMatches(full, queryY, sort, L"DHFJB");
@@ -380,8 +365,7 @@ TEST_F(SortTest, testTypedSort)
 }
 
 /// Test String sorting: small queue to many matches, multi field sort, reverse sort
-TEST_F(SortTest, testStringSort)
-{
+TEST_F(SortTest, testStringSort) {
     IndexSearcherPtr searcher = getFullStrings();
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", SortField::STRING), newLucene<SortField>(L"string2", SortField::STRING, true), SortField::FIELD_DOC()));
     Collection<ScoreDocPtr> result = searcher->search(newLucene<MatchAllDocsQuery>(), FilterPtr(), 500, sort)->scoreDocs;
@@ -391,27 +375,24 @@ TEST_F(SortTest, testStringSort)
     String last;
     String lastSub;
     int32_t lastDocId = 0;
-    for (int32_t x = 0; x < n; ++x)
-    {
+    for (int32_t x = 0; x < n; ++x) {
         DocumentPtr doc2 = searcher->doc(result[x]->doc);
         Collection<String> v = doc2->getValues(L"tracer");
         Collection<String> v2 = doc2->getValues(L"tracer2");
-        for (int32_t j = 0; j < v.size(); ++j)
-        {
-            if (!last.empty())
-            {
+        for (int32_t j = 0; j < v.size(); ++j) {
+            if (!last.empty()) {
                 int32_t cmp = v[j].compare(last);
-                if (cmp < 0)
+                if (cmp < 0) {
                     FAIL() << "first field out of order";
-                if (cmp == 0) // ensure second field is in reverse order
-                {
+                }
+                if (cmp == 0) { // ensure second field is in reverse order
                     cmp = v2[j].compare(lastSub);
-                    if (cmp > 0)
+                    if (cmp > 0) {
                         FAIL() << "second field out of order";
-                    else if (cmp == 0) // ensure docid is in order
-                    {
-                        if (result[x]->doc < lastDocId)
+                    } else if (cmp == 0) { // ensure docid is in order
+                        if (result[x]->doc < lastDocId) {
                             FAIL() << "docid out of order";
+                        }
                     }
 
                 }
@@ -424,70 +405,58 @@ TEST_F(SortTest, testStringSort)
     }
 }
 
-namespace TestCustomFieldParserSort
-{
-    class CustomIntParser : public IntParser
-    {
-    public:
-        virtual ~CustomIntParser()
-        {
-        }
+namespace TestCustomFieldParserSort {
 
-    public:
-        virtual int32_t parseInt(const String& string)
-        {
-            return (string[0] - L'A') * 123456;
-        }
-    };
+class CustomIntParser : public IntParser {
+public:
+    virtual ~CustomIntParser() {
+    }
 
-    class CustomDoubleParser : public DoubleParser
-    {
-    public:
-        virtual ~CustomDoubleParser()
-        {
-        }
+public:
+    virtual int32_t parseInt(const String& string) {
+        return (string[0] - L'A') * 123456;
+    }
+};
 
-    public:
-        virtual double parseDouble(const String& string)
-        {
-            return std::sqrt((double)string[0]);
-        }
-    };
+class CustomDoubleParser : public DoubleParser {
+public:
+    virtual ~CustomDoubleParser() {
+    }
 
-    class CustomLongParser : public LongParser
-    {
-    public:
-        virtual ~CustomLongParser()
-        {
-        }
+public:
+    virtual double parseDouble(const String& string) {
+        return std::sqrt((double)string[0]);
+    }
+};
 
-    public:
-        virtual int64_t parseLong(const String& string)
-        {
-            return (string[0] - L'A') * (int64_t)1234567890;
-        }
-    };
+class CustomLongParser : public LongParser {
+public:
+    virtual ~CustomLongParser() {
+    }
 
-    class CustomByteParser : public ByteParser
-    {
-    public:
-        virtual ~CustomByteParser()
-        {
-        }
+public:
+    virtual int64_t parseLong(const String& string) {
+        return (string[0] - L'A') * (int64_t)1234567890;
+    }
+};
 
-    public:
-        virtual uint8_t parseByte(const String& string)
-        {
-            return (uint8_t)(string[0] - L'A');
-        }
-    };
+class CustomByteParser : public ByteParser {
+public:
+    virtual ~CustomByteParser() {
+    }
+
+public:
+    virtual uint8_t parseByte(const String& string) {
+        return (uint8_t)(string[0] - L'A');
+    }
+};
+
 }
 
 /// Test sorts where the type of field is specified and a custom field parser  is used, that uses a simple char encoding.
 /// The sorted string contains a character beginning from 'A' that is mapped to a numeric value using some "funny"
 /// algorithm to be different for each data type.
-TEST_F(SortTest, testCustomFieldParserSort)
-{
+TEST_F(SortTest, testCustomFieldParserSort) {
     // since tests explicitly uses different parsers on the same field name we explicitly check/purge the FieldCache between each assertMatch
     FieldCachePtr fc = FieldCache::DEFAULT();
 
@@ -513,8 +482,7 @@ TEST_F(SortTest, testCustomFieldParserSort)
 }
 
 /// test sorts when there's nothing in the index
-TEST_F(SortTest, testEmptyIndex)
-{
+TEST_F(SortTest, testEmptyIndex) {
     SearcherPtr empty = getEmptyIndex();
 
     sort = newLucene<Sort>();
@@ -533,97 +501,81 @@ TEST_F(SortTest, testEmptyIndex)
     checkMatches(empty, queryX, sort, L"");
 }
 
-namespace TestNewCustomFieldParserSort
-{
-    class MyIntParser : public IntParser
-    {
-    public:
-        virtual ~MyIntParser()
-        {
-        }
+namespace TestNewCustomFieldParserSort {
 
-    public:
-        virtual int32_t parseInt(const String& string)
-        {
-            return (string[0] - L'A') * 123456;
-        }
-    };
+class MyIntParser : public IntParser {
+public:
+    virtual ~MyIntParser() {
+    }
 
-    class MyFieldComparator : public FieldComparator
-    {
-    public:
-        MyFieldComparator(int32_t numHits)
-        {
-            slotValues = Collection<int32_t>::newInstance(numHits);
-            bottomValue = 0;
-        }
+public:
+    virtual int32_t parseInt(const String& string) {
+        return (string[0] - L'A') * 123456;
+    }
+};
 
-        virtual ~MyFieldComparator()
-        {
-        }
+class MyFieldComparator : public FieldComparator {
+public:
+    MyFieldComparator(int32_t numHits) {
+        slotValues = Collection<int32_t>::newInstance(numHits);
+        bottomValue = 0;
+    }
 
-    public:
-        Collection<int32_t> docValues;
-        Collection<int32_t> slotValues;
-        int32_t bottomValue;
+    virtual ~MyFieldComparator() {
+    }
 
-    public:
-        virtual void copy(int32_t slot, int32_t doc)
-        {
-            slotValues[slot] = docValues[doc];
-        }
+public:
+    Collection<int32_t> docValues;
+    Collection<int32_t> slotValues;
+    int32_t bottomValue;
 
-        virtual int32_t compare(int32_t slot1, int32_t slot2)
-        {
-            return slotValues[slot1] - slotValues[slot2];
-        }
+public:
+    virtual void copy(int32_t slot, int32_t doc) {
+        slotValues[slot] = docValues[doc];
+    }
 
-        virtual int32_t compareBottom(int32_t doc)
-        {
-            return bottomValue - docValues[doc];
-        }
+    virtual int32_t compare(int32_t slot1, int32_t slot2) {
+        return slotValues[slot1] - slotValues[slot2];
+    }
 
-        virtual void setBottom(int32_t slot)
-        {
-            bottomValue = slotValues[slot];
-        }
+    virtual int32_t compareBottom(int32_t doc) {
+        return bottomValue - docValues[doc];
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-            docValues = FieldCache::DEFAULT()->getInts(reader, L"parser", newLucene<MyIntParser>());
-        }
+    virtual void setBottom(int32_t slot) {
+        bottomValue = slotValues[slot];
+    }
 
-        virtual ComparableValue value(int32_t slot)
-        {
-            return slotValues[slot];
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+        docValues = FieldCache::DEFAULT()->getInts(reader, L"parser", newLucene<MyIntParser>());
+    }
 
-    class MyFieldComparatorSource : public FieldComparatorSource
-    {
-    public:
-        virtual ~MyFieldComparatorSource()
-        {
-        }
+    virtual ComparableValue value(int32_t slot) {
+        return slotValues[slot];
+    }
+};
 
-    public:
-        virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed)
-        {
-            return newLucene<MyFieldComparator>(numHits);
-        }
-    };
+class MyFieldComparatorSource : public FieldComparatorSource {
+public:
+    virtual ~MyFieldComparatorSource() {
+    }
+
+public:
+    virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed) {
+        return newLucene<MyFieldComparator>(numHits);
+    }
+};
+
 }
 
 // Test sorting with custom FieldComparator
-TEST_F(SortTest, testNewCustomFieldParserSort)
-{
+TEST_F(SortTest, testNewCustomFieldParserSort) {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"parser", newLucene<TestNewCustomFieldParserSort::MyFieldComparatorSource>())));
     checkMatches(full, queryA, sort, L"JIHGFEDCBA");
 }
 
 /// test sorts in reverse
-TEST_F(SortTest, testReverseSort)
-{
+TEST_F(SortTest, testReverseSort) {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"", SortField::SCORE, true), SortField::FIELD_DOC()));
     checkMatches(full, queryX, sort, L"IEGCA");
     checkMatches(full, queryY, sort, L"JFHDB");
@@ -646,8 +598,7 @@ TEST_F(SortTest, testReverseSort)
 }
 
 /// test sorting when the sort field is empty (undefined) for some of the documents
-TEST_F(SortTest, testEmptyFieldSort)
-{
+TEST_F(SortTest, testEmptyFieldSort) {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", SortField::STRING)));
     checkMatches(full, queryF, sort, L"ZJI");
 
@@ -706,8 +657,7 @@ TEST_F(SortTest, testEmptyFieldSort)
 }
 
 /// test sorts using a series of fields
-TEST_F(SortTest, testSortCombos)
-{
+TEST_F(SortTest, testSortCombos) {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"int", SortField::INT), newLucene<SortField>(L"double", SortField::DOUBLE)));
     checkMatches(full, queryX, sort, L"IGEAC");
 
@@ -719,8 +669,7 @@ TEST_F(SortTest, testSortCombos)
 }
 
 /// test using a Locale for sorting strings
-TEST_F(SortTest, testLocaleSort)
-{
+TEST_F(SortTest, testLocaleSort) {
     sort->setSort(newCollection<SortFieldPtr>(newLucene<SortField>(L"string", std::locale())));
     checkMatches(full, queryX, sort, L"AIGEC");
     checkMatches(full, queryY, sort, L"DJHFB");
@@ -731,22 +680,19 @@ TEST_F(SortTest, testLocaleSort)
 }
 
 /// test a variety of sorts using more than one searcher
-TEST_F(SortTest, testMultiSort)
-{
+TEST_F(SortTest, testMultiSort) {
     MultiSearcherPtr searcher = newLucene<MultiSearcher>(newCollection<SearchablePtr>(searchX, searchY));
     runMultiSorts(searcher, false);
 }
 
 /// test a variety of sorts using a parallel multisearcher
-TEST_F(SortTest, testParallelMultiSort)
-{
+TEST_F(SortTest, testParallelMultiSort) {
     MultiSearcherPtr searcher = newLucene<ParallelMultiSearcher>(newCollection<SearchablePtr>(searchX, searchY));
     runMultiSorts(searcher, false);
 }
 
 // test that the relevancy scores are the same even if hits are sorted
-TEST_F(SortTest, testNormalizedScores)
-{
+TEST_F(SortTest, testNormalizedScores) {
     // capture relevancy scores
     MapStringDouble scoresX = getScores(full->search(queryX, FilterPtr(), 1000)->scoreDocs, full);
     MapStringDouble scoresY = getScores(full->search(queryY, FilterPtr(), 1000)->scoreDocs, full);
@@ -823,36 +769,32 @@ TEST_F(SortTest, testNormalizedScores)
     checkSameValues(scoresA, getScores(multi->search(queryA, FilterPtr(), 1000, sort)->scoreDocs, multi));
 }
 
-namespace TestTopDocsScores
-{
-    class TopDocsFilter : public Filter
-    {
-    public:
-        TopDocsFilter(const TopDocsPtr& docs)
-        {
-            this->docs = docs;
-        }
+namespace TestTopDocsScores {
 
-        virtual ~TopDocsFilter()
-        {
-        }
+class TopDocsFilter : public Filter {
+public:
+    TopDocsFilter(const TopDocsPtr& docs) {
+        this->docs = docs;
+    }
 
-    protected:
-        TopDocsPtr docs;
+    virtual ~TopDocsFilter() {
+    }
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-        {
-            BitSetPtr bs = newLucene<BitSet>(reader->maxDoc());
-            bs->set((uint32_t)0, (uint32_t)reader->maxDoc());
-            bs->set(docs->scoreDocs[0]->doc);
-            return newLucene<DocIdBitSet>(bs);
-        }
-    };
+protected:
+    TopDocsPtr docs;
+
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
+        BitSetPtr bs = newLucene<BitSet>(reader->maxDoc());
+        bs->set((uint32_t)0, (uint32_t)reader->maxDoc());
+        bs->set(docs->scoreDocs[0]->doc);
+        return newLucene<DocIdBitSet>(bs);
+    }
+};
+
 }
 
-TEST_F(SortTest, testTopDocsScores)
-{
+TEST_F(SortTest, testTopDocsScores) {
     SortPtr sort = newLucene<Sort>();
     int32_t numDocs = 10;
 
@@ -866,28 +808,25 @@ TEST_F(SortTest, testTopDocsScores)
     EXPECT_NEAR(docs1->scoreDocs[0]->score, docs2->scoreDocs[0]->score, 1e-6);
 }
 
-TEST_F(SortTest, testSortWithoutFillFields)
-{
+TEST_F(SortTest, testSortWithoutFillFields) {
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
-    for (int32_t i = 0; i < sort.size(); ++i)
-    {
+    for (int32_t i = 0; i < sort.size(); ++i) {
         QueryPtr q = newLucene<MatchAllDocsQuery>();
         TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, false, false, false, true);
 
         full->search(q, tdc);
 
         Collection<ScoreDocPtr> sd = tdc->topDocs()->scoreDocs;
-        for (int32_t j = 1; j < sd.size(); ++j)
+        for (int32_t j = 1; j < sd.size(); ++j) {
             EXPECT_NE(sd[j]->doc, sd[j - 1]->doc);
+        }
     }
 }
 
-TEST_F(SortTest, testSortWithoutScoreTracking)
-{
+TEST_F(SortTest, testSortWithoutScoreTracking) {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
-    for (int32_t i = 0; i < sort.size(); ++i)
-    {
+    for (int32_t i = 0; i < sort.size(); ++i) {
         QueryPtr q = newLucene<MatchAllDocsQuery>();
         TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, true, false, false, true);
 
@@ -895,18 +834,17 @@ TEST_F(SortTest, testSortWithoutScoreTracking)
 
         TopDocsPtr td = tdc->topDocs();
         Collection<ScoreDocPtr> sd = td->scoreDocs;
-        for (int32_t j = 1; j < sd.size(); ++j)
+        for (int32_t j = 1; j < sd.size(); ++j) {
             EXPECT_TRUE(MiscUtils::isNaN(sd[j]->score));
+        }
         EXPECT_TRUE(MiscUtils::isNaN(td->maxScore));
     }
 }
 
-TEST_F(SortTest, testSortWithScoreNoMaxScoreTracking)
-{
+TEST_F(SortTest, testSortWithScoreNoMaxScoreTracking) {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
-    for (int32_t i = 0; i < sort.size(); ++i)
-    {
+    for (int32_t i = 0; i < sort.size(); ++i) {
         QueryPtr q = newLucene<MatchAllDocsQuery>();
         TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, true, true, false, true);
 
@@ -914,18 +852,17 @@ TEST_F(SortTest, testSortWithScoreNoMaxScoreTracking)
 
         TopDocsPtr td = tdc->topDocs();
         Collection<ScoreDocPtr> sd = td->scoreDocs;
-        for (int32_t j = 1; j < sd.size(); ++j)
+        for (int32_t j = 1; j < sd.size(); ++j) {
             EXPECT_TRUE(!MiscUtils::isNaN(sd[j]->score));
+        }
         EXPECT_TRUE(MiscUtils::isNaN(td->maxScore));
     }
 }
 
-TEST_F(SortTest, testSortWithScoreAndMaxScoreTracking)
-{
+TEST_F(SortTest, testSortWithScoreAndMaxScoreTracking) {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
-    for (int32_t i = 0; i < sort.size(); ++i)
-    {
+    for (int32_t i = 0; i < sort.size(); ++i) {
         QueryPtr q = newLucene<MatchAllDocsQuery>();
         TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, true, true, true, true);
 
@@ -933,36 +870,36 @@ TEST_F(SortTest, testSortWithScoreAndMaxScoreTracking)
 
         TopDocsPtr td = tdc->topDocs();
         Collection<ScoreDocPtr> sd = td->scoreDocs;
-        for (int32_t j = 1; j < sd.size(); ++j)
+        for (int32_t j = 1; j < sd.size(); ++j) {
             EXPECT_TRUE(!MiscUtils::isNaN(sd[j]->score));
+        }
         EXPECT_TRUE(!MiscUtils::isNaN(td->maxScore));
     }
 }
 
-TEST_F(SortTest, testOutOfOrderDocsScoringSort)
-{
+TEST_F(SortTest, testOutOfOrderDocsScoringSort) {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
     Collection< Collection<uint8_t> > tfcOptions = newCollection< Collection<uint8_t> >(
-        newCollection<uint8_t>(false, false, false),
-        newCollection<uint8_t>(false, false, true),
-        newCollection<uint8_t>(false, true, false),
-        newCollection<uint8_t>(false, true, true),
-        newCollection<uint8_t>(true, false, false),
-        newCollection<uint8_t>(true, false, true),
-        newCollection<uint8_t>(true, true, false),
-        newCollection<uint8_t>(true, true, true)
-    );
+                newCollection<uint8_t>(false, false, false),
+                newCollection<uint8_t>(false, false, true),
+                newCollection<uint8_t>(false, true, false),
+                newCollection<uint8_t>(false, true, true),
+                newCollection<uint8_t>(true, false, false),
+                newCollection<uint8_t>(true, false, true),
+                newCollection<uint8_t>(true, true, false),
+                newCollection<uint8_t>(true, true, true)
+            );
     Collection<String> actualTFCClasses = newCollection<String>(
-        L"OutOfOrderOneComparatorNonScoringCollector",
-        L"OutOfOrderOneComparatorScoringMaxScoreCollector",
-        L"OutOfOrderOneComparatorScoringNoMaxScoreCollector",
-        L"OutOfOrderOneComparatorScoringMaxScoreCollector",
-        L"OutOfOrderOneComparatorNonScoringCollector",
-        L"OutOfOrderOneComparatorScoringMaxScoreCollector",
-        L"OutOfOrderOneComparatorScoringNoMaxScoreCollector",
-        L"OutOfOrderOneComparatorScoringMaxScoreCollector"
-    );
+            L"OutOfOrderOneComparatorNonScoringCollector",
+            L"OutOfOrderOneComparatorScoringMaxScoreCollector",
+            L"OutOfOrderOneComparatorScoringNoMaxScoreCollector",
+            L"OutOfOrderOneComparatorScoringMaxScoreCollector",
+            L"OutOfOrderOneComparatorNonScoringCollector",
+            L"OutOfOrderOneComparatorScoringMaxScoreCollector",
+            L"OutOfOrderOneComparatorScoringNoMaxScoreCollector",
+            L"OutOfOrderOneComparatorScoringMaxScoreCollector"
+                                          );
 
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
     // Add a Query with SHOULD, since bw.scorer() returns BooleanScorer2 which delegates to
@@ -971,10 +908,8 @@ TEST_F(SortTest, testOutOfOrderDocsScoringSort)
     // Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return the clause
     // instead of BQ.
     bq->setMinimumNumberShouldMatch(1);
-    for (int32_t i = 0; i < sort.size(); ++i)
-    {
-        for (int32_t j = 0; j < tfcOptions.size(); ++j)
-        {
+    for (int32_t i = 0; i < sort.size(); ++i) {
+        for (int32_t j = 0; j < tfcOptions.size(); ++j) {
             TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, tfcOptions[j][0] == 1, tfcOptions[j][1] == 1, tfcOptions[j][2] == 1, false);
 
             EXPECT_EQ(tdc->getClassName(), actualTFCClasses[j]);
@@ -988,12 +923,10 @@ TEST_F(SortTest, testOutOfOrderDocsScoringSort)
     }
 }
 
-TEST_F(SortTest, testSortWithScoreAndMaxScoreTrackingNoResults)
-{
+TEST_F(SortTest, testSortWithScoreAndMaxScoreTrackingNoResults) {
     // Two Sort criteria to instantiate the multi/single comparators.
     Collection<SortPtr> sort = newCollection<SortPtr>(newLucene<Sort>(SortField::FIELD_DOC()), newLucene<Sort>());
-    for (int32_t i = 0; i < sort.size(); ++i)
-    {
+    for (int32_t i = 0; i < sort.size(); ++i) {
         TopDocsCollectorPtr tdc = TopFieldCollector::create(sort[i], 10, true, true, true, true);
         TopDocsPtr td = tdc->topDocs();
         EXPECT_EQ(0, td->totalHits);
@@ -1001,12 +934,10 @@ TEST_F(SortTest, testSortWithScoreAndMaxScoreTrackingNoResults)
     }
 }
 
-TEST_F(SortTest, testSortWithStringNoException)
-{
+TEST_F(SortTest, testSortWithStringNoException) {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < 5; ++i)
-    {
+    for (int32_t i = 0; i < 5; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"string", L"a" + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         doc->add(newLucene<Field>(L"string", L"b" + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));

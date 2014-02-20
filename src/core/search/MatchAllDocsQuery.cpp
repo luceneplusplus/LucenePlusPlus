@@ -14,139 +14,118 @@
 #include "Searcher.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    MatchAllDocsQuery::MatchAllDocsQuery(const String& normsField)
-    {
-        this->normsField = normsField;
-    }
+namespace Lucene {
 
-    MatchAllDocsQuery::~MatchAllDocsQuery()
-    {
-    }
+MatchAllDocsQuery::MatchAllDocsQuery(const String& normsField) {
+    this->normsField = normsField;
+}
 
-    WeightPtr MatchAllDocsQuery::createWeight(const SearcherPtr& searcher)
-    {
-        return newLucene<MatchAllDocsWeight>(shared_from_this(), searcher);
-    }
+MatchAllDocsQuery::~MatchAllDocsQuery() {
+}
 
-    void MatchAllDocsQuery::extractTerms(SetTerm terms)
-    {
-    }
+WeightPtr MatchAllDocsQuery::createWeight(const SearcherPtr& searcher) {
+    return newLucene<MatchAllDocsWeight>(shared_from_this(), searcher);
+}
 
-    String MatchAllDocsQuery::toString(const String& field)
-    {
-        StringStream buffer;
-        buffer << L"*:*" << boostString();
-        return buffer.str();
-    }
+void MatchAllDocsQuery::extractTerms(SetTerm terms) {
+}
 
-    bool MatchAllDocsQuery::equals(const LuceneObjectPtr& other)
-    {
-        return Query::equals(other);
-    }
+String MatchAllDocsQuery::toString(const String& field) {
+    StringStream buffer;
+    buffer << L"*:*" << boostString();
+    return buffer.str();
+}
 
-    int32_t MatchAllDocsQuery::hashCode()
-    {
-        return MiscUtils::doubleToIntBits(getBoost()) ^ 0x1aa71190;
-    }
+bool MatchAllDocsQuery::equals(const LuceneObjectPtr& other) {
+    return Query::equals(other);
+}
 
-    LuceneObjectPtr MatchAllDocsQuery::clone(const LuceneObjectPtr& other)
-    {
-        LuceneObjectPtr clone = other ? other : newLucene<MatchAllDocsQuery>();
-        MatchAllDocsQueryPtr cloneQuery(boost::dynamic_pointer_cast<MatchAllDocsQuery>(Query::clone(clone)));
-        cloneQuery->normsField = normsField;
-        return cloneQuery;
-    }
+int32_t MatchAllDocsQuery::hashCode() {
+    return MiscUtils::doubleToIntBits(getBoost()) ^ 0x1aa71190;
+}
 
-    MatchAllDocsWeight::MatchAllDocsWeight(const MatchAllDocsQueryPtr& query, const SearcherPtr& searcher)
-    {
-        this->query = query;
-        this->similarity = searcher->getSimilarity();
-        this->queryWeight = 0.0;
-        this->queryNorm = 0.0;
-    }
+LuceneObjectPtr MatchAllDocsQuery::clone(const LuceneObjectPtr& other) {
+    LuceneObjectPtr clone = other ? other : newLucene<MatchAllDocsQuery>();
+    MatchAllDocsQueryPtr cloneQuery(boost::dynamic_pointer_cast<MatchAllDocsQuery>(Query::clone(clone)));
+    cloneQuery->normsField = normsField;
+    return cloneQuery;
+}
 
-    MatchAllDocsWeight::~MatchAllDocsWeight()
-    {
-    }
+MatchAllDocsWeight::MatchAllDocsWeight(const MatchAllDocsQueryPtr& query, const SearcherPtr& searcher) {
+    this->query = query;
+    this->similarity = searcher->getSimilarity();
+    this->queryWeight = 0.0;
+    this->queryNorm = 0.0;
+}
 
-    String MatchAllDocsWeight::toString()
-    {
-        StringStream buffer;
-        buffer << L"weight(" << queryWeight << L", " << queryNorm << L")";
-        return buffer.str();
-    }
+MatchAllDocsWeight::~MatchAllDocsWeight() {
+}
 
-    QueryPtr MatchAllDocsWeight::getQuery()
-    {
-        return query;
-    }
+String MatchAllDocsWeight::toString() {
+    StringStream buffer;
+    buffer << L"weight(" << queryWeight << L", " << queryNorm << L")";
+    return buffer.str();
+}
 
-    double MatchAllDocsWeight::getValue()
-    {
-        return queryWeight;
-    }
+QueryPtr MatchAllDocsWeight::getQuery() {
+    return query;
+}
 
-    double MatchAllDocsWeight::sumOfSquaredWeights()
-    {
-        queryWeight = getQuery()->getBoost();
-        return queryWeight * queryWeight;
-    }
+double MatchAllDocsWeight::getValue() {
+    return queryWeight;
+}
 
-    void MatchAllDocsWeight::normalize(double norm)
-    {
-        this->queryNorm = norm;
-        queryWeight *= this->queryNorm;
-    }
+double MatchAllDocsWeight::sumOfSquaredWeights() {
+    queryWeight = getQuery()->getBoost();
+    return queryWeight * queryWeight;
+}
 
-    ScorerPtr MatchAllDocsWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer)
-    {
-        return newLucene<MatchAllScorer>(query, reader, similarity, shared_from_this(), !query->normsField.empty() ? reader->norms(query->normsField) : ByteArray());
-    }
+void MatchAllDocsWeight::normalize(double norm) {
+    this->queryNorm = norm;
+    queryWeight *= this->queryNorm;
+}
 
-    ExplanationPtr MatchAllDocsWeight::explain(const IndexReaderPtr& reader, int32_t doc)
-    {
-        // explain query weight
-        ExplanationPtr queryExpl(newLucene<ComplexExplanation>(true, getValue(), L"MatchAllDocsQuery, product of:"));
-        if (getQuery()->getBoost() != 1.0)
-            queryExpl->addDetail(newLucene<Explanation>(getQuery()->getBoost(), L"boost"));
-        queryExpl->addDetail(newLucene<Explanation>(queryNorm, L"queryNorm"));
-        return queryExpl;
-    }
+ScorerPtr MatchAllDocsWeight::scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer) {
+    return newLucene<MatchAllScorer>(query, reader, similarity, shared_from_this(), !query->normsField.empty() ? reader->norms(query->normsField) : ByteArray());
+}
 
-    MatchAllScorer::MatchAllScorer(const MatchAllDocsQueryPtr& query, const IndexReaderPtr& reader, const SimilarityPtr& similarity, const WeightPtr& weight, ByteArray norms) : Scorer(similarity)
-    {
-        this->query = query;
-        this->termDocs = reader->termDocs(TermPtr());
-        this->_score = weight->getValue();
-        this->norms = norms;
-        this->doc = -1;
+ExplanationPtr MatchAllDocsWeight::explain(const IndexReaderPtr& reader, int32_t doc) {
+    // explain query weight
+    ExplanationPtr queryExpl(newLucene<ComplexExplanation>(true, getValue(), L"MatchAllDocsQuery, product of:"));
+    if (getQuery()->getBoost() != 1.0) {
+        queryExpl->addDetail(newLucene<Explanation>(getQuery()->getBoost(), L"boost"));
     }
+    queryExpl->addDetail(newLucene<Explanation>(queryNorm, L"queryNorm"));
+    return queryExpl;
+}
 
-    MatchAllScorer::~MatchAllScorer()
-    {
-    }
+MatchAllScorer::MatchAllScorer(const MatchAllDocsQueryPtr& query, const IndexReaderPtr& reader, const SimilarityPtr& similarity, const WeightPtr& weight, ByteArray norms) : Scorer(similarity) {
+    this->query = query;
+    this->termDocs = reader->termDocs(TermPtr());
+    this->_score = weight->getValue();
+    this->norms = norms;
+    this->doc = -1;
+}
 
-    int32_t MatchAllScorer::docID()
-    {
-        return doc;
-    }
+MatchAllScorer::~MatchAllScorer() {
+}
 
-    int32_t MatchAllScorer::nextDoc()
-    {
-        doc = termDocs->next() ? termDocs->doc() : NO_MORE_DOCS;
-        return doc;
-    }
+int32_t MatchAllScorer::docID() {
+    return doc;
+}
 
-    double MatchAllScorer::score()
-    {
-        return norms ? _score * Similarity::decodeNorm(norms[docID()]) : _score;
-    }
+int32_t MatchAllScorer::nextDoc() {
+    doc = termDocs->next() ? termDocs->doc() : NO_MORE_DOCS;
+    return doc;
+}
 
-    int32_t MatchAllScorer::advance(int32_t target)
-    {
-        doc = termDocs->skipTo(target) ? termDocs->doc() : NO_MORE_DOCS;
-        return doc;
-    }
+double MatchAllScorer::score() {
+    return norms ? _score * Similarity::decodeNorm(norms[docID()]) : _score;
+}
+
+int32_t MatchAllScorer::advance(int32_t target) {
+    doc = termDocs->skipTo(target) ? termDocs->doc() : NO_MORE_DOCS;
+    return doc;
+}
+
 }

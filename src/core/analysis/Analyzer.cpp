@@ -8,39 +8,33 @@
 #include "Analyzer.h"
 #include "Fieldable.h"
 
-namespace Lucene
-{
-    Analyzer::~Analyzer()
-    {
-    }
+namespace Lucene {
 
-    TokenStreamPtr Analyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        return tokenStream(fieldName, reader);
-    }
+Analyzer::~Analyzer() {
+}
 
-    LuceneObjectPtr Analyzer::getPreviousTokenStream()
-    {
-        return tokenStreams.get();
-    }
+TokenStreamPtr Analyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
+    return tokenStream(fieldName, reader);
+}
 
-    void Analyzer::setPreviousTokenStream(const LuceneObjectPtr& stream)
-    {
-        tokenStreams.set(stream);
-    }
+LuceneObjectPtr Analyzer::getPreviousTokenStream() {
+    return tokenStreams.get();
+}
 
-    int32_t Analyzer::getPositionIncrementGap(const String& fieldName)
-    {
-        return 0;
-    }
+void Analyzer::setPreviousTokenStream(const LuceneObjectPtr& stream) {
+    tokenStreams.set(stream);
+}
 
-    int32_t Analyzer::getOffsetGap(const FieldablePtr& field)
-    {
-        return field->isTokenized() ? 1 : 0;
-    }
+int32_t Analyzer::getPositionIncrementGap(const String& fieldName) {
+    return 0;
+}
 
-    void Analyzer::close()
-    {
-        tokenStreams.close();
-    }
+int32_t Analyzer::getOffsetGap(const FieldablePtr& field) {
+    return field->isTokenized() ? 1 : 0;
+}
+
+void Analyzer::close() {
+    tokenStreams.close();
+}
+
 }

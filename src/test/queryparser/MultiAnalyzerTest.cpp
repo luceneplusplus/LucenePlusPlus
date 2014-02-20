@@ -31,11 +31,9 @@ DECLARE_SHARED_PTR(DumbQueryWrapper)
 DECLARE_SHARED_PTR(DumbQueryParser)
 DECLARE_SHARED_PTR(TestPosIncrementFilter)
 
-class MultiAnalyzerTestFilter : public TokenFilter
-{
+class MultiAnalyzerTestFilter : public TokenFilter {
 public:
-    MultiAnalyzerTestFilter(const TokenStreamPtr& in) : TokenFilter(in)
-    {
+    MultiAnalyzerTestFilter(const TokenStreamPtr& in) : TokenFilter(in) {
         prevStartOffset = 0;
         prevEndOffset = 0;
         termAtt = addAttribute<TermAttribute>();
@@ -44,8 +42,7 @@ public:
         typeAtt = addAttribute<TypeAttribute>();
     }
 
-    virtual ~MultiAnalyzerTestFilter()
-    {
+    virtual ~MultiAnalyzerTestFilter() {
     }
 
     LUCENE_CLASS(MultiAnalyzerTestFilter);
@@ -61,54 +58,45 @@ protected:
     TypeAttributePtr typeAtt;
 
 public:
-    virtual bool incrementToken()
-    {
-        if (multiToken > 0)
-        {
+    virtual bool incrementToken() {
+        if (multiToken > 0) {
             termAtt->setTermBuffer(L"multi" + StringUtils::toString(multiToken + 1));
             offsetAtt->setOffset(prevStartOffset, prevEndOffset);
             typeAtt->setType(prevType);
             posIncrAtt->setPositionIncrement(0);
             --multiToken;
             return true;
-        }
-        else
-        {
+        } else {
             bool next = input->incrementToken();
-            if (!next)
+            if (!next) {
                 return false;
+            }
             prevType = typeAtt->type();
             prevStartOffset = offsetAtt->startOffset();
             prevEndOffset = offsetAtt->endOffset();
             String text = termAtt->term();
-            if (text == L"triplemulti")
-            {
+            if (text == L"triplemulti") {
                 multiToken = 2;
                 return true;
-            }
-            else if (text == L"multi")
-            {
+            } else if (text == L"multi") {
                 multiToken = 1;
                 return true;
-            }
-            else
+            } else {
                 return true;
+            }
         }
     }
 };
 
-class MultiAnalyzer : public Analyzer
-{
+class MultiAnalyzer : public Analyzer {
 public:
-    virtual ~MultiAnalyzer()
-    {
+    virtual ~MultiAnalyzer() {
     }
 
     LUCENE_CLASS(MultiAnalyzer);
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         TokenStreamPtr result = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, reader);
         result = newLucene<MultiAnalyzerTestFilter>(result);
         result = newLucene<LowerCaseFilter>(result);
@@ -117,16 +105,13 @@ public:
 };
 
 /// A very simple wrapper to prevent typeOf checks but uses the toString of the query it wraps.
-class DumbQueryWrapper : public Query
-{
+class DumbQueryWrapper : public Query {
 public:
-    DumbQueryWrapper(const QueryPtr& q)
-    {
+    DumbQueryWrapper(const QueryPtr& q) {
         this->q = q;
     }
 
-    virtual ~DumbQueryWrapper()
-    {
+    virtual ~DumbQueryWrapper() {
     }
 
     LUCENE_CLASS(DumbQueryWrapper);
@@ -135,44 +120,36 @@ protected:
     QueryPtr q;
 
 public:
-    virtual String toString(const String& field)
-    {
+    virtual String toString(const String& field) {
         return q->toString(field);
     }
 };
 
 /// A very simple subclass of QueryParser
-class DumbQueryParser : public QueryParser
-{
+class DumbQueryParser : public QueryParser {
 public:
-    DumbQueryParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
-    {
+    DumbQueryParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a) {
     }
 
-    virtual ~DumbQueryParser()
-    {
+    virtual ~DumbQueryParser() {
     }
 
     LUCENE_CLASS(DumbQueryParser);
 
 public:
-    virtual QueryPtr getFieldQuery(const String& field, const String& queryText)
-    {
+    virtual QueryPtr getFieldQuery(const String& field, const String& queryText) {
         return newLucene<DumbQueryWrapper>(QueryParser::getFieldQuery(field, queryText));
     }
 };
 
-class TestPosIncrementFilter : public TokenFilter
-{
+class TestPosIncrementFilter : public TokenFilter {
 public:
-    TestPosIncrementFilter(const TokenStreamPtr& in) : TokenFilter(in)
-    {
+    TestPosIncrementFilter(const TokenStreamPtr& in) : TokenFilter(in) {
         termAtt = addAttribute<TermAttribute>();
         posIncrAtt = addAttribute<PositionIncrementAttribute>();
     }
 
-    virtual ~TestPosIncrementFilter()
-    {
+    virtual ~TestPosIncrementFilter() {
     }
 
     LUCENE_CLASS(TestPosIncrementFilter);
@@ -182,21 +159,14 @@ protected:
     PositionIncrementAttributePtr posIncrAtt;
 
 public:
-    virtual bool incrementToken()
-    {
-        while (input->incrementToken())
-        {
-            if (termAtt->term() == L"the")
-            {
+    virtual bool incrementToken() {
+        while (input->incrementToken()) {
+            if (termAtt->term() == L"the") {
                 // stopword, do nothing
-            }
-            else if (termAtt->term() == L"quick")
-            {
+            } else if (termAtt->term() == L"quick") {
                 posIncrAtt->setPositionIncrement(2);
                 return true;
-            }
-            else
-            {
+            } else {
                 posIncrAtt->setPositionIncrement(1);
                 return true;
             }
@@ -207,18 +177,15 @@ public:
 
 /// Analyzes "the quick brown" as: quick(incr=2) brown(incr=1).
 /// Does not work correctly for input other than "the quick brown ...".
-class PosIncrementAnalyzer : public Analyzer
-{
+class PosIncrementAnalyzer : public Analyzer {
 public:
-    virtual ~PosIncrementAnalyzer()
-    {
+    virtual ~PosIncrementAnalyzer() {
     }
 
     LUCENE_CLASS(PosIncrementAnalyzer);
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         TokenStreamPtr result = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, reader);
         result = newLucene<TestPosIncrementFilter>(result);
         result = newLucene<LowerCaseFilter>(result);
@@ -226,8 +193,7 @@ public:
     }
 };
 
-TEST_F(MultiAnalyzerTest, testMultiAnalyzer)
-{
+TEST_F(MultiAnalyzerTest, testMultiAnalyzer) {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"", newLucene<MultiAnalyzer>());
 
     // trivial, no multiple tokens
@@ -274,8 +240,7 @@ TEST_F(MultiAnalyzerTest, testMultiAnalyzer)
     EXPECT_EQ(L"+(multi multi2) +foo", qp->parse(L"multi foo")->toString());
 }
 
-TEST_F(MultiAnalyzerTest, testMultiAnalyzerWithSubclassOfQueryParser)
-{
+TEST_F(MultiAnalyzerTest, testMultiAnalyzerWithSubclassOfQueryParser) {
     DumbQueryParserPtr qp = newLucene<DumbQueryParser>(L"", newLucene<MultiAnalyzer>());
 
     qp->setPhraseSlop(99); // modified default slop
@@ -288,8 +253,7 @@ TEST_F(MultiAnalyzerTest, testMultiAnalyzerWithSubclassOfQueryParser)
     EXPECT_EQ(L"\"(multi multi2) foo\"~99 bar", qp->parse(L"\"multi foo\" bar")->toString());
 }
 
-TEST_F(MultiAnalyzerTest, testPosIncrementAnalyzer)
-{
+TEST_F(MultiAnalyzerTest, testPosIncrementAnalyzer) {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_24, L"", newLucene<PosIncrementAnalyzer>());
     EXPECT_EQ(L"quick brown", qp->parse(L"the quick brown")->toString());
     EXPECT_EQ(L"\"quick brown\"", qp->parse(L"\"the quick brown\"")->toString());

@@ -9,24 +9,24 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Convenience class for storing collate objects.
-    class LPPAPI Collator : public LuceneObject
-    {
-    public:
-        /// Creates a new Collator, given the file to read from.
-        Collator(std::locale locale);
-        virtual ~Collator();
+namespace Lucene {
 
-        LUCENE_CLASS(Collator);
+/// Convenience class for storing collate objects.
+class LPPAPI Collator : public LuceneObject {
+public:
+    /// Creates a new Collator, given the file to read from.
+    Collator(std::locale locale);
+    virtual ~Collator();
 
-    protected:
-        const std::collate<wchar_t>& collate;
+    LUCENE_CLASS(Collator);
 
-    public:
-        int32_t compare(const String& first, const String& second);
-    };
+protected:
+    const std::collate<wchar_t>& collate;
+
+public:
+    int32_t compare(const String& first, const String& second);
+};
+
 }
 
 #endif

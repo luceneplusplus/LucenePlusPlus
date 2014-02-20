@@ -9,21 +9,21 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Provides a {@link FieldComparator} for custom field sorting.
-    class LPPAPI FieldComparatorSource : public LuceneObject
-    {
-    public:
-        virtual ~FieldComparatorSource();
-        LUCENE_CLASS(FieldComparatorSource);
+namespace Lucene {
 
-    public:
-        /// Creates a comparator for the field in the given index.
-        /// @param fieldname Name of the field to create comparator for.
-        /// @return FieldComparator.
-        virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed) = 0;
-    };
+/// Provides a {@link FieldComparator} for custom field sorting.
+class LPPAPI FieldComparatorSource : public LuceneObject {
+public:
+    virtual ~FieldComparatorSource();
+    LUCENE_CLASS(FieldComparatorSource);
+
+public:
+    /// Creates a comparator for the field in the given index.
+    /// @param fieldname Name of the field to create comparator for.
+    /// @return FieldComparator.
+    virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed) = 0;
+};
+
 }
 
 #endif

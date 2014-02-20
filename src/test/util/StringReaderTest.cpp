@@ -12,8 +12,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture StringReaderTest;
 
-TEST_F(StringReaderTest, testStringReaderChar)
-{
+TEST_F(StringReaderTest, testStringReaderChar) {
     StringReader reader(L"Test string");
     EXPECT_EQ((wchar_t)reader.read(), L'T');
     EXPECT_EQ((wchar_t)reader.read(), L'e');
@@ -29,8 +28,7 @@ TEST_F(StringReaderTest, testStringReaderChar)
     EXPECT_EQ(reader.read(), StringReader::READER_EOF);
 }
 
-TEST_F(StringReaderTest, testStringReaderBuffer)
-{
+TEST_F(StringReaderTest, testStringReaderBuffer) {
     StringReader reader(L"Longer test string");
 
     wchar_t buffer[50];
@@ -48,8 +46,7 @@ TEST_F(StringReaderTest, testStringReaderBuffer)
     EXPECT_EQ(reader.read(buffer, 0, 1), StringReader::READER_EOF);
 }
 
-TEST_F(StringReaderTest, testStringReaderReset)
-{
+TEST_F(StringReaderTest, testStringReaderReset) {
     StringReader reader(L"Longer test string");
 
     wchar_t buffer[50];
@@ -61,8 +58,7 @@ TEST_F(StringReaderTest, testStringReaderReset)
     EXPECT_EQ(String(buffer, 6), L"Longer");
 }
 
-TEST_F(StringReaderTest, testStringReaderPastEOF)
-{
+TEST_F(StringReaderTest, testStringReaderPastEOF) {
     StringReader reader(L"Short string");
 
     wchar_t buffer[50];

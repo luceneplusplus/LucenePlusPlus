@@ -9,40 +9,40 @@
 
 #include "Attribute.h"
 
-namespace Lucene
-{
-    /// The start and end character offset of a Token.
-    class LPPAPI PayloadAttribute : public Attribute
-    {
-    public:
-        /// Initialize this attribute with no payload.
-        PayloadAttribute();
+namespace Lucene {
 
-        /// Initialize this attribute with the given payload.
-        PayloadAttribute(const PayloadPtr& payload);
+/// The start and end character offset of a Token.
+class LPPAPI PayloadAttribute : public Attribute {
+public:
+    /// Initialize this attribute with no payload.
+    PayloadAttribute();
 
-        virtual ~PayloadAttribute();
+    /// Initialize this attribute with the given payload.
+    PayloadAttribute(const PayloadPtr& payload);
 
-        LUCENE_CLASS(PayloadAttribute);
+    virtual ~PayloadAttribute();
 
-    protected:
-        PayloadPtr payload;
+    LUCENE_CLASS(PayloadAttribute);
 
-    public:
-        virtual String toString();
+protected:
+    PayloadPtr payload;
 
-        /// Returns this Token's payload.
-        virtual PayloadPtr getPayload();
+public:
+    virtual String toString();
 
-        /// Sets this Token's payload.
-        virtual void setPayload(const PayloadPtr& payload);
+    /// Returns this Token's payload.
+    virtual PayloadPtr getPayload();
 
-        virtual void clear();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual void copyTo(const AttributePtr& target);
-    };
+    /// Sets this Token's payload.
+    virtual void setPayload(const PayloadPtr& payload);
+
+    virtual void clear();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual void copyTo(const AttributePtr& target);
+};
+
 }
 
 #endif

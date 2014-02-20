@@ -9,33 +9,33 @@
 
 #include "Filter.h"
 
-namespace Lucene
-{
-    /// Constrains search results to only match those which also match a provided query.
-    ///
-    /// This could be used, for example, with a {@link TermRangeQuery} on a suitably formatted date field to
-    /// implement date filtering.  One could re-use a single QueryFilter that matches, eg., only documents
-    /// modified within the last week.  The QueryFilter and TermRangeQuery would only need to be reconstructed
-    /// once per day.
-    class LPPAPI QueryWrapperFilter : public Filter
-    {
-    public:
-        /// Constructs a filter which only matches documents matching query.
-        QueryWrapperFilter(const QueryPtr& query);
+namespace Lucene {
 
-        virtual ~QueryWrapperFilter();
+/// Constrains search results to only match those which also match a provided query.
+///
+/// This could be used, for example, with a {@link TermRangeQuery} on a suitably formatted date field to
+/// implement date filtering.  One could re-use a single QueryFilter that matches, eg., only documents
+/// modified within the last week.  The QueryFilter and TermRangeQuery would only need to be reconstructed
+/// once per day.
+class LPPAPI QueryWrapperFilter : public Filter {
+public:
+    /// Constructs a filter which only matches documents matching query.
+    QueryWrapperFilter(const QueryPtr& query);
 
-        LUCENE_CLASS(QueryWrapperFilter);
+    virtual ~QueryWrapperFilter();
 
-    protected:
-        QueryPtr query;
+    LUCENE_CLASS(QueryWrapperFilter);
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
-        virtual String toString();
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-    };
+protected:
+    QueryPtr query;
+
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+    virtual String toString();
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+};
+
 }
 
 #endif

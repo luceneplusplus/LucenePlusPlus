@@ -9,35 +9,35 @@
 
 #include "Lucene.h"
 
-namespace Lucene
-{
-    /// Initialise unit test files directory
-    void setTestDir(const String& dir);
+namespace Lucene {
 
-    /// Return unit test files directory
-    String getTestDir();
+/// Initialise unit test files directory
+void setTestDir(const String& dir);
 
-    /// Return temporary directory
-    String getTempDir();
+/// Return unit test files directory
+String getTestDir();
 
-    /// Return temporary directory (randomly generated)
-    String getTempDir(const String& desc);
+/// Return temporary directory
+String getTempDir();
 
-    /// Wait for concurrent merge to finish
-    void syncConcurrentMerges(const IndexWriterPtr& writer);
+/// Return temporary directory (randomly generated)
+String getTempDir(const String& desc);
 
-    /// Wait for concurrent merge to finish
-    void syncConcurrentMerges(const MergeSchedulerPtr& ms);
+/// Wait for concurrent merge to finish
+void syncConcurrentMerges(const IndexWriterPtr& writer);
 
-    /// Return English representation of given integer
-    String intToEnglish(int32_t i);
+/// Wait for concurrent merge to finish
+void syncConcurrentMerges(const MergeSchedulerPtr& ms);
 
-    /// Return English representation of given integer (recursive)
-    String _intToEnglish(int32_t i);
+/// Return English representation of given integer
+String intToEnglish(int32_t i);
 
-    /// This runs the CheckIndex tool on the index in.
-    /// If any issues are hit, a RuntimeException is thrown; else, true is returned.
-    bool checkIndex(const DirectoryPtr& dir);
+/// Return English representation of given integer (recursive)
+String _intToEnglish(int32_t i);
+
+/// This runs the CheckIndex tool on the index in.
+/// If any issues are hit, a RuntimeException is thrown; else, true is returned.
+bool checkIndex(const DirectoryPtr& dir);
 }
 
 #endif

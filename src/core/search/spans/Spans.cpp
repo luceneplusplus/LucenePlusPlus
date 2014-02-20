@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "Spans.h"
 
-namespace Lucene
-{
-    Spans::~Spans()
-    {
-    }
+namespace Lucene {
+
+Spans::~Spans() {
+}
+
 }

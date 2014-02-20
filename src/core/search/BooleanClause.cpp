@@ -8,71 +8,61 @@
 #include "BooleanClause.h"
 #include "Query.h"
 
-namespace Lucene
-{
-    BooleanClause::BooleanClause(const QueryPtr& query, Occur occur)
-    {
-        this->query = query;
-        this->occur = occur;
-    }
+namespace Lucene {
 
-    BooleanClause::~BooleanClause()
-    {
-    }
+BooleanClause::BooleanClause(const QueryPtr& query, Occur occur) {
+    this->query = query;
+    this->occur = occur;
+}
 
-    BooleanClause::Occur BooleanClause::getOccur()
-    {
-        return occur;
-    }
+BooleanClause::~BooleanClause() {
+}
 
-    void BooleanClause::setOccur(BooleanClause::Occur occur)
-    {
-        this->occur = occur;
-    }
+BooleanClause::Occur BooleanClause::getOccur() {
+    return occur;
+}
 
-    QueryPtr BooleanClause::getQuery()
-    {
-        return query;
-    }
+void BooleanClause::setOccur(BooleanClause::Occur occur) {
+    this->occur = occur;
+}
 
-    void BooleanClause::setQuery(const QueryPtr& query)
-    {
-        this->query = query;
-    }
+QueryPtr BooleanClause::getQuery() {
+    return query;
+}
 
-    bool BooleanClause::isProhibited()
-    {
-        return (occur == MUST_NOT);
-    }
+void BooleanClause::setQuery(const QueryPtr& query) {
+    this->query = query;
+}
 
-    bool BooleanClause::isRequired()
-    {
-        return (occur == MUST);
-    }
+bool BooleanClause::isProhibited() {
+    return (occur == MUST_NOT);
+}
 
-    bool BooleanClause::equals(const LuceneObjectPtr& other)
-    {
-        BooleanClausePtr otherBooleanClause(boost::dynamic_pointer_cast<BooleanClause>(other));
-        if (!otherBooleanClause)
-            return false;
-        return (this->query->equals(otherBooleanClause->query) && this->occur == otherBooleanClause->occur);
-    }
+bool BooleanClause::isRequired() {
+    return (occur == MUST);
+}
 
-    int32_t BooleanClause::hashCode()
-    {
-        return query->hashCode() ^ (occur == MUST ? 1 : 0) ^ (occur == MUST_NOT ? 2 : 0);
+bool BooleanClause::equals(const LuceneObjectPtr& other) {
+    BooleanClausePtr otherBooleanClause(boost::dynamic_pointer_cast<BooleanClause>(other));
+    if (!otherBooleanClause) {
+        return false;
     }
+    return (this->query->equals(otherBooleanClause->query) && this->occur == otherBooleanClause->occur);
+}
 
-    String BooleanClause::toString()
-    {
-        switch (occur)
-        {
-            case MUST:
-                return L"+" + query->toString();
-            case MUST_NOT:
-                return L"-" + query->toString();
-            default:
-                return query->toString();
-        }
+int32_t BooleanClause::hashCode() {
+    return query->hashCode() ^ (occur == MUST ? 1 : 0) ^ (occur == MUST_NOT ? 2 : 0);
+}
+
+String BooleanClause::toString() {
+    switch (occur) {
+    case MUST:
+        return L"+" + query->toString();
+    case MUST_NOT:
+        return L"-" + query->toString();
+    default:
+        return query->toString();
     }
+}
+
 }

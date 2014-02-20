@@ -7,49 +7,41 @@
 #include "LuceneInc.h"
 #include "CharFilter.h"
 
-namespace Lucene
-{
-    CharFilter::CharFilter(const CharStreamPtr& in)
-    {
-        input = in;
-    }
+namespace Lucene {
 
-    CharFilter::~CharFilter()
-    {
-    }
+CharFilter::CharFilter(const CharStreamPtr& in) {
+    input = in;
+}
 
-    int32_t CharFilter::correct(int32_t currentOff)
-    {
-        return currentOff;
-    }
+CharFilter::~CharFilter() {
+}
 
-    int32_t CharFilter::correctOffset(int32_t currentOff)
-    {
-        return input->correctOffset(correct(currentOff));
-    }
+int32_t CharFilter::correct(int32_t currentOff) {
+    return currentOff;
+}
 
-    void CharFilter::close()
-    {
-        input->close();
-    }
+int32_t CharFilter::correctOffset(int32_t currentOff) {
+    return input->correctOffset(correct(currentOff));
+}
 
-    int32_t CharFilter::read(wchar_t* buffer, int32_t offset, int32_t length)
-    {
-        return input->read(buffer, offset, length);
-    }
+void CharFilter::close() {
+    input->close();
+}
 
-    bool CharFilter::markSupported()
-    {
-        return input->markSupported();
-    }
+int32_t CharFilter::read(wchar_t* buffer, int32_t offset, int32_t length) {
+    return input->read(buffer, offset, length);
+}
 
-    void CharFilter::mark(int32_t readAheadLimit)
-    {
-        input->mark(readAheadLimit);
-    }
+bool CharFilter::markSupported() {
+    return input->markSupported();
+}
 
-    void CharFilter::reset()
-    {
-        input->reset();
-    }
+void CharFilter::mark(int32_t readAheadLimit) {
+    input->mark(readAheadLimit);
+}
+
+void CharFilter::reset() {
+    input->reset();
+}
+
 }

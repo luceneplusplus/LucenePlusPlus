@@ -21,51 +21,44 @@ using namespace Lucene;
 
 typedef LuceneTestFixture DocBoostTest;
 
-namespace TestDocBoost
-{
-    class BoostCollector : public Collector
-    {
-    public:
-        BoostCollector(Collection<double> scores)
-        {
-            this->scores = scores;
-            this->base = 0;
-        }
+namespace TestDocBoost {
 
-        virtual ~BoostCollector()
-        {
-        }
+class BoostCollector : public Collector {
+public:
+    BoostCollector(Collection<double> scores) {
+        this->scores = scores;
+        this->base = 0;
+    }
 
-    public:
-        Collection<double> scores;
-        int32_t base;
-        ScorerPtr scorer;
+    virtual ~BoostCollector() {
+    }
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+public:
+    Collection<double> scores;
+    int32_t base;
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            scores[doc + base] = scorer->score();
-        }
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-            base = docBase;
-        }
+    virtual void collect(int32_t doc) {
+        scores[doc + base] = scorer->score();
+    }
 
-        virtual bool acceptsDocsOutOfOrder()
-        {
-            return true;
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+        base = docBase;
+    }
+
+    virtual bool acceptsDocsOutOfOrder() {
+        return true;
+    }
+};
+
 }
 
-TEST_F(DocBoostTest, testDocBoost)
-{
+TEST_F(DocBoostTest, testDocBoost) {
     RAMDirectoryPtr store = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(store, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -97,8 +90,7 @@ TEST_F(DocBoostTest, testDocBoost)
     searcher->search(newLucene<TermQuery>(newLucene<Term>(L"field", L"word")), newLucene<TestDocBoost::BoostCollector>(scores));
 
     double lastScore = 0.0;
-    for (int32_t i = 0; i < 4; ++i)
-    {
+    for (int32_t i = 0; i < 4; ++i) {
         EXPECT_TRUE(scores[i] > lastScore);
         lastScore = scores[i];
     }

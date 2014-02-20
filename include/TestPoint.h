@@ -9,36 +9,35 @@
 
 #include "Lucene.h"
 
-namespace Lucene
-{
-    /// Used for unit testing as a substitute for stack trace
-    class TestPoint
-    {
-    public:
-        virtual ~TestPoint();
+namespace Lucene {
 
-    protected:
-        static MapStringInt testMethods;
-        static bool enable;
+/// Used for unit testing as a substitute for stack trace
+class TestPoint {
+public:
+    virtual ~TestPoint();
 
-    public:
-        static void enableTestPoints();
-        static void clear();
-        static void setTestPoint(const String& object, const String& method, bool point);
-        static bool getTestPoint(const String& object, const String& method);
-        static bool getTestPoint(const String& method);
-    };
+protected:
+    static MapStringInt testMethods;
+    static bool enable;
 
-    class TestScope
-    {
-    public:
-        TestScope(const String& object, const String& method);
-        virtual ~TestScope();
+public:
+    static void enableTestPoints();
+    static void clear();
+    static void setTestPoint(const String& object, const String& method, bool point);
+    static bool getTestPoint(const String& object, const String& method);
+    static bool getTestPoint(const String& method);
+};
 
-    protected:
-        String object;
-        String method;
-    };
+class TestScope {
+public:
+    TestScope(const String& object, const String& method);
+    virtual ~TestScope();
+
+protected:
+    String object;
+    String method;
+};
+
 }
 
 #endif

@@ -10,53 +10,52 @@
 #include "LuceneContrib.h"
 #include "Analyzer.h"
 
-namespace Lucene
-{
-    /// Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link LowerCaseFilter}, {@link StopFilter}
-    /// and {@link SnowballFilter}.
-    ///
-    /// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
-    class LPPCONTRIBAPI SnowballAnalyzer : public Analyzer
-    {
-    public:
-        /// Builds the named analyzer with no stop words.
-        SnowballAnalyzer(LuceneVersion::Version matchVersion, const String& name);
+namespace Lucene {
 
-        /// Builds an analyzer with the given stop words.
-        SnowballAnalyzer(LuceneVersion::Version matchVersion, const String& name, HashSet<String> stopwords);
+/// Filters {@link StandardTokenizer} with {@link StandardFilter}, {@link LowerCaseFilter}, {@link StopFilter}
+/// and {@link SnowballFilter}.
+///
+/// NOTE: This class uses the same {@link LuceneVersion#Version} dependent settings as {@link StandardAnalyzer}.
+class LPPCONTRIBAPI SnowballAnalyzer : public Analyzer {
+public:
+    /// Builds the named analyzer with no stop words.
+    SnowballAnalyzer(LuceneVersion::Version matchVersion, const String& name);
 
-        virtual ~SnowballAnalyzer();
+    /// Builds an analyzer with the given stop words.
+    SnowballAnalyzer(LuceneVersion::Version matchVersion, const String& name, HashSet<String> stopwords);
 
-        LUCENE_CLASS(SnowballAnalyzer);
+    virtual ~SnowballAnalyzer();
 
-    protected:
-        /// Contains the stopwords used with the StopFilter.
-        HashSet<String> stopSet;
+    LUCENE_CLASS(SnowballAnalyzer);
 
-        String name;
-        LuceneVersion::Version matchVersion;
+protected:
+    /// Contains the stopwords used with the StopFilter.
+    HashSet<String> stopSet;
 
-    public:
-        /// Constructs a {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link LowerCaseFilter},
-        /// a {@link StopFilter} and a {@link SnowballFilter}.
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+    String name;
+    LuceneVersion::Version matchVersion;
 
-        /// Returns a (possibly reused) {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link
-        /// LowerCaseFilter}, a {@link StopFilter} and a {@link SnowballFilter}.
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
-    };
+public:
+    /// Constructs a {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link LowerCaseFilter},
+    /// a {@link StopFilter} and a {@link SnowballFilter}.
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
 
-    class LPPCONTRIBAPI SnowballAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~SnowballAnalyzerSavedStreams();
+    /// Returns a (possibly reused) {@link StandardTokenizer} filtered by a {@link StandardFilter}, a {@link
+    /// LowerCaseFilter}, a {@link StopFilter} and a {@link SnowballFilter}.
+    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
+};
 
-        LUCENE_CLASS(SnowballAnalyzerSavedStreams);
+class LPPCONTRIBAPI SnowballAnalyzerSavedStreams : public LuceneObject {
+public:
+    virtual ~SnowballAnalyzerSavedStreams();
 
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
-    };
+    LUCENE_CLASS(SnowballAnalyzerSavedStreams);
+
+public:
+    TokenizerPtr source;
+    TokenStreamPtr result;
+};
+
 }
 
 #endif

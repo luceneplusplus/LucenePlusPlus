@@ -10,168 +10,133 @@
 #include "DocFieldConsumersPerThread.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    DocFieldConsumers::DocFieldConsumers(const DocFieldConsumerPtr& one, const DocFieldConsumerPtr& two)
-    {
-        freeCount = 0;
-        allocCount = 0;
-        docFreeList = Collection<DocFieldConsumersPerDocPtr>::newInstance(1);
+namespace Lucene {
 
-        this->one = one;
-        this->two = two;
-    }
+DocFieldConsumers::DocFieldConsumers(const DocFieldConsumerPtr& one, const DocFieldConsumerPtr& two) {
+    freeCount = 0;
+    allocCount = 0;
+    docFreeList = Collection<DocFieldConsumersPerDocPtr>::newInstance(1);
 
-    DocFieldConsumers::~DocFieldConsumers()
-    {
-    }
+    this->one = one;
+    this->two = two;
+}
 
-    void DocFieldConsumers::setFieldInfos(const FieldInfosPtr& fieldInfos)
-    {
-        DocFieldConsumer::setFieldInfos(fieldInfos);
-        one->setFieldInfos(fieldInfos);
-        two->setFieldInfos(fieldInfos);
-    }
+DocFieldConsumers::~DocFieldConsumers() {
+}
 
-    void DocFieldConsumers::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state)
-    {
-        MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField oneThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
-        MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField twoThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
+void DocFieldConsumers::setFieldInfos(const FieldInfosPtr& fieldInfos) {
+    DocFieldConsumer::setFieldInfos(fieldInfos);
+    one->setFieldInfos(fieldInfos);
+    two->setFieldInfos(fieldInfos);
+}
 
-        for (MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry)
-        {
-            Collection<DocFieldConsumerPerFieldPtr> oneFields(Collection<DocFieldConsumerPerFieldPtr>::newInstance());
-            Collection<DocFieldConsumerPerFieldPtr> twoFields(Collection<DocFieldConsumerPerFieldPtr>::newInstance());
+void DocFieldConsumers::flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) {
+    MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField oneThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
+    MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField twoThreadsAndFields(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::newInstance());
 
-            for (Collection<DocFieldConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField)
-            {
-                oneFields.add(boost::static_pointer_cast<DocFieldConsumersPerField>(*perField)->one);
-                twoFields.add(boost::static_pointer_cast<DocFieldConsumersPerField>(*perField)->two);
-            }
+    for (MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField::iterator entry = threadsAndFields.begin(); entry != threadsAndFields.end(); ++entry) {
+        Collection<DocFieldConsumerPerFieldPtr> oneFields(Collection<DocFieldConsumerPerFieldPtr>::newInstance());
+        Collection<DocFieldConsumerPerFieldPtr> twoFields(Collection<DocFieldConsumerPerFieldPtr>::newInstance());
 
-            oneThreadsAndFields.put(boost::static_pointer_cast<DocFieldConsumersPerThread>(entry->first)->one, oneFields);
-            twoThreadsAndFields.put(boost::static_pointer_cast<DocFieldConsumersPerThread>(entry->first)->two, oneFields);
+        for (Collection<DocFieldConsumerPerFieldPtr>::iterator perField = entry->second.begin(); perField != entry->second.end(); ++perField) {
+            oneFields.add(boost::static_pointer_cast<DocFieldConsumersPerField>(*perField)->one);
+            twoFields.add(boost::static_pointer_cast<DocFieldConsumersPerField>(*perField)->two);
         }
 
-        one->flush(oneThreadsAndFields, state);
-        two->flush(twoThreadsAndFields, state);
+        oneThreadsAndFields.put(boost::static_pointer_cast<DocFieldConsumersPerThread>(entry->first)->one, oneFields);
+        twoThreadsAndFields.put(boost::static_pointer_cast<DocFieldConsumersPerThread>(entry->first)->two, oneFields);
     }
 
-    void DocFieldConsumers::closeDocStore(const SegmentWriteStatePtr& state)
-    {
-        LuceneException finally;
-        try
-        {
-            one->closeDocStore(state);
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        try
-        {
-            two->closeDocStore(state);
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        finally.throwException();
-    }
+    one->flush(oneThreadsAndFields, state);
+    two->flush(twoThreadsAndFields, state);
+}
 
-    bool DocFieldConsumers::freeRAM()
-    {
-        return (one->freeRAM() || two->freeRAM());
+void DocFieldConsumers::closeDocStore(const SegmentWriteStatePtr& state) {
+    LuceneException finally;
+    try {
+        one->closeDocStore(state);
+    } catch (LuceneException& e) {
+        finally = e;
     }
+    try {
+        two->closeDocStore(state);
+    } catch (LuceneException& e) {
+        finally = e;
+    }
+    finally.throwException();
+}
 
-    DocFieldConsumerPerThreadPtr DocFieldConsumers::addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread)
-    {
-        return newLucene<DocFieldConsumersPerThread>(docFieldProcessorPerThread, shared_from_this(), one->addThread(docFieldProcessorPerThread), two->addThread(docFieldProcessorPerThread));
-    }
+bool DocFieldConsumers::freeRAM() {
+    return (one->freeRAM() || two->freeRAM());
+}
 
-    DocFieldConsumersPerDocPtr DocFieldConsumers::getPerDoc()
-    {
-        SyncLock syncLock(this);
-        if (freeCount == 0)
-        {
-            ++allocCount;
-            if (allocCount > docFreeList.size())
-            {
-                // Grow our free list up front to make sure we have enough space to recycle all outstanding
-                // PerDoc instances
-                BOOST_ASSERT(allocCount == 1 + docFreeList.size());
-                docFreeList.resize(MiscUtils::getNextSize(allocCount));
-            }
-            return newLucene<DocFieldConsumersPerDoc>(shared_from_this());
-        }
-        else
-            return docFreeList[--freeCount];
-    }
+DocFieldConsumerPerThreadPtr DocFieldConsumers::addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread) {
+    return newLucene<DocFieldConsumersPerThread>(docFieldProcessorPerThread, shared_from_this(), one->addThread(docFieldProcessorPerThread), two->addThread(docFieldProcessorPerThread));
+}
 
-    void DocFieldConsumers::freePerDoc(const DocFieldConsumersPerDocPtr& perDoc)
-    {
-        SyncLock syncLock(this);
-        BOOST_ASSERT(freeCount < docFreeList.size());
-        docFreeList[freeCount++] = perDoc;
+DocFieldConsumersPerDocPtr DocFieldConsumers::getPerDoc() {
+    SyncLock syncLock(this);
+    if (freeCount == 0) {
+        ++allocCount;
+        if (allocCount > docFreeList.size()) {
+            // Grow our free list up front to make sure we have enough space to recycle all outstanding
+            // PerDoc instances
+            BOOST_ASSERT(allocCount == 1 + docFreeList.size());
+            docFreeList.resize(MiscUtils::getNextSize(allocCount));
+        }
+        return newLucene<DocFieldConsumersPerDoc>(shared_from_this());
+    } else {
+        return docFreeList[--freeCount];
     }
+}
 
-    DocFieldConsumersPerDoc::DocFieldConsumersPerDoc(const DocFieldConsumersPtr& fieldConsumers)
-    {
-        this->_fieldConsumers = fieldConsumers;
-    }
+void DocFieldConsumers::freePerDoc(const DocFieldConsumersPerDocPtr& perDoc) {
+    SyncLock syncLock(this);
+    BOOST_ASSERT(freeCount < docFreeList.size());
+    docFreeList[freeCount++] = perDoc;
+}
 
-    DocFieldConsumersPerDoc::~DocFieldConsumersPerDoc()
-    {
-    }
+DocFieldConsumersPerDoc::DocFieldConsumersPerDoc(const DocFieldConsumersPtr& fieldConsumers) {
+    this->_fieldConsumers = fieldConsumers;
+}
 
-    int64_t DocFieldConsumersPerDoc::sizeInBytes()
-    {
-        return one->sizeInBytes() + two->sizeInBytes();
-    }
+DocFieldConsumersPerDoc::~DocFieldConsumersPerDoc() {
+}
 
-    void DocFieldConsumersPerDoc::finish()
-    {
-        LuceneException finally;
-        try
-        {
-            one->finish();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        try
-        {
-            two->finish();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(shared_from_this());
-        finally.throwException();
-    }
+int64_t DocFieldConsumersPerDoc::sizeInBytes() {
+    return one->sizeInBytes() + two->sizeInBytes();
+}
 
-    void DocFieldConsumersPerDoc::abort()
-    {
-        LuceneException finally;
-        try
-        {
-            one->abort();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        try
-        {
-            two->abort();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(shared_from_this());
-        finally.throwException();
+void DocFieldConsumersPerDoc::finish() {
+    LuceneException finally;
+    try {
+        one->finish();
+    } catch (LuceneException& e) {
+        finally = e;
     }
+    try {
+        two->finish();
+    } catch (LuceneException& e) {
+        finally = e;
+    }
+    DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(shared_from_this());
+    finally.throwException();
+}
+
+void DocFieldConsumersPerDoc::abort() {
+    LuceneException finally;
+    try {
+        one->abort();
+    } catch (LuceneException& e) {
+        finally = e;
+    }
+    try {
+        two->abort();
+    } catch (LuceneException& e) {
+        finally = e;
+    }
+    DocFieldConsumersPtr(_fieldConsumers)->freePerDoc(shared_from_this());
+    finally.throwException();
+}
+
 }

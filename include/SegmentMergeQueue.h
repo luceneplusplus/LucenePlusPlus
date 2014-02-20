@@ -9,22 +9,22 @@
 
 #include "PriorityQueue.h"
 
-namespace Lucene
-{
-    class SegmentMergeQueue : public PriorityQueue<SegmentMergeInfoPtr>
-    {
-    public:
-        SegmentMergeQueue(int32_t size);
-        virtual ~SegmentMergeQueue();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentMergeQueue);
+class SegmentMergeQueue : public PriorityQueue<SegmentMergeInfoPtr> {
+public:
+    SegmentMergeQueue(int32_t size);
+    virtual ~SegmentMergeQueue();
 
-    public:
-        void close();
+    LUCENE_CLASS(SegmentMergeQueue);
 
-    protected:
-        virtual bool lessThan(const SegmentMergeInfoPtr& first, const SegmentMergeInfoPtr& second);
-    };
+public:
+    void close();
+
+protected:
+    virtual bool lessThan(const SegmentMergeInfoPtr& first, const SegmentMergeInfoPtr& second);
+};
+
 }
 
 #endif

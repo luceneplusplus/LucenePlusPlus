@@ -8,45 +8,39 @@
 #include "LuceneObject.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    LuceneObject::LuceneObject()
-    {
-    }
+namespace Lucene {
 
-    LuceneObject::~LuceneObject()
-    {
-    }
+LuceneObject::LuceneObject() {
+}
 
-    void LuceneObject::initialize()
-    {
-        // override
-    }
+LuceneObject::~LuceneObject() {
+}
 
-    LuceneObjectPtr LuceneObject::clone(const LuceneObjectPtr& other)
-    {
-        if (!other)
-            boost::throw_exception(UnsupportedOperationException(L"clone must not be null"));
-        return other;
-    }
+void LuceneObject::initialize() {
+    // override
+}
 
-    int32_t LuceneObject::hashCode()
-    {
-        return (int32_t)(int64_t)this;
+LuceneObjectPtr LuceneObject::clone(const LuceneObjectPtr& other) {
+    if (!other) {
+        boost::throw_exception(UnsupportedOperationException(L"clone must not be null"));
     }
+    return other;
+}
 
-    bool LuceneObject::equals(const LuceneObjectPtr& other)
-    {
-        return (other && this == other.get());
-    }
+int32_t LuceneObject::hashCode() {
+    return (int32_t)(int64_t)this;
+}
 
-    int32_t LuceneObject::compareTo(const LuceneObjectPtr& other)
-    {
-        return (int32_t)(this - other.get());
-    }
+bool LuceneObject::equals(const LuceneObjectPtr& other) {
+    return (other && this == other.get());
+}
 
-    String LuceneObject::toString()
-    {
-        return StringUtils::toString(hashCode());
-    }
+int32_t LuceneObject::compareTo(const LuceneObjectPtr& other) {
+    return (int32_t)(this - other.get());
+}
+
+String LuceneObject::toString() {
+    return StringUtils::toString(hashCode());
+}
+
 }

@@ -7,73 +7,61 @@
 #include "ContribInc.h"
 #include "TextFragment.h"
 
-namespace Lucene
-{
-    TextFragment::TextFragment(const StringBufferPtr& markedUpText, int32_t textStartPos, int32_t fragNum)
-    {
-        this->markedUpText = markedUpText;
-        this->textStartPos = textStartPos;
-        this->textEndPos = 0;
-        this->fragNum = fragNum;
-        this->score = 0;
-    }
+namespace Lucene {
 
-    TextFragment::~TextFragment()
-    {
-    }
+TextFragment::TextFragment(const StringBufferPtr& markedUpText, int32_t textStartPos, int32_t fragNum) {
+    this->markedUpText = markedUpText;
+    this->textStartPos = textStartPos;
+    this->textEndPos = 0;
+    this->fragNum = fragNum;
+    this->score = 0;
+}
 
-    void TextFragment::setScore(double score)
-    {
-        this->score = score;
-    }
+TextFragment::~TextFragment() {
+}
 
-    double TextFragment::getScore()
-    {
-        return score;
-    }
+void TextFragment::setScore(double score) {
+    this->score = score;
+}
 
-    void TextFragment::merge(const TextFragmentPtr& frag2)
-    {
-        textEndPos = frag2->textEndPos;
-        score = std::max(score, frag2->score);
-    }
+double TextFragment::getScore() {
+    return score;
+}
 
-    bool TextFragment::follows(const TextFragmentPtr& fragment)
-    {
-        return (textStartPos == fragment->textEndPos);
-    }
+void TextFragment::merge(const TextFragmentPtr& frag2) {
+    textEndPos = frag2->textEndPos;
+    score = std::max(score, frag2->score);
+}
 
-    int32_t TextFragment::getFragNum()
-    {
-        return fragNum;
-    }
+bool TextFragment::follows(const TextFragmentPtr& fragment) {
+    return (textStartPos == fragment->textEndPos);
+}
 
-    String TextFragment::toString()
-    {
-        return markedUpText->toString().substr(textStartPos, textEndPos - textStartPos);
-    }
+int32_t TextFragment::getFragNum() {
+    return fragNum;
+}
 
-    StringBuffer::~StringBuffer()
-    {
-    }
+String TextFragment::toString() {
+    return markedUpText->toString().substr(textStartPos, textEndPos - textStartPos);
+}
 
-    int32_t StringBuffer::length()
-    {
-        return buffer.str().length();
-    }
+StringBuffer::~StringBuffer() {
+}
 
-    String StringBuffer::toString()
-    {
-        return buffer.str();
-    }
+int32_t StringBuffer::length() {
+    return buffer.str().length();
+}
 
-    void StringBuffer::append(const String& str)
-    {
-        buffer << str;
-    }
+String StringBuffer::toString() {
+    return buffer.str();
+}
 
-    void StringBuffer::clear()
-    {
-        buffer.str(L"");
-    }
+void StringBuffer::append(const String& str) {
+    buffer << str;
+}
+
+void StringBuffer::clear() {
+    buffer.str(L"");
+}
+
 }

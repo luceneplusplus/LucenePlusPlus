@@ -9,21 +9,21 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class InvertedDocConsumerPerThread : public LuceneObject
-    {
-    public:
-        virtual ~InvertedDocConsumerPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(InvertedDocConsumerPerThread);
+class InvertedDocConsumerPerThread : public LuceneObject {
+public:
+    virtual ~InvertedDocConsumerPerThread();
 
-    public:
-        virtual void startDocument() = 0;
-        virtual InvertedDocConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo) = 0;
-        virtual DocWriterPtr finishDocument() = 0;
-        virtual void abort() = 0;
-    };
+    LUCENE_CLASS(InvertedDocConsumerPerThread);
+
+public:
+    virtual void startDocument() = 0;
+    virtual InvertedDocConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo) = 0;
+    virtual DocWriterPtr finishDocument() = 0;
+    virtual void abort() = 0;
+};
+
 }
 
 #endif

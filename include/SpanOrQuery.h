@@ -9,39 +9,39 @@
 
 #include "SpanQuery.h"
 
-namespace Lucene
-{
-    /// Matches the union of its clauses.
-    class LPPAPI SpanOrQuery : public SpanQuery
-    {
-    public:
-        /// Construct a SpanOrQuery merging the provided clauses.
-        SpanOrQuery(Collection<SpanQueryPtr> clauses);
-        virtual ~SpanOrQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanOrQuery);
+/// Matches the union of its clauses.
+class LPPAPI SpanOrQuery : public SpanQuery {
+public:
+    /// Construct a SpanOrQuery merging the provided clauses.
+    SpanOrQuery(Collection<SpanQueryPtr> clauses);
+    virtual ~SpanOrQuery();
 
-    protected:
-        Collection<SpanQueryPtr> clauses;
-        String field;
+    LUCENE_CLASS(SpanOrQuery);
 
-    public:
-        using SpanQuery::toString;
+protected:
+    Collection<SpanQueryPtr> clauses;
+    String field;
 
-        /// Return the clauses whose spans are matched.
-        Collection<SpanQueryPtr> getClauses();
+public:
+    using SpanQuery::toString;
 
-        virtual String getField();
-        virtual void extractTerms(SetTerm terms);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
-        virtual String toString(const String& field);
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+    /// Return the clauses whose spans are matched.
+    Collection<SpanQueryPtr> getClauses();
 
-        friend class OrSpans;
-    };
+    virtual String getField();
+    virtual void extractTerms(SetTerm terms);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    virtual String toString(const String& field);
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+
+    friend class OrSpans;
+};
+
 }
 
 #endif

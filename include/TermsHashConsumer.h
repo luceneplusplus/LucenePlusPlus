@@ -9,28 +9,28 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class TermsHashConsumer : public LuceneObject
-    {
-    public:
-        virtual ~TermsHashConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(TermsHashConsumer);
+class TermsHashConsumer : public LuceneObject {
+public:
+    virtual ~TermsHashConsumer();
 
-    public:
-        FieldInfosPtr fieldInfos;
+    LUCENE_CLASS(TermsHashConsumer);
 
-    public:
-        virtual int32_t bytesPerPosting() = 0;
-        virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count) = 0;
-        virtual TermsHashConsumerPerThreadPtr addThread(const TermsHashPerThreadPtr& perThread) = 0;
-        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
-        virtual void abort() = 0;
-        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
+public:
+    FieldInfosPtr fieldInfos;
 
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
-    };
+public:
+    virtual int32_t bytesPerPosting() = 0;
+    virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count) = 0;
+    virtual TermsHashConsumerPerThreadPtr addThread(const TermsHashPerThreadPtr& perThread) = 0;
+    virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
+    virtual void abort() = 0;
+    virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
+
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
+};
+
 }
 
 #endif

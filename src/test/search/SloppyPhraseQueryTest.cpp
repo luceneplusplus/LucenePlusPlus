@@ -18,11 +18,9 @@
 
 using namespace Lucene;
 
-class SloppyPhraseQueryTest : public LuceneTestFixture
-{
+class SloppyPhraseQueryTest : public LuceneTestFixture {
 public:
-    SloppyPhraseQueryTest()
-    {
+    SloppyPhraseQueryTest() {
         S_1 = L"A A A";
         S_2 = L"A 1 2 3 A 4 5 6 A";
 
@@ -39,8 +37,7 @@ public:
         QUERY_4 = makePhraseQuery(L"X A A");
     }
 
-    virtual ~SloppyPhraseQueryTest()
-    {
+    virtual ~SloppyPhraseQueryTest() {
     }
 
 protected:
@@ -60,8 +57,7 @@ protected:
     PhraseQueryPtr QUERY_4;
 
 public:
-    DocumentPtr makeDocument(const String& docText)
-    {
+    DocumentPtr makeDocument(const String& docText) {
         DocumentPtr doc = newLucene<Document>();
         FieldPtr f = newLucene<Field>(L"f", docText, Field::STORE_NO, Field::INDEX_ANALYZED);
         f->setOmitNorms(true);
@@ -69,17 +65,16 @@ public:
         return doc;
     }
 
-    PhraseQueryPtr makePhraseQuery(const String& terms)
-    {
+    PhraseQueryPtr makePhraseQuery(const String& terms) {
         PhraseQueryPtr query = newLucene<PhraseQuery>();
         Collection<String> tokens = StringUtils::split(terms, L" +");
-        for (int32_t i = 0; i < tokens.size(); ++i)
+        for (int32_t i = 0; i < tokens.size(); ++i) {
             query->add(newLucene<Term>(L"f", tokens[i]));
+        }
         return query;
     }
 
-    double checkPhraseQuery(const DocumentPtr& doc, const PhraseQueryPtr& query, int32_t slop, int32_t expectedNumResults)
-    {
+    double checkPhraseQuery(const DocumentPtr& doc, const PhraseQueryPtr& query, int32_t slop, int32_t expectedNumResults) {
         query->setSlop(slop);
 
         RAMDirectoryPtr ramDir = newLucene<RAMDirectory>();
@@ -102,10 +97,8 @@ public:
 /// Test DOC_4 and QUERY_4.
 /// QUERY_4 has a fuzzy (len=1) match to DOC_4, so all slop values > 0 should succeed.
 /// But only the 3rd sequence of A's in DOC_4 will do.
-TEST_F(SloppyPhraseQueryTest, testDoc4Query4AllSlopsShouldMatch)
-{
-    for (int32_t slop = 0; slop < 30; ++slop)
-    {
+TEST_F(SloppyPhraseQueryTest, testDoc4Query4AllSlopsShouldMatch) {
+    for (int32_t slop = 0; slop < 30; ++slop) {
         int32_t numResultsExpected = slop < 1 ? 0 : 1;
         checkPhraseQuery(DOC_4, QUERY_4, slop, numResultsExpected);
     }
@@ -113,10 +106,8 @@ TEST_F(SloppyPhraseQueryTest, testDoc4Query4AllSlopsShouldMatch)
 
 /// Test DOC_1 and QUERY_1.
 /// QUERY_1 has an exact match to DOC_1, so all slop values should succeed.
-TEST_F(SloppyPhraseQueryTest, testDoc1Query1AllSlopsShouldMatch)
-{
-    for (int32_t slop = 0; slop < 30; ++slop)
-    {
+TEST_F(SloppyPhraseQueryTest, testDoc1Query1AllSlopsShouldMatch) {
+    for (int32_t slop = 0; slop < 30; ++slop) {
         double score1 = checkPhraseQuery(DOC_1, QUERY_1, slop, 1);
         double score2 = checkPhraseQuery(DOC_1_B, QUERY_1, slop, 1);
         EXPECT_TRUE(score2 > score1);
@@ -125,14 +116,11 @@ TEST_F(SloppyPhraseQueryTest, testDoc1Query1AllSlopsShouldMatch)
 
 /// Test DOC_2 and QUERY_1.
 /// 6 should be the minimum slop to make QUERY_1 match DOC_2.
-TEST_F(SloppyPhraseQueryTest, testDoc2Query1Slop6OrMoreShouldMatch)
-{
-    for (int32_t slop = 0; slop < 30; ++slop)
-    {
+TEST_F(SloppyPhraseQueryTest, testDoc2Query1Slop6OrMoreShouldMatch) {
+    for (int32_t slop = 0; slop < 30; ++slop) {
         int32_t numResultsExpected = slop < 6 ? 0 : 1;
         double score1 = checkPhraseQuery(DOC_2, QUERY_1, slop, numResultsExpected);
-        if (numResultsExpected > 0)
-        {
+        if (numResultsExpected > 0) {
             double score2 = checkPhraseQuery(DOC_2_B, QUERY_1, slop, 1);
             EXPECT_TRUE(score2 > score1);
         }
@@ -141,10 +129,8 @@ TEST_F(SloppyPhraseQueryTest, testDoc2Query1Slop6OrMoreShouldMatch)
 
 /// Test DOC_2 and QUERY_2.
 /// QUERY_2 has an exact match to DOC_2, so all slop values should succeed.
-TEST_F(SloppyPhraseQueryTest, testDoc2Query2AllSlopsShouldMatch)
-{
-    for (int32_t slop = 0; slop < 30; ++slop)
-    {
+TEST_F(SloppyPhraseQueryTest, testDoc2Query2AllSlopsShouldMatch) {
+    for (int32_t slop = 0; slop < 30; ++slop) {
         double score1 = checkPhraseQuery(DOC_2, QUERY_2, slop, 1);
         double score2 = checkPhraseQuery(DOC_2_B, QUERY_2, slop, 1);
         EXPECT_TRUE(score2 > score1);
@@ -153,10 +139,8 @@ TEST_F(SloppyPhraseQueryTest, testDoc2Query2AllSlopsShouldMatch)
 
 /// Test DOC_3 and QUERY_1.
 /// QUERY_1 has an exact match to DOC_3, so all slop values should succeed.
-TEST_F(SloppyPhraseQueryTest, testDoc3Query1AllSlopsShouldMatch)
-{
-    for (int32_t slop = 0; slop < 30; ++slop)
-    {
+TEST_F(SloppyPhraseQueryTest, testDoc3Query1AllSlopsShouldMatch) {
+    for (int32_t slop = 0; slop < 30; ++slop) {
         double score1 = checkPhraseQuery(DOC_3, QUERY_1, slop, 1);
         double score2 = checkPhraseQuery(DOC_3_B, QUERY_1, slop, 1);
         EXPECT_TRUE(score2 > score1);

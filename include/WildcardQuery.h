@@ -9,46 +9,46 @@
 
 #include "MultiTermQuery.h"
 
-namespace Lucene
-{
-    /// Implements the wildcard search query.  Supported wildcards are *, which matches any character sequence
-    /// (including the empty one), and ?, which matches any single character. Note this query can be slow, as
-    /// it needs to iterate over many terms.  In order to prevent extremely slow WildcardQueries, a Wildcard
-    /// term should not start with one of the wildcards * or ?.
-    ///
-    /// This query uses the {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} rewrite method.
-    /// @see WildcardTermEnum
-    class LPPAPI WildcardQuery : public MultiTermQuery
-    {
-    public:
-        WildcardQuery(const TermPtr& term);
-        virtual ~WildcardQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(WildcardQuery);
+/// Implements the wildcard search query.  Supported wildcards are *, which matches any character sequence
+/// (including the empty one), and ?, which matches any single character. Note this query can be slow, as
+/// it needs to iterate over many terms.  In order to prevent extremely slow WildcardQueries, a Wildcard
+/// term should not start with one of the wildcards * or ?.
+///
+/// This query uses the {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} rewrite method.
+/// @see WildcardTermEnum
+class LPPAPI WildcardQuery : public MultiTermQuery {
+public:
+    WildcardQuery(const TermPtr& term);
+    virtual ~WildcardQuery();
 
-    protected:
-        bool termContainsWildcard;
-        bool termIsPrefix;
-        TermPtr term;
+    LUCENE_CLASS(WildcardQuery);
 
-    public:
-        using MultiTermQuery::toString;
+protected:
+    bool termContainsWildcard;
+    bool termIsPrefix;
+    TermPtr term;
 
-        /// Returns the pattern term.
-        TermPtr getTerm();
+public:
+    using MultiTermQuery::toString;
 
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    /// Returns the pattern term.
+    TermPtr getTerm();
 
-        /// Prints a user-readable version of this query.
-        virtual String toString(const String& field);
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual int32_t hashCode();
-        virtual bool equals(const LuceneObjectPtr& other);
+    /// Prints a user-readable version of this query.
+    virtual String toString(const String& field);
 
-    protected:
-        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
-    };
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual int32_t hashCode();
+    virtual bool equals(const LuceneObjectPtr& other);
+
+protected:
+    virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
+};
+
 }
 
 #endif

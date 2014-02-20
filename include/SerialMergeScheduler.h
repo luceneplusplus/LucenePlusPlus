@@ -9,24 +9,24 @@
 
 #include "MergeScheduler.h"
 
-namespace Lucene
-{
-    /// A {@link MergeScheduler} that simply does each merge sequentially, using the current thread.
-    class LPPAPI SerialMergeScheduler : public MergeScheduler
-    {
-    public:
-        virtual ~SerialMergeScheduler();
+namespace Lucene {
 
-        LUCENE_CLASS(SerialMergeScheduler);
+/// A {@link MergeScheduler} that simply does each merge sequentially, using the current thread.
+class LPPAPI SerialMergeScheduler : public MergeScheduler {
+public:
+    virtual ~SerialMergeScheduler();
 
-    public:
-        /// Just do the merges in sequence. We do this "synchronized" so that even if the application is using
-        /// multiple threads, only one merge may run at a time.
-        virtual void merge(const IndexWriterPtr& writer);
+    LUCENE_CLASS(SerialMergeScheduler);
 
-        /// Close this MergeScheduler.
-        virtual void close();
-    };
+public:
+    /// Just do the merges in sequence. We do this "synchronized" so that even if the application is using
+    /// multiple threads, only one merge may run at a time.
+    virtual void merge(const IndexWriterPtr& writer);
+
+    /// Close this MergeScheduler.
+    virtual void close();
+};
+
 }
 
 #endif

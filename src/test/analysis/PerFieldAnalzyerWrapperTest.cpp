@@ -17,8 +17,7 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture PerFieldAnalzyerWrapperTest;
 
-TEST_F(PerFieldAnalzyerWrapperTest, testPerField)
-{
+TEST_F(PerFieldAnalzyerWrapperTest, testPerField) {
     String text = L"Qwerty";
     PerFieldAnalyzerWrapperPtr analyzer = newLucene<PerFieldAnalyzerWrapper>(newLucene<WhitespaceAnalyzer>());
     analyzer->addAnalyzer(L"special", newLucene<SimpleAnalyzer>());

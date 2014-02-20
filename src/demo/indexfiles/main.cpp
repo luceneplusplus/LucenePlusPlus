@@ -16,8 +16,7 @@ using namespace Lucene;
 
 int32_t docNumber = 0;
 
-DocumentPtr fileDocument(const String& docFile)
-{
+DocumentPtr fileDocument(const String& docFile) {
     DocumentPtr doc = newLucene<Document>();
 
     // Add the path of the file as a field named "path".  Use a field that is indexed (ie. searchable), but
@@ -37,37 +36,30 @@ DocumentPtr fileDocument(const String& docFile)
     return doc;
 }
 
-void indexDocs(const IndexWriterPtr& writer, const String& sourceDir)
-{
+void indexDocs(const IndexWriterPtr& writer, const String& sourceDir) {
     HashSet<String> dirList(HashSet<String>::newInstance());
-    if (!FileUtils::listDirectory(sourceDir, false, dirList))
+    if (!FileUtils::listDirectory(sourceDir, false, dirList)) {
         return;
+    }
 
-    for (HashSet<String>::iterator dirFile = dirList.begin(); dirFile != dirList.end(); ++dirFile)
-    {
+    for (HashSet<String>::iterator dirFile = dirList.begin(); dirFile != dirList.end(); ++dirFile) {
         String docFile(FileUtils::joinPath(sourceDir, *dirFile));
-        if (FileUtils::isDirectory(docFile))
+        if (FileUtils::isDirectory(docFile)) {
             indexDocs(writer, docFile);
-        else
-        {
+        } else {
             std::wcout << L"Adding [" << ++docNumber << L"]: " << *dirFile << L"\n";
 
-            try
-            {
+            try {
                 writer->addDocument(fileDocument(docFile));
-            }
-            catch (FileNotFoundException&)
-            {
+            } catch (FileNotFoundException&) {
             }
         }
     }
 }
 
 /// Index all text files under a directory.
-int main(int argc, char* argv[])
-{
-    if (argc != 3)
-    {
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
         std::wcout << L"Usage: indexfiles.exe <index source dir> <lucene index dir>\n";
         return 1;
     }
@@ -75,16 +67,13 @@ int main(int argc, char* argv[])
     String sourceDir(StringUtils::toUnicode(argv[1]));
     String indexDir(StringUtils::toUnicode(argv[2]));
 
-    if (!FileUtils::isDirectory(sourceDir))
-    {
+    if (!FileUtils::isDirectory(sourceDir)) {
         std::wcout << L"Source directory doesn't exist: " << sourceDir << L"\n";
         return 1;
     }
 
-    if (!FileUtils::isDirectory(indexDir))
-    {
-        if (!FileUtils::createDirectory(indexDir))
-        {
+    if (!FileUtils::isDirectory(indexDir)) {
+        if (!FileUtils::createDirectory(indexDir)) {
             std::wcout << L"Unable to create directory: " << indexDir << L"\n";
             return 1;
         }
@@ -92,8 +81,7 @@ int main(int argc, char* argv[])
 
     uint64_t beginIndex = MiscUtils::currentTimeMillis();
 
-    try
-    {
+    try {
         IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexDir), newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
         std::wcout << L"Indexing to directory: " << indexDir << L"...\n";
 
@@ -112,9 +100,7 @@ int main(int argc, char* argv[])
         writer->close();
 
         std::wcout << L"Total time: " << indexDuration + optimizeDuration << L" milliseconds\n";
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         std::wcout << L"Exception: " << e.getError() << L"\n";
         return 1;
     }

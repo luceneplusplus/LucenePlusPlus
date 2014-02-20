@@ -9,48 +9,48 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// A simple class that stores Strings as char[]'s in a hash table.  Note that this is not a general purpose class.
-    /// For example, it cannot remove items from the set, nor does it resize its hash table to be smaller, etc.  It is
-    /// designed to be quick to test if a char[] is in the set without the necessity of converting it to a String first.
-    class LPPAPI CharArraySet : public LuceneObject
-    {
-    public:
-        CharArraySet(bool ignoreCase);
+namespace Lucene {
 
-        /// Create set from a set of strings.
-        CharArraySet(HashSet<String> entries, bool ignoreCase);
+/// A simple class that stores Strings as char[]'s in a hash table.  Note that this is not a general purpose class.
+/// For example, it cannot remove items from the set, nor does it resize its hash table to be smaller, etc.  It is
+/// designed to be quick to test if a char[] is in the set without the necessity of converting it to a String first.
+class LPPAPI CharArraySet : public LuceneObject {
+public:
+    CharArraySet(bool ignoreCase);
 
-        /// Create set from a collection of strings.
-        CharArraySet(Collection<String> entries, bool ignoreCase);
+    /// Create set from a set of strings.
+    CharArraySet(HashSet<String> entries, bool ignoreCase);
 
-        virtual ~CharArraySet();
+    /// Create set from a collection of strings.
+    CharArraySet(Collection<String> entries, bool ignoreCase);
 
-        LUCENE_CLASS(CharArraySet);
+    virtual ~CharArraySet();
 
-    protected:
-        HashSet<String> entries;
-        bool ignoreCase;
+    LUCENE_CLASS(CharArraySet);
 
-    public:
-        virtual bool contains(const String& text);
+protected:
+    HashSet<String> entries;
+    bool ignoreCase;
 
-        /// True if the length chars of text starting at offset are in the set
-        virtual bool contains(const wchar_t* text, int32_t offset, int32_t length);
+public:
+    virtual bool contains(const String& text);
 
-        /// Add this String into the set
-        virtual bool add(const String& text);
+    /// True if the length chars of text starting at offset are in the set
+    virtual bool contains(const wchar_t* text, int32_t offset, int32_t length);
 
-        /// Add this char[] into the set.
-        virtual bool add(CharArray text);
+    /// Add this String into the set
+    virtual bool add(const String& text);
 
-        virtual int32_t size();
-        virtual bool isEmpty();
+    /// Add this char[] into the set.
+    virtual bool add(CharArray text);
 
-        HashSet<String>::iterator begin();
-        HashSet<String>::iterator end();
-    };
+    virtual int32_t size();
+    virtual bool isEmpty();
+
+    HashSet<String>::iterator begin();
+    HashSet<String>::iterator end();
+};
+
 }
 
 #endif

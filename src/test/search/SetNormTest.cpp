@@ -22,51 +22,44 @@ using namespace Lucene;
 
 typedef LuceneTestFixture SetNormTest;
 
-namespace TestSetNorm
-{
-    class SetNormCollector : public Collector
-    {
-    public:
-        SetNormCollector(Collection<double> scores)
-        {
-            this->scores = scores;
-            this->base = 0;
-        }
+namespace TestSetNorm {
 
-        virtual ~SetNormCollector()
-        {
-        }
+class SetNormCollector : public Collector {
+public:
+    SetNormCollector(Collection<double> scores) {
+        this->scores = scores;
+        this->base = 0;
+    }
 
-    protected:
-        int32_t base;
-        ScorerPtr scorer;
-        Collection<double> scores;
+    virtual ~SetNormCollector() {
+    }
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+protected:
+    int32_t base;
+    ScorerPtr scorer;
+    Collection<double> scores;
 
-        virtual void collect(int32_t doc)
-        {
-            scores[doc + base] = scorer->score();
-        }
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-            base = docBase;
-        }
+    virtual void collect(int32_t doc) {
+        scores[doc + base] = scorer->score();
+    }
 
-        virtual bool acceptsDocsOutOfOrder()
-        {
-            return true;
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+        base = docBase;
+    }
+
+    virtual bool acceptsDocsOutOfOrder() {
+        return true;
+    }
+};
+
 }
 
-TEST_F(SetNormTest, testSetNorm)
-{
+TEST_F(SetNormTest, testSetNorm) {
     RAMDirectoryPtr store = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(store, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -95,8 +88,7 @@ TEST_F(SetNormTest, testSetNorm)
     searcher->search(newLucene<TermQuery>(newLucene<Term>(L"field", L"word")), newLucene<TestSetNorm::SetNormCollector>(scores));
 
     double lastScore = 0.0;
-    for (int32_t i = 0; i < 4; ++i)
-    {
+    for (int32_t i = 0; i < 4; ++i) {
         EXPECT_TRUE(scores[i] > lastScore);
         lastScore = scores[i];
     }

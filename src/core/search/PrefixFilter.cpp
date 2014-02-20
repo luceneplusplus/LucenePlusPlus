@@ -9,25 +9,22 @@
 #include "PrefixQuery.h"
 #include "Term.h"
 
-namespace Lucene
-{
-    PrefixFilter::PrefixFilter(const TermPtr& prefix) : MultiTermQueryWrapperFilter(newLucene<PrefixQuery>(prefix))
-    {
-    }
+namespace Lucene {
 
-    PrefixFilter::~PrefixFilter()
-    {
-    }
+PrefixFilter::PrefixFilter(const TermPtr& prefix) : MultiTermQueryWrapperFilter(newLucene<PrefixQuery>(prefix)) {
+}
 
-    TermPtr PrefixFilter::getPrefix()
-    {
-        return boost::static_pointer_cast<PrefixQuery>(query)->getPrefix();
-    }
+PrefixFilter::~PrefixFilter() {
+}
 
-    String PrefixFilter::toString()
-    {
-        StringStream buffer;
-        buffer << L"PrefixFilter(" << getPrefix()->toString() << L")";
-        return buffer.str();
-    }
+TermPtr PrefixFilter::getPrefix() {
+    return boost::static_pointer_cast<PrefixQuery>(query)->getPrefix();
+}
+
+String PrefixFilter::toString() {
+    StringStream buffer;
+    buffer << L"PrefixFilter(" << getPrefix()->toString() << L")";
+    return buffer.str();
+}
+
 }

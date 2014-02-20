@@ -9,25 +9,25 @@
 
 #include "DocIdSet.h"
 
-namespace Lucene
-{
-    class DocIdBitSetIterator : public DocIdSetIterator
-    {
-    public:
-        DocIdBitSetIterator(const BitSetPtr& bitSet);
-        virtual ~DocIdBitSetIterator();
+namespace Lucene {
 
-        LUCENE_CLASS(DocIdBitSetIterator);
+class DocIdBitSetIterator : public DocIdSetIterator {
+public:
+    DocIdBitSetIterator(const BitSetPtr& bitSet);
+    virtual ~DocIdBitSetIterator();
 
-    protected:
-        int32_t docId;
-        BitSetPtr bitSet;
+    LUCENE_CLASS(DocIdBitSetIterator);
 
-    public:
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual int32_t advance(int32_t target);
-    };
+protected:
+    int32_t docId;
+    BitSetPtr bitSet;
+
+public:
+    virtual int32_t docID();
+    virtual int32_t nextDoc();
+    virtual int32_t advance(int32_t target);
+};
+
 }
 
 #endif

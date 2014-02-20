@@ -9,30 +9,30 @@
 
 #include "LuceneThread.h"
 
-namespace Lucene
-{
-    class TimerThread : public LuceneThread
-    {
-    public:
-        TimerThread();
-        virtual ~TimerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(TimerThread);
+class TimerThread : public LuceneThread {
+public:
+    TimerThread();
+    virtual ~TimerThread();
 
-    protected:
-        int64_t time;
-        bool _stopThread;
+    LUCENE_CLASS(TimerThread);
 
-    public:
-        virtual void start();
-        virtual void run();
+protected:
+    int64_t time;
+    bool _stopThread;
 
-        /// Get the timer value in milliseconds.
-        int64_t getMilliseconds();
+public:
+    virtual void start();
+    virtual void run();
 
-        /// Stop timer thread.
-        void stopThread();
-    };
+    /// Get the timer value in milliseconds.
+    int64_t getMilliseconds();
+
+    /// Stop timer thread.
+    void stopThread();
+};
+
 }
 
 #endif

@@ -13,8 +13,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture TermTest;
 
-TEST_F(TermTest, testEquals)
-{
+TEST_F(TermTest, testEquals) {
     TermPtr base = newLucene<Term>(L"same", L"same");
     TermPtr same = newLucene<Term>(L"same", L"same");
     TermPtr differentField = newLucene<Term>(L"different", L"same");

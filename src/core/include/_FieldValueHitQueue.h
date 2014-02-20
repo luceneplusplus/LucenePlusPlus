@@ -9,37 +9,36 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// An implementation of {@link FieldValueHitQueue} which is optimized in case there is just one comparator.
-    class OneComparatorFieldValueHitQueue : public FieldValueHitQueue
-    {
-    public:
-        OneComparatorFieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
-        virtual ~OneComparatorFieldValueHitQueue();
+namespace Lucene {
 
-        LUCENE_CLASS(OneComparatorFieldValueHitQueue);
+/// An implementation of {@link FieldValueHitQueue} which is optimized in case there is just one comparator.
+class OneComparatorFieldValueHitQueue : public FieldValueHitQueue {
+public:
+    OneComparatorFieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
+    virtual ~OneComparatorFieldValueHitQueue();
 
-    public:
-        FieldComparatorPtr comparator;
-        int32_t oneReverseMul;
+    LUCENE_CLASS(OneComparatorFieldValueHitQueue);
 
-    protected:
-        virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
-    };
+public:
+    FieldComparatorPtr comparator;
+    int32_t oneReverseMul;
 
-    /// An implementation of {@link FieldValueHitQueue} which is optimized in case there is more than one comparator.
-    class MultiComparatorsFieldValueHitQueue : public FieldValueHitQueue
-    {
-    public:
-        MultiComparatorsFieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
-        virtual ~MultiComparatorsFieldValueHitQueue();
+protected:
+    virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
+};
 
-        LUCENE_CLASS(MultiComparatorsFieldValueHitQueue);
+/// An implementation of {@link FieldValueHitQueue} which is optimized in case there is more than one comparator.
+class MultiComparatorsFieldValueHitQueue : public FieldValueHitQueue {
+public:
+    MultiComparatorsFieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
+    virtual ~MultiComparatorsFieldValueHitQueue();
 
-    protected:
-        virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
-    };
+    LUCENE_CLASS(MultiComparatorsFieldValueHitQueue);
+
+protected:
+    virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
+};
+
 }
 
 #endif

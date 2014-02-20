@@ -9,26 +9,22 @@
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
-namespace Lucene
-{
-    RussianLetterTokenizer::RussianLetterTokenizer(const ReaderPtr& input) : CharTokenizer(input)
-    {
-    }
+namespace Lucene {
 
-    RussianLetterTokenizer::RussianLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input)
-    {
-    }
+RussianLetterTokenizer::RussianLetterTokenizer(const ReaderPtr& input) : CharTokenizer(input) {
+}
 
-    RussianLetterTokenizer::RussianLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input)
-    {
-    }
+RussianLetterTokenizer::RussianLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input) {
+}
 
-    RussianLetterTokenizer::~RussianLetterTokenizer()
-    {
-    }
+RussianLetterTokenizer::RussianLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input) {
+}
 
-    bool RussianLetterTokenizer::isTokenChar(wchar_t c)
-    {
-        return (UnicodeUtil::isAlpha(c) || UnicodeUtil::isDigit(c));
-    }
+RussianLetterTokenizer::~RussianLetterTokenizer() {
+}
+
+bool RussianLetterTokenizer::isTokenChar(wchar_t c) {
+    return (UnicodeUtil::isAlpha(c) || UnicodeUtil::isDigit(c));
+}
+
 }

@@ -34,16 +34,13 @@ using namespace Lucene;
 
 /// Test BooleanQuery2 against BooleanQuery by overriding the standard query parser.
 /// This also tests the scoring order of BooleanQuery.
-class Boolean2Test : public LuceneTestFixture
-{
+class Boolean2Test : public LuceneTestFixture {
 public:
-    Boolean2Test()
-    {
+    Boolean2Test() {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
         docFields = newCollection<String>(L"w1 w2 w3 w4 w5", L"w1 w3 w2 w3", L"w1 xx w2 yy w3", L"w1 w3 xx w2 yy w3");
-        for (int32_t i = 0; i < docFields.size(); ++i)
-        {
+        for (int32_t i = 0; i < docFields.size(); ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(field, docFields[i], Field::STORE_NO, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
@@ -58,26 +55,26 @@ public:
         // First multiply small test index
         mulFactor = 1;
         int32_t docCount = 0;
-        do
-        {
+        do {
             DirectoryPtr copy = newLucene<RAMDirectory>(dir2);
             IndexWriterPtr w = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
             w->addIndexesNoOptimize(newCollection<DirectoryPtr>(copy));
             docCount = w->maxDoc();
             w->close();
             mulFactor *= 2;
-        }
-        while (docCount < 3000);
+        } while (docCount < 3000);
 
         IndexWriterPtr w = newLucene<IndexWriter>(dir2, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"field2", L"xxx", Field::STORE_NO, Field::INDEX_ANALYZED));
-        for (int32_t i = 0; i <NUM_EXTRA_DOCS / 2; ++i)
+        for (int32_t i = 0; i <NUM_EXTRA_DOCS / 2; ++i) {
             w->addDocument(doc);
+        }
         doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"field2", L"big bad bug", Field::STORE_NO, Field::INDEX_ANALYZED));
-        for (int32_t i = 0; i <NUM_EXTRA_DOCS / 2; ++i)
+        for (int32_t i = 0; i <NUM_EXTRA_DOCS / 2; ++i) {
             w->addDocument(doc);
+        }
         // optimize to 1 segment
         w->optimize();
         reader = w->getReader();
@@ -85,8 +82,7 @@ public:
         bigSearcher = newLucene<IndexSearcher>(reader);
     }
 
-    virtual ~Boolean2Test()
-    {
+    virtual ~Boolean2Test() {
         reader->close();
         dir2->close();
     }
@@ -104,13 +100,11 @@ public:
     static const String field;
 
 public:
-    QueryPtr makeQuery(const String& queryText)
-    {
+    QueryPtr makeQuery(const String& queryText) {
         return newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, field, newLucene<WhitespaceAnalyzer>())->parse(queryText);
     }
 
-    void queriesTest(const String& queryText, Collection<int32_t> expDocNrs)
-    {
+    void queriesTest(const String& queryText, Collection<int32_t> expDocNrs) {
         QueryPtr query1 = makeQuery(queryText);
         TopScoreDocCollectorPtr collector = TopScoreDocCollector::create(1000, false);
         searcher->search(query1, FilterPtr(), collector);
@@ -127,32 +121,32 @@ public:
     }
 
     /// Random rnd is passed in so that the exact same random query may be created more than once.
-    BooleanQueryPtr randBoolQuery(const RandomPtr& rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
-    {
+    BooleanQueryPtr randBoolQuery(const RandomPtr& rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals) {
         BooleanQueryPtr current = newLucene<BooleanQuery>(rnd->nextInt() < 0);
-        for (int32_t i = 0; i < rnd->nextInt(vals.size()) + 1; ++i)
-        {
+        for (int32_t i = 0; i < rnd->nextInt(vals.size()) + 1; ++i) {
             int32_t qType = 0; // term query
-            if (level > 0)
+            if (level > 0) {
                 qType = rnd->nextInt(10);
+            }
             QueryPtr q;
-            if (qType < 3)
+            if (qType < 3) {
                 q = newLucene<TermQuery>(newLucene<Term>(field, vals[rnd->nextInt(vals.size())]));
-            else if (qType < 7)
+            } else if (qType < 7) {
                 q = newLucene<WildcardQuery>(newLucene<Term>(field, L"w*"));
-            else
+            } else {
                 q = randBoolQuery(rnd, allowMust, level - 1, field, vals);
+            }
 
             int32_t r = rnd->nextInt(10);
             BooleanClause::Occur occur = BooleanClause::SHOULD;
-            if (r < 2)
+            if (r < 2) {
                 occur = BooleanClause::MUST_NOT;
-            else if (r < 5)
-            {
-                if (allowMust)
+            } else if (r < 5) {
+                if (allowMust) {
                     occur = BooleanClause::MUST;
-                else
+                } else {
                     occur = BooleanClause::SHOULD;
+                }
             }
 
             current->add(q, occur);
@@ -164,88 +158,76 @@ public:
 const String Boolean2Test::field = L"field";
 const int32_t Boolean2Test::NUM_EXTRA_DOCS = 6000;
 
-TEST_F(Boolean2Test, testQueries01)
-{
+TEST_F(Boolean2Test, testQueries01) {
     String queryText = L"+w3 +xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3);
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries02)
-{
+TEST_F(Boolean2Test, testQueries02) {
     String queryText = L"+w3 xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3, 1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries03)
-{
+TEST_F(Boolean2Test, testQueries03) {
     String queryText = L"w3 xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3, 1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries04)
-{
+TEST_F(Boolean2Test, testQueries04) {
     String queryText = L"w3 -xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries05)
-{
+TEST_F(Boolean2Test, testQueries05) {
     String queryText = L"+w3 -xx";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(1, 0);
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries06)
-{
+TEST_F(Boolean2Test, testQueries06) {
     String queryText = L"+w3 -xx -w5";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(1);
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries07)
-{
+TEST_F(Boolean2Test, testQueries07) {
     String queryText = L"-w3 -xx -w5";
     Collection<int32_t> expDocNrs = Collection<int32_t>::newInstance();
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries08)
-{
+TEST_F(Boolean2Test, testQueries08) {
     String queryText = L"+w3 xx -w5";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3, 1);
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testQueries09)
-{
+TEST_F(Boolean2Test, testQueries09) {
     String queryText = L"+w3 +xx +w2 zz";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3);
     queriesTest(queryText, expDocNrs);
 }
 
-namespace TestQueries10
-{
-    class OverlapSimilarity : public DefaultSimilarity
-    {
-    public:
-        virtual ~OverlapSimilarity()
-        {
-        }
+namespace TestQueries10 {
 
-    public:
-        virtual double coord(int32_t overlap, int32_t maxOverlap)
-        {
-            return (double)overlap / ((double)maxOverlap - 1.0);
-        }
-    };
+class OverlapSimilarity : public DefaultSimilarity {
+public:
+    virtual ~OverlapSimilarity() {
+    }
+
+public:
+    virtual double coord(int32_t overlap, int32_t maxOverlap) {
+        return (double)overlap / ((double)maxOverlap - 1.0);
+    }
+};
+
 }
 
-TEST_F(Boolean2Test, testQueries10)
-{
+TEST_F(Boolean2Test, testQueries10) {
     String queryText = L"+w3 +xx +w2 zz";
     Collection<int32_t> expDocNrs = newCollection<int32_t>(2, 3);
     searcher->setSimilarity(newLucene<TestQueries10::OverlapSimilarity>());
@@ -253,14 +235,12 @@ TEST_F(Boolean2Test, testQueries10)
     queriesTest(queryText, expDocNrs);
 }
 
-TEST_F(Boolean2Test, testRandomQueries)
-{
+TEST_F(Boolean2Test, testRandomQueries) {
     RandomPtr rnd = newLucene<Random>(17);
     Collection<String> vals = newCollection<String>(L"w1", L"w2", L"w3", L"w4", L"w5", L"xx", L"yy", L"zzz");
     int32_t tot = 0;
     // increase number of iterations for more complete testing
-    for (int32_t i = 0; i < 1000; ++i)
-    {
+    for (int32_t i = 0; i < 1000; ++i) {
         int32_t level = rnd->nextInt(3);
         BooleanQueryPtr q1 = randBoolQuery(rnd, rnd->nextInt() % 2 == 0, level, field, vals);
 

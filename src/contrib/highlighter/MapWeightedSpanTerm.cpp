@@ -7,39 +7,33 @@
 #include "ContribInc.h"
 #include "MapWeightedSpanTerm.h"
 
-namespace Lucene
-{
-    MapWeightedSpanTerm::MapWeightedSpanTerm()
-    {
-        map = MapStringWeightedSpanTerm::newInstance();
-    }
+namespace Lucene {
 
-    MapWeightedSpanTerm::~MapWeightedSpanTerm()
-    {
-    }
+MapWeightedSpanTerm::MapWeightedSpanTerm() {
+    map = MapStringWeightedSpanTerm::newInstance();
+}
 
-    MapStringWeightedSpanTerm::iterator MapWeightedSpanTerm::begin()
-    {
-        return map.begin();
-    }
+MapWeightedSpanTerm::~MapWeightedSpanTerm() {
+}
 
-    MapStringWeightedSpanTerm::iterator MapWeightedSpanTerm::end()
-    {
-        return map.end();
-    }
+MapStringWeightedSpanTerm::iterator MapWeightedSpanTerm::begin() {
+    return map.begin();
+}
 
-    void MapWeightedSpanTerm::put(const String& key, const WeightedSpanTermPtr& val)
-    {
-        return map.put(key, val);
-    }
+MapStringWeightedSpanTerm::iterator MapWeightedSpanTerm::end() {
+    return map.end();
+}
 
-    WeightedSpanTermPtr MapWeightedSpanTerm::get(const String& key) const
-    {
-        return map.get(key);
-    }
+void MapWeightedSpanTerm::put(const String& key, const WeightedSpanTermPtr& val) {
+    return map.put(key, val);
+}
 
-    void MapWeightedSpanTerm::clear()
-    {
-        map.clear();
-    }
+WeightedSpanTermPtr MapWeightedSpanTerm::get(const String& key) const {
+    return map.get(key);
+}
+
+void MapWeightedSpanTerm::clear() {
+    map.clear();
+}
+
 }

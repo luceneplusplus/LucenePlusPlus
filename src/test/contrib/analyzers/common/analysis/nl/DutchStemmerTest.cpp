@@ -11,21 +11,17 @@
 
 using namespace Lucene;
 
-class DutchStemmerTest : public BaseTokenStreamFixture
-{
+class DutchStemmerTest : public BaseTokenStreamFixture {
 public:
-    virtual ~DutchStemmerTest()
-    {
+    virtual ~DutchStemmerTest() {
     }
 
 public:
-    void check(const String& input, const String& expected)
-    {
+    void check(const String& input, const String& expected) {
         checkOneTerm(newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
 
-    void checkReuse(const AnalyzerPtr& a, const String& input, const String& expected)
-    {
+    void checkReuse(const AnalyzerPtr& a, const String& input, const String& expected) {
         checkOneTermReuse(a, input, expected);
     }
 };
@@ -33,8 +29,7 @@ public:
 /// Test the Dutch Stem Filter, which only modifies the term text.
 /// The code states that it uses the snowball algorithm, but tests reveal some differences.
 
-TEST_F(DutchStemmerTest, testWithSnowballExamples)
-{
+TEST_F(DutchStemmerTest, testWithSnowballExamples) {
     check(L"lichaamsziek", L"lichaamsziek");
     check(L"lichamelijk", L"licham");
     check(L"lichamelijke", L"licham");
@@ -117,8 +112,7 @@ TEST_F(DutchStemmerTest, testWithSnowballExamples)
     check(L"ophouden", L"ophoud");
 }
 
-TEST_F(DutchStemmerTest, testReusableTokenStream)
-{
+TEST_F(DutchStemmerTest, testReusableTokenStream) {
     AnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"lichaamsziek", L"lichaamsziek");
     checkReuse(a, L"lichamelijk", L"licham");
@@ -127,8 +121,7 @@ TEST_F(DutchStemmerTest, testReusableTokenStream)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-TEST_F(DutchStemmerTest, testExclusionTableReuse)
-{
+TEST_F(DutchStemmerTest, testExclusionTableReuse) {
     DutchAnalyzerPtr a = newLucene<DutchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"lichamelijk", L"licham");
     HashSet<String> exclusions = HashSet<String>::newInstance();

@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "DocFieldConsumerPerField.h"
 
-namespace Lucene
-{
-    DocFieldConsumerPerField::~DocFieldConsumerPerField()
-    {
-    }
+namespace Lucene {
+
+DocFieldConsumerPerField::~DocFieldConsumerPerField() {
+}
+
 }

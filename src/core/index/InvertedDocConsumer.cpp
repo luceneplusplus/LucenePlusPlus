@@ -7,14 +7,13 @@
 #include "LuceneInc.h"
 #include "InvertedDocConsumer.h"
 
-namespace Lucene
-{
-    InvertedDocConsumer::~InvertedDocConsumer()
-    {
-    }
+namespace Lucene {
 
-    void InvertedDocConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos)
-    {
-        this->fieldInfos = fieldInfos;
-    }
+InvertedDocConsumer::~InvertedDocConsumer() {
+}
+
+void InvertedDocConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos) {
+    this->fieldInfos = fieldInfos;
+}
+
 }

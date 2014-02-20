@@ -30,31 +30,29 @@ using namespace Lucene;
 
 typedef LuceneTestFixture MultiSearcherTest;
 
-static MultiSearcherPtr getMultiSearcherInstance(Collection<SearchablePtr> searchers)
-{
+static MultiSearcherPtr getMultiSearcherInstance(Collection<SearchablePtr> searchers) {
     return newLucene<MultiSearcher>(searchers);
 }
 
-static DocumentPtr createDocument(const String& contents1, const String& contents2)
-{
+static DocumentPtr createDocument(const String& contents1, const String& contents2) {
     DocumentPtr document = newLucene<Document>();
     document->add(newLucene<Field>(L"contents", contents1, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     document->add(newLucene<Field>(L"other", L"other contents", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-    if (!contents2.empty())
+    if (!contents2.empty()) {
         document->add(newLucene<Field>(L"contents", contents2, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+    }
     return document;
 }
 
-static void initIndex(const DirectoryPtr& directory, int32_t numDocs, bool create, const String& contents2)
-{
+static void initIndex(const DirectoryPtr& directory, int32_t numDocs, bool create, const String& contents2) {
     IndexWriterPtr indexWriter = newLucene<IndexWriter>(directory, newLucene<KeywordAnalyzer>(), create, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < numDocs; ++i)
+    for (int32_t i = 0; i < numDocs; ++i) {
         indexWriter->addDocument(createDocument(L"doc" + StringUtils::toString(i), contents2));
+    }
     indexWriter->close();
 }
 
-TEST_F(MultiSearcherTest, testEmptyIndex)
-{
+TEST_F(MultiSearcherTest, testEmptyIndex) {
     // creating two directories for indices
     DirectoryPtr indexStoreA = newLucene<MockRAMDirectory>();
     DirectoryPtr indexStoreB = newLucene<MockRAMDirectory>();
@@ -110,8 +108,9 @@ TEST_F(MultiSearcherTest, testEmptyIndex)
     EXPECT_EQ(3, hits.size());
 
     // iterating over the hit documents
-    for (int32_t i = 0; i < hits.size(); ++i)
+    for (int32_t i = 0; i < hits.size(); ++i) {
         mSearcher->doc(hits[i]->doc);
+    }
     mSearcher->close();
 
 
@@ -135,8 +134,9 @@ TEST_F(MultiSearcherTest, testEmptyIndex)
     EXPECT_EQ(4, hits2.size());
 
     // iterating over the hit documents
-    for (int32_t i = 0; i < hits2.size(); ++i)
+    for (int32_t i = 0; i < hits2.size(); ++i) {
         mSearcher2->doc(hits2[i]->doc);
+    }
 
     // test the subSearcher() method
     QueryPtr subSearcherQuery = parser->parse(L"id:doc1");
@@ -176,16 +176,16 @@ TEST_F(MultiSearcherTest, testEmptyIndex)
 
 
     // iterating over the hit documents
-    for (int32_t i = 0; i < hits3.size(); ++i)
+    for (int32_t i = 0; i < hits3.size(); ++i) {
         mSearcher3->doc(hits3[i]->doc);
+    }
 
     mSearcher3->close();
     indexStoreA->close();
     indexStoreB->close();
 }
 
-TEST_F(MultiSearcherTest, testFieldSelector)
-{
+TEST_F(MultiSearcherTest, testFieldSelector) {
     RAMDirectoryPtr ramDirectory1 = newLucene<RAMDirectory>();
     RAMDirectoryPtr ramDirectory2 = newLucene<RAMDirectory>();
 
@@ -227,8 +227,7 @@ TEST_F(MultiSearcherTest, testFieldSelector)
     EXPECT_TRUE(value.empty());
 }
 
-TEST_F(MultiSearcherTest, testNormalization)
-{
+TEST_F(MultiSearcherTest, testNormalization) {
     int32_t numDocs = 10;
 
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"contents", L"doc0"));
@@ -288,50 +287,42 @@ TEST_F(MultiSearcherTest, testNormalization)
     ramDirectory2->close();
 }
 
-namespace TestCustomSimilarity
-{
-    class CustomSimilarity : public DefaultSimilarity
-    {
-    public:
-        virtual ~CustomSimilarity()
-        {
-        }
+namespace TestCustomSimilarity {
 
-    public:
-        virtual double idf(int32_t docFreq, int32_t numDocs)
-        {
-            return 100.0;
-        }
+class CustomSimilarity : public DefaultSimilarity {
+public:
+    virtual ~CustomSimilarity() {
+    }
 
-        virtual double coord(int32_t overlap, int32_t maxOverlap)
-        {
-            return 1.0;
-        }
+public:
+    virtual double idf(int32_t docFreq, int32_t numDocs) {
+        return 100.0;
+    }
 
-        virtual double lengthNorm(const String& fieldName, int32_t numTokens)
-        {
-            return 1.0;
-        }
+    virtual double coord(int32_t overlap, int32_t maxOverlap) {
+        return 1.0;
+    }
 
-        virtual double queryNorm(double sumOfSquaredWeights)
-        {
-            return 1.0;
-        }
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
+        return 1.0;
+    }
 
-        virtual double sloppyFreq(int32_t distance)
-        {
-            return 1.0;
-        }
+    virtual double queryNorm(double sumOfSquaredWeights) {
+        return 1.0;
+    }
 
-        virtual double tf(double freq)
-        {
-            return 1.0;
-        }
-    };
+    virtual double sloppyFreq(int32_t distance) {
+        return 1.0;
+    }
+
+    virtual double tf(double freq) {
+        return 1.0;
+    }
+};
+
 }
 
-TEST_F(MultiSearcherTest, testCustomSimilarity)
-{
+TEST_F(MultiSearcherTest, testCustomSimilarity) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     initIndex(dir, 10, true, L"x"); // documents with two tokens "doc0" and "x", "doc1" and x, etc...
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
@@ -355,8 +346,7 @@ TEST_F(MultiSearcherTest, testCustomSimilarity)
     EXPECT_NEAR(score1, scoreN, 1e-6);
 }
 
-TEST_F(MultiSearcherTest, testDocFreq)
-{
+TEST_F(MultiSearcherTest, testDocFreq) {
     RAMDirectoryPtr dir1 = newLucene<RAMDirectory>();
     RAMDirectoryPtr dir2 = newLucene<RAMDirectory>();
 

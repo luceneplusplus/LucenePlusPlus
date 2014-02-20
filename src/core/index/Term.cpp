@@ -9,71 +9,67 @@
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    Term::Term(const String& fld, const String& txt) : _field(fld), _text(txt)
-    {
-    }
+namespace Lucene {
 
-    Term::~Term()
-    {
-    }
+Term::Term(const String& fld, const String& txt) : _field(fld), _text(txt) {
+}
 
-    String Term::field()
-    {
-        return _field;
-    }
+Term::~Term() {
+}
 
-    String Term::text()
-    {
-        return _text;
-    }
+String Term::field() {
+    return _field;
+}
 
-    TermPtr Term::createTerm(const String& text)
-    {
-        return newLucene<Term>(_field, text);
-    }
+String Term::text() {
+    return _text;
+}
 
-    bool Term::equals(const LuceneObjectPtr& other)
-    {
-        if (LuceneObject::equals(other))
-            return true;
-        if (!other)
-            return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
-            return false;
-        TermPtr otherTerm(boost::dynamic_pointer_cast<Term>(other));
-        if (!otherTerm)
-            return false;
-        return (_field == otherTerm->_field && _text == otherTerm->_text);
-    }
+TermPtr Term::createTerm(const String& text) {
+    return newLucene<Term>(_field, text);
+}
 
-    int32_t Term::hashCode()
-    {
-        int32_t prime = 31;
-        int32_t result = 1;
-        result = prime * result + (_field.empty() ? 0 : StringUtils::hashCode(_field));
-        result = prime * result + (_text.empty() ? 0 : StringUtils::hashCode(_text));
-        return result;
+bool Term::equals(const LuceneObjectPtr& other) {
+    if (LuceneObject::equals(other)) {
+        return true;
     }
+    if (!other) {
+        return false;
+    }
+    if (!MiscUtils::equalTypes(shared_from_this(), other)) {
+        return false;
+    }
+    TermPtr otherTerm(boost::dynamic_pointer_cast<Term>(other));
+    if (!otherTerm) {
+        return false;
+    }
+    return (_field == otherTerm->_field && _text == otherTerm->_text);
+}
 
-    int32_t Term::compareTo(const LuceneObjectPtr& other)
-    {
-        TermPtr otherTerm(boost::static_pointer_cast<Term>(other));
-        if (_field == otherTerm->_field)
-            return _text.compare(otherTerm->_text);
-        else
-            return _field.compare(otherTerm->_field);
-    }
+int32_t Term::hashCode() {
+    int32_t prime = 31;
+    int32_t result = 1;
+    result = prime * result + (_field.empty() ? 0 : StringUtils::hashCode(_field));
+    result = prime * result + (_text.empty() ? 0 : StringUtils::hashCode(_text));
+    return result;
+}
 
-    void Term::set(const String& fld, const String& txt)
-    {
-        _field = fld;
-        _text = txt;
+int32_t Term::compareTo(const LuceneObjectPtr& other) {
+    TermPtr otherTerm(boost::static_pointer_cast<Term>(other));
+    if (_field == otherTerm->_field) {
+        return _text.compare(otherTerm->_text);
+    } else {
+        return _field.compare(otherTerm->_field);
     }
+}
 
-    String Term::toString()
-    {
-        return _field + L":" + _text;
-    }
+void Term::set(const String& fld, const String& txt) {
+    _field = fld;
+    _text = txt;
+}
+
+String Term::toString() {
+    return _field + L":" + _text;
+}
+
 }

@@ -10,124 +10,105 @@
 #include <boost/unordered_set.hpp>
 #include "LuceneSync.h"
 
-namespace Lucene
-{
-    /// Utility template class to handle hash set collections that can be safely copied and shared
-    template < class TYPE, class HASH = boost::hash<TYPE>, class EQUAL = std::equal_to<TYPE> >
-    class HashSet : public LuceneSync
-    {
-    public:
-        typedef HashSet<TYPE, HASH, EQUAL> this_type;
-        typedef boost::unordered_set<TYPE, HASH, EQUAL> set_type;
-        typedef typename set_type::iterator iterator;
-        typedef typename set_type::const_iterator const_iterator;
-        typedef TYPE value_type;
+namespace Lucene {
 
-        virtual ~HashSet()
-        {
-        }
+/// Utility template class to handle hash set collections that can be safely copied and shared
+template < class TYPE, class HASH = boost::hash<TYPE>, class EQUAL = std::equal_to<TYPE> >
+class HashSet : public LuceneSync {
+public:
+    typedef HashSet<TYPE, HASH, EQUAL> this_type;
+    typedef boost::unordered_set<TYPE, HASH, EQUAL> set_type;
+    typedef typename set_type::iterator iterator;
+    typedef typename set_type::const_iterator const_iterator;
+    typedef TYPE value_type;
 
-    protected:
-        boost::shared_ptr<set_type> setContainer;
+    virtual ~HashSet() {
+    }
 
-    public:
-        static this_type newInstance()
-        {
-            this_type instance;
-            instance.setContainer = Lucene::newInstance<set_type>();
-            return instance;
-        }
+protected:
+    boost::shared_ptr<set_type> setContainer;
 
-        template <class ITER>
-        static this_type newInstance(ITER first, ITER last)
-        {
-            this_type instance;
-            instance.setContainer = Lucene::newInstance<set_type>(first, last);
-            return instance;
-        }
+public:
+    static this_type newInstance() {
+        this_type instance;
+        instance.setContainer = Lucene::newInstance<set_type>();
+        return instance;
+    }
 
-        void reset()
-        {
-            setContainer.reset();
-        }
+    template <class ITER>
+    static this_type newInstance(ITER first, ITER last) {
+        this_type instance;
+        instance.setContainer = Lucene::newInstance<set_type>(first, last);
+        return instance;
+    }
 
-        int32_t size() const
-        {
-            return (int32_t)setContainer->size();
-        }
+    void reset() {
+        setContainer.reset();
+    }
 
-        bool empty() const
-        {
-            return setContainer->empty();
-        }
+    int32_t size() const {
+        return (int32_t)setContainer->size();
+    }
 
-        void clear()
-        {
-            setContainer->clear();
-        }
+    bool empty() const {
+        return setContainer->empty();
+    }
 
-        iterator begin()
-        {
-            return setContainer->begin();
-        }
+    void clear() {
+        setContainer->clear();
+    }
 
-        iterator end()
-        {
-            return setContainer->end();
-        }
+    iterator begin() {
+        return setContainer->begin();
+    }
 
-        const_iterator begin() const
-        {
-            return setContainer->begin();
-        }
+    iterator end() {
+        return setContainer->end();
+    }
 
-        const_iterator end() const
-        {
-            return setContainer->end();
-        }
+    const_iterator begin() const {
+        return setContainer->begin();
+    }
 
-        operator bool() const
-        {
-            return setContainer.get() != NULL;
-        }
+    const_iterator end() const {
+        return setContainer->end();
+    }
 
-        bool operator! () const
-        {
-            return !setContainer;
-        }
+    operator bool() const {
+        return setContainer.get() != NULL;
+    }
 
-        set_type& operator= (const set_type& other)
-        {
-            setContainer = other.setContainer;
-            return *this;
-        }
+    bool operator! () const {
+        return !setContainer;
+    }
 
-        bool add(const TYPE& type)
-        {
-            return setContainer->insert(type).second;
-        }
+    set_type& operator= (const set_type& other) {
+        setContainer = other.setContainer;
+        return *this;
+    }
 
-        template <class ITER>
-        void addAll(ITER first, ITER last)
-        {
-            setContainer->insert(first, last);
-        }
+    bool add(const TYPE& type) {
+        return setContainer->insert(type).second;
+    }
 
-        bool remove(const TYPE& type)
-        {
-            return (setContainer->erase(type) > 0);
-        }
+    template <class ITER>
+    void addAll(ITER first, ITER last) {
+        setContainer->insert(first, last);
+    }
 
-        iterator find(const TYPE& type)
-        {
-            return setContainer->find(type);
-        }
+    bool remove(const TYPE& type) {
+        return (setContainer->erase(type) > 0);
+    }
 
-        bool contains(const TYPE& type) const
-        {
-            return (setContainer->find(type) != setContainer->end());
-        }
-    };
+    iterator find(const TYPE& type) {
+        return setContainer->find(type);
+    }
+
+    bool contains(const TYPE& type) const {
+        return (setContainer->find(type) != setContainer->end());
+    }
+};
+
 }
 
 #endif

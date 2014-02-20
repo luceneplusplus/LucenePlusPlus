@@ -9,50 +9,49 @@
 
 #include "Weight.h"
 
-namespace Lucene
-{
-    class ConstantWeight : public Weight
-    {
-    public:
-        ConstantWeight(const ConstantScoreQueryPtr& constantScorer, const SearcherPtr& searcher);
-        virtual ~ConstantWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(ConstantWeight);
+class ConstantWeight : public Weight {
+public:
+    ConstantWeight(const ConstantScoreQueryPtr& constantScorer, const SearcherPtr& searcher);
+    virtual ~ConstantWeight();
 
-    protected:
-        ConstantScoreQueryPtr constantScorer;
-        SimilarityPtr similarity;
-        double queryNorm;
-        double queryWeight;
+    LUCENE_CLASS(ConstantWeight);
 
-    public:
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
-    };
+protected:
+    ConstantScoreQueryPtr constantScorer;
+    SimilarityPtr similarity;
+    double queryNorm;
+    double queryWeight;
 
-    class ConstantScorer : public Scorer
-    {
-    public:
-        ConstantScorer(const ConstantScoreQueryPtr& constantScorer, const SimilarityPtr& similarity, const IndexReaderPtr& reader, const WeightPtr& w);
-        virtual ~ConstantScorer();
+public:
+    virtual QueryPtr getQuery();
+    virtual double getValue();
+    virtual double sumOfSquaredWeights();
+    virtual void normalize(double norm);
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+};
 
-        LUCENE_CLASS(ConstantScorer);
+class ConstantScorer : public Scorer {
+public:
+    ConstantScorer(const ConstantScoreQueryPtr& constantScorer, const SimilarityPtr& similarity, const IndexReaderPtr& reader, const WeightPtr& w);
+    virtual ~ConstantScorer();
 
-    public:
-        DocIdSetIteratorPtr docIdSetIterator;
-        double theScore;
-        int32_t doc;
+    LUCENE_CLASS(ConstantScorer);
 
-    public:
-        virtual int32_t nextDoc();
-        virtual int32_t docID();
-        virtual double score();
-        virtual int32_t advance(int32_t target);
-    };
+public:
+    DocIdSetIteratorPtr docIdSetIterator;
+    double theScore;
+    int32_t doc;
+
+public:
+    virtual int32_t nextDoc();
+    virtual int32_t docID();
+    virtual double score();
+    virtual int32_t advance(int32_t target);
+};
+
 }
 
 #endif

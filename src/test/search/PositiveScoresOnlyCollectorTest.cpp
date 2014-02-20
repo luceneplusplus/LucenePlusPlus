@@ -16,51 +16,44 @@ using namespace Lucene;
 
 typedef LuceneTestFixture PositiveScoresOnlyCollectorTest;
 
-namespace TestNegativeScores
-{
-    class SimpleScorer : public Scorer
-    {
-    public:
-        SimpleScorer(Collection<double> scores) : Scorer(SimilarityPtr())
-        {
-            this->scores = scores;
-            idx = -1;
-        }
+namespace TestNegativeScores {
 
-        virtual ~SimpleScorer()
-        {
-        }
+class SimpleScorer : public Scorer {
+public:
+    SimpleScorer(Collection<double> scores) : Scorer(SimilarityPtr()) {
+        this->scores = scores;
+        idx = -1;
+    }
 
-    public:
-        int32_t idx;
-        Collection<double> scores;
+    virtual ~SimpleScorer() {
+    }
 
-    public:
-        virtual double score()
-        {
-            return idx == scores.size() ? std::numeric_limits<double>::quiet_NaN() : scores[idx];
-        }
+public:
+    int32_t idx;
+    Collection<double> scores;
 
-        virtual int32_t docID()
-        {
-            return idx;
-        }
+public:
+    virtual double score() {
+        return idx == scores.size() ? std::numeric_limits<double>::quiet_NaN() : scores[idx];
+    }
 
-        virtual int32_t nextDoc()
-        {
-            return ++idx != scores.size() ? idx : DocIdSetIterator::NO_MORE_DOCS;
-        }
+    virtual int32_t docID() {
+        return idx;
+    }
 
-        virtual int32_t advance(int32_t target)
-        {
-            idx = target;
-            return idx < scores.size() ? idx : DocIdSetIterator::NO_MORE_DOCS;
-        }
-    };
+    virtual int32_t nextDoc() {
+        return ++idx != scores.size() ? idx : DocIdSetIterator::NO_MORE_DOCS;
+    }
+
+    virtual int32_t advance(int32_t target) {
+        idx = target;
+        return idx < scores.size() ? idx : DocIdSetIterator::NO_MORE_DOCS;
+    }
+};
+
 }
 
-TEST_F(PositiveScoresOnlyCollectorTest, testNegativeScores)
-{
+TEST_F(PositiveScoresOnlyCollectorTest, testNegativeScores) {
     // The scores must have positive as well as negative values
     Collection<double> scores = Collection<double>::newInstance();
     scores.add(0.7767749);
@@ -82,22 +75,24 @@ TEST_F(PositiveScoresOnlyCollectorTest, testNegativeScores)
     // <= 0 scores are indeed filtered.
 
     int32_t numPositiveScores = 0;
-    for (int32_t i = 0; i < scores.size(); ++i)
-    {
-        if (scores[i] > 0)
+    for (int32_t i = 0; i < scores.size(); ++i) {
+        if (scores[i] > 0) {
             ++numPositiveScores;
+        }
     }
 
     ScorerPtr s = newLucene<TestNegativeScores::SimpleScorer>(scores);
     TopDocsCollectorPtr tdc = TopScoreDocCollector::create(scores.size(), true);
     CollectorPtr c = newLucene<PositiveScoresOnlyCollector>(tdc);
     c->setScorer(s);
-    while (s->nextDoc() != DocIdSetIterator::NO_MORE_DOCS)
+    while (s->nextDoc() != DocIdSetIterator::NO_MORE_DOCS) {
         c->collect(0);
+    }
 
     TopDocsPtr td = tdc->topDocs();
     Collection<ScoreDocPtr> sd = td->scoreDocs;
     EXPECT_EQ(numPositiveScores, td->totalHits);
-    for (int32_t i = 0; i < sd.size(); ++i)
+    for (int32_t i = 0; i < sd.size(); ++i) {
         EXPECT_TRUE(sd[i]->score > 0);
+    }
 }

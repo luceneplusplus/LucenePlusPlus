@@ -25,22 +25,19 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexFileDeleterTest;
 
-static void addDoc(const IndexWriterPtr& writer, int32_t id)
-{
+static void addDoc(const IndexWriterPtr& writer, int32_t id) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED));
     doc->add(newLucene<Field>(L"id", StringUtils::toString(id), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void copyFile(const DirectoryPtr& dir, const String& src, const String& dest)
-{
+static void copyFile(const DirectoryPtr& dir, const String& src, const String& dest) {
     IndexInputPtr in = dir->openInput(src);
     IndexOutputPtr out = dir->createOutput(dest);
     ByteArray b = ByteArray::newInstance(1024);
     int64_t remainder = in->length();
-    while (remainder > 0)
-    {
+    while (remainder > 0) {
         int32_t len = std::min(b.size(), (int32_t)remainder);
         in->readBytes(b.get(), 0, len);
         out->writeBytes(b.get(), len);
@@ -50,40 +47,42 @@ static void copyFile(const DirectoryPtr& dir, const String& src, const String& d
     out->close();
 }
 
-static HashSet<String> difFiles(Collection<String> files1, Collection<String> files2)
-{
+static HashSet<String> difFiles(Collection<String> files1, Collection<String> files2) {
     HashSet<String> set1 = HashSet<String>::newInstance();
     HashSet<String> set2 = HashSet<String>::newInstance();
     HashSet<String> extra = HashSet<String>::newInstance();
-    for (Collection<String>::iterator file = files1.begin(); file != files1.end(); ++file)
+    for (Collection<String>::iterator file = files1.begin(); file != files1.end(); ++file) {
         set1.add(*file);
-    for (Collection<String>::iterator file = files2.begin(); file != files2.end(); ++file)
-        set2.add(*file);
-    for (HashSet<String>::iterator file = set1.begin(); file != set1.end(); ++file)
-    {
-        if (!set2.contains(*file))
-            extra.add(*file);
     }
-    for (HashSet<String>::iterator file = set2.begin(); file != set2.end(); ++file)
-    {
-        if (!set1.contains(*file))
+    for (Collection<String>::iterator file = files2.begin(); file != files2.end(); ++file) {
+        set2.add(*file);
+    }
+    for (HashSet<String>::iterator file = set1.begin(); file != set1.end(); ++file) {
+        if (!set2.contains(*file)) {
             extra.add(*file);
+        }
+    }
+    for (HashSet<String>::iterator file = set2.begin(); file != set2.end(); ++file) {
+        if (!set1.contains(*file)) {
+            extra.add(*file);
+        }
     }
     return extra;
 }
 
-TEST_F(IndexFileDeleterTest, testDeleteLeftoverFiles)
-{
+TEST_F(IndexFileDeleterTest, testDeleteLeftoverFiles) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
 
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(10);
     int32_t i = 0;
-    for (; i < 35; ++i)
+    for (; i < 35; ++i) {
         addDoc(writer, i);
+    }
     writer->setUseCompoundFile(false);
-    for (; i < 45; ++i)
+    for (; i < 45; ++i) {
         addDoc(writer, i);
+    }
     writer->close();
 
     // Delete one doc so we get a .del file
@@ -104,11 +103,9 @@ TEST_F(IndexFileDeleterTest, testDeleteLeftoverFiles)
     CompoundFileReaderPtr cfsReader = newLucene<CompoundFileReader>(dir, L"_2.cfs");
     FieldInfosPtr fieldInfos = newLucene<FieldInfos>(cfsReader, L"_2.fnm");
     int32_t contentFieldIndex = -1;
-    for (int32_t j = 0; j < fieldInfos->size(); ++j)
-    {
+    for (int32_t j = 0; j < fieldInfos->size(); ++j) {
         FieldInfoPtr fi = fieldInfos->fieldInfo(j);
-        if (fi->name == L"content")
-        {
+        if (fi->name == L"content") {
             contentFieldIndex = j;
             break;
         }

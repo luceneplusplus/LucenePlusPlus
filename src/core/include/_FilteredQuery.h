@@ -10,56 +10,55 @@
 #include "Weight.h"
 #include "Scorer.h"
 
-namespace Lucene
-{
-    class FilteredQueryWeight : public Weight
-    {
-    public:
-        FilteredQueryWeight(const FilteredQueryPtr& query, const WeightPtr& weight, const SimilarityPtr& similarity);
-        virtual ~FilteredQueryWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(FilteredQueryWeight);
+class FilteredQueryWeight : public Weight {
+public:
+    FilteredQueryWeight(const FilteredQueryPtr& query, const WeightPtr& weight, const SimilarityPtr& similarity);
+    virtual ~FilteredQueryWeight();
 
-    protected:
-        FilteredQueryPtr query;
-        WeightPtr weight;
-        SimilarityPtr similarity;
-        double value;
+    LUCENE_CLASS(FilteredQueryWeight);
 
-    public:
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
-        virtual QueryPtr getQuery();
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+protected:
+    FilteredQueryPtr query;
+    WeightPtr weight;
+    SimilarityPtr similarity;
+    double value;
 
-        friend class FilteredQueryWeightScorer;
-    };
+public:
+    virtual double getValue();
+    virtual double sumOfSquaredWeights();
+    virtual void normalize(double norm);
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+    virtual QueryPtr getQuery();
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
 
-    class FilteredQueryWeightScorer : public Scorer
-    {
-    public:
-        FilteredQueryWeightScorer(const FilteredQueryWeightPtr& weight, const ScorerPtr& scorer, const DocIdSetIteratorPtr& docIdSetIterator, const SimilarityPtr& similarity);
-        virtual ~FilteredQueryWeightScorer();
+    friend class FilteredQueryWeightScorer;
+};
 
-        LUCENE_CLASS(FilteredQueryWeightScorer);
+class FilteredQueryWeightScorer : public Scorer {
+public:
+    FilteredQueryWeightScorer(const FilteredQueryWeightPtr& weight, const ScorerPtr& scorer, const DocIdSetIteratorPtr& docIdSetIterator, const SimilarityPtr& similarity);
+    virtual ~FilteredQueryWeightScorer();
 
-    protected:
-        FilteredQueryWeightPtr weight;
-        ScorerPtr scorer;
-        DocIdSetIteratorPtr docIdSetIterator;
-        int32_t doc;
+    LUCENE_CLASS(FilteredQueryWeightScorer);
 
-    public:
-        virtual int32_t nextDoc();
-        virtual int32_t docID();
-        virtual int32_t advance(int32_t target);
-        virtual double score();
+protected:
+    FilteredQueryWeightPtr weight;
+    ScorerPtr scorer;
+    DocIdSetIteratorPtr docIdSetIterator;
+    int32_t doc;
 
-    protected:
-        int32_t advanceToCommon(int32_t scorerDoc, int32_t disiDoc);
-    };
+public:
+    virtual int32_t nextDoc();
+    virtual int32_t docID();
+    virtual int32_t advance(int32_t target);
+    virtual double score();
+
+protected:
+    int32_t advanceToCommon(int32_t scorerDoc, int32_t disiDoc);
+};
+
 }
 
 #endif

@@ -9,26 +9,26 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Implement this class to plug into the TermsHash processor, which inverts & stores Tokens into a hash
-    /// table and provides an API for writing bytes into multiple streams for each unique Token.
-    class TermsHashConsumerPerField : public LuceneObject
-    {
-    public:
-        virtual ~TermsHashConsumerPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(TermsHashConsumerPerField);
+/// Implement this class to plug into the TermsHash processor, which inverts & stores Tokens into a hash
+/// table and provides an API for writing bytes into multiple streams for each unique Token.
+class TermsHashConsumerPerField : public LuceneObject {
+public:
+    virtual ~TermsHashConsumerPerField();
 
-    public:
-        virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
-        virtual void finish() = 0;
-        virtual void skippingLongTerm() = 0;
-        virtual void start(const FieldablePtr& field) = 0;
-        virtual void newTerm(const RawPostingListPtr& p) = 0;
-        virtual void addTerm(const RawPostingListPtr& p) = 0;
-        virtual int32_t getStreamCount() = 0;
-    };
+    LUCENE_CLASS(TermsHashConsumerPerField);
+
+public:
+    virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
+    virtual void finish() = 0;
+    virtual void skippingLongTerm() = 0;
+    virtual void start(const FieldablePtr& field) = 0;
+    virtual void newTerm(const RawPostingListPtr& p) = 0;
+    virtual void addTerm(const RawPostingListPtr& p) = 0;
+    virtual int32_t getStreamCount() = 0;
+};
+
 }
 
 #endif

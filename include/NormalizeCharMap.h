@@ -9,30 +9,30 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Holds a map of String input to String output, to be used with {@link MappingCharFilter}.
-    class LPPAPI NormalizeCharMap : public LuceneObject
-    {
-    public:
-        NormalizeCharMap();
-        virtual ~NormalizeCharMap();
+namespace Lucene {
 
-        LUCENE_CLASS(NormalizeCharMap);
+/// Holds a map of String input to String output, to be used with {@link MappingCharFilter}.
+class LPPAPI NormalizeCharMap : public LuceneObject {
+public:
+    NormalizeCharMap();
+    virtual ~NormalizeCharMap();
 
-    public:
-        MapCharNormalizeCharMap submap;
-        String normStr;
-        int32_t diff;
+    LUCENE_CLASS(NormalizeCharMap);
 
-    public:
-        /// Records a replacement to be applied to the inputs stream.  Whenever singleMatch occurs in the input, it
-        /// will be replaced with replacement.
-        ///
-        /// @param singleMatch input String to be replaced
-        /// @param replacement output String
-        void add(const String& singleMatch, const String& replacement);
-    };
+public:
+    MapCharNormalizeCharMap submap;
+    String normStr;
+    int32_t diff;
+
+public:
+    /// Records a replacement to be applied to the inputs stream.  Whenever singleMatch occurs in the input, it
+    /// will be replaced with replacement.
+    ///
+    /// @param singleMatch input String to be replaced
+    /// @param replacement output String
+    void add(const String& singleMatch, const String& replacement);
+};
+
 }
 
 #endif

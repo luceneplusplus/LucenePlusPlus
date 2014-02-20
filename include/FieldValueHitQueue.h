@@ -10,64 +10,63 @@
 #include "HitQueueBase.h"
 #include "ScoreDoc.h"
 
-namespace Lucene
-{
-    /// A hit queue for sorting by hits by terms in more than one field.  Uses FieldCache::DEFAULT for maintaining
-    /// internal term lookup tables.
-    /// @see Searcher#search(QueryPtr, FilterPtr, int32_t, SortPtr)
-    /// @see FieldCache
-    class LPPAPI FieldValueHitQueue : public HitQueueBase
-    {
-    protected:
-        FieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
+namespace Lucene {
 
-    public:
-        virtual ~FieldValueHitQueue();
+/// A hit queue for sorting by hits by terms in more than one field.  Uses FieldCache::DEFAULT for maintaining
+/// internal term lookup tables.
+/// @see Searcher#search(QueryPtr, FilterPtr, int32_t, SortPtr)
+/// @see FieldCache
+class LPPAPI FieldValueHitQueue : public HitQueueBase {
+protected:
+    FieldValueHitQueue(Collection<SortFieldPtr> fields, int32_t size);
 
-        LUCENE_CLASS(FieldValueHitQueue);
+public:
+    virtual ~FieldValueHitQueue();
 
-    protected:
-        /// Stores the sort criteria being used.
-        Collection<SortFieldPtr> fields;
-        Collection<FieldComparatorPtr> comparators;
-        Collection<int32_t> reverseMul;
+    LUCENE_CLASS(FieldValueHitQueue);
 
-    public:
-        /// Creates a hit queue sorted by the given list of fields.
-        /// @param fields SortField array we are sorting by in priority order (highest priority first); cannot
-        /// be null or empty.
-        /// @param size The number of hits to retain. Must be greater than zero.
-        static FieldValueHitQueuePtr create(Collection<SortFieldPtr> fields, int32_t size);
+protected:
+    /// Stores the sort criteria being used.
+    Collection<SortFieldPtr> fields;
+    Collection<FieldComparatorPtr> comparators;
+    Collection<int32_t> reverseMul;
 
-        Collection<FieldComparatorPtr> getComparators();
-        Collection<int32_t> getReverseMul();
+public:
+    /// Creates a hit queue sorted by the given list of fields.
+    /// @param fields SortField array we are sorting by in priority order (highest priority first); cannot
+    /// be null or empty.
+    /// @param size The number of hits to retain. Must be greater than zero.
+    static FieldValueHitQueuePtr create(Collection<SortFieldPtr> fields, int32_t size);
 
-        /// Given a queue Entry, creates a corresponding FieldDoc that contains the values used to sort the given
-        /// document.  These values are not the raw values out of the index, but the internal representation of
-        /// them.  This is so the given search hit can be collated by a MultiSearcher with other search hits.
-        /// @param entry The Entry used to create a FieldDoc
-        /// @return The newly created FieldDoc
-        /// @see Searchable#search(WeightPtr, FilterPtr, int32_t, SortPtr)
-        FieldDocPtr fillFields(const FieldValueHitQueueEntryPtr& entry);
+    Collection<FieldComparatorPtr> getComparators();
+    Collection<int32_t> getReverseMul();
 
-        /// Returns the SortFields being used by this hit queue.
-        Collection<SortFieldPtr> getFields();
-    };
+    /// Given a queue Entry, creates a corresponding FieldDoc that contains the values used to sort the given
+    /// document.  These values are not the raw values out of the index, but the internal representation of
+    /// them.  This is so the given search hit can be collated by a MultiSearcher with other search hits.
+    /// @param entry The Entry used to create a FieldDoc
+    /// @return The newly created FieldDoc
+    /// @see Searchable#search(WeightPtr, FilterPtr, int32_t, SortPtr)
+    FieldDocPtr fillFields(const FieldValueHitQueueEntryPtr& entry);
 
-    class LPPAPI FieldValueHitQueueEntry : public ScoreDoc
-    {
-    public:
-        FieldValueHitQueueEntry(int32_t slot, int32_t doc, double score);
-        virtual ~FieldValueHitQueueEntry();
+    /// Returns the SortFields being used by this hit queue.
+    Collection<SortFieldPtr> getFields();
+};
 
-        LUCENE_CLASS(FieldValueHitQueueEntry);
+class LPPAPI FieldValueHitQueueEntry : public ScoreDoc {
+public:
+    FieldValueHitQueueEntry(int32_t slot, int32_t doc, double score);
+    virtual ~FieldValueHitQueueEntry();
 
-    public:
-        int32_t slot;
+    LUCENE_CLASS(FieldValueHitQueueEntry);
 
-    public:
-        virtual String toString();
-    };
+public:
+    int32_t slot;
+
+public:
+    virtual String toString();
+};
+
 }
 
 #endif

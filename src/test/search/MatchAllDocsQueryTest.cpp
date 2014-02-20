@@ -25,8 +25,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture MatchAllDocsQueryTest;
 
-static void addDoc(const String& text, const IndexWriterPtr& iw, double boost)
-{
+static void addDoc(const String& text, const IndexWriterPtr& iw, double boost) {
     DocumentPtr doc = newLucene<Document>();
     FieldPtr f = newLucene<Field>(L"key", text, Field::STORE_YES, Field::INDEX_ANALYZED);
     f->setBoost(boost);
@@ -34,8 +33,7 @@ static void addDoc(const String& text, const IndexWriterPtr& iw, double boost)
     iw->addDocument(doc);
 }
 
-TEST_F(MatchAllDocsQueryTest, testQuery)
-{
+TEST_F(MatchAllDocsQueryTest, testQuery) {
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr iw = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -109,8 +107,7 @@ TEST_F(MatchAllDocsQueryTest, testQuery)
     dir->close();
 }
 
-TEST_F(MatchAllDocsQueryTest, testEquals)
-{
+TEST_F(MatchAllDocsQueryTest, testEquals) {
     QueryPtr q1 = newLucene<MatchAllDocsQuery>();
     QueryPtr q2 = newLucene<MatchAllDocsQuery>();
     EXPECT_TRUE(q1->equals(q2));

@@ -9,37 +9,37 @@
 
 #include "Tokenizer.h"
 
-namespace Lucene
-{
-    /// Emits the entire input as a single token.
-    class LPPAPI KeywordTokenizer : public Tokenizer
-    {
-    public:
-        KeywordTokenizer(const ReaderPtr& input);
-        KeywordTokenizer(const ReaderPtr& input, int32_t bufferSize);
-        KeywordTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input, int32_t bufferSize);
-        KeywordTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input, int32_t bufferSize);
+namespace Lucene {
 
-        virtual ~KeywordTokenizer();
+/// Emits the entire input as a single token.
+class LPPAPI KeywordTokenizer : public Tokenizer {
+public:
+    KeywordTokenizer(const ReaderPtr& input);
+    KeywordTokenizer(const ReaderPtr& input, int32_t bufferSize);
+    KeywordTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input, int32_t bufferSize);
+    KeywordTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input, int32_t bufferSize);
 
-        LUCENE_CLASS(KeywordTokenizer);
+    virtual ~KeywordTokenizer();
 
-    protected:
-        static const int32_t DEFAULT_BUFFER_SIZE;
+    LUCENE_CLASS(KeywordTokenizer);
 
-        bool done;
-        int32_t finalOffset;
-        TermAttributePtr termAtt;
-        OffsetAttributePtr offsetAtt;
+protected:
+    static const int32_t DEFAULT_BUFFER_SIZE;
 
-    protected:
-        void init(int32_t bufferSize);
+    bool done;
+    int32_t finalOffset;
+    TermAttributePtr termAtt;
+    OffsetAttributePtr offsetAtt;
 
-    public:
-        virtual bool incrementToken();
-        virtual void end();
-        virtual void reset();
-    };
+protected:
+    void init(int32_t bufferSize);
+
+public:
+    virtual bool incrementToken();
+    virtual void end();
+    virtual void reset();
+};
+
 }
 
 #endif

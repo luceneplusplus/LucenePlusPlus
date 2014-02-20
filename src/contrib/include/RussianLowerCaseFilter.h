@@ -10,24 +10,24 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// Normalizes token text to lower case.
-    class LPPCONTRIBAPI RussianLowerCaseFilter : public TokenFilter
-    {
-    public:
-        RussianLowerCaseFilter(const TokenStreamPtr& input);
+namespace Lucene {
 
-        virtual ~RussianLowerCaseFilter();
+/// Normalizes token text to lower case.
+class LPPCONTRIBAPI RussianLowerCaseFilter : public TokenFilter {
+public:
+    RussianLowerCaseFilter(const TokenStreamPtr& input);
 
-        LUCENE_CLASS(RussianLowerCaseFilter);
+    virtual ~RussianLowerCaseFilter();
 
-    protected:
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(RussianLowerCaseFilter);
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

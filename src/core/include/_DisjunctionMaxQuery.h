@@ -9,46 +9,46 @@
 
 #include "Weight.h"
 
-namespace Lucene
-{
-    /// The Weight for DisjunctionMaxQuery, used to normalize, score and explain these queries.
-    class DisjunctionMaxWeight : public Weight
-    {
-    public:
-        /// Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights.
-        DisjunctionMaxWeight(const DisjunctionMaxQueryPtr& query, const SearcherPtr& searcher);
-        virtual ~DisjunctionMaxWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(DisjunctionMaxWeight);
+/// The Weight for DisjunctionMaxQuery, used to normalize, score and explain these queries.
+class DisjunctionMaxWeight : public Weight {
+public:
+    /// Construct the Weight for this Query searched by searcher.  Recursively construct subquery weights.
+    DisjunctionMaxWeight(const DisjunctionMaxQueryPtr& query, const SearcherPtr& searcher);
+    virtual ~DisjunctionMaxWeight();
 
-    protected:
-        DisjunctionMaxQueryPtr query;
+    LUCENE_CLASS(DisjunctionMaxWeight);
 
-        /// The Similarity implementation.
-        SimilarityPtr similarity;
+protected:
+    DisjunctionMaxQueryPtr query;
 
-        /// The Weights for our subqueries, in 1-1 correspondence with disjuncts
-        Collection<WeightPtr> weights;
+    /// The Similarity implementation.
+    SimilarityPtr similarity;
 
-    public:
-        /// Return our associated DisjunctionMaxQuery
-        virtual QueryPtr getQuery();
+    /// The Weights for our subqueries, in 1-1 correspondence with disjuncts
+    Collection<WeightPtr> weights;
 
-        /// Return our boost
-        virtual double getValue();
+public:
+    /// Return our associated DisjunctionMaxQuery
+    virtual QueryPtr getQuery();
 
-        /// Compute the sub of squared weights of us applied to our subqueries.  Used for normalization.
-        virtual double sumOfSquaredWeights();
+    /// Return our boost
+    virtual double getValue();
 
-        /// Apply the computed normalization factor to our subqueries
-        virtual void normalize(double norm);
+    /// Compute the sub of squared weights of us applied to our subqueries.  Used for normalization.
+    virtual double sumOfSquaredWeights();
 
-        /// Create the scorer used to score our associated DisjunctionMaxQuery
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+    /// Apply the computed normalization factor to our subqueries
+    virtual void normalize(double norm);
 
-        /// Explain the score we computed for doc
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
-    };
+    /// Create the scorer used to score our associated DisjunctionMaxQuery
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+
+    /// Explain the score we computed for doc
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+};
+
 }
 
 #endif

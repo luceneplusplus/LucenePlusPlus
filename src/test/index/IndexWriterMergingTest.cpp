@@ -18,30 +18,27 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexWriterMergingTest;
 
-static bool verifyIndex(const DirectoryPtr& directory, int32_t startAt)
-{
+static bool verifyIndex(const DirectoryPtr& directory, int32_t startAt) {
     bool fail = false;
     IndexReaderPtr reader = IndexReader::open(directory, true);
 
     int32_t max = reader->maxDoc();
-    for (int32_t i = 0; i < max; ++i)
-    {
+    for (int32_t i = 0; i < max; ++i) {
         DocumentPtr temp = reader->document(i);
-        if (temp->getField(L"count")->stringValue() != StringUtils::toString(i + startAt))
+        if (temp->getField(L"count")->stringValue() != StringUtils::toString(i + startAt)) {
             fail = true;
+        }
     }
     reader->close();
     return fail;
 }
 
-static void fillIndex(const DirectoryPtr& dir, int32_t start, int32_t numDocs)
-{
+static void fillIndex(const DirectoryPtr& dir, int32_t start, int32_t numDocs) {
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergeFactor(2);
     writer->setMaxBufferedDocs(2);
 
-    for (int32_t i = start; i < (start + numDocs); ++i)
-    {
+    for (int32_t i = start; i < (start + numDocs); ++i) {
         DocumentPtr temp = newLucene<Document>();
         temp->add(newLucene<Field>(L"count", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(temp);
@@ -50,8 +47,7 @@ static void fillIndex(const DirectoryPtr& dir, int32_t start, int32_t numDocs)
 }
 
 /// Tests that index merging (specifically addIndexesNoOptimize()) doesn't change the index order of documents.
-TEST_F(IndexWriterMergingTest, testIndexWriterMerging)
-{
+TEST_F(IndexWriterMergingTest, testIndexWriterMerging) {
     int32_t num = 100;
 
     DirectoryPtr indexA = newLucene<MockRAMDirectory>();

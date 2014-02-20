@@ -35,16 +35,13 @@
 
 using namespace Lucene;
 
-class DocumentWriterTest : public LuceneTestFixture, public DocHelper
-{
+class DocumentWriterTest : public LuceneTestFixture, public DocHelper {
 public:
-    virtual ~DocumentWriterTest()
-    {
+    virtual ~DocumentWriterTest() {
     }
 };
 
-TEST_F(DocumentWriterTest, testAddDocument)
-{
+TEST_F(DocumentWriterTest, testAddDocument) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
 
     DocumentPtr testDoc = newLucene<Document>();
@@ -84,42 +81,38 @@ TEST_F(DocumentWriterTest, testAddDocument)
     EXPECT_EQ(fields[0]->stringValue(), DocHelper::FIELD_3_TEXT);
 
     // test that the norms are not present in the segment if omitNorms is true
-    for (int32_t i = 0; i < reader->core->fieldInfos->size(); ++i)
-    {
+    for (int32_t i = 0; i < reader->core->fieldInfos->size(); ++i) {
         FieldInfoPtr fi = reader->core->fieldInfos->fieldInfo(i);
-        if (fi->isIndexed)
+        if (fi->isIndexed) {
             EXPECT_TRUE(fi->omitNorms == !reader->hasNorms(fi->name));
+        }
     }
 }
 
-namespace TestPositionIncrementGap
-{
-    DECLARE_SHARED_PTR(TestableAnalyzer)
+namespace TestPositionIncrementGap {
 
-    class TestableAnalyzer : public Analyzer
-    {
-    public:
-        virtual ~TestableAnalyzer()
-        {
-        }
+DECLARE_SHARED_PTR(TestableAnalyzer)
 
-        LUCENE_CLASS(TestableAnalyzer);
+class TestableAnalyzer : public Analyzer {
+public:
+    virtual ~TestableAnalyzer() {
+    }
 
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-        {
-            return newLucene<WhitespaceTokenizer>(reader);
-        }
+    LUCENE_CLASS(TestableAnalyzer);
 
-        virtual int32_t getPositionIncrementGap(const String& fieldName)
-        {
-            return 500;
-        }
-    };
+public:
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
+        return newLucene<WhitespaceTokenizer>(reader);
+    }
+
+    virtual int32_t getPositionIncrementGap(const String& fieldName) {
+        return 500;
+    }
+};
+
 }
 
-TEST_F(DocumentWriterTest, testPositionIncrementGap)
-{
+TEST_F(DocumentWriterTest, testPositionIncrementGap) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
 
     AnalyzerPtr analyzer = newLucene<TestPositionIncrementGap::TestableAnalyzer>();
@@ -143,89 +136,82 @@ TEST_F(DocumentWriterTest, testPositionIncrementGap)
     EXPECT_EQ(502, termPositions->nextPosition());
 }
 
-namespace TestTokenReuse
-{
-    DECLARE_SHARED_PTR(TestableTokenFilter)
-    DECLARE_SHARED_PTR(TestableAnalyzer)
+namespace TestTokenReuse {
 
-    class TestableTokenFilter : public TokenFilter
-    {
-    public:
-        TestableTokenFilter(const ReaderPtr& reader) : TokenFilter(newLucene<WhitespaceTokenizer>(reader))
-        {
-            first = true;
-            termAtt = addAttribute<TermAttribute>();
-            payloadAtt = addAttribute<PayloadAttribute>();
-            posIncrAtt = addAttribute<PositionIncrementAttribute>();
-        }
+DECLARE_SHARED_PTR(TestableTokenFilter)
+DECLARE_SHARED_PTR(TestableAnalyzer)
 
-        virtual ~TestableTokenFilter()
-        {
-        }
+class TestableTokenFilter : public TokenFilter {
+public:
+    TestableTokenFilter(const ReaderPtr& reader) : TokenFilter(newLucene<WhitespaceTokenizer>(reader)) {
+        first = true;
+        termAtt = addAttribute<TermAttribute>();
+        payloadAtt = addAttribute<PayloadAttribute>();
+        posIncrAtt = addAttribute<PositionIncrementAttribute>();
+    }
 
-        LUCENE_CLASS(TestableTokenFilter);
+    virtual ~TestableTokenFilter() {
+    }
 
-    public:
-        bool first;
-        AttributeSourceStatePtr state;
-        TermAttributePtr termAtt;
-        PayloadAttributePtr payloadAtt;
-        PositionIncrementAttributePtr posIncrAtt;
+    LUCENE_CLASS(TestableTokenFilter);
 
-    public:
-        virtual bool incrementToken()
-        {
-            if (state)
-            {
-                restoreState(state);
-                payloadAtt->setPayload(PayloadPtr());
-                posIncrAtt->setPositionIncrement(0);
-                static const wchar_t buffer[] = L"b";
+public:
+    bool first;
+    AttributeSourceStatePtr state;
+    TermAttributePtr termAtt;
+    PayloadAttributePtr payloadAtt;
+    PositionIncrementAttributePtr posIncrAtt;
 
-                termAtt->setTermBuffer(buffer, 0, 1);
-                state.reset();
-                return true;
-            }
+public:
+    virtual bool incrementToken() {
+        if (state) {
+            restoreState(state);
+            payloadAtt->setPayload(PayloadPtr());
+            posIncrAtt->setPositionIncrement(0);
+            static const wchar_t buffer[] = L"b";
 
-            bool hasNext = input->incrementToken();
-            if (!hasNext)
-                return false;
-            if (UnicodeUtil::isDigit(termAtt->termBufferArray()[0]))
-                posIncrAtt->setPositionIncrement(termAtt->termBufferArray()[0] - L'0');
-            if (first)
-            {
-                ByteArray payload = ByteArray::newInstance(1);
-                payload.get()[0] = 100;
-
-                // set payload on first position only
-                payloadAtt->setPayload(newLucene<Payload>(payload));
-                first = false;
-            }
-            // index a "synonym" for every token
-            state = captureState();
+            termAtt->setTermBuffer(buffer, 0, 1);
+            state.reset();
             return true;
         }
-    };
 
-    class TestableAnalyzer : public Analyzer
-    {
-    public:
-        virtual ~TestableAnalyzer()
-        {
+        bool hasNext = input->incrementToken();
+        if (!hasNext) {
+            return false;
         }
-
-        LUCENE_CLASS(TestableAnalyzer);
-
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-        {
-            return newLucene<TestableTokenFilter>(reader);
+        if (UnicodeUtil::isDigit(termAtt->termBufferArray()[0])) {
+            posIncrAtt->setPositionIncrement(termAtt->termBufferArray()[0] - L'0');
         }
-    };
+        if (first) {
+            ByteArray payload = ByteArray::newInstance(1);
+            payload.get()[0] = 100;
+
+            // set payload on first position only
+            payloadAtt->setPayload(newLucene<Payload>(payload));
+            first = false;
+        }
+        // index a "synonym" for every token
+        state = captureState();
+        return true;
+    }
+};
+
+class TestableAnalyzer : public Analyzer {
+public:
+    virtual ~TestableAnalyzer() {
+    }
+
+    LUCENE_CLASS(TestableAnalyzer);
+
+public:
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
+        return newLucene<TestableTokenFilter>(reader);
+    }
+};
+
 }
 
-TEST_F(DocumentWriterTest, testTokenReuse)
-{
+TEST_F(DocumentWriterTest, testTokenReuse) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
 
     AnalyzerPtr analyzer = newLucene<TestTokenReuse::TestableAnalyzer>();
@@ -252,48 +238,43 @@ TEST_F(DocumentWriterTest, testTokenReuse)
     EXPECT_EQ(false, termPositions->isPayloadAvailable());
 }
 
-namespace TestPreAnalyzedField
-{
-    DECLARE_SHARED_PTR(TestableTokenStream)
+namespace TestPreAnalyzedField {
 
-    class TestableTokenStream : public TokenStream
-    {
-    public:
-        TestableTokenStream()
-        {
-            tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
-            index = 0;
-            termAtt = addAttribute<TermAttribute>();
+DECLARE_SHARED_PTR(TestableTokenStream)
+
+class TestableTokenStream : public TokenStream {
+public:
+    TestableTokenStream() {
+        tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
+        index = 0;
+        termAtt = addAttribute<TermAttribute>();
+    }
+
+    virtual ~TestableTokenStream() {
+    }
+
+    LUCENE_CLASS(TestableTokenStream);
+
+protected:
+    Collection<String> tokens;
+    int32_t index;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken() {
+        if (index == tokens.size()) {
+            return false;
+        } else {
+            clearAttributes();
+            termAtt->setTermBuffer(tokens[index++]);
+            return true;
         }
+    }
+};
 
-        virtual ~TestableTokenStream()
-        {
-        }
-
-        LUCENE_CLASS(TestableTokenStream);
-
-    protected:
-        Collection<String> tokens;
-        int32_t index;
-        TermAttributePtr termAtt;
-
-    public:
-        virtual bool incrementToken()
-        {
-            if (index == tokens.size())
-                return false;
-            else
-            {
-                clearAttributes();
-                termAtt->setTermBuffer(tokens[index++]);
-                return true;
-            }
-        }
-    };
 }
 
-TEST_F(DocumentWriterTest, testPreAnalyzedField)
-{
+TEST_F(DocumentWriterTest, testPreAnalyzedField) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
 
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -325,8 +306,7 @@ TEST_F(DocumentWriterTest, testPreAnalyzedField)
 }
 
 /// Test adding two fields with the same name, but with different term vector setting
-TEST_F(DocumentWriterTest, testMixedTermVectorSettingsSameField)
-{
+TEST_F(DocumentWriterTest, testMixedTermVectorSettingsSameField) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     DocumentPtr doc = newLucene<Document>();
     // f1 first without tv then with tv
@@ -355,8 +335,7 @@ TEST_F(DocumentWriterTest, testMixedTermVectorSettingsSameField)
 
 /// Test adding two fields with the same name, one indexed the other stored only. The omitNorms and
 /// omitTermFreqAndPositions setting of the stored field should not affect the indexed one
-TEST_F(DocumentWriterTest, testMixedTermVectorSettingsSameField2)
-{
+TEST_F(DocumentWriterTest, testMixedTermVectorSettingsSameField2) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     DocumentPtr doc = newLucene<Document>();
     // f1 has no norms

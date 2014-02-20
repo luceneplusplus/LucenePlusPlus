@@ -12,8 +12,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CompressionToolsTest;
 
-TEST_F(CompressionToolsTest, testCompressDecompress)
-{
+TEST_F(CompressionToolsTest, testCompressDecompress) {
     ByteArray compress(CompressionTools::compressString(L"test compressed string"));
     EXPECT_TRUE(compress.size() > 0);
 

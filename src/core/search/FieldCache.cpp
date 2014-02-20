@@ -11,351 +11,290 @@
 #include "NumericUtils.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    /// Indicator for StringIndex values in the cache.
-    const int32_t FieldCache::STRING_INDEX = -1;
+namespace Lucene {
 
-    FieldCache::~FieldCache()
-    {
-    }
+/// Indicator for StringIndex values in the cache.
+const int32_t FieldCache::STRING_INDEX = -1;
 
-    FieldCachePtr FieldCache::DEFAULT()
-    {
-        static FieldCacheImplPtr _DEFAULT;
-        if (!_DEFAULT)
-        {
-            _DEFAULT = newLucene<FieldCacheImpl>();
-            CycleCheck::addStatic(_DEFAULT);
-        }
-        return _DEFAULT;
-    }
+FieldCache::~FieldCache() {
+}
 
-    ByteParserPtr FieldCache::DEFAULT_BYTE_PARSER()
-    {
-        static DefaultByteParserPtr _DEFAULT_BYTE_PARSER;
-        if (!_DEFAULT_BYTE_PARSER)
-        {
-            _DEFAULT_BYTE_PARSER = newLucene<DefaultByteParser>();
-            CycleCheck::addStatic(_DEFAULT_BYTE_PARSER);
-        }
-        return _DEFAULT_BYTE_PARSER;
+FieldCachePtr FieldCache::DEFAULT() {
+    static FieldCacheImplPtr _DEFAULT;
+    if (!_DEFAULT) {
+        _DEFAULT = newLucene<FieldCacheImpl>();
+        CycleCheck::addStatic(_DEFAULT);
     }
+    return _DEFAULT;
+}
 
-    IntParserPtr FieldCache::DEFAULT_INT_PARSER()
-    {
-        static DefaultIntParserPtr _DEFAULT_INT_PARSER;
-        if (!_DEFAULT_INT_PARSER)
-        {
-            _DEFAULT_INT_PARSER = newLucene<DefaultIntParser>();
-            CycleCheck::addStatic(_DEFAULT_INT_PARSER);
-        }
-        return _DEFAULT_INT_PARSER;
+ByteParserPtr FieldCache::DEFAULT_BYTE_PARSER() {
+    static DefaultByteParserPtr _DEFAULT_BYTE_PARSER;
+    if (!_DEFAULT_BYTE_PARSER) {
+        _DEFAULT_BYTE_PARSER = newLucene<DefaultByteParser>();
+        CycleCheck::addStatic(_DEFAULT_BYTE_PARSER);
     }
+    return _DEFAULT_BYTE_PARSER;
+}
 
-    LongParserPtr FieldCache::DEFAULT_LONG_PARSER()
-    {
-        static DefaultLongParserPtr _DEFAULT_LONG_PARSER;
-        if (!_DEFAULT_LONG_PARSER)
-        {
-            _DEFAULT_LONG_PARSER = newLucene<DefaultLongParser>();
-            CycleCheck::addStatic(_DEFAULT_LONG_PARSER);
-        }
-        return _DEFAULT_LONG_PARSER;
+IntParserPtr FieldCache::DEFAULT_INT_PARSER() {
+    static DefaultIntParserPtr _DEFAULT_INT_PARSER;
+    if (!_DEFAULT_INT_PARSER) {
+        _DEFAULT_INT_PARSER = newLucene<DefaultIntParser>();
+        CycleCheck::addStatic(_DEFAULT_INT_PARSER);
     }
+    return _DEFAULT_INT_PARSER;
+}
 
-    DoubleParserPtr FieldCache::DEFAULT_DOUBLE_PARSER()
-    {
-        static DefaultDoubleParserPtr _DEFAULT_DOUBLE_PARSER;
-        if (!_DEFAULT_DOUBLE_PARSER)
-        {
-            _DEFAULT_DOUBLE_PARSER = newLucene<DefaultDoubleParser>();
-            CycleCheck::addStatic(_DEFAULT_DOUBLE_PARSER);
-        }
-        return _DEFAULT_DOUBLE_PARSER;
+LongParserPtr FieldCache::DEFAULT_LONG_PARSER() {
+    static DefaultLongParserPtr _DEFAULT_LONG_PARSER;
+    if (!_DEFAULT_LONG_PARSER) {
+        _DEFAULT_LONG_PARSER = newLucene<DefaultLongParser>();
+        CycleCheck::addStatic(_DEFAULT_LONG_PARSER);
     }
+    return _DEFAULT_LONG_PARSER;
+}
 
-    IntParserPtr FieldCache::NUMERIC_UTILS_INT_PARSER()
-    {
-        static NumericUtilsIntParserPtr _NUMERIC_UTILS_INT_PARSER;
-        if (!_NUMERIC_UTILS_INT_PARSER)
-        {
-            _NUMERIC_UTILS_INT_PARSER = newLucene<NumericUtilsIntParser>();
-            CycleCheck::addStatic(_NUMERIC_UTILS_INT_PARSER);
-        }
-        return _NUMERIC_UTILS_INT_PARSER;
+DoubleParserPtr FieldCache::DEFAULT_DOUBLE_PARSER() {
+    static DefaultDoubleParserPtr _DEFAULT_DOUBLE_PARSER;
+    if (!_DEFAULT_DOUBLE_PARSER) {
+        _DEFAULT_DOUBLE_PARSER = newLucene<DefaultDoubleParser>();
+        CycleCheck::addStatic(_DEFAULT_DOUBLE_PARSER);
     }
+    return _DEFAULT_DOUBLE_PARSER;
+}
 
-    LongParserPtr FieldCache::NUMERIC_UTILS_LONG_PARSER()
-    {
-        static NumericUtilsLongParserPtr _NUMERIC_UTILS_LONG_PARSER;
-        if (!_NUMERIC_UTILS_LONG_PARSER)
-        {
-            _NUMERIC_UTILS_LONG_PARSER = newLucene<NumericUtilsLongParser>();
-            CycleCheck::addStatic(_NUMERIC_UTILS_LONG_PARSER);
-        }
-        return _NUMERIC_UTILS_LONG_PARSER;
+IntParserPtr FieldCache::NUMERIC_UTILS_INT_PARSER() {
+    static NumericUtilsIntParserPtr _NUMERIC_UTILS_INT_PARSER;
+    if (!_NUMERIC_UTILS_INT_PARSER) {
+        _NUMERIC_UTILS_INT_PARSER = newLucene<NumericUtilsIntParser>();
+        CycleCheck::addStatic(_NUMERIC_UTILS_INT_PARSER);
     }
+    return _NUMERIC_UTILS_INT_PARSER;
+}
 
-    DoubleParserPtr FieldCache::NUMERIC_UTILS_DOUBLE_PARSER()
-    {
-        static NumericUtilsDoubleParserPtr _NUMERIC_UTILS_DOUBLE_PARSER;
-        if (!_NUMERIC_UTILS_DOUBLE_PARSER)
-        {
-            _NUMERIC_UTILS_DOUBLE_PARSER = newLucene<NumericUtilsDoubleParser>();
-            CycleCheck::addStatic(_NUMERIC_UTILS_DOUBLE_PARSER);
-        }
-        return _NUMERIC_UTILS_DOUBLE_PARSER;
+LongParserPtr FieldCache::NUMERIC_UTILS_LONG_PARSER() {
+    static NumericUtilsLongParserPtr _NUMERIC_UTILS_LONG_PARSER;
+    if (!_NUMERIC_UTILS_LONG_PARSER) {
+        _NUMERIC_UTILS_LONG_PARSER = newLucene<NumericUtilsLongParser>();
+        CycleCheck::addStatic(_NUMERIC_UTILS_LONG_PARSER);
     }
+    return _NUMERIC_UTILS_LONG_PARSER;
+}
 
-    Collection<uint8_t> FieldCache::getBytes(const IndexReaderPtr& reader, const String& field)
-    {
-        BOOST_ASSERT(false);
-        return Collection<uint8_t>(); // override
+DoubleParserPtr FieldCache::NUMERIC_UTILS_DOUBLE_PARSER() {
+    static NumericUtilsDoubleParserPtr _NUMERIC_UTILS_DOUBLE_PARSER;
+    if (!_NUMERIC_UTILS_DOUBLE_PARSER) {
+        _NUMERIC_UTILS_DOUBLE_PARSER = newLucene<NumericUtilsDoubleParser>();
+        CycleCheck::addStatic(_NUMERIC_UTILS_DOUBLE_PARSER);
     }
+    return _NUMERIC_UTILS_DOUBLE_PARSER;
+}
 
-    Collection<uint8_t> FieldCache::getBytes(const IndexReaderPtr& reader, const String& field, const ByteParserPtr& parser)
-    {
-        BOOST_ASSERT(false);
-        return Collection<uint8_t>(); // override
-    }
+Collection<uint8_t> FieldCache::getBytes(const IndexReaderPtr& reader, const String& field) {
+    BOOST_ASSERT(false);
+    return Collection<uint8_t>(); // override
+}
 
-    Collection<int32_t> FieldCache::getInts(const IndexReaderPtr& reader, const String& field)
-    {
-        BOOST_ASSERT(false);
-        return Collection<int32_t>(); // override
-    }
+Collection<uint8_t> FieldCache::getBytes(const IndexReaderPtr& reader, const String& field, const ByteParserPtr& parser) {
+    BOOST_ASSERT(false);
+    return Collection<uint8_t>(); // override
+}
 
-    Collection<int32_t> FieldCache::getInts(const IndexReaderPtr& reader, const String& field, const IntParserPtr& parser)
-    {
-        BOOST_ASSERT(false);
-        return Collection<int32_t>(); // override
-    }
+Collection<int32_t> FieldCache::getInts(const IndexReaderPtr& reader, const String& field) {
+    BOOST_ASSERT(false);
+    return Collection<int32_t>(); // override
+}
 
-    Collection<int64_t> FieldCache::getLongs(const IndexReaderPtr& reader, const String& field)
-    {
-        BOOST_ASSERT(false);
-        return Collection<int64_t>(); // override
-    }
+Collection<int32_t> FieldCache::getInts(const IndexReaderPtr& reader, const String& field, const IntParserPtr& parser) {
+    BOOST_ASSERT(false);
+    return Collection<int32_t>(); // override
+}
 
-    Collection<int64_t> FieldCache::getLongs(const IndexReaderPtr& reader, const String& field, const LongParserPtr& parser)
-    {
-        BOOST_ASSERT(false);
-        return Collection<int64_t>(); // override
-    }
+Collection<int64_t> FieldCache::getLongs(const IndexReaderPtr& reader, const String& field) {
+    BOOST_ASSERT(false);
+    return Collection<int64_t>(); // override
+}
 
-    Collection<double> FieldCache::getDoubles(const IndexReaderPtr& reader, const String& field)
-    {
-        BOOST_ASSERT(false);
-        return Collection<double>(); // override
-    }
+Collection<int64_t> FieldCache::getLongs(const IndexReaderPtr& reader, const String& field, const LongParserPtr& parser) {
+    BOOST_ASSERT(false);
+    return Collection<int64_t>(); // override
+}
 
-    Collection<double> FieldCache::getDoubles(const IndexReaderPtr& reader, const String& field, const DoubleParserPtr& parser)
-    {
-        BOOST_ASSERT(false);
-        return Collection<double>(); // override
-    }
+Collection<double> FieldCache::getDoubles(const IndexReaderPtr& reader, const String& field) {
+    BOOST_ASSERT(false);
+    return Collection<double>(); // override
+}
 
-    Collection<String> FieldCache::getStrings(const IndexReaderPtr& reader, const String& field)
-    {
-        BOOST_ASSERT(false);
-        return Collection<String>(); // override
-    }
+Collection<double> FieldCache::getDoubles(const IndexReaderPtr& reader, const String& field, const DoubleParserPtr& parser) {
+    BOOST_ASSERT(false);
+    return Collection<double>(); // override
+}
 
-    StringIndexPtr FieldCache::getStringIndex(const IndexReaderPtr& reader, const String& field)
-    {
-        BOOST_ASSERT(false);
-        return StringIndexPtr(); // override
-    }
+Collection<String> FieldCache::getStrings(const IndexReaderPtr& reader, const String& field) {
+    BOOST_ASSERT(false);
+    return Collection<String>(); // override
+}
 
-    void FieldCache::setInfoStream(const InfoStreamPtr& stream)
-    {
-        BOOST_ASSERT(false);
-        // override
-    }
+StringIndexPtr FieldCache::getStringIndex(const IndexReaderPtr& reader, const String& field) {
+    BOOST_ASSERT(false);
+    return StringIndexPtr(); // override
+}
 
-    InfoStreamPtr FieldCache::getInfoStream()
-    {
-        BOOST_ASSERT(false);
-        return InfoStreamPtr(); // override
-    }
+void FieldCache::setInfoStream(const InfoStreamPtr& stream) {
+    BOOST_ASSERT(false);
+    // override
+}
 
-    CreationPlaceholder::~CreationPlaceholder()
-    {
-    }
+InfoStreamPtr FieldCache::getInfoStream() {
+    BOOST_ASSERT(false);
+    return InfoStreamPtr(); // override
+}
 
-    StringIndex::StringIndex(Collection<int32_t> values, Collection<String> lookup)
-    {
-        this->order = values;
-        this->lookup = lookup;
-    }
+CreationPlaceholder::~CreationPlaceholder() {
+}
 
-    StringIndex::~StringIndex()
-    {
-    }
+StringIndex::StringIndex(Collection<int32_t> values, Collection<String> lookup) {
+    this->order = values;
+    this->lookup = lookup;
+}
 
-    int32_t StringIndex::binarySearchLookup(const String& key)
-    {
-        Collection<String>::iterator search = std::lower_bound(lookup.begin(), lookup.end(), key);
-        int32_t keyPos = std::distance(lookup.begin(), search);
-        return (search == lookup.end() || key < *search) ? -(keyPos + 1) : keyPos;
-    }
+StringIndex::~StringIndex() {
+}
 
-    Parser::~Parser()
-    {
-    }
+int32_t StringIndex::binarySearchLookup(const String& key) {
+    Collection<String>::iterator search = std::lower_bound(lookup.begin(), lookup.end(), key);
+    int32_t keyPos = std::distance(lookup.begin(), search);
+    return (search == lookup.end() || key < *search) ? -(keyPos + 1) : keyPos;
+}
 
-    ByteParser::~ByteParser()
-    {
-    }
+Parser::~Parser() {
+}
 
-    uint8_t ByteParser::parseByte(const String& string)
-    {
-        return 0; // override
-    }
+ByteParser::~ByteParser() {
+}
 
-    DefaultByteParser::~DefaultByteParser()
-    {
-    }
+uint8_t ByteParser::parseByte(const String& string) {
+    return 0; // override
+}
 
-    uint8_t DefaultByteParser::parseByte(const String& string)
-    {
-        return (uint8_t)StringUtils::toInt(string);
-    }
+DefaultByteParser::~DefaultByteParser() {
+}
 
-    String DefaultByteParser::toString()
-    {
-        return FieldCache::_getClassName() + L".DEFAULT_BYTE_PARSER";
-    }
+uint8_t DefaultByteParser::parseByte(const String& string) {
+    return (uint8_t)StringUtils::toInt(string);
+}
 
-    IntParser::~IntParser()
-    {
-    }
+String DefaultByteParser::toString() {
+    return FieldCache::_getClassName() + L".DEFAULT_BYTE_PARSER";
+}
 
-    int32_t IntParser::parseInt(const String& string)
-    {
-        return 0; // override
-    }
+IntParser::~IntParser() {
+}
 
-    DefaultIntParser::~DefaultIntParser()
-    {
-    }
+int32_t IntParser::parseInt(const String& string) {
+    return 0; // override
+}
 
-    int32_t DefaultIntParser::parseInt(const String& string)
-    {
-        return StringUtils::toInt(string);
-    }
+DefaultIntParser::~DefaultIntParser() {
+}
 
-    String DefaultIntParser::toString()
-    {
-        return FieldCache::_getClassName() + L".DEFAULT_INT_PARSER";
-    }
+int32_t DefaultIntParser::parseInt(const String& string) {
+    return StringUtils::toInt(string);
+}
 
-    NumericUtilsIntParser::~NumericUtilsIntParser()
-    {
-    }
+String DefaultIntParser::toString() {
+    return FieldCache::_getClassName() + L".DEFAULT_INT_PARSER";
+}
 
-    int32_t NumericUtilsIntParser::parseInt(const String& string)
-    {
-        int32_t shift = string[0] - NumericUtils::SHIFT_START_INT;
-        if (shift > 0 && shift <= 31)
-            boost::throw_exception(StopFillCacheException());
-        return NumericUtils::prefixCodedToInt(string);
-    }
+NumericUtilsIntParser::~NumericUtilsIntParser() {
+}
 
-    String NumericUtilsIntParser::toString()
-    {
-        return FieldCache::_getClassName() + L".NUMERIC_UTILS_INT_PARSER";
+int32_t NumericUtilsIntParser::parseInt(const String& string) {
+    int32_t shift = string[0] - NumericUtils::SHIFT_START_INT;
+    if (shift > 0 && shift <= 31) {
+        boost::throw_exception(StopFillCacheException());
     }
+    return NumericUtils::prefixCodedToInt(string);
+}
 
-    LongParser::~LongParser()
-    {
-    }
+String NumericUtilsIntParser::toString() {
+    return FieldCache::_getClassName() + L".NUMERIC_UTILS_INT_PARSER";
+}
 
-    int64_t LongParser::parseLong(const String& string)
-    {
-        return 0; // override
-    }
+LongParser::~LongParser() {
+}
 
-    DefaultLongParser::~DefaultLongParser()
-    {
-    }
+int64_t LongParser::parseLong(const String& string) {
+    return 0; // override
+}
 
-    int64_t DefaultLongParser::parseLong(const String& string)
-    {
-        return StringUtils::toLong(string);
-    }
+DefaultLongParser::~DefaultLongParser() {
+}
 
-    String DefaultLongParser::toString()
-    {
-        return FieldCache::_getClassName() + L".DEFAULT_LONG_PARSER";
-    }
+int64_t DefaultLongParser::parseLong(const String& string) {
+    return StringUtils::toLong(string);
+}
 
-    NumericUtilsLongParser::~NumericUtilsLongParser()
-    {
-    }
+String DefaultLongParser::toString() {
+    return FieldCache::_getClassName() + L".DEFAULT_LONG_PARSER";
+}
 
-    int64_t NumericUtilsLongParser::parseLong(const String& string)
-    {
-        int32_t shift = string[0] - NumericUtils::SHIFT_START_LONG;
-        if (shift > 0 && shift <= 63)
-            boost::throw_exception(StopFillCacheException());
-        return NumericUtils::prefixCodedToLong(string);
-    }
+NumericUtilsLongParser::~NumericUtilsLongParser() {
+}
 
-    String NumericUtilsLongParser::toString()
-    {
-        return FieldCache::_getClassName() + L".NUMERIC_UTILS_LONG_PARSER";
+int64_t NumericUtilsLongParser::parseLong(const String& string) {
+    int32_t shift = string[0] - NumericUtils::SHIFT_START_LONG;
+    if (shift > 0 && shift <= 63) {
+        boost::throw_exception(StopFillCacheException());
     }
+    return NumericUtils::prefixCodedToLong(string);
+}
 
-    DoubleParser::~DoubleParser()
-    {
-    }
+String NumericUtilsLongParser::toString() {
+    return FieldCache::_getClassName() + L".NUMERIC_UTILS_LONG_PARSER";
+}
 
-    double DoubleParser::parseDouble(const String& string)
-    {
-        return 0; // override
-    }
+DoubleParser::~DoubleParser() {
+}
 
-    DefaultDoubleParser::~DefaultDoubleParser()
-    {
-    }
+double DoubleParser::parseDouble(const String& string) {
+    return 0; // override
+}
 
-    double DefaultDoubleParser::parseDouble(const String& string)
-    {
-        return StringUtils::toDouble(string);
-    }
+DefaultDoubleParser::~DefaultDoubleParser() {
+}
 
-    String DefaultDoubleParser::toString()
-    {
-        return FieldCache::_getClassName() + L".DEFAULT_DOUBLE_PARSER";
-    }
+double DefaultDoubleParser::parseDouble(const String& string) {
+    return StringUtils::toDouble(string);
+}
 
-    NumericUtilsDoubleParser::~NumericUtilsDoubleParser()
-    {
-    }
+String DefaultDoubleParser::toString() {
+    return FieldCache::_getClassName() + L".DEFAULT_DOUBLE_PARSER";
+}
 
-    double NumericUtilsDoubleParser::parseDouble(const String& string)
-    {
-        int32_t shift = string[0] - NumericUtils::SHIFT_START_LONG;
-        if (shift > 0 && shift <= 63)
-            boost::throw_exception(StopFillCacheException());
-        return NumericUtils::sortableLongToDouble(NumericUtils::prefixCodedToLong(string));
-    }
+NumericUtilsDoubleParser::~NumericUtilsDoubleParser() {
+}
 
-    String NumericUtilsDoubleParser::toString()
-    {
-        return FieldCache::_getClassName() + L".NUMERIC_UTILS_DOUBLE_PARSER";
+double NumericUtilsDoubleParser::parseDouble(const String& string) {
+    int32_t shift = string[0] - NumericUtils::SHIFT_START_LONG;
+    if (shift > 0 && shift <= 63) {
+        boost::throw_exception(StopFillCacheException());
     }
+    return NumericUtils::sortableLongToDouble(NumericUtils::prefixCodedToLong(string));
+}
 
-    FieldCacheEntry::~FieldCacheEntry()
-    {
-    }
+String NumericUtilsDoubleParser::toString() {
+    return FieldCache::_getClassName() + L".NUMERIC_UTILS_DOUBLE_PARSER";
+}
 
-    String FieldCacheEntry::toString()
-    {
-        StringStream buffer;
-        buffer << L"'" << getReaderKey()->toString() << L"'=>" << getFieldName() << L"'," << getCacheType();
-        return buffer.str();
-    }
+FieldCacheEntry::~FieldCacheEntry() {
+}
+
+String FieldCacheEntry::toString() {
+    StringStream buffer;
+    buffer << L"'" << getReaderKey()->toString() << L"'=>" << getFieldName() << L"'," << getCacheType();
+    return buffer.str();
+}
+
 }

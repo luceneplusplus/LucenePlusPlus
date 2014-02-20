@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "DocConsumer.h"
 
-namespace Lucene
-{
-    DocConsumer::~DocConsumer()
-    {
-    }
+namespace Lucene {
+
+DocConsumer::~DocConsumer() {
+}
+
 }

@@ -9,28 +9,28 @@
 
 #include "Explanation.h"
 
-namespace Lucene
-{
-    class SimilarityIDFExplanation : public IDFExplanation
-    {
-    public:
-        SimilarityIDFExplanation(int32_t df, int32_t max, double idf);
-        SimilarityIDFExplanation(const String& exp, double idf);
+namespace Lucene {
 
-        virtual ~SimilarityIDFExplanation();
+class SimilarityIDFExplanation : public IDFExplanation {
+public:
+    SimilarityIDFExplanation(int32_t df, int32_t max, double idf);
+    SimilarityIDFExplanation(const String& exp, double idf);
 
-        LUCENE_CLASS(SimilarityIDFExplanation);
+    virtual ~SimilarityIDFExplanation();
 
-    protected:
-        String exp;
-        int32_t df;
-        int32_t max;
-        double idf;
+    LUCENE_CLASS(SimilarityIDFExplanation);
 
-    public:
-        virtual String explain();
-        virtual double getIdf();
-    };
+protected:
+    String exp;
+    int32_t df;
+    int32_t max;
+    double idf;
+
+public:
+    virtual String explain();
+    virtual double getIdf();
+};
+
 }
 
 #endif

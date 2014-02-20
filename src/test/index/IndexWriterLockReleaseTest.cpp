@@ -16,29 +16,22 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexWriterLockReleaseTest;
 
-TEST_F(IndexWriterLockReleaseTest, testIndexWriterLockRelease)
-{
+TEST_F(IndexWriterLockReleaseTest, testIndexWriterLockRelease) {
     String testDir(getTempDir(L"testIndexWriter"));
     FileUtils::createDirectory(testDir);
 
     DirectoryPtr dir = FSDirectory::open(testDir);
     IndexWriterPtr im;
 
-    try
-    {
+    try {
         im = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
-    }
-    catch (FileNotFoundException& e)
-    {
+    } catch (FileNotFoundException& e) {
         EXPECT_TRUE(check_exception(LuceneException::FileNotFound)(e));
     }
 
-    try
-    {
+    try {
         im = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
-    }
-    catch (FileNotFoundException& e)
-    {
+    } catch (FileNotFoundException& e) {
         EXPECT_TRUE(check_exception(LuceneException::FileNotFound)(e));
     }
 

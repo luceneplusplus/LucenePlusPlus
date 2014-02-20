@@ -9,30 +9,26 @@
 #include "DocIdBitSet.h"
 #include "BitSet.h"
 
-namespace Lucene
-{
-    MockFilter::MockFilter()
-    {
-        _wasCalled = false;
-    }
+namespace Lucene {
 
-    MockFilter::~MockFilter()
-    {
-    }
+MockFilter::MockFilter() {
+    _wasCalled = false;
+}
 
-    DocIdSetPtr MockFilter::getDocIdSet(const IndexReaderPtr& reader)
-    {
-        _wasCalled = true;
-        return newLucene<DocIdBitSet>(newLucene<BitSet>());
-    }
+MockFilter::~MockFilter() {
+}
 
-    void MockFilter::clear()
-    {
-        _wasCalled = false;
-    }
+DocIdSetPtr MockFilter::getDocIdSet(const IndexReaderPtr& reader) {
+    _wasCalled = true;
+    return newLucene<DocIdBitSet>(newLucene<BitSet>());
+}
 
-    bool MockFilter::wasCalled()
-    {
-        return _wasCalled;
-    }
+void MockFilter::clear() {
+    _wasCalled = false;
+}
+
+bool MockFilter::wasCalled() {
+    return _wasCalled;
+}
+
 }

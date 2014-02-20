@@ -9,80 +9,80 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// A Payload is metadata that can be stored together with each occurrence of a term. This metadata is stored
-    /// inline in the posting list of the specific term.
-    ///
-    /// To store payloads in the index a {@link TokenStream} has to be used that produces payload data.
-    ///
-    /// Use {@link TermPositions#getPayloadLength()} and {@link TermPositions#getPayload(byte[], int)} to retrieve
-    /// the payloads from the index.
-    class LPPAPI Payload : public LuceneObject
-    {
-    public:
-        /// Creates an empty payload and does not allocate a byte array.
-        Payload();
+namespace Lucene {
 
-        /// Creates a new payload with the the given array as data.  A reference to the passed-in array is held,
-        /// ie. no copy is made.
-        /// @param data the data of this payload
-        Payload(ByteArray data);
+/// A Payload is metadata that can be stored together with each occurrence of a term. This metadata is stored
+/// inline in the posting list of the specific term.
+///
+/// To store payloads in the index a {@link TokenStream} has to be used that produces payload data.
+///
+/// Use {@link TermPositions#getPayloadLength()} and {@link TermPositions#getPayload(byte[], int)} to retrieve
+/// the payloads from the index.
+class LPPAPI Payload : public LuceneObject {
+public:
+    /// Creates an empty payload and does not allocate a byte array.
+    Payload();
 
-        /// Creates a new payload with the the given array as data.  A reference to the passed-in array is held,
-        /// ie. no copy is made.
-        /// @param data the data of this payload
-        /// @param offset the offset in the data byte array
-        /// @param length the length of the data
-        Payload(ByteArray data, int32_t offset, int32_t length);
+    /// Creates a new payload with the the given array as data.  A reference to the passed-in array is held,
+    /// ie. no copy is made.
+    /// @param data the data of this payload
+    Payload(ByteArray data);
 
-        virtual ~Payload();
+    /// Creates a new payload with the the given array as data.  A reference to the passed-in array is held,
+    /// ie. no copy is made.
+    /// @param data the data of this payload
+    /// @param offset the offset in the data byte array
+    /// @param length the length of the data
+    Payload(ByteArray data, int32_t offset, int32_t length);
 
-        LUCENE_CLASS(Payload);
+    virtual ~Payload();
 
-    protected:
-        /// the byte array containing the payload data
-        ByteArray data;
+    LUCENE_CLASS(Payload);
 
-        /// the offset within the byte array
-        int32_t offset;
+protected:
+    /// the byte array containing the payload data
+    ByteArray data;
 
-        /// the length of the payload data
-        int32_t _length;
+    /// the offset within the byte array
+    int32_t offset;
 
-    public:
-        /// Sets this payloads data.  A reference to the passed-in array is held, ie. no copy is made.
-        void setData(ByteArray data);
+    /// the length of the payload data
+    int32_t _length;
 
-        /// Sets this payloads data.  A reference to the passed-in array is held, ie. no copy is made.
-        void setData(ByteArray data, int32_t offset, int32_t length);
+public:
+    /// Sets this payloads data.  A reference to the passed-in array is held, ie. no copy is made.
+    void setData(ByteArray data);
 
-        /// Returns a reference to the underlying byte array that holds this payloads data.
-        ByteArray getData();
+    /// Sets this payloads data.  A reference to the passed-in array is held, ie. no copy is made.
+    void setData(ByteArray data, int32_t offset, int32_t length);
 
-        /// Returns the offset in the underlying byte array
-        int32_t getOffset();
+    /// Returns a reference to the underlying byte array that holds this payloads data.
+    ByteArray getData();
 
-        /// Returns the length of the payload data.
-        int32_t length();
+    /// Returns the offset in the underlying byte array
+    int32_t getOffset();
 
-        /// Returns the byte at the given index.
-        uint8_t byteAt(int32_t index);
+    /// Returns the length of the payload data.
+    int32_t length();
 
-        /// Allocates a new byte array, copies the payload data into it and returns it.
-        ByteArray toByteArray();
+    /// Returns the byte at the given index.
+    uint8_t byteAt(int32_t index);
 
-        /// Copies the payload data to a byte array.
-        /// @param target the target byte array
-        /// @param targetOffset the offset in the target byte array
-        void copyTo(ByteArray target, int32_t targetOffset);
+    /// Allocates a new byte array, copies the payload data into it and returns it.
+    ByteArray toByteArray();
 
-        /// Clones this payload by creating a copy of the underlying byte array.
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    /// Copies the payload data to a byte array.
+    /// @param target the target byte array
+    /// @param targetOffset the offset in the target byte array
+    void copyTo(ByteArray target, int32_t targetOffset);
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-    };
+    /// Clones this payload by creating a copy of the underlying byte array.
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+};
+
 }
 
 #endif

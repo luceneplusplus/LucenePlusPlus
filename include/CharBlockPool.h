@@ -9,32 +9,32 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class CharBlockPool : public LuceneObject
-    {
-    public:
-        CharBlockPool(const DocumentsWriterPtr& docWriter);
-        virtual ~CharBlockPool();
+namespace Lucene {
 
-        LUCENE_CLASS(CharBlockPool);
+class CharBlockPool : public LuceneObject {
+public:
+    CharBlockPool(const DocumentsWriterPtr& docWriter);
+    virtual ~CharBlockPool();
 
-    public:
-        Collection<CharArray> buffers;
-        int32_t numBuffer;
-        int32_t bufferUpto; // Which buffer we are up to
-        int32_t charUpto; // Where we are in head buffer
+    LUCENE_CLASS(CharBlockPool);
 
-        CharArray buffer; // Current head buffer
-        int32_t charOffset; // Current head offset
+public:
+    Collection<CharArray> buffers;
+    int32_t numBuffer;
+    int32_t bufferUpto; // Which buffer we are up to
+    int32_t charUpto; // Where we are in head buffer
 
-    protected:
-        DocumentsWriterWeakPtr _docWriter;
+    CharArray buffer; // Current head buffer
+    int32_t charOffset; // Current head offset
 
-    public:
-        void reset();
-        void nextBuffer();
-    };
+protected:
+    DocumentsWriterWeakPtr _docWriter;
+
+public:
+    void reset();
+    void nextBuffer();
+};
+
 }
 
 #endif

@@ -10,51 +10,51 @@
 #include <boost/iostreams/device/mapped_file.hpp>
 #include "IndexInput.h"
 
-namespace Lucene
-{
-    class MMapIndexInput : public IndexInput
-    {
-    public:
-        MMapIndexInput(const String& path = L"");
-        virtual ~MMapIndexInput();
+namespace Lucene {
 
-        LUCENE_CLASS(MMapIndexInput);
+class MMapIndexInput : public IndexInput {
+public:
+    MMapIndexInput(const String& path = L"");
+    virtual ~MMapIndexInput();
 
-    protected:
-        int32_t _length;
-        bool isClone;
-        boost::iostreams::mapped_file_source file;
-        int32_t bufferPosition; // next byte to read
+    LUCENE_CLASS(MMapIndexInput);
 
-    public:
-        /// Reads and returns a single byte.
-        /// @see IndexOutput#writeByte(uint8_t)
-        virtual uint8_t readByte();
+protected:
+    int32_t _length;
+    bool isClone;
+    boost::iostreams::mapped_file_source file;
+    int32_t bufferPosition; // next byte to read
 
-        /// Reads a specified number of bytes into an array at the specified offset.
-        /// @param b the array to read bytes into.
-        /// @param offset the offset in the array to start storing bytes.
-        /// @param length the number of bytes to read.
-        /// @see IndexOutput#writeBytes(const uint8_t*,int)
-        virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
+public:
+    /// Reads and returns a single byte.
+    /// @see IndexOutput#writeByte(uint8_t)
+    virtual uint8_t readByte();
 
-        /// Returns the current position in this file, where the next read will occur.
-        /// @see #seek(int64_t)
-        virtual int64_t getFilePointer();
+    /// Reads a specified number of bytes into an array at the specified offset.
+    /// @param b the array to read bytes into.
+    /// @param offset the offset in the array to start storing bytes.
+    /// @param length the number of bytes to read.
+    /// @see IndexOutput#writeBytes(const uint8_t*,int)
+    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
 
-        /// Sets current position in this file, where the next read will occur.
-        /// @see #getFilePointer()
-        virtual void seek(int64_t pos);
+    /// Returns the current position in this file, where the next read will occur.
+    /// @see #seek(int64_t)
+    virtual int64_t getFilePointer();
 
-        /// The number of bytes in the file.
-        virtual int64_t length();
+    /// Sets current position in this file, where the next read will occur.
+    /// @see #getFilePointer()
+    virtual void seek(int64_t pos);
 
-        /// Closes the stream to further operations.
-        virtual void close();
+    /// The number of bytes in the file.
+    virtual int64_t length();
 
-        /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+    /// Closes the stream to further operations.
+    virtual void close();
+
+    /// Returns a clone of this stream.
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

@@ -33,21 +33,17 @@
 
 using namespace Lucene;
 
-class NumericRangeQuery32Test : public LuceneTestFixture
-{
+class NumericRangeQuery32Test : public LuceneTestFixture {
 public:
-    NumericRangeQuery32Test()
-    {
+    NumericRangeQuery32Test() {
         static bool setupRequired = true;
-        if (setupRequired)
-        {
+        if (setupRequired) {
             setup();
             setupRequired = false;
         }
     }
 
-    virtual ~NumericRangeQuery32Test()
-    {
+    virtual ~NumericRangeQuery32Test() {
     }
 
 protected:
@@ -65,8 +61,7 @@ protected:
 
 protected:
     /// One-time setup to initialise static members
-    void setup()
-    {
+    void setup() {
         // set the theoretical maximum term count for 8bit (see docs for the number)
         BooleanQuery::setMaxClauseCount(3 * 255 * 2 + 255);
 
@@ -95,8 +90,7 @@ protected:
         doc->add(ascfield2);
 
         // Add a series of noDocs docs with increasing int values
-        for (int32_t l = 0; l < noDocs; ++l)
-        {
+        for (int32_t l = 0; l < noDocs; ++l) {
             int32_t val = distance * l + startOffset;
             field8->setIntValue(val);
             field4->setIntValue(val);
@@ -117,8 +111,7 @@ protected:
 
 public:
     /// test for both constant score and boolean query, the other tests only use the constant score mode
-    void testRange(int32_t precisionStep)
-    {
+    void testRange(int32_t precisionStep) {
         String field = L"field" + StringUtils::toString(precisionStep);
         int32_t count = 3000;
         int32_t lower = (distance * 3 / 2) + startOffset;
@@ -127,34 +120,32 @@ public:
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, true);
         NumericRangeFilterPtr f = NumericRangeFilter::newIntRange(field, precisionStep, lower, upper, true, true);
         int32_t lastTerms = 0;
-        for (uint8_t i = 0; i < 3; ++i)
-        {
+        for (uint8_t i = 0; i < 3; ++i) {
             TopDocsPtr topDocs;
             int32_t terms;
             String type;
             q->clearTotalNumberOfTerms();
             f->clearTotalNumberOfTerms();
-            switch (i)
-            {
-                case 0:
-                    type = L" (constant score filter rewrite)";
-                    q->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
-                    topDocs = searcher->search(q, FilterPtr(), noDocs, Sort::INDEXORDER());
-                    terms = q->getTotalNumberOfTerms();
-                    break;
-                case 1:
-                    type = L" (constant score boolean rewrite)";
-                    q->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE());
-                    topDocs = searcher->search(q, FilterPtr(), noDocs, Sort::INDEXORDER());
-                    terms = q->getTotalNumberOfTerms();
-                    break;
-                case 2:
-                    type = L" (filter)";
-                    topDocs = searcher->search(newLucene<MatchAllDocsQuery>(), f, noDocs, Sort::INDEXORDER());
-                    terms = f->getTotalNumberOfTerms();
-                    break;
-                default:
-                    return;
+            switch (i) {
+            case 0:
+                type = L" (constant score filter rewrite)";
+                q->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
+                topDocs = searcher->search(q, FilterPtr(), noDocs, Sort::INDEXORDER());
+                terms = q->getTotalNumberOfTerms();
+                break;
+            case 1:
+                type = L" (constant score boolean rewrite)";
+                q->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE());
+                topDocs = searcher->search(q, FilterPtr(), noDocs, Sort::INDEXORDER());
+                terms = q->getTotalNumberOfTerms();
+                break;
+            case 2:
+                type = L" (filter)";
+                topDocs = searcher->search(newLucene<MatchAllDocsQuery>(), f, noDocs, Sort::INDEXORDER());
+                terms = f->getTotalNumberOfTerms();
+                break;
+            default:
+                return;
             }
             // std::cout << "Found " << terms << " distinct terms in range for field '" << field << "'" << type << ".";
             Collection<ScoreDocPtr> sd = topDocs->scoreDocs;
@@ -164,14 +155,14 @@ public:
             EXPECT_EQ(StringUtils::toString(2 * distance + startOffset), doc->get(field));
             doc = searcher->doc(sd[sd.size() - 1]->doc);
             EXPECT_EQ(StringUtils::toString((1 + count) * distance + startOffset), doc->get(field));
-            if (i > 0)
+            if (i > 0) {
                 EXPECT_EQ(lastTerms, terms);
+            }
             lastTerms = terms;
         }
     }
 
-    void testLeftOpenRange(int32_t precisionStep)
-    {
+    void testLeftOpenRange(int32_t precisionStep) {
         String field = L"field" + StringUtils::toString(precisionStep);
         int32_t count = 3000;
         int32_t upper = (count - 1) * distance + (distance / 3) + startOffset;
@@ -186,8 +177,7 @@ public:
         EXPECT_EQ(StringUtils::toString((count - 1) * distance + startOffset), doc->get(field));
     }
 
-    void testRightOpenRange(int32_t precisionStep)
-    {
+    void testRightOpenRange(int32_t precisionStep) {
         String field = L"field" + StringUtils::toString(precisionStep);
         int32_t count = 3000;
         int32_t lower = (count - 1) * distance + (distance / 3) + startOffset;
@@ -202,18 +192,17 @@ public:
         EXPECT_EQ(StringUtils::toString((noDocs - 1) * distance + startOffset), doc->get(field));
     }
 
-    void testRandomTrieAndClassicRangeQuery(int32_t precisionStep)
-    {
+    void testRandomTrieAndClassicRangeQuery(int32_t precisionStep) {
         RandomPtr rnd = newLucene<Random>();
         String field = L"field" + StringUtils::toString(precisionStep);
         int32_t termCountT = 0;
         int32_t termCountC = 0;
-        for (int32_t i = 0; i < 50; ++i)
-        {
+        for (int32_t i = 0; i < 50; ++i) {
             int32_t lower = (int32_t)(rnd->nextDouble() * noDocs * distance) + startOffset;
             int32_t upper = (int32_t)(rnd->nextDouble() * noDocs * distance) + startOffset;
-            if (lower > upper)
+            if (lower > upper) {
                 std::swap(lower, upper);
+            }
             // test inclusive range
             NumericRangeQueryPtr tq = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, true);
             TermRangeQueryPtr cq = newLucene<TermRangeQuery>(field, NumericUtils::intToPrefixCoded(lower), NumericUtils::intToPrefixCoded(upper), true, true);
@@ -247,21 +236,21 @@ public:
             termCountT += tq->getTotalNumberOfTerms();
             termCountC += cq->getTotalNumberOfTerms();
         }
-        if (precisionStep == INT_MAX)
+        if (precisionStep == INT_MAX) {
             EXPECT_EQ(termCountT, termCountC);
+        }
     }
 
-    void testRangeSplit(int32_t precisionStep)
-    {
+    void testRangeSplit(int32_t precisionStep) {
         RandomPtr rnd = newLucene<Random>();
         String field = L"ascfield" + StringUtils::toString(precisionStep);
         // 50 random tests
-        for (int32_t i = 0; i < 50; ++i)
-        {
+        for (int32_t i = 0; i < 50; ++i) {
             int32_t lower = (int32_t)(rnd->nextDouble() * noDocs - noDocs / 2.0);
             int32_t upper = (int32_t)(rnd->nextDouble() * noDocs - noDocs / 2.0);
-            if (lower > upper)
+            if (lower > upper) {
                 std::swap(lower, upper);
+            }
             // test inclusive range
             QueryPtr tq = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, true);
             TopDocsPtr tTopDocs = searcher->search(tq, 1);
@@ -281,26 +270,25 @@ public:
         }
     }
 
-    void testSorting(int32_t precisionStep)
-    {
+    void testSorting(int32_t precisionStep) {
         RandomPtr rnd = newLucene<Random>();
         String field = L"field" + StringUtils::toString(precisionStep);
         // 10 random tests, the index order is ascending, so using a reverse sort field should return descending documents
-        for (int32_t i = 0; i < 10; ++i)
-        {
+        for (int32_t i = 0; i < 10; ++i) {
             int32_t lower = (int32_t)(rnd->nextDouble() * noDocs * distance) + startOffset;
             int32_t upper = (int32_t)(rnd->nextDouble() * noDocs * distance) + startOffset;
-            if (lower > upper)
+            if (lower > upper) {
                 std::swap(lower, upper);
+            }
             QueryPtr tq = NumericRangeQuery::newIntRange(field, precisionStep, lower, upper, true, true);
             TopDocsPtr topDocs = searcher->search(tq, FilterPtr(), noDocs, newLucene<Sort>(newLucene<SortField>(field, SortField::INT, true)));
-            if (topDocs->totalHits == 0)
+            if (topDocs->totalHits == 0) {
                 continue;
+            }
             Collection<ScoreDocPtr> sd = topDocs->scoreDocs;
             EXPECT_TRUE(sd);
             int32_t last = StringUtils::toInt(searcher->doc(sd[0]->doc)->get(field));
-            for (int32_t j = 1; j < sd.size(); ++j)
-            {
+            for (int32_t j = 1; j < sd.size(); ++j) {
                 int32_t act = StringUtils::toInt(searcher->doc(sd[j]->doc)->get(field));
                 EXPECT_TRUE(last > act);
                 last = act;
@@ -308,22 +296,18 @@ public:
         }
     }
 
-    void testEnumRange(int32_t lower, int32_t upper)
-    {
+    void testEnumRange(int32_t lower, int32_t upper) {
         NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(L"field4", 4, lower, upper, true, true);
         FilteredTermEnumPtr termEnum = newLucene<NumericRangeTermEnum>(q, searcher->getIndexReader());
-        do
-        {
+        do {
             TermPtr t = termEnum->term();
-            if (t)
-            {
+            if (t) {
                 int32_t val = NumericUtils::prefixCodedToInt(t->text());
                 EXPECT_TRUE(val >= lower && val <= upper);
-            }
-            else
+            } else {
                 break;
-        }
-        while (termEnum->next());
+            }
+        } while (termEnum->next());
         EXPECT_TRUE(!termEnum->next());
         termEnum->close();
     }
@@ -341,23 +325,19 @@ const int32_t NumericRangeQuery32Test::noDocs = 10000;
 RAMDirectoryPtr NumericRangeQuery32Test::directory;
 IndexSearcherPtr NumericRangeQuery32Test::searcher;
 
-TEST_F(NumericRangeQuery32Test, testRange_8bit)
-{
+TEST_F(NumericRangeQuery32Test, testRange_8bit) {
     testRange(8);
 }
 
-TEST_F(NumericRangeQuery32Test, testRange_4bit)
-{
+TEST_F(NumericRangeQuery32Test, testRange_4bit) {
     testRange(4);
 }
 
-TEST_F(NumericRangeQuery32Test, testRange_2bit)
-{
+TEST_F(NumericRangeQuery32Test, testRange_2bit) {
     testRange(2);
 }
 
-TEST_F(NumericRangeQuery32Test, testInverseRange)
-{
+TEST_F(NumericRangeQuery32Test, testInverseRange) {
     NumericRangeFilterPtr f = NumericRangeFilter::newIntRange(L"field8", 8, 1000, -1000, true, true);
     EXPECT_EQ(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
     f = NumericRangeFilter::newIntRange(L"field8", 8, INT_MAX, INT_MIN, false, false);
@@ -366,8 +346,7 @@ TEST_F(NumericRangeQuery32Test, testInverseRange)
     EXPECT_EQ(f->getDocIdSet(searcher->getIndexReader()), DocIdSet::EMPTY_DOCIDSET());
 }
 
-TEST_F(NumericRangeQuery32Test, testOneMatchQuery)
-{
+TEST_F(NumericRangeQuery32Test, testOneMatchQuery) {
     NumericRangeQueryPtr q = NumericRangeQuery::newIntRange(L"ascfield8", 8, 1000, 1000, true, true);
     EXPECT_EQ(MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE(), q->getRewriteMethod());
     TopDocsPtr topDocs = searcher->search(q, noDocs);
@@ -376,88 +355,71 @@ TEST_F(NumericRangeQuery32Test, testOneMatchQuery)
     EXPECT_EQ(1, sd.size());
 }
 
-TEST_F(NumericRangeQuery32Test, testLeftOpenRange_8bit)
-{
+TEST_F(NumericRangeQuery32Test, testLeftOpenRange_8bit) {
     testLeftOpenRange(8);
 }
 
-TEST_F(NumericRangeQuery32Test, testLeftOpenRange_4bit)
-{
+TEST_F(NumericRangeQuery32Test, testLeftOpenRange_4bit) {
     testLeftOpenRange(4);
 }
 
-TEST_F(NumericRangeQuery32Test, testLeftOpenRange_2bit)
-{
+TEST_F(NumericRangeQuery32Test, testLeftOpenRange_2bit) {
     testLeftOpenRange(2);
 }
 
-TEST_F(NumericRangeQuery32Test, testRightOpenRange_8bit)
-{
+TEST_F(NumericRangeQuery32Test, testRightOpenRange_8bit) {
     testRightOpenRange(8);
 }
 
-TEST_F(NumericRangeQuery32Test, testRightOpenRange_4bit)
-{
+TEST_F(NumericRangeQuery32Test, testRightOpenRange_4bit) {
     testRightOpenRange(4);
 }
 
-TEST_F(NumericRangeQuery32Test, testRightOpenRange_2bit)
-{
+TEST_F(NumericRangeQuery32Test, testRightOpenRange_2bit) {
     testRightOpenRange(2);
 }
 
-TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_8bit)
-{
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_8bit) {
     testRandomTrieAndClassicRangeQuery(8);
 }
 
-TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_4bit)
-{
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_4bit) {
     testRandomTrieAndClassicRangeQuery(4);
 }
 
-TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_2bit)
-{
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_2bit) {
     testRandomTrieAndClassicRangeQuery(2);
 }
 
-TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_NoTrie)
-{
+TEST_F(NumericRangeQuery32Test, testRandomTrieAndClassicRangeQuery_NoTrie) {
     testRandomTrieAndClassicRangeQuery(INT_MAX);
 }
 
-TEST_F(NumericRangeQuery32Test, testRangeSplit_8bit)
-{
+TEST_F(NumericRangeQuery32Test, testRangeSplit_8bit) {
     testRangeSplit(8);
 }
 
-TEST_F(NumericRangeQuery32Test, testRangeSplit_4bit)
-{
+TEST_F(NumericRangeQuery32Test, testRangeSplit_4bit) {
     testRangeSplit(4);
 }
 
-TEST_F(NumericRangeQuery32Test, testRangeSplit_2bit)
-{
+TEST_F(NumericRangeQuery32Test, testRangeSplit_2bit) {
     testRangeSplit(2);
 }
 
-TEST_F(NumericRangeQuery32Test, testSorting_8bit)
-{
+TEST_F(NumericRangeQuery32Test, testSorting_8bit) {
     testSorting(8);
 }
 
-TEST_F(NumericRangeQuery32Test, testSorting_4bit)
-{
+TEST_F(NumericRangeQuery32Test, testSorting_4bit) {
     testSorting(4);
 }
 
-TEST_F(NumericRangeQuery32Test, testSorting_2bit)
-{
+TEST_F(NumericRangeQuery32Test, testSorting_2bit) {
     testSorting(2);
 }
 
-TEST_F(NumericRangeQuery32Test, testEqualsAndHash)
-{
+TEST_F(NumericRangeQuery32Test, testEqualsAndHash) {
     QueryUtils::checkHashEquals(NumericRangeQuery::newIntRange(L"test1", 4, 10, 20, true, true));
     QueryUtils::checkHashEquals(NumericRangeQuery::newIntRange(L"test2", 4, 10, 20, false, true));
     QueryUtils::checkHashEquals(NumericRangeQuery::newIntRange(L"test3", 4, 10, 20, true, false));
@@ -479,8 +441,7 @@ TEST_F(NumericRangeQuery32Test, testEqualsAndHash)
     EXPECT_TRUE(!q2->equals(q1));
 }
 
-TEST_F(NumericRangeQuery32Test, testEnum)
-{
+TEST_F(NumericRangeQuery32Test, testEnum) {
     int32_t count = 3000;
     int32_t lower= (distance * 3 / 2) + startOffset;
     int32_t upper = lower + count * distance + (distance / 3);

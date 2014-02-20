@@ -9,69 +9,69 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// A ScorerDocQueue maintains a partial ordering of its Scorers such that the least Scorer can always be
-    /// found in constant time.  Put()'s and pop()'s require log(size) time.  The ordering is by Scorer::doc().
-    class LPPAPI ScorerDocQueue : public LuceneObject
-    {
-    public:
-        ScorerDocQueue(int32_t maxSize);
-        virtual ~ScorerDocQueue();
+namespace Lucene {
 
-        LUCENE_CLASS(ScorerDocQueue);
+/// A ScorerDocQueue maintains a partial ordering of its Scorers such that the least Scorer can always be
+/// found in constant time.  Put()'s and pop()'s require log(size) time.  The ordering is by Scorer::doc().
+class LPPAPI ScorerDocQueue : public LuceneObject {
+public:
+    ScorerDocQueue(int32_t maxSize);
+    virtual ~ScorerDocQueue();
 
-    protected:
-        Collection<HeapedScorerDocPtr> heap;
-        int32_t maxSize;
-        int32_t _size;
-        HeapedScorerDocPtr topHSD; // same as heap[1], only for speed
+    LUCENE_CLASS(ScorerDocQueue);
 
-    public:
-        /// Adds a Scorer to a ScorerDocQueue in log(size) time.  If one tries to add more Scorers than maxSize
-        /// ArrayIndexOutOfBound exception is thrown.
-        void put(const ScorerPtr& scorer);
+protected:
+    Collection<HeapedScorerDocPtr> heap;
+    int32_t maxSize;
+    int32_t _size;
+    HeapedScorerDocPtr topHSD; // same as heap[1], only for speed
 
-        /// Adds a Scorer to the ScorerDocQueue in log(size) time if either the ScorerDocQueue is not full, or
-        /// not lessThan(scorer, top()).
-        /// @return true if scorer is added, false otherwise.
-        bool insert(const ScorerPtr& scorer);
+public:
+    /// Adds a Scorer to a ScorerDocQueue in log(size) time.  If one tries to add more Scorers than maxSize
+    /// ArrayIndexOutOfBound exception is thrown.
+    void put(const ScorerPtr& scorer);
 
-        /// Returns the least Scorer of the ScorerDocQueue in constant time. Should not be used when the queue
-        /// is empty.
-        ScorerPtr top();
+    /// Adds a Scorer to the ScorerDocQueue in log(size) time if either the ScorerDocQueue is not full, or
+    /// not lessThan(scorer, top()).
+    /// @return true if scorer is added, false otherwise.
+    bool insert(const ScorerPtr& scorer);
 
-        /// Returns document number of the least Scorer of the ScorerDocQueue in constant time.
-        /// Should not be used when the queue is empty.
-        int32_t topDoc();
+    /// Returns the least Scorer of the ScorerDocQueue in constant time. Should not be used when the queue
+    /// is empty.
+    ScorerPtr top();
 
-        double topScore();
-        bool topNextAndAdjustElsePop();
-        bool topSkipToAndAdjustElsePop(int32_t target);
+    /// Returns document number of the least Scorer of the ScorerDocQueue in constant time.
+    /// Should not be used when the queue is empty.
+    int32_t topDoc();
 
-        /// Removes and returns the least scorer of the ScorerDocQueue in log(size) time.  Should not be used
-        /// when the queue is empty.
-        ScorerPtr pop();
+    double topScore();
+    bool topNextAndAdjustElsePop();
+    bool topSkipToAndAdjustElsePop(int32_t target);
 
-        /// Should be called when the scorer at top changes doc() value.
-        void adjustTop();
+    /// Removes and returns the least scorer of the ScorerDocQueue in log(size) time.  Should not be used
+    /// when the queue is empty.
+    ScorerPtr pop();
 
-        /// Returns the number of scorers currently stored in the ScorerDocQueue.
-        int32_t size();
+    /// Should be called when the scorer at top changes doc() value.
+    void adjustTop();
 
-        /// Removes all entries from the ScorerDocQueue.
-        void clear();
+    /// Returns the number of scorers currently stored in the ScorerDocQueue.
+    int32_t size();
 
-    protected:
-        bool checkAdjustElsePop(bool cond);
+    /// Removes all entries from the ScorerDocQueue.
+    void clear();
 
-        /// Removes the least scorer of the ScorerDocQueue in log(size) time.  Should not be used when the
-        /// queue is empty.
-        void popNoResult();
+protected:
+    bool checkAdjustElsePop(bool cond);
 
-        void upHeap();
-        void downHeap();
-    };
+    /// Removes the least scorer of the ScorerDocQueue in log(size) time.  Should not be used when the
+    /// queue is empty.
+    void popNoResult();
+
+    void upHeap();
+    void downHeap();
+};
+
 }
 
 #endif

@@ -15,8 +15,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture FileReaderTest;
 
-TEST_F(FileReaderTest, testFileReaderChar)
-{
+TEST_F(FileReaderTest, testFileReaderChar) {
     FileReaderPtr reader = newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt"));
     EXPECT_EQ((wchar_t)reader->read(), L't');
     EXPECT_EQ((wchar_t)reader->read(), L'e');
@@ -29,8 +28,7 @@ TEST_F(FileReaderTest, testFileReaderChar)
     EXPECT_EQ((wchar_t)reader->read(), L'e');
 }
 
-TEST_F(FileReaderTest, testFileReaderRead)
-{
+TEST_F(FileReaderTest, testFileReaderRead) {
     FileReaderPtr reader = newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt"));
 
     wchar_t buffer[80];
@@ -43,8 +41,7 @@ TEST_F(FileReaderTest, testFileReaderRead)
     EXPECT_EQ(reader->read(buffer, 0, 1), FileReader::FILE_EOF);
 }
 
-TEST_F(FileReaderTest, testFileReaderReset)
-{
+TEST_F(FileReaderTest, testFileReaderReset) {
     FileReaderPtr reader = newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt"));
 
     wchar_t buffer[20];

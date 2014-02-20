@@ -21,8 +21,7 @@ typedef LuceneTestFixture BinaryDocumentTest;
 static String binaryValStored = L"this text will be stored as a byte array in the index";
 static String binaryValCompressed = L"this text will be also stored and compressed as a byte array in the index";
 
-TEST_F(BinaryDocumentTest, testBinaryFieldInIndex)
-{
+TEST_F(BinaryDocumentTest, testBinaryFieldInIndex) {
     ByteArray binaryStored = ByteArray::newInstance(binaryValStored.length() * sizeof(wchar_t));
     std::wcsncpy((wchar_t*)binaryStored.get(), binaryValStored.c_str(), binaryValStored.length());
 
@@ -30,12 +29,9 @@ TEST_F(BinaryDocumentTest, testBinaryFieldInIndex)
     FieldablePtr stringFldStored = newLucene<Field>(L"stringStored", binaryValStored, Field::STORE_YES, Field::INDEX_NO, Field::TERM_VECTOR_NO);
 
     // binary fields with store off are not allowed
-    try
-    {
+    try {
         newLucene<Field>(L"fail", binaryStored, Field::STORE_NO);
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 
@@ -75,8 +71,7 @@ TEST_F(BinaryDocumentTest, testBinaryFieldInIndex)
     dir->close();
 }
 
-TEST_F(BinaryDocumentTest, testCompressionTools)
-{
+TEST_F(BinaryDocumentTest, testCompressionTools) {
     ByteArray binaryCompressed = ByteArray::newInstance(binaryValCompressed.length() * sizeof(wchar_t));
     std::wcsncpy((wchar_t*)binaryCompressed.get(), binaryValCompressed.c_str(), binaryValCompressed.length());
 

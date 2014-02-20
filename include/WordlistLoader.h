@@ -9,41 +9,41 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Loader for text files that represent a list of stopwords.
-    class LPPAPI WordlistLoader : public LuceneObject
-    {
-    public:
-        virtual ~WordlistLoader();
+namespace Lucene {
 
-        LUCENE_CLASS(WordlistLoader);
+/// Loader for text files that represent a list of stopwords.
+class LPPAPI WordlistLoader : public LuceneObject {
+public:
+    virtual ~WordlistLoader();
 
-    public:
-        /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace).
-        /// Every line of the file should contain only one word. The words need to be in lowercase if you make use of an
-        /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
-        ///
-        /// @param wordfile File name containing the wordlist
-        /// @param comment The comment string to ignore
-        /// @return A set with the file's words
-        static HashSet<String> getWordSet(const String& wordfile, const String& comment = EmptyString);
+    LUCENE_CLASS(WordlistLoader);
 
-        /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace).
-        /// Every line of the file should contain only one word. The words need to be in lowercase if you make use of an
-        /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
-        ///
-        /// @param reader Reader containing the wordlist
-        /// @param comment The comment string to ignore
-        /// @return A set with the file's words
-        static HashSet<String> getWordSet(const ReaderPtr& reader, const String& comment = EmptyString);
+public:
+    /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace).
+    /// Every line of the file should contain only one word. The words need to be in lowercase if you make use of an
+    /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
+    ///
+    /// @param wordfile File name containing the wordlist
+    /// @param comment The comment string to ignore
+    /// @return A set with the file's words
+    static HashSet<String> getWordSet(const String& wordfile, const String& comment = EmptyString);
 
-        /// Reads a stem dictionary. Each line contains:
-        /// <pre>word\tstem</pre>
-        /// (ie. two tab separated words)
-        /// @return stem dictionary that overrules the stemming algorithm
-        static MapStringString getStemDict(const String& wordstemfile);
-    };
+    /// Loads a text file and adds every line as an entry to a HashSet (omitting leading and trailing whitespace).
+    /// Every line of the file should contain only one word. The words need to be in lowercase if you make use of an
+    /// Analyzer which uses LowerCaseFilter (like StandardAnalyzer).
+    ///
+    /// @param reader Reader containing the wordlist
+    /// @param comment The comment string to ignore
+    /// @return A set with the file's words
+    static HashSet<String> getWordSet(const ReaderPtr& reader, const String& comment = EmptyString);
+
+    /// Reads a stem dictionary. Each line contains:
+    /// <pre>word\tstem</pre>
+    /// (ie. two tab separated words)
+    /// @return stem dictionary that overrules the stemming algorithm
+    static MapStringString getStemDict(const String& wordstemfile);
+};
+
 }
 
 #endif

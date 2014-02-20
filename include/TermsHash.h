@@ -9,60 +9,60 @@
 
 #include "InvertedDocConsumer.h"
 
-namespace Lucene
-{
-    /// This class implements {@link InvertedDocConsumer}, which is passed each token produced by the analyzer on
-    /// each field.  It stores these tokens in a hash table, and allocates separate byte streams per token.  Consumers
-    /// of this class, eg {@link FreqProxTermsWriter} and {@link TermVectorsTermsWriter}, write their own byte streams
-    /// under each term.
-    class TermsHash : public InvertedDocConsumer
-    {
-    public:
-        TermsHash(const DocumentsWriterPtr& docWriter, bool trackAllocations, const TermsHashConsumerPtr& consumer, const TermsHashPtr& nextTermsHash);
-        virtual ~TermsHash();
+namespace Lucene {
 
-        LUCENE_CLASS(TermsHash);
+/// This class implements {@link InvertedDocConsumer}, which is passed each token produced by the analyzer on
+/// each field.  It stores these tokens in a hash table, and allocates separate byte streams per token.  Consumers
+/// of this class, eg {@link FreqProxTermsWriter} and {@link TermVectorsTermsWriter}, write their own byte streams
+/// under each term.
+class TermsHash : public InvertedDocConsumer {
+public:
+    TermsHash(const DocumentsWriterPtr& docWriter, bool trackAllocations, const TermsHashConsumerPtr& consumer, const TermsHashPtr& nextTermsHash);
+    virtual ~TermsHash();
 
-    public:
-        TermsHashConsumerPtr consumer;
-        TermsHashPtr nextTermsHash;
-        int32_t bytesPerPosting;
-        int32_t postingsFreeChunk;
-        DocumentsWriterWeakPtr _docWriter;
-        bool trackAllocations;
+    LUCENE_CLASS(TermsHash);
 
-    protected:
-        Collection<RawPostingListPtr> postingsFreeList;
-        int32_t postingsFreeCount;
-        int32_t postingsAllocCount;
+public:
+    TermsHashConsumerPtr consumer;
+    TermsHashPtr nextTermsHash;
+    int32_t bytesPerPosting;
+    int32_t postingsFreeChunk;
+    DocumentsWriterWeakPtr _docWriter;
+    bool trackAllocations;
 
-    public:
-        /// Add a new thread
-        virtual InvertedDocConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread);
-        virtual TermsHashPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPerThreadPtr& primaryPerThread);
+protected:
+    Collection<RawPostingListPtr> postingsFreeList;
+    int32_t postingsFreeCount;
+    int32_t postingsAllocCount;
 
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
+public:
+    /// Add a new thread
+    virtual InvertedDocConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread);
+    virtual TermsHashPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPerThreadPtr& primaryPerThread);
 
-        /// Abort (called after hitting AbortException)
-        /// NOTE: do not make this sync'd; it's not necessary (DW ensures all other threads are idle), and it
-        /// leads to deadlock
-        virtual void abort();
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
-        void shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+    /// Abort (called after hitting AbortException)
+    /// NOTE: do not make this sync'd; it's not necessary (DW ensures all other threads are idle), and it
+    /// leads to deadlock
+    virtual void abort();
 
-        /// Close doc stores
-        virtual void closeDocStore(const SegmentWriteStatePtr& state);
+    void shrinkFreePostings(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
-        /// Flush a new segment
-        virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+    /// Close doc stores
+    virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
-        /// Attempt to free RAM, returning true if any RAM was freed
-        virtual bool freeRAM();
+    /// Flush a new segment
+    virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
-        void recyclePostings(Collection<RawPostingListPtr> postings, int32_t numPostings);
+    /// Attempt to free RAM, returning true if any RAM was freed
+    virtual bool freeRAM();
 
-        void getPostings(Collection<RawPostingListPtr> postings);
-    };
+    void recyclePostings(Collection<RawPostingListPtr> postings, int32_t numPostings);
+
+    void getPostings(Collection<RawPostingListPtr> postings);
+};
+
 }
 
 #endif

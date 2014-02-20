@@ -7,13 +7,13 @@
 #include "LuceneInc.h"
 #include "DocIdSetIterator.h"
 
-namespace Lucene
-{
-    /// When returned by {@link #nextDoc()}, {@link #advance(int)} and {@link #docID()} it means there
-    /// docs in the iterator.
-    const int32_t DocIdSetIterator::NO_MORE_DOCS = INT_MAX;
+namespace Lucene {
 
-    DocIdSetIterator::~DocIdSetIterator()
-    {
-    }
+/// When returned by {@link #nextDoc()}, {@link #advance(int)} and {@link #docID()} it means there
+/// docs in the iterator.
+const int32_t DocIdSetIterator::NO_MORE_DOCS = INT_MAX;
+
+DocIdSetIterator::~DocIdSetIterator() {
+}
+
 }

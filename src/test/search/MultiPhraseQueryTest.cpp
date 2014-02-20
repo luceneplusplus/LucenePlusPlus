@@ -27,23 +27,20 @@ using namespace Lucene;
 
 typedef LuceneTestFixture MultiPhraseQueryTest;
 
-static void add(const String& s, const IndexWriterPtr& writer)
-{
+static void add(const String& s, const IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"body", s, Field::STORE_YES, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void add(const String& s, const String& type, const IndexWriterPtr& writer)
-{
+static void add(const String& s, const String& type, const IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"body", s, Field::STORE_YES, Field::INDEX_ANALYZED));
     doc->add(newLucene<Field>(L"type", type, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     writer->addDocument(doc);
 }
 
-TEST_F(MultiPhraseQueryTest, testPhrasePrefix)
-{
+TEST_F(MultiPhraseQueryTest, testPhrasePrefix) {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     add(L"blueberry pie", writer);
@@ -71,12 +68,11 @@ TEST_F(MultiPhraseQueryTest, testPhrasePrefix)
     // this TermEnum gives "piccadilly", "pie" and "pizza".
     String prefix = L"pi";
     TermEnumPtr te = ir->terms(newLucene<Term>(L"body", prefix));
-    do
-    {
-        if (boost::starts_with(te->term()->text(), prefix))
+    do {
+        if (boost::starts_with(te->term()->text(), prefix)) {
             termsWithPrefix.add(te->term());
-    }
-    while (te->next());
+        }
+    } while (te->next());
 
     query1->add(termsWithPrefix);
     EXPECT_EQ(L"body:\"blueberry (piccadilly pie pizza)\"", query1->toString());
@@ -93,12 +89,11 @@ TEST_F(MultiPhraseQueryTest, testPhrasePrefix)
     termsWithPrefix.clear();
     prefix = L"blue";
     te = ir->terms(newLucene<Term>(L"body", prefix));
-    do
-    {
-        if (boost::starts_with(te->term()->text(), prefix))
+    do {
+        if (boost::starts_with(te->term()->text(), prefix)) {
             termsWithPrefix.add(te->term());
-    }
-    while (te->next());
+        }
+    } while (te->next());
 
     query3->add(termsWithPrefix);
     query3->add(newLucene<Term>(L"body", L"pizza"));
@@ -114,12 +109,9 @@ TEST_F(MultiPhraseQueryTest, testPhrasePrefix)
 
     MultiPhraseQueryPtr query4 = newLucene<MultiPhraseQuery>();
     query4->add(newLucene<Term>(L"field1", L"foo"));
-    try
-    {
+    try {
         query4->add(newLucene<Term>(L"field2", L"foobar"));
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 
@@ -127,8 +119,7 @@ TEST_F(MultiPhraseQueryTest, testPhrasePrefix)
     indexStore->close();
 }
 
-TEST_F(MultiPhraseQueryTest, testBooleanQueryContainingSingleTermPrefixQuery)
-{
+TEST_F(MultiPhraseQueryTest, testBooleanQueryContainingSingleTermPrefixQuery) {
     // In order to cause the bug, the outer query must have more than one term and all terms required.
     // The contained PhraseMultiQuery must contain exactly one term array.
 
@@ -155,8 +146,7 @@ TEST_F(MultiPhraseQueryTest, testBooleanQueryContainingSingleTermPrefixQuery)
     searcher->close();
 }
 
-TEST_F(MultiPhraseQueryTest, testPhrasePrefixWithBooleanQuery)
-{
+TEST_F(MultiPhraseQueryTest, testPhrasePrefixWithBooleanQuery) {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, HashSet<String>::newInstance()), true, IndexWriter::MaxFieldLengthLIMITED);
     add(L"This is a test", L"object", writer);
@@ -180,8 +170,7 @@ TEST_F(MultiPhraseQueryTest, testPhrasePrefixWithBooleanQuery)
     searcher->close();
 }
 
-TEST_F(MultiPhraseQueryTest, testHashCodeAndEquals)
-{
+TEST_F(MultiPhraseQueryTest, testHashCodeAndEquals) {
     MultiPhraseQueryPtr query1 = newLucene<MultiPhraseQuery>();
     MultiPhraseQueryPtr query2 = newLucene<MultiPhraseQuery>();
 

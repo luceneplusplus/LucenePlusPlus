@@ -16,16 +16,13 @@
 
 using namespace Lucene;
 
-class FieldInfosTest : public LuceneTestFixture, public DocHelper
-{
+class FieldInfosTest : public LuceneTestFixture, public DocHelper {
 public:
-    virtual ~FieldInfosTest()
-    {
+    virtual ~FieldInfosTest() {
     }
 };
 
-TEST_F(FieldInfosTest, testFieldInfos)
-{
+TEST_F(FieldInfosTest, testFieldInfos) {
     DocumentPtr testDoc = newLucene<Document>();
     DocHelper::setupDoc(testDoc);
 

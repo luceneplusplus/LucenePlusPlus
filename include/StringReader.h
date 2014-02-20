@@ -9,41 +9,41 @@
 
 #include "Reader.h"
 
-namespace Lucene
-{
-    /// Convenience class for reading strings.
-    class LPPAPI StringReader : public Reader
-    {
-    public:
-        /// Creates a new StringReader, given the String to read from.
-        StringReader(const String& str);
-        virtual ~StringReader();
+namespace Lucene {
 
-        LUCENE_CLASS(StringReader);
+/// Convenience class for reading strings.
+class LPPAPI StringReader : public Reader {
+public:
+    /// Creates a new StringReader, given the String to read from.
+    StringReader(const String& str);
+    virtual ~StringReader();
 
-    protected:
-        String str;
-        int32_t position;
+    LUCENE_CLASS(StringReader);
 
-    public:
-        /// Read a single character.
-        virtual int32_t read();
+protected:
+    String str;
+    int32_t position;
 
-        /// Read characters into a portion of an array.
-        virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+public:
+    /// Read a single character.
+    virtual int32_t read();
 
-        /// Close the stream.
-        virtual void close();
+    /// Read characters into a portion of an array.
+    virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
 
-        /// Tell whether this stream supports the mark() operation
-        virtual bool markSupported();
+    /// Close the stream.
+    virtual void close();
 
-        /// Reset the stream.
-        virtual void reset();
+    /// Tell whether this stream supports the mark() operation
+    virtual bool markSupported();
 
-        /// The number of bytes in the stream.
-        virtual int64_t length();
-    };
+    /// Reset the stream.
+    virtual void reset();
+
+    /// The number of bytes in the stream.
+    virtual int64_t length();
+};
+
 }
 
 #endif

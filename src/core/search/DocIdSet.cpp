@@ -8,58 +8,48 @@
 #include "DocIdSet.h"
 #include "_DocIdSet.h"
 
-namespace Lucene
-{
-    DocIdSet::~DocIdSet()
-    {
-    }
+namespace Lucene {
 
-    bool DocIdSet::isCacheable()
-    {
-        return false;
-    }
+DocIdSet::~DocIdSet() {
+}
 
-    DocIdSetPtr DocIdSet::EMPTY_DOCIDSET()
-    {
-        static DocIdSetPtr _EMPTY_DOCIDSET;
-        if (!_EMPTY_DOCIDSET)
-        {
-            _EMPTY_DOCIDSET = newLucene<EmptyDocIdSet>();
-            CycleCheck::addStatic(_EMPTY_DOCIDSET);
-        }
-        return _EMPTY_DOCIDSET;
-    }
+bool DocIdSet::isCacheable() {
+    return false;
+}
 
-    EmptyDocIdSetIterator::~EmptyDocIdSetIterator()
-    {
+DocIdSetPtr DocIdSet::EMPTY_DOCIDSET() {
+    static DocIdSetPtr _EMPTY_DOCIDSET;
+    if (!_EMPTY_DOCIDSET) {
+        _EMPTY_DOCIDSET = newLucene<EmptyDocIdSet>();
+        CycleCheck::addStatic(_EMPTY_DOCIDSET);
     }
+    return _EMPTY_DOCIDSET;
+}
 
-    int32_t EmptyDocIdSetIterator::advance(int32_t target)
-    {
-        return NO_MORE_DOCS;
-    }
+EmptyDocIdSetIterator::~EmptyDocIdSetIterator() {
+}
 
-    int32_t EmptyDocIdSetIterator::docID()
-    {
-        return NO_MORE_DOCS;
-    }
+int32_t EmptyDocIdSetIterator::advance(int32_t target) {
+    return NO_MORE_DOCS;
+}
 
-    int32_t EmptyDocIdSetIterator::nextDoc()
-    {
-        return NO_MORE_DOCS;
-    }
+int32_t EmptyDocIdSetIterator::docID() {
+    return NO_MORE_DOCS;
+}
 
-    EmptyDocIdSet::~EmptyDocIdSet()
-    {
-    }
+int32_t EmptyDocIdSetIterator::nextDoc() {
+    return NO_MORE_DOCS;
+}
 
-    DocIdSetIteratorPtr EmptyDocIdSet::iterator()
-    {
-        return newLucene<EmptyDocIdSetIterator>();
-    }
+EmptyDocIdSet::~EmptyDocIdSet() {
+}
 
-    bool EmptyDocIdSet::isCacheable()
-    {
-        return true;
-    }
+DocIdSetIteratorPtr EmptyDocIdSet::iterator() {
+    return newLucene<EmptyDocIdSetIterator>();
+}
+
+bool EmptyDocIdSet::isCacheable() {
+    return true;
+}
+
 }

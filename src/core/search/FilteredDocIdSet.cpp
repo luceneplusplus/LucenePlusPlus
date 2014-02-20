@@ -8,38 +8,32 @@
 #include "FilteredDocIdSet.h"
 #include "_FilteredDocIdSet.h"
 
-namespace Lucene
-{
-    FilteredDocIdSet::FilteredDocIdSet(const DocIdSetPtr& innerSet)
-    {
-        this->innerSet = innerSet;
-    }
+namespace Lucene {
 
-    FilteredDocIdSet::~FilteredDocIdSet()
-    {
-    }
+FilteredDocIdSet::FilteredDocIdSet(const DocIdSetPtr& innerSet) {
+    this->innerSet = innerSet;
+}
 
-    bool FilteredDocIdSet::isCacheable()
-    {
-        return innerSet->isCacheable();
-    }
+FilteredDocIdSet::~FilteredDocIdSet() {
+}
 
-    DocIdSetIteratorPtr FilteredDocIdSet::iterator()
-    {
-        return newLucene<DefaultFilteredDocIdSetIterator>(shared_from_this(), innerSet->iterator());
-    }
+bool FilteredDocIdSet::isCacheable() {
+    return innerSet->isCacheable();
+}
 
-    DefaultFilteredDocIdSetIterator::DefaultFilteredDocIdSetIterator(const FilteredDocIdSetPtr& filtered, const DocIdSetIteratorPtr& innerIter) : FilteredDocIdSetIterator(innerIter)
-    {
-        this->filtered = filtered;
-    }
+DocIdSetIteratorPtr FilteredDocIdSet::iterator() {
+    return newLucene<DefaultFilteredDocIdSetIterator>(shared_from_this(), innerSet->iterator());
+}
 
-    DefaultFilteredDocIdSetIterator::~DefaultFilteredDocIdSetIterator()
-    {
-    }
+DefaultFilteredDocIdSetIterator::DefaultFilteredDocIdSetIterator(const FilteredDocIdSetPtr& filtered, const DocIdSetIteratorPtr& innerIter) : FilteredDocIdSetIterator(innerIter) {
+    this->filtered = filtered;
+}
 
-    bool DefaultFilteredDocIdSetIterator::match(int32_t docid)
-    {
-        return filtered->match(docid);
-    }
+DefaultFilteredDocIdSetIterator::~DefaultFilteredDocIdSetIterator() {
+}
+
+bool DefaultFilteredDocIdSetIterator::match(int32_t docid) {
+    return filtered->match(docid);
+}
+
 }

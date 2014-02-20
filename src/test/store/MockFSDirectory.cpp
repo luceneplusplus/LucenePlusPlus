@@ -11,81 +11,68 @@
 #include "BufferedIndexInput.h"
 #include "Random.h"
 
-namespace Lucene
-{
-    MockFSDirectory::MockFSDirectory(const String& path)
-    {
-        allIndexInputs = Collection<IndexInputPtr>::newInstance();
-        lockFactory = newLucene<NoLockFactory>();
-        dir = newLucene<SimpleFSDirectory>(path);
-        rand = newLucene<Random>();
-    }
+namespace Lucene {
 
-    MockFSDirectory::~MockFSDirectory()
-    {
-    }
+MockFSDirectory::MockFSDirectory(const String& path) {
+    allIndexInputs = Collection<IndexInputPtr>::newInstance();
+    lockFactory = newLucene<NoLockFactory>();
+    dir = newLucene<SimpleFSDirectory>(path);
+    rand = newLucene<Random>();
+}
 
-    IndexInputPtr MockFSDirectory::openInput(const String& name)
-    {
-        return openInput(name, BufferedIndexInput::BUFFER_SIZE);
-    }
+MockFSDirectory::~MockFSDirectory() {
+}
 
-    void MockFSDirectory::tweakBufferSizes()
-    {
-        for (Collection<IndexInputPtr>::iterator ii = allIndexInputs.begin(); ii != allIndexInputs.end(); ++ii)
-        {
-            BufferedIndexInputPtr bii(boost::dynamic_pointer_cast<BufferedIndexInput>(*ii));
-            int32_t bufferSize = 1024 + (int32_t)std::abs(rand->nextInt() % 32768);
-            bii->setBufferSize(bufferSize);
-        }
-    }
+IndexInputPtr MockFSDirectory::openInput(const String& name) {
+    return openInput(name, BufferedIndexInput::BUFFER_SIZE);
+}
 
-    IndexInputPtr MockFSDirectory::openInput(const String& name, int32_t bufferSize)
-    {
-        // Make random changes to buffer size
-        bufferSize = 1 + (int32_t)std::abs(rand->nextInt() % 10);
-        IndexInputPtr f(dir->openInput(name, bufferSize));
-        allIndexInputs.add(f);
-        return f;
+void MockFSDirectory::tweakBufferSizes() {
+    for (Collection<IndexInputPtr>::iterator ii = allIndexInputs.begin(); ii != allIndexInputs.end(); ++ii) {
+        BufferedIndexInputPtr bii(boost::dynamic_pointer_cast<BufferedIndexInput>(*ii));
+        int32_t bufferSize = 1024 + (int32_t)std::abs(rand->nextInt() % 32768);
+        bii->setBufferSize(bufferSize);
     }
+}
 
-    IndexOutputPtr MockFSDirectory::createOutput(const String& name)
-    {
-        return dir->createOutput(name);
-    }
+IndexInputPtr MockFSDirectory::openInput(const String& name, int32_t bufferSize) {
+    // Make random changes to buffer size
+    bufferSize = 1 + (int32_t)std::abs(rand->nextInt() % 10);
+    IndexInputPtr f(dir->openInput(name, bufferSize));
+    allIndexInputs.add(f);
+    return f;
+}
 
-    void MockFSDirectory::close()
-    {
-        dir->close();
-    }
+IndexOutputPtr MockFSDirectory::createOutput(const String& name) {
+    return dir->createOutput(name);
+}
 
-    void MockFSDirectory::deleteFile(const String& name)
-    {
-        dir->deleteFile(name);
-    }
+void MockFSDirectory::close() {
+    dir->close();
+}
 
-    void MockFSDirectory::touchFile(const String& name)
-    {
-        dir->touchFile(name);
-    }
+void MockFSDirectory::deleteFile(const String& name) {
+    dir->deleteFile(name);
+}
 
-    uint64_t MockFSDirectory::fileModified(const String& name)
-    {
-        return dir->fileModified(name);
-    }
+void MockFSDirectory::touchFile(const String& name) {
+    dir->touchFile(name);
+}
 
-    bool MockFSDirectory::fileExists(const String& name)
-    {
-        return dir->fileExists(name);
-    }
+uint64_t MockFSDirectory::fileModified(const String& name) {
+    return dir->fileModified(name);
+}
 
-    HashSet<String> MockFSDirectory::listAll()
-    {
-        return dir->listAll();
-    }
+bool MockFSDirectory::fileExists(const String& name) {
+    return dir->fileExists(name);
+}
 
-    int64_t MockFSDirectory::fileLength(const String& name)
-    {
-        return dir->fileLength(name);
-    }
+HashSet<String> MockFSDirectory::listAll() {
+    return dir->listAll();
+}
+
+int64_t MockFSDirectory::fileLength(const String& name) {
+    return dir->fileLength(name);
+}
+
 }

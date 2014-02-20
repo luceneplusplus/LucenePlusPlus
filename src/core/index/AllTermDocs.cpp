@@ -9,21 +9,19 @@
 #include "SegmentReader.h"
 #include "BitVector.h"
 
-namespace Lucene
-{
-    AllTermDocs::AllTermDocs(const SegmentReaderPtr& parent) : AbstractAllTermDocs(parent->maxDoc())
-    {
-        SyncLock parentLock(parent);
-        this->_deletedDocs = parent->deletedDocs;
-    }
+namespace Lucene {
 
-    AllTermDocs::~AllTermDocs()
-    {
-    }
+AllTermDocs::AllTermDocs(const SegmentReaderPtr& parent) : AbstractAllTermDocs(parent->maxDoc()) {
+    SyncLock parentLock(parent);
+    this->_deletedDocs = parent->deletedDocs;
+}
 
-    bool AllTermDocs::isDeleted(int32_t doc)
-    {
-        BitVectorPtr deletedDocs(_deletedDocs.lock());
-        return (deletedDocs && deletedDocs->get(_doc));
-    }
+AllTermDocs::~AllTermDocs() {
+}
+
+bool AllTermDocs::isDeleted(int32_t doc) {
+    BitVectorPtr deletedDocs(_deletedDocs.lock());
+    return (deletedDocs && deletedDocs->get(_doc));
+}
+
 }

@@ -10,56 +10,47 @@
 #include "StringUtils.h"
 #include "VariantUtils.h"
 
-namespace Lucene
-{
-    TermRangeFilter::TermRangeFilter(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower,
-                                     bool includeUpper, CollatorPtr collator) :
-                                     MultiTermQueryWrapperFilter(newLucene<TermRangeQuery>(fieldName, lowerTerm, upperTerm,
-                                     includeLower, includeUpper, collator))
-    {
-    }
+namespace Lucene {
 
-    TermRangeFilter::~TermRangeFilter()
-    {
-    }
+TermRangeFilter::TermRangeFilter(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower,
+                                 bool includeUpper, CollatorPtr collator) :
+    MultiTermQueryWrapperFilter(newLucene<TermRangeQuery>(fieldName, lowerTerm, upperTerm,
+                                includeLower, includeUpper, collator)) {
+}
 
-    TermRangeFilterPtr TermRangeFilter::Less(const String& fieldName, StringValue upperTerm)
-    {
-        return newLucene<TermRangeFilter>(fieldName, VariantUtils::null(), upperTerm, false, true);
-    }
+TermRangeFilter::~TermRangeFilter() {
+}
 
-    TermRangeFilterPtr TermRangeFilter::More(const String& fieldName, StringValue lowerTerm)
-    {
-        return newLucene<TermRangeFilter>(fieldName, lowerTerm, VariantUtils::null(), true, false);
-    }
+TermRangeFilterPtr TermRangeFilter::Less(const String& fieldName, StringValue upperTerm) {
+    return newLucene<TermRangeFilter>(fieldName, VariantUtils::null(), upperTerm, false, true);
+}
 
-    String TermRangeFilter::getField()
-    {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getField();
-    }
+TermRangeFilterPtr TermRangeFilter::More(const String& fieldName, StringValue lowerTerm) {
+    return newLucene<TermRangeFilter>(fieldName, lowerTerm, VariantUtils::null(), true, false);
+}
 
-    String TermRangeFilter::getLowerTerm()
-    {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getLowerTerm();
-    }
+String TermRangeFilter::getField() {
+    return boost::static_pointer_cast<TermRangeQuery>(query)->getField();
+}
 
-    String TermRangeFilter::getUpperTerm()
-    {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getUpperTerm();
-    }
+String TermRangeFilter::getLowerTerm() {
+    return boost::static_pointer_cast<TermRangeQuery>(query)->getLowerTerm();
+}
 
-    bool TermRangeFilter::includesLower()
-    {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->includesLower();
-    }
+String TermRangeFilter::getUpperTerm() {
+    return boost::static_pointer_cast<TermRangeQuery>(query)->getUpperTerm();
+}
 
-    bool TermRangeFilter::includesUpper()
-    {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->includesUpper();
-    }
+bool TermRangeFilter::includesLower() {
+    return boost::static_pointer_cast<TermRangeQuery>(query)->includesLower();
+}
 
-    CollatorPtr TermRangeFilter::getCollator()
-    {
-        return boost::static_pointer_cast<TermRangeQuery>(query)->getCollator();
-    }
+bool TermRangeFilter::includesUpper() {
+    return boost::static_pointer_cast<TermRangeQuery>(query)->includesUpper();
+}
+
+CollatorPtr TermRangeFilter::getCollator() {
+    return boost::static_pointer_cast<TermRangeQuery>(query)->getCollator();
+}
+
 }

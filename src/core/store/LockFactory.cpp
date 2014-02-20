@@ -7,19 +7,17 @@
 #include "LuceneInc.h"
 #include "LockFactory.h"
 
-namespace Lucene
-{
-    LockFactory::~LockFactory()
-    {
-    }
+namespace Lucene {
 
-    void LockFactory::setLockPrefix(const String& lockPrefix)
-    {
-        this->lockPrefix = lockPrefix;
-    }
+LockFactory::~LockFactory() {
+}
 
-    String LockFactory::getLockPrefix()
-    {
-        return lockPrefix;
-    }
+void LockFactory::setLockPrefix(const String& lockPrefix) {
+    this->lockPrefix = lockPrefix;
+}
+
+String LockFactory::getLockPrefix() {
+    return lockPrefix;
+}
+
 }

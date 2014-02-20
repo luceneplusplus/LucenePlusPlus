@@ -9,27 +9,24 @@
 #include "PersianNormalizer.h"
 #include "TermAttribute.h"
 
-namespace Lucene
-{
-    PersianNormalizationFilter::PersianNormalizationFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
-        normalizer = newLucene<PersianNormalizer>();
-        termAtt = addAttribute<TermAttribute>();
-    }
+namespace Lucene {
 
-    PersianNormalizationFilter::~PersianNormalizationFilter()
-    {
-    }
+PersianNormalizationFilter::PersianNormalizationFilter(const TokenStreamPtr& input) : TokenFilter(input) {
+    normalizer = newLucene<PersianNormalizer>();
+    termAtt = addAttribute<TermAttribute>();
+}
 
-    bool PersianNormalizationFilter::incrementToken()
-    {
-        if (input->incrementToken())
-        {
-            int32_t newlen = normalizer->normalize(termAtt->termBuffer().get(), termAtt->termLength());
-            termAtt->setTermLength(newlen);
-            return true;
-        }
-        else
-            return false;
+PersianNormalizationFilter::~PersianNormalizationFilter() {
+}
+
+bool PersianNormalizationFilter::incrementToken() {
+    if (input->incrementToken()) {
+        int32_t newlen = normalizer->normalize(termAtt->termBuffer().get(), termAtt->termLength());
+        termAtt->setTermLength(newlen);
+        return true;
+    } else {
+        return false;
     }
+}
+
 }

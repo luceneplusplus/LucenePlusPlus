@@ -20,11 +20,9 @@
 
 using namespace Lucene;
 
-class ParallelTermEnumTest : public LuceneTestFixture
-{
+class ParallelTermEnumTest : public LuceneTestFixture {
 public:
-    ParallelTermEnumTest()
-    {
+    ParallelTermEnumTest() {
         RAMDirectoryPtr rd1 = newLucene<RAMDirectory>();
         IndexWriterPtr iw1 = newLucene<IndexWriter>(rd1, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -50,8 +48,7 @@ public:
         this->ir2 = IndexReader::open(rd2, true);
     }
 
-    virtual ~ParallelTermEnumTest()
-    {
+    virtual ~ParallelTermEnumTest() {
         ir1->close();
         ir2->close();
     }
@@ -61,8 +58,7 @@ public:
     IndexReaderPtr ir2;
 };
 
-TEST_F(ParallelTermEnumTest, testParallelTermEnum)
-{
+TEST_F(ParallelTermEnumTest, testParallelTermEnum) {
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(ir1);
     pr->add(ir2);

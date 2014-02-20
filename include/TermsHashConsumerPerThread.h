@@ -9,21 +9,21 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class TermsHashConsumerPerThread : public LuceneObject
-    {
-    public:
-        virtual ~TermsHashConsumerPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(TermsHashConsumerPerThread);
+class TermsHashConsumerPerThread : public LuceneObject {
+public:
+    virtual ~TermsHashConsumerPerThread();
 
-    public:
-        virtual void startDocument() = 0;
-        virtual DocWriterPtr finishDocument() = 0;
-        virtual TermsHashConsumerPerFieldPtr addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo) = 0;
-        virtual void abort() = 0;
-    };
+    LUCENE_CLASS(TermsHashConsumerPerThread);
+
+public:
+    virtual void startDocument() = 0;
+    virtual DocWriterPtr finishDocument() = 0;
+    virtual TermsHashConsumerPerFieldPtr addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo) = 0;
+    virtual void abort() = 0;
+};
+
 }
 
 #endif

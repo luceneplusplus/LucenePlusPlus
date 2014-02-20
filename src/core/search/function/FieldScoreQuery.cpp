@@ -10,29 +10,26 @@
 #include "IntFieldSource.h"
 #include "DoubleFieldSource.h"
 
-namespace Lucene
-{
-    FieldScoreQuery::FieldScoreQuery(const String& field, Type type) : ValueSourceQuery(getValueSource(field,type))
-    {
-    }
+namespace Lucene {
 
-    FieldScoreQuery::~FieldScoreQuery()
-    {
-    }
+FieldScoreQuery::FieldScoreQuery(const String& field, Type type) : ValueSourceQuery(getValueSource(field,type)) {
+}
 
-    ValueSourcePtr FieldScoreQuery::getValueSource(const String& field, Type type)
-    {
-        switch (type)
-        {
-            case BYTE:
-                return newLucene<ByteFieldSource>(field);
-            case INT:
-                return newLucene<IntFieldSource>(field);
-            case DOUBLE:
-                return newLucene<DoubleFieldSource>(field);
-            default:
-                boost::throw_exception(IllegalArgumentException(L"not a known Field Score Query Type"));
-                return ValueSourcePtr();
-        }
+FieldScoreQuery::~FieldScoreQuery() {
+}
+
+ValueSourcePtr FieldScoreQuery::getValueSource(const String& field, Type type) {
+    switch (type) {
+    case BYTE:
+        return newLucene<ByteFieldSource>(field);
+    case INT:
+        return newLucene<IntFieldSource>(field);
+    case DOUBLE:
+        return newLucene<DoubleFieldSource>(field);
+    default:
+        boost::throw_exception(IllegalArgumentException(L"not a known Field Score Query Type"));
+        return ValueSourcePtr();
     }
+}
+
 }

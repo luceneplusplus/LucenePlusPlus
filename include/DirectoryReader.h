@@ -13,341 +13,337 @@
 #include "IndexCommit.h"
 #include "SegmentMergeQueue.h"
 
-namespace Lucene
-{
-    /// An IndexReader which reads indexes with multiple segments.
-    class DirectoryReader : public IndexReader
-    {
-    public:
-        /// Construct reading the named set of readers.
-        DirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
+namespace Lucene {
 
-        /// Used by near real-time search.
-        DirectoryReader(const IndexWriterPtr& writer, const SegmentInfosPtr& infos, int32_t termInfosIndexDivisor);
+/// An IndexReader which reads indexes with multiple segments.
+class DirectoryReader : public IndexReader {
+public:
+    /// Construct reading the named set of readers.
+    DirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);
 
-        /// This constructor is only used for {@link #reopen()}
-        DirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos, Collection<SegmentReaderPtr> oldReaders,
-                        Collection<int32_t> oldStarts, MapStringByteArray oldNormsCache, bool readOnly,
-                        bool doClone, int32_t termInfosIndexDivisor);
+    /// Used by near real-time search.
+    DirectoryReader(const IndexWriterPtr& writer, const SegmentInfosPtr& infos, int32_t termInfosIndexDivisor);
 
-        virtual ~DirectoryReader();
+    /// This constructor is only used for {@link #reopen()}
+    DirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos, Collection<SegmentReaderPtr> oldReaders,
+                    Collection<int32_t> oldStarts, MapStringByteArray oldNormsCache, bool readOnly,
+                    bool doClone, int32_t termInfosIndexDivisor);
 
-        LUCENE_CLASS(DirectoryReader);
+    virtual ~DirectoryReader();
 
-    protected:
-        DirectoryPtr _directory;
-        bool readOnly;
-        IndexWriterWeakPtr _writer;
-        IndexDeletionPolicyPtr deletionPolicy;
-        HashSet<String> synced;
-        LockPtr writeLock;
-        SegmentInfosPtr segmentInfos;
-        SegmentInfosPtr segmentInfosStart;
-        bool stale;
-        int32_t termInfosIndexDivisor;
+    LUCENE_CLASS(DirectoryReader);
 
-        bool rollbackHasChanges;
+protected:
+    DirectoryPtr _directory;
+    bool readOnly;
+    IndexWriterWeakPtr _writer;
+    IndexDeletionPolicyPtr deletionPolicy;
+    HashSet<String> synced;
+    LockPtr writeLock;
+    SegmentInfosPtr segmentInfos;
+    SegmentInfosPtr segmentInfosStart;
+    bool stale;
+    int32_t termInfosIndexDivisor;
 
-        Collection<SegmentReaderPtr> subReaders;
-        Collection<int32_t> starts; // 1st docno for each segment
-        MapStringByteArray normsCache;
-        int32_t _maxDoc;
-        int32_t _numDocs;
-        bool _hasDeletions;
+    bool rollbackHasChanges;
 
-        // Max version in index as of when we opened; this can be > our current segmentInfos version
-        // in case we were opened on a past IndexCommit
-        int64_t maxIndexVersion;
+    Collection<SegmentReaderPtr> subReaders;
+    Collection<int32_t> starts; // 1st docno for each segment
+    MapStringByteArray normsCache;
+    int32_t _maxDoc;
+    int32_t _numDocs;
+    bool _hasDeletions;
 
-    public:
-        void _initialize(Collection<SegmentReaderPtr> subReaders);
+    // Max version in index as of when we opened; this can be > our current segmentInfos version
+    // in case we were opened on a past IndexCommit
+    int64_t maxIndexVersion;
 
-        static IndexReaderPtr open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& commit, bool readOnly, int32_t termInfosIndexDivisor);
+public:
+    void _initialize(Collection<SegmentReaderPtr> subReaders);
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual LuceneObjectPtr clone(bool openReadOnly, const LuceneObjectPtr& other = LuceneObjectPtr());
+    static IndexReaderPtr open(const DirectoryPtr& directory, const IndexDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& commit, bool readOnly, int32_t termInfosIndexDivisor);
 
-        virtual IndexReaderPtr reopen();
-        virtual IndexReaderPtr reopen(bool openReadOnly);
-        virtual IndexReaderPtr reopen(const IndexCommitPtr& commit);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual LuceneObjectPtr clone(bool openReadOnly, const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        /// Version number when this IndexReader was opened.
-        virtual int64_t getVersion();
+    virtual IndexReaderPtr reopen();
+    virtual IndexReaderPtr reopen(bool openReadOnly);
+    virtual IndexReaderPtr reopen(const IndexCommitPtr& commit);
 
-        /// Return an array of term frequency vectors for the specified document.
-        virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
+    /// Version number when this IndexReader was opened.
+    virtual int64_t getVersion();
 
-        /// Return a term frequency vector for the specified document and field.
-        virtual TermFreqVectorPtr getTermFreqVector(int32_t docNumber, const String& field);
+    /// Return an array of term frequency vectors for the specified document.
+    virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
 
-        /// Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays of the {@link TermFreqVector}.
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
+    /// Return a term frequency vector for the specified document and field.
+    virtual TermFreqVectorPtr getTermFreqVector(int32_t docNumber, const String& field);
 
-        /// Map all the term vectors for all fields in a Document
-        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
+    /// Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays of the {@link TermFreqVector}.
+    virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
 
-        /// Checks is the index is optimized (if it has a single segment and no deletions).  Not implemented in the IndexReader base class.
-        /// @return true if the index is optimized; false otherwise
-        virtual bool isOptimized();
+    /// Map all the term vectors for all fields in a Document
+    virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
 
-        /// Returns the number of documents in this index.
-        virtual int32_t numDocs();
+    /// Checks is the index is optimized (if it has a single segment and no deletions).  Not implemented in the IndexReader base class.
+    /// @return true if the index is optimized; false otherwise
+    virtual bool isOptimized();
 
-        /// Returns one greater than the largest possible document number.
-        virtual int32_t maxDoc();
+    /// Returns the number of documents in this index.
+    virtual int32_t numDocs();
 
-        /// Get the {@link Document} at the n'th position. The {@link FieldSelector} may be used to determine what {@link Field}s to load and how they should be loaded.
-        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
+    /// Returns one greater than the largest possible document number.
+    virtual int32_t maxDoc();
 
-        /// Returns true if document n has been deleted
-        virtual bool isDeleted(int32_t n);
+    /// Get the {@link Document} at the n'th position. The {@link FieldSelector} may be used to determine what {@link Field}s to load and how they should be loaded.
+    virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
 
-        /// Returns true if any documents have been deleted
-        virtual bool hasDeletions();
+    /// Returns true if document n has been deleted
+    virtual bool isDeleted(int32_t n);
 
-        /// Find reader for doc n
-        static int32_t readerIndex(int32_t n, Collection<int32_t> starts, int32_t numSubReaders);
+    /// Returns true if any documents have been deleted
+    virtual bool hasDeletions();
 
-        /// Returns true if there are norms stored for this field.
-        virtual bool hasNorms(const String& field);
+    /// Find reader for doc n
+    static int32_t readerIndex(int32_t n, Collection<int32_t> starts, int32_t numSubReaders);
 
-        /// Returns the byte-encoded normalization factor for the named field of every document.
-        virtual ByteArray norms(const String& field);
+    /// Returns true if there are norms stored for this field.
+    virtual bool hasNorms(const String& field);
 
-        /// Reads the byte-encoded normalization factor for the named field of every document.
-        virtual void norms(const String& field, ByteArray norms, int32_t offset);
+    /// Returns the byte-encoded normalization factor for the named field of every document.
+    virtual ByteArray norms(const String& field);
 
-        /// Returns an enumeration of all the terms in the index.
-        virtual TermEnumPtr terms();
+    /// Reads the byte-encoded normalization factor for the named field of every document.
+    virtual void norms(const String& field, ByteArray norms, int32_t offset);
 
-        /// Returns an enumeration of all terms starting at a given term.
-        virtual TermEnumPtr terms(const TermPtr& t);
+    /// Returns an enumeration of all the terms in the index.
+    virtual TermEnumPtr terms();
 
-        /// Returns the number of documents containing the term t.
-        virtual int32_t docFreq(const TermPtr& t);
+    /// Returns an enumeration of all terms starting at a given term.
+    virtual TermEnumPtr terms(const TermPtr& t);
 
-        /// Returns an unpositioned {@link TermDocs} enumerator.
-        virtual TermDocsPtr termDocs();
+    /// Returns the number of documents containing the term t.
+    virtual int32_t docFreq(const TermPtr& t);
 
-        /// Returns an unpositioned {@link TermPositions} enumerator.
-        virtual TermPositionsPtr termPositions();
+    /// Returns an unpositioned {@link TermDocs} enumerator.
+    virtual TermDocsPtr termDocs();
 
-        /// Tries to acquire the WriteLock on this directory. this method is only valid if this
-        /// IndexReader is directory owner.
-        virtual void acquireWriteLock();
+    /// Returns an unpositioned {@link TermPositions} enumerator.
+    virtual TermPositionsPtr termPositions();
 
-        void startCommit();
-        void rollbackCommit();
+    /// Tries to acquire the WriteLock on this directory. this method is only valid if this
+    /// IndexReader is directory owner.
+    virtual void acquireWriteLock();
 
-        /// Retrieve the String userData optionally passed to IndexWriter#commit.
-        virtual MapStringString getCommitUserData();
+    void startCommit();
+    void rollbackCommit();
 
-        /// Check whether any new changes have occurred to the index since this reader was opened.
-        virtual bool isCurrent();
+    /// Retrieve the String userData optionally passed to IndexWriter#commit.
+    virtual MapStringString getCommitUserData();
 
-        /// Get a list of unique field names that exist in this index and have the specified field
-        /// option information.
-        virtual HashSet<String> getFieldNames(FieldOption fieldOption);
+    /// Check whether any new changes have occurred to the index since this reader was opened.
+    virtual bool isCurrent();
 
-        static HashSet<String> getFieldNames(FieldOption fieldOption, Collection<IndexReaderPtr> subReaders);
+    /// Get a list of unique field names that exist in this index and have the specified field
+    /// option information.
+    virtual HashSet<String> getFieldNames(FieldOption fieldOption);
 
-        /// Returns the sequential sub readers that this reader is logically composed of.
-        virtual Collection<IndexReaderPtr> getSequentialSubReaders();
+    static HashSet<String> getFieldNames(FieldOption fieldOption, Collection<IndexReaderPtr> subReaders);
 
-        /// Returns the directory this index resides in.
-        virtual DirectoryPtr directory();
+    /// Returns the sequential sub readers that this reader is logically composed of.
+    virtual Collection<IndexReaderPtr> getSequentialSubReaders();
 
-        virtual int32_t getTermInfosIndexDivisor();
+    /// Returns the directory this index resides in.
+    virtual DirectoryPtr directory();
 
-        /// Return the IndexCommit that this reader has opened.
-        virtual IndexCommitPtr getIndexCommit();
+    virtual int32_t getTermInfosIndexDivisor();
 
-        /// Returns all commit points that exist in the Directory.
-        static Collection<IndexCommitPtr> listCommits(const DirectoryPtr& dir);
+    /// Return the IndexCommit that this reader has opened.
+    virtual IndexCommitPtr getIndexCommit();
 
-    protected:
-        IndexReaderPtr doReopenFromWriter(bool openReadOnly, const IndexCommitPtr& commit);
-        IndexReaderPtr doReopen(bool openReadOnly, const IndexCommitPtr& commit);
-        IndexReaderPtr doReopenNoWriter(bool openReadOnly, const IndexCommitPtr& commit);
-        DirectoryReaderPtr doReopen(const SegmentInfosPtr& infos, bool doClone, bool openReadOnly);
+    /// Returns all commit points that exist in the Directory.
+    static Collection<IndexCommitPtr> listCommits(const DirectoryPtr& dir);
 
-        /// Implements deletion of the document numbered docNum.
-        virtual void doDelete(int32_t docNum);
+protected:
+    IndexReaderPtr doReopenFromWriter(bool openReadOnly, const IndexCommitPtr& commit);
+    IndexReaderPtr doReopen(bool openReadOnly, const IndexCommitPtr& commit);
+    IndexReaderPtr doReopenNoWriter(bool openReadOnly, const IndexCommitPtr& commit);
+    DirectoryReaderPtr doReopen(const SegmentInfosPtr& infos, bool doClone, bool openReadOnly);
 
-        /// Implements actual undeleteAll() in subclass.
-        virtual void doUndeleteAll();
+    /// Implements deletion of the document numbered docNum.
+    virtual void doDelete(int32_t docNum);
 
-        int32_t readerIndex(int32_t n);
+    /// Implements actual undeleteAll() in subclass.
+    virtual void doUndeleteAll();
 
-        /// Implements setNorm in subclass.
-        virtual void doSetNorm(int32_t doc, const String& field, uint8_t value);
+    int32_t readerIndex(int32_t n);
 
-        /// Commit changes resulting from delete, undeleteAll, or setNorm operations
-        ///
-        /// If an exception is hit, then either no changes or all changes will have been committed to the index (transactional semantics).
-        virtual void doCommit(MapStringString commitUserData);
+    /// Implements setNorm in subclass.
+    virtual void doSetNorm(int32_t doc, const String& field, uint8_t value);
 
-        /// Implements close.
-        virtual void doClose();
+    /// Commit changes resulting from delete, undeleteAll, or setNorm operations
+    ///
+    /// If an exception is hit, then either no changes or all changes will have been committed to the index (transactional semantics).
+    virtual void doCommit(MapStringString commitUserData);
 
-        friend class FindSegmentsReopen;
-    };
+    /// Implements close.
+    virtual void doClose();
 
-    class MultiTermEnum : public TermEnum
-    {
-    public:
-        MultiTermEnum(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> readers, Collection<int32_t> starts, const TermPtr& t);
-        virtual ~MultiTermEnum();
+    friend class FindSegmentsReopen;
+};
 
-        LUCENE_CLASS(MultiTermEnum);
+class MultiTermEnum : public TermEnum {
+public:
+    MultiTermEnum(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> readers, Collection<int32_t> starts, const TermPtr& t);
+    virtual ~MultiTermEnum();
 
-    protected:
-        SegmentMergeQueuePtr queue;
-        TermPtr _term;
-        int32_t _docFreq;
+    LUCENE_CLASS(MultiTermEnum);
 
-    public:
-        IndexReaderWeakPtr _topReader;
-        Collection<SegmentMergeInfoPtr> matchingSegments; // null terminated array of matching segments
+protected:
+    SegmentMergeQueuePtr queue;
+    TermPtr _term;
+    int32_t _docFreq;
 
-    public:
-        /// Increments the enumeration to the next element.  True if one exists.
-        virtual bool next();
+public:
+    IndexReaderWeakPtr _topReader;
+    Collection<SegmentMergeInfoPtr> matchingSegments; // null terminated array of matching segments
 
-        /// Returns the current Term in the enumeration.
-        virtual TermPtr term();
+public:
+    /// Increments the enumeration to the next element.  True if one exists.
+    virtual bool next();
 
-        /// Returns the docFreq of the current Term in the enumeration.
-        virtual int32_t docFreq();
+    /// Returns the current Term in the enumeration.
+    virtual TermPtr term();
 
-        /// Closes the enumeration to further activity, freeing resources.
-        virtual void close();
-    };
+    /// Returns the docFreq of the current Term in the enumeration.
+    virtual int32_t docFreq();
 
-    class MultiTermDocs : public TermPositions, public LuceneObject
-    {
-    public:
-        MultiTermDocs(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s);
-        virtual ~MultiTermDocs();
+    /// Closes the enumeration to further activity, freeing resources.
+    virtual void close();
+};
 
-        LUCENE_CLASS(MultiTermDocs);
+class MultiTermDocs : public TermPositions, public LuceneObject {
+public:
+    MultiTermDocs(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s);
+    virtual ~MultiTermDocs();
 
-    protected:
-        IndexReaderWeakPtr _topReader; // used for matching TermEnum to TermDocs
-        Collection<IndexReaderPtr> readers;
-        Collection<int32_t> starts;
-        TermPtr term;
+    LUCENE_CLASS(MultiTermDocs);
 
-        int32_t base;
-        int32_t pointer;
+protected:
+    IndexReaderWeakPtr _topReader; // used for matching TermEnum to TermDocs
+    Collection<IndexReaderPtr> readers;
+    Collection<int32_t> starts;
+    TermPtr term;
 
-        Collection<TermDocsPtr> readerTermDocs;
-        TermDocsPtr current;
-        MultiTermEnumPtr tenum; // the term enum used for seeking
-        int32_t matchingSegmentPos; // position into the matching segments from tenum
-        SegmentMergeInfoPtr smi; // current segment mere info
+    int32_t base;
+    int32_t pointer;
 
-    public:
-        /// Returns the current document number.
-        virtual int32_t doc();
+    Collection<TermDocsPtr> readerTermDocs;
+    TermDocsPtr current;
+    MultiTermEnumPtr tenum; // the term enum used for seeking
+    int32_t matchingSegmentPos; // position into the matching segments from tenum
+    SegmentMergeInfoPtr smi; // current segment mere info
 
-        /// Returns the frequency of the term within the current document.
-        virtual int32_t freq();
+public:
+    /// Returns the current document number.
+    virtual int32_t doc();
 
-        /// Sets this to the data for a term.
-        virtual void seek(const TermPtr& term);
+    /// Returns the frequency of the term within the current document.
+    virtual int32_t freq();
 
-        /// Sets this to the data for the current term in a {@link TermEnum}.
-        virtual void seek(const TermEnumPtr& termEnum);
+    /// Sets this to the data for a term.
+    virtual void seek(const TermPtr& term);
 
-        /// Moves to the next pair in the enumeration.
-        virtual bool next();
+    /// Sets this to the data for the current term in a {@link TermEnum}.
+    virtual void seek(const TermEnumPtr& termEnum);
 
-        /// Attempts to read multiple entries from the enumeration, up to length of docs.
-        /// Optimized implementation.
-        virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    /// Moves to the next pair in the enumeration.
+    virtual bool next();
 
-        /// Skips entries to the first beyond the current whose document number is greater than or equal to target.
-        virtual bool skipTo(int32_t target);
+    /// Attempts to read multiple entries from the enumeration, up to length of docs.
+    /// Optimized implementation.
+    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
 
-        /// Frees associated resources.
-        virtual void close();
+    /// Skips entries to the first beyond the current whose document number is greater than or equal to target.
+    virtual bool skipTo(int32_t target);
 
-    protected:
-        virtual TermDocsPtr termDocs(int32_t i);
-        virtual TermDocsPtr termDocs(const IndexReaderPtr& reader);
-    };
+    /// Frees associated resources.
+    virtual void close();
 
-    class MultiTermPositions : public MultiTermDocs
-    {
-    public:
-        MultiTermPositions(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s);
-        virtual ~MultiTermPositions();
+protected:
+    virtual TermDocsPtr termDocs(int32_t i);
+    virtual TermDocsPtr termDocs(const IndexReaderPtr& reader);
+};
 
-        LUCENE_CLASS(MultiTermPositions);
+class MultiTermPositions : public MultiTermDocs {
+public:
+    MultiTermPositions(const IndexReaderPtr& topReader, Collection<IndexReaderPtr> r, Collection<int32_t> s);
+    virtual ~MultiTermPositions();
 
-    public:
-        /// Returns next position in the current document.
-        virtual int32_t nextPosition();
+    LUCENE_CLASS(MultiTermPositions);
 
-        /// Returns the length of the payload at the current term position.
-        virtual int32_t getPayloadLength();
+public:
+    /// Returns next position in the current document.
+    virtual int32_t nextPosition();
 
-        /// Returns the payload data at the current term position.
-        virtual ByteArray getPayload(ByteArray data, int32_t offset);
+    /// Returns the length of the payload at the current term position.
+    virtual int32_t getPayloadLength();
 
-        /// Checks if a payload can be loaded at this position.
-        virtual bool isPayloadAvailable();
+    /// Returns the payload data at the current term position.
+    virtual ByteArray getPayload(ByteArray data, int32_t offset);
 
-    protected:
-        virtual TermDocsPtr termDocs(const IndexReaderPtr& reader);
-    };
+    /// Checks if a payload can be loaded at this position.
+    virtual bool isPayloadAvailable();
 
-    class ReaderCommit : public IndexCommit
-    {
-    public:
-        ReaderCommit(const SegmentInfosPtr& infos, const DirectoryPtr& dir);
-        virtual ~ReaderCommit();
+protected:
+    virtual TermDocsPtr termDocs(const IndexReaderPtr& reader);
+};
 
-        LUCENE_CLASS(ReaderCommit);
+class ReaderCommit : public IndexCommit {
+public:
+    ReaderCommit(const SegmentInfosPtr& infos, const DirectoryPtr& dir);
+    virtual ~ReaderCommit();
 
-    protected:
-        String segmentsFileName;
-        HashSet<String> files;
-        DirectoryPtr dir;
-        int64_t generation;
-        int64_t version;
-        bool _isOptimized;
-        MapStringString userData;
+    LUCENE_CLASS(ReaderCommit);
 
-    public:
-        virtual String toString();
+protected:
+    String segmentsFileName;
+    HashSet<String> files;
+    DirectoryPtr dir;
+    int64_t generation;
+    int64_t version;
+    bool _isOptimized;
+    MapStringString userData;
 
-        /// Returns true if this commit is an optimized index.
-        virtual bool isOptimized();
+public:
+    virtual String toString();
 
-        /// Two IndexCommits are equal if both their Directory and versions are equal.
-        virtual String getSegmentsFileName();
+    /// Returns true if this commit is an optimized index.
+    virtual bool isOptimized();
 
-        /// Returns all index files referenced by this commit point.
-        virtual HashSet<String> getFileNames();
+    /// Two IndexCommits are equal if both their Directory and versions are equal.
+    virtual String getSegmentsFileName();
 
-        /// Returns the {@link Directory} for the index.
-        virtual DirectoryPtr getDirectory();
+    /// Returns all index files referenced by this commit point.
+    virtual HashSet<String> getFileNames();
 
-        /// Returns the version for this IndexCommit.
-        virtual int64_t getVersion();
+    /// Returns the {@link Directory} for the index.
+    virtual DirectoryPtr getDirectory();
 
-        /// Returns the generation (the _N in segments_N) for this IndexCommit.
-        virtual int64_t getGeneration();
+    /// Returns the version for this IndexCommit.
+    virtual int64_t getVersion();
 
-        virtual bool isDeleted();
+    /// Returns the generation (the _N in segments_N) for this IndexCommit.
+    virtual int64_t getGeneration();
 
-        /// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
-        virtual MapStringString getUserData();
+    virtual bool isDeleted();
 
-        virtual void deleteCommit();
-    };
+    /// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
+    virtual MapStringString getUserData();
+
+    virtual void deleteCommit();
+};
+
 }
 
 #endif

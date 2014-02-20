@@ -14,76 +14,71 @@
 #include "TokenStream.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    const int32_t SimpleSpanFragmenter::DEFAULT_FRAGMENT_SIZE = 100;
+namespace Lucene {
 
-    SimpleSpanFragmenter::SimpleSpanFragmenter(const QueryScorerPtr& queryScorer)
-    {
-        this->currentNumFrags = 0;
-        this->position = -1;
-        this->waitForPos = -1;
-        this->textSize = 0;
+const int32_t SimpleSpanFragmenter::DEFAULT_FRAGMENT_SIZE = 100;
 
-        this->queryScorer = queryScorer;
-        this->fragmentSize = DEFAULT_FRAGMENT_SIZE;
+SimpleSpanFragmenter::SimpleSpanFragmenter(const QueryScorerPtr& queryScorer) {
+    this->currentNumFrags = 0;
+    this->position = -1;
+    this->waitForPos = -1;
+    this->textSize = 0;
+
+    this->queryScorer = queryScorer;
+    this->fragmentSize = DEFAULT_FRAGMENT_SIZE;
+}
+
+SimpleSpanFragmenter::SimpleSpanFragmenter(const QueryScorerPtr& queryScorer, int32_t fragmentSize) {
+    this->currentNumFrags = 0;
+    this->position = -1;
+    this->waitForPos = -1;
+    this->textSize = 0;
+
+    this->queryScorer = queryScorer;
+    this->fragmentSize = fragmentSize;
+}
+
+SimpleSpanFragmenter::~SimpleSpanFragmenter() {
+}
+
+bool SimpleSpanFragmenter::isNewFragment() {
+    position += posIncAtt->getPositionIncrement();
+
+    if (waitForPos == position) {
+        waitForPos = -1;
+    } else if (waitForPos != -1) {
+        return false;
     }
 
-    SimpleSpanFragmenter::SimpleSpanFragmenter(const QueryScorerPtr& queryScorer, int32_t fragmentSize)
-    {
-        this->currentNumFrags = 0;
-        this->position = -1;
-        this->waitForPos = -1;
-        this->textSize = 0;
+    WeightedSpanTermPtr wSpanTerm(queryScorer->getWeightedSpanTerm(termAtt->term()));
 
-        this->queryScorer = queryScorer;
-        this->fragmentSize = fragmentSize;
-    }
+    if (wSpanTerm) {
+        Collection<PositionSpanPtr> positionSpans(wSpanTerm->getPositionSpans());
 
-    SimpleSpanFragmenter::~SimpleSpanFragmenter()
-    {
-    }
-
-    bool SimpleSpanFragmenter::isNewFragment()
-    {
-        position += posIncAtt->getPositionIncrement();
-
-        if (waitForPos == position)
-            waitForPos = -1;
-        else if (waitForPos != -1)
-            return false;
-
-        WeightedSpanTermPtr wSpanTerm(queryScorer->getWeightedSpanTerm(termAtt->term()));
-
-        if (wSpanTerm)
-        {
-            Collection<PositionSpanPtr> positionSpans(wSpanTerm->getPositionSpans());
-
-            for (int32_t i = 0; i < positionSpans.size(); ++i)
-            {
-                if (positionSpans[i]->start == position)
-                {
-                    waitForPos = positionSpans[i]->end + 1;
-                    break;
-                }
+        for (int32_t i = 0; i < positionSpans.size(); ++i) {
+            if (positionSpans[i]->start == position) {
+                waitForPos = positionSpans[i]->end + 1;
+                break;
             }
         }
-
-        bool isNewFrag = (offsetAtt->endOffset() >= (fragmentSize * currentNumFrags) && (textSize - offsetAtt->endOffset()) >= MiscUtils::unsignedShift(fragmentSize, 1));
-
-        if (isNewFrag)
-            ++currentNumFrags;
-
-        return isNewFrag;
     }
 
-    void SimpleSpanFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
-    {
-        position = -1;
-        currentNumFrags = 1;
-        textSize = originalText.length();
-        termAtt = tokenStream->addAttribute<TermAttribute>();
-        posIncAtt = tokenStream->addAttribute<PositionIncrementAttribute>();
-        offsetAtt = tokenStream->addAttribute<OffsetAttribute>();
+    bool isNewFrag = (offsetAtt->endOffset() >= (fragmentSize * currentNumFrags) && (textSize - offsetAtt->endOffset()) >= MiscUtils::unsignedShift(fragmentSize, 1));
+
+    if (isNewFrag) {
+        ++currentNumFrags;
     }
+
+    return isNewFrag;
+}
+
+void SimpleSpanFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream) {
+    position = -1;
+    currentNumFrags = 1;
+    textSize = originalText.length();
+    termAtt = tokenStream->addAttribute<TermAttribute>();
+    posIncAtt = tokenStream->addAttribute<PositionIncrementAttribute>();
+    offsetAtt = tokenStream->addAttribute<OffsetAttribute>();
+}
+
 }

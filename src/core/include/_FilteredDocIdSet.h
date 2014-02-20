@@ -9,23 +9,23 @@
 
 #include "FilteredDocIdSetIterator.h"
 
-namespace Lucene
-{
-    /// Implementation of the contract to build a DocIdSetIterator.
-    class DefaultFilteredDocIdSetIterator : public FilteredDocIdSetIterator
-    {
-    public:
-        DefaultFilteredDocIdSetIterator(const FilteredDocIdSetPtr& filtered, const DocIdSetIteratorPtr& innerIter);
-        virtual ~DefaultFilteredDocIdSetIterator();
+namespace Lucene {
 
-        LUCENE_CLASS(DefaultFilteredDocIdSetIterator);
+/// Implementation of the contract to build a DocIdSetIterator.
+class DefaultFilteredDocIdSetIterator : public FilteredDocIdSetIterator {
+public:
+    DefaultFilteredDocIdSetIterator(const FilteredDocIdSetPtr& filtered, const DocIdSetIteratorPtr& innerIter);
+    virtual ~DefaultFilteredDocIdSetIterator();
 
-    protected:
-        FilteredDocIdSetPtr filtered;
+    LUCENE_CLASS(DefaultFilteredDocIdSetIterator);
 
-    protected:
-        virtual bool match(int32_t docid);
-    };
+protected:
+    FilteredDocIdSetPtr filtered;
+
+protected:
+    virtual bool match(int32_t docid);
+};
+
 }
 
 #endif

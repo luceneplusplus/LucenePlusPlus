@@ -9,73 +9,73 @@
 
 #include "Tokenizer.h"
 
-namespace Lucene
-{
-    /// Tokenize Chinese text as individual Chinese characters.
-    ///
-    /// The difference between ChineseTokenizer and ChineseTokenizer is that they have different
-    /// token parsing logic.
-    ///
-    /// For example, if the Chinese text "C1C2C3C4" is to be indexed:
-    /// <ul>
-    /// <li> The tokens returned from ChineseTokenizer are C1, C2, C3, C4.
-    /// <li>The tokens returned from the ChineseTokenizer are C1C2, C2C3, C3C4.
-    /// </ul>
-    ///
-    /// Therefore the index created by ChineseTokenizer is much larger.
-    ///
-    /// The problem is that when searching for C1, C1C2, C1C3, C4C2, C1C2C3 ... the
-    /// ChineseTokenizer works, but the ChineseTokenizer will not work.
-    class LPPCONTRIBAPI ChineseTokenizer : public Tokenizer
-    {
-    public:
-        ChineseTokenizer(const ReaderPtr& input);
-        ChineseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
-        ChineseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
+namespace Lucene {
 
-        virtual ~ChineseTokenizer();
+/// Tokenize Chinese text as individual Chinese characters.
+///
+/// The difference between ChineseTokenizer and ChineseTokenizer is that they have different
+/// token parsing logic.
+///
+/// For example, if the Chinese text "C1C2C3C4" is to be indexed:
+/// <ul>
+/// <li> The tokens returned from ChineseTokenizer are C1, C2, C3, C4.
+/// <li>The tokens returned from the ChineseTokenizer are C1C2, C2C3, C3C4.
+/// </ul>
+///
+/// Therefore the index created by ChineseTokenizer is much larger.
+///
+/// The problem is that when searching for C1, C1C2, C1C3, C4C2, C1C2C3 ... the
+/// ChineseTokenizer works, but the ChineseTokenizer will not work.
+class LPPCONTRIBAPI ChineseTokenizer : public Tokenizer {
+public:
+    ChineseTokenizer(const ReaderPtr& input);
+    ChineseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
+    ChineseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
-        LUCENE_CLASS(ChineseTokenizer);
+    virtual ~ChineseTokenizer();
 
-    protected:
-        /// Max word length
-        static const int32_t MAX_WORD_LEN;
+    LUCENE_CLASS(ChineseTokenizer);
 
-        static const int32_t IO_BUFFER_SIZE;
+protected:
+    /// Max word length
+    static const int32_t MAX_WORD_LEN;
 
-    protected:
-        /// word offset, used to imply which character(in) is parsed
-        int32_t offset;
+    static const int32_t IO_BUFFER_SIZE;
 
-        /// the index used only for ioBuffer
-        int32_t bufferIndex;
+protected:
+    /// word offset, used to imply which character(in) is parsed
+    int32_t offset;
 
-        /// data length
-        int32_t dataLen;
+    /// the index used only for ioBuffer
+    int32_t bufferIndex;
 
-        /// character buffer, store the characters which are used to compose the returned Token
-        CharArray buffer;
+    /// data length
+    int32_t dataLen;
 
-        /// I/O buffer, used to store the content of the input (one of the members of Tokenizer)
-        CharArray ioBuffer;
+    /// character buffer, store the characters which are used to compose the returned Token
+    CharArray buffer;
 
-        TermAttributePtr termAtt;
-        OffsetAttributePtr offsetAtt;
+    /// I/O buffer, used to store the content of the input (one of the members of Tokenizer)
+    CharArray ioBuffer;
 
-        int32_t length;
-        int32_t start;
+    TermAttributePtr termAtt;
+    OffsetAttributePtr offsetAtt;
 
-    public:
-        virtual void initialize();
-        virtual bool incrementToken();
-        virtual void end();
-        virtual void reset();
-        virtual void reset(const ReaderPtr& input);
+    int32_t length;
+    int32_t start;
 
-    protected:
-        void push(wchar_t c);
-        bool flush();
-    };
+public:
+    virtual void initialize();
+    virtual bool incrementToken();
+    virtual void end();
+    virtual void reset();
+    virtual void reset(const ReaderPtr& input);
+
+protected:
+    void push(wchar_t c);
+    bool flush();
+};
+
 }
 
 #endif

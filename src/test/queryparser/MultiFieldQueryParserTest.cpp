@@ -30,11 +30,9 @@ DECLARE_SHARED_PTR(MultiFieldQueryParserTestAnalyzer)
 DECLARE_SHARED_PTR(MultiFieldQueryParserTestFilter)
 
 /// Filter which discards the token 'stop' and which expands the token 'phrase' into 'phrase1 phrase2'
-class MultiFieldQueryParserTestFilter : public TokenFilter
-{
+class MultiFieldQueryParserTestFilter : public TokenFilter {
 public:
-    MultiFieldQueryParserTestFilter(const TokenStreamPtr& in) : TokenFilter(in)
-    {
+    MultiFieldQueryParserTestFilter(const TokenStreamPtr& in) : TokenFilter(in) {
         termAtt = addAttribute<TermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
         inPhrase = false;
@@ -42,8 +40,7 @@ public:
         savedEnd = 0;
     }
 
-    virtual ~MultiFieldQueryParserTestFilter()
-    {
+    virtual ~MultiFieldQueryParserTestFilter() {
     }
 
     LUCENE_CLASS(MultiFieldQueryParserTestFilter);
@@ -56,80 +53,65 @@ public:
     OffsetAttributePtr offsetAtt;
 
 public:
-    virtual bool incrementToken()
-    {
-        if (inPhrase)
-        {
+    virtual bool incrementToken() {
+        if (inPhrase) {
             inPhrase = false;
             termAtt->setTermBuffer(L"phrase2");
             offsetAtt->setOffset(savedStart, savedEnd);
             return true;
-        }
-        else
-        {
-            while (input->incrementToken())
-            {
-                if (termAtt->term() == L"phrase")
-                {
+        } else {
+            while (input->incrementToken()) {
+                if (termAtt->term() == L"phrase") {
                     inPhrase = true;
                     savedStart = offsetAtt->startOffset();
                     savedEnd = offsetAtt->endOffset();
                     termAtt->setTermBuffer(L"phrase1");
                     offsetAtt->setOffset(savedStart, savedEnd);
                     return true;
-                }
-                else if (termAtt->term() != L"stop")
+                } else if (termAtt->term() != L"stop") {
                     return true;
+                }
             }
         }
         return false;
     }
 };
 
-class MultiFieldQueryParserTestAnalyzer : public Analyzer
-{
+class MultiFieldQueryParserTestAnalyzer : public Analyzer {
 public:
-    virtual ~MultiFieldQueryParserTestAnalyzer()
-    {
+    virtual ~MultiFieldQueryParserTestAnalyzer() {
     }
 
     LUCENE_CLASS(MultiFieldQueryParserTestAnalyzer);
 
 public:
     // Filters LowerCaseTokenizer with StopFilter.
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         return newLucene<MultiFieldQueryParserTestFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
 };
 
-class EmptyTokenStream : public TokenStream
-{
+class EmptyTokenStream : public TokenStream {
 public:
-    virtual ~EmptyTokenStream()
-    {
+    virtual ~EmptyTokenStream() {
     }
 
     LUCENE_CLASS(EmptyTokenStream);
 
 public:
-    virtual bool incrementToken()
-    {
+    virtual bool incrementToken() {
         return false;
     }
 };
 
 /// Return empty tokens for field "f1".
-class AnalyzerReturningNull : public Analyzer
-{
+class AnalyzerReturningNull : public Analyzer {
 public:
-    AnalyzerReturningNull()
-    {
+    AnalyzerReturningNull() {
         standardAnalyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     }
 
-    virtual ~AnalyzerReturningNull()
-    {
+    virtual ~AnalyzerReturningNull() {
     }
 
     LUCENE_CLASS(AnalyzerReturningNull);
@@ -138,18 +120,17 @@ protected:
     StandardAnalyzerPtr standardAnalyzer;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        if (fieldName == L"f1")
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
+        if (fieldName == L"f1") {
             return newLucene<EmptyTokenStream>();
-        else
+        } else {
             return standardAnalyzer->tokenStream(fieldName, reader);
+        }
     }
 };
 
 /// verify parsing of query using a stopping analyzer
-static void checkStopQueryEquals(const String& qtxt, const String& expectedRes)
-{
+static void checkStopQueryEquals(const String& qtxt, const String& expectedRes) {
     Collection<String> fields = newCollection<String>(L"b", L"t");
     Collection<BooleanClause::Occur> occur = newCollection<BooleanClause::Occur>(BooleanClause::SHOULD, BooleanClause::SHOULD);
     MultiFieldQueryParserTestAnalyzerPtr a = newLucene<MultiFieldQueryParserTestAnalyzer>();
@@ -163,8 +144,7 @@ static void checkStopQueryEquals(const String& qtxt, const String& expectedRes)
 }
 
 /// test stop words arising for both the non static form, and for the corresponding static form (qtxt, fields[]).
-TEST_F(MultiFieldQueryParserTest, testStopwordsParsing)
-{
+TEST_F(MultiFieldQueryParserTest, testStopwordsParsing) {
     checkStopQueryEquals(L"one", L"b:one t:one");
     checkStopQueryEquals(L"one stop", L"b:one t:one");
     checkStopQueryEquals(L"one (stop)", L"b:one t:one");
@@ -174,8 +154,7 @@ TEST_F(MultiFieldQueryParserTest, testStopwordsParsing)
     checkStopQueryEquals(L"((stop))", L"");
 }
 
-TEST_F(MultiFieldQueryParserTest, testSimple)
-{
+TEST_F(MultiFieldQueryParserTest, testSimple) {
     Collection<String> fields = newCollection<String>(L"b", L"t");
     MultiFieldQueryParserPtr mfqp = newLucene<MultiFieldQueryParser>(LuceneVersion::LUCENE_CURRENT, fields, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
 
@@ -233,8 +212,7 @@ TEST_F(MultiFieldQueryParserTest, testSimple)
     EXPECT_EQ(L"+(b:\"aa bb cc\" t:\"aa bb cc\") +(b:\"dd ee\" t:\"dd ee\")", q->toString());
 }
 
-TEST_F(MultiFieldQueryParserTest, testBoostsSimple)
-{
+TEST_F(MultiFieldQueryParserTest, testBoostsSimple) {
     MapStringDouble boosts = MapStringDouble::newInstance();
     boosts.put(L"b", 5.0);
     boosts.put(L"t", 10.0);
@@ -261,8 +239,7 @@ TEST_F(MultiFieldQueryParserTest, testBoostsSimple)
     EXPECT_EQ(L"+((b:one^5.0 t:one^10.0)^3.0) +((b:two^5.0 t:two^10.0)^4.0)", q->toString());
 }
 
-TEST_F(MultiFieldQueryParserTest, testStaticMethod1)
-{
+TEST_F(MultiFieldQueryParserTest, testStaticMethod1) {
     Collection<String> fields = newCollection<String>(L"b", L"t");
     Collection<String> queries = newCollection<String>(L"one", L"two");
     QueryPtr q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, queries, fields, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
@@ -283,12 +260,9 @@ TEST_F(MultiFieldQueryParserTest, testStaticMethod1)
     Collection<String> queries5 = newCollection<String>(L"blah");
 
     // expected exception, array length differs
-    try
-    {
+    try {
         q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, queries5, fields, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 
@@ -304,8 +278,7 @@ TEST_F(MultiFieldQueryParserTest, testStaticMethod1)
     EXPECT_EQ(L"(b:one +b:more) (+t:two)", q->toString());
 }
 
-TEST_F(MultiFieldQueryParserTest, testStaticMethod2)
-{
+TEST_F(MultiFieldQueryParserTest, testStaticMethod2) {
     Collection<String> fields = newCollection<String>(L"b", L"t");
     Collection<BooleanClause::Occur> flags = newCollection<BooleanClause::Occur>(BooleanClause::MUST, BooleanClause::MUST_NOT);
     QueryPtr q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, L"one", fields, flags, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
@@ -317,18 +290,14 @@ TEST_F(MultiFieldQueryParserTest, testStaticMethod2)
     Collection<BooleanClause::Occur> flags2 = newCollection<BooleanClause::Occur>(BooleanClause::MUST);
 
     // expected exception, array length differs
-    try
-    {
+    try {
         q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, L"blah", fields, flags2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 }
 
-TEST_F(MultiFieldQueryParserTest, testStaticMethod3)
-{
+TEST_F(MultiFieldQueryParserTest, testStaticMethod3) {
     Collection<String> queries = newCollection<String>(L"one", L"two", L"three");
     Collection<String> fields = newCollection<String>(L"f1", L"f2", L"f3");
     Collection<BooleanClause::Occur> flags = newCollection<BooleanClause::Occur>(BooleanClause::MUST, BooleanClause::MUST_NOT, BooleanClause::SHOULD);
@@ -338,18 +307,14 @@ TEST_F(MultiFieldQueryParserTest, testStaticMethod3)
     Collection<BooleanClause::Occur> flags2 = newCollection<BooleanClause::Occur>(BooleanClause::MUST);
 
     // expected exception, array length differs
-    try
-    {
+    try {
         q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, queries, fields, flags2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 }
 
-TEST_F(MultiFieldQueryParserTest, testStaticMethod3Old)
-{
+TEST_F(MultiFieldQueryParserTest, testStaticMethod3Old) {
     Collection<String> queries = newCollection<String>(L"one", L"two");
     Collection<String> fields = newCollection<String>(L"b", L"t");
     Collection<BooleanClause::Occur> flags = newCollection<BooleanClause::Occur>(BooleanClause::MUST, BooleanClause::MUST_NOT);
@@ -359,18 +324,14 @@ TEST_F(MultiFieldQueryParserTest, testStaticMethod3Old)
     Collection<BooleanClause::Occur> flags2 = newCollection<BooleanClause::Occur>(BooleanClause::MUST);
 
     // expected exception, array length differs
-    try
-    {
+    try {
         q = MultiFieldQueryParser::parse(LuceneVersion::LUCENE_CURRENT, queries, fields, flags2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 }
 
-TEST_F(MultiFieldQueryParserTest, testAnalyzerReturningNull)
-{
+TEST_F(MultiFieldQueryParserTest, testAnalyzerReturningNull) {
     Collection<String> fields = newCollection<String>(L"f1", L"f2", L"f3");
     MultiFieldQueryParserPtr parser = newLucene<MultiFieldQueryParser>(LuceneVersion::LUCENE_CURRENT, fields, newLucene<AnalyzerReturningNull>());
     QueryPtr q = parser->parse(L"bla AND blo");
@@ -385,8 +346,7 @@ TEST_F(MultiFieldQueryParserTest, testAnalyzerReturningNull)
     EXPECT_EQ(L"f1:[a TO c] f2:[a TO c] f3:[a TO c]", q->toString());
 }
 
-TEST_F(MultiFieldQueryParserTest, testStopWordSearching)
-{
+TEST_F(MultiFieldQueryParserTest, testStopWordSearching) {
     AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     DirectoryPtr ramDir = newLucene<RAMDirectory>();
     IndexWriterPtr iw =  newLucene<IndexWriter>(ramDir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);

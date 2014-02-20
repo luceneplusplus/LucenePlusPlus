@@ -9,46 +9,46 @@
 
 #include "Reader.h"
 
-namespace Lucene
-{
-    /// Convenience class for reading character files.
-    class LPPAPI FileReader : public Reader
-    {
-    public:
-        /// Creates a new FileReader, given the file name to read from.
-        FileReader(const String& fileName);
-        virtual ~FileReader();
+namespace Lucene {
 
-        LUCENE_CLASS(FileReader);
+/// Convenience class for reading character files.
+class LPPAPI FileReader : public Reader {
+public:
+    /// Creates a new FileReader, given the file name to read from.
+    FileReader(const String& fileName);
+    virtual ~FileReader();
 
-    protected:
-        ifstreamPtr file;
-        int64_t _length;
-        ByteArray fileBuffer;
+    LUCENE_CLASS(FileReader);
 
-    public:
-        static const int32_t FILE_EOF;
-        static const int32_t FILE_ERROR;
+protected:
+    ifstreamPtr file;
+    int64_t _length;
+    ByteArray fileBuffer;
 
-    public:
-        /// Read a single character.
-        virtual int32_t read();
+public:
+    static const int32_t FILE_EOF;
+    static const int32_t FILE_ERROR;
 
-        /// Read characters into a portion of an array.
-        virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+public:
+    /// Read a single character.
+    virtual int32_t read();
 
-        /// Close the stream.
-        virtual void close();
+    /// Read characters into a portion of an array.
+    virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
 
-        /// Tell whether this stream supports the mark() operation
-        virtual bool markSupported();
+    /// Close the stream.
+    virtual void close();
 
-        /// Reset the stream.
-        virtual void reset();
+    /// Tell whether this stream supports the mark() operation
+    virtual bool markSupported();
 
-        /// The number of bytes in the file.
-        virtual int64_t length();
-    };
+    /// Reset the stream.
+    virtual void reset();
+
+    /// The number of bytes in the file.
+    virtual int64_t length();
+};
+
 }
 
 #endif

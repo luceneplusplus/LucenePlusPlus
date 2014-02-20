@@ -9,72 +9,72 @@
 
 #include "Query.h"
 
-namespace Lucene
-{
-    /// MultiPhraseQuery is a generalized version of PhraseQuery, with an added method {@link #add(Term[])}.
-    /// To use this class, to search for the phrase "Microsoft app*" first use add(Term) on the term "Microsoft",
-    /// then find all terms that have "app" as prefix using IndexReader.terms(Term), and use
-    /// MultiPhraseQuery.add(Term[] terms) to add them to the query.
-    class LPPAPI MultiPhraseQuery : public Query
-    {
-    public:
-        MultiPhraseQuery();
-        virtual ~MultiPhraseQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(MultiPhraseQuery);
+/// MultiPhraseQuery is a generalized version of PhraseQuery, with an added method {@link #add(Term[])}.
+/// To use this class, to search for the phrase "Microsoft app*" first use add(Term) on the term "Microsoft",
+/// then find all terms that have "app" as prefix using IndexReader.terms(Term), and use
+/// MultiPhraseQuery.add(Term[] terms) to add them to the query.
+class LPPAPI MultiPhraseQuery : public Query {
+public:
+    MultiPhraseQuery();
+    virtual ~MultiPhraseQuery();
 
-    protected:
-        String field;
-        Collection< Collection<TermPtr> > termArrays;
-        Collection<int32_t> positions;
-        int32_t slop;
+    LUCENE_CLASS(MultiPhraseQuery);
 
-    public:
-        using Query::toString;
+protected:
+    String field;
+    Collection< Collection<TermPtr> > termArrays;
+    Collection<int32_t> positions;
+    int32_t slop;
 
-        /// Sets the phrase slop for this query.
-        /// @see PhraseQuery#setSlop(int32_t)
-        void setSlop(int32_t s);
+public:
+    using Query::toString;
 
-        /// Gets the phrase slop for this query.
-        /// @see PhraseQuery#getSlop()
-        int32_t getSlop();
+    /// Sets the phrase slop for this query.
+    /// @see PhraseQuery#setSlop(int32_t)
+    void setSlop(int32_t s);
 
-        /// Add a single term at the next position in the phrase.
-        /// @see PhraseQuery#add(Term)
-        void add(const TermPtr& term);
+    /// Gets the phrase slop for this query.
+    /// @see PhraseQuery#getSlop()
+    int32_t getSlop();
 
-        /// Add multiple terms at the next position in the phrase.  Any of the terms may match.
-        /// @see PhraseQuery#add(Term)
-        void add(Collection<TermPtr> terms);
+    /// Add a single term at the next position in the phrase.
+    /// @see PhraseQuery#add(Term)
+    void add(const TermPtr& term);
 
-        /// Allows to specify the relative position of terms within the phrase.
-        /// @see PhraseQuery#add(Term, int)
-        void add(Collection<TermPtr> terms, int32_t position);
+    /// Add multiple terms at the next position in the phrase.  Any of the terms may match.
+    /// @see PhraseQuery#add(Term)
+    void add(Collection<TermPtr> terms);
 
-        /// Returns a List of the terms in the multiphrase. Do not modify the List or its contents.
-        Collection< Collection<TermPtr> > getTermArrays();
+    /// Allows to specify the relative position of terms within the phrase.
+    /// @see PhraseQuery#add(Term, int)
+    void add(Collection<TermPtr> terms, int32_t position);
 
-        /// Returns the relative positions of terms in this phrase.
-        Collection<int32_t> getPositions();
+    /// Returns a List of the terms in the multiphrase. Do not modify the List or its contents.
+    Collection< Collection<TermPtr> > getTermArrays();
 
-        virtual void extractTerms(SetTerm terms);
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
-        virtual WeightPtr createWeight(const SearcherPtr& searcher);
+    /// Returns the relative positions of terms in this phrase.
+    Collection<int32_t> getPositions();
 
-        /// Prints a user-readable version of this query.
-        virtual String toString(const String& field);
+    virtual void extractTerms(SetTerm terms);
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    /// Prints a user-readable version of this query.
+    virtual String toString(const String& field);
 
-    protected:
-        int32_t termArraysHashCode();
-        bool termArraysEquals(Collection< Collection<TermPtr> > first, Collection< Collection<TermPtr> > second);
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        friend class MultiPhraseWeight;
-    };
+protected:
+    int32_t termArraysHashCode();
+    bool termArraysEquals(Collection< Collection<TermPtr> > first, Collection< Collection<TermPtr> > second);
+
+    friend class MultiPhraseWeight;
+};
+
 }
 
 #endif

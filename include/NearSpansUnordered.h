@@ -9,63 +9,63 @@
 
 #include "Spans.h"
 
-namespace Lucene
-{
-    /// Similar to {@link NearSpansOrdered}, but for the unordered case.
-    ///
-    /// Only public for subclassing.  Most implementations should not need this class
-    class LPPAPI NearSpansUnordered : public Spans
-    {
-    public:
-        NearSpansUnordered(const SpanNearQueryPtr& query, const IndexReaderPtr& reader);
-        virtual ~NearSpansUnordered();
+namespace Lucene {
 
-        LUCENE_CLASS(NearSpansUnordered);
+/// Similar to {@link NearSpansOrdered}, but for the unordered case.
+///
+/// Only public for subclassing.  Most implementations should not need this class
+class LPPAPI NearSpansUnordered : public Spans {
+public:
+    NearSpansUnordered(const SpanNearQueryPtr& query, const IndexReaderPtr& reader);
+    virtual ~NearSpansUnordered();
 
-    protected:
-        SpanNearQueryPtr query;
-        IndexReaderPtr reader;
+    LUCENE_CLASS(NearSpansUnordered);
 
-        Collection<SpansCellPtr> ordered; // spans in query order
-        Collection<SpansPtr> subSpans;
-        int32_t slop; // from query
+protected:
+    SpanNearQueryPtr query;
+    IndexReaderPtr reader;
 
-        SpansCellPtr first; // linked list of spans
-        SpansCellPtr last; // sorted by doc only
+    Collection<SpansCellPtr> ordered; // spans in query order
+    Collection<SpansPtr> subSpans;
+    int32_t slop; // from query
 
-        int32_t totalLength; // sum of current lengths
+    SpansCellPtr first; // linked list of spans
+    SpansCellPtr last; // sorted by doc only
 
-        CellQueuePtr queue; // sorted queue of spans
-        SpansCellPtr max; // max element in queue
+    int32_t totalLength; // sum of current lengths
 
-        bool more; // true if not done
-        bool firstTime; // true before first next()
+    CellQueuePtr queue; // sorted queue of spans
+    SpansCellPtr max; // max element in queue
 
-    public:
-        virtual void initialize();
+    bool more; // true if not done
+    bool firstTime; // true before first next()
 
-        Collection<SpansPtr> getSubSpans();
+public:
+    virtual void initialize();
 
-        virtual bool next();
-        virtual bool skipTo(int32_t target);
-        virtual int32_t doc();
-        virtual int32_t start();
-        virtual int32_t end();
-        virtual Collection<ByteArray> getPayload();
-        virtual bool isPayloadAvailable();
-        virtual String toString();
+    Collection<SpansPtr> getSubSpans();
 
-    protected:
-        SpansCellPtr min();
-        void initList(bool next);
-        void addToList(const SpansCellPtr& cell);
-        void firstToLast();
-        void queueToList();
-        void listToQueue();
-        bool atMatch();
+    virtual bool next();
+    virtual bool skipTo(int32_t target);
+    virtual int32_t doc();
+    virtual int32_t start();
+    virtual int32_t end();
+    virtual Collection<ByteArray> getPayload();
+    virtual bool isPayloadAvailable();
+    virtual String toString();
 
-        friend class SpansCell;
-    };
+protected:
+    SpansCellPtr min();
+    void initList(bool next);
+    void addToList(const SpansCellPtr& cell);
+    void firstToLast();
+    void queueToList();
+    void listToQueue();
+    bool atMatch();
+
+    friend class SpansCell;
+};
+
 }
 
 #endif

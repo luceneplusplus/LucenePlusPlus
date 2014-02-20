@@ -9,32 +9,32 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class InvertedDocConsumerPerField : public LuceneObject
-    {
-    public:
-        virtual ~InvertedDocConsumerPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(InvertedDocConsumerPerField);
+class InvertedDocConsumerPerField : public LuceneObject {
+public:
+    virtual ~InvertedDocConsumerPerField();
 
-    public:
-        /// Called once per field, and is given all Fieldable occurrences for this field in the document.
-        /// Return true if you wish to see inverted tokens for these fields
-        virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
+    LUCENE_CLASS(InvertedDocConsumerPerField);
 
-        /// Called before a field instance is being processed
-        virtual void start(const FieldablePtr& field) = 0;
+public:
+    /// Called once per field, and is given all Fieldable occurrences for this field in the document.
+    /// Return true if you wish to see inverted tokens for these fields
+    virtual bool start(Collection<FieldablePtr> fields, int32_t count) = 0;
 
-        /// Called once per inverted token
-        virtual void add() = 0;
+    /// Called before a field instance is being processed
+    virtual void start(const FieldablePtr& field) = 0;
 
-        /// Called once per field per document, after all Fieldable occurrences are inverted
-        virtual void finish() = 0;
+    /// Called once per inverted token
+    virtual void add() = 0;
 
-        /// Called on hitting an aborting exception
-        virtual void abort() = 0;
-    };
+    /// Called once per field per document, after all Fieldable occurrences are inverted
+    virtual void finish() = 0;
+
+    /// Called on hitting an aborting exception
+    virtual void abort() = 0;
+};
+
 }
 
 #endif

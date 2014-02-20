@@ -9,34 +9,34 @@
 
 #include "Reader.h"
 
-namespace Lucene
-{
-    /// Used by DocumentsWriter to implemented a StringReader that can be reset to a new string; we use this
-    /// when tokenizing the string value from a Field.
-    class ReusableStringReader : public Reader
-    {
-    public:
-        ReusableStringReader();
-        virtual ~ReusableStringReader();
+namespace Lucene {
 
-        LUCENE_CLASS(ReusableStringReader);
+/// Used by DocumentsWriter to implemented a StringReader that can be reset to a new string; we use this
+/// when tokenizing the string value from a Field.
+class ReusableStringReader : public Reader {
+public:
+    ReusableStringReader();
+    virtual ~ReusableStringReader();
 
-    public:
-        int32_t upto;
-        int32_t left;
-        String s;
+    LUCENE_CLASS(ReusableStringReader);
 
-    public:
-        virtual void init(const String& s);
+public:
+    int32_t upto;
+    int32_t left;
+    String s;
 
-        using Reader::read;
+public:
+    virtual void init(const String& s);
 
-        /// Read characters into a portion of an array.
-        virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+    using Reader::read;
 
-        /// Close the stream.
-        virtual void close();
-    };
+    /// Read characters into a portion of an array.
+    virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+
+    /// Close the stream.
+    virtual void close();
+};
+
 }
 
 #endif

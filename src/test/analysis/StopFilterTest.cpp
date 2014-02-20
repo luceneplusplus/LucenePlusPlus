@@ -18,13 +18,11 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture StopFilterTest;
 
-static void doTestStopPositons(const StopFilterPtr& stpf, bool enableIcrements)
-{
+static void doTestStopPositons(const StopFilterPtr& stpf, bool enableIcrements) {
     stpf->setEnablePositionIncrements(enableIcrements);
     TermAttributePtr termAtt = stpf->getAttribute<TermAttribute>();
     PositionIncrementAttributePtr posIncrAtt = stpf->getAttribute<PositionIncrementAttribute>();
-    for (int32_t i = 0; i < 20; i += 3)
-    {
+    for (int32_t i = 0; i < 20; i += 3) {
         EXPECT_TRUE(stpf->incrementToken());
         String w = intToEnglish(i);
         EXPECT_EQ(w, termAtt->term());
@@ -33,8 +31,7 @@ static void doTestStopPositons(const StopFilterPtr& stpf, bool enableIcrements)
     EXPECT_TRUE(!stpf->incrementToken());
 }
 
-TEST_F(StopFilterTest, testExactCase)
-{
+TEST_F(StopFilterTest, testExactCase) {
     StringReaderPtr reader = newLucene<StringReader>(L"Now is The Time");
     HashSet<String> stopWords = HashSet<String>::newInstance();
     stopWords.add(L"is");
@@ -49,8 +46,7 @@ TEST_F(StopFilterTest, testExactCase)
     EXPECT_TRUE(!stream->incrementToken());
 }
 
-TEST_F(StopFilterTest, testIgnoreCase)
-{
+TEST_F(StopFilterTest, testIgnoreCase) {
     StringReaderPtr reader = newLucene<StringReader>(L"Now is The Time");
     HashSet<String> stopWords = HashSet<String>::newInstance();
     stopWords.add(L"is");
@@ -63,16 +59,15 @@ TEST_F(StopFilterTest, testIgnoreCase)
     EXPECT_TRUE(!stream->incrementToken());
 }
 
-TEST_F(StopFilterTest, testStopPositons)
-{
+TEST_F(StopFilterTest, testStopPositons) {
     StringStream buf;
     Collection<String> stopWords = Collection<String>::newInstance();
-    for (int32_t i = 0; i < 20; ++i)
-    {
+    for (int32_t i = 0; i < 20; ++i) {
         String w = intToEnglish(i);
         buf << w << L" ";
-        if (i % 3 != 0)
+        if (i % 3 != 0) {
             stopWords.add(w);
+        }
     }
     HashSet<String> stopSet = HashSet<String>::newInstance(stopWords.begin(), stopWords.end());
     // with increments
@@ -86,12 +81,12 @@ TEST_F(StopFilterTest, testStopPositons)
     // with increments, concatenating two stop filters
     Collection<String> stopWords0 = Collection<String>::newInstance();
     Collection<String> stopWords1 = Collection<String>::newInstance();
-    for (int32_t i = 0; i < stopWords.size(); ++i)
-    {
-        if (i % 2 == 0)
+    for (int32_t i = 0; i < stopWords.size(); ++i) {
+        if (i % 2 == 0) {
             stopWords0.add(stopWords[i]);
-        else
+        } else {
             stopWords1.add(stopWords[i]);
+        }
     }
     HashSet<String> stopSet0 = HashSet<String>::newInstance(stopWords0.begin(), stopWords0.end());
     HashSet<String> stopSet1 = HashSet<String>::newInstance(stopWords1.begin(), stopWords1.end());

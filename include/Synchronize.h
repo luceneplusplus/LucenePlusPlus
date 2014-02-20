@@ -10,58 +10,56 @@
 #include <boost/thread/recursive_mutex.hpp>
 #include "Lucene.h"
 
-namespace Lucene
-{
-    /// Utility class to support locking via a mutex.
-    class LPPAPI Synchronize
-    {
-    public:
-        Synchronize();
-        virtual ~Synchronize();
+namespace Lucene {
 
-    protected:
-        boost::recursive_timed_mutex mutexSynchronize;
-        int64_t lockThread;
-        int32_t recursionCount;
+/// Utility class to support locking via a mutex.
+class LPPAPI Synchronize {
+public:
+    Synchronize();
+    virtual ~Synchronize();
 
-    public:
-        /// create a new Synchronize instance atomically.
-        static void createSync(SynchronizePtr& sync);
+protected:
+    boost::recursive_timed_mutex mutexSynchronize;
+    int64_t lockThread;
+    int32_t recursionCount;
 
-        /// Lock mutex using an optional timeout.
-        void lock(int32_t timeout = 0);
+public:
+    /// create a new Synchronize instance atomically.
+    static void createSync(SynchronizePtr& sync);
 
-        /// Unlock mutex.
-        void unlock();
+    /// Lock mutex using an optional timeout.
+    void lock(int32_t timeout = 0);
 
-        /// Unlock all recursive mutex.
-        int32_t unlockAll();
+    /// Unlock mutex.
+    void unlock();
 
-        /// Returns true if mutex is currently locked by current thread.
-        bool holdsLock();
-    };
+    /// Unlock all recursive mutex.
+    int32_t unlockAll();
 
-    /// Utility class to support scope locking.
-    class LPPAPI SyncLock
-    {
-    public:
-        SyncLock(const SynchronizePtr& sync, int32_t timeout = 0);
+    /// Returns true if mutex is currently locked by current thread.
+    bool holdsLock();
+};
 
-        template <class OBJECT>
-        SyncLock(OBJECT object, int32_t timeout = 0)
-        {
-            this->sync = object->getSync();
-            lock(timeout);
-        }
+/// Utility class to support scope locking.
+class LPPAPI SyncLock {
+public:
+    SyncLock(const SynchronizePtr& sync, int32_t timeout = 0);
 
-        virtual ~SyncLock();
+    template <class OBJECT>
+    SyncLock(OBJECT object, int32_t timeout = 0) {
+        this->sync = object->getSync();
+        lock(timeout);
+    }
 
-    protected:
-        SynchronizePtr sync;
+    virtual ~SyncLock();
 
-    protected:
-        void lock(int32_t timeout);
-    };
+protected:
+    SynchronizePtr sync;
+
+protected:
+    void lock(int32_t timeout);
+};
+
 }
 
 #endif

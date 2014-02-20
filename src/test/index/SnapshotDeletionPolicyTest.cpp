@@ -23,17 +23,14 @@
 
 using namespace Lucene;
 
-class SnapshotThread : public LuceneThread
-{
+class SnapshotThread : public LuceneThread {
 public:
-    SnapshotThread(int64_t stopTime, const IndexWriterPtr& writer)
-    {
+    SnapshotThread(int64_t stopTime, const IndexWriterPtr& writer) {
         this->stopTime = stopTime;
         this->writer = writer;
     }
 
-    virtual ~SnapshotThread()
-    {
+    virtual ~SnapshotThread() {
     }
 
     LUCENE_CLASS(SnapshotThread);
@@ -43,41 +40,32 @@ protected:
     IndexWriterPtr writer;
 
 public:
-    virtual void run()
-    {
-        try
-        {
+    virtual void run() {
+        try {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-            do
-            {
-                for (int32_t i = 0; i < 27; ++i)
-                {
+            do {
+                for (int32_t i = 0; i < 27; ++i) {
                     writer->addDocument(doc);
-                    if (i % 2 == 0)
+                    if (i % 2 == 0) {
                         writer->commit();
+                    }
                 }
                 LuceneThread::threadSleep(1);
-            }
-            while ((int64_t)MiscUtils::currentTimeMillis() < stopTime);
-        }
-        catch (LuceneException& e)
-        {
+            } while ((int64_t)MiscUtils::currentTimeMillis() < stopTime);
+        } catch (LuceneException& e) {
             FAIL() << "Unexpected exception: " << e.getError();
         }
     }
 };
 
-class SnapshotDeletionPolicyTest : public LuceneTestFixture
-{
+class SnapshotDeletionPolicyTest : public LuceneTestFixture {
 public:
-    SnapshotDeletionPolicyTest()
-    {
+    SnapshotDeletionPolicyTest() {
         buffer = ByteArray::newInstance(4096);
     }
 
-    virtual ~SnapshotDeletionPolicyTest()
-    {
+    virtual ~SnapshotDeletionPolicyTest() {
     }
 
 public:
@@ -85,8 +73,7 @@ public:
     ByteArray buffer;
 
 public:
-    void runTest(const DirectoryPtr& dir)
-    {
+    void runTest(const DirectoryPtr& dir) {
         // Run for ~1 seconds
         int64_t stopTime = MiscUtils::currentTimeMillis() + 1000;
 
@@ -100,14 +87,13 @@ public:
         thread->start();
 
         // While the above indexing thread is running, take many backups
-        do
-        {
+        do {
             backupIndex(dir, dp);
             LuceneThread::threadSleep(20);
-            if (!thread->isAlive())
+            if (!thread->isAlive()) {
                 break;
-        }
-        while ((int64_t)MiscUtils::currentTimeMillis() < stopTime);
+            }
+        } while ((int64_t)MiscUtils::currentTimeMillis() < stopTime);
 
         thread->join();
 
@@ -124,16 +110,12 @@ public:
     /// Example showing how to use the SnapshotDeletionPolicy to take a backup.  This method does not
     /// really do a backup; instead, it reads every byte of every file just to test that the files
     /// indeed exist and are readable even while the index is changing.
-    void backupIndex(const DirectoryPtr& dir, const SnapshotDeletionPolicyPtr& dp)
-    {
+    void backupIndex(const DirectoryPtr& dir, const SnapshotDeletionPolicyPtr& dp) {
         // To backup an index we first take a snapshot
         LuceneException finally;
-        try
-        {
+        try {
             copyFiles(dir, boost::dynamic_pointer_cast<IndexCommit>(dp->snapshot()));
-        }
-        catch (LuceneException& e)
-        {
+        } catch (LuceneException& e) {
             finally = e;
         }
 
@@ -143,13 +125,11 @@ public:
         finally.throwException();
     }
 
-    void copyFiles(const DirectoryPtr& dir, const IndexCommitPtr& cp)
-    {
+    void copyFiles(const DirectoryPtr& dir, const IndexCommitPtr& cp) {
         // While we hold the snapshot, and nomatter how long we take to do the backup, the IndexWriter will
         // never delete the files in the snapshot
         HashSet<String> files = cp->getFileNames();
-        for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
-        {
+        for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName) {
             // NOTE: in a real backup you would not use readFile; you would need to use something else
             // that copies the file to a backup location.  This could even be a spawned shell process
             // (eg "tar", "zip") that takes the list of files and builds a backup.
@@ -157,17 +137,14 @@ public:
         }
     }
 
-    void readFile(const DirectoryPtr& dir, const String& name)
-    {
+    void readFile(const DirectoryPtr& dir, const String& name) {
         IndexInputPtr input = dir->openInput(name);
 
         LuceneException finally;
-        try
-        {
+        try {
             int64_t size = dir->fileLength(name);
             int64_t bytesLeft = size;
-            while (bytesLeft > 0)
-            {
+            while (bytesLeft > 0) {
                 int32_t numToRead = bytesLeft < buffer.size() ? (int32_t)bytesLeft : buffer.size();
                 input->readBytes(buffer.get(), 0, numToRead, false);
                 bytesLeft -= numToRead;
@@ -176,17 +153,14 @@ public:
             // long time, to make sure we are exercising the fact that the IndexWriter should not delete
             // this file even when I take my time reading it.
             LuceneThread::threadSleep(1);
-        }
-        catch (LuceneException& e)
-        {
+        } catch (LuceneException& e) {
             finally = e;
         }
         input->close();
         finally.throwException();
     }
 
-    void checkNoUnreferencedFiles(const DirectoryPtr& dir)
-    {
+    void checkNoUnreferencedFiles(const DirectoryPtr& dir) {
         HashSet<String> _startFiles = dir->listAll();
         SegmentInfosPtr infos = newLucene<SegmentInfos>();
         infos->read(dir);
@@ -205,19 +179,15 @@ public:
 
 const String SnapshotDeletionPolicyTest::INDEX_PATH = L"test.snapshots";
 
-TEST_F(SnapshotDeletionPolicyTest, testSnapshotDeletionPolicy)
-{
+TEST_F(SnapshotDeletionPolicyTest, testSnapshotDeletionPolicy) {
     String dir = getTempDir(INDEX_PATH);
 
     LuceneException finally;
-    try
-    {
+    try {
         DirectoryPtr fsDir = FSDirectory::open(dir);
         runTest(fsDir);
         fsDir->close();
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         finally = e;
     }
     FileUtils::removeDirectory(dir);
@@ -228,17 +198,13 @@ TEST_F(SnapshotDeletionPolicyTest, testSnapshotDeletionPolicy)
     dir2->close();
 }
 
-TEST_F(SnapshotDeletionPolicyTest, testNoCommits)
-{
+TEST_F(SnapshotDeletionPolicyTest, testNoCommits) {
     // Tests that if there were no commits when snapshot() is called, then
     // IllegalStateException is thrown rather than NPE.
     SnapshotDeletionPolicyPtr sdp = newLucene<SnapshotDeletionPolicy>(newLucene<KeepOnlyLastCommitDeletionPolicy>());
-    try
-    {
+    try {
         sdp->snapshot();
-    }
-    catch (IllegalStateException& e)
-    {
+    } catch (IllegalStateException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalState)(e));
     }
 }

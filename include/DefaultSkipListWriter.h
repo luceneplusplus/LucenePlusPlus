@@ -9,45 +9,45 @@
 
 #include "MultiLevelSkipListWriter.h"
 
-namespace Lucene
-{
-    /// Implements the skip list writer for the default posting list format that stores positions and payloads.
-    class DefaultSkipListWriter : public MultiLevelSkipListWriter
-    {
-    public:
-        DefaultSkipListWriter(int32_t skipInterval, int32_t numberOfSkipLevels, int32_t docCount, const IndexOutputPtr& freqOutput, const IndexOutputPtr& proxOutput);
-        virtual ~DefaultSkipListWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(DefaultSkipListWriter);
+/// Implements the skip list writer for the default posting list format that stores positions and payloads.
+class DefaultSkipListWriter : public MultiLevelSkipListWriter {
+public:
+    DefaultSkipListWriter(int32_t skipInterval, int32_t numberOfSkipLevels, int32_t docCount, const IndexOutputPtr& freqOutput, const IndexOutputPtr& proxOutput);
+    virtual ~DefaultSkipListWriter();
 
-    protected:
-        Collection<int32_t> lastSkipDoc;
-        Collection<int32_t> lastSkipPayloadLength;
-        Collection<int64_t> lastSkipFreqPointer;
-        Collection<int64_t> lastSkipProxPointer;
+    LUCENE_CLASS(DefaultSkipListWriter);
 
-        IndexOutputPtr freqOutput;
-        IndexOutputPtr proxOutput;
+protected:
+    Collection<int32_t> lastSkipDoc;
+    Collection<int32_t> lastSkipPayloadLength;
+    Collection<int64_t> lastSkipFreqPointer;
+    Collection<int64_t> lastSkipProxPointer;
 
-        int32_t curDoc;
-        bool curStorePayloads;
-        int32_t curPayloadLength;
-        int64_t curFreqPointer;
-        int64_t curProxPointer;
+    IndexOutputPtr freqOutput;
+    IndexOutputPtr proxOutput;
 
-    public:
-        void setFreqOutput(const IndexOutputPtr& freqOutput);
-        void setProxOutput(const IndexOutputPtr& proxOutput);
+    int32_t curDoc;
+    bool curStorePayloads;
+    int32_t curPayloadLength;
+    int64_t curFreqPointer;
+    int64_t curProxPointer;
 
-        /// Sets the values for the current skip data.
-        void setSkipData(int32_t doc, bool storePayloads, int32_t payloadLength);
+public:
+    void setFreqOutput(const IndexOutputPtr& freqOutput);
+    void setProxOutput(const IndexOutputPtr& proxOutput);
 
-    protected:
-        virtual void resetSkip();
-        virtual void writeSkipData(int32_t level, const IndexOutputPtr& skipBuffer);
+    /// Sets the values for the current skip data.
+    void setSkipData(int32_t doc, bool storePayloads, int32_t payloadLength);
 
-        friend class FormatPostingsTermsWriter;
-    };
+protected:
+    virtual void resetSkip();
+    virtual void writeSkipData(int32_t level, const IndexOutputPtr& skipBuffer);
+
+    friend class FormatPostingsTermsWriter;
+};
+
 }
 
 #endif

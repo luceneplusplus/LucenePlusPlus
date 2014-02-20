@@ -8,25 +8,23 @@
 #include "SerialMergeScheduler.h"
 #include "IndexWriter.h"
 
-namespace Lucene
-{
-    SerialMergeScheduler::~SerialMergeScheduler()
-    {
-    }
+namespace Lucene {
 
-    void SerialMergeScheduler::merge(const IndexWriterPtr& writer)
-    {
-        SyncLock syncLock(this);
-        while (true)
-        {
-            OneMergePtr merge(writer->getNextMerge());
-            if (!merge)
-                break;
-            writer->merge(merge);
+SerialMergeScheduler::~SerialMergeScheduler() {
+}
+
+void SerialMergeScheduler::merge(const IndexWriterPtr& writer) {
+    SyncLock syncLock(this);
+    while (true) {
+        OneMergePtr merge(writer->getNextMerge());
+        if (!merge) {
+            break;
         }
+        writer->merge(merge);
     }
+}
 
-    void SerialMergeScheduler::close()
-    {
-    }
+void SerialMergeScheduler::close() {
+}
+
 }

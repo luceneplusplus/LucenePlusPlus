@@ -26,30 +26,24 @@
 
 using namespace Lucene;
 
-class PhraseQueryAnalyzer : public Analyzer
-{
+class PhraseQueryAnalyzer : public Analyzer {
 public:
-    virtual ~PhraseQueryAnalyzer()
-    {
+    virtual ~PhraseQueryAnalyzer() {
     }
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         return newLucene<WhitespaceTokenizer>(reader);
     }
 
-    virtual int32_t getPositionIncrementGap(const String& fieldName)
-    {
+    virtual int32_t getPositionIncrementGap(const String& fieldName) {
         return 100;
     }
 };
 
-class PhraseQueryTest : public LuceneTestFixture
-{
+class PhraseQueryTest : public LuceneTestFixture {
 public:
-    PhraseQueryTest()
-    {
+    PhraseQueryTest() {
         directory = newLucene<RAMDirectory>();
         AnalyzerPtr analyzer = newLucene<PhraseQueryAnalyzer>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -77,8 +71,7 @@ public:
         query = newLucene<PhraseQuery>();
     }
 
-    virtual ~PhraseQueryTest()
-    {
+    virtual ~PhraseQueryTest() {
         searcher->close();
         directory->close();
     }
@@ -95,8 +88,7 @@ protected:
 
 const double PhraseQueryTest::SCORE_COMP_THRESH = 1e-6f;
 
-TEST_F(PhraseQueryTest, testNotCloseEnough)
-{
+TEST_F(PhraseQueryTest, testNotCloseEnough) {
     query->setSlop(2);
     query->add(newLucene<Term>(L"field", L"one"));
     query->add(newLucene<Term>(L"field", L"five"));
@@ -105,8 +97,7 @@ TEST_F(PhraseQueryTest, testNotCloseEnough)
     QueryUtils::check(query, searcher);
 }
 
-TEST_F(PhraseQueryTest, testBarelyCloseEnough)
-{
+TEST_F(PhraseQueryTest, testBarelyCloseEnough) {
     query->setSlop(3);
     query->add(newLucene<Term>(L"field", L"one"));
     query->add(newLucene<Term>(L"field", L"five"));
@@ -116,8 +107,7 @@ TEST_F(PhraseQueryTest, testBarelyCloseEnough)
 }
 
 /// Ensures slop of 0 works for exact matches, but not reversed
-TEST_F(PhraseQueryTest, testExact)
-{
+TEST_F(PhraseQueryTest, testExact) {
     // slop is zero by default
     query->add(newLucene<Term>(L"field", L"four"));
     query->add(newLucene<Term>(L"field", L"five"));
@@ -133,8 +123,7 @@ TEST_F(PhraseQueryTest, testExact)
     QueryUtils::check(query, searcher);
 }
 
-TEST_F(PhraseQueryTest, testSlop1)
-{
+TEST_F(PhraseQueryTest, testSlop1) {
     // Ensures slop of 1 works with terms in order.
     query->setSlop(1);
     query->add(newLucene<Term>(L"field", L"one"));
@@ -154,8 +143,7 @@ TEST_F(PhraseQueryTest, testSlop1)
 }
 
 /// As long as slop is at least 2, terms can be reversed
-TEST_F(PhraseQueryTest, testOrderDoesntMatter)
-{
+TEST_F(PhraseQueryTest, testOrderDoesntMatter) {
     // must be at least two for reverse order match
     query->setSlop(2);
     query->add(newLucene<Term>(L"field", L"two"));
@@ -174,8 +162,7 @@ TEST_F(PhraseQueryTest, testOrderDoesntMatter)
 }
 
 /// Slop is the total number of positional moves allowed to line up a phrase
-TEST_F(PhraseQueryTest, testMulipleTerms)
-{
+TEST_F(PhraseQueryTest, testMulipleTerms) {
     query->setSlop(2);
     query->add(newLucene<Term>(L"field", L"one"));
     query->add(newLucene<Term>(L"field", L"three"));
@@ -199,8 +186,7 @@ TEST_F(PhraseQueryTest, testMulipleTerms)
     QueryUtils::check(query, searcher);
 }
 
-TEST_F(PhraseQueryTest, testPhraseQueryWithStopAnalyzer)
-{
+TEST_F(PhraseQueryTest, testPhraseQueryWithStopAnalyzer) {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     StopAnalyzerPtr stopAnalyzer = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_24);
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, stopAnalyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -230,8 +216,7 @@ TEST_F(PhraseQueryTest, testPhraseQueryWithStopAnalyzer)
     searcher->close();
 }
 
-TEST_F(PhraseQueryTest, testPhraseQueryInConjunctionScorer)
-{
+TEST_F(PhraseQueryTest, testPhraseQueryInConjunctionScorer) {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -311,8 +296,7 @@ TEST_F(PhraseQueryTest, testPhraseQueryInConjunctionScorer)
     directory->close();
 }
 
-TEST_F(PhraseQueryTest, testSlopScoring)
-{
+TEST_F(PhraseQueryTest, testSlopScoring) {
     DirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -348,8 +332,7 @@ TEST_F(PhraseQueryTest, testSlopScoring)
     QueryUtils::check(query, searcher);
 }
 
-TEST_F(PhraseQueryTest, testToString)
-{
+TEST_F(PhraseQueryTest, testToString) {
     StopAnalyzerPtr analyzer = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", analyzer);
     qp->setEnablePositionIncrements(true);
@@ -359,8 +342,7 @@ TEST_F(PhraseQueryTest, testToString)
     EXPECT_EQ(L"field:\"? hi|hello ? ? ? test\"", q->toString());
 }
 
-TEST_F(PhraseQueryTest, testWrappedPhrase)
-{
+TEST_F(PhraseQueryTest, testWrappedPhrase) {
     query->add(newLucene<Term>(L"repeated", L"first"));
     query->add(newLucene<Term>(L"repeated", L"part"));
     query->add(newLucene<Term>(L"repeated", L"second"));
@@ -379,8 +361,7 @@ TEST_F(PhraseQueryTest, testWrappedPhrase)
 }
 
 /// work on two docs like this: "phrase exist notexist exist found"
-TEST_F(PhraseQueryTest, testNonExistingPhrase)
-{
+TEST_F(PhraseQueryTest, testNonExistingPhrase) {
     // phrase without repetitions that exists in 2 docs
     query->add(newLucene<Term>(L"nonexist", L"phrase"));
     query->add(newLucene<Term>(L"nonexist", L"notexist"));
@@ -432,8 +413,7 @@ TEST_F(PhraseQueryTest, testNonExistingPhrase)
 /// Phrase of size 2 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice.
 /// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and
 /// exact scorer scores the same.
-TEST_F(PhraseQueryTest, testPalindrome2)
-{
+TEST_F(PhraseQueryTest, testPalindrome2) {
     // search on non palindrome, find phrase with no slop, using exact phrase scorer
     query->setSlop(0); // to use exact phrase scorer
     query->add(newLucene<Term>(L"field", L"two"));
@@ -476,8 +456,7 @@ TEST_F(PhraseQueryTest, testPalindrome2)
 /// Phrase of size 3 occurring twice, once in order and once in reverse, because doc is a palindrome, is counted twice.
 /// Also, in this case order in query does not matter.  Also, when an exact match is found, both sloppy scorer and exact
 /// scorer scores the same.
-TEST_F(PhraseQueryTest, testPalindrome3)
-{
+TEST_F(PhraseQueryTest, testPalindrome3) {
     // search on non palindrome, find phrase with no slop, using exact phrase scorer
     query->setSlop(0); // to use exact phrase scorer
     query->add(newLucene<Term>(L"field", L"one"));
@@ -517,8 +496,7 @@ TEST_F(PhraseQueryTest, testPalindrome3)
     QueryUtils::check(query, searcher);
 }
 
-TEST_F(PhraseQueryTest, testEmptyPhraseQuery)
-{
+TEST_F(PhraseQueryTest, testEmptyPhraseQuery) {
     BooleanQueryPtr q2 = newLucene<BooleanQuery>();
     q2->add(newLucene<PhraseQuery>(), BooleanClause::MUST);
     EXPECT_EQ(q2->toString(), L"+\"?\"");

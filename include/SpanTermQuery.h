@@ -9,35 +9,35 @@
 
 #include "SpanQuery.h"
 
-namespace Lucene
-{
-    /// Matches spans containing a term.
-    class LPPAPI SpanTermQuery : public SpanQuery
-    {
-    public:
-        /// Construct a SpanTermQuery matching the named term's spans.
-        SpanTermQuery(const TermPtr& term);
-        virtual ~SpanTermQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanTermQuery);
+/// Matches spans containing a term.
+class LPPAPI SpanTermQuery : public SpanQuery {
+public:
+    /// Construct a SpanTermQuery matching the named term's spans.
+    SpanTermQuery(const TermPtr& term);
+    virtual ~SpanTermQuery();
 
-    protected:
-        TermPtr term;
+    LUCENE_CLASS(SpanTermQuery);
 
-    public:
-        using SpanQuery::toString;
+protected:
+    TermPtr term;
 
-        /// Return the term whose spans are matched.
-        TermPtr getTerm();
+public:
+    using SpanQuery::toString;
 
-        virtual String getField();
-        virtual void extractTerms(SetTerm terms);
-        virtual String toString(const String& field);
-        virtual int32_t hashCode();
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
-    };
+    /// Return the term whose spans are matched.
+    TermPtr getTerm();
+
+    virtual String getField();
+    virtual void extractTerms(SetTerm terms);
+    virtual String toString(const String& field);
+    virtual int32_t hashCode();
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+};
+
 }
 
 #endif

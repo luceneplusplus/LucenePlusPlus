@@ -9,33 +9,33 @@
 
 #include "Lock.h"
 
-namespace Lucene
-{
-    class NativeFSLock : public Lock
-    {
-    public:
-        NativeFSLock(const String& lockDir, const String& lockFileName);
-        virtual ~NativeFSLock();
+namespace Lucene {
 
-        LUCENE_CLASS(NativeFSLock);
+class NativeFSLock : public Lock {
+public:
+    NativeFSLock(const String& lockDir, const String& lockFileName);
+    virtual ~NativeFSLock();
 
-    protected:
-        String lockDir;
-        String path;
-        filelockPtr lock;
+    LUCENE_CLASS(NativeFSLock);
 
-        static SynchronizePtr LOCK_HELD_LOCK();
-        static HashSet<String> LOCK_HELD();
+protected:
+    String lockDir;
+    String path;
+    filelockPtr lock;
 
-    public:
-        virtual bool obtain();
-        virtual void release();
-        virtual bool isLocked();
-        virtual String toString();
+    static SynchronizePtr LOCK_HELD_LOCK();
+    static HashSet<String> LOCK_HELD();
 
-    protected:
-        bool lockExists();
-    };
+public:
+    virtual bool obtain();
+    virtual void release();
+    virtual bool isLocked();
+    virtual String toString();
+
+protected:
+    bool lockExists();
+};
+
 }
 
 #endif

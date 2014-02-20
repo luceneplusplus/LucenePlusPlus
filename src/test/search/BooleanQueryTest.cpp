@@ -24,8 +24,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture BooleanQueryTest;
 
-TEST_F(BooleanQueryTest, testEquality)
-{
+TEST_F(BooleanQueryTest, testEquality) {
     BooleanQueryPtr bq1 = newLucene<BooleanQuery>();
     bq1->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"value1")), BooleanClause::SHOULD);
     bq1->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"value2")), BooleanClause::SHOULD);
@@ -45,20 +44,15 @@ TEST_F(BooleanQueryTest, testEquality)
     EXPECT_TRUE(bq1->equals(bq2));
 }
 
-TEST_F(BooleanQueryTest, testException)
-{
-    try
-    {
+TEST_F(BooleanQueryTest, testException) {
+    try {
         BooleanQuery::setMaxClauseCount(0);
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 }
 
-TEST_F(BooleanQueryTest, testNullOrSubScorer)
-{
+TEST_F(BooleanQueryTest, testNullOrSubScorer) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();

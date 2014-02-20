@@ -7,107 +7,88 @@
 #include "LuceneInc.h"
 #include "FileSwitchDirectory.h"
 
-namespace Lucene
-{
-    FileSwitchDirectory::FileSwitchDirectory(HashSet<String> primaryExtensions, const DirectoryPtr& primaryDir, const DirectoryPtr& secondaryDir, bool doClose)
-    {
-        this->primaryExtensions = primaryExtensions;
-        this->primaryDir = primaryDir;
-        this->secondaryDir = secondaryDir;
-        this->doClose = doClose;
-        this->lockFactory = primaryDir->getLockFactory();
-    }
+namespace Lucene {
 
-    FileSwitchDirectory::~FileSwitchDirectory()
-    {
-    }
+FileSwitchDirectory::FileSwitchDirectory(HashSet<String> primaryExtensions, const DirectoryPtr& primaryDir, const DirectoryPtr& secondaryDir, bool doClose) {
+    this->primaryExtensions = primaryExtensions;
+    this->primaryDir = primaryDir;
+    this->secondaryDir = secondaryDir;
+    this->doClose = doClose;
+    this->lockFactory = primaryDir->getLockFactory();
+}
 
-    DirectoryPtr FileSwitchDirectory::getPrimaryDir()
-    {
-        return primaryDir;
-    }
+FileSwitchDirectory::~FileSwitchDirectory() {
+}
 
-    DirectoryPtr FileSwitchDirectory::getSecondaryDir()
-    {
-        return secondaryDir;
-    }
+DirectoryPtr FileSwitchDirectory::getPrimaryDir() {
+    return primaryDir;
+}
 
-    void FileSwitchDirectory::close()
-    {
-        if (doClose)
-        {
-            LuceneException finally;
-            try
-            {
-                secondaryDir->close();
-            }
-            catch (LuceneException& e)
-            {
-                finally = e;
-            }
-            doClose = false;
-            primaryDir->close();
-            finally.throwException();
+DirectoryPtr FileSwitchDirectory::getSecondaryDir() {
+    return secondaryDir;
+}
+
+void FileSwitchDirectory::close() {
+    if (doClose) {
+        LuceneException finally;
+        try {
+            secondaryDir->close();
+        } catch (LuceneException& e) {
+            finally = e;
         }
+        doClose = false;
+        primaryDir->close();
+        finally.throwException();
     }
+}
 
-    HashSet<String> FileSwitchDirectory::listAll()
-    {
-        HashSet<String> primaryFiles(primaryDir->listAll());
-        HashSet<String> secondaryFiles(secondaryDir->listAll());
-        HashSet<String> files(HashSet<String>::newInstance(primaryFiles.begin(), primaryFiles.end()));
-        files.addAll(secondaryFiles.begin(), secondaryFiles.end());
-        return files;
-    }
+HashSet<String> FileSwitchDirectory::listAll() {
+    HashSet<String> primaryFiles(primaryDir->listAll());
+    HashSet<String> secondaryFiles(secondaryDir->listAll());
+    HashSet<String> files(HashSet<String>::newInstance(primaryFiles.begin(), primaryFiles.end()));
+    files.addAll(secondaryFiles.begin(), secondaryFiles.end());
+    return files;
+}
 
-    String FileSwitchDirectory::getExtension(const String& name)
-    {
-        String::size_type i = name.find_last_of(L'.');
-        return i == String::npos ? L"" : name.substr(i + 1);
-    }
+String FileSwitchDirectory::getExtension(const String& name) {
+    String::size_type i = name.find_last_of(L'.');
+    return i == String::npos ? L"" : name.substr(i + 1);
+}
 
-    DirectoryPtr FileSwitchDirectory::getDirectory(const String& name)
-    {
-        return primaryExtensions.contains(getExtension(name)) ? primaryDir : secondaryDir;
-    }
+DirectoryPtr FileSwitchDirectory::getDirectory(const String& name) {
+    return primaryExtensions.contains(getExtension(name)) ? primaryDir : secondaryDir;
+}
 
-    bool FileSwitchDirectory::fileExists(const String& name)
-    {
-        return getDirectory(name)->fileExists(name);
-    }
+bool FileSwitchDirectory::fileExists(const String& name) {
+    return getDirectory(name)->fileExists(name);
+}
 
-    uint64_t FileSwitchDirectory::fileModified(const String& name)
-    {
-        return getDirectory(name)->fileModified(name);
-    }
+uint64_t FileSwitchDirectory::fileModified(const String& name) {
+    return getDirectory(name)->fileModified(name);
+}
 
-    void FileSwitchDirectory::touchFile(const String& name)
-    {
-        getDirectory(name)->touchFile(name);
-    }
+void FileSwitchDirectory::touchFile(const String& name) {
+    getDirectory(name)->touchFile(name);
+}
 
-    void FileSwitchDirectory::deleteFile(const String& name)
-    {
-        getDirectory(name)->deleteFile(name);
-    }
+void FileSwitchDirectory::deleteFile(const String& name) {
+    getDirectory(name)->deleteFile(name);
+}
 
-    int64_t FileSwitchDirectory::fileLength(const String& name)
-    {
-        return getDirectory(name)->fileLength(name);
-    }
+int64_t FileSwitchDirectory::fileLength(const String& name) {
+    return getDirectory(name)->fileLength(name);
+}
 
-    IndexOutputPtr FileSwitchDirectory::createOutput(const String& name)
-    {
-        return getDirectory(name)->createOutput(name);
-    }
+IndexOutputPtr FileSwitchDirectory::createOutput(const String& name) {
+    return getDirectory(name)->createOutput(name);
+}
 
-    void FileSwitchDirectory::sync(const String& name)
-    {
-        getDirectory(name)->sync(name);
-    }
+void FileSwitchDirectory::sync(const String& name) {
+    getDirectory(name)->sync(name);
+}
 
-    IndexInputPtr FileSwitchDirectory::openInput(const String& name)
-    {
-        return getDirectory(name)->openInput(name);
-    }
+IndexInputPtr FileSwitchDirectory::openInput(const String& name) {
+    return getDirectory(name)->openInput(name);
+}
+
 }

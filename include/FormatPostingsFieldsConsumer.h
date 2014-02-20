@@ -9,24 +9,24 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Abstract API that consumes terms, doc, freq, prox and payloads postings.  Concrete implementations of this
-    /// actually do "something" with the postings (write it into the index in a specific format).
-    class FormatPostingsFieldsConsumer : public LuceneObject
-    {
-    public:
-        virtual ~FormatPostingsFieldsConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsFieldsConsumer);
+/// Abstract API that consumes terms, doc, freq, prox and payloads postings.  Concrete implementations of this
+/// actually do "something" with the postings (write it into the index in a specific format).
+class FormatPostingsFieldsConsumer : public LuceneObject {
+public:
+    virtual ~FormatPostingsFieldsConsumer();
 
-    public:
-        /// Add a new field.
-        virtual FormatPostingsTermsConsumerPtr addField(const FieldInfoPtr& field) = 0;
+    LUCENE_CLASS(FormatPostingsFieldsConsumer);
 
-        /// Called when we are done adding everything.
-        virtual void finish() = 0;
-    };
+public:
+    /// Add a new field.
+    virtual FormatPostingsTermsConsumerPtr addField(const FieldInfoPtr& field) = 0;
+
+    /// Called when we are done adding everything.
+    virtual void finish() = 0;
+};
+
 }
 
 #endif

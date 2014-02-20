@@ -24,80 +24,67 @@ DECLARE_SHARED_PTR(TestTermEnum)
 DECLARE_SHARED_PTR(TestTermPositions)
 
 /// Filter that only permits terms containing 'e'
-class TestTermEnum : public FilterTermEnum
-{
+class TestTermEnum : public FilterTermEnum {
 public:
-    TestTermEnum(const TermEnumPtr& termEnum) : FilterTermEnum(termEnum)
-    {
+    TestTermEnum(const TermEnumPtr& termEnum) : FilterTermEnum(termEnum) {
     }
 
-    virtual ~TestTermEnum()
-    {
+    virtual ~TestTermEnum() {
     }
 
     LUCENE_CLASS(TestTermEnum);
 
 public:
-    virtual bool next()
-    {
-        while (in->next())
-        {
-            if (in->term()->text().find(L'e') != String::npos)
+    virtual bool next() {
+        while (in->next()) {
+            if (in->term()->text().find(L'e') != String::npos) {
                 return true;
+            }
         }
         return false;
     }
 };
 
 /// Filter that only returns odd numbered documents.
-class TestTermPositions : public FilterTermPositions
-{
+class TestTermPositions : public FilterTermPositions {
 public:
-    TestTermPositions(const TermPositionsPtr& in) : FilterTermPositions(in)
-    {
+    TestTermPositions(const TermPositionsPtr& in) : FilterTermPositions(in) {
     }
 
-    virtual ~TestTermPositions()
-    {
+    virtual ~TestTermPositions() {
     }
 
     LUCENE_CLASS(TestTermPositions);
 
 public:
-    virtual bool next()
-    {
-        while (in->next())
-        {
-            if ((in->doc() % 2) == 1)
+    virtual bool next() {
+        while (in->next()) {
+            if ((in->doc() % 2) == 1) {
                 return true;
+            }
         }
         return false;
     }
 };
 
-class TestReader : public FilterIndexReader
-{
+class TestReader : public FilterIndexReader {
 public:
-    TestReader(const IndexReaderPtr& reader) : FilterIndexReader(reader)
-    {
+    TestReader(const IndexReaderPtr& reader) : FilterIndexReader(reader) {
     }
 
-    virtual ~TestReader()
-    {
+    virtual ~TestReader() {
     }
 
     LUCENE_CLASS(TestReader);
 
 public:
     /// Filter terms with TestTermEnum.
-    virtual TermEnumPtr terms()
-    {
+    virtual TermEnumPtr terms() {
         return newLucene<TestTermEnum>(in->terms());
     }
 
     /// Filter positions with TestTermPositions.
-    virtual TermPositionsPtr termPositions()
-    {
+    virtual TermPositionsPtr termPositions() {
         return newLucene<TestTermPositions>(in->termPositions());
     }
 };
@@ -105,8 +92,7 @@ public:
 typedef LuceneTestFixture FilterIndexReaderTest;
 
 /// Tests the IndexReader::getFieldNames implementation
-TEST_F(FilterIndexReaderTest, testFilterIndexReader)
-{
+TEST_F(FilterIndexReaderTest, testFilterIndexReader) {
     RAMDirectoryPtr directory = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -129,19 +115,20 @@ TEST_F(FilterIndexReaderTest, testFilterIndexReader)
     EXPECT_TRUE(reader->isOptimized());
 
     TermEnumPtr terms = reader->terms();
-    while (terms->next())
+    while (terms->next()) {
         EXPECT_NE(terms->term()->text().find(L'e'), String::npos);
+    }
     terms->close();
 
     TermPositionsPtr positions = reader->termPositions(newLucene<Term>(L"default", L"one"));
-    while (positions->next())
+    while (positions->next()) {
         EXPECT_TRUE((positions->doc() % 2) == 1);
+    }
 
     int32_t NUM_DOCS = 3;
 
     TermDocsPtr td = reader->termDocs(TermPtr());
-    for (int32_t i = 0; i < NUM_DOCS; ++i)
-    {
+    for (int32_t i = 0; i < NUM_DOCS; ++i) {
         EXPECT_TRUE(td->next());
         EXPECT_EQ(i, td->doc());
         EXPECT_EQ(1, td->freq());

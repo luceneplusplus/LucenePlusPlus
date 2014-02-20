@@ -13,57 +13,50 @@
 #include "FieldInfo.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    NormsWriterPerField::NormsWriterPerField(const DocInverterPerFieldPtr& docInverterPerField, const NormsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo)
-    {
-        docIDs = Collection<int32_t>::newInstance(1);
-        norms = ByteArray::newInstance(1);
-        upto = 0;
+namespace Lucene {
 
-        this->_perThread = perThread;
-        this->fieldInfo = fieldInfo;
-        docState = perThread->docState;
-        fieldState = docInverterPerField->fieldState;
-    }
+NormsWriterPerField::NormsWriterPerField(const DocInverterPerFieldPtr& docInverterPerField, const NormsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo) {
+    docIDs = Collection<int32_t>::newInstance(1);
+    norms = ByteArray::newInstance(1);
+    upto = 0;
 
-    NormsWriterPerField::~NormsWriterPerField()
-    {
-    }
+    this->_perThread = perThread;
+    this->fieldInfo = fieldInfo;
+    docState = perThread->docState;
+    fieldState = docInverterPerField->fieldState;
+}
 
-    void NormsWriterPerField::reset()
-    {
-        // Shrink back if we are over allocated now
-        docIDs.resize(MiscUtils::getShrinkSize(docIDs.size(), upto));
-        norms.resize(MiscUtils::getShrinkSize(norms.size(), upto));
-        upto = 0;
-    }
+NormsWriterPerField::~NormsWriterPerField() {
+}
 
-    void NormsWriterPerField::abort()
-    {
-        upto = 0;
-    }
+void NormsWriterPerField::reset() {
+    // Shrink back if we are over allocated now
+    docIDs.resize(MiscUtils::getShrinkSize(docIDs.size(), upto));
+    norms.resize(MiscUtils::getShrinkSize(norms.size(), upto));
+    upto = 0;
+}
 
-    int32_t NormsWriterPerField::compareTo(const LuceneObjectPtr& other)
-    {
-        return fieldInfo->name.compare(boost::static_pointer_cast<NormsWriterPerField>(other)->fieldInfo->name);
-    }
+void NormsWriterPerField::abort() {
+    upto = 0;
+}
 
-    void NormsWriterPerField::finish()
-    {
-        BOOST_ASSERT(docIDs.size() == norms.size());
-        if (fieldInfo->isIndexed && !fieldInfo->omitNorms)
-        {
-            if (docIDs.size() <= upto)
-            {
-                BOOST_ASSERT(docIDs.size() == upto);
-                docIDs.resize(MiscUtils::getNextSize(1 + upto));
-                norms.resize(MiscUtils::getNextSize(1 + upto));
-            }
-            double norm = docState->similarity->computeNorm(fieldInfo->name, fieldState);
-            norms[upto] = Similarity::encodeNorm(norm);
-            docIDs[upto] = docState->docID;
-            ++upto;
+int32_t NormsWriterPerField::compareTo(const LuceneObjectPtr& other) {
+    return fieldInfo->name.compare(boost::static_pointer_cast<NormsWriterPerField>(other)->fieldInfo->name);
+}
+
+void NormsWriterPerField::finish() {
+    BOOST_ASSERT(docIDs.size() == norms.size());
+    if (fieldInfo->isIndexed && !fieldInfo->omitNorms) {
+        if (docIDs.size() <= upto) {
+            BOOST_ASSERT(docIDs.size() == upto);
+            docIDs.resize(MiscUtils::getNextSize(1 + upto));
+            norms.resize(MiscUtils::getNextSize(1 + upto));
         }
+        double norm = docState->similarity->computeNorm(fieldInfo->name, fieldState);
+        norms[upto] = Similarity::encodeNorm(norm);
+        docIDs[upto] = docState->docID;
+        ++upto;
     }
+}
+
 }

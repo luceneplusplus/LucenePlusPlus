@@ -29,18 +29,17 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CachingSpanFilterTest;
 
-static IndexReaderPtr refreshReader(const IndexReaderPtr& reader)
-{
+static IndexReaderPtr refreshReader(const IndexReaderPtr& reader) {
     IndexReaderPtr _reader(reader);
     IndexReaderPtr oldReader = _reader;
     _reader = _reader->reopen();
-    if (_reader != oldReader)
+    if (_reader != oldReader) {
         oldReader->close();
+    }
     return _reader;
 }
 
-TEST_F(CachingSpanFilterTest, testEnforceDeletions)
-{
+TEST_F(CachingSpanFilterTest, testEnforceDeletions) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     IndexReaderPtr reader = writer->getReader();

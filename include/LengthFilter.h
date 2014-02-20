@@ -9,29 +9,29 @@
 
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// Removes words that are too long or too short from the stream.
-    class LPPAPI LengthFilter : public TokenFilter
-    {
-    public:
-        /// Build a filter that removes words that are too long or too short from the text.
-        LengthFilter(const TokenStreamPtr& input, int32_t min, int32_t max);
-        virtual ~LengthFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(LengthFilter);
+/// Removes words that are too long or too short from the stream.
+class LPPAPI LengthFilter : public TokenFilter {
+public:
+    /// Build a filter that removes words that are too long or too short from the text.
+    LengthFilter(const TokenStreamPtr& input, int32_t min, int32_t max);
+    virtual ~LengthFilter();
 
-    public:
-        int32_t min;
-        int32_t max;
+    LUCENE_CLASS(LengthFilter);
 
-    protected:
-        TermAttributePtr termAtt;
+public:
+    int32_t min;
+    int32_t max;
 
-    public:
-        /// Returns the next input Token whose term() is the right len
-        virtual bool incrementToken();
-    };
+protected:
+    TermAttributePtr termAtt;
+
+public:
+    /// Returns the next input Token whose term() is the right len
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

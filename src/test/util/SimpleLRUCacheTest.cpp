@@ -16,8 +16,7 @@ typedef SimpleLRUCache< TermPtr, int32_t, luceneHash<TermPtr>, luceneEquals<Term
 
 typedef LuceneTestFixture SimpleLRUCacheTest;
 
-TEST_F(SimpleLRUCacheTest, testCachePut)
-{
+TEST_F(SimpleLRUCacheTest, testCachePut) {
     TestLRUSimpleCache testCache(5);
 
     testCache.put(1, L"test 1");
@@ -32,12 +31,12 @@ TEST_F(SimpleLRUCacheTest, testCachePut)
     int32_t expectedKey = 6;
 
     // lru = 6, 5, 4, 3, 2
-    for (TestLRUSimpleCache::const_iterator cache = testCache.begin(); cache != testCache.end(); ++cache)
+    for (TestLRUSimpleCache::const_iterator cache = testCache.begin(); cache != testCache.end(); ++cache) {
         EXPECT_EQ(cache->first, expectedKey--);
+    }
 }
 
-TEST_F(SimpleLRUCacheTest, testCacheGet)
-{
+TEST_F(SimpleLRUCacheTest, testCacheGet) {
     TestLRUSimpleCache testCache(5);
 
     testCache.put(1, L"test 1");
@@ -51,8 +50,7 @@ TEST_F(SimpleLRUCacheTest, testCacheGet)
     EXPECT_EQ(testCache.get(3), L"test 3");
 }
 
-TEST_F(SimpleLRUCacheTest, testCacheExists)
-{
+TEST_F(SimpleLRUCacheTest, testCacheExists) {
     TestLRUSimpleCache testCache(5);
 
     testCache.put(1, L"test 1");
@@ -65,8 +63,7 @@ TEST_F(SimpleLRUCacheTest, testCacheExists)
     EXPECT_TRUE(!testCache.contains(7));
 }
 
-TEST_F(SimpleLRUCacheTest, testCachePutGet)
-{
+TEST_F(SimpleLRUCacheTest, testCachePutGet) {
     TestLRUSimpleCache testCache(5);
 
     testCache.put(1, L"test 1");
@@ -85,8 +82,9 @@ TEST_F(SimpleLRUCacheTest, testCachePutGet)
     testCache.put(8, L"test 8");
 
     Collection<int32_t> expectedLRU = Collection<int32_t>::newInstance();
-    for (TestLRUSimpleCache::const_iterator cache = testCache.begin(); cache != testCache.end(); ++cache)
+    for (TestLRUSimpleCache::const_iterator cache = testCache.begin(); cache != testCache.end(); ++cache) {
         expectedLRU.add(cache->first);
+    }
 
     EXPECT_EQ(expectedLRU.size(), 5);
 
@@ -98,38 +96,42 @@ TEST_F(SimpleLRUCacheTest, testCachePutGet)
     EXPECT_EQ(expectedLRU[4], 2);
 }
 
-TEST_F(SimpleLRUCacheTest, testRandomAccess)
-{
+TEST_F(SimpleLRUCacheTest, testRandomAccess) {
     const int32_t n = 100;
     TestLRUSimpleCache cache(n);
     String value = L"test";
 
-    for (int32_t i = 0; i < n; ++i)
+    for (int32_t i = 0; i < n; ++i) {
         cache.put(i, value);
+    }
 
     // access every 2nd item in cache
-    for (int32_t i = 0; i < n; i += 2)
+    for (int32_t i = 0; i < n; i += 2) {
         EXPECT_NE(cache.get(i), L"");
+    }
 
     // add n/2 elements to cache, the ones that weren't touched in the previous loop should now be thrown away
-    for (int32_t i = n; i < n + (n / 2); ++i)
+    for (int32_t i = n; i < n + (n / 2); ++i) {
         cache.put(i, value);
+    }
 
     // access every 4th item in cache
-    for (int32_t i = 0; i < n; i += 4)
+    for (int32_t i = 0; i < n; i += 4) {
         EXPECT_NE(cache.get(i), L"");
+    }
 
     // add 3/4n elements to cache, the ones that weren't touched in the previous loops should now be thrown away
-    for (int32_t i = n; i < n + (n * 3 / 4); ++i)
+    for (int32_t i = n; i < n + (n * 3 / 4); ++i) {
         cache.put(i, value);
+    }
 
     // access every 4th item in cache
-    for (int32_t i = 0; i < n; i += 4)
+    for (int32_t i = 0; i < n; i += 4) {
         EXPECT_NE(cache.get(i), L"");
+    }
 }
 
-TEST_F(SimpleLRUCacheTest, testTermCache)
-{
+TEST_F(SimpleLRUCacheTest, testTermCache) {
     TestLRUTermCache testCache(5);
 
     testCache.put(newLucene<Term>(L"field1", L"text1"), 1);
@@ -148,8 +150,9 @@ TEST_F(SimpleLRUCacheTest, testTermCache)
     testCache.put(newLucene<Term>(L"field8", L"text8"), 8);
 
     Collection<TermPtr> expectedLRU = Collection<TermPtr>::newInstance();
-    for (TestLRUTermCache::const_iterator cache = testCache.begin(); cache != testCache.end(); ++cache)
+    for (TestLRUTermCache::const_iterator cache = testCache.begin(); cache != testCache.end(); ++cache) {
         expectedLRU.add(cache->first);
+    }
 
     EXPECT_EQ(expectedLRU.size(), 5);
 

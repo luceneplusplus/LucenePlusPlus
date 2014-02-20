@@ -9,36 +9,36 @@
 
 #include "Fragmenter.h"
 
-namespace Lucene
-{
-    /// {@link Fragmenter} implementation which breaks text up into same-size fragments with
-    /// no concerns over spotting sentence boundaries.
-    class LPPCONTRIBAPI SimpleFragmenter : public Fragmenter, public LuceneObject
-    {
-    public:
-        SimpleFragmenter();
-        SimpleFragmenter(int32_t fragmentSize);
+namespace Lucene {
 
-        virtual ~SimpleFragmenter();
+/// {@link Fragmenter} implementation which breaks text up into same-size fragments with
+/// no concerns over spotting sentence boundaries.
+class LPPCONTRIBAPI SimpleFragmenter : public Fragmenter, public LuceneObject {
+public:
+    SimpleFragmenter();
+    SimpleFragmenter(int32_t fragmentSize);
 
-        LUCENE_CLASS(SimpleFragmenter);
+    virtual ~SimpleFragmenter();
 
-    protected:
-        static const int32_t DEFAULT_FRAGMENT_SIZE;
-        int32_t currentNumFrags;
-        int32_t fragmentSize;
-        OffsetAttributePtr offsetAtt;
+    LUCENE_CLASS(SimpleFragmenter);
 
-    public:
-        virtual void start(const String& originalText, const TokenStreamPtr& tokenStream);
-        virtual bool isNewFragment();
+protected:
+    static const int32_t DEFAULT_FRAGMENT_SIZE;
+    int32_t currentNumFrags;
+    int32_t fragmentSize;
+    OffsetAttributePtr offsetAtt;
 
-        /// @return size in number of characters of each fragment
-        int32_t getFragmentSize();
+public:
+    virtual void start(const String& originalText, const TokenStreamPtr& tokenStream);
+    virtual bool isNewFragment();
 
-        /// @param size size in characters of each fragment
-        void setFragmentSize(int32_t size);
-    };
+    /// @return size in number of characters of each fragment
+    int32_t getFragmentSize();
+
+    /// @param size size in characters of each fragment
+    void setFragmentSize(int32_t size);
+};
+
 }
 
 #endif

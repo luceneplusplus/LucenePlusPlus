@@ -15,8 +15,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture WordlistLoaderTest;
 
-static void checkSet(HashSet<String> wordset)
-{
+static void checkSet(HashSet<String> wordset) {
     EXPECT_EQ(3, wordset.size());
     EXPECT_TRUE(wordset.contains(L"ONE")); // case is not modified
     EXPECT_TRUE(!wordset.contains(L"one")); // case is not modified
@@ -25,8 +24,7 @@ static void checkSet(HashSet<String> wordset)
     EXPECT_TRUE(!wordset.contains(L"four"));
 }
 
-TEST_F(WordlistLoaderTest, testWordlistLoading)
-{
+TEST_F(WordlistLoaderTest, testWordlistLoading) {
     String s = L"ONE\n  two \nthree";
     HashSet<String> wordSet1 = WordlistLoader::getWordSet(newLucene<StringReader>(s));
     checkSet(wordSet1);
@@ -34,8 +32,7 @@ TEST_F(WordlistLoaderTest, testWordlistLoading)
     checkSet(wordSet2);
 }
 
-TEST_F(WordlistLoaderTest, testComments)
-{
+TEST_F(WordlistLoaderTest, testComments) {
     String s = L"ONE\n  two \nthree\n#comment";
     HashSet<String> wordSet1 = WordlistLoader::getWordSet(newLucene<StringReader>(s), L"#");
     checkSet(wordSet1);

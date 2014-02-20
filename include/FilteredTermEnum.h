@@ -9,54 +9,54 @@
 
 #include "TermEnum.h"
 
-namespace Lucene
-{
-    /// Abstract class for enumerating a subset of all terms.
-    ///
-    /// Term enumerations are always ordered by Term.compareTo().  Each term in the enumeration is greater than
-    /// all that precede it.
-    class LPPAPI FilteredTermEnum : public TermEnum
-    {
-    public:
-        virtual ~FilteredTermEnum();
-        LUCENE_CLASS(FilteredTermEnum);
+namespace Lucene {
 
-    protected:
-        /// The current term
-        TermPtr currentTerm;
+/// Abstract class for enumerating a subset of all terms.
+///
+/// Term enumerations are always ordered by Term.compareTo().  Each term in the enumeration is greater than
+/// all that precede it.
+class LPPAPI FilteredTermEnum : public TermEnum {
+public:
+    virtual ~FilteredTermEnum();
+    LUCENE_CLASS(FilteredTermEnum);
 
-        /// The delegate enum - to set this member use {@link #setEnum}
-        TermEnumPtr actualEnum;
+protected:
+    /// The current term
+    TermPtr currentTerm;
 
-    public:
-        /// Equality measure on the term
-        virtual double difference() = 0;
+    /// The delegate enum - to set this member use {@link #setEnum}
+    TermEnumPtr actualEnum;
 
-        /// Returns the docFreq of the current Term in the enumeration.
-        /// Returns -1 if no Term matches or all terms have been enumerated.
-        virtual int32_t docFreq();
+public:
+    /// Equality measure on the term
+    virtual double difference() = 0;
 
-        /// Increments the enumeration to the next element.  True if one exists.
-        virtual bool next();
+    /// Returns the docFreq of the current Term in the enumeration.
+    /// Returns -1 if no Term matches or all terms have been enumerated.
+    virtual int32_t docFreq();
 
-        /// Returns the current Term in the enumeration.
-        /// Returns null if no Term matches or all terms have been enumerated.
-        virtual TermPtr term();
+    /// Increments the enumeration to the next element.  True if one exists.
+    virtual bool next();
 
-        /// Closes the enumeration to further activity, freeing resources.
-        virtual void close();
+    /// Returns the current Term in the enumeration.
+    /// Returns null if no Term matches or all terms have been enumerated.
+    virtual TermPtr term();
 
-    protected:
-        /// Equality compare on the term
-        virtual bool termCompare(const TermPtr& term) = 0;
+    /// Closes the enumeration to further activity, freeing resources.
+    virtual void close();
 
-        /// Indicates the end of the enumeration has been reached
-        virtual bool endEnum() = 0;
+protected:
+    /// Equality compare on the term
+    virtual bool termCompare(const TermPtr& term) = 0;
 
-        /// Use this method to set the actual TermEnum (eg. in ctor), it will be automatically positioned
-        /// on the first matching term.
-        virtual void setEnum(const TermEnumPtr& actualEnum);
-    };
+    /// Indicates the end of the enumeration has been reached
+    virtual bool endEnum() = 0;
+
+    /// Use this method to set the actual TermEnum (eg. in ctor), it will be automatically positioned
+    /// on the first matching term.
+    virtual void setEnum(const TermEnumPtr& actualEnum);
+};
+
 }
 
 #endif

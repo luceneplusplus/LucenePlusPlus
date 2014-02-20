@@ -24,8 +24,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture DateFilterTest;
 
-TEST_F(DateFilterTest, testBefore)
-{
+TEST_F(DateFilterTest, testBefore) {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -43,10 +42,10 @@ TEST_F(DateFilterTest, testBefore)
 
     // filter that should preserve matches
     TermRangeFilterPtr df1 = newLucene<TermRangeFilter>(L"datefield", DateTools::timeToString(now - 2000, DateTools::RESOLUTION_MILLISECOND),
-                                                        DateTools::timeToString(now, DateTools::RESOLUTION_MILLISECOND), false, true);
+                             DateTools::timeToString(now, DateTools::RESOLUTION_MILLISECOND), false, true);
     // filter that should discard matches
     TermRangeFilterPtr df2 = newLucene<TermRangeFilter>(L"datefield", DateTools::timeToString(0, DateTools::RESOLUTION_MILLISECOND),
-                                                        DateTools::timeToString(now - 2000, DateTools::RESOLUTION_MILLISECOND), true, false);
+                             DateTools::timeToString(now - 2000, DateTools::RESOLUTION_MILLISECOND), true, false);
 
     // search something that doesn't exist with DateFilter
     QueryPtr query1 = newLucene<TermQuery>(newLucene<Term>(L"body", L"NoMatchForThis"));
@@ -75,8 +74,7 @@ TEST_F(DateFilterTest, testBefore)
     EXPECT_EQ(0, result.size());
 }
 
-TEST_F(DateFilterTest, testAfter)
-{
+TEST_F(DateFilterTest, testAfter) {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -94,10 +92,10 @@ TEST_F(DateFilterTest, testAfter)
 
     // filter that should preserve matches
     TermRangeFilterPtr df1 = newLucene<TermRangeFilter>(L"datefield", DateTools::timeToString(now, DateTools::RESOLUTION_MILLISECOND),
-                                                        DateTools::timeToString(now + 999999, DateTools::RESOLUTION_MILLISECOND), true, false);
+                             DateTools::timeToString(now + 999999, DateTools::RESOLUTION_MILLISECOND), true, false);
     // filter that should discard matches
     TermRangeFilterPtr df2 = newLucene<TermRangeFilter>(L"datefield", DateTools::timeToString(now + 999999, DateTools::RESOLUTION_MILLISECOND),
-                                                        DateTools::timeToString(now + 999999999, DateTools::RESOLUTION_MILLISECOND), false, true);
+                             DateTools::timeToString(now + 999999999, DateTools::RESOLUTION_MILLISECOND), false, true);
 
     // search something that doesn't exist with DateFilter
     QueryPtr query1 = newLucene<TermQuery>(newLucene<Term>(L"body", L"NoMatchForThis"));

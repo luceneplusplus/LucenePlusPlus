@@ -9,34 +9,31 @@
 #include "DocumentsWriter.h"
 #include "DocConsumer.h"
 
-namespace Lucene
-{
-    DocumentsWriterThreadState::DocumentsWriterThreadState(const DocumentsWriterPtr& docWriter)
-    {
-        this->_docWriter = docWriter;
-    }
+namespace Lucene {
 
-    DocumentsWriterThreadState::~DocumentsWriterThreadState()
-    {
-    }
+DocumentsWriterThreadState::DocumentsWriterThreadState(const DocumentsWriterPtr& docWriter) {
+    this->_docWriter = docWriter;
+}
 
-    void DocumentsWriterThreadState::initialize()
-    {
-        isIdle = true;
-        doFlushAfter = false;
-        numThreads = 1;
-        DocumentsWriterPtr docWriter(_docWriter);
-        docState = newLucene<DocState>();
-        docState->maxFieldLength = docWriter->maxFieldLength;
-        docState->infoStream = docWriter->infoStream;
-        docState->similarity = docWriter->similarity;
-        docState->_docWriter = docWriter;
-        consumer = docWriter->consumer->addThread(shared_from_this());
-    }
+DocumentsWriterThreadState::~DocumentsWriterThreadState() {
+}
 
-    void DocumentsWriterThreadState::doAfterFlush()
-    {
-        numThreads = 0;
-        doFlushAfter = false;
-    }
+void DocumentsWriterThreadState::initialize() {
+    isIdle = true;
+    doFlushAfter = false;
+    numThreads = 1;
+    DocumentsWriterPtr docWriter(_docWriter);
+    docState = newLucene<DocState>();
+    docState->maxFieldLength = docWriter->maxFieldLength;
+    docState->infoStream = docWriter->infoStream;
+    docState->similarity = docWriter->similarity;
+    docState->_docWriter = docWriter;
+    consumer = docWriter->consumer->addThread(shared_from_this());
+}
+
+void DocumentsWriterThreadState::doAfterFlush() {
+    numThreads = 0;
+    doFlushAfter = false;
+}
+
 }

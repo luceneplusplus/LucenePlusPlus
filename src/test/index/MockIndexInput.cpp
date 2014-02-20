@@ -8,48 +8,42 @@
 #include "MockIndexInput.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    MockIndexInput::MockIndexInput(ByteArray bytes)
-    {
-        buffer = bytes;
-        _length = bytes.size();
-        pointer = 0;
-    }
+namespace Lucene {
 
-    MockIndexInput::~MockIndexInput()
-    {
-    }
+MockIndexInput::MockIndexInput(ByteArray bytes) {
+    buffer = bytes;
+    _length = bytes.size();
+    pointer = 0;
+}
 
-    void MockIndexInput::readInternal(uint8_t* b, int32_t offset, int32_t length)
-    {
-        int32_t remainder = length;
-        int32_t start = pointer;
-        while (remainder != 0)
-        {
-            int32_t bufferOffset = start % buffer.size();
-            int32_t bytesInBuffer = buffer.size() - bufferOffset;
-            int32_t bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
-            MiscUtils::arrayCopy(buffer.get(), bufferOffset, b, offset, bytesToCopy);
-            offset += bytesToCopy;
-            start += bytesToCopy;
-            remainder -= bytesToCopy;
-        }
-        pointer += length;
-    }
+MockIndexInput::~MockIndexInput() {
+}
 
-    void MockIndexInput::close()
-    {
-        // ignore
+void MockIndexInput::readInternal(uint8_t* b, int32_t offset, int32_t length) {
+    int32_t remainder = length;
+    int32_t start = pointer;
+    while (remainder != 0) {
+        int32_t bufferOffset = start % buffer.size();
+        int32_t bytesInBuffer = buffer.size() - bufferOffset;
+        int32_t bytesToCopy = bytesInBuffer >= remainder ? remainder : bytesInBuffer;
+        MiscUtils::arrayCopy(buffer.get(), bufferOffset, b, offset, bytesToCopy);
+        offset += bytesToCopy;
+        start += bytesToCopy;
+        remainder -= bytesToCopy;
     }
+    pointer += length;
+}
 
-    void MockIndexInput::seekInternal(int64_t pos)
-    {
-        pointer = (int32_t)pos;
-    }
+void MockIndexInput::close() {
+    // ignore
+}
 
-    int64_t MockIndexInput::length()
-    {
-        return _length;
-    }
+void MockIndexInput::seekInternal(int64_t pos) {
+    pointer = (int32_t)pos;
+}
+
+int64_t MockIndexInput::length() {
+    return _length;
+}
+
 }

@@ -9,37 +9,37 @@
 
 #include "InvertedDocEndConsumer.h"
 
-namespace Lucene
-{
-    /// Writes norms.  Each thread X field accumulates the norms for the doc/fields it saw, then the flush method
-    /// below merges all of these together into a single _X.nrm file.
-    class NormsWriter : public InvertedDocEndConsumer
-    {
-    public:
-        NormsWriter();
-        virtual ~NormsWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(NormsWriter);
+/// Writes norms.  Each thread X field accumulates the norms for the doc/fields it saw, then the flush method
+/// below merges all of these together into a single _X.nrm file.
+class NormsWriter : public InvertedDocEndConsumer {
+public:
+    NormsWriter();
+    virtual ~NormsWriter();
 
-    protected:
-        FieldInfosPtr fieldInfos;
+    LUCENE_CLASS(NormsWriter);
 
-    public:
-        virtual InvertedDocEndConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread);
-        virtual void abort();
+protected:
+    FieldInfosPtr fieldInfos;
 
-        // We only write the _X.nrm file at flush
-        virtual void files(HashSet<String> files);
+public:
+    virtual InvertedDocEndConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread);
+    virtual void abort();
 
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
+    // We only write the _X.nrm file at flush
+    virtual void files(HashSet<String> files);
 
-        /// Produce _X.nrm if any document had a field with norms not disabled
-        virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
-        virtual void closeDocStore(const SegmentWriteStatePtr& state);
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
-    protected:
-        static uint8_t getDefaultNorm();
-    };
+    /// Produce _X.nrm if any document had a field with norms not disabled
+    virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+    virtual void closeDocStore(const SegmentWriteStatePtr& state);
+
+protected:
+    static uint8_t getDefaultNorm();
+};
+
 }
 
 #endif

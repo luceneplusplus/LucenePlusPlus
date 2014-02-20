@@ -9,57 +9,57 @@
 
 #include "test_lucene.h"
 
-namespace Lucene
-{
-    class QueryUtils
-    {
-    public:
-        virtual ~QueryUtils();
+namespace Lucene {
 
-    public:
-        /// Check the types of things query objects should be able to do.
-        static void check(const QueryPtr& q);
+class QueryUtils {
+public:
+    virtual ~QueryUtils();
 
-        /// Check very basic hashCode and equals
-        static void checkHashEquals(const QueryPtr& q);
+public:
+    /// Check the types of things query objects should be able to do.
+    static void check(const QueryPtr& q);
 
-        static void checkEqual(const QueryPtr& q1, const QueryPtr& q2);
-        static void checkUnequal(const QueryPtr& q1, const QueryPtr& q2);
+    /// Check very basic hashCode and equals
+    static void checkHashEquals(const QueryPtr& q);
 
-        /// Deep check that explanations of a query 'score' correctly
-        static void checkExplanations(const QueryPtr& q, const SearcherPtr& s);
+    static void checkEqual(const QueryPtr& q1, const QueryPtr& q2);
+    static void checkUnequal(const QueryPtr& q1, const QueryPtr& q2);
 
-        /// Various query sanity checks on a searcher, some checks are only done
-        /// for types of IndexSearcher.
-        static void check(const QueryPtr& q1, const SearcherPtr& s);
-        static void check(const QueryPtr& q1, const SearcherPtr& s, bool wrap);
+    /// Deep check that explanations of a query 'score' correctly
+    static void checkExplanations(const QueryPtr& q, const SearcherPtr& s);
 
-        /// Given an IndexSearcher, returns a new IndexSearcher whose IndexReader is a MultiReader
-        /// containing the Reader of the original IndexSearcher, as well as several "empty"
-        /// IndexReaders - some of which will have deleted documents in them.  This new IndexSearcher
-        /// should behave exactly the same as the original IndexSearcher.
-        /// @param s the searcher to wrap.
-        /// @param edge if negative, s will be the first sub; if 0, s will be in the middle, if
-        /// positive s will be the last sub
-        static IndexSearcherPtr wrapUnderlyingReader(const IndexSearcherPtr& s, int32_t edge);
+    /// Various query sanity checks on a searcher, some checks are only done
+    /// for types of IndexSearcher.
+    static void check(const QueryPtr& q1, const SearcherPtr& s);
+    static void check(const QueryPtr& q1, const SearcherPtr& s, bool wrap);
 
-        /// Given a Searcher, returns a new MultiSearcher wrapping the the original Searcher, as well
-        /// as several "empty" IndexSearchers - some of which will have deleted documents in them.
-        /// This new MultiSearcher should behave exactly the same as the original Searcher.
-        /// @param s the Searcher to wrap
-        /// @param edge if negative, s will be the first sub; if 0, s will be in hte middle, if positive
-        /// s will be the last sub
-        static MultiSearcherPtr wrapSearcher(const SearcherPtr& s, int32_t edge);
+    /// Given an IndexSearcher, returns a new IndexSearcher whose IndexReader is a MultiReader
+    /// containing the Reader of the original IndexSearcher, as well as several "empty"
+    /// IndexReaders - some of which will have deleted documents in them.  This new IndexSearcher
+    /// should behave exactly the same as the original IndexSearcher.
+    /// @param s the searcher to wrap.
+    /// @param edge if negative, s will be the first sub; if 0, s will be in the middle, if
+    /// positive s will be the last sub
+    static IndexSearcherPtr wrapUnderlyingReader(const IndexSearcherPtr& s, int32_t edge);
 
-        static RAMDirectoryPtr makeEmptyIndex(int32_t numDeletedDocs);
+    /// Given a Searcher, returns a new MultiSearcher wrapping the the original Searcher, as well
+    /// as several "empty" IndexSearchers - some of which will have deleted documents in them.
+    /// This new MultiSearcher should behave exactly the same as the original Searcher.
+    /// @param s the Searcher to wrap
+    /// @param edge if negative, s will be the first sub; if 0, s will be in hte middle, if positive
+    /// s will be the last sub
+    static MultiSearcherPtr wrapSearcher(const SearcherPtr& s, int32_t edge);
 
-        /// Alternate scorer skipTo(), skipTo(), next(), next(), skipTo(), skipTo(), etc and ensure
-        /// a hitcollector receives same docs and scores
-        static void checkSkipTo(const QueryPtr& q, const IndexSearcherPtr& s);
+    static RAMDirectoryPtr makeEmptyIndex(int32_t numDeletedDocs);
 
-        /// Check that first skip on just created scorers always goes to the right doc
-        static void checkFirstSkipTo(const QueryPtr& q, const IndexSearcherPtr& s);
-    };
+    /// Alternate scorer skipTo(), skipTo(), next(), next(), skipTo(), skipTo(), etc and ensure
+    /// a hitcollector receives same docs and scores
+    static void checkSkipTo(const QueryPtr& q, const IndexSearcherPtr& s);
+
+    /// Check that first skip on just created scorers always goes to the right doc
+    static void checkFirstSkipTo(const QueryPtr& q, const IndexSearcherPtr& s);
+};
+
 }
 
 #endif

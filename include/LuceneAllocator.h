@@ -9,16 +9,16 @@
 
 #include "Config.h"
 
-namespace Lucene
-{
-    /// Allocate block of memory.
-    LPPAPI void* AllocMemory(size_t size);
+namespace Lucene {
 
-    /// Reallocate a given block of memory.
-    LPPAPI void* ReallocMemory(void* memory, size_t size);
+/// Allocate block of memory.
+LPPAPI void* AllocMemory(size_t size);
 
-    /// Release a given block of memory.
-    LPPAPI void FreeMemory(void* memory);
+/// Reallocate a given block of memory.
+LPPAPI void* ReallocMemory(void* memory, size_t size);
+
+/// Release a given block of memory.
+LPPAPI void FreeMemory(void* memory);
 }
 
 #endif

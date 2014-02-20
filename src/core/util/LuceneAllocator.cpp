@@ -7,41 +7,40 @@
 #include "LuceneInc.h"
 #include "LuceneAllocator.h"
 
-namespace Lucene
-{
-    void* AllocMemory(size_t size)
-    {
-        #if (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG)
-        return _malloc_dbg(size, _NORMAL_BLOCK, __FILE__, __LINE__);
-        #else
-        return malloc(size);
-        #endif
-    }
+namespace Lucene {
 
-    void* ReallocMemory(void* memory, size_t size)
-    {
-        if (memory == NULL)
-            return AllocMemory(size);
-        if (size == 0)
-        {
-            FreeMemory(memory);
-            return NULL;
-        }
-        #if defined(_WIN32) && !defined(NDEBUG)
-        return _realloc_dbg(memory, size, _NORMAL_BLOCK, __FILE__, __LINE__);
-        #else
-        return realloc(memory, size);
-        #endif
-    }
+void* AllocMemory(size_t size) {
+#if (defined(_WIN32) || defined(_WIN64)) && !defined(NDEBUG)
+    return _malloc_dbg(size, _NORMAL_BLOCK, __FILE__, __LINE__);
+#else
+    return malloc(size);
+#endif
+}
 
-    void FreeMemory(void* memory)
-    {
-        if (memory == NULL)
-            return;
-        #if defined(_WIN32) && !defined(NDEBUG)
-        _free_dbg(memory, _NORMAL_BLOCK);
-        #else
-        free(memory);
-        #endif
+void* ReallocMemory(void* memory, size_t size) {
+    if (memory == NULL) {
+        return AllocMemory(size);
     }
+    if (size == 0) {
+        FreeMemory(memory);
+        return NULL;
+    }
+#if defined(_WIN32) && !defined(NDEBUG)
+    return _realloc_dbg(memory, size, _NORMAL_BLOCK, __FILE__, __LINE__);
+#else
+    return realloc(memory, size);
+#endif
+}
+
+void FreeMemory(void* memory) {
+    if (memory == NULL) {
+        return;
+    }
+#if defined(_WIN32) && !defined(NDEBUG)
+    _free_dbg(memory, _NORMAL_BLOCK);
+#else
+    free(memory);
+#endif
+}
+
 }

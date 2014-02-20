@@ -10,41 +10,41 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A {@link TokenFilter} that stems German words.
-    ///
-    /// It supports a table of words that should not be stemmed at all.  The stemmer used can
-    /// be changed at runtime after the filter object is created (as long as it is a
-    /// {@link GermanStemmer}).
-    class LPPCONTRIBAPI GermanStemFilter : public TokenFilter
-    {
-    public:
-        GermanStemFilter(const TokenStreamPtr& input);
+namespace Lucene {
 
-        /// Builds a GermanStemFilter that uses an exclusion table.
-        GermanStemFilter(const TokenStreamPtr& input, HashSet<String> exclusionSet);
+/// A {@link TokenFilter} that stems German words.
+///
+/// It supports a table of words that should not be stemmed at all.  The stemmer used can
+/// be changed at runtime after the filter object is created (as long as it is a
+/// {@link GermanStemmer}).
+class LPPCONTRIBAPI GermanStemFilter : public TokenFilter {
+public:
+    GermanStemFilter(const TokenStreamPtr& input);
 
-        virtual ~GermanStemFilter();
+    /// Builds a GermanStemFilter that uses an exclusion table.
+    GermanStemFilter(const TokenStreamPtr& input, HashSet<String> exclusionSet);
 
-        LUCENE_CLASS(GermanStemFilter);
+    virtual ~GermanStemFilter();
 
-    protected:
-        /// {@link GermanStemmer} in use by this filter.
-        GermanStemmerPtr stemmer;
+    LUCENE_CLASS(GermanStemFilter);
 
-        HashSet<String> exclusionSet;
-        TermAttributePtr termAtt;
+protected:
+    /// {@link GermanStemmer} in use by this filter.
+    GermanStemmerPtr stemmer;
 
-    public:
-        virtual bool incrementToken();
+    HashSet<String> exclusionSet;
+    TermAttributePtr termAtt;
 
-        /// Set a alternative/custom {@link GermanStemmer} for this filter.
-        void setStemmer(const GermanStemmerPtr& stemmer);
+public:
+    virtual bool incrementToken();
 
-        /// Set an alternative exclusion list for this filter.
-        void setExclusionSet(HashSet<String> exclusionSet);
-    };
+    /// Set a alternative/custom {@link GermanStemmer} for this filter.
+    void setStemmer(const GermanStemmerPtr& stemmer);
+
+    /// Set an alternative exclusion list for this filter.
+    void setExclusionSet(HashSet<String> exclusionSet);
+};
+
 }
 
 #endif

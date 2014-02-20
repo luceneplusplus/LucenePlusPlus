@@ -12,15 +12,13 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture StandardAnalyzerTest;
 
-TEST_F(StandardAnalyzerTest, testMaxTermLength)
-{
+TEST_F(StandardAnalyzerTest, testMaxTermLength) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     sa->setMaxTokenLength(5);
     checkAnalyzesTo(sa, L"ab cd toolong xy z", newCollection<String>(L"ab", L"cd", L"xy", L"z"));
 }
 
-TEST_F(StandardAnalyzerTest, testMaxTermLength2)
-{
+TEST_F(StandardAnalyzerTest, testMaxTermLength2) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
 
     checkAnalyzesTo(sa, L"ab cd toolong xy z", newCollection<String>(L"ab", L"cd", L"toolong", L"xy", L"z"));
@@ -28,32 +26,28 @@ TEST_F(StandardAnalyzerTest, testMaxTermLength2)
     checkAnalyzesTo(sa, L"ab cd toolong xy z", newCollection<String>(L"ab", L"cd", L"xy", L"z"), newCollection<int32_t>(1, 1, 2, 1));
 }
 
-TEST_F(StandardAnalyzerTest, testMaxTermLength3)
-{
+TEST_F(StandardAnalyzerTest, testMaxTermLength3) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     String longTerm(255, L'a');
     checkAnalyzesTo(sa, L"ab cd " + longTerm + L" xy z", newCollection<String>(L"ab", L"cd", longTerm, L"xy", L"z"));
     checkAnalyzesTo(sa, L"ab cd " + longTerm + L"a xy z", newCollection<String>(L"ab", L"cd", L"xy", L"z"));
 }
 
-TEST_F(StandardAnalyzerTest, testAlphanumeric)
-{
+TEST_F(StandardAnalyzerTest, testAlphanumeric) {
     // alphanumeric tokens
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"B2B", newCollection<String>(L"b2b"));
     checkAnalyzesTo(sa, L"2B", newCollection<String>(L"2b"));
 }
 
-TEST_F(StandardAnalyzerTest, testUnderscores)
-{
+TEST_F(StandardAnalyzerTest, testUnderscores) {
     // underscores are delimiters, but not in email addresses (below)
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"word_having_underscore", newCollection<String>(L"word", L"having", L"underscore"));
     checkAnalyzesTo(sa, L"word_with_underscore_and_stopwords", newCollection<String>(L"word", L"underscore", L"stopwords"));
 }
 
-TEST_F(StandardAnalyzerTest, testDelimiters)
-{
+TEST_F(StandardAnalyzerTest, testDelimiters) {
     // other delimiters: "-", "/", ","
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"some-dashed-phrase", newCollection<String>(L"some", L"dashed", L"phrase"));
@@ -61,8 +55,7 @@ TEST_F(StandardAnalyzerTest, testDelimiters)
     checkAnalyzesTo(sa, L"ac/dc", newCollection<String>(L"ac", L"dc"));
 }
 
-TEST_F(StandardAnalyzerTest, testApostrophes)
-{
+TEST_F(StandardAnalyzerTest, testApostrophes) {
     // internal apostrophes: O'Reilly, you're, O'Reilly's possessives are actually removed by StardardFilter, not the tokenizer
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
 
@@ -74,8 +67,7 @@ TEST_F(StandardAnalyzerTest, testApostrophes)
     checkAnalyzesTo(sa, L"O'Reilly's", newCollection<String>(L"o'reilly"));
 }
 
-TEST_F(StandardAnalyzerTest, testTSADash)
-{
+TEST_F(StandardAnalyzerTest, testTSADash) {
     // t and s had been stopwords in Lucene <= 2.0, which made it impossible to correctly search for these terms
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"s-class", newCollection<String>(L"s", L"class"));
@@ -85,16 +77,14 @@ TEST_F(StandardAnalyzerTest, testTSADash)
     checkAnalyzesTo(sa, L"a-class", newCollection<String>(L"class"));
 }
 
-TEST_F(StandardAnalyzerTest, testCompanyNames)
-{
+TEST_F(StandardAnalyzerTest, testCompanyNames) {
     // internal apostrophes: O'Reilly, you're, O'Reilly's possessives are actually removed by StardardFilter, not the tokenizer
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"AT&T", newCollection<String>(L"at&t"));
     checkAnalyzesTo(sa, L"Excite@Home", newCollection<String>(L"excite@home"));
 }
 
-TEST_F(StandardAnalyzerTest, testDomainNames)
-{
+TEST_F(StandardAnalyzerTest, testDomainNames) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
 
     // domain names
@@ -112,8 +102,7 @@ TEST_F(StandardAnalyzerTest, testDomainNames)
     EXPECT_NO_THROW(checkAnalyzesTo(sa, L"www.nutch.org.", newCollection<String>(L"www.nutch.org"), newCollection<String>(L"<HOST>")));
 }
 
-TEST_F(StandardAnalyzerTest, testEMailAddresses)
-{
+TEST_F(StandardAnalyzerTest, testEMailAddresses) {
     // email addresses, possibly with underscores, periods, etc
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"test@example.com", newCollection<String>(L"test@example.com"));
@@ -121,8 +110,7 @@ TEST_F(StandardAnalyzerTest, testEMailAddresses)
     checkAnalyzesTo(sa, L"first_lastname@example.com", newCollection<String>(L"first_lastname@example.com"));
 }
 
-TEST_F(StandardAnalyzerTest, testNumeric)
-{
+TEST_F(StandardAnalyzerTest, testNumeric) {
     // floating point, serial, model numbers, ip addresses, etc.
     // every other segment must have at least one digit
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
@@ -134,14 +122,12 @@ TEST_F(StandardAnalyzerTest, testNumeric)
     checkAnalyzesTo(sa, L"R2D2 C3PO", newCollection<String>(L"r2d2", L"c3po"));
 }
 
-TEST_F(StandardAnalyzerTest, testTextWithNumbers)
-{
+TEST_F(StandardAnalyzerTest, testTextWithNumbers) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"David has 5000 bones", newCollection<String>(L"david", L"has", L"5000", L"bones"));
 }
 
-TEST_F(StandardAnalyzerTest, testVariousText)
-{
+TEST_F(StandardAnalyzerTest, testVariousText) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"C embedded developers wanted", newCollection<String>(L"c", L"embedded", L"developers", L"wanted"));
     checkAnalyzesTo(sa, L"foo bar FOO BAR", newCollection<String>(L"foo", L"bar", L"foo", L"bar"));
@@ -149,62 +135,53 @@ TEST_F(StandardAnalyzerTest, testVariousText)
     checkAnalyzesTo(sa, L"\"QUOTED\" word", newCollection<String>(L"quoted", L"word"));
 }
 
-TEST_F(StandardAnalyzerTest, testAcronyms)
-{
+TEST_F(StandardAnalyzerTest, testAcronyms) {
     // acronyms have their dots stripped
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"U.S.A.", newCollection<String>(L"usa"));
 }
 
-TEST_F(StandardAnalyzerTest, testCPlusPlusHash)
-{
+TEST_F(StandardAnalyzerTest, testCPlusPlusHash) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"C++", newCollection<String>(L"c"));
     checkAnalyzesTo(sa, L"C#", newCollection<String>(L"c"));
 }
 
-TEST_F(StandardAnalyzerTest, testComplianceFileName)
-{
+TEST_F(StandardAnalyzerTest, testComplianceFileName) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"2004.jpg", newCollection<String>(L"2004.jpg"), newCollection<String>(L"<HOST>"));
 }
 
-TEST_F(StandardAnalyzerTest, testComplianceNumericIncorrect)
-{
+TEST_F(StandardAnalyzerTest, testComplianceNumericIncorrect) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"62.46", newCollection<String>(L"62.46"), newCollection<String>(L"<HOST>"));
 }
 
-TEST_F(StandardAnalyzerTest, testComplianceNumericLong)
-{
+TEST_F(StandardAnalyzerTest, testComplianceNumericLong) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"978-0-94045043-1", newCollection<String>(L"978-0-94045043-1"), newCollection<String>(L"<NUM>"));
 }
 
-TEST_F(StandardAnalyzerTest, testComplianceNumericFile)
-{
+TEST_F(StandardAnalyzerTest, testComplianceNumericFile) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"78academyawards/rules/rule02.html", newCollection<String>(L"78academyawards/rules/rule02.html"), newCollection<String>(L"<NUM>"));
 }
 
-TEST_F(StandardAnalyzerTest, testComplianceNumericWithUnderscores)
-{
+TEST_F(StandardAnalyzerTest, testComplianceNumericWithUnderscores) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"2006-03-11t082958z_01_ban130523_rtridst_0_ozabs", newCollection<String>(L"2006-03-11t082958z_01_ban130523_rtridst_0_ozabs"), newCollection<String>(L"<NUM>"));
 }
 
-TEST_F(StandardAnalyzerTest, testComplianceNumericWithDash)
-{
+TEST_F(StandardAnalyzerTest, testComplianceNumericWithDash) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"mid-20th", newCollection<String>(L"mid-20th"), newCollection<String>(L"<NUM>"));
 }
 
-TEST_F(StandardAnalyzerTest, testComplianceManyTokens)
-{
+TEST_F(StandardAnalyzerTest, testComplianceManyTokens) {
     StandardAnalyzerPtr sa = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesTo(sa, L"/money.cnn.com/magazines/fortune/fortune_archive/2007/03/19/8402357/index.htm safari-0-sheikh-zayed-grand-mosque.jpg",
                     newCollection<String>(L"money.cnn.com", L"magazines", L"fortune", L"fortune", L"archive/2007/03/19/8402357",
                                           L"index.htm", L"safari-0-sheikh", L"zayed", L"grand", L"mosque.jpg"),
                     newCollection<String>(L"<HOST>", L"<ALPHANUM>", L"<ALPHANUM>", L"<ALPHANUM>", L"<NUM>", L"<HOST>", L"<NUM>",
-                    L"<ALPHANUM>", L"<ALPHANUM>", L"<HOST>"));
+                                          L"<ALPHANUM>", L"<ALPHANUM>", L"<HOST>"));
 }

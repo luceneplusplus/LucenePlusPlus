@@ -36,15 +36,12 @@ using namespace Lucene;
 /// Tests are each a single query, and its hits are checked to ensure that all and only the
 /// correct documents are returned, thus providing end-to-end testing of the indexing and
 /// search code.
-class BasicSpansTest : public LuceneTestFixture
-{
+class BasicSpansTest : public LuceneTestFixture {
 public:
-    BasicSpansTest()
-    {
+    BasicSpansTest() {
         RAMDirectoryPtr directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        for (int32_t i = 0; i < 1000; ++i)
-        {
+        for (int32_t i = 0; i < 1000; ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
@@ -54,37 +51,31 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
     }
 
-    virtual ~BasicSpansTest()
-    {
+    virtual ~BasicSpansTest() {
     }
 
 protected:
     IndexSearcherPtr searcher;
 
 public:
-    void checkHits(const QueryPtr& query, Collection<int32_t> results)
-    {
+    void checkHits(const QueryPtr& query, Collection<int32_t> results) {
         CheckHits::checkHits(query, L"field", searcher, results);
     }
 
-    bool skipTo(const SpansPtr& s, int32_t target)
-    {
-        do
-        {
-            if (!s->next())
+    bool skipTo(const SpansPtr& s, int32_t target) {
+        do {
+            if (!s->next()) {
                 return false;
-        }
-        while (target > s->doc());
+            }
+        } while (target > s->doc());
         return true;
     }
 };
 
-TEST_F(BasicSpansTest, testTerm)
-{
+TEST_F(BasicSpansTest, testTerm) {
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"seventy"));
 
-    static const int32_t results[] =
-    {
+    static const int32_t results[] = {
         70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 170, 171, 172, 173, 174, 175,
         176, 177, 178, 179, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279,
         370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 470, 471, 472, 473,
@@ -96,14 +87,12 @@ TEST_F(BasicSpansTest, testTerm)
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testTerm2)
-{
+TEST_F(BasicSpansTest, testTerm2) {
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"seventish"));
     checkHits(query, Collection<int32_t>::newInstance());
 }
 
-TEST_F(BasicSpansTest, testPhrase)
-{
+TEST_F(BasicSpansTest, testPhrase) {
     PhraseQueryPtr query = newLucene<PhraseQuery>();
     query->add(newLucene<Term>(L"field", L"seventy"));
     query->add(newLucene<Term>(L"field", L"seven"));
@@ -112,37 +101,32 @@ TEST_F(BasicSpansTest, testPhrase)
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testPhrase2)
-{
+TEST_F(BasicSpansTest, testPhrase2) {
     PhraseQueryPtr query = newLucene<PhraseQuery>();
     query->add(newLucene<Term>(L"field", L"seventish"));
     query->add(newLucene<Term>(L"field", L"sevenon"));
     checkHits(query, Collection<int32_t>::newInstance());
 }
 
-TEST_F(BasicSpansTest, testBoolean)
-{
+TEST_F(BasicSpansTest, testBoolean) {
     BooleanQueryPtr query = newLucene<BooleanQuery>();
     query->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"seventy")), BooleanClause::MUST);
     query->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"seven")), BooleanClause::MUST);
 
-    static const int32_t results[] =
-    {
+    static const int32_t results[] = {
         77, 777, 177, 277, 377, 477, 577, 677, 770, 771, 772, 773, 774, 775, 776, 778, 779, 877, 977
     };
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testBoolean2)
-{
+TEST_F(BasicSpansTest, testBoolean2) {
     BooleanQueryPtr query = newLucene<BooleanQuery>();
     query->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"sevento")), BooleanClause::MUST);
     query->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"sevenly")), BooleanClause::MUST);
     checkHits(query, Collection<int32_t>::newInstance());
 }
 
-TEST_F(BasicSpansTest, testSpanNearExact)
-{
+TEST_F(BasicSpansTest, testSpanNearExact) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"seventy"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"seven"));
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 0, true);
@@ -158,8 +142,7 @@ TEST_F(BasicSpansTest, testSpanNearExact)
     QueryUtils::checkUnequal(term1, term2);
 }
 
-TEST_F(BasicSpansTest, testSpanNearUnordered)
-{
+TEST_F(BasicSpansTest, testSpanNearUnordered) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"nine"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"six"));
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, false);
@@ -168,8 +151,7 @@ TEST_F(BasicSpansTest, testSpanNearUnordered)
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testSpanNearOrdered)
-{
+TEST_F(BasicSpansTest, testSpanNearOrdered) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"nine"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"six"));
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, true);
@@ -178,8 +160,7 @@ TEST_F(BasicSpansTest, testSpanNearOrdered)
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testSpanNot)
-{
+TEST_F(BasicSpansTest, testSpanNot) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"eight"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"one"));
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, true);
@@ -194,8 +175,7 @@ TEST_F(BasicSpansTest, testSpanNot)
     EXPECT_TRUE(searcher->explain(query, 891)->getValue() > 0.0);
 }
 
-TEST_F(BasicSpansTest, testSpanWithMultipleNotSingle)
-{
+TEST_F(BasicSpansTest, testSpanWithMultipleNotSingle) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"eight"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"one"));
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, true);
@@ -212,8 +192,7 @@ TEST_F(BasicSpansTest, testSpanWithMultipleNotSingle)
     EXPECT_TRUE(searcher->explain(query, 891)->getValue() > 0.0);
 }
 
-TEST_F(BasicSpansTest, testSpanWithMultipleNotMany)
-{
+TEST_F(BasicSpansTest, testSpanWithMultipleNotMany) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"eight"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"one"));
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, true);
@@ -232,8 +211,7 @@ TEST_F(BasicSpansTest, testSpanWithMultipleNotMany)
     EXPECT_TRUE(searcher->explain(query, 891)->getValue() > 0.0);
 }
 
-TEST_F(BasicSpansTest, testNpeInSpanNearWithSpanNot)
-{
+TEST_F(BasicSpansTest, testNpeInSpanNearWithSpanNot) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"eight"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"one"));
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 4, true);
@@ -250,8 +228,7 @@ TEST_F(BasicSpansTest, testNpeInSpanNearWithSpanNot)
     EXPECT_TRUE(searcher->explain(query, 891)->getValue() > 0.0);
 }
 
-TEST_F(BasicSpansTest, testNpeInSpanNearInSpanFirstInSpanNot)
-{
+TEST_F(BasicSpansTest, testNpeInSpanNearInSpanFirstInSpanNot) {
     int32_t n = 5;
     SpanTermQueryPtr hun = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"hundred"));
     SpanTermQueryPtr term40 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"forty"));
@@ -266,13 +243,11 @@ TEST_F(BasicSpansTest, testNpeInSpanNearInSpanFirstInSpanNot)
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testSpanFirst)
-{
+TEST_F(BasicSpansTest, testSpanFirst) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"five"));
     SpanFirstQueryPtr query = newLucene<SpanFirstQuery>(term1, 1);
 
-    static const int32_t results[] =
-    {
+    static const int32_t results[] = {
         5, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513,
         514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525, 526, 527,
         528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541,
@@ -288,8 +263,7 @@ TEST_F(BasicSpansTest, testSpanFirst)
     EXPECT_TRUE(searcher->explain(query, 599)->getValue() > 0.0);
 }
 
-TEST_F(BasicSpansTest, testSpanOr)
-{
+TEST_F(BasicSpansTest, testSpanOr) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"thirty"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"three"));
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 0, true);
@@ -299,8 +273,7 @@ TEST_F(BasicSpansTest, testSpanOr)
 
     SpanOrQueryPtr query = newLucene<SpanOrQuery>(newCollection<SpanQueryPtr>(near1, near2));
 
-    static const int32_t results[] =
-    {
+    static const int32_t results[] = {
         33, 47, 133, 147, 233, 247, 333, 347, 433, 447, 533, 547, 633, 647, 733, 747, 833, 847, 933, 947
     };
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
@@ -309,8 +282,7 @@ TEST_F(BasicSpansTest, testSpanOr)
     EXPECT_TRUE(searcher->explain(query, 947)->getValue() > 0.0);
 }
 
-TEST_F(BasicSpansTest, testSpanExactNested)
-{
+TEST_F(BasicSpansTest, testSpanExactNested) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"three"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"hundred"));
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 0, true);
@@ -326,8 +298,7 @@ TEST_F(BasicSpansTest, testSpanExactNested)
     EXPECT_TRUE(searcher->explain(query, 333)->getValue() > 0.0);
 }
 
-TEST_F(BasicSpansTest, testSpanNearOr)
-{
+TEST_F(BasicSpansTest, testSpanNearOr) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"six"));
     SpanTermQueryPtr term3 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"seven"));
 
@@ -339,8 +310,7 @@ TEST_F(BasicSpansTest, testSpanNearOr)
 
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(to1, to2), 10, true);
 
-    static const int32_t results[] =
-    {
+    static const int32_t results[] = {
         606, 607, 626, 627, 636, 637, 646, 647, 656,
         657, 666, 667, 676, 677, 686, 687, 696, 697,
         706, 707, 726, 727, 736, 737, 746, 747, 756,
@@ -349,8 +319,7 @@ TEST_F(BasicSpansTest, testSpanNearOr)
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testSpanComplex1)
-{
+TEST_F(BasicSpansTest, testSpanComplex1) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"six"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"hundred"));
     SpanNearQueryPtr near1 = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(term1, term2), 0, true);
@@ -367,8 +336,7 @@ TEST_F(BasicSpansTest, testSpanComplex1)
 
     SpanNearQueryPtr query = newLucene<SpanNearQuery>(newCollection<SpanQueryPtr>(to1, to2), 100, true);
 
-    static const int32_t results[] =
-    {
+    static const int32_t results[] = {
         606, 607, 626, 627, 636, 637, 646, 647, 656,
         657, 666, 667, 676, 677, 686, 687, 696, 697,
         706, 707, 726, 727, 736, 737, 746, 747, 756,
@@ -377,8 +345,7 @@ TEST_F(BasicSpansTest, testSpanComplex1)
     checkHits(query, Collection<int32_t>::newInstance(results, results + SIZEOF_ARRAY(results)));
 }
 
-TEST_F(BasicSpansTest, testSpansSkipTo)
-{
+TEST_F(BasicSpansTest, testSpansSkipTo) {
     SpanTermQueryPtr term1 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"seventy"));
     SpanTermQueryPtr term2 = newLucene<SpanTermQuery>(newLucene<Term>(L"field", L"seventy"));
     SpansPtr spans1 = term1->getSpans(searcher->getIndexReader());
@@ -388,11 +355,9 @@ TEST_F(BasicSpansTest, testSpansSkipTo)
     EXPECT_TRUE(spans2->next());
 
     bool hasMore = true;
-    do
-    {
+    do {
         hasMore = skipTo(spans1, spans2->doc());
         EXPECT_EQ(hasMore, spans2->skipTo(spans2->doc()));
         EXPECT_EQ(spans1->doc(), spans2->doc());
-    }
-    while (hasMore);
+    } while (hasMore);
 }

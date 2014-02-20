@@ -8,30 +8,29 @@
 #include "Lock.h"
 #include "LuceneThread.h"
 
-namespace Lucene
-{
-    /// How long {@link #obtain(int64_t)} waits, in milliseconds, in between attempts to acquire the lock.
-    const int32_t Lock::LOCK_OBTAIN_WAIT_FOREVER = -1;
+namespace Lucene {
 
-    /// Pass this value to {@link #obtain(int64_t)} to try forever to obtain the lock.
-    const int32_t Lock::LOCK_POLL_INTERVAL = 1000;
+/// How long {@link #obtain(int64_t)} waits, in milliseconds, in between attempts to acquire the lock.
+const int32_t Lock::LOCK_OBTAIN_WAIT_FOREVER = -1;
 
-    Lock::~Lock()
-    {
-    }
+/// Pass this value to {@link #obtain(int64_t)} to try forever to obtain the lock.
+const int32_t Lock::LOCK_POLL_INTERVAL = 1000;
 
-    bool Lock::obtain(int32_t lockWaitTimeout)
-    {
-        bool locked = obtain();
-        int32_t maxSleepCount = lockWaitTimeout / LOCK_POLL_INTERVAL;
-        int32_t sleepCount = 0;
-        while (!locked)
-        {
-            if (lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER && sleepCount++ >= maxSleepCount)
-                boost::throw_exception(LockObtainFailedException(L"Lock obtain timed out"));
-            LuceneThread::threadSleep(LOCK_POLL_INTERVAL);
-            locked = obtain();
+Lock::~Lock() {
+}
+
+bool Lock::obtain(int32_t lockWaitTimeout) {
+    bool locked = obtain();
+    int32_t maxSleepCount = lockWaitTimeout / LOCK_POLL_INTERVAL;
+    int32_t sleepCount = 0;
+    while (!locked) {
+        if (lockWaitTimeout != LOCK_OBTAIN_WAIT_FOREVER && sleepCount++ >= maxSleepCount) {
+            boost::throw_exception(LockObtainFailedException(L"Lock obtain timed out"));
         }
-        return locked;
+        LuceneThread::threadSleep(LOCK_POLL_INTERVAL);
+        locked = obtain();
     }
+    return locked;
+}
+
 }

@@ -9,39 +9,39 @@
 
 #include "Attribute.h"
 
-namespace Lucene
-{
-    /// This attribute can be used to pass different flags down the tokenizer chain, eg from one TokenFilter
-    /// to another one.
-    class LPPAPI FlagsAttribute : public Attribute
-    {
-    public:
-        FlagsAttribute();
-        virtual ~FlagsAttribute();
+namespace Lucene {
 
-        LUCENE_CLASS(FlagsAttribute);
+/// This attribute can be used to pass different flags down the tokenizer chain, eg from one TokenFilter
+/// to another one.
+class LPPAPI FlagsAttribute : public Attribute {
+public:
+    FlagsAttribute();
+    virtual ~FlagsAttribute();
 
-    protected:
-        int32_t flags;
+    LUCENE_CLASS(FlagsAttribute);
 
-    public:
-        virtual String toString();
+protected:
+    int32_t flags;
 
-        /// Get the bitset for any bits that have been set.  This is completely distinct from {@link
-        /// TypeAttribute#type()}, although they do share similar purposes.  The flags can be used to encode
-        /// information about the token for use by other {@link TokenFilter}s.
-        virtual int32_t getFlags();
+public:
+    virtual String toString();
 
-        /// @see #getFlags()
-        virtual void setFlags(int32_t flags);
+    /// Get the bitset for any bits that have been set.  This is completely distinct from {@link
+    /// TypeAttribute#type()}, although they do share similar purposes.  The flags can be used to encode
+    /// information about the token for use by other {@link TokenFilter}s.
+    virtual int32_t getFlags();
 
-        virtual void clear();
+    /// @see #getFlags()
+    virtual void setFlags(int32_t flags);
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual void copyTo(const AttributePtr& target);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+    virtual void clear();
+
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual void copyTo(const AttributePtr& target);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

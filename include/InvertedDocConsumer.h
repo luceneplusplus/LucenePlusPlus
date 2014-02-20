@@ -9,36 +9,36 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class InvertedDocConsumer : public LuceneObject
-    {
-    public:
-        virtual ~InvertedDocConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(InvertedDocConsumer);
+class InvertedDocConsumer : public LuceneObject {
+public:
+    virtual ~InvertedDocConsumer();
 
-    public:
-        FieldInfosPtr fieldInfos;
+    LUCENE_CLASS(InvertedDocConsumer);
 
-    public:
-        /// Add a new thread
-        virtual InvertedDocConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread) = 0;
+public:
+    FieldInfosPtr fieldInfos;
 
-        /// Abort (called after hitting AbortException)
-        virtual void abort() = 0;
+public:
+    /// Add a new thread
+    virtual InvertedDocConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread) = 0;
 
-        /// Flush a new segment
-        virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
+    /// Abort (called after hitting AbortException)
+    virtual void abort() = 0;
 
-        /// Close doc stores
-        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
+    /// Flush a new segment
+    virtual void flush(MapInvertedDocConsumerPerThreadCollectionInvertedDocConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
 
-        /// Attempt to free RAM, returning true if any RAM was freed
-        virtual bool freeRAM() = 0;
+    /// Close doc stores
+    virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
 
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
-    };
+    /// Attempt to free RAM, returning true if any RAM was freed
+    virtual bool freeRAM() = 0;
+
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
+};
+
 }
 
 #endif

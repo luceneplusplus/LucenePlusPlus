@@ -7,18 +7,16 @@
 #include "ContribInc.h"
 #include "NullFragmenter.h"
 
-namespace Lucene
-{
-    NullFragmenter::~NullFragmenter()
-    {
-    }
+namespace Lucene {
 
-    void NullFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
-    {
-    }
+NullFragmenter::~NullFragmenter() {
+}
 
-    bool NullFragmenter::isNewFragment()
-    {
-        return false;
-    }
+void NullFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream) {
+}
+
+bool NullFragmenter::isNewFragment() {
+    return false;
+}
+
 }

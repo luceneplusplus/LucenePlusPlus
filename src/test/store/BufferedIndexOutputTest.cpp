@@ -13,23 +13,19 @@ using namespace Lucene;
 
 typedef LuceneTestFixture BufferedIndexOutputTest;
 
-class TestableBufferedIndexOutput : public BufferedIndexOutput
-{
+class TestableBufferedIndexOutput : public BufferedIndexOutput {
 public:
     using BufferedIndexOutput::writeBytes;
 
-    TestableBufferedIndexOutput(uint8_t* b, int32_t length) : outputBytes(b), outputLength(length), nextByte(0)
-    {
+    TestableBufferedIndexOutput(uint8_t* b, int32_t length) : outputBytes(b), outputLength(length), nextByte(0) {
     }
 
-    virtual void flushBuffer(const uint8_t* b, int32_t offset, int32_t length)
-    {
+    virtual void flushBuffer(const uint8_t* b, int32_t offset, int32_t length) {
         std::copy(b + offset, b + offset + length, outputBytes + nextByte + offset);
         nextByte += length;
     }
 
-    virtual int64_t length()
-    {
+    virtual int64_t length() {
         return outputLength;
     }
 
@@ -39,8 +35,7 @@ protected:
     int32_t nextByte;
 };
 
-TEST_F(BufferedIndexOutputTest, testWriteInt)
-{
+TEST_F(BufferedIndexOutputTest, testWriteInt) {
     ByteArray outputBytes(ByteArray::newInstance(10));
     TestableBufferedIndexOutput indexOutput(outputBytes.get(), 10);
     indexOutput.writeInt(1234);
@@ -50,8 +45,7 @@ TEST_F(BufferedIndexOutputTest, testWriteInt)
     EXPECT_EQ(memcmp(outputBytes.get(), expected, 4), 0);
 }
 
-TEST_F(BufferedIndexOutputTest, testWriteVInt)
-{
+TEST_F(BufferedIndexOutputTest, testWriteVInt) {
     ByteArray outputBytes(ByteArray::newInstance(10));
     TestableBufferedIndexOutput indexOutput(outputBytes.get(), 10);
     indexOutput.writeVInt(1234);
@@ -61,8 +55,7 @@ TEST_F(BufferedIndexOutputTest, testWriteVInt)
     EXPECT_EQ(memcmp(outputBytes.get(), expected, 2), 0);
 }
 
-TEST_F(BufferedIndexOutputTest, testWriteLong)
-{
+TEST_F(BufferedIndexOutputTest, testWriteLong) {
     ByteArray outputBytes(ByteArray::newInstance(10));
     TestableBufferedIndexOutput indexOutput(outputBytes.get(), 10);
     indexOutput.writeLong(1234123412341234LL);
@@ -72,8 +65,7 @@ TEST_F(BufferedIndexOutputTest, testWriteLong)
     EXPECT_EQ(memcmp(outputBytes.get(), expected, 8), 0);
 }
 
-TEST_F(BufferedIndexOutputTest, testWriteVLong)
-{
+TEST_F(BufferedIndexOutputTest, testWriteVLong) {
     ByteArray outputBytes(ByteArray::newInstance(10));
     TestableBufferedIndexOutput indexOutput(outputBytes.get(), 10);
     indexOutput.writeVLong(1234123412341234LL);
@@ -83,8 +75,7 @@ TEST_F(BufferedIndexOutputTest, testWriteVLong)
     EXPECT_EQ(memcmp(outputBytes.get(), expected, 8), 0);
 }
 
-TEST_F(BufferedIndexOutputTest, testWriteString)
-{
+TEST_F(BufferedIndexOutputTest, testWriteString) {
     ByteArray outputBytes(ByteArray::newInstance(30));
     TestableBufferedIndexOutput indexOutput(outputBytes.get(), 30);
     indexOutput.writeString(L"test string");
@@ -94,8 +85,7 @@ TEST_F(BufferedIndexOutputTest, testWriteString)
     EXPECT_EQ(memcmp(outputBytes.get(), expected, 12), 0);
 }
 
-TEST_F(BufferedIndexOutputTest, testWriteChars)
-{
+TEST_F(BufferedIndexOutputTest, testWriteChars) {
     ByteArray outputBytes(ByteArray::newInstance(30));
     TestableBufferedIndexOutput indexOutput(outputBytes.get(), 30);
     indexOutput.writeChars(L"test string", 5, 6);
@@ -105,44 +95,38 @@ TEST_F(BufferedIndexOutputTest, testWriteChars)
     EXPECT_EQ(memcmp(outputBytes.get(), expected, 6), 0);
 }
 
-namespace TestCopyBytes
-{
-    class SourceIndexInput : public BufferedIndexInput
-    {
-    public:
-        SourceIndexInput(const uint8_t* b, int32_t length) : inputBytes(b), inputLength(length), nextByte(0)
-        {
-        }
+namespace TestCopyBytes {
 
-        virtual void readInternal(uint8_t* b, int32_t offset, int32_t length)
-        {
-            std::copy(inputBytes + nextByte + offset, inputBytes + nextByte + offset + length, b + offset);
-            nextByte += length;
-        }
+class SourceIndexInput : public BufferedIndexInput {
+public:
+    SourceIndexInput(const uint8_t* b, int32_t length) : inputBytes(b), inputLength(length), nextByte(0) {
+    }
 
-        virtual void seekInternal(int64_t pos)
-        {
-        }
+    virtual void readInternal(uint8_t* b, int32_t offset, int32_t length) {
+        std::copy(inputBytes + nextByte + offset, inputBytes + nextByte + offset + length, b + offset);
+        nextByte += length;
+    }
 
-        virtual int64_t length()
-        {
-            return inputLength;
-        }
+    virtual void seekInternal(int64_t pos) {
+    }
 
-        virtual IndexInputPtr clone()
-        {
-            return IndexInputPtr();
-        }
+    virtual int64_t length() {
+        return inputLength;
+    }
 
-    protected:
-        const uint8_t* inputBytes;
-        int32_t inputLength;
-        int32_t nextByte;
-    };
+    virtual IndexInputPtr clone() {
+        return IndexInputPtr();
+    }
+
+protected:
+    const uint8_t* inputBytes;
+    int32_t inputLength;
+    int32_t nextByte;
+};
+
 }
 
-TEST_F(BufferedIndexOutputTest, testCopyBytes)
-{
+TEST_F(BufferedIndexOutputTest, testCopyBytes) {
     ByteArray sourceBytes(ByteArray::newInstance(32768));
     std::generate(sourceBytes.get(), sourceBytes.get() + 32768, rand);
     BufferedIndexInputPtr indexSource(newLucene<TestCopyBytes::SourceIndexInput>(sourceBytes.get(), 32768));

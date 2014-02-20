@@ -10,105 +10,102 @@
 #include "BufferedIndexInput.h"
 #include "BufferedIndexOutput.h"
 
-namespace Lucene
-{
-    class InputFile : public LuceneObject
-    {
-    public:
-        InputFile(const String& path);
-        virtual ~InputFile();
+namespace Lucene {
 
-        LUCENE_CLASS(InputFile);
+class InputFile : public LuceneObject {
+public:
+    InputFile(const String& path);
+    virtual ~InputFile();
 
-    public:
-        static const int32_t FILE_EOF;
-        static const int32_t FILE_ERROR;
+    LUCENE_CLASS(InputFile);
 
-    protected:
-        ifstreamPtr file;
-        int64_t position;
-        int64_t length;
+public:
+    static const int32_t FILE_EOF;
+    static const int32_t FILE_ERROR;
 
-    public:
-        void setPosition(int64_t position);
-        int64_t getPosition();
-        int64_t getLength();
-        int32_t read(uint8_t* b, int32_t offset, int32_t length);
-        void close();
-        bool isValid();
-    };
+protected:
+    ifstreamPtr file;
+    int64_t position;
+    int64_t length;
 
-    class SimpleFSIndexInput : public BufferedIndexInput
-    {
-    public:
-        SimpleFSIndexInput();
-        SimpleFSIndexInput(const String& path, int32_t bufferSize, int32_t chunkSize);
-        virtual ~SimpleFSIndexInput();
+public:
+    void setPosition(int64_t position);
+    int64_t getPosition();
+    int64_t getLength();
+    int32_t read(uint8_t* b, int32_t offset, int32_t length);
+    void close();
+    bool isValid();
+};
 
-        LUCENE_CLASS(SimpleFSIndexInput);
+class SimpleFSIndexInput : public BufferedIndexInput {
+public:
+    SimpleFSIndexInput();
+    SimpleFSIndexInput(const String& path, int32_t bufferSize, int32_t chunkSize);
+    virtual ~SimpleFSIndexInput();
 
-    protected:
-        String path;
-        InputFilePtr file;
-        bool isClone;
-        int32_t chunkSize;
+    LUCENE_CLASS(SimpleFSIndexInput);
 
-    protected:
-        virtual void readInternal(uint8_t* b, int32_t offset, int32_t length);
-        virtual void seekInternal(int64_t pos);
+protected:
+    String path;
+    InputFilePtr file;
+    bool isClone;
+    int32_t chunkSize;
 
-    public:
-        virtual int64_t length();
-        virtual void close();
+protected:
+    virtual void readInternal(uint8_t* b, int32_t offset, int32_t length);
+    virtual void seekInternal(int64_t pos);
 
-        /// Method used for testing.
-        bool isValid();
+public:
+    virtual int64_t length();
+    virtual void close();
 
-        /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+    /// Method used for testing.
+    bool isValid();
 
-    class OutputFile : public LuceneObject
-    {
-    public:
-        OutputFile(const String& path);
-        virtual ~OutputFile();
+    /// Returns a clone of this stream.
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
 
-        LUCENE_CLASS(OutputFile);
+class OutputFile : public LuceneObject {
+public:
+    OutputFile(const String& path);
+    virtual ~OutputFile();
 
-    protected:
-        ofstreamPtr file;
-        String path;
+    LUCENE_CLASS(OutputFile);
 
-    public:
-        bool write(const uint8_t* b, int32_t offset, int32_t length);
-        void close();
-        void setPosition(int64_t position);
-        int64_t getLength();
-        void setLength(int64_t length);
-        void flush();
-        bool isValid();
-    };
+protected:
+    ofstreamPtr file;
+    String path;
 
-    class SimpleFSIndexOutput : public BufferedIndexOutput
-    {
-    public:
-        SimpleFSIndexOutput(const String& path);
-        virtual ~SimpleFSIndexOutput();
+public:
+    bool write(const uint8_t* b, int32_t offset, int32_t length);
+    void close();
+    void setPosition(int64_t position);
+    int64_t getLength();
+    void setLength(int64_t length);
+    void flush();
+    bool isValid();
+};
 
-        LUCENE_CLASS(SimpleFSIndexOutput);
+class SimpleFSIndexOutput : public BufferedIndexOutput {
+public:
+    SimpleFSIndexOutput(const String& path);
+    virtual ~SimpleFSIndexOutput();
 
-    protected:
-        OutputFilePtr file;
-        bool isOpen;
+    LUCENE_CLASS(SimpleFSIndexOutput);
 
-    public:
-        virtual void flushBuffer(const uint8_t* b, int32_t offset, int32_t length);
-        virtual void close();
-        virtual void seek(int64_t pos);
-        virtual int64_t length();
-        virtual void setLength(int64_t length);
-    };
+protected:
+    OutputFilePtr file;
+    bool isOpen;
+
+public:
+    virtual void flushBuffer(const uint8_t* b, int32_t offset, int32_t length);
+    virtual void close();
+    virtual void seek(int64_t pos);
+    virtual int64_t length();
+    virtual void setLength(int64_t length);
+};
+
 }
 
 #endif

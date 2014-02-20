@@ -8,60 +8,51 @@
 #include "SingleInstanceLockFactory.h"
 #include "_SingleInstanceLockFactory.h"
 
-namespace Lucene
-{
-    SingleInstanceLockFactory::SingleInstanceLockFactory()
-    {
-        locks = HashSet<String>::newInstance();
-    }
+namespace Lucene {
 
-    SingleInstanceLockFactory::~SingleInstanceLockFactory()
-    {
-    }
+SingleInstanceLockFactory::SingleInstanceLockFactory() {
+    locks = HashSet<String>::newInstance();
+}
 
-    LockPtr SingleInstanceLockFactory::makeLock(const String& lockName)
-    {
-        // We do not use the LockPrefix at all, because the private HashSet instance
-        // effectively scopes the locking to this single Directory instance.
-        return newLucene<SingleInstanceLock>(locks, lockName);
-    }
+SingleInstanceLockFactory::~SingleInstanceLockFactory() {
+}
 
-    void SingleInstanceLockFactory::clearLock(const String& lockName)
-    {
-        SyncLock syncLock(&locks);
-        locks.remove(lockName);
-    }
+LockPtr SingleInstanceLockFactory::makeLock(const String& lockName) {
+    // We do not use the LockPrefix at all, because the private HashSet instance
+    // effectively scopes the locking to this single Directory instance.
+    return newLucene<SingleInstanceLock>(locks, lockName);
+}
 
-    SingleInstanceLock::SingleInstanceLock(HashSet<String> locks, const String& lockName)
-    {
-        this->locks = locks;
-        this->lockName = lockName;
-    }
+void SingleInstanceLockFactory::clearLock(const String& lockName) {
+    SyncLock syncLock(&locks);
+    locks.remove(lockName);
+}
 
-    SingleInstanceLock::~SingleInstanceLock()
-    {
-    }
+SingleInstanceLock::SingleInstanceLock(HashSet<String> locks, const String& lockName) {
+    this->locks = locks;
+    this->lockName = lockName;
+}
 
-    bool SingleInstanceLock::obtain()
-    {
-        SyncLock syncLock(&locks);
-        return locks.add(lockName);
-    }
+SingleInstanceLock::~SingleInstanceLock() {
+}
 
-    void SingleInstanceLock::release()
-    {
-        SyncLock syncLock(&locks);
-        locks.remove(lockName);
-    }
+bool SingleInstanceLock::obtain() {
+    SyncLock syncLock(&locks);
+    return locks.add(lockName);
+}
 
-    bool SingleInstanceLock::isLocked()
-    {
-        SyncLock syncLock(&locks);
-        return locks.contains(lockName);
-    }
+void SingleInstanceLock::release() {
+    SyncLock syncLock(&locks);
+    locks.remove(lockName);
+}
 
-    String SingleInstanceLock::toString()
-    {
-        return lockName;
-    }
+bool SingleInstanceLock::isLocked() {
+    SyncLock syncLock(&locks);
+    return locks.contains(lockName);
+}
+
+String SingleInstanceLock::toString() {
+    return lockName;
+}
+
 }

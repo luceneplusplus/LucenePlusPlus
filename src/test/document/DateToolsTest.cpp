@@ -16,8 +16,7 @@ using namespace boost::gregorian;
 
 typedef LuceneTestFixture DateToolsTest;
 
-TEST_F(DateToolsTest, testDateToString)
-{
+TEST_F(DateToolsTest, testDateToString) {
     EXPECT_EQ(DateTools::dateToString(ptime(date(2010, Jan, 14)), DateTools::RESOLUTION_YEAR), L"2010");
     EXPECT_EQ(DateTools::dateToString(ptime(date(2010, Jan, 14)), DateTools::RESOLUTION_MONTH), L"201001");
     EXPECT_EQ(DateTools::dateToString(ptime(date(2010, Jan, 14)), DateTools::RESOLUTION_DAY), L"20100114");
@@ -27,8 +26,7 @@ TEST_F(DateToolsTest, testDateToString)
     EXPECT_EQ(DateTools::dateToString(ptime(date(2010, Jan, 14), hours(3) + minutes(41) + seconds(5) + milliseconds(123)), DateTools::RESOLUTION_MILLISECOND), L"20100114034105123");
 }
 
-TEST_F(DateToolsTest, testTimeToString)
-{
+TEST_F(DateToolsTest, testTimeToString) {
     EXPECT_EQ(DateTools::timeToString(1263427200000LL, DateTools::RESOLUTION_YEAR), L"2010");
     EXPECT_EQ(DateTools::timeToString(1263427200000LL, DateTools::RESOLUTION_MONTH), L"201001");
     EXPECT_EQ(DateTools::timeToString(1263427200000LL, DateTools::RESOLUTION_DAY), L"20100114");
@@ -38,8 +36,7 @@ TEST_F(DateToolsTest, testTimeToString)
     EXPECT_EQ(DateTools::timeToString(1263440465123LL, DateTools::RESOLUTION_MILLISECOND), L"20100114034105123");
 }
 
-TEST_F(DateToolsTest, testStringToTime)
-{
+TEST_F(DateToolsTest, testStringToTime) {
     EXPECT_EQ(DateTools::stringToTime(L"2010"), 1262304000000LL);
     EXPECT_EQ(DateTools::stringToTime(L"201001"), 1262304000000LL);
     EXPECT_EQ(DateTools::stringToTime(L"20100114"), 1263427200000LL);
@@ -49,8 +46,7 @@ TEST_F(DateToolsTest, testStringToTime)
     EXPECT_EQ(DateTools::stringToTime(L"20100114034105123"), 1263440465123LL);
 }
 
-TEST_F(DateToolsTest, testDateRound)
-{
+TEST_F(DateToolsTest, testDateRound) {
     EXPECT_EQ(DateTools::round(ptime(date(2010, Feb, 16), hours(3) + minutes(41) + seconds(5) + milliseconds(123)), DateTools::RESOLUTION_YEAR), ptime(date(2010, Jan, 1)));
     EXPECT_EQ(DateTools::round(ptime(date(2010, Feb, 16), hours(3) + minutes(41) + seconds(5) + milliseconds(123)), DateTools::RESOLUTION_MONTH), ptime(date(2010, Feb, 1)));
     EXPECT_EQ(DateTools::round(ptime(date(2010, Feb, 16), hours(3) + minutes(41) + seconds(5) + milliseconds(123)), DateTools::RESOLUTION_DAY), ptime(date(2010, Feb, 16)));
@@ -60,8 +56,7 @@ TEST_F(DateToolsTest, testDateRound)
     EXPECT_EQ(DateTools::round(ptime(date(2010, Feb, 16), hours(3) + minutes(41) + seconds(5) + milliseconds(123)), DateTools::RESOLUTION_MILLISECOND), ptime(date(2010, Feb, 16), hours(3) + minutes(41) + seconds(5) + milliseconds(123)));
 }
 
-TEST_F(DateToolsTest, testParseDateGB)
-{
+TEST_F(DateToolsTest, testParseDateGB) {
     DateTools::setDateOrder(DateTools::DATEORDER_DMY);
     EXPECT_EQ(DateTools::parseDate(L"01122005"), ptime(date(2005, 12, 01)));
     EXPECT_EQ(DateTools::parseDate(L"011205"), ptime(date(2005, 12, 01)));
@@ -75,8 +70,7 @@ TEST_F(DateToolsTest, testParseDateGB)
     EXPECT_EQ(DateTools::parseDate(L"01/Jan/2005"), ptime(date(2005, 01, 01)));
 }
 
-TEST_F(DateToolsTest, testParseDateUS)
-{
+TEST_F(DateToolsTest, testParseDateUS) {
     DateTools::setDateOrder(DateTools::DATEORDER_MDY);
     EXPECT_EQ(DateTools::parseDate(L"12012005"), ptime(date(2005, 12, 01)));
     EXPECT_EQ(DateTools::parseDate(L"120105"), ptime(date(2005, 12, 01)));
@@ -90,21 +84,16 @@ TEST_F(DateToolsTest, testParseDateUS)
     EXPECT_EQ(DateTools::parseDate(L"Jan/01/2005"), ptime(date(2005, 01, 01)));
 }
 
-TEST_F(DateToolsTest, testParseDateLocale)
-{
+TEST_F(DateToolsTest, testParseDateLocale) {
     bool hasThisLocale = false;
 
-    try
-    {
+    try {
         std::locale("en_GB.UTF-8");
         hasThisLocale = true;
-    }
-    catch (...)
-    {
+    } catch (...) {
     }
 
-    if (hasThisLocale)
-    {
+    if (hasThisLocale) {
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
         EXPECT_EQ(DateTools::parseDate(L"01122005", std::locale("en_GB.UTF-8")), ptime(date(2005, 12, 01)));
         EXPECT_EQ(DateTools::parseDate(L"011205", std::locale("en_GB.UTF-8")), ptime(date(2005, 12, 01)));
@@ -118,18 +107,14 @@ TEST_F(DateToolsTest, testParseDateLocale)
         EXPECT_EQ(DateTools::parseDate(L"01/Jan/2005", std::locale("en_GB.UTF-8")), ptime(date(2005, 01, 01)));
     }
 
-    try
-    {
+    try {
         std::locale("en_US.UTF-8");
         hasThisLocale = true;
-    }
-    catch (...)
-    {
+    } catch (...) {
         hasThisLocale = false;
     }
 
-    if (hasThisLocale)
-    {
+    if (hasThisLocale) {
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
         EXPECT_EQ(DateTools::parseDate(L"12012005", std::locale("en_US.UTF-8")), ptime(date(2005, 12, 01)));
         EXPECT_EQ(DateTools::parseDate(L"120105", std::locale("en_US.UTF-8")), ptime(date(2005, 12, 01)));
@@ -144,8 +129,7 @@ TEST_F(DateToolsTest, testParseDateLocale)
     }
 }
 
-TEST_F(DateToolsTest, testParseDateSeparator)
-{
+TEST_F(DateToolsTest, testParseDateSeparator) {
     DateTools::setDateOrder(DateTools::DATEORDER_DMY);
     EXPECT_EQ(DateTools::parseDate(L"01122005"), ptime(date(2005, 12, 01)));
     EXPECT_EQ(DateTools::parseDate(L"011205"), ptime(date(2005, 12, 01)));

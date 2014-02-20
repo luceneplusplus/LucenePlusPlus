@@ -7,21 +7,19 @@
 #include "ContribInc.h"
 #include "Fragmenter.h"
 
-namespace Lucene
-{
-    Fragmenter::~Fragmenter()
-    {
-    }
+namespace Lucene {
 
-    void Fragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
-    {
-        BOOST_ASSERT(false);
-        // override
-    }
+Fragmenter::~Fragmenter() {
+}
 
-    bool Fragmenter::isNewFragment()
-    {
-        BOOST_ASSERT(false);
-        return false; // override
-    }
+void Fragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream) {
+    BOOST_ASSERT(false);
+    // override
+}
+
+bool Fragmenter::isNewFragment() {
+    BOOST_ASSERT(false);
+    return false; // override
+}
+
 }

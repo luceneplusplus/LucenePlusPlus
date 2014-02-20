@@ -9,47 +9,47 @@
 
 #include "TermsHashConsumerPerField.h"
 
-namespace Lucene
-{
-    class TermVectorsTermsWriterPerField : public TermsHashConsumerPerField
-    {
-    public:
-        TermVectorsTermsWriterPerField(const TermsHashPerFieldPtr& termsHashPerField, const TermVectorsTermsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
-        virtual ~TermVectorsTermsWriterPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(TermVectorsTermsWriterPerField);
+class TermVectorsTermsWriterPerField : public TermsHashConsumerPerField {
+public:
+    TermVectorsTermsWriterPerField(const TermsHashPerFieldPtr& termsHashPerField, const TermVectorsTermsWriterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
+    virtual ~TermVectorsTermsWriterPerField();
 
-    public:
-        TermVectorsTermsWriterPerThreadWeakPtr _perThread;
-        TermsHashPerFieldWeakPtr _termsHashPerField;
-        TermVectorsTermsWriterWeakPtr _termsWriter;
-        FieldInfoPtr fieldInfo;
-        DocStateWeakPtr _docState;
-        FieldInvertStateWeakPtr _fieldState;
+    LUCENE_CLASS(TermVectorsTermsWriterPerField);
 
-        bool doVectors;
-        bool doVectorPositions;
-        bool doVectorOffsets;
+public:
+    TermVectorsTermsWriterPerThreadWeakPtr _perThread;
+    TermsHashPerFieldWeakPtr _termsHashPerField;
+    TermVectorsTermsWriterWeakPtr _termsWriter;
+    FieldInfoPtr fieldInfo;
+    DocStateWeakPtr _docState;
+    FieldInvertStateWeakPtr _fieldState;
 
-        int32_t maxNumPostings;
-        OffsetAttributePtr offsetAttribute;
+    bool doVectors;
+    bool doVectorPositions;
+    bool doVectorOffsets;
 
-    public:
-        virtual int32_t getStreamCount();
-        virtual bool start(Collection<FieldablePtr> fields, int32_t count);
-        virtual void abort();
+    int32_t maxNumPostings;
+    OffsetAttributePtr offsetAttribute;
 
-        /// Called once per field per document if term vectors are enabled, to write the vectors to RAMOutputStream,
-        /// which is then quickly flushed to the real term vectors files in the Directory.
-        virtual void finish();
+public:
+    virtual int32_t getStreamCount();
+    virtual bool start(Collection<FieldablePtr> fields, int32_t count);
+    virtual void abort();
 
-        void shrinkHash();
+    /// Called once per field per document if term vectors are enabled, to write the vectors to RAMOutputStream,
+    /// which is then quickly flushed to the real term vectors files in the Directory.
+    virtual void finish();
 
-        virtual void start(const FieldablePtr& field);
-        virtual void newTerm(const RawPostingListPtr& p0);
-        virtual void addTerm(const RawPostingListPtr& p0);
-        virtual void skippingLongTerm();
-    };
+    void shrinkHash();
+
+    virtual void start(const FieldablePtr& field);
+    virtual void newTerm(const RawPostingListPtr& p0);
+    virtual void addTerm(const RawPostingListPtr& p0);
+    virtual void skippingLongTerm();
+};
+
 }
 
 #endif

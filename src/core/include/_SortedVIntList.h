@@ -9,30 +9,30 @@
 
 #include "DocIdSetIterator.h"
 
-namespace Lucene
-{
-    class SortedDocIdSetIterator : public DocIdSetIterator
-    {
-    public:
-        SortedDocIdSetIterator(const SortedVIntListPtr& list);
-        virtual ~SortedDocIdSetIterator();
+namespace Lucene {
 
-        LUCENE_CLASS(SortedDocIdSetIterator);
+class SortedDocIdSetIterator : public DocIdSetIterator {
+public:
+    SortedDocIdSetIterator(const SortedVIntListPtr& list);
+    virtual ~SortedDocIdSetIterator();
 
-    public:
-        SortedVIntListWeakPtr _list;
-        int32_t bytePos;
-        int32_t lastInt;
-        int32_t doc;
+    LUCENE_CLASS(SortedDocIdSetIterator);
 
-    public:
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual int32_t advance(int32_t target);
+public:
+    SortedVIntListWeakPtr _list;
+    int32_t bytePos;
+    int32_t lastInt;
+    int32_t doc;
 
-    protected:
-        void advance();
-    };
+public:
+    virtual int32_t docID();
+    virtual int32_t nextDoc();
+    virtual int32_t advance(int32_t target);
+
+protected:
+    void advance();
+};
+
 }
 
 #endif

@@ -9,148 +9,131 @@
 #include "Fieldable.h"
 #include "Field.h"
 
-namespace Lucene
-{
-    Document::Document()
-    {
-        fields = Collection<FieldablePtr>::newInstance();
-        boost = 1.0;
-    }
+namespace Lucene {
 
-    Document::~Document()
-    {
-    }
+Document::Document() {
+    fields = Collection<FieldablePtr>::newInstance();
+    boost = 1.0;
+}
 
-    void Document::setBoost(double boost)
-    {
-        this->boost = boost;
-    }
+Document::~Document() {
+}
 
-    double Document::getBoost()
-    {
-        return boost;
-    }
+void Document::setBoost(double boost) {
+    this->boost = boost;
+}
 
-    void Document::add(const FieldablePtr& field)
-    {
-        fields.add(field);
-    }
+double Document::getBoost() {
+    return boost;
+}
 
-    /// Utility functor for comparing fieldable names.
-    /// see {@link Document}.
-    struct equalFieldableName
-    {
-        equalFieldableName(const String& name) : equalName(name) {}
-        inline bool operator()(const FieldablePtr& other) const
-        {
-            return (equalName == other->name());
+void Document::add(const FieldablePtr& field) {
+    fields.add(field);
+}
+
+/// Utility functor for comparing fieldable names.
+/// see {@link Document}.
+struct equalFieldableName {
+    equalFieldableName(const String& name) : equalName(name) {}
+    inline bool operator()(const FieldablePtr& other) const {
+        return (equalName == other->name());
+    }
+    const String& equalName;
+};
+
+void Document::removeField(const String& name) {
+    Collection<FieldablePtr>::iterator field = fields.find_if(equalFieldableName(name));
+    if (field != fields.end()) {
+        fields.remove(field);
+    }
+}
+
+void Document::removeFields(const String& name) {
+    fields.remove_if(equalFieldableName(name));
+}
+
+FieldPtr Document::getField(const String& name) {
+    return boost::static_pointer_cast<Field>(getFieldable(name));
+}
+
+FieldablePtr Document::getFieldable(const String& name) {
+    Collection<FieldablePtr>::iterator field = fields.find_if(equalFieldableName(name));
+    return field == fields.end() ? FieldablePtr() : *field;
+}
+
+String Document::get(const String& name) {
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
+        if ((*field)->name() == name && !(*field)->isBinary()) {
+            return (*field)->stringValue();
         }
-        const String& equalName;
-    };
-
-    void Document::removeField(const String& name)
-    {
-        Collection<FieldablePtr>::iterator field = fields.find_if(equalFieldableName(name));
-        if (field != fields.end())
-            fields.remove(field);
     }
+    return L"";
+}
 
-    void Document::removeFields(const String& name)
-    {
-        fields.remove_if(equalFieldableName(name));
-    }
+Collection<FieldablePtr> Document::getFields() {
+    return fields;
+}
 
-    FieldPtr Document::getField(const String& name)
-    {
-        return boost::static_pointer_cast<Field>(getFieldable(name));
-    }
-
-    FieldablePtr Document::getFieldable(const String& name)
-    {
-        Collection<FieldablePtr>::iterator field = fields.find_if(equalFieldableName(name));
-        return field == fields.end() ? FieldablePtr() : *field;
-    }
-
-    String Document::get(const String& name)
-    {
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-        {
-            if ((*field)->name() == name && !(*field)->isBinary())
-                return (*field)->stringValue();
+Collection<FieldPtr> Document::getFields(const String& name) {
+    Collection<FieldPtr> result(Collection<FieldPtr>::newInstance());
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
+        if ((*field)->name() == name) {
+            result.add(boost::static_pointer_cast<Field>(*field));
         }
-        return L"";
     }
+    return result;
+}
 
-    Collection<FieldablePtr> Document::getFields()
-    {
-        return fields;
-    }
-
-    Collection<FieldPtr> Document::getFields(const String& name)
-    {
-        Collection<FieldPtr> result(Collection<FieldPtr>::newInstance());
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-        {
-            if ((*field)->name() == name)
-                result.add(boost::static_pointer_cast<Field>(*field));
+Collection<FieldablePtr> Document::getFieldables(const String& name) {
+    Collection<FieldablePtr> result(Collection<FieldablePtr>::newInstance());
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
+        if ((*field)->name() == name) {
+            result.add(*field);
         }
-        return result;
     }
+    return result;
+}
 
-    Collection<FieldablePtr> Document::getFieldables(const String& name)
-    {
-        Collection<FieldablePtr> result(Collection<FieldablePtr>::newInstance());
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-        {
-            if ((*field)->name() == name)
-                result.add(*field);
+Collection<String> Document::getValues(const String& name) {
+    Collection<String> result(Collection<String>::newInstance());
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
+        if ((*field)->name() == name && !(*field)->isBinary()) {
+            result.add((*field)->stringValue());
         }
-        return result;
     }
+    return result;
+}
 
-    Collection<String> Document::getValues(const String& name)
-    {
-        Collection<String> result(Collection<String>::newInstance());
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-        {
-            if ((*field)->name() == name && !(*field)->isBinary())
-                result.add((*field)->stringValue());
+Collection<ByteArray> Document::getBinaryValues(const String& name) {
+    Collection<ByteArray> result(Collection<ByteArray>::newInstance());
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
+        if ((*field)->name() == name && (*field)->isBinary()) {
+            result.add((*field)->getBinaryValue());
         }
-        return result;
     }
+    return result;
+}
 
-    Collection<ByteArray> Document::getBinaryValues(const String& name)
-    {
-        Collection<ByteArray> result(Collection<ByteArray>::newInstance());
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-        {
-            if ((*field)->name() == name && (*field)->isBinary())
-                result.add((*field)->getBinaryValue());
+ByteArray Document::getBinaryValue(const String& name) {
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
+        if ((*field)->name() == name && (*field)->isBinary()) {
+            return (*field)->getBinaryValue();
         }
-        return result;
     }
+    return ByteArray();
+}
 
-    ByteArray Document::getBinaryValue(const String& name)
-    {
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-        {
-            if ((*field)->name() == name && (*field)->isBinary())
-                return (*field)->getBinaryValue();
+String Document::toString() {
+    StringStream buffer;
+    buffer << L"Document<";
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
+        if (field != fields.begin()) {
+            buffer << L" ";
         }
-        return ByteArray();
+        buffer << (*field)->stringValue();
     }
+    buffer << L">";
+    return buffer.str();
+}
 
-    String Document::toString()
-    {
-        StringStream buffer;
-        buffer << L"Document<";
-        for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-        {
-            if (field != fields.begin())
-                buffer << L" ";
-            buffer << (*field)->stringValue();
-        }
-        buffer << L">";
-        return buffer.str();
-    }
 }

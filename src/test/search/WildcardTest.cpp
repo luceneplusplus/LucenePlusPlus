@@ -29,12 +29,10 @@ using namespace Lucene;
 
 typedef LuceneTestFixture WildcardTest;
 
-static RAMDirectoryPtr getIndexStore(const String& field, Collection<String> contents)
-{
+static RAMDirectoryPtr getIndexStore(const String& field, Collection<String> contents) {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < contents.size(); ++i)
-    {
+    for (int32_t i = 0; i < contents.size(); ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(field, contents[i], Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
@@ -45,14 +43,12 @@ static RAMDirectoryPtr getIndexStore(const String& field, Collection<String> con
     return indexStore;
 }
 
-static void checkMatches(const IndexSearcherPtr& searcher, const QueryPtr& q, int32_t expectedMatches)
-{
+static void checkMatches(const IndexSearcherPtr& searcher, const QueryPtr& q, int32_t expectedMatches) {
     Collection<ScoreDocPtr> result = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(expectedMatches, result.size());
 }
 
-TEST_F(WildcardTest, testEquals)
-{
+TEST_F(WildcardTest, testEquals) {
     WildcardQueryPtr wq1 = newLucene<WildcardQuery>(newLucene<Term>(L"field", L"b*a"));
     WildcardQueryPtr wq2 = newLucene<WildcardQuery>(newLucene<Term>(L"field", L"b*a"));
     WildcardQueryPtr wq3 = newLucene<WildcardQuery>(newLucene<Term>(L"field", L"b*a"));
@@ -75,8 +71,7 @@ TEST_F(WildcardTest, testEquals)
 /// Tests if a WildcardQuery that has no wildcard in the term is rewritten to a single TermQuery.
 /// The boost should be preserved, and the rewrite should return a ConstantScoreQuery if the
 /// WildcardQuery had a ConstantScore rewriteMethod.
-TEST_F(WildcardTest, testTermWithoutWildcard)
-{
+TEST_F(WildcardTest, testTermWithoutWildcard) {
     RAMDirectoryPtr indexStore = getIndexStore(L"field", newCollection<String>(L"nowildcard", L"nowildcardx"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(indexStore, true);
 
@@ -109,8 +104,7 @@ TEST_F(WildcardTest, testTermWithoutWildcard)
 }
 
 /// Tests if a WildcardQuery with an empty term is rewritten to an empty BooleanQuery
-TEST_F(WildcardTest, testEmptyTerm)
-{
+TEST_F(WildcardTest, testEmptyTerm) {
     RAMDirectoryPtr indexStore = getIndexStore(L"field", newCollection<String>(L"nowildcard", L"nowildcardx"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(indexStore, true);
 
@@ -123,8 +117,7 @@ TEST_F(WildcardTest, testEmptyTerm)
 
 /// Tests if a WildcardQuery that has only a trailing * in the term is rewritten to a
 /// single PrefixQuery. The boost and rewriteMethod should be preserved.
-TEST_F(WildcardTest, testPrefixTerm)
-{
+TEST_F(WildcardTest, testPrefixTerm) {
     RAMDirectoryPtr indexStore = getIndexStore(L"field", newCollection<String>(L"prefix", L"prefixx"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(indexStore, true);
 
@@ -157,8 +150,7 @@ TEST_F(WildcardTest, testPrefixTerm)
     EXPECT_TRUE(searcher->rewrite(expected)->equals(searcher->rewrite(wq)));
 }
 
-TEST_F(WildcardTest, testAsterisk)
-{
+TEST_F(WildcardTest, testAsterisk) {
     RAMDirectoryPtr indexStore = getIndexStore(L"body", newCollection<String>(L"metal", L"metals"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(indexStore, true);
     QueryPtr query1 = newLucene<TermQuery>(newLucene<Term>(L"body", L"metal"));
@@ -190,14 +182,14 @@ TEST_F(WildcardTest, testAsterisk)
     checkMatches(searcher, newLucene<WildcardQuery>(newLucene<Term>(L"body", L"*tal*")), 2);
 }
 
-TEST_F(WildcardTest, testLotsOfAsterisks)
-{
+TEST_F(WildcardTest, testLotsOfAsterisks) {
     RAMDirectoryPtr indexStore = getIndexStore(L"body", newCollection<String>(L"metal", L"metals"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(indexStore, true);
     StringStream term;
     term << L"m";
-    for (int32_t i = 0; i < 512; ++i)
+    for (int32_t i = 0; i < 512; ++i) {
         term << L"*";
+    }
     term << L"tal";
     QueryPtr query3 = newLucene<WildcardQuery>(newLucene<Term>(L"body", term.str()));
 
@@ -206,8 +198,7 @@ TEST_F(WildcardTest, testLotsOfAsterisks)
     indexStore->close();
 }
 
-TEST_F(WildcardTest, testQuestionmark)
-{
+TEST_F(WildcardTest, testQuestionmark) {
     RAMDirectoryPtr indexStore = getIndexStore(L"body", newCollection<String>(L"metal", L"metals", L"mXtals", L"mXtXls"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(indexStore, true);
     QueryPtr query1 = newLucene<WildcardQuery>(newLucene<Term>(L"body", L"m?tal"));
@@ -229,8 +220,7 @@ TEST_F(WildcardTest, testQuestionmark)
 /// This test looks at both parsing and execution of wildcard queries.  Although placed
 /// here, it also tests prefix queries, verifying that prefix queries are not parsed into
 /// wild card queries, and vice-versa.
-TEST_F(WildcardTest, testParsingAndSearching)
-{
+TEST_F(WildcardTest, testParsingAndSearching) {
     String field = L"content";
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, field, newLucene<WhitespaceAnalyzer>());
     qp->setAllowLeadingWildcard(true);
@@ -244,23 +234,22 @@ TEST_F(WildcardTest, testParsingAndSearching)
 
     // queries that should be parsed to prefix queries
     Collection< Collection<String> > matchOneDocPrefix = newCollection< Collection<String> >(
-        newCollection<String>(L"a*", L"ab*", L"abc*"), // these should find only doc 0
-        newCollection<String>(L"h*", L"hi*", L"hij*", L"\\\\7*"), // these should find only doc 1
-        newCollection<String>(L"o*", L"op*", L"opq*", L"\\\\\\\\*") // these should find only doc 2
-    );
+                newCollection<String>(L"a*", L"ab*", L"abc*"), // these should find only doc 0
+                newCollection<String>(L"h*", L"hi*", L"hij*", L"\\\\7*"), // these should find only doc 1
+                newCollection<String>(L"o*", L"op*", L"opq*", L"\\\\\\\\*") // these should find only doc 2
+            );
 
     // queries that should be parsed to wildcard queries
     Collection< Collection<String> > matchOneDocWild = newCollection< Collection<String> >(
-        newCollection<String>(L"*a*", L"*ab*", L"*abc**", L"ab*e*", L"*g?", L"*f?1", L"abc**"), // these should find only doc 0
-        newCollection<String>(L"*h*", L"*hi*", L"*hij**", L"hi*k*", L"*n?", L"*m?1", L"hij**"), // these should find only doc 1
-        newCollection<String>(L"*o*", L"*op*", L"*opq**", L"op*q*", L"*u?", L"*t?1", L"opq**") // these should find only doc 2
-    );
+                newCollection<String>(L"*a*", L"*ab*", L"*abc**", L"ab*e*", L"*g?", L"*f?1", L"abc**"), // these should find only doc 0
+                newCollection<String>(L"*h*", L"*hi*", L"*hij**", L"hi*k*", L"*n?", L"*m?1", L"hij**"), // these should find only doc 1
+                newCollection<String>(L"*o*", L"*op*", L"*opq**", L"op*q*", L"*u?", L"*t?1", L"opq**") // these should find only doc 2
+            );
 
     // prepare the index
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < docs.size(); ++i)
-    {
+    for (int32_t i = 0; i < docs.size(); ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(field, docs[i], Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
@@ -270,8 +259,7 @@ TEST_F(WildcardTest, testParsingAndSearching)
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
 
     // test queries that must find all
-    for (int32_t i = 0; i < matchAll.size(); ++i)
-    {
+    for (int32_t i = 0; i < matchAll.size(); ++i) {
         String qtxt = matchAll[i];
         QueryPtr q = qp->parse(qtxt);
         Collection<ScoreDocPtr> hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
@@ -279,8 +267,7 @@ TEST_F(WildcardTest, testParsingAndSearching)
     }
 
     // test queries that must find none
-    for (int32_t i = 0; i < matchNone.size(); ++i)
-    {
+    for (int32_t i = 0; i < matchNone.size(); ++i) {
         String qtxt = matchNone[i];
         QueryPtr q = qp->parse(qtxt);
         Collection<ScoreDocPtr> hits = searcher->search(q, FilterPtr(), 1000)->scoreDocs;
@@ -288,10 +275,8 @@ TEST_F(WildcardTest, testParsingAndSearching)
     }
 
     // test queries that must be prefix queries and must find only one doc
-    for (int32_t i = 0; i < matchOneDocPrefix.size(); ++i)
-    {
-        for (int32_t j = 0; j < matchOneDocPrefix[i].size(); ++j)
-        {
+    for (int32_t i = 0; i < matchOneDocPrefix.size(); ++i) {
+        for (int32_t j = 0; j < matchOneDocPrefix[i].size(); ++j) {
             String qtxt = matchOneDocPrefix[i][j];
             QueryPtr q = qp->parse(qtxt);
             EXPECT_TRUE(MiscUtils::typeOf<PrefixQuery>(q));
@@ -302,10 +287,8 @@ TEST_F(WildcardTest, testParsingAndSearching)
     }
 
     // test queries that must be wildcard queries and must find only one doc
-    for (int32_t i = 0; i < matchOneDocPrefix.size(); ++i)
-    {
-        for (int32_t j = 0; j < matchOneDocWild[i].size(); ++j)
-        {
+    for (int32_t i = 0; i < matchOneDocPrefix.size(); ++i) {
+        for (int32_t j = 0; j < matchOneDocWild[i].size(); ++j) {
             String qtxt = matchOneDocWild[i][j];
             QueryPtr q = qp->parse(qtxt);
             EXPECT_TRUE(MiscUtils::typeOf<WildcardQuery>(q));

@@ -9,25 +9,22 @@
 #include "TermAttribute.h"
 #include "CharFolder.h"
 
-namespace Lucene
-{
-    LowerCaseFilter::LowerCaseFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
-        termAtt = addAttribute<TermAttribute>();
-    }
+namespace Lucene {
 
-    LowerCaseFilter::~LowerCaseFilter()
-    {
-    }
+LowerCaseFilter::LowerCaseFilter(const TokenStreamPtr& input) : TokenFilter(input) {
+    termAtt = addAttribute<TermAttribute>();
+}
 
-    bool LowerCaseFilter::incrementToken()
-    {
-        if (input->incrementToken())
-        {
-            wchar_t* buffer = termAtt->termBufferArray();
-            CharFolder::toLower(buffer, buffer + termAtt->termLength());
-            return true;
-        }
-        return false;
+LowerCaseFilter::~LowerCaseFilter() {
+}
+
+bool LowerCaseFilter::incrementToken() {
+    if (input->incrementToken()) {
+        wchar_t* buffer = termAtt->termBufferArray();
+        CharFolder::toLower(buffer, buffer + termAtt->termLength());
+        return true;
     }
+    return false;
+}
+
 }

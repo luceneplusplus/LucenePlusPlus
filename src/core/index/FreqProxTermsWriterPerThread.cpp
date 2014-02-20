@@ -9,33 +9,28 @@
 #include "FreqProxTermsWriterPerField.h"
 #include "TermsHashPerThread.h"
 
-namespace Lucene
-{
-    FreqProxTermsWriterPerThread::FreqProxTermsWriterPerThread(const TermsHashPerThreadPtr& perThread)
-    {
-        docState = perThread->docState;
-        _termsHashPerThread = perThread;
-    }
+namespace Lucene {
 
-    FreqProxTermsWriterPerThread::~FreqProxTermsWriterPerThread()
-    {
-    }
+FreqProxTermsWriterPerThread::FreqProxTermsWriterPerThread(const TermsHashPerThreadPtr& perThread) {
+    docState = perThread->docState;
+    _termsHashPerThread = perThread;
+}
 
-    TermsHashConsumerPerFieldPtr FreqProxTermsWriterPerThread::addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo)
-    {
-        return newLucene<FreqProxTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
-    }
+FreqProxTermsWriterPerThread::~FreqProxTermsWriterPerThread() {
+}
 
-    void FreqProxTermsWriterPerThread::startDocument()
-    {
-    }
+TermsHashConsumerPerFieldPtr FreqProxTermsWriterPerThread::addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo) {
+    return newLucene<FreqProxTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
+}
 
-    DocWriterPtr FreqProxTermsWriterPerThread::finishDocument()
-    {
-        return DocWriterPtr();
-    }
+void FreqProxTermsWriterPerThread::startDocument() {
+}
 
-    void FreqProxTermsWriterPerThread::abort()
-    {
-    }
+DocWriterPtr FreqProxTermsWriterPerThread::finishDocument() {
+    return DocWriterPtr();
+}
+
+void FreqProxTermsWriterPerThread::abort() {
+}
+
 }

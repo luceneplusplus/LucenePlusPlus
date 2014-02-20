@@ -18,80 +18,65 @@
 #include "FieldInvertState.h"
 #include "ReusableStringReader.h"
 
-namespace Lucene
-{
-    DocInverterPerThread::DocInverterPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocInverterPtr& docInverter)
-    {
-        this->fieldState = newLucene<FieldInvertState>();
-        this->stringReader = newLucene<ReusableStringReader>();
-        this->singleToken = newLucene<SingleTokenAttributeSource>();
-        this->_docInverter = docInverter;
-        this->docState = docFieldProcessorPerThread->docState;
-    }
+namespace Lucene {
 
-    DocInverterPerThread::~DocInverterPerThread()
-    {
-    }
+DocInverterPerThread::DocInverterPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocInverterPtr& docInverter) {
+    this->fieldState = newLucene<FieldInvertState>();
+    this->stringReader = newLucene<ReusableStringReader>();
+    this->singleToken = newLucene<SingleTokenAttributeSource>();
+    this->_docInverter = docInverter;
+    this->docState = docFieldProcessorPerThread->docState;
+}
 
-    void DocInverterPerThread::initialize()
-    {
-        DocInverterPtr docInverter(_docInverter);
-        consumer = docInverter->consumer->addThread(shared_from_this());
-        endConsumer = docInverter->endConsumer->addThread(shared_from_this());
-    }
+DocInverterPerThread::~DocInverterPerThread() {
+}
 
-    void DocInverterPerThread::startDocument()
-    {
-        consumer->startDocument();
-        endConsumer->startDocument();
-    }
+void DocInverterPerThread::initialize() {
+    DocInverterPtr docInverter(_docInverter);
+    consumer = docInverter->consumer->addThread(shared_from_this());
+    endConsumer = docInverter->endConsumer->addThread(shared_from_this());
+}
 
-    DocWriterPtr DocInverterPerThread::finishDocument()
-    {
-        endConsumer->finishDocument();
-        return consumer->finishDocument();
-    }
+void DocInverterPerThread::startDocument() {
+    consumer->startDocument();
+    endConsumer->startDocument();
+}
 
-    void DocInverterPerThread::abort()
-    {
-        LuceneException finally;
-        try
-        {
-            consumer->abort();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        try
-        {
-            endConsumer->abort();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        finally.throwException();
-    }
+DocWriterPtr DocInverterPerThread::finishDocument() {
+    endConsumer->finishDocument();
+    return consumer->finishDocument();
+}
 
-    DocFieldConsumerPerFieldPtr DocInverterPerThread::addField(const FieldInfoPtr& fi)
-    {
-        return newLucene<DocInverterPerField>(shared_from_this(), fi);
+void DocInverterPerThread::abort() {
+    LuceneException finally;
+    try {
+        consumer->abort();
+    } catch (LuceneException& e) {
+        finally = e;
     }
+    try {
+        endConsumer->abort();
+    } catch (LuceneException& e) {
+        finally = e;
+    }
+    finally.throwException();
+}
 
-    SingleTokenAttributeSource::SingleTokenAttributeSource()
-    {
-        termAttribute = addAttribute<TermAttribute>();
-        offsetAttribute = addAttribute<OffsetAttribute>();
-    }
+DocFieldConsumerPerFieldPtr DocInverterPerThread::addField(const FieldInfoPtr& fi) {
+    return newLucene<DocInverterPerField>(shared_from_this(), fi);
+}
 
-    SingleTokenAttributeSource::~SingleTokenAttributeSource()
-    {
-    }
+SingleTokenAttributeSource::SingleTokenAttributeSource() {
+    termAttribute = addAttribute<TermAttribute>();
+    offsetAttribute = addAttribute<OffsetAttribute>();
+}
 
-    void SingleTokenAttributeSource::reinit(const String& stringValue, int32_t startOffset, int32_t endOffset)
-    {
-        termAttribute->setTermBuffer(stringValue);
-        offsetAttribute->setOffset(startOffset, endOffset);
-    }
+SingleTokenAttributeSource::~SingleTokenAttributeSource() {
+}
+
+void SingleTokenAttributeSource::reinit(const String& stringValue, int32_t startOffset, int32_t endOffset) {
+    termAttribute->setTermBuffer(stringValue);
+    offsetAttribute->setOffset(startOffset, endOffset);
+}
+
 }

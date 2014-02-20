@@ -9,29 +9,29 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class StoredFieldsWriterPerThread : public LuceneObject
-    {
-    public:
-        StoredFieldsWriterPerThread(const DocStatePtr& docState, const StoredFieldsWriterPtr& storedFieldsWriter);
-        virtual ~StoredFieldsWriterPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(StoredFieldsWriterPerThread);
+class StoredFieldsWriterPerThread : public LuceneObject {
+public:
+    StoredFieldsWriterPerThread(const DocStatePtr& docState, const StoredFieldsWriterPtr& storedFieldsWriter);
+    virtual ~StoredFieldsWriterPerThread();
 
-    public:
-        FieldsWriterPtr localFieldsWriter;
-        StoredFieldsWriterWeakPtr _storedFieldsWriter;
-        DocStatePtr docState;
+    LUCENE_CLASS(StoredFieldsWriterPerThread);
 
-        StoredFieldsWriterPerDocPtr doc;
+public:
+    FieldsWriterPtr localFieldsWriter;
+    StoredFieldsWriterWeakPtr _storedFieldsWriter;
+    DocStatePtr docState;
 
-    public:
-        void startDocument();
-        void addField(const FieldablePtr& field, const FieldInfoPtr& fieldInfo);
-        DocWriterPtr finishDocument();
-        void abort();
-    };
+    StoredFieldsWriterPerDocPtr doc;
+
+public:
+    void startDocument();
+    void addField(const FieldablePtr& field, const FieldInfoPtr& fieldInfo);
+    DocWriterPtr finishDocument();
+    void abort();
+};
+
 }
 
 #endif

@@ -9,31 +9,31 @@
 
 #include "Formatter.h"
 
-namespace Lucene
-{
-    /// Simple {@link Formatter} implementation to highlight terms with a pre and post tag.
-    class LPPCONTRIBAPI SimpleHTMLFormatter : public Formatter, public LuceneObject
-    {
-    public:
-        /// Default constructor uses HTML: &lt;B&gt; tags to markup terms.
-        SimpleHTMLFormatter();
+namespace Lucene {
 
-        SimpleHTMLFormatter(const String& preTag, const String& postTag);
+/// Simple {@link Formatter} implementation to highlight terms with a pre and post tag.
+class LPPCONTRIBAPI SimpleHTMLFormatter : public Formatter, public LuceneObject {
+public:
+    /// Default constructor uses HTML: &lt;B&gt; tags to markup terms.
+    SimpleHTMLFormatter();
 
-        virtual ~SimpleHTMLFormatter();
+    SimpleHTMLFormatter(const String& preTag, const String& postTag);
 
-        LUCENE_CLASS(SimpleHTMLFormatter);
+    virtual ~SimpleHTMLFormatter();
 
-    protected:
-        static const String DEFAULT_PRE_TAG;
-        static const String DEFAULT_POST_TAG;
+    LUCENE_CLASS(SimpleHTMLFormatter);
 
-        String preTag;
-        String postTag;
+protected:
+    static const String DEFAULT_PRE_TAG;
+    static const String DEFAULT_POST_TAG;
 
-    public:
-        virtual String highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup);
-    };
+    String preTag;
+    String postTag;
+
+public:
+    virtual String highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup);
+};
+
 }
 
 #endif

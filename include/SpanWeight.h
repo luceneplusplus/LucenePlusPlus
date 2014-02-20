@@ -9,39 +9,39 @@
 
 #include "Weight.h"
 
-namespace Lucene
-{
-    /// Public for use by other weight implementations
-    class LPPAPI SpanWeight : public Weight
-    {
-    public:
-        SpanWeight(const SpanQueryPtr& query, const SearcherPtr& searcher);
-        virtual ~SpanWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanWeight);
+/// Public for use by other weight implementations
+class LPPAPI SpanWeight : public Weight {
+public:
+    SpanWeight(const SpanQueryPtr& query, const SearcherPtr& searcher);
+    virtual ~SpanWeight();
 
-    protected:
-        SimilarityPtr similarity;
-        double value;
-        double idf;
-        double queryNorm;
-        double queryWeight;
+    LUCENE_CLASS(SpanWeight);
 
-        SetTerm terms;
-        SpanQueryPtr query;
-        IDFExplanationPtr idfExp;
+protected:
+    SimilarityPtr similarity;
+    double value;
+    double idf;
+    double queryNorm;
+    double queryWeight;
 
-    public:
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+    SetTerm terms;
+    SpanQueryPtr query;
+    IDFExplanationPtr idfExp;
 
-        friend class PayloadNearSpanScorer;
-        friend class PayloadTermSpanScorer;
-    };
+public:
+    virtual QueryPtr getQuery();
+    virtual double getValue();
+    virtual double sumOfSquaredWeights();
+    virtual void normalize(double norm);
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+
+    friend class PayloadNearSpanScorer;
+    friend class PayloadTermSpanScorer;
+};
+
 }
 
 #endif

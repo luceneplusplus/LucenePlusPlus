@@ -9,35 +9,35 @@
 
 #include "TermDocs.h"
 
-namespace Lucene
-{
-    /// Base class for enumerating all but deleted docs.
-    ///
-    /// NOTE: this class is meant only to be used internally by Lucene; it's only public so it
-    /// can be shared across packages.
-    class LPPAPI AbstractAllTermDocs : public TermDocs, public LuceneObject
-    {
-    public:
-        AbstractAllTermDocs(int32_t maxDoc);
-        virtual ~AbstractAllTermDocs();
+namespace Lucene {
 
-        LUCENE_CLASS(AbstractAllTermDocs);
+/// Base class for enumerating all but deleted docs.
+///
+/// NOTE: this class is meant only to be used internally by Lucene; it's only public so it
+/// can be shared across packages.
+class LPPAPI AbstractAllTermDocs : public TermDocs, public LuceneObject {
+public:
+    AbstractAllTermDocs(int32_t maxDoc);
+    virtual ~AbstractAllTermDocs();
 
-    protected:
-        int32_t maxDoc;
-        int32_t _doc;
+    LUCENE_CLASS(AbstractAllTermDocs);
 
-    public:
-        virtual void seek(const TermPtr& term);
-        virtual void seek(const TermEnumPtr& termEnum);
-        virtual int32_t doc();
-        virtual int32_t freq();
-        virtual bool next();
-        virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
-        virtual bool skipTo(int32_t target);
-        virtual void close();
-        virtual bool isDeleted(int32_t doc) = 0;
-    };
+protected:
+    int32_t maxDoc;
+    int32_t _doc;
+
+public:
+    virtual void seek(const TermPtr& term);
+    virtual void seek(const TermEnumPtr& termEnum);
+    virtual int32_t doc();
+    virtual int32_t freq();
+    virtual bool next();
+    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    virtual bool skipTo(int32_t target);
+    virtual void close();
+    virtual bool isDeleted(int32_t doc) = 0;
+};
+
 }
 
 #endif

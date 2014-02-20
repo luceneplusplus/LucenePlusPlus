@@ -9,84 +9,84 @@
 
 #include "Attribute.h"
 
-namespace Lucene
-{
-    /// The term text of a Token.
-    class LPPAPI TermAttribute : public Attribute
-    {
-    public:
-        TermAttribute();
-        virtual ~TermAttribute();
+namespace Lucene {
 
-        LUCENE_CLASS(TermAttribute);
+/// The term text of a Token.
+class LPPAPI TermAttribute : public Attribute {
+public:
+    TermAttribute();
+    virtual ~TermAttribute();
 
-    protected:
-        static const int32_t MIN_BUFFER_SIZE;
+    LUCENE_CLASS(TermAttribute);
 
-        CharArray _termBuffer;
-        int32_t _termLength;
+protected:
+    static const int32_t MIN_BUFFER_SIZE;
 
-    public:
-        virtual String toString();
+    CharArray _termBuffer;
+    int32_t _termLength;
 
-        /// Returns the Token's term text.
-        ///
-        /// This method has a performance penalty because the text is stored internally in a char[].  If possible,
-        /// use {@link #termBuffer()} and {@link #termLength()} directly instead.  If you really need a String, use
-        /// this method, which is nothing more than a convenience call to new String(token.termBuffer(), 0,
-        /// token.termLength())
-        virtual String term();
+public:
+    virtual String toString();
 
-        /// Copies the contents of buffer, starting at offset for length characters, into the termBuffer array.
-        /// @param buffer the buffer to copy
-        /// @param offset the index in the buffer of the first character to copy
-        /// @param length the number of characters to copy
-        virtual void setTermBuffer(const wchar_t* buffer, int32_t offset, int32_t length);
+    /// Returns the Token's term text.
+    ///
+    /// This method has a performance penalty because the text is stored internally in a char[].  If possible,
+    /// use {@link #termBuffer()} and {@link #termLength()} directly instead.  If you really need a String, use
+    /// this method, which is nothing more than a convenience call to new String(token.termBuffer(), 0,
+    /// token.termLength())
+    virtual String term();
 
-        /// Copies the contents of buffer into the termBuffer array.
-        /// @param buffer the buffer to copy
-        virtual void setTermBuffer(const String& buffer);
+    /// Copies the contents of buffer, starting at offset for length characters, into the termBuffer array.
+    /// @param buffer the buffer to copy
+    /// @param offset the index in the buffer of the first character to copy
+    /// @param length the number of characters to copy
+    virtual void setTermBuffer(const wchar_t* buffer, int32_t offset, int32_t length);
 
-        /// Returns the internal termBuffer character array which you can then directly alter.  If the array is
-        /// too small for your token, use {@link #resizeTermBuffer(int)} to increase it.  After altering the buffer
-        /// be sure to call {@link #setTermLength} to record the number of valid characters that were placed into
-        /// the termBuffer.
-        virtual CharArray termBuffer();
+    /// Copies the contents of buffer into the termBuffer array.
+    /// @param buffer the buffer to copy
+    virtual void setTermBuffer(const String& buffer);
 
-        /// Optimized implementation of termBuffer.
-        virtual wchar_t* termBufferArray();
+    /// Returns the internal termBuffer character array which you can then directly alter.  If the array is
+    /// too small for your token, use {@link #resizeTermBuffer(int)} to increase it.  After altering the buffer
+    /// be sure to call {@link #setTermLength} to record the number of valid characters that were placed into
+    /// the termBuffer.
+    virtual CharArray termBuffer();
 
-        /// Grows the termBuffer to at least size newSize, preserving the existing content. Note: If the next
-        /// operation is to change the contents of the term buffer use {@link #setTermBuffer(char[], int, int)},
-        /// {@link #setTermBuffer(String)}, or {@link #setTermBuffer(String, int, int)} to optimally combine the
-        /// resize with the setting of the termBuffer.
-        /// @param newSize minimum size of the new termBuffer
-        /// @return newly created termBuffer with length >= newSize
-        virtual CharArray resizeTermBuffer(int32_t newSize);
+    /// Optimized implementation of termBuffer.
+    virtual wchar_t* termBufferArray();
 
-        /// Return number of valid characters (length of the term) in the termBuffer array.
-        virtual int32_t termLength();
+    /// Grows the termBuffer to at least size newSize, preserving the existing content. Note: If the next
+    /// operation is to change the contents of the term buffer use {@link #setTermBuffer(char[], int, int)},
+    /// {@link #setTermBuffer(String)}, or {@link #setTermBuffer(String, int, int)} to optimally combine the
+    /// resize with the setting of the termBuffer.
+    /// @param newSize minimum size of the new termBuffer
+    /// @return newly created termBuffer with length >= newSize
+    virtual CharArray resizeTermBuffer(int32_t newSize);
 
-        /// Set number of valid characters (length of the term) in the termBuffer array. Use this to truncate the
-        /// termBuffer or to synchronize with external manipulation of the termBuffer.  Note: to grow the size of
-        /// the array, use {@link #resizeTermBuffer(int)} first.
-        /// @param length the truncated length
-        virtual void setTermLength(int32_t length);
+    /// Return number of valid characters (length of the term) in the termBuffer array.
+    virtual int32_t termLength();
 
-        virtual int32_t hashCode();
-        virtual void clear();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual void copyTo(const AttributePtr& target);
+    /// Set number of valid characters (length of the term) in the termBuffer array. Use this to truncate the
+    /// termBuffer or to synchronize with external manipulation of the termBuffer.  Note: to grow the size of
+    /// the array, use {@link #resizeTermBuffer(int)} first.
+    /// @param length the truncated length
+    virtual void setTermLength(int32_t length);
 
-    protected:
-        /// Allocates a buffer char[] of at least newSize, without preserving the existing content.  Its always
-        /// used in places that set the content.
-        /// @param newSize minimum size of the buffer
-        void growTermBuffer(int32_t newSize);
+    virtual int32_t hashCode();
+    virtual void clear();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual void copyTo(const AttributePtr& target);
 
-        void initTermBuffer();
-    };
+protected:
+    /// Allocates a buffer char[] of at least newSize, without preserving the existing content.  Its always
+    /// used in places that set the content.
+    /// @param newSize minimum size of the buffer
+    void growTermBuffer(int32_t newSize);
+
+    void initTermBuffer();
+};
+
 }
 
 #endif

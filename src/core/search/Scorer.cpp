@@ -8,39 +8,35 @@
 #include "Scorer.h"
 #include "Collector.h"
 
-namespace Lucene
-{
-    Scorer::Scorer(const SimilarityPtr& similarity)
-    {
-        this->similarity = similarity;
-    }
+namespace Lucene {
 
-    Scorer::~Scorer()
-    {
-    }
+Scorer::Scorer(const SimilarityPtr& similarity) {
+    this->similarity = similarity;
+}
 
-    SimilarityPtr Scorer::getSimilarity()
-    {
-        return similarity;
-    }
+Scorer::~Scorer() {
+}
 
-    void Scorer::score(const CollectorPtr& collector)
-    {
-        collector->setScorer(shared_from_this());
-        int32_t doc;
-        while ((doc = nextDoc()) != NO_MORE_DOCS)
-            collector->collect(doc);
-    }
+SimilarityPtr Scorer::getSimilarity() {
+    return similarity;
+}
 
-    bool Scorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
-    {
-        collector->setScorer(shared_from_this());
-        int32_t doc = firstDocID;
-        while (doc < max)
-        {
-            collector->collect(doc);
-            doc = nextDoc();
-        }
-        return (doc != NO_MORE_DOCS);
+void Scorer::score(const CollectorPtr& collector) {
+    collector->setScorer(shared_from_this());
+    int32_t doc;
+    while ((doc = nextDoc()) != NO_MORE_DOCS) {
+        collector->collect(doc);
     }
+}
+
+bool Scorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID) {
+    collector->setScorer(shared_from_this());
+    int32_t doc = firstDocID;
+    while (doc < max) {
+        collector->collect(doc);
+        doc = nextDoc();
+    }
+    return (doc != NO_MORE_DOCS);
+}
+
 }

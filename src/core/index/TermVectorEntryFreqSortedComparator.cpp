@@ -8,24 +8,27 @@
 #include "TermVectorEntryFreqSortedComparator.h"
 #include "TermVectorEntry.h"
 
-namespace Lucene
-{
-    TermVectorEntryFreqSortedComparator::~TermVectorEntryFreqSortedComparator()
-    {
-    }
+namespace Lucene {
 
-    bool TermVectorEntryFreqSortedComparator::compare(const TermVectorEntryPtr& first, const TermVectorEntryPtr& second)
-    {
-        int32_t result = (second->getFrequency() - first->getFrequency());
-        if (result < 0)
-            return true;
-        if (result > 0)
-            return false;
-        result = first->getTerm().compare(second->getTerm());
-        if (result < 0)
-            return true;
-        if (result > 0)
-            return false;
-        return (first->getField().compare(second->getField()) < 0);
+TermVectorEntryFreqSortedComparator::~TermVectorEntryFreqSortedComparator() {
+}
+
+bool TermVectorEntryFreqSortedComparator::compare(const TermVectorEntryPtr& first, const TermVectorEntryPtr& second) {
+    int32_t result = (second->getFrequency() - first->getFrequency());
+    if (result < 0) {
+        return true;
     }
+    if (result > 0) {
+        return false;
+    }
+    result = first->getTerm().compare(second->getTerm());
+    if (result < 0) {
+        return true;
+    }
+    if (result > 0) {
+        return false;
+    }
+    return (first->getField().compare(second->getField()) < 0);
+}
+
 }

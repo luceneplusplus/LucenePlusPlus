@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "FormatPostingsDocsConsumer.h"
 
-namespace Lucene
-{
-    FormatPostingsDocsConsumer::~FormatPostingsDocsConsumer()
-    {
-    }
+namespace Lucene {
+
+FormatPostingsDocsConsumer::~FormatPostingsDocsConsumer() {
+}
+
 }

@@ -10,51 +10,50 @@
 #include "Spans.h"
 #include "PriorityQueue.h"
 
-namespace Lucene
-{
-    /// Wraps a Spans, and can be used to form a linked list.
-    class SpansCell : public Spans
-    {
-    public:
-        SpansCell(const NearSpansUnorderedPtr& unordered, const SpansPtr& spans, int32_t index);
-        virtual ~SpansCell();
+namespace Lucene {
 
-        LUCENE_CLASS(SpansCell);
+/// Wraps a Spans, and can be used to form a linked list.
+class SpansCell : public Spans {
+public:
+    SpansCell(const NearSpansUnorderedPtr& unordered, const SpansPtr& spans, int32_t index);
+    virtual ~SpansCell();
 
-    protected:
-        NearSpansUnorderedWeakPtr _unordered;
-        SpansPtr spans;
-        SpansCellPtr _next;
-        int32_t length;
-        int32_t index;
+    LUCENE_CLASS(SpansCell);
 
-    public:
-        virtual bool next();
-        virtual bool skipTo(int32_t target);
-        virtual int32_t doc();
-        virtual int32_t start();
-        virtual int32_t end();
-        virtual Collection<ByteArray> getPayload();
-        virtual bool isPayloadAvailable();
-        virtual String toString();
+protected:
+    NearSpansUnorderedWeakPtr _unordered;
+    SpansPtr spans;
+    SpansCellPtr _next;
+    int32_t length;
+    int32_t index;
 
-    protected:
-        bool adjust(bool condition);
+public:
+    virtual bool next();
+    virtual bool skipTo(int32_t target);
+    virtual int32_t doc();
+    virtual int32_t start();
+    virtual int32_t end();
+    virtual Collection<ByteArray> getPayload();
+    virtual bool isPayloadAvailable();
+    virtual String toString();
 
-        friend class NearSpansUnordered;
-    };
+protected:
+    bool adjust(bool condition);
 
-    class CellQueue : public PriorityQueue<SpansCellPtr>
-    {
-    public:
-        CellQueue(int32_t size);
-        virtual ~CellQueue();
+    friend class NearSpansUnordered;
+};
 
-        LUCENE_CLASS(CellQueue);
+class CellQueue : public PriorityQueue<SpansCellPtr> {
+public:
+    CellQueue(int32_t size);
+    virtual ~CellQueue();
 
-    protected:
-        virtual bool lessThan(const SpansCellPtr& first, const SpansCellPtr& second);
-    };
+    LUCENE_CLASS(CellQueue);
+
+protected:
+    virtual bool lessThan(const SpansCellPtr& first, const SpansCellPtr& second);
+};
+
 }
 
 #endif

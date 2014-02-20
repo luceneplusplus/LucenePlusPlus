@@ -10,31 +10,30 @@
 #include <boost/thread/condition.hpp>
 #include "Lucene.h"
 
-namespace Lucene
-{
-    /// Utility class to support signaling notifications.
-    class LPPAPI LuceneSignal
-    {
-    public:
-        LuceneSignal(const SynchronizePtr& objectLock = SynchronizePtr());
-        virtual ~LuceneSignal();
+namespace Lucene {
 
-    protected:
-        boost::mutex waitMutex;
-        boost::condition signalCondition;
-        SynchronizePtr objectLock;
+/// Utility class to support signaling notifications.
+class LPPAPI LuceneSignal {
+public:
+    LuceneSignal(const SynchronizePtr& objectLock = SynchronizePtr());
+    virtual ~LuceneSignal();
 
-    public:
-        /// create a new LuceneSignal instance atomically.
-        static void createSignal(LuceneSignalPtr& signal, const SynchronizePtr& objectLock);
+protected:
+    boost::mutex waitMutex;
+    boost::condition signalCondition;
+    SynchronizePtr objectLock;
 
-        /// Wait for signal using an optional timeout.
-        void wait(int32_t timeout = 0);
+public:
+    /// create a new LuceneSignal instance atomically.
+    static void createSignal(LuceneSignalPtr& signal, const SynchronizePtr& objectLock);
 
-        /// Notify all threads waiting for signal.
-        void notifyAll();
-    };
+    /// Wait for signal using an optional timeout.
+    void wait(int32_t timeout = 0);
+
+    /// Notify all threads waiting for signal.
+    void notifyAll();
+};
+
 }
-
 
 #endif

@@ -9,22 +9,22 @@
 
 #include "AbstractAllTermDocs.h"
 
-namespace Lucene
-{
-    class AllTermDocs : public AbstractAllTermDocs
-    {
-    public:
-        AllTermDocs(const SegmentReaderPtr& parent);
-        virtual ~AllTermDocs();
+namespace Lucene {
 
-        LUCENE_CLASS(AllTermDocs);
+class AllTermDocs : public AbstractAllTermDocs {
+public:
+    AllTermDocs(const SegmentReaderPtr& parent);
+    virtual ~AllTermDocs();
 
-    protected:
-        BitVectorWeakPtr _deletedDocs;
+    LUCENE_CLASS(AllTermDocs);
 
-    public:
-        virtual bool isDeleted(int32_t doc);
-    };
+protected:
+    BitVectorWeakPtr _deletedDocs;
+
+public:
+    virtual bool isDeleted(int32_t doc);
+};
+
 }
 
 #endif

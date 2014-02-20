@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "FormatPostingsFieldsConsumer.h"
 
-namespace Lucene
-{
-    FormatPostingsFieldsConsumer::~FormatPostingsFieldsConsumer()
-    {
-    }
+namespace Lucene {
+
+FormatPostingsFieldsConsumer::~FormatPostingsFieldsConsumer() {
+}
+
 }

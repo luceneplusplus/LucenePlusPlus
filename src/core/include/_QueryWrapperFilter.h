@@ -9,24 +9,24 @@
 
 #include "DocIdSet.h"
 
-namespace Lucene
-{
-    class QueryWrapperFilterDocIdSet : public DocIdSet
-    {
-    public:
-        QueryWrapperFilterDocIdSet(const IndexReaderPtr& reader, const WeightPtr& weight);
-        virtual ~QueryWrapperFilterDocIdSet();
+namespace Lucene {
 
-        LUCENE_CLASS(QueryWrapperFilterDocIdSet);
+class QueryWrapperFilterDocIdSet : public DocIdSet {
+public:
+    QueryWrapperFilterDocIdSet(const IndexReaderPtr& reader, const WeightPtr& weight);
+    virtual ~QueryWrapperFilterDocIdSet();
 
-    protected:
-        IndexReaderPtr reader;
-        WeightPtr weight;
+    LUCENE_CLASS(QueryWrapperFilterDocIdSet);
 
-    public:
-        virtual DocIdSetIteratorPtr iterator();
-        virtual bool isCacheable();
-    };
+protected:
+    IndexReaderPtr reader;
+    WeightPtr weight;
+
+public:
+    virtual DocIdSetIteratorPtr iterator();
+    virtual bool isCacheable();
+};
+
 }
 
 #endif

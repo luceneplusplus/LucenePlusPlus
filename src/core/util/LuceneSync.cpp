@@ -9,46 +9,39 @@
 #include "Synchronize.h"
 #include "LuceneSignal.h"
 
-namespace Lucene
-{
-    LuceneSync::~LuceneSync()
-    {
-    }
+namespace Lucene {
 
-    SynchronizePtr LuceneSync::getSync()
-    {
-        Synchronize::createSync(objectLock);
-        return objectLock;
-    }
+LuceneSync::~LuceneSync() {
+}
 
-    LuceneSignalPtr LuceneSync::getSignal()
-    {
-        LuceneSignal::createSignal(objectSignal, getSync());
-        return objectSignal;
-    }
+SynchronizePtr LuceneSync::getSync() {
+    Synchronize::createSync(objectLock);
+    return objectLock;
+}
 
-    void LuceneSync::lock(int32_t timeout)
-    {
-        getSync()->lock();
-    }
+LuceneSignalPtr LuceneSync::getSignal() {
+    LuceneSignal::createSignal(objectSignal, getSync());
+    return objectSignal;
+}
 
-    void LuceneSync::unlock()
-    {
-        getSync()->unlock();
-    }
+void LuceneSync::lock(int32_t timeout) {
+    getSync()->lock();
+}
 
-    bool LuceneSync::holdsLock()
-    {
-        return getSync()->holdsLock();
-    }
+void LuceneSync::unlock() {
+    getSync()->unlock();
+}
 
-    void LuceneSync::wait(int32_t timeout)
-    {
-        getSignal()->wait(timeout);
-    }
+bool LuceneSync::holdsLock() {
+    return getSync()->holdsLock();
+}
 
-    void LuceneSync::notifyAll()
-    {
-        getSignal()->notifyAll();
-    }
+void LuceneSync::wait(int32_t timeout) {
+    getSignal()->wait(timeout);
+}
+
+void LuceneSync::notifyAll() {
+    getSignal()->notifyAll();
+}
+
 }

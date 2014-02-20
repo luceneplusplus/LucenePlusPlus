@@ -9,35 +9,35 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class TermVectorsWriter : public LuceneObject
-    {
-    public:
-        TermVectorsWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fieldInfos);
-        virtual ~TermVectorsWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(TermVectorsWriter);
+class TermVectorsWriter : public LuceneObject {
+public:
+    TermVectorsWriter(const DirectoryPtr& directory, const String& segment, const FieldInfosPtr& fieldInfos);
+    virtual ~TermVectorsWriter();
 
-    protected:
-        IndexOutputPtr tvx;
-        IndexOutputPtr tvd;
-        IndexOutputPtr tvf;
-        FieldInfosPtr fieldInfos;
-        Collection<UTF8ResultPtr> utf8Results;
+    LUCENE_CLASS(TermVectorsWriter);
 
-    public:
-        /// Add a complete document specified by all its term vectors. If document has no term vectors,
-        /// add value for tvx.
-        void addAllDocVectors(Collection<TermFreqVectorPtr> vectors);
+protected:
+    IndexOutputPtr tvx;
+    IndexOutputPtr tvd;
+    IndexOutputPtr tvf;
+    FieldInfosPtr fieldInfos;
+    Collection<UTF8ResultPtr> utf8Results;
 
-        /// Do a bulk copy of numDocs documents from reader to our streams.  This is used to expedite merging,
-        /// if the field numbers are congruent.
-        void addRawDocuments(const TermVectorsReaderPtr& reader, Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t numDocs);
+public:
+    /// Add a complete document specified by all its term vectors. If document has no term vectors,
+    /// add value for tvx.
+    void addAllDocVectors(Collection<TermFreqVectorPtr> vectors);
 
-        /// Close all streams.
-        void close();
-    };
+    /// Do a bulk copy of numDocs documents from reader to our streams.  This is used to expedite merging,
+    /// if the field numbers are congruent.
+    void addRawDocuments(const TermVectorsReaderPtr& reader, Collection<int32_t> tvdLengths, Collection<int32_t> tvfLengths, int32_t numDocs);
+
+    /// Close all streams.
+    void close();
+};
+
 }
 
 #endif

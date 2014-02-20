@@ -9,29 +9,29 @@
 
 #include "Spans.h"
 
-namespace Lucene
-{
-    class FirstSpans : public Spans
-    {
-    public:
-        FirstSpans(const SpanFirstQueryPtr& query, const SpansPtr& spans);
-        virtual ~FirstSpans();
+namespace Lucene {
 
-        LUCENE_CLASS(FirstSpans);
+class FirstSpans : public Spans {
+public:
+    FirstSpans(const SpanFirstQueryPtr& query, const SpansPtr& spans);
+    virtual ~FirstSpans();
 
-    protected:
-        SpanFirstQueryPtr query;
-        SpansPtr spans;
+    LUCENE_CLASS(FirstSpans);
 
-    public:
-        virtual bool next();
-        virtual bool skipTo(int32_t target);
-        virtual int32_t doc();
-        virtual int32_t start();
-        virtual int32_t end();
-        virtual Collection<ByteArray> getPayload();
-        virtual bool isPayloadAvailable();
-    };
+protected:
+    SpanFirstQueryPtr query;
+    SpansPtr spans;
+
+public:
+    virtual bool next();
+    virtual bool skipTo(int32_t target);
+    virtual int32_t doc();
+    virtual int32_t start();
+    virtual int32_t end();
+    virtual Collection<ByteArray> getPayload();
+    virtual bool isPayloadAvailable();
+};
+
 }
 
 #endif

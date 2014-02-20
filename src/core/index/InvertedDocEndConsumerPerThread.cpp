@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "InvertedDocEndConsumerPerThread.h"
 
-namespace Lucene
-{
-    InvertedDocEndConsumerPerThread::~InvertedDocEndConsumerPerThread()
-    {
-    }
+namespace Lucene {
+
+InvertedDocEndConsumerPerThread::~InvertedDocEndConsumerPerThread() {
+}
+
 }

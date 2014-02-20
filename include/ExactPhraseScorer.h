@@ -9,19 +9,19 @@
 
 #include "PhraseScorer.h"
 
-namespace Lucene
-{
-    class ExactPhraseScorer : public PhraseScorer
-    {
-    public:
-        ExactPhraseScorer(const WeightPtr& weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, const SimilarityPtr& similarity, ByteArray norms);
-        virtual ~ExactPhraseScorer();
+namespace Lucene {
 
-        LUCENE_CLASS(ExactPhraseScorer);
+class ExactPhraseScorer : public PhraseScorer {
+public:
+    ExactPhraseScorer(const WeightPtr& weight, Collection<TermPositionsPtr> tps, Collection<int32_t> offsets, const SimilarityPtr& similarity, ByteArray norms);
+    virtual ~ExactPhraseScorer();
 
-    protected:
-        virtual double phraseFreq();
-    };
+    LUCENE_CLASS(ExactPhraseScorer);
+
+protected:
+    virtual double phraseFreq();
+};
+
 }
 
 #endif

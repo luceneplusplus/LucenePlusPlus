@@ -9,27 +9,24 @@
 #include "ArabicNormalizer.h"
 #include "TermAttribute.h"
 
-namespace Lucene
-{
-    ArabicNormalizationFilter::ArabicNormalizationFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
-        normalizer = newLucene<ArabicNormalizer>();
-        termAtt = addAttribute<TermAttribute>();
-    }
+namespace Lucene {
 
-    ArabicNormalizationFilter::~ArabicNormalizationFilter()
-    {
-    }
+ArabicNormalizationFilter::ArabicNormalizationFilter(const TokenStreamPtr& input) : TokenFilter(input) {
+    normalizer = newLucene<ArabicNormalizer>();
+    termAtt = addAttribute<TermAttribute>();
+}
 
-    bool ArabicNormalizationFilter::incrementToken()
-    {
-        if (input->incrementToken())
-        {
-            int32_t newlen = normalizer->normalize(termAtt->termBuffer().get(), termAtt->termLength());
-            termAtt->setTermLength(newlen);
-            return true;
-        }
-        else
-            return false;
+ArabicNormalizationFilter::~ArabicNormalizationFilter() {
+}
+
+bool ArabicNormalizationFilter::incrementToken() {
+    if (input->incrementToken()) {
+        int32_t newlen = normalizer->normalize(termAtt->termBuffer().get(), termAtt->termLength());
+        termAtt->setTermLength(newlen);
+        return true;
+    } else {
+        return false;
     }
+}
+
 }

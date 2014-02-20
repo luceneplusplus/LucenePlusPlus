@@ -9,38 +9,38 @@
 
 #include "SpanFilter.h"
 
-namespace Lucene
-{
-    /// Constrains search results to only match those which also match a provided query.  Also provides position
-    /// information about where each document matches at the cost of extra space compared with the
-    /// QueryWrapperFilter.  There is an added cost to this above what is stored in a {@link QueryWrapperFilter}.
-    /// Namely, the position information for each matching document is stored.
-    ///
-    /// This filter does not cache.  See the {@link CachingSpanFilter} for a wrapper that caches.
-    class LPPAPI SpanQueryFilter : public SpanFilter
-    {
-    public:
-        /// Constructs a filter which only matches documents matching query.
-        /// @param query The {@link SpanQuery} to use as the basis for the Filter.
-        SpanQueryFilter(const SpanQueryPtr& query = SpanQueryPtr());
+namespace Lucene {
 
-        virtual ~SpanQueryFilter();
+/// Constrains search results to only match those which also match a provided query.  Also provides position
+/// information about where each document matches at the cost of extra space compared with the
+/// QueryWrapperFilter.  There is an added cost to this above what is stored in a {@link QueryWrapperFilter}.
+/// Namely, the position information for each matching document is stored.
+///
+/// This filter does not cache.  See the {@link CachingSpanFilter} for a wrapper that caches.
+class LPPAPI SpanQueryFilter : public SpanFilter {
+public:
+    /// Constructs a filter which only matches documents matching query.
+    /// @param query The {@link SpanQuery} to use as the basis for the Filter.
+    SpanQueryFilter(const SpanQueryPtr& query = SpanQueryPtr());
 
-        LUCENE_CLASS(SpanQueryFilter);
+    virtual ~SpanQueryFilter();
 
-    protected:
-        SpanQueryPtr query;
+    LUCENE_CLASS(SpanQueryFilter);
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
-        virtual SpanFilterResultPtr bitSpans(const IndexReaderPtr& reader);
+protected:
+    SpanQueryPtr query;
 
-        SpanQueryPtr getQuery();
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+    virtual SpanFilterResultPtr bitSpans(const IndexReaderPtr& reader);
 
-        virtual String toString();
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-    };
+    SpanQueryPtr getQuery();
+
+    virtual String toString();
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+};
+
 }
 
 #endif

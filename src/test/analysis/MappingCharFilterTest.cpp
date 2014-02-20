@@ -15,11 +15,9 @@
 
 using namespace Lucene;
 
-class MappingCharFilterTest : public BaseTokenStreamFixture
-{
+class MappingCharFilterTest : public BaseTokenStreamFixture {
 public:
-    MappingCharFilterTest()
-    {
+    MappingCharFilterTest() {
         normMap = newLucene<NormalizeCharMap>();
 
         normMap->add(L"aa", L"a");
@@ -34,16 +32,14 @@ public:
         normMap->add(L"empty", L"");
     }
 
-    virtual ~MappingCharFilterTest()
-    {
+    virtual ~MappingCharFilterTest() {
     }
 
 public:
     NormalizeCharMapPtr normMap;
 };
 
-TEST_F(MappingCharFilterTest, testReaderReset)
-{
+TEST_F(MappingCharFilterTest, testReaderReset) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"x"));
     CharArray buf = CharArray::newInstance(10);
     int32_t len = cs->read(buf.get(), 0, 10);
@@ -59,64 +55,55 @@ TEST_F(MappingCharFilterTest, testReaderReset)
     EXPECT_EQ(L'x', buf[0]) ;
 }
 
-TEST_F(MappingCharFilterTest, testNothingChange)
-{
+TEST_F(MappingCharFilterTest, testNothingChange) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"x"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"x"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-TEST_F(MappingCharFilterTest, test1to1)
-{
+TEST_F(MappingCharFilterTest, test1to1) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"h"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"i"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-TEST_F(MappingCharFilterTest, test1to2)
-{
+TEST_F(MappingCharFilterTest, test1to2) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"j"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"jj"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-TEST_F(MappingCharFilterTest, test1to3)
-{
+TEST_F(MappingCharFilterTest, test1to3) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"k"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"kkk"), newCollection<int32_t>(0), newCollection<int32_t>(1));
 }
 
-TEST_F(MappingCharFilterTest, test2to4)
-{
+TEST_F(MappingCharFilterTest, test2to4) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"ll"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"llll"), newCollection<int32_t>(0), newCollection<int32_t>(2));
 }
 
-TEST_F(MappingCharFilterTest, test2to1)
-{
+TEST_F(MappingCharFilterTest, test2to1) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"aa"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"a"), newCollection<int32_t>(0), newCollection<int32_t>(2));
 }
 
-TEST_F(MappingCharFilterTest, test3to1)
-{
+TEST_F(MappingCharFilterTest, test3to1) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"bbb"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"b"), newCollection<int32_t>(0), newCollection<int32_t>(3));
 }
 
-TEST_F(MappingCharFilterTest, test4to2)
-{
+TEST_F(MappingCharFilterTest, test4to2) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"cccc"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"cc"), newCollection<int32_t>(0), newCollection<int32_t>(4));
 }
 
-TEST_F(MappingCharFilterTest, test5to0)
-{
+TEST_F(MappingCharFilterTest, test5to0) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, newLucene<StringReader>(L"empty"));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, Collection<String>::newInstance());
@@ -139,8 +126,7 @@ TEST_F(MappingCharFilterTest, test5to0)
 // cccc,11,15 =>   cc,11,15
 //  bbb,16,19 =>    b,16,19
 //   aa,20,22 =>    a,20,22
-TEST_F(MappingCharFilterTest, testTokenStream)
-{
+TEST_F(MappingCharFilterTest, testTokenStream) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, CharReader::get(newLucene<StringReader>(L"h i j k ll cccc bbb aa")));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"i", L"i", L"jj", L"kkk", L"llll", L"cc", L"b", L"a"),
@@ -158,8 +144,7 @@ TEST_F(MappingCharFilterTest, testTokenStream)
 // aaaa,0,4 => a,0,4
 //   ll,5,7 => llllllll,5,7
 //    h,8,9 => i,8,9
-TEST_F(MappingCharFilterTest, testChained)
-{
+TEST_F(MappingCharFilterTest, testChained) {
     CharStreamPtr cs = newLucene<MappingCharFilter>(normMap, (CharStreamPtr)newLucene<MappingCharFilter>(normMap, CharReader::get(newLucene<StringReader>(L"aaaa ll h"))));
     TokenStreamPtr ts = newLucene<WhitespaceTokenizer>(cs);
     checkTokenStreamContents(ts, newCollection<String>(L"a", L"llllllll", L"i"), newCollection<int32_t>(0, 5, 8), newCollection<int32_t>(4, 7, 9));

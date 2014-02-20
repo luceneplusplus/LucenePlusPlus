@@ -10,89 +10,89 @@
 #include "LuceneContrib.h"
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Stemmer for Arabic.
-    ///
-    /// Stemming  is done in-place for efficiency, operating on a termbuffer.
-    ///
-    /// Stemming is defined as:
-    /// <ul>
-    /// <li> Removal of attached definite article, conjunction, and prepositions.
-    /// <li> Stemming of common suffixes.
-    /// </ul>
-    class LPPCONTRIBAPI ArabicStemmer : public LuceneObject
-    {
-    public:
-        virtual ~ArabicStemmer();
+namespace Lucene {
 
-        LUCENE_CLASS(ArabicStemmer);
+/// Stemmer for Arabic.
+///
+/// Stemming  is done in-place for efficiency, operating on a termbuffer.
+///
+/// Stemming is defined as:
+/// <ul>
+/// <li> Removal of attached definite article, conjunction, and prepositions.
+/// <li> Stemming of common suffixes.
+/// </ul>
+class LPPCONTRIBAPI ArabicStemmer : public LuceneObject {
+public:
+    virtual ~ArabicStemmer();
 
-    public:
-        static const wchar_t ALEF;
-        static const wchar_t BEH;
-        static const wchar_t TEH_MARBUTA;
-        static const wchar_t TEH;
-        static const wchar_t FEH;
-        static const wchar_t KAF;
-        static const wchar_t LAM;
-        static const wchar_t NOON;
-        static const wchar_t HEH;
-        static const wchar_t WAW;
-        static const wchar_t YEH;
+    LUCENE_CLASS(ArabicStemmer);
 
-    public:
-        static const Collection<String> prefixes();
-        static const Collection<String> suffixes();
+public:
+    static const wchar_t ALEF;
+    static const wchar_t BEH;
+    static const wchar_t TEH_MARBUTA;
+    static const wchar_t TEH;
+    static const wchar_t FEH;
+    static const wchar_t KAF;
+    static const wchar_t LAM;
+    static const wchar_t NOON;
+    static const wchar_t HEH;
+    static const wchar_t WAW;
+    static const wchar_t YEH;
 
-        /// Stem an input buffer of Arabic text.
-        /// @param s input buffer
-        /// @param len length of input buffer
-        /// @return length of input buffer after normalization
-        int32_t stem(wchar_t* s, int32_t len);
+public:
+    static const Collection<String> prefixes();
+    static const Collection<String> suffixes();
 
-        /// Stem a prefix off an Arabic word.
-        /// @param s input buffer
-        /// @param len length of input buffer
-        /// @return new length of input buffer after stemming.
-        int32_t stemPrefix(wchar_t* s, int32_t len);
+    /// Stem an input buffer of Arabic text.
+    /// @param s input buffer
+    /// @param len length of input buffer
+    /// @return length of input buffer after normalization
+    int32_t stem(wchar_t* s, int32_t len);
 
-        /// Stem suffix(es) off an Arabic word.
-        /// @param s input buffer
-        /// @param len length of input buffer
-        /// @return new length of input buffer after stemming
-        int32_t stemSuffix(wchar_t* s, int32_t len);
+    /// Stem a prefix off an Arabic word.
+    /// @param s input buffer
+    /// @param len length of input buffer
+    /// @return new length of input buffer after stemming.
+    int32_t stemPrefix(wchar_t* s, int32_t len);
 
-        /// Returns true if the prefix matches and can be stemmed
-        /// @param s input buffer
-        /// @param len length of input buffer
-        /// @param prefix prefix to check
-        /// @return true if the prefix matches and can be stemmed
-        bool startsWith(wchar_t* s, int32_t len, const String& prefix);
+    /// Stem suffix(es) off an Arabic word.
+    /// @param s input buffer
+    /// @param len length of input buffer
+    /// @return new length of input buffer after stemming
+    int32_t stemSuffix(wchar_t* s, int32_t len);
 
-        /// Returns true if the suffix matches and can be stemmed
-        /// @param s input buffer
-        /// @param len length of input buffer
-        /// @param suffix suffix to check
-        /// @return true if the suffix matches and can be stemmed
-        bool endsWith(wchar_t* s, int32_t len, const String& suffix);
+    /// Returns true if the prefix matches and can be stemmed
+    /// @param s input buffer
+    /// @param len length of input buffer
+    /// @param prefix prefix to check
+    /// @return true if the prefix matches and can be stemmed
+    bool startsWith(wchar_t* s, int32_t len, const String& prefix);
 
-    protected:
-        /// Delete n characters in-place
-        /// @param s Input Buffer
-        /// @param pos Position of character to delete
-        /// @param len Length of input buffer
-        /// @param chars number of characters to delete
-        /// @return length of input buffer after deletion
-        int32_t deleteChars(wchar_t* s, int32_t pos, int32_t len, int32_t chars);
+    /// Returns true if the suffix matches and can be stemmed
+    /// @param s input buffer
+    /// @param len length of input buffer
+    /// @param suffix suffix to check
+    /// @return true if the suffix matches and can be stemmed
+    bool endsWith(wchar_t* s, int32_t len, const String& suffix);
 
-        /// Delete a character in-place
-        /// @param s Input Buffer
-        /// @param pos Position of character to delete
-        /// @param len length of input buffer
-        /// @return length of input buffer after deletion
-        int32_t deleteChar(wchar_t* s, int32_t pos, int32_t len);
-    };
+protected:
+    /// Delete n characters in-place
+    /// @param s Input Buffer
+    /// @param pos Position of character to delete
+    /// @param len Length of input buffer
+    /// @param chars number of characters to delete
+    /// @return length of input buffer after deletion
+    int32_t deleteChars(wchar_t* s, int32_t pos, int32_t len, int32_t chars);
+
+    /// Delete a character in-place
+    /// @param s Input Buffer
+    /// @param pos Position of character to delete
+    /// @param len length of input buffer
+    /// @return length of input buffer after deletion
+    int32_t deleteChar(wchar_t* s, int32_t pos, int32_t len);
+};
+
 }
 
 #endif

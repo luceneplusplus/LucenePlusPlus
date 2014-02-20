@@ -9,165 +9,165 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Information about a segment such as it's name, directory, and files
-    /// related to the segment.
-    class LPPAPI SegmentInfo : public LuceneObject
-    {
-    public:
-        SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir);
+namespace Lucene {
 
-        SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile, bool hasSingleNormFile);
+/// Information about a segment such as it's name, directory, and files
+/// related to the segment.
+class LPPAPI SegmentInfo : public LuceneObject {
+public:
+    SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir);
 
-        SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile,
-                    bool hasSingleNormFile, int32_t docStoreOffset, const String& docStoreSegment,
-                    bool docStoreIsCompoundFile, bool hasProx);
+    SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile, bool hasSingleNormFile);
 
-        /// Construct a new SegmentInfo instance by reading a previously saved SegmentInfo from input.
-        /// @param dir directory to load from.
-        /// @param format format of the segments info file.
-        /// @param input input handle to read segment info from.
-        SegmentInfo(const DirectoryPtr& dir, int32_t format, const IndexInputPtr& input);
+    SegmentInfo(const String& name, int32_t docCount, const DirectoryPtr& dir, bool isCompoundFile,
+                bool hasSingleNormFile, int32_t docStoreOffset, const String& docStoreSegment,
+                bool docStoreIsCompoundFile, bool hasProx);
 
-        virtual ~SegmentInfo();
+    /// Construct a new SegmentInfo instance by reading a previously saved SegmentInfo from input.
+    /// @param dir directory to load from.
+    /// @param format format of the segments info file.
+    /// @param input input handle to read segment info from.
+    SegmentInfo(const DirectoryPtr& dir, int32_t format, const IndexInputPtr& input);
 
-        LUCENE_CLASS(SegmentInfo);
+    virtual ~SegmentInfo();
 
-    public:
-        static const int32_t NO; // no norms; no deletes;
-        static const int32_t YES; // have norms; have deletes;
-        static const int32_t CHECK_DIR; // must check dir to see if there are norms/deletions
-        static const int32_t WITHOUT_GEN; // a file name that has no GEN in it.
+    LUCENE_CLASS(SegmentInfo);
 
-    protected:
-        // true if this is a segments file written before lock-less commits (2.1)
-        bool preLockless;
+public:
+    static const int32_t NO; // no norms; no deletes;
+    static const int32_t YES; // have norms; have deletes;
+    static const int32_t CHECK_DIR; // must check dir to see if there are norms/deletions
+    static const int32_t WITHOUT_GEN; // a file name that has no GEN in it.
 
-        // current generation of del file; NO if there are no deletes; CHECK_DIR if  it's a pre-2.1 segment
-        // (and we must check filesystem); YES or higher if there are deletes at generation N
-        int64_t delGen;
+protected:
+    // true if this is a segments file written before lock-less commits (2.1)
+    bool preLockless;
 
-        // current generation of each field's norm file.  If this array is null, for lockLess this means no
-        // separate norms.  For preLockLess this means we must check filesystem. If this array is not null,
-        // its values mean: NO says this field has no separate norms; CHECK_DIR says it is a preLockLess
-        // segment and filesystem must be checked; >= YES says this field has separate norms with the
-        // specified generation
-        Collection<int64_t> normGen;
+    // current generation of del file; NO if there are no deletes; CHECK_DIR if  it's a pre-2.1 segment
+    // (and we must check filesystem); YES or higher if there are deletes at generation N
+    int64_t delGen;
 
-        // NO if it is not; YES if it is; CHECK_DIR if it's pre-2.1 (ie, must check file system to see if
-        // <name>.cfs and <name>.nrm exist)
-        uint8_t isCompoundFile;
+    // current generation of each field's norm file.  If this array is null, for lockLess this means no
+    // separate norms.  For preLockLess this means we must check filesystem. If this array is not null,
+    // its values mean: NO says this field has no separate norms; CHECK_DIR says it is a preLockLess
+    // segment and filesystem must be checked; >= YES says this field has separate norms with the
+    // specified generation
+    Collection<int64_t> normGen;
 
-        // true if this segment maintains norms in a single file; false otherwise this is currently false for
-        // segments populated by DocumentWriter and true for newly created merged segments (both compound and
-        // non compound).
-        bool hasSingleNormFile;
+    // NO if it is not; YES if it is; CHECK_DIR if it's pre-2.1 (ie, must check file system to see if
+    // <name>.cfs and <name>.nrm exist)
+    uint8_t isCompoundFile;
 
-        // cached list of files that this segment uses in the Directory
-        HashSet<String> _files;
+    // true if this segment maintains norms in a single file; false otherwise this is currently false for
+    // segments populated by DocumentWriter and true for newly created merged segments (both compound and
+    // non compound).
+    bool hasSingleNormFile;
 
-        // total byte size of all of our files (computed on demand)
-        int64_t _sizeInBytes;
+    // cached list of files that this segment uses in the Directory
+    HashSet<String> _files;
 
-        // if this segment shares stored fields & vectors, this offset is where in that file this segment's
-        // docs begin
-        int32_t docStoreOffset;
+    // total byte size of all of our files (computed on demand)
+    int64_t _sizeInBytes;
 
-        // name used to derive fields/vectors file we share with other segments
-        String docStoreSegment;
+    // if this segment shares stored fields & vectors, this offset is where in that file this segment's
+    // docs begin
+    int32_t docStoreOffset;
 
-        // whether doc store files are stored in compound file (*.cfx)
-        bool docStoreIsCompoundFile;
+    // name used to derive fields/vectors file we share with other segments
+    String docStoreSegment;
 
-        // How many deleted docs in this segment, or -1 if not yet known (if it's an older index)
-        int32_t delCount;
+    // whether doc store files are stored in compound file (*.cfx)
+    bool docStoreIsCompoundFile;
 
-        // True if this segment has any fields with omitTermFreqAndPositions == false
-        bool hasProx;
+    // How many deleted docs in this segment, or -1 if not yet known (if it's an older index)
+    int32_t delCount;
 
-        MapStringString diagnostics;
+    // True if this segment has any fields with omitTermFreqAndPositions == false
+    bool hasProx;
 
-    public:
-        String name; // unique name in dir
-        int32_t docCount; // number of docs in seg
-        DirectoryPtr dir; // where segment resides
+    MapStringString diagnostics;
 
-    public:
-        /// Copy everything from src SegmentInfo into our instance.
-        void reset(const SegmentInfoPtr& src);
+public:
+    String name; // unique name in dir
+    int32_t docCount; // number of docs in seg
+    DirectoryPtr dir; // where segment resides
 
-        void setDiagnostics(MapStringString diagnostics);
-        MapStringString getDiagnostics();
+public:
+    /// Copy everything from src SegmentInfo into our instance.
+    void reset(const SegmentInfoPtr& src);
 
-        void setNumFields(int32_t numFields);
+    void setDiagnostics(MapStringString diagnostics);
+    MapStringString getDiagnostics();
 
-        /// Returns total size in bytes of all of files used by this segment.
-        int64_t sizeInBytes();
+    void setNumFields(int32_t numFields);
 
-        bool hasDeletions();
-        void advanceDelGen();
-        void clearDelGen();
+    /// Returns total size in bytes of all of files used by this segment.
+    int64_t sizeInBytes();
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    bool hasDeletions();
+    void advanceDelGen();
+    void clearDelGen();
 
-        String getDelFileName();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        /// Returns true if this field for this segment has saved a separate norms file (_<segment>_N.sX).
-        /// @param fieldNumber the field index to check
-        bool hasSeparateNorms(int32_t fieldNumber);
+    String getDelFileName();
 
-        /// Returns true if any fields in this segment have separate norms.
-        bool hasSeparateNorms();
+    /// Returns true if this field for this segment has saved a separate norms file (_<segment>_N.sX).
+    /// @param fieldNumber the field index to check
+    bool hasSeparateNorms(int32_t fieldNumber);
 
-        /// Increment the generation count for the norms file for this field.
-        /// @param fieldIndex field whose norm file will be rewritten
-        void advanceNormGen(int32_t fieldIndex);
+    /// Returns true if any fields in this segment have separate norms.
+    bool hasSeparateNorms();
 
-        /// Get the file name for the norms file for this field.
-        /// @param number field index
-        String getNormFileName(int32_t number);
+    /// Increment the generation count for the norms file for this field.
+    /// @param fieldIndex field whose norm file will be rewritten
+    void advanceNormGen(int32_t fieldIndex);
 
-        /// Mark whether this segment is stored as a compound file.
-        /// @param isCompoundFile true if this is a compound file; else, false
-        void setUseCompoundFile(bool isCompoundFile);
+    /// Get the file name for the norms file for this field.
+    /// @param number field index
+    String getNormFileName(int32_t number);
 
-        /// Returns true if this segment is stored as a compound file; else, false.
-        bool getUseCompoundFile();
+    /// Mark whether this segment is stored as a compound file.
+    /// @param isCompoundFile true if this is a compound file; else, false
+    void setUseCompoundFile(bool isCompoundFile);
 
-        int32_t getDelCount();
-        void setDelCount(int32_t delCount);
-        int32_t getDocStoreOffset();
-        bool getDocStoreIsCompoundFile();
-        void setDocStoreIsCompoundFile(bool v);
-        String getDocStoreSegment();
-        void setDocStoreOffset(int32_t offset);
-        void setDocStore(int32_t offset, const String& segment, bool isCompoundFile);
+    /// Returns true if this segment is stored as a compound file; else, false.
+    bool getUseCompoundFile();
 
-        /// Save this segment's info.
-        void write(const IndexOutputPtr& output);
+    int32_t getDelCount();
+    void setDelCount(int32_t delCount);
+    int32_t getDocStoreOffset();
+    bool getDocStoreIsCompoundFile();
+    void setDocStoreIsCompoundFile(bool v);
+    String getDocStoreSegment();
+    void setDocStoreOffset(int32_t offset);
+    void setDocStore(int32_t offset, const String& segment, bool isCompoundFile);
 
-        void setHasProx(bool hasProx);
-        bool getHasProx();
+    /// Save this segment's info.
+    void write(const IndexOutputPtr& output);
 
-        /// Return all files referenced by this SegmentInfo.  The returns List is a locally cached List so
-        /// you should not modify it.
-        HashSet<String> files();
+    void setHasProx(bool hasProx);
+    bool getHasProx();
 
-        /// Used for debugging.
-        String segString(const DirectoryPtr& dir);
+    /// Return all files referenced by this SegmentInfo.  The returns List is a locally cached List so
+    /// you should not modify it.
+    HashSet<String> files();
 
-        /// We consider another SegmentInfo instance equal if it has the same dir and same name.
-        virtual bool equals(const LuceneObjectPtr& other);
+    /// Used for debugging.
+    String segString(const DirectoryPtr& dir);
 
-        virtual int32_t hashCode();
+    /// We consider another SegmentInfo instance equal if it has the same dir and same name.
+    virtual bool equals(const LuceneObjectPtr& other);
 
-    protected:
-        void addIfExists(HashSet<String> files, const String& fileName);
+    virtual int32_t hashCode();
 
-        /// Called whenever any change is made that affects which files this segment has.
-        void clearFiles();
-    };
+protected:
+    void addIfExists(HashSet<String> files, const String& fileName);
+
+    /// Called whenever any change is made that affects which files this segment has.
+    void clearFiles();
+};
+
 }
 
 #endif

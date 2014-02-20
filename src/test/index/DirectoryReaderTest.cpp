@@ -25,11 +25,9 @@
 
 using namespace Lucene;
 
-class DirectoryReaderTest : public LuceneTestFixture, public DocHelper
-{
+class DirectoryReaderTest : public LuceneTestFixture, public DocHelper {
 public:
-    DirectoryReaderTest()
-    {
+    DirectoryReaderTest() {
         readers = Collection<SegmentReaderPtr>::newInstance(2);
         dir = newLucene<RAMDirectory>();
         doc1 = newLucene<Document>();
@@ -42,8 +40,7 @@ public:
         sis->read(dir);
     }
 
-    virtual ~DirectoryReaderTest()
-    {
+    virtual ~DirectoryReaderTest() {
     }
 
 protected:
@@ -54,8 +51,7 @@ protected:
     SegmentInfosPtr sis;
 
 public:
-    void doTestDocument()
-    {
+    void doTestDocument() {
         sis->read(dir);
         IndexReaderPtr reader = openReader();
         EXPECT_TRUE(reader);
@@ -70,8 +66,7 @@ public:
         checkNorms(reader);
     }
 
-    void doTestUndeleteAll()
-    {
+    void doTestUndeleteAll() {
         sis->read(dir);
         IndexReaderPtr reader = openReader();
         EXPECT_TRUE(reader);
@@ -85,8 +80,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (boost::dynamic_pointer_cast<MultiReader>(reader))
-        {
+        if (boost::dynamic_pointer_cast<MultiReader>(reader)) {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }
@@ -100,8 +94,7 @@ public:
         reader->commit(MapStringString());
         reader->close();
 
-        if (boost::dynamic_pointer_cast<MultiReader>(reader))
-        {
+        if (boost::dynamic_pointer_cast<MultiReader>(reader)) {
             // MultiReader does not "own" the directory so it does not write the changes to sis on commit
             sis->commit(dir);
         }
@@ -112,8 +105,7 @@ public:
     }
 
 protected:
-    IndexReaderPtr openReader()
-    {
+    IndexReaderPtr openReader() {
         IndexReaderPtr reader = IndexReader::open(dir, false);
         EXPECT_TRUE(boost::dynamic_pointer_cast<DirectoryReader>(reader));
         EXPECT_TRUE(dir);
@@ -122,31 +114,27 @@ protected:
         return reader;
     }
 
-    void checkNorms(const IndexReaderPtr& reader)
-    {
-        for (Collection<FieldPtr>::iterator field = DocHelper::fields.begin(); field != DocHelper::fields.end(); ++field)
-        {
-            if ((*field)->isIndexed())
-            {
+    void checkNorms(const IndexReaderPtr& reader) {
+        for (Collection<FieldPtr>::iterator field = DocHelper::fields.begin(); field != DocHelper::fields.end(); ++field) {
+            if ((*field)->isIndexed()) {
                 EXPECT_EQ(reader->hasNorms((*field)->name()), !(*field)->getOmitNorms());
                 EXPECT_EQ(reader->hasNorms((*field)->name()), !DocHelper::noNorms.contains((*field)->name()));
-                if (!reader->hasNorms((*field)->name()))
-                {
+                if (!reader->hasNorms((*field)->name())) {
                     // test for fake norms of 1.0 or null depending on the flag
                     ByteArray norms = reader->norms((*field)->name());
                     uint8_t norm1 = DefaultSimilarity::encodeNorm(1.0);
                     EXPECT_TRUE(!norms);
                     norms = ByteArray::newInstance(reader->maxDoc());
                     reader->norms((*field)->name(), norms, 0);
-                    for (int32_t j = 0; j < reader->maxDoc(); ++j)
+                    for (int32_t j = 0; j < reader->maxDoc(); ++j) {
                         EXPECT_EQ(norms[j], norm1);
+                    }
                 }
             }
         }
     }
 
-    void addDoc(const RAMDirectoryPtr& ramDir1, const String& s, bool create)
-    {
+    void addDoc(const RAMDirectoryPtr& ramDir1, const String& s, bool create) {
         IndexWriterPtr iw = newLucene<IndexWriter>(ramDir1, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), create, IndexWriter::MaxFieldLengthLIMITED);
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"body", s, Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -155,14 +143,12 @@ protected:
     }
 };
 
-TEST_F(DirectoryReaderTest, testDirectoryReader)
-{
+TEST_F(DirectoryReaderTest, testDirectoryReader) {
     doTestDocument();
     doTestUndeleteAll();
 }
 
-TEST_F(DirectoryReaderTest, testIsCurrent)
-{
+TEST_F(DirectoryReaderTest, testIsCurrent) {
     RAMDirectoryPtr ramDir1 = newLucene<RAMDirectory>();
     addDoc(ramDir1, L"test foo", true);
     RAMDirectoryPtr ramDir2 = newLucene<RAMDirectory>();
@@ -173,19 +159,15 @@ TEST_F(DirectoryReaderTest, testIsCurrent)
     EXPECT_TRUE(!mr->isCurrent()); // has been modified, not current anymore
     addDoc(ramDir2, L"even more text", false);
     EXPECT_TRUE(!mr->isCurrent()); // has been modified even more, not current anymore
-    try
-    {
+    try {
         mr->getVersion();
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::UnsupportedOperation)(e));
     }
     mr->close();
 }
 
-TEST_F(DirectoryReaderTest, testMultiTermDocs)
-{
+TEST_F(DirectoryReaderTest, testMultiTermDocs) {
     RAMDirectoryPtr ramDir1 = newLucene<RAMDirectory>();
     addDoc(ramDir1, L"test foo", true);
     RAMDirectoryPtr ramDir2 = newLucene<RAMDirectory>();
@@ -206,8 +188,9 @@ TEST_F(DirectoryReaderTest, testMultiTermDocs)
     int32_t ret = 0;
 
     // This should blow up if we forget to check that the TermEnum is from the same reader as the TermDocs.
-    while (td2->next())
+    while (td2->next()) {
         ret += td2->doc();
+    }
     td2->close();
     te3->close();
 
@@ -215,13 +198,11 @@ TEST_F(DirectoryReaderTest, testMultiTermDocs)
     EXPECT_TRUE(ret > 0);
 }
 
-TEST_F(DirectoryReaderTest, testAllTermDocs)
-{
+TEST_F(DirectoryReaderTest, testAllTermDocs) {
     IndexReaderPtr reader = openReader();
     int32_t NUM_DOCS = 2;
     TermDocsPtr td = reader->termDocs(TermPtr());
-    for (int32_t i = 0; i < NUM_DOCS; ++i)
-    {
+    for (int32_t i = 0; i < NUM_DOCS; ++i) {
         EXPECT_TRUE(td->next());
         EXPECT_EQ(i, td->doc());
         EXPECT_EQ(1, td->freq());

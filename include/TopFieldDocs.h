@@ -9,26 +9,26 @@
 
 #include "TopDocs.h"
 
-namespace Lucene
-{
-    /// Represents hits returned by {@link Searcher#search(QueryPtr, FilterPtr, int32_t, SortPtr)}.
-    class LPPAPI TopFieldDocs : public TopDocs
-    {
-    public:
-        /// @param totalHits Total number of hits for the query.
-        /// @param scoreDocs The top hits for the query.
-        /// @param fields The sort criteria used to find the top hits.
-        /// @param maxScore The maximum score encountered.
-        TopFieldDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, Collection<SortFieldPtr> fields, double maxScore);
+namespace Lucene {
 
-        virtual ~TopFieldDocs();
+/// Represents hits returned by {@link Searcher#search(QueryPtr, FilterPtr, int32_t, SortPtr)}.
+class LPPAPI TopFieldDocs : public TopDocs {
+public:
+    /// @param totalHits Total number of hits for the query.
+    /// @param scoreDocs The top hits for the query.
+    /// @param fields The sort criteria used to find the top hits.
+    /// @param maxScore The maximum score encountered.
+    TopFieldDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, Collection<SortFieldPtr> fields, double maxScore);
 
-        LUCENE_CLASS(TopFieldDocs);
+    virtual ~TopFieldDocs();
 
-    public:
-        /// The fields which were used to sort results by.
-        Collection<SortFieldPtr> fields;
-    };
+    LUCENE_CLASS(TopFieldDocs);
+
+public:
+    /// The fields which were used to sort results by.
+    Collection<SortFieldPtr> fields;
+};
+
 }
 
 #endif

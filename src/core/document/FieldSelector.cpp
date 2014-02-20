@@ -7,13 +7,12 @@
 #include "LuceneInc.h"
 #include "FieldSelector.h"
 
-namespace Lucene
-{
-    FieldSelector::FieldSelector()
-    {
-    }
+namespace Lucene {
 
-    FieldSelector::~FieldSelector()
-    {
-    }
+FieldSelector::FieldSelector() {
+}
+
+FieldSelector::~FieldSelector() {
+}
+
 }

@@ -19,15 +19,15 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CheckIndexTest;
 
-TEST_F(CheckIndexTest, testDeletedDocs)
-{
+TEST_F(CheckIndexTest, testDeletedDocs) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
-    for (int32_t i = 0; i < 19; ++i)
+    for (int32_t i = 0; i < 19; ++i) {
         writer->addDocument(doc);
+    }
     writer->close();
     IndexReaderPtr reader = IndexReader::open(dir, false);
     reader->deleteDocument(5);

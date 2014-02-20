@@ -25,14 +25,12 @@ typedef BaseTokenStreamFixture CachingTokenFilterTest;
 
 static Collection<String> tokens = newCollection<String>(L"term1", L"term2", L"term3", L"term2");
 
-static void checkTokens(const TokenStreamPtr& stream)
-{
+static void checkTokens(const TokenStreamPtr& stream) {
     int32_t count = 0;
 
     TermAttributePtr termAtt = stream->getAttribute<TermAttribute>();
     EXPECT_TRUE(termAtt);
-    while (stream->incrementToken())
-    {
+    while (stream->incrementToken()) {
         EXPECT_TRUE(count < tokens.size());
         EXPECT_EQ(tokens[count], termAtt->term());
         ++count;
@@ -40,45 +38,40 @@ static void checkTokens(const TokenStreamPtr& stream)
     EXPECT_EQ(tokens.size(), count);
 }
 
-namespace TestCaching
-{
-    class TestableTokenStream : public TokenStream
-    {
-    public:
-        TestableTokenStream()
-        {
-            index = 0;
-            termAtt = addAttribute<TermAttribute>();
-            offsetAtt = addAttribute<OffsetAttribute>();
-        }
+namespace TestCaching {
 
-        virtual ~TestableTokenStream()
-        {
-        }
+class TestableTokenStream : public TokenStream {
+public:
+    TestableTokenStream() {
+        index = 0;
+        termAtt = addAttribute<TermAttribute>();
+        offsetAtt = addAttribute<OffsetAttribute>();
+    }
 
-    protected:
-        int32_t index;
-        TermAttributePtr termAtt;
-        OffsetAttributePtr offsetAtt;
+    virtual ~TestableTokenStream() {
+    }
 
-    public:
-        virtual bool incrementToken()
-        {
-            if (index == tokens.size())
-                return false;
-            else
-            {
-                clearAttributes();
-                termAtt->setTermBuffer(tokens[index++]);
-                offsetAtt->setOffset(0, 0);
-                return true;
-            }
+protected:
+    int32_t index;
+    TermAttributePtr termAtt;
+    OffsetAttributePtr offsetAtt;
+
+public:
+    virtual bool incrementToken() {
+        if (index == tokens.size()) {
+            return false;
+        } else {
+            clearAttributes();
+            termAtt->setTermBuffer(tokens[index++]);
+            offsetAtt->setOffset(0, 0);
+            return true;
         }
-    };
+    }
+};
+
 }
 
-TEST_F(CachingTokenFilterTest, testCaching)
-{
+TEST_F(CachingTokenFilterTest, testCaching) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();

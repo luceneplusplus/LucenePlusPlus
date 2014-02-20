@@ -9,28 +9,28 @@
 
 #include "InvertedDocEndConsumerPerThread.h"
 
-namespace Lucene
-{
-    class NormsWriterPerThread : public InvertedDocEndConsumerPerThread
-    {
-    public:
-        NormsWriterPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const NormsWriterPtr& normsWriter);
-        virtual ~NormsWriterPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(NormsWriterPerThread);
+class NormsWriterPerThread : public InvertedDocEndConsumerPerThread {
+public:
+    NormsWriterPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const NormsWriterPtr& normsWriter);
+    virtual ~NormsWriterPerThread();
 
-    public:
-        NormsWriterWeakPtr _normsWriter;
-        DocStatePtr docState;
+    LUCENE_CLASS(NormsWriterPerThread);
 
-    public:
-        virtual InvertedDocEndConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo);
-        virtual void abort();
-        virtual void startDocument();
-        virtual void finishDocument();
+public:
+    NormsWriterWeakPtr _normsWriter;
+    DocStatePtr docState;
 
-        bool freeRAM();
-    };
+public:
+    virtual InvertedDocEndConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo);
+    virtual void abort();
+    virtual void startDocument();
+    virtual void finishDocument();
+
+    bool freeRAM();
+};
+
 }
 
 #endif

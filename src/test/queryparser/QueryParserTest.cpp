@@ -48,11 +48,9 @@ DECLARE_SHARED_PTR(QueryParserTestFilter)
 DECLARE_SHARED_PTR(TestParser)
 
 /// Filter which discards the token 'stop' and which expands the token 'phrase' into 'phrase1 phrase2'
-class QueryParserTestFilter : public TokenFilter
-{
+class QueryParserTestFilter : public TokenFilter {
 public:
-    QueryParserTestFilter(const TokenStreamPtr& in) : TokenFilter(in)
-    {
+    QueryParserTestFilter(const TokenStreamPtr& in) : TokenFilter(in) {
         termAtt = addAttribute<TermAttribute>();
         offsetAtt = addAttribute<OffsetAttribute>();
         inPhrase = false;
@@ -60,8 +58,7 @@ public:
         savedEnd = 0;
     }
 
-    virtual ~QueryParserTestFilter()
-    {
+    virtual ~QueryParserTestFilter() {
     }
 
     LUCENE_CLASS(QueryParserTestFilter);
@@ -74,202 +71,177 @@ public:
     OffsetAttributePtr offsetAtt;
 
 public:
-    virtual bool incrementToken()
-    {
-        if (inPhrase)
-        {
+    virtual bool incrementToken() {
+        if (inPhrase) {
             inPhrase = false;
             clearAttributes();
             termAtt->setTermBuffer(L"phrase2");
             offsetAtt->setOffset(savedStart, savedEnd);
             return true;
-        }
-        else
-        {
-            while (input->incrementToken())
-            {
-                if (termAtt->term() == L"phrase")
-                {
+        } else {
+            while (input->incrementToken()) {
+                if (termAtt->term() == L"phrase") {
                     inPhrase = true;
                     savedStart = offsetAtt->startOffset();
                     savedEnd = offsetAtt->endOffset();
                     termAtt->setTermBuffer(L"phrase1");
                     offsetAtt->setOffset(savedStart, savedEnd);
                     return true;
-                }
-                else if (termAtt->term() != L"stop")
+                } else if (termAtt->term() != L"stop") {
                     return true;
+                }
             }
         }
         return false;
     }
 };
 
-class QueryParserTestAnalyzer : public Analyzer
-{
+class QueryParserTestAnalyzer : public Analyzer {
 public:
-    virtual ~QueryParserTestAnalyzer()
-    {
+    virtual ~QueryParserTestAnalyzer() {
     }
 
     LUCENE_CLASS(QueryParserTestAnalyzer);
 
 public:
     // Filters LowerCaseTokenizer with StopFilter.
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         return newLucene<QueryParserTestFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
 };
 
-class TestParser : public QueryParser
-{
+class TestParser : public QueryParser {
 public:
-    TestParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
-    {
+    TestParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a) {
     }
 
-    virtual ~TestParser()
-    {
+    virtual ~TestParser() {
     }
 
     LUCENE_CLASS(TestParser);
 
 public:
-    virtual QueryPtr getFuzzyQuery(const String& field, const String& termStr, double minSimilarity)
-    {
+    virtual QueryPtr getFuzzyQuery(const String& field, const String& termStr, double minSimilarity) {
         boost::throw_exception(QueryParserError(L"Fuzzy queries not allowed"));
         return QueryPtr();
     }
 
-    virtual QueryPtr getWildcardQuery(const String& field, const String& termStr)
-    {
+    virtual QueryPtr getWildcardQuery(const String& field, const String& termStr) {
         boost::throw_exception(QueryParserError(L"Wildcard queries not allowed"));
         return QueryPtr();
     }
 };
 
-class QueryParserTest : public LuceneTestFixture
-{
+class QueryParserTest : public LuceneTestFixture {
 public:
-    QueryParserTest()
-    {
+    QueryParserTest() {
         originalMaxClauses = BooleanQuery::getMaxClauseCount();
         DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
     }
 
-    virtual ~QueryParserTest()
-    {
+    virtual ~QueryParserTest() {
         BooleanQuery::setMaxClauseCount(originalMaxClauses);
     }
 
 protected:
     int32_t originalMaxClauses;
 
-    QueryParserPtr getParser(const AnalyzerPtr& a)
-    {
+    QueryParserPtr getParser(const AnalyzerPtr& a) {
         AnalyzerPtr _a(a);
-        if (!_a)
+        if (!_a) {
             _a = newLucene<SimpleAnalyzer>();
+        }
         QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", _a);
         qp->setDefaultOperator(QueryParser::OR_OPERATOR);
         return qp;
     }
 
-    QueryPtr getQuery(const String& query, const AnalyzerPtr& a)
-    {
+    QueryPtr getQuery(const String& query, const AnalyzerPtr& a) {
         return getParser(a)->parse(query);
     }
 
-    void checkQueryEquals(const String& query, const AnalyzerPtr& a, const String& result)
-    {
+    void checkQueryEquals(const String& query, const AnalyzerPtr& a, const String& result) {
         QueryPtr q = getQuery(query, a);
         String s = q->toString(L"field");
-        if (s != result)
+        if (s != result) {
             FAIL() << "Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
+        }
     }
 
-    void checkQueryEquals(const QueryParserPtr& qp, const String& field, const String& query, const String& result)
-    {
+    void checkQueryEquals(const QueryParserPtr& qp, const String& field, const String& query, const String& result) {
         QueryPtr q = qp->parse(query);
         String s = q->toString(field);
-        if (s != result)
+        if (s != result) {
             FAIL() << "Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
+        }
     }
 
-    void checkParseException(const String& queryString)
-    {
-        try
-        {
+    void checkParseException(const String& queryString) {
+        try {
             getQuery(queryString, AnalyzerPtr());
-        }
-        catch (QueryParserError& e)
-        {
+        } catch (QueryParserError& e) {
             EXPECT_TRUE(check_exception(LuceneException::QueryParser)(e));
         }
     }
 
-    void checkWildcardQueryEquals(const String& query, bool lowercase, const String& result, bool allowLeadingWildcard = false)
-    {
+    void checkWildcardQueryEquals(const String& query, bool lowercase, const String& result, bool allowLeadingWildcard = false) {
         QueryParserPtr qp = getParser(AnalyzerPtr());
         qp->setLowercaseExpandedTerms(lowercase);
         qp->setAllowLeadingWildcard(allowLeadingWildcard);
         QueryPtr q = qp->parse(query);
         String s = q->toString(L"field");
-        if (s != result)
+        if (s != result) {
             FAIL() << "WildcardQuery \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
+        }
     }
 
-    void checkWildcardQueryEquals(const String& query, const String& result)
-    {
+    void checkWildcardQueryEquals(const String& query, const String& result) {
         QueryParserPtr qp = getParser(AnalyzerPtr());
         QueryPtr q = qp->parse(query);
         String s = q->toString(L"field");
-        if (s != result)
+        if (s != result) {
             FAIL() << "WildcardQuery \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
+        }
     }
 
-    void checkEscapedQueryEquals(const String& query, const AnalyzerPtr& a, const String& result)
-    {
-        class TestableQueryParser : public QueryParser
-        {
+    void checkEscapedQueryEquals(const String& query, const AnalyzerPtr& a, const String& result) {
+        class TestableQueryParser : public QueryParser {
         public:
             using QueryParser::escape;
         };
 
         String escapedQuery = TestableQueryParser::escape(query);
-        if (escapedQuery != result)
+        if (escapedQuery != result) {
             FAIL() << "Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(escapedQuery) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
+        }
     }
 
-    QueryPtr getQueryDOA(const String& query, const AnalyzerPtr& a)
-    {
+    QueryPtr getQueryDOA(const String& query, const AnalyzerPtr& a) {
         AnalyzerPtr _a(a);
-        if (!_a)
+        if (!_a) {
             _a = newLucene<SimpleAnalyzer>();
+        }
         QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", _a);
         qp->setDefaultOperator(QueryParser::AND_OPERATOR);
         return qp->parse(query);
     }
 
-    void checkQueryEqualsDOA(const String& query, const AnalyzerPtr& a, const String& result)
-    {
+    void checkQueryEqualsDOA(const String& query, const AnalyzerPtr& a, const String& result) {
         QueryPtr q = getQueryDOA(query, a);
         String s = q->toString(L"field");
-        if (s != result)
+        if (s != result) {
             FAIL() << "Query \"" << StringUtils::toUTF8(query) << "\" yielded \"" << StringUtils::toUTF8(s) << "\", expecting \"" << StringUtils::toUTF8(result) << "\"";
+        }
     }
 
-    void addDateDoc(const String& content, boost::posix_time::ptime date, const IndexWriterPtr& iw)
-    {
+    void addDateDoc(const String& content, boost::posix_time::ptime date, const IndexWriterPtr& iw) {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(L"f", content, Field::STORE_YES, Field::INDEX_ANALYZED));
         d->add(newLucene<Field>(L"date", DateField::dateToString(date), Field::STORE_YES, Field::INDEX_ANALYZED));
         iw->addDocument(d);
     }
 
-    void checkHits(int32_t expected, const String& query, const IndexSearcherPtr& is)
-    {
+    void checkHits(int32_t expected, const String& query, const IndexSearcherPtr& is) {
         QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"date", newLucene<WhitespaceAnalyzer>());
         qp->setLocale(std::locale());
         QueryPtr q = qp->parse(query);
@@ -278,8 +250,7 @@ protected:
     }
 };
 
-TEST_F(QueryParserTest, testSimple)
-{
+TEST_F(QueryParserTest, testSimple) {
     checkQueryEquals(L"term term term", AnalyzerPtr(), L"term term term");
 
     const uint8_t term[] = {0x74, 0xc3, 0xbc, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d, 0x20, 0x74, 0x65, 0x72, 0x6d};
@@ -339,16 +310,14 @@ TEST_F(QueryParserTest, testSimple)
     EXPECT_EQ(QueryParser::OR_OPERATOR, qp->getDefaultOperator());
 }
 
-TEST_F(QueryParserTest, testPunct)
-{
+TEST_F(QueryParserTest, testPunct) {
     AnalyzerPtr a = newLucene<WhitespaceAnalyzer>();
     checkQueryEquals(L"a&b", a, L"a&b");
     checkQueryEquals(L"a&&b", a, L"a&&b");
     checkQueryEquals(L".NET", a, L".NET");
 }
 
-TEST_F(QueryParserTest, testSlop)
-{
+TEST_F(QueryParserTest, testSlop) {
     checkQueryEquals(L"\"term germ\"~2", AnalyzerPtr(), L"\"term germ\"~2");
     checkQueryEquals(L"\"term germ\"~2 flork", AnalyzerPtr(), L"\"term germ\"~2 flork");
     checkQueryEquals(L"\"term\"~2", AnalyzerPtr(), L"term");
@@ -356,8 +325,7 @@ TEST_F(QueryParserTest, testSlop)
     checkQueryEquals(L"\"term germ\"~2^2", AnalyzerPtr(), L"\"term germ\"~2^2.0");
 }
 
-TEST_F(QueryParserTest, testNumber)
-{
+TEST_F(QueryParserTest, testNumber) {
     // The numbers go away because SimpleAnalzyer ignores them
     checkQueryEquals(L"3", AnalyzerPtr(), L"");
     checkQueryEquals(L"term 1.0 1 2", AnalyzerPtr(), L"term");
@@ -369,8 +337,7 @@ TEST_F(QueryParserTest, testNumber)
     checkQueryEquals(L"term term1 term2", a, L"term term1 term2");
 }
 
-TEST_F(QueryParserTest, testWildcard)
-{
+TEST_F(QueryParserTest, testWildcard) {
     checkQueryEquals(L"term*", AnalyzerPtr(), L"term*");
     checkQueryEquals(L"term*^2", AnalyzerPtr(), L"term*^2.0");
     checkQueryEquals(L"term~", AnalyzerPtr(), L"term~0.5");
@@ -430,20 +397,14 @@ TEST_F(QueryParserTest, testWildcard)
     checkWildcardQueryEquals(L"[A TO C]", true, L"[a TO c]");
     checkWildcardQueryEquals(L"[A TO C]", false, L"[A TO C]");
     // Test suffix queries: first disallow
-    try
-    {
+    try {
         checkWildcardQueryEquals(L"*Term", true, L"*term");
-    }
-    catch (QueryParserError& e)
-    {
+    } catch (QueryParserError& e) {
         EXPECT_TRUE(check_exception(LuceneException::QueryParser)(e));
     }
-    try
-    {
+    try {
         checkWildcardQueryEquals(L"?Term", true, L"?term");
-    }
-    catch (QueryParserError& e)
-    {
+    } catch (QueryParserError& e) {
         EXPECT_TRUE(check_exception(LuceneException::QueryParser)(e));
     }
 
@@ -452,8 +413,7 @@ TEST_F(QueryParserTest, testWildcard)
     checkWildcardQueryEquals(L"?Term", true, L"?term", true);
 }
 
-TEST_F(QueryParserTest, testLeadingWildcardType)
-{
+TEST_F(QueryParserTest, testLeadingWildcardType) {
     QueryParserPtr qp = getParser(AnalyzerPtr());
     qp->setAllowLeadingWildcard(true);
     EXPECT_TRUE(MiscUtils::typeOf<WildcardQuery>(qp->parse(L"t*erm*")));
@@ -461,8 +421,7 @@ TEST_F(QueryParserTest, testLeadingWildcardType)
     EXPECT_TRUE(MiscUtils::typeOf<WildcardQuery>(qp->parse(L"*term*")));
 }
 
-TEST_F(QueryParserTest, testQPA)
-{
+TEST_F(QueryParserTest, testQPA) {
     AnalyzerPtr qpAnalyzer = newLucene<QueryParserTestAnalyzer>();
 
     checkQueryEquals(L"term term^3.0 term", qpAnalyzer, L"term term^3.0 term");
@@ -491,8 +450,7 @@ TEST_F(QueryParserTest, testQPA)
     EXPECT_TRUE(MiscUtils::typeOf<TermQuery>(getQuery(L"term +stop", qpAnalyzer)));
 }
 
-TEST_F(QueryParserTest, testRange)
-{
+TEST_F(QueryParserTest, testRange) {
     checkQueryEquals(L"[ a TO z]", AnalyzerPtr(), L"[a TO z]");
     EXPECT_EQ(MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT(), boost::dynamic_pointer_cast<TermRangeQuery>(getQuery(L"[ a TO z]", AnalyzerPtr()))->getRewriteMethod());
 
@@ -510,15 +468,13 @@ TEST_F(QueryParserTest, testRange)
     checkQueryEquals(L"gack ( bar blar { a TO z}) ", AnalyzerPtr(), L"gack (bar blar {a TO z})");
 }
 
-TEST_F(QueryParserTest, testLegacyDateRange)
-{
+TEST_F(QueryParserTest, testLegacyDateRange) {
     DateTools::setDateOrder(DateTools::DATEORDER_DMY);
     checkQueryEquals(L"[01/02/02 TO 04/02/02]", AnalyzerPtr(), L"[0cx597uo0 TO 0cxayz9bz]");
     checkQueryEquals(L"{01/02/02 04/02/02}", AnalyzerPtr(), L"{0cx597uo0 TO 0cx9jjeo0}");
 }
 
-TEST_F(QueryParserTest, testDateRange)
-{
+TEST_F(QueryParserTest, testDateRange) {
     DateTools::setDateOrder(DateTools::DATEORDER_DMY);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<SimpleAnalyzer>());
 
@@ -551,8 +507,7 @@ TEST_F(QueryParserTest, testDateRange)
     checkQueryEquals(qp, L"hour", L"hour:{01/02/02 TO 04/02/02}", L"{2002020100 TO 2002020400}");
 }
 
-TEST_F(QueryParserTest, testEscaped)
-{
+TEST_F(QueryParserTest, testEscaped) {
     AnalyzerPtr a = newLucene<WhitespaceAnalyzer>();
 
     checkQueryEquals(L"\\a", a, L"a");
@@ -619,8 +574,7 @@ TEST_F(QueryParserTest, testEscaped)
     checkQueryEquals(L"(\"a\\\\\") or (\"b\")", a, L"a\\ or b");
 }
 
-TEST_F(QueryParserTest, testQueryStringEscaping)
-{
+TEST_F(QueryParserTest, testQueryStringEscaping) {
     AnalyzerPtr a = newLucene<WhitespaceAnalyzer>();
 
     checkEscapedQueryEquals(L"a-b:c", a, L"a\\-b\\:c");
@@ -658,8 +612,7 @@ TEST_F(QueryParserTest, testQueryStringEscaping)
     checkEscapedQueryEquals(L"&& abc &&", a, L"\\&\\& abc \\&\\&");
 }
 
-TEST_F(QueryParserTest, testTabNewlineCarriageReturn)
-{
+TEST_F(QueryParserTest, testTabNewlineCarriageReturn) {
     checkQueryEqualsDOA(L"+weltbank +worlbank", AnalyzerPtr(), L"+weltbank +worlbank");
 
     checkQueryEqualsDOA(L"+weltbank\n+worlbank", AnalyzerPtr(), L"+weltbank +worlbank");
@@ -680,8 +633,7 @@ TEST_F(QueryParserTest, testTabNewlineCarriageReturn)
     checkQueryEqualsDOA(L"weltbank \t +worlbank", AnalyzerPtr(), L"+weltbank +worlbank");
 }
 
-TEST_F(QueryParserTest, testSimpleDAO)
-{
+TEST_F(QueryParserTest, testSimpleDAO) {
     checkQueryEqualsDOA(L"term term term", AnalyzerPtr(), L"+term +term +term");
     checkQueryEqualsDOA(L"term +term term", AnalyzerPtr(), L"+term +term +term");
     checkQueryEqualsDOA(L"term term +term", AnalyzerPtr(), L"+term +term +term");
@@ -689,8 +641,7 @@ TEST_F(QueryParserTest, testSimpleDAO)
     checkQueryEqualsDOA(L"-term term term", AnalyzerPtr(), L"-term +term +term");
 }
 
-TEST_F(QueryParserTest, testBoost)
-{
+TEST_F(QueryParserTest, testBoost) {
     HashSet<String> stopWords = HashSet<String>::newInstance();
     stopWords.add(L"on");
     StandardAnalyzerPtr oneStopAnalyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT, stopWords);
@@ -715,8 +666,7 @@ TEST_F(QueryParserTest, testBoost)
     EXPECT_NEAR(1.0, q->getBoost(), 0.01);
 }
 
-TEST_F(QueryParserTest, testException)
-{
+TEST_F(QueryParserTest, testException) {
     checkParseException(L"\"some phrase");
     checkParseException(L"(foo bar");
     checkParseException(L"foo bar))");
@@ -725,56 +675,42 @@ TEST_F(QueryParserTest, testException)
     checkParseException(L"secret AND illegal) AND access:confidential");
 }
 
-TEST_F(QueryParserTest, testCustomQueryParserWildcard)
-{
-    try
-    {
+TEST_F(QueryParserTest, testCustomQueryParserWildcard) {
+    try {
         newLucene<TestParser>(L"contents", newLucene<WhitespaceAnalyzer>())->parse(L"a?t");
-    }
-    catch (QueryParserError& e)
-    {
+    } catch (QueryParserError& e) {
         EXPECT_TRUE(check_exception(LuceneException::QueryParser)(e));
     }
 }
 
-TEST_F(QueryParserTest, testCustomQueryParserFuzzy)
-{
-    try
-    {
+TEST_F(QueryParserTest, testCustomQueryParserFuzzy) {
+    try {
         newLucene<TestParser>(L"contents", newLucene<WhitespaceAnalyzer>())->parse(L"xunit~");
-    }
-    catch (QueryParserError& e)
-    {
+    } catch (QueryParserError& e) {
         EXPECT_TRUE(check_exception(LuceneException::QueryParser)(e));
     }
 }
 
-TEST_F(QueryParserTest, testBooleanQuery)
-{
+TEST_F(QueryParserTest, testBooleanQuery) {
     BooleanQuery::setMaxClauseCount(2);
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<WhitespaceAnalyzer>());
 
     // too many boolean clauses, so ParseException is expected
-    try
-    {
+    try {
         qp->parse(L"one two three");
-    }
-    catch (QueryParserError& e)
-    {
+    } catch (QueryParserError& e) {
         EXPECT_TRUE(check_exception(LuceneException::QueryParser)(e));
     }
 }
 
-TEST_F(QueryParserTest, testPrecedence)
-{
+TEST_F(QueryParserTest, testPrecedence) {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<WhitespaceAnalyzer>());
     QueryPtr query1 = qp->parse(L"A AND B OR C AND D");
     QueryPtr query2 = qp->parse(L"+A +B +C +D");
     EXPECT_TRUE(query1->equals(query2));
 }
 
-TEST_F(QueryParserTest, testLocalDateFormat)
-{
+TEST_F(QueryParserTest, testLocalDateFormat) {
     DateTools::setDateOrder(DateTools::DATEORDER_DMY);
     RAMDirectoryPtr ramDir = newLucene<RAMDirectory>();
     IndexWriterPtr iw = newLucene<IndexWriter>(ramDir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -791,52 +727,46 @@ TEST_F(QueryParserTest, testLocalDateFormat)
     is->close();
 }
 
-namespace TestStarParsing
-{
-    DECLARE_SHARED_PTR(StarParser)
+namespace TestStarParsing {
 
-    class StarParser : public QueryParser
-    {
-    public:
-        StarParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a)
-        {
-            type = Collection<int32_t>::newInstance(1);
-        }
+DECLARE_SHARED_PTR(StarParser)
 
-        virtual ~StarParser()
-        {
-        }
+class StarParser : public QueryParser {
+public:
+    StarParser(const String& f, const AnalyzerPtr& a) : QueryParser(LuceneVersion::LUCENE_CURRENT, f, a) {
+        type = Collection<int32_t>::newInstance(1);
+    }
 
-        LUCENE_CLASS(StarParser);
+    virtual ~StarParser() {
+    }
 
-    public:
-        Collection<int32_t> type;
+    LUCENE_CLASS(StarParser);
 
-    public:
-        virtual QueryPtr getWildcardQuery(const String& field, const String& termStr)
-        {
-            // override error checking of superclass
-            type[0] = 1;
-            return newLucene<TermQuery>(newLucene<Term>(field, termStr));
-        }
+public:
+    Collection<int32_t> type;
 
-        virtual QueryPtr getPrefixQuery(const String& field, const String& termStr)
-        {
-            // override error checking of superclass
-            type[0] = 2;
-            return newLucene<TermQuery>(newLucene<Term>(field, termStr));
-        }
+public:
+    virtual QueryPtr getWildcardQuery(const String& field, const String& termStr) {
+        // override error checking of superclass
+        type[0] = 1;
+        return newLucene<TermQuery>(newLucene<Term>(field, termStr));
+    }
 
-        virtual QueryPtr getFieldQuery(const String& field, const String& queryText)
-        {
-            type[0] = 3;
-            return QueryParser::getFieldQuery(field, queryText);
-        }
-    };
+    virtual QueryPtr getPrefixQuery(const String& field, const String& termStr) {
+        // override error checking of superclass
+        type[0] = 2;
+        return newLucene<TermQuery>(newLucene<Term>(field, termStr));
+    }
+
+    virtual QueryPtr getFieldQuery(const String& field, const String& queryText) {
+        type[0] = 3;
+        return QueryParser::getFieldQuery(field, queryText);
+    }
+};
+
 }
 
-TEST_F(QueryParserTest, testStarParsing)
-{
+TEST_F(QueryParserTest, testStarParsing) {
     TestStarParsing::StarParserPtr qp = newLucene<TestStarParsing::StarParser>(L"field", newLucene<WhitespaceAnalyzer>());
 
     TermQueryPtr tq = boost::dynamic_pointer_cast<TermQuery>(qp->parse(L"foo:zoo*"));
@@ -873,8 +803,7 @@ TEST_F(QueryParserTest, testStarParsing)
     EXPECT_EQ(1, qp->type[0]);
 }
 
-TEST_F(QueryParserTest, testStopwords)
-{
+TEST_F(QueryParserTest, testStopwords) {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"a", newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT, StopFilter::makeStopSet(newCollection<String>(L"the", L"foo"))));
     QueryPtr result = qp->parse(L"a:the OR a:foo");
     EXPECT_TRUE(result);
@@ -889,8 +818,7 @@ TEST_F(QueryParserTest, testStopwords)
     EXPECT_EQ(boost::dynamic_pointer_cast<BooleanQuery>(result)->getClauses().size(), 2);
 }
 
-TEST_F(QueryParserTest, testPositionIncrement)
-{
+TEST_F(QueryParserTest, testPositionIncrement) {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"a", newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT, StopFilter::makeStopSet(newCollection<String>(L"the", L"in", L"are", L"this"))));
     qp->setEnablePositionIncrements(true);
     String qtxt = L"\"the words in positions pos02578 are stopped in this phrasequery\"";
@@ -899,12 +827,12 @@ TEST_F(QueryParserTest, testPositionIncrement)
     PhraseQueryPtr pq = boost::dynamic_pointer_cast<PhraseQuery>(qp->parse(qtxt));
     Collection<TermPtr> t = pq->getTerms();
     Collection<int32_t> pos = pq->getPositions();
-    for (int32_t i = 0; i < t.size(); ++i)
+    for (int32_t i = 0; i < t.size(); ++i) {
         EXPECT_EQ(expectedPositions[i], pos[i]);
+    }
 }
 
-TEST_F(QueryParserTest, testMatchAllDocs)
-{
+TEST_F(QueryParserTest, testMatchAllDocs) {
     QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"field", newLucene<WhitespaceAnalyzer>());
     EXPECT_TRUE(newLucene<MatchAllDocsQuery>()->equals(qp->parse(L"*:*")));
     EXPECT_TRUE(newLucene<MatchAllDocsQuery>()->equals(qp->parse(L"(*:*)")));
@@ -913,8 +841,7 @@ TEST_F(QueryParserTest, testMatchAllDocs)
     EXPECT_TRUE(MiscUtils::typeOf<MatchAllDocsQuery>(bq->getClauses()[1]->getQuery()));
 }
 
-TEST_F(QueryParserTest, testPositionIncrements)
-{
+TEST_F(QueryParserTest, testPositionIncrements) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     AnalyzerPtr a = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     IndexWriterPtr w = newLucene<IndexWriter>(dir, a, IndexWriter::MaxFieldLengthUNLIMITED);

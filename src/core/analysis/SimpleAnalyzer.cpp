@@ -8,27 +8,24 @@
 #include "SimpleAnalyzer.h"
 #include "LowerCaseTokenizer.h"
 
-namespace Lucene
-{
-    SimpleAnalyzer::~SimpleAnalyzer()
-    {
-    }
+namespace Lucene {
 
-    TokenStreamPtr SimpleAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        return newLucene<LowerCaseTokenizer>(reader);
-    }
+SimpleAnalyzer::~SimpleAnalyzer() {
+}
 
-    TokenStreamPtr SimpleAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
-        if (!tokenizer)
-        {
-            tokenizer = newLucene<LowerCaseTokenizer>(reader);
-            setPreviousTokenStream(tokenizer);
-        }
-        else
-            tokenizer->reset(reader);
-        return tokenizer;
+TokenStreamPtr SimpleAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader) {
+    return newLucene<LowerCaseTokenizer>(reader);
+}
+
+TokenStreamPtr SimpleAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
+    TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
+    if (!tokenizer) {
+        tokenizer = newLucene<LowerCaseTokenizer>(reader);
+        setPreviousTokenStream(tokenizer);
+    } else {
+        tokenizer->reset(reader);
     }
+    return tokenizer;
+}
+
 }

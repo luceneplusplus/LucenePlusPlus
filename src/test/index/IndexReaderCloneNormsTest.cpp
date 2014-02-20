@@ -22,25 +22,20 @@
 
 using namespace Lucene;
 
-class SimilarityOne : public DefaultSimilarity
-{
+class SimilarityOne : public DefaultSimilarity {
 public:
-    virtual ~SimilarityOne()
-    {
+    virtual ~SimilarityOne() {
     }
 
 public:
-    virtual double lengthNorm(const String& fieldName, int32_t numTokens)
-    {
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
         return 1.0;
     }
 };
 
-class IndexReaderCloneNormsTest : public LuceneTestFixture
-{
+class IndexReaderCloneNormsTest : public LuceneTestFixture {
 public:
-    IndexReaderCloneNormsTest()
-    {
+    IndexReaderCloneNormsTest() {
         similarityOne = newLucene<SimilarityOne>();
         anlzr = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
         numDocNorms = 0;
@@ -48,8 +43,7 @@ public:
         normDelta = 0.001;
     }
 
-    virtual ~IndexReaderCloneNormsTest()
-    {
+    virtual ~IndexReaderCloneNormsTest() {
     }
 
 protected:
@@ -64,8 +58,7 @@ protected:
     double normDelta;
 
 public:
-    void createIndex(const DirectoryPtr& dir)
-    {
+    void createIndex(const DirectoryPtr& dir) {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, anlzr, true, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);
         iw->setMergeFactor(3);
@@ -74,35 +67,35 @@ public:
         iw->close();
     }
 
-    void createIndex(const DirectoryPtr& dir, bool multiSegment)
-    {
+    void createIndex(const DirectoryPtr& dir, bool multiSegment) {
         IndexWriter::unlock(dir);
         IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
 
         w->setMergePolicy(newLucene<LogDocMergePolicy>(w));
 
-        for (int32_t i = 0; i < 100; ++i)
-        {
+        for (int32_t i = 0; i < 100; ++i) {
             w->addDocument(createDocument(i, 4));
-            if (multiSegment && (i % 10) == 0)
+            if (multiSegment && (i % 10) == 0) {
                 w->commit();
+            }
         }
 
-        if (!multiSegment)
+        if (!multiSegment) {
             w->optimize();
+        }
 
         w->close();
 
         IndexReaderPtr r = IndexReader::open(dir, false);
-        if (multiSegment)
+        if (multiSegment) {
             EXPECT_TRUE(r->getSequentialSubReaders().size() > 1);
-        else
+        } else {
             EXPECT_EQ(r->getSequentialSubReaders().size(), 1);
+        }
         r->close();
     }
 
-    DocumentPtr createDocument(int32_t n, int32_t numFields)
-    {
+    DocumentPtr createDocument(int32_t n, int32_t numFields) {
         StringStream sb;
         DocumentPtr doc = newLucene<Document>();
         sb << L"a" << n;
@@ -110,14 +103,14 @@ public:
         doc->add(newLucene<Field>(L"fielda", sb.str(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
         doc->add(newLucene<Field>(L"fieldb", sb.str(), Field::STORE_YES, Field::INDEX_NO));
         sb << L" b" << n;
-        for (int32_t i = 1; i < numFields; ++i)
+        for (int32_t i = 1; i < numFields; ++i) {
             doc->add(newLucene<Field>(L"field" + StringUtils::toString(i + 1), sb.str(), Field::STORE_YES, Field::INDEX_ANALYZED));
+        }
         return doc;
     }
 
     /// try cloning and reopening the norms
-    void doTestNorms(const DirectoryPtr& dir)
-    {
+    void doTestNorms(const DirectoryPtr& dir) {
         addDocs(dir, 12, true);
         IndexReaderPtr ir = IndexReader::open(dir, false);
         verifyIndex(ir);
@@ -135,17 +128,14 @@ public:
         irc3->close();
     }
 
-    void modifyNormsForF1(const DirectoryPtr& dir)
-    {
+    void modifyNormsForF1(const DirectoryPtr& dir) {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         modifyNormsForF1(ir);
     }
 
-    void modifyNormsForF1(const IndexReaderPtr& ir)
-    {
+    void modifyNormsForF1(const IndexReaderPtr& ir) {
         int32_t n = ir->maxDoc();
-        for (int32_t i = 0; i < n; i += 3) // modify for every third doc
-        {
+        for (int32_t i = 0; i < n; i += 3) { // modify for every third doc
             int32_t k = (i * 3) % modifiedNorms.size();
             double origNorm = modifiedNorms[i];
             double newNorm = modifiedNorms[k];
@@ -156,24 +146,22 @@ public:
         }
     }
 
-    void addDocs(const DirectoryPtr& dir, int32_t ndocs, bool compound)
-    {
+    void addDocs(const DirectoryPtr& dir, int32_t ndocs, bool compound) {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, anlzr, false, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);
         iw->setMergeFactor(3);
         iw->setSimilarity(similarityOne);
         iw->setUseCompoundFile(compound);
-        for (int32_t i = 0; i < ndocs; ++i)
+        for (int32_t i = 0; i < ndocs; ++i) {
             iw->addDocument(newDoc());
+        }
         iw->close();
     }
 
-    DocumentPtr newDoc()
-    {
+    DocumentPtr newDoc() {
         DocumentPtr d = newLucene<Document>();
         double boost = nextNorm();
-        for (int32_t i = 0; i < 10; ++i)
-        {
+        for (int32_t i = 0; i < 10; ++i) {
             FieldPtr f = newLucene<Field>(L"f" + StringUtils::toString(i), L"v" + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_NOT_ANALYZED);
             f->setBoost(boost);
             d->add(f);
@@ -181,20 +169,16 @@ public:
         return d;
     }
 
-    double nextNorm()
-    {
+    double nextNorm() {
         double norm = lastNorm + normDelta;
-        do
-        {
+        do {
             double norm1 = Similarity::decodeNorm(Similarity::encodeNorm(norm));
-            if (norm1 > lastNorm)
-            {
+            if (norm1 > lastNorm) {
                 norm = norm1;
                 break;
             }
             norm += normDelta;
-        }
-        while (true);
+        } while (true);
         norms.add(numDocNorms, norm);
         modifiedNorms.add(numDocNorms, norm);
         ++numDocNorms;
@@ -203,23 +187,19 @@ public:
         return norm;
     }
 
-    void verifyIndex(const DirectoryPtr& dir)
-    {
+    void verifyIndex(const DirectoryPtr& dir) {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         verifyIndex(ir);
         ir->close();
     }
 
-    void verifyIndex(const IndexReaderPtr& ir)
-    {
-        for (int32_t i = 0; i < NUM_FIELDS; ++i)
-        {
+    void verifyIndex(const IndexReaderPtr& ir) {
+        for (int32_t i = 0; i < NUM_FIELDS; ++i) {
             String field = L"f" + StringUtils::toString(i);
             ByteArray b = ir->norms(field);
             EXPECT_EQ(numDocNorms, b.size());
             Collection<double> storedNorms = (i == 1 ? modifiedNorms : norms);
-            for (int32_t j = 0; j < b.size(); ++j)
-            {
+            for (int32_t j = 0; j < b.size(); ++j) {
                 double norm = Similarity::decodeNorm(b[j]);
                 double norm1 = storedNorms[j];
                 EXPECT_EQ(norm, norm1); // 0.000001 ??
@@ -232,8 +212,7 @@ const int32_t IndexReaderCloneNormsTest::NUM_FIELDS = 10;
 
 /// Test that norms values are preserved as the index is maintained.  Including separate norms.
 /// Including merging indexes with separate norms. Including optimize.
-TEST_F(IndexReaderCloneNormsTest, testNorms)
-{
+TEST_F(IndexReaderCloneNormsTest, testNorms) {
     // test with a single index: index1
     String indexDir1(FileUtils::joinPath(getTempDir(), L"lucenetestindex1"));
     DirectoryPtr dir1 = FSDirectory::open(indexDir1);
@@ -295,8 +274,7 @@ TEST_F(IndexReaderCloneNormsTest, testNorms)
     dir3->close();
 }
 
-TEST_F(IndexReaderCloneNormsTest, testNormsClose)
-{
+TEST_F(IndexReaderCloneNormsTest, testNormsClose) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     SegmentReaderPtr reader1 = SegmentReader::getOnlySegmentReader(dir1);
@@ -312,8 +290,7 @@ TEST_F(IndexReaderCloneNormsTest, testNormsClose)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneNormsTest, testNormsRefCounting)
-{
+TEST_F(IndexReaderCloneNormsTest, testNormsRefCounting) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
 
@@ -337,12 +314,9 @@ TEST_F(IndexReaderCloneNormsTest, testNormsRefCounting)
     reader4C->setNorm(5, L"field1", 0.33);
 
     // generate a cannot update exception in reader1
-    try
-    {
+    try {
         reader3C->setNorm(1, L"field1", 0.99);
-    }
-    catch (LockObtainFailedException& e)
-    {
+    } catch (LockObtainFailedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
 

@@ -9,48 +9,47 @@
 
 #include "WeightedTerm.h"
 
-namespace Lucene
-{
-    /// Lightweight class to hold term, weight, and positions used for scoring this term.
-    class LPPCONTRIBAPI WeightedSpanTerm : public WeightedTerm
-    {
-    public:
-        WeightedSpanTerm(double weight, const String& term, bool positionSensitive = false);
-        virtual ~WeightedSpanTerm();
+namespace Lucene {
 
-        LUCENE_CLASS(WeightedSpanTerm);
+/// Lightweight class to hold term, weight, and positions used for scoring this term.
+class LPPCONTRIBAPI WeightedSpanTerm : public WeightedTerm {
+public:
+    WeightedSpanTerm(double weight, const String& term, bool positionSensitive = false);
+    virtual ~WeightedSpanTerm();
 
-    public:
-        bool positionSensitive;
+    LUCENE_CLASS(WeightedSpanTerm);
 
-    protected:
-        Collection<PositionSpanPtr> positionSpans;
+public:
+    bool positionSensitive;
 
-    public:
-        /// Checks to see if this term is valid at position.
-        /// @param position To check against valid term positions.
-        /// @return true if this term is a hit at this position.
-        bool checkPosition(int32_t position);
+protected:
+    Collection<PositionSpanPtr> positionSpans;
 
-        void addPositionSpans(Collection<PositionSpanPtr> positionSpans);
-        bool isPositionSensitive();
-        void setPositionSensitive(bool positionSensitive);
-        Collection<PositionSpanPtr> getPositionSpans();
-    };
+public:
+    /// Checks to see if this term is valid at position.
+    /// @param position To check against valid term positions.
+    /// @return true if this term is a hit at this position.
+    bool checkPosition(int32_t position);
 
-    /// Utility class to store a Span
-    class LPPCONTRIBAPI PositionSpan : public LuceneObject
-    {
-    public:
-        PositionSpan(int32_t start, int32_t end);
-        virtual ~PositionSpan();
+    void addPositionSpans(Collection<PositionSpanPtr> positionSpans);
+    bool isPositionSensitive();
+    void setPositionSensitive(bool positionSensitive);
+    Collection<PositionSpanPtr> getPositionSpans();
+};
 
-        LUCENE_CLASS(PositionSpan);
+/// Utility class to store a Span
+class LPPCONTRIBAPI PositionSpan : public LuceneObject {
+public:
+    PositionSpan(int32_t start, int32_t end);
+    virtual ~PositionSpan();
 
-    public:
-        int32_t start;
-        int32_t end;
-    };
+    LUCENE_CLASS(PositionSpan);
+
+public:
+    int32_t start;
+    int32_t end;
+};
+
 }
 
 #endif

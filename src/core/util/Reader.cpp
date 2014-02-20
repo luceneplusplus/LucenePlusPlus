@@ -7,46 +7,39 @@
 #include "LuceneInc.h"
 #include "Reader.h"
 
-namespace Lucene
-{
-    const int32_t Reader::READER_EOF = -1;
+namespace Lucene {
 
-    Reader::Reader()
-    {
-    }
+const int32_t Reader::READER_EOF = -1;
 
-    Reader::~Reader()
-    {
-    }
+Reader::Reader() {
+}
 
-    int32_t Reader::read()
-    {
-        wchar_t buffer;
-        return read(&buffer, 0, 1) == READER_EOF ? READER_EOF : buffer;
-    }
+Reader::~Reader() {
+}
 
-    int64_t Reader::skip(int64_t n)
-    {
-        return 0; // override
-    }
+int32_t Reader::read() {
+    wchar_t buffer;
+    return read(&buffer, 0, 1) == READER_EOF ? READER_EOF : buffer;
+}
 
-    bool Reader::markSupported()
-    {
-        return false; // override
-    }
+int64_t Reader::skip(int64_t n) {
+    return 0; // override
+}
 
-    void Reader::mark(int32_t readAheadLimit)
-    {
-        // override
-    }
+bool Reader::markSupported() {
+    return false; // override
+}
 
-    void Reader::reset()
-    {
-        // override
-    }
+void Reader::mark(int32_t readAheadLimit) {
+    // override
+}
 
-    int64_t Reader::length()
-    {
-        return 0; // override
-    }
+void Reader::reset() {
+    // override
+}
+
+int64_t Reader::length() {
+    return 0; // override
+}
+
 }

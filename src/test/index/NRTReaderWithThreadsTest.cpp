@@ -26,8 +26,7 @@ typedef LuceneTestFixture NRTReaderWithThreadsTest;
 DECLARE_SHARED_PTR(RunThread)
 DECLARE_SHARED_PTR(HeavyAtomicInt)
 
-static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t numFields)
-{
+static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t numFields) {
     StringStream sb;
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"id", StringUtils::toString(n), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
@@ -35,17 +34,16 @@ static DocumentPtr createDocument(int32_t n, const String& indexName, int32_t nu
     sb << L"a" << n;
     doc->add(newLucene<Field>(L"field1", sb.str(), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
     sb << L" b" << n;
-    for (int32_t i = 1; i < numFields; ++i)
+    for (int32_t i = 1; i < numFields; ++i) {
         doc->add(newLucene<Field>(L"field" + StringUtils::toString(i + 1), sb.str(), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
+    }
     return doc;
 }
 
-static int32_t count(const TermPtr& t, const IndexReaderPtr& r)
-{
+static int32_t count(const TermPtr& t, const IndexReaderPtr& r) {
     int32_t count = 0;
     TermDocsPtr td = r->termDocs(t);
-    while (td->next())
-    {
+    while (td->next()) {
         td->doc();
         ++count;
     }
@@ -53,16 +51,13 @@ static int32_t count(const TermPtr& t, const IndexReaderPtr& r)
     return count;
 }
 
-class HeavyAtomicInt : public LuceneObject
-{
+class HeavyAtomicInt : public LuceneObject {
 public:
-    HeavyAtomicInt(int32_t start)
-    {
+    HeavyAtomicInt(int32_t start) {
         value = start;
     }
 
-    virtual ~HeavyAtomicInt()
-    {
+    virtual ~HeavyAtomicInt() {
 
     }
 
@@ -70,31 +65,26 @@ protected:
     int32_t value;
 
 public:
-    int32_t addAndGet(int32_t inc)
-    {
+    int32_t addAndGet(int32_t inc) {
         SyncLock syncLock(this);
         value += inc;
         return value;
     }
 
-    int32_t incrementAndGet()
-    {
+    int32_t incrementAndGet() {
         SyncLock syncLock(this);
         return ++value;
     }
 
-    int32_t intValue()
-    {
+    int32_t intValue() {
         SyncLock syncLock(this);
         return value;
     }
 };
 
-class RunThread : public LuceneThread
-{
+class RunThread : public LuceneThread {
 public:
-    RunThread(int32_t type, const IndexWriterPtr& writer, const HeavyAtomicIntPtr& seq)
-    {
+    RunThread(int32_t type, const IndexWriterPtr& writer, const HeavyAtomicIntPtr& seq) {
         this->_run = true;
         this->delCount = 0;
         this->addCount = 0;
@@ -104,8 +94,7 @@ public:
         this->rand = newLucene<Random>();
     }
 
-    virtual ~RunThread()
-    {
+    virtual ~RunThread() {
     }
 
     LUCENE_CLASS(RunThread);
@@ -120,21 +109,15 @@ public:
     RandomPtr rand;
 
 public:
-    virtual void run()
-    {
-        try
-        {
-            while (_run)
-            {
-                if (type == 0)
-                {
+    virtual void run() {
+        try {
+            while (_run) {
+                if (type == 0) {
                     int32_t i = seq->addAndGet(1);
                     DocumentPtr doc = createDocument(i, L"index1", 10);
                     writer->addDocument(doc);
                     ++addCount;
-                }
-                else
-                {
+                } else {
                     // we may or may not delete because the term may not exist,
                     // however we're opening and closing the reader rapidly
                     IndexReaderPtr reader = writer->getReader();
@@ -146,17 +129,14 @@ public:
                     delCount += _count;
                 }
             }
-        }
-        catch (LuceneException& e)
-        {
+        } catch (LuceneException& e) {
             _run = false;
             FAIL() << "Unexpected exception: " << e.getError();
         }
     }
 };
 
-TEST_F(NRTReaderWithThreadsTest, testIndexing)
-{
+TEST_F(NRTReaderWithThreadsTest, testIndexing) {
     HeavyAtomicIntPtr seq = newLucene<HeavyAtomicInt>(1);
     DirectoryPtr mainDir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(mainDir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
@@ -166,25 +146,25 @@ TEST_F(NRTReaderWithThreadsTest, testIndexing)
     writer->setMergeFactor(2);
     writer->setMaxBufferedDocs(10);
     Collection<RunThreadPtr> indexThreads = Collection<RunThreadPtr>::newInstance(4);
-    for (int32_t x = 0; x < indexThreads.size(); ++x)
-    {
+    for (int32_t x = 0; x < indexThreads.size(); ++x) {
         indexThreads[x] = newLucene<RunThread>(x % 2, writer, seq);
         indexThreads[x]->start();
     }
     int64_t startTime = MiscUtils::currentTimeMillis();
     int64_t duration = 5 * 1000;
-    while (((int64_t)MiscUtils::currentTimeMillis() - startTime) < duration)
+    while (((int64_t)MiscUtils::currentTimeMillis() - startTime) < duration) {
         LuceneThread::threadSleep(100);
+    }
     int32_t delCount = 0;
     int32_t addCount = 0;
-    for (int32_t x = 0; x < indexThreads.size(); ++x)
-    {
+    for (int32_t x = 0; x < indexThreads.size(); ++x) {
         indexThreads[x]->_run = false;
         addCount += indexThreads[x]->addCount;
         delCount += indexThreads[x]->delCount;
     }
-    for (int32_t x = 0; x < indexThreads.size(); ++x)
+    for (int32_t x = 0; x < indexThreads.size(); ++x) {
         indexThreads[x]->join();
+    }
     writer->close();
     mainDir->close();
 }

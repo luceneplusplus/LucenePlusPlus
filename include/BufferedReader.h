@@ -9,55 +9,55 @@
 
 #include "Reader.h"
 
-namespace Lucene
-{
-    /// Read text from a character-input stream, buffering characters so as to provide
-    /// for the efficient reading of characters, arrays, and lines.
-    class LPPAPI BufferedReader : public Reader
-    {
-    public:
-        /// Create a buffering character-input stream.
-        BufferedReader(const ReaderPtr& reader, int32_t size = READER_BUFFER);
-        virtual ~BufferedReader();
+namespace Lucene {
 
-        LUCENE_CLASS(BufferedReader);
+/// Read text from a character-input stream, buffering characters so as to provide
+/// for the efficient reading of characters, arrays, and lines.
+class LPPAPI BufferedReader : public Reader {
+public:
+    /// Create a buffering character-input stream.
+    BufferedReader(const ReaderPtr& reader, int32_t size = READER_BUFFER);
+    virtual ~BufferedReader();
 
-    protected:
-        ReaderPtr reader;
-        int32_t bufferSize;
-        int32_t bufferLength; // end of valid bytes
-        int32_t bufferPosition; // next byte to read
-        CharArray buffer;
+    LUCENE_CLASS(BufferedReader);
 
-    public:
-        static const int32_t READER_BUFFER;
+protected:
+    ReaderPtr reader;
+    int32_t bufferSize;
+    int32_t bufferLength; // end of valid bytes
+    int32_t bufferPosition; // next byte to read
+    CharArray buffer;
 
-    public:
-        /// Read a single character.
-        virtual int32_t read();
+public:
+    static const int32_t READER_BUFFER;
 
-        /// Read characters into a portion of an array.
-        virtual int32_t read(wchar_t* b, int32_t offset, int32_t length);
+public:
+    /// Read a single character.
+    virtual int32_t read();
 
-        /// Read a line of text.
-        virtual bool readLine(String& line);
+    /// Read characters into a portion of an array.
+    virtual int32_t read(wchar_t* b, int32_t offset, int32_t length);
 
-        /// Close the stream.
-        virtual void close();
+    /// Read a line of text.
+    virtual bool readLine(String& line);
 
-        /// Tell whether this stream supports the mark() operation
-        virtual bool markSupported();
+    /// Close the stream.
+    virtual void close();
 
-        /// Reset the stream.
-        virtual void reset();
+    /// Tell whether this stream supports the mark() operation
+    virtual bool markSupported();
 
-    protected:
-        /// Refill buffer in preparation for reading.
-        int32_t refill();
+    /// Reset the stream.
+    virtual void reset();
 
-        /// Read a single character without moving position.
-        int32_t peek();
-    };
+protected:
+    /// Refill buffer in preparation for reading.
+    int32_t refill();
+
+    /// Read a single character without moving position.
+    int32_t peek();
+};
+
 }
 
 #endif

@@ -19,8 +19,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture AttributeSourceTest;
 
-TEST_F(AttributeSourceTest, testCaptureState)
-{
+TEST_F(AttributeSourceTest, testCaptureState) {
     // init a first instance
     AttributeSourcePtr src = newLucene<AttributeSource>();
     TermAttributePtr termAtt = src->addAttribute<TermAttribute>();
@@ -64,18 +63,14 @@ TEST_F(AttributeSourceTest, testCaptureState)
     // init a third instance missing one Attribute
     AttributeSourcePtr src3 = newLucene<AttributeSource>();
     termAtt = src3->addAttribute<TermAttribute>();
-    try
-    {
+    try {
         src3->restoreState(state);
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 }
 
-TEST_F(AttributeSourceTest, testCloneAttributes)
-{
+TEST_F(AttributeSourceTest, testCloneAttributes) {
     AttributeSourcePtr src = newLucene<AttributeSource>();
     TermAttributePtr termAtt = src->addAttribute<TermAttribute>();
     TypeAttributePtr typeAtt = src->addAttribute<TypeAttribute>();
@@ -96,8 +91,7 @@ TEST_F(AttributeSourceTest, testCloneAttributes)
     EXPECT_TRUE(typeAtt2->equals(typeAtt));
 }
 
-TEST_F(AttributeSourceTest, testToStringAndMultiAttributeImplementations)
-{
+TEST_F(AttributeSourceTest, testToStringAndMultiAttributeImplementations) {
     AttributeSourcePtr src = newLucene<AttributeSource>();
     TermAttributePtr termAtt = src->addAttribute<TermAttribute>();
     TypeAttributePtr typeAtt = src->addAttribute<TypeAttribute>();
@@ -111,8 +105,7 @@ TEST_F(AttributeSourceTest, testToStringAndMultiAttributeImplementations)
     EXPECT_TRUE(attributes[1]->equals(typeAtt));
 }
 
-TEST_F(AttributeSourceTest, testDefaultAttributeFactory)
-{
+TEST_F(AttributeSourceTest, testDefaultAttributeFactory) {
     AttributeSourcePtr src = newLucene<AttributeSource>();
     EXPECT_TRUE(MiscUtils::typeOf<TermAttribute>(src->addAttribute<TermAttribute>()));
     EXPECT_TRUE(MiscUtils::typeOf<OffsetAttribute>(src->addAttribute<OffsetAttribute>()));

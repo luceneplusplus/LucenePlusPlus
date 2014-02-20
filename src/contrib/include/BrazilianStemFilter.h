@@ -10,29 +10,29 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A {@link TokenFilter} that applies {@link BrazilianStemmer}.
-    class LPPCONTRIBAPI BrazilianStemFilter : public TokenFilter
-    {
-    public:
-        BrazilianStemFilter(const TokenStreamPtr& input);
-        BrazilianStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable);
+namespace Lucene {
 
-        virtual ~BrazilianStemFilter();
+/// A {@link TokenFilter} that applies {@link BrazilianStemmer}.
+class LPPCONTRIBAPI BrazilianStemFilter : public TokenFilter {
+public:
+    BrazilianStemFilter(const TokenStreamPtr& input);
+    BrazilianStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable);
 
-        LUCENE_CLASS(BrazilianStemFilter);
+    virtual ~BrazilianStemFilter();
 
-    protected:
-        /// {@link BrazilianStemmer} in use by this filter.
-        BrazilianStemmerPtr stemmer;
+    LUCENE_CLASS(BrazilianStemFilter);
 
-        HashSet<String> exclusions;
-        TermAttributePtr termAtt;
+protected:
+    /// {@link BrazilianStemmer} in use by this filter.
+    BrazilianStemmerPtr stemmer;
 
-    public:
-        virtual bool incrementToken();
-    };
+    HashSet<String> exclusions;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

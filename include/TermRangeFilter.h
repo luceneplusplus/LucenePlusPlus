@@ -9,60 +9,60 @@
 
 #include "MultiTermQueryWrapperFilter.h"
 
-namespace Lucene
-{
-    /// A Filter that restricts search results to a range of term values in a given field.
-    ///
-    /// This filter matches the documents looking for terms that fall into the supplied range according to {@link
-    /// String#compare(String)}, unless a Collator is provided. It is not intended for numerical ranges; use {@link
-    /// NumericRangeFilter} instead.
-    ///
-    /// If you construct a large number of range filters with different ranges but on the same field, {@link
-    /// FieldCacheRangeFilter} may have significantly better performance.
-    class LPPAPI TermRangeFilter : public MultiTermQueryWrapperFilter
-    {
-    public:
-        /// Warning: Using this constructor and supplying a non-null value in the collator parameter will cause
-        /// every single index Term in the Field referenced by lowerTerm and/or upperTerm to be examined.  Depending
-        /// on the number of index Terms in this Field, the operation could be very slow.
-        /// @param lowerTerm The lower bound on this range
-        /// @param upperTerm The upper bound on this range
-        /// @param includeLower Does this range include the lower bound?
-        /// @param includeUpper Does this range include the upper bound?
-        /// @param collator The collator to use when determining range inclusion; set to null to use Unicode code
-        /// point ordering instead of collation.
-        TermRangeFilter(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower,
-                        bool includeUpper, CollatorPtr collator = CollatorPtr());
+namespace Lucene {
 
-        virtual ~TermRangeFilter();
+/// A Filter that restricts search results to a range of term values in a given field.
+///
+/// This filter matches the documents looking for terms that fall into the supplied range according to {@link
+/// String#compare(String)}, unless a Collator is provided. It is not intended for numerical ranges; use {@link
+/// NumericRangeFilter} instead.
+///
+/// If you construct a large number of range filters with different ranges but on the same field, {@link
+/// FieldCacheRangeFilter} may have significantly better performance.
+class LPPAPI TermRangeFilter : public MultiTermQueryWrapperFilter {
+public:
+    /// Warning: Using this constructor and supplying a non-null value in the collator parameter will cause
+    /// every single index Term in the Field referenced by lowerTerm and/or upperTerm to be examined.  Depending
+    /// on the number of index Terms in this Field, the operation could be very slow.
+    /// @param lowerTerm The lower bound on this range
+    /// @param upperTerm The upper bound on this range
+    /// @param includeLower Does this range include the lower bound?
+    /// @param includeUpper Does this range include the upper bound?
+    /// @param collator The collator to use when determining range inclusion; set to null to use Unicode code
+    /// point ordering instead of collation.
+    TermRangeFilter(const String& fieldName, StringValue lowerTerm, StringValue upperTerm, bool includeLower,
+                    bool includeUpper, CollatorPtr collator = CollatorPtr());
 
-        LUCENE_CLASS(TermRangeFilter);
+    virtual ~TermRangeFilter();
 
-    public:
-        /// Constructs a filter for field fieldName matching less than or equal to upperTerm.
-        static TermRangeFilterPtr Less(const String& fieldName, StringValue upperTerm);
+    LUCENE_CLASS(TermRangeFilter);
 
-        /// Constructs a filter for field fieldName matching greater than or equal to lowerTerm.
-        static TermRangeFilterPtr More(const String& fieldName, StringValue lowerTerm);
+public:
+    /// Constructs a filter for field fieldName matching less than or equal to upperTerm.
+    static TermRangeFilterPtr Less(const String& fieldName, StringValue upperTerm);
 
-        /// Returns the field name for this filter
-        String getField();
+    /// Constructs a filter for field fieldName matching greater than or equal to lowerTerm.
+    static TermRangeFilterPtr More(const String& fieldName, StringValue lowerTerm);
 
-        /// Returns the lower value of this range filter
-        String getLowerTerm();
+    /// Returns the field name for this filter
+    String getField();
 
-        /// Returns the upper value of this range filter
-        String getUpperTerm();
+    /// Returns the lower value of this range filter
+    String getLowerTerm();
 
-        /// Returns true if the lower endpoint is inclusive
-        bool includesLower();
+    /// Returns the upper value of this range filter
+    String getUpperTerm();
 
-        /// Returns true if the upper endpoint is inclusive
-        bool includesUpper();
+    /// Returns true if the lower endpoint is inclusive
+    bool includesLower();
 
-        /// Returns the collator used to determine range inclusion, if any.
-        CollatorPtr getCollator();
-    };
+    /// Returns true if the upper endpoint is inclusive
+    bool includesUpper();
+
+    /// Returns the collator used to determine range inclusion, if any.
+    CollatorPtr getCollator();
+};
+
 }
 
 #endif

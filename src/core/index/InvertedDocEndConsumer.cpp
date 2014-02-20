@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "InvertedDocEndConsumer.h"
 
-namespace Lucene
-{
-    InvertedDocEndConsumer::~InvertedDocEndConsumer()
-    {
-    }
+namespace Lucene {
+
+InvertedDocEndConsumer::~InvertedDocEndConsumer() {
+}
+
 }

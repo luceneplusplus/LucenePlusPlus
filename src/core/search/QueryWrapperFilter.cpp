@@ -12,58 +12,50 @@
 #include "Scorer.h"
 #include "IndexSearcher.h"
 
-namespace Lucene
-{
-    QueryWrapperFilter::QueryWrapperFilter(const QueryPtr& query)
-    {
-        this->query = query;
-    }
+namespace Lucene {
 
-    QueryWrapperFilter::~QueryWrapperFilter()
-    {
-    }
+QueryWrapperFilter::QueryWrapperFilter(const QueryPtr& query) {
+    this->query = query;
+}
 
-    DocIdSetPtr QueryWrapperFilter::getDocIdSet(const IndexReaderPtr& reader)
-    {
-        WeightPtr weight(query->weight(newLucene<IndexSearcher>(reader)));
-        return newLucene<QueryWrapperFilterDocIdSet>(reader, weight);
-    }
+QueryWrapperFilter::~QueryWrapperFilter() {
+}
 
-    String QueryWrapperFilter::toString()
-    {
-        return L"QueryWrapperFilter(" + query->toString() + L")";
-    }
+DocIdSetPtr QueryWrapperFilter::getDocIdSet(const IndexReaderPtr& reader) {
+    WeightPtr weight(query->weight(newLucene<IndexSearcher>(reader)));
+    return newLucene<QueryWrapperFilterDocIdSet>(reader, weight);
+}
 
-    bool QueryWrapperFilter::equals(const LuceneObjectPtr& other)
-    {
-        QueryWrapperFilterPtr otherQueryWrapperFilter(boost::dynamic_pointer_cast<QueryWrapperFilter>(other));
-        if (!otherQueryWrapperFilter)
-            return false;
-        return this->query->equals(otherQueryWrapperFilter->query);
-    }
+String QueryWrapperFilter::toString() {
+    return L"QueryWrapperFilter(" + query->toString() + L")";
+}
 
-    int32_t QueryWrapperFilter::hashCode()
-    {
-        return query->hashCode() ^ 0x923F64B9;
-    }
-
-    QueryWrapperFilterDocIdSet::QueryWrapperFilterDocIdSet(const IndexReaderPtr& reader, const WeightPtr& weight)
-    {
-        this->reader = reader;
-        this->weight = weight;
-    }
-
-    QueryWrapperFilterDocIdSet::~QueryWrapperFilterDocIdSet()
-    {
-    }
-
-    DocIdSetIteratorPtr QueryWrapperFilterDocIdSet::iterator()
-    {
-        return weight->scorer(reader, true, false);
-    }
-
-    bool QueryWrapperFilterDocIdSet::isCacheable()
-    {
+bool QueryWrapperFilter::equals(const LuceneObjectPtr& other) {
+    QueryWrapperFilterPtr otherQueryWrapperFilter(boost::dynamic_pointer_cast<QueryWrapperFilter>(other));
+    if (!otherQueryWrapperFilter) {
         return false;
     }
+    return this->query->equals(otherQueryWrapperFilter->query);
+}
+
+int32_t QueryWrapperFilter::hashCode() {
+    return query->hashCode() ^ 0x923F64B9;
+}
+
+QueryWrapperFilterDocIdSet::QueryWrapperFilterDocIdSet(const IndexReaderPtr& reader, const WeightPtr& weight) {
+    this->reader = reader;
+    this->weight = weight;
+}
+
+QueryWrapperFilterDocIdSet::~QueryWrapperFilterDocIdSet() {
+}
+
+DocIdSetIteratorPtr QueryWrapperFilterDocIdSet::iterator() {
+    return weight->scorer(reader, true, false);
+}
+
+bool QueryWrapperFilterDocIdSet::isCacheable() {
+    return false;
+}
+
 }

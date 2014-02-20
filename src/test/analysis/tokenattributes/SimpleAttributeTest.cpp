@@ -18,8 +18,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture SimpleAttributeTest;
 
-static AttributePtr checkCloneIsEqual(const AttributePtr& att)
-{
+static AttributePtr checkCloneIsEqual(const AttributePtr& att) {
     AttributePtr clone = boost::dynamic_pointer_cast<Attribute>(att->clone());
     EXPECT_TRUE(att->equals(clone));
     EXPECT_EQ(att->hashCode(), clone->hashCode());
@@ -27,8 +26,7 @@ static AttributePtr checkCloneIsEqual(const AttributePtr& att)
 }
 
 template <class ATTR>
-static AttributePtr checkCopyIsEqual(const AttributePtr& att)
-{
+static AttributePtr checkCopyIsEqual(const AttributePtr& att) {
     AttributePtr copy = newLucene<ATTR>();
     att->copyTo(copy);
     EXPECT_TRUE(att->equals(copy));
@@ -36,8 +34,7 @@ static AttributePtr checkCopyIsEqual(const AttributePtr& att)
     return copy;
 }
 
-TEST_F(SimpleAttributeTest, testFlagsAttribute)
-{
+TEST_F(SimpleAttributeTest, testFlagsAttribute) {
     FlagsAttributePtr att = newLucene<FlagsAttribute>();
     EXPECT_EQ(0, att->getFlags());
 
@@ -54,8 +51,7 @@ TEST_F(SimpleAttributeTest, testFlagsAttribute)
     EXPECT_EQ(0, att->getFlags());
 }
 
-TEST_F(SimpleAttributeTest, testPositionIncrementAttribute)
-{
+TEST_F(SimpleAttributeTest, testPositionIncrementAttribute) {
     PositionIncrementAttributePtr att = newLucene<PositionIncrementAttribute>();
     EXPECT_EQ(1, att->getPositionIncrement());
 
@@ -72,24 +68,22 @@ TEST_F(SimpleAttributeTest, testPositionIncrementAttribute)
     EXPECT_EQ(1, att->getPositionIncrement());
 }
 
-namespace TestTypeAttribute
-{
-    class TestableTypeAttribute : public TypeAttribute
-    {
-    public:
-        virtual ~TestableTypeAttribute()
-        {
-        }
+namespace TestTypeAttribute {
 
-        LUCENE_CLASS(TestableTypeAttribute);
+class TestableTypeAttribute : public TypeAttribute {
+public:
+    virtual ~TestableTypeAttribute() {
+    }
 
-    public:
-        using TypeAttribute::DEFAULT_TYPE;
-    };
+    LUCENE_CLASS(TestableTypeAttribute);
+
+public:
+    using TypeAttribute::DEFAULT_TYPE;
+};
+
 }
 
-TEST_F(SimpleAttributeTest, testTypeAttribute)
-{
+TEST_F(SimpleAttributeTest, testTypeAttribute) {
     TypeAttributePtr att = newLucene<TestTypeAttribute::TestableTypeAttribute>();
     EXPECT_EQ(TestTypeAttribute::TestableTypeAttribute::DEFAULT_TYPE(), att->type());
 
@@ -106,8 +100,7 @@ TEST_F(SimpleAttributeTest, testTypeAttribute)
     EXPECT_EQ(TestTypeAttribute::TestableTypeAttribute::DEFAULT_TYPE(), att->type());
 }
 
-TEST_F(SimpleAttributeTest, testPayloadAttribute)
-{
+TEST_F(SimpleAttributeTest, testPayloadAttribute) {
     PayloadAttributePtr att = newLucene<PayloadAttribute>();
     EXPECT_TRUE(!att->getPayload());
 
@@ -132,8 +125,7 @@ TEST_F(SimpleAttributeTest, testPayloadAttribute)
     EXPECT_TRUE(!att->getPayload());
 }
 
-TEST_F(SimpleAttributeTest, testOffsetAttribute)
-{
+TEST_F(SimpleAttributeTest, testOffsetAttribute) {
     OffsetAttributePtr att = newLucene<OffsetAttribute>();
     EXPECT_EQ(0, att->startOffset());
     EXPECT_EQ(0, att->endOffset());

@@ -9,50 +9,50 @@
 
 #include "FormatPostingsDocsConsumer.h"
 
-namespace Lucene
-{
-    /// Consumes doc & freq, writing them using the current index file format
-    class FormatPostingsDocsWriter : public FormatPostingsDocsConsumer
-    {
-    public:
-        FormatPostingsDocsWriter(const SegmentWriteStatePtr& state, const FormatPostingsTermsWriterPtr& parent);
-        virtual ~FormatPostingsDocsWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsDocsWriter);
+/// Consumes doc & freq, writing them using the current index file format
+class FormatPostingsDocsWriter : public FormatPostingsDocsConsumer {
+public:
+    FormatPostingsDocsWriter(const SegmentWriteStatePtr& state, const FormatPostingsTermsWriterPtr& parent);
+    virtual ~FormatPostingsDocsWriter();
 
-    public:
-        IndexOutputPtr out;
-        FormatPostingsTermsWriterWeakPtr _parent;
-        SegmentWriteStatePtr state;
-        FormatPostingsPositionsWriterPtr posWriter;
-        DefaultSkipListWriterPtr skipListWriter;
-        int32_t skipInterval;
-        int32_t totalNumDocs;
+    LUCENE_CLASS(FormatPostingsDocsWriter);
 
-        bool omitTermFreqAndPositions;
-        bool storePayloads;
-        int64_t freqStart;
-        FieldInfoPtr fieldInfo;
+public:
+    IndexOutputPtr out;
+    FormatPostingsTermsWriterWeakPtr _parent;
+    SegmentWriteStatePtr state;
+    FormatPostingsPositionsWriterPtr posWriter;
+    DefaultSkipListWriterPtr skipListWriter;
+    int32_t skipInterval;
+    int32_t totalNumDocs;
 
-        int32_t lastDocID;
-        int32_t df;
+    bool omitTermFreqAndPositions;
+    bool storePayloads;
+    int64_t freqStart;
+    FieldInfoPtr fieldInfo;
 
-        TermInfoPtr termInfo; // minimize consing
-        UTF8ResultPtr utf8;
+    int32_t lastDocID;
+    int32_t df;
 
-    public:
-        virtual void initialize();
+    TermInfoPtr termInfo; // minimize consing
+    UTF8ResultPtr utf8;
 
-        void setField(const FieldInfoPtr& fieldInfo);
+public:
+    virtual void initialize();
 
-        /// Adds a new doc in this term.  If this returns null then we just skip consuming positions/payloads.
-        virtual FormatPostingsPositionsConsumerPtr addDoc(int32_t docID, int32_t termDocFreq);
+    void setField(const FieldInfoPtr& fieldInfo);
 
-        /// Called when we are done adding docs to this term
-        virtual void finish();
+    /// Adds a new doc in this term.  If this returns null then we just skip consuming positions/payloads.
+    virtual FormatPostingsPositionsConsumerPtr addDoc(int32_t docID, int32_t termDocFreq);
 
-        void close();
-    };
+    /// Called when we are done adding docs to this term
+    virtual void finish();
+
+    void close();
+};
+
 }
 
 #endif

@@ -9,23 +9,23 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class DocConsumerPerThread : public LuceneObject
-    {
-    public:
-        virtual ~DocConsumerPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(DocConsumerPerThread);
+class DocConsumerPerThread : public LuceneObject {
+public:
+    virtual ~DocConsumerPerThread();
 
-    public:
-        /// Process the document. If there is something for this document to be done in docID order,
-        /// you should encapsulate that as a DocWriter and return it.
-        /// DocumentsWriter then calls finish() on this object when it's its turn.
-        virtual DocWriterPtr processDocument() = 0;
+    LUCENE_CLASS(DocConsumerPerThread);
 
-        virtual void abort() = 0;
-    };
+public:
+    /// Process the document. If there is something for this document to be done in docID order,
+    /// you should encapsulate that as a DocWriter and return it.
+    /// DocumentsWriter then calls finish() on this object when it's its turn.
+    virtual DocWriterPtr processDocument() = 0;
+
+    virtual void abort() = 0;
+};
+
 }
 
 #endif

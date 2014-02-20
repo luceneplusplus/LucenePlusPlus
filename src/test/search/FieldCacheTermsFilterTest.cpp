@@ -22,13 +22,11 @@ using namespace Lucene;
 
 typedef LuceneTestFixture FieldCacheTermsFilterTest;
 
-TEST_F(FieldCacheTermsFilterTest, testMissingTerms)
-{
+TEST_F(FieldCacheTermsFilterTest, testMissingTerms) {
     String fieldName = L"field1";
     MockRAMDirectoryPtr rd = newLucene<MockRAMDirectory>();
     IndexWriterPtr w = newLucene<IndexWriter>(rd, newLucene<KeywordAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
-    for (int32_t i = 0; i < 100; ++i)
-    {
+    for (int32_t i = 0; i < 100; ++i) {
         DocumentPtr doc = newLucene<Document>();
         int32_t term = i * 10; // terms are units of 10
         doc->add(newLucene<Field>(fieldName, StringUtils::toString(term), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));

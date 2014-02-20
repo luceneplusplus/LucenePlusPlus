@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "SpanFilter.h"
 
-namespace Lucene
-{
-    SpanFilter::~SpanFilter()
-    {
-    }
+namespace Lucene {
+
+SpanFilter::~SpanFilter() {
+}
+
 }

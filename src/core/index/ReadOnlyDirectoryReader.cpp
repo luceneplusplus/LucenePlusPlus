@@ -8,33 +8,29 @@
 #include "ReadOnlyDirectoryReader.h"
 #include "ReadOnlySegmentReader.h"
 
-namespace Lucene
-{
-    ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis,
-                                                     const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor) :
-        DirectoryReader(directory, sis, deletionPolicy, true, termInfosIndexDivisor)
-    {
-    }
+namespace Lucene {
 
-    ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos,
-                                                     Collection<SegmentReaderPtr> oldReaders, Collection<int32_t> oldStarts,
-                                                     MapStringByteArray oldNormsCache, bool doClone,
-                                                     int32_t termInfosIndexDivisor) :
-        DirectoryReader(directory, infos, oldReaders, oldStarts, oldNormsCache, true, doClone, termInfosIndexDivisor)
-    {
-    }
+ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis,
+        const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor) :
+    DirectoryReader(directory, sis, deletionPolicy, true, termInfosIndexDivisor) {
+}
 
-    ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(const IndexWriterPtr& writer, const SegmentInfosPtr& infos, int32_t termInfosIndexDivisor) :
-        DirectoryReader(writer, infos, termInfosIndexDivisor)
-    {
-    }
+ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos,
+        Collection<SegmentReaderPtr> oldReaders, Collection<int32_t> oldStarts,
+        MapStringByteArray oldNormsCache, bool doClone,
+        int32_t termInfosIndexDivisor) :
+    DirectoryReader(directory, infos, oldReaders, oldStarts, oldNormsCache, true, doClone, termInfosIndexDivisor) {
+}
 
-    ReadOnlyDirectoryReader::~ReadOnlyDirectoryReader()
-    {
-    }
+ReadOnlyDirectoryReader::ReadOnlyDirectoryReader(const IndexWriterPtr& writer, const SegmentInfosPtr& infos, int32_t termInfosIndexDivisor) :
+    DirectoryReader(writer, infos, termInfosIndexDivisor) {
+}
 
-    void ReadOnlyDirectoryReader::acquireWriteLock()
-    {
-        ReadOnlySegmentReader::noWrite();
-    }
+ReadOnlyDirectoryReader::~ReadOnlyDirectoryReader() {
+}
+
+void ReadOnlyDirectoryReader::acquireWriteLock() {
+    ReadOnlySegmentReader::noWrite();
+}
+
 }

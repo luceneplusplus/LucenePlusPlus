@@ -9,61 +9,60 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Class that Posting and PostingVector use to write byte streams into shared fixed-size byte[] arrays.
-    /// The idea is to allocate slices of increasing lengths.  For example, the first slice is 5 bytes, the
-    /// next slice is 14, etc.  We start by writing our bytes into the first 5 bytes.  When we hit the end of
-    /// the slice, we allocate the next slice and then write the address of the new slice into the last 4
-    /// bytes of the previous slice (the "forwarding address").
-    ///
-    /// Each slice is filled with 0's initially, and we mark the end with a non-zero byte.  This way the methods
-    /// that are writing into the slice don't need to record its length and instead allocate a new slice once
-    /// they hit a non-zero byte.
-    class ByteBlockPool : public LuceneObject
-    {
-    public:
-        ByteBlockPool(const ByteBlockPoolAllocatorBasePtr& allocator, bool trackAllocations);
-        virtual ~ByteBlockPool();
+namespace Lucene {
 
-        LUCENE_CLASS(ByteBlockPool);
+/// Class that Posting and PostingVector use to write byte streams into shared fixed-size byte[] arrays.
+/// The idea is to allocate slices of increasing lengths.  For example, the first slice is 5 bytes, the
+/// next slice is 14, etc.  We start by writing our bytes into the first 5 bytes.  When we hit the end of
+/// the slice, we allocate the next slice and then write the address of the new slice into the last 4
+/// bytes of the previous slice (the "forwarding address").
+///
+/// Each slice is filled with 0's initially, and we mark the end with a non-zero byte.  This way the methods
+/// that are writing into the slice don't need to record its length and instead allocate a new slice once
+/// they hit a non-zero byte.
+class ByteBlockPool : public LuceneObject {
+public:
+    ByteBlockPool(const ByteBlockPoolAllocatorBasePtr& allocator, bool trackAllocations);
+    virtual ~ByteBlockPool();
 
-    public:
-        Collection<ByteArray> buffers;
-        int32_t bufferUpto; // Which buffer we are up to
-        int32_t byteUpto; // Where we are in head buffer
+    LUCENE_CLASS(ByteBlockPool);
 
-        ByteArray buffer;
-        int32_t byteOffset;
+public:
+    Collection<ByteArray> buffers;
+    int32_t bufferUpto; // Which buffer we are up to
+    int32_t byteUpto; // Where we are in head buffer
 
-        static const int32_t nextLevelArray[];
-        static const int32_t levelSizeArray[];
+    ByteArray buffer;
+    int32_t byteOffset;
 
-    protected:
-        bool trackAllocations;
-        ByteBlockPoolAllocatorBasePtr allocator;
+    static const int32_t nextLevelArray[];
+    static const int32_t levelSizeArray[];
 
-    public:
-        static int32_t FIRST_LEVEL_SIZE();
+protected:
+    bool trackAllocations;
+    ByteBlockPoolAllocatorBasePtr allocator;
 
-        void reset();
-        void nextBuffer();
-        int32_t newSlice(int32_t size);
-        int32_t allocSlice(ByteArray slice, int32_t upto);
-    };
+public:
+    static int32_t FIRST_LEVEL_SIZE();
 
-    class ByteBlockPoolAllocatorBase : public LuceneObject
-    {
-    public:
-        virtual ~ByteBlockPoolAllocatorBase();
+    void reset();
+    void nextBuffer();
+    int32_t newSlice(int32_t size);
+    int32_t allocSlice(ByteArray slice, int32_t upto);
+};
 
-        LUCENE_CLASS(ByteBlockPoolAllocatorBase);
+class ByteBlockPoolAllocatorBase : public LuceneObject {
+public:
+    virtual ~ByteBlockPoolAllocatorBase();
 
-    public:
-        virtual void recycleByteBlocks(Collection<ByteArray> blocks, int32_t start, int32_t end) = 0;
-        virtual void recycleByteBlocks(Collection<ByteArray> blocks) = 0;
-        virtual ByteArray getByteBlock(bool trackAllocations) = 0;
-    };
+    LUCENE_CLASS(ByteBlockPoolAllocatorBase);
+
+public:
+    virtual void recycleByteBlocks(Collection<ByteArray> blocks, int32_t start, int32_t end) = 0;
+    virtual void recycleByteBlocks(Collection<ByteArray> blocks) = 0;
+    virtual ByteArray getByteBlock(bool trackAllocations) = 0;
+};
+
 }
 
 #endif

@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "TermEnum.h"
 
-namespace Lucene
-{
-    TermEnum::~TermEnum()
-    {
-    }
+namespace Lucene {
+
+TermEnum::~TermEnum() {
+}
+
 }

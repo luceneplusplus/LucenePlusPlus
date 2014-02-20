@@ -9,21 +9,21 @@
 
 #include "Analyzer.h"
 
-namespace Lucene
-{
-    /// Tokenizes the entire stream as a single token. This is useful for data like zip codes, ids, and some
-    /// product names.
-    class LPPAPI KeywordAnalyzer : public Analyzer
-    {
-    public:
-        virtual ~KeywordAnalyzer();
+namespace Lucene {
 
-        LUCENE_CLASS(KeywordAnalyzer);
+/// Tokenizes the entire stream as a single token. This is useful for data like zip codes, ids, and some
+/// product names.
+class LPPAPI KeywordAnalyzer : public Analyzer {
+public:
+    virtual ~KeywordAnalyzer();
 
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
-    };
+    LUCENE_CLASS(KeywordAnalyzer);
+
+public:
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
+};
+
 }
 
 #endif

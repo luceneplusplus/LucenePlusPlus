@@ -7,35 +7,33 @@
 #include "LuceneInc.h"
 #include "NormalizeCharMap.h"
 
-namespace Lucene
-{
-    NormalizeCharMap::NormalizeCharMap()
-    {
-        diff = 0;
-    }
+namespace Lucene {
 
-    NormalizeCharMap::~NormalizeCharMap()
-    {
-    }
+NormalizeCharMap::NormalizeCharMap() {
+    diff = 0;
+}
 
-    void NormalizeCharMap::add(const String& singleMatch, const String& replacement)
-    {
-        NormalizeCharMapPtr currMap(shared_from_this());
-        for (String::const_iterator c = singleMatch.begin(); c != singleMatch.end(); ++c)
-        {
-            if (!currMap->submap)
-                currMap->submap = MapCharNormalizeCharMap::newInstance();
-            NormalizeCharMapPtr map(currMap->submap.get(*c));
-            if (!map)
-            {
-                map = newLucene<NormalizeCharMap>();
-                currMap->submap.put(*c, map);
-            }
-            currMap = map;
+NormalizeCharMap::~NormalizeCharMap() {
+}
+
+void NormalizeCharMap::add(const String& singleMatch, const String& replacement) {
+    NormalizeCharMapPtr currMap(shared_from_this());
+    for (String::const_iterator c = singleMatch.begin(); c != singleMatch.end(); ++c) {
+        if (!currMap->submap) {
+            currMap->submap = MapCharNormalizeCharMap::newInstance();
         }
-        if (!currMap->normStr.empty())
-            boost::throw_exception(RuntimeException(L"MappingCharFilter: there is already a mapping for " + singleMatch));
-        currMap->normStr = replacement;
-        currMap->diff = (int32_t)(singleMatch.length() - replacement.length());
+        NormalizeCharMapPtr map(currMap->submap.get(*c));
+        if (!map) {
+            map = newLucene<NormalizeCharMap>();
+            currMap->submap.put(*c, map);
+        }
+        currMap = map;
     }
+    if (!currMap->normStr.empty()) {
+        boost::throw_exception(RuntimeException(L"MappingCharFilter: there is already a mapping for " + singleMatch));
+    }
+    currMap->normStr = replacement;
+    currMap->diff = (int32_t)(singleMatch.length() - replacement.length());
+}
+
 }

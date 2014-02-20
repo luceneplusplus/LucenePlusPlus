@@ -10,212 +10,212 @@
 #include "IndexReader.h"
 #include "CloseableThreadLocal.h"
 
-namespace Lucene
-{
-    class LPPAPI SegmentReader : public IndexReader
-    {
-    public:
-        SegmentReader();
-        virtual ~SegmentReader();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentReader);
+class LPPAPI SegmentReader : public IndexReader {
+public:
+    SegmentReader();
+    virtual ~SegmentReader();
 
-    protected:
-        bool readOnly;
+    LUCENE_CLASS(SegmentReader);
 
-    INTERNAL:
-        BitVectorPtr deletedDocs;
-        SegmentReaderRefPtr deletedDocsRef;
-        CoreReadersPtr core;
-        FieldsReaderLocalPtr fieldsReaderLocal;
-        SegmentInfoPtr rollbackSegmentInfo;
-        CloseableThreadLocal<TermVectorsReader> termVectorsLocal;
-        FieldInfosPtr fieldInfos();
+protected:
+    bool readOnly;
 
-        /// Create a clone from the initial TermVectorsReader and store it in the ThreadLocal.
-        /// @return TermVectorsReader
-        TermVectorsReaderPtr getTermVectorsReader();
+INTERNAL:
+    BitVectorPtr deletedDocs;
+    SegmentReaderRefPtr deletedDocsRef;
+    CoreReadersPtr core;
+    FieldsReaderLocalPtr fieldsReaderLocal;
+    SegmentInfoPtr rollbackSegmentInfo;
+    CloseableThreadLocal<TermVectorsReader> termVectorsLocal;
+    FieldInfosPtr fieldInfos();
 
-        TermVectorsReaderPtr getTermVectorsReaderOrig();
-        FieldsReaderPtr getFieldsReader();
-        MapStringNorm _norms;
+    /// Create a clone from the initial TermVectorsReader and store it in the ThreadLocal.
+    /// @return TermVectorsReader
+    TermVectorsReaderPtr getTermVectorsReader();
 
-    private:
-        SegmentInfoPtr si;
-        int32_t readBufferSize;
-        bool deletedDocsDirty;
-        bool normsDirty;
-        int32_t pendingDeleteCount;
+    TermVectorsReaderPtr getTermVectorsReaderOrig();
+    FieldsReaderPtr getFieldsReader();
+    MapStringNorm _norms;
 
-        bool rollbackHasChanges;
-        bool rollbackDeletedDocsDirty;
-        bool rollbackNormsDirty;
-        int32_t rollbackPendingDeleteCount;
+private:
+    SegmentInfoPtr si;
+    int32_t readBufferSize;
+    bool deletedDocsDirty;
+    bool normsDirty;
+    int32_t pendingDeleteCount;
 
-        // optionally used for the .nrm file shared by multiple norms
-        IndexInputPtr singleNormStream;
-        SegmentReaderRefPtr singleNormRef;
+    bool rollbackHasChanges;
+    bool rollbackDeletedDocsDirty;
+    bool rollbackNormsDirty;
+    int32_t rollbackPendingDeleteCount;
 
-    public:
-        virtual void initialize();
+    // optionally used for the .nrm file shared by multiple norms
+    IndexInputPtr singleNormStream;
+    SegmentReaderRefPtr singleNormRef;
 
-        using IndexReader::document;
-        using IndexReader::termPositions;
+public:
+    virtual void initialize();
 
-        static SegmentReaderPtr get(bool readOnly, const SegmentInfoPtr& si, int32_t termInfosIndexDivisor);
-        static SegmentReaderPtr get(bool readOnly, const DirectoryPtr& dir, const SegmentInfoPtr& si, int32_t readBufferSize, bool doOpenStores, int32_t termInfosIndexDivisor);
+    using IndexReader::document;
+    using IndexReader::termPositions;
 
-        void openDocStores();
+    static SegmentReaderPtr get(bool readOnly, const SegmentInfoPtr& si, int32_t termInfosIndexDivisor);
+    static SegmentReaderPtr get(bool readOnly, const DirectoryPtr& dir, const SegmentInfoPtr& si, int32_t readBufferSize, bool doOpenStores, int32_t termInfosIndexDivisor);
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual LuceneObjectPtr clone(bool openReadOnly, const LuceneObjectPtr& other = LuceneObjectPtr());
-        SegmentReaderPtr reopenSegment(const SegmentInfoPtr& si, bool doClone, bool openReadOnly);
+    void openDocStores();
 
-        static bool hasDeletions(const SegmentInfoPtr& si);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual LuceneObjectPtr clone(bool openReadOnly, const LuceneObjectPtr& other = LuceneObjectPtr());
+    SegmentReaderPtr reopenSegment(const SegmentInfoPtr& si, bool doClone, bool openReadOnly);
 
-        /// Returns true if any documents have been deleted
-        virtual bool hasDeletions();
+    static bool hasDeletions(const SegmentInfoPtr& si);
 
-        static bool usesCompoundFile(const SegmentInfoPtr& si);
-        static bool hasSeparateNorms(const SegmentInfoPtr& si);
+    /// Returns true if any documents have been deleted
+    virtual bool hasDeletions();
 
-        HashSet<String> files();
+    static bool usesCompoundFile(const SegmentInfoPtr& si);
+    static bool hasSeparateNorms(const SegmentInfoPtr& si);
 
-        /// Returns an enumeration of all the terms in the index.
-        virtual TermEnumPtr terms();
+    HashSet<String> files();
 
-        /// Returns an enumeration of all terms starting at a given term.
-        virtual TermEnumPtr terms(const TermPtr& t);
+    /// Returns an enumeration of all the terms in the index.
+    virtual TermEnumPtr terms();
 
-        /// Get the {@link Document} at the n'th position.
-        virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
+    /// Returns an enumeration of all terms starting at a given term.
+    virtual TermEnumPtr terms(const TermPtr& t);
 
-        /// Returns true if document n has been deleted
-        virtual bool isDeleted(int32_t n);
+    /// Get the {@link Document} at the n'th position.
+    virtual DocumentPtr document(int32_t n, const FieldSelectorPtr& fieldSelector);
 
-        /// Returns an enumeration of all the documents which contain term.
-        virtual TermDocsPtr termDocs(const TermPtr& term);
+    /// Returns true if document n has been deleted
+    virtual bool isDeleted(int32_t n);
 
-        /// Returns an unpositioned {@link TermDocs} enumerator.
-        virtual TermDocsPtr termDocs();
+    /// Returns an enumeration of all the documents which contain term.
+    virtual TermDocsPtr termDocs(const TermPtr& term);
 
-        /// Returns an unpositioned {@link TermPositions} enumerator.
-        virtual TermPositionsPtr termPositions();
+    /// Returns an unpositioned {@link TermDocs} enumerator.
+    virtual TermDocsPtr termDocs();
 
-        /// Returns the number of documents containing the term t.
-        virtual int32_t docFreq(const TermPtr& t);
+    /// Returns an unpositioned {@link TermPositions} enumerator.
+    virtual TermPositionsPtr termPositions();
 
-        /// Returns the number of documents in this index.
-        virtual int32_t numDocs();
+    /// Returns the number of documents containing the term t.
+    virtual int32_t docFreq(const TermPtr& t);
 
-        /// Returns one greater than the largest possible document number.
-        virtual int32_t maxDoc();
+    /// Returns the number of documents in this index.
+    virtual int32_t numDocs();
 
-        /// Get a list of unique field names that exist in this index and have the specified field option information.
-        virtual HashSet<String> getFieldNames(FieldOption fieldOption);
+    /// Returns one greater than the largest possible document number.
+    virtual int32_t maxDoc();
 
-        /// Returns true if there are norms stored for this field.
-        virtual bool hasNorms(const String& field);
+    /// Get a list of unique field names that exist in this index and have the specified field option information.
+    virtual HashSet<String> getFieldNames(FieldOption fieldOption);
 
-        /// Returns the byte-encoded normalization factor for the named field of every document.
-        virtual ByteArray norms(const String& field);
+    /// Returns true if there are norms stored for this field.
+    virtual bool hasNorms(const String& field);
 
-        /// Read norms into a pre-allocated array.
-        virtual void norms(const String& field, ByteArray norms, int32_t offset);
+    /// Returns the byte-encoded normalization factor for the named field of every document.
+    virtual ByteArray norms(const String& field);
 
-        bool termsIndexLoaded();
+    /// Read norms into a pre-allocated array.
+    virtual void norms(const String& field, ByteArray norms, int32_t offset);
 
-        /// NOTE: only called from IndexWriter when a near real-time reader is opened, or applyDeletes is run, sharing a
-        /// segment that's still being merged.  This method is not thread safe, and relies on the synchronization in IndexWriter
-        void loadTermsIndex(int32_t termsIndexDivisor);
+    bool termsIndexLoaded();
 
-        bool normsClosed(); // for testing only
-        bool normsClosed(const String& field); // for testing only
+    /// NOTE: only called from IndexWriter when a near real-time reader is opened, or applyDeletes is run, sharing a
+    /// segment that's still being merged.  This method is not thread safe, and relies on the synchronization in IndexWriter
+    void loadTermsIndex(int32_t termsIndexDivisor);
 
-        /// Return a term frequency vector for the specified document and field. The vector returned contains term
-        /// numbers and frequencies for all terms in the specified field of this document, if the field had
-        /// storeTermVector flag set.  If the flag was not set, the method returns null.
-        virtual TermFreqVectorPtr getTermFreqVector(int32_t docNumber, const String& field);
+    bool normsClosed(); // for testing only
+    bool normsClosed(const String& field); // for testing only
 
-        /// Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays
-        /// of the {@link TermFreqVector}.
-        virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
+    /// Return a term frequency vector for the specified document and field. The vector returned contains term
+    /// numbers and frequencies for all terms in the specified field of this document, if the field had
+    /// storeTermVector flag set.  If the flag was not set, the method returns null.
+    virtual TermFreqVectorPtr getTermFreqVector(int32_t docNumber, const String& field);
 
-        /// Map all the term vectors for all fields in a Document
-        virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
+    /// Load the Term Vector into a user-defined data structure instead of relying on the parallel arrays
+    /// of the {@link TermFreqVector}.
+    virtual void getTermFreqVector(int32_t docNumber, const String& field, const TermVectorMapperPtr& mapper);
 
-        /// Return an array of term frequency vectors for the specified document.  The array contains a vector for
-        /// each vectorized field in the document.  Each vector vector contains term numbers and frequencies for all
-        /// terms in a given vectorized field.  If no such fields existed, the method returns null.
-        virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
+    /// Map all the term vectors for all fields in a Document
+    virtual void getTermFreqVector(int32_t docNumber, const TermVectorMapperPtr& mapper);
 
-        /// Return the name of the segment this reader is reading.
-        String getSegmentName();
+    /// Return an array of term frequency vectors for the specified document.  The array contains a vector for
+    /// each vectorized field in the document.  Each vector vector contains term numbers and frequencies for all
+    /// terms in a given vectorized field.  If no such fields existed, the method returns null.
+    virtual Collection<TermFreqVectorPtr> getTermFreqVectors(int32_t docNumber);
 
-        /// Return the SegmentInfo of the segment this reader is reading.
-        SegmentInfoPtr getSegmentInfo();
-        void setSegmentInfo(const SegmentInfoPtr& info);
+    /// Return the name of the segment this reader is reading.
+    String getSegmentName();
 
-        void startCommit();
-        void rollbackCommit();
+    /// Return the SegmentInfo of the segment this reader is reading.
+    SegmentInfoPtr getSegmentInfo();
+    void setSegmentInfo(const SegmentInfoPtr& info);
 
-        /// Returns the directory this index resides in.
-        virtual DirectoryPtr directory();
+    void startCommit();
+    void rollbackCommit();
 
-        /// This is necessary so that cloned SegmentReaders (which share the underlying postings data)
-        /// will map to the same entry in the FieldCache.
-        virtual LuceneObjectPtr getFieldCacheKey();
-        virtual LuceneObjectPtr getDeletesCacheKey();
+    /// Returns the directory this index resides in.
+    virtual DirectoryPtr directory();
 
-        /// Returns the number of unique terms (across all fields) in this reader.
-        virtual int64_t getUniqueTermCount();
+    /// This is necessary so that cloned SegmentReaders (which share the underlying postings data)
+    /// will map to the same entry in the FieldCache.
+    virtual LuceneObjectPtr getFieldCacheKey();
+    virtual LuceneObjectPtr getDeletesCacheKey();
 
-        static SegmentReaderPtr getOnlySegmentReader(const DirectoryPtr& dir);
-        static SegmentReaderPtr getOnlySegmentReader(const IndexReaderPtr& reader);
+    /// Returns the number of unique terms (across all fields) in this reader.
+    virtual int64_t getUniqueTermCount();
 
-        virtual int32_t getTermInfosIndexDivisor();
+    static SegmentReaderPtr getOnlySegmentReader(const DirectoryPtr& dir);
+    static SegmentReaderPtr getOnlySegmentReader(const IndexReaderPtr& reader);
 
-    protected:
-        bool checkDeletedCounts();
-        void loadDeletedDocs();
+    virtual int32_t getTermInfosIndexDivisor();
 
-        /// Clones the norm bytes.  May be overridden by subclasses.
-        /// @param bytes Byte array to clone
-        /// @return New BitVector
-        virtual ByteArray cloneNormBytes(ByteArray bytes);
+protected:
+    bool checkDeletedCounts();
+    void loadDeletedDocs();
 
-        /// Clones the deleteDocs BitVector.  May be overridden by subclasses.
-        /// @param bv BitVector to clone
-        /// @return New BitVector
-        virtual BitVectorPtr cloneDeletedDocs(const BitVectorPtr& bv);
+    /// Clones the norm bytes.  May be overridden by subclasses.
+    /// @param bytes Byte array to clone
+    /// @return New BitVector
+    virtual ByteArray cloneNormBytes(ByteArray bytes);
 
-        /// Implements commit.
-        virtual void doCommit(MapStringString commitUserData);
+    /// Clones the deleteDocs BitVector.  May be overridden by subclasses.
+    /// @param bv BitVector to clone
+    /// @return New BitVector
+    virtual BitVectorPtr cloneDeletedDocs(const BitVectorPtr& bv);
 
-        virtual void commitChanges(MapStringString commitUserData);
+    /// Implements commit.
+    virtual void doCommit(MapStringString commitUserData);
 
-        /// Implements close.
-        virtual void doClose();
+    virtual void commitChanges(MapStringString commitUserData);
 
-        /// Implements deletion of the document numbered docNum.
-        /// Applications should call {@link #deleteDocument(int)} or {@link #deleteDocuments(Term)}.
-        virtual void doDelete(int32_t docNum);
+    /// Implements close.
+    virtual void doClose();
 
-        /// Implements actual undeleteAll() in subclass.
-        virtual void doUndeleteAll();
+    /// Implements deletion of the document numbered docNum.
+    /// Applications should call {@link #deleteDocument(int)} or {@link #deleteDocuments(Term)}.
+    virtual void doDelete(int32_t docNum);
 
-        /// can return null if norms aren't stored
-        ByteArray getNorms(const String& field);
+    /// Implements actual undeleteAll() in subclass.
+    virtual void doUndeleteAll();
 
-        /// Implements setNorm in subclass.
-        virtual void doSetNorm(int32_t doc, const String& field, uint8_t value);
+    /// can return null if norms aren't stored
+    ByteArray getNorms(const String& field);
 
-        void openNorms(const DirectoryPtr& cfsDir, int32_t readBufferSize);
+    /// Implements setNorm in subclass.
+    virtual void doSetNorm(int32_t doc, const String& field, uint8_t value);
 
-        friend class ReaderPool;
-        friend class IndexWriter;
-        friend class Norm;
-    };
+    void openNorms(const DirectoryPtr& cfsDir, int32_t readBufferSize);
+
+    friend class ReaderPool;
+    friend class IndexWriter;
+    friend class Norm;
+};
+
 }
 
 #endif

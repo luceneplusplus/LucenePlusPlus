@@ -24,54 +24,47 @@ using namespace Lucene;
 
 typedef LuceneTestFixture AddIndexesNoOptimizeTest;
 
-static IndexWriterPtr newWriter(const DirectoryPtr& dir, bool create)
-{
+static IndexWriterPtr newWriter(const DirectoryPtr& dir, bool create) {
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), create, IndexWriter::MaxFieldLengthUNLIMITED);
     writer->setMergePolicy(newLucene<LogDocMergePolicy>(writer));
     return writer;
 }
 
-static void addDocs(const IndexWriterPtr& writer, int32_t numDocs)
-{
-    for (int32_t i = 0; i < numDocs; ++i)
-    {
+static void addDocs(const IndexWriterPtr& writer, int32_t numDocs) {
+    for (int32_t i = 0; i < numDocs; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
     }
 }
 
-static void addDocs2(const IndexWriterPtr& writer, int32_t numDocs)
-{
-    for (int32_t i = 0; i < numDocs; ++i)
-    {
+static void addDocs2(const IndexWriterPtr& writer, int32_t numDocs) {
+    for (int32_t i = 0; i < numDocs; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"content", L"bbb", Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
     }
 }
 
-static void verifyNumDocs(const DirectoryPtr& dir, int32_t numDocs)
-{
+static void verifyNumDocs(const DirectoryPtr& dir, int32_t numDocs) {
     IndexReaderPtr reader = IndexReader::open(dir, true);
     EXPECT_EQ(reader->maxDoc(), numDocs);
     EXPECT_EQ(reader->numDocs(), numDocs);
     reader->close();
 }
 
-static void verifyTermDocs(const DirectoryPtr& dir, const TermPtr& term, int32_t numDocs)
-{
+static void verifyTermDocs(const DirectoryPtr& dir, const TermPtr& term, int32_t numDocs) {
     IndexReaderPtr reader = IndexReader::open(dir, true);
     TermDocsPtr termDocs = reader->termDocs(term);
     int32_t count = 0;
-    while (termDocs->next())
+    while (termDocs->next()) {
         ++count;
+    }
     EXPECT_EQ(count, numDocs);
     reader->close();
 }
 
-static void setUpDirs(const DirectoryPtr& dir, const DirectoryPtr& aux)
-{
+static void setUpDirs(const DirectoryPtr& dir, const DirectoryPtr& aux) {
     IndexWriterPtr writer;
 
     writer = newWriter(dir, true);
@@ -87,8 +80,7 @@ static void setUpDirs(const DirectoryPtr& dir, const DirectoryPtr& aux)
     writer->setMaxBufferedDocs(100);
     writer->setMergeFactor(10);
     // add 30 documents in 3 segments
-    for (int32_t i = 0; i < 3; ++i)
-    {
+    for (int32_t i = 0; i < 3; ++i) {
         addDocs(writer, 10);
         writer->close();
         writer = newWriter(aux, false);
@@ -101,8 +93,7 @@ static void setUpDirs(const DirectoryPtr& dir, const DirectoryPtr& aux)
     writer->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testSimpleCase)
-{
+TEST_F(AddIndexesNoOptimizeTest, testSimpleCase) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // two auxiliary directories
@@ -192,8 +183,7 @@ TEST_F(AddIndexesNoOptimizeTest, testSimpleCase)
     verifyTermDocs(dir, newLucene<Term>(L"content", L"bbb"), 51);
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes)
-{
+TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -204,8 +194,7 @@ TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes)
     writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux));
 
     // Adds 10 docs, then replaces them with another 10 docs, so 10 pending deletes
-    for (int32_t i = 0; i < 20; ++i)
-    {
+    for (int32_t i = 0; i < 20; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", StringUtils::toString(i % 10), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         doc->add(newLucene<Field>(L"content", L"bbb " + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -230,8 +219,7 @@ TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes2)
-{
+TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes2) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -241,8 +229,7 @@ TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes2)
     IndexWriterPtr writer = newWriter(dir, false);
 
     // Adds 10 docs, then replaces them with another 10 docs, so 10 pending deletes
-    for (int32_t i = 0; i < 20; ++i)
-    {
+    for (int32_t i = 0; i < 20; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", StringUtils::toString(i % 10), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         doc->add(newLucene<Field>(L"content", L"bbb " + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -269,8 +256,7 @@ TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes2)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes3)
-{
+TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes3) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -280,8 +266,7 @@ TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes3)
     IndexWriterPtr writer = newWriter(dir, false);
 
     // Adds 10 docs, then replaces them with another 10 docs, so 10 pending deletes
-    for (int32_t i = 0; i < 20; ++i)
-    {
+    for (int32_t i = 0; i < 20; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", StringUtils::toString(i % 10), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         doc->add(newLucene<Field>(L"content", L"bbb " + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -308,8 +293,7 @@ TEST_F(AddIndexesNoOptimizeTest, testWithPendingDeletes3)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testAddSelf)
-{
+TEST_F(AddIndexesNoOptimizeTest, testAddSelf) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -334,12 +318,9 @@ TEST_F(AddIndexesNoOptimizeTest, testAddSelf)
     writer->close();
 
     writer = newWriter(dir, false);
-    try
-    {
+    try {
         writer->addIndexesNoOptimize(newCollection<DirectoryPtr>(aux, dir));
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e)); // cannot add self
     }
     EXPECT_EQ(100, writer->maxDoc());
@@ -353,8 +334,7 @@ TEST_F(AddIndexesNoOptimizeTest, testAddSelf)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testNoTailSegments)
-{
+TEST_F(AddIndexesNoOptimizeTest, testNoTailSegments) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -381,8 +361,7 @@ TEST_F(AddIndexesNoOptimizeTest, testNoTailSegments)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testNoCopySegments)
-{
+TEST_F(AddIndexesNoOptimizeTest, testNoCopySegments) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -409,8 +388,7 @@ TEST_F(AddIndexesNoOptimizeTest, testNoCopySegments)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testNoMergeAfterCopy)
-{
+TEST_F(AddIndexesNoOptimizeTest, testNoMergeAfterCopy) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -435,8 +413,7 @@ TEST_F(AddIndexesNoOptimizeTest, testNoMergeAfterCopy)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testMergeAfterCopy)
-{
+TEST_F(AddIndexesNoOptimizeTest, testMergeAfterCopy) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -445,8 +422,9 @@ TEST_F(AddIndexesNoOptimizeTest, testMergeAfterCopy)
     setUpDirs(dir, aux);
 
     IndexReaderPtr reader = IndexReader::open(aux, false);
-    for (int32_t i = 0; i < 20; ++i)
+    for (int32_t i = 0; i < 20; ++i) {
         reader->deleteDocument(i);
+    }
     EXPECT_EQ(10, reader->numDocs());
     reader->close();
 
@@ -467,8 +445,7 @@ TEST_F(AddIndexesNoOptimizeTest, testMergeAfterCopy)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testMoreMerges)
-{
+TEST_F(AddIndexesNoOptimizeTest, testMoreMerges) {
     // main directory
     DirectoryPtr dir = newLucene<RAMDirectory>();
     // auxiliary directory
@@ -488,14 +465,16 @@ TEST_F(AddIndexesNoOptimizeTest, testMoreMerges)
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(aux, false);
-    for (int32_t i = 0; i < 27; ++i)
+    for (int32_t i = 0; i < 27; ++i) {
         reader->deleteDocument(i);
+    }
     EXPECT_EQ(3, reader->numDocs());
     reader->close();
 
     reader = IndexReader::open(aux2, false);
-    for (int32_t i = 0; i < 8; ++i)
+    for (int32_t i = 0; i < 8; ++i) {
         reader->deleteDocument(i);
+    }
     EXPECT_EQ(22, reader->numDocs());
     reader->close();
 
@@ -516,8 +495,7 @@ TEST_F(AddIndexesNoOptimizeTest, testMoreMerges)
     aux->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testHangOnClose)
-{
+TEST_F(AddIndexesNoOptimizeTest, testHangOnClose) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMergePolicy(newLucene<LogByteSizeMergePolicy>(writer));
@@ -528,8 +506,9 @@ TEST_F(AddIndexesNoOptimizeTest, testHangOnClose)
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
 
-    for (int32_t i = 0; i < 60; ++i)
+    for (int32_t i = 0; i < 60; ++i) {
         writer->addDocument(doc);
+    }
     writer->setMaxBufferedDocs(200);
     DocumentPtr doc2 = newLucene<Document>();
 
@@ -538,8 +517,9 @@ TEST_F(AddIndexesNoOptimizeTest, testHangOnClose)
     doc2->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_NO));
     doc2->add(newLucene<Field>(L"content", L"aaa bbb ccc ddd eee fff ggg hhh iii", Field::STORE_YES, Field::INDEX_NO));
 
-    for (int32_t i = 0; i < 60; ++i)
+    for (int32_t i = 0; i < 60; ++i) {
         writer->addDocument(doc2);
+    }
     writer->close();
 
     DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
@@ -556,8 +536,7 @@ TEST_F(AddIndexesNoOptimizeTest, testHangOnClose)
     dir2->close();
 }
 
-TEST_F(AddIndexesNoOptimizeTest, testTargetCFS)
-{
+TEST_F(AddIndexesNoOptimizeTest, testTargetCFS) {
     // make sure CFS of destination indexwriter is respected when copying tail segments
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newWriter(dir, true);

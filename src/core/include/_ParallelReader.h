@@ -11,79 +11,77 @@
 #include "TermDocs.h"
 #include "TermPositions.h"
 
-namespace Lucene
-{
-    class ParallelTermEnum : public TermEnum
-    {
-    public:
-        ParallelTermEnum(const ParallelReaderPtr& reader);
-        ParallelTermEnum(const ParallelReaderPtr& reader, const TermPtr& term);
-        virtual ~ParallelTermEnum();
+namespace Lucene {
 
-        LUCENE_CLASS(ParallelTermEnum);
+class ParallelTermEnum : public TermEnum {
+public:
+    ParallelTermEnum(const ParallelReaderPtr& reader);
+    ParallelTermEnum(const ParallelReaderPtr& reader, const TermPtr& term);
+    virtual ~ParallelTermEnum();
 
-    protected:
-        ParallelReaderWeakPtr _reader;
-        String field;
-        MapStringIndexReader::iterator fieldIterator;
-        bool setIterator;
-        TermEnumPtr termEnum;
+    LUCENE_CLASS(ParallelTermEnum);
 
-    public:
-        /// Increments the enumeration to the next element.  True if one exists.
-        virtual bool next();
+protected:
+    ParallelReaderWeakPtr _reader;
+    String field;
+    MapStringIndexReader::iterator fieldIterator;
+    bool setIterator;
+    TermEnumPtr termEnum;
 
-        /// Returns the current Term in the enumeration.
-        virtual TermPtr term();
+public:
+    /// Increments the enumeration to the next element.  True if one exists.
+    virtual bool next();
 
-        /// Returns the docFreq of the current Term in the enumeration.
-        virtual int32_t docFreq();
+    /// Returns the current Term in the enumeration.
+    virtual TermPtr term();
 
-        /// Closes the enumeration to further activity, freeing resources.
-        virtual void close();
-    };
+    /// Returns the docFreq of the current Term in the enumeration.
+    virtual int32_t docFreq();
 
-    /// Wrap a TermDocs in order to support seek(Term)
-    class ParallelTermDocs : public TermPositions, public LuceneObject
-    {
-    public:
-        ParallelTermDocs(const ParallelReaderPtr& reader);
-        ParallelTermDocs(const ParallelReaderPtr& reader, const TermPtr& term);
-        virtual ~ParallelTermDocs();
+    /// Closes the enumeration to further activity, freeing resources.
+    virtual void close();
+};
 
-        LUCENE_CLASS(ParallelTermDocs);
+/// Wrap a TermDocs in order to support seek(Term)
+class ParallelTermDocs : public TermPositions, public LuceneObject {
+public:
+    ParallelTermDocs(const ParallelReaderPtr& reader);
+    ParallelTermDocs(const ParallelReaderPtr& reader, const TermPtr& term);
+    virtual ~ParallelTermDocs();
 
-    protected:
-        ParallelReaderWeakPtr _reader;
-        TermDocsPtr termDocs;
+    LUCENE_CLASS(ParallelTermDocs);
 
-    public:
-        virtual int32_t doc();
-        virtual int32_t freq();
-        virtual void seek(const TermPtr& term);
-        virtual void seek(const TermEnumPtr& termEnum);
-        virtual bool next();
-        virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
-        virtual bool skipTo(int32_t target);
-        virtual void close();
-    };
+protected:
+    ParallelReaderWeakPtr _reader;
+    TermDocsPtr termDocs;
 
-    class ParallelTermPositions : public ParallelTermDocs
-    {
-    public:
-        ParallelTermPositions(const ParallelReaderPtr& reader);
-        ParallelTermPositions(const ParallelReaderPtr& reader, const TermPtr& term);
-        virtual ~ParallelTermPositions();
+public:
+    virtual int32_t doc();
+    virtual int32_t freq();
+    virtual void seek(const TermPtr& term);
+    virtual void seek(const TermEnumPtr& termEnum);
+    virtual bool next();
+    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    virtual bool skipTo(int32_t target);
+    virtual void close();
+};
 
-        LUCENE_CLASS(ParallelTermPositions);
+class ParallelTermPositions : public ParallelTermDocs {
+public:
+    ParallelTermPositions(const ParallelReaderPtr& reader);
+    ParallelTermPositions(const ParallelReaderPtr& reader, const TermPtr& term);
+    virtual ~ParallelTermPositions();
 
-    public:
-        virtual void seek(const TermPtr& term);
-        virtual int32_t nextPosition();
-        virtual int32_t getPayloadLength();
-        virtual ByteArray getPayload(ByteArray data, int32_t offset);
-        virtual bool isPayloadAvailable();
-    };
+    LUCENE_CLASS(ParallelTermPositions);
+
+public:
+    virtual void seek(const TermPtr& term);
+    virtual int32_t nextPosition();
+    virtual int32_t getPayloadLength();
+    virtual ByteArray getPayload(ByteArray data, int32_t offset);
+    virtual bool isPayloadAvailable();
+};
+
 }
 
 #endif

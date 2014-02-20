@@ -25,31 +25,29 @@
 
 using namespace Lucene;
 
-class BooleanMinShouldMatchTest : public LuceneTestFixture
-{
+class BooleanMinShouldMatchTest : public LuceneTestFixture {
 public:
-    BooleanMinShouldMatchTest()
-    {
+    BooleanMinShouldMatchTest() {
         Collection<String> data = newCollection<String>(
-            L"A 1 2 3 4 5 6",
-            L"Z       4 5 6",
-            L"",
-            L"B   2   4 5 6",
-            L"Y     3   5 6",
-            L"",
-            L"C     3     6",
-            L"X       4 5 6"
-        );
+                                      L"A 1 2 3 4 5 6",
+                                      L"Z       4 5 6",
+                                      L"",
+                                      L"B   2   4 5 6",
+                                      L"Y     3   5 6",
+                                      L"",
+                                      L"C     3     6",
+                                      L"X       4 5 6"
+                                  );
 
         index = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(index, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        for (int32_t i = 0; i < data.size(); ++i)
-        {
+        for (int32_t i = 0; i < data.size(); ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             doc->add(newLucene<Field>(L"all", L"all", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-            if (!data[i].empty())
+            if (!data[i].empty()) {
                 doc->add(newLucene<Field>(L"data", data[i], Field::STORE_YES, Field::INDEX_ANALYZED));
+            }
             writer->addDocument(doc);
         }
 
@@ -60,8 +58,7 @@ public:
         s = newLucene<IndexSearcher>(r);
     }
 
-    virtual ~BooleanMinShouldMatchTest()
-    {
+    virtual ~BooleanMinShouldMatchTest() {
     }
 
 public:
@@ -70,40 +67,39 @@ public:
     IndexSearcherPtr s;
 
 public:
-    void verifyNrHits(const QueryPtr& q, int32_t expected)
-    {
+    void verifyNrHits(const QueryPtr& q, int32_t expected) {
         Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
         EXPECT_EQ(expected, h.size());
         QueryUtils::check(q, s);
     }
 
     /// Random rnd is passed in so that the exact same random query may be created more than once.
-    BooleanQueryPtr randBoolQuery(const RandomPtr& rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals)
-    {
+    BooleanQueryPtr randBoolQuery(const RandomPtr& rnd, bool allowMust, int32_t level, const String& field, Collection<String> vals) {
         BooleanQueryPtr current = newLucene<BooleanQuery>(rnd->nextInt() < 0);
-        for (int32_t i = 0; i < rnd->nextInt(vals.size()) + 1; ++i)
-        {
+        for (int32_t i = 0; i < rnd->nextInt(vals.size()) + 1; ++i) {
             int32_t qType = 0; // term query
-            if (level > 0)
+            if (level > 0) {
                 qType = rnd->nextInt(10);
+            }
             QueryPtr q;
-            if (qType < 3)
+            if (qType < 3) {
                 q = newLucene<TermQuery>(newLucene<Term>(field, vals[rnd->nextInt(vals.size())]));
-            else if (qType < 7)
+            } else if (qType < 7) {
                 q = newLucene<WildcardQuery>(newLucene<Term>(field, L"w*"));
-            else
+            } else {
                 q = randBoolQuery(rnd, allowMust, level - 1, field, vals);
+            }
 
             int32_t r = rnd->nextInt(10);
             BooleanClause::Occur occur = BooleanClause::SHOULD;
-            if (r < 2)
+            if (r < 2) {
                 occur = BooleanClause::MUST_NOT;
-            else if (r < 5)
-            {
-                if (allowMust)
+            } else if (r < 5) {
+                if (allowMust) {
                     occur = BooleanClause::MUST;
-                else
+                } else {
                     occur = BooleanClause::SHOULD;
+                }
             }
 
             current->add(q, occur);
@@ -111,30 +107,28 @@ public:
         return current;
     }
 
-    void minNrCB(const RandomPtr& rnd, const BooleanQueryPtr& q)
-    {
+    void minNrCB(const RandomPtr& rnd, const BooleanQueryPtr& q) {
         Collection<BooleanClausePtr> c = q->getClauses();
         int32_t opt = 0;
-        for (int32_t i = 0; i < c.size(); ++i)
-        {
-            if (c[i]->getOccur() == BooleanClause::SHOULD)
+        for (int32_t i = 0; i < c.size(); ++i) {
+            if (c[i]->getOccur() == BooleanClause::SHOULD) {
                 ++opt;
+            }
         }
         q->setMinimumNumberShouldMatch(rnd->nextInt(opt + 2));
     }
 };
 
-TEST_F(BooleanMinShouldMatchTest, testAllOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testAllOptional) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
-    for (int32_t i = 1; i <= 4; ++i)
+    for (int32_t i = 1; i <= 4; ++i) {
         q->add(newLucene<TermQuery>(newLucene<Term>(L"data", StringUtils::toString(i))), BooleanClause::SHOULD);
+    }
     q->setMinimumNumberShouldMatch(2); // match at least two of 4
     verifyNrHits(q, 2);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testOneReqAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testOneReqAndSomeOptional) {
     // one required, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -147,8 +141,7 @@ TEST_F(BooleanMinShouldMatchTest, testOneReqAndSomeOptional)
     verifyNrHits(q, 5);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testSomeReqAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testSomeReqAndSomeOptional) {
     // two required, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -162,8 +155,7 @@ TEST_F(BooleanMinShouldMatchTest, testSomeReqAndSomeOptional)
     verifyNrHits(q, 5);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testOneProhibAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testOneProhibAndSomeOptional) {
     // one prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"1")), BooleanClause::SHOULD);
@@ -176,8 +168,7 @@ TEST_F(BooleanMinShouldMatchTest, testOneProhibAndSomeOptional)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testSomeProhibAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testSomeProhibAndSomeOptional) {
     // two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"1")), BooleanClause::SHOULD);
@@ -191,8 +182,7 @@ TEST_F(BooleanMinShouldMatchTest, testSomeProhibAndSomeOptional)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testOneReqOneProhibAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testOneReqOneProhibAndSomeOptional) {
     // one required, one prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"6")), BooleanClause::MUST);
@@ -207,8 +197,7 @@ TEST_F(BooleanMinShouldMatchTest, testOneReqOneProhibAndSomeOptional)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testSomeReqOneProhibAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testSomeReqOneProhibAndSomeOptional) {
     // two required, one prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -224,8 +213,7 @@ TEST_F(BooleanMinShouldMatchTest, testSomeReqOneProhibAndSomeOptional)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testOneReqSomeProhibAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testOneReqSomeProhibAndSomeOptional) {
     // one required, two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"data", L"6")), BooleanClause::MUST);
@@ -241,8 +229,7 @@ TEST_F(BooleanMinShouldMatchTest, testOneReqSomeProhibAndSomeOptional)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testSomeReqSomeProhibAndSomeOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testSomeReqSomeProhibAndSomeOptional) {
     // two required, two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -259,8 +246,7 @@ TEST_F(BooleanMinShouldMatchTest, testSomeReqSomeProhibAndSomeOptional)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testMinHigherThenNumOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testMinHigherThenNumOptional) {
     // two required, two prohibited, some optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -277,8 +263,7 @@ TEST_F(BooleanMinShouldMatchTest, testMinHigherThenNumOptional)
     verifyNrHits(q, 0);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testMinEqualToNumOptional)
-{
+TEST_F(BooleanMinShouldMatchTest, testMinEqualToNumOptional) {
     // two required, two optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::SHOULD);
@@ -291,8 +276,7 @@ TEST_F(BooleanMinShouldMatchTest, testMinEqualToNumOptional)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testOneOptionalEqualToMin)
-{
+TEST_F(BooleanMinShouldMatchTest, testOneOptionalEqualToMin) {
     // two required, one optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -304,8 +288,7 @@ TEST_F(BooleanMinShouldMatchTest, testOneOptionalEqualToMin)
     verifyNrHits(q, 1);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin)
-{
+TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin) {
     // two required, no optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -316,8 +299,7 @@ TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin)
     verifyNrHits(q, 0);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin2)
-{
+TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin2) {
     // one required, no optional
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     q->add(newLucene<TermQuery>(newLucene<Term>(L"all", L"all")), BooleanClause::MUST);
@@ -327,8 +309,7 @@ TEST_F(BooleanMinShouldMatchTest, testNoOptionalButMin2)
     verifyNrHits(q, 0);
 }
 
-TEST_F(BooleanMinShouldMatchTest, testRandomQueries)
-{
+TEST_F(BooleanMinShouldMatchTest, testRandomQueries) {
     RandomPtr rnd = newLucene<Random>(17);
 
     String field = L"data";
@@ -349,8 +330,7 @@ TEST_F(BooleanMinShouldMatchTest, testRandomQueries)
     int32_t maxLev = 4;
 
     // increase number of iterations for more complete testing
-    for (int32_t i = 0; i < 1000; ++i)
-    {
+    for (int32_t i = 0; i < 1000; ++i) {
         int32_t lev = rnd->nextInt(maxLev);
         int32_t seed = rnd->nextInt();
 
@@ -374,16 +354,13 @@ TEST_F(BooleanMinShouldMatchTest, testRandomQueries)
         // The constrained query should be a superset to the unconstrained query.
         EXPECT_TRUE(top2->totalHits <= top1->totalHits);
 
-        for (int32_t hit = 0; hit < top2->totalHits; ++hit)
-        {
+        for (int32_t hit = 0; hit < top2->totalHits; ++hit) {
             int32_t id = top2->scoreDocs[hit]->doc;
             double score = top2->scoreDocs[hit]->score;
             bool found = false;
             // find this doc in other hits
-            for (int32_t other = 0; other < top1->totalHits; ++other)
-            {
-                if (top1->scoreDocs[other]->doc == id)
-                {
+            for (int32_t other = 0; other < top1->totalHits; ++other) {
+                if (top1->scoreDocs[other]->doc == id) {
                     found = true;
                     double otherScore = top1->scoreDocs[other]->score;
                     // check if scores match

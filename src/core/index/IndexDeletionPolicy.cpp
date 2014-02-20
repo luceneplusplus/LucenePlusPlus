@@ -7,13 +7,12 @@
 #include "LuceneInc.h"
 #include "IndexDeletionPolicy.h"
 
-namespace Lucene
-{
-    IndexDeletionPolicy::IndexDeletionPolicy()
-    {
-    }
+namespace Lucene {
 
-    IndexDeletionPolicy::~IndexDeletionPolicy()
-    {
-    }
+IndexDeletionPolicy::IndexDeletionPolicy() {
+}
+
+IndexDeletionPolicy::~IndexDeletionPolicy() {
+}
+
 }

@@ -7,33 +7,29 @@
 #include "LuceneInc.h"
 #include "TopDocs.h"
 
-namespace Lucene
-{
-    TopDocs::TopDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs)
-    {
-        this->totalHits = totalHits;
-        this->scoreDocs = scoreDocs;
-        this->maxScore = std::numeric_limits<double>::quiet_NaN();
-    }
+namespace Lucene {
 
-    TopDocs::TopDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, double maxScore)
-    {
-        this->totalHits = totalHits;
-        this->scoreDocs = scoreDocs;
-        this->maxScore = maxScore;
-    }
+TopDocs::TopDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs) {
+    this->totalHits = totalHits;
+    this->scoreDocs = scoreDocs;
+    this->maxScore = std::numeric_limits<double>::quiet_NaN();
+}
 
-    TopDocs::~TopDocs()
-    {
-    }
+TopDocs::TopDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, double maxScore) {
+    this->totalHits = totalHits;
+    this->scoreDocs = scoreDocs;
+    this->maxScore = maxScore;
+}
 
-    double TopDocs::getMaxScore()
-    {
-        return maxScore;
-    }
+TopDocs::~TopDocs() {
+}
 
-    void TopDocs::setMaxScore(double maxScore)
-    {
-        this->maxScore = maxScore;
-    }
+double TopDocs::getMaxScore() {
+    return maxScore;
+}
+
+void TopDocs::setMaxScore(double maxScore) {
+    this->maxScore = maxScore;
+}
+
 }

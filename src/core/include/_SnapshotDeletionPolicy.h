@@ -9,50 +9,50 @@
 
 #include "IndexCommit.h"
 
-namespace Lucene
-{
-    class MyCommitPoint : public IndexCommit
-    {
-    public:
-        MyCommitPoint(const SnapshotDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& cp);
-        virtual ~MyCommitPoint();
+namespace Lucene {
 
-        LUCENE_CLASS(MyCommitPoint);
+class MyCommitPoint : public IndexCommit {
+public:
+    MyCommitPoint(const SnapshotDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& cp);
+    virtual ~MyCommitPoint();
 
-    protected:
-        SnapshotDeletionPolicyWeakPtr _deletionPolicy;
+    LUCENE_CLASS(MyCommitPoint);
 
-    public:
-        IndexCommitPtr cp;
+protected:
+    SnapshotDeletionPolicyWeakPtr _deletionPolicy;
 
-    public:
-        virtual String toString();
+public:
+    IndexCommitPtr cp;
 
-        /// Get the segments file (segments_N) associated with this commit point.
-        virtual String getSegmentsFileName();
+public:
+    virtual String toString();
 
-        /// Returns all index files referenced by this commit point.
-        virtual HashSet<String> getFileNames();
+    /// Get the segments file (segments_N) associated with this commit point.
+    virtual String getSegmentsFileName();
 
-        /// Returns the {@link Directory} for the index.
-        virtual DirectoryPtr getDirectory();
+    /// Returns all index files referenced by this commit point.
+    virtual HashSet<String> getFileNames();
 
-        /// Delete this commit point.
-        virtual void deleteCommit();
+    /// Returns the {@link Directory} for the index.
+    virtual DirectoryPtr getDirectory();
 
-        virtual bool isDeleted();
+    /// Delete this commit point.
+    virtual void deleteCommit();
 
-        /// Returns the version for this IndexCommit.
-        virtual int64_t getVersion();
+    virtual bool isDeleted();
 
-        /// Returns the generation (the _N in segments_N) for this IndexCommit.
-        virtual int64_t getGeneration();
+    /// Returns the version for this IndexCommit.
+    virtual int64_t getVersion();
 
-        /// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
-        virtual MapStringString getUserData();
+    /// Returns the generation (the _N in segments_N) for this IndexCommit.
+    virtual int64_t getGeneration();
 
-        virtual bool isOptimized();
-    };
+    /// Returns userData, previously passed to {@link IndexWriter#commit(Map)} for this commit.
+    virtual MapStringString getUserData();
+
+    virtual bool isOptimized();
+};
+
 }
 
 #endif

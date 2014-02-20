@@ -26,8 +26,7 @@ using namespace Lucene;
 /// A basic 'positive' Unit test class for the FieldCacheRangeFilter class.
 typedef BaseTestRangeFilterFixture FieldCacheRangeFilterTest;
 
-TEST_F(FieldCacheRangeFilterTest, testRangeFilterId)
-{
+TEST_F(FieldCacheRangeFilterTest, testRangeFilterId) {
     IndexReaderPtr reader = IndexReader::open((DirectoryPtr)signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -111,8 +110,7 @@ TEST_F(FieldCacheRangeFilterTest, testRangeFilterId)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterRand)
-{
+TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterRand) {
     IndexReaderPtr reader = IndexReader::open((DirectoryPtr)signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -176,8 +174,7 @@ TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterRand)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterInts)
-{
+TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterInts) {
     IndexReaderPtr reader = IndexReader::open((DirectoryPtr)signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -258,8 +255,7 @@ TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterInts)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterLongs)
-{
+TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterLongs) {
     IndexReaderPtr reader = IndexReader::open((DirectoryPtr)signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -340,8 +336,7 @@ TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterLongs)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterDoubles)
-{
+TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterDoubles) {
     IndexReaderPtr reader = IndexReader::open((DirectoryPtr)signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -366,13 +361,11 @@ TEST_F(FieldCacheRangeFilterTest, testFieldCacheRangeFilterDoubles)
     EXPECT_EQ(0, result.size());
 }
 
-TEST_F(FieldCacheRangeFilterTest, testSparseIndex)
-{
+TEST_F(FieldCacheRangeFilterTest, testSparseIndex) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
-    for (int32_t d = -20; d <= 20; ++d)
-    {
+    for (int32_t d = -20; d <= 20; ++d) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", StringUtils::toString(d), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         doc->add(newLucene<Field>(L"body", L"body", Field::STORE_NO, Field::INDEX_NOT_ANALYZED));

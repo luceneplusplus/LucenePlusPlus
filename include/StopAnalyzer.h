@@ -9,44 +9,44 @@
 
 #include "Analyzer.h"
 
-namespace Lucene
-{
-    /// Filters {@link LetterTokenizer} with {@link LowerCaseFilter} and {@link StopFilter}.
-    ///
-    /// You must specify the required {@link Version} compatibility when creating StopAnalyzer: As of 2.9, position
-    /// increments are preserved
-    class LPPAPI StopAnalyzer : public Analyzer
-    {
-    public:
-        /// Builds an analyzer which removes words in {@link #ENGLISH_STOP_WORDS_SET}.
-        StopAnalyzer(LuceneVersion::Version matchVersion);
+namespace Lucene {
 
-        /// Builds an analyzer with the stop words from the given set.
-        StopAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopWords);
+/// Filters {@link LetterTokenizer} with {@link LowerCaseFilter} and {@link StopFilter}.
+///
+/// You must specify the required {@link Version} compatibility when creating StopAnalyzer: As of 2.9, position
+/// increments are preserved
+class LPPAPI StopAnalyzer : public Analyzer {
+public:
+    /// Builds an analyzer which removes words in {@link #ENGLISH_STOP_WORDS_SET}.
+    StopAnalyzer(LuceneVersion::Version matchVersion);
 
-        /// Builds an analyzer with the stop words from the given file.
-        StopAnalyzer(LuceneVersion::Version matchVersion, const String& stopwordsFile);
+    /// Builds an analyzer with the stop words from the given set.
+    StopAnalyzer(LuceneVersion::Version matchVersion, HashSet<String> stopWords);
 
-        /// Builds an analyzer with the stop words from the given reader.
-        StopAnalyzer(LuceneVersion::Version matchVersion, const ReaderPtr& stopwords);
+    /// Builds an analyzer with the stop words from the given file.
+    StopAnalyzer(LuceneVersion::Version matchVersion, const String& stopwordsFile);
 
-        virtual ~StopAnalyzer();
+    /// Builds an analyzer with the stop words from the given reader.
+    StopAnalyzer(LuceneVersion::Version matchVersion, const ReaderPtr& stopwords);
 
-        LUCENE_CLASS(StopAnalyzer);
+    virtual ~StopAnalyzer();
 
-    protected:
-        HashSet<String> stopWords;
-        bool enablePositionIncrements;
+    LUCENE_CLASS(StopAnalyzer);
 
-        static const wchar_t* _ENGLISH_STOP_WORDS_SET[];
+protected:
+    HashSet<String> stopWords;
+    bool enablePositionIncrements;
 
-    public:
-        /// An unmodifiable set containing some common English words that are usually not useful for searching.
-        static const HashSet<String> ENGLISH_STOP_WORDS_SET();
+    static const wchar_t* _ENGLISH_STOP_WORDS_SET[];
 
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
-    };
+public:
+    /// An unmodifiable set containing some common English words that are usually not useful for searching.
+    static const HashSet<String> ENGLISH_STOP_WORDS_SET();
+
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
+};
+
 }
 
 #endif

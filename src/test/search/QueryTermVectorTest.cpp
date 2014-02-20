@@ -13,17 +13,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture QueryTermVectorTest;
 
-static void checkGold(Collection<String> terms, Collection<String> gold, Collection<int32_t> freq, Collection<int32_t> goldFreqs)
-{
-    for (int32_t i = 0; i < terms.size(); ++i)
-    {
+static void checkGold(Collection<String> terms, Collection<String> gold, Collection<int32_t> freq, Collection<int32_t> goldFreqs) {
+    for (int32_t i = 0; i < terms.size(); ++i) {
         EXPECT_EQ(terms[i], gold[i]);
         EXPECT_EQ(freq[i], goldFreqs[i]);
     }
 }
 
-TEST_F(QueryTermVectorTest, testConstructor)
-{
+TEST_F(QueryTermVectorTest, testConstructor) {
     Collection<String> queryTerm = newCollection<String>(L"foo", L"bar", L"foo", L"again", L"foo", L"bar", L"go", L"go", L"go");
 
     // Items are sorted lexicographically

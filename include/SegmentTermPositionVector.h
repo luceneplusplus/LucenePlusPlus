@@ -9,34 +9,34 @@
 
 #include "SegmentTermVector.h"
 
-namespace Lucene
-{
-    class SegmentTermPositionVector : public SegmentTermVector
-    {
-    public:
-        SegmentTermPositionVector(const String& field, Collection<String> terms, Collection<int32_t> termFreqs,
-                                  Collection< Collection<int32_t> > positions, Collection< Collection<TermVectorOffsetInfoPtr> > offsets);
-        virtual ~SegmentTermPositionVector();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentTermPositionVector);
+class SegmentTermPositionVector : public SegmentTermVector {
+public:
+    SegmentTermPositionVector(const String& field, Collection<String> terms, Collection<int32_t> termFreqs,
+                              Collection< Collection<int32_t> > positions, Collection< Collection<TermVectorOffsetInfoPtr> > offsets);
+    virtual ~SegmentTermPositionVector();
 
-    protected:
-        Collection< Collection<int32_t> > positions;
-        Collection< Collection<TermVectorOffsetInfoPtr> > offsets;
+    LUCENE_CLASS(SegmentTermPositionVector);
 
-    protected:
-        static const Collection<int32_t> EMPTY_TERM_POS();
+protected:
+    Collection< Collection<int32_t> > positions;
+    Collection< Collection<TermVectorOffsetInfoPtr> > offsets;
 
-    public:
-        /// Returns an array of TermVectorOffsetInfo in which the term is found.
-        /// @param index The position in the array to get the offsets from
-        /// @return An array of TermVectorOffsetInfo objects or the empty list
-        virtual Collection<TermVectorOffsetInfoPtr> getOffsets(int32_t index);
+protected:
+    static const Collection<int32_t> EMPTY_TERM_POS();
 
-        /// Returns an array of positions in which the term is found.
-        /// Terms are identified by the index at which its number appears in the term String array obtained from the indexOf method.
-        virtual Collection<int32_t> getTermPositions(int32_t index);
-    };
+public:
+    /// Returns an array of TermVectorOffsetInfo in which the term is found.
+    /// @param index The position in the array to get the offsets from
+    /// @return An array of TermVectorOffsetInfo objects or the empty list
+    virtual Collection<TermVectorOffsetInfoPtr> getOffsets(int32_t index);
+
+    /// Returns an array of positions in which the term is found.
+    /// Terms are identified by the index at which its number appears in the term String array obtained from the indexOf method.
+    virtual Collection<int32_t> getTermPositions(int32_t index);
+};
+
 }
 
 #endif

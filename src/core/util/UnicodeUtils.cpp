@@ -9,67 +9,55 @@
 #include "UnicodeUtils.h"
 #include "unicode/guniprop.h"
 
-namespace Lucene
-{
-    UnicodeUtil::~UnicodeUtil()
-    {
-    }
+namespace Lucene {
 
-    bool UnicodeUtil::isAlnum(wchar_t c)
-    {
-        return g_unichar_isalnum(c);
-    }
+UnicodeUtil::~UnicodeUtil() {
+}
 
-    bool UnicodeUtil::isAlpha(wchar_t c)
-    {
-        return g_unichar_isalpha(c);
-    }
+bool UnicodeUtil::isAlnum(wchar_t c) {
+    return g_unichar_isalnum(c);
+}
 
-    bool UnicodeUtil::isDigit(wchar_t c)
-    {
-        return g_unichar_isdigit(c);
-    }
+bool UnicodeUtil::isAlpha(wchar_t c) {
+    return g_unichar_isalpha(c);
+}
 
-    bool UnicodeUtil::isSpace(wchar_t c)
-    {
-        return g_unichar_isspace(c);
-    }
+bool UnicodeUtil::isDigit(wchar_t c) {
+    return g_unichar_isdigit(c);
+}
 
-    bool UnicodeUtil::isUpper(wchar_t c)
-    {
-        return g_unichar_isupper(c);
-    }
+bool UnicodeUtil::isSpace(wchar_t c) {
+    return g_unichar_isspace(c);
+}
 
-    bool UnicodeUtil::isLower(wchar_t c)
-    {
-        return g_unichar_islower(c);
-    }
+bool UnicodeUtil::isUpper(wchar_t c) {
+    return g_unichar_isupper(c);
+}
 
-    bool UnicodeUtil::isOther(wchar_t c)
-    {
-        return (g_unichar_type(c) == G_UNICODE_OTHER_LETTER);
-    }
+bool UnicodeUtil::isLower(wchar_t c) {
+    return g_unichar_islower(c);
+}
 
-    bool UnicodeUtil::isNonSpacing(wchar_t c)
-    {
-        return (g_unichar_type(c) == G_UNICODE_NON_SPACING_MARK);
-    }
+bool UnicodeUtil::isOther(wchar_t c) {
+    return (g_unichar_type(c) == G_UNICODE_OTHER_LETTER);
+}
 
-    wchar_t UnicodeUtil::toUpper(wchar_t c)
-    {
-        return (wchar_t)g_unichar_toupper(c);
-    }
+bool UnicodeUtil::isNonSpacing(wchar_t c) {
+    return (g_unichar_type(c) == G_UNICODE_NON_SPACING_MARK);
+}
 
-    wchar_t UnicodeUtil::toLower(wchar_t c)
-    {
-        return (wchar_t)g_unichar_tolower(c);
-    }
+wchar_t UnicodeUtil::toUpper(wchar_t c) {
+    return (wchar_t)g_unichar_toupper(c);
+}
 
-    UTF8Result::~UTF8Result()
-    {
-    }
+wchar_t UnicodeUtil::toLower(wchar_t c) {
+    return (wchar_t)g_unichar_tolower(c);
+}
 
-    UnicodeResult::~UnicodeResult()
-    {
-    }
+UTF8Result::~UTF8Result() {
+}
+
+UnicodeResult::~UnicodeResult() {
+}
+
 }

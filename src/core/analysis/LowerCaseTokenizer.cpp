@@ -8,26 +8,22 @@
 #include "LowerCaseTokenizer.h"
 #include "CharFolder.h"
 
-namespace Lucene
-{
-    LowerCaseTokenizer::LowerCaseTokenizer(const ReaderPtr& input) : LetterTokenizer(input)
-    {
-    }
+namespace Lucene {
 
-    LowerCaseTokenizer::LowerCaseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : LetterTokenizer(source, input)
-    {
-    }
+LowerCaseTokenizer::LowerCaseTokenizer(const ReaderPtr& input) : LetterTokenizer(input) {
+}
 
-    LowerCaseTokenizer::LowerCaseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : LetterTokenizer(factory, input)
-    {
-    }
+LowerCaseTokenizer::LowerCaseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : LetterTokenizer(source, input) {
+}
 
-    LowerCaseTokenizer::~LowerCaseTokenizer()
-    {
-    }
+LowerCaseTokenizer::LowerCaseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : LetterTokenizer(factory, input) {
+}
 
-    wchar_t LowerCaseTokenizer::normalize(wchar_t c)
-    {
-        return CharFolder::toLower(c);
-    }
+LowerCaseTokenizer::~LowerCaseTokenizer() {
+}
+
+wchar_t LowerCaseTokenizer::normalize(wchar_t c) {
+    return CharFolder::toLower(c);
+}
+
 }

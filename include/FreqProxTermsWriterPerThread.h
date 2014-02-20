@@ -9,26 +9,26 @@
 
 #include "TermsHashConsumerPerThread.h"
 
-namespace Lucene
-{
-    class FreqProxTermsWriterPerThread : public TermsHashConsumerPerThread
-    {
-    public:
-        FreqProxTermsWriterPerThread(const TermsHashPerThreadPtr& perThread);
-        virtual ~FreqProxTermsWriterPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(FreqProxTermsWriterPerThread);
+class FreqProxTermsWriterPerThread : public TermsHashConsumerPerThread {
+public:
+    FreqProxTermsWriterPerThread(const TermsHashPerThreadPtr& perThread);
+    virtual ~FreqProxTermsWriterPerThread();
 
-    public:
-        TermsHashPerThreadWeakPtr _termsHashPerThread;
-        DocStatePtr docState;
+    LUCENE_CLASS(FreqProxTermsWriterPerThread);
 
-    public:
-        virtual TermsHashConsumerPerFieldPtr addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo);
-        virtual void startDocument();
-        virtual DocWriterPtr finishDocument();
-        virtual void abort();
-    };
+public:
+    TermsHashPerThreadWeakPtr _termsHashPerThread;
+    DocStatePtr docState;
+
+public:
+    virtual TermsHashConsumerPerFieldPtr addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo);
+    virtual void startDocument();
+    virtual DocWriterPtr finishDocument();
+    virtual void abort();
+};
+
 }
 
 #endif

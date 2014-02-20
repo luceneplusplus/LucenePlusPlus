@@ -9,33 +9,33 @@
 
 #include "CharStream.h"
 
-namespace Lucene
-{
-    /// CharReader is a Reader wrapper.  It reads chars from Reader and outputs {@link CharStream}, defining an
-    /// identify function {@link #correctOffset} method that simply returns the provided offset.
-    class LPPAPI CharReader : public CharStream
-    {
-    public:
-        CharReader(const ReaderPtr& in);
-        virtual ~CharReader();
+namespace Lucene {
 
-        LUCENE_CLASS(CharReader);
+/// CharReader is a Reader wrapper.  It reads chars from Reader and outputs {@link CharStream}, defining an
+/// identify function {@link #correctOffset} method that simply returns the provided offset.
+class LPPAPI CharReader : public CharStream {
+public:
+    CharReader(const ReaderPtr& in);
+    virtual ~CharReader();
 
-    protected:
-        ReaderPtr input;
+    LUCENE_CLASS(CharReader);
 
-    public:
-        using CharStream::read;
+protected:
+    ReaderPtr input;
 
-        static CharStreamPtr get(const ReaderPtr& input);
+public:
+    using CharStream::read;
 
-        virtual int32_t correctOffset(int32_t currentOff);
-        virtual void close();
-        virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
-        virtual bool markSupported();
-        virtual void mark(int32_t readAheadLimit);
-        virtual void reset();
-    };
+    static CharStreamPtr get(const ReaderPtr& input);
+
+    virtual int32_t correctOffset(int32_t currentOff);
+    virtual void close();
+    virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+    virtual bool markSupported();
+    virtual void mark(int32_t readAheadLimit);
+    virtual void reset();
+};
+
 }
 
 #endif

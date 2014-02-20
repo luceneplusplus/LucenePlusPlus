@@ -9,22 +9,20 @@
 #include "ConcurrentMergeScheduler.h"
 #include "DateTools.h"
 
-namespace Lucene
-{
-    LuceneTestFixture::LuceneTestFixture()
-    {
-        DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
-        ConcurrentMergeScheduler::setTestMode();
-    }
+namespace Lucene {
 
-    LuceneTestFixture::~LuceneTestFixture()
-    {
-        DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
-        if (ConcurrentMergeScheduler::anyUnhandledExceptions())
-        {
-            // Clear the failure so that we don't just keep failing subsequent test cases
-            ConcurrentMergeScheduler::clearUnhandledExceptions();
-            FAIL() << "ConcurrentMergeScheduler hit unhandled exceptions";
-        }
+LuceneTestFixture::LuceneTestFixture() {
+    DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
+    ConcurrentMergeScheduler::setTestMode();
+}
+
+LuceneTestFixture::~LuceneTestFixture() {
+    DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
+    if (ConcurrentMergeScheduler::anyUnhandledExceptions()) {
+        // Clear the failure so that we don't just keep failing subsequent test cases
+        ConcurrentMergeScheduler::clearUnhandledExceptions();
+        FAIL() << "ConcurrentMergeScheduler hit unhandled exceptions";
     }
+}
+
 }

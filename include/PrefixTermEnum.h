@@ -9,33 +9,33 @@
 
 #include "FilteredTermEnum.h"
 
-namespace Lucene
-{
-    /// Subclass of FilteredTermEnum for enumerating all terms that match the specified prefix filter term.
-    ///
-    /// Term enumerations are always ordered by Term.compareTo().  Each term in the enumeration is greater than
-    /// all that precede it.
-    class LPPAPI PrefixTermEnum : public FilteredTermEnum
-    {
-    public:
-        PrefixTermEnum(const IndexReaderPtr& reader, const TermPtr& prefix);
-        virtual ~PrefixTermEnum();
+namespace Lucene {
 
-        LUCENE_CLASS(PrefixTermEnum);
+/// Subclass of FilteredTermEnum for enumerating all terms that match the specified prefix filter term.
+///
+/// Term enumerations are always ordered by Term.compareTo().  Each term in the enumeration is greater than
+/// all that precede it.
+class LPPAPI PrefixTermEnum : public FilteredTermEnum {
+public:
+    PrefixTermEnum(const IndexReaderPtr& reader, const TermPtr& prefix);
+    virtual ~PrefixTermEnum();
 
-    protected:
-        TermPtr prefix;
-        bool _endEnum;
+    LUCENE_CLASS(PrefixTermEnum);
 
-    public:
-        virtual double difference();
+protected:
+    TermPtr prefix;
+    bool _endEnum;
 
-    protected:
-        virtual bool endEnum();
-        virtual bool termCompare(const TermPtr& term);
+public:
+    virtual double difference();
 
-        TermPtr getPrefixTerm();
-    };
+protected:
+    virtual bool endEnum();
+    virtual bool termCompare(const TermPtr& term);
+
+    TermPtr getPrefixTerm();
+};
+
 }
 
 #endif

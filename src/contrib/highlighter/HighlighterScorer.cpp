@@ -7,33 +7,29 @@
 #include "ContribInc.h"
 #include "HighlighterScorer.h"
 
-namespace Lucene
-{
-    HighlighterScorer::~HighlighterScorer()
-    {
-    }
+namespace Lucene {
 
-    TokenStreamPtr HighlighterScorer::init(const TokenStreamPtr& tokenStream)
-    {
-        BOOST_ASSERT(false);
-        return TokenStreamPtr(); // override
-    }
+HighlighterScorer::~HighlighterScorer() {
+}
 
-    void HighlighterScorer::startFragment(const TextFragmentPtr& newFragment)
-    {
-        BOOST_ASSERT(false);
-        // override
-    }
+TokenStreamPtr HighlighterScorer::init(const TokenStreamPtr& tokenStream) {
+    BOOST_ASSERT(false);
+    return TokenStreamPtr(); // override
+}
 
-    double HighlighterScorer::getTokenScore()
-    {
-        BOOST_ASSERT(false);
-        return 0; // override
-    }
+void HighlighterScorer::startFragment(const TextFragmentPtr& newFragment) {
+    BOOST_ASSERT(false);
+    // override
+}
 
-    double HighlighterScorer::getFragmentScore()
-    {
-        BOOST_ASSERT(false);
-        return 0; // override
-    }
+double HighlighterScorer::getTokenScore() {
+    BOOST_ASSERT(false);
+    return 0; // override
+}
+
+double HighlighterScorer::getFragmentScore() {
+    BOOST_ASSERT(false);
+    return 0; // override
+}
+
 }

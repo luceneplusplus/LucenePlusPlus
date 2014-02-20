@@ -21,12 +21,12 @@ using namespace Lucene;
 
 typedef LuceneTestFixture TopScoreDocCollectorTest;
 
-TEST_F(TopScoreDocCollectorTest, testOutOfOrderCollection)
-{
+TEST_F(TopScoreDocCollectorTest, testOutOfOrderCollection) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, AnalyzerPtr(), IndexWriter::MaxFieldLengthUNLIMITED);
-    for (int32_t i = 0; i < 10; ++i)
+    for (int32_t i = 0; i < 10; ++i) {
         writer->addDocument(newLucene<Document>());
+    }
     writer->commit();
     writer->close();
 
@@ -42,8 +42,7 @@ TEST_F(TopScoreDocCollectorTest, testOutOfOrderCollection)
     // Set minNrShouldMatch to 1 so that BQ will not optimize rewrite to return the clause instead of BQ.
     bq->setMinimumNumberShouldMatch(1);
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
-    for (int32_t i = 0; i < inOrder.size(); ++i)
-    {
+    for (int32_t i = 0; i < inOrder.size(); ++i) {
         TopDocsCollectorPtr tdc = TopScoreDocCollector::create(3, inOrder[i] == 1);
         EXPECT_EQ(actualTSDCClass[i], tdc->getClassName());
 
@@ -51,7 +50,8 @@ TEST_F(TopScoreDocCollectorTest, testOutOfOrderCollection)
 
         Collection<ScoreDocPtr> sd = tdc->topDocs()->scoreDocs;
         EXPECT_EQ(3, sd.size());
-        for (int32_t j = 0; j < sd.size(); ++j)
+        for (int32_t j = 0; j < sd.size(); ++j) {
             EXPECT_EQ(j, sd[j]->doc);
+        }
     }
 }

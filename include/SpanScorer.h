@@ -9,42 +9,42 @@
 
 #include "Scorer.h"
 
-namespace Lucene
-{
-    /// Public for extension only.
-    class LPPAPI SpanScorer : public Scorer
-    {
-    public:
-        SpanScorer(const SpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms);
-        virtual ~SpanScorer();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanScorer);
+/// Public for extension only.
+class LPPAPI SpanScorer : public Scorer {
+public:
+    SpanScorer(const SpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms);
+    virtual ~SpanScorer();
 
-    protected:
-        SpansPtr spans;
-        WeightPtr weight;
-        ByteArray norms;
-        double value;
-        bool more;
-        int32_t doc;
-        double freq;
+    LUCENE_CLASS(SpanScorer);
 
-    public:
-        virtual int32_t nextDoc();
-        virtual int32_t advance(int32_t target);
-        virtual int32_t docID();
-        virtual double score();
+protected:
+    SpansPtr spans;
+    WeightPtr weight;
+    ByteArray norms;
+    double value;
+    bool more;
+    int32_t doc;
+    double freq;
 
-    protected:
-        virtual bool setFreqCurrentDoc();
+public:
+    virtual int32_t nextDoc();
+    virtual int32_t advance(int32_t target);
+    virtual int32_t docID();
+    virtual double score();
 
-        /// This method is no longer an official member of {@link Scorer}, but it is needed by SpanWeight
-        /// to build an explanation.
-        virtual ExplanationPtr explain(int32_t doc);
+protected:
+    virtual bool setFreqCurrentDoc();
 
-        friend class SpanWeight;
-        friend class PayloadNearSpanWeight;
-    };
+    /// This method is no longer an official member of {@link Scorer}, but it is needed by SpanWeight
+    /// to build an explanation.
+    virtual ExplanationPtr explain(int32_t doc);
+
+    friend class SpanWeight;
+    friend class PayloadNearSpanWeight;
+};
+
 }
 
 #endif

@@ -16,8 +16,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture BufferedReaderTest;
 
-TEST_F(BufferedReaderTest, testBufferedReaderChar)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderChar) {
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")));
     EXPECT_EQ((wchar_t)reader->read(), L't');
     EXPECT_EQ((wchar_t)reader->read(), L'e');
@@ -30,8 +29,7 @@ TEST_F(BufferedReaderTest, testBufferedReaderChar)
     EXPECT_EQ((wchar_t)reader->read(), L'e');
 }
 
-TEST_F(BufferedReaderTest, testBufferedReaderRead)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderRead) {
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")));
 
     wchar_t buffer[80];
@@ -44,15 +42,15 @@ TEST_F(BufferedReaderTest, testBufferedReaderRead)
     EXPECT_EQ(reader->read(buffer, 0, 1), FileReader::FILE_EOF);
 }
 
-TEST_F(BufferedReaderTest, testBufferedReaderReadLine)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderReadLine) {
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")));
 
     Collection<String> readLines = Collection<String>::newInstance();
     String line;
 
-    while (reader->readLine(line))
+    while (reader->readLine(line)) {
         readLines.add(line);
+    }
 
     EXPECT_EQ(reader->read(), FileReader::FILE_EOF);
     EXPECT_EQ(readLines.size(), 6);
@@ -64,8 +62,7 @@ TEST_F(BufferedReaderTest, testBufferedReaderReadLine)
     EXPECT_EQ(readLines[5], L"1 2 3 4");
 }
 
-TEST_F(BufferedReaderTest, testBufferedReaderReset)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderReset) {
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")));
 
     wchar_t buffer[20];
@@ -76,8 +73,7 @@ TEST_F(BufferedReaderTest, testBufferedReaderReset)
     EXPECT_EQ(String(buffer, 9), L"test file");
 }
 
-TEST_F(BufferedReaderTest, testBufferedReaderCharsSmallBuffer)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderCharsSmallBuffer) {
     static const int32_t bufferSize = 5;
 
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")), bufferSize);
@@ -93,8 +89,7 @@ TEST_F(BufferedReaderTest, testBufferedReaderCharsSmallBuffer)
     EXPECT_EQ((wchar_t)reader->read(), L'e');
 }
 
-TEST_F(BufferedReaderTest, testBufferedReaderReadSmallBuffer)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderReadSmallBuffer) {
     static const int32_t bufferSize = 5;
 
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")), bufferSize);
@@ -109,8 +104,7 @@ TEST_F(BufferedReaderTest, testBufferedReaderReadSmallBuffer)
     EXPECT_EQ(reader->read(buffer, 0, 1), FileReader::FILE_EOF);
 }
 
-TEST_F(BufferedReaderTest, testBufferedReaderResetSmallBuffer)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderResetSmallBuffer) {
     static const int32_t bufferSize = 5;
 
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")), bufferSize);
@@ -123,8 +117,7 @@ TEST_F(BufferedReaderTest, testBufferedReaderResetSmallBuffer)
     EXPECT_EQ(String(buffer, 9), L"test file");
 }
 
-TEST_F(BufferedReaderTest, testBufferedReaderReadLineSmallBuffer)
-{
+TEST_F(BufferedReaderTest, testBufferedReaderReadLineSmallBuffer) {
     static const int32_t bufferSize = 5;
 
     BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(getTestDir(), L"testfile_text.txt")), bufferSize);
@@ -132,8 +125,9 @@ TEST_F(BufferedReaderTest, testBufferedReaderReadLineSmallBuffer)
     Collection<String> readLines = Collection<String>::newInstance();
     String line;
 
-    while (reader->readLine(line))
+    while (reader->readLine(line)) {
         readLines.add(line);
+    }
 
     EXPECT_EQ(reader->read(), FileReader::FILE_EOF);
     EXPECT_EQ(readLines.size(), 6);

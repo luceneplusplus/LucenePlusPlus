@@ -8,64 +8,55 @@
 #include "DefaultSimilarity.h"
 #include "FieldInvertState.h"
 
-namespace Lucene
-{
-    DefaultSimilarity::DefaultSimilarity()
-    {
-        discountOverlaps = false;
-    }
+namespace Lucene {
 
-    DefaultSimilarity::~DefaultSimilarity()
-    {
-    }
+DefaultSimilarity::DefaultSimilarity() {
+    discountOverlaps = false;
+}
 
-    double DefaultSimilarity::computeNorm(const String& fieldName, const FieldInvertStatePtr& state)
-    {
-        int32_t numTerms;
-        if (discountOverlaps)
-            numTerms = state->getLength() - state->getNumOverlap();
-        else
-            numTerms = state->getLength();
-        return (state->getBoost() * lengthNorm(fieldName, numTerms));
-    }
+DefaultSimilarity::~DefaultSimilarity() {
+}
 
-    double DefaultSimilarity::lengthNorm(const String& fieldName, int32_t numTokens)
-    {
-        return (double)(1.0 / std::sqrt((double)numTokens));
+double DefaultSimilarity::computeNorm(const String& fieldName, const FieldInvertStatePtr& state) {
+    int32_t numTerms;
+    if (discountOverlaps) {
+        numTerms = state->getLength() - state->getNumOverlap();
+    } else {
+        numTerms = state->getLength();
     }
+    return (state->getBoost() * lengthNorm(fieldName, numTerms));
+}
 
-    double DefaultSimilarity::queryNorm(double sumOfSquaredWeights)
-    {
-        return (double)(1.0 / std::sqrt(sumOfSquaredWeights));
-    }
+double DefaultSimilarity::lengthNorm(const String& fieldName, int32_t numTokens) {
+    return (double)(1.0 / std::sqrt((double)numTokens));
+}
 
-    double DefaultSimilarity::tf(double freq)
-    {
-        return (double)std::sqrt(freq);
-    }
+double DefaultSimilarity::queryNorm(double sumOfSquaredWeights) {
+    return (double)(1.0 / std::sqrt(sumOfSquaredWeights));
+}
 
-    double DefaultSimilarity::sloppyFreq(int32_t distance)
-    {
-        return (1.0 / (double)(distance + 1));
-    }
+double DefaultSimilarity::tf(double freq) {
+    return (double)std::sqrt(freq);
+}
 
-    double DefaultSimilarity::idf(int32_t docFreq, int32_t numDocs)
-    {
-        return (double)(std::log((double)numDocs / (double)(docFreq + 1)) + 1.0);
-    }
+double DefaultSimilarity::sloppyFreq(int32_t distance) {
+    return (1.0 / (double)(distance + 1));
+}
 
-    double DefaultSimilarity::coord(int32_t overlap, int32_t maxOverlap)
-    {
-        return (double)overlap / (double)maxOverlap;
-    }
+double DefaultSimilarity::idf(int32_t docFreq, int32_t numDocs) {
+    return (double)(std::log((double)numDocs / (double)(docFreq + 1)) + 1.0);
+}
 
-    void DefaultSimilarity::setDiscountOverlaps(bool v)
-    {
-        discountOverlaps = v;
-    }
+double DefaultSimilarity::coord(int32_t overlap, int32_t maxOverlap) {
+    return (double)overlap / (double)maxOverlap;
+}
 
-    bool DefaultSimilarity::getDiscountOverlaps()
-    {
-        return discountOverlaps;
-    }
+void DefaultSimilarity::setDiscountOverlaps(bool v) {
+    discountOverlaps = v;
+}
+
+bool DefaultSimilarity::getDiscountOverlaps() {
+    return discountOverlaps;
+}
+
 }

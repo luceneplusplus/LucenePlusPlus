@@ -7,35 +7,31 @@
 #include "LuceneInc.h"
 #include "LogDocMergePolicy.h"
 
-namespace Lucene
-{
-    /// Default minimum segment size.  @see setMinMergeDocs
-    const int32_t LogDocMergePolicy::DEFAULT_MIN_MERGE_DOCS = 1000;
+namespace Lucene {
 
-    LogDocMergePolicy::LogDocMergePolicy(const IndexWriterPtr& writer) : LogMergePolicy(writer)
-    {
-        minMergeSize = DEFAULT_MIN_MERGE_DOCS;
+/// Default minimum segment size.  @see setMinMergeDocs
+const int32_t LogDocMergePolicy::DEFAULT_MIN_MERGE_DOCS = 1000;
 
-        // maxMergeSize is never used by LogDocMergePolicy; set it to LLONG_MAX to disable it
-        maxMergeSize = std::numeric_limits<int64_t>::max();
-    }
+LogDocMergePolicy::LogDocMergePolicy(const IndexWriterPtr& writer) : LogMergePolicy(writer) {
+    minMergeSize = DEFAULT_MIN_MERGE_DOCS;
 
-    LogDocMergePolicy::~LogDocMergePolicy()
-    {
-    }
+    // maxMergeSize is never used by LogDocMergePolicy; set it to LLONG_MAX to disable it
+    maxMergeSize = std::numeric_limits<int64_t>::max();
+}
 
-    int64_t LogDocMergePolicy::size(const SegmentInfoPtr& info)
-    {
-        return sizeDocs(info);
-    }
+LogDocMergePolicy::~LogDocMergePolicy() {
+}
 
-    void LogDocMergePolicy::setMinMergeDocs(int32_t minMergeDocs)
-    {
-        minMergeSize = minMergeDocs;
-    }
+int64_t LogDocMergePolicy::size(const SegmentInfoPtr& info) {
+    return sizeDocs(info);
+}
 
-    int32_t LogDocMergePolicy::getMinMergeDocs()
-    {
-        return (int32_t)minMergeSize;
-    }
+void LogDocMergePolicy::setMinMergeDocs(int32_t minMergeDocs) {
+    minMergeSize = minMergeDocs;
+}
+
+int32_t LogDocMergePolicy::getMinMergeDocs() {
+    return (int32_t)minMergeSize;
+}
+
 }

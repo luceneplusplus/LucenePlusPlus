@@ -9,38 +9,38 @@
 
 #include "CharStream.h"
 
-namespace Lucene
-{
-    /// Subclasses of CharFilter can be chained to filter CharStream.  They can be used as {@link Reader} with
-    /// additional offset correction. {@link Tokenizer}s will automatically use {@link #correctOffset} if a
-    /// CharFilter/CharStream subclass is used.
-    class LPPAPI CharFilter : public CharStream
-    {
-    protected:
-        CharFilter(const CharStreamPtr& in);
-    public:
-        virtual ~CharFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(CharFilter);
+/// Subclasses of CharFilter can be chained to filter CharStream.  They can be used as {@link Reader} with
+/// additional offset correction. {@link Tokenizer}s will automatically use {@link #correctOffset} if a
+/// CharFilter/CharStream subclass is used.
+class LPPAPI CharFilter : public CharStream {
+protected:
+    CharFilter(const CharStreamPtr& in);
+public:
+    virtual ~CharFilter();
 
-    protected:
-        CharStreamPtr input;
+    LUCENE_CLASS(CharFilter);
 
-    protected:
-        /// Subclass may want to override to correct the current offset.
-        /// @param currentOff current offset
-        /// @return corrected offset
-        virtual int32_t correct(int32_t currentOff);
+protected:
+    CharStreamPtr input;
 
-        /// Chains the corrected offset through the input CharFilter.
-        virtual int32_t correctOffset(int32_t currentOff);
+protected:
+    /// Subclass may want to override to correct the current offset.
+    /// @param currentOff current offset
+    /// @return corrected offset
+    virtual int32_t correct(int32_t currentOff);
 
-        virtual void close();
-        virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
-        virtual bool markSupported();
-        virtual void mark(int32_t readAheadLimit);
-        virtual void reset();
-    };
+    /// Chains the corrected offset through the input CharFilter.
+    virtual int32_t correctOffset(int32_t currentOff);
+
+    virtual void close();
+    virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+    virtual bool markSupported();
+    virtual void mark(int32_t readAheadLimit);
+    virtual void reset();
+};
+
 }
 
 #endif

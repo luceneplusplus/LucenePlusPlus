@@ -9,51 +9,51 @@
 
 #include "InvertedDocConsumerPerThread.h"
 
-namespace Lucene
-{
-    class TermsHashPerThread : public InvertedDocConsumerPerThread
-    {
-    public:
-        TermsHashPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPtr& termsHash, const TermsHashPtr& nextTermsHash, const TermsHashPerThreadPtr& primaryPerThread);
-        virtual ~TermsHashPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(TermsHashPerThread);
+class TermsHashPerThread : public InvertedDocConsumerPerThread {
+public:
+    TermsHashPerThread(const DocInverterPerThreadPtr& docInverterPerThread, const TermsHashPtr& termsHash, const TermsHashPtr& nextTermsHash, const TermsHashPerThreadPtr& primaryPerThread);
+    virtual ~TermsHashPerThread();
 
-    public:
-        DocInverterPerThreadWeakPtr _docInverterPerThread;
-        TermsHashWeakPtr _termsHash;
-        TermsHashPtr nextTermsHash;
-        TermsHashPerThreadWeakPtr _primaryPerThread;
-        TermsHashConsumerPerThreadPtr consumer;
-        TermsHashPerThreadPtr nextPerThread;
+    LUCENE_CLASS(TermsHashPerThread);
 
-        CharBlockPoolPtr charPool;
-        IntBlockPoolPtr intPool;
-        ByteBlockPoolPtr bytePool;
-        bool primary;
-        DocStatePtr docState;
+public:
+    DocInverterPerThreadWeakPtr _docInverterPerThread;
+    TermsHashWeakPtr _termsHash;
+    TermsHashPtr nextTermsHash;
+    TermsHashPerThreadWeakPtr _primaryPerThread;
+    TermsHashConsumerPerThreadPtr consumer;
+    TermsHashPerThreadPtr nextPerThread;
 
-        Collection<RawPostingListPtr> freePostings;
-        int32_t freePostingsCount;
+    CharBlockPoolPtr charPool;
+    IntBlockPoolPtr intPool;
+    ByteBlockPoolPtr bytePool;
+    bool primary;
+    DocStatePtr docState;
 
-    public:
-        virtual void initialize();
+    Collection<RawPostingListPtr> freePostings;
+    int32_t freePostingsCount;
 
-        virtual InvertedDocConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo);
-        virtual void abort();
+public:
+    virtual void initialize();
 
-        /// perField calls this when it needs more postings
-        void morePostings();
+    virtual InvertedDocConsumerPerFieldPtr addField(const DocInverterPerFieldPtr& docInverterPerField, const FieldInfoPtr& fieldInfo);
+    virtual void abort();
 
-        virtual void startDocument();
-        virtual DocWriterPtr finishDocument();
+    /// perField calls this when it needs more postings
+    void morePostings();
 
-        /// Clear all state
-        void reset(bool recyclePostings);
+    virtual void startDocument();
+    virtual DocWriterPtr finishDocument();
 
-    protected:
-        static bool noNullPostings(Collection<RawPostingListPtr> postings, int32_t count, const String& details);
-    };
+    /// Clear all state
+    void reset(bool recyclePostings);
+
+protected:
+    static bool noNullPostings(Collection<RawPostingListPtr> postings, int32_t count, const String& details);
+};
+
 }
 
 #endif

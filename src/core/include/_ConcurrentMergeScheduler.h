@@ -9,28 +9,28 @@
 
 #include "LuceneThread.h"
 
-namespace Lucene
-{
-    class MergeThread : public LuceneThread
-    {
-    public:
-        MergeThread(const ConcurrentMergeSchedulerPtr& merger, const IndexWriterPtr& writer, const OneMergePtr& startMerge);
-        virtual ~MergeThread();
+namespace Lucene {
 
-        LUCENE_CLASS(MergeThread);
+class MergeThread : public LuceneThread {
+public:
+    MergeThread(const ConcurrentMergeSchedulerPtr& merger, const IndexWriterPtr& writer, const OneMergePtr& startMerge);
+    virtual ~MergeThread();
 
-    protected:
-        ConcurrentMergeSchedulerWeakPtr _merger;
-        IndexWriterWeakPtr _writer;
-        OneMergePtr startMerge;
-        OneMergePtr runningMerge;
+    LUCENE_CLASS(MergeThread);
 
-    public:
-        void setRunningMerge(const OneMergePtr& merge);
-        OneMergePtr getRunningMerge();
-        void setThreadPriority(int32_t pri);
-        virtual void run();
-    };
+protected:
+    ConcurrentMergeSchedulerWeakPtr _merger;
+    IndexWriterWeakPtr _writer;
+    OneMergePtr startMerge;
+    OneMergePtr runningMerge;
+
+public:
+    void setRunningMerge(const OneMergePtr& merge);
+    OneMergePtr getRunningMerge();
+    void setThreadPriority(int32_t pri);
+    virtual void run();
+};
+
 }
 
 #endif

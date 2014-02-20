@@ -31,27 +31,25 @@
 
 using namespace Lucene;
 
-class TermVectorsTest : public LuceneTestFixture
-{
+class TermVectorsTest : public LuceneTestFixture {
 public:
-    TermVectorsTest()
-    {
+    TermVectorsTest() {
         directory = newLucene<MockRAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        for (int32_t i = 0; i < 1000; ++i)
-        {
+        for (int32_t i = 0; i < 1000; ++i) {
             DocumentPtr doc = newLucene<Document>();
             Field::TermVector termVector;
             int32_t mod3 = i % 3;
             int32_t mod2 = i % 2;
-            if (mod2 == 0 && mod3 == 0)
+            if (mod2 == 0 && mod3 == 0) {
                 termVector = Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS;
-            else if (mod2 == 0)
+            } else if (mod2 == 0) {
                 termVector = Field::TERM_VECTOR_WITH_POSITIONS;
-            else if (mod3 == 0)
+            } else if (mod3 == 0) {
                 termVector = Field::TERM_VECTOR_WITH_OFFSETS;
-            else
+            } else {
                 termVector = Field::TERM_VECTOR_YES;
+            }
             doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED, termVector));
             writer->addDocument(doc);
         }
@@ -59,8 +57,7 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
     }
 
-    virtual ~TermVectorsTest()
-    {
+    virtual ~TermVectorsTest() {
     }
 
 protected:
@@ -68,28 +65,24 @@ protected:
     DirectoryPtr directory;
 
 public:
-    void setupDoc(const DocumentPtr& doc, const String& text)
-    {
+    void setupDoc(const DocumentPtr& doc, const String& text) {
         doc->add(newLucene<Field>(L"field2", text, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
         doc->add(newLucene<Field>(L"field", text, Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_YES));
     }
 };
 
-TEST_F(TermVectorsTest, testTermVectors)
-{
+TEST_F(TermVectorsTest, testTermVectors) {
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"seventy"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(100, hits.size());
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
+    for (int32_t i = 0; i < hits.size(); ++i) {
         Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[i]->doc);
         EXPECT_TRUE(vector);
         EXPECT_EQ(vector.size(), 1);
     }
 }
 
-TEST_F(TermVectorsTest, testTermVectorsFieldOrder)
-{
+TEST_F(TermVectorsTest, testTermVectorsFieldOrder) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -104,8 +97,7 @@ TEST_F(TermVectorsTest, testTermVectorsFieldOrder)
     EXPECT_EQ(4, v.size());
     Collection<String> expectedFields = newCollection<String>(L"a", L"b", L"c", L"x");
     Collection<int32_t> expectedPositions = newCollection<int32_t>(1, 2, 0);
-    for (int32_t i = 0; i < v.size(); ++i)
-    {
+    for (int32_t i = 0; i < v.size(); ++i) {
         TermPositionVectorPtr posVec = boost::dynamic_pointer_cast<TermPositionVector>(v[i]);
         EXPECT_EQ(expectedFields[i], posVec->getField());
         Collection<String> terms = posVec->getTerms();
@@ -113,8 +105,7 @@ TEST_F(TermVectorsTest, testTermVectorsFieldOrder)
         EXPECT_EQ(L"content", terms[0]);
         EXPECT_EQ(L"here", terms[1]);
         EXPECT_EQ(L"some", terms[2]);
-        for (int32_t j = 0; j < 3; ++j)
-        {
+        for (int32_t j = 0; j < 3; ++j) {
             Collection<int32_t> positions = posVec->getTermPositions(j);
             EXPECT_EQ(1, positions.size());
             EXPECT_EQ(expectedPositions[j], positions[0]);
@@ -122,14 +113,12 @@ TEST_F(TermVectorsTest, testTermVectorsFieldOrder)
     }
 }
 
-TEST_F(TermVectorsTest, testTermPositionVectors)
-{
+TEST_F(TermVectorsTest, testTermPositionVectors) {
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"zero"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(1, hits.size());
 
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
+    for (int32_t i = 0; i < hits.size(); ++i) {
         Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[i]->doc);
         EXPECT_TRUE(vector);
         EXPECT_EQ(vector.size(), 1);
@@ -140,36 +129,30 @@ TEST_F(TermVectorsTest, testTermPositionVectors)
         bool shouldBeOffVector = (hits[i]->doc % 3 == 0);
         EXPECT_TRUE(!shouldBeOffVector || (shouldBeOffVector && boost::dynamic_pointer_cast<TermPositionVector>(vector[0])));
 
-        if (shouldBePosVector || shouldBeOffVector)
-        {
+        if (shouldBePosVector || shouldBeOffVector) {
             TermPositionVectorPtr posVec = boost::dynamic_pointer_cast<TermPositionVector>(vector[0]);
             Collection<String> terms = posVec->getTerms();
             EXPECT_TRUE(terms && !terms.empty());
 
-            for (int32_t j = 0; j < terms.size(); ++j)
-            {
+            for (int32_t j = 0; j < terms.size(); ++j) {
                 Collection<int32_t> positions = posVec->getTermPositions(j);
                 Collection<TermVectorOffsetInfoPtr> offsets = posVec->getOffsets(j);
 
-                if (shouldBePosVector)
-                {
+                if (shouldBePosVector) {
                     EXPECT_TRUE(positions);
                     EXPECT_TRUE(!positions.empty());
-                }
-                else
+                } else {
                     EXPECT_TRUE(!positions);
+                }
 
-                if (shouldBeOffVector)
-                {
+                if (shouldBeOffVector) {
                     EXPECT_TRUE(offsets);
                     EXPECT_TRUE(!offsets.empty());
-                }
-                else
+                } else {
                     EXPECT_TRUE(!offsets);
+                }
             }
-        }
-        else
-        {
+        } else {
             EXPECT_TRUE(!boost::dynamic_pointer_cast<TermPositionVector>(vector[0]));
             TermFreqVectorPtr freqVec = boost::dynamic_pointer_cast<TermFreqVector>(vector[0]);
             Collection<String> terms = freqVec->getTerms();
@@ -178,22 +161,19 @@ TEST_F(TermVectorsTest, testTermPositionVectors)
     }
 }
 
-TEST_F(TermVectorsTest, testTermOffsetVectors)
-{
+TEST_F(TermVectorsTest, testTermOffsetVectors) {
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"fifty"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(100, hits.size());
 
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
+    for (int32_t i = 0; i < hits.size(); ++i) {
         Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[i]->doc);
         EXPECT_TRUE(vector);
         EXPECT_EQ(vector.size(), 1);
     }
 }
 
-TEST_F(TermVectorsTest, testKnownSetOfDocuments)
-{
+TEST_F(TermVectorsTest, testKnownSetOfDocuments) {
     String test1 = L"eating chocolate in a computer lab"; // 6 terms
     String test2 = L"computer in a computer lab"; // 5 terms
     String test3 = L"a chocolate lab grows old"; // 5 terms
@@ -235,12 +215,10 @@ TEST_F(TermVectorsTest, testKnownSetOfDocuments)
     TermDocsPtr termDocs = knownSearcher->reader->termDocs();
 
     SimilarityPtr sim = knownSearcher->getSimilarity();
-    while (termEnum->next())
-    {
+    while (termEnum->next()) {
         TermPtr term = termEnum->term();
         termDocs->seek(term);
-        while (termDocs->next())
-        {
+        while (termDocs->next()) {
             int32_t docId = termDocs->doc();
             int32_t freq = termDocs->freq();
             TermFreqVectorPtr vector = knownSearcher->reader->getTermFreqVector(docId, L"field");
@@ -251,10 +229,10 @@ TEST_F(TermVectorsTest, testKnownSetOfDocuments)
             EXPECT_TRUE(vector);
             Collection<String> vTerms = vector->getTerms();
             Collection<int32_t> freqs = vector->getTermFrequencies();
-            for (int32_t i = 0; i < vTerms.size(); ++i)
-            {
-                if (term->text() == vTerms[i])
+            for (int32_t i = 0; i < vTerms.size(); ++i) {
+                if (term->text() == vTerms[i]) {
                     EXPECT_EQ(freqs[i], freq);
+                }
             }
         }
     }
@@ -271,8 +249,7 @@ TEST_F(TermVectorsTest, testKnownSetOfDocuments)
     Collection<String> terms = vector->getTerms();
     Collection<int32_t> freqs = vector->getTermFrequencies();
     EXPECT_TRUE(terms && terms.size() == 10);
-    for (int32_t i = 0; i < terms.size(); ++i)
-    {
+    for (int32_t i = 0; i < terms.size(); ++i) {
         String term = terms[i];
         int32_t freq = freqs[i];
         EXPECT_TRUE(test4.find(term) != String::npos);
@@ -284,10 +261,8 @@ TEST_F(TermVectorsTest, testKnownSetOfDocuments)
     Collection<TermVectorEntryPtr> vectorEntrySet = mapper->getTermVectorEntrySet();
     EXPECT_EQ(vectorEntrySet.size(), 10);
     TermVectorEntryPtr last;
-    for (Collection<TermVectorEntryPtr>::iterator tve = vectorEntrySet.begin(); tve != vectorEntrySet.end(); ++tve)
-    {
-        if (*tve && last)
-        {
+    for (Collection<TermVectorEntryPtr>::iterator tve = vectorEntrySet.begin(); tve != vectorEntrySet.end(); ++tve) {
+        if (*tve && last) {
             EXPECT_TRUE(last->getFrequency() >= (*tve)->getFrequency());
             int32_t expectedFreq = test4Map.get((*tve)->getTerm());
             // we expect double the expectedFreq, since there are two fields with the exact same text and we are collapsing all fields
@@ -306,19 +281,16 @@ TEST_F(TermVectorsTest, testKnownSetOfDocuments)
 }
 
 /// Test only a few docs having vectors
-TEST_F(TermVectorsTest, testRareVectors)
-{
+TEST_F(TermVectorsTest, testRareVectors) {
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
-    for (int32_t i = 0; i < 100; ++i)
-    {
+    for (int32_t i = 0; i < 100; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO));
         writer->addDocument(doc);
     }
 
-    for (int32_t i = 0; i < 10; ++i)
-    {
+    for (int32_t i = 0; i < 10; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"field", intToEnglish(100 + i), Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS));
         writer->addDocument(doc);
@@ -330,8 +302,7 @@ TEST_F(TermVectorsTest, testRareVectors)
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"field", L"hundred"));
     Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(10, hits.size());
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
+    for (int32_t i = 0; i < hits.size(); ++i) {
         Collection<TermFreqVectorPtr> vector = searcher->reader->getTermFreqVectors(hits[i]->doc);
         EXPECT_TRUE(vector);
         EXPECT_EQ(vector.size(), 1);
@@ -339,8 +310,7 @@ TEST_F(TermVectorsTest, testRareVectors)
 }
 
 /// In a single doc, for the same field, mix the term vectors up
-TEST_F(TermVectorsTest, testMixedVectrosVectors)
-{
+TEST_F(TermVectorsTest, testMixedVectrosVectors) {
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", L"one", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO));
@@ -369,12 +339,12 @@ TEST_F(TermVectorsTest, testMixedVectrosVectors)
 
     Collection<int32_t> positions = tfv->getTermPositions(0);
     EXPECT_EQ(5, positions.size());
-    for (int32_t i = 0; i < 5; ++i)
+    for (int32_t i = 0; i < 5; ++i) {
         EXPECT_EQ(i, positions[i]);
+    }
     Collection<TermVectorOffsetInfoPtr> offsets = tfv->getOffsets(0);
     EXPECT_EQ(5, offsets.size());
-    for (int32_t i = 0; i < 5; ++i)
-    {
+    for (int32_t i = 0; i < 5; ++i) {
         EXPECT_EQ(4 * i, offsets[i]->getStartOffset());
         EXPECT_EQ(4 * i + 3, offsets[i]->getEndOffset());
     }

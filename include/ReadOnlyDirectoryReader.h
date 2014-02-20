@@ -9,24 +9,24 @@
 
 #include "DirectoryReader.h"
 
-namespace Lucene
-{
-    class ReadOnlyDirectoryReader : public DirectoryReader
-    {
-    public:
-        ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis, const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor);
-        ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos, Collection<SegmentReaderPtr> oldReaders,
-                                Collection<int32_t> oldStarts, MapStringByteArray oldNormsCache, bool doClone, int32_t termInfosIndexDivisor);
-        ReadOnlyDirectoryReader(const IndexWriterPtr& writer, const SegmentInfosPtr& infos, int32_t termInfosIndexDivisor);
-        virtual ~ReadOnlyDirectoryReader();
+namespace Lucene {
 
-        LUCENE_CLASS(ReadOnlyDirectoryReader);
+class ReadOnlyDirectoryReader : public DirectoryReader {
+public:
+    ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis, const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor);
+    ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos, Collection<SegmentReaderPtr> oldReaders,
+                            Collection<int32_t> oldStarts, MapStringByteArray oldNormsCache, bool doClone, int32_t termInfosIndexDivisor);
+    ReadOnlyDirectoryReader(const IndexWriterPtr& writer, const SegmentInfosPtr& infos, int32_t termInfosIndexDivisor);
+    virtual ~ReadOnlyDirectoryReader();
 
-    public:
-        /// Tries to acquire the WriteLock on this directory. this method is only valid if this
-        /// IndexReader is directory owner.
-        virtual void acquireWriteLock();
-    };
+    LUCENE_CLASS(ReadOnlyDirectoryReader);
+
+public:
+    /// Tries to acquire the WriteLock on this directory. this method is only valid if this
+    /// IndexReader is directory owner.
+    virtual void acquireWriteLock();
+};
+
 }
 
 #endif

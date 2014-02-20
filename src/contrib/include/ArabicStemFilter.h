@@ -10,24 +10,24 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A {@link TokenFilter} that applies {@link ArabicStemmer} to stem Arabic words.
-    class LPPCONTRIBAPI ArabicStemFilter : public TokenFilter
-    {
-    public:
-        ArabicStemFilter(const TokenStreamPtr& input);
-        virtual ~ArabicStemFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(ArabicStemFilter);
+/// A {@link TokenFilter} that applies {@link ArabicStemmer} to stem Arabic words.
+class LPPCONTRIBAPI ArabicStemFilter : public TokenFilter {
+public:
+    ArabicStemFilter(const TokenStreamPtr& input);
+    virtual ~ArabicStemFilter();
 
-    protected:
-        ArabicStemmerPtr stemmer;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(ArabicStemFilter);
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    ArabicStemmerPtr stemmer;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

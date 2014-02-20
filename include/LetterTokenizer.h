@@ -9,33 +9,33 @@
 
 #include "CharTokenizer.h"
 
-namespace Lucene
-{
-    /// A LetterTokenizer is a tokenizer that divides text at non-letters.  That's to say, it defines tokens as maximal
-    /// strings of adjacent letters, as defined UnicodeUtil::isAlpha(c) predicate.
-    ///
-    /// Note: this does a decent job for most European languages, but does a terrible job for some Asian languages, where
-    /// words are not separated by spaces.
-    class LPPAPI LetterTokenizer : public CharTokenizer
-    {
-    public:
-        /// Construct a new LetterTokenizer.
-        LetterTokenizer(const ReaderPtr& input);
+namespace Lucene {
 
-        /// Construct a new LetterTokenizer using a given {@link AttributeSource}.
-        LetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
+/// A LetterTokenizer is a tokenizer that divides text at non-letters.  That's to say, it defines tokens as maximal
+/// strings of adjacent letters, as defined UnicodeUtil::isAlpha(c) predicate.
+///
+/// Note: this does a decent job for most European languages, but does a terrible job for some Asian languages, where
+/// words are not separated by spaces.
+class LPPAPI LetterTokenizer : public CharTokenizer {
+public:
+    /// Construct a new LetterTokenizer.
+    LetterTokenizer(const ReaderPtr& input);
 
-        /// Construct a new LetterTokenizer using a given {@link AttributeFactory}.
-        LetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
+    /// Construct a new LetterTokenizer using a given {@link AttributeSource}.
+    LetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
-        virtual ~LetterTokenizer();
+    /// Construct a new LetterTokenizer using a given {@link AttributeFactory}.
+    LetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
-        LUCENE_CLASS(LetterTokenizer);
+    virtual ~LetterTokenizer();
 
-    public:
-        /// Collects only characters which satisfy UnicodeUtil::isAlpha(c).
-        virtual bool isTokenChar(wchar_t c);
-    };
+    LUCENE_CLASS(LetterTokenizer);
+
+public:
+    /// Collects only characters which satisfy UnicodeUtil::isAlpha(c).
+    virtual bool isTokenChar(wchar_t c);
+};
+
 }
 
 #endif

@@ -10,79 +10,77 @@
 #include "FilteredTermEnum.h"
 #include "NumericUtils.h"
 
-namespace Lucene
-{
-    /// Subclass of FilteredTermEnum for enumerating all terms that match the sub-ranges for trie range queries.
-    ///
-    /// Warning: This term enumeration is not guaranteed to be always ordered by {@link Term#compareTo}.  The
-    /// ordering depends on how {@link NumericUtils#splitLongRange} and {@link NumericUtils#splitIntRange}
-    /// generates the sub-ranges.  For {@link MultiTermQuery} ordering is not relevant.
-    class NumericRangeTermEnum : public FilteredTermEnum
-    {
-    public:
-        NumericRangeTermEnum(const NumericRangeQueryPtr& query, const IndexReaderPtr& reader);
-        virtual ~NumericRangeTermEnum();
+namespace Lucene {
 
-        LUCENE_CLASS(NumericRangeTermEnum);
+/// Subclass of FilteredTermEnum for enumerating all terms that match the sub-ranges for trie range queries.
+///
+/// Warning: This term enumeration is not guaranteed to be always ordered by {@link Term#compareTo}.  The
+/// ordering depends on how {@link NumericUtils#splitLongRange} and {@link NumericUtils#splitIntRange}
+/// generates the sub-ranges.  For {@link MultiTermQuery} ordering is not relevant.
+class NumericRangeTermEnum : public FilteredTermEnum {
+public:
+    NumericRangeTermEnum(const NumericRangeQueryPtr& query, const IndexReaderPtr& reader);
+    virtual ~NumericRangeTermEnum();
 
-    protected:
-        NumericRangeQueryWeakPtr _query;
-        IndexReaderPtr reader;
-        Collection<String> rangeBounds;
-        TermPtr termTemplate;
-        String currentUpperBound;
+    LUCENE_CLASS(NumericRangeTermEnum);
 
-    public:
-        virtual double difference();
+protected:
+    NumericRangeQueryWeakPtr _query;
+    IndexReaderPtr reader;
+    Collection<String> rangeBounds;
+    TermPtr termTemplate;
+    String currentUpperBound;
 
-        /// Increments the enumeration to the next element.  True if one exists.
-        virtual bool next();
+public:
+    virtual double difference();
 
-        /// Closes the enumeration to further activity, freeing resources.
-        virtual void close();
+    /// Increments the enumeration to the next element.  True if one exists.
+    virtual bool next();
 
-    protected:
-        /// This is a dummy, it is not used by this class.
-        virtual bool endEnum();
+    /// Closes the enumeration to further activity, freeing resources.
+    virtual void close();
 
-        /// This is a dummy, it is not used by this class.
-        virtual void setEnum(const TermEnumPtr& actualEnum);
+protected:
+    /// This is a dummy, it is not used by this class.
+    virtual bool endEnum();
 
-        /// Compares if current upper bound is reached, this also updates the term count for statistics.
-        /// In contrast to {@link FilteredTermEnum}, a return value of false ends iterating the current enum
-        /// and forwards to the next sub-range.
-        virtual bool termCompare(const TermPtr& term);
-    };
+    /// This is a dummy, it is not used by this class.
+    virtual void setEnum(const TermEnumPtr& actualEnum);
 
-    class NumericLongRangeBuilder : public LongRangeBuilder
-    {
-    public:
-        NumericLongRangeBuilder(Collection<String> rangeBounds);
-        virtual ~NumericLongRangeBuilder();
+    /// Compares if current upper bound is reached, this also updates the term count for statistics.
+    /// In contrast to {@link FilteredTermEnum}, a return value of false ends iterating the current enum
+    /// and forwards to the next sub-range.
+    virtual bool termCompare(const TermPtr& term);
+};
 
-        LUCENE_CLASS(NumericLongRangeBuilder);
+class NumericLongRangeBuilder : public LongRangeBuilder {
+public:
+    NumericLongRangeBuilder(Collection<String> rangeBounds);
+    virtual ~NumericLongRangeBuilder();
 
-    protected:
-        Collection<String> rangeBounds;
+    LUCENE_CLASS(NumericLongRangeBuilder);
 
-    public:
-        virtual void addRange(const String& minPrefixCoded, const String& maxPrefixCoded);
-    };
+protected:
+    Collection<String> rangeBounds;
 
-    class NumericIntRangeBuilder : public IntRangeBuilder
-    {
-    public:
-        NumericIntRangeBuilder(Collection<String> rangeBounds);
-        virtual ~NumericIntRangeBuilder();
+public:
+    virtual void addRange(const String& minPrefixCoded, const String& maxPrefixCoded);
+};
 
-        LUCENE_CLASS(NumericIntRangeBuilder);
+class NumericIntRangeBuilder : public IntRangeBuilder {
+public:
+    NumericIntRangeBuilder(Collection<String> rangeBounds);
+    virtual ~NumericIntRangeBuilder();
 
-    protected:
-        Collection<String> rangeBounds;
+    LUCENE_CLASS(NumericIntRangeBuilder);
 
-    public:
-        virtual void addRange(const String& minPrefixCoded, const String& maxPrefixCoded);
-    };
+protected:
+    Collection<String> rangeBounds;
+
+public:
+    virtual void addRange(const String& minPrefixCoded, const String& maxPrefixCoded);
+};
+
 }
 
 #endif

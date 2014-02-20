@@ -22,55 +22,48 @@
 
 using namespace Lucene;
 
-class TheSinkFilter : public SinkFilter
-{
+class TheSinkFilter : public SinkFilter {
 public:
-    virtual ~TheSinkFilter()
-    {
+    virtual ~TheSinkFilter() {
     }
 
 public:
-    virtual bool accept(const AttributeSourcePtr& source)
-    {
+    virtual bool accept(const AttributeSourcePtr& source) {
         TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
         return boost::iequals(termAtt->term(), L"The");
     }
 };
 
-class DogSinkFilter : public SinkFilter
-{
+class DogSinkFilter : public SinkFilter {
 public:
-    virtual ~DogSinkFilter()
-    {
+    virtual ~DogSinkFilter() {
     }
 
 public:
-    virtual bool accept(const AttributeSourcePtr& source)
-    {
+    virtual bool accept(const AttributeSourcePtr& source) {
         TermAttributePtr termAtt = source->getAttribute<TermAttribute>();
         return boost::iequals(termAtt->term(), L"Dogs");
     }
 };
 
-class TeeSinkTokenFilterTest : public BaseTokenStreamFixture
-{
+class TeeSinkTokenFilterTest : public BaseTokenStreamFixture {
 public:
-    TeeSinkTokenFilterTest()
-    {
+    TeeSinkTokenFilterTest() {
         tokens1 = newCollection<String>(L"The", L"quick", L"Burgundy", L"Fox", L"jumped", L"over", L"the", L"lazy", L"Red", L"Dogs");
         tokens2 = newCollection<String>(L"The", L"Lazy", L"Dogs", L"should", L"stay", L"on", L"the", L"porch");
 
-        for (int32_t i = 0; i < tokens1.size(); ++i)
+        for (int32_t i = 0; i < tokens1.size(); ++i) {
             buffer1 << tokens1[i] << L" ";
-        for (int32_t i = 0; i < tokens2.size(); ++i)
+        }
+        for (int32_t i = 0; i < tokens2.size(); ++i) {
             buffer2 << tokens2[i] << L" ";
+        }
 
         theFilter = newLucene<TheSinkFilter>();
         dogFilter = newLucene<DogSinkFilter>();
     }
 
-    virtual ~TeeSinkTokenFilterTest()
-    {
+    virtual ~TeeSinkTokenFilterTest() {
     }
 
 protected:
@@ -83,8 +76,7 @@ protected:
     SinkFilterPtr dogFilter;
 };
 
-TEST_F(TeeSinkTokenFilterTest, testGeneral)
-{
+TEST_F(TeeSinkTokenFilterTest, testGeneral) {
     TeeSinkTokenFilterPtr source = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer1.str())));
     TokenStreamPtr sink1 = source->newSinkTokenStream();
     TokenStreamPtr sink2 = source->newSinkTokenStream(theFilter);
@@ -98,8 +90,7 @@ TEST_F(TeeSinkTokenFilterTest, testGeneral)
     checkTokenStreamContents(sink2, newCollection<String>(L"The", L"the"));
 }
 
-TEST_F(TeeSinkTokenFilterTest, testMultipleSources)
-{
+TEST_F(TeeSinkTokenFilterTest, testMultipleSources) {
     TeeSinkTokenFilterPtr tee1 = newLucene<TeeSinkTokenFilter>(newLucene<WhitespaceTokenizer>(newLucene<StringReader>(buffer1.str())));
     SinkTokenStreamPtr dogDetector = tee1->newSinkTokenStream(dogFilter);
     SinkTokenStreamPtr theDetector = tee1->newSinkTokenStream(theFilter);
@@ -123,80 +114,74 @@ TEST_F(TeeSinkTokenFilterTest, testMultipleSources)
     source1->reset();
     TokenStreamPtr lowerCasing = newLucene<LowerCaseFilter>(source1);
     Collection<String> lowerCaseTokens = Collection<String>::newInstance(tokens1.size());
-    for (int32_t i = 0; i < tokens1.size(); ++i)
+    for (int32_t i = 0; i < tokens1.size(); ++i) {
         lowerCaseTokens[i] = StringUtils::toLower((const String&)tokens1[i]);
+    }
     checkTokenStreamContents(lowerCasing, lowerCaseTokens);
 }
 
-namespace TestPerformance
-{
-    class ModuloTokenFilter : public TokenFilter
-    {
-    public:
-        ModuloTokenFilter(const TokenStreamPtr& input, int32_t mc) : TokenFilter(input)
-        {
-            modCount = mc;
-            count = 0;
-        }
+namespace TestPerformance {
 
-        virtual ~ModuloTokenFilter()
-        {
-        }
+class ModuloTokenFilter : public TokenFilter {
+public:
+    ModuloTokenFilter(const TokenStreamPtr& input, int32_t mc) : TokenFilter(input) {
+        modCount = mc;
+        count = 0;
+    }
 
-    public:
-        int32_t modCount;
-        int32_t count;
+    virtual ~ModuloTokenFilter() {
+    }
 
-    public:
-        // return every 100 tokens
-        virtual bool incrementToken()
-        {
-            bool hasNext = false;
-            for (hasNext = input->incrementToken(); hasNext && count % modCount != 0; hasNext = input->incrementToken())
-                ++count;
+public:
+    int32_t modCount;
+    int32_t count;
+
+public:
+    // return every 100 tokens
+    virtual bool incrementToken() {
+        bool hasNext = false;
+        for (hasNext = input->incrementToken(); hasNext && count % modCount != 0; hasNext = input->incrementToken()) {
             ++count;
-            return hasNext;
         }
-    };
+        ++count;
+        return hasNext;
+    }
+};
 
-    class ModuloSinkFilter : public SinkFilter
-    {
-    public:
-        ModuloSinkFilter(int32_t mc)
-        {
-            modCount = mc;
-            count = 0;
-        }
+class ModuloSinkFilter : public SinkFilter {
+public:
+    ModuloSinkFilter(int32_t mc) {
+        modCount = mc;
+        count = 0;
+    }
 
-        virtual ~ModuloSinkFilter()
-        {
-        }
+    virtual ~ModuloSinkFilter() {
+    }
 
-    public:
-        int32_t modCount;
-        int32_t count;
+public:
+    int32_t modCount;
+    int32_t count;
 
-    public:
-        virtual bool accept(const AttributeSourcePtr& source)
-        {
-            bool b = (source && count % modCount == 0);
-            ++count;
-            return b;
-        }
-    };
+public:
+    virtual bool accept(const AttributeSourcePtr& source) {
+        bool b = (source && count % modCount == 0);
+        ++count;
+        return b;
+    }
+};
+
 }
 
 /// Not an explicit test, just useful to print out some info on performance
-TEST_F(TeeSinkTokenFilterTest, testPerformance)
-{
+TEST_F(TeeSinkTokenFilterTest, testPerformance) {
     Collection<int32_t> tokCount = newCollection<int32_t>(100, 500, 1000, 2000, 5000, 10000);
     Collection<int32_t> modCounts = newCollection<int32_t>(1, 2, 5, 10, 20, 50, 100, 200, 500);
-    for (int32_t k = 0; k < tokCount.size(); ++k)
-    {
+    for (int32_t k = 0; k < tokCount.size(); ++k) {
         StringStream buffer;
         // std::cout << "-----Tokens: " << tokCount[k] << "-----";
-        for (int32_t i = 0; i < tokCount[k]; ++i)
+        for (int32_t i = 0; i < tokCount[k]; ++i) {
             buffer << StringUtils::toUpper(intToEnglish(i)) << L" ";
+        }
         // make sure we produce the same tokens
         TeeSinkTokenFilterPtr teeStream = newLucene<TeeSinkTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))));
         TokenStreamPtr sink = teeStream->newSinkTokenStream(newLucene<TestPerformance::ModuloSinkFilter>(100));
@@ -204,43 +189,43 @@ TEST_F(TeeSinkTokenFilterTest, testPerformance)
         TokenStreamPtr stream = newLucene<TestPerformance::ModuloTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))), 100);
         TermAttributePtr tfTok = stream->addAttribute<TermAttribute>();
         TermAttributePtr sinkTok = sink->addAttribute<TermAttribute>();
-        for (int32_t i = 0; stream->incrementToken(); ++i)
-        {
+        for (int32_t i = 0; stream->incrementToken(); ++i) {
             EXPECT_TRUE(sink->incrementToken());
             EXPECT_TRUE(tfTok->equals(sinkTok));
         }
 
         // simulate two fields, each being analyzed once, for 20 documents
-        for (int32_t j = 0; j < modCounts.size(); ++j)
-        {
+        for (int32_t j = 0; j < modCounts.size(); ++j) {
             int32_t tfPos = 0;
             int64_t start = MiscUtils::currentTimeMillis();
-            for (int32_t i = 0; i < 20; ++i)
-            {
+            for (int32_t i = 0; i < 20; ++i) {
                 stream = newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str())));
                 PositionIncrementAttributePtr posIncrAtt = stream->getAttribute<PositionIncrementAttribute>();
-                while (stream->incrementToken())
+                while (stream->incrementToken()) {
                     tfPos += posIncrAtt->getPositionIncrement();
+                }
                 stream = newLucene<TestPerformance::ModuloTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))), modCounts[j]);
                 posIncrAtt = stream->getAttribute<PositionIncrementAttribute>();
-                while (stream->incrementToken())
+                while (stream->incrementToken()) {
                     tfPos += posIncrAtt->getPositionIncrement();
+                }
             }
             int64_t finish = MiscUtils::currentTimeMillis();
             // std::cout << "ModCount: " << modCounts[j] << " Two fields took " << (finish - start) << " ms";
             int32_t sinkPos = 0;
             // simulate one field with one sink
             start = MiscUtils::currentTimeMillis();
-            for (int32_t i = 0; i < 20; ++i)
-            {
+            for (int32_t i = 0; i < 20; ++i) {
                 teeStream = newLucene<TeeSinkTokenFilter>(newLucene<StandardFilter>(newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(buffer.str()))));
                 sink = teeStream->newSinkTokenStream(newLucene<TestPerformance::ModuloSinkFilter>(modCounts[j]));
                 PositionIncrementAttributePtr posIncrAtt = teeStream->getAttribute<PositionIncrementAttribute>();
-                while (teeStream->incrementToken())
+                while (teeStream->incrementToken()) {
                     sinkPos += posIncrAtt->getPositionIncrement();
+                }
                 posIncrAtt = sink->getAttribute<PositionIncrementAttribute>();
-                while (sink->incrementToken())
+                while (sink->incrementToken()) {
                     sinkPos += posIncrAtt->getPositionIncrement();
+                }
             }
             finish = MiscUtils::currentTimeMillis();
             // std::cout << "ModCount: " << modCounts[j] << " Tee fields took " << (finish - start) << " ms";

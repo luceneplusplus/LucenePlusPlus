@@ -13,16 +13,13 @@
 using namespace Lucene;
 
 /// Deletes documents from an index that do not contain a term.
-int main(int argc, char* argv[])
-{
-    if (argc == 1)
-    {
+int main(int argc, char* argv[]) {
+    if (argc == 1) {
         std::wcout << L"Usage: deletefiles.exe <lucene index dir> <unique_term>\n";
         return 1;
     }
 
-    try
-    {
+    try {
         DirectoryPtr directory = FSDirectory::open(StringUtils::toUnicode(argv[1]));
 
         // we don't want read-only because we are about to delete
@@ -35,9 +32,7 @@ int main(int argc, char* argv[])
 
         reader->close();
         directory->close();
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         std::wcout << L"Exception: " << e.getError() << L"\n";
         return 1;
     }

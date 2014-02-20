@@ -12,41 +12,37 @@
 #include "IndexFileNames.h"
 #include "DefaultSkipListWriter.h"
 
-namespace Lucene
-{
-    FormatPostingsFieldsWriter::FormatPostingsFieldsWriter(const SegmentWriteStatePtr& state, const FieldInfosPtr& fieldInfos)
-    {
-        dir = state->directory;
-        segment = state->segmentName;
-        totalNumDocs = state->numDocs;
-        this->state = state;
-        this->fieldInfos = fieldInfos;
-        termsOut = newLucene<TermInfosWriter>(dir, segment, fieldInfos, state->termIndexInterval);
+namespace Lucene {
 
-        skipListWriter = newLucene<DefaultSkipListWriter>(termsOut->skipInterval, termsOut->maxSkipLevels, totalNumDocs, IndexOutputPtr(), IndexOutputPtr());
+FormatPostingsFieldsWriter::FormatPostingsFieldsWriter(const SegmentWriteStatePtr& state, const FieldInfosPtr& fieldInfos) {
+    dir = state->directory;
+    segment = state->segmentName;
+    totalNumDocs = state->numDocs;
+    this->state = state;
+    this->fieldInfos = fieldInfos;
+    termsOut = newLucene<TermInfosWriter>(dir, segment, fieldInfos, state->termIndexInterval);
 
-        state->flushedFiles.add(state->segmentFileName(IndexFileNames::TERMS_EXTENSION()));
-        state->flushedFiles.add(state->segmentFileName(IndexFileNames::TERMS_INDEX_EXTENSION()));
-    }
+    skipListWriter = newLucene<DefaultSkipListWriter>(termsOut->skipInterval, termsOut->maxSkipLevels, totalNumDocs, IndexOutputPtr(), IndexOutputPtr());
 
-    FormatPostingsFieldsWriter::~FormatPostingsFieldsWriter()
-    {
-    }
+    state->flushedFiles.add(state->segmentFileName(IndexFileNames::TERMS_EXTENSION()));
+    state->flushedFiles.add(state->segmentFileName(IndexFileNames::TERMS_INDEX_EXTENSION()));
+}
 
-    void FormatPostingsFieldsWriter::initialize()
-    {
-        termsWriter = newLucene<FormatPostingsTermsWriter>(state, shared_from_this());
-    }
+FormatPostingsFieldsWriter::~FormatPostingsFieldsWriter() {
+}
 
-    FormatPostingsTermsConsumerPtr FormatPostingsFieldsWriter::addField(const FieldInfoPtr& field)
-    {
-        termsWriter->setField(field);
-        return termsWriter;
-    }
+void FormatPostingsFieldsWriter::initialize() {
+    termsWriter = newLucene<FormatPostingsTermsWriter>(state, shared_from_this());
+}
 
-    void FormatPostingsFieldsWriter::finish()
-    {
-        termsOut->close();
-        termsWriter->close();
-    }
+FormatPostingsTermsConsumerPtr FormatPostingsFieldsWriter::addField(const FieldInfoPtr& field) {
+    termsWriter->setField(field);
+    return termsWriter;
+}
+
+void FormatPostingsFieldsWriter::finish() {
+    termsOut->close();
+    termsWriter->close();
+}
+
 }

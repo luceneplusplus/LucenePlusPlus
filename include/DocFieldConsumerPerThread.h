@@ -9,21 +9,21 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class DocFieldConsumerPerThread : public LuceneObject
-    {
-    public:
-        virtual ~DocFieldConsumerPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldConsumerPerThread);
+class DocFieldConsumerPerThread : public LuceneObject {
+public:
+    virtual ~DocFieldConsumerPerThread();
 
-    public:
-        virtual void startDocument() = 0;
-        virtual DocWriterPtr finishDocument() = 0;
-        virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi) = 0;
-        virtual void abort() = 0;
-    };
+    LUCENE_CLASS(DocFieldConsumerPerThread);
+
+public:
+    virtual void startDocument() = 0;
+    virtual DocWriterPtr finishDocument() = 0;
+    virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi) = 0;
+    virtual void abort() = 0;
+};
+
 }
 
 #endif

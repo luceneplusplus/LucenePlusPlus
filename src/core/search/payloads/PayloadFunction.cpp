@@ -7,13 +7,12 @@
 #include "LuceneInc.h"
 #include "PayloadFunction.h"
 
-namespace Lucene
-{
-    PayloadFunction::PayloadFunction()
-    {
-    }
+namespace Lucene {
 
-    PayloadFunction::~PayloadFunction()
-    {
-    }
+PayloadFunction::PayloadFunction() {
+}
+
+PayloadFunction::~PayloadFunction() {
+}
+
 }

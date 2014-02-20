@@ -9,63 +9,63 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Filter caching singleton.  It can be used to save filters locally for reuse.  Also could be used as a
-    /// persistent storage for any filter as long as the filter provides a proper hashCode(), as that is used
-    /// as the key in the cache.
-    ///
-    /// The cache is periodically cleaned up from a separate thread to ensure the cache doesn't exceed the
-    /// maximum size.
-    class LPPAPI FilterManager : public LuceneObject
-    {
-    public:
-        /// Sets up the FilterManager singleton.
-        FilterManager();
-        virtual ~FilterManager();
+namespace Lucene {
 
-        LUCENE_CLASS(FilterManager);
+/// Filter caching singleton.  It can be used to save filters locally for reuse.  Also could be used as a
+/// persistent storage for any filter as long as the filter provides a proper hashCode(), as that is used
+/// as the key in the cache.
+///
+/// The cache is periodically cleaned up from a separate thread to ensure the cache doesn't exceed the
+/// maximum size.
+class LPPAPI FilterManager : public LuceneObject {
+public:
+    /// Sets up the FilterManager singleton.
+    FilterManager();
+    virtual ~FilterManager();
 
-    protected:
-        /// The default maximum number of Filters in the cache
-        static const int32_t DEFAULT_CACHE_CLEAN_SIZE;
+    LUCENE_CLASS(FilterManager);
 
-        /// The default frequency of cache cleanup
-        static const int64_t DEFAULT_CACHE_SLEEP_TIME;
+protected:
+    /// The default maximum number of Filters in the cache
+    static const int32_t DEFAULT_CACHE_CLEAN_SIZE;
 
-        /// The cache itself
-        MapIntFilterItem cache;
+    /// The default frequency of cache cleanup
+    static const int64_t DEFAULT_CACHE_SLEEP_TIME;
 
-        /// Maximum allowed cache size
-        int32_t cacheCleanSize;
+    /// The cache itself
+    MapIntFilterItem cache;
 
-        /// Cache cleaning frequency
-        int64_t cleanSleepTime;
+    /// Maximum allowed cache size
+    int32_t cacheCleanSize;
 
-        /// Cache cleaner that runs in a separate thread
-        FilterCleanerPtr filterCleaner;
+    /// Cache cleaning frequency
+    int64_t cleanSleepTime;
 
-    public:
-        virtual void initialize();
+    /// Cache cleaner that runs in a separate thread
+    FilterCleanerPtr filterCleaner;
 
-        static FilterManagerPtr getInstance();
+public:
+    virtual void initialize();
 
-        /// Sets the max size that cache should reach before it is cleaned up
-        /// @param cacheCleanSize maximum allowed cache size
-        void setCacheSize(int32_t cacheCleanSize);
+    static FilterManagerPtr getInstance();
 
-        /// Sets the cache cleaning frequency in milliseconds.
-        /// @param cleanSleepTime cleaning frequency in milliseconds
-        void setCleanThreadSleepTime(int64_t cleanSleepTime);
+    /// Sets the max size that cache should reach before it is cleaned up
+    /// @param cacheCleanSize maximum allowed cache size
+    void setCacheSize(int32_t cacheCleanSize);
 
-        /// Returns the cached version of the filter.  Allows the caller to pass up a small filter but this will
-        /// keep a persistent version around and allow the caching filter to do its job.
-        /// @param filter The input filter
-        /// @return The cached version of the filter
-        FilterPtr getFilter(const FilterPtr& filter);
+    /// Sets the cache cleaning frequency in milliseconds.
+    /// @param cleanSleepTime cleaning frequency in milliseconds
+    void setCleanThreadSleepTime(int64_t cleanSleepTime);
 
-        friend class FilterCleaner;
-    };
+    /// Returns the cached version of the filter.  Allows the caller to pass up a small filter but this will
+    /// keep a persistent version around and allow the caching filter to do its job.
+    /// @param filter The input filter
+    /// @return The cached version of the filter
+    FilterPtr getFilter(const FilterPtr& filter);
+
+    friend class FilterCleaner;
+};
+
 }
 
 #endif

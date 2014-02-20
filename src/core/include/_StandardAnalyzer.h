@@ -9,17 +9,17 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class StandardAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~StandardAnalyzerSavedStreams();
+namespace Lucene {
 
-    public:
-        StandardTokenizerPtr tokenStream;
-        TokenStreamPtr filteredTokenStream;
-    };
+class StandardAnalyzerSavedStreams : public LuceneObject {
+public:
+    virtual ~StandardAnalyzerSavedStreams();
+
+public:
+    StandardTokenizerPtr tokenStream;
+    TokenStreamPtr filteredTokenStream;
+};
+
 }
 
 #endif

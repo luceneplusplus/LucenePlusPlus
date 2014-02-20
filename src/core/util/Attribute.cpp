@@ -7,24 +7,21 @@
 #include "LuceneInc.h"
 #include "Attribute.h"
 
-namespace Lucene
-{
-    Attribute::~Attribute()
-    {
-    }
+namespace Lucene {
 
-    int32_t Attribute::hashCode()
-    {
-        return LuceneObject::hashCode();
-    }
+Attribute::~Attribute() {
+}
 
-    bool Attribute::equals(const LuceneObjectPtr& other)
-    {
-        return LuceneObject::equals(other);
-    }
+int32_t Attribute::hashCode() {
+    return LuceneObject::hashCode();
+}
 
-    LuceneObjectPtr Attribute::clone(const LuceneObjectPtr& other)
-    {
-        return LuceneObject::clone(other);
-    }
+bool Attribute::equals(const LuceneObjectPtr& other) {
+    return LuceneObject::equals(other);
+}
+
+LuceneObjectPtr Attribute::clone(const LuceneObjectPtr& other) {
+    return LuceneObject::clone(other);
+}
+
 }

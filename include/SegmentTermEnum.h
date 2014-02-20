@@ -9,80 +9,80 @@
 
 #include "TermEnum.h"
 
-namespace Lucene
-{
-    class SegmentTermEnum : public TermEnum
-    {
-    public:
-        SegmentTermEnum();
-        SegmentTermEnum(const IndexInputPtr& i, const FieldInfosPtr& fis, bool isi);
-        virtual ~SegmentTermEnum();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentTermEnum);
+class SegmentTermEnum : public TermEnum {
+public:
+    SegmentTermEnum();
+    SegmentTermEnum(const IndexInputPtr& i, const FieldInfosPtr& fis, bool isi);
+    virtual ~SegmentTermEnum();
 
-    protected:
-        IndexInputPtr input;
-        TermBufferPtr termBuffer;
-        TermBufferPtr prevBuffer;
-        TermBufferPtr scanBuffer; // used for scanning
+    LUCENE_CLASS(SegmentTermEnum);
 
-        TermInfoPtr _termInfo;
+protected:
+    IndexInputPtr input;
+    TermBufferPtr termBuffer;
+    TermBufferPtr prevBuffer;
+    TermBufferPtr scanBuffer; // used for scanning
 
-        int32_t format;
-        bool isIndex;
-        int32_t formatM1SkipInterval;
+    TermInfoPtr _termInfo;
 
-    public:
-        FieldInfosPtr fieldInfos;
-        int64_t size;
-        int64_t position;
+    int32_t format;
+    bool isIndex;
+    int32_t formatM1SkipInterval;
 
-        int64_t indexPointer;
-        int32_t indexInterval;
-        int32_t skipInterval;
-        int32_t maxSkipLevels;
+public:
+    FieldInfosPtr fieldInfos;
+    int64_t size;
+    int64_t position;
 
-    public:
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    int64_t indexPointer;
+    int32_t indexInterval;
+    int32_t skipInterval;
+    int32_t maxSkipLevels;
 
-        void seek(int64_t pointer, int64_t p, const TermPtr& t, const TermInfoPtr& ti);
+public:
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        /// Increments the enumeration to the next element.  True if one exists.
-        virtual bool next();
+    void seek(int64_t pointer, int64_t p, const TermPtr& t, const TermInfoPtr& ti);
 
-        /// Optimized scan, without allocating new terms. Return number of invocations to next().
-        int32_t scanTo(const TermPtr& term);
+    /// Increments the enumeration to the next element.  True if one exists.
+    virtual bool next();
 
-        /// Returns the current Term in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
-        virtual TermPtr term();
+    /// Optimized scan, without allocating new terms. Return number of invocations to next().
+    int32_t scanTo(const TermPtr& term);
 
-        /// Returns the previous Term enumerated. Initially null.
-        TermPtr prev();
+    /// Returns the current Term in the enumeration.
+    /// Initially invalid, valid after next() called for the first time.
+    virtual TermPtr term();
 
-        /// Returns the current TermInfo in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
-        TermInfoPtr termInfo();
+    /// Returns the previous Term enumerated. Initially null.
+    TermPtr prev();
 
-        /// Sets the argument to the current TermInfo in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
-        void termInfo(const TermInfoPtr& ti);
+    /// Returns the current TermInfo in the enumeration.
+    /// Initially invalid, valid after next() called for the first time.
+    TermInfoPtr termInfo();
 
-        /// Returns the docFreq of the current Term in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
-        virtual int32_t docFreq();
+    /// Sets the argument to the current TermInfo in the enumeration.
+    /// Initially invalid, valid after next() called for the first time.
+    void termInfo(const TermInfoPtr& ti);
 
-        /// Returns the freqPointer from the current TermInfo in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
-        int64_t freqPointer();
+    /// Returns the docFreq of the current Term in the enumeration.
+    /// Initially invalid, valid after next() called for the first time.
+    virtual int32_t docFreq();
 
-        /// Returns the proxPointer from the current TermInfo in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
-        int64_t proxPointer();
+    /// Returns the freqPointer from the current TermInfo in the enumeration.
+    /// Initially invalid, valid after next() called for the first time.
+    int64_t freqPointer();
 
-        /// Closes the enumeration to further activity, freeing resources.
-        virtual void close();
-    };
+    /// Returns the proxPointer from the current TermInfo in the enumeration.
+    /// Initially invalid, valid after next() called for the first time.
+    int64_t proxPointer();
+
+    /// Closes the enumeration to further activity, freeing resources.
+    virtual void close();
+};
+
 }
 
 #endif

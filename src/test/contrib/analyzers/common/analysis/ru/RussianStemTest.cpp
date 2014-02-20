@@ -15,11 +15,9 @@
 
 using namespace Lucene;
 
-class RussianStemmerTest : public BaseTokenStreamFixture
-{
+class RussianStemmerTest : public BaseTokenStreamFixture {
 public:
-    RussianStemmerTest()
-    {
+    RussianStemmerTest() {
         words = Collection<String>::newInstance();
         stems = Collection<String>::newInstance();
 
@@ -28,19 +26,20 @@ public:
 
         BufferedReaderPtr inWords = newLucene<BufferedReader>(newLucene<InputStreamReader>(newLucene<FileReader>(wordsFile)));
         String word;
-        while (inWords->readLine(word))
+        while (inWords->readLine(word)) {
             words.add(word);
+        }
         inWords->close();
 
         BufferedReaderPtr inStems = newLucene<BufferedReader>(newLucene<InputStreamReader>(newLucene<FileReader>(stemsFile)));
         String stem;
-        while (inStems->readLine(stem))
+        while (inStems->readLine(stem)) {
             stems.add(stem);
+        }
         inStems->close();
     }
 
-    virtual ~RussianStemmerTest()
-    {
+    virtual ~RussianStemmerTest() {
     }
 
 protected:
@@ -48,11 +47,9 @@ protected:
     Collection<String> stems;
 };
 
-TEST_F(RussianStemmerTest, testStem)
-{
+TEST_F(RussianStemmerTest, testStem) {
     EXPECT_EQ(words.size(), stems.size());
-    for (int32_t i = 0; i < words.size(); ++i)
-    {
+    for (int32_t i = 0; i < words.size(); ++i) {
         String realStem = RussianStemmer::stemWord(words[i]);
         EXPECT_EQ(stems[i], realStem);
     }

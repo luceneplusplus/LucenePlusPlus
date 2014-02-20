@@ -25,180 +25,147 @@ using namespace Lucene;
 
 typedef LuceneTestFixture SimilarityTest;
 
-namespace TestSimilarity
-{
-    class SimpleIDFExplanation : public IDFExplanation
-    {
-    public:
-        virtual ~SimpleIDFExplanation()
-        {
-        }
+namespace TestSimilarity {
 
-    public:
-        virtual double getIdf()
-        {
-            return 1.0;
-        }
+class SimpleIDFExplanation : public IDFExplanation {
+public:
+    virtual ~SimpleIDFExplanation() {
+    }
 
-        virtual String explain()
-        {
-            return L"Inexplicable";
-        }
-    };
+public:
+    virtual double getIdf() {
+        return 1.0;
+    }
 
-    class SimpleSimilarity : public Similarity
-    {
-    public:
-        virtual ~SimpleSimilarity()
-        {
-        }
+    virtual String explain() {
+        return L"Inexplicable";
+    }
+};
 
-    public:
-        virtual double lengthNorm(const String& fieldName, int32_t numTokens)
-        {
-            return 1.0;
-        }
+class SimpleSimilarity : public Similarity {
+public:
+    virtual ~SimpleSimilarity() {
+    }
 
-        virtual double queryNorm(double sumOfSquaredWeights)
-        {
-            return 1.0;
-        }
+public:
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
+        return 1.0;
+    }
 
-        virtual double tf(double freq)
-        {
-            return freq;
-        }
+    virtual double queryNorm(double sumOfSquaredWeights) {
+        return 1.0;
+    }
 
-        virtual double sloppyFreq(int32_t distance)
-        {
-            return 2.0;
-        }
+    virtual double tf(double freq) {
+        return freq;
+    }
 
-        virtual double idf(int32_t docFreq, int32_t numDocs)
-        {
-            return 1.0;
-        }
+    virtual double sloppyFreq(int32_t distance) {
+        return 2.0;
+    }
 
-        virtual double coord(int32_t overlap, int32_t maxOverlap)
-        {
-            return 1.0;
-        }
+    virtual double idf(int32_t docFreq, int32_t numDocs) {
+        return 1.0;
+    }
 
-        virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher)
-        {
-            return newLucene<SimpleIDFExplanation>();
-        }
-    };
+    virtual double coord(int32_t overlap, int32_t maxOverlap) {
+        return 1.0;
+    }
 
-    class TermQueryCollector : public Collector
-    {
-    public:
-        virtual ~TermQueryCollector()
-        {
-        }
+    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher) {
+        return newLucene<SimpleIDFExplanation>();
+    }
+};
 
-    protected:
-        ScorerPtr scorer;
+class TermQueryCollector : public Collector {
+public:
+    virtual ~TermQueryCollector() {
+    }
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+protected:
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ(1.0, scorer->score());
-        }
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-        }
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ(1.0, scorer->score());
+    }
 
-        virtual bool acceptsDocsOutOfOrder()
-        {
-            return true;
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+    }
 
-    class BooleanQueryCollector : public Collector
-    {
-    public:
-        BooleanQueryCollector()
-        {
-            this->base = 0;
-        }
+    virtual bool acceptsDocsOutOfOrder() {
+        return true;
+    }
+};
 
-        virtual ~BooleanQueryCollector()
-        {
-        }
+class BooleanQueryCollector : public Collector {
+public:
+    BooleanQueryCollector() {
+        this->base = 0;
+    }
 
-    protected:
-        int32_t base;
-        ScorerPtr scorer;
+    virtual ~BooleanQueryCollector() {
+    }
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+protected:
+    int32_t base;
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ((double)doc + (double)base + 1.0, scorer->score());
-        }
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-            base = docBase;
-        }
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ((double)doc + (double)base + 1.0, scorer->score());
+    }
 
-        virtual bool acceptsDocsOutOfOrder()
-        {
-            return true;
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+        base = docBase;
+    }
 
-    class PhraseQueryCollector : public Collector
-    {
-    public:
-        PhraseQueryCollector(double expectedScore)
-        {
-            this->expectedScore = expectedScore;
-        }
+    virtual bool acceptsDocsOutOfOrder() {
+        return true;
+    }
+};
 
-        virtual ~PhraseQueryCollector()
-        {
-        }
+class PhraseQueryCollector : public Collector {
+public:
+    PhraseQueryCollector(double expectedScore) {
+        this->expectedScore = expectedScore;
+    }
 
-    protected:
-        double expectedScore;
-        ScorerPtr scorer;
+    virtual ~PhraseQueryCollector() {
+    }
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+protected:
+    double expectedScore;
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ(expectedScore, scorer->score());
-        }
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-        }
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ(expectedScore, scorer->score());
+    }
 
-        virtual bool acceptsDocsOutOfOrder()
-        {
-            return true;
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+    }
+
+    virtual bool acceptsDocsOutOfOrder() {
+        return true;
+    }
+};
+
 }
 
-TEST_F(SimilarityTest, testSimilarity)
-{
+TEST_F(SimilarityTest, testSimilarity) {
     RAMDirectoryPtr store = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(store, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setSimilarity(newLucene<TestSimilarity::SimpleSimilarity>());

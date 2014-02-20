@@ -9,34 +9,34 @@
 
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A filter that replaces accented characters in the ISO Latin 1 character set (ISO-8859-1) by their unaccented
-    /// equivalent. The case will not be altered.
-    ///
-    /// For instance, '&agrave;' will be replaced by 'a'.
-    ///
-    /// @deprecated If you build a new index, use {@link ASCIIFoldingFilter} which covers a superset of Latin 1.
-    /// This class is included for use with existing indexes and will be removed in a future release (possibly Lucene 4.0).
-    class LPPAPI ISOLatin1AccentFilter : public TokenFilter
-    {
-    public:
-        ISOLatin1AccentFilter(const TokenStreamPtr& input);
-        virtual ~ISOLatin1AccentFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(ISOLatin1AccentFilter);
+/// A filter that replaces accented characters in the ISO Latin 1 character set (ISO-8859-1) by their unaccented
+/// equivalent. The case will not be altered.
+///
+/// For instance, '&agrave;' will be replaced by 'a'.
+///
+/// @deprecated If you build a new index, use {@link ASCIIFoldingFilter} which covers a superset of Latin 1.
+/// This class is included for use with existing indexes and will be removed in a future release (possibly Lucene 4.0).
+class LPPAPI ISOLatin1AccentFilter : public TokenFilter {
+public:
+    ISOLatin1AccentFilter(const TokenStreamPtr& input);
+    virtual ~ISOLatin1AccentFilter();
 
-    protected:
-        CharArray output;
-        int32_t outputPos;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(ISOLatin1AccentFilter);
 
-    public:
-        virtual bool incrementToken();
+protected:
+    CharArray output;
+    int32_t outputPos;
+    TermAttributePtr termAtt;
 
-        /// To replace accented characters in a String by unaccented equivalents.
-        void removeAccents(const wchar_t* input, int32_t length);
-    };
+public:
+    virtual bool incrementToken();
+
+    /// To replace accented characters in a String by unaccented equivalents.
+    void removeAccents(const wchar_t* input, int32_t length);
+};
+
 }
 
 #endif

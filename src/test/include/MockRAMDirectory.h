@@ -10,123 +10,122 @@
 #include "test_lucene.h"
 #include "RAMDirectory.h"
 
-namespace Lucene
-{
-    /// This is a subclass of RAMDirectory that adds methods intended to be used only by unit tests.
-    class MockRAMDirectory : public RAMDirectory
-    {
-    public:
-        MockRAMDirectory();
-        MockRAMDirectory(const DirectoryPtr& dir);
-        virtual ~MockRAMDirectory();
+namespace Lucene {
 
-        LUCENE_CLASS(MockRAMDirectory);
+/// This is a subclass of RAMDirectory that adds methods intended to be used only by unit tests.
+class MockRAMDirectory : public RAMDirectory {
+public:
+    MockRAMDirectory();
+    MockRAMDirectory(const DirectoryPtr& dir);
+    virtual ~MockRAMDirectory();
 
-    public:
-        int64_t maxSize;
-        RandomPtr randomState;
+    LUCENE_CLASS(MockRAMDirectory);
 
-        // Max actual bytes used. This is set by MockRAMOutputStream
-        int64_t maxUsedSize;
-        double randomIOExceptionRate;
-        bool noDeleteOpenFile;
-        bool preventDoubleWrite;
-        bool crashed;
+public:
+    int64_t maxSize;
+    RandomPtr randomState;
 
-        MapStringInt openFiles;
+    // Max actual bytes used. This is set by MockRAMOutputStream
+    int64_t maxUsedSize;
+    double randomIOExceptionRate;
+    bool noDeleteOpenFile;
+    bool preventDoubleWrite;
+    bool crashed;
 
-        // Only tracked if noDeleteOpenFile is true: if an attempt is made to delete an
-        // open file, we enroll it here.
-        HashSet<String> openFilesDeleted;
+    MapStringInt openFiles;
 
-        Collection<MockDirectoryFailurePtr> failures;
+    // Only tracked if noDeleteOpenFile is true: if an attempt is made to delete an
+    // open file, we enroll it here.
+    HashSet<String> openFilesDeleted;
 
-    protected:
-        HashSet<String> unSyncedFiles;
-        HashSet<String> createdFiles;
+    Collection<MockDirectoryFailurePtr> failures;
 
-    public:
-        /// If set to true, we throw an IO exception if the same file is opened by createOutput, ever.
-        void setPreventDoubleWrite(bool value);
+protected:
+    HashSet<String> unSyncedFiles;
+    HashSet<String> createdFiles;
 
-        virtual void sync(const String& name);
+public:
+    /// If set to true, we throw an IO exception if the same file is opened by createOutput, ever.
+    void setPreventDoubleWrite(bool value);
 
-        /// Simulates a crash of OS or machine by overwriting unsynced files.
-        void crash();
+    virtual void sync(const String& name);
 
-        void clearCrash();
-        void setMaxSizeInBytes(int64_t maxSize);
-        int64_t getMaxSizeInBytes();
+    /// Simulates a crash of OS or machine by overwriting unsynced files.
+    void crash();
 
-        /// Returns the peek actual storage used (bytes) in this directory.
-        int64_t getMaxUsedSizeInBytes();
-        void resetMaxUsedSizeInBytes();
+    void clearCrash();
+    void setMaxSizeInBytes(int64_t maxSize);
+    int64_t getMaxSizeInBytes();
 
-        /// Emulate windows whereby deleting an open file is not allowed (raise IO exception)
-        void setNoDeleteOpenFile(bool value);
-        bool getNoDeleteOpenFile();
+    /// Returns the peek actual storage used (bytes) in this directory.
+    int64_t getMaxUsedSizeInBytes();
+    void resetMaxUsedSizeInBytes();
 
-        /// If 0.0, no exceptions will be thrown.  Else this should be a double 0.0 - 1.0.  We will randomly throw an
-        /// IO exception on the first write to an OutputStream based on this probability.
-        void setRandomIOExceptionRate(double rate, int64_t seed);
-        double getRandomIOExceptionRate();
+    /// Emulate windows whereby deleting an open file is not allowed (raise IO exception)
+    void setNoDeleteOpenFile(bool value);
+    bool getNoDeleteOpenFile();
 
-        void maybeThrowIOException();
+    /// If 0.0, no exceptions will be thrown.  Else this should be a double 0.0 - 1.0.  We will randomly throw an
+    /// IO exception on the first write to an OutputStream based on this probability.
+    void setRandomIOExceptionRate(double rate, int64_t seed);
+    double getRandomIOExceptionRate();
 
-        virtual void deleteFile(const String& name);
+    void maybeThrowIOException();
 
-        virtual HashSet<String> getOpenDeletedFiles();
+    virtual void deleteFile(const String& name);
 
-        virtual IndexOutputPtr createOutput(const String& name);
-        virtual IndexInputPtr openInput(const String& name);
+    virtual HashSet<String> getOpenDeletedFiles();
 
-        /// Provided for testing purposes.  Use sizeInBytes() instead.
-        int64_t getRecomputedSizeInBytes();
+    virtual IndexOutputPtr createOutput(const String& name);
+    virtual IndexInputPtr openInput(const String& name);
 
-        /// Like getRecomputedSizeInBytes(), but, uses actual file lengths rather than buffer allocations (which are
-        /// quantized up to nearest RAMOutputStream::BUFFER_SIZE (now 1024) bytes.
-        int64_t getRecomputedActualSizeInBytes();
+    /// Provided for testing purposes.  Use sizeInBytes() instead.
+    int64_t getRecomputedSizeInBytes();
 
-        virtual void close();
+    /// Like getRecomputedSizeInBytes(), but, uses actual file lengths rather than buffer allocations (which are
+    /// quantized up to nearest RAMOutputStream::BUFFER_SIZE (now 1024) bytes.
+    int64_t getRecomputedActualSizeInBytes();
 
-        /// Add a Failure object to the list of objects to be evaluated at every potential failure point
-        void failOn(const MockDirectoryFailurePtr& fail);
+    virtual void close();
 
-        /// Iterate through the failures list, giving each object a chance to throw an IO exception.
-        void maybeThrowDeterministicException();
+    /// Add a Failure object to the list of objects to be evaluated at every potential failure point
+    void failOn(const MockDirectoryFailurePtr& fail);
 
-    protected:
-        void init();
+    /// Iterate through the failures list, giving each object a chance to throw an IO exception.
+    void maybeThrowDeterministicException();
 
-        void deleteFile(const String& name, bool forced);
-    };
+protected:
+    void init();
 
-    /// Objects that represent fail-able conditions. Objects of a derived class are created and registered with the
-    /// mock directory. After register, each object will be invoked once for each first write of a file, giving the
-    /// object a chance to throw an IO exception.
-    class MockDirectoryFailure : public LuceneObject
-    {
-    public:
-        MockDirectoryFailure();
-        virtual ~MockDirectoryFailure();
+    void deleteFile(const String& name, bool forced);
+};
 
-        LUCENE_CLASS(MockDirectoryFailure);
+/// Objects that represent fail-able conditions. Objects of a derived class are created and registered with the
+/// mock directory. After register, each object will be invoked once for each first write of a file, giving the
+/// object a chance to throw an IO exception.
+class MockDirectoryFailure : public LuceneObject {
+public:
+    MockDirectoryFailure();
+    virtual ~MockDirectoryFailure();
 
-    public:
-        /// eval is called on the first write of every new file.
-        virtual void eval(const MockRAMDirectoryPtr& dir);
+    LUCENE_CLASS(MockDirectoryFailure);
 
-        /// reset should set the state of the failure to its default (freshly constructed) state. Reset is convenient
-        /// for tests that want to create one failure object and then reuse it in multiple cases. This, combined with
-        /// the fact that MockDirectoryFailure subclasses are often anonymous classes makes reset difficult to do otherwise.
-        virtual MockDirectoryFailurePtr reset();
+public:
+    /// eval is called on the first write of every new file.
+    virtual void eval(const MockRAMDirectoryPtr& dir);
 
-        virtual void setDoFail();
-        virtual void clearDoFail();
+    /// reset should set the state of the failure to its default (freshly constructed) state. Reset is convenient
+    /// for tests that want to create one failure object and then reuse it in multiple cases. This, combined with
+    /// the fact that MockDirectoryFailure subclasses are often anonymous classes makes reset difficult to do otherwise.
+    virtual MockDirectoryFailurePtr reset();
 
-    protected:
-        bool doFail;
-    };
+    virtual void setDoFail();
+    virtual void clearDoFail();
+
+protected:
+    bool doFail;
+};
+
 }
 
 #endif

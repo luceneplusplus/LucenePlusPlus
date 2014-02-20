@@ -11,42 +11,42 @@
 #include "Weight.h"
 #include "Scorer.h"
 
-namespace Lucene
-{
-    /// A query that wraps a filter and simply returns a constant score equal to the query boost for every
-    /// document in the filter.
-    class LPPAPI ConstantScoreQuery : public Query
-    {
-    public:
-        ConstantScoreQuery(const FilterPtr& filter);
-        virtual ~ConstantScoreQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(ConstantScoreQuery);
+/// A query that wraps a filter and simply returns a constant score equal to the query boost for every
+/// document in the filter.
+class LPPAPI ConstantScoreQuery : public Query {
+public:
+    ConstantScoreQuery(const FilterPtr& filter);
+    virtual ~ConstantScoreQuery();
 
-    protected:
-        FilterPtr filter;
+    LUCENE_CLASS(ConstantScoreQuery);
 
-    public:
-        using Query::toString;
+protected:
+    FilterPtr filter;
 
-        /// Returns the encapsulated filter
-        FilterPtr getFilter();
+public:
+    using Query::toString;
 
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
-        virtual void extractTerms(SetTerm terms);
+    /// Returns the encapsulated filter
+    FilterPtr getFilter();
 
-        virtual WeightPtr createWeight(const SearcherPtr& searcher);
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    virtual void extractTerms(SetTerm terms);
 
-        /// Prints a user-readable version of this query.
-        virtual String toString(const String& field);
+    virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    /// Prints a user-readable version of this query.
+    virtual String toString(const String& field);
 
-        friend class ConstantWeight;
-        friend class ConstantScorer;
-    };
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+    friend class ConstantWeight;
+    friend class ConstantScorer;
+};
+
 }
 
 #endif

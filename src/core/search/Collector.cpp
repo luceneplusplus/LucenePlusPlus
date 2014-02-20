@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "Collector.h"
 
-namespace Lucene
-{
-    Collector::~Collector()
-    {
-    }
+namespace Lucene {
+
+Collector::~Collector() {
+}
+
 }

@@ -9,34 +9,34 @@
 
 #include "MultiSearcher.h"
 
-namespace Lucene
-{
-    /// Implements parallel search over a set of Searchables.
-    ///
-    /// Applications usually need only call the inherited {@link #search(QueryPtr, int32_t)} or
-    /// {@link #search(QueryPtr, FilterPtr, int32_t)} methods.
-    class LPPAPI ParallelMultiSearcher : public MultiSearcher
-    {
-    public:
-        /// Creates a {@link Searchable} which searches searchables.
-        ParallelMultiSearcher(Collection<SearchablePtr> searchables);
-        virtual ~ParallelMultiSearcher();
+namespace Lucene {
 
-        LUCENE_CLASS(ParallelMultiSearcher);
+/// Implements parallel search over a set of Searchables.
+///
+/// Applications usually need only call the inherited {@link #search(QueryPtr, int32_t)} or
+/// {@link #search(QueryPtr, FilterPtr, int32_t)} methods.
+class LPPAPI ParallelMultiSearcher : public MultiSearcher {
+public:
+    /// Creates a {@link Searchable} which searches searchables.
+    ParallelMultiSearcher(Collection<SearchablePtr> searchables);
+    virtual ~ParallelMultiSearcher();
 
-    public:
-        /// Executes each {@link Searchable}'s docFreq() in its own thread and waits for each search to
-        /// complete and merge the results back together.
-        virtual int32_t docFreq(const TermPtr& term);
+    LUCENE_CLASS(ParallelMultiSearcher);
 
-        /// A search implementation which executes each {@link Searchable} in its own thread and waits
-        /// for each search to complete and merge the results back together.
-        virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n);
+public:
+    /// Executes each {@link Searchable}'s docFreq() in its own thread and waits for each search to
+    /// complete and merge the results back together.
+    virtual int32_t docFreq(const TermPtr& term);
 
-        /// A search implementation allowing sorting which spans a new thread for each Searchable, waits
-        /// for each search to complete and merges the results back together.
-        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort);
-    };
+    /// A search implementation which executes each {@link Searchable} in its own thread and waits
+    /// for each search to complete and merge the results back together.
+    virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n);
+
+    /// A search implementation allowing sorting which spans a new thread for each Searchable, waits
+    /// for each search to complete and merges the results back together.
+    virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort);
+};
+
 }
 
 #endif

@@ -9,42 +9,42 @@
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    MinPayloadFunction::~MinPayloadFunction()
-    {
-    }
+namespace Lucene {
 
-    double MinPayloadFunction::currentScore(int32_t docId, const String& field, int32_t start, int32_t end,
-                                            int32_t numPayloadsSeen, double currentScore, double currentPayloadScore)
-    {
-        if (numPayloadsSeen == 0)
-            return currentPayloadScore;
-        else
-            return std::min(currentPayloadScore, currentScore);
-    }
+MinPayloadFunction::~MinPayloadFunction() {
+}
 
-    double MinPayloadFunction::docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore)
-    {
-        return numPayloadsSeen > 0 ? payloadScore : 1.0;
+double MinPayloadFunction::currentScore(int32_t docId, const String& field, int32_t start, int32_t end,
+                                        int32_t numPayloadsSeen, double currentScore, double currentPayloadScore) {
+    if (numPayloadsSeen == 0) {
+        return currentPayloadScore;
+    } else {
+        return std::min(currentPayloadScore, currentScore);
     }
+}
 
-    int32_t MinPayloadFunction::hashCode()
-    {
-        int32_t prime = 31;
-        int32_t result = 1;
-        result = prime * result + StringUtils::hashCode(getClassName());
-        return result;
-    }
+double MinPayloadFunction::docScore(int32_t docId, const String& field, int32_t numPayloadsSeen, double payloadScore) {
+    return numPayloadsSeen > 0 ? payloadScore : 1.0;
+}
 
-    bool MinPayloadFunction::equals(const LuceneObjectPtr& other)
-    {
-        if (LuceneObject::equals(other))
-            return true;
-        if (!other)
-            return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
-            return false;
+int32_t MinPayloadFunction::hashCode() {
+    int32_t prime = 31;
+    int32_t result = 1;
+    result = prime * result + StringUtils::hashCode(getClassName());
+    return result;
+}
+
+bool MinPayloadFunction::equals(const LuceneObjectPtr& other) {
+    if (LuceneObject::equals(other)) {
         return true;
     }
+    if (!other) {
+        return false;
+    }
+    if (!MiscUtils::equalTypes(shared_from_this(), other)) {
+        return false;
+    }
+    return true;
+}
+
 }

@@ -9,35 +9,35 @@
 
 #include "FormatPostingsFieldsConsumer.h"
 
-namespace Lucene
-{
-    class FormatPostingsFieldsWriter : public FormatPostingsFieldsConsumer
-    {
-    public:
-        FormatPostingsFieldsWriter(const SegmentWriteStatePtr& state, const FieldInfosPtr& fieldInfos);
-        virtual ~FormatPostingsFieldsWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsFieldsWriter);
+class FormatPostingsFieldsWriter : public FormatPostingsFieldsConsumer {
+public:
+    FormatPostingsFieldsWriter(const SegmentWriteStatePtr& state, const FieldInfosPtr& fieldInfos);
+    virtual ~FormatPostingsFieldsWriter();
 
-    public:
-        DirectoryPtr dir;
-        String segment;
-        TermInfosWriterPtr termsOut;
-        SegmentWriteStatePtr state;
-        FieldInfosPtr fieldInfos;
-        FormatPostingsTermsWriterPtr termsWriter;
-        DefaultSkipListWriterPtr skipListWriter;
-        int32_t totalNumDocs;
+    LUCENE_CLASS(FormatPostingsFieldsWriter);
 
-    public:
-        virtual void initialize();
+public:
+    DirectoryPtr dir;
+    String segment;
+    TermInfosWriterPtr termsOut;
+    SegmentWriteStatePtr state;
+    FieldInfosPtr fieldInfos;
+    FormatPostingsTermsWriterPtr termsWriter;
+    DefaultSkipListWriterPtr skipListWriter;
+    int32_t totalNumDocs;
 
-        /// Add a new field.
-        virtual FormatPostingsTermsConsumerPtr addField(const FieldInfoPtr& field);
+public:
+    virtual void initialize();
 
-        /// Called when we are done adding everything.
-        virtual void finish();
-    };
+    /// Add a new field.
+    virtual FormatPostingsTermsConsumerPtr addField(const FieldInfoPtr& field);
+
+    /// Called when we are done adding everything.
+    virtual void finish();
+};
+
 }
 
 #endif

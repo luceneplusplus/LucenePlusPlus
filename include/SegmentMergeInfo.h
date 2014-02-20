@@ -9,34 +9,34 @@
 
 #include "Term.h"
 
-namespace Lucene
-{
-    class SegmentMergeInfo : public LuceneObject
-    {
-    public:
-        SegmentMergeInfo(int32_t b, const TermEnumPtr& te, const IndexReaderPtr& r);
-        virtual ~SegmentMergeInfo();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentMergeInfo);
+class SegmentMergeInfo : public LuceneObject {
+public:
+    SegmentMergeInfo(int32_t b, const TermEnumPtr& te, const IndexReaderPtr& r);
+    virtual ~SegmentMergeInfo();
 
-    protected:
-        TermPositionsPtr postings; // use getPositions()
-        Collection<int32_t> docMap; // use getDocMap()
+    LUCENE_CLASS(SegmentMergeInfo);
 
-    public:
-        TermPtr term;
-        int32_t base;
-        int32_t ord; // the position of the segment in a MultiReader
-        TermEnumPtr termEnum;
-        IndexReaderWeakPtr _reader;
-        int32_t delCount;
+protected:
+    TermPositionsPtr postings; // use getPositions()
+    Collection<int32_t> docMap; // use getDocMap()
 
-    public:
-        Collection<int32_t> getDocMap();
-        TermPositionsPtr getPositions();
-        bool next();
-        void close();
-    };
+public:
+    TermPtr term;
+    int32_t base;
+    int32_t ord; // the position of the segment in a MultiReader
+    TermEnumPtr termEnum;
+    IndexReaderWeakPtr _reader;
+    int32_t delCount;
+
+public:
+    Collection<int32_t> getDocMap();
+    TermPositionsPtr getPositions();
+    bool next();
+    void close();
+};
+
 }
 
 #endif

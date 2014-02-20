@@ -21,37 +21,28 @@ using namespace Lucene;
 
 typedef LuceneTestFixture DirectoryTest;
 
-TEST_F(DirectoryTest, testDetectDirectoryClose)
-{
+TEST_F(DirectoryTest, testDetectDirectoryClose) {
     RAMDirectoryPtr dir(newLucene<RAMDirectory>());
     dir->close();
-    try
-    {
+    try {
         dir->createOutput(L"test");
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
     }
 }
 
-TEST_F(DirectoryTest, testDetectFSDirectoryClose)
-{
+TEST_F(DirectoryTest, testDetectFSDirectoryClose) {
     DirectoryPtr dir = FSDirectory::open(getTempDir());
     dir->close();
-    try
-    {
+    try {
         dir->createOutput(L"test");
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
     }
 }
 
 template < class FSDirectory1, class FSDirectory2 >
-void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const String& fileName, const String& lockName)
-{
+void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const String& fileName, const String& lockName) {
     EXPECT_NO_THROW(first.ensureOpen());
 
     IndexOutputPtr out = first.createOutput(fileName);
@@ -63,8 +54,7 @@ void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const Stri
     EXPECT_EQ(first.fileLength(fileName), 1);
 
     // don't test read on MMapDirectory, since it can't really be closed and will cause a failure to delete the file.
-    if (!first.isMMapDirectory())
-    {
+    if (!first.isMMapDirectory()) {
         IndexInputPtr input = first.openInput(fileName);
         EXPECT_EQ(input->readByte(), 123);
         EXPECT_NO_THROW(input->close());
@@ -74,8 +64,7 @@ void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const Stri
     EXPECT_TRUE(second.fileExists(fileName));
     EXPECT_EQ(second.fileLength(fileName), 1);
 
-    if (!second.isMMapDirectory())
-    {
+    if (!second.isMMapDirectory()) {
         IndexInputPtr input = second.openInput(fileName);
         EXPECT_EQ(input->readByte(), 123);
         EXPECT_NO_THROW(input->close());
@@ -91,12 +80,9 @@ void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const Stri
     EXPECT_TRUE(lock->obtain());
 
     LockPtr lock2 = first.makeLock(lockName);
-    try
-    {
+    try {
         lock2->obtain(1);
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
 
@@ -107,31 +93,33 @@ void TestInstantiationPair(FSDirectory1& first, FSDirectory2& second, const Stri
     lock->release();
 }
 
-namespace TestDirectInstantiation
-{
-    class TestableSimpleFSDirectory : public SimpleFSDirectory
-    {
-    public:
-        TestableSimpleFSDirectory(const String& path) : SimpleFSDirectory(path) {}
-        virtual ~TestableSimpleFSDirectory() {}
-        using SimpleFSDirectory::ensureOpen;
-        bool isMMapDirectory() { return false; }
-    };
+namespace TestDirectInstantiation {
 
-    class TestableMMapDirectory : public MMapDirectory
-    {
-    public:
-        TestableMMapDirectory(const String& path) : MMapDirectory(path) {}
-        virtual ~TestableMMapDirectory() {}
-        using MMapDirectory::ensureOpen;
-        bool isMMapDirectory() { return true; }
-    };
+class TestableSimpleFSDirectory : public SimpleFSDirectory {
+public:
+    TestableSimpleFSDirectory(const String& path) : SimpleFSDirectory(path) {}
+    virtual ~TestableSimpleFSDirectory() {}
+    using SimpleFSDirectory::ensureOpen;
+    bool isMMapDirectory() {
+        return false;
+    }
+};
+
+class TestableMMapDirectory : public MMapDirectory {
+public:
+    TestableMMapDirectory(const String& path) : MMapDirectory(path) {}
+    virtual ~TestableMMapDirectory() {}
+    using MMapDirectory::ensureOpen;
+    bool isMMapDirectory() {
+        return true;
+    }
+};
+
 }
 
 // Test that different instances of FSDirectory can coexist on the same
 // path, can read, write, and lock files.
-TEST_F(DirectoryTest, testDirectInstantiation)
-{
+TEST_F(DirectoryTest, testDirectInstantiation) {
     TestDirectInstantiation::TestableSimpleFSDirectory fsDir(getTempDir());
     fsDir.ensureOpen();
 
@@ -142,23 +130,18 @@ TEST_F(DirectoryTest, testDirectInstantiation)
     TestInstantiationPair(mmapDir, fsDir, L"foo.1", L"foo1.lck");
 }
 
-TEST_F(DirectoryTest, testDontCreate)
-{
+TEST_F(DirectoryTest, testDontCreate) {
     String path(FileUtils::joinPath(getTempDir(), L"doesnotexist"));
-    try
-    {
+    try {
         EXPECT_TRUE(!FileUtils::fileExists(path));
         SimpleFSDirectoryPtr fsDir(newLucene<SimpleFSDirectory>(path));
         EXPECT_TRUE(!FileUtils::fileExists(path));
-    }
-    catch (...)
-    {
+    } catch (...) {
     }
     FileUtils::removeDirectory(path);
 }
 
-void checkDirectoryFilter(const DirectoryPtr& dir)
-{
+void checkDirectoryFilter(const DirectoryPtr& dir) {
     String name(L"file");
     dir->createOutput(name)->close();
     EXPECT_TRUE(dir->fileExists(name));
@@ -166,53 +149,40 @@ void checkDirectoryFilter(const DirectoryPtr& dir)
     EXPECT_TRUE(dirFiles.contains(name));
 }
 
-TEST_F(DirectoryTest, testRAMDirectoryFilter)
-{
+TEST_F(DirectoryTest, testRAMDirectoryFilter) {
     checkDirectoryFilter(newLucene<RAMDirectory>());
 }
 
-TEST_F(DirectoryTest, testFSDirectoryFilter)
-{
+TEST_F(DirectoryTest, testFSDirectoryFilter) {
     checkDirectoryFilter(newLucene<SimpleFSDirectory>(getTempDir()));
 }
 
-TEST_F(DirectoryTest, testCopySubdir)
-{
+TEST_F(DirectoryTest, testCopySubdir) {
     String path(FileUtils::joinPath(getTempDir(), L"testsubdir"));
-    try
-    {
+    try {
         FileUtils::createDirectory(path);
         String subpath(FileUtils::joinPath(path, L"subdir"));
         FileUtils::createDirectory(subpath);
         SimpleFSDirectoryPtr fsDir(newLucene<SimpleFSDirectory>(path));
         EXPECT_TRUE(newLucene<RAMDirectory>(fsDir)->listAll().empty());
-    }
-    catch (...)
-    {
+    } catch (...) {
     }
     FileUtils::removeDirectory(path);
 }
 
-TEST_F(DirectoryTest, testNotDirectory)
-{
+TEST_F(DirectoryTest, testNotDirectory) {
     String path(FileUtils::joinPath(getTempDir(), L"testnotdir"));
     SimpleFSDirectoryPtr fsDir(newLucene<SimpleFSDirectory>(path));
-    try
-    {
+    try {
         IndexOutputPtr out = fsDir->createOutput(L"afile");
         out->close();
         EXPECT_TRUE(fsDir->fileExists(L"afile"));
-        try
-        {
+        try {
             newLucene<SimpleFSDirectory>(FileUtils::joinPath(path, L"afile"));
-        }
-        catch (LuceneException& e)
-        {
+        } catch (LuceneException& e) {
             EXPECT_TRUE(check_exception(LuceneException::NoSuchDirectory)(e));
         }
-    }
-    catch (...)
-    {
+    } catch (...) {
     }
     FileUtils::removeDirectory(path);
 }

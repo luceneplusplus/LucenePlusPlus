@@ -22,11 +22,9 @@
 
 using namespace Lucene;
 
-class SegmentReaderTest : public LuceneTestFixture, public DocHelper
-{
+class SegmentReaderTest : public LuceneTestFixture, public DocHelper {
 public:
-    SegmentReaderTest()
-    {
+    SegmentReaderTest() {
         dir = newLucene<RAMDirectory>();
         testDoc = newLucene<Document>();
         DocHelper::setupDoc(testDoc);
@@ -34,8 +32,7 @@ public:
         reader = SegmentReader::get(true, info, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
     }
 
-    virtual ~SegmentReaderTest()
-    {
+    virtual ~SegmentReaderTest() {
     }
 
 protected:
@@ -44,16 +41,14 @@ protected:
     SegmentReaderPtr reader;
 };
 
-TEST_F(SegmentReaderTest, testSegmentReader)
-{
+TEST_F(SegmentReaderTest, testSegmentReader) {
     EXPECT_TRUE(dir);
     EXPECT_TRUE(reader);
     EXPECT_TRUE(DocHelper::nameValues.size() > 0);
     EXPECT_EQ(DocHelper::numFields(testDoc), DocHelper::all.size());
 }
 
-TEST_F(SegmentReaderTest, testDocument)
-{
+TEST_F(SegmentReaderTest, testDocument) {
     EXPECT_EQ(reader->numDocs(), 1);
     EXPECT_TRUE(reader->maxDoc() >= 1);
     DocumentPtr result = reader->document(0);
@@ -63,15 +58,13 @@ TEST_F(SegmentReaderTest, testDocument)
     EXPECT_EQ(DocHelper::numFields(result), DocHelper::numFields(testDoc) - DocHelper::unstored.size());
 
     Collection<FieldablePtr> fields = result->getFields();
-    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field)
-    {
+    for (Collection<FieldablePtr>::iterator field = fields.begin(); field != fields.end(); ++field) {
         EXPECT_TRUE(*field);
         EXPECT_TRUE(DocHelper::nameValues.contains((*field)->name()));
     }
 }
 
-TEST_F(SegmentReaderTest, testDelete)
-{
+TEST_F(SegmentReaderTest, testDelete) {
     DocumentPtr docToDelete = newLucene<Document>();
     DocHelper::setupDoc(docToDelete);
     SegmentInfoPtr info = DocHelper::writeDoc(dir, docToDelete);
@@ -84,18 +77,19 @@ TEST_F(SegmentReaderTest, testDelete)
     EXPECT_EQ(deleteReader->numDocs(), 0);
 }
 
-TEST_F(SegmentReaderTest, testGetFieldNameVariations)
-{
+TEST_F(SegmentReaderTest, testGetFieldNameVariations) {
     HashSet<String> result = reader->getFieldNames(IndexReader::FIELD_OPTION_ALL);
     EXPECT_TRUE(result);
     EXPECT_EQ(result.size(), DocHelper::all.size());
-    for (HashSet<String>::iterator field = result.begin(); field != result.end(); ++field)
+    for (HashSet<String>::iterator field = result.begin(); field != result.end(); ++field) {
         EXPECT_TRUE(DocHelper::nameValues.contains(*field) || field->empty());
+    }
     result = reader->getFieldNames(IndexReader::FIELD_OPTION_INDEXED);
     EXPECT_TRUE(result);
     EXPECT_EQ(result.size(), DocHelper::indexed.size());
-    for (HashSet<String>::iterator field = result.begin(); field != result.end(); ++field)
+    for (HashSet<String>::iterator field = result.begin(); field != result.end(); ++field) {
         EXPECT_TRUE(DocHelper::indexed.contains(*field) || field->empty());
+    }
     result = reader->getFieldNames(IndexReader::FIELD_OPTION_UNINDEXED);
     EXPECT_TRUE(result);
     EXPECT_EQ(result.size(), DocHelper::unindexed.size());
@@ -110,12 +104,10 @@ TEST_F(SegmentReaderTest, testGetFieldNameVariations)
     EXPECT_EQ(result.size(), DocHelper::notermvector.size());
 }
 
-TEST_F(SegmentReaderTest, testTerms)
-{
+TEST_F(SegmentReaderTest, testTerms) {
     TermEnumPtr terms = reader->terms();
     EXPECT_TRUE(terms);
-    while (terms->next())
-    {
+    while (terms->next()) {
         TermPtr term = terms->term();
         EXPECT_TRUE(term);
         String fieldValue = DocHelper::nameValues.get(term->field());
@@ -137,37 +129,33 @@ TEST_F(SegmentReaderTest, testTerms)
     EXPECT_TRUE(positions->nextPosition() >= 0);
 }
 
-TEST_F(SegmentReaderTest, testNorms)
-{
+TEST_F(SegmentReaderTest, testNorms) {
     // test omit norms
-    for (int32_t i = 0; i < DocHelper::fields.size(); ++i)
-    {
+    for (int32_t i = 0; i < DocHelper::fields.size(); ++i) {
         FieldPtr f = DocHelper::fields[i];
-        if (f->isIndexed())
-        {
+        if (f->isIndexed()) {
             bool a = reader->hasNorms(f->name());
             bool b = !f->getOmitNorms();
 
             EXPECT_EQ(reader->hasNorms(f->name()), !f->getOmitNorms());
             EXPECT_EQ(reader->hasNorms(f->name()), !DocHelper::noNorms.contains(f->name()));
 
-            if (!reader->hasNorms(f->name()))
-            {
+            if (!reader->hasNorms(f->name())) {
                 // test for fake norms of 1.0 or null depending on the flag
                 ByteArray norms = reader->norms(f->name());
                 uint8_t norm1 = DefaultSimilarity::encodeNorm(1.0);
                 EXPECT_TRUE(!norms);
                 norms.resize(reader->maxDoc());
                 reader->norms(f->name(), norms, 0);
-                for (int32_t j = 0; j < reader->maxDoc(); ++j)
+                for (int32_t j = 0; j < reader->maxDoc(); ++j) {
                     EXPECT_EQ(norms[j], norm1);
+                }
             }
         }
     }
 }
 
-TEST_F(SegmentReaderTest, testTermVectors)
-{
+TEST_F(SegmentReaderTest, testTermVectors) {
     TermFreqVectorPtr result = reader->getTermFreqVector(0, DocHelper::TEXT_FIELD_2_KEY);
     EXPECT_TRUE(result);
     Collection<String> terms = result->getTerms();
@@ -176,8 +164,7 @@ TEST_F(SegmentReaderTest, testTermVectors)
     EXPECT_EQ(terms.size(), 3);
     EXPECT_TRUE(freqs);
     EXPECT_EQ(freqs.size(), 3);
-    for (int32_t i = 0; i < terms.size(); ++i)
-    {
+    for (int32_t i = 0; i < terms.size(); ++i) {
         String term = terms[i];
         int32_t freq = freqs[i];
         EXPECT_NE(String(DocHelper::FIELD_2_TEXT).find(term), -1);

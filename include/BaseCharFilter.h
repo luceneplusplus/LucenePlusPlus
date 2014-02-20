@@ -9,30 +9,30 @@
 
 #include "CharFilter.h"
 
-namespace Lucene
-{
-    /// Base utility class for implementing a {@link CharFilter}.  You subclass this, and then record mappings by
-    /// calling {@link #addOffCorrectMap}, and then invoke the correct method to correct an offset.
-    class LPPAPI BaseCharFilter : public CharFilter
-    {
-    public:
-        BaseCharFilter(const CharStreamPtr& in);
-        virtual ~BaseCharFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(BaseCharFilter);
+/// Base utility class for implementing a {@link CharFilter}.  You subclass this, and then record mappings by
+/// calling {@link #addOffCorrectMap}, and then invoke the correct method to correct an offset.
+class LPPAPI BaseCharFilter : public CharFilter {
+public:
+    BaseCharFilter(const CharStreamPtr& in);
+    virtual ~BaseCharFilter();
 
-    protected:
-        IntArray offsets;
-        IntArray diffs;
-        int32_t size;
+    LUCENE_CLASS(BaseCharFilter);
 
-    protected:
-        /// Retrieve the corrected offset.
-        virtual int32_t correct(int32_t currentOff);
+protected:
+    IntArray offsets;
+    IntArray diffs;
+    int32_t size;
 
-        int32_t getLastCumulativeDiff();
-        void addOffCorrectMap(int32_t off, int32_t cumulativeDiff);
-    };
+protected:
+    /// Retrieve the corrected offset.
+    virtual int32_t correct(int32_t currentOff);
+
+    int32_t getLastCumulativeDiff();
+    void addOffCorrectMap(int32_t off, int32_t cumulativeDiff);
+};
+
 }
 
 #endif

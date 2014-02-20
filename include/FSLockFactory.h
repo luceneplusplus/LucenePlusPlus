@@ -9,33 +9,33 @@
 
 #include "LockFactory.h"
 
-namespace Lucene
-{
-    /// Base class for file system based locking implementation.
-    class LPPAPI FSLockFactory : public LockFactory
-    {
-    protected:
-        FSLockFactory();
+namespace Lucene {
 
-    public:
-        virtual ~FSLockFactory();
+/// Base class for file system based locking implementation.
+class LPPAPI FSLockFactory : public LockFactory {
+protected:
+    FSLockFactory();
 
-        LUCENE_CLASS(FSLockFactory);
+public:
+    virtual ~FSLockFactory();
 
-    protected:
-        /// Directory for the lock files.
-        String lockDir;
+    LUCENE_CLASS(FSLockFactory);
 
-    public:
-        /// Set the lock directory. This method can be only called once to
-        /// initialize the lock directory. It is used by {@link FSDirectory}
-        /// to set the lock directory to itself.  Subclasses can also use
-        /// this method to set the directory in the constructor.
-        void setLockDir(const String& lockDir);
+protected:
+    /// Directory for the lock files.
+    String lockDir;
 
-        /// Retrieve the lock directory.
-        String getLockDir();
-    };
+public:
+    /// Set the lock directory. This method can be only called once to
+    /// initialize the lock directory. It is used by {@link FSDirectory}
+    /// to set the lock directory to itself.  Subclasses can also use
+    /// this method to set the directory in the constructor.
+    void setLockDir(const String& lockDir);
+
+    /// Retrieve the lock directory.
+    String getLockDir();
+};
+
 }
 
 #endif

@@ -9,83 +9,71 @@
 #include "_DocIdBitSet.h"
 #include "BitSet.h"
 
-namespace Lucene
-{
-    DocIdBitSet::DocIdBitSet()
-    {
-    }
+namespace Lucene {
 
-    DocIdBitSet::DocIdBitSet(const BitSetPtr& bitSet)
-    {
-        this->bitSet = bitSet;
-    }
+DocIdBitSet::DocIdBitSet() {
+}
 
-    DocIdBitSet::~DocIdBitSet()
-    {
-    }
+DocIdBitSet::DocIdBitSet(const BitSetPtr& bitSet) {
+    this->bitSet = bitSet;
+}
 
-    DocIdSetIteratorPtr DocIdBitSet::iterator()
-    {
-        return newLucene<DocIdBitSetIterator>(bitSet);
-    }
+DocIdBitSet::~DocIdBitSet() {
+}
 
-    bool DocIdBitSet::isCacheable()
-    {
+DocIdSetIteratorPtr DocIdBitSet::iterator() {
+    return newLucene<DocIdBitSetIterator>(bitSet);
+}
+
+bool DocIdBitSet::isCacheable() {
+    return true;
+}
+
+BitSetPtr DocIdBitSet::getBitSet() {
+    return bitSet;
+}
+
+bool DocIdBitSet::equals(const LuceneObjectPtr& other) {
+    if (DocIdSet::equals(other)) {
         return true;
     }
+    DocIdBitSetPtr otherBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(other));
+    return bitSet->equals(otherBitSet->bitSet);
+}
 
-    BitSetPtr DocIdBitSet::getBitSet()
-    {
-        return bitSet;
-    }
+int32_t DocIdBitSet::hashCode() {
+    return bitSet->hashCode();
+}
 
-    bool DocIdBitSet::equals(const LuceneObjectPtr& other)
-    {
-        if (DocIdSet::equals(other))
-            return true;
-        DocIdBitSetPtr otherBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(other));
-        return bitSet->equals(otherBitSet->bitSet);
-    }
+LuceneObjectPtr DocIdBitSet::clone(const LuceneObjectPtr& other) {
+    LuceneObjectPtr clone = other ? other : newLucene<DocIdBitSet>();
+    DocIdBitSetPtr cloneBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(LuceneObject::clone(clone)));
+    cloneBitSet->bitSet = boost::dynamic_pointer_cast<BitSet>(bitSet->clone());
+    return cloneBitSet;
+}
 
-    int32_t DocIdBitSet::hashCode()
-    {
-        return bitSet->hashCode();
-    }
+DocIdBitSetIterator::DocIdBitSetIterator(const BitSetPtr& bitSet) {
+    this->bitSet = bitSet;
+    this->docId = -1;
+}
 
-    LuceneObjectPtr DocIdBitSet::clone(const LuceneObjectPtr& other)
-    {
-        LuceneObjectPtr clone = other ? other : newLucene<DocIdBitSet>();
-        DocIdBitSetPtr cloneBitSet(boost::dynamic_pointer_cast<DocIdBitSet>(LuceneObject::clone(clone)));
-        cloneBitSet->bitSet = boost::dynamic_pointer_cast<BitSet>(bitSet->clone());
-        return cloneBitSet;
-    }
+DocIdBitSetIterator::~DocIdBitSetIterator() {
+}
 
-    DocIdBitSetIterator::DocIdBitSetIterator(const BitSetPtr& bitSet)
-    {
-        this->bitSet = bitSet;
-        this->docId = -1;
-    }
+int32_t DocIdBitSetIterator::docID() {
+    return docId;
+}
 
-    DocIdBitSetIterator::~DocIdBitSetIterator()
-    {
-    }
+int32_t DocIdBitSetIterator::nextDoc() {
+    int32_t doc = bitSet->nextSetBit(docId + 1);
+    docId = doc == -1 ? NO_MORE_DOCS : doc;
+    return docId;
+}
 
-    int32_t DocIdBitSetIterator::docID()
-    {
-        return docId;
-    }
+int32_t DocIdBitSetIterator::advance(int32_t target) {
+    int32_t doc = bitSet->nextSetBit(target);
+    docId = doc == -1 ? NO_MORE_DOCS : doc;
+    return docId;
+}
 
-    int32_t DocIdBitSetIterator::nextDoc()
-    {
-        int32_t doc = bitSet->nextSetBit(docId + 1);
-        docId = doc == -1 ? NO_MORE_DOCS : doc;
-        return docId;
-    }
-
-    int32_t DocIdBitSetIterator::advance(int32_t target)
-    {
-        int32_t doc = bitSet->nextSetBit(target);
-        docId = doc == -1 ? NO_MORE_DOCS : doc;
-        return docId;
-    }
 }

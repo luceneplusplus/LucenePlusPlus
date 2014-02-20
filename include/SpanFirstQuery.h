@@ -10,43 +10,43 @@
 #include "SpanQuery.h"
 #include "Spans.h"
 
-namespace Lucene
-{
-    /// Matches spans near the beginning of a field.
-    class LPPAPI SpanFirstQuery : public SpanQuery
-    {
-    public:
-        /// Construct a SpanFirstQuery matching spans in match whose end position is less than or equal to end.
-        SpanFirstQuery(const SpanQueryPtr& match, int32_t end);
-        virtual ~SpanFirstQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanFirstQuery);
+/// Matches spans near the beginning of a field.
+class LPPAPI SpanFirstQuery : public SpanQuery {
+public:
+    /// Construct a SpanFirstQuery matching spans in match whose end position is less than or equal to end.
+    SpanFirstQuery(const SpanQueryPtr& match, int32_t end);
+    virtual ~SpanFirstQuery();
 
-    protected:
-        SpanQueryPtr match;
-        int32_t end;
+    LUCENE_CLASS(SpanFirstQuery);
 
-    public:
-        using SpanQuery::toString;
+protected:
+    SpanQueryPtr match;
+    int32_t end;
 
-        /// Return the SpanQuery whose matches are filtered.
-        SpanQueryPtr getMatch();
+public:
+    using SpanQuery::toString;
 
-        /// Return the maximum end position permitted in a match.
-        int32_t getEnd();
+    /// Return the SpanQuery whose matches are filtered.
+    SpanQueryPtr getMatch();
 
-        virtual String getField();
-        virtual String toString(const String& field);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual void extractTerms(SetTerm terms);
-        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    /// Return the maximum end position permitted in a match.
+    int32_t getEnd();
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
+    virtual String getField();
+    virtual String toString(const String& field);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual void extractTerms(SetTerm terms);
+    virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
-        friend class FirstSpans;
-    };
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+
+    friend class FirstSpans;
+};
+
 }
 
 #endif

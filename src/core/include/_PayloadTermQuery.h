@@ -10,58 +10,57 @@
 #include "SpanWeight.h"
 #include "SpanScorer.h"
 
-namespace Lucene
-{
-    class PayloadTermWeight : public SpanWeight
-    {
-    public:
-        PayloadTermWeight(const PayloadTermQueryPtr& query, const SearcherPtr& searcher);
-        virtual ~PayloadTermWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(PayloadTermWeight);
+class PayloadTermWeight : public SpanWeight {
+public:
+    PayloadTermWeight(const PayloadTermQueryPtr& query, const SearcherPtr& searcher);
+    virtual ~PayloadTermWeight();
 
-    public:
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
-    };
+    LUCENE_CLASS(PayloadTermWeight);
 
-    class PayloadTermSpanScorer : public SpanScorer
-    {
-    public:
-        PayloadTermSpanScorer(const TermSpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms);
-        virtual ~PayloadTermSpanScorer();
+public:
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+};
 
-        LUCENE_CLASS(PayloadTermSpanScorer);
+class PayloadTermSpanScorer : public SpanScorer {
+public:
+    PayloadTermSpanScorer(const TermSpansPtr& spans, const WeightPtr& weight, const SimilarityPtr& similarity, ByteArray norms);
+    virtual ~PayloadTermSpanScorer();
 
-    protected:
-        ByteArray payload;
-        TermPositionsPtr positions;
-        double payloadScore;
-        int32_t payloadsSeen;
+    LUCENE_CLASS(PayloadTermSpanScorer);
 
-    public:
-        virtual double score();
+protected:
+    ByteArray payload;
+    TermPositionsPtr positions;
+    double payloadScore;
+    int32_t payloadsSeen;
 
-    protected:
-        virtual bool setFreqCurrentDoc();
+public:
+    virtual double score();
 
-        void processPayload(const SimilarityPtr& similarity);
+protected:
+    virtual bool setFreqCurrentDoc();
 
-        /// Returns the SpanScorer score only.
-        ///
-        /// Should not be overridden without good cause
-        ///
-        /// @return the score for just the Span part without the payload
-        /// @see #score()
-        virtual double getSpanScore();
+    void processPayload(const SimilarityPtr& similarity);
 
-        /// The score for the payload
-        ///
-        /// @return The score, as calculated by {@link PayloadFunction#docScore(int32_t, const String&,
-        /// int32_t, double)}
-        virtual double getPayloadScore();
+    /// Returns the SpanScorer score only.
+    ///
+    /// Should not be overridden without good cause
+    ///
+    /// @return the score for just the Span part without the payload
+    /// @see #score()
+    virtual double getSpanScore();
 
-        virtual ExplanationPtr explain(int32_t doc);
-    };
+    /// The score for the payload
+    ///
+    /// @return The score, as calculated by {@link PayloadFunction#docScore(int32_t, const String&,
+    /// int32_t, double)}
+    virtual double getPayloadScore();
+
+    virtual ExplanationPtr explain(int32_t doc);
+};
+
 }
 
 #endif

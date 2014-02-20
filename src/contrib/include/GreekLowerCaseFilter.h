@@ -10,27 +10,27 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// Normalizes token text to lower case, removes some Greek diacritics, and standardizes
-    /// final sigma to sigma.
-    class LPPCONTRIBAPI GreekLowerCaseFilter : public TokenFilter
-    {
-    public:
-        GreekLowerCaseFilter(const TokenStreamPtr& input);
-        virtual ~GreekLowerCaseFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(GreekLowerCaseFilter);
+/// Normalizes token text to lower case, removes some Greek diacritics, and standardizes
+/// final sigma to sigma.
+class LPPCONTRIBAPI GreekLowerCaseFilter : public TokenFilter {
+public:
+    GreekLowerCaseFilter(const TokenStreamPtr& input);
+    virtual ~GreekLowerCaseFilter();
 
-    protected:
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(GreekLowerCaseFilter);
 
-    public:
-        virtual bool incrementToken();
+protected:
+    TermAttributePtr termAtt;
 
-    protected:
-        wchar_t lowerCase(wchar_t codepoint);
-    };
+public:
+    virtual bool incrementToken();
+
+protected:
+    wchar_t lowerCase(wchar_t codepoint);
+};
+
 }
 
 #endif

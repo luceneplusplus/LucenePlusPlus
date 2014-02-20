@@ -30,16 +30,13 @@ using namespace Lucene;
 /// several other testcases.
 typedef LuceneTestFixture MultiLevelSkipListTest;
 
-class MultiLevelSkipListPayloadFilter : public TokenFilter
-{
+class MultiLevelSkipListPayloadFilter : public TokenFilter {
 public:
-    MultiLevelSkipListPayloadFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
+    MultiLevelSkipListPayloadFilter(const TokenStreamPtr& input) : TokenFilter(input) {
         payloadAtt = addAttribute<PayloadAttribute>();
     }
 
-    virtual ~MultiLevelSkipListPayloadFilter()
-    {
+    virtual ~MultiLevelSkipListPayloadFilter() {
     }
 
     LUCENE_CLASS(MultiLevelSkipListPayloadFilter);
@@ -49,16 +46,13 @@ public:
     PayloadAttributePtr payloadAtt;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         return newLucene<MultiLevelSkipListPayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
 
-    virtual bool incrementToken()
-    {
+    virtual bool incrementToken() {
         bool hasNext = input->incrementToken();
-        if (hasNext)
-        {
+        if (hasNext) {
             ByteArray data = ByteArray::newInstance(1);
             data[0] = (uint8_t)(count++);
             payloadAtt->setPayload(newLucene<Payload>(data));
@@ -69,34 +63,28 @@ public:
 
 int32_t MultiLevelSkipListPayloadFilter::count = 0;
 
-class MultiLevelSkipListPayloadAnalyzer : public Analyzer
-{
+class MultiLevelSkipListPayloadAnalyzer : public Analyzer {
 public:
-    virtual ~MultiLevelSkipListPayloadAnalyzer()
-    {
+    virtual ~MultiLevelSkipListPayloadAnalyzer() {
     }
 
     LUCENE_CLASS(MultiLevelSkipListPayloadAnalyzer);
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         return newLucene<MultiLevelSkipListPayloadFilter>(newLucene<LowerCaseTokenizer>(reader));
     }
 };
 
 static int32_t counter = 0;
 
-class CountingStream : public IndexInput
-{
+class CountingStream : public IndexInput {
 public:
-    CountingStream(const IndexInputPtr& input)
-    {
+    CountingStream(const IndexInputPtr& input) {
         this->input = input;
     }
 
-    virtual ~CountingStream()
-    {
+    virtual ~CountingStream() {
     }
 
     LUCENE_CLASS(CountingStream);
@@ -105,49 +93,42 @@ protected:
     IndexInputPtr input;
 
 public:
-    virtual uint8_t readByte()
-    {
+    virtual uint8_t readByte() {
         ++counter;
         return input->readByte();
     }
 
-    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length)
-    {
+    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length) {
         counter += length;
         input->readBytes(b, offset, length);
     }
 
-    virtual void close()
-    {
+    virtual void close() {
         input->close();
     }
 
-    virtual int64_t getFilePointer()
-    {
+    virtual int64_t getFilePointer() {
         return input->getFilePointer();
     }
 
-    virtual void seek(int64_t pos)
-    {
+    virtual void seek(int64_t pos) {
         input->seek(pos);
     }
 
-    virtual int64_t length()
-    {
+    virtual int64_t length() {
         return input->length();
     }
 
-    LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr())
-    {
+    LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr()) {
         return newLucene<CountingStream>(boost::dynamic_pointer_cast<IndexInput>(input->clone()));
     }
 };
 
-static void checkSkipTo(const TermPositionsPtr& tp, int32_t target, int32_t maxCounter)
-{
+static void checkSkipTo(const TermPositionsPtr& tp, int32_t target, int32_t maxCounter) {
     tp->skipTo(target);
-    if (maxCounter < counter)
+    if (maxCounter < counter) {
         FAIL() << "Too many bytes read: " << counter;
+    }
 
     EXPECT_EQ(target, tp->doc());
     EXPECT_EQ(1, tp->freq());
@@ -157,13 +138,11 @@ static void checkSkipTo(const TermPositionsPtr& tp, int32_t target, int32_t maxC
     EXPECT_EQ((uint8_t)target, b[0]);
 }
 
-TEST_F(MultiLevelSkipListTest, testSimpleSkip)
-{
+TEST_F(MultiLevelSkipListTest, testSimpleSkip) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<MultiLevelSkipListPayloadAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     TermPtr term = newLucene<Term>(L"test", L"a");
-    for (int32_t i = 0; i < 5000; ++i)
-    {
+    for (int32_t i = 0; i < 5000; ++i) {
         DocumentPtr d1 = newLucene<Document>();
         d1->add(newLucene<Field>(term->field(), term->text(), Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(d1);
@@ -177,8 +156,7 @@ TEST_F(MultiLevelSkipListTest, testSimpleSkip)
     SegmentTermPositionsPtr tp = boost::dynamic_pointer_cast<SegmentTermPositions>(reader->termPositions());
     tp->freqStream(newLucene<CountingStream>(tp->freqStream()));
 
-    for (int32_t i = 0; i < 2; ++i)
-    {
+    for (int32_t i = 0; i < 2; ++i) {
         counter = 0;
         tp->seek(term);
 

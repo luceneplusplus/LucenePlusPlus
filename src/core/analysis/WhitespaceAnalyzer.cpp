@@ -8,27 +8,24 @@
 #include "WhitespaceAnalyzer.h"
 #include "WhitespaceTokenizer.h"
 
-namespace Lucene
-{
-    WhitespaceAnalyzer::~WhitespaceAnalyzer()
-    {
-    }
+namespace Lucene {
 
-    TokenStreamPtr WhitespaceAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        return newLucene<WhitespaceTokenizer>(reader);
-    }
+WhitespaceAnalyzer::~WhitespaceAnalyzer() {
+}
 
-    TokenStreamPtr WhitespaceAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
-        if (!tokenizer)
-        {
-            tokenizer = newLucene<WhitespaceTokenizer>(reader);
-            setPreviousTokenStream(tokenizer);
-        }
-        else
-            tokenizer->reset(reader);
-        return tokenizer;
+TokenStreamPtr WhitespaceAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader) {
+    return newLucene<WhitespaceTokenizer>(reader);
+}
+
+TokenStreamPtr WhitespaceAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
+    TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
+    if (!tokenizer) {
+        tokenizer = newLucene<WhitespaceTokenizer>(reader);
+        setPreviousTokenStream(tokenizer);
+    } else {
+        tokenizer->reset(reader);
     }
+    return tokenizer;
+}
+
 }

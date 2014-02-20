@@ -10,24 +10,24 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A {@link TokenFilter} that applies {@link PersianNormalizer} to normalize the orthography.
-    class LPPCONTRIBAPI PersianNormalizationFilter : public TokenFilter
-    {
-    public:
-        PersianNormalizationFilter(const TokenStreamPtr& input);
-        virtual ~PersianNormalizationFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(PersianNormalizationFilter);
+/// A {@link TokenFilter} that applies {@link PersianNormalizer} to normalize the orthography.
+class LPPCONTRIBAPI PersianNormalizationFilter : public TokenFilter {
+public:
+    PersianNormalizationFilter(const TokenStreamPtr& input);
+    virtual ~PersianNormalizationFilter();
 
-    protected:
-        PersianNormalizerPtr normalizer;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(PersianNormalizationFilter);
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    PersianNormalizerPtr normalizer;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

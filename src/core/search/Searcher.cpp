@@ -10,67 +10,57 @@
 #include "Query.h"
 #include "Collector.h"
 
-namespace Lucene
-{
-    Searcher::Searcher()
-    {
-        similarity = Similarity::getDefault();
-    }
+namespace Lucene {
 
-    Searcher::~Searcher()
-    {
-    }
+Searcher::Searcher() {
+    similarity = Similarity::getDefault();
+}
 
-    TopFieldDocsPtr Searcher::search(const QueryPtr& query, const FilterPtr& filter, int32_t n, const SortPtr& sort)
-    {
-        return search(createWeight(query), filter, n, sort);
-    }
+Searcher::~Searcher() {
+}
 
-    void Searcher::search(const QueryPtr& query, const CollectorPtr& results)
-    {
-        search(createWeight(query), FilterPtr(), results);
-    }
+TopFieldDocsPtr Searcher::search(const QueryPtr& query, const FilterPtr& filter, int32_t n, const SortPtr& sort) {
+    return search(createWeight(query), filter, n, sort);
+}
 
-    void Searcher::search(const QueryPtr& query, const FilterPtr& filter, const CollectorPtr& results)
-    {
-        search(createWeight(query), filter, results);
-    }
+void Searcher::search(const QueryPtr& query, const CollectorPtr& results) {
+    search(createWeight(query), FilterPtr(), results);
+}
 
-    TopDocsPtr Searcher::search(const QueryPtr& query, const FilterPtr& filter, int32_t n)
-    {
-        return search(createWeight(query), filter, n);
-    }
+void Searcher::search(const QueryPtr& query, const FilterPtr& filter, const CollectorPtr& results) {
+    search(createWeight(query), filter, results);
+}
 
-    TopDocsPtr Searcher::search(const QueryPtr& query, int32_t n)
-    {
-        return search(query, FilterPtr(), n);
-    }
+TopDocsPtr Searcher::search(const QueryPtr& query, const FilterPtr& filter, int32_t n) {
+    return search(createWeight(query), filter, n);
+}
 
-    ExplanationPtr Searcher::explain(const QueryPtr& query, int32_t doc)
-    {
-        return explain(createWeight(query), doc);
-    }
+TopDocsPtr Searcher::search(const QueryPtr& query, int32_t n) {
+    return search(query, FilterPtr(), n);
+}
 
-    void Searcher::setSimilarity(const SimilarityPtr& similarity)
-    {
-        this->similarity = similarity;
-    }
+ExplanationPtr Searcher::explain(const QueryPtr& query, int32_t doc) {
+    return explain(createWeight(query), doc);
+}
 
-    SimilarityPtr Searcher::getSimilarity()
-    {
-        return this->similarity;
-    }
+void Searcher::setSimilarity(const SimilarityPtr& similarity) {
+    this->similarity = similarity;
+}
 
-    WeightPtr Searcher::createWeight(const QueryPtr& query)
-    {
-        return query->weight(shared_from_this());
-    }
+SimilarityPtr Searcher::getSimilarity() {
+    return this->similarity;
+}
 
-    Collection<int32_t> Searcher::docFreqs(Collection<TermPtr> terms)
-    {
-        Collection<int32_t> result(Collection<int32_t>::newInstance(terms.size()));
-        for (int32_t i = 0; i < terms.size(); ++i)
-            result[i] = docFreq(terms[i]);
-        return result;
+WeightPtr Searcher::createWeight(const QueryPtr& query) {
+    return query->weight(shared_from_this());
+}
+
+Collection<int32_t> Searcher::docFreqs(Collection<TermPtr> terms) {
+    Collection<int32_t> result(Collection<int32_t>::newInstance(terms.size()));
+    for (int32_t i = 0; i < terms.size(); ++i) {
+        result[i] = docFreq(terms[i]);
     }
+    return result;
+}
+
 }

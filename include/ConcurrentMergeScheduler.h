@@ -9,92 +9,92 @@
 
 #include "MergeScheduler.h"
 
-namespace Lucene
-{
-    /// A {@link MergeScheduler} that runs each merge using a separate thread, up until a
-    /// maximum number of threads ({@link #setMaxThreadCount}) at which when a merge is needed,
-    /// the thread(s) that are updating the index will pause until one or more merges completes.
-    /// This is a simple way to use concurrency in the indexing process without having to create
-    /// and manage application level threads.
-    class LPPAPI ConcurrentMergeScheduler : public MergeScheduler
-    {
-    public:
-        ConcurrentMergeScheduler();
-        virtual ~ConcurrentMergeScheduler();
+namespace Lucene {
 
-        LUCENE_CLASS(ConcurrentMergeScheduler);
+/// A {@link MergeScheduler} that runs each merge using a separate thread, up until a
+/// maximum number of threads ({@link #setMaxThreadCount}) at which when a merge is needed,
+/// the thread(s) that are updating the index will pause until one or more merges completes.
+/// This is a simple way to use concurrency in the indexing process without having to create
+/// and manage application level threads.
+class LPPAPI ConcurrentMergeScheduler : public MergeScheduler {
+public:
+    ConcurrentMergeScheduler();
+    virtual ~ConcurrentMergeScheduler();
 
-    protected:
-        int32_t mergeThreadPriority;
+    LUCENE_CLASS(ConcurrentMergeScheduler);
 
-        SetMergeThread mergeThreads;
+protected:
+    int32_t mergeThreadPriority;
 
-        /// Max number of threads allowed to be merging at once
-        int32_t maxThreadCount;
+    SetMergeThread mergeThreads;
 
-        DirectoryPtr dir;
+    /// Max number of threads allowed to be merging at once
+    int32_t maxThreadCount;
 
-        bool closed;
-        IndexWriterWeakPtr _writer;
+    DirectoryPtr dir;
 
-        static Collection<ConcurrentMergeSchedulerPtr> allInstances;
+    bool closed;
+    IndexWriterWeakPtr _writer;
 
-        bool suppressExceptions;
-        static bool anyExceptions;
+    static Collection<ConcurrentMergeSchedulerPtr> allInstances;
 
-    public:
-        virtual void initialize();
+    bool suppressExceptions;
+    static bool anyExceptions;
 
-        /// Sets the max # simultaneous threads that may be running.  If a merge is necessary yet
-        /// we already have this many threads running, the incoming thread (that is calling
-        /// add/updateDocument) will block until a merge thread has completed.
-        virtual void setMaxThreadCount(int32_t count);
+public:
+    virtual void initialize();
 
-        /// Get the max # simultaneous threads that may be running. @see #setMaxThreadCount.
-        virtual int32_t getMaxThreadCount();
+    /// Sets the max # simultaneous threads that may be running.  If a merge is necessary yet
+    /// we already have this many threads running, the incoming thread (that is calling
+    /// add/updateDocument) will block until a merge thread has completed.
+    virtual void setMaxThreadCount(int32_t count);
 
-        /// Return the priority that merge threads run at.  By default the priority is 1 plus the
-        /// priority of (ie, slightly higher priority than) the first thread that calls merge.
-        virtual int32_t getMergeThreadPriority();
+    /// Get the max # simultaneous threads that may be running. @see #setMaxThreadCount.
+    virtual int32_t getMaxThreadCount();
 
-        /// Set the priority that merge threads run at.
-        virtual void setMergeThreadPriority(int32_t pri);
+    /// Return the priority that merge threads run at.  By default the priority is 1 plus the
+    /// priority of (ie, slightly higher priority than) the first thread that calls merge.
+    virtual int32_t getMergeThreadPriority();
 
-        virtual void close();
+    /// Set the priority that merge threads run at.
+    virtual void setMergeThreadPriority(int32_t pri);
 
-        virtual void sync();
+    virtual void close();
 
-        virtual void merge(const IndexWriterPtr& writer);
+    virtual void sync();
 
-        /// Used for testing
-        static bool anyUnhandledExceptions();
-        static void clearUnhandledExceptions();
+    virtual void merge(const IndexWriterPtr& writer);
 
-        /// Used for testing
-        void setSuppressExceptions();
-        void clearSuppressExceptions();
+    /// Used for testing
+    static bool anyUnhandledExceptions();
+    static void clearUnhandledExceptions();
 
-        /// Used for testing
-        static void setTestMode();
+    /// Used for testing
+    void setSuppressExceptions();
+    void clearSuppressExceptions();
 
-    protected:
-        virtual bool verbose();
-        virtual void message(const String& message);
-        virtual void initMergeThreadPriority();
-        virtual int32_t mergeThreadCount();
+    /// Used for testing
+    static void setTestMode();
 
-        /// Does the actual merge, by calling {@link IndexWriter#merge}
-        virtual void doMerge(const OneMergePtr& merge);
+protected:
+    virtual bool verbose();
+    virtual void message(const String& message);
+    virtual void initMergeThreadPriority();
+    virtual int32_t mergeThreadCount();
 
-        virtual MergeThreadPtr getMergeThread(const IndexWriterPtr& writer, const OneMergePtr& merge);
+    /// Does the actual merge, by calling {@link IndexWriter#merge}
+    virtual void doMerge(const OneMergePtr& merge);
 
-        /// Called when an exception is hit in a background merge thread
-        virtual void handleMergeException(const LuceneException& exc);
+    virtual MergeThreadPtr getMergeThread(const IndexWriterPtr& writer, const OneMergePtr& merge);
 
-        virtual void addMyself();
+    /// Called when an exception is hit in a background merge thread
+    virtual void handleMergeException(const LuceneException& exc);
 
-        friend class MergeThread;
-    };
+    virtual void addMyself();
+
+    friend class MergeThread;
+};
+
 }
 
 #endif

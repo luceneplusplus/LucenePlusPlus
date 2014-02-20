@@ -9,28 +9,28 @@
 
 #include "DocValues.h"
 
-namespace Lucene
-{
-    class ReverseOrdDocValues : public DocValues
-    {
-    public:
-        ReverseOrdDocValues(const ReverseOrdFieldSourcePtr& source, Collection<int32_t> arr, int32_t end);
-        virtual ~ReverseOrdDocValues();
+namespace Lucene {
 
-        LUCENE_CLASS(ReverseOrdDocValues);
+class ReverseOrdDocValues : public DocValues {
+public:
+    ReverseOrdDocValues(const ReverseOrdFieldSourcePtr& source, Collection<int32_t> arr, int32_t end);
+    virtual ~ReverseOrdDocValues();
 
-    protected:
-        ReverseOrdFieldSourceWeakPtr _source;
-        Collection<int32_t> arr;
-        int32_t end;
+    LUCENE_CLASS(ReverseOrdDocValues);
 
-    public:
-        virtual double doubleVal(int32_t doc);
-        virtual int32_t intVal(int32_t doc);
-        virtual String strVal(int32_t doc);
-        virtual String toString(int32_t doc);
-        virtual CollectionValue getInnerArray();
-    };
+protected:
+    ReverseOrdFieldSourceWeakPtr _source;
+    Collection<int32_t> arr;
+    int32_t end;
+
+public:
+    virtual double doubleVal(int32_t doc);
+    virtual int32_t intVal(int32_t doc);
+    virtual String strVal(int32_t doc);
+    virtual String toString(int32_t doc);
+    virtual CollectionValue getInnerArray();
+};
+
 }
 
 #endif

@@ -7,70 +7,58 @@
 #include "LuceneInc.h"
 #include "SpanFilterResult.h"
 
-namespace Lucene
-{
-    SpanFilterResult::SpanFilterResult(const DocIdSetPtr& docIdSet, Collection<PositionInfoPtr> positions)
-    {
-        this->docIdSet = docIdSet;
-        this->positions = positions;
-    }
+namespace Lucene {
 
-    SpanFilterResult::~SpanFilterResult()
-    {
-    }
+SpanFilterResult::SpanFilterResult(const DocIdSetPtr& docIdSet, Collection<PositionInfoPtr> positions) {
+    this->docIdSet = docIdSet;
+    this->positions = positions;
+}
 
-    Collection<PositionInfoPtr> SpanFilterResult::getPositions()
-    {
-        return positions;
-    }
+SpanFilterResult::~SpanFilterResult() {
+}
 
-    DocIdSetPtr SpanFilterResult::getDocIdSet()
-    {
-        return docIdSet;
-    }
+Collection<PositionInfoPtr> SpanFilterResult::getPositions() {
+    return positions;
+}
 
-    PositionInfo::PositionInfo(int32_t doc)
-    {
-        this->doc = doc;
-        this->positions = Collection<StartEndPtr>::newInstance();
-    }
+DocIdSetPtr SpanFilterResult::getDocIdSet() {
+    return docIdSet;
+}
 
-    PositionInfo::~PositionInfo()
-    {
-    }
+PositionInfo::PositionInfo(int32_t doc) {
+    this->doc = doc;
+    this->positions = Collection<StartEndPtr>::newInstance();
+}
 
-    void PositionInfo::addPosition(int32_t start, int32_t end)
-    {
-        positions.add(newLucene<StartEnd>(start, end));
-    }
+PositionInfo::~PositionInfo() {
+}
 
-    int32_t PositionInfo::getDoc()
-    {
-        return doc;
-    }
+void PositionInfo::addPosition(int32_t start, int32_t end) {
+    positions.add(newLucene<StartEnd>(start, end));
+}
 
-    Collection<StartEndPtr> PositionInfo::getPositions()
-    {
-        return positions;
-    }
+int32_t PositionInfo::getDoc() {
+    return doc;
+}
 
-    StartEnd::StartEnd(int32_t start, int32_t end)
-    {
-        this->start = start;
-        this->end = end;
-    }
+Collection<StartEndPtr> PositionInfo::getPositions() {
+    return positions;
+}
 
-    StartEnd::~StartEnd()
-    {
-    }
+StartEnd::StartEnd(int32_t start, int32_t end) {
+    this->start = start;
+    this->end = end;
+}
 
-    int32_t StartEnd::getEnd()
-    {
-        return end;
-    }
+StartEnd::~StartEnd() {
+}
 
-    int32_t StartEnd::getStart()
-    {
-        return start;
-    }
+int32_t StartEnd::getEnd() {
+    return end;
+}
+
+int32_t StartEnd::getStart() {
+    return start;
+}
+
 }

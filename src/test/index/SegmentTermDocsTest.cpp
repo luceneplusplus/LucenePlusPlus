@@ -22,19 +22,16 @@
 
 using namespace Lucene;
 
-class SegmentTermDocsTest : public LuceneTestFixture, public DocHelper
-{
+class SegmentTermDocsTest : public LuceneTestFixture, public DocHelper {
 public:
-    SegmentTermDocsTest()
-    {
+    SegmentTermDocsTest() {
         testDoc = newLucene<Document>();
         dir = newLucene<RAMDirectory>();
         DocHelper::setupDoc(testDoc);
         info = DocHelper::writeDoc(dir, testDoc);
     }
 
-    virtual ~SegmentTermDocsTest()
-    {
+    virtual ~SegmentTermDocsTest() {
     }
 
 protected:
@@ -43,8 +40,7 @@ protected:
     SegmentInfoPtr info;
 
 public:
-    void checkTermDocs(int32_t indexDivisor)
-    {
+    void checkTermDocs(int32_t indexDivisor) {
         // After adding the document, we should be able to read it back in
         SegmentReaderPtr reader = SegmentReader::get(true, info, indexDivisor);
         EXPECT_TRUE(reader);
@@ -52,8 +48,7 @@ public:
         SegmentTermDocsPtr segTermDocs = newLucene<SegmentTermDocs>(reader);
         EXPECT_TRUE(segTermDocs);
         segTermDocs->seek(newLucene<Term>(DocHelper::TEXT_FIELD_2_KEY, L"field"));
-        if (segTermDocs->next())
-        {
+        if (segTermDocs->next()) {
             int32_t docId = segTermDocs->doc();
             EXPECT_EQ(docId, 0);
             int32_t freq = segTermDocs->freq();
@@ -62,8 +57,7 @@ public:
         reader->close();
     }
 
-    void checkBadSeek(int32_t indexDivisor)
-    {
+    void checkBadSeek(int32_t indexDivisor) {
         {
             // After adding the document, we should be able to read it back in
             SegmentReaderPtr reader = SegmentReader::get(true, info, indexDivisor);
@@ -86,22 +80,24 @@ public:
         }
     }
 
-    void checkSkipTo(int32_t indexDivisor)
-    {
+    void checkSkipTo(int32_t indexDivisor) {
         DirectoryPtr dir = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
         TermPtr ta = newLucene<Term>(L"content", L"aaa");
-        for (int32_t i = 0; i < 10; ++i)
+        for (int32_t i = 0; i < 10; ++i) {
             addDoc(writer, L"aaa aaa aaa aaa");
+        }
 
         TermPtr tb = newLucene<Term>(L"content", L"bbb");
-        for (int32_t i = 0; i < 16; ++i)
+        for (int32_t i = 0; i < 16; ++i) {
             addDoc(writer, L"bbb bbb bbb bbb");
+        }
 
         TermPtr tc = newLucene<Term>(L"content", L"ccc");
-        for (int32_t i = 0; i < 50; ++i)
+        for (int32_t i = 0; i < 50; ++i) {
             addDoc(writer, L"ccc ccc ccc ccc");
+        }
 
         // assure that we deal with a single segment
         writer->optimize();
@@ -212,31 +208,26 @@ public:
         dir->close();
     }
 
-    void addDoc(const IndexWriterPtr& writer, const String& value)
-    {
+    void addDoc(const IndexWriterPtr& writer, const String& value) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"content", value, Field::STORE_NO, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
     }
 };
 
-TEST_F(SegmentTermDocsTest, testTermDocs)
-{
+TEST_F(SegmentTermDocsTest, testTermDocs) {
     checkTermDocs(1);
 }
 
-TEST_F(SegmentTermDocsTest, testBadSeek)
-{
+TEST_F(SegmentTermDocsTest, testBadSeek) {
     checkBadSeek(1);
 }
 
-TEST_F(SegmentTermDocsTest, testSkipTo)
-{
+TEST_F(SegmentTermDocsTest, testSkipTo) {
     checkSkipTo(1);
 }
 
-TEST_F(SegmentTermDocsTest, testIndexDivisor)
-{
+TEST_F(SegmentTermDocsTest, testIndexDivisor) {
     dir = newLucene<MockRAMDirectory>();
     testDoc = newLucene<Document>();
     DocHelper::setupDoc(testDoc);

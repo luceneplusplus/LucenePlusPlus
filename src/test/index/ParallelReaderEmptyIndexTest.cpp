@@ -21,8 +21,7 @@ typedef LuceneTestFixture ParallelReaderEmptyIndexTest;
 
 /// Creates two empty indexes and wraps a ParallelReader around.
 /// Adding this reader to a new index should not throw any exception.
-TEST_F(ParallelReaderEmptyIndexTest, testEmptyIndex)
-{
+TEST_F(ParallelReaderEmptyIndexTest, testEmptyIndex) {
     RAMDirectoryPtr rd1 = newLucene<MockRAMDirectory>();
     IndexWriterPtr iw = newLucene<IndexWriter>(rd1, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
     iw->close();
@@ -47,8 +46,7 @@ TEST_F(ParallelReaderEmptyIndexTest, testEmptyIndex)
 
 /// This method creates an empty index (numFields=0, numDocs=0) but is marked to have TermVectors.
 /// Adding this index to another index should not throw any exception.
-TEST_F(ParallelReaderEmptyIndexTest, testEmptyIndexWithVectors)
-{
+TEST_F(ParallelReaderEmptyIndexTest, testEmptyIndexWithVectors) {
     RAMDirectoryPtr rd1 = newLucene<MockRAMDirectory>();
     {
         IndexWriterPtr iw = newLucene<IndexWriter>(rd1, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);

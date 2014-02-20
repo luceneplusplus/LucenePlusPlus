@@ -21,8 +21,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture NotTest;
 
-TEST_F(NotTest, testNot)
-{
+TEST_F(NotTest, testNot) {
     RAMDirectoryPtr store = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(store, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 

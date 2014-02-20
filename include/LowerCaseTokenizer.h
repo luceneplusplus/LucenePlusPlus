@@ -9,35 +9,35 @@
 
 #include "LetterTokenizer.h"
 
-namespace Lucene
-{
-    /// LowerCaseTokenizer performs the function of LetterTokenizer and LowerCaseFilter together.  It divides text at
-    /// non-letters and converts them to lower case.  While it is functionally equivalent to the combination of
-    /// LetterTokenizer and LowerCaseFilter, there is a performance advantage to doing the two tasks at once, hence
-    /// this (redundant) implementation.
-    ///
-    /// Note: this does a decent job for most European languages, but does a terrible job for some Asian languages,
-    /// where words are not separated by spaces.
-    class LPPAPI LowerCaseTokenizer : public LetterTokenizer
-    {
-    public:
-        /// Construct a new LowerCaseTokenizer.
-        LowerCaseTokenizer(const ReaderPtr& input);
+namespace Lucene {
 
-        /// Construct a new LowerCaseTokenizer using a given {@link AttributeSource}.
-        LowerCaseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
+/// LowerCaseTokenizer performs the function of LetterTokenizer and LowerCaseFilter together.  It divides text at
+/// non-letters and converts them to lower case.  While it is functionally equivalent to the combination of
+/// LetterTokenizer and LowerCaseFilter, there is a performance advantage to doing the two tasks at once, hence
+/// this (redundant) implementation.
+///
+/// Note: this does a decent job for most European languages, but does a terrible job for some Asian languages,
+/// where words are not separated by spaces.
+class LPPAPI LowerCaseTokenizer : public LetterTokenizer {
+public:
+    /// Construct a new LowerCaseTokenizer.
+    LowerCaseTokenizer(const ReaderPtr& input);
 
-        /// Construct a new LowerCaseTokenizer using a given {@link AttributeFactory}.
-        LowerCaseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
+    /// Construct a new LowerCaseTokenizer using a given {@link AttributeSource}.
+    LowerCaseTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
 
-        virtual ~LowerCaseTokenizer();
+    /// Construct a new LowerCaseTokenizer using a given {@link AttributeFactory}.
+    LowerCaseTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
-        LUCENE_CLASS(LowerCaseTokenizer);
+    virtual ~LowerCaseTokenizer();
 
-    public:
-        /// Converts char to lower case CharFolder::toLower<wchar_t>.
-        virtual wchar_t normalize(wchar_t c);
-    };
+    LUCENE_CLASS(LowerCaseTokenizer);
+
+public:
+    /// Converts char to lower case CharFolder::toLower<wchar_t>.
+    virtual wchar_t normalize(wchar_t c);
+};
+
 }
 
 #endif

@@ -9,27 +9,27 @@
 
 #include "DocFieldConsumerPerField.h"
 
-namespace Lucene
-{
-    class DocFieldConsumersPerField : public DocFieldConsumerPerField
-    {
-    public:
-        DocFieldConsumersPerField(const DocFieldConsumersPerThreadPtr& perThread, const DocFieldConsumerPerFieldPtr& one, const DocFieldConsumerPerFieldPtr& two);
-        virtual ~DocFieldConsumersPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldConsumersPerField);
+class DocFieldConsumersPerField : public DocFieldConsumerPerField {
+public:
+    DocFieldConsumersPerField(const DocFieldConsumersPerThreadPtr& perThread, const DocFieldConsumerPerFieldPtr& one, const DocFieldConsumerPerFieldPtr& two);
+    virtual ~DocFieldConsumersPerField();
 
-    public:
-        DocFieldConsumerPerFieldPtr one;
-        DocFieldConsumerPerFieldPtr two;
-        DocFieldConsumersPerThreadWeakPtr _perThread;
+    LUCENE_CLASS(DocFieldConsumersPerField);
 
-    public:
-        /// Processes all occurrences of a single field
-        virtual void processFields(Collection<FieldablePtr> fields, int32_t count);
+public:
+    DocFieldConsumerPerFieldPtr one;
+    DocFieldConsumerPerFieldPtr two;
+    DocFieldConsumersPerThreadWeakPtr _perThread;
 
-        virtual void abort();
-    };
+public:
+    /// Processes all occurrences of a single field
+    virtual void processFields(Collection<FieldablePtr> fields, int32_t count);
+
+    virtual void abort();
+};
+
 }
 
 #endif

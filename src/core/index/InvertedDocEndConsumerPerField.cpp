@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "InvertedDocEndConsumerPerField.h"
 
-namespace Lucene
-{
-    InvertedDocEndConsumerPerField::~InvertedDocEndConsumerPerField()
-    {
-    }
+namespace Lucene {
+
+InvertedDocEndConsumerPerField::~InvertedDocEndConsumerPerField() {
+}
+
 }

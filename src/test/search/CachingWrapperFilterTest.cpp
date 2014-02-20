@@ -34,31 +34,30 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CachingWrapperFilterTest;
 
-static void checkDocIdSetCacheable(const IndexReaderPtr& reader, const FilterPtr& filter, bool shouldCacheable)
-{
+static void checkDocIdSetCacheable(const IndexReaderPtr& reader, const FilterPtr& filter, bool shouldCacheable) {
     CachingWrapperFilterPtr cacher = newLucene<CachingWrapperFilter>(filter);
     DocIdSetPtr originalSet = filter->getDocIdSet(reader);
     DocIdSetPtr cachedSet = cacher->getDocIdSet(reader);
     EXPECT_TRUE(cachedSet->isCacheable());
     EXPECT_EQ(shouldCacheable, originalSet->isCacheable());
-    if (originalSet->isCacheable())
+    if (originalSet->isCacheable()) {
         EXPECT_TRUE(MiscUtils::equalTypes(originalSet, cachedSet));
-    else
+    } else {
         EXPECT_TRUE(MiscUtils::typeOf<OpenBitSetDISI>(cachedSet));
+    }
 }
 
-static IndexReaderPtr refreshReader(const IndexReaderPtr& reader)
-{
+static IndexReaderPtr refreshReader(const IndexReaderPtr& reader) {
     IndexReaderPtr _reader(reader);
     IndexReaderPtr oldReader = _reader;
     _reader = _reader->reopen();
-    if (_reader != oldReader)
+    if (_reader != oldReader) {
         oldReader->close();
+    }
     return _reader;
 }
 
-TEST_F(CachingWrapperFilterTest, testCachingWorks)
-{
+TEST_F(CachingWrapperFilterTest, testCachingWorks) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
@@ -83,25 +82,22 @@ TEST_F(CachingWrapperFilterTest, testCachingWorks)
     reader->close();
 }
 
-namespace TestNullDocIdSet
-{
-    class NullDocIdSetFilter : public Filter
-    {
-    public:
-        virtual ~NullDocIdSetFilter()
-        {
-        }
+namespace TestNullDocIdSet {
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-        {
-            return DocIdSetPtr();
-        }
-    };
+class NullDocIdSetFilter : public Filter {
+public:
+    virtual ~NullDocIdSetFilter() {
+    }
+
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
+        return DocIdSetPtr();
+    }
+};
+
 }
 
-TEST_F(CachingWrapperFilterTest, testNullDocIdSet)
-{
+TEST_F(CachingWrapperFilterTest, testNullDocIdSet) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
@@ -116,39 +112,33 @@ TEST_F(CachingWrapperFilterTest, testNullDocIdSet)
     reader->close();
 }
 
-namespace TestNullDocIdSetIterator
-{
-    class NullDocIdSetIterator : public DocIdSet
-    {
-    public:
-        virtual ~NullDocIdSetIterator()
-        {
-        }
+namespace TestNullDocIdSetIterator {
 
-    public:
-        virtual DocIdSetIteratorPtr iterator()
-        {
-            return DocIdSetIteratorPtr();
-        }
-    };
+class NullDocIdSetIterator : public DocIdSet {
+public:
+    virtual ~NullDocIdSetIterator() {
+    }
 
-    class NullDocIdSetIteratorFilter : public Filter
-    {
-    public:
-        virtual ~NullDocIdSetIteratorFilter()
-        {
-        }
+public:
+    virtual DocIdSetIteratorPtr iterator() {
+        return DocIdSetIteratorPtr();
+    }
+};
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-        {
-            return newLucene<NullDocIdSetIterator>();
-        }
-    };
+class NullDocIdSetIteratorFilter : public Filter {
+public:
+    virtual ~NullDocIdSetIteratorFilter() {
+    }
+
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
+        return newLucene<NullDocIdSetIterator>();
+    }
+};
+
 }
 
-TEST_F(CachingWrapperFilterTest, testNullDocIdSetIterator)
-{
+TEST_F(CachingWrapperFilterTest, testNullDocIdSetIterator) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
@@ -163,25 +153,22 @@ TEST_F(CachingWrapperFilterTest, testNullDocIdSetIterator)
     reader->close();
 }
 
-namespace TestIsCacheable
-{
-    class OpenBitSetFilter : public Filter
-    {
-    public:
-        virtual ~OpenBitSetFilter()
-        {
-        }
+namespace TestIsCacheable {
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-        {
-            return newLucene<OpenBitSet>();
-        }
-    };
+class OpenBitSetFilter : public Filter {
+public:
+    virtual ~OpenBitSetFilter() {
+    }
+
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
+        return newLucene<OpenBitSet>();
+    }
+};
+
 }
 
-TEST_F(CachingWrapperFilterTest, testIsCacheable)
-{
+TEST_F(CachingWrapperFilterTest, testIsCacheable) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->close();
@@ -201,8 +188,7 @@ TEST_F(CachingWrapperFilterTest, testIsCacheable)
     checkDocIdSetCacheable(reader, newLucene<TestIsCacheable::OpenBitSetFilter>(), true);
 }
 
-TEST_F(CachingWrapperFilterTest, testEnforceDeletions)
-{
+TEST_F(CachingWrapperFilterTest, testEnforceDeletions) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     IndexReaderPtr reader = writer->getReader();

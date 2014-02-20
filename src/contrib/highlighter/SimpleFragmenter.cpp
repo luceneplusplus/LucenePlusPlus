@@ -10,47 +10,42 @@
 #include "OffsetAttribute.h"
 #include "TokenStream.h"
 
-namespace Lucene
-{
-    const int32_t SimpleFragmenter::DEFAULT_FRAGMENT_SIZE = 100;
+namespace Lucene {
 
-    SimpleFragmenter::SimpleFragmenter()
-    {
-        this->currentNumFrags = 0;
-        this->fragmentSize = DEFAULT_FRAGMENT_SIZE;
-    }
+const int32_t SimpleFragmenter::DEFAULT_FRAGMENT_SIZE = 100;
 
-    SimpleFragmenter::SimpleFragmenter(int32_t fragmentSize)
-    {
-        this->currentNumFrags = 0;
-        this->fragmentSize = fragmentSize;
-    }
+SimpleFragmenter::SimpleFragmenter() {
+    this->currentNumFrags = 0;
+    this->fragmentSize = DEFAULT_FRAGMENT_SIZE;
+}
 
-    SimpleFragmenter::~SimpleFragmenter()
-    {
-    }
+SimpleFragmenter::SimpleFragmenter(int32_t fragmentSize) {
+    this->currentNumFrags = 0;
+    this->fragmentSize = fragmentSize;
+}
 
-    void SimpleFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream)
-    {
-        offsetAtt = tokenStream->addAttribute<OffsetAttribute>();
-        currentNumFrags = 1;
-    }
+SimpleFragmenter::~SimpleFragmenter() {
+}
 
-    bool SimpleFragmenter::isNewFragment()
-    {
-        bool isNewFrag = (offsetAtt->endOffset() >= (fragmentSize * currentNumFrags));
-        if (isNewFrag)
-            ++currentNumFrags;
-        return isNewFrag;
-    }
+void SimpleFragmenter::start(const String& originalText, const TokenStreamPtr& tokenStream) {
+    offsetAtt = tokenStream->addAttribute<OffsetAttribute>();
+    currentNumFrags = 1;
+}
 
-    int32_t SimpleFragmenter::getFragmentSize()
-    {
-        return fragmentSize;
+bool SimpleFragmenter::isNewFragment() {
+    bool isNewFrag = (offsetAtt->endOffset() >= (fragmentSize * currentNumFrags));
+    if (isNewFrag) {
+        ++currentNumFrags;
     }
+    return isNewFrag;
+}
 
-    void SimpleFragmenter::setFragmentSize(int32_t size)
-    {
-        fragmentSize = size;
-    }
+int32_t SimpleFragmenter::getFragmentSize() {
+    return fragmentSize;
+}
+
+void SimpleFragmenter::setFragmentSize(int32_t size) {
+    fragmentSize = size;
+}
+
 }

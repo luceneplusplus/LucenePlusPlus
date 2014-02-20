@@ -30,15 +30,13 @@ using namespace Lucene;
 
 typedef LuceneTestFixture DeletionPolicyTest;
 
-static void verifyCommitOrder(Collection<IndexCommitPtr> commits)
-{
+static void verifyCommitOrder(Collection<IndexCommitPtr> commits) {
     IndexCommitPtr firstCommit = commits[0];
     int64_t last = SegmentInfos::generationFromSegmentsFileName(firstCommit->getSegmentsFileName());
     EXPECT_EQ(last, firstCommit->getGeneration());
     int64_t lastVersion = firstCommit->getVersion();
     int64_t lastTimestamp = firstCommit->getTimestamp();
-    for (int32_t i = 1; i < commits.size(); ++i)
-    {
+    for (int32_t i = 1; i < commits.size(); ++i) {
         IndexCommitPtr commit = commits[i];
         int64_t now = SegmentInfos::generationFromSegmentsFileName(commit->getSegmentsFileName());
         int64_t nowVersion = commit->getVersion();
@@ -53,8 +51,7 @@ static void verifyCommitOrder(Collection<IndexCommitPtr> commits)
     }
 }
 
-static void addDoc(const IndexWriterPtr& writer)
-{
+static void addDoc(const IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
@@ -65,17 +62,14 @@ DECLARE_SHARED_PTR(KeepNoneOnInitDeletionPolicy)
 DECLARE_SHARED_PTR(KeepLastNDeletionPolicy)
 DECLARE_SHARED_PTR(ExpirationTimeDeletionPolicy)
 
-class DeletionPolicyKeepAllDeletionPolicy : public IndexDeletionPolicy
-{
+class DeletionPolicyKeepAllDeletionPolicy : public IndexDeletionPolicy {
 public:
-    DeletionPolicyKeepAllDeletionPolicy()
-    {
+    DeletionPolicyKeepAllDeletionPolicy() {
         numOnInit = 0;
         numOnCommit = 0;
     }
 
-    virtual ~DeletionPolicyKeepAllDeletionPolicy()
-    {
+    virtual ~DeletionPolicyKeepAllDeletionPolicy() {
     }
 
     LUCENE_CLASS(DeletionPolicyKeepAllDeletionPolicy);
@@ -86,14 +80,12 @@ public:
     DirectoryPtr dir;
 
 public:
-    virtual void onInit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onInit(Collection<IndexCommitPtr> commits) {
         verifyCommitOrder(commits);
         ++numOnInit;
     }
 
-    virtual void onCommit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onCommit(Collection<IndexCommitPtr> commits) {
         IndexCommitPtr lastCommit = commits[commits.size() - 1];
         IndexReaderPtr r = IndexReader::open(dir, true);
         EXPECT_EQ(r->isOptimized(), lastCommit->isOptimized());
@@ -104,17 +96,14 @@ public:
 };
 
 /// This is useful for adding to a big index when you know readers are not using it.
-class KeepNoneOnInitDeletionPolicy : public IndexDeletionPolicy
-{
+class KeepNoneOnInitDeletionPolicy : public IndexDeletionPolicy {
 public:
-    KeepNoneOnInitDeletionPolicy()
-    {
+    KeepNoneOnInitDeletionPolicy() {
         numOnInit = 0;
         numOnCommit = 0;
     }
 
-    virtual ~KeepNoneOnInitDeletionPolicy()
-    {
+    virtual ~KeepNoneOnInitDeletionPolicy() {
     }
 
     LUCENE_CLASS(KeepNoneOnInitDeletionPolicy);
@@ -124,34 +113,30 @@ public:
     int32_t numOnCommit;
 
 public:
-    virtual void onInit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onInit(Collection<IndexCommitPtr> commits) {
         verifyCommitOrder(commits);
         ++numOnInit;
         // On init, delete all commit points
-        for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
-        {
+        for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit) {
             (*commit)->deleteCommit();
             EXPECT_TRUE((*commit)->isDeleted());
         }
     }
 
-    virtual void onCommit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onCommit(Collection<IndexCommitPtr> commits) {
         verifyCommitOrder(commits);
         int32_t size = commits.size();
         // Delete all but last one
-        for (int32_t i = 0; i < size - 1; ++i)
+        for (int32_t i = 0; i < size - 1; ++i) {
             commits[i]->deleteCommit();
+        }
         ++numOnCommit;
     }
 };
 
-class KeepLastNDeletionPolicy : public IndexDeletionPolicy
-{
+class KeepLastNDeletionPolicy : public IndexDeletionPolicy {
 public:
-    KeepLastNDeletionPolicy(int32_t numToKeep)
-    {
+    KeepLastNDeletionPolicy(int32_t numToKeep) {
         this->numOnInit = 0;
         this->numOnCommit = 0;
         this->numToKeep = numToKeep;
@@ -159,8 +144,7 @@ public:
         this->seen = HashSet<String>::newInstance();
     }
 
-    virtual ~KeepLastNDeletionPolicy()
-    {
+    virtual ~KeepLastNDeletionPolicy() {
     }
 
     LUCENE_CLASS(KeepLastNDeletionPolicy);
@@ -173,35 +157,31 @@ public:
     HashSet<String> seen;
 
 public:
-    virtual void onInit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onInit(Collection<IndexCommitPtr> commits) {
         verifyCommitOrder(commits);
         ++numOnInit;
         // do no deletions on init
         doDeletes(commits, false);
     }
 
-    virtual void onCommit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onCommit(Collection<IndexCommitPtr> commits) {
         verifyCommitOrder(commits);
         doDeletes(commits, true);
     }
 
 protected:
-    void doDeletes(Collection<IndexCommitPtr> commits, bool isCommit)
-    {
+    void doDeletes(Collection<IndexCommitPtr> commits, bool isCommit) {
         // Assert that we really are only called for each new commit
-        if (isCommit)
-        {
+        if (isCommit) {
             String fileName = commits[commits.size() - 1]->getSegmentsFileName();
-            if (seen.contains(fileName))
+            if (seen.contains(fileName)) {
                 FAIL() << "onCommit was called twice on the same commit point";
+            }
             seen.add(fileName);
             ++numOnCommit;
         }
         int32_t size = commits.size();
-        for (int32_t i = 0; i < size - numToKeep; ++i)
-        {
+        for (int32_t i = 0; i < size - numToKeep; ++i) {
             commits[i]->deleteCommit();
             ++numDelete;
         }
@@ -209,18 +189,15 @@ protected:
 };
 
 /// Delete a commit only when it has been obsoleted by N seconds
-class ExpirationTimeDeletionPolicy : public IndexDeletionPolicy
-{
+class ExpirationTimeDeletionPolicy : public IndexDeletionPolicy {
 public:
-    ExpirationTimeDeletionPolicy(const DirectoryPtr& dir, double seconds)
-    {
+    ExpirationTimeDeletionPolicy(const DirectoryPtr& dir, double seconds) {
         this->dir = dir;
         this->expirationTimeSeconds = seconds;
         this->numDelete = 0;
     }
 
-    virtual ~ExpirationTimeDeletionPolicy()
-    {
+    virtual ~ExpirationTimeDeletionPolicy() {
     }
 
     LUCENE_CLASS(ExpirationTimeDeletionPolicy);
@@ -231,14 +208,12 @@ public:
     int32_t numDelete;
 
 public:
-    virtual void onInit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onInit(Collection<IndexCommitPtr> commits) {
         verifyCommitOrder(commits);
         onCommit(commits);
     }
 
-    virtual void onCommit(Collection<IndexCommitPtr> commits)
-    {
+    virtual void onCommit(Collection<IndexCommitPtr> commits) {
         verifyCommitOrder(commits);
 
         IndexCommitPtr lastCommit = commits[commits.size() - 1];
@@ -246,11 +221,9 @@ public:
         // Any commit older than expireTime should be deleted
         double expireTime = dir->fileModified(lastCommit->getSegmentsFileName()) / 1000.0 - expirationTimeSeconds;
 
-        for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
-        {
+        for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit) {
             double modTime = dir->fileModified((*commit)->getSegmentsFileName()) / 1000.0;
-            if (*commit != lastCommit && modTime < expireTime)
-            {
+            if (*commit != lastCommit && modTime < expireTime) {
                 (*commit)->deleteCommit();
                 ++numDelete;
             }
@@ -259,8 +232,7 @@ public:
 };
 
 /// Test "by time expiration" deletion policy
-TEST_F(DeletionPolicyTest, testExpirationTimeDeletionPolicy)
-{
+TEST_F(DeletionPolicyTest, testExpirationTimeDeletionPolicy) {
     const double SECONDS = 2.0;
 
     bool useCompoundFile = true;
@@ -272,14 +244,14 @@ TEST_F(DeletionPolicyTest, testExpirationTimeDeletionPolicy)
     writer->close();
 
     int64_t lastDeleteTime = 0;
-    for (int32_t i = 0; i < 7; ++i)
-    {
+    for (int32_t i = 0; i < 7; ++i) {
         // Record last time when writer performed deletes of past commits
         lastDeleteTime = MiscUtils::currentTimeMillis();
         writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, policy, IndexWriter::MaxFieldLengthUNLIMITED);
         writer->setUseCompoundFile(useCompoundFile);
-        for (int32_t j = 0; j < 17; ++j)
+        for (int32_t j = 0; j < 17; ++j) {
             addDoc(writer);
+        }
         writer->close();
 
         // Make sure to sleep long enough so that some commit points will be deleted
@@ -295,18 +267,14 @@ TEST_F(DeletionPolicyTest, testExpirationTimeDeletionPolicy)
 
     String fileName = IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", gen);
     dir->deleteFile(IndexFileNames::SEGMENTS_GEN());
-    while (gen > 0)
-    {
-        try
-        {
+    while (gen > 0) {
+        try {
             IndexReaderPtr reader = IndexReader::open(dir, true);
             reader->close();
             fileName = IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", gen);
             int64_t modTime = dir->fileModified(fileName);
             EXPECT_TRUE(lastDeleteTime - modTime <= (SECONDS * 1000));
-        }
-        catch (IOException&)
-        {
+        } catch (IOException&) {
             // OK
             break;
         }
@@ -319,10 +287,8 @@ TEST_F(DeletionPolicyTest, testExpirationTimeDeletionPolicy)
 }
 
 /// Test a silly deletion policy that keeps all commits around.
-TEST_F(DeletionPolicyTest, testDeletionPolicyKeepAllDeletionPolicy)
-{
-    for (int32_t pass = 0; pass < 2; ++pass)
-    {
+TEST_F(DeletionPolicyTest, testDeletionPolicyKeepAllDeletionPolicy) {
+    for (int32_t pass = 0; pass < 2; ++pass) {
         bool useCompoundFile = ((pass % 2) != 0);
 
         // Never deletes a commit
@@ -335,8 +301,9 @@ TEST_F(DeletionPolicyTest, testDeletionPolicyKeepAllDeletionPolicy)
         writer->setMaxBufferedDocs(10);
         writer->setUseCompoundFile(useCompoundFile);
         writer->setMergeScheduler(newLucene<SerialMergeScheduler>());
-        for (int32_t i = 0; i < 107; ++i)
+        for (int32_t i = 0; i < 107; ++i) {
             addDoc(writer);
+        }
 
         writer->close();
 
@@ -356,8 +323,7 @@ TEST_F(DeletionPolicyTest, testDeletionPolicyKeepAllDeletionPolicy)
         EXPECT_EQ(3, commits.size());
 
         // Make sure we can open a reader on each commit
-        for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
-        {
+        for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit) {
             IndexReaderPtr r = IndexReader::open(*commit, IndexDeletionPolicyPtr(), false);
             r->close();
         }
@@ -365,15 +331,13 @@ TEST_F(DeletionPolicyTest, testDeletionPolicyKeepAllDeletionPolicy)
         // Simplistic check: just verify all segments_N's still exist, and, I can open a reader on each
         dir->deleteFile(IndexFileNames::SEGMENTS_GEN());
         int64_t gen = SegmentInfos::getCurrentSegmentGeneration(dir);
-        while (gen > 0)
-        {
+        while (gen > 0) {
             IndexReaderPtr reader = IndexReader::open(dir, true);
             reader->close();
             dir->deleteFile(IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", gen));
             --gen;
 
-            if (gen > 0)
-            {
+            if (gen > 0) {
                 // Now that we've removed a commit point, which should have orphan'd at least one index file.
                 // Open and close a writer and check that it actually removed something
                 int32_t preCount = dir->listAll().size();
@@ -389,8 +353,7 @@ TEST_F(DeletionPolicyTest, testDeletionPolicyKeepAllDeletionPolicy)
 }
 
 /// Uses DeletionPolicyKeepAllDeletionPolicy to keep all commits around, then, opens a new IndexWriter on a previous commit point.
-TEST_F(DeletionPolicyTest, testOpenPriorSnapshot)
-{
+TEST_F(DeletionPolicyTest, testOpenPriorSnapshot) {
     // Never deletes a commit
     DeletionPolicyKeepAllDeletionPolicyPtr policy = newLucene<DeletionPolicyKeepAllDeletionPolicy>();
 
@@ -399,21 +362,21 @@ TEST_F(DeletionPolicyTest, testOpenPriorSnapshot)
 
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), (IndexDeletionPolicyPtr)policy, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);
-    for (int32_t i = 0; i < 10; ++i)
-    {
+    for (int32_t i = 0; i < 10; ++i) {
         addDoc(writer);
-        if ((1 + i) % 2 == 0)
+        if ((1 + i) % 2 == 0) {
             writer->commit();
+        }
     }
     writer->close();
 
     Collection<IndexCommitPtr> commits = IndexReader::listCommits(dir);
     EXPECT_EQ(6, commits.size());
     IndexCommitPtr lastCommit;
-    for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
-    {
-        if (!lastCommit || (*commit)->getGeneration() > lastCommit->getGeneration())
+    for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit) {
+        if (!lastCommit || (*commit)->getGeneration() > lastCommit->getGeneration()) {
             lastCommit = *commit;
+        }
     }
     EXPECT_TRUE(lastCommit);
 
@@ -485,10 +448,8 @@ TEST_F(DeletionPolicyTest, testOpenPriorSnapshot)
 }
 
 /// Test keeping NO commit points.  This is a viable and useful case eg where you want to build a big index and you know there are no readers.
-TEST_F(DeletionPolicyTest, testKeepNoneOnInitDeletionPolicy)
-{
-    for (int32_t pass = 0; pass < 2; ++pass)
-    {
+TEST_F(DeletionPolicyTest, testKeepNoneOnInitDeletionPolicy) {
+    for (int32_t pass = 0; pass < 2; ++pass) {
         bool useCompoundFile = ((pass % 2) != 0);
 
         KeepNoneOnInitDeletionPolicyPtr policy = newLucene<KeepNoneOnInitDeletionPolicy>();
@@ -498,8 +459,9 @@ TEST_F(DeletionPolicyTest, testKeepNoneOnInitDeletionPolicy)
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, policy, IndexWriter::MaxFieldLengthUNLIMITED);
         writer->setMaxBufferedDocs(10);
         writer->setUseCompoundFile(useCompoundFile);
-        for (int32_t i = 0; i < 107; ++i)
+        for (int32_t i = 0; i < 107; ++i) {
             addDoc(writer);
+        }
         writer->close();
 
         writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, policy, IndexWriter::MaxFieldLengthUNLIMITED);
@@ -521,25 +483,23 @@ TEST_F(DeletionPolicyTest, testKeepNoneOnInitDeletionPolicy)
 }
 
 /// Test a deletion policy that keeps last N commits.
-TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicy)
-{
+TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicy) {
     int32_t N = 5;
 
-    for (int32_t pass = 0; pass < 2; ++pass)
-    {
+    for (int32_t pass = 0; pass < 2; ++pass) {
         bool useCompoundFile = ((pass % 2) != 0);
 
         DirectoryPtr dir = newLucene<RAMDirectory>();
 
         KeepLastNDeletionPolicyPtr policy = newLucene<KeepLastNDeletionPolicy>(N);
 
-        for (int32_t j = 0; j < N + 1; ++j)
-        {
+        for (int32_t j = 0; j < N + 1; ++j) {
             IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, policy, IndexWriter::MaxFieldLengthUNLIMITED);
             writer->setMaxBufferedDocs(10);
             writer->setUseCompoundFile(useCompoundFile);
-            for (int32_t i = 0; i < 17; ++i)
+            for (int32_t i = 0; i < 17; ++i) {
                 addDoc(writer);
+            }
             writer->optimize();
             writer->close();
         }
@@ -551,22 +511,21 @@ TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicy)
         // Simplistic check: just verify only the past N segments_N's still exist, and, I can open a reader on each
         dir->deleteFile(IndexFileNames::SEGMENTS_GEN());
         int64_t gen = SegmentInfos::getCurrentSegmentGeneration(dir);
-        for (int32_t i = 0; i < N + 1; ++i)
-        {
-            try
-            {
+        for (int32_t i = 0; i < N + 1; ++i) {
+            try {
                 IndexReaderPtr reader = IndexReader::open(dir, true);
                 reader->close();
-                if (i == N)
+                if (i == N) {
                     FAIL() << "should have failed on commits prior to last";
-            }
-            catch (IOException& e)
-            {
-                if (i != N)
+                }
+            } catch (IOException& e) {
+                if (i != N) {
                     FAIL() << e.getError();
+                }
             }
-            if (i < N)
+            if (i < N) {
                 dir->deleteFile(IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", gen));
+            }
             --gen;
         }
 
@@ -575,12 +534,10 @@ TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicy)
 }
 
 /// Test a deletion policy that keeps last N commits around, with reader doing deletes.
-TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithReader)
-{
+TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithReader) {
     int32_t N = 10;
 
-    for (int32_t pass = 0; pass < 2; ++pass)
-    {
+    for (int32_t pass = 0; pass < 2; ++pass) {
         bool useCompoundFile = ((pass % 2) != 0);
 
         KeepLastNDeletionPolicyPtr policy = newLucene<KeepLastNDeletionPolicy>(N);
@@ -592,12 +549,12 @@ TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithReader)
         TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
         QueryPtr query = newLucene<TermQuery>(searchTerm);
 
-        for (int32_t i = 0; i < N + 1; ++i)
-        {
+        for (int32_t i = 0; i < N + 1; ++i) {
             writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, policy, IndexWriter::MaxFieldLengthUNLIMITED);
             writer->setUseCompoundFile(useCompoundFile);
-            for (int32_t j = 0; j < 17; ++j)
+            for (int32_t j = 0; j < 17; ++j) {
                 addDoc(writer);
+            }
             // this is a commit
             writer->close();
             IndexReaderPtr reader = IndexReader::open(dir, policy, false);
@@ -630,34 +587,33 @@ TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithReader)
         dir->deleteFile(IndexFileNames::SEGMENTS_GEN());
         int32_t expectedCount = 176;
 
-        for (int32_t i = 0; i < N + 1; ++i)
-        {
-            try
-            {
+        for (int32_t i = 0; i < N + 1; ++i) {
+            try {
                 IndexReaderPtr reader = IndexReader::open(dir, true);
                 // Work backwards in commits on what the expected count should be.
                 searcher = newLucene<IndexSearcher>(reader);
                 hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-                if (i > 1)
-                {
-                    if (i % 2 == 0)
+                if (i > 1) {
+                    if (i % 2 == 0) {
                         expectedCount += 1;
-                    else
+                    } else {
                         expectedCount -= 17;
+                    }
                 }
                 EXPECT_EQ(expectedCount, hits.size());
                 searcher->close();
                 reader->close();
-                if (i == N)
+                if (i == N) {
                     FAIL() << "should have failed on commits before last 5";
-            }
-            catch (IOException& e)
-            {
-                if (i != N)
+                }
+            } catch (IOException& e) {
+                if (i != N) {
                     FAIL() << e.getError();
+                }
             }
-            if (i < N)
+            if (i < N) {
                 dir->deleteFile(IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", gen));
+            }
             --gen;
         }
 
@@ -666,12 +622,10 @@ TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithReader)
 }
 
 /// Test a deletion policy that keeps last N commits around, through creates.
-TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithCreates)
-{
+TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithCreates) {
     int32_t N = 10;
 
-    for (int32_t pass = 0; pass < 2; ++pass)
-    {
+    for (int32_t pass = 0; pass < 2; ++pass) {
         bool useCompoundFile = ((pass % 2) != 0);
 
         KeepLastNDeletionPolicyPtr policy = newLucene<KeepLastNDeletionPolicy>(N);
@@ -684,13 +638,13 @@ TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithCreates)
         TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
         QueryPtr query = newLucene<TermQuery>(searchTerm);
 
-        for (int32_t i = 0; i < N + 1; ++i)
-        {
+        for (int32_t i = 0; i < N + 1; ++i) {
             writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, policy, IndexWriter::MaxFieldLengthUNLIMITED);
             writer->setMaxBufferedDocs(10);
             writer->setUseCompoundFile(useCompoundFile);
-            for (int32_t j = 0; j < 17; ++j)
+            for (int32_t j = 0; j < 17; ++j) {
                 addDoc(writer);
+            }
             // this is a commit
             writer->close();
             IndexReaderPtr reader = IndexReader::open(dir, policy, false);
@@ -721,33 +675,33 @@ TEST_F(DeletionPolicyTest, testKeepLastNDeletionPolicyWithCreates)
         dir->deleteFile(IndexFileNames::SEGMENTS_GEN());
         int32_t expectedCount = 0;
 
-        for (int32_t i = 0; i < N + 1; ++i)
-        {
-            try
-            {
+        for (int32_t i = 0; i < N + 1; ++i) {
+            try {
                 IndexReaderPtr reader = IndexReader::open(dir, true);
                 // Work backwards in commits on what the expected count should be.
                 searcher = newLucene<IndexSearcher>(reader);
                 hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
                 EXPECT_EQ(expectedCount, hits.size());
                 searcher->close();
-                if (expectedCount == 0)
+                if (expectedCount == 0) {
                     expectedCount = 16;
-                else if (expectedCount == 16)
+                } else if (expectedCount == 16) {
                     expectedCount = 17;
-                else if (expectedCount == 17)
+                } else if (expectedCount == 17) {
                     expectedCount = 0;
+                }
                 reader->close();
-                if (i == N)
+                if (i == N) {
                     FAIL() << "should have failed on commits before last";
-            }
-            catch (IOException& e)
-            {
-                if (i != N)
+                }
+            } catch (IOException& e) {
+                if (i != N) {
                     FAIL() << e.getError();
+                }
             }
-            if (i < N)
+            if (i < N) {
                 dir->deleteFile(IndexFileNames::fileNameFromGeneration(IndexFileNames::SEGMENTS(), L"", gen));
+            }
             --gen;
         }
 

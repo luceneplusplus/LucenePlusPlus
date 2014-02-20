@@ -9,22 +9,22 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class InvertedDocEndConsumer : public LuceneObject
-    {
-    public:
-        virtual ~InvertedDocEndConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(InvertedDocEndConsumer);
+class InvertedDocEndConsumer : public LuceneObject {
+public:
+    virtual ~InvertedDocEndConsumer();
 
-    public:
-        virtual InvertedDocEndConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread) = 0;
-        virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
-        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
-        virtual void abort() = 0;
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos) = 0;
-    };
+    LUCENE_CLASS(InvertedDocEndConsumer);
+
+public:
+    virtual InvertedDocEndConsumerPerThreadPtr addThread(const DocInverterPerThreadPtr& docInverterPerThread) = 0;
+    virtual void flush(MapInvertedDocEndConsumerPerThreadCollectionInvertedDocEndConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state) = 0;
+    virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
+    virtual void abort() = 0;
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos) = 0;
+};
+
 }
 
 #endif

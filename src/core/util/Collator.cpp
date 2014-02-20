@@ -8,18 +8,16 @@
 #include <locale>
 #include "Collator.h"
 
-namespace Lucene
-{
-    Collator::Collator(std::locale locale) : collate(std::use_facet< std::collate<wchar_t> >(locale))
-    {
-    }
+namespace Lucene {
 
-    Collator::~Collator()
-    {
-    }
+Collator::Collator(std::locale locale) : collate(std::use_facet< std::collate<wchar_t> >(locale)) {
+}
 
-    int32_t Collator::compare(const String& first, const String& second)
-    {
-        return collate.compare(first.c_str(), first.c_str() + first.length(), second.c_str(), second.c_str() + second.length());
-    }
+Collator::~Collator() {
+}
+
+int32_t Collator::compare(const String& first, const String& second) {
+    return collate.compare(first.c_str(), first.c_str() + first.length(), second.c_str(), second.c_str() + second.length());
+}
+
 }

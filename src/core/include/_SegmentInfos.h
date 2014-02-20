@@ -9,65 +9,61 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Utility class for executing code that needs to do something with the current segments file.
-    class FindSegmentsFile : public LuceneObject
-    {
-    public:
-        FindSegmentsFile(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
-        virtual ~FindSegmentsFile();
+namespace Lucene {
 
-        LUCENE_CLASS(FindSegmentsFile);
+/// Utility class for executing code that needs to do something with the current segments file.
+class FindSegmentsFile : public LuceneObject {
+public:
+    FindSegmentsFile(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
+    virtual ~FindSegmentsFile();
 
-    protected:
-        SegmentInfosWeakPtr _segmentInfos;
-        DirectoryPtr directory;
+    LUCENE_CLASS(FindSegmentsFile);
 
-    public:
-        void doRun(const IndexCommitPtr& commit = IndexCommitPtr());
-        virtual void runBody(const String& segmentFileName) = 0;
-    };
+protected:
+    SegmentInfosWeakPtr _segmentInfos;
+    DirectoryPtr directory;
 
-    template <class TYPE>
-    class FindSegmentsFileT : public FindSegmentsFile
-    {
-    public:
-        FindSegmentsFileT(const SegmentInfosPtr& infos, const DirectoryPtr& directory) : FindSegmentsFile(infos, directory) {}
-        virtual ~FindSegmentsFileT() {}
+public:
+    void doRun(const IndexCommitPtr& commit = IndexCommitPtr());
+    virtual void runBody(const String& segmentFileName) = 0;
+};
 
-    protected:
-        TYPE result;
+template <class TYPE>
+class FindSegmentsFileT : public FindSegmentsFile {
+public:
+    FindSegmentsFileT(const SegmentInfosPtr& infos, const DirectoryPtr& directory) : FindSegmentsFile(infos, directory) {}
+    virtual ~FindSegmentsFileT() {}
 
-    public:
-        virtual TYPE run(const IndexCommitPtr& commit = IndexCommitPtr())
-        {
-            doRun(commit);
-            return result;
-        }
+protected:
+    TYPE result;
 
-        virtual void runBody(const String& segmentFileName)
-        {
-            result = doBody(segmentFileName);
-        }
+public:
+    virtual TYPE run(const IndexCommitPtr& commit = IndexCommitPtr()) {
+        doRun(commit);
+        return result;
+    }
 
-        virtual TYPE doBody(const String& segmentFileName) = 0;
-    };
+    virtual void runBody(const String& segmentFileName) {
+        result = doBody(segmentFileName);
+    }
 
-    /// Utility class for executing code that needs to do something with the current segments file.  This is necessary with
-    /// lock-less commits because from the time you locate the current segments file name, until you actually open it, read
-    /// its contents, or check modified time, etc., it could have been deleted due to a writer commit finishing.
-    class FindSegmentsRead : public FindSegmentsFileT<int64_t>
-    {
-    public:
-        FindSegmentsRead(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
-        virtual ~FindSegmentsRead();
+    virtual TYPE doBody(const String& segmentFileName) = 0;
+};
 
-        LUCENE_CLASS(FindSegmentsRead);
+/// Utility class for executing code that needs to do something with the current segments file.  This is necessary with
+/// lock-less commits because from the time you locate the current segments file name, until you actually open it, read
+/// its contents, or check modified time, etc., it could have been deleted due to a writer commit finishing.
+class FindSegmentsRead : public FindSegmentsFileT<int64_t> {
+public:
+    FindSegmentsRead(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
+    virtual ~FindSegmentsRead();
 
-    public:
-        virtual int64_t doBody(const String& segmentFileName);
-    };
+    LUCENE_CLASS(FindSegmentsRead);
+
+public:
+    virtual int64_t doBody(const String& segmentFileName);
+};
+
 }
 
 #endif

@@ -7,14 +7,13 @@
 #include "LuceneInc.h"
 #include "Weight.h"
 
-namespace Lucene
-{
-    Weight::~Weight()
-    {
-    }
+namespace Lucene {
 
-    bool Weight::scoresDocsOutOfOrder()
-    {
-        return false;
-    }
+Weight::~Weight() {
+}
+
+bool Weight::scoresDocsOutOfOrder() {
+    return false;
+}
+
 }

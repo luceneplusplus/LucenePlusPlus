@@ -13,26 +13,23 @@
 
 using namespace Lucene;
 
-class ElisionTest : public BaseTokenStreamFixture
-{
+class ElisionTest : public BaseTokenStreamFixture {
 public:
-    virtual ~ElisionTest()
-    {
+    virtual ~ElisionTest() {
     }
 
 public:
-    Collection<String> addTerms(const TokenFilterPtr& filter)
-    {
+    Collection<String> addTerms(const TokenFilterPtr& filter) {
         Collection<String> terms = Collection<String>::newInstance();
         TermAttributePtr termAtt = filter->getAttribute<TermAttribute>();
-        while (filter->incrementToken())
+        while (filter->incrementToken()) {
             terms.add(termAtt->term());
+        }
         return terms;
     }
 };
 
-TEST_F(ElisionTest, testElision)
-{
+TEST_F(ElisionTest, testElision) {
     String test = L"Plop, juste pour voir l'embrouille avec O'brian. M'enfin.";
     TokenizerPtr tokenizer = newLucene<StandardTokenizer>(LuceneVersion::LUCENE_CURRENT, newLucene<StringReader>(test));
     HashSet<String> articles = HashSet<String>::newInstance();

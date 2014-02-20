@@ -9,31 +9,31 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class SegmentWriteState : public LuceneObject
-    {
-    public:
-        SegmentWriteState(const DocumentsWriterPtr& docWriter, const DirectoryPtr& directory, const String& segmentName,
-                          const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore,
-                          int32_t termIndexInterval);
-        virtual ~SegmentWriteState();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentWriteState);
+class SegmentWriteState : public LuceneObject {
+public:
+    SegmentWriteState(const DocumentsWriterPtr& docWriter, const DirectoryPtr& directory, const String& segmentName,
+                      const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore,
+                      int32_t termIndexInterval);
+    virtual ~SegmentWriteState();
 
-    public:
-        DocumentsWriterWeakPtr _docWriter;
-        DirectoryPtr directory;
-        String segmentName;
-        String docStoreSegmentName;
-        int32_t numDocs;
-        int32_t termIndexInterval;
-        int32_t numDocsInStore;
-        HashSet<String> flushedFiles;
+    LUCENE_CLASS(SegmentWriteState);
 
-    public:
-        String segmentFileName(const String& ext);
-    };
+public:
+    DocumentsWriterWeakPtr _docWriter;
+    DirectoryPtr directory;
+    String segmentName;
+    String docStoreSegmentName;
+    int32_t numDocs;
+    int32_t termIndexInterval;
+    int32_t numDocsInStore;
+    HashSet<String> flushedFiles;
+
+public:
+    String segmentFileName(const String& ext);
+};
+
 }
 
 #endif

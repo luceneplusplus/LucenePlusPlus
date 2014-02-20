@@ -22,19 +22,17 @@ using namespace Lucene;
 
 typedef LuceneTestFixture PrefixFilterTest;
 
-TEST_F(PrefixFilterTest, testPrefixFilter)
-{
+TEST_F(PrefixFilterTest, testPrefixFilter) {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
 
     Collection<String> categories = newCollection<String>(
-        L"/Computers/Linux",
-        L"/Computers/Mac/One",
-        L"/Computers/Mac/Two",
-        L"/Computers/Windows"
-    );
+                                        L"/Computers/Linux",
+                                        L"/Computers/Mac/One",
+                                        L"/Computers/Mac/Two",
+                                        L"/Computers/Windows"
+                                    );
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < categories.size(); ++i)
-    {
+    for (int32_t i = 0; i < categories.size(); ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"category", categories[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);

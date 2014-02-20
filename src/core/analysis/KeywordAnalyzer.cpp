@@ -8,27 +8,24 @@
 #include "KeywordAnalyzer.h"
 #include "KeywordTokenizer.h"
 
-namespace Lucene
-{
-    KeywordAnalyzer::~KeywordAnalyzer()
-    {
-    }
+namespace Lucene {
 
-    TokenStreamPtr KeywordAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        return newLucene<KeywordTokenizer>(reader);
-    }
+KeywordAnalyzer::~KeywordAnalyzer() {
+}
 
-    TokenStreamPtr KeywordAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
-        TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
-        if (!tokenizer)
-        {
-            tokenizer = newLucene<KeywordTokenizer>(reader);
-            setPreviousTokenStream(tokenizer);
-        }
-        else
-            tokenizer->reset(reader);
-        return tokenizer;
+TokenStreamPtr KeywordAnalyzer::tokenStream(const String& fieldName, const ReaderPtr& reader) {
+    return newLucene<KeywordTokenizer>(reader);
+}
+
+TokenStreamPtr KeywordAnalyzer::reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
+    TokenizerPtr tokenizer(boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream()));
+    if (!tokenizer) {
+        tokenizer = newLucene<KeywordTokenizer>(reader);
+        setPreviousTokenStream(tokenizer);
+    } else {
+        tokenizer->reset(reader);
     }
+    return tokenizer;
+}
+
 }

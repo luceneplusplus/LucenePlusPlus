@@ -9,24 +9,24 @@
 
 #include "Query.h"
 
-namespace Lucene
-{
-    /// Base class for span-based queries.
-    class LPPAPI SpanQuery : public Query
-    {
-    public:
-        virtual ~SpanQuery();
-        LUCENE_CLASS(SpanQuery);
+namespace Lucene {
 
-    public:
-        /// Returns the matches for this query in an index.  Used internally to search for spans.
-        virtual SpansPtr getSpans(const IndexReaderPtr& reader) = 0;
+/// Base class for span-based queries.
+class LPPAPI SpanQuery : public Query {
+public:
+    virtual ~SpanQuery();
+    LUCENE_CLASS(SpanQuery);
 
-        /// Returns the name of the field matched by this query.
-        virtual String getField() = 0;
+public:
+    /// Returns the matches for this query in an index.  Used internally to search for spans.
+    virtual SpansPtr getSpans(const IndexReaderPtr& reader) = 0;
 
-        virtual WeightPtr createWeight(const SearcherPtr& searcher);
-    };
+    /// Returns the name of the field matched by this query.
+    virtual String getField() = 0;
+
+    virtual WeightPtr createWeight(const SearcherPtr& searcher);
+};
+
 }
 
 #endif

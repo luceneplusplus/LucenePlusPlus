@@ -9,55 +9,55 @@
 
 #include "Query.h"
 
-namespace Lucene
-{
-    /// A query that applies a filter to the results of another query.
-    ///
-    /// Note: the bits are retrieved from the filter each time this query is used in a search - use a
-    /// CachingWrapperFilter to avoid regenerating the bits every time.
-    ///
-    /// @see CachingWrapperFilter
-    class LPPAPI FilteredQuery : public Query
-    {
-    public:
-        /// Constructs a new query which applies a filter to the results of the original query.
-        /// Filter::getDocIdSet() will be called every time this query is used in a search.
-        /// @param query Query to be filtered, cannot be null.
-        /// @param filter Filter to apply to query results, cannot be null.
-        FilteredQuery(const QueryPtr& query, const FilterPtr& filter);
+namespace Lucene {
 
-        virtual ~FilteredQuery();
+/// A query that applies a filter to the results of another query.
+///
+/// Note: the bits are retrieved from the filter each time this query is used in a search - use a
+/// CachingWrapperFilter to avoid regenerating the bits every time.
+///
+/// @see CachingWrapperFilter
+class LPPAPI FilteredQuery : public Query {
+public:
+    /// Constructs a new query which applies a filter to the results of the original query.
+    /// Filter::getDocIdSet() will be called every time this query is used in a search.
+    /// @param query Query to be filtered, cannot be null.
+    /// @param filter Filter to apply to query results, cannot be null.
+    FilteredQuery(const QueryPtr& query, const FilterPtr& filter);
 
-        LUCENE_CLASS(FilteredQuery);
+    virtual ~FilteredQuery();
 
-    private:
-        QueryPtr query;
-        FilterPtr filter;
+    LUCENE_CLASS(FilteredQuery);
 
-    public:
-        using Query::toString;
+private:
+    QueryPtr query;
+    FilterPtr filter;
 
-        /// Returns a Weight that applies the filter to the enclosed query's Weight.
-        /// This is accomplished by overriding the Scorer returned by the Weight.
-        virtual WeightPtr createWeight(const SearcherPtr& searcher);
+public:
+    using Query::toString;
 
-        /// Rewrites the wrapped query.
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    /// Returns a Weight that applies the filter to the enclosed query's Weight.
+    /// This is accomplished by overriding the Scorer returned by the Weight.
+    virtual WeightPtr createWeight(const SearcherPtr& searcher);
 
-        QueryPtr getQuery();
-        FilterPtr getFilter();
+    /// Rewrites the wrapped query.
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
 
-        virtual void extractTerms(SetTerm terms);
+    QueryPtr getQuery();
+    FilterPtr getFilter();
 
-        /// Prints a user-readable version of this query.
-        virtual String toString(const String& field);
+    virtual void extractTerms(SetTerm terms);
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    /// Prints a user-readable version of this query.
+    virtual String toString(const String& field);
 
-        friend class FilteredQueryWeight;
-    };
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+    friend class FilteredQueryWeight;
+};
+
 }
 
 #endif

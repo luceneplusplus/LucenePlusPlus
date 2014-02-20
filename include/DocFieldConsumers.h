@@ -10,64 +10,63 @@
 #include "DocFieldConsumer.h"
 #include "DocumentsWriter.h"
 
-namespace Lucene
-{
-    /// This is just a "splitter" class: it lets you wrap two DocFieldConsumer instances as a single consumer.
-    class DocFieldConsumers : public DocFieldConsumer
-    {
-    public:
-        DocFieldConsumers(const DocFieldConsumerPtr& one, const DocFieldConsumerPtr& two);
-        virtual ~DocFieldConsumers();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldConsumers);
+/// This is just a "splitter" class: it lets you wrap two DocFieldConsumer instances as a single consumer.
+class DocFieldConsumers : public DocFieldConsumer {
+public:
+    DocFieldConsumers(const DocFieldConsumerPtr& one, const DocFieldConsumerPtr& two);
+    virtual ~DocFieldConsumers();
 
-    public:
-        DocFieldConsumerPtr one;
-        DocFieldConsumerPtr two;
+    LUCENE_CLASS(DocFieldConsumers);
 
-        Collection<DocFieldConsumersPerDocPtr> docFreeList;
-        int32_t freeCount;
-        int32_t allocCount;
+public:
+    DocFieldConsumerPtr one;
+    DocFieldConsumerPtr two;
 
-    public:
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
+    Collection<DocFieldConsumersPerDocPtr> docFreeList;
+    int32_t freeCount;
+    int32_t allocCount;
 
-        /// Called when DocumentsWriter decides to create a new segment
-        virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+public:
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
-        /// Called when DocumentsWriter decides to close the doc stores
-        virtual void closeDocStore(const SegmentWriteStatePtr& state);
+    /// Called when DocumentsWriter decides to create a new segment
+    virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
-        /// Called when DocumentsWriter is using too much RAM.
-        virtual bool freeRAM();
+    /// Called when DocumentsWriter decides to close the doc stores
+    virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
-        /// Add a new thread
-        virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread);
+    /// Called when DocumentsWriter is using too much RAM.
+    virtual bool freeRAM();
 
-        DocFieldConsumersPerDocPtr getPerDoc();
-        void freePerDoc(const DocFieldConsumersPerDocPtr& perDoc);
-    };
+    /// Add a new thread
+    virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread);
 
-    class DocFieldConsumersPerDoc : public DocWriter
-    {
-    public:
-        DocFieldConsumersPerDoc(const DocFieldConsumersPtr& fieldConsumers);
-        virtual ~DocFieldConsumersPerDoc();
+    DocFieldConsumersPerDocPtr getPerDoc();
+    void freePerDoc(const DocFieldConsumersPerDocPtr& perDoc);
+};
 
-        LUCENE_CLASS(DocFieldConsumersPerDoc);
+class DocFieldConsumersPerDoc : public DocWriter {
+public:
+    DocFieldConsumersPerDoc(const DocFieldConsumersPtr& fieldConsumers);
+    virtual ~DocFieldConsumersPerDoc();
 
-    protected:
-        DocFieldConsumersWeakPtr _fieldConsumers;
+    LUCENE_CLASS(DocFieldConsumersPerDoc);
 
-    public:
-        DocWriterPtr one;
-        DocWriterPtr two;
+protected:
+    DocFieldConsumersWeakPtr _fieldConsumers;
 
-    public:
-        virtual int64_t sizeInBytes();
-        virtual void finish();
-        virtual void abort();
-    };
+public:
+    DocWriterPtr one;
+    DocWriterPtr two;
+
+public:
+    virtual int64_t sizeInBytes();
+    virtual void finish();
+    virtual void abort();
+};
+
 }
 
 #endif

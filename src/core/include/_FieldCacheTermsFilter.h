@@ -10,45 +10,44 @@
 #include "DocIdSet.h"
 #include "DocIdSetIterator.h"
 
-namespace Lucene
-{
-    class FieldCacheTermsFilterDocIdSet : public DocIdSet
-    {
-    public:
-        FieldCacheTermsFilterDocIdSet(Collection<String> terms, const StringIndexPtr& fcsi);
-        virtual ~FieldCacheTermsFilterDocIdSet();
+namespace Lucene {
 
-        LUCENE_CLASS(FieldCacheTermsFilterDocIdSet);
+class FieldCacheTermsFilterDocIdSet : public DocIdSet {
+public:
+    FieldCacheTermsFilterDocIdSet(Collection<String> terms, const StringIndexPtr& fcsi);
+    virtual ~FieldCacheTermsFilterDocIdSet();
 
-    protected:
-        StringIndexPtr fcsi;
-        OpenBitSetPtr openBitSet;
+    LUCENE_CLASS(FieldCacheTermsFilterDocIdSet);
 
-    public:
-        virtual DocIdSetIteratorPtr iterator();
+protected:
+    StringIndexPtr fcsi;
+    OpenBitSetPtr openBitSet;
 
-        /// This DocIdSet implementation is cacheable.
-        virtual bool isCacheable();
-    };
+public:
+    virtual DocIdSetIteratorPtr iterator();
 
-    class FieldCacheTermsFilterDocIdSetIterator : public DocIdSetIterator
-    {
-    public:
-        FieldCacheTermsFilterDocIdSetIterator(const StringIndexPtr& fcsi, const OpenBitSetPtr& openBitSet);
-        virtual ~FieldCacheTermsFilterDocIdSetIterator();
+    /// This DocIdSet implementation is cacheable.
+    virtual bool isCacheable();
+};
 
-        LUCENE_CLASS(FieldCacheTermsFilterDocIdSetIterator);
+class FieldCacheTermsFilterDocIdSetIterator : public DocIdSetIterator {
+public:
+    FieldCacheTermsFilterDocIdSetIterator(const StringIndexPtr& fcsi, const OpenBitSetPtr& openBitSet);
+    virtual ~FieldCacheTermsFilterDocIdSetIterator();
 
-    protected:
-        StringIndexPtr fcsi;
-        OpenBitSetPtr openBitSet;
-        int32_t doc;
+    LUCENE_CLASS(FieldCacheTermsFilterDocIdSetIterator);
 
-    public:
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual int32_t advance(int32_t target);
-    };
+protected:
+    StringIndexPtr fcsi;
+    OpenBitSetPtr openBitSet;
+    int32_t doc;
+
+public:
+    virtual int32_t docID();
+    virtual int32_t nextDoc();
+    virtual int32_t advance(int32_t target);
+};
+
 }
 
 #endif

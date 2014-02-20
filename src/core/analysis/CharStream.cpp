@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "CharStream.h"
 
-namespace Lucene
-{
-    CharStream::~CharStream()
-    {
-    }
+namespace Lucene {
+
+CharStream::~CharStream() {
+}
+
 }

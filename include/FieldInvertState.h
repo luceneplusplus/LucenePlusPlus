@@ -9,54 +9,54 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// This class tracks the number and position / offset parameters of terms being added to the index.
-    /// The information collected in this class is also used to calculate the normalization factor for a field.
-    class LPPAPI FieldInvertState : public LuceneObject
-    {
-    public:
-        FieldInvertState(int32_t position = 0, int32_t length = 0, int32_t numOverlap = 0, int32_t offset = 0, double boost = 0);
-        virtual ~FieldInvertState();
+namespace Lucene {
 
-        LUCENE_CLASS(FieldInvertState);
+/// This class tracks the number and position / offset parameters of terms being added to the index.
+/// The information collected in this class is also used to calculate the normalization factor for a field.
+class LPPAPI FieldInvertState : public LuceneObject {
+public:
+    FieldInvertState(int32_t position = 0, int32_t length = 0, int32_t numOverlap = 0, int32_t offset = 0, double boost = 0);
+    virtual ~FieldInvertState();
 
-    INTERNAL:
-        int32_t position;
-        int32_t length;
-        int32_t numOverlap;
-        int32_t offset;
-        double boost;
-        AttributeSourcePtr attributeSource;
+    LUCENE_CLASS(FieldInvertState);
 
-    public:
-        /// Re-initialize the state, using this boost value.
-        /// @param docBoost boost value to use.
-        void reset(double docBoost);
+INTERNAL:
+    int32_t position;
+    int32_t length;
+    int32_t numOverlap;
+    int32_t offset;
+    double boost;
+    AttributeSourcePtr attributeSource;
 
-        /// Get the last processed term position.
-        /// @return the position
-        int32_t getPosition();
+public:
+    /// Re-initialize the state, using this boost value.
+    /// @param docBoost boost value to use.
+    void reset(double docBoost);
 
-        /// Get total number of terms in this field.
-        /// @return the length
-        int32_t getLength();
+    /// Get the last processed term position.
+    /// @return the position
+    int32_t getPosition();
 
-        /// Get the number of terms with positionIncrement == 0.
-        /// @return the numOverlap
-        int32_t getNumOverlap();
+    /// Get total number of terms in this field.
+    /// @return the length
+    int32_t getLength();
 
-        /// Get end offset of the last processed term.
-        /// @return the offset
-        int32_t getOffset();
+    /// Get the number of terms with positionIncrement == 0.
+    /// @return the numOverlap
+    int32_t getNumOverlap();
 
-        /// Get boost value. This is the cumulative product of document boost and field boost for all field
-        /// instances sharing the same field name.
-        /// @return the boost
-        double getBoost();
+    /// Get end offset of the last processed term.
+    /// @return the offset
+    int32_t getOffset();
 
-        AttributeSourcePtr getAttributeSource();
-    };
+    /// Get boost value. This is the cumulative product of document boost and field boost for all field
+    /// instances sharing the same field name.
+    /// @return the boost
+    double getBoost();
+
+    AttributeSourcePtr getAttributeSource();
+};
+
 }
 
 #endif

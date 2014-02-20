@@ -8,94 +8,84 @@
 #include "Explanation.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    Explanation::Explanation(double value, const String& description)
-    {
-        this->value = value;
-        this->description = description;
-    }
+namespace Lucene {
 
-    Explanation::~Explanation()
-    {
-    }
+Explanation::Explanation(double value, const String& description) {
+    this->value = value;
+    this->description = description;
+}
 
-    bool Explanation::isMatch()
-    {
-        return (0.0 < getValue());
-    }
+Explanation::~Explanation() {
+}
 
-    double Explanation::getValue()
-    {
-        return value;
-    }
+bool Explanation::isMatch() {
+    return (0.0 < getValue());
+}
 
-    void Explanation::setValue(double value)
-    {
-        this->value = value;
-    }
+double Explanation::getValue() {
+    return value;
+}
 
-    String Explanation::getDescription()
-    {
-        return description;
-    }
+void Explanation::setValue(double value) {
+    this->value = value;
+}
 
-    void Explanation::setDescription(const String& description)
-    {
-        this->description = description;
-    }
+String Explanation::getDescription() {
+    return description;
+}
 
-    String Explanation::getSummary()
-    {
-        return StringUtils::toString(getValue()) + L" = " + getDescription();
-    }
+void Explanation::setDescription(const String& description) {
+    this->description = description;
+}
 
-    Collection<ExplanationPtr> Explanation::getDetails()
-    {
-        if (!details)
-            return Collection<ExplanationPtr>();
-        return Collection<ExplanationPtr>::newInstance(this->details.begin(), this->details.end());
-    }
+String Explanation::getSummary() {
+    return StringUtils::toString(getValue()) + L" = " + getDescription();
+}
 
-    void Explanation::addDetail(const ExplanationPtr& detail)
-    {
-        if (!details)
-            details = Collection<ExplanationPtr>::newInstance();
-        details.add(detail);
+Collection<ExplanationPtr> Explanation::getDetails() {
+    if (!details) {
+        return Collection<ExplanationPtr>();
     }
+    return Collection<ExplanationPtr>::newInstance(this->details.begin(), this->details.end());
+}
 
-    String Explanation::toString()
-    {
-        return toString(0);
+void Explanation::addDetail(const ExplanationPtr& detail) {
+    if (!details) {
+        details = Collection<ExplanationPtr>::newInstance();
     }
+    details.add(detail);
+}
 
-    String Explanation::toString(int32_t depth)
-    {
-        String buffer;
-        for (int32_t i = 0; i < depth; ++i)
-            buffer += L"  ";
-        buffer += getSummary() + L"\n";
-        if (details)
-        {
-            for (int32_t i = 0; i < details.size(); ++i)
-                buffer += details[i]->toString(depth + 1);
+String Explanation::toString() {
+    return toString(0);
+}
+
+String Explanation::toString(int32_t depth) {
+    String buffer;
+    for (int32_t i = 0; i < depth; ++i) {
+        buffer += L"  ";
+    }
+    buffer += getSummary() + L"\n";
+    if (details) {
+        for (int32_t i = 0; i < details.size(); ++i) {
+            buffer += details[i]->toString(depth + 1);
         }
-        return buffer;
     }
+    return buffer;
+}
 
-    String Explanation::toHtml()
-    {
-        String buffer(L"<ul>\n<li>" + getSummary() + L"<br />\n");
-        if (details)
-        {
-            for (int32_t i = 0; i < details.size(); ++i)
-                buffer += details[i]->toHtml();
+String Explanation::toHtml() {
+    String buffer(L"<ul>\n<li>" + getSummary() + L"<br />\n");
+    if (details) {
+        for (int32_t i = 0; i < details.size(); ++i) {
+            buffer += details[i]->toHtml();
         }
-        buffer += L"</li>\n</ul>\n";
-        return buffer;
     }
+    buffer += L"</li>\n</ul>\n";
+    return buffer;
+}
 
-    IDFExplanation::~IDFExplanation()
-    {
-    }
+IDFExplanation::~IDFExplanation() {
+}
+
 }

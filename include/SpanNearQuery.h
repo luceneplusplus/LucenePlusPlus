@@ -9,50 +9,50 @@
 
 #include "SpanQuery.h"
 
-namespace Lucene
-{
-    /// Matches spans which are near one another.  One can specify slop, the maximum number of intervening
-    /// unmatched positions, as well as whether matches are required to be in-order.
-    class LPPAPI SpanNearQuery : public SpanQuery
-    {
-    public:
-        /// Construct a SpanNearQuery.  Matches spans matching a span from each clause, with up to slop total
-        /// unmatched positions between them.  * When inOrder is true, the spans from each clause must be
-        /// ordered as in clauses.
-        SpanNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, bool collectPayloads = true);
-        virtual ~SpanNearQuery();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanNearQuery);
+/// Matches spans which are near one another.  One can specify slop, the maximum number of intervening
+/// unmatched positions, as well as whether matches are required to be in-order.
+class LPPAPI SpanNearQuery : public SpanQuery {
+public:
+    /// Construct a SpanNearQuery.  Matches spans matching a span from each clause, with up to slop total
+    /// unmatched positions between them.  * When inOrder is true, the spans from each clause must be
+    /// ordered as in clauses.
+    SpanNearQuery(Collection<SpanQueryPtr> clauses, int32_t slop, bool inOrder, bool collectPayloads = true);
+    virtual ~SpanNearQuery();
 
-    protected:
-        Collection<SpanQueryPtr> clauses;
-        int32_t slop;
-        bool inOrder;
+    LUCENE_CLASS(SpanNearQuery);
 
-        String field;
-        bool collectPayloads;
+protected:
+    Collection<SpanQueryPtr> clauses;
+    int32_t slop;
+    bool inOrder;
 
-    public:
-        using SpanQuery::toString;
+    String field;
+    bool collectPayloads;
 
-        /// Return the clauses whose spans are matched.
-        Collection<SpanQueryPtr> getClauses();
+public:
+    using SpanQuery::toString;
 
-        /// Return the maximum number of intervening unmatched positions permitted.
-        int32_t getSlop();
+    /// Return the clauses whose spans are matched.
+    Collection<SpanQueryPtr> getClauses();
 
-        /// Return true if matches are required to be in-order.
-        bool isInOrder();
+    /// Return the maximum number of intervening unmatched positions permitted.
+    int32_t getSlop();
 
-        virtual String getField();
-        virtual void extractTerms(SetTerm terms);
-        virtual String toString(const String& field);
-        virtual SpansPtr getSpans(const IndexReaderPtr& reader);
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-    };
+    /// Return true if matches are required to be in-order.
+    bool isInOrder();
+
+    virtual String getField();
+    virtual void extractTerms(SetTerm terms);
+    virtual String toString(const String& field);
+    virtual SpansPtr getSpans(const IndexReaderPtr& reader);
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+};
+
 }
 
 #endif

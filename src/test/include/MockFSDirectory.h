@@ -10,38 +10,38 @@
 #include "test_lucene.h"
 #include "Directory.h"
 
-namespace Lucene
-{
-    class MockFSDirectory : public Directory
-    {
-    public:
-        MockFSDirectory(const String& path);
-        virtual ~MockFSDirectory();
+namespace Lucene {
 
-        LUCENE_CLASS(MockFSDirectory);
+class MockFSDirectory : public Directory {
+public:
+    MockFSDirectory(const String& path);
+    virtual ~MockFSDirectory();
 
-    public:
-        Collection<IndexInputPtr> allIndexInputs;
+    LUCENE_CLASS(MockFSDirectory);
 
-    protected:
-        DirectoryPtr dir;
-        RandomPtr rand;
+public:
+    Collection<IndexInputPtr> allIndexInputs;
 
-    public:
-        virtual IndexInputPtr openInput(const String& name);
-        virtual IndexInputPtr openInput(const String& name, int32_t bufferSize);
+protected:
+    DirectoryPtr dir;
+    RandomPtr rand;
 
-        void tweakBufferSizes();
+public:
+    virtual IndexInputPtr openInput(const String& name);
+    virtual IndexInputPtr openInput(const String& name, int32_t bufferSize);
 
-        virtual IndexOutputPtr createOutput(const String& name);
-        virtual void close();
-        virtual void deleteFile(const String& name);
-        virtual void touchFile(const String& name);
-        virtual uint64_t fileModified(const String& name);
-        virtual bool fileExists(const String& name);
-        virtual HashSet<String> listAll();
-        virtual int64_t fileLength(const String& name);
-    };
+    void tweakBufferSizes();
+
+    virtual IndexOutputPtr createOutput(const String& name);
+    virtual void close();
+    virtual void deleteFile(const String& name);
+    virtual void touchFile(const String& name);
+    virtual uint64_t fileModified(const String& name);
+    virtual bool fileExists(const String& name);
+    virtual HashSet<String> listAll();
+    virtual int64_t fileLength(const String& name);
+};
+
 }
 
 #endif

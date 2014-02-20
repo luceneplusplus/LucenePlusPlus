@@ -13,8 +13,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture TokenTest;
 
-static AttributePtr checkCloneIsEqual(const AttributePtr& att)
-{
+static AttributePtr checkCloneIsEqual(const AttributePtr& att) {
     AttributePtr clone = boost::dynamic_pointer_cast<Attribute>(att->clone());
     EXPECT_TRUE(att->equals(clone));
     EXPECT_EQ(att->hashCode(), clone->hashCode());
@@ -22,8 +21,7 @@ static AttributePtr checkCloneIsEqual(const AttributePtr& att)
 }
 
 template <class ATTR>
-static AttributePtr checkCopyIsEqual(const AttributePtr& att)
-{
+static AttributePtr checkCopyIsEqual(const AttributePtr& att) {
     AttributePtr copy = newLucene<ATTR>();
     att->copyTo(copy);
     EXPECT_TRUE(att->equals(copy));
@@ -31,8 +29,7 @@ static AttributePtr checkCopyIsEqual(const AttributePtr& att)
     return copy;
 }
 
-TEST_F(TokenTest, testCtor)
-{
+TEST_F(TokenTest, testCtor) {
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     EXPECT_EQ(L"hello", t->term());
@@ -59,25 +56,21 @@ TEST_F(TokenTest, testCtor)
     EXPECT_EQ(0, t->getFlags());
 }
 
-TEST_F(TokenTest, testResize)
-{
+TEST_F(TokenTest, testResize) {
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
-    for (int32_t i = 0; i < 2000; ++i)
-    {
+    for (int32_t i = 0; i < 2000; ++i) {
         t->resizeTermBuffer(i);
         EXPECT_TRUE(i <= t->termBuffer().size());
         EXPECT_EQ(L"hello", t->term());
     }
 }
 
-TEST_F(TokenTest, testGrow)
-{
+TEST_F(TokenTest, testGrow) {
     TokenPtr t = newLucene<Token>();
     StringStream buf;
     buf << L"ab";
-    for (int32_t i = 0; i < 20; ++i)
-    {
+    for (int32_t i = 0; i < 20; ++i) {
         String content = buf.str();
         t->setTermBuffer(content);
         EXPECT_EQ(content.length(), t->termLength());
@@ -91,8 +84,7 @@ TEST_F(TokenTest, testGrow)
     t = newLucene<Token>();
     buf.str(L"");
     buf << L"a";
-    for (int32_t i = 0; i < 20000; ++i)
-    {
+    for (int32_t i = 0; i < 20000; ++i) {
         String content = buf.str();
         t->setTermBuffer(content);
         EXPECT_EQ(content.length(), t->termLength());
@@ -103,8 +95,7 @@ TEST_F(TokenTest, testGrow)
     EXPECT_EQ(20167, t->termBuffer().size());
 }
 
-TEST_F(TokenTest, testToString)
-{
+TEST_F(TokenTest, testToString) {
     TokenPtr t = newLucene<Token>(L"", 0, 5);
     t->setTermBuffer(L"aloha");
     EXPECT_EQ(L"(aloha,0,5)", t->toString());
@@ -113,8 +104,7 @@ TEST_F(TokenTest, testToString)
     EXPECT_EQ(L"(hi there,0,5)", t->toString());
 }
 
-TEST_F(TokenTest, testTermBufferEquals)
-{
+TEST_F(TokenTest, testTermBufferEquals) {
     TokenPtr t1a = newLucene<Token>();
     t1a->setTermBuffer(L"hello");
     TokenPtr t1b = newLucene<Token>();
@@ -126,8 +116,7 @@ TEST_F(TokenTest, testTermBufferEquals)
     EXPECT_TRUE(!t2->equals(t1b));
 }
 
-TEST_F(TokenTest, testMixedStringArray)
-{
+TEST_F(TokenTest, testMixedStringArray) {
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     EXPECT_EQ(t->termLength(), 5);
@@ -152,8 +141,7 @@ TEST_F(TokenTest, testMixedStringArray)
     EXPECT_EQ(t->term(), L"hollo3");
 }
 
-TEST_F(TokenTest, testClone)
-{
+TEST_F(TokenTest, testClone) {
     TokenPtr t = newLucene<Token>();
     t->setTermBuffer(L"hello");
     CharArray buf = t->termBuffer();
@@ -174,8 +162,7 @@ TEST_F(TokenTest, testClone)
     EXPECT_NE(pl, clone->getPayload());
 }
 
-TEST_F(TokenTest, testCopyTo)
-{
+TEST_F(TokenTest, testCopyTo) {
     TokenPtr t = newLucene<Token>();
     TokenPtr copy = boost::dynamic_pointer_cast<Token>(checkCopyIsEqual<Token>(t));
     EXPECT_EQ(L"", t->term());

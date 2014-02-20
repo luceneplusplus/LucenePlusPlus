@@ -24,16 +24,14 @@ using namespace Lucene;
 
 typedef LuceneTestFixture BooleanScorerTest;
 
-TEST_F(BooleanScorerTest, testMethod)
-{
+TEST_F(BooleanScorerTest, testMethod) {
     static const String FIELD = L"category";
 
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     Collection<String> values = newCollection<String>(L"1", L"2", L"3", L"4");
 
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < values.size(); ++i)
-    {
+    for (int32_t i = 0; i < values.size(); ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(FIELD, values[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);
@@ -53,50 +51,43 @@ TEST_F(BooleanScorerTest, testMethod)
     EXPECT_EQ(2, hits.size());
 }
 
-namespace TestEmptyBucketWithMoreDocs
-{
-    class EmptyScorer : public Scorer
-    {
-    public:
-        EmptyScorer(const SimilarityPtr& similarity) : Scorer(similarity)
-        {
-            doc = -1;
-        }
+namespace TestEmptyBucketWithMoreDocs {
 
-        virtual ~EmptyScorer()
-        {
-        }
+class EmptyScorer : public Scorer {
+public:
+    EmptyScorer(const SimilarityPtr& similarity) : Scorer(similarity) {
+        doc = -1;
+    }
 
-    protected:
-        int32_t doc;
+    virtual ~EmptyScorer() {
+    }
 
-    public:
-        virtual double score()
-        {
-            return 0.0;
-        }
+protected:
+    int32_t doc;
 
-        virtual int32_t docID()
-        {
-            return doc;
-        }
+public:
+    virtual double score() {
+        return 0.0;
+    }
 
-        virtual int32_t nextDoc()
-        {
-            doc = doc == -1 ? 3000 : NO_MORE_DOCS;
-            return doc;
-        }
+    virtual int32_t docID() {
+        return doc;
+    }
 
-        virtual int32_t advance(int32_t target)
-        {
-            doc = target <= 3000 ? 3000 : NO_MORE_DOCS;
-            return doc;
-        }
-    };
+    virtual int32_t nextDoc() {
+        doc = doc == -1 ? 3000 : NO_MORE_DOCS;
+        return doc;
+    }
+
+    virtual int32_t advance(int32_t target) {
+        doc = target <= 3000 ? 3000 : NO_MORE_DOCS;
+        return doc;
+    }
+};
+
 }
 
-TEST_F(BooleanScorerTest, testEmptyBucketWithMoreDocs)
-{
+TEST_F(BooleanScorerTest, testEmptyBucketWithMoreDocs) {
     // This test checks the logic of nextDoc() when all sub scorers have docs beyond the first bucket
     // (for example). Currently, the code relies on the 'more' variable to work properly, and this
     // test ensures that if the logic changes, we have a test to back it up.

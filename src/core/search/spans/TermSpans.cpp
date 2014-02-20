@@ -9,100 +9,88 @@
 #include "TermPositions.h"
 #include "Term.h"
 
-namespace Lucene
-{
-    TermSpans::TermSpans(const TermPositionsPtr& positions, const TermPtr& term)
-    {
-        this->positions = positions;
-        this->term = term;
-        this->_doc = -1;
-        this->freq = 0;
-        this->count = 0;
-        this->position = 0;
-    }
+namespace Lucene {
 
-    TermSpans::~TermSpans()
-    {
-    }
+TermSpans::TermSpans(const TermPositionsPtr& positions, const TermPtr& term) {
+    this->positions = positions;
+    this->term = term;
+    this->_doc = -1;
+    this->freq = 0;
+    this->count = 0;
+    this->position = 0;
+}
 
-    bool TermSpans::next()
-    {
-        if (count == freq)
-        {
-            if (!positions->next())
-            {
-                _doc = INT_MAX;
-                return false;
-            }
-            _doc = positions->doc();
-            freq = positions->freq();
-            count = 0;
-        }
-        position = positions->nextPosition();
-        ++count;
-        return true;
-    }
+TermSpans::~TermSpans() {
+}
 
-    bool TermSpans::skipTo(int32_t target)
-    {
-        if (!positions->skipTo(target))
-        {
+bool TermSpans::next() {
+    if (count == freq) {
+        if (!positions->next()) {
             _doc = INT_MAX;
             return false;
         }
-
         _doc = positions->doc();
         freq = positions->freq();
         count = 0;
+    }
+    position = positions->nextPosition();
+    ++count;
+    return true;
+}
 
-        position = positions->nextPosition();
-        ++count;
-
-        return true;
+bool TermSpans::skipTo(int32_t target) {
+    if (!positions->skipTo(target)) {
+        _doc = INT_MAX;
+        return false;
     }
 
-    int32_t TermSpans::doc()
-    {
-        return _doc;
-    }
+    _doc = positions->doc();
+    freq = positions->freq();
+    count = 0;
 
-    int32_t TermSpans::start()
-    {
-        return position;
-    }
+    position = positions->nextPosition();
+    ++count;
 
-    int32_t TermSpans::end()
-    {
-        return position + 1;
-    }
+    return true;
+}
 
-    Collection<ByteArray> TermSpans::getPayload()
-    {
-        Collection<ByteArray> payload(newCollection<ByteArray>(ByteArray::newInstance(positions->getPayloadLength())));
-        payload[0] = positions->getPayload(payload[0], 0);
-        return payload;
-    }
+int32_t TermSpans::doc() {
+    return _doc;
+}
 
-    bool TermSpans::isPayloadAvailable()
-    {
-        return positions->isPayloadAvailable();
-    }
+int32_t TermSpans::start() {
+    return position;
+}
 
-    String TermSpans::toString()
-    {
-        StringStream buffer;
-        buffer << L"spans(" << term->toString() << L")@";
-        if (_doc == -1)
-            buffer << L"START";
-        else if (_doc == INT_MAX)
-            buffer << L"END";
-        else
-            buffer << _doc << L"-" << position;
-        return buffer.str();
-    }
+int32_t TermSpans::end() {
+    return position + 1;
+}
 
-    TermPositionsPtr TermSpans::getPositions()
-    {
-        return positions;
+Collection<ByteArray> TermSpans::getPayload() {
+    Collection<ByteArray> payload(newCollection<ByteArray>(ByteArray::newInstance(positions->getPayloadLength())));
+    payload[0] = positions->getPayload(payload[0], 0);
+    return payload;
+}
+
+bool TermSpans::isPayloadAvailable() {
+    return positions->isPayloadAvailable();
+}
+
+String TermSpans::toString() {
+    StringStream buffer;
+    buffer << L"spans(" << term->toString() << L")@";
+    if (_doc == -1) {
+        buffer << L"START";
+    } else if (_doc == INT_MAX) {
+        buffer << L"END";
+    } else {
+        buffer << _doc << L"-" << position;
     }
+    return buffer.str();
+}
+
+TermPositionsPtr TermSpans::getPositions() {
+    return positions;
+}
+
 }

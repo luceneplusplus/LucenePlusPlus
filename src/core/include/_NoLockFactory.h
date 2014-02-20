@@ -9,21 +9,21 @@
 
 #include "Lock.h"
 
-namespace Lucene
-{
-    class NoLock : public Lock
-    {
-    public:
-        virtual ~NoLock();
+namespace Lucene {
 
-        LUCENE_CLASS(NoLock);
+class NoLock : public Lock {
+public:
+    virtual ~NoLock();
 
-    public:
-        virtual bool obtain();
-        virtual void release();
-        virtual bool isLocked();
-        virtual String toString();
-    };
+    LUCENE_CLASS(NoLock);
+
+public:
+    virtual bool obtain();
+    virtual void release();
+    virtual bool isLocked();
+    virtual String toString();
+};
+
 }
 
 #endif

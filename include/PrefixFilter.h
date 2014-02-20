@@ -9,22 +9,22 @@
 
 #include "MultiTermQueryWrapperFilter.h"
 
-namespace Lucene
-{
-    /// A Filter that restricts search results to values that have a matching prefix in a given field.
-    class LPPAPI PrefixFilter : public MultiTermQueryWrapperFilter
-    {
-    public:
-        PrefixFilter(const TermPtr& prefix);
-        virtual ~PrefixFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(PrefixFilter);
+/// A Filter that restricts search results to values that have a matching prefix in a given field.
+class LPPAPI PrefixFilter : public MultiTermQueryWrapperFilter {
+public:
+    PrefixFilter(const TermPtr& prefix);
+    virtual ~PrefixFilter();
 
-    public:
-        TermPtr getPrefix();
+    LUCENE_CLASS(PrefixFilter);
 
-        virtual String toString();
-    };
+public:
+    TermPtr getPrefix();
+
+    virtual String toString();
+};
+
 }
 
 #endif

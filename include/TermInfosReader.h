@@ -10,81 +10,80 @@
 #include "CloseableThreadLocal.h"
 #include "SimpleLRUCache.h"
 
-namespace Lucene
-{
-    /// This stores a monotonically increasing set of <Term, TermInfo> pairs in a  Directory.  Pairs are
-    /// accessed either by Term or by ordinal position the set.
-    class TermInfosReader : public LuceneObject
-    {
-    public:
-        TermInfosReader(const DirectoryPtr& dir, const String& seg, const FieldInfosPtr& fis, int32_t readBufferSize, int32_t indexDivisor);
-        virtual ~TermInfosReader();
+namespace Lucene {
 
-        LUCENE_CLASS(TermInfosReader);
+/// This stores a monotonically increasing set of <Term, TermInfo> pairs in a  Directory.  Pairs are
+/// accessed either by Term or by ordinal position the set.
+class TermInfosReader : public LuceneObject {
+public:
+    TermInfosReader(const DirectoryPtr& dir, const String& seg, const FieldInfosPtr& fis, int32_t readBufferSize, int32_t indexDivisor);
+    virtual ~TermInfosReader();
 
-    protected:
-        DirectoryPtr directory;
-        String segment;
-        FieldInfosPtr fieldInfos;
-        CloseableThreadLocal<TermInfosReaderThreadResources> threadResources;
-        SegmentTermEnumPtr origEnum;
-        int64_t _size;
+    LUCENE_CLASS(TermInfosReader);
 
-        Collection<TermPtr> indexTerms;
-        Collection<TermInfoPtr> indexInfos;
-        Collection<int64_t> indexPointers;
+protected:
+    DirectoryPtr directory;
+    String segment;
+    FieldInfosPtr fieldInfos;
+    CloseableThreadLocal<TermInfosReaderThreadResources> threadResources;
+    SegmentTermEnumPtr origEnum;
+    int64_t _size;
 
-        int32_t totalIndexInterval;
+    Collection<TermPtr> indexTerms;
+    Collection<TermInfoPtr> indexInfos;
+    Collection<int64_t> indexPointers;
 
-        static const int32_t DEFAULT_CACHE_SIZE;
+    int32_t totalIndexInterval;
 
-    public:
-        int32_t getSkipInterval();
-        int32_t getMaxSkipLevels();
-        void close();
+    static const int32_t DEFAULT_CACHE_SIZE;
 
-        /// Returns the number of term/value pairs in the set.
-        int64_t size();
+public:
+    int32_t getSkipInterval();
+    int32_t getMaxSkipLevels();
+    void close();
 
-        /// Returns the TermInfo for a Term in the set, or null.
-        TermInfoPtr get(const TermPtr& term);
+    /// Returns the number of term/value pairs in the set.
+    int64_t size();
 
-        /// Returns the position of a Term in the set or -1.
-        int64_t getPosition(const TermPtr& term);
+    /// Returns the TermInfo for a Term in the set, or null.
+    TermInfoPtr get(const TermPtr& term);
 
-        /// Returns an enumeration of all the Terms and TermInfos in the set.
-        SegmentTermEnumPtr terms();
+    /// Returns the position of a Term in the set or -1.
+    int64_t getPosition(const TermPtr& term);
 
-        /// Returns an enumeration of terms starting at or after the named term.
-        SegmentTermEnumPtr terms(const TermPtr& term);
+    /// Returns an enumeration of all the Terms and TermInfos in the set.
+    SegmentTermEnumPtr terms();
 
-    protected:
-        TermInfosReaderThreadResourcesPtr getThreadResources();
+    /// Returns an enumeration of terms starting at or after the named term.
+    SegmentTermEnumPtr terms(const TermPtr& term);
 
-        /// Returns the offset of the greatest index entry which is less than or equal to term.
-        int32_t getIndexOffset(const TermPtr& term);
+protected:
+    TermInfosReaderThreadResourcesPtr getThreadResources();
 
-        void seekEnum(const SegmentTermEnumPtr& enumerator, int32_t indexOffset);
+    /// Returns the offset of the greatest index entry which is less than or equal to term.
+    int32_t getIndexOffset(const TermPtr& term);
 
-        /// Returns the TermInfo for a Term in the set, or null.
-        TermInfoPtr get(const TermPtr& term, bool useCache);
+    void seekEnum(const SegmentTermEnumPtr& enumerator, int32_t indexOffset);
 
-        void ensureIndexIsRead();
-    };
+    /// Returns the TermInfo for a Term in the set, or null.
+    TermInfoPtr get(const TermPtr& term, bool useCache);
 
-    class TermInfosReaderThreadResources : public LuceneObject
-    {
-    public:
-        virtual ~TermInfosReaderThreadResources();
+    void ensureIndexIsRead();
+};
 
-        LUCENE_CLASS(TermInfosReaderThreadResources);
+class TermInfosReaderThreadResources : public LuceneObject {
+public:
+    virtual ~TermInfosReaderThreadResources();
 
-    public:
-        SegmentTermEnumPtr termEnum;
+    LUCENE_CLASS(TermInfosReaderThreadResources);
 
-        // Used for caching the least recently looked-up Terms
-        TermInfoCachePtr termInfoCache;
-    };
+public:
+    SegmentTermEnumPtr termEnum;
+
+    // Used for caching the least recently looked-up Terms
+    TermInfoCachePtr termInfoCache;
+};
+
 }
 
 #endif

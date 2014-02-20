@@ -9,20 +9,20 @@
 
 #include "FieldSelector.h"
 
-namespace Lucene
-{
-    /// Load the First field and break.
-    /// See {@link FieldSelectorResult#LOAD_AND_BREAK}
-    class LPPAPI LoadFirstFieldSelector : public FieldSelector
-    {
-    public:
-        virtual ~LoadFirstFieldSelector();
+namespace Lucene {
 
-        LUCENE_CLASS(LoadFirstFieldSelector);
+/// Load the First field and break.
+/// See {@link FieldSelectorResult#LOAD_AND_BREAK}
+class LPPAPI LoadFirstFieldSelector : public FieldSelector {
+public:
+    virtual ~LoadFirstFieldSelector();
 
-    public:
-        virtual FieldSelectorResult accept(const String& fieldName);
-    };
+    LUCENE_CLASS(LoadFirstFieldSelector);
+
+public:
+    virtual FieldSelectorResult accept(const String& fieldName);
+};
+
 }
 
 #endif

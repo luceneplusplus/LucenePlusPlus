@@ -9,36 +9,36 @@
 
 #include "DocFieldConsumerPerField.h"
 
-namespace Lucene
-{
-    /// Holds state for inverting all occurrences of a single field in the document.  This class doesn't do
-    /// anything itself; instead, it forwards the tokens produced by analysis to its own consumer
-    /// (InvertedDocConsumerPerField).  It also interacts with an endConsumer (InvertedDocEndConsumerPerField).
-    class DocInverterPerField : public DocFieldConsumerPerField
-    {
-    public:
-        DocInverterPerField(const DocInverterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
-        virtual ~DocInverterPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(DocInverterPerField);
+/// Holds state for inverting all occurrences of a single field in the document.  This class doesn't do
+/// anything itself; instead, it forwards the tokens produced by analysis to its own consumer
+/// (InvertedDocConsumerPerField).  It also interacts with an endConsumer (InvertedDocEndConsumerPerField).
+class DocInverterPerField : public DocFieldConsumerPerField {
+public:
+    DocInverterPerField(const DocInverterPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
+    virtual ~DocInverterPerField();
 
-    protected:
-        DocInverterPerThreadWeakPtr _perThread;
-        FieldInfoPtr fieldInfo;
+    LUCENE_CLASS(DocInverterPerField);
 
-    public:
-        InvertedDocConsumerPerFieldPtr consumer;
-        InvertedDocEndConsumerPerFieldPtr endConsumer;
-        DocStatePtr docState;
-        FieldInvertStatePtr fieldState;
+protected:
+    DocInverterPerThreadWeakPtr _perThread;
+    FieldInfoPtr fieldInfo;
 
-    public:
-        virtual void initialize();
-        virtual void abort();
+public:
+    InvertedDocConsumerPerFieldPtr consumer;
+    InvertedDocEndConsumerPerFieldPtr endConsumer;
+    DocStatePtr docState;
+    FieldInvertStatePtr fieldState;
 
-        /// Processes all occurrences of a single field
-        virtual void processFields(Collection<FieldablePtr> fields, int32_t count);
-    };
+public:
+    virtual void initialize();
+    virtual void abort();
+
+    /// Processes all occurrences of a single field
+    virtual void processFields(Collection<FieldablePtr> fields, int32_t count);
+};
+
 }
 
 #endif

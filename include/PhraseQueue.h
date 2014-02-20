@@ -9,19 +9,19 @@
 
 #include "PriorityQueue.h"
 
-namespace Lucene
-{
-    class PhraseQueue : public PriorityQueue<PhrasePositionsPtr>
-    {
-    public:
-        PhraseQueue(int32_t size);
-        virtual ~PhraseQueue();
+namespace Lucene {
 
-        LUCENE_CLASS(PhraseQueue);
+class PhraseQueue : public PriorityQueue<PhrasePositionsPtr> {
+public:
+    PhraseQueue(int32_t size);
+    virtual ~PhraseQueue();
 
-    protected:
-        virtual bool lessThan(const PhrasePositionsPtr& first, const PhrasePositionsPtr& second);
-    };
+    LUCENE_CLASS(PhraseQueue);
+
+protected:
+    virtual bool lessThan(const PhrasePositionsPtr& first, const PhrasePositionsPtr& second);
+};
+
 }
 
 #endif

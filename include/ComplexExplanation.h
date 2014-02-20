@@ -9,39 +9,39 @@
 
 #include "Explanation.h"
 
-namespace Lucene
-{
-    /// Describes the score computation for document and query, and can distinguish a match independent
-    /// of a positive value.
-    class LPPAPI ComplexExplanation : public Explanation
-    {
-    public:
-        ComplexExplanation(bool match = false, double value = 0, const String& description = EmptyString);
-        virtual ~ComplexExplanation();
+namespace Lucene {
 
-        LUCENE_CLASS(ComplexExplanation);
+/// Describes the score computation for document and query, and can distinguish a match independent
+/// of a positive value.
+class LPPAPI ComplexExplanation : public Explanation {
+public:
+    ComplexExplanation(bool match = false, double value = 0, const String& description = EmptyString);
+    virtual ~ComplexExplanation();
 
-    protected:
-        bool match;
+    LUCENE_CLASS(ComplexExplanation);
 
-    public:
-        /// The match status of this explanation node.
-        bool getMatch();
+protected:
+    bool match;
 
-        /// Sets the match status assigned to this explanation node.
-        void setMatch(bool match);
+public:
+    /// The match status of this explanation node.
+    bool getMatch();
 
-        /// Indicates whether or not this Explanation models a good match.
-        ///
-        /// If the match status is explicitly set this method uses it; otherwise it defers to the
-        /// superclass.
-        ///
-        /// @see #getMatch
-        virtual bool isMatch();
+    /// Sets the match status assigned to this explanation node.
+    void setMatch(bool match);
 
-    protected:
-        virtual String getSummary();
-    };
+    /// Indicates whether or not this Explanation models a good match.
+    ///
+    /// If the match status is explicitly set this method uses it; otherwise it defers to the
+    /// superclass.
+    ///
+    /// @see #getMatch
+    virtual bool isMatch();
+
+protected:
+    virtual String getSummary();
+};
+
 }
 
 #endif

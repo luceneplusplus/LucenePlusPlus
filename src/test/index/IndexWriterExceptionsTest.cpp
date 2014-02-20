@@ -22,20 +22,17 @@
 
 using namespace Lucene;
 
-class IndexWriterExceptionsTest : public LuceneTestFixture
-{
+class IndexWriterExceptionsTest : public LuceneTestFixture {
 public:
-    IndexWriterExceptionsTest()
-    {
+    IndexWriterExceptionsTest() {
         random = newLucene<Random>();
         tvSettings = newCollection<Field::TermVector>(
-            Field::TERM_VECTOR_NO, Field::TERM_VECTOR_YES, Field::TERM_VECTOR_WITH_OFFSETS,
-            Field::TERM_VECTOR_WITH_POSITIONS, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS
-        );
+                         Field::TERM_VECTOR_NO, Field::TERM_VECTOR_YES, Field::TERM_VECTOR_WITH_OFFSETS,
+                         Field::TERM_VECTOR_WITH_POSITIONS, Field::TERM_VECTOR_WITH_POSITIONS_OFFSETS
+                     );
     }
 
-    virtual ~IndexWriterExceptionsTest()
-    {
+    virtual ~IndexWriterExceptionsTest() {
     }
 
 protected:
@@ -43,8 +40,7 @@ protected:
     Collection<Field::TermVector> tvSettings;
 
 public:
-    Field::TermVector randomTVSetting()
-    {
+    Field::TermVector randomTVSetting() {
         return tvSettings[random->nextInt(tvSettings.size())];
     }
 };
@@ -53,18 +49,15 @@ static CloseableThreadLocal<LuceneThread> doFail;
 
 DECLARE_SHARED_PTR(ExceptionsIndexerThread)
 
-class ExceptionsIndexerThread : public LuceneThread
-{
+class ExceptionsIndexerThread : public LuceneThread {
 public:
-    ExceptionsIndexerThread(const IndexWriterPtr& writer, IndexWriterExceptionsTest* fixture)
-    {
+    ExceptionsIndexerThread(const IndexWriterPtr& writer, IndexWriterExceptionsTest* fixture) {
         this->writer = writer;
         this->fixture = fixture;
         this->r = newLucene<Random>(47);
     }
 
-    virtual ~ExceptionsIndexerThread()
-    {
+    virtual ~ExceptionsIndexerThread() {
     }
 
     LUCENE_CLASS(ExceptionsIndexerThread);
@@ -76,8 +69,7 @@ public:
     RandomPtr r;
 
 public:
-    virtual void run()
-    {
+    virtual void run() {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"content1", L"aaa bbb ccc ddd", Field::STORE_YES, Field::INDEX_ANALYZED, fixture->randomTVSetting()));
         doc->add(newLucene<Field>(L"content6", L"aaa bbb ccc ddd", Field::STORE_NO, Field::INDEX_ANALYZED, fixture->randomTVSetting()));
@@ -94,30 +86,21 @@ public:
 
         int64_t stopTime = MiscUtils::currentTimeMillis() + 3000;
 
-        while ((int64_t)MiscUtils::currentTimeMillis() < stopTime)
-        {
+        while ((int64_t)MiscUtils::currentTimeMillis() < stopTime) {
             doFail.set(shared_from_this());
             String id = StringUtils::toString(r->nextInt(50));
             idField->setValue(id);
             TermPtr idTerm = newLucene<Term>(L"id", id);
-            try
-            {
+            try {
                 writer->updateDocument(idTerm, doc);
-            }
-            catch (RuntimeException&)
-            {
-                try
-                {
+            } catch (RuntimeException&) {
+                try {
                     checkIndex(writer->getDirectory());
-                }
-                catch (IOException& ioe)
-                {
+                } catch (IOException& ioe) {
                     failure = ioe;
                     break;
                 }
-            }
-            catch (LuceneException& e)
-            {
+            } catch (LuceneException& e) {
                 failure = e;
                 break;
             }
@@ -126,12 +109,9 @@ public:
 
             // After a possible exception (above) I should be able to add a new document
             // without hitting an exception
-            try
-            {
+            try {
                 writer->updateDocument(idTerm, doc);
-            }
-            catch (LuceneException& e)
-            {
+            } catch (LuceneException& e) {
                 failure = e;
                 break;
             }
@@ -139,32 +119,28 @@ public:
     }
 };
 
-class MockIndexWriter : public IndexWriter
-{
+class MockIndexWriter : public IndexWriter {
 public:
-    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
-    {
+    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl) {
         this->r = newLucene<Random>(17);
     }
 
-    virtual ~MockIndexWriter()
-    {
+    virtual ~MockIndexWriter() {
     }
 
 protected:
     RandomPtr r;
 
 public:
-    virtual bool testPoint(const String& name)
-    {
-        if (doFail.get() && name != L"startDoFlush" && r->nextInt(20) == 17)
+    virtual bool testPoint(const String& name) {
+        if (doFail.get() && name != L"startDoFlush" && r->nextInt(20) == 17) {
             boost::throw_exception(RuntimeException(L"intentionally failing at " + name));
+        }
         return true;
     }
 };
 
-TEST_F(IndexWriterExceptionsTest, testRandomExceptions)
-{
+TEST_F(IndexWriterExceptionsTest, testRandomExceptions) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
@@ -174,17 +150,15 @@ TEST_F(IndexWriterExceptionsTest, testRandomExceptions)
     ExceptionsIndexerThreadPtr thread = newLucene<ExceptionsIndexerThread>(writer, this);
     thread->run();
 
-    if (!thread->failure.isNull())
+    if (!thread->failure.isNull()) {
         FAIL() << "thread hit unexpected failure";
+    }
 
     writer->commit();
 
-    try
-    {
+    try {
         writer->close();
-    }
-    catch (LuceneException&)
-    {
+    } catch (LuceneException&) {
         writer->rollback();
     }
 
@@ -198,8 +172,7 @@ TEST_F(IndexWriterExceptionsTest, testRandomExceptions)
     checkIndex(dir);
 }
 
-TEST_F(IndexWriterExceptionsTest, testRandomExceptionsThreads)
-{
+TEST_F(IndexWriterExceptionsTest, testRandomExceptionsThreads) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
@@ -209,29 +182,26 @@ TEST_F(IndexWriterExceptionsTest, testRandomExceptionsThreads)
     int32_t NUM_THREADS = 4;
 
     Collection<ExceptionsIndexerThreadPtr> threads = Collection<ExceptionsIndexerThreadPtr>::newInstance(NUM_THREADS);
-    for (int32_t i = 0; i < NUM_THREADS; ++i)
-    {
+    for (int32_t i = 0; i < NUM_THREADS; ++i) {
         threads[i] = newLucene<ExceptionsIndexerThread>(writer, this);
         threads[i]->start();
     }
 
-    for (int32_t i = 0; i < NUM_THREADS; ++i)
+    for (int32_t i = 0; i < NUM_THREADS; ++i) {
         threads[i]->join();
+    }
 
-    for (int32_t i = 0; i < NUM_THREADS; ++i)
-    {
-        if (!threads[i]->failure.isNull())
+    for (int32_t i = 0; i < NUM_THREADS; ++i) {
+        if (!threads[i]->failure.isNull()) {
             FAIL() << "thread hit unexpected failure: " << threads[i]->failure.getError();
+        }
     }
 
     writer->commit();
 
-    try
-    {
+    try {
         writer->close();
-    }
-    catch (LuceneException&)
-    {
+    } catch (LuceneException&) {
         writer->rollback();
     }
 

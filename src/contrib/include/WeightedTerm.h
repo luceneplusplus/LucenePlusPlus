@@ -10,34 +10,34 @@
 #include "LuceneContrib.h"
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Lightweight class to hold term and a weight value used for scoring this term
-    class LPPCONTRIBAPI WeightedTerm : public LuceneObject
-    {
-    public:
-        WeightedTerm(double weight, const String& term);
-        virtual ~WeightedTerm();
+namespace Lucene {
 
-        LUCENE_CLASS(WeightedTerm);
+/// Lightweight class to hold term and a weight value used for scoring this term
+class LPPCONTRIBAPI WeightedTerm : public LuceneObject {
+public:
+    WeightedTerm(double weight, const String& term);
+    virtual ~WeightedTerm();
 
-    public:
-        double weight; // multiplier
-        String term; // stemmed form
+    LUCENE_CLASS(WeightedTerm);
 
-    public:
-        /// @return the term value (stemmed)
-        String getTerm();
+public:
+    double weight; // multiplier
+    String term; // stemmed form
 
-        /// @return the weight associated with this term
-        double getWeight();
+public:
+    /// @return the term value (stemmed)
+    String getTerm();
 
-        /// @param term the term value (stemmed)
-        void setTerm(const String& term);
+    /// @return the weight associated with this term
+    double getWeight();
 
-        /// @param weight the weight associated with this term
-        void setWeight(double weight);
-    };
+    /// @param term the term value (stemmed)
+    void setTerm(const String& term);
+
+    /// @param weight the weight associated with this term
+    void setWeight(double weight);
+};
+
 }
 
 #endif

@@ -13,110 +13,90 @@
 #include "FileUtils.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    MMapDirectory::MMapDirectory(const String& path, const LockFactoryPtr& lockFactory) : FSDirectory(path, lockFactory)
-    {
-    }
+namespace Lucene {
 
-    MMapDirectory::~MMapDirectory()
-    {
-    }
+MMapDirectory::MMapDirectory(const String& path, const LockFactoryPtr& lockFactory) : FSDirectory(path, lockFactory) {
+}
 
-    IndexInputPtr MMapDirectory::openInput(const String& name, int32_t bufferSize)
-    {
-        ensureOpen();
-        return newLucene<MMapIndexInput>(FileUtils::joinPath(directory, name));
-    }
+MMapDirectory::~MMapDirectory() {
+}
 
-    IndexOutputPtr MMapDirectory::createOutput(const String& name)
-    {
-        initOutput(name);
-        return newLucene<SimpleFSIndexOutput>(FileUtils::joinPath(directory, name));
-    }
+IndexInputPtr MMapDirectory::openInput(const String& name, int32_t bufferSize) {
+    ensureOpen();
+    return newLucene<MMapIndexInput>(FileUtils::joinPath(directory, name));
+}
 
-    MMapIndexInput::MMapIndexInput(const String& path)
-    {
-        _length = path.empty() ? 0 : (int32_t)FileUtils::fileLength(path);
-        bufferPosition = 0;
-        if (!path.empty())
-        {
-            try
-            {
-                file.open(boost::filesystem::wpath(path), _length);
-            }
-            catch (...)
-            {
-                boost::throw_exception(FileNotFoundException(path));
-            }
-        }
-        isClone = false;
-    }
+IndexOutputPtr MMapDirectory::createOutput(const String& name) {
+    initOutput(name);
+    return newLucene<SimpleFSIndexOutput>(FileUtils::joinPath(directory, name));
+}
 
-    MMapIndexInput::~MMapIndexInput()
-    {
-    }
-
-    uint8_t MMapIndexInput::readByte()
-    {
-        try
-        {
-            return file.data()[bufferPosition++];
-        }
-        catch (...)
-        {
-            boost::throw_exception(IOException(L"Read past EOF"));
-            return 0;
+MMapIndexInput::MMapIndexInput(const String& path) {
+    _length = path.empty() ? 0 : (int32_t)FileUtils::fileLength(path);
+    bufferPosition = 0;
+    if (!path.empty()) {
+        try {
+            file.open(boost::filesystem::wpath(path), _length);
+        } catch (...) {
+            boost::throw_exception(FileNotFoundException(path));
         }
     }
+    isClone = false;
+}
 
-    void MMapIndexInput::readBytes(uint8_t* b, int32_t offset, int32_t length)
-    {
-        try
-        {
-            MiscUtils::arrayCopy(file.data(), bufferPosition, b, offset, length);
-            bufferPosition += length;
-        }
-        catch (...)
-        {
-            boost::throw_exception(IOException(L"Read past EOF"));
-        }
-    }
+MMapIndexInput::~MMapIndexInput() {
+}
 
-    int64_t MMapIndexInput::getFilePointer()
-    {
-        return bufferPosition;
+uint8_t MMapIndexInput::readByte() {
+    try {
+        return file.data()[bufferPosition++];
+    } catch (...) {
+        boost::throw_exception(IOException(L"Read past EOF"));
+        return 0;
     }
+}
 
-    void MMapIndexInput::seek(int64_t pos)
-    {
-        bufferPosition = (int32_t)pos;
+void MMapIndexInput::readBytes(uint8_t* b, int32_t offset, int32_t length) {
+    try {
+        MiscUtils::arrayCopy(file.data(), bufferPosition, b, offset, length);
+        bufferPosition += length;
+    } catch (...) {
+        boost::throw_exception(IOException(L"Read past EOF"));
     }
+}
 
-    int64_t MMapIndexInput::length()
-    {
-        return (int64_t)_length;
-    }
+int64_t MMapIndexInput::getFilePointer() {
+    return bufferPosition;
+}
 
-    void MMapIndexInput::close()
-    {
-        if (isClone || !file.is_open())
-            return;
-        _length = 0;
-        bufferPosition = 0;
-        file.close();
-    }
+void MMapIndexInput::seek(int64_t pos) {
+    bufferPosition = (int32_t)pos;
+}
 
-    LuceneObjectPtr MMapIndexInput::clone(const LuceneObjectPtr& other)
-    {
-        if (!file.is_open())
-            boost::throw_exception(AlreadyClosedException(L"MMapIndexInput already closed"));
-        LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<MMapIndexInput>());
-        MMapIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<MMapIndexInput>(clone));
-        cloneIndexInput->_length = _length;
-        cloneIndexInput->file = file;
-        cloneIndexInput->bufferPosition = bufferPosition;
-        cloneIndexInput->isClone = true;
-        return cloneIndexInput;
+int64_t MMapIndexInput::length() {
+    return (int64_t)_length;
+}
+
+void MMapIndexInput::close() {
+    if (isClone || !file.is_open()) {
+        return;
     }
+    _length = 0;
+    bufferPosition = 0;
+    file.close();
+}
+
+LuceneObjectPtr MMapIndexInput::clone(const LuceneObjectPtr& other) {
+    if (!file.is_open()) {
+        boost::throw_exception(AlreadyClosedException(L"MMapIndexInput already closed"));
+    }
+    LuceneObjectPtr clone = IndexInput::clone(other ? other : newLucene<MMapIndexInput>());
+    MMapIndexInputPtr cloneIndexInput(boost::dynamic_pointer_cast<MMapIndexInput>(clone));
+    cloneIndexInput->_length = _length;
+    cloneIndexInput->file = file;
+    cloneIndexInput->bufferPosition = bufferPosition;
+    cloneIndexInput->isClone = true;
+    return cloneIndexInput;
+}
+
 }

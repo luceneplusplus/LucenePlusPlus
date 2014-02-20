@@ -9,26 +9,26 @@
 
 #include "DocValues.h"
 
-namespace Lucene
-{
-    class LPPAPI OrdDocValues : public DocValues
-    {
-    public:
-        OrdDocValues(const OrdFieldSourcePtr& source, Collection<int32_t> arr);
-        virtual ~OrdDocValues();
+namespace Lucene {
 
-        LUCENE_CLASS(OrdDocValues);
+class LPPAPI OrdDocValues : public DocValues {
+public:
+    OrdDocValues(const OrdFieldSourcePtr& source, Collection<int32_t> arr);
+    virtual ~OrdDocValues();
 
-    protected:
-        OrdFieldSourceWeakPtr _source;
-        Collection<int32_t> arr;
+    LUCENE_CLASS(OrdDocValues);
 
-    public:
-        virtual double doubleVal(int32_t doc);
-        virtual String strVal(int32_t doc);
-        virtual String toString(int32_t doc);
-        virtual CollectionValue getInnerArray();
-    };
+protected:
+    OrdFieldSourceWeakPtr _source;
+    Collection<int32_t> arr;
+
+public:
+    virtual double doubleVal(int32_t doc);
+    virtual String strVal(int32_t doc);
+    virtual String toString(int32_t doc);
+    virtual CollectionValue getInnerArray();
+};
+
 }
 
 #endif

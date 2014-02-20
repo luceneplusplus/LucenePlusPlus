@@ -9,36 +9,36 @@
 
 #include "LockFactory.h"
 
-namespace Lucene
-{
-    /// Implements {@link LockFactory} for a single in-process instance, meaning all
-    /// locking will take place through this one instance.  Only use this {@link LockFactory}
-    /// when you are certain all IndexReaders and IndexWriters for a given index are running
-    /// against a single shared in-process Directory instance.  This is currently the
-    /// default locking for RAMDirectory.
-    /// @see LockFactory
-    class LPPAPI SingleInstanceLockFactory : public LockFactory
-    {
-    public:
-        SingleInstanceLockFactory();
-        virtual ~SingleInstanceLockFactory();
+namespace Lucene {
 
-        LUCENE_CLASS(SingleInstanceLockFactory);
+/// Implements {@link LockFactory} for a single in-process instance, meaning all
+/// locking will take place through this one instance.  Only use this {@link LockFactory}
+/// when you are certain all IndexReaders and IndexWriters for a given index are running
+/// against a single shared in-process Directory instance.  This is currently the
+/// default locking for RAMDirectory.
+/// @see LockFactory
+class LPPAPI SingleInstanceLockFactory : public LockFactory {
+public:
+    SingleInstanceLockFactory();
+    virtual ~SingleInstanceLockFactory();
 
-    protected:
-        HashSet<String> locks;
+    LUCENE_CLASS(SingleInstanceLockFactory);
 
-    public:
-        /// Return a new Lock instance identified by lockName.
-        /// @param lockName name of the lock to be created.
-        virtual LockPtr makeLock(const String& lockName);
+protected:
+    HashSet<String> locks;
 
-        /// Attempt to clear (forcefully unlock and remove) the
-        /// specified lock.  Only call this at a time when you are
-        /// certain this lock is no longer in use.
-        /// @param lockName name of the lock to be cleared.
-        virtual void clearLock(const String& lockName);
-    };
+public:
+    /// Return a new Lock instance identified by lockName.
+    /// @param lockName name of the lock to be created.
+    virtual LockPtr makeLock(const String& lockName);
+
+    /// Attempt to clear (forcefully unlock and remove) the
+    /// specified lock.  Only call this at a time when you are
+    /// certain this lock is no longer in use.
+    /// @param lockName name of the lock to be cleared.
+    virtual void clearLock(const String& lockName);
+};
+
 }
 
 #endif

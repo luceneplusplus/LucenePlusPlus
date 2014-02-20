@@ -22,15 +22,13 @@ using namespace Lucene;
 
 typedef LuceneTestFixture SegmentTermEnumTest;
 
-static void addDoc(const IndexWriterPtr& writer, const String& value)
-{
+static void addDoc(const IndexWriterPtr& writer, const String& value) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", value, Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void verifyDocFreq(const DirectoryPtr& dir)
-{
+static void verifyDocFreq(const DirectoryPtr& dir) {
     IndexReaderPtr reader = IndexReader::open(dir, true);
 
     // create enumeration of all terms
@@ -62,16 +60,14 @@ static void verifyDocFreq(const DirectoryPtr& dir)
     termEnum->close();
 }
 
-TEST_F(SegmentTermEnumTest, testTermEnum)
-{
+TEST_F(SegmentTermEnumTest, testTermEnum) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
     // ADD 100 documents with term : aaa
     // add 100 documents with terms: aaa bbb
     // Therefore, term 'aaa' has document frequency of 200 and term 'bbb' 100
-    for (int32_t i = 0; i < 100; ++i)
-    {
+    for (int32_t i = 0; i < 100; ++i) {
         addDoc(writer, L"aaa");
         addDoc(writer, L"aaa bbb");
     }
@@ -90,8 +86,7 @@ TEST_F(SegmentTermEnumTest, testTermEnum)
     verifyDocFreq(dir);
 }
 
-TEST_F(SegmentTermEnumTest, testPrevTermAtEnd)
-{
+TEST_F(SegmentTermEnumTest, testPrevTermAtEnd) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer  = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(writer, L"aaa bbb");

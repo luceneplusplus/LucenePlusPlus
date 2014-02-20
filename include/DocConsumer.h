@@ -9,22 +9,22 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class DocConsumer : public LuceneObject
-    {
-    public:
-        virtual ~DocConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(DocConsumer);
+class DocConsumer : public LuceneObject {
+public:
+    virtual ~DocConsumer();
 
-    public:
-        virtual DocConsumerPerThreadPtr addThread(const DocumentsWriterThreadStatePtr& perThread) = 0;
-        virtual void flush(Collection<DocConsumerPerThreadPtr> threads, const SegmentWriteStatePtr& state) = 0;
-        virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
-        virtual void abort() = 0;
-        virtual bool freeRAM() = 0;
-    };
+    LUCENE_CLASS(DocConsumer);
+
+public:
+    virtual DocConsumerPerThreadPtr addThread(const DocumentsWriterThreadStatePtr& perThread) = 0;
+    virtual void flush(Collection<DocConsumerPerThreadPtr> threads, const SegmentWriteStatePtr& state) = 0;
+    virtual void closeDocStore(const SegmentWriteStatePtr& state) = 0;
+    virtual void abort() = 0;
+    virtual bool freeRAM() = 0;
+};
+
 }
 
 #endif

@@ -23,18 +23,15 @@
 
 using namespace Lucene;
 
-class SingleCharTokenizer : public Tokenizer
-{
+class SingleCharTokenizer : public Tokenizer {
 public:
-    SingleCharTokenizer(const ReaderPtr& r) : Tokenizer(r)
-    {
+    SingleCharTokenizer(const ReaderPtr& r) : Tokenizer(r) {
         termAtt = addAttribute<TermAttribute>();
         buffer = CharArray::newInstance(1);
         done = false;
     }
 
-    virtual ~SingleCharTokenizer()
-    {
+    virtual ~SingleCharTokenizer() {
     }
 
 public:
@@ -43,71 +40,59 @@ public:
     TermAttributePtr termAtt;
 
 public:
-    virtual bool incrementToken()
-    {
+    virtual bool incrementToken() {
         int32_t count = input->read(buffer.get(), 0, 1);
-        if (done)
+        if (done) {
             return false;
-        else
-        {
+        } else {
             clearAttributes();
             done = true;
-            if (count == 1)
-            {
+            if (count == 1) {
                 termAtt->termBuffer()[0] = buffer[0];
                 termAtt->setTermLength(1);
-            }
-            else
+            } else {
                 termAtt->setTermLength(0);
+            }
             return true;
         }
     }
 
-    virtual void reset(const ReaderPtr& input)
-    {
+    virtual void reset(const ReaderPtr& input) {
         Tokenizer::reset(input);
         done = false;
     }
 };
 
-class SingleCharAnalyzer : public Analyzer
-{
+class SingleCharAnalyzer : public Analyzer {
 public:
-    virtual ~SingleCharAnalyzer()
-    {
+    virtual ~SingleCharAnalyzer() {
     }
 
 public:
-    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader) {
         TokenizerPtr tokenizer = boost::dynamic_pointer_cast<Tokenizer>(getPreviousTokenStream());
-        if (!tokenizer)
-        {
+        if (!tokenizer) {
             tokenizer = newLucene<SingleCharTokenizer>(reader);
             setPreviousTokenStream(tokenizer);
-        }
-        else
+        } else {
             tokenizer->reset(reader);
+        }
         return tokenizer;
     }
 
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         return newLucene<SingleCharTokenizer>(reader);
     }
 };
 
-class TermRangeQueryTest : public LuceneTestFixture
-{
+class TermRangeQueryTest : public LuceneTestFixture {
 public:
-    TermRangeQueryTest()
-    {
+    TermRangeQueryTest() {
         docCount = 0;
         dir = newLucene<RAMDirectory>();
     }
 
-    virtual ~TermRangeQueryTest()
-    {
+    virtual ~TermRangeQueryTest() {
     }
 
 protected:
@@ -115,28 +100,25 @@ protected:
     RAMDirectoryPtr dir;
 
 public:
-    void initializeIndex(Collection<String> values)
-    {
+    void initializeIndex(Collection<String> values) {
         initializeIndex(values, newLucene<WhitespaceAnalyzer>());
     }
 
-    void initializeIndex(Collection<String> values, const AnalyzerPtr& analyzer)
-    {
+    void initializeIndex(Collection<String> values, const AnalyzerPtr& analyzer) {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
-        for (int32_t i = 0; i < values.size(); ++i)
+        for (int32_t i = 0; i < values.size(); ++i) {
             insertDoc(writer, values[i]);
+        }
         writer->close();
     }
 
-    void addDoc(const String& content)
-    {
+    void addDoc(const String& content) {
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
         insertDoc(writer, content);
         writer->close();
     }
 
-    void insertDoc(const IndexWriterPtr& writer, const String& content)
-    {
+    void insertDoc(const IndexWriterPtr& writer, const String& content) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", L"id" + StringUtils::toString(docCount), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         doc->add(newLucene<Field>(L"content", content, Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -145,8 +127,7 @@ public:
     }
 };
 
-TEST_F(TermRangeQueryTest, testExclusive)
-{
+TEST_F(TermRangeQueryTest, testExclusive) {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", false, false);
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
@@ -167,8 +148,7 @@ TEST_F(TermRangeQueryTest, testExclusive)
     searcher->close();
 }
 
-TEST_F(TermRangeQueryTest, testInclusive)
-{
+TEST_F(TermRangeQueryTest, testInclusive) {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true);
 
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
@@ -190,8 +170,7 @@ TEST_F(TermRangeQueryTest, testInclusive)
     searcher->close();
 }
 
-TEST_F(TermRangeQueryTest, testEqualsHashcode)
-{
+TEST_F(TermRangeQueryTest, testEqualsHashcode) {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true);
 
     query->setBoost(1.0);
@@ -237,8 +216,7 @@ TEST_F(TermRangeQueryTest, testEqualsHashcode)
     EXPECT_TRUE(!query->equals(other));
 }
 
-TEST_F(TermRangeQueryTest, testExclusiveCollating)
-{
+TEST_F(TermRangeQueryTest, testExclusiveCollating) {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", false, false, newLucene<Collator>(std::locale()));
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
@@ -259,8 +237,7 @@ TEST_F(TermRangeQueryTest, testExclusiveCollating)
     searcher->close();
 }
 
-TEST_F(TermRangeQueryTest, testInclusiveCollating)
-{
+TEST_F(TermRangeQueryTest, testInclusiveCollating) {
     QueryPtr query = newLucene<TermRangeQuery>(L"content", L"A", L"C", true, true, newLucene<Collator>(std::locale()));
     initializeIndex(newCollection<String>(L"A", L"B", L"C", L"D"));
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
@@ -281,8 +258,7 @@ TEST_F(TermRangeQueryTest, testInclusiveCollating)
     searcher->close();
 }
 
-TEST_F(TermRangeQueryTest, testExclusiveLowerNull)
-{
+TEST_F(TermRangeQueryTest, testExclusiveLowerNull) {
     AnalyzerPtr analyzer = newLucene<SingleCharAnalyzer>();
     QueryPtr query = newLucene<TermRangeQuery>(L"content", VariantUtils::null(), L"C", false, false);
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"C", L"D"), analyzer);
@@ -304,8 +280,7 @@ TEST_F(TermRangeQueryTest, testExclusiveLowerNull)
     searcher->close();
 }
 
-TEST_F(TermRangeQueryTest, testInclusiveLowerNull)
-{
+TEST_F(TermRangeQueryTest, testInclusiveLowerNull) {
     AnalyzerPtr analyzer = newLucene<SingleCharAnalyzer>();
     QueryPtr query = newLucene<TermRangeQuery>(L"content", VariantUtils::null(), L"C", true, true);
     initializeIndex(newCollection<String>(L"A", L"B", L"", L"C", L"D"), analyzer);

@@ -9,50 +9,49 @@
 
 #include "PriorityQueue.h"
 
-namespace Lucene
-{
-    class TermPositionsQueue : public PriorityQueue<TermPositionsPtr>
-    {
-    public:
-        TermPositionsQueue(Collection<TermPositionsPtr> termPositions);
-        virtual ~TermPositionsQueue();
+namespace Lucene {
 
-        LUCENE_CLASS(TermPositionsQueue);
+class TermPositionsQueue : public PriorityQueue<TermPositionsPtr> {
+public:
+    TermPositionsQueue(Collection<TermPositionsPtr> termPositions);
+    virtual ~TermPositionsQueue();
 
-    protected:
-        Collection<TermPositionsPtr> termPositions;
+    LUCENE_CLASS(TermPositionsQueue);
 
-    public:
-        virtual void initialize();
+protected:
+    Collection<TermPositionsPtr> termPositions;
 
-    protected:
-        virtual bool lessThan(const TermPositionsPtr& first, const TermPositionsPtr& second);
-    };
+public:
+    virtual void initialize();
 
-    class IntQueue : public LuceneObject
-    {
-    public:
-        IntQueue();
-        virtual ~IntQueue();
+protected:
+    virtual bool lessThan(const TermPositionsPtr& first, const TermPositionsPtr& second);
+};
 
-        LUCENE_CLASS(IntQueue);
+class IntQueue : public LuceneObject {
+public:
+    IntQueue();
+    virtual ~IntQueue();
 
-    protected:
-        int32_t arraySize;
-        int32_t index;
-        int32_t lastIndex;
-        Collection<int32_t> array;
+    LUCENE_CLASS(IntQueue);
 
-    public:
-        void add(int32_t i);
-        int32_t next();
-        void sort();
-        void clear();
-        int32_t size();
+protected:
+    int32_t arraySize;
+    int32_t index;
+    int32_t lastIndex;
+    Collection<int32_t> array;
 
-    protected:
-        void growArray();
-    };
+public:
+    void add(int32_t i);
+    int32_t next();
+    void sort();
+    void clear();
+    int32_t size();
+
+protected:
+    void growArray();
+};
+
 }
 
 #endif

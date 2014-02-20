@@ -28,19 +28,16 @@
 
 using namespace Lucene;
 
-class ElevationFieldComparator : public FieldComparator
-{
+class ElevationFieldComparator : public FieldComparator {
 public:
-    ElevationFieldComparator(MapStringInt priority, const String& fieldname, int32_t numHits)
-    {
+    ElevationFieldComparator(MapStringInt priority, const String& fieldname, int32_t numHits) {
         this->priority = priority;
         this->fieldname = fieldname;
         this->values = Collection<int32_t>::newInstance(numHits);
         this->bottomVal = 0;
     }
 
-    virtual ~ElevationFieldComparator()
-    {
+    virtual ~ElevationFieldComparator() {
     }
 
 public:
@@ -51,92 +48,77 @@ public:
     int32_t bottomVal;
 
 public:
-    virtual int32_t compare(int32_t slot1, int32_t slot2)
-    {
+    virtual int32_t compare(int32_t slot1, int32_t slot2) {
         return values[slot2] - values[slot1]; // values will be small enough that there is no overflow concern
     }
 
-    virtual void setBottom(int32_t slot)
-    {
+    virtual void setBottom(int32_t slot) {
         bottomVal = values[slot];
     }
 
-    virtual int32_t compareBottom(int32_t doc)
-    {
+    virtual int32_t compareBottom(int32_t doc) {
         return docVal(doc) - bottomVal;
     }
 
-    virtual void copy(int32_t slot, int32_t doc)
-    {
+    virtual void copy(int32_t slot, int32_t doc) {
         values[slot] = docVal(doc);
     }
 
-    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-    {
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
         idIndex = FieldCache::DEFAULT()->getStringIndex(reader, fieldname);
     }
 
-    virtual ComparableValue value(int32_t slot)
-    {
+    virtual ComparableValue value(int32_t slot) {
         return values[slot];
     }
 
 protected:
-    int32_t docVal(int32_t doc)
-    {
+    int32_t docVal(int32_t doc) {
         String id = idIndex->lookup[idIndex->order[doc]];
         return priority.contains(id) ? priority.get(id) : 0;
     }
 };
 
-class ElevationComparatorSource : public FieldComparatorSource
-{
+class ElevationComparatorSource : public FieldComparatorSource {
 public:
-    ElevationComparatorSource(MapStringInt priority)
-    {
+    ElevationComparatorSource(MapStringInt priority) {
         this->priority = priority;
     }
 
-    virtual ~ElevationComparatorSource()
-    {
+    virtual ~ElevationComparatorSource() {
     }
 
 protected:
     MapStringInt priority;
 
 public:
-    virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed)
-    {
+    virtual FieldComparatorPtr newComparator(const String& fieldname, int32_t numHits, int32_t sortPos, bool reversed) {
         return newLucene<ElevationFieldComparator>(priority, fieldname, numHits);
     }
 };
 
-class ElevationComparatorTest : public LuceneTestFixture
-{
+class ElevationComparatorTest : public LuceneTestFixture {
 public:
-    ElevationComparatorTest()
-    {
+    ElevationComparatorTest() {
         priority = MapStringInt::newInstance();
     }
 
-    virtual ~ElevationComparatorTest()
-    {
+    virtual ~ElevationComparatorTest() {
     }
 
 public:
     MapStringInt priority;
 
 public:
-    DocumentPtr adoc(Collection<String> vals)
-    {
+    DocumentPtr adoc(Collection<String> vals) {
         DocumentPtr doc = newLucene<Document>();
-        for (int32_t i = 0; i < vals.size() - 2; i += 2)
+        for (int32_t i = 0; i < vals.size() - 2; i += 2) {
             doc->add(newLucene<Field>(vals[i], vals[i + 1], Field::STORE_YES, Field::INDEX_ANALYZED));
+        }
         return doc;
     }
 
-    void runTest(const IndexSearcherPtr& searcher, bool reversed)
-    {
+    void runTest(const IndexSearcherPtr& searcher, bool reversed) {
         BooleanQueryPtr newq = newLucene<BooleanQuery>(false);
         TermQueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"title", L"ipod"));
 
@@ -144,9 +126,9 @@ public:
         newq->add(getElevatedQuery(newCollection<String>(L"id", L"a", L"id", L"x")), BooleanClause::SHOULD);
 
         SortPtr sort = newLucene<Sort>(newCollection<SortFieldPtr>(
-            newLucene<SortField>(L"id", newLucene<ElevationComparatorSource>(priority), false),
-            newLucene<SortField>(L"", SortField::SCORE, reversed)
-        ));
+                                           newLucene<SortField>(L"id", newLucene<ElevationComparatorSource>(priority), false),
+                                           newLucene<SortField>(L"", SortField::SCORE, reversed)
+                                       ));
 
         TopDocsCollectorPtr topCollector = TopFieldCollector::create(sort, 50, false, true, true, true);
         searcher->search(newq, FilterPtr(), topCollector);
@@ -160,25 +142,20 @@ public:
         EXPECT_EQ(0, topDocs->scoreDocs[0]->doc);
         EXPECT_EQ(3, topDocs->scoreDocs[1]->doc);
 
-        if (reversed)
-        {
+        if (reversed) {
             EXPECT_EQ(2, topDocs->scoreDocs[2]->doc);
             EXPECT_EQ(1, topDocs->scoreDocs[3]->doc);
-        }
-        else
-        {
+        } else {
             EXPECT_EQ(1, topDocs->scoreDocs[2]->doc);
             EXPECT_EQ(2, topDocs->scoreDocs[3]->doc);
         }
     }
 
-    QueryPtr getElevatedQuery(Collection<String> vals)
-    {
+    QueryPtr getElevatedQuery(Collection<String> vals) {
         BooleanQueryPtr q = newLucene<BooleanQuery>(false);
         q->setBoost(0);
         int32_t max = (vals.size() / 2) + 5;
-        for (int32_t i = 0; i < vals.size() - 1; i += 2)
-        {
+        for (int32_t i = 0; i < vals.size() - 1; i += 2) {
             q->add(newLucene<TermQuery>(newLucene<Term>(vals[i], vals[i + 1])), BooleanClause::SHOULD);
             priority.put(vals[i + 1], max--);
         }
@@ -186,8 +163,7 @@ public:
     }
 };
 
-TEST_F(ElevationComparatorTest, testSorting)
-{
+TEST_F(ElevationComparatorTest, testSorting) {
     DirectoryPtr directory = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);

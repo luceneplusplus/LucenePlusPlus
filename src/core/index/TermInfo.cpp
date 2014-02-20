@@ -7,38 +7,34 @@
 #include "LuceneInc.h"
 #include "TermInfo.h"
 
-namespace Lucene
-{
-    TermInfo::TermInfo(const TermInfoPtr& ti)
-    {
-        set(ti);
-    }
+namespace Lucene {
 
-    TermInfo::TermInfo(int32_t df, int64_t fp, int64_t pp)
-    {
-        docFreq = df;
-        freqPointer = fp;
-        proxPointer = pp;
-        skipOffset = 0;
-    }
+TermInfo::TermInfo(const TermInfoPtr& ti) {
+    set(ti);
+}
 
-    TermInfo::~TermInfo()
-    {
-    }
+TermInfo::TermInfo(int32_t df, int64_t fp, int64_t pp) {
+    docFreq = df;
+    freqPointer = fp;
+    proxPointer = pp;
+    skipOffset = 0;
+}
 
-    void TermInfo::set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset)
-    {
-        this->docFreq = docFreq;
-        this->freqPointer = freqPointer;
-        this->proxPointer = proxPointer;
-        this->skipOffset = skipOffset;
-    }
+TermInfo::~TermInfo() {
+}
 
-    void TermInfo::set(const TermInfoPtr& ti)
-    {
-        docFreq = ti->docFreq;
-        freqPointer = ti->freqPointer;
-        proxPointer = ti->proxPointer;
-        skipOffset = ti->skipOffset;
-    }
+void TermInfo::set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset) {
+    this->docFreq = docFreq;
+    this->freqPointer = freqPointer;
+    this->proxPointer = proxPointer;
+    this->skipOffset = skipOffset;
+}
+
+void TermInfo::set(const TermInfoPtr& ti) {
+    docFreq = ti->docFreq;
+    freqPointer = ti->freqPointer;
+    proxPointer = ti->proxPointer;
+    skipOffset = ti->skipOffset;
+}
+
 }

@@ -9,37 +9,33 @@
 #include "FieldCache.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    FieldCacheSource::FieldCacheSource(const String& field)
-    {
-        this->field = field;
-    }
+namespace Lucene {
 
-    FieldCacheSource::~FieldCacheSource()
-    {
-    }
+FieldCacheSource::FieldCacheSource(const String& field) {
+    this->field = field;
+}
 
-    DocValuesPtr FieldCacheSource::getValues(const IndexReaderPtr& reader)
-    {
-        return getCachedFieldValues(FieldCache::DEFAULT(), field, reader);
-    }
+FieldCacheSource::~FieldCacheSource() {
+}
 
-    String FieldCacheSource::description()
-    {
-        return field;
-    }
+DocValuesPtr FieldCacheSource::getValues(const IndexReaderPtr& reader) {
+    return getCachedFieldValues(FieldCache::DEFAULT(), field, reader);
+}
 
-    bool FieldCacheSource::equals(const LuceneObjectPtr& other)
-    {
-        FieldCacheSourcePtr otherSource(boost::dynamic_pointer_cast<FieldCacheSource>(other));
-        if (!otherSource)
-            return false;
-        return field == otherSource->field && cachedFieldSourceEquals(otherSource);
-    }
+String FieldCacheSource::description() {
+    return field;
+}
 
-    int32_t FieldCacheSource::hashCode()
-    {
-        return StringUtils::hashCode(field) + cachedFieldSourceHashCode();
+bool FieldCacheSource::equals(const LuceneObjectPtr& other) {
+    FieldCacheSourcePtr otherSource(boost::dynamic_pointer_cast<FieldCacheSource>(other));
+    if (!otherSource) {
+        return false;
     }
+    return field == otherSource->field && cachedFieldSourceEquals(otherSource);
+}
+
+int32_t FieldCacheSource::hashCode() {
+    return StringUtils::hashCode(field) + cachedFieldSourceHashCode();
+}
+
 }

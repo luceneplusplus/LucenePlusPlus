@@ -9,23 +9,23 @@
 
 #include "SegmentTermDocs.h"
 
-namespace Lucene
-{
-    class MySegmentTermDocs : public SegmentTermDocs
-    {
-    public:
-        MySegmentTermDocs(const SegmentReaderPtr& p);
-        virtual ~MySegmentTermDocs();
+namespace Lucene {
 
-        LUCENE_CLASS(MySegmentTermDocs);
+class MySegmentTermDocs : public SegmentTermDocs {
+public:
+    MySegmentTermDocs(const SegmentReaderPtr& p);
+    virtual ~MySegmentTermDocs();
 
-    public:
-        int32_t delCount;
+    LUCENE_CLASS(MySegmentTermDocs);
 
-    public:
-        virtual void seek(const TermPtr& term);
-        virtual void skippingDoc();
-    };
+public:
+    int32_t delCount;
+
+public:
+    virtual void seek(const TermPtr& term);
+    virtual void skippingDoc();
+};
+
 }
 
 #endif

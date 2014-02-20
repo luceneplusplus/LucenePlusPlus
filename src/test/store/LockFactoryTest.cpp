@@ -32,8 +32,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture LockFactoryTest;
 
-static void addDoc(const IndexWriterPtr& writer)
-{
+static void addDoc(const IndexWriterPtr& writer) {
     DocumentPtr doc(newLucene<Document>());
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
@@ -41,8 +40,7 @@ static void addDoc(const IndexWriterPtr& writer)
 
 // Verify: we can provide our own LockFactory implementation, the right
 // methods are called at the right time, locks are created, etc.
-TEST_F(LockFactoryTest, testCustomLockFactory)
-{
+TEST_F(LockFactoryTest, testCustomLockFactory) {
     DirectoryPtr dir(newLucene<RAMDirectory>());
     MockLockFactoryPtr lf(newLucene<MockLockFactory>());
     dir->setLockFactory(lf);
@@ -53,15 +51,15 @@ TEST_F(LockFactoryTest, testCustomLockFactory)
     IndexWriterPtr writer(newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED));
 
     // add 100 documents (so that commit lock is used)
-    for (int32_t i = 0; i < 100; ++i)
+    for (int32_t i = 0; i < 100; ++i) {
         addDoc(writer);
+    }
 
     // Both write lock and commit lock should have been created
     EXPECT_EQ(lf->locksCreated.size(), 1); // # of unique locks created (after instantiating IndexWriter)
     EXPECT_TRUE(lf->makeLockCount >= 1); // # calls to makeLock is 0 (after instantiating IndexWriter)
 
-    for (MapStringLock::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName)
-    {
+    for (MapStringLock::iterator lockName = lf->locksCreated.begin(); lockName != lf->locksCreated.end(); ++lockName) {
         MockLockPtr lock(boost::dynamic_pointer_cast<MockLock>(lockName->second));
         EXPECT_TRUE(lock->lockAttempts > 0); // # calls to Lock.obtain is 0 (after instantiating IndexWriter)
     }
@@ -71,8 +69,7 @@ TEST_F(LockFactoryTest, testCustomLockFactory)
 
 // Verify: we can use the NoLockFactory with RAMDirectory with no exceptions raised
 // Verify: NoLockFactory allows two IndexWriters
-TEST_F(LockFactoryTest, testRAMDirectoryNoLocking)
-{
+TEST_F(LockFactoryTest, testRAMDirectoryNoLocking) {
     DirectoryPtr dir(newLucene<RAMDirectory>());
     dir->setLockFactory(NoLockFactory::getNoLockFactory());
 
@@ -86,14 +83,14 @@ TEST_F(LockFactoryTest, testRAMDirectoryNoLocking)
     EXPECT_NO_THROW(writer2 = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED));
 
     writer->close();
-    if (writer2)
+    if (writer2) {
         writer2->close();
+    }
 }
 
 // Verify: SingleInstanceLockFactory is the default lock for RAMDirectory
 // Verify: RAMDirectory does basic locking correctly (can't create two IndexWriters)
-TEST_F(LockFactoryTest, testDefaultRAMDirectory)
-{
+TEST_F(LockFactoryTest, testDefaultRAMDirectory) {
     DirectoryPtr dir(newLucene<RAMDirectory>());
     LockFactoryPtr lockFactory(dir->getLockFactory());
     EXPECT_TRUE(boost::dynamic_pointer_cast<SingleInstanceLockFactory>(lockFactory));
@@ -103,183 +100,145 @@ TEST_F(LockFactoryTest, testDefaultRAMDirectory)
     IndexWriterPtr writer2;
 
     // Create a 2nd IndexWriter - This should fail
-    try
-    {
+    try {
         writer2 = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
 
     writer->close();
-    if (writer2)
+    if (writer2) {
         writer2->close();
+    }
 }
 
 // test string file instantiation
-TEST_F(LockFactoryTest, testSimpleFSLockFactory)
-{
+TEST_F(LockFactoryTest, testSimpleFSLockFactory) {
     EXPECT_NO_THROW(newLucene<SimpleFSLockFactory>(L"test"));
 }
 
-namespace LockFactoryTestNS
-{
-    DECLARE_SHARED_PTR(WriterThread)
-    DECLARE_SHARED_PTR(LockFactorySearcherThread)
+namespace LockFactoryTestNS {
 
-    class WriterThread : public LuceneThread
-    {
-    public:
-        WriterThread(int32_t numIteration, const DirectoryPtr& dir)
-        {
-            this->numIteration = numIteration;
-            this->dir = dir;
-            this->hitException = false;
-        }
+DECLARE_SHARED_PTR(WriterThread)
+DECLARE_SHARED_PTR(LockFactorySearcherThread)
 
-        virtual ~WriterThread()
-        {
-        }
+class WriterThread : public LuceneThread {
+public:
+    WriterThread(int32_t numIteration, const DirectoryPtr& dir) {
+        this->numIteration = numIteration;
+        this->dir = dir;
+        this->hitException = false;
+    }
 
-        LUCENE_CLASS(WriterThread);
+    virtual ~WriterThread() {
+    }
 
-    public:
-        bool hitException;
+    LUCENE_CLASS(WriterThread);
 
-    protected:
-        DirectoryPtr dir;
-        int32_t numIteration;
+public:
+    bool hitException;
 
-    public:
-        virtual void run()
-        {
-            WhitespaceAnalyzerPtr analyzer = newLucene<WhitespaceAnalyzer>();
-            IndexWriterPtr writer;
-            for (int32_t i = 0; i < numIteration; ++i)
-            {
-                try
-                {
-                    writer = newLucene<IndexWriter>(dir, analyzer, false, IndexWriter::MaxFieldLengthLIMITED);
-                }
-                catch (IOException& e)
-                {
-                    if (e.getError().find(L" timed out:") == String::npos)
-                    {
-                        hitException = true;
-                        FAIL() << "Stress Test Index Writer: creation hit unexpected IO exception: " << e.getError();
-                        break;
-                    }
-                    else
-                    {
-                        // lock obtain timed out
-                    }
-                }
-                catch (LuceneException& e)
-                {
+protected:
+    DirectoryPtr dir;
+    int32_t numIteration;
+
+public:
+    virtual void run() {
+        WhitespaceAnalyzerPtr analyzer = newLucene<WhitespaceAnalyzer>();
+        IndexWriterPtr writer;
+        for (int32_t i = 0; i < numIteration; ++i) {
+            try {
+                writer = newLucene<IndexWriter>(dir, analyzer, false, IndexWriter::MaxFieldLengthLIMITED);
+            } catch (IOException& e) {
+                if (e.getError().find(L" timed out:") == String::npos) {
                     hitException = true;
-                    FAIL() << "Stress Test Index Writer: creation hit unexpected exception: " << e.getError();
+                    FAIL() << "Stress Test Index Writer: creation hit unexpected IO exception: " << e.getError();
+                    break;
+                } else {
+                    // lock obtain timed out
+                }
+            } catch (LuceneException& e) {
+                hitException = true;
+                FAIL() << "Stress Test Index Writer: creation hit unexpected exception: " << e.getError();
+                break;
+            }
+            if (writer) {
+                try {
+                    addDoc(writer);
+                } catch (LuceneException& e) {
+                    hitException = true;
+                    FAIL() << "Stress Test Index Writer: addDoc hit unexpected exception: " << e.getError();
                     break;
                 }
-                if (writer)
-                {
-                    try
-                    {
-                        addDoc(writer);
-                    }
-                    catch (LuceneException& e)
-                    {
-                        hitException = true;
-                        FAIL() << "Stress Test Index Writer: addDoc hit unexpected exception: " << e.getError();
-                        break;
-                    }
-                    try
-                    {
-                        writer->close();
-                    }
-                    catch (LuceneException& e)
-                    {
-                        hitException = true;
-                        FAIL() << "Stress Test Index Writer: close hit unexpected exception: " << e.getError();
-                        break;
-                    }
+                try {
+                    writer->close();
+                } catch (LuceneException& e) {
+                    hitException = true;
+                    FAIL() << "Stress Test Index Writer: close hit unexpected exception: " << e.getError();
+                    break;
                 }
             }
         }
-    };
+    }
+};
 
-    class LockFactorySearcherThread : public LuceneThread
-    {
-    public:
-        LockFactorySearcherThread(int32_t numIteration, const DirectoryPtr& dir)
-        {
-            this->numIteration = numIteration;
-            this->dir = dir;
-            this->hitException = false;
-        }
+class LockFactorySearcherThread : public LuceneThread {
+public:
+    LockFactorySearcherThread(int32_t numIteration, const DirectoryPtr& dir) {
+        this->numIteration = numIteration;
+        this->dir = dir;
+        this->hitException = false;
+    }
 
-        virtual ~LockFactorySearcherThread()
-        {
-        }
+    virtual ~LockFactorySearcherThread() {
+    }
 
-        LUCENE_CLASS(LockFactorySearcherThread);
+    LUCENE_CLASS(LockFactorySearcherThread);
 
-    public:
-        bool hitException;
+public:
+    bool hitException;
 
-    protected:
-        DirectoryPtr dir;
-        int32_t numIteration;
+protected:
+    DirectoryPtr dir;
+    int32_t numIteration;
 
 
-    public:
-        virtual void run()
-        {
-            IndexSearcherPtr searcher;
-            QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"content", L"aaa"));
-            for (int32_t i = 0; i < numIteration; ++i)
-            {
-                try
-                {
-                    searcher = newLucene<IndexSearcher>(dir, false);
-                }
-                catch (LuceneException& e)
-                {
+public:
+    virtual void run() {
+        IndexSearcherPtr searcher;
+        QueryPtr query = newLucene<TermQuery>(newLucene<Term>(L"content", L"aaa"));
+        for (int32_t i = 0; i < numIteration; ++i) {
+            try {
+                searcher = newLucene<IndexSearcher>(dir, false);
+            } catch (LuceneException& e) {
+                hitException = true;
+                FAIL() << "Stress Test Index Searcher: creation hit unexpected exception: " << e.getError();
+                break;
+            }
+            if (searcher) {
+                Collection<ScoreDocPtr> hits;
+                try {
+                    hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
+                } catch (LuceneException& e) {
                     hitException = true;
-                    FAIL() << "Stress Test Index Searcher: creation hit unexpected exception: " << e.getError();
+                    FAIL() << "Stress Test Index Searcher: search hit unexpected exception: " << e.getError();
                     break;
                 }
-                if (searcher)
-                {
-                    Collection<ScoreDocPtr> hits;
-                    try
-                    {
-                        hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
-                    }
-                    catch (LuceneException& e)
-                    {
-                        hitException = true;
-                        FAIL() << "Stress Test Index Searcher: search hit unexpected exception: " << e.getError();
-                        break;
-                    }
-                    try
-                    {
-                        searcher->close();
-                    }
-                    catch (LuceneException& e)
-                    {
-                        hitException = true;
-                        FAIL() << "Stress Test Index Searcher: close hit unexpected exception: " << e.getError();
-                        break;
-                    }
+                try {
+                    searcher->close();
+                } catch (LuceneException& e) {
+                    hitException = true;
+                    FAIL() << "Stress Test Index Searcher: close hit unexpected exception: " << e.getError();
+                    break;
                 }
             }
         }
-    };
+    }
+};
+
 }
 
-static void _testStressLocks(const LockFactoryPtr& lockFactory, const String& indexDir)
-{
+static void _testStressLocks(const LockFactoryPtr& lockFactory, const String& indexDir) {
     FSDirectoryPtr fs1 = FSDirectory::open(indexDir, lockFactory);
 
     // First create a 1 doc index
@@ -303,22 +262,19 @@ static void _testStressLocks(const LockFactoryPtr& lockFactory, const String& in
 
 // Verify: do stress test, by opening IndexReaders and IndexWriters over and over in 2 threads and making sure
 // no unexpected exceptions are raised
-TEST_F(LockFactoryTest, testStressLocks)
-{
+TEST_F(LockFactoryTest, testStressLocks) {
     _testStressLocks(LockFactoryPtr(), getTempDir(L"index.TestLockFactory6"));
 }
 
 // Verify: do stress test, by opening IndexReaders and IndexWriters over and over in 2 threads and making sure
 // no unexpected exceptions are raised, but use NativeFSLockFactory
-TEST_F(LockFactoryTest, testStressLocksNativeFSLockFactory)
-{
+TEST_F(LockFactoryTest, testStressLocksNativeFSLockFactory) {
     String dir(getTempDir(L"index.TestLockFactory7"));
     _testStressLocks(newLucene<NativeFSLockFactory>(dir), dir);
 }
 
 // Verify: NativeFSLockFactory works correctly
-TEST_F(LockFactoryTest, testNativeFSLockFactory)
-{
+TEST_F(LockFactoryTest, testNativeFSLockFactory) {
     NativeFSLockFactoryPtr f(newLucene<NativeFSLockFactory>(getTempDir()));
 
     f->setLockPrefix(L"test");
@@ -342,8 +298,7 @@ TEST_F(LockFactoryTest, testNativeFSLockFactory)
 }
 
 // Verify: NativeFSLockFactory works correctly if the lock file exists
-TEST_F(LockFactoryTest, testNativeFSLockFactoryLockExists)
-{
+TEST_F(LockFactoryTest, testNativeFSLockFactoryLockExists) {
     String lockFile = getTempDir(L"test.lock");
     std::ofstream lockStream;
     lockStream.open(StringUtils::toUTF8(lockFile).c_str(), std::ios::binary | std::ios::in | std::ios::out);
@@ -353,12 +308,12 @@ TEST_F(LockFactoryTest, testNativeFSLockFactoryLockExists)
     EXPECT_TRUE(l->obtain());
     l->release();
     EXPECT_TRUE(!l->isLocked());
-    if (FileUtils::fileExists(lockFile))
+    if (FileUtils::fileExists(lockFile)) {
         FileUtils::removeFile(lockFile);
+    }
 }
 
-TEST_F(LockFactoryTest, testNativeFSLockReleaseByOtherLock)
-{
+TEST_F(LockFactoryTest, testNativeFSLockReleaseByOtherLock) {
     NativeFSLockFactoryPtr f = newLucene<NativeFSLockFactory>(getTempDir());
 
     f->setLockPrefix(L"test");
@@ -368,12 +323,9 @@ TEST_F(LockFactoryTest, testNativeFSLockReleaseByOtherLock)
     EXPECT_TRUE(l->obtain());
     EXPECT_TRUE(l2->isLocked());
 
-    try
-    {
+    try {
         l2->release();
-    }
-    catch (LockReleaseFailedException& e)
-    {
+    } catch (LockReleaseFailedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockReleaseFailed)(e));
     }
 
@@ -381,8 +333,7 @@ TEST_F(LockFactoryTest, testNativeFSLockReleaseByOtherLock)
 }
 
 // Verify: NativeFSLockFactory assigns null as lockPrefix if the lockDir is inside directory
-TEST_F(LockFactoryTest, testNativeFSLockFactoryPrefix)
-{
+TEST_F(LockFactoryTest, testNativeFSLockFactoryPrefix) {
     String fdir1(getTempDir(L"TestLockFactory.8"));
     String fdir2(getTempDir(L"TestLockFactory.8.Lockdir"));
 
@@ -402,8 +353,7 @@ TEST_F(LockFactoryTest, testNativeFSLockFactoryPrefix)
 }
 
 // Verify: default LockFactory has no prefix (ie write.lock is stored in index)
-TEST_F(LockFactoryTest, testDefaultFSLockFactoryPrefix)
-{
+TEST_F(LockFactoryTest, testDefaultFSLockFactoryPrefix) {
     // Make sure we get null prefix
     String dirName(getTempDir(L"TestLockFactory.10"));
     DirectoryPtr dir(FSDirectory::open(dirName));

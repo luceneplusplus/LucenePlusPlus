@@ -23,11 +23,9 @@
 
 using namespace Lucene;
 
-class SpansAdvanced2Test : public LuceneTestFixture
-{
+class SpansAdvanced2Test : public LuceneTestFixture {
 public:
-    SpansAdvanced2Test()
-    {
+    SpansAdvanced2Test() {
         // create test index
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -46,8 +44,7 @@ public:
         searcher2 = newLucene<IndexSearcher>(directory, true);
     }
 
-    virtual ~SpansAdvanced2Test()
-    {
+    virtual ~SpansAdvanced2Test() {
         searcher->close();
         searcher2->close();
         directory->close();
@@ -62,16 +59,14 @@ protected:
     IndexSearcherPtr searcher;
     IndexSearcherPtr searcher2;
 
-    void addDocument(const IndexWriterPtr& writer, const String& id, const String& text)
-    {
+    void addDocument(const IndexWriterPtr& writer, const String& id, const String& text) {
         DocumentPtr document = newLucene<Document>();
         document->add(newLucene<Field>(FIELD_ID, id, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         document->add(newLucene<Field>(FIELD_TEXT, text, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(document);
     }
 
-    void checkHits(const SearcherPtr& s, const QueryPtr& query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores)
-    {
+    void checkHits(const SearcherPtr& s, const QueryPtr& query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores) {
         QueryUtils::check(query, s);
 
         double tolerance = 1e-5f;
@@ -82,15 +77,13 @@ protected:
         // did we get the hits we expected
         EXPECT_EQ(expectedIds.size(), topdocs->totalHits);
 
-        for (int32_t i = 0; i < topdocs->totalHits; ++i)
-        {
+        for (int32_t i = 0; i < topdocs->totalHits; ++i) {
             int32_t id = topdocs->scoreDocs[i]->doc;
             double score = topdocs->scoreDocs[i]->score;
             DocumentPtr doc = s->doc(id);
             EXPECT_EQ(expectedIds[i], doc->get(FIELD_ID));
             bool scoreEq = (std::abs(expectedScores[i] - score) < tolerance);
-            if (scoreEq)
-            {
+            if (scoreEq) {
                 EXPECT_NEAR(expectedScores[i], score, tolerance);
                 EXPECT_NEAR(s->explain(query, id)->getValue(), score, tolerance);
             }
@@ -101,23 +94,20 @@ protected:
 const String SpansAdvanced2Test::FIELD_ID = L"ID";
 const String SpansAdvanced2Test::FIELD_TEXT = L"TEXT";
 
-TEST_F(SpansAdvanced2Test, testVerifyIndex)
-{
+TEST_F(SpansAdvanced2Test, testVerifyIndex) {
     IndexReaderPtr reader = IndexReader::open(directory, true);
     EXPECT_EQ(8, reader->numDocs());
     reader->close();
 }
 
-TEST_F(SpansAdvanced2Test, testSingleSpanQuery)
-{
+TEST_F(SpansAdvanced2Test, testSingleSpanQuery) {
     QueryPtr spanQuery = newLucene<SpanTermQuery>(newLucene<Term>(FIELD_TEXT, L"should"));
     Collection<String> expectedIds = newCollection<String>(L"B", L"D", L"1", L"2", L"3", L"4", L"A");
     Collection<double> expectedScores = newCollection<double>(0.625, 0.45927936, 0.35355338, 0.35355338, 0.35355338, 0.35355338, 0.26516503);
     checkHits(searcher2, spanQuery, L"single span query", expectedIds, expectedScores);
 }
 
-TEST_F(SpansAdvanced2Test, testMultipleDifferentSpanQueries)
-{
+TEST_F(SpansAdvanced2Test, testMultipleDifferentSpanQueries) {
     QueryPtr spanQuery1 = newLucene<SpanTermQuery>(newLucene<Term>(FIELD_TEXT, L"should"));
     QueryPtr spanQuery2 = newLucene<SpanTermQuery>(newLucene<Term>(FIELD_TEXT, L"we"));
     BooleanQueryPtr query = newLucene<BooleanQuery>();
@@ -128,8 +118,7 @@ TEST_F(SpansAdvanced2Test, testMultipleDifferentSpanQueries)
     checkHits(searcher2, query, L"multiple different span queries", expectedIds, expectedScores);
 }
 
-TEST_F(SpansAdvanced2Test, testBooleanQueryWithSpanQueries)
-{
+TEST_F(SpansAdvanced2Test, testBooleanQueryWithSpanQueries) {
     double expectedScore = 0.73500174;
     QueryPtr spanQuery = newLucene<SpanTermQuery>(newLucene<Term>(FIELD_TEXT, L"work"));
     BooleanQueryPtr query = newLucene<BooleanQuery>();

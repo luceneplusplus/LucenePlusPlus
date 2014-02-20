@@ -10,53 +10,53 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A {@link TokenFilter} that stems Dutch words.
-    ///
-    /// It supports a table of words that should not be stemmed at all.  The stemmer used can
-    /// be changed at runtime after the filter object is created (as long as it is a
-    /// {@link DutchStemmer}).
-    ///
-    /// NOTE: This stemmer does not implement the Snowball algorithm correctly, specifically
-    /// doubled consonants. It is recommended that you consider using the "Dutch" stemmer in
-    /// the snowball package instead. This stemmer will likely be deprecated in a future release.
-    class LPPCONTRIBAPI DutchStemFilter : public TokenFilter
-    {
-    public:
-        DutchStemFilter(const TokenStreamPtr& input);
+namespace Lucene {
 
-        /// Builds a DutchStemFilter that uses an exclusion table.
-        DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable);
+/// A {@link TokenFilter} that stems Dutch words.
+///
+/// It supports a table of words that should not be stemmed at all.  The stemmer used can
+/// be changed at runtime after the filter object is created (as long as it is a
+/// {@link DutchStemmer}).
+///
+/// NOTE: This stemmer does not implement the Snowball algorithm correctly, specifically
+/// doubled consonants. It is recommended that you consider using the "Dutch" stemmer in
+/// the snowball package instead. This stemmer will likely be deprecated in a future release.
+class LPPCONTRIBAPI DutchStemFilter : public TokenFilter {
+public:
+    DutchStemFilter(const TokenStreamPtr& input);
 
-        /// Builds a DutchStemFilter that uses an exclusion table and dictionary of word stem
-        /// pairs, that overrule the algorithm.
-        DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable, MapStringString stemdictionary);
+    /// Builds a DutchStemFilter that uses an exclusion table.
+    DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable);
 
-        virtual ~DutchStemFilter();
+    /// Builds a DutchStemFilter that uses an exclusion table and dictionary of word stem
+    /// pairs, that overrule the algorithm.
+    DutchStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable, MapStringString stemdictionary);
 
-        LUCENE_CLASS(DutchStemFilter);
+    virtual ~DutchStemFilter();
 
-    protected:
-        /// {@link DutchStemmer} in use by this filter.
-        DutchStemmerPtr stemmer;
+    LUCENE_CLASS(DutchStemFilter);
 
-        HashSet<String> exclusions;
-        TermAttributePtr termAtt;
+protected:
+    /// {@link DutchStemmer} in use by this filter.
+    DutchStemmerPtr stemmer;
 
-    public:
-        virtual bool incrementToken();
+    HashSet<String> exclusions;
+    TermAttributePtr termAtt;
 
-        /// Set a alternative/custom {@link DutchStemmer} for this filter.
-        void setStemmer(const DutchStemmerPtr& stemmer);
+public:
+    virtual bool incrementToken();
 
-        /// Set an alternative exclusion list for this filter.
-        void setExclusionSet(HashSet<String> exclusiontable);
+    /// Set a alternative/custom {@link DutchStemmer} for this filter.
+    void setStemmer(const DutchStemmerPtr& stemmer);
 
-        /// Set dictionary for stemming, this dictionary overrules the algorithm, so you can
-        /// correct for a particular unwanted word-stem pair.
-        void setStemDictionary(MapStringString dict);
-    };
+    /// Set an alternative exclusion list for this filter.
+    void setExclusionSet(HashSet<String> exclusiontable);
+
+    /// Set dictionary for stemming, this dictionary overrules the algorithm, so you can
+    /// correct for a particular unwanted word-stem pair.
+    void setStemDictionary(MapStringString dict);
+};
+
 }
 
 #endif

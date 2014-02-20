@@ -9,45 +9,45 @@
 
 #include "Attribute.h"
 
-namespace Lucene
-{
-    /// The start and end character offset of a Token.
-    class LPPAPI OffsetAttribute : public Attribute
-    {
-    public:
-        OffsetAttribute();
-        virtual ~OffsetAttribute();
+namespace Lucene {
 
-        LUCENE_CLASS(OffsetAttribute);
+/// The start and end character offset of a Token.
+class LPPAPI OffsetAttribute : public Attribute {
+public:
+    OffsetAttribute();
+    virtual ~OffsetAttribute();
 
-    protected:
-        int32_t _startOffset;
-        int32_t _endOffset;
+    LUCENE_CLASS(OffsetAttribute);
 
-    public:
-        virtual String toString();
+protected:
+    int32_t _startOffset;
+    int32_t _endOffset;
 
-        /// Returns this Token's starting offset, the position of the first character corresponding to this token
-        /// in the source text.
-        ///
-        /// Note that the difference between endOffset() and startOffset() may not be equal to termText.length(),
-        /// as the term text may have been altered by a stemmer or some other filter.
-        virtual int32_t startOffset();
+public:
+    virtual String toString();
 
-        /// Set the starting and ending offset.
-        /// @see #startOffset() and #endOffset()
-        virtual void setOffset(int32_t startOffset, int32_t endOffset);
+    /// Returns this Token's starting offset, the position of the first character corresponding to this token
+    /// in the source text.
+    ///
+    /// Note that the difference between endOffset() and startOffset() may not be equal to termText.length(),
+    /// as the term text may have been altered by a stemmer or some other filter.
+    virtual int32_t startOffset();
 
-        /// Returns this Token's ending offset, one greater than the position of the last character corresponding
-        /// to this token in the source text. The length of the token in the source text is (endOffset - startOffset).
-        virtual int32_t endOffset();
+    /// Set the starting and ending offset.
+    /// @see #startOffset() and #endOffset()
+    virtual void setOffset(int32_t startOffset, int32_t endOffset);
 
-        virtual void clear();
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual void copyTo(const AttributePtr& target);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+    /// Returns this Token's ending offset, one greater than the position of the last character corresponding
+    /// to this token in the source text. The length of the token in the source text is (endOffset - startOffset).
+    virtual int32_t endOffset();
+
+    virtual void clear();
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual void copyTo(const AttributePtr& target);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

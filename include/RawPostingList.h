@@ -9,28 +9,28 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// This is the base class for an in-memory posting list, keyed by a Token.  {@link TermsHash} maintains a
-    /// hash table holding one instance of this per unique Token.  Consumers of TermsHash ({@link TermsHashConsumer})
-    /// must subclass this class with its own concrete class.  FreqProxTermsWriterPostingList is a private inner
-    /// class used for the freq/prox postings, and TermVectorsTermsWriterPostingList is a private inner class used
-    /// to hold TermVectors postings.
-    class RawPostingList : public LuceneObject
-    {
-    public:
-        RawPostingList();
-        virtual ~RawPostingList();
+namespace Lucene {
 
-        LUCENE_CLASS(RawPostingList);
+/// This is the base class for an in-memory posting list, keyed by a Token.  {@link TermsHash} maintains a
+/// hash table holding one instance of this per unique Token.  Consumers of TermsHash ({@link TermsHashConsumer})
+/// must subclass this class with its own concrete class.  FreqProxTermsWriterPostingList is a private inner
+/// class used for the freq/prox postings, and TermVectorsTermsWriterPostingList is a private inner class used
+/// to hold TermVectors postings.
+class RawPostingList : public LuceneObject {
+public:
+    RawPostingList();
+    virtual ~RawPostingList();
 
-    public:
-        static const int32_t BYTES_SIZE;
+    LUCENE_CLASS(RawPostingList);
 
-        int32_t textStart;
-        int32_t intStart;
-        int32_t byteStart;
-    };
+public:
+    static const int32_t BYTES_SIZE;
+
+    int32_t textStart;
+    int32_t intStart;
+    int32_t byteStart;
+};
+
 }
 
 #endif

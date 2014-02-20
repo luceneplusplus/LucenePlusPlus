@@ -10,55 +10,54 @@
 #include "Weight.h"
 #include "Scorer.h"
 
-namespace Lucene
-{
-    class MatchAllDocsWeight : public Weight
-    {
-    public:
-        MatchAllDocsWeight(const MatchAllDocsQueryPtr& query, const SearcherPtr& searcher);
-        virtual ~MatchAllDocsWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(MatchAllDocsWeight);
+class MatchAllDocsWeight : public Weight {
+public:
+    MatchAllDocsWeight(const MatchAllDocsQueryPtr& query, const SearcherPtr& searcher);
+    virtual ~MatchAllDocsWeight();
 
-    protected:
-        MatchAllDocsQueryPtr query;
-        SimilarityPtr similarity;
-        double queryWeight;
-        double queryNorm;
+    LUCENE_CLASS(MatchAllDocsWeight);
 
-    public:
-        virtual String toString();
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
-    };
+protected:
+    MatchAllDocsQueryPtr query;
+    SimilarityPtr similarity;
+    double queryWeight;
+    double queryNorm;
 
-    class MatchAllScorer : public Scorer
-    {
-    public:
-        MatchAllScorer(const MatchAllDocsQueryPtr& query, const IndexReaderPtr& reader, const SimilarityPtr& similarity, const WeightPtr& weight, ByteArray norms);
-        virtual ~MatchAllScorer();
+public:
+    virtual String toString();
+    virtual QueryPtr getQuery();
+    virtual double getValue();
+    virtual double sumOfSquaredWeights();
+    virtual void normalize(double norm);
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+};
 
-        LUCENE_CLASS(MatchAllScorer);
+class MatchAllScorer : public Scorer {
+public:
+    MatchAllScorer(const MatchAllDocsQueryPtr& query, const IndexReaderPtr& reader, const SimilarityPtr& similarity, const WeightPtr& weight, ByteArray norms);
+    virtual ~MatchAllScorer();
 
-    public:
-        TermDocsPtr termDocs;
-        double _score;
-        ByteArray norms;
+    LUCENE_CLASS(MatchAllScorer);
 
-    protected:
-        MatchAllDocsQueryPtr query;
-        int32_t doc;
+public:
+    TermDocsPtr termDocs;
+    double _score;
+    ByteArray norms;
 
-    public:
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual double score();
-        virtual int32_t advance(int32_t target);
-    };
+protected:
+    MatchAllDocsQueryPtr query;
+    int32_t doc;
+
+public:
+    virtual int32_t docID();
+    virtual int32_t nextDoc();
+    virtual double score();
+    virtual int32_t advance(int32_t target);
+};
+
 }
 
 #endif

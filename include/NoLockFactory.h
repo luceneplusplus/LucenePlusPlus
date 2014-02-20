@@ -9,32 +9,32 @@
 
 #include "LockFactory.h"
 
-namespace Lucene
-{
-    /// Use this {@link LockFactory} to disable locking entirely.  Only one instance of this lock is created.
-    /// You should call {@link #getNoLockFactory()} to get the instance.
-    ///
-    /// @see LockFactory
-    class LPPAPI NoLockFactory : public LockFactory
-    {
-    public:
-        virtual ~NoLockFactory();
+namespace Lucene {
 
-        LUCENE_CLASS(NoLockFactory);
+/// Use this {@link LockFactory} to disable locking entirely.  Only one instance of this lock is created.
+/// You should call {@link #getNoLockFactory()} to get the instance.
+///
+/// @see LockFactory
+class LPPAPI NoLockFactory : public LockFactory {
+public:
+    virtual ~NoLockFactory();
 
-    private:
-        static NoLockPtr getSingletonLock();
+    LUCENE_CLASS(NoLockFactory);
 
-    public:
-        static NoLockFactoryPtr getNoLockFactory();
+private:
+    static NoLockPtr getSingletonLock();
 
-        /// Return a new Lock instance identified by lockName.
-        virtual LockPtr makeLock(const String& lockName);
+public:
+    static NoLockFactoryPtr getNoLockFactory();
 
-        /// Attempt to clear (forcefully unlock and remove) the specified lock.  Only call this at a time when you
-        /// are certain this lock is no longer in use.
-        virtual void clearLock(const String& lockName);
-    };
+    /// Return a new Lock instance identified by lockName.
+    virtual LockPtr makeLock(const String& lockName);
+
+    /// Attempt to clear (forcefully unlock and remove) the specified lock.  Only call this at a time when you
+    /// are certain this lock is no longer in use.
+    virtual void clearLock(const String& lockName);
+};
+
 }
 
 #endif

@@ -9,97 +9,97 @@
 
 #include "IndexInput.h"
 
-namespace Lucene
-{
-    /// Base implementation class for buffered {@link IndexInput}.
-    class LPPAPI BufferedIndexInput : public IndexInput
-    {
-    public:
-        /// Construct BufferedIndexInput with a specific bufferSize.
-        BufferedIndexInput(int32_t bufferSize = BUFFER_SIZE);
-        virtual ~BufferedIndexInput();
+namespace Lucene {
 
-        LUCENE_CLASS(BufferedIndexInput);
+/// Base implementation class for buffered {@link IndexInput}.
+class LPPAPI BufferedIndexInput : public IndexInput {
+public:
+    /// Construct BufferedIndexInput with a specific bufferSize.
+    BufferedIndexInput(int32_t bufferSize = BUFFER_SIZE);
+    virtual ~BufferedIndexInput();
 
-    public:
-        /// Default buffer size.
-        static const int32_t BUFFER_SIZE;
+    LUCENE_CLASS(BufferedIndexInput);
 
-    protected:
-        int32_t bufferSize;
-        int64_t bufferStart; // position in file of buffer
-        int32_t bufferLength; // end of valid bytes
-        int32_t bufferPosition; // next byte to read
-        ByteArray buffer;
+public:
+    /// Default buffer size.
+    static const int32_t BUFFER_SIZE;
 
-    public:
-        /// Reads and returns a single byte.
-        /// @see IndexOutput#writeByte(uint8_t)
-        virtual uint8_t readByte();
+protected:
+    int32_t bufferSize;
+    int64_t bufferStart; // position in file of buffer
+    int32_t bufferLength; // end of valid bytes
+    int32_t bufferPosition; // next byte to read
+    ByteArray buffer;
 
-        /// Change the buffer size used by this IndexInput.
-        void setBufferSize(int32_t newSize);
+public:
+    /// Reads and returns a single byte.
+    /// @see IndexOutput#writeByte(uint8_t)
+    virtual uint8_t readByte();
 
-        /// Returns buffer size.
-        /// @see #setBufferSize
-        int32_t getBufferSize();
+    /// Change the buffer size used by this IndexInput.
+    void setBufferSize(int32_t newSize);
 
-        /// Reads a specified number of bytes into an array at the specified offset.
-        /// @param b the array to read bytes into.
-        /// @param offset the offset in the array to start storing bytes.
-        /// @param length the number of bytes to read.
-        /// @see IndexOutput#writeBytes(const uint8_t*,int)
-        /// @see #readInternal(uint8_t*, int32_t, int32_t)
-        virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
+    /// Returns buffer size.
+    /// @see #setBufferSize
+    int32_t getBufferSize();
 
-        /// Reads a specified number of bytes into an array at the specified offset with control over whether the
-        /// read should be buffered (callers who have their own buffer should pass in "false" for useBuffer).
-        /// Currently only {@link BufferedIndexInput} respects this parameter.
-        /// @param b the array to read bytes into.
-        /// @param offset the offset in the array to start storing bytes.
-        /// @param length the number of bytes to read.
-        /// @param useBuffer set to false if the caller will handle buffering.
-        /// @see IndexOutput#writeBytes(const uint8_t*,int)
-        /// @see #readInternal(uint8_t*, int32_t, int32_t)
-        virtual void readBytes(uint8_t* b, int32_t offset, int32_t length, bool useBuffer);
+    /// Reads a specified number of bytes into an array at the specified offset.
+    /// @param b the array to read bytes into.
+    /// @param offset the offset in the array to start storing bytes.
+    /// @param length the number of bytes to read.
+    /// @see IndexOutput#writeBytes(const uint8_t*,int)
+    /// @see #readInternal(uint8_t*, int32_t, int32_t)
+    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
 
-        /// Closes the stream to further operations.
-        virtual void close();
+    /// Reads a specified number of bytes into an array at the specified offset with control over whether the
+    /// read should be buffered (callers who have their own buffer should pass in "false" for useBuffer).
+    /// Currently only {@link BufferedIndexInput} respects this parameter.
+    /// @param b the array to read bytes into.
+    /// @param offset the offset in the array to start storing bytes.
+    /// @param length the number of bytes to read.
+    /// @param useBuffer set to false if the caller will handle buffering.
+    /// @see IndexOutput#writeBytes(const uint8_t*,int)
+    /// @see #readInternal(uint8_t*, int32_t, int32_t)
+    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length, bool useBuffer);
 
-        /// Returns the current position in this file, where the next read will occur.
-        /// @see #seek(int64_t)
-        virtual int64_t getFilePointer();
+    /// Closes the stream to further operations.
+    virtual void close();
 
-        /// Sets current position in this file, where the next read will occur.
-        /// @see #getFilePointer()
-        /// @see #seekInternal(int64_t)
-        virtual void seek(int64_t pos);
+    /// Returns the current position in this file, where the next read will occur.
+    /// @see #seek(int64_t)
+    virtual int64_t getFilePointer();
 
-        /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    /// Sets current position in this file, where the next read will occur.
+    /// @see #getFilePointer()
+    /// @see #seekInternal(int64_t)
+    virtual void seek(int64_t pos);
 
-    protected:
-        virtual void newBuffer(ByteArray newBuffer);
+    /// Returns a clone of this stream.
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        void checkBufferSize(int32_t bufferSize);
+protected:
+    virtual void newBuffer(ByteArray newBuffer);
 
-        /// Refill buffer in preparation for reading.
-        /// @see #readInternal(uint8_t*, int32_t, int32_t)
-        /// @see #seekInternal(int64_t)
-        virtual void refill();
+    void checkBufferSize(int32_t bufferSize);
 
-        /// Implements buffer refill.  Reads bytes from the current position in the input.
-        /// @param b the array to read bytes into.
-        /// @param offset the offset in the array to start storing bytes.
-        /// @param length the number of bytes to read.
-        virtual void readInternal(uint8_t* b, int32_t offset, int32_t length) = 0;
+    /// Refill buffer in preparation for reading.
+    /// @see #readInternal(uint8_t*, int32_t, int32_t)
+    /// @see #seekInternal(int64_t)
+    virtual void refill();
 
-        /// Implements seek.  Sets current position in this file, where the next {@link
-        /// #readInternal(uint8_t*, int32_t, int32_t)} will occur.
-        /// @param pos position to set next write.
-        /// @see #readInternal(uint8_t*, int32_t, int32_t)
-        virtual void seekInternal(int64_t pos) = 0;
-    };
+    /// Implements buffer refill.  Reads bytes from the current position in the input.
+    /// @param b the array to read bytes into.
+    /// @param offset the offset in the array to start storing bytes.
+    /// @param length the number of bytes to read.
+    virtual void readInternal(uint8_t* b, int32_t offset, int32_t length) = 0;
+
+    /// Implements seek.  Sets current position in this file, where the next {@link
+    /// #readInternal(uint8_t*, int32_t, int32_t)} will occur.
+    /// @param pos position to set next write.
+    /// @see #readInternal(uint8_t*, int32_t, int32_t)
+    virtual void seekInternal(int64_t pos) = 0;
+};
+
 }
 
 #endif

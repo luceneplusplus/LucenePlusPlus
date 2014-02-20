@@ -9,18 +9,18 @@
 
 #include "Encoder.h"
 
-namespace Lucene
-{
-    /// Simple {@link Encoder} implementation that does not modify the output.
-    class LPPCONTRIBAPI DefaultEncoder : public Encoder, public LuceneObject
-    {
-    public:
-        virtual ~DefaultEncoder();
-        LUCENE_CLASS(DefaultEncoder);
+namespace Lucene {
 
-    public:
-        virtual String encodeText(const String& originalText);
-    };
+/// Simple {@link Encoder} implementation that does not modify the output.
+class LPPCONTRIBAPI DefaultEncoder : public Encoder, public LuceneObject {
+public:
+    virtual ~DefaultEncoder();
+    LUCENE_CLASS(DefaultEncoder);
+
+public:
+    virtual String encodeText(const String& originalText);
+};
+
 }
 
 #endif

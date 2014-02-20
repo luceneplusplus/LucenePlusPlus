@@ -9,93 +9,93 @@
 
 #include "Tokenizer.h"
 
-namespace Lucene
-{
-    /// CJKTokenizer is designed for Chinese, Japanese, and Korean languages.
-    ///
-    /// The tokens returned are every two adjacent characters with overlap match.
-    ///
-    /// Example: "lucene C1C2C3C4" will be segmented to: "lucene" "C1C2" "C2C3" "C3C4".
-    ///
-    /// Additionally, the following is applied to Latin text (such as English):
-    /// <ul>
-    /// <li>Text is converted to lowercase.
-    /// <li>Numeric digits, '+', '#', and '_' are tokenized as letters.
-    /// <li>Full-width forms are converted to half-width forms.
-    /// </ul>
-    /// For more info on Asian language (Chinese, Japanese, and Korean) text segmentation:
-    /// please search <a href="http://www.google.com/search?q=word+chinese+segment">google</a>
-    class LPPCONTRIBAPI CJKTokenizer : public Tokenizer
-    {
-    public:
-        CJKTokenizer(const ReaderPtr& input);
-        CJKTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
-        CJKTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
+namespace Lucene {
 
-        virtual ~CJKTokenizer();
+/// CJKTokenizer is designed for Chinese, Japanese, and Korean languages.
+///
+/// The tokens returned are every two adjacent characters with overlap match.
+///
+/// Example: "lucene C1C2C3C4" will be segmented to: "lucene" "C1C2" "C2C3" "C3C4".
+///
+/// Additionally, the following is applied to Latin text (such as English):
+/// <ul>
+/// <li>Text is converted to lowercase.
+/// <li>Numeric digits, '+', '#', and '_' are tokenized as letters.
+/// <li>Full-width forms are converted to half-width forms.
+/// </ul>
+/// For more info on Asian language (Chinese, Japanese, and Korean) text segmentation:
+/// please search <a href="http://www.google.com/search?q=word+chinese+segment">google</a>
+class LPPCONTRIBAPI CJKTokenizer : public Tokenizer {
+public:
+    CJKTokenizer(const ReaderPtr& input);
+    CJKTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input);
+    CJKTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input);
 
-        LUCENE_CLASS(CJKTokenizer);
+    virtual ~CJKTokenizer();
 
-    public:
-        /// Word token type
-        static const int32_t WORD_TYPE;
+    LUCENE_CLASS(CJKTokenizer);
 
-        /// Single byte token type
-        static const int32_t SINGLE_TOKEN_TYPE;
+public:
+    /// Word token type
+    static const int32_t WORD_TYPE;
 
-        /// Double byte token type
-        static const int32_t DOUBLE_TOKEN_TYPE;
+    /// Single byte token type
+    static const int32_t SINGLE_TOKEN_TYPE;
 
-        /// Names for token types
-        static const wchar_t* TOKEN_TYPE_NAMES[];
+    /// Double byte token type
+    static const int32_t DOUBLE_TOKEN_TYPE;
 
-    protected:
-        /// Max word length
-        static const int32_t MAX_WORD_LEN;
+    /// Names for token types
+    static const wchar_t* TOKEN_TYPE_NAMES[];
 
-        static const int32_t IO_BUFFER_SIZE;
+protected:
+    /// Max word length
+    static const int32_t MAX_WORD_LEN;
 
-        enum UnicodeBlock { NONE, BASIC_LATIN, HALFWIDTH_AND_FULLWIDTH_FORMS };
+    static const int32_t IO_BUFFER_SIZE;
 
-    protected:
-        /// word offset, used to imply which character(in) is parsed
-        int32_t offset;
+    enum UnicodeBlock { NONE, BASIC_LATIN, HALFWIDTH_AND_FULLWIDTH_FORMS };
 
-        /// the index used only for ioBuffer
-        int32_t bufferIndex;
+protected:
+    /// word offset, used to imply which character(in) is parsed
+    int32_t offset;
 
-        /// data length
-        int32_t dataLen;
+    /// the index used only for ioBuffer
+    int32_t bufferIndex;
 
-        /// character buffer, store the characters which are used to compose the returned Token
-        CharArray buffer;
+    /// data length
+    int32_t dataLen;
 
-        /// I/O buffer, used to store the content of the input (one of the members of Tokenizer)
-        CharArray ioBuffer;
+    /// character buffer, store the characters which are used to compose the returned Token
+    CharArray buffer;
 
-        /// word type: single=>ASCII  double=>non-ASCII word=>default
-        int32_t tokenType;
+    /// I/O buffer, used to store the content of the input (one of the members of Tokenizer)
+    CharArray ioBuffer;
 
-        /// tag: previous character is a cached double-byte character  "C1C2C3C4"
-        /// ----(set the C1 isTokened) C1C2 "C2C3C4" ----(set the C2 isTokened)
-        /// C1C2 C2C3 "C3C4" ----(set the C3 isTokened) "C1C2 C2C3 C3C4"
-        bool preIsTokened;
+    /// word type: single=>ASCII  double=>non-ASCII word=>default
+    int32_t tokenType;
 
-        TermAttributePtr termAtt;
-        OffsetAttributePtr offsetAtt;
-        TypeAttributePtr typeAtt;
+    /// tag: previous character is a cached double-byte character  "C1C2C3C4"
+    /// ----(set the C1 isTokened) C1C2 "C2C3C4" ----(set the C2 isTokened)
+    /// C1C2 C2C3 "C3C4" ----(set the C3 isTokened) "C1C2 C2C3 C3C4"
+    bool preIsTokened;
 
-    protected:
-        /// return unicode block for given character (see http://unicode.org/Public/UNIDATA/Blocks.txt)
-        UnicodeBlock unicodeBlock(wchar_t c);
+    TermAttributePtr termAtt;
+    OffsetAttributePtr offsetAtt;
+    TypeAttributePtr typeAtt;
 
-    public:
-        virtual void initialize();
-        virtual bool incrementToken();
-        virtual void end();
-        virtual void reset();
-        virtual void reset(const ReaderPtr& input);
-    };
+protected:
+    /// return unicode block for given character (see http://unicode.org/Public/UNIDATA/Blocks.txt)
+    UnicodeBlock unicodeBlock(wchar_t c);
+
+public:
+    virtual void initialize();
+    virtual bool incrementToken();
+    virtual void end();
+    virtual void reset();
+    virtual void reset(const ReaderPtr& input);
+};
+
 }
 
 #endif

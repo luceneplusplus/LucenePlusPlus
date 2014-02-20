@@ -9,29 +9,29 @@
 
 #include "DocFieldConsumerPerThread.h"
 
-namespace Lucene
-{
-    class DocFieldConsumersPerThread : public DocFieldConsumerPerThread
-    {
-    public:
-        DocFieldConsumersPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocFieldConsumersPtr& parent,
-                                   const DocFieldConsumerPerThreadPtr& one, const DocFieldConsumerPerThreadPtr& two);
-        virtual ~DocFieldConsumersPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldConsumersPerThread);
+class DocFieldConsumersPerThread : public DocFieldConsumerPerThread {
+public:
+    DocFieldConsumersPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocFieldConsumersPtr& parent,
+                               const DocFieldConsumerPerThreadPtr& one, const DocFieldConsumerPerThreadPtr& two);
+    virtual ~DocFieldConsumersPerThread();
 
-    public:
-        DocFieldConsumerPerThreadPtr one;
-        DocFieldConsumerPerThreadPtr two;
-        DocFieldConsumersWeakPtr _parent;
-        DocStatePtr docState;
+    LUCENE_CLASS(DocFieldConsumersPerThread);
 
-    public:
-        virtual void startDocument();
-        virtual void abort();
-        virtual DocWriterPtr finishDocument();
-        virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi);
-    };
+public:
+    DocFieldConsumerPerThreadPtr one;
+    DocFieldConsumerPerThreadPtr two;
+    DocFieldConsumersWeakPtr _parent;
+    DocStatePtr docState;
+
+public:
+    virtual void startDocument();
+    virtual void abort();
+    virtual DocWriterPtr finishDocument();
+    virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi);
+};
+
 }
 
 #endif

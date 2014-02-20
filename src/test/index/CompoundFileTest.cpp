@@ -19,11 +19,9 @@
 
 using namespace Lucene;
 
-class CompoundFileTest : public LuceneTestFixture
-{
+class CompoundFileTest : public LuceneTestFixture {
 public:
-    CompoundFileTest()
-    {
+    CompoundFileTest() {
         indexDir = FileUtils::joinPath(getTempDir(), L"testIndex");
         FileUtils::removeDirectory(indexDir);
 
@@ -31,8 +29,7 @@ public:
         dir = newLucene<SimpleFSDirectory>(indexDir);
     }
 
-    virtual ~CompoundFileTest()
-    {
+    virtual ~CompoundFileTest() {
         dir->close();
         FileUtils::removeDirectory(indexDir);
     }
@@ -43,28 +40,25 @@ protected:
 
 public:
     /// Creates a file of the specified size with random data.
-    void createRandomFile(const DirectoryPtr& dir, const String& name, int32_t size)
-    {
+    void createRandomFile(const DirectoryPtr& dir, const String& name, int32_t size) {
         IndexOutputPtr os = dir->createOutput(name);
         RandomPtr r = newLucene<Random>();
-        for (int32_t i = 0; i < size; ++i)
+        for (int32_t i = 0; i < size; ++i) {
             os->writeByte((uint8_t)r->nextInt(256));
+        }
         os->close();
     }
 
-    void createSequenceFile(const DirectoryPtr& dir, const String& name, uint8_t start, int32_t size)
-    {
+    void createSequenceFile(const DirectoryPtr& dir, const String& name, uint8_t start, int32_t size) {
         IndexOutputPtr os = dir->createOutput(name);
-        for (int32_t i = 0; i < size; ++i)
-        {
+        for (int32_t i = 0; i < size; ++i) {
             os->writeByte(start);
             ++start;
         }
         os->close();
     }
 
-    void checkSameStreams(const IndexInputPtr& expected, const IndexInputPtr& test)
-    {
+    void checkSameStreams(const IndexInputPtr& expected, const IndexInputPtr& test) {
         EXPECT_TRUE(expected);
         EXPECT_TRUE(test);
         EXPECT_EQ(expected->length(), test->length());
@@ -74,8 +68,7 @@ public:
         ByteArray testBuffer(ByteArray::newInstance(expectedBuffer.size()));
 
         int64_t remainder = expected->length() - expected->getFilePointer();
-        while (remainder > 0)
-        {
+        while (remainder > 0) {
             int32_t readLen = std::min((int32_t)remainder, expectedBuffer.size());
             expected->readBytes(expectedBuffer.get(), 0, readLen);
             test->readBytes(testBuffer.get(), 0, readLen);
@@ -84,18 +77,15 @@ public:
         }
     }
 
-    void checkSameStreams(const IndexInputPtr& expected, const IndexInputPtr& actual, int64_t seekTo)
-    {
-        if (seekTo >= 0 && seekTo < (int64_t)expected->length())
-        {
+    void checkSameStreams(const IndexInputPtr& expected, const IndexInputPtr& actual, int64_t seekTo) {
+        if (seekTo >= 0 && seekTo < (int64_t)expected->length()) {
             expected->seek(seekTo);
             actual->seek(seekTo);
             checkSameStreams(expected, actual);
         }
     }
 
-    void checkSameSeekBehavior(const IndexInputPtr& expected, const IndexInputPtr& actual)
-    {
+    void checkSameSeekBehavior(const IndexInputPtr& expected, const IndexInputPtr& actual) {
         // seek to 0
         int64_t point = 0;
         checkSameStreams(expected, actual, point);
@@ -121,61 +111,53 @@ public:
         checkSameStreams(expected, actual, point);
     }
 
-    void checkEqualArrays(ByteArray expected, ByteArray test, int32_t start, int32_t length)
-    {
+    void checkEqualArrays(ByteArray expected, ByteArray test, int32_t start, int32_t length) {
         EXPECT_TRUE(expected);
         EXPECT_TRUE(test);
-        for (int32_t i = start; i < length; ++i)
+        for (int32_t i = start; i < length; ++i) {
             EXPECT_EQ(expected[i], test[i]);
+        }
     }
 
     /// Setup a larger compound file with a number of components, each of which is a sequential file (so that we can
     /// easily tell that we are reading in the right byte). The methods sets up 20 files - f0 to f19, the size of each
     /// file is 1000 bytes.
-    void setUpLarger()
-    {
+    void setUpLarger() {
         CompoundFileWriterPtr cw = newLucene<CompoundFileWriter>(dir, L"f.comp");
-        for (int32_t i = 0; i < 20; ++i)
-        {
+        for (int32_t i = 0; i < 20; ++i) {
             createSequenceFile(dir, L"f" + StringUtils::toString(i), 0, 2000);
             cw->addFile(L"f" + StringUtils::toString(i));
         }
         cw->close();
     }
 
-    bool isCSIndexInputOpen(const IndexInputPtr& is)
-    {
-        if (MiscUtils::typeOf<CSIndexInput>(is))
-        {
+    bool isCSIndexInputOpen(const IndexInputPtr& is) {
+        if (MiscUtils::typeOf<CSIndexInput>(is)) {
             CSIndexInputPtr cis = boost::dynamic_pointer_cast<CSIndexInput>(is);
             return isSimpleFSIndexInputOpen(cis->base);
-        }
-        else
+        } else {
             return false;
+        }
     }
 
-    bool isSimpleFSIndexInputOpen(const IndexInputPtr& is)
-    {
-        if (MiscUtils::typeOf<SimpleFSIndexInput>(is))
-        {
+    bool isSimpleFSIndexInputOpen(const IndexInputPtr& is) {
+        if (MiscUtils::typeOf<SimpleFSIndexInput>(is)) {
             SimpleFSIndexInputPtr fis = boost::dynamic_pointer_cast<SimpleFSIndexInput>(is);
             return fis->isValid();
-        }
-        else
+        } else {
             return false;
+        }
     }
 };
 
 /// This test creates compound file based on a single file.  Files of different sizes are tested: 0, 1, 10, 100 bytes.
-TEST_F(CompoundFileTest, testSingleFile)
-{
+TEST_F(CompoundFileTest, testSingleFile) {
     IntArray data(IntArray::newInstance(4));
     data[0] = 0;
     data[1] = 1;
     data[2] = 10;
     data[3] = 100;
-    for (int32_t i = 0; i < data.size(); ++i)
-    {
+    for (int32_t i = 0; i < data.size(); ++i) {
         String name = L"t" + StringUtils::toString(data[i]);
         createSequenceFile(dir, name, 0, data[i]);
         CompoundFileWriterPtr csw = newLucene<CompoundFileWriter>(dir, name + L".cfs");
@@ -194,8 +176,7 @@ TEST_F(CompoundFileTest, testSingleFile)
 }
 
 /// This test creates compound file based on two files.
-TEST_F(CompoundFileTest, testTwoFiles)
-{
+TEST_F(CompoundFileTest, testTwoFiles) {
     createSequenceFile(dir, L"d1", 0, 15);
     createSequenceFile(dir, L"d2", 0, 114);
 
@@ -224,8 +205,7 @@ TEST_F(CompoundFileTest, testTwoFiles)
 /// This test creates a compound file based on a large number of files of various length. The file content is generated randomly.
 /// The sizes range from 0 to 1Mb.  Some of the sizes are selected to test the buffering logic in the file reading code.
 /// For this the chunk variable is set to the length of the buffer used internally by the compound file logic.
-TEST_F(CompoundFileTest, testRandomFiles)
-{
+TEST_F(CompoundFileTest, testRandomFiles) {
     // Setup the test segment
     String segment = L"test";
     int32_t chunk = 1024; // internal buffer size used by the stream
@@ -250,18 +230,25 @@ TEST_F(CompoundFileTest, testRandomFiles)
     CompoundFileWriterPtr csw = newLucene<CompoundFileWriter>(dir, L"test.cfs");
 
     Collection<String> data(Collection<String>::newInstance());
-    data.add(L".zero");    data.add(L".one"); data.add(L".ten");
-    data.add(L".hundred"); data.add(L".big1"); data.add(L".big2");
-    data.add(L".big3"); data.add(L".big4"); data.add(L".big5");
-    data.add(L".big6"); data.add(L".big7");
+    data.add(L".zero");
+    data.add(L".one");
+    data.add(L".ten");
+    data.add(L".hundred");
+    data.add(L".big1");
+    data.add(L".big2");
+    data.add(L".big3");
+    data.add(L".big4");
+    data.add(L".big5");
+    data.add(L".big6");
+    data.add(L".big7");
 
-    for (Collection<String>::iterator name = data.begin(); name != data.end(); ++name)
+    for (Collection<String>::iterator name = data.begin(); name != data.end(); ++name) {
         csw->addFile(segment + *name);
+    }
     csw->close();
 
     CompoundFileReaderPtr csr = newLucene<CompoundFileReader>(dir, L"test.cfs");
-    for (Collection<String>::iterator name = data.begin(); name != data.end(); ++name)
-    {
+    for (Collection<String>::iterator name = data.begin(); name != data.end(); ++name) {
         IndexInputPtr check = dir->openInput(segment + *name);
         IndexInputPtr test = csr->openInput(segment + *name);
         checkSameStreams(check, test);
@@ -272,12 +259,12 @@ TEST_F(CompoundFileTest, testRandomFiles)
     csr->close();
 }
 
-TEST_F(CompoundFileTest, testReadAfterClose)
-{
+TEST_F(CompoundFileTest, testReadAfterClose) {
     // Setup the test file - we need more than 1024 bytes
     IndexOutputPtr os = dir->createOutput(L"test");
-    for (int32_t i = 0; i < 2000; ++i)
+    for (int32_t i = 0; i < 2000; ++i) {
         os->writeByte((uint8_t)i);
+    }
     os->close();
 
     IndexInputPtr in = dir->openInput(L"test");
@@ -294,18 +281,14 @@ TEST_F(CompoundFileTest, testReadAfterClose)
     // ERROR: this call should fail, but succeeds for some reason as well
     in->seek(1099);
 
-    try
-    {
+    try {
         in->readByte();
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IO)(e));
     }
 }
 
-TEST_F(CompoundFileTest, testClonedStreamsClosing)
-{
+TEST_F(CompoundFileTest, testClonedStreamsClosing) {
     setUpLarger();
 
     CompoundFileReaderPtr cr = newLucene<CompoundFileReader>(dir, L"f.comp");
@@ -355,8 +338,7 @@ TEST_F(CompoundFileTest, testClonedStreamsClosing)
 }
 
 /// This test opens two files from a compound stream and verifies that their file positions are independent of each other.
-TEST_F(CompoundFileTest, testRandomAccess)
-{
+TEST_F(CompoundFileTest, testRandomAccess) {
     setUpLarger();
 
     CompoundFileReaderPtr cr = newLucene<CompoundFileReader>(dir, L"f.comp");
@@ -434,8 +416,7 @@ TEST_F(CompoundFileTest, testRandomAccess)
 }
 
 /// This test opens two files from a compound stream and verifies that their file positions are independent of each other.
-TEST_F(CompoundFileTest, testRandomAccessClones)
-{
+TEST_F(CompoundFileTest, testRandomAccessClones) {
     setUpLarger();
 
     CompoundFileReaderPtr cr = newLucene<CompoundFileReader>(dir, L"f.comp");
@@ -512,28 +493,23 @@ TEST_F(CompoundFileTest, testRandomAccessClones)
     cr->close();
 }
 
-TEST_F(CompoundFileTest, testFileNotFound)
-{
+TEST_F(CompoundFileTest, testFileNotFound) {
     setUpLarger();
 
     CompoundFileReaderPtr cr = newLucene<CompoundFileReader>(dir, L"f.comp");
     IndexInputPtr e1;
 
     // Open two files
-    try
-    {
+    try {
         e1 = cr->openInput(L"bogus");
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IO)(e));
     }
 
     cr->close();
 }
 
-TEST_F(CompoundFileTest, testReadPastEOF)
-{
+TEST_F(CompoundFileTest, testReadPastEOF) {
     setUpLarger();
 
     CompoundFileReaderPtr cr = newLucene<CompoundFileReader>(dir, L"f.comp");
@@ -543,23 +519,17 @@ TEST_F(CompoundFileTest, testReadPastEOF)
     is->readBytes(b.get(), 0, 10);
     uint8_t test = 0;
 
-    try
-    {
+    try {
         test = is->readByte();
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IO)(e));
     }
 
     is->seek(is->length() - 10);
 
-    try
-    {
+    try {
         is->readBytes(b.get(), 0, 50);
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IO)(e));
     }
 
@@ -568,14 +538,14 @@ TEST_F(CompoundFileTest, testReadPastEOF)
 }
 
 /// This test that writes larger than the size of the buffer output will correctly increment the file pointer.
-TEST_F(CompoundFileTest, testLargeWrites)
-{
+TEST_F(CompoundFileTest, testLargeWrites) {
     IndexOutputPtr os = dir->createOutput(L"testBufferStart.txt");
     RandomPtr r = newLucene<Random>();
 
     ByteArray largeBuf(ByteArray::newInstance(2048));
-    for (int32_t i = 0; i < largeBuf.size(); ++i)
+    for (int32_t i = 0; i < largeBuf.size(); ++i) {
         largeBuf[i] = (uint8_t)r->nextInt(256);
+    }
 
     int64_t currentPos = os->getFilePointer();
     os->writeBytes(largeBuf.get(), largeBuf.size());

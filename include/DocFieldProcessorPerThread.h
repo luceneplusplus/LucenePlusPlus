@@ -10,77 +10,76 @@
 #include "DocConsumerPerThread.h"
 #include "DocumentsWriter.h"
 
-namespace Lucene
-{
-    /// Gathers all Fieldables for a document under the same name, updates FieldInfos, and calls per-field
-    /// consumers to process field by field.
-    ///
-    /// Currently, only a single thread visits the fields, sequentially, for processing.
-    class DocFieldProcessorPerThread : public DocConsumerPerThread
-    {
-    public:
-        DocFieldProcessorPerThread(const DocumentsWriterThreadStatePtr& threadState, const DocFieldProcessorPtr& docFieldProcessor);
-        virtual ~DocFieldProcessorPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldProcessorPerThread);
+/// Gathers all Fieldables for a document under the same name, updates FieldInfos, and calls per-field
+/// consumers to process field by field.
+///
+/// Currently, only a single thread visits the fields, sequentially, for processing.
+class DocFieldProcessorPerThread : public DocConsumerPerThread {
+public:
+    DocFieldProcessorPerThread(const DocumentsWriterThreadStatePtr& threadState, const DocFieldProcessorPtr& docFieldProcessor);
+    virtual ~DocFieldProcessorPerThread();
 
-    public:
-        double docBoost;
-        int32_t fieldGen;
-        DocFieldProcessorWeakPtr _docFieldProcessor;
-        FieldInfosPtr fieldInfos;
-        DocFieldConsumerPerThreadPtr consumer;
-        Collection<DocFieldProcessorPerFieldPtr> _fields; // Holds all fields seen in current doc
-        int32_t fieldCount;
+    LUCENE_CLASS(DocFieldProcessorPerThread);
 
-        Collection<DocFieldProcessorPerFieldPtr> fieldHash; // Hash table for all fields ever seen
-        int32_t hashMask;
-        int32_t totalFieldCount;
+public:
+    double docBoost;
+    int32_t fieldGen;
+    DocFieldProcessorWeakPtr _docFieldProcessor;
+    FieldInfosPtr fieldInfos;
+    DocFieldConsumerPerThreadPtr consumer;
+    Collection<DocFieldProcessorPerFieldPtr> _fields; // Holds all fields seen in current doc
+    int32_t fieldCount;
 
-        StoredFieldsWriterPerThreadPtr fieldsWriter;
-        DocStatePtr docState;
+    Collection<DocFieldProcessorPerFieldPtr> fieldHash; // Hash table for all fields ever seen
+    int32_t hashMask;
+    int32_t totalFieldCount;
 
-        Collection<DocFieldProcessorPerThreadPerDocPtr> docFreeList;
-        int32_t freeCount;
-        int32_t allocCount;
+    StoredFieldsWriterPerThreadPtr fieldsWriter;
+    DocStatePtr docState;
 
-    public:
-        virtual void initialize();
-        virtual void abort();
-        Collection<DocFieldConsumerPerFieldPtr> fields();
+    Collection<DocFieldProcessorPerThreadPerDocPtr> docFreeList;
+    int32_t freeCount;
+    int32_t allocCount;
 
-        // If there are fields we've seen but did not see again in the last run, then free them up.
-        void trimFields(const SegmentWriteStatePtr& state);
+public:
+    virtual void initialize();
+    virtual void abort();
+    Collection<DocFieldConsumerPerFieldPtr> fields();
 
-        virtual DocWriterPtr processDocument();
+    // If there are fields we've seen but did not see again in the last run, then free them up.
+    void trimFields(const SegmentWriteStatePtr& state);
 
-        DocFieldProcessorPerThreadPerDocPtr getPerDoc();
-        void freePerDoc(const DocFieldProcessorPerThreadPerDocPtr& perDoc);
+    virtual DocWriterPtr processDocument();
 
-    protected:
-        void rehash();
-    };
+    DocFieldProcessorPerThreadPerDocPtr getPerDoc();
+    void freePerDoc(const DocFieldProcessorPerThreadPerDocPtr& perDoc);
 
-    class DocFieldProcessorPerThreadPerDoc : public DocWriter
-    {
-    public:
-        DocFieldProcessorPerThreadPerDoc(const DocFieldProcessorPerThreadPtr& docProcessor);
-        virtual ~DocFieldProcessorPerThreadPerDoc();
+protected:
+    void rehash();
+};
 
-        LUCENE_CLASS(DocFieldProcessorPerThreadPerDoc);
+class DocFieldProcessorPerThreadPerDoc : public DocWriter {
+public:
+    DocFieldProcessorPerThreadPerDoc(const DocFieldProcessorPerThreadPtr& docProcessor);
+    virtual ~DocFieldProcessorPerThreadPerDoc();
 
-    public:
-        DocWriterPtr one;
-        DocWriterPtr two;
+    LUCENE_CLASS(DocFieldProcessorPerThreadPerDoc);
 
-    protected:
-        DocFieldProcessorPerThreadWeakPtr _docProcessor;
+public:
+    DocWriterPtr one;
+    DocWriterPtr two;
 
-    public:
-        virtual int64_t sizeInBytes();
-        virtual void finish();
-        virtual void abort();
-    };
+protected:
+    DocFieldProcessorPerThreadWeakPtr _docProcessor;
+
+public:
+    virtual int64_t sizeInBytes();
+    virtual void finish();
+    virtual void abort();
+};
+
 }
 
 #endif

@@ -12,8 +12,7 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture FrenchAnalyzerTest;
 
-TEST_F(FrenchAnalyzerTest, testAnalyzer)
-{
+TEST_F(FrenchAnalyzerTest, testAnalyzer) {
     AnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
 
     checkAnalyzesTo(fa, L"", Collection<String>::newInstance());
@@ -52,8 +51,7 @@ TEST_F(FrenchAnalyzerTest, testAnalyzer)
                     newCollection<String>(L"33bis", L"1940-1945", L"1940", L"1945", L"i"));
 }
 
-TEST_F(FrenchAnalyzerTest, testReusableTokenStream)
-{
+TEST_F(FrenchAnalyzerTest, testReusableTokenStream) {
     AnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
 
     // stopwords
@@ -66,8 +64,7 @@ TEST_F(FrenchAnalyzerTest, testReusableTokenStream)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-TEST_F(FrenchAnalyzerTest, testExclusionTableReuse)
-{
+TEST_F(FrenchAnalyzerTest, testExclusionTableReuse) {
     FrenchAnalyzerPtr fa = newLucene<FrenchAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkAnalyzesToReuse(fa, L"habitable", newCollection<String>(L"habit"));
     HashSet<String> exclusions = HashSet<String>::newInstance();

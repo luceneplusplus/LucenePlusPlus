@@ -9,91 +9,79 @@
 #include "RAMDirectory.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    RAMFile::RAMFile()
-    {
-        this->buffers = Collection<ByteArray>::newInstance();
-        this->length = 0;
-        this->sizeInBytes = 0;
-        this->lastModified = MiscUtils::currentTimeMillis();
-    }
+namespace Lucene {
 
-    RAMFile::RAMFile(const RAMDirectoryPtr& directory)
-    {
-        this->buffers = Collection<ByteArray>::newInstance();
-        this->length = 0;
-        this->sizeInBytes = 0;
-        this->_directory = directory;
-        this->lastModified = MiscUtils::currentTimeMillis();
-    }
+RAMFile::RAMFile() {
+    this->buffers = Collection<ByteArray>::newInstance();
+    this->length = 0;
+    this->sizeInBytes = 0;
+    this->lastModified = MiscUtils::currentTimeMillis();
+}
 
-    RAMFile::~RAMFile()
-    {
-    }
+RAMFile::RAMFile(const RAMDirectoryPtr& directory) {
+    this->buffers = Collection<ByteArray>::newInstance();
+    this->length = 0;
+    this->sizeInBytes = 0;
+    this->_directory = directory;
+    this->lastModified = MiscUtils::currentTimeMillis();
+}
 
-    int64_t RAMFile::getLength()
-    {
-        SyncLock syncLock(this);
-        return length;
-    }
+RAMFile::~RAMFile() {
+}
 
-    void RAMFile::setLength(int64_t length)
-    {
-        SyncLock syncLock(this);
-        this->length = length;
-    }
+int64_t RAMFile::getLength() {
+    SyncLock syncLock(this);
+    return length;
+}
 
-    int64_t RAMFile::getLastModified()
-    {
-        SyncLock syncLock(this);
-        return lastModified;
-    }
+void RAMFile::setLength(int64_t length) {
+    SyncLock syncLock(this);
+    this->length = length;
+}
 
-    void RAMFile::setLastModified(int64_t lastModified)
-    {
-        SyncLock syncLock(this);
-        this->lastModified = lastModified;
-    }
+int64_t RAMFile::getLastModified() {
+    SyncLock syncLock(this);
+    return lastModified;
+}
 
-    ByteArray RAMFile::addBuffer(int32_t size)
-    {
-        ByteArray buffer(newBuffer(size));
-        {
-            SyncLock syncLock(this);
-            buffers.add(buffer);
-            sizeInBytes += size;
-        }
+void RAMFile::setLastModified(int64_t lastModified) {
+    SyncLock syncLock(this);
+    this->lastModified = lastModified;
+}
 
-        RAMDirectoryPtr directory(_directory.lock());
-        if (directory)
-        {
-            SyncLock dirLock(directory);
-            directory->_sizeInBytes += size;
-        }
-        return buffer;
-    }
-
-    ByteArray RAMFile::getBuffer(int32_t index)
+ByteArray RAMFile::addBuffer(int32_t size) {
+    ByteArray buffer(newBuffer(size));
     {
         SyncLock syncLock(this);
-        return buffers[index];
+        buffers.add(buffer);
+        sizeInBytes += size;
     }
 
-    int32_t RAMFile::numBuffers()
-    {
-        SyncLock syncLock(this);
-        return buffers.size();
+    RAMDirectoryPtr directory(_directory.lock());
+    if (directory) {
+        SyncLock dirLock(directory);
+        directory->_sizeInBytes += size;
     }
+    return buffer;
+}
 
-    ByteArray RAMFile::newBuffer(int32_t size)
-    {
-        return ByteArray::newInstance(size);
-    }
+ByteArray RAMFile::getBuffer(int32_t index) {
+    SyncLock syncLock(this);
+    return buffers[index];
+}
 
-    int64_t RAMFile::getSizeInBytes()
-    {
-        SyncLock syncLock(this);
-        return sizeInBytes;
-    }
+int32_t RAMFile::numBuffers() {
+    SyncLock syncLock(this);
+    return buffers.size();
+}
+
+ByteArray RAMFile::newBuffer(int32_t size) {
+    return ByteArray::newInstance(size);
+}
+
+int64_t RAMFile::getSizeInBytes() {
+    SyncLock syncLock(this);
+    return sizeInBytes;
+}
+
 }

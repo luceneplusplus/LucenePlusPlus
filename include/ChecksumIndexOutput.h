@@ -10,61 +10,61 @@
 #include <boost/crc.hpp>
 #include "IndexOutput.h"
 
-namespace Lucene
-{
-    /// Writes bytes through to a primary IndexOutput, computing
-    /// checksum.  Note that you cannot use seek().
-    class LPPAPI ChecksumIndexOutput : public IndexOutput
-    {
-    public:
-        ChecksumIndexOutput(const IndexOutputPtr& main);
-        virtual ~ChecksumIndexOutput();
+namespace Lucene {
 
-        LUCENE_CLASS(ChecksumIndexOutput);
+/// Writes bytes through to a primary IndexOutput, computing
+/// checksum.  Note that you cannot use seek().
+class LPPAPI ChecksumIndexOutput : public IndexOutput {
+public:
+    ChecksumIndexOutput(const IndexOutputPtr& main);
+    virtual ~ChecksumIndexOutput();
 
-    protected:
-        IndexOutputPtr main;
-        boost::crc_32_type checksum;
+    LUCENE_CLASS(ChecksumIndexOutput);
 
-    public:
-        /// Writes a single byte.
-        /// @see IndexInput#readByte()
-        virtual void writeByte(uint8_t b);
+protected:
+    IndexOutputPtr main;
+    boost::crc_32_type checksum;
 
-        /// Writes an array of bytes.
-        /// @param b the bytes to write.
-        /// @param length the number of bytes to write.
-        /// @see IndexInput#readBytes(uint8_t*, int32_t, int32_t)
-        virtual void writeBytes(const uint8_t* b, int32_t offset, int32_t length);
+public:
+    /// Writes a single byte.
+    /// @see IndexInput#readByte()
+    virtual void writeByte(uint8_t b);
 
-        /// Return calculated checksum.
-        int64_t getChecksum();
+    /// Writes an array of bytes.
+    /// @param b the bytes to write.
+    /// @param length the number of bytes to write.
+    /// @see IndexInput#readBytes(uint8_t*, int32_t, int32_t)
+    virtual void writeBytes(const uint8_t* b, int32_t offset, int32_t length);
 
-        /// Forces any buffered output to be written.
-        virtual void flush();
+    /// Return calculated checksum.
+    int64_t getChecksum();
 
-        /// Closes the stream to further operations.
-        virtual void close();
+    /// Forces any buffered output to be written.
+    virtual void flush();
 
-        /// Returns the current position in this file, where the next write will occur.
-        /// @see #seek(int64_t)
-        virtual int64_t getFilePointer();
+    /// Closes the stream to further operations.
+    virtual void close();
 
-        /// Sets current position in this file, where the next write will occur.
-        /// @see #getFilePointer()
-        virtual void seek(int64_t pos);
+    /// Returns the current position in this file, where the next write will occur.
+    /// @see #seek(int64_t)
+    virtual int64_t getFilePointer();
 
-        /// Starts but does not complete the commit of this file (= writing of
-        /// the final checksum at the end).  After this is called must call
-        /// {@link #finishCommit} and the {@link #close} to complete the commit.
-        void prepareCommit();
+    /// Sets current position in this file, where the next write will occur.
+    /// @see #getFilePointer()
+    virtual void seek(int64_t pos);
 
-        /// See {@link #prepareCommit}
-        void finishCommit();
+    /// Starts but does not complete the commit of this file (= writing of
+    /// the final checksum at the end).  After this is called must call
+    /// {@link #finishCommit} and the {@link #close} to complete the commit.
+    void prepareCommit();
 
-        /// The number of bytes in the file.
-        virtual int64_t length();
-    };
+    /// See {@link #prepareCommit}
+    void finishCommit();
+
+    /// The number of bytes in the file.
+    virtual int64_t length();
+};
+
 }
 
 #endif

@@ -9,20 +9,20 @@
 
 #include "Analyzer.h"
 
-namespace Lucene
-{
-    /// An Analyzer that uses {@link WhitespaceTokenizer}.
-    class LPPAPI WhitespaceAnalyzer : public Analyzer
-    {
-    public:
-        virtual ~WhitespaceAnalyzer();
+namespace Lucene {
 
-        LUCENE_CLASS(WhitespaceAnalyzer);
+/// An Analyzer that uses {@link WhitespaceTokenizer}.
+class LPPAPI WhitespaceAnalyzer : public Analyzer {
+public:
+    virtual ~WhitespaceAnalyzer();
 
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
-    };
+    LUCENE_CLASS(WhitespaceAnalyzer);
+
+public:
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
+};
+
 }
 
 #endif

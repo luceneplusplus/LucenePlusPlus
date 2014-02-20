@@ -9,42 +9,42 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// An interprocess mutex lock.
-    /// @see Directory#makeLock(const String&)
-    class LPPAPI Lock : public LuceneObject
-    {
-    public:
-        virtual ~Lock();
-        LUCENE_CLASS(Lock);
+namespace Lucene {
 
-    public:
-        /// How long {@link #obtain(int64_t)} waits, in milliseconds, in between attempts to acquire the lock.
-        static const int32_t LOCK_OBTAIN_WAIT_FOREVER;
+/// An interprocess mutex lock.
+/// @see Directory#makeLock(const String&)
+class LPPAPI Lock : public LuceneObject {
+public:
+    virtual ~Lock();
+    LUCENE_CLASS(Lock);
 
-        /// Pass this value to {@link #obtain(int64_t)} to try forever to obtain the lock.
-        static const int32_t LOCK_POLL_INTERVAL;
+public:
+    /// How long {@link #obtain(int64_t)} waits, in milliseconds, in between attempts to acquire the lock.
+    static const int32_t LOCK_OBTAIN_WAIT_FOREVER;
 
-    public:
-        /// Attempts to obtain exclusive access and immediately return upon success or failure.
-        /// @return true if exclusive access is obtained.
-        virtual bool obtain() = 0;
+    /// Pass this value to {@link #obtain(int64_t)} to try forever to obtain the lock.
+    static const int32_t LOCK_POLL_INTERVAL;
 
-        /// Releases exclusive access.
-        virtual void release() = 0;
+public:
+    /// Attempts to obtain exclusive access and immediately return upon success or failure.
+    /// @return true if exclusive access is obtained.
+    virtual bool obtain() = 0;
 
-        /// Returns true if the resource is currently locked. Note that one must still call {@link #obtain()}
-        /// before using the resource.
-        virtual bool isLocked() = 0;
+    /// Releases exclusive access.
+    virtual void release() = 0;
 
-        /// Attempts to obtain an exclusive lock within amount of time given. Polls once per {@link #LOCK_POLL_INTERVAL}
-        /// (currently 1000) milliseconds until lockWaitTimeout is passed.
-        /// @param lockWaitTimeout length of time to wait in milliseconds or {@link #LOCK_OBTAIN_WAIT_FOREVER}
-        /// to retry forever.
-        /// @return true if lock was obtained.
-        bool obtain(int32_t lockWaitTimeout);
-    };
+    /// Returns true if the resource is currently locked. Note that one must still call {@link #obtain()}
+    /// before using the resource.
+    virtual bool isLocked() = 0;
+
+    /// Attempts to obtain an exclusive lock within amount of time given. Polls once per {@link #LOCK_POLL_INTERVAL}
+    /// (currently 1000) milliseconds until lockWaitTimeout is passed.
+    /// @param lockWaitTimeout length of time to wait in milliseconds or {@link #LOCK_OBTAIN_WAIT_FOREVER}
+    /// to retry forever.
+    /// @return true if lock was obtained.
+    bool obtain(int32_t lockWaitTimeout);
+};
+
 }
 
 #endif

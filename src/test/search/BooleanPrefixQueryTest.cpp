@@ -25,34 +25,29 @@ using namespace Lucene;
 
 typedef LuceneTestFixture BooleanPrefixQueryTest;
 
-static int32_t getCount(const IndexReaderPtr& r, const QueryPtr& q)
-{
-    if (MiscUtils::typeOf<BooleanQuery>(q))
+static int32_t getCount(const IndexReaderPtr& r, const QueryPtr& q) {
+    if (MiscUtils::typeOf<BooleanQuery>(q)) {
         return boost::dynamic_pointer_cast<BooleanQuery>(q)->getClauses().size();
-    else if (MiscUtils::typeOf<ConstantScoreQuery>(q))
-    {
+    } else if (MiscUtils::typeOf<ConstantScoreQuery>(q)) {
         DocIdSetIteratorPtr iter = boost::dynamic_pointer_cast<ConstantScoreQuery>(q)->getFilter()->getDocIdSet(r)->iterator();
         int32_t count = 0;
-        while (iter->nextDoc() != DocIdSetIterator::NO_MORE_DOCS)
+        while (iter->nextDoc() != DocIdSetIterator::NO_MORE_DOCS) {
             ++count;
+        }
         return count;
-    }
-    else
-    {
+    } else {
         boost::throw_exception(RuntimeException(L"unexpected query"));
         return 0;
     }
 }
 
-TEST_F(BooleanPrefixQueryTest, testMethod)
-{
+TEST_F(BooleanPrefixQueryTest, testMethod) {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
 
     Collection<String> categories = newCollection<String>(L"food", L"foodanddrink", L"foodanddrinkandgoodtimes", L"food and drink");
 
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < categories.size(); ++i)
-    {
+    for (int32_t i = 0; i < categories.size(); ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"category", categories[i], Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         writer->addDocument(doc);

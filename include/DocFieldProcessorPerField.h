@@ -9,30 +9,30 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Holds all per thread, per field state.
-    class DocFieldProcessorPerField : public LuceneObject
-    {
-    public:
-        DocFieldProcessorPerField(const DocFieldProcessorPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
-        virtual ~DocFieldProcessorPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldProcessorPerField);
+/// Holds all per thread, per field state.
+class DocFieldProcessorPerField : public LuceneObject {
+public:
+    DocFieldProcessorPerField(const DocFieldProcessorPerThreadPtr& perThread, const FieldInfoPtr& fieldInfo);
+    virtual ~DocFieldProcessorPerField();
 
-    public:
-        DocFieldConsumerPerFieldPtr consumer;
-        FieldInfoPtr fieldInfo;
+    LUCENE_CLASS(DocFieldProcessorPerField);
 
-        DocFieldProcessorPerFieldPtr next;
-        int32_t lastGen;
+public:
+    DocFieldConsumerPerFieldPtr consumer;
+    FieldInfoPtr fieldInfo;
 
-        int32_t fieldCount;
-        Collection<FieldablePtr> fields;
+    DocFieldProcessorPerFieldPtr next;
+    int32_t lastGen;
 
-    public:
-        virtual void abort();
-    };
+    int32_t fieldCount;
+    Collection<FieldablePtr> fields;
+
+public:
+    virtual void abort();
+};
+
 }
 
 #endif

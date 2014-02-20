@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "TermsHashConsumerPerThread.h"
 
-namespace Lucene
-{
-    TermsHashConsumerPerThread::~TermsHashConsumerPerThread()
-    {
-    }
+namespace Lucene {
+
+TermsHashConsumerPerThread::~TermsHashConsumerPerThread() {
+}
+
 }

@@ -8,29 +8,28 @@
 #include "IndexCommit.h"
 #include "Directory.h"
 
-namespace Lucene
-{
-    IndexCommit::~IndexCommit()
-    {
-    }
+namespace Lucene {
 
-    bool IndexCommit::equals(const LuceneObjectPtr& other)
-    {
-        if (LuceneObject::equals(other))
-            return true;
-        IndexCommitPtr otherCommit(boost::dynamic_pointer_cast<IndexCommit>(other));
-        if (!otherCommit)
-            return false;
-        return (otherCommit->getDirectory()->equals(getDirectory()) && otherCommit->getVersion() == getVersion());
-    }
+IndexCommit::~IndexCommit() {
+}
 
-    int32_t IndexCommit::hashCode()
-    {
-        return (getDirectory()->hashCode() + (int32_t)getVersion());
+bool IndexCommit::equals(const LuceneObjectPtr& other) {
+    if (LuceneObject::equals(other)) {
+        return true;
     }
+    IndexCommitPtr otherCommit(boost::dynamic_pointer_cast<IndexCommit>(other));
+    if (!otherCommit) {
+        return false;
+    }
+    return (otherCommit->getDirectory()->equals(getDirectory()) && otherCommit->getVersion() == getVersion());
+}
 
-    int64_t IndexCommit::getTimestamp()
-    {
-        return getDirectory()->fileModified(getSegmentsFileName());
-    }
+int32_t IndexCommit::hashCode() {
+    return (getDirectory()->hashCode() + (int32_t)getVersion());
+}
+
+int64_t IndexCommit::getTimestamp() {
+    return getDirectory()->fileModified(getSegmentsFileName());
+}
+
 }

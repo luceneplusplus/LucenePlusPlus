@@ -13,15 +13,13 @@ using namespace Lucene;
 
 typedef LuceneTestFixture Base64Test;
 
-TEST_F(Base64Test, testEncodeSmall)
-{
+TEST_F(Base64Test, testEncodeSmall) {
     SingleString testBinary = "this is test binary";
     String encode = Base64::encode((uint8_t*)testBinary.c_str(), testBinary.length());
     EXPECT_EQ(encode, L"dGhpcyBpcyB0ZXN0IGJpbmFyeQ==");
 }
 
-TEST_F(Base64Test, testEncodeLarge)
-{
+TEST_F(Base64Test, testEncodeLarge) {
     SingleString testBinary = "This is a larger test string that should convert into base64 "
                               "This is a larger test string that should convert into base64 "
                               "This is a larger test string that should convert into base64 "
@@ -39,16 +37,14 @@ TEST_F(Base64Test, testEncodeLarge)
     EXPECT_EQ(encode, expected);
 }
 
-TEST_F(Base64Test, testDecodeSmall)
-{
+TEST_F(Base64Test, testDecodeSmall) {
     String testString = L"dGhpcyBpcyB0ZXN0IGJpbmFyeQ==";
     ByteArray decode = Base64::decode(testString);
     SingleString decodeBinary((char*)decode.get(), decode.size());
     EXPECT_EQ(decodeBinary, "this is test binary");
 }
 
-TEST_F(Base64Test, testDecodeLaarge)
-{
+TEST_F(Base64Test, testDecodeLaarge) {
     String testString = L"VGhpcyBpcyBhIGxhcmdlciB0ZXN0IHN0cmluZyB0aGF0IHNob3VsZCBjb252ZXJ0IGludG8gYmFz"
                         L"ZTY0IFRoaXMgaXMgYSBsYXJnZXIgdGVzdCBzdHJpbmcgdGhhdCBzaG91bGQgY29udmVydCBpbnRv"
                         L"IGJhc2U2NCBUaGlzIGlzIGEgbGFyZ2VyIHRlc3Qgc3RyaW5nIHRoYXQgc2hvdWxkIGNvbnZlcnQg"

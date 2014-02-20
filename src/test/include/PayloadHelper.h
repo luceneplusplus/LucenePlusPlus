@@ -9,27 +9,27 @@
 
 #include "test_lucene.h"
 
-namespace Lucene
-{
-    class PayloadHelper
-    {
-    public:
-        virtual ~PayloadHelper();
+namespace Lucene {
 
-    public:
-        static const String NO_PAYLOAD_FIELD;
-        static const String MULTI_FIELD;
-        static const String FIELD;
+class PayloadHelper {
+public:
+    virtual ~PayloadHelper();
 
-    public:
-        static const ByteArray payloadField();
-        static const ByteArray payloadMultiField1();
-        static const ByteArray payloadMultiField2();
+public:
+    static const String NO_PAYLOAD_FIELD;
+    static const String MULTI_FIELD;
+    static const String FIELD;
 
-        /// Sets up a RAMDirectory, and adds documents (using intToEnglish()) with two fields: field and multiField
-        /// and analyzes them using the PayloadHelperAnalyzer
-        static IndexSearcherPtr setUp(const SimilarityPtr& similarity, int32_t numDocs);
-    };
+public:
+    static const ByteArray payloadField();
+    static const ByteArray payloadMultiField1();
+    static const ByteArray payloadMultiField2();
+
+    /// Sets up a RAMDirectory, and adds documents (using intToEnglish()) with two fields: field and multiField
+    /// and analyzes them using the PayloadHelperAnalyzer
+    static IndexSearcherPtr setUp(const SimilarityPtr& similarity, int32_t numDocs);
+};
+
 }
 
 #endif

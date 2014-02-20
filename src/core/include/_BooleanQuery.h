@@ -9,46 +9,45 @@
 
 #include "SimilarityDelegator.h"
 
-namespace Lucene
-{
-    /// The Weight for BooleanQuery, used to normalize, score and explain these queries.
-    class BooleanWeight : public Weight
-    {
-    public:
-        BooleanWeight(const BooleanQueryPtr& query, const SearcherPtr& searcher);
-        virtual ~BooleanWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(BooleanWeight);
+/// The Weight for BooleanQuery, used to normalize, score and explain these queries.
+class BooleanWeight : public Weight {
+public:
+    BooleanWeight(const BooleanQueryPtr& query, const SearcherPtr& searcher);
+    virtual ~BooleanWeight();
 
-    protected:
-        BooleanQueryPtr query;
+    LUCENE_CLASS(BooleanWeight);
 
-        /// The Similarity implementation.
-        SimilarityPtr similarity;
-        Collection<WeightPtr> weights;
+protected:
+    BooleanQueryPtr query;
 
-    public:
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
-        virtual bool scoresDocsOutOfOrder();
-    };
+    /// The Similarity implementation.
+    SimilarityPtr similarity;
+    Collection<WeightPtr> weights;
 
-    /// Disabled coord Similarity
-    class SimilarityDisableCoord : public SimilarityDelegator
-    {
-    public:
-        SimilarityDisableCoord(const SimilarityPtr& delegee);
-        virtual ~SimilarityDisableCoord();
+public:
+    virtual QueryPtr getQuery();
+    virtual double getValue();
+    virtual double sumOfSquaredWeights();
+    virtual void normalize(double norm);
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+    virtual bool scoresDocsOutOfOrder();
+};
 
-        LUCENE_CLASS(SimilarityDisableCoord);
+/// Disabled coord Similarity
+class SimilarityDisableCoord : public SimilarityDelegator {
+public:
+    SimilarityDisableCoord(const SimilarityPtr& delegee);
+    virtual ~SimilarityDisableCoord();
 
-    public:
-        virtual double coord(int32_t overlap, int32_t maxOverlap);
-    };
+    LUCENE_CLASS(SimilarityDisableCoord);
+
+public:
+    virtual double coord(int32_t overlap, int32_t maxOverlap);
+};
+
 }
 
 #endif

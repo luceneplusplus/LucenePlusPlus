@@ -13,8 +13,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexInputTest;
 
-TEST_F(IndexInputTest, testReadInt)
-{
+TEST_F(IndexInputTest, testReadInt) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[4] = { 1, 2, 3, 4 };
     std::memcpy(inputBytes.get(), input, 4);
@@ -22,8 +21,7 @@ TEST_F(IndexInputTest, testReadInt)
     EXPECT_EQ(is->readInt(), 16909060);
 }
 
-TEST_F(IndexInputTest, testReadVInt)
-{
+TEST_F(IndexInputTest, testReadVInt) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[4] = { 200, 201, 150, 96 };
     std::memcpy(inputBytes.get(), input, 4);
@@ -31,8 +29,7 @@ TEST_F(IndexInputTest, testReadVInt)
     EXPECT_EQ(is->readVInt(), 201696456);
 }
 
-TEST_F(IndexInputTest, testReadLong)
-{
+TEST_F(IndexInputTest, testReadLong) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[8] = { 32, 43, 32, 96, 12, 54, 22, 96 };
     std::memcpy(inputBytes.get(), input, 8);
@@ -40,8 +37,7 @@ TEST_F(IndexInputTest, testReadLong)
     EXPECT_EQ(is->readLong(), 2317982030106072672LL);
 }
 
-TEST_F(IndexInputTest, testReadVLong)
-{
+TEST_F(IndexInputTest, testReadVLong) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[8] = { 213, 143, 132, 196, 172, 154, 129, 96 };
     std::memcpy(inputBytes.get(), input, 8);
@@ -49,8 +45,7 @@ TEST_F(IndexInputTest, testReadVLong)
     EXPECT_EQ(is->readVLong(), 54048498881988565LL);
 }
 
-TEST_F(IndexInputTest, testReadString)
-{
+TEST_F(IndexInputTest, testReadString) {
     ByteArray inputBytes(ByteArray::newInstance(30));
     uint8_t input[12] = { 11, 't', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g' };
     std::memcpy(inputBytes.get(), input, 12);
@@ -58,8 +53,7 @@ TEST_F(IndexInputTest, testReadString)
     EXPECT_EQ(is->readString(), L"test string");
 }
 
-TEST_F(IndexInputTest, testReadModifiedUTF8String)
-{
+TEST_F(IndexInputTest, testReadModifiedUTF8String) {
     ByteArray inputBytes(ByteArray::newInstance(30));
     uint8_t input[12] = { 11, 't', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g' };
     std::memcpy(inputBytes.get(), input, 12);
@@ -67,8 +61,7 @@ TEST_F(IndexInputTest, testReadModifiedUTF8String)
     EXPECT_EQ(is->readModifiedUTF8String(), L"test string");
 }
 
-TEST_F(IndexInputTest, testReadChars)
-{
+TEST_F(IndexInputTest, testReadChars) {
     ByteArray inputBytes(ByteArray::newInstance(30));
     uint8_t input[11] = { 't', 'e', 's', 't', ' ', 's', 't', 'r', 'i', 'n', 'g' };
     std::memcpy(inputBytes.get(), input, 11);
@@ -82,8 +75,7 @@ TEST_F(IndexInputTest, testReadChars)
     EXPECT_EQ(std::memcmp((wchar_t*)outputChars.get(), expected, 11 * sizeof(wchar_t)), 0);
 }
 
-TEST_F(IndexInputTest, testSkipOneChar)
-{
+TEST_F(IndexInputTest, testSkipOneChar) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[5] = { 1, 2, 3, 4, 5 };
     std::memcpy(inputBytes.get(), input, 5);
@@ -92,8 +84,7 @@ TEST_F(IndexInputTest, testSkipOneChar)
     EXPECT_EQ(is->getFilePointer(), 1);
 }
 
-TEST_F(IndexInputTest, testSkipTwoChars)
-{
+TEST_F(IndexInputTest, testSkipTwoChars) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[5] = { 1, 2, 3, 4, 5 };
     std::memcpy(inputBytes.get(), input, 5);
@@ -102,8 +93,7 @@ TEST_F(IndexInputTest, testSkipTwoChars)
     EXPECT_EQ(is->getFilePointer(), 2);
 }
 
-TEST_F(IndexInputTest, testSkipTwoCharsAdditionalChar)
-{
+TEST_F(IndexInputTest, testSkipTwoCharsAdditionalChar) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[5] = { 1, 132, 132, 4, 5 };
     std::memcpy(inputBytes.get(), input, 5);
@@ -112,8 +102,7 @@ TEST_F(IndexInputTest, testSkipTwoCharsAdditionalChar)
     EXPECT_EQ(is->getFilePointer(), 3);
 }
 
-TEST_F(IndexInputTest, testSkipTwoCharsAdditionalTwoChars)
-{
+TEST_F(IndexInputTest, testSkipTwoCharsAdditionalTwoChars) {
     ByteArray inputBytes(ByteArray::newInstance(10));
     uint8_t input[5] = { 1, 232, 232, 4, 5 };
     std::memcpy(inputBytes.get(), input, 5);
@@ -122,12 +111,11 @@ TEST_F(IndexInputTest, testSkipTwoCharsAdditionalTwoChars)
     EXPECT_EQ(is->getFilePointer(), 4);
 }
 
-TEST_F(IndexInputTest, testRead)
-{
+TEST_F(IndexInputTest, testRead) {
     ByteArray inputBytes(ByteArray::newInstance(100));
 
     uint8_t input[88] = {0x80, 0x01, 0xff, 0x7f, 0x80, 0x80, 0x01, 0x81, 0x80, 0x01, 0x06,
-                          'L', 'u', 'c', 'e', 'n', 'e',
+                         'L', 'u', 'c', 'e', 'n', 'e',
 
                          // 2-byte UTF-8 (U+00BF "INVERTED QUESTION MARK")
                          0x02, 0xc2, 0xbf, 0x0a, 'L', 'u', 0xc2, 0xbf, 'c', 'e', 0xc2, 0xbf, 'n', 'e',
@@ -142,7 +130,8 @@ TEST_F(IndexInputTest, testRead)
                          'L', 'u', 0xf0, 0x9d, 0x84, 0x9e, 'c', 'e', 0xf0, 0x9d, 0x85, 0xa0, 'n', 'e',
 
                          // null bytes
-                         0x01, 0x00, 0x08, 'L', 'u', 0x00, 'c', 'e', 0x00, 'n', 'e'};
+                         0x01, 0x00, 0x08, 'L', 'u', 0x00, 'c', 'e', 0x00, 'n', 'e'
+                        };
     std::memcpy(inputBytes.get(), input, 88);
 
     IndexInputPtr is = newLucene<MockIndexInput>(inputBytes);
@@ -163,26 +152,26 @@ TEST_F(IndexInputTest, testRead)
     EXPECT_EQ(is->readString(), UTF8_TO_STRING(eighthnote));
 
     String readString(is->readString());
-    #ifdef LPP_UNICODE_CHAR_SIZE_2
+#ifdef LPP_UNICODE_CHAR_SIZE_2
     EXPECT_EQ(readString[0], 55348);
     EXPECT_EQ(readString[1], 56606);
-    #else
+#else
     EXPECT_EQ(readString[0], 119070);
-    #endif
+#endif
 
     readString = is->readString();
-    #ifdef LPP_UNICODE_CHAR_SIZE_2
+#ifdef LPP_UNICODE_CHAR_SIZE_2
     EXPECT_EQ(readString[0], 55348);
     EXPECT_EQ(readString[1], 56606);
     EXPECT_EQ(readString[2], 55348);
     EXPECT_EQ(readString[3], 56672);
-    #else
+#else
     EXPECT_EQ(readString[0], 119070);
     EXPECT_EQ(readString[1], 119136);
-    #endif
+#endif
 
     readString = is->readString();
-    #ifdef LPP_UNICODE_CHAR_SIZE_2
+#ifdef LPP_UNICODE_CHAR_SIZE_2
     EXPECT_EQ(readString[0], L'L');
     EXPECT_EQ(readString[1], L'u');
     EXPECT_EQ(readString[2], 55348);
@@ -193,7 +182,7 @@ TEST_F(IndexInputTest, testRead)
     EXPECT_EQ(readString[7], 56672);
     EXPECT_EQ(readString[8], L'n');
     EXPECT_EQ(readString[9], L'e');
-    #else
+#else
     EXPECT_EQ(readString[0], L'L');
     EXPECT_EQ(readString[1], L'u');
     EXPECT_EQ(readString[2], 119070);
@@ -202,7 +191,7 @@ TEST_F(IndexInputTest, testRead)
     EXPECT_EQ(readString[5], 119136);
     EXPECT_EQ(readString[6], L'n');
     EXPECT_EQ(readString[7], L'e');
-    #endif
+#endif
 
     readString = is->readString();
     EXPECT_EQ(readString[0], 0);
@@ -218,8 +207,7 @@ TEST_F(IndexInputTest, testRead)
     EXPECT_EQ(readString[7], L'e');
 }
 
-TEST_F(IndexInputTest, testSkipChars)
-{
+TEST_F(IndexInputTest, testSkipChars) {
     ByteArray inputBytes(ByteArray::newInstance(100));
     uint8_t input[17] = {0x80, 0x01, 0xff, 0x7f, 0x80, 0x80, 0x01, 0x81, 0x80, 0x01, 0x06, 'L', 'u', 'c', 'e', 'n', 'e'};
     std::memcpy(inputBytes.get(), input, 17);
@@ -236,21 +224,19 @@ TEST_F(IndexInputTest, testSkipChars)
     EXPECT_EQ(String((wchar_t*)remainingBytes.get(), 3), L"ene");
 }
 
-struct lessKey
-{
-    inline bool operator()(const MapStringString::key_value& first, const MapStringString::key_value& second) const
-    {
+struct lessKey {
+    inline bool operator()(const MapStringString::key_value& first, const MapStringString::key_value& second) const {
         return (first.first < second.first);
     }
 };
 
-TEST_F(IndexInputTest, testReadStringMap)
-{
+TEST_F(IndexInputTest, testReadStringMap) {
     ByteArray inputBytes(ByteArray::newInstance(100));
     uint8_t input[34] = { 0, 0, 0, 3,
                           4, 'k', 'e', 'y', '1', 4, 'v', 'a', 'l', '1',
                           4, 'k', 'e', 'y', '2', 4, 'v', 'a', 'l', '2',
-                          4, 'k', 'e', 'y', '3', 4, 'v', 'a', 'l', '3' };
+                          4, 'k', 'e', 'y', '3', 4, 'v', 'a', 'l', '3'
+                        };
     std::memcpy(inputBytes.get(), input, 34);
     IndexInputPtr is = newLucene<MockIndexInput>(inputBytes);
 
@@ -263,8 +249,7 @@ TEST_F(IndexInputTest, testReadStringMap)
     std::sort(orderedMap.begin(), orderedMap.end(), lessKey());
 
     int32_t count = 1;
-    for (Collection<MapStringString::key_value>::iterator mapEntry = orderedMap.begin(); mapEntry != orderedMap.end(); ++mapEntry, ++count)
-    {
+    for (Collection<MapStringString::key_value>::iterator mapEntry = orderedMap.begin(); mapEntry != orderedMap.end(); ++mapEntry, ++count) {
         EXPECT_EQ(mapEntry->first, L"key" + StringUtils::toString(count));
         EXPECT_EQ(mapEntry->second, L"val" + StringUtils::toString(count));
     }

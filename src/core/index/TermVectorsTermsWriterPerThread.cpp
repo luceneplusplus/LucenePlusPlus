@@ -14,62 +14,53 @@
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
-namespace Lucene
-{
-    TermVectorsTermsWriterPerThread::TermVectorsTermsWriterPerThread(const TermsHashPerThreadPtr& termsHashPerThread, const TermVectorsTermsWriterPtr& termsWriter)
-    {
-        utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
-        this->vectorSliceReader = newLucene<ByteSliceReader>();
-        this->_termsWriter = termsWriter;
-        this->_termsHashPerThread = termsHashPerThread;
-        _docState = termsHashPerThread->docState;
-    }
+namespace Lucene {
 
-    TermVectorsTermsWriterPerThread::~TermVectorsTermsWriterPerThread()
-    {
-    }
+TermVectorsTermsWriterPerThread::TermVectorsTermsWriterPerThread(const TermsHashPerThreadPtr& termsHashPerThread, const TermVectorsTermsWriterPtr& termsWriter) {
+    utf8Results = newCollection<UTF8ResultPtr>(newInstance<UTF8Result>(), newInstance<UTF8Result>());
+    this->vectorSliceReader = newLucene<ByteSliceReader>();
+    this->_termsWriter = termsWriter;
+    this->_termsHashPerThread = termsHashPerThread;
+    _docState = termsHashPerThread->docState;
+}
 
-    void TermVectorsTermsWriterPerThread::startDocument()
-    {
-        BOOST_ASSERT(clearLastVectorFieldName());
-        if (doc)
-        {
-            doc->reset();
-            doc->docID = DocStatePtr(_docState)->docID;
-        }
-    }
+TermVectorsTermsWriterPerThread::~TermVectorsTermsWriterPerThread() {
+}
 
-    DocWriterPtr TermVectorsTermsWriterPerThread::finishDocument()
-    {
-        DocWriterPtr returnDoc(doc);
+void TermVectorsTermsWriterPerThread::startDocument() {
+    BOOST_ASSERT(clearLastVectorFieldName());
+    if (doc) {
+        doc->reset();
+        doc->docID = DocStatePtr(_docState)->docID;
+    }
+}
+
+DocWriterPtr TermVectorsTermsWriterPerThread::finishDocument() {
+    DocWriterPtr returnDoc(doc);
+    doc.reset();
+    return returnDoc;
+}
+
+TermsHashConsumerPerFieldPtr TermVectorsTermsWriterPerThread::addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo) {
+    return newLucene<TermVectorsTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
+}
+
+void TermVectorsTermsWriterPerThread::abort() {
+    if (doc) {
+        doc->abort();
         doc.reset();
-        return returnDoc;
     }
+}
 
-    TermsHashConsumerPerFieldPtr TermVectorsTermsWriterPerThread::addField(const TermsHashPerFieldPtr& termsHashPerField, const FieldInfoPtr& fieldInfo)
-    {
-        return newLucene<TermVectorsTermsWriterPerField>(termsHashPerField, shared_from_this(), fieldInfo);
-    }
+bool TermVectorsTermsWriterPerThread::clearLastVectorFieldName() {
+    lastVectorFieldName.clear();
+    return true;
+}
 
-    void TermVectorsTermsWriterPerThread::abort()
-    {
-        if (doc)
-        {
-            doc->abort();
-            doc.reset();
-        }
-    }
+bool TermVectorsTermsWriterPerThread::vectorFieldsInOrder(const FieldInfoPtr& fi) {
+    bool inOrder = lastVectorFieldName.empty() ? true : (lastVectorFieldName < fi->name);
+    lastVectorFieldName = fi->name;
+    return inOrder;
+}
 
-    bool TermVectorsTermsWriterPerThread::clearLastVectorFieldName()
-    {
-        lastVectorFieldName.clear();
-        return true;
-    }
-
-    bool TermVectorsTermsWriterPerThread::vectorFieldsInOrder(const FieldInfoPtr& fi)
-    {
-        bool inOrder = lastVectorFieldName.empty() ? true : (lastVectorFieldName < fi->name);
-        lastVectorFieldName = fi->name;
-        return inOrder;
-    }
 }

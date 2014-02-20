@@ -9,40 +9,40 @@
 
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// Transforms the token stream as per the Porter stemming algorithm.  Note: the input to the stemming filter must
-    /// already be in lower case, so you will need to use LowerCaseFilter or LowerCaseTokenizer further down the Tokenizer
-    /// chain in order for this to work properly.
-    ///
-    /// To use this filter with other analyzers, you'll want to write an Analyzer class that sets up the TokenStream chain
-    /// as you want it.  To use this with LowerCaseTokenizer, for example, you'd write an analyzer like this:
-    ///
-    /// <pre>
-    /// class MyAnalyzer : public Analyzer
-    /// {
-    /// public:
-    ///     virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    ///     {
-    ///         return newLucene<PorterStemFilter>(newLucene<LowerCaseTokenizer>(reader));
-    ///     }
-    /// };
-    /// </pre>
-    class LPPAPI PorterStemFilter : public TokenFilter
-    {
-    public:
-        PorterStemFilter(const TokenStreamPtr& input);
-        virtual ~PorterStemFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(PorterStemFilter);
+/// Transforms the token stream as per the Porter stemming algorithm.  Note: the input to the stemming filter must
+/// already be in lower case, so you will need to use LowerCaseFilter or LowerCaseTokenizer further down the Tokenizer
+/// chain in order for this to work properly.
+///
+/// To use this filter with other analyzers, you'll want to write an Analyzer class that sets up the TokenStream chain
+/// as you want it.  To use this with LowerCaseTokenizer, for example, you'd write an analyzer like this:
+///
+/// <pre>
+/// class MyAnalyzer : public Analyzer
+/// {
+/// public:
+///     virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
+///     {
+///         return newLucene<PorterStemFilter>(newLucene<LowerCaseTokenizer>(reader));
+///     }
+/// };
+/// </pre>
+class LPPAPI PorterStemFilter : public TokenFilter {
+public:
+    PorterStemFilter(const TokenStreamPtr& input);
+    virtual ~PorterStemFilter();
 
-    protected:
-        PorterStemmerPtr stemmer;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(PorterStemFilter);
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    PorterStemmerPtr stemmer;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

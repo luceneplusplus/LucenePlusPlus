@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "DocFieldConsumerPerThread.h"
 
-namespace Lucene
-{
-    DocFieldConsumerPerThread::~DocFieldConsumerPerThread()
-    {
-    }
+namespace Lucene {
+
+DocFieldConsumerPerThread::~DocFieldConsumerPerThread() {
+}
+
 }

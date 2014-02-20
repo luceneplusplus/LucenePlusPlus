@@ -9,25 +9,25 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class Base64 : public LuceneObject
-    {
-    public:
-        virtual ~Base64();
-        LUCENE_CLASS(Base64);
+namespace Lucene {
 
-    protected:
-        static const String BASE64_CHARS;
+class Base64 : public LuceneObject {
+public:
+    virtual ~Base64();
+    LUCENE_CLASS(Base64);
 
-    public:
-        static String encode(ByteArray bytes);
-        static String encode(const uint8_t* bytes, int32_t length);
-        static ByteArray decode(const String& str);
+protected:
+    static const String BASE64_CHARS;
 
-    protected:
-        static bool isBase64(wchar_t ch);
-    };
+public:
+    static String encode(ByteArray bytes);
+    static String encode(const uint8_t* bytes, int32_t length);
+    static ByteArray decode(const String& str);
+
+protected:
+    static bool isBase64(wchar_t ch);
+};
+
 }
 
 #endif

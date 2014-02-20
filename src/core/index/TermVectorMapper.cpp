@@ -7,30 +7,26 @@
 #include "LuceneInc.h"
 #include "TermVectorMapper.h"
 
-namespace Lucene
-{
-    TermVectorMapper::TermVectorMapper(bool ignoringPositions, bool ignoringOffsets)
-    {
-        this->ignoringPositions = ignoringPositions;
-        this->ignoringOffsets = ignoringOffsets;
-    }
+namespace Lucene {
 
-    TermVectorMapper::~TermVectorMapper()
-    {
-    }
+TermVectorMapper::TermVectorMapper(bool ignoringPositions, bool ignoringOffsets) {
+    this->ignoringPositions = ignoringPositions;
+    this->ignoringOffsets = ignoringOffsets;
+}
 
-    bool TermVectorMapper::isIgnoringPositions()
-    {
-        return ignoringPositions;
-    }
+TermVectorMapper::~TermVectorMapper() {
+}
 
-    bool TermVectorMapper::isIgnoringOffsets()
-    {
-        return ignoringOffsets;
-    }
+bool TermVectorMapper::isIgnoringPositions() {
+    return ignoringPositions;
+}
 
-    void TermVectorMapper::setDocumentNumber(int32_t documentNumber)
-    {
-        // override
-    }
+bool TermVectorMapper::isIgnoringOffsets() {
+    return ignoringOffsets;
+}
+
+void TermVectorMapper::setDocumentNumber(int32_t documentNumber) {
+    // override
+}
+
 }

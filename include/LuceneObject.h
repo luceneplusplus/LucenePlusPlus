@@ -25,38 +25,38 @@
     LUCENE_INTERFACE(Name); \
     boost::shared_ptr<Name> shared_from_this() { return boost::static_pointer_cast<Name>(LuceneObject::shared_from_this()); } \
 
-namespace Lucene
-{
-    /// Base class for all Lucene classes
-    class LPPAPI LuceneObject : public LuceneSync, public boost::enable_shared_from_this<LuceneObject>
-    {
-    public:
-        virtual ~LuceneObject();
+namespace Lucene {
 
-    protected:
-        LuceneObject();
+/// Base class for all Lucene classes
+class LPPAPI LuceneObject : public LuceneSync, public boost::enable_shared_from_this<LuceneObject> {
+public:
+    virtual ~LuceneObject();
 
-    public:
-        /// Called directly after instantiation to create objects that depend on this object being
-        /// fully constructed.
-        virtual void initialize();
+protected:
+    LuceneObject();
 
-        /// Return clone of this object
-        /// @param other clone reference - null when called initially, then set in top virtual override.
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+public:
+    /// Called directly after instantiation to create objects that depend on this object being
+    /// fully constructed.
+    virtual void initialize();
 
-        /// Return hash code for this object.
-        virtual int32_t hashCode();
+    /// Return clone of this object
+    /// @param other clone reference - null when called initially, then set in top virtual override.
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
 
-        /// Return whether two objects are equal
-        virtual bool equals(const LuceneObjectPtr& other);
+    /// Return hash code for this object.
+    virtual int32_t hashCode();
 
-        /// Compare two objects
-        virtual int32_t compareTo(const LuceneObjectPtr& other);
+    /// Return whether two objects are equal
+    virtual bool equals(const LuceneObjectPtr& other);
 
-        /// Returns a string representation of the object
-        virtual String toString();
-    };
+    /// Compare two objects
+    virtual int32_t compareTo(const LuceneObjectPtr& other);
+
+    /// Returns a string representation of the object
+    virtual String toString();
+};
+
 }
 
 #endif

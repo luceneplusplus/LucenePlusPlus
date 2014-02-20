@@ -10,25 +10,25 @@
 #include "test_lucene.h"
 #include "Lock.h"
 
-namespace Lucene
-{
-    class MockLock : public Lock
-    {
-    public:
-        MockLock();
-        virtual ~MockLock();
+namespace Lucene {
 
-        LUCENE_CLASS(MockLock);
+class MockLock : public Lock {
+public:
+    MockLock();
+    virtual ~MockLock();
 
-    public:
-        int32_t lockAttempts;
+    LUCENE_CLASS(MockLock);
 
-    public:
-        virtual bool obtain();
-        virtual void release();
-        virtual bool isLocked();
-        virtual String toString();
-    };
+public:
+    int32_t lockAttempts;
+
+public:
+    virtual bool obtain();
+    virtual void release();
+    virtual bool isLocked();
+    virtual String toString();
+};
+
 }
 
 #endif

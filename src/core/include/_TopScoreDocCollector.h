@@ -9,35 +9,34 @@
 
 #include "TopDocsCollector.h"
 
-namespace Lucene
-{
-    /// Assumes docs are scored in order.
-    class InOrderTopScoreDocCollector : public TopScoreDocCollector
-    {
-    public:
-        InOrderTopScoreDocCollector(int32_t numHits);
-        virtual ~InOrderTopScoreDocCollector();
+namespace Lucene {
 
-        LUCENE_CLASS(InOrderTopScoreDocCollector);
+/// Assumes docs are scored in order.
+class InOrderTopScoreDocCollector : public TopScoreDocCollector {
+public:
+    InOrderTopScoreDocCollector(int32_t numHits);
+    virtual ~InOrderTopScoreDocCollector();
 
-    public:
-        virtual void collect(int32_t doc);
-        virtual bool acceptsDocsOutOfOrder();
-    };
+    LUCENE_CLASS(InOrderTopScoreDocCollector);
 
-    /// Assumes docs are scored out of order.
-    class OutOfOrderTopScoreDocCollector : public TopScoreDocCollector
-    {
-    public:
-        OutOfOrderTopScoreDocCollector(int32_t numHits);
-        virtual ~OutOfOrderTopScoreDocCollector();
+public:
+    virtual void collect(int32_t doc);
+    virtual bool acceptsDocsOutOfOrder();
+};
 
-        LUCENE_CLASS(OutOfOrderTopScoreDocCollector);
+/// Assumes docs are scored out of order.
+class OutOfOrderTopScoreDocCollector : public TopScoreDocCollector {
+public:
+    OutOfOrderTopScoreDocCollector(int32_t numHits);
+    virtual ~OutOfOrderTopScoreDocCollector();
 
-    public:
-        virtual void collect(int32_t doc);
-        virtual bool acceptsDocsOutOfOrder();
-    };
+    LUCENE_CLASS(OutOfOrderTopScoreDocCollector);
+
+public:
+    virtual void collect(int32_t doc);
+    virtual bool acceptsDocsOutOfOrder();
+};
+
 }
 
 #endif

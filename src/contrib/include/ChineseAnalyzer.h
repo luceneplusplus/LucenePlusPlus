@@ -10,40 +10,39 @@
 #include "LuceneContrib.h"
 #include "Analyzer.h"
 
-namespace Lucene
-{
-    /// An {@link Analyzer} that tokenizes text with {@link ChineseTokenizer} and filters with {@link ChineseFilter}
-    class LPPCONTRIBAPI ChineseAnalyzer : public Analyzer
-    {
-    public:
-        virtual ~ChineseAnalyzer();
+namespace Lucene {
 
-        LUCENE_CLASS(ChineseAnalyzer);
+/// An {@link Analyzer} that tokenizes text with {@link ChineseTokenizer} and filters with {@link ChineseFilter}
+class LPPCONTRIBAPI ChineseAnalyzer : public Analyzer {
+public:
+    virtual ~ChineseAnalyzer();
 
-    public:
-        /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
+    LUCENE_CLASS(ChineseAnalyzer);
 
-        /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the
-        /// provided {@link Reader}.
-        ///
-        /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
-        virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
-    };
+public:
+    /// Creates a {@link TokenStream} which tokenizes all the text in the provided {@link Reader}.
+    ///
+    /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader);
 
-    class LPPCONTRIBAPI ChineseAnalyzerSavedStreams : public LuceneObject
-    {
-    public:
-        virtual ~ChineseAnalyzerSavedStreams();
+    /// Returns a (possibly reused) {@link TokenStream} which tokenizes all the text  in the
+    /// provided {@link Reader}.
+    ///
+    /// @return A {@link TokenStream} built from {@link ChineseTokenizer}, filtered with {@link ChineseFilter}
+    virtual TokenStreamPtr reusableTokenStream(const String& fieldName, const ReaderPtr& reader);
+};
 
-        LUCENE_CLASS(ChineseAnalyzerSavedStreams);
+class LPPCONTRIBAPI ChineseAnalyzerSavedStreams : public LuceneObject {
+public:
+    virtual ~ChineseAnalyzerSavedStreams();
 
-    public:
-        TokenizerPtr source;
-        TokenStreamPtr result;
-    };
+    LUCENE_CLASS(ChineseAnalyzerSavedStreams);
+
+public:
+    TokenizerPtr source;
+    TokenStreamPtr result;
+};
+
 }
 
 #endif

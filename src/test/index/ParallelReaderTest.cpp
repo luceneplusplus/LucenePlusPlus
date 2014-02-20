@@ -25,17 +25,14 @@
 
 using namespace Lucene;
 
-class ParallelReaderTest : public LuceneTestFixture
-{
+class ParallelReaderTest : public LuceneTestFixture {
 public:
-    ParallelReaderTest()
-    {
+    ParallelReaderTest() {
         single = createSingle();
         parallel = createParallel();
     }
 
-    virtual ~ParallelReaderTest()
-    {
+    virtual ~ParallelReaderTest() {
     }
 
 public:
@@ -44,8 +41,7 @@ public:
 
 public:
     /// Fields 1-4 indexed together
-    SearcherPtr createSingle()
-    {
+    SearcherPtr createSingle() {
         DirectoryPtr dir = newLucene<MockRAMDirectory>();
         IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
         DocumentPtr d1 = newLucene<Document>();
@@ -65,8 +61,7 @@ public:
     }
 
     /// Fields 1 & 2 in one index, 3 & 4 in other, with ParallelReader
-    SearcherPtr createParallel()
-    {
+    SearcherPtr createParallel() {
         DirectoryPtr dir1 = getDir1();
         DirectoryPtr dir2 = getDir2();
         ParallelReaderPtr pr = newLucene<ParallelReader>();
@@ -75,8 +70,7 @@ public:
         return newLucene<IndexSearcher>(pr);
     }
 
-    DirectoryPtr getDir1()
-    {
+    DirectoryPtr getDir1() {
         DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
         IndexWriterPtr w1 = newLucene<IndexWriter>(dir1, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
         DocumentPtr d1 = newLucene<Document>();
@@ -91,8 +85,7 @@ public:
         return dir1;
     }
 
-    DirectoryPtr getDir2()
-    {
+    DirectoryPtr getDir2() {
         DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
         IndexWriterPtr w2 = newLucene<IndexWriter>(dir2, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
         DocumentPtr d3 = newLucene<Document>();
@@ -107,13 +100,11 @@ public:
         return dir2;
     }
 
-    void queryTest(const QueryPtr& query)
-    {
+    void queryTest(const QueryPtr& query) {
         Collection<ScoreDocPtr> parallelHits = parallel->search(query, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> singleHits = single->search(query, FilterPtr(), 1000)->scoreDocs;
         EXPECT_EQ(parallelHits.size(), singleHits.size());
-        for (int32_t i = 0; i < parallelHits.size(); ++i)
-        {
+        for (int32_t i = 0; i < parallelHits.size(); ++i) {
             EXPECT_NEAR(parallelHits[i]->score, singleHits[i]->score, 0.001);
             DocumentPtr docParallel = parallel->doc(parallelHits[i]->doc);
             DocumentPtr docSingle = single->doc(singleHits[i]->doc);
@@ -125,8 +116,7 @@ public:
     }
 };
 
-TEST_F(ParallelReaderTest, testQueries)
-{
+TEST_F(ParallelReaderTest, testQueries) {
     queryTest(newLucene<TermQuery>(newLucene<Term>(L"f1", L"v1")));
     queryTest(newLucene<TermQuery>(newLucene<Term>(L"f2", L"v1")));
     queryTest(newLucene<TermQuery>(newLucene<Term>(L"f2", L"v2")));
@@ -141,8 +131,7 @@ TEST_F(ParallelReaderTest, testQueries)
     queryTest(bq1);
 }
 
-TEST_F(ParallelReaderTest, testFieldNames)
-{
+TEST_F(ParallelReaderTest, testFieldNames) {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
     ParallelReaderPtr pr = newLucene<ParallelReader>();
@@ -156,8 +145,7 @@ TEST_F(ParallelReaderTest, testFieldNames)
     EXPECT_TRUE(fieldNames.contains(L"f4"));
 }
 
-TEST_F(ParallelReaderTest, testDocument)
-{
+TEST_F(ParallelReaderTest, testDocument) {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
     ParallelReaderPtr pr = newLucene<ParallelReader>();
@@ -182,8 +170,7 @@ TEST_F(ParallelReaderTest, testDocument)
     EXPECT_EQ(L"v2", doc223->get(L"f3"));
 }
 
-TEST_F(ParallelReaderTest, testIncompatibleIndexes)
-{
+TEST_F(ParallelReaderTest, testIncompatibleIndexes) {
     // two documents
     DirectoryPtr dir1 = getDir1();
 
@@ -198,18 +185,14 @@ TEST_F(ParallelReaderTest, testIncompatibleIndexes)
     ParallelReaderPtr pr = newLucene<ParallelReader>();
     pr->add(IndexReader::open(dir1, false));
 
-    try
-    {
+    try {
         pr->add(IndexReader::open(dir2, false));
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 }
 
-TEST_F(ParallelReaderTest, testIsCurrent)
-{
+TEST_F(ParallelReaderTest, testIsCurrent) {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
     ParallelReaderPtr pr = newLucene<ParallelReader>();
@@ -232,8 +215,7 @@ TEST_F(ParallelReaderTest, testIsCurrent)
     EXPECT_TRUE(!pr->isCurrent());
 }
 
-TEST_F(ParallelReaderTest, testIsOptimized)
-{
+TEST_F(ParallelReaderTest, testIsOptimized) {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
 
@@ -279,8 +261,7 @@ TEST_F(ParallelReaderTest, testIsOptimized)
     pr->close();
 }
 
-TEST_F(ParallelReaderTest, testAllTermDocs)
-{
+TEST_F(ParallelReaderTest, testAllTermDocs) {
     DirectoryPtr dir1 = getDir1();
     DirectoryPtr dir2 = getDir2();
 
@@ -289,8 +270,7 @@ TEST_F(ParallelReaderTest, testAllTermDocs)
     pr->add(IndexReader::open(dir2, false));
     int32_t NUM_DOCS = 2;
     TermDocsPtr td = pr->termDocs(TermPtr());
-    for (int32_t i = 0; i < NUM_DOCS; ++i)
-    {
+    for (int32_t i = 0; i < NUM_DOCS; ++i) {
         EXPECT_TRUE(td->next());
         EXPECT_EQ(i, td->doc());
         EXPECT_EQ(1, td->freq());

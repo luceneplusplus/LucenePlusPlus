@@ -9,49 +9,49 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// File used as buffer in RAMDirectory
-    class LPPAPI RAMFile : public LuceneObject
-    {
-    public:
-        RAMFile(); // File used as buffer, in no RAMDirectory
-        RAMFile(const RAMDirectoryPtr& directory);
-        virtual ~RAMFile();
+namespace Lucene {
 
-        LUCENE_CLASS(RAMFile);
+/// File used as buffer in RAMDirectory
+class LPPAPI RAMFile : public LuceneObject {
+public:
+    RAMFile(); // File used as buffer, in no RAMDirectory
+    RAMFile(const RAMDirectoryPtr& directory);
+    virtual ~RAMFile();
 
-    INTERNAL:
-        int64_t length;
-        RAMDirectoryWeakPtr _directory;
+    LUCENE_CLASS(RAMFile);
 
-    protected:
-        Collection<ByteArray> buffers;
+INTERNAL:
+    int64_t length;
+    RAMDirectoryWeakPtr _directory;
 
-        int64_t sizeInBytes;
+protected:
+    Collection<ByteArray> buffers;
 
-        /// This is publicly modifiable via Directory.touchFile(), so direct access not supported
-        int64_t lastModified;
+    int64_t sizeInBytes;
 
-    public:
-        /// For non-stream access from thread that might be concurrent with writing.
-        int64_t getLength();
-        void setLength(int64_t length);
+    /// This is publicly modifiable via Directory.touchFile(), so direct access not supported
+    int64_t lastModified;
 
-        /// For non-stream access from thread that might be concurrent with writing
-        int64_t getLastModified();
-        void setLastModified(int64_t lastModified);
+public:
+    /// For non-stream access from thread that might be concurrent with writing.
+    int64_t getLength();
+    void setLength(int64_t length);
 
-        int64_t getSizeInBytes();
+    /// For non-stream access from thread that might be concurrent with writing
+    int64_t getLastModified();
+    void setLastModified(int64_t lastModified);
 
-        ByteArray addBuffer(int32_t size);
-        ByteArray getBuffer(int32_t index);
-        int32_t numBuffers();
+    int64_t getSizeInBytes();
 
-    protected:
-        /// Allocate a new buffer.  Subclasses can allocate differently.
-        virtual ByteArray newBuffer(int32_t size);
-    };
+    ByteArray addBuffer(int32_t size);
+    ByteArray getBuffer(int32_t index);
+    int32_t numBuffers();
+
+protected:
+    /// Allocate a new buffer.  Subclasses can allocate differently.
+    virtual ByteArray newBuffer(int32_t size);
+};
+
 }
 
 #endif

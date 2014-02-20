@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "TermsHashConsumerPerField.h"
 
-namespace Lucene
-{
-    TermsHashConsumerPerField::~TermsHashConsumerPerField()
-    {
-    }
+namespace Lucene {
+
+TermsHashConsumerPerField::~TermsHashConsumerPerField() {
+}
+
 }

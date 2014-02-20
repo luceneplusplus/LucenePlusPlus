@@ -15,47 +15,38 @@ typedef LuceneTestFixture PriorityQueueTest;
 
 DECLARE_SHARED_PTR(IntegerQueue)
 
-class IntegerQueue : public PriorityQueue<int32_t>
-{
+class IntegerQueue : public PriorityQueue<int32_t> {
 public:
-    IntegerQueue(int32_t maxSize) : PriorityQueue<int32_t>(maxSize)
-    {
+    IntegerQueue(int32_t maxSize) : PriorityQueue<int32_t>(maxSize) {
     }
 
-    virtual ~IntegerQueue()
-    {
+    virtual ~IntegerQueue() {
     }
 };
 
 DECLARE_SHARED_PTR(IntegerPtrQueue)
 typedef boost::shared_ptr<int32_t> IntPtr;
 
-class IntegerPtrQueue : public PriorityQueue<IntPtr>
-{
+class IntegerPtrQueue : public PriorityQueue<IntPtr> {
 public:
-    IntegerPtrQueue(int32_t maxSize) : PriorityQueue<IntPtr>(maxSize)
-    {
+    IntegerPtrQueue(int32_t maxSize) : PriorityQueue<IntPtr>(maxSize) {
     }
 
-    virtual ~IntegerPtrQueue()
-    {
+    virtual ~IntegerPtrQueue() {
     }
 
 protected:
-    virtual bool lessThan(const IntPtr& first, const IntPtr& second)
-    {
+    virtual bool lessThan(const IntPtr& first, const IntPtr& second) {
         return (*first < *second);
     }
 };
 
-TEST_F(PriorityQueueTest, testPriorityQueue)
-{
+TEST_F(PriorityQueueTest, testPriorityQueue) {
     IntegerQueuePtr testQueue = newLucene<IntegerQueue>(10000);
     int64_t sum = 0;
     RandomPtr random = newLucene<Random>();
 
-    for (int32_t i = 0; i < 10000; ++i)
-    {
+    for (int32_t i = 0; i < 10000; ++i) {
         int32_t next = random->nextInt();
         sum += next;
         testQueue->add(next);
@@ -64,8 +55,7 @@ TEST_F(PriorityQueueTest, testPriorityQueue)
     int32_t last = INT_MIN;
     int64_t sum2 = 0;
 
-    for (int32_t i = 0; i < 10000; ++i)
-    {
+    for (int32_t i = 0; i < 10000; ++i) {
         int32_t next = testQueue->pop();
         EXPECT_TRUE(next >= last);
         last = next;
@@ -75,8 +65,7 @@ TEST_F(PriorityQueueTest, testPriorityQueue)
     EXPECT_EQ(sum, sum2);
 }
 
-TEST_F(PriorityQueueTest, testPriorityQueueOverflow)
-{
+TEST_F(PriorityQueueTest, testPriorityQueueOverflow) {
     IntegerQueuePtr testQueue = newLucene<IntegerQueue>(3);
     testQueue->addOverflow(2);
     testQueue->addOverflow(3);
@@ -88,8 +77,7 @@ TEST_F(PriorityQueueTest, testPriorityQueueOverflow)
     EXPECT_EQ(3, testQueue->top());
 }
 
-TEST_F(PriorityQueueTest, testPriorityQueueClear)
-{
+TEST_F(PriorityQueueTest, testPriorityQueueClear) {
     IntegerQueuePtr testQueue = newLucene<IntegerQueue>(3);
     testQueue->add(2);
     testQueue->add(3);
@@ -99,8 +87,7 @@ TEST_F(PriorityQueueTest, testPriorityQueueClear)
     EXPECT_TRUE(testQueue->empty());
 }
 
-TEST_F(PriorityQueueTest, testPriorityQueueUpdate)
-{
+TEST_F(PriorityQueueTest, testPriorityQueueUpdate) {
     IntegerPtrQueuePtr testQueue = newLucene<IntegerPtrQueue>(1024);
     testQueue->add(newInstance<int32_t>(2));
     testQueue->add(newInstance<int32_t>(3));

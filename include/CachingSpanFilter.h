@@ -10,39 +10,39 @@
 #include "SpanFilter.h"
 #include "CachingWrapperFilter.h"
 
-namespace Lucene
-{
-    /// Wraps another SpanFilter's result and caches it.  The purpose is to allow filters to simply filter,
-    /// and then wrap with this class to add caching.
-    class LPPAPI CachingSpanFilter : public SpanFilter
-    {
-    public:
-        /// New deletions always result in a cache miss, by default ({@link CachingWrapperFilter#RECACHE}.
-        CachingSpanFilter(const SpanFilterPtr& filter, CachingWrapperFilter::DeletesMode deletesMode = CachingWrapperFilter::DELETES_RECACHE);
-        virtual ~CachingSpanFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(CachingSpanFilter);
+/// Wraps another SpanFilter's result and caches it.  The purpose is to allow filters to simply filter,
+/// and then wrap with this class to add caching.
+class LPPAPI CachingSpanFilter : public SpanFilter {
+public:
+    /// New deletions always result in a cache miss, by default ({@link CachingWrapperFilter#RECACHE}.
+    CachingSpanFilter(const SpanFilterPtr& filter, CachingWrapperFilter::DeletesMode deletesMode = CachingWrapperFilter::DELETES_RECACHE);
+    virtual ~CachingSpanFilter();
 
-    protected:
-        SpanFilterPtr filter;
-        FilterCachePtr cache;
+    LUCENE_CLASS(CachingSpanFilter);
 
-    public:
-        // for testing
-        int32_t hitCount;
-        int32_t missCount;
+protected:
+    SpanFilterPtr filter;
+    FilterCachePtr cache;
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
-        virtual SpanFilterResultPtr bitSpans(const IndexReaderPtr& reader);
+public:
+    // for testing
+    int32_t hitCount;
+    int32_t missCount;
 
-        virtual String toString();
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+    virtual SpanFilterResultPtr bitSpans(const IndexReaderPtr& reader);
 
-    protected:
-        SpanFilterResultPtr getCachedResult(const IndexReaderPtr& reader);
-    };
+    virtual String toString();
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+
+protected:
+    SpanFilterResultPtr getCachedResult(const IndexReaderPtr& reader);
+};
+
 }
 
 #endif

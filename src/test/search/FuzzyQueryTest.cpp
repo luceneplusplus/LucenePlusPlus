@@ -25,15 +25,13 @@ using namespace Lucene;
 
 typedef LuceneTestFixture FuzzyQueryTest;
 
-static void addDoc(const String& text, const IndexWriterPtr& writer)
-{
+static void addDoc(const String& text, const IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"field", text, Field::STORE_YES, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-TEST_F(FuzzyQueryTest, testFuzziness)
-{
+TEST_F(FuzzyQueryTest, testFuzziness) {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(L"aaaaa", writer);
@@ -76,8 +74,7 @@ TEST_F(FuzzyQueryTest, testFuzziness)
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(3, hits.size());
     Collection<String> order = newCollection<String>(L"bbbbb", L"abbbb", L"aabbb");
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
+    for (int32_t i = 0; i < hits.size(); ++i) {
         String term = searcher->doc(hits[i]->doc)->get(L"field");
         EXPECT_EQ(order[i], term);
     }
@@ -92,8 +89,7 @@ TEST_F(FuzzyQueryTest, testFuzziness)
     EXPECT_EQ(2, hits.size());
     order = newCollection<String>(L"bbbbb", L"abbbb");
 
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
+    for (int32_t i = 0; i < hits.size(); ++i) {
         String term = searcher->doc(hits[i]->doc)->get(L"field");
         EXPECT_EQ(order[i], term);
     }
@@ -188,8 +184,7 @@ TEST_F(FuzzyQueryTest, testFuzziness)
     directory->close();
 }
 
-TEST_F(FuzzyQueryTest, testFuzzinessLong)
-{
+TEST_F(FuzzyQueryTest, testFuzzinessLong) {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(L"aaaaaaa", writer);
@@ -259,20 +254,14 @@ TEST_F(FuzzyQueryTest, testFuzzinessLong)
     hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(0, hits.size());
 
-    try
-    {
+    try {
         query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), 1.1);
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
-    try
-    {
+    try {
         query = newLucene<FuzzyQuery>(newLucene<Term>(L"field", L"student"), -0.1);
-    }
-    catch (IllegalArgumentException& e)
-    {
+    } catch (IllegalArgumentException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalArgument)(e));
     }
 
@@ -280,8 +269,7 @@ TEST_F(FuzzyQueryTest, testFuzzinessLong)
     directory->close();
 }
 
-TEST_F(FuzzyQueryTest, testTokenLengthOpt)
-{
+TEST_F(FuzzyQueryTest, testTokenLengthOpt) {
     RAMDirectoryPtr directory = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(L"12345678911", writer);
@@ -311,8 +299,7 @@ TEST_F(FuzzyQueryTest, testTokenLengthOpt)
     EXPECT_EQ(0, hits.size());
 }
 
-TEST_F(FuzzyQueryTest, testGiga)
-{
+TEST_F(FuzzyQueryTest, testGiga) {
     StandardAnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
 
     DirectoryPtr index = newLucene<MockRAMDirectory>();

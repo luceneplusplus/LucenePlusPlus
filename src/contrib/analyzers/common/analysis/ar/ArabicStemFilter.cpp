@@ -9,27 +9,24 @@
 #include "ArabicStemmer.h"
 #include "TermAttribute.h"
 
-namespace Lucene
-{
-    ArabicStemFilter::ArabicStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
-        stemmer = newLucene<ArabicStemmer>();
-        termAtt = addAttribute<TermAttribute>();
-    }
+namespace Lucene {
 
-    ArabicStemFilter::~ArabicStemFilter()
-    {
-    }
+ArabicStemFilter::ArabicStemFilter(const TokenStreamPtr& input) : TokenFilter(input) {
+    stemmer = newLucene<ArabicStemmer>();
+    termAtt = addAttribute<TermAttribute>();
+}
 
-    bool ArabicStemFilter::incrementToken()
-    {
-        if (input->incrementToken())
-        {
-            int32_t newlen = stemmer->stem(termAtt->termBuffer().get(), termAtt->termLength());
-            termAtt->setTermLength(newlen);
-            return true;
-        }
-        else
-            return false;
+ArabicStemFilter::~ArabicStemFilter() {
+}
+
+bool ArabicStemFilter::incrementToken() {
+    if (input->incrementToken()) {
+        int32_t newlen = stemmer->stem(termAtt->termBuffer().get(), termAtt->termLength());
+        termAtt->setTermLength(newlen);
+        return true;
+    } else {
+        return false;
     }
+}
+
 }

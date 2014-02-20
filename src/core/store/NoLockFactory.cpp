@@ -8,64 +8,53 @@
 #include "NoLockFactory.h"
 #include "_NoLockFactory.h"
 
-namespace Lucene
-{
-    NoLockFactory::~NoLockFactory()
-    {
-    }
+namespace Lucene {
 
-    NoLockFactoryPtr NoLockFactory::getNoLockFactory()
-    {
-        static NoLockFactoryPtr singleton;
-        if (!singleton)
-        {
-            singleton = newLucene<NoLockFactory>();
-            CycleCheck::addStatic(singleton);
-        }
-        return singleton;
-    }
+NoLockFactory::~NoLockFactory() {
+}
 
-    NoLockPtr NoLockFactory::getSingletonLock()
-    {
-        // Single instance returned whenever makeLock is called.
-        static NoLockPtr singletonLock;
-        if (!singletonLock)
-        {
-            singletonLock = newLucene<NoLock>();
-            CycleCheck::addStatic(singletonLock);
-        }
-        return singletonLock;
+NoLockFactoryPtr NoLockFactory::getNoLockFactory() {
+    static NoLockFactoryPtr singleton;
+    if (!singleton) {
+        singleton = newLucene<NoLockFactory>();
+        CycleCheck::addStatic(singleton);
     }
+    return singleton;
+}
 
-    LockPtr NoLockFactory::makeLock(const String& lockName)
-    {
-        return getSingletonLock();
+NoLockPtr NoLockFactory::getSingletonLock() {
+    // Single instance returned whenever makeLock is called.
+    static NoLockPtr singletonLock;
+    if (!singletonLock) {
+        singletonLock = newLucene<NoLock>();
+        CycleCheck::addStatic(singletonLock);
     }
+    return singletonLock;
+}
 
-    void NoLockFactory::clearLock(const String& lockName)
-    {
-    }
+LockPtr NoLockFactory::makeLock(const String& lockName) {
+    return getSingletonLock();
+}
 
-    NoLock::~NoLock()
-    {
-    }
+void NoLockFactory::clearLock(const String& lockName) {
+}
 
-    bool NoLock::obtain()
-    {
-        return true;
-    }
+NoLock::~NoLock() {
+}
 
-    void NoLock::release()
-    {
-    }
+bool NoLock::obtain() {
+    return true;
+}
 
-    bool NoLock::isLocked()
-    {
-        return false;
-    }
+void NoLock::release() {
+}
 
-    String NoLock::toString()
-    {
-        return getClassName();
-    }
+bool NoLock::isLocked() {
+    return false;
+}
+
+String NoLock::toString() {
+    return getClassName();
+}
+
 }

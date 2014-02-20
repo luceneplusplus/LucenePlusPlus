@@ -8,18 +8,17 @@
 #include "RawPostingList.h"
 #include "DocumentsWriter.h"
 
-namespace Lucene
-{
-    const int32_t RawPostingList::BYTES_SIZE = DocumentsWriter::OBJECT_HEADER_BYTES + 3 * DocumentsWriter::INT_NUM_BYTE;
+namespace Lucene {
 
-    RawPostingList::RawPostingList()
-    {
-        textStart = 0;
-        intStart = 0;
-        byteStart = 0;
-    }
+const int32_t RawPostingList::BYTES_SIZE = DocumentsWriter::OBJECT_HEADER_BYTES + 3 * DocumentsWriter::INT_NUM_BYTE;
 
-    RawPostingList::~RawPostingList()
-    {
-    }
+RawPostingList::RawPostingList() {
+    textStart = 0;
+    intStart = 0;
+    byteStart = 0;
+}
+
+RawPostingList::~RawPostingList() {
+}
+
 }

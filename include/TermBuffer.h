@@ -9,43 +9,43 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class TermBuffer : public LuceneObject
-    {
-    public:
-        TermBuffer();
-        virtual ~TermBuffer();
+namespace Lucene {
 
-        LUCENE_CLASS(TermBuffer);
+class TermBuffer : public LuceneObject {
+public:
+    TermBuffer();
+    virtual ~TermBuffer();
 
-    protected:
-        String field;
-        TermPtr term; // cached
-        bool preUTF8Strings; // true if strings are stored in modified UTF8 encoding
+    LUCENE_CLASS(TermBuffer);
 
-        UnicodeResultPtr text;
-        UTF8ResultPtr bytes;
+protected:
+    String field;
+    TermPtr term; // cached
+    bool preUTF8Strings; // true if strings are stored in modified UTF8 encoding
 
-    public:
-        virtual int32_t compareTo(const LuceneObjectPtr& other);
+    UnicodeResultPtr text;
+    UTF8ResultPtr bytes;
 
-        /// Call this if the IndexInput passed to {@link #read} stores terms in the "modified UTF8" format.
-        void setPreUTF8Strings();
+public:
+    virtual int32_t compareTo(const LuceneObjectPtr& other);
 
-        void read(const IndexInputPtr& input, const FieldInfosPtr& fieldInfos);
+    /// Call this if the IndexInput passed to {@link #read} stores terms in the "modified UTF8" format.
+    void setPreUTF8Strings();
 
-        void set(const TermPtr& term);
-        void set(const TermBufferPtr& other);
-        void reset();
+    void read(const IndexInputPtr& input, const FieldInfosPtr& fieldInfos);
 
-        TermPtr toTerm();
+    void set(const TermPtr& term);
+    void set(const TermBufferPtr& other);
+    void reset();
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    TermPtr toTerm();
 
-    protected:
-        int32_t compareChars(wchar_t* chars1, int32_t len1, wchar_t* chars2, int32_t len2);
-    };
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+protected:
+    int32_t compareChars(wchar_t* chars1, int32_t len1, wchar_t* chars2, int32_t len2);
+};
+
 }
 
 #endif

@@ -9,72 +9,71 @@
 
 #include "TermVectorMapper.h"
 
-namespace Lucene
-{
-    class LPPAPI PositionBasedTermVectorMapper : public TermVectorMapper
-    {
-    public:
-        PositionBasedTermVectorMapper(bool ignoringOffsets = false);
-        virtual ~PositionBasedTermVectorMapper();
+namespace Lucene {
 
-        LUCENE_CLASS(PositionBasedTermVectorMapper);
+class LPPAPI PositionBasedTermVectorMapper : public TermVectorMapper {
+public:
+    PositionBasedTermVectorMapper(bool ignoringOffsets = false);
+    virtual ~PositionBasedTermVectorMapper();
 
-    protected:
-        MapStringMapIntTermVectorsPositionInfo fieldToTerms;
+    LUCENE_CLASS(PositionBasedTermVectorMapper);
 
-        String currentField;
+protected:
+    MapStringMapIntTermVectorsPositionInfo fieldToTerms;
 
-        /// A Map of Integer and TermVectorsPositionInfo
-        MapIntTermVectorsPositionInfo currentPositions;
+    String currentField;
 
-        bool storeOffsets;
+    /// A Map of Integer and TermVectorsPositionInfo
+    MapIntTermVectorsPositionInfo currentPositions;
 
-    public:
-        /// Never ignores positions.  This mapper doesn't make much sense unless there are positions.
-        /// @return false
-        virtual bool isIgnoringPositions();
+    bool storeOffsets;
 
-        /// Callback for the TermVectorReader.
-        virtual void map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions);
+public:
+    /// Never ignores positions.  This mapper doesn't make much sense unless there are positions.
+    /// @return false
+    virtual bool isIgnoringPositions();
 
-        /// Callback mechanism used by the TermVectorReader.
-        virtual void setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions);
+    /// Callback for the TermVectorReader.
+    virtual void map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions);
 
-        /// Get the mapping between fields and terms, sorted by the comparator
-        /// @return A map between field names and a Map.  The sub-Map key is the position as the integer, the value is
-        /// {@link PositionBasedTermVectorMapper}.
-        MapStringMapIntTermVectorsPositionInfo getFieldToTerms();
-    };
+    /// Callback mechanism used by the TermVectorReader.
+    virtual void setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions);
 
-    /// Container for a term at a position
-    class LPPAPI TermVectorsPositionInfo : public LuceneObject
-    {
-    public:
-        TermVectorsPositionInfo(int32_t position, bool storeOffsets);
-        virtual ~TermVectorsPositionInfo();
+    /// Get the mapping between fields and terms, sorted by the comparator
+    /// @return A map between field names and a Map.  The sub-Map key is the position as the integer, the value is
+    /// {@link PositionBasedTermVectorMapper}.
+    MapStringMapIntTermVectorsPositionInfo getFieldToTerms();
+};
 
-        LUCENE_CLASS(TermVectorsPositionInfo);
+/// Container for a term at a position
+class LPPAPI TermVectorsPositionInfo : public LuceneObject {
+public:
+    TermVectorsPositionInfo(int32_t position, bool storeOffsets);
+    virtual ~TermVectorsPositionInfo();
 
-    protected:
-        int32_t position;
-        Collection<String> terms;
-        Collection<TermVectorOffsetInfoPtr> offsets;
+    LUCENE_CLASS(TermVectorsPositionInfo);
 
-    public:
-        void addTerm(const String& term, const TermVectorOffsetInfoPtr& info);
+protected:
+    int32_t position;
+    Collection<String> terms;
+    Collection<TermVectorOffsetInfoPtr> offsets;
 
-        /// @return The position of the term
-        int32_t getPosition();
+public:
+    void addTerm(const String& term, const TermVectorOffsetInfoPtr& info);
 
-        /// Note, there may be multiple terms at the same position
-        /// @return A List of Strings
-        Collection<String> getTerms();
+    /// @return The position of the term
+    int32_t getPosition();
 
-        /// Parallel list (to {@link #getTerms()}) of TermVectorOffsetInfo objects.  There may be multiple
-        /// entries since there may be multiple terms at a position.
-        /// @return A List of TermVectorOffsetInfo objects, if offsets are stored.
-        Collection<TermVectorOffsetInfoPtr> getOffsets();
-    };
+    /// Note, there may be multiple terms at the same position
+    /// @return A List of Strings
+    Collection<String> getTerms();
+
+    /// Parallel list (to {@link #getTerms()}) of TermVectorOffsetInfo objects.  There may be multiple
+    /// entries since there may be multiple terms at a position.
+    /// @return A List of TermVectorOffsetInfo objects, if offsets are stored.
+    Collection<TermVectorOffsetInfoPtr> getOffsets();
+};
+
 }
 
 #endif

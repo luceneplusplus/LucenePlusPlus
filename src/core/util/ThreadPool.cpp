@@ -7,35 +7,32 @@
 #include "LuceneInc.h"
 #include "ThreadPool.h"
 
-namespace Lucene
-{
-    Future::~Future()
-    {
-    }
+namespace Lucene {
 
-    const int32_t ThreadPool::THREADPOOL_SIZE = 5;
+Future::~Future() {
+}
 
-    ThreadPool::ThreadPool()
-    {
-        work.reset(new boost::asio::io_service::work(io_service));
-        for (int32_t i = 0; i < THREADPOOL_SIZE; ++i)
-            threadGroup.create_thread(boost::bind(&boost::asio::io_service::run, &io_service));
-    }
+const int32_t ThreadPool::THREADPOOL_SIZE = 5;
 
-    ThreadPool::~ThreadPool()
-    {
-        work.reset(); // stop all threads
-        threadGroup.join_all(); // wait for all competition
+ThreadPool::ThreadPool() {
+    work.reset(new boost::asio::io_service::work(io_service));
+    for (int32_t i = 0; i < THREADPOOL_SIZE; ++i) {
+        threadGroup.create_thread(boost::bind(&boost::asio::io_service::run, &io_service));
     }
+}
 
-    ThreadPoolPtr ThreadPool::getInstance()
-    {
-        static ThreadPoolPtr threadPool;
-        if (!threadPool)
-        {
-            threadPool = newLucene<ThreadPool>();
-            CycleCheck::addStatic(threadPool);
-        }
-        return threadPool;
+ThreadPool::~ThreadPool() {
+    work.reset(); // stop all threads
+    threadGroup.join_all(); // wait for all competition
+}
+
+ThreadPoolPtr ThreadPool::getInstance() {
+    static ThreadPoolPtr threadPool;
+    if (!threadPool) {
+        threadPool = newLucene<ThreadPool>();
+        CycleCheck::addStatic(threadPool);
     }
+    return threadPool;
+}
+
 }

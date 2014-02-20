@@ -10,49 +10,48 @@
 #include "Term.h"
 #include "Query.h"
 
-namespace Lucene
-{
-    /// Holds buffered deletes, by docID, term or query.  We hold two instances of this class: one for
-    /// the deletes prior to the last flush, the other for deletes after the last flush.  This is so if
-    /// we need to abort (discard all buffered docs) we can also discard the buffered deletes yet keep
-    /// the deletes done during previously flushed segments.
-    class BufferedDeletes : public LuceneObject
-    {
-    public:
-        BufferedDeletes(bool doTermSort);
-        virtual ~BufferedDeletes();
+namespace Lucene {
 
-        LUCENE_CLASS(BufferedDeletes);
+/// Holds buffered deletes, by docID, term or query.  We hold two instances of this class: one for
+/// the deletes prior to the last flush, the other for deletes after the last flush.  This is so if
+/// we need to abort (discard all buffered docs) we can also discard the buffered deletes yet keep
+/// the deletes done during previously flushed segments.
+class BufferedDeletes : public LuceneObject {
+public:
+    BufferedDeletes(bool doTermSort);
+    virtual ~BufferedDeletes();
 
-    public:
-        int32_t numTerms;
-        MapTermNum terms;
-        MapQueryInt queries;
-        Collection<int32_t> docIDs;
-        int64_t bytesUsed;
+    LUCENE_CLASS(BufferedDeletes);
 
-    public:
-        int32_t size();
-        void update(const BufferedDeletesPtr& in);
-        void clear();
-        void addBytesUsed(int64_t b);
-        bool any();
-        void remap(const MergeDocIDRemapperPtr& mapper, const SegmentInfosPtr& infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, const OneMergePtr& merge, int32_t mergedDocCount);
-    };
+public:
+    int32_t numTerms;
+    MapTermNum terms;
+    MapQueryInt queries;
+    Collection<int32_t> docIDs;
+    int64_t bytesUsed;
 
-    /// Number of documents a delete term applies to.
-    class Num : public LuceneObject
-    {
-    public:
-        Num(int32_t num);
+public:
+    int32_t size();
+    void update(const BufferedDeletesPtr& in);
+    void clear();
+    void addBytesUsed(int64_t b);
+    bool any();
+    void remap(const MergeDocIDRemapperPtr& mapper, const SegmentInfosPtr& infos, Collection< Collection<int32_t> > docMaps, Collection<int32_t> delCounts, const OneMergePtr& merge, int32_t mergedDocCount);
+};
 
-    protected:
-        int32_t num;
+/// Number of documents a delete term applies to.
+class Num : public LuceneObject {
+public:
+    Num(int32_t num);
 
-    public:
-        int32_t getNum();
-        void setNum(int32_t num);
-    };
+protected:
+    int32_t num;
+
+public:
+    int32_t getNum();
+    void setNum(int32_t num);
+};
+
 }
 
 #endif

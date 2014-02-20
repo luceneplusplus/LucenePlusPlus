@@ -10,18 +10,17 @@
 #include "TestPoint.h"
 #include "FileUtils.h"
 
-namespace Lucene
-{
-    LuceneGlobalFixture::LuceneGlobalFixture()
-    {
-        FileUtils::removeDirectory(getTempDir());
-        FileUtils::createDirectory(getTempDir());
-        TestPoint::enableTestPoints();
-    }
+namespace Lucene {
 
-    LuceneGlobalFixture::~LuceneGlobalFixture()
-    {
-        FileUtils::removeDirectory(getTempDir());
-        Lucene::CycleCheck::dumpRefs();
-    }
+LuceneGlobalFixture::LuceneGlobalFixture() {
+    FileUtils::removeDirectory(getTempDir());
+    FileUtils::createDirectory(getTempDir());
+    TestPoint::enableTestPoints();
+}
+
+LuceneGlobalFixture::~LuceneGlobalFixture() {
+    FileUtils::removeDirectory(getTempDir());
+    Lucene::CycleCheck::dumpRefs();
+}
+
 }

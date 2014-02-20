@@ -9,35 +9,35 @@
 
 #include "DocIdSet.h"
 
-namespace Lucene
-{
-    /// Simple DocIdSet and DocIdSetIterator backed by a BitSet
-    class LPPAPI DocIdBitSet : public DocIdSet
-    {
-    public:
-        DocIdBitSet();
-        DocIdBitSet(const BitSetPtr& bitSet);
+namespace Lucene {
 
-        virtual ~DocIdBitSet();
+/// Simple DocIdSet and DocIdSetIterator backed by a BitSet
+class LPPAPI DocIdBitSet : public DocIdSet {
+public:
+    DocIdBitSet();
+    DocIdBitSet(const BitSetPtr& bitSet);
 
-        LUCENE_CLASS(DocIdBitSet);
+    virtual ~DocIdBitSet();
 
-    protected:
-        BitSetPtr bitSet;
+    LUCENE_CLASS(DocIdBitSet);
 
-    public:
-        virtual DocIdSetIteratorPtr iterator();
+protected:
+    BitSetPtr bitSet;
 
-        /// This DocIdSet implementation is cacheable.
-        virtual bool isCacheable();
+public:
+    virtual DocIdSetIteratorPtr iterator();
 
-        /// Returns the underlying BitSet.
-        BitSetPtr getBitSet();
+    /// This DocIdSet implementation is cacheable.
+    virtual bool isCacheable();
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+    /// Returns the underlying BitSet.
+    BitSetPtr getBitSet();
+
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

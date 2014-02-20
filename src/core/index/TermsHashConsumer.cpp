@@ -7,14 +7,13 @@
 #include "LuceneInc.h"
 #include "TermsHashConsumer.h"
 
-namespace Lucene
-{
-    TermsHashConsumer::~TermsHashConsumer()
-    {
-    }
+namespace Lucene {
 
-    void TermsHashConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos)
-    {
-        this->fieldInfos = fieldInfos;
-    }
+TermsHashConsumer::~TermsHashConsumer() {
+}
+
+void TermsHashConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos) {
+    this->fieldInfos = fieldInfos;
+}
+
 }

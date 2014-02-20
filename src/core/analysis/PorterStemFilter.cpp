@@ -9,25 +9,25 @@
 #include "PorterStemmer.h"
 #include "TermAttribute.h"
 
-namespace Lucene
-{
-    PorterStemFilter::PorterStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
-        stemmer = newLucene<PorterStemmer>();
-        termAtt = addAttribute<TermAttribute>();
+namespace Lucene {
+
+PorterStemFilter::PorterStemFilter(const TokenStreamPtr& input) : TokenFilter(input) {
+    stemmer = newLucene<PorterStemmer>();
+    termAtt = addAttribute<TermAttribute>();
+}
+
+PorterStemFilter::~PorterStemFilter() {
+}
+
+bool PorterStemFilter::incrementToken() {
+    if (!input->incrementToken()) {
+        return false;
     }
 
-    PorterStemFilter::~PorterStemFilter()
-    {
+    if (stemmer->stem(termAtt->termBuffer())) {
+        termAtt->setTermBuffer(stemmer->getResultBuffer(), 0, stemmer->getResultLength());
     }
+    return true;
+}
 
-    bool PorterStemFilter::incrementToken()
-    {
-        if (!input->incrementToken())
-            return false;
-
-        if (stemmer->stem(termAtt->termBuffer()))
-            termAtt->setTermBuffer(stemmer->getResultBuffer(), 0, stemmer->getResultLength());
-        return true;
-    }
 }

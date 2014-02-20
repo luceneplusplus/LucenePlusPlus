@@ -9,26 +9,26 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class FormatPostingsTermsConsumer : public LuceneObject
-    {
-    public:
-        virtual ~FormatPostingsTermsConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsTermsConsumer);
+class FormatPostingsTermsConsumer : public LuceneObject {
+public:
+    virtual ~FormatPostingsTermsConsumer();
 
-    public:
-        CharArray termBuffer;
+    LUCENE_CLASS(FormatPostingsTermsConsumer);
 
-    public:
-        /// Adds a new term in this field
-        virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start) = 0;
-        virtual FormatPostingsDocsConsumerPtr addTerm(const String& text);
+public:
+    CharArray termBuffer;
 
-        /// Called when we are done adding terms to this field
-        virtual void finish() = 0;
-    };
+public:
+    /// Adds a new term in this field
+    virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start) = 0;
+    virtual FormatPostingsDocsConsumerPtr addTerm(const String& text);
+
+    /// Called when we are done adding terms to this field
+    virtual void finish() = 0;
+};
+
 }
 
 #endif

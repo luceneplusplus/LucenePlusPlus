@@ -7,29 +7,26 @@
 #include "LuceneInc.h"
 #include "QueryParserToken.h"
 
-namespace Lucene
-{
-    QueryParserToken::QueryParserToken(int32_t kind, const String& image)
-    {
-        this->kind = kind;
-        this->image = image;
-        this->beginLine = 0;
-        this->beginColumn = 0;
-        this->endLine = 0;
-        this->endColumn = 0;
-    }
+namespace Lucene {
 
-    QueryParserToken::~QueryParserToken()
-    {
-    }
+QueryParserToken::QueryParserToken(int32_t kind, const String& image) {
+    this->kind = kind;
+    this->image = image;
+    this->beginLine = 0;
+    this->beginColumn = 0;
+    this->endLine = 0;
+    this->endColumn = 0;
+}
 
-    String QueryParserToken::toString()
-    {
-        return image;
-    }
+QueryParserToken::~QueryParserToken() {
+}
 
-    QueryParserTokenPtr QueryParserToken::newToken(int32_t ofKind, const String& image)
-    {
-        return newLucene<QueryParserToken>(ofKind, image);
-    }
+String QueryParserToken::toString() {
+    return image;
+}
+
+QueryParserTokenPtr QueryParserToken::newToken(int32_t ofKind, const String& image) {
+    return newLucene<QueryParserToken>(ofKind, image);
+}
+
 }

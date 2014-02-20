@@ -9,24 +9,24 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class HeapedScorerDoc : public LuceneObject
-    {
-    public:
-        HeapedScorerDoc(const ScorerPtr& scorer);
-        HeapedScorerDoc(const ScorerPtr& scorer, int32_t doc);
-        virtual ~HeapedScorerDoc();
+namespace Lucene {
 
-        LUCENE_CLASS(HeapedScorerDoc);
+class HeapedScorerDoc : public LuceneObject {
+public:
+    HeapedScorerDoc(const ScorerPtr& scorer);
+    HeapedScorerDoc(const ScorerPtr& scorer, int32_t doc);
+    virtual ~HeapedScorerDoc();
 
-    public:
-        ScorerPtr scorer;
-        int32_t doc;
+    LUCENE_CLASS(HeapedScorerDoc);
 
-    public:
-        void adjust();
-    };
+public:
+    ScorerPtr scorer;
+    int32_t doc;
+
+public:
+    void adjust();
+};
+
 }
 
 #endif

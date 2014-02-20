@@ -10,49 +10,47 @@
 #include "LuceneTestFixture.h"
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    DECLARE_SHARED_PTR(TestIndex)
+namespace Lucene {
 
-    /// Collation interacts badly with hyphens -- collation produces different ordering than Unicode code-point ordering,
-    /// so two indexes are created:
-    /// one which can't have negative random integers, for testing collated ranges, and the other which can have negative
-    /// random integers, for all other tests.
-    class TestIndex : public LuceneObject
-    {
-    public:
-        TestIndex(int32_t minR, int32_t maxR, bool allowNegativeRandomInts);
-        virtual ~TestIndex();
+DECLARE_SHARED_PTR(TestIndex)
 
-        LUCENE_CLASS(TestIndex);
+/// Collation interacts badly with hyphens -- collation produces different ordering than Unicode code-point ordering,
+/// so two indexes are created:
+/// one which can't have negative random integers, for testing collated ranges, and the other which can have negative
+/// random integers, for all other tests.
+class TestIndex : public LuceneObject {
+public:
+    TestIndex(int32_t minR, int32_t maxR, bool allowNegativeRandomInts);
+    virtual ~TestIndex();
 
-    public:
-        int32_t maxR;
-        int32_t minR;
-        bool allowNegativeRandomInts;
-        RAMDirectoryPtr index;
-    };
+    LUCENE_CLASS(TestIndex);
 
-    class BaseTestRangeFilterFixture : public LuceneTestFixture
-    {
-    public:
-        BaseTestRangeFilterFixture();
-        virtual ~BaseTestRangeFilterFixture();
+public:
+    int32_t maxR;
+    int32_t minR;
+    bool allowNegativeRandomInts;
+    RAMDirectoryPtr index;
+};
 
-    public:
-        TestIndexPtr signedIndex;
-        TestIndexPtr unsignedIndex;
+class BaseTestRangeFilterFixture : public LuceneTestFixture {
+public:
+    BaseTestRangeFilterFixture();
+    virtual ~BaseTestRangeFilterFixture();
 
-        int32_t minId;
-        int32_t maxId;
-        int32_t intLength;
-        RandomPtr random;
+public:
+    TestIndexPtr signedIndex;
+    TestIndexPtr unsignedIndex;
 
-    protected:
-        void build(const TestIndexPtr& index);
-        String pad(int32_t n);
-    };
+    int32_t minId;
+    int32_t maxId;
+    int32_t intLength;
+    RandomPtr random;
+
+protected:
+    void build(const TestIndexPtr& index);
+    String pad(int32_t n);
+};
+
 }
-
 
 #endif

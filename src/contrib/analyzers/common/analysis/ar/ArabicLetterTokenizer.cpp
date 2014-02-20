@@ -9,26 +9,22 @@
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
-namespace Lucene
-{
-    ArabicLetterTokenizer::ArabicLetterTokenizer(const ReaderPtr& input) : LetterTokenizer(input)
-    {
-    }
+namespace Lucene {
 
-    ArabicLetterTokenizer::ArabicLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : LetterTokenizer(source, input)
-    {
-    }
+ArabicLetterTokenizer::ArabicLetterTokenizer(const ReaderPtr& input) : LetterTokenizer(input) {
+}
 
-    ArabicLetterTokenizer::ArabicLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : LetterTokenizer(factory, input)
-    {
-    }
+ArabicLetterTokenizer::ArabicLetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : LetterTokenizer(source, input) {
+}
 
-    ArabicLetterTokenizer::~ArabicLetterTokenizer()
-    {
-    }
+ArabicLetterTokenizer::ArabicLetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : LetterTokenizer(factory, input) {
+}
 
-    bool ArabicLetterTokenizer::isTokenChar(wchar_t c)
-    {
-        return LetterTokenizer::isTokenChar(c) || UnicodeUtil::isNonSpacing(c);
-    }
+ArabicLetterTokenizer::~ArabicLetterTokenizer() {
+}
+
+bool ArabicLetterTokenizer::isTokenChar(wchar_t c) {
+    return LetterTokenizer::isTokenChar(c) || UnicodeUtil::isNonSpacing(c);
+}
+
 }

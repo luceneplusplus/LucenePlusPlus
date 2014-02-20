@@ -9,26 +9,22 @@
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
-namespace Lucene
-{
-    LetterTokenizer::LetterTokenizer(const ReaderPtr& input) : CharTokenizer(input)
-    {
-    }
+namespace Lucene {
 
-    LetterTokenizer::LetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input)
-    {
-    }
+LetterTokenizer::LetterTokenizer(const ReaderPtr& input) : CharTokenizer(input) {
+}
 
-    LetterTokenizer::LetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input)
-    {
-    }
+LetterTokenizer::LetterTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input) {
+}
 
-    LetterTokenizer::~LetterTokenizer()
-    {
-    }
+LetterTokenizer::LetterTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input) {
+}
 
-    bool LetterTokenizer::isTokenChar(wchar_t c)
-    {
-        return UnicodeUtil::isAlpha(c);
-    }
+LetterTokenizer::~LetterTokenizer() {
+}
+
+bool LetterTokenizer::isTokenChar(wchar_t c) {
+    return UnicodeUtil::isAlpha(c);
+}
+
 }

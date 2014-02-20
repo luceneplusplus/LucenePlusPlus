@@ -8,29 +8,27 @@
 #include "HitQueue.h"
 #include "ScoreDoc.h"
 
-namespace Lucene
-{
-    HitQueue::HitQueue(int32_t size, bool prePopulate) : HitQueueBase(size)
-    {
-        this->prePopulate = prePopulate;
-    }
+namespace Lucene {
 
-    HitQueue::~HitQueue()
-    {
-    }
+HitQueue::HitQueue(int32_t size, bool prePopulate) : HitQueueBase(size) {
+    this->prePopulate = prePopulate;
+}
 
-    bool HitQueue::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second)
-    {
-        if (first->score == second->score)
-            return (first->doc > second->doc);
-        else
-            return (first->score < second->score);
-    }
+HitQueue::~HitQueue() {
+}
 
-    ScoreDocPtr HitQueue::getSentinelObject()
-    {
-        // Always set the doc Id to MAX_VALUE so that it won't be favored by lessThan. This generally should
-        // not happen since if score is not NEG_INF, TopScoreDocCollector will always add the object to the queue.
-        return !prePopulate ? ScoreDocPtr() : newLucene<ScoreDoc>(INT_MAX, -std::numeric_limits<double>::infinity());
+bool HitQueue::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second) {
+    if (first->score == second->score) {
+        return (first->doc > second->doc);
+    } else {
+        return (first->score < second->score);
     }
+}
+
+ScoreDocPtr HitQueue::getSentinelObject() {
+    // Always set the doc Id to MAX_VALUE so that it won't be favored by lessThan. This generally should
+    // not happen since if score is not NEG_INF, TopScoreDocCollector will always add the object to the queue.
+    return !prePopulate ? ScoreDocPtr() : newLucene<ScoreDoc>(INT_MAX, -std::numeric_limits<double>::infinity());
+}
+
 }

@@ -8,14 +8,13 @@
 #include "SpanQuery.h"
 #include "SpanWeight.h"
 
-namespace Lucene
-{
-    SpanQuery::~SpanQuery()
-    {
-    }
+namespace Lucene {
 
-    WeightPtr SpanQuery::createWeight(const SearcherPtr& searcher)
-    {
-        return newLucene<SpanWeight>(shared_from_this(), searcher);
-    }
+SpanQuery::~SpanQuery() {
+}
+
+WeightPtr SpanQuery::createWeight(const SearcherPtr& searcher) {
+    return newLucene<SpanWeight>(shared_from_this(), searcher);
+}
+
 }

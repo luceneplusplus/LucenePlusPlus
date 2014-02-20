@@ -41,8 +41,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexReaderTest;
 
-static void addDocumentWithFields(const IndexWriterPtr& writer)
-{
+static void addDocumentWithFields(const IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"keyword", L"test1", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     doc->add(newLucene<Field>(L"text", L"test1", Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -51,8 +50,7 @@ static void addDocumentWithFields(const IndexWriterPtr& writer)
     writer->addDocument(doc);
 }
 
-static void addDocumentWithDifferentFields(const IndexWriterPtr& writer)
-{
+static void addDocumentWithDifferentFields(const IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"keyword2", L"test1", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
     doc->add(newLucene<Field>(L"text2", L"test1", Field::STORE_YES, Field::INDEX_ANALYZED));
@@ -61,8 +59,7 @@ static void addDocumentWithDifferentFields(const IndexWriterPtr& writer)
     writer->addDocument(doc);
 }
 
-static void addDocumentWithTermVectorFields(const IndexWriterPtr& writer)
-{
+static void addDocumentWithTermVectorFields(const IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"tvnot", L"tvnot", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO));
     doc->add(newLucene<Field>(L"termvector", L"termvector", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_YES));
@@ -72,50 +69,44 @@ static void addDocumentWithTermVectorFields(const IndexWriterPtr& writer)
     writer->addDocument(doc);
 }
 
-static void addDoc(const IndexWriterPtr& writer, const String& value)
-{
+static void addDoc(const IndexWriterPtr& writer, const String& value) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", value, Field::STORE_NO, Field::INDEX_ANALYZED));
     writer->addDocument(doc);
 }
 
-static void checkTermDocsCount(const IndexReaderPtr& reader, const TermPtr& term, int32_t expected)
-{
+static void checkTermDocsCount(const IndexReaderPtr& reader, const TermPtr& term, int32_t expected) {
     TermDocsPtr tdocs;
 
     LuceneException finally;
-    try
-    {
+    try {
         tdocs = reader->termDocs(term);
         EXPECT_TRUE(tdocs);
         int32_t count = 0;
-        while (tdocs->next())
+        while (tdocs->next()) {
             ++count;
+        }
         EXPECT_EQ(expected, count);
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         finally = e;
     }
-    if (tdocs)
+    if (tdocs) {
         tdocs->close();
+    }
     finally.throwException();
 }
 
-static DirectoryPtr getDirectory()
-{
+static DirectoryPtr getDirectory() {
     return FSDirectory::open(FileUtils::joinPath(getTempDir(), L"testIndex"));
 }
 
-static DocumentPtr createDocument(const String& id)
-{
+static DocumentPtr createDocument(const String& id) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"id", id, Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
     return doc;
 }
 
-TEST_F(IndexReaderTest, testCommitUserData)
-{
+TEST_F(IndexReaderTest, testCommitUserData) {
     RAMDirectoryPtr d = newLucene<MockRAMDirectory>();
 
     MapStringString commitUserData = MapStringString::newInstance();
@@ -124,8 +115,9 @@ TEST_F(IndexReaderTest, testCommitUserData)
     // set up writer
     IndexWriterPtr writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);
-    for (int32_t i = 0; i < 27; ++i)
+    for (int32_t i = 0; i < 27; ++i) {
         addDocumentWithFields(writer);
+    }
     writer->close();
 
     IndexReaderPtr r = IndexReader::open(d, false);
@@ -140,10 +132,12 @@ TEST_F(IndexReaderTest, testCommitUserData)
     MapStringString expectedData = c->getUserData();
 
     EXPECT_EQ(expectedData.size(), commitUserData.size());
-    for (MapStringString::iterator expected = expectedData.begin(); expected != expectedData.end(); ++expected)
+    for (MapStringString::iterator expected = expectedData.begin(); expected != expectedData.end(); ++expected) {
         EXPECT_TRUE(commitUserData.find(expected->first) != commitUserData.end());
-    for (MapStringString::iterator commit = commitUserData.begin(); commit != commitUserData.end(); ++commit)
+    }
+    for (MapStringString::iterator commit = commitUserData.begin(); commit != commitUserData.end(); ++commit) {
         EXPECT_TRUE(expectedData.find(commit->first) != expectedData.end());
+    }
 
     EXPECT_EQ(sis->getCurrentSegmentFileName(), c->getSegmentsFileName());
 
@@ -152,8 +146,9 @@ TEST_F(IndexReaderTest, testCommitUserData)
     // Change the index
     writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);
-    for (int32_t i = 0; i < 7; ++i)
+    for (int32_t i = 0; i < 7; ++i) {
         addDocumentWithFields(writer);
+    }
     writer->close();
 
     IndexReaderPtr r3 = r2->reopen();
@@ -172,8 +167,7 @@ TEST_F(IndexReaderTest, testCommitUserData)
     d->close();
 }
 
-TEST_F(IndexReaderTest, testIsCurrent)
-{
+TEST_F(IndexReaderTest, testIsCurrent) {
     RAMDirectoryPtr d = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     addDocumentWithFields(writer);
@@ -195,8 +189,7 @@ TEST_F(IndexReaderTest, testIsCurrent)
     d->close();
 }
 
-TEST_F(IndexReaderTest, testGetFieldNames)
-{
+TEST_F(IndexReaderTest, testGetFieldNames) {
     RAMDirectoryPtr d = newLucene<MockRAMDirectory>();
     // set up writer
     IndexWriterPtr writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -214,14 +207,17 @@ TEST_F(IndexReaderTest, testGetFieldNames)
     // add more documents
     writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     // want to get some more segments here
-    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i)
+    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i) {
         addDocumentWithFields(writer);
+    }
     // new fields are in some different segments (we hope)
-    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i)
+    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i) {
         addDocumentWithDifferentFields(writer);
+    }
     // new termvector fields
-    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i)
+    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i) {
         addDocumentWithTermVectorFields(writer);
+    }
 
     writer->close();
     // verify fields again
@@ -283,15 +279,13 @@ TEST_F(IndexReaderTest, testGetFieldNames)
     d->close();
 }
 
-TEST_F(IndexReaderTest, testTermVectors)
-{
+TEST_F(IndexReaderTest, testTermVectors) {
     RAMDirectoryPtr d = newLucene<MockRAMDirectory>();
     // set up writer
     IndexWriterPtr writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     // want to get some more segments here
     // new termvector fields
-    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i)
-    {
+    for (int32_t i = 0; i < 5 * writer->getMergeFactor(); ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"tvnot", L"one two two three three three", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_NO));
         doc->add(newLucene<Field>(L"termvector", L"one two two three three three", Field::STORE_YES, Field::INDEX_ANALYZED, Field::TERM_VECTOR_YES));
@@ -308,19 +302,20 @@ TEST_F(IndexReaderTest, testTermVectors)
     EXPECT_TRUE(map);
     EXPECT_EQ(map.size(), 4);
     Collection<TermVectorEntryPtr> set = map.get(L"termvector");
-    for (Collection<TermVectorEntryPtr>::iterator entry = set.begin(); entry != set.end(); ++entry)
+    for (Collection<TermVectorEntryPtr>::iterator entry = set.begin(); entry != set.end(); ++entry) {
         EXPECT_TRUE(*entry);
+    }
 }
 
-TEST_F(IndexReaderTest, testBasicDelete)
-{
+TEST_F(IndexReaderTest, testBasicDelete) {
     RAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
 
     // add 100 documents with term : aaa
-    for (int32_t i = 0; i < 100; ++i)
+    for (int32_t i = 0; i < 100; ++i) {
         addDoc(writer, searchTerm->text());
+    }
     writer->close();
 
     // open reader at this point - this should fix the view of the
@@ -352,16 +347,14 @@ TEST_F(IndexReaderTest, testBasicDelete)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testBinaryFields)
-{
+TEST_F(IndexReaderTest, testBinaryFields) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     uint8_t _bin[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     ByteArray bin(ByteArray::newInstance(10));
     std::memcpy(bin.get(), _bin, 10);
 
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthUNLIMITED);
-    for (int32_t i = 0; i < 10; ++i)
-    {
+    for (int32_t i = 0; i < 10; ++i) {
         addDoc(writer, L"document number " + StringUtils::toString(i + 1));
         addDocumentWithFields(writer);
         addDocumentWithDifferentFields(writer);
@@ -417,15 +410,15 @@ TEST_F(IndexReaderTest, testBinaryFields)
 }
 
 /// Make sure attempts to make changes after reader is closed throws IOException
-TEST_F(IndexReaderTest, testChangesAfterClose)
-{
+TEST_F(IndexReaderTest, testChangesAfterClose) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
 
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     // add 11 documents with term : aaa
-    for (int32_t i = 0; i < 11; ++i)
+    for (int32_t i = 0; i < 11; ++i) {
         addDoc(writer, searchTerm->text());
+    }
     writer->close();
 
     IndexReaderPtr reader = IndexReader::open(dir, false);
@@ -434,68 +427,50 @@ TEST_F(IndexReaderTest, testChangesAfterClose)
     reader->close();
 
     // Then, try to make changes
-    try
-    {
+    try {
         reader->deleteDocument(4);
-    }
-    catch (AlreadyClosedException& e)
-    {
+    } catch (AlreadyClosedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
     }
-    try
-    {
+    try {
         reader->setNorm(5, L"aaa", 2.0);
-    }
-    catch (AlreadyClosedException& e)
-    {
+    } catch (AlreadyClosedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
     }
-    try
-    {
+    try {
         reader->undeleteAll();
-    }
-    catch (AlreadyClosedException& e)
-    {
+    } catch (AlreadyClosedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::AlreadyClosed)(e));
     }
 }
 
 /// Make sure we get lock obtain failed exception with 2 writers
-TEST_F(IndexReaderTest, testLockObtainFailed)
-{
+TEST_F(IndexReaderTest, testLockObtainFailed) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
 
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     // add 11 documents with term : aaa
-    for (int32_t i = 0; i < 11; ++i)
+    for (int32_t i = 0; i < 11; ++i) {
         addDoc(writer, searchTerm->text());
+    }
 
     IndexReaderPtr reader = IndexReader::open(dir, false);
 
     // Try to make changes
-    try
-    {
+    try {
         reader->deleteDocument(4);
-    }
-    catch (LockObtainFailedException& e)
-    {
+    } catch (LockObtainFailedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
-    try
-    {
+    try {
         reader->setNorm(5, L"aaa", 2.0);
-    }
-    catch (LockObtainFailedException& e)
-    {
+    } catch (LockObtainFailedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
-    try
-    {
+    try {
         reader->undeleteAll();
-    }
-    catch (LockObtainFailedException& e)
-    {
+    } catch (LockObtainFailedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
 
@@ -503,8 +478,7 @@ TEST_F(IndexReaderTest, testLockObtainFailed)
     reader->close();
 }
 
-TEST_F(IndexReaderTest, testWritingNorms)
-{
+TEST_F(IndexReaderTest, testWritingNorms) {
     String indexDir(FileUtils::joinPath(getTempDir(), L"lucenetestnormwriter"));
     DirectoryPtr dir = FSDirectory::open(indexDir);
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
@@ -544,8 +518,7 @@ TEST_F(IndexReaderTest, testWritingNorms)
 }
 
 /// Make sure you can set norms and commit, and there are no extra norms files left
-TEST_F(IndexReaderTest, testWritingNormsNoReader)
-{
+TEST_F(IndexReaderTest, testWritingNormsNoReader) {
     RAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
 
     // add 1 documents with term : aaa
@@ -570,8 +543,7 @@ TEST_F(IndexReaderTest, testWritingNormsNoReader)
     dir->close();
 }
 
-static void deleteReaderWriterConflict(bool optimize)
-{
+static void deleteReaderWriterConflict(bool optimize) {
     DirectoryPtr dir = getDirectory();
 
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
@@ -579,8 +551,9 @@ static void deleteReaderWriterConflict(bool optimize)
 
     // add 100 documents with term : aaa
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < 100; ++i)
+    for (int32_t i = 0; i < 100; ++i) {
         addDoc(writer, searchTerm->text());
+    }
     writer->close();
 
     // open reader at this point - this should fix the view of the index at the point of
@@ -593,16 +566,18 @@ static void deleteReaderWriterConflict(bool optimize)
 
     // add 100 documents with term : bbb
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < 100; ++i)
+    for (int32_t i = 0; i < 100; ++i) {
         addDoc(writer, searchTerm2->text());
+    }
 
     // request optimization
     // This causes a new segment to become current for all subsequent
     // searchers. Because of this, deletions made via a previously open
     // reader, which would be applied to that reader's segment, are lost
     // for subsequent searchers/readers
-    if (optimize)
+    if (optimize) {
         writer->optimize();
+    }
     writer->close();
 
     // The reader should not see the new data
@@ -614,12 +589,9 @@ static void deleteReaderWriterConflict(bool optimize)
     // delete documents containing term: aaa
     // NOTE: the reader was created when only "aaa" documents were in
     int32_t deleted = 0;
-    try
-    {
+    try {
         deleted = reader->deleteDocuments(searchTerm);
-    }
-    catch (StaleReaderException& e)
-    {
+    } catch (StaleReaderException& e) {
         EXPECT_TRUE(check_exception(LuceneException::StaleReader)(e));
     }
 
@@ -648,18 +620,15 @@ static void deleteReaderWriterConflict(bool optimize)
     reader->close();
 }
 
-TEST_F(IndexReaderTest, testDeleteReaderWriterConflictUnoptimized)
-{
+TEST_F(IndexReaderTest, testDeleteReaderWriterConflictUnoptimized) {
     deleteReaderWriterConflict(false);
 }
 
-TEST_F(IndexReaderTest, testDeleteReaderWriterConflictOptimized)
-{
+TEST_F(IndexReaderTest, testDeleteReaderWriterConflictOptimized) {
     deleteReaderWriterConflict(true);
 }
 
-TEST_F(IndexReaderTest, testFilesOpenClose)
-{
+TEST_F(IndexReaderTest, testFilesOpenClose) {
     // Create initial data set
     String dirFile = FileUtils::joinPath(getTempDir(), L"testIndex");
     DirectoryPtr dir = getDirectory();
@@ -688,14 +657,11 @@ TEST_F(IndexReaderTest, testFilesOpenClose)
     EXPECT_TRUE(FileUtils::removeDirectory(dirFile));
 }
 
-TEST_F(IndexReaderTest, testLastModified)
-{
+TEST_F(IndexReaderTest, testLastModified) {
     String fileDir = FileUtils::joinPath(getTempDir(), L"testIndex");
-    for (int32_t i = 0; i < 2; ++i)
-    {
+    for (int32_t i = 0; i < 2; ++i) {
         LuceneException finally;
-        try
-        {
+        try {
             DirectoryPtr dir = i == 0 ? newLucene<MockRAMDirectory>() : getDirectory();
             EXPECT_TRUE(!IndexReader::indexExists(dir));
             IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -706,8 +672,7 @@ TEST_F(IndexReaderTest, testLastModified)
             IndexReaderPtr reader = IndexReader::open(dir, false);
             EXPECT_TRUE(!IndexWriter::isLocked(dir)); // reader only, no lock
             int64_t version = IndexReader::lastModified(dir);
-            if (i == 1)
-            {
+            if (i == 1) {
                 int64_t version2 = IndexReader::lastModified(dir);
                 EXPECT_EQ(version, version2);
             }
@@ -723,19 +688,17 @@ TEST_F(IndexReaderTest, testLastModified)
             EXPECT_TRUE(version <= IndexReader::lastModified(dir));
             reader->close();
             dir->close();
-        }
-        catch (LuceneException& e)
-        {
+        } catch (LuceneException& e) {
             finally = e;
         }
-        if (i == 1)
+        if (i == 1) {
             EXPECT_TRUE(FileUtils::removeDirectory(fileDir));
+        }
         finally.throwException();
     }
 }
 
-TEST_F(IndexReaderTest, testVersion)
-{
+TEST_F(IndexReaderTest, testVersion) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     EXPECT_TRUE(!IndexReader::indexExists(dir));
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -757,20 +720,16 @@ TEST_F(IndexReaderTest, testVersion)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testLock)
-{
+TEST_F(IndexReaderTest, testLock) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDocumentWithFields(writer);
     writer->close();
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
     IndexReaderPtr reader = IndexReader::open(dir, false);
-    try
-    {
+    try {
         reader->deleteDocument(0);
-    }
-    catch (LockObtainFailedException& e)
-    {
+    } catch (LockObtainFailedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
     IndexWriter::unlock(dir); // this should not be done in the real world!
@@ -780,8 +739,7 @@ TEST_F(IndexReaderTest, testLock)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testUndeleteAll)
-{
+TEST_F(IndexReaderTest, testUndeleteAll) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDocumentWithFields(writer);
@@ -798,8 +756,7 @@ TEST_F(IndexReaderTest, testUndeleteAll)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testUndeleteAllAfterClose)
-{
+TEST_F(IndexReaderTest, testUndeleteAllAfterClose) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDocumentWithFields(writer);
@@ -816,8 +773,7 @@ TEST_F(IndexReaderTest, testUndeleteAllAfterClose)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testUndeleteAllAfterCloseThenReopen)
-{
+TEST_F(IndexReaderTest, testUndeleteAllAfterCloseThenReopen) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDocumentWithFields(writer);
@@ -836,8 +792,7 @@ TEST_F(IndexReaderTest, testUndeleteAllAfterCloseThenReopen)
     dir->close();
 }
 
-static void deleteReaderReaderConflict(bool optimize)
-{
+static void deleteReaderReaderConflict(bool optimize) {
     DirectoryPtr dir = getDirectory();
 
     TermPtr searchTerm1 = newLucene<Term>(L"content", L"aaa");
@@ -848,14 +803,14 @@ static void deleteReaderReaderConflict(bool optimize)
     //  add 100 documents with term : bbb
     //  add 100 documents with term : ccc
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < 100; ++i)
-    {
+    for (int32_t i = 0; i < 100; ++i) {
         addDoc(writer, searchTerm1->text());
         addDoc(writer, searchTerm2->text());
         addDoc(writer, searchTerm3->text());
     }
-    if (optimize)
+    if (optimize) {
         writer->optimize();
+    }
     writer->close();
 
     // open two readers
@@ -899,12 +854,9 @@ static void deleteReaderReaderConflict(bool optimize)
 
     // attempt to delete from stale reader
     // delete documents containing term: bbb
-    try
-    {
+    try {
         reader1->deleteDocuments(searchTerm2);
-    }
-    catch (StaleReaderException& e)
-    {
+    } catch (StaleReaderException& e) {
         EXPECT_TRUE(check_exception(LuceneException::StaleReader)(e));
     }
 
@@ -940,19 +892,16 @@ static void deleteReaderReaderConflict(bool optimize)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testDeleteReaderReaderConflictUnoptimized)
-{
+TEST_F(IndexReaderTest, testDeleteReaderReaderConflictUnoptimized) {
     deleteReaderReaderConflict(false);
 }
 
-TEST_F(IndexReaderTest, testDeleteReaderReaderConflictOptimized)
-{
+TEST_F(IndexReaderTest, testDeleteReaderReaderConflictOptimized) {
     deleteReaderReaderConflict(true);
 }
 
 /// Make sure if reader tries to commit but hits disk full that reader remains consistent and usable.
-TEST_F(IndexReaderTest, testDiskFull)
-{
+TEST_F(IndexReaderTest, testDiskFull) {
     TermPtr searchTerm = newLucene<Term>(L"content", L"aaa");
     int32_t START_COUNT = 157;
     int32_t END_COUNT = 144;
@@ -960,8 +909,7 @@ TEST_F(IndexReaderTest, testDiskFull)
     // First build up a starting index
     RAMDirectoryPtr startDir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(startDir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < 157; ++i)
-    {
+    for (int32_t i = 0; i < 157; ++i) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         doc->add(newLucene<Field>(L"content", L"aaa " + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -977,8 +925,7 @@ TEST_F(IndexReaderTest, testDiskFull)
     bool done = false;
 
     // Iterate with ever increasing free disk space
-    while (!done)
-    {
+    while (!done) {
         MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>(startDir);
 
         // If IndexReader hits disk full, it can write to the same files again.
@@ -991,26 +938,25 @@ TEST_F(IndexReaderTest, testDiskFull)
         // retry with same reader
         bool success = false;
 
-        for (int32_t x = 0; x < 2; ++x)
-        {
+        for (int32_t x = 0; x < 2; ++x) {
             double rate = 0.05;
             double diskRatio = ((double)diskFree) / (double)diskUsage;
             int64_t thisDiskFree = 0;
             String testName;
 
-            if (x == 0)
-            {
+            if (x == 0) {
                 thisDiskFree = diskFree;
-                if (diskRatio >= 2.0)
+                if (diskRatio >= 2.0) {
                     rate /= 2;
-                if (diskRatio >= 4.0)
+                }
+                if (diskRatio >= 4.0) {
                     rate /= 2;
-                if (diskRatio >= 6.0)
+                }
+                if (diskRatio >= 6.0) {
                     rate = 0.0;
+                }
                 testName = L"disk full during reader.close() @ " + StringUtils::toString(thisDiskFree) + L" bytes";
-            }
-            else
-            {
+            } else {
                 thisDiskFree = 0;
                 rate = 0.0;
                 testName = L"reader re-use after disk full";
@@ -1019,13 +965,10 @@ TEST_F(IndexReaderTest, testDiskFull)
             dir->setMaxSizeInBytes(thisDiskFree);
             dir->setRandomIOExceptionRate(rate, diskFree);
 
-            try
-            {
-                if (x == 0)
-                {
+            try {
+                if (x == 0) {
                     int32_t docId = 12;
-                    for (int32_t i = 0; i < 13; ++i)
-                    {
+                    for (int32_t i = 0; i < 13; ++i) {
                         reader->deleteDocument(docId);
                         reader->setNorm(docId, L"contents", 2.0);
                         docId += 12;
@@ -1033,14 +976,14 @@ TEST_F(IndexReaderTest, testDiskFull)
                 }
                 reader->close();
                 success = true;
-                if (x == 0)
+                if (x == 0) {
                     done = true;
-            }
-            catch (IOException& e)
-            {
+                }
+            } catch (IOException& e) {
                 err = e;
-                if (x == 1)
+                if (x == 1) {
                     FAIL() << testName << " hit IOException after disk space was freed up";
+                }
             }
 
             // Whether we succeeded or failed, check that all un-referenced files were in fact deleted (ie,
@@ -1058,8 +1001,7 @@ TEST_F(IndexReaderTest, testDiskFull)
             std::sort(startFiles.begin(), startFiles.end());
             std::sort(endFiles.begin(), endFiles.end());
 
-            if (!startFiles.equals(endFiles))
-            {
+            if (!startFiles.equals(endFiles)) {
                 String successStr = success ? L"success" : L"IOException";
                 FAIL() << "reader.close() failed to delete unreferenced files after " << successStr << " (" << diskFree << " bytes)";
             }
@@ -1073,23 +1015,23 @@ TEST_F(IndexReaderTest, testDiskFull)
             Collection<ScoreDocPtr> hits;
             EXPECT_NO_THROW(hits = searcher->search(newLucene<TermQuery>(searchTerm), FilterPtr(), 1000)->scoreDocs);
             int32_t result2 = hits.size();
-            if (success)
-            {
-                if (result2 != END_COUNT)
+            if (success) {
+                if (result2 != END_COUNT) {
                     FAIL() << testName << ": method did not throw exception but hits.size() for search on term 'aaa' is " << result2 << " instead of expected " << END_COUNT;
-            }
-            else
-            {
+                }
+            } else {
                 // On hitting exception we still may have added all docs
-                if (result2 != START_COUNT && result2 != END_COUNT)
+                if (result2 != START_COUNT && result2 != END_COUNT) {
                     FAIL() << testName << ": method did throw exception but hits.size() for search on term 'aaa' is " << result2 << " instead of expected " << END_COUNT;
+                }
             }
 
             searcher->close();
             newReader->close();
 
-            if (result2 == END_COUNT)
+            if (result2 == END_COUNT) {
                 break;
+            }
         }
 
         dir->close();
@@ -1101,22 +1043,19 @@ TEST_F(IndexReaderTest, testDiskFull)
     startDir->close();
 }
 
-TEST_F(IndexReaderTest, testDocsOutOfOrder)
-{
+TEST_F(IndexReaderTest, testDocsOutOfOrder) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-    for (int32_t i = 0; i < 11; ++i)
+    for (int32_t i = 0; i < 11; ++i) {
         addDoc(writer, L"aaa");
+    }
     writer->close();
     IndexReaderPtr reader = IndexReader::open(dir, false);
 
     // Try to delete an invalid docId, yet, within range of the final bits of the BitVector
-    try
-    {
+    try {
         reader->deleteDocument(11);
-    }
-    catch (IndexOutOfBoundsException& e)
-    {
+    } catch (IndexOutOfBoundsException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
     }
 
@@ -1125,16 +1064,16 @@ TEST_F(IndexReaderTest, testDocsOutOfOrder)
     writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), false, IndexWriter::MaxFieldLengthLIMITED);
 
     // We must add more docs to get a new segment written
-    for (int32_t i = 0; i < 11; ++i)
+    for (int32_t i = 0; i < 11; ++i) {
         addDoc(writer, L"aaa");
+    }
 
     EXPECT_NO_THROW(writer->optimize());
     writer->close();
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testExceptionReleaseWriteLock)
-{
+TEST_F(IndexReaderTest, testExceptionReleaseWriteLock) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     addDoc(writer, L"aaa");
@@ -1142,12 +1081,9 @@ TEST_F(IndexReaderTest, testExceptionReleaseWriteLock)
 
     IndexReaderPtr reader = IndexReader::open(dir, false);
 
-    try
-    {
+    try {
         reader->deleteDocument(1);
-    }
-    catch (IndexOutOfBoundsException& e)
-    {
+    } catch (IndexOutOfBoundsException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
     }
 
@@ -1157,12 +1093,9 @@ TEST_F(IndexReaderTest, testExceptionReleaseWriteLock)
 
     reader = IndexReader::open(dir, false);
 
-    try
-    {
+    try {
         reader->setNorm(1, L"content", 2.0);
-    }
-    catch (IndexOutOfBoundsException& e)
-    {
+    } catch (IndexOutOfBoundsException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IndexOutOfBounds)(e));
     }
 
@@ -1173,41 +1106,34 @@ TEST_F(IndexReaderTest, testExceptionReleaseWriteLock)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testOpenReaderAfterDelete)
-{
+TEST_F(IndexReaderTest, testOpenReaderAfterDelete) {
     String indexDir(FileUtils::joinPath(getTempDir(), L"deletetest"));
     DirectoryPtr dir = FSDirectory::open(indexDir);
-    try
-    {
+    try {
         IndexReader::open(dir, false);
-    }
-    catch (NoSuchDirectoryException& e)
-    {
+    } catch (NoSuchDirectoryException& e) {
         EXPECT_TRUE(check_exception(LuceneException::NoSuchDirectory)(e));
     }
 
     FileUtils::removeDirectory(indexDir);
 
-    try
-    {
+    try {
         IndexReader::open(dir, false);
-    }
-    catch (NoSuchDirectoryException& e)
-    {
+    } catch (NoSuchDirectoryException& e) {
         EXPECT_TRUE(check_exception(LuceneException::NoSuchDirectory)(e));
     }
 
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testGetIndexCommit)
-{
+TEST_F(IndexReaderTest, testGetIndexCommit) {
     RAMDirectoryPtr d = newLucene<MockRAMDirectory>();
     // set up writer
     IndexWriterPtr writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);
-    for (int32_t i = 0; i < 27; ++i)
+    for (int32_t i = 0; i < 27; ++i) {
         addDocumentWithFields(writer);
+    }
     writer->close();
 
     SegmentInfosPtr sis = newLucene<SegmentInfos>();
@@ -1222,8 +1148,9 @@ TEST_F(IndexReaderTest, testGetIndexCommit)
     // Change the index
     writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);
-    for (int32_t i = 0; i < 7; ++i)
+    for (int32_t i = 0; i < 7; ++i) {
         addDocumentWithFields(writer);
+    }
     writer->close();
 
     IndexReaderPtr r2 = r->reopen();
@@ -1243,8 +1170,7 @@ TEST_F(IndexReaderTest, testGetIndexCommit)
     d->close();
 }
 
-TEST_F(IndexReaderTest, testReadOnly)
-{
+TEST_F(IndexReaderTest, testReadOnly) {
     RAMDirectoryPtr d = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(d, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     addDocumentWithFields(writer);
@@ -1253,12 +1179,9 @@ TEST_F(IndexReaderTest, testReadOnly)
     writer->close();
 
     IndexReaderPtr r = IndexReader::open(d, true);
-    try
-    {
+    try {
         r->deleteDocument(0);
-    }
-    catch (UnsupportedOperationException& e)
-    {
+    } catch (UnsupportedOperationException& e) {
         EXPECT_TRUE(check_exception(LuceneException::UnsupportedOperation)(e));
     }
 
@@ -1271,12 +1194,9 @@ TEST_F(IndexReaderTest, testReadOnly)
     r->close();
 
     EXPECT_NE(r, r2);
-    try
-    {
+    try {
         r2->deleteDocument(0);
-    }
-    catch (UnsupportedOperationException& e)
-    {
+    } catch (UnsupportedOperationException& e) {
         EXPECT_TRUE(check_exception(LuceneException::UnsupportedOperation)(e));
     }
 
@@ -1289,12 +1209,9 @@ TEST_F(IndexReaderTest, testReadOnly)
     r2->close();
 
     EXPECT_NE(r, r2);
-    try
-    {
+    try {
         r3->deleteDocument(0);
-    }
-    catch (UnsupportedOperationException& e)
-    {
+    } catch (UnsupportedOperationException& e) {
         EXPECT_TRUE(check_exception(LuceneException::UnsupportedOperation)(e));
     }
 
@@ -1305,8 +1222,7 @@ TEST_F(IndexReaderTest, testReadOnly)
     r3->close();
 }
 
-TEST_F(IndexReaderTest, testIndexReader)
-{
+TEST_F(IndexReaderTest, testIndexReader) {
     RAMDirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), IndexWriter::MaxFieldLengthUNLIMITED);
     writer->addDocument(createDocument(L"a"));
@@ -1321,8 +1237,7 @@ TEST_F(IndexReaderTest, testIndexReader)
     IndexReader::open(dir, true)->close();
 }
 
-TEST_F(IndexReaderTest, testIndexReaderUnDeleteAll)
-{
+TEST_F(IndexReaderTest, testIndexReaderUnDeleteAll) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     dir->setPreventDoubleWrite(false);
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), IndexWriter::MaxFieldLengthUNLIMITED);
@@ -1342,23 +1257,18 @@ TEST_F(IndexReaderTest, testIndexReaderUnDeleteAll)
 }
 
 /// Make sure on attempting to open an IndexReader on a non-existent directory, you get a good exception
-TEST_F(IndexReaderTest, testNoDir)
-{
+TEST_F(IndexReaderTest, testNoDir) {
     String indexDir(FileUtils::joinPath(getTempDir(), L"doesnotexist"));
     DirectoryPtr dir = FSDirectory::open(indexDir);
-    try
-    {
+    try {
         IndexReader::open(dir, true);
-    }
-    catch (NoSuchDirectoryException& e)
-    {
+    } catch (NoSuchDirectoryException& e) {
         EXPECT_TRUE(check_exception(LuceneException::NoSuchDirectory)(e));
     }
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testNoDupCommitFileNames)
-{
+TEST_F(IndexReaderTest, testNoDupCommitFileNames) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), IndexWriter::MaxFieldLengthLIMITED);
     writer->setMaxBufferedDocs(2);
@@ -1368,12 +1278,10 @@ TEST_F(IndexReaderTest, testNoDupCommitFileNames)
     writer->close();
 
     Collection<IndexCommitPtr> commits = IndexReader::listCommits(dir);
-    for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
-    {
+    for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit) {
         HashSet<String> files = (*commit)->getFileNames();
         HashSet<String> seen = HashSet<String>::newInstance();
-        for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName)
-        {
+        for (HashSet<String>::iterator fileName = files.begin(); fileName != files.end(); ++fileName) {
             EXPECT_TRUE(!seen.contains(*fileName));
             seen.add(*fileName);
         }
@@ -1383,8 +1291,7 @@ TEST_F(IndexReaderTest, testNoDupCommitFileNames)
 }
 
 /// Ensure that on a cloned reader, segments reuse the doc values arrays in FieldCache
-TEST_F(IndexReaderTest, testFieldCacheReuseAfterClone)
-{
+TEST_F(IndexReaderTest, testFieldCacheReuseAfterClone) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -1413,8 +1320,7 @@ TEST_F(IndexReaderTest, testFieldCacheReuseAfterClone)
 }
 
 /// Ensure that on a reopened reader, that any shared segments reuse the doc values arrays in FieldCache
-TEST_F(IndexReaderTest, testFieldCacheReuseAfterReopen)
-{
+TEST_F(IndexReaderTest, testFieldCacheReuseAfterReopen) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -1445,8 +1351,7 @@ TEST_F(IndexReaderTest, testFieldCacheReuseAfterReopen)
 }
 
 /// Make sure all SegmentReaders are new when reopen switches readOnly
-TEST_F(IndexReaderTest, testReopenChangeReadonly)
-{
+TEST_F(IndexReaderTest, testReopenChangeReadonly) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -1486,8 +1391,7 @@ TEST_F(IndexReaderTest, testReopenChangeReadonly)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testUniqueTermCount)
-{
+TEST_F(IndexReaderTest, testUniqueTermCount) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -1504,25 +1408,22 @@ TEST_F(IndexReaderTest, testUniqueTermCount)
     writer->commit();
     IndexReaderPtr r2 = r->reopen();
     r->close();
-    try
-    {
+    try {
         r2->getUniqueTermCount();
-    }
-    catch (UnsupportedOperationException& e)
-    {
+    } catch (UnsupportedOperationException& e) {
         EXPECT_TRUE(check_exception(LuceneException::UnsupportedOperation)(e));
     }
     Collection<IndexReaderPtr> subs = r2->getSequentialSubReaders();
-    for (Collection<IndexReaderPtr>::iterator sub = subs.begin(); sub != subs.end(); ++sub)
+    for (Collection<IndexReaderPtr>::iterator sub = subs.begin(); sub != subs.end(); ++sub) {
         EXPECT_EQ(36, (*sub)->getUniqueTermCount());
+    }
     r2->close();
     writer->close();
     dir->close();
 }
 
 /// don't load terms index
-TEST_F(IndexReaderTest, testNoTermsIndex)
-{
+TEST_F(IndexReaderTest, testNoTermsIndex) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -1533,12 +1434,9 @@ TEST_F(IndexReaderTest, testNoTermsIndex)
     writer->close();
 
     IndexReaderPtr r = IndexReader::open(dir, IndexDeletionPolicyPtr(), true, -1);
-    try
-    {
+    try {
         r->docFreq(newLucene<Term>(L"field", L"f"));
-    }
-    catch (IllegalStateException& e)
-    {
+    } catch (IllegalStateException& e) {
         EXPECT_TRUE(check_exception(LuceneException::IllegalState)(e));
     }
     EXPECT_TRUE(!boost::dynamic_pointer_cast<SegmentReader>(r->getSequentialSubReaders()[0])->termsIndexLoaded());
@@ -1552,8 +1450,7 @@ TEST_F(IndexReaderTest, testNoTermsIndex)
     r->close();
     Collection<IndexReaderPtr> subReaders = r2->getSequentialSubReaders();
     EXPECT_EQ(2, subReaders.size());
-    for (Collection<IndexReaderPtr>::iterator sub = subReaders.begin(); sub != subReaders.end(); ++sub)
-    {
+    for (Collection<IndexReaderPtr>::iterator sub = subReaders.begin(); sub != subReaders.end(); ++sub) {
         SegmentReaderPtr subReader = boost::dynamic_pointer_cast<SegmentReader>(*sub);
         EXPECT_TRUE(!subReader->termsIndexLoaded());
     }
@@ -1561,8 +1458,7 @@ TEST_F(IndexReaderTest, testNoTermsIndex)
     dir->close();
 }
 
-TEST_F(IndexReaderTest, testPrepareCommitIsCurrent)
-{
+TEST_F(IndexReaderTest, testPrepareCommitIsCurrent) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();

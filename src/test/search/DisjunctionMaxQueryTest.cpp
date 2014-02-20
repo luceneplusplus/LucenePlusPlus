@@ -28,38 +28,32 @@
 using namespace Lucene;
 
 /// Similarity to eliminate tf, idf and lengthNorm effects to isolate test case.
-class DisjunctionMaxSimilarity : public DefaultSimilarity
-{
+class DisjunctionMaxSimilarity : public DefaultSimilarity {
 public:
-    virtual ~DisjunctionMaxSimilarity()
-    {
+    virtual ~DisjunctionMaxSimilarity() {
     }
 
 public:
-    virtual double tf(double freq)
-    {
-        if (freq > 0.0)
+    virtual double tf(double freq) {
+        if (freq > 0.0) {
             return 1.0;
-        else
+        } else {
             return 0.0;
+        }
     }
 
-    virtual double lengthNorm(const String& fieldName, int32_t numTokens)
-    {
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
         return 1.0;
     }
 
-    virtual double idf(int32_t docFreq, int32_t numDocs)
-    {
+    virtual double idf(int32_t docFreq, int32_t numDocs) {
         return 1.0;
     }
 };
 
-class DisjunctionMaxQueryTest : public LuceneTestFixture
-{
+class DisjunctionMaxQueryTest : public LuceneTestFixture {
 public:
-    DisjunctionMaxQueryTest()
-    {
+    DisjunctionMaxQueryTest() {
         sim = newLucene<DisjunctionMaxSimilarity>();
 
         index = newLucene<RAMDirectory>();
@@ -113,8 +107,7 @@ public:
         s->setSimilarity(sim);
     }
 
-    virtual ~DisjunctionMaxQueryTest()
-    {
+    virtual ~DisjunctionMaxQueryTest() {
     }
 
 public:
@@ -126,13 +119,11 @@ public:
     static const double SCORE_COMP_THRESH;
 
 protected:
-    QueryPtr tq(const String& f, const String& t)
-    {
+    QueryPtr tq(const String& f, const String& t) {
         return newLucene<TermQuery>(newLucene<Term>(f, t));
     }
 
-    QueryPtr tq(const String& f, const String& t, double b)
-    {
+    QueryPtr tq(const String& f, const String& t, double b) {
         QueryPtr q = tq(f, t);
         q->setBoost(b);
         return q;
@@ -141,8 +132,7 @@ protected:
 
 const double DisjunctionMaxQueryTest::SCORE_COMP_THRESH = 0.00001;
 
-TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeMiss)
-{
+TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeMiss) {
     DisjunctionMaxQueryPtr dq = newLucene<DisjunctionMaxQuery>(0.0);
     dq->add(tq(L"id", L"d1"));
     dq->add(tq(L"dek", L"DOES_NOT_EXIST"));
@@ -154,8 +144,7 @@ TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeMiss)
     EXPECT_EQ(ds->advance(3), DocIdSetIterator::NO_MORE_DOCS);
 }
 
-TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeHit)
-{
+TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeHit) {
     DisjunctionMaxQueryPtr dq = newLucene<DisjunctionMaxQuery>(0.0);
     dq->add(tq(L"dek", L"albino"));
     dq->add(tq(L"dek", L"DOES_NOT_EXIST"));
@@ -168,8 +157,7 @@ TEST_F(DisjunctionMaxQueryTest, testSkipToFirsttimeHit)
     EXPECT_EQ(L"d4", r->document(ds->docID())->get(L"id"));
 }
 
-TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores1)
-{
+TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores1) {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.0);
     q->add(tq(L"hed", L"albino"));
     q->add(tq(L"hed", L"elephant"));
@@ -180,12 +168,12 @@ TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores1)
     EXPECT_EQ(4, h.size());
 
     double score = h[0]->score;
-    for (int32_t i = 1; i < h.size(); ++i)
+    for (int32_t i = 1; i < h.size(); ++i) {
         EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
+    }
 }
 
-TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores2)
-{
+TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores2) {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.0);
     q->add(tq(L"dek", L"albino"));
     q->add(tq(L"dek", L"elephant"));
@@ -196,12 +184,12 @@ TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores2)
     EXPECT_EQ(3, h.size());
 
     double score = h[0]->score;
-    for (int32_t i = 1; i < h.size(); ++i)
+    for (int32_t i = 1; i < h.size(); ++i) {
         EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
+    }
 }
 
-TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores3)
-{
+TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores3) {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.0);
     q->add(tq(L"hed", L"albino"));
     q->add(tq(L"hed", L"elephant"));
@@ -214,12 +202,12 @@ TEST_F(DisjunctionMaxQueryTest, testSimpleEqualScores3)
     EXPECT_EQ(4, h.size());
 
     double score = h[0]->score;
-    for (int32_t i = 1; i < h.size(); ++i)
+    for (int32_t i = 1; i < h.size(); ++i) {
         EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
+    }
 }
 
-TEST_F(DisjunctionMaxQueryTest, testSimpleTiebreaker)
-{
+TEST_F(DisjunctionMaxQueryTest, testSimpleTiebreaker) {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.01);
     q->add(tq(L"dek", L"albino"));
     q->add(tq(L"dek", L"elephant"));
@@ -236,8 +224,7 @@ TEST_F(DisjunctionMaxQueryTest, testSimpleTiebreaker)
     EXPECT_NEAR(score1, score2, SCORE_COMP_THRESH);
 }
 
-TEST_F(DisjunctionMaxQueryTest, testBooleanRequiredEqualScores)
-{
+TEST_F(DisjunctionMaxQueryTest, testBooleanRequiredEqualScores) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
         DisjunctionMaxQueryPtr q1 = newLucene<DisjunctionMaxQuery>(0.0);
@@ -259,12 +246,12 @@ TEST_F(DisjunctionMaxQueryTest, testBooleanRequiredEqualScores)
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(3, h.size());
     double score = h[0]->score;
-    for (int32_t i = 1; i < h.size(); ++i)
+    for (int32_t i = 1; i < h.size(); ++i) {
         EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
+    }
 }
 
-TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalNoTiebreaker)
-{
+TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalNoTiebreaker) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
         DisjunctionMaxQueryPtr q1 = newLucene<DisjunctionMaxQuery>(0.0);
@@ -284,15 +271,15 @@ TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalNoTiebreaker)
     Collection<ScoreDocPtr> h = s->search(q, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(4, h.size());
     double score = h[0]->score;
-    for (int32_t i = 1; i < h.size() - 1; ++i)
+    for (int32_t i = 1; i < h.size() - 1; ++i) {
         EXPECT_NEAR(score, h[i]->score, SCORE_COMP_THRESH);
+    }
     EXPECT_EQ(L"d1", s->doc(h[h.size() - 1]->doc)->get(L"id"));
     double score1 = h[h.size() - 1]->score;
     EXPECT_TRUE(score > score1);
 }
 
-TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalWithTiebreaker)
-{
+TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalWithTiebreaker) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
         DisjunctionMaxQueryPtr q1 = newLucene<DisjunctionMaxQuery>(0.01);
@@ -332,8 +319,7 @@ TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalWithTiebreaker)
     EXPECT_TRUE(score2 > score3);
 }
 
-TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalWithTiebreakerAndBoost)
-{
+TEST_F(DisjunctionMaxQueryTest, testBooleanOptionalWithTiebreakerAndBoost) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
     {
         DisjunctionMaxQueryPtr q1 = newLucene<DisjunctionMaxQuery>(0.01);

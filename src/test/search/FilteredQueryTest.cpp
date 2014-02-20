@@ -31,32 +31,26 @@
 
 using namespace Lucene;
 
-class StaticFilterA : public Filter
-{
+class StaticFilterA : public Filter {
 public:
-    virtual ~StaticFilterA()
-    {
+    virtual ~StaticFilterA() {
     }
 
 public:
-    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-    {
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
         BitSetPtr bitset = newLucene<BitSet>(5);
         bitset->set((uint32_t)0, (uint32_t)5);
         return newLucene<DocIdBitSet>(bitset);
     }
 };
 
-class StaticFilterB : public Filter
-{
+class StaticFilterB : public Filter {
 public:
-    virtual ~StaticFilterB()
-    {
+    virtual ~StaticFilterB() {
     }
 
 public:
-    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-    {
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
         BitSetPtr bitset = newLucene<BitSet>(5);
         bitset->set(1);
         bitset->set(3);
@@ -64,35 +58,29 @@ public:
     }
 };
 
-class SingleDocTestFilter : public Filter
-{
+class SingleDocTestFilter : public Filter {
 public:
-    SingleDocTestFilter(int32_t doc)
-    {
+    SingleDocTestFilter(int32_t doc) {
         this->doc = doc;
     }
 
-    virtual ~SingleDocTestFilter()
-    {
+    virtual ~SingleDocTestFilter() {
     }
 
 protected:
     int32_t doc;
 
 public:
-    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-    {
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
         BitSetPtr bits = newLucene<BitSet>(reader->maxDoc());
         bits->set(doc);
         return newLucene<DocIdBitSet>(bits);
     }
 };
 
-class FilteredQueryTest : public LuceneTestFixture
-{
+class FilteredQueryTest : public LuceneTestFixture {
 public:
-    FilteredQueryTest()
-    {
+    FilteredQueryTest() {
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
@@ -124,8 +112,7 @@ public:
         filter = newStaticFilterB();
     }
 
-    virtual ~FilteredQueryTest()
-    {
+    virtual ~FilteredQueryTest() {
         searcher->close();
         directory->close();
     }
@@ -137,30 +124,27 @@ protected:
     FilterPtr filter;
 
 public:
-    FilterPtr newStaticFilterA()
-    {
+    FilterPtr newStaticFilterA() {
         return newLucene<StaticFilterA>();
     }
 
-    FilterPtr newStaticFilterB()
-    {
+    FilterPtr newStaticFilterB() {
         return newLucene<StaticFilterB>();
     }
 
-    void checkScoreEquals(const QueryPtr& q1, const QueryPtr& q2)
-    {
+    void checkScoreEquals(const QueryPtr& q1, const QueryPtr& q2) {
         Collection<ScoreDocPtr> hits1 = searcher->search(q1, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> hits2 = searcher->search (q2, FilterPtr(), 1000)->scoreDocs;
 
         EXPECT_EQ(hits1.size(), hits2.size());
 
-        for (int32_t i = 0; i < hits1.size(); ++i)
+        for (int32_t i = 0; i < hits1.size(); ++i) {
             EXPECT_NEAR(hits1[i]->score, hits2[i]->score, 0.0000001);
+        }
     }
 };
 
-TEST_F(FilteredQueryTest, testFilteredQuery)
-{
+TEST_F(FilteredQueryTest, testFilteredQuery) {
     QueryPtr filteredquery = newLucene<FilteredQuery>(query, filter);
     Collection<ScoreDocPtr> hits = searcher->search(filteredquery, FilterPtr(), 1000)->scoreDocs;
     EXPECT_EQ(1, hits.size());
@@ -209,8 +193,7 @@ TEST_F(FilteredQueryTest, testFilteredQuery)
     EXPECT_EQ(1.0, tq->getBoost()); // the boost value of the underlying query shouldn't have changed
 }
 
-TEST_F(FilteredQueryTest, testRangeQuery)
-{
+TEST_F(FilteredQueryTest, testRangeQuery) {
     TermRangeQueryPtr rq = newLucene<TermRangeQuery>(L"sorter", L"b", L"d", true, true);
 
     QueryPtr filteredquery = newLucene<FilteredQuery>(rq, filter);
@@ -219,8 +202,7 @@ TEST_F(FilteredQueryTest, testRangeQuery)
     QueryUtils::check(filteredquery, searcher);
 }
 
-TEST_F(FilteredQueryTest, testBoolean)
-{
+TEST_F(FilteredQueryTest, testBoolean) {
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
     QueryPtr query = newLucene<FilteredQuery>(newLucene<MatchAllDocsQuery>(), newLucene<SingleDocTestFilter>(0));
     bq->add(query, BooleanClause::MUST);
@@ -232,8 +214,7 @@ TEST_F(FilteredQueryTest, testBoolean)
 }
 
 /// Make sure BooleanQuery, which does out-of-order scoring, inside FilteredQuery, works
-TEST_F(FilteredQueryTest, testBoolean2)
-{
+TEST_F(FilteredQueryTest, testBoolean2) {
     BooleanQueryPtr bq = newLucene<BooleanQuery>();
     QueryPtr query = newLucene<FilteredQuery>(bq, newLucene<SingleDocTestFilter>(0));
     bq->add(newLucene<TermQuery>(newLucene<Term>(L"field", L"one")), BooleanClause::SHOULD);

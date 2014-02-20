@@ -8,24 +8,21 @@
 #include "ReadOnlySegmentReader.h"
 #include "BitVector.h"
 
-namespace Lucene
-{
-    ReadOnlySegmentReader::~ReadOnlySegmentReader()
-    {
-    }
+namespace Lucene {
 
-    void ReadOnlySegmentReader::noWrite()
-    {
-        boost::throw_exception(UnsupportedOperationException(L"This IndexReader cannot make any changes to the index (it was opened with readOnly = true)"));
-    }
+ReadOnlySegmentReader::~ReadOnlySegmentReader() {
+}
 
-    void ReadOnlySegmentReader::acquireWriteLock()
-    {
-        noWrite();
-    }
+void ReadOnlySegmentReader::noWrite() {
+    boost::throw_exception(UnsupportedOperationException(L"This IndexReader cannot make any changes to the index (it was opened with readOnly = true)"));
+}
 
-    bool ReadOnlySegmentReader::isDeleted(int32_t n)
-    {
-        return (deletedDocs && deletedDocs->get(n));
-    }
+void ReadOnlySegmentReader::acquireWriteLock() {
+    noWrite();
+}
+
+bool ReadOnlySegmentReader::isDeleted(int32_t n) {
+    return (deletedDocs && deletedDocs->get(n));
+}
+
 }

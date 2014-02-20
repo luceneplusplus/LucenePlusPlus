@@ -15,8 +15,7 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture ReverseStringFilterTest;
 
-TEST_F(ReverseStringFilterTest, testFilter)
-{
+TEST_F(ReverseStringFilterTest, testFilter) {
     TokenStreamPtr stream = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(L"Do have a nice day")); // 1-4 length string
     ReverseStringFilterPtr filter = newLucene<ReverseStringFilter>(stream);
     TermAttributePtr text = filter->getAttribute<TermAttribute>();
@@ -33,8 +32,7 @@ TEST_F(ReverseStringFilterTest, testFilter)
     EXPECT_TRUE(!filter->incrementToken());
 }
 
-TEST_F(ReverseStringFilterTest, testFilterWithMark)
-{
+TEST_F(ReverseStringFilterTest, testFilterWithMark) {
     TokenStreamPtr stream = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(L"Do have a nice day")); // 1-4 length string
     ReverseStringFilterPtr filter = newLucene<ReverseStringFilter>(stream, (wchar_t)0x0001);
     TermAttributePtr text = filter->getAttribute<TermAttribute>();

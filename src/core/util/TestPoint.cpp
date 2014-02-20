@@ -7,59 +7,51 @@
 #include "LuceneInc.h"
 #include "TestPoint.h"
 
-namespace Lucene
-{
-    MapStringInt TestPoint::testMethods = MapStringInt::newInstance();
-    bool TestPoint::enable = false;
+namespace Lucene {
 
-    TestPoint::~TestPoint()
-    {
-    }
+MapStringInt TestPoint::testMethods = MapStringInt::newInstance();
+bool TestPoint::enable = false;
 
-    void TestPoint::enableTestPoints()
-    {
-        enable = true;
-    }
+TestPoint::~TestPoint() {
+}
 
-    void TestPoint::clear()
-    {
+void TestPoint::enableTestPoints() {
+    enable = true;
+}
+
+void TestPoint::clear() {
+    SyncLock syncLock(&testMethods);
+    testMethods.clear();
+}
+
+void TestPoint::setTestPoint(const String& object, const String& method, bool point) {
+    if (enable) {
         SyncLock syncLock(&testMethods);
-        testMethods.clear();
+        testMethods.put(object + L":" + method, point);
+        testMethods.put(method, point);
     }
+}
 
-    void TestPoint::setTestPoint(const String& object, const String& method, bool point)
-    {
-        if (enable)
-        {
-            SyncLock syncLock(&testMethods);
-            testMethods.put(object + L":" + method, point);
-            testMethods.put(method, point);
-        }
-    }
+bool TestPoint::getTestPoint(const String& object, const String& method) {
+    SyncLock syncLock(&testMethods);
+    MapStringInt::iterator testMethod = testMethods.find(object + L":" + method);
+    return testMethod == testMethods.end() ? false : (testMethod->second != 0);
+}
 
-    bool TestPoint::getTestPoint(const String& object, const String& method)
-    {
-        SyncLock syncLock(&testMethods);
-        MapStringInt::iterator testMethod = testMethods.find(object + L":" + method);
-        return testMethod == testMethods.end() ? false : (testMethod->second != 0);
-    }
+bool TestPoint::getTestPoint(const String& method) {
+    SyncLock syncLock(&testMethods);
+    MapStringInt::iterator testMethod = testMethods.find(method);
+    return testMethod == testMethods.end() ? false : (testMethod->second != 0);
+}
 
-    bool TestPoint::getTestPoint(const String& method)
-    {
-        SyncLock syncLock(&testMethods);
-        MapStringInt::iterator testMethod = testMethods.find(method);
-        return testMethod == testMethods.end() ? false : (testMethod->second != 0);
-    }
+TestScope::TestScope(const String& object, const String& method) {
+    this->object = object;
+    this->method = method;
+    TestPoint::setTestPoint(object, method, true);
+}
 
-    TestScope::TestScope(const String& object, const String& method)
-    {
-        this->object = object;
-        this->method = method;
-        TestPoint::setTestPoint(object, method, true);
-    }
+TestScope::~TestScope() {
+    TestPoint::setTestPoint(object, method, false);
+}
 
-    TestScope::~TestScope()
-    {
-        TestPoint::setTestPoint(object, method, false);
-    }
 }

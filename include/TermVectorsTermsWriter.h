@@ -11,87 +11,85 @@
 #include "DocumentsWriter.h"
 #include "RawPostingList.h"
 
-namespace Lucene
-{
-    class TermVectorsTermsWriter : public TermsHashConsumer
-    {
-    public:
-        TermVectorsTermsWriter(const DocumentsWriterPtr& docWriter);
-        virtual ~TermVectorsTermsWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(TermVectorsTermsWriter);
+class TermVectorsTermsWriter : public TermsHashConsumer {
+public:
+    TermVectorsTermsWriter(const DocumentsWriterPtr& docWriter);
+    virtual ~TermVectorsTermsWriter();
 
-    public:
-        DocumentsWriterWeakPtr _docWriter;
-        TermVectorsWriterPtr termVectorsWriter;
-        Collection<TermVectorsTermsWriterPerDocPtr> docFreeList;
-        int32_t freeCount;
-        IndexOutputPtr tvx;
-        IndexOutputPtr tvd;
-        IndexOutputPtr tvf;
-        int32_t lastDocID;
-        int32_t allocCount;
+    LUCENE_CLASS(TermVectorsTermsWriter);
 
-    public:
-        virtual TermsHashConsumerPerThreadPtr addThread(const TermsHashPerThreadPtr& perThread);
-        virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count);
-        virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
-        virtual void closeDocStore(const SegmentWriteStatePtr& state);
+public:
+    DocumentsWriterWeakPtr _docWriter;
+    TermVectorsWriterPtr termVectorsWriter;
+    Collection<TermVectorsTermsWriterPerDocPtr> docFreeList;
+    int32_t freeCount;
+    IndexOutputPtr tvx;
+    IndexOutputPtr tvd;
+    IndexOutputPtr tvf;
+    int32_t lastDocID;
+    int32_t allocCount;
 
-        TermVectorsTermsWriterPerDocPtr getPerDoc();
+public:
+    virtual TermsHashConsumerPerThreadPtr addThread(const TermsHashPerThreadPtr& perThread);
+    virtual void createPostings(Collection<RawPostingListPtr> postings, int32_t start, int32_t count);
+    virtual void flush(MapTermsHashConsumerPerThreadCollectionTermsHashConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+    virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
-        /// Fills in no-term-vectors for all docs we haven't seen since the last doc that had term vectors.
-        void fill(int32_t docID);
+    TermVectorsTermsWriterPerDocPtr getPerDoc();
 
-        void initTermVectorsWriter();
-        void finishDocument(const TermVectorsTermsWriterPerDocPtr& perDoc);
-        bool freeRAM();
-        void free(const TermVectorsTermsWriterPerDocPtr& doc);
+    /// Fills in no-term-vectors for all docs we haven't seen since the last doc that had term vectors.
+    void fill(int32_t docID);
 
-        virtual void abort();
-        virtual int32_t bytesPerPosting();
-    };
+    void initTermVectorsWriter();
+    void finishDocument(const TermVectorsTermsWriterPerDocPtr& perDoc);
+    bool freeRAM();
+    void free(const TermVectorsTermsWriterPerDocPtr& doc);
 
-    class TermVectorsTermsWriterPerDoc : public DocWriter
-    {
-    public:
-        TermVectorsTermsWriterPerDoc(const TermVectorsTermsWriterPtr& termsWriter = TermVectorsTermsWriterPtr());
-        virtual ~TermVectorsTermsWriterPerDoc();
+    virtual void abort();
+    virtual int32_t bytesPerPosting();
+};
 
-        LUCENE_CLASS(TermVectorsTermsWriterPerDoc);
+class TermVectorsTermsWriterPerDoc : public DocWriter {
+public:
+    TermVectorsTermsWriterPerDoc(const TermVectorsTermsWriterPtr& termsWriter = TermVectorsTermsWriterPtr());
+    virtual ~TermVectorsTermsWriterPerDoc();
 
-    protected:
-        TermVectorsTermsWriterWeakPtr _termsWriter;
+    LUCENE_CLASS(TermVectorsTermsWriterPerDoc);
 
-    public:
-        PerDocBufferPtr buffer;
-        RAMOutputStreamPtr perDocTvf;
-        int32_t numVectorFields;
+protected:
+    TermVectorsTermsWriterWeakPtr _termsWriter;
 
-        Collection<int32_t> fieldNumbers;
-        Collection<int64_t> fieldPointers;
+public:
+    PerDocBufferPtr buffer;
+    RAMOutputStreamPtr perDocTvf;
+    int32_t numVectorFields;
 
-    public:
-        void reset();
-        virtual void abort();
-        void addField(int32_t fieldNumber);
-        virtual int64_t sizeInBytes();
-        virtual void finish();
-    };
+    Collection<int32_t> fieldNumbers;
+    Collection<int64_t> fieldPointers;
 
-    class TermVectorsTermsWriterPostingList : public RawPostingList
-    {
-    public:
-        TermVectorsTermsWriterPostingList();
-        virtual ~TermVectorsTermsWriterPostingList();
+public:
+    void reset();
+    virtual void abort();
+    void addField(int32_t fieldNumber);
+    virtual int64_t sizeInBytes();
+    virtual void finish();
+};
 
-        LUCENE_CLASS(TermVectorsTermsWriterPostingList);
+class TermVectorsTermsWriterPostingList : public RawPostingList {
+public:
+    TermVectorsTermsWriterPostingList();
+    virtual ~TermVectorsTermsWriterPostingList();
 
-    public:
-        int32_t freq; // How many times this term occurred in the current doc
-        int32_t lastOffset; // Last offset we saw
-        int32_t lastPosition; // Last position where this term occurred
-    };
+    LUCENE_CLASS(TermVectorsTermsWriterPostingList);
+
+public:
+    int32_t freq; // How many times this term occurred in the current doc
+    int32_t lastOffset; // Last offset we saw
+    int32_t lastPosition; // Last position where this term occurred
+};
+
 }
 
 #endif

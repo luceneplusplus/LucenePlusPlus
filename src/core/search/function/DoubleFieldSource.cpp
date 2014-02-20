@@ -10,67 +10,60 @@
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    DoubleFieldSource::DoubleFieldSource(const String& field, const DoubleParserPtr& parser) : FieldCacheSource(field)
-    {
-        this->parser = parser;
-    }
+namespace Lucene {
 
-    DoubleFieldSource::~DoubleFieldSource()
-    {
-    }
+DoubleFieldSource::DoubleFieldSource(const String& field, const DoubleParserPtr& parser) : FieldCacheSource(field) {
+    this->parser = parser;
+}
 
-    String DoubleFieldSource::description()
-    {
-        return L"double(" + FieldCacheSource::description() + L")";
-    }
+DoubleFieldSource::~DoubleFieldSource() {
+}
 
-    DocValuesPtr DoubleFieldSource::getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader)
-    {
-        Collection<double> arr(cache->getDoubles(reader, field, parser));
-        return newLucene<DoubleDocValues>(shared_from_this(), arr);
-    }
+String DoubleFieldSource::description() {
+    return L"double(" + FieldCacheSource::description() + L")";
+}
 
-    bool DoubleFieldSource::cachedFieldSourceEquals(const FieldCacheSourcePtr& other)
-    {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
-            return false;
-        DoubleFieldSourcePtr otherSource(boost::dynamic_pointer_cast<DoubleFieldSource>(other));
-        if (!otherSource)
-            return false;
-        return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;
-    }
+DocValuesPtr DoubleFieldSource::getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader) {
+    Collection<double> arr(cache->getDoubles(reader, field, parser));
+    return newLucene<DoubleDocValues>(shared_from_this(), arr);
+}
 
-    int32_t DoubleFieldSource::cachedFieldSourceHashCode()
-    {
-        return StringUtils::hashCode(parser ? DoubleParser::_getClassName() : DoubleFieldSource::_getClassName());
+bool DoubleFieldSource::cachedFieldSourceEquals(const FieldCacheSourcePtr& other) {
+    if (!MiscUtils::equalTypes(shared_from_this(), other)) {
+        return false;
     }
+    DoubleFieldSourcePtr otherSource(boost::dynamic_pointer_cast<DoubleFieldSource>(other));
+    if (!otherSource) {
+        return false;
+    }
+    return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;
+}
 
-    DoubleDocValues::DoubleDocValues(const DoubleFieldSourcePtr& source, Collection<double> arr)
-    {
-        this->_source = source;
-        this->arr = arr;
-    }
+int32_t DoubleFieldSource::cachedFieldSourceHashCode() {
+    return StringUtils::hashCode(parser ? DoubleParser::_getClassName() : DoubleFieldSource::_getClassName());
+}
 
-    DoubleDocValues::~DoubleDocValues()
-    {
-    }
+DoubleDocValues::DoubleDocValues(const DoubleFieldSourcePtr& source, Collection<double> arr) {
+    this->_source = source;
+    this->arr = arr;
+}
 
-    double DoubleDocValues::doubleVal(int32_t doc)
-    {
-        if (doc < 0 || doc >= arr.size())
-            boost::throw_exception(IndexOutOfBoundsException());
-        return arr[doc];
-    }
+DoubleDocValues::~DoubleDocValues() {
+}
 
-    String DoubleDocValues::toString(int32_t doc)
-    {
-        return DoubleFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(doubleVal(doc));
+double DoubleDocValues::doubleVal(int32_t doc) {
+    if (doc < 0 || doc >= arr.size()) {
+        boost::throw_exception(IndexOutOfBoundsException());
     }
+    return arr[doc];
+}
 
-    CollectionValue DoubleDocValues::getInnerArray()
-    {
-        return arr;
-    }
+String DoubleDocValues::toString(int32_t doc) {
+    return DoubleFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(doubleVal(doc));
+}
+
+CollectionValue DoubleDocValues::getInnerArray() {
+    return arr;
+}
+
 }

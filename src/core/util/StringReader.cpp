@@ -7,50 +7,44 @@
 #include "LuceneInc.h"
 #include "StringReader.h"
 
-namespace Lucene
-{
-    StringReader::StringReader(const String& str)
-    {
-        this->str = str;
-        this->position = 0;
-    }
+namespace Lucene {
 
-    StringReader::~StringReader()
-    {
-    }
+StringReader::StringReader(const String& str) {
+    this->str = str;
+    this->position = 0;
+}
 
-    int32_t StringReader::read()
-    {
-        return position == (int32_t)str.length() ? READER_EOF : (int32_t)str[position++];
-    }
+StringReader::~StringReader() {
+}
 
-    int32_t StringReader::read(wchar_t* buffer, int32_t offset, int32_t length)
-    {
-        if (position >= (int32_t)str.length())
-            return READER_EOF;
-        int32_t readChars = std::min(length, (int32_t)str.length() - position);
-        std::wcsncpy(buffer + offset, str.c_str() + position, readChars);
-        position += readChars;
-        return readChars;
-    }
+int32_t StringReader::read() {
+    return position == (int32_t)str.length() ? READER_EOF : (int32_t)str[position++];
+}
 
-    void StringReader::close()
-    {
-        str.clear();
+int32_t StringReader::read(wchar_t* buffer, int32_t offset, int32_t length) {
+    if (position >= (int32_t)str.length()) {
+        return READER_EOF;
     }
+    int32_t readChars = std::min(length, (int32_t)str.length() - position);
+    std::wcsncpy(buffer + offset, str.c_str() + position, readChars);
+    position += readChars;
+    return readChars;
+}
 
-    bool StringReader::markSupported()
-    {
-        return false;
-    }
+void StringReader::close() {
+    str.clear();
+}
 
-    void StringReader::reset()
-    {
-        position = 0;
-    }
+bool StringReader::markSupported() {
+    return false;
+}
 
-    int64_t StringReader::length()
-    {
-        return str.length();
-    }
+void StringReader::reset() {
+    position = 0;
+}
+
+int64_t StringReader::length() {
+    return str.length();
+}
+
 }

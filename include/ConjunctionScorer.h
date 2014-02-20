@@ -9,31 +9,31 @@
 
 #include "Scorer.h"
 
-namespace Lucene
-{
-    /// Scorer for conjunctions, sets of queries, all of which are required.
-    class ConjunctionScorer : public Scorer
-    {
-    public:
-        ConjunctionScorer(const SimilarityPtr& similarity, Collection<ScorerPtr> scorers);
-        virtual ~ConjunctionScorer();
+namespace Lucene {
 
-        LUCENE_CLASS(ConjunctionScorer);
+/// Scorer for conjunctions, sets of queries, all of which are required.
+class ConjunctionScorer : public Scorer {
+public:
+    ConjunctionScorer(const SimilarityPtr& similarity, Collection<ScorerPtr> scorers);
+    virtual ~ConjunctionScorer();
 
-    protected:
-        Collection<ScorerPtr> scorers;
-        double coord;
-        int32_t lastDoc;
+    LUCENE_CLASS(ConjunctionScorer);
 
-    public:
-        virtual int32_t advance(int32_t target);
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual double score();
+protected:
+    Collection<ScorerPtr> scorers;
+    double coord;
+    int32_t lastDoc;
 
-    protected:
-        int32_t doNext();
-    };
+public:
+    virtual int32_t advance(int32_t target);
+    virtual int32_t docID();
+    virtual int32_t nextDoc();
+    virtual double score();
+
+protected:
+    int32_t doNext();
+};
+
 }
 
 #endif

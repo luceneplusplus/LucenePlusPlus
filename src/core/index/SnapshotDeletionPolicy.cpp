@@ -8,121 +8,108 @@
 #include "SnapshotDeletionPolicy.h"
 #include "_SnapshotDeletionPolicy.h"
 
-namespace Lucene
-{
-    SnapshotDeletionPolicy::SnapshotDeletionPolicy(const IndexDeletionPolicyPtr& primary)
-    {
-        this->primary = primary;
-    }
+namespace Lucene {
 
-    SnapshotDeletionPolicy::~SnapshotDeletionPolicy()
-    {
-    }
+SnapshotDeletionPolicy::SnapshotDeletionPolicy(const IndexDeletionPolicyPtr& primary) {
+    this->primary = primary;
+}
 
-    void SnapshotDeletionPolicy::onInit(Collection<IndexCommitPtr> commits)
-    {
-        SyncLock syncLock(this);
-        primary->onInit(wrapCommits(commits));
-        lastCommit = commits[commits.size() - 1];
-    }
+SnapshotDeletionPolicy::~SnapshotDeletionPolicy() {
+}
 
-    void SnapshotDeletionPolicy::onCommit(Collection<IndexCommitPtr> commits)
-    {
-        SyncLock syncLock(this);
-        primary->onCommit(wrapCommits(commits));
-        lastCommit = commits[commits.size() - 1];
-    }
+void SnapshotDeletionPolicy::onInit(Collection<IndexCommitPtr> commits) {
+    SyncLock syncLock(this);
+    primary->onInit(wrapCommits(commits));
+    lastCommit = commits[commits.size() - 1];
+}
 
-    IndexCommitPtr SnapshotDeletionPolicy::snapshot()
-    {
-        SyncLock syncLock(this);
-        if (!lastCommit)
-            boost::throw_exception(IllegalStateException(L"no index commits to snapshot"));
-        if (_snapshot.empty())
-            _snapshot = lastCommit->getSegmentsFileName();
-        else
-            boost::throw_exception(IllegalStateException(L"snapshot is already set; please call release() first"));
-        return lastCommit;
-    }
+void SnapshotDeletionPolicy::onCommit(Collection<IndexCommitPtr> commits) {
+    SyncLock syncLock(this);
+    primary->onCommit(wrapCommits(commits));
+    lastCommit = commits[commits.size() - 1];
+}
 
-    void SnapshotDeletionPolicy::release()
-    {
-        SyncLock syncLock(this);
-        if (!_snapshot.empty())
-            _snapshot.clear();
-        else
-            boost::throw_exception(IllegalStateException(L"snapshot was not set; please call snapshot() first"));
+IndexCommitPtr SnapshotDeletionPolicy::snapshot() {
+    SyncLock syncLock(this);
+    if (!lastCommit) {
+        boost::throw_exception(IllegalStateException(L"no index commits to snapshot"));
     }
+    if (_snapshot.empty()) {
+        _snapshot = lastCommit->getSegmentsFileName();
+    } else {
+        boost::throw_exception(IllegalStateException(L"snapshot is already set; please call release() first"));
+    }
+    return lastCommit;
+}
 
-    Collection<IndexCommitPtr> SnapshotDeletionPolicy::wrapCommits(Collection<IndexCommitPtr> commits)
-    {
-        Collection<IndexCommitPtr> myCommits(Collection<IndexCommitPtr>::newInstance());
-        for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit)
-            myCommits.add(newLucene<MyCommitPoint>(shared_from_this(), *commit));
-        return myCommits;
+void SnapshotDeletionPolicy::release() {
+    SyncLock syncLock(this);
+    if (!_snapshot.empty()) {
+        _snapshot.clear();
+    } else {
+        boost::throw_exception(IllegalStateException(L"snapshot was not set; please call snapshot() first"));
     }
+}
 
-    MyCommitPoint::MyCommitPoint(const SnapshotDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& cp)
-    {
-        this->_deletionPolicy = deletionPolicy;
-        this->cp = cp;
+Collection<IndexCommitPtr> SnapshotDeletionPolicy::wrapCommits(Collection<IndexCommitPtr> commits) {
+    Collection<IndexCommitPtr> myCommits(Collection<IndexCommitPtr>::newInstance());
+    for (Collection<IndexCommitPtr>::iterator commit = commits.begin(); commit != commits.end(); ++commit) {
+        myCommits.add(newLucene<MyCommitPoint>(shared_from_this(), *commit));
     }
+    return myCommits;
+}
 
-    MyCommitPoint::~MyCommitPoint()
-    {
-    }
+MyCommitPoint::MyCommitPoint(const SnapshotDeletionPolicyPtr& deletionPolicy, const IndexCommitPtr& cp) {
+    this->_deletionPolicy = deletionPolicy;
+    this->cp = cp;
+}
 
-    String MyCommitPoint::toString()
-    {
-        return L"SnapshotDeletionPolicy.SnapshotCommitPoint(" + cp->toString() + L")";
-    }
+MyCommitPoint::~MyCommitPoint() {
+}
 
-    String MyCommitPoint::getSegmentsFileName()
-    {
-        return cp->getSegmentsFileName();
-    }
+String MyCommitPoint::toString() {
+    return L"SnapshotDeletionPolicy.SnapshotCommitPoint(" + cp->toString() + L")";
+}
 
-    HashSet<String> MyCommitPoint::getFileNames()
-    {
-        return cp->getFileNames();
-    }
+String MyCommitPoint::getSegmentsFileName() {
+    return cp->getSegmentsFileName();
+}
 
-    DirectoryPtr MyCommitPoint::getDirectory()
-    {
-        return cp->getDirectory();
-    }
+HashSet<String> MyCommitPoint::getFileNames() {
+    return cp->getFileNames();
+}
 
-    void MyCommitPoint::deleteCommit()
-    {
-        SnapshotDeletionPolicyPtr deletionPolicy(_deletionPolicy);
-        SyncLock policyLock(deletionPolicy);
-        // Suppress the delete request if this commit point is our current snapshot.
-        if (deletionPolicy->_snapshot.empty() || deletionPolicy->_snapshot != getSegmentsFileName())
-            cp->deleteCommit();
-    }
+DirectoryPtr MyCommitPoint::getDirectory() {
+    return cp->getDirectory();
+}
 
-    bool MyCommitPoint::isDeleted()
-    {
-        return cp->isDeleted();
+void MyCommitPoint::deleteCommit() {
+    SnapshotDeletionPolicyPtr deletionPolicy(_deletionPolicy);
+    SyncLock policyLock(deletionPolicy);
+    // Suppress the delete request if this commit point is our current snapshot.
+    if (deletionPolicy->_snapshot.empty() || deletionPolicy->_snapshot != getSegmentsFileName()) {
+        cp->deleteCommit();
     }
+}
 
-    int64_t MyCommitPoint::getVersion()
-    {
-        return cp->getVersion();
-    }
+bool MyCommitPoint::isDeleted() {
+    return cp->isDeleted();
+}
 
-    int64_t MyCommitPoint::getGeneration()
-    {
-        return cp->getGeneration();
-    }
+int64_t MyCommitPoint::getVersion() {
+    return cp->getVersion();
+}
 
-    MapStringString MyCommitPoint::getUserData()
-    {
-        return cp->getUserData();
-    }
+int64_t MyCommitPoint::getGeneration() {
+    return cp->getGeneration();
+}
 
-    bool MyCommitPoint::isOptimized()
-    {
-        return cp->isOptimized();
-    }
+MapStringString MyCommitPoint::getUserData() {
+    return cp->getUserData();
+}
+
+bool MyCommitPoint::isOptimized() {
+    return cp->isOptimized();
+}
+
 }

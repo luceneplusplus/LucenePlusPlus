@@ -12,163 +12,139 @@
 
 using namespace Lucene;
 
-class ArabicStemFilterTest : public BaseTokenStreamFixture
-{
+class ArabicStemFilterTest : public BaseTokenStreamFixture {
 public:
-    virtual ~ArabicStemFilterTest()
-    {
+    virtual ~ArabicStemFilterTest() {
     }
 
 public:
-    void check(const String& input, const String& expected)
-    {
+    void check(const String& input, const String& expected) {
         ArabicLetterTokenizerPtr tokenStream  = newLucene<ArabicLetterTokenizer>(newLucene<StringReader>(input));
         ArabicStemFilterPtr filter = newLucene<ArabicStemFilter>(tokenStream);
         checkTokenStreamContents(filter, newCollection<String>(expected));
     }
 };
 
-TEST_F(ArabicStemFilterTest, testAlPrefix)
-{
+TEST_F(ArabicStemFilterTest, testAlPrefix) {
     const uint8_t first[] = {0xd8, 0xa7, 0xd9, 0x84, 0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testWalPrefix)
-{
+TEST_F(ArabicStemFilterTest, testWalPrefix) {
     const uint8_t first[] = {0xd9, 0x88, 0xd8, 0xa7, 0xd9, 0x84, 0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testBalPrefix)
-{
+TEST_F(ArabicStemFilterTest, testBalPrefix) {
     const uint8_t first[] = {0xd8, 0xa8, 0xd8, 0xa7, 0xd9, 0x84, 0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testKalPrefix)
-{
+TEST_F(ArabicStemFilterTest, testKalPrefix) {
     const uint8_t first[] = {0xd9, 0x83, 0xd8, 0xa7, 0xd9, 0x84, 0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testFalPrefix)
-{
+TEST_F(ArabicStemFilterTest, testFalPrefix) {
     const uint8_t first[] = {0xd9, 0x81, 0xd8, 0xa7, 0xd9, 0x84, 0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testLlPrefix)
-{
+TEST_F(ArabicStemFilterTest, testLlPrefix) {
     const uint8_t first[] = {0xd9, 0x84, 0xd9, 0x84, 0xd8, 0xa7, 0xd8, 0xae, 0xd8, 0xb1};
     const uint8_t second[] = {0xd8, 0xa7, 0xd8, 0xae, 0xd8, 0xb1};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testWaPrefix)
-{
+TEST_F(ArabicStemFilterTest, testWaPrefix) {
     const uint8_t first[] = {0xd9, 0x88, 0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xad, 0xd8, 0xb3, 0xd9, 0x86};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testAhSuffix)
-{
+TEST_F(ArabicStemFilterTest, testAhSuffix) {
     const uint8_t first[] = {0xd8, 0xb2, 0xd9, 0x88, 0xd8, 0xac, 0xd9, 0x87, 0xd8, 0xa7};
     const uint8_t second[] = {0xd8, 0xb2, 0xd9, 0x88, 0xd8, 0xac};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testAnSuffix)
-{
+TEST_F(ArabicStemFilterTest, testAnSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd8, 0xa7, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testAtSuffix)
-{
+TEST_F(ArabicStemFilterTest, testAtSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd8, 0xa7, 0xd8, 0xaa};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testWnSuffix)
-{
+TEST_F(ArabicStemFilterTest, testWnSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x88, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testYnSuffix)
-{
+TEST_F(ArabicStemFilterTest, testYnSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x8a, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testYhSuffix)
-{
+TEST_F(ArabicStemFilterTest, testYhSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x8a, 0xd9, 0x87};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testYpSuffix)
-{
+TEST_F(ArabicStemFilterTest, testYpSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x8a, 0xd8, 0xa9};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testHSuffix)
-{
+TEST_F(ArabicStemFilterTest, testHSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x87};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testPSuffix)
-{
+TEST_F(ArabicStemFilterTest, testPSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd8, 0xa9};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testYSuffix)
-{
+TEST_F(ArabicStemFilterTest, testYSuffix) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x8a};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testComboPrefSuf)
-{
+TEST_F(ArabicStemFilterTest, testComboPrefSuf) {
     const uint8_t first[] = {0xd9, 0x88, 0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x88, 0xd9, 0x86};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testComboSuf)
-{
+TEST_F(ArabicStemFilterTest, testComboSuf) {
     const uint8_t first[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf, 0xd9, 0x87, 0xd8, 0xa7, 0xd8, 0xaa};
     const uint8_t second[] = {0xd8, 0xb3, 0xd8, 0xa7, 0xd9, 0x87, 0xd8, 0xaf};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testShouldntStem)
-{
+TEST_F(ArabicStemFilterTest, testShouldntStem) {
     const uint8_t first[] = {0xd8, 0xa7, 0xd9, 0x84, 0xd9, 0x88};
     const uint8_t second[] = {0xd8, 0xa7, 0xd9, 0x84, 0xd9, 0x88};
     check(UTF8_TO_STRING(first), UTF8_TO_STRING(second));
 }
 
-TEST_F(ArabicStemFilterTest, testNonArabic)
-{
+TEST_F(ArabicStemFilterTest, testNonArabic) {
     check(L"English", L"English");
 }

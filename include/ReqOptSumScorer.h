@@ -9,33 +9,33 @@
 
 #include "Scorer.h"
 
-namespace Lucene
-{
-    /// A Scorer for queries with a required part and an optional part.  Delays skipTo() on the optional part
-    /// until a score() is needed.  This Scorer implements {@link Scorer#skipTo(int32_t)}.
-    class ReqOptSumScorer : public Scorer
-    {
-    public:
-        ReqOptSumScorer(const ScorerPtr& reqScorer, const ScorerPtr& optScorer);
-        virtual ~ReqOptSumScorer();
+namespace Lucene {
 
-        LUCENE_CLASS(ReqOptSumScorer);
+/// A Scorer for queries with a required part and an optional part.  Delays skipTo() on the optional part
+/// until a score() is needed.  This Scorer implements {@link Scorer#skipTo(int32_t)}.
+class ReqOptSumScorer : public Scorer {
+public:
+    ReqOptSumScorer(const ScorerPtr& reqScorer, const ScorerPtr& optScorer);
+    virtual ~ReqOptSumScorer();
 
-    protected:
-        ScorerPtr reqScorer;
-        ScorerPtr optScorer;
+    LUCENE_CLASS(ReqOptSumScorer);
 
-    public:
-        virtual int32_t nextDoc();
-        virtual int32_t advance(int32_t target);
-        virtual int32_t docID();
+protected:
+    ScorerPtr reqScorer;
+    ScorerPtr optScorer;
 
-        /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()}
-        /// is called the first time.
-        /// @return The score of the required scorer, eventually increased by the score of the optional scorer when
-        /// it also matches the current document.
-        virtual double score();
-    };
+public:
+    virtual int32_t nextDoc();
+    virtual int32_t advance(int32_t target);
+    virtual int32_t docID();
+
+    /// Returns the score of the current document matching the query.  Initially invalid, until {@link #next()}
+    /// is called the first time.
+    /// @return The score of the required scorer, eventually increased by the score of the optional scorer when
+    /// it also matches the current document.
+    virtual double score();
+};
+
 }
 
 #endif

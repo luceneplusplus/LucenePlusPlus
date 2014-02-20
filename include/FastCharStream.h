@@ -9,49 +9,49 @@
 
 #include "QueryParserCharStream.h"
 
-namespace Lucene
-{
-    /// An efficient implementation of QueryParserCharStream interface.
-    ///
-    /// Note that this does not do line-number counting, but instead keeps track of the character position of
-    /// the token in the input, as required by Lucene's {@link Token} API.
-    class LPPAPI FastCharStream : public QueryParserCharStream, public LuceneObject
-    {
-    public:
-        /// Constructs from a Reader.
-        FastCharStream(const ReaderPtr& reader);
-        virtual ~FastCharStream();
+namespace Lucene {
 
-        LUCENE_CLASS(FastCharStream);
+/// An efficient implementation of QueryParserCharStream interface.
+///
+/// Note that this does not do line-number counting, but instead keeps track of the character position of
+/// the token in the input, as required by Lucene's {@link Token} API.
+class LPPAPI FastCharStream : public QueryParserCharStream, public LuceneObject {
+public:
+    /// Constructs from a Reader.
+    FastCharStream(const ReaderPtr& reader);
+    virtual ~FastCharStream();
 
-    public:
-        CharArray buffer;
+    LUCENE_CLASS(FastCharStream);
 
-        int32_t bufferLength; // end of valid chars
-        int32_t bufferPosition; // next char to read
+public:
+    CharArray buffer;
 
-        int32_t tokenStart; // offset in buffer
-        int32_t bufferStart; // position in file of buffer
+    int32_t bufferLength; // end of valid chars
+    int32_t bufferPosition; // next char to read
 
-        ReaderPtr input; // source of chars
+    int32_t tokenStart; // offset in buffer
+    int32_t bufferStart; // position in file of buffer
 
-    public:
-        virtual wchar_t readChar();
-        virtual wchar_t BeginToken();
-        virtual void backup(int32_t amount);
-        virtual String GetImage();
-        virtual CharArray GetSuffix(int32_t length);
-        virtual void Done();
-        virtual int32_t getColumn();
-        virtual int32_t getLine();
-        virtual int32_t getEndColumn();
-        virtual int32_t getEndLine();
-        virtual int32_t getBeginColumn();
-        virtual int32_t getBeginLine();
+    ReaderPtr input; // source of chars
 
-    protected:
-        void refill();
-    };
+public:
+    virtual wchar_t readChar();
+    virtual wchar_t BeginToken();
+    virtual void backup(int32_t amount);
+    virtual String GetImage();
+    virtual CharArray GetSuffix(int32_t length);
+    virtual void Done();
+    virtual int32_t getColumn();
+    virtual int32_t getLine();
+    virtual int32_t getEndColumn();
+    virtual int32_t getEndLine();
+    virtual int32_t getBeginColumn();
+    virtual int32_t getBeginLine();
+
+protected:
+    void refill();
+};
+
 }
 
 #endif

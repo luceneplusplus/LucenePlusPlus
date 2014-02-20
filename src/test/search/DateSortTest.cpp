@@ -22,11 +22,9 @@
 
 using namespace Lucene;
 
-class DateSortTest : public LuceneTestFixture
-{
+class DateSortTest : public LuceneTestFixture {
 public:
-    DateSortTest()
-    {
+    DateSortTest() {
         // Create an index writer.
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -48,8 +46,7 @@ public:
         writer->close();
     }
 
-    virtual ~DateSortTest()
-    {
+    virtual ~DateSortTest() {
     }
 
 protected:
@@ -59,8 +56,7 @@ protected:
     DirectoryPtr directory;
 
 public:
-    DocumentPtr createDocument(const String& text, int64_t time)
-    {
+    DocumentPtr createDocument(const String& text, int64_t time) {
         DocumentPtr document = newLucene<Document>();
 
         // Add the text field.
@@ -79,8 +75,7 @@ public:
 const String DateSortTest::TEXT_FIELD = L"text";
 const String DateSortTest::DATE_TIME_FIELD = L"dateTime";
 
-TEST_F(DateSortTest, testReverseDateSort)
-{
+TEST_F(DateSortTest, testReverseDateSort) {
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
 
     SortPtr sort = newLucene<Sort>(newLucene<SortField>(DATE_TIME_FIELD, SortField::STRING, true));
@@ -91,8 +86,7 @@ TEST_F(DateSortTest, testReverseDateSort)
     // Execute the search and process the search results.
     Collection<String> actualOrder = Collection<String>::newInstance(5);
     Collection<ScoreDocPtr>hits = searcher->search(query, FilterPtr(), 1000, sort)->scoreDocs;
-    for (int32_t i = 0; i < hits.size(); ++i)
-    {
+    for (int32_t i = 0; i < hits.size(); ++i) {
         DocumentPtr document = searcher->doc(hits[i]->doc);
         String text = document->get(TEXT_FIELD);
         actualOrder[i] = text;

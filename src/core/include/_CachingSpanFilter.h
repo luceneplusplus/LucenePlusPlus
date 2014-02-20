@@ -9,19 +9,19 @@
 
 #include "_CachingWrapperFilter.h"
 
-namespace Lucene
-{
-    class FilterCacheSpanFilterResult : public FilterCache
-    {
-    public:
-        FilterCacheSpanFilterResult(CachingWrapperFilter::DeletesMode deletesMode);
-        virtual ~FilterCacheSpanFilterResult();
+namespace Lucene {
 
-        LUCENE_CLASS(FilterCacheSpanFilterResult);
+class FilterCacheSpanFilterResult : public FilterCache {
+public:
+    FilterCacheSpanFilterResult(CachingWrapperFilter::DeletesMode deletesMode);
+    virtual ~FilterCacheSpanFilterResult();
 
-    protected:
-        virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value);
-    };
+    LUCENE_CLASS(FilterCacheSpanFilterResult);
+
+protected:
+    virtual LuceneObjectPtr mergeDeletes(const IndexReaderPtr& reader, const LuceneObjectPtr& value);
+};
+
 }
 
 #endif

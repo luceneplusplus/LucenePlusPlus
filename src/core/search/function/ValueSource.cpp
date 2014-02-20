@@ -7,14 +7,13 @@
 #include "LuceneInc.h"
 #include "ValueSource.h"
 
-namespace Lucene
-{
-    ValueSource::~ValueSource()
-    {
-    }
+namespace Lucene {
 
-    String ValueSource::toString()
-    {
-        return description();
-    }
+ValueSource::~ValueSource() {
+}
+
+String ValueSource::toString() {
+    return description();
+}
+
 }

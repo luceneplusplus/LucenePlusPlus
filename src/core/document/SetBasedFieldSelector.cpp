@@ -7,25 +7,25 @@
 #include "LuceneInc.h"
 #include "SetBasedFieldSelector.h"
 
-namespace Lucene
-{
-    SetBasedFieldSelector::SetBasedFieldSelector(HashSet<String> fieldsToLoad, HashSet<String> lazyFieldsToLoad)
-    {
-        this->fieldsToLoad = fieldsToLoad;
-        this->lazyFieldsToLoad = lazyFieldsToLoad;
-    }
+namespace Lucene {
 
-    SetBasedFieldSelector::~SetBasedFieldSelector()
-    {
-    }
+SetBasedFieldSelector::SetBasedFieldSelector(HashSet<String> fieldsToLoad, HashSet<String> lazyFieldsToLoad) {
+    this->fieldsToLoad = fieldsToLoad;
+    this->lazyFieldsToLoad = lazyFieldsToLoad;
+}
 
-    FieldSelector::FieldSelectorResult SetBasedFieldSelector::accept(const String& fieldName)
-    {
-        FieldSelector::FieldSelectorResult result = FieldSelector::SELECTOR_NO_LOAD;
-        if (fieldsToLoad.contains(fieldName))
-            result = FieldSelector::SELECTOR_LOAD;
-        if (lazyFieldsToLoad.contains(fieldName))
-            result = FieldSelector::SELECTOR_LAZY_LOAD;
-        return result;
+SetBasedFieldSelector::~SetBasedFieldSelector() {
+}
+
+FieldSelector::FieldSelectorResult SetBasedFieldSelector::accept(const String& fieldName) {
+    FieldSelector::FieldSelectorResult result = FieldSelector::SELECTOR_NO_LOAD;
+    if (fieldsToLoad.contains(fieldName)) {
+        result = FieldSelector::SELECTOR_LOAD;
     }
+    if (lazyFieldsToLoad.contains(fieldName)) {
+        result = FieldSelector::SELECTOR_LAZY_LOAD;
+    }
+    return result;
+}
+
 }

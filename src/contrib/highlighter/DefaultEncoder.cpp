@@ -7,14 +7,13 @@
 #include "ContribInc.h"
 #include "DefaultEncoder.h"
 
-namespace Lucene
-{
-    DefaultEncoder::~DefaultEncoder()
-    {
-    }
+namespace Lucene {
 
-    String DefaultEncoder::encodeText(const String& originalText)
-    {
-        return originalText;
-    }
+DefaultEncoder::~DefaultEncoder() {
+}
+
+String DefaultEncoder::encodeText(const String& originalText) {
+    return originalText;
+}
+
 }

@@ -9,40 +9,39 @@
 
 #include "_SegmentInfos.h"
 
-namespace Lucene
-{
-    class FindSegmentsOpen : public FindSegmentsFileT<IndexReaderPtr>
-    {
-    public:
-        FindSegmentsOpen(bool readOnly, const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor, const SegmentInfosPtr& infos, const DirectoryPtr& directory);
-        virtual ~FindSegmentsOpen();
+namespace Lucene {
 
-        LUCENE_CLASS(FindSegmentsOpen);
+class FindSegmentsOpen : public FindSegmentsFileT<IndexReaderPtr> {
+public:
+    FindSegmentsOpen(bool readOnly, const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor, const SegmentInfosPtr& infos, const DirectoryPtr& directory);
+    virtual ~FindSegmentsOpen();
 
-    protected:
-        bool readOnly;
-        IndexDeletionPolicyPtr deletionPolicy;
-        int32_t termInfosIndexDivisor;
+    LUCENE_CLASS(FindSegmentsOpen);
 
-    public:
-        virtual IndexReaderPtr doBody(const String& segmentFileName);
-    };
+protected:
+    bool readOnly;
+    IndexDeletionPolicyPtr deletionPolicy;
+    int32_t termInfosIndexDivisor;
 
-    class FindSegmentsReopen : public FindSegmentsFileT<DirectoryReaderPtr>
-    {
-    public:
-        FindSegmentsReopen(const DirectoryReaderPtr& reader, bool openReadOnly, const SegmentInfosPtr& infos, const DirectoryPtr& directory);
-        virtual ~FindSegmentsReopen();
+public:
+    virtual IndexReaderPtr doBody(const String& segmentFileName);
+};
 
-        LUCENE_CLASS(FindSegmentsReopen);
+class FindSegmentsReopen : public FindSegmentsFileT<DirectoryReaderPtr> {
+public:
+    FindSegmentsReopen(const DirectoryReaderPtr& reader, bool openReadOnly, const SegmentInfosPtr& infos, const DirectoryPtr& directory);
+    virtual ~FindSegmentsReopen();
 
-    protected:
-        DirectoryReaderWeakPtr _reader;
-        bool openReadOnly;
+    LUCENE_CLASS(FindSegmentsReopen);
 
-    public:
-        virtual DirectoryReaderPtr doBody(const String& segmentFileName);
-    };
+protected:
+    DirectoryReaderWeakPtr _reader;
+    bool openReadOnly;
+
+public:
+    virtual DirectoryReaderPtr doBody(const String& segmentFileName);
+};
+
 }
 
 #endif

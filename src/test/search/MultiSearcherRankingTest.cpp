@@ -20,11 +20,9 @@
 
 using namespace Lucene;
 
-class MultiSearcherRankingTest : public LuceneTestFixture
-{
+class MultiSearcherRankingTest : public LuceneTestFixture {
 public:
-    MultiSearcherRankingTest()
-    {
+    MultiSearcherRankingTest() {
         // create MultiSearcher from two separate searchers
         DirectoryPtr d1 = newLucene<RAMDirectory>();
         IndexWriterPtr iw1 = newLucene<IndexWriter>(d1, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -47,8 +45,7 @@ public:
         singleSearcher = newLucene<IndexSearcher>(d, true);
     }
 
-    virtual ~MultiSearcherRankingTest()
-    {
+    virtual ~MultiSearcherRankingTest() {
     }
 
 protected:
@@ -57,8 +54,7 @@ protected:
     SearcherPtr singleSearcher;
 
 public:
-    void addCollection1(const IndexWriterPtr& iw)
-    {
+    void addCollection1(const IndexWriterPtr& iw) {
         add(L"one blah three", iw);
         add(L"one foo three multiOne", iw);
         add(L"one foobar three multiThree", iw);
@@ -67,8 +63,7 @@ public:
         add(L"blueberry pizza", iw);
     }
 
-    void addCollection2(const IndexWriterPtr& iw)
-    {
+    void addCollection2(const IndexWriterPtr& iw) {
         add(L"two blah three", iw);
         add(L"two foo xxx multiTwo", iw);
         add(L"two foobar xxx multiThreee", iw);
@@ -78,8 +73,7 @@ public:
         add(L"piccadilly circus", iw);
     }
 
-    void add(const String& value, const IndexWriterPtr& iw)
-    {
+    void add(const String& value, const IndexWriterPtr& iw) {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(FIELD_NAME, value, Field::STORE_YES, Field::INDEX_ANALYZED));
         iw->addDocument(d);
@@ -88,15 +82,13 @@ public:
     /// checks if a query yields the same result when executed on a single IndexSearcher containing all
     /// documents and on MultiSearcher aggregating sub-searchers
     /// @param queryStr  the query to check.
-    void checkQuery(const String& queryStr)
-    {
+    void checkQuery(const String& queryStr) {
         QueryParserPtr queryParser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, FIELD_NAME, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT));
         QueryPtr query = queryParser->parse(queryStr);
         Collection<ScoreDocPtr> multiSearcherHits = multiSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
         Collection<ScoreDocPtr> singleSearcherHits = singleSearcher->search(query, FilterPtr(), 1000)->scoreDocs;
         EXPECT_EQ(multiSearcherHits.size(), singleSearcherHits.size());
-        for (int32_t i = 0; i < multiSearcherHits.size(); ++i)
-        {
+        for (int32_t i = 0; i < multiSearcherHits.size(); ++i) {
             DocumentPtr docMulti = multiSearcher->doc(multiSearcherHits[i]->doc);
             DocumentPtr docSingle = singleSearcher->doc(singleSearcherHits[i]->doc);
             EXPECT_NEAR(multiSearcherHits[i]->score, singleSearcherHits[i]->score, 0.001);
@@ -107,37 +99,30 @@ public:
 
 const String MultiSearcherRankingTest::FIELD_NAME = L"body";
 
-TEST_F(MultiSearcherRankingTest, testOneTermQuery)
-{
+TEST_F(MultiSearcherRankingTest, testOneTermQuery) {
     checkQuery(L"three");
 }
 
-TEST_F(MultiSearcherRankingTest, testTwoTermQuery)
-{
+TEST_F(MultiSearcherRankingTest, testTwoTermQuery) {
     checkQuery(L"three foo");
 }
 
-TEST_F(MultiSearcherRankingTest, testPrefixQuery)
-{
+TEST_F(MultiSearcherRankingTest, testPrefixQuery) {
     checkQuery(L"multi*");
 }
 
-TEST_F(MultiSearcherRankingTest, testFuzzyQuery)
-{
+TEST_F(MultiSearcherRankingTest, testFuzzyQuery) {
     checkQuery(L"multiThree~");
 }
 
-TEST_F(MultiSearcherRankingTest, testRangeQuery)
-{
+TEST_F(MultiSearcherRankingTest, testRangeQuery) {
     checkQuery(L"{multiA TO multiP}");
 }
 
-TEST_F(MultiSearcherRankingTest, testMultiPhraseQuery)
-{
+TEST_F(MultiSearcherRankingTest, testMultiPhraseQuery) {
     checkQuery(L"\"blueberry pi*\"");
 }
 
-TEST_F(MultiSearcherRankingTest, testNoMatchQuery)
-{
+TEST_F(MultiSearcherRankingTest, testNoMatchQuery) {
     checkQuery(L"+three +nomatch");
 }

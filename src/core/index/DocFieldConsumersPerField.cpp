@@ -7,44 +7,35 @@
 #include "LuceneInc.h"
 #include "DocFieldConsumersPerField.h"
 
-namespace Lucene
-{
-    DocFieldConsumersPerField::DocFieldConsumersPerField(const DocFieldConsumersPerThreadPtr& perThread, const DocFieldConsumerPerFieldPtr& one, const DocFieldConsumerPerFieldPtr& two)
-    {
-        this->_perThread = perThread;
-        this->one = one;
-        this->two = two;
-    }
+namespace Lucene {
 
-    DocFieldConsumersPerField::~DocFieldConsumersPerField()
-    {
-    }
+DocFieldConsumersPerField::DocFieldConsumersPerField(const DocFieldConsumersPerThreadPtr& perThread, const DocFieldConsumerPerFieldPtr& one, const DocFieldConsumerPerFieldPtr& two) {
+    this->_perThread = perThread;
+    this->one = one;
+    this->two = two;
+}
 
-    void DocFieldConsumersPerField::processFields(Collection<FieldablePtr> fields, int32_t count)
-    {
-        one->processFields(fields, count);
-        two->processFields(fields, count);
-    }
+DocFieldConsumersPerField::~DocFieldConsumersPerField() {
+}
 
-    void DocFieldConsumersPerField::abort()
-    {
-        LuceneException finally;
-        try
-        {
-            one->abort();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        try
-        {
-            two->abort();
-        }
-        catch (LuceneException& e)
-        {
-            finally = e;
-        }
-        finally.throwException();
+void DocFieldConsumersPerField::processFields(Collection<FieldablePtr> fields, int32_t count) {
+    one->processFields(fields, count);
+    two->processFields(fields, count);
+}
+
+void DocFieldConsumersPerField::abort() {
+    LuceneException finally;
+    try {
+        one->abort();
+    } catch (LuceneException& e) {
+        finally = e;
     }
+    try {
+        two->abort();
+    } catch (LuceneException& e) {
+        finally = e;
+    }
+    finally.throwException();
+}
+
 }

@@ -41,91 +41,81 @@ using namespace Lucene;
 
 typedef LuceneTestFixture PositionIncrementTest;
 
-namespace TestSetPosition
-{
-    class SetPositionTokenStream : public TokenStream
-    {
-    public:
-        SetPositionTokenStream()
-        {
-            TOKENS = newCollection<String>(L"1", L"2", L"3", L"4", L"5");
-            INCREMENTS = newCollection<int32_t>(0, 2, 1, 0, 1);
-            i = 0;
+namespace TestSetPosition {
 
-            posIncrAtt = addAttribute<PositionIncrementAttribute>();
-            termAtt = addAttribute<TermAttribute>();
-            offsetAtt = addAttribute<OffsetAttribute>();
+class SetPositionTokenStream : public TokenStream {
+public:
+    SetPositionTokenStream() {
+        TOKENS = newCollection<String>(L"1", L"2", L"3", L"4", L"5");
+        INCREMENTS = newCollection<int32_t>(0, 2, 1, 0, 1);
+        i = 0;
+
+        posIncrAtt = addAttribute<PositionIncrementAttribute>();
+        termAtt = addAttribute<TermAttribute>();
+        offsetAtt = addAttribute<OffsetAttribute>();
+    }
+
+    virtual ~SetPositionTokenStream() {
+    }
+
+protected:
+    Collection<String> TOKENS;
+    Collection<int32_t> INCREMENTS;
+    int32_t i;
+
+    PositionIncrementAttributePtr posIncrAtt;
+    TermAttributePtr termAtt;
+    OffsetAttributePtr offsetAtt;
+
+public:
+    virtual bool incrementToken() {
+        if (i == TOKENS.size()) {
+            return false;
         }
+        clearAttributes();
+        termAtt->setTermBuffer(TOKENS[i]);
+        offsetAtt->setOffset(i, i);
+        posIncrAtt->setPositionIncrement(INCREMENTS[i]);
+        ++i;
+        return true;
+    }
+};
 
-        virtual ~SetPositionTokenStream()
-        {
-        }
+class SetPositionAnalyzer : public Analyzer {
+public:
+    virtual ~SetPositionAnalyzer() {
+    }
 
-    protected:
-        Collection<String> TOKENS;
-        Collection<int32_t> INCREMENTS;
-        int32_t i;
+public:
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
+        return newLucene<SetPositionTokenStream>();
+    }
+};
 
-        PositionIncrementAttributePtr posIncrAtt;
-        TermAttributePtr termAtt;
-        OffsetAttributePtr offsetAtt;
+class StopWhitespaceAnalyzer : public Analyzer {
+public:
+    StopWhitespaceAnalyzer(bool enablePositionIncrements) {
+        this->enablePositionIncrements = enablePositionIncrements;
+        this->a = newLucene<WhitespaceAnalyzer>();
+    }
 
-    public:
-        virtual bool incrementToken()
-        {
-            if (i == TOKENS.size())
-                return false;
-            clearAttributes();
-            termAtt->setTermBuffer(TOKENS[i]);
-            offsetAtt->setOffset(i, i);
-            posIncrAtt->setPositionIncrement(INCREMENTS[i]);
-            ++i;
-            return true;
-        }
-    };
+    virtual ~StopWhitespaceAnalyzer() {
+    }
 
-    class SetPositionAnalyzer : public Analyzer
-    {
-    public:
-        virtual ~SetPositionAnalyzer()
-        {
-        }
+public:
+    bool enablePositionIncrements;
+    WhitespaceAnalyzerPtr a;
 
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-        {
-            return newLucene<SetPositionTokenStream>();
-        }
-    };
+public:
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
+        TokenStreamPtr ts = a->tokenStream(fieldName, reader);
+        return newLucene<StopFilter>(enablePositionIncrements, ts, newLucene<CharArraySet>(newCollection<String>(L"stop"), true));
+    }
+};
 
-    class StopWhitespaceAnalyzer : public Analyzer
-    {
-    public:
-        StopWhitespaceAnalyzer(bool enablePositionIncrements)
-        {
-            this->enablePositionIncrements = enablePositionIncrements;
-            this->a = newLucene<WhitespaceAnalyzer>();
-        }
-
-        virtual ~StopWhitespaceAnalyzer()
-        {
-        }
-
-    public:
-        bool enablePositionIncrements;
-        WhitespaceAnalyzerPtr a;
-
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-        {
-            TokenStreamPtr ts = a->tokenStream(fieldName, reader);
-            return newLucene<StopFilter>(enablePositionIncrements, ts, newLucene<CharArraySet>(newCollection<String>(L"stop"), true));
-        }
-    };
 }
 
-TEST_F(PositionIncrementTest, testSetPosition)
-{
+TEST_F(PositionIncrementTest, testSetPosition) {
     AnalyzerPtr analyzer = newLucene<TestSetPosition::SetPositionAnalyzer>();
     DirectoryPtr store = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(store, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
@@ -256,72 +246,64 @@ TEST_F(PositionIncrementTest, testSetPosition)
     EXPECT_EQ(1, hits.size());
 }
 
-namespace TestPayloadsPos0
-{
-    class TestPayloadFilter : public TokenFilter
-    {
-    public:
-        TestPayloadFilter(const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input)
-        {
-            this->fieldName = fieldName;
-            this->pos = 0;
-            this->i = 0;
-            this->posIncrAttr = input->addAttribute<PositionIncrementAttribute>();
-            this->payloadAttr = input->addAttribute<PayloadAttribute>();
-            this->termAttr = input->addAttribute<TermAttribute>();
+namespace TestPayloadsPos0 {
+
+class TestPayloadFilter : public TokenFilter {
+public:
+    TestPayloadFilter(const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input) {
+        this->fieldName = fieldName;
+        this->pos = 0;
+        this->i = 0;
+        this->posIncrAttr = input->addAttribute<PositionIncrementAttribute>();
+        this->payloadAttr = input->addAttribute<PayloadAttribute>();
+        this->termAttr = input->addAttribute<TermAttribute>();
+    }
+
+    virtual ~TestPayloadFilter() {
+    }
+
+public:
+    String fieldName;
+    int32_t pos;
+    int32_t i;
+
+    PositionIncrementAttributePtr posIncrAttr;
+    PayloadAttributePtr payloadAttr;
+    TermAttributePtr termAttr;
+
+public:
+    virtual bool incrementToken() {
+        if (input->incrementToken()) {
+            String payloadData = L"pos: " + StringUtils::toString(pos);
+            ByteArray data = ByteArray::newInstance(payloadData.length() * sizeof(wchar_t));
+            std::wcsncpy((wchar_t*)data.get(), payloadData.c_str(), payloadData.length());
+            payloadAttr->setPayload(newLucene<Payload>(data));
+            int32_t posIncr = i % 2 == 1 ? 1 : 0;
+            posIncrAttr->setPositionIncrement(posIncr);
+            pos += posIncr;
+            ++i;
+            return true;
+        } else {
+            return false;
         }
+    }
+};
 
-        virtual ~TestPayloadFilter()
-        {
-        }
+class TestPayloadAnalyzer : public Analyzer {
+public:
+    virtual ~TestPayloadAnalyzer() {
+    }
 
-    public:
-        String fieldName;
-        int32_t pos;
-        int32_t i;
+public:
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
+        TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
+        return newLucene<TestPayloadFilter>(result, fieldName);
+    }
+};
 
-        PositionIncrementAttributePtr posIncrAttr;
-        PayloadAttributePtr payloadAttr;
-        TermAttributePtr termAttr;
-
-    public:
-        virtual bool incrementToken()
-        {
-            if (input->incrementToken())
-            {
-                String payloadData = L"pos: " + StringUtils::toString(pos);
-                ByteArray data = ByteArray::newInstance(payloadData.length() * sizeof(wchar_t));
-                std::wcsncpy((wchar_t*)data.get(), payloadData.c_str(), payloadData.length());
-                payloadAttr->setPayload(newLucene<Payload>(data));
-                int32_t posIncr = i % 2 == 1 ? 1 : 0;
-                posIncrAttr->setPositionIncrement(posIncr);
-                pos += posIncr;
-                ++i;
-                return true;
-            }
-            else
-                return false;
-        }
-    };
-
-    class TestPayloadAnalyzer : public Analyzer
-    {
-    public:
-        virtual ~TestPayloadAnalyzer()
-        {
-        }
-
-    public:
-        virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-        {
-            TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
-            return newLucene<TestPayloadFilter>(result, fieldName);
-        }
-    };
 }
 
-TEST_F(PositionIncrementTest, testPayloadsPos0)
-{
+TEST_F(PositionIncrementTest, testPayloadsPos0) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<TestPayloadsPos0::TestPayloadAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();
@@ -355,11 +337,11 @@ TEST_F(PositionIncrementTest, testPayloadsPos0)
     count = 0;
     bool sawZero = false;
     SpansPtr pspans = snq->getSpans(is->getIndexReader());
-    while (pspans->next())
-    {
+    while (pspans->next()) {
         Collection<ByteArray> payloads = pspans->getPayload();
-        if (pspans->start() == 0)
+        if (pspans->start() == 0) {
             sawZero = true;
+        }
         count += payloads.size();
     }
 
@@ -369,11 +351,11 @@ TEST_F(PositionIncrementTest, testPayloadsPos0)
     SpansPtr spans = snq->getSpans(is->getIndexReader());
     count = 0;
     sawZero = false;
-    while (spans->next())
-    {
+    while (spans->next()) {
         ++count;
-        if (spans->start() == 0)
+        if (spans->start() == 0) {
             sawZero = true;
+        }
     }
 
     EXPECT_EQ(4, count);
@@ -383,11 +365,11 @@ TEST_F(PositionIncrementTest, testPayloadsPos0)
     PayloadSpanUtilPtr psu = newLucene<PayloadSpanUtil>(is->getIndexReader());
     Collection<ByteArray> pls = psu->getPayloadsForQuery(snq);
     count = pls.size();
-    for (Collection<ByteArray>::iterator it = pls.begin(); it != pls.end(); ++it)
-    {
+    for (Collection<ByteArray>::iterator it = pls.begin(); it != pls.end(); ++it) {
         String s = String((wchar_t*)it->get(), it->size() / sizeof(wchar_t));
-        if (s == L"pos: 0")
+        if (s == L"pos: 0") {
             sawZero = true;
+        }
     }
 
     EXPECT_EQ(5, count);

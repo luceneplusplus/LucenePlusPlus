@@ -7,28 +7,26 @@
 #include "LuceneInc.h"
 #include "SegmentWriteState.h"
 
-namespace Lucene
-{
-    SegmentWriteState::SegmentWriteState(const DocumentsWriterPtr& docWriter, const DirectoryPtr& directory, const String& segmentName,
-                                         const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore,
-                                         int32_t termIndexInterval)
-    {
-        this->_docWriter = docWriter;
-        this->directory = directory;
-        this->segmentName = segmentName;
-        this->docStoreSegmentName = docStoreSegmentName;
-        this->numDocs = numDocs;
-        this->numDocsInStore = numDocsInStore;
-        this->termIndexInterval = termIndexInterval;
-        this->flushedFiles = HashSet<String>::newInstance();
-    }
+namespace Lucene {
 
-    SegmentWriteState::~SegmentWriteState()
-    {
-    }
+SegmentWriteState::SegmentWriteState(const DocumentsWriterPtr& docWriter, const DirectoryPtr& directory, const String& segmentName,
+                                     const String& docStoreSegmentName, int32_t numDocs, int32_t numDocsInStore,
+                                     int32_t termIndexInterval) {
+    this->_docWriter = docWriter;
+    this->directory = directory;
+    this->segmentName = segmentName;
+    this->docStoreSegmentName = docStoreSegmentName;
+    this->numDocs = numDocs;
+    this->numDocsInStore = numDocsInStore;
+    this->termIndexInterval = termIndexInterval;
+    this->flushedFiles = HashSet<String>::newInstance();
+}
 
-    String SegmentWriteState::segmentFileName(const String& ext)
-    {
-        return segmentName + L"." + ext;
-    }
+SegmentWriteState::~SegmentWriteState() {
+}
+
+String SegmentWriteState::segmentFileName(const String& ext) {
+    return segmentName + L"." + ext;
+}
+
 }

@@ -9,91 +9,91 @@
 
 #include "InvertedDocConsumerPerField.h"
 
-namespace Lucene
-{
-    class TermsHashPerField : public InvertedDocConsumerPerField
-    {
-    public:
-        TermsHashPerField(const DocInverterPerFieldPtr& docInverterPerField, const TermsHashPerThreadPtr& perThread, const TermsHashPerThreadPtr& nextPerThread, const FieldInfoPtr& fieldInfo);
-        virtual ~TermsHashPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(TermsHashPerField);
+class TermsHashPerField : public InvertedDocConsumerPerField {
+public:
+    TermsHashPerField(const DocInverterPerFieldPtr& docInverterPerField, const TermsHashPerThreadPtr& perThread, const TermsHashPerThreadPtr& nextPerThread, const FieldInfoPtr& fieldInfo);
+    virtual ~TermsHashPerField();
 
-    public:
-        TermsHashConsumerPerFieldPtr consumer;
-        TermsHashPerFieldPtr nextPerField;
-        DocInverterPerFieldWeakPtr _docInverterPerField;
-        TermsHashPerThreadPtr nextPerThread;
-        TermsHashPerThreadWeakPtr _perThread;
-        DocStatePtr docState;
-        FieldInvertStatePtr fieldState;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(TermsHashPerField);
 
-        // Copied from our perThread
-        CharBlockPoolPtr charPool;
-        IntBlockPoolPtr intPool;
-        ByteBlockPoolPtr bytePool;
+public:
+    TermsHashConsumerPerFieldPtr consumer;
+    TermsHashPerFieldPtr nextPerField;
+    DocInverterPerFieldWeakPtr _docInverterPerField;
+    TermsHashPerThreadPtr nextPerThread;
+    TermsHashPerThreadWeakPtr _perThread;
+    DocStatePtr docState;
+    FieldInvertStatePtr fieldState;
+    TermAttributePtr termAtt;
 
-        int32_t streamCount;
-        int32_t numPostingInt;
+    // Copied from our perThread
+    CharBlockPoolPtr charPool;
+    IntBlockPoolPtr intPool;
+    ByteBlockPoolPtr bytePool;
 
-        FieldInfoPtr fieldInfo;
+    int32_t streamCount;
+    int32_t numPostingInt;
 
-        bool postingsCompacted;
-        int32_t numPostings;
+    FieldInfoPtr fieldInfo;
 
-        IntArray intUptos;
-        int32_t intUptoStart;
+    bool postingsCompacted;
+    int32_t numPostings;
 
-    protected:
-        int32_t postingsHashSize;
-        int32_t postingsHashHalfSize;
-        int32_t postingsHashMask;
-        Collection<RawPostingListPtr> postingsHash;
-        RawPostingListPtr p;
-        bool doCall;
-        bool doNextCall;
+    IntArray intUptos;
+    int32_t intUptoStart;
 
-    public:
-        virtual void initialize();
-        void shrinkHash(int32_t targetSize);
-        void reset();
+protected:
+    int32_t postingsHashSize;
+    int32_t postingsHashHalfSize;
+    int32_t postingsHashMask;
+    Collection<RawPostingListPtr> postingsHash;
+    RawPostingListPtr p;
+    bool doCall;
+    bool doNextCall;
 
-        /// Called on hitting an aborting exception
-        virtual void abort();
+public:
+    virtual void initialize();
+    void shrinkHash(int32_t targetSize);
+    void reset();
 
-        void initReader(const ByteSliceReaderPtr& reader, const RawPostingListPtr& p, int32_t stream);
+    /// Called on hitting an aborting exception
+    virtual void abort();
 
-        /// Collapse the hash table and sort in-place.
-        Collection<RawPostingListPtr> sortPostings();
+    void initReader(const ByteSliceReaderPtr& reader, const RawPostingListPtr& p, int32_t stream);
 
-        /// Called before a field instance is being processed
-        virtual void start(const FieldablePtr& field);
+    /// Collapse the hash table and sort in-place.
+    Collection<RawPostingListPtr> sortPostings();
 
-        /// Called once per field, and is given all Fieldable occurrences for this field in the document.
-        virtual bool start(Collection<FieldablePtr> fields, int32_t count);
+    /// Called before a field instance is being processed
+    virtual void start(const FieldablePtr& field);
 
-        void add(int32_t textStart);
+    /// Called once per field, and is given all Fieldable occurrences for this field in the document.
+    virtual bool start(Collection<FieldablePtr> fields, int32_t count);
 
-        /// Primary entry point (for first TermsHash)
-        virtual void add();
+    void add(int32_t textStart);
 
-        void writeByte(int32_t stream, int8_t b);
-        void writeBytes(int32_t stream, const uint8_t* b, int32_t offset, int32_t length);
-        void writeVInt(int32_t stream, int32_t i);
+    /// Primary entry point (for first TermsHash)
+    virtual void add();
 
-        /// Called once per field per document, after all Fieldable occurrences are inverted
-        virtual void finish();
+    void writeByte(int32_t stream, int8_t b);
+    void writeBytes(int32_t stream, const uint8_t* b, int32_t offset, int32_t length);
+    void writeVInt(int32_t stream, int32_t i);
 
-        /// Called when postings hash is too small (> 50% occupied) or too large (< 20% occupied).
-        void rehashPostings(int32_t newSize);
+    /// Called once per field per document, after all Fieldable occurrences are inverted
+    virtual void finish();
 
-    protected:
-        void compactPostings();
+    /// Called when postings hash is too small (> 50% occupied) or too large (< 20% occupied).
+    void rehashPostings(int32_t newSize);
 
-        /// Test whether the text for current RawPostingList p equals current tokenText.
-        bool postingEquals(const wchar_t* tokenText, int32_t tokenTextLen);
-    };
+protected:
+    void compactPostings();
+
+    /// Test whether the text for current RawPostingList p equals current tokenText.
+    bool postingEquals(const wchar_t* tokenText, int32_t tokenTextLen);
+};
+
 }
 
 #endif

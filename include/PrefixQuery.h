@@ -9,41 +9,41 @@
 
 #include "MultiTermQuery.h"
 
-namespace Lucene
-{
-    /// A Query that matches documents containing terms with a specified prefix. A PrefixQuery is built by
-    /// QueryParser for input like app*.
-    ///
-    /// This query uses the {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} rewrite method.
-    class LPPAPI PrefixQuery : public MultiTermQuery
-    {
-    public:
-        /// Constructs a query for terms starting with prefix.
-        PrefixQuery(const TermPtr& prefix);
+namespace Lucene {
 
-        virtual ~PrefixQuery();
+/// A Query that matches documents containing terms with a specified prefix. A PrefixQuery is built by
+/// QueryParser for input like app*.
+///
+/// This query uses the {@link MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} rewrite method.
+class LPPAPI PrefixQuery : public MultiTermQuery {
+public:
+    /// Constructs a query for terms starting with prefix.
+    PrefixQuery(const TermPtr& prefix);
 
-        LUCENE_CLASS(PrefixQuery);
+    virtual ~PrefixQuery();
 
-    protected:
-        TermPtr prefix;
+    LUCENE_CLASS(PrefixQuery);
 
-    public:
-        using MultiTermQuery::toString;
+protected:
+    TermPtr prefix;
 
-        /// Returns the prefix of this query.
-        TermPtr getPrefix();
+public:
+    using MultiTermQuery::toString;
 
-        /// Prints a user-readable version of this query.
-        virtual String toString(const String& field);
+    /// Returns the prefix of this query.
+    TermPtr getPrefix();
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-        virtual int32_t hashCode();
-        virtual bool equals(const LuceneObjectPtr& other);
+    /// Prints a user-readable version of this query.
+    virtual String toString(const String& field);
 
-    protected:
-        virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
-    };
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    virtual int32_t hashCode();
+    virtual bool equals(const LuceneObjectPtr& other);
+
+protected:
+    virtual FilteredTermEnumPtr getEnum(const IndexReaderPtr& reader);
+};
+
 }
 
 #endif

@@ -10,29 +10,29 @@
 #include "test_lucene.h"
 #include "BufferedIndexInput.h"
 
-namespace Lucene
-{
-    class MockIndexInput : public BufferedIndexInput
-    {
-    public:
-        MockIndexInput(ByteArray bytes);
-        virtual ~MockIndexInput();
+namespace Lucene {
 
-        LUCENE_CLASS(MockIndexInput);
+class MockIndexInput : public BufferedIndexInput {
+public:
+    MockIndexInput(ByteArray bytes);
+    virtual ~MockIndexInput();
 
-    protected:
-        ByteArray buffer;
-        int32_t pointer;
-        int64_t _length;
+    LUCENE_CLASS(MockIndexInput);
 
-    public:
-        virtual void close();
-        virtual int64_t length();
+protected:
+    ByteArray buffer;
+    int32_t pointer;
+    int64_t _length;
 
-    protected:
-        virtual void readInternal(uint8_t* b, int32_t offset, int32_t length);
-        virtual void seekInternal(int64_t pos);
-    };
+public:
+    virtual void close();
+    virtual int64_t length();
+
+protected:
+    virtual void readInternal(uint8_t* b, int32_t offset, int32_t length);
+    virtual void seekInternal(int64_t pos);
+};
+
 }
 
 #endif

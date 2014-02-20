@@ -9,35 +9,35 @@
 
 #include "DocIdSetIterator.h"
 
-namespace Lucene
-{
-    /// Abstract decorator class of a DocIdSetIterator implementation that provides on-demand filter/validation
-    /// mechanism on an underlying DocIdSetIterator.  See {@link FilteredDocIdSet}.
-    class LPPAPI FilteredDocIdSetIterator : public DocIdSetIterator
-    {
-    public:
-        /// @param innerIter Underlying DocIdSetIterator.
-        FilteredDocIdSetIterator(const DocIdSetIteratorPtr& innerIter);
-        virtual ~FilteredDocIdSetIterator();
+namespace Lucene {
 
-        LUCENE_CLASS(FilteredDocIdSetIterator);
+/// Abstract decorator class of a DocIdSetIterator implementation that provides on-demand filter/validation
+/// mechanism on an underlying DocIdSetIterator.  See {@link FilteredDocIdSet}.
+class LPPAPI FilteredDocIdSetIterator : public DocIdSetIterator {
+public:
+    /// @param innerIter Underlying DocIdSetIterator.
+    FilteredDocIdSetIterator(const DocIdSetIteratorPtr& innerIter);
+    virtual ~FilteredDocIdSetIterator();
 
-    protected:
-        DocIdSetIteratorPtr innerIter;
-        int32_t doc;
+    LUCENE_CLASS(FilteredDocIdSetIterator);
 
-    public:
-        virtual int32_t docID();
-        virtual int32_t nextDoc();
-        virtual int32_t advance(int32_t target);
+protected:
+    DocIdSetIteratorPtr innerIter;
+    int32_t doc;
 
-    protected:
-        /// Validation method to determine whether a docid should be in the result set.
-        /// @param doc docid to be tested
-        /// @return true if input docid should be in the result set, false otherwise.
-        /// @see #FilteredDocIdSetIterator(DocIdSetIterator).
-        virtual bool match(int32_t docid) = 0;
-    };
+public:
+    virtual int32_t docID();
+    virtual int32_t nextDoc();
+    virtual int32_t advance(int32_t target);
+
+protected:
+    /// Validation method to determine whether a docid should be in the result set.
+    /// @param doc docid to be tested
+    /// @return true if input docid should be in the result set, false otherwise.
+    /// @see #FilteredDocIdSetIterator(DocIdSetIterator).
+    virtual bool match(int32_t docid) = 0;
+};
+
 }
 
 #endif

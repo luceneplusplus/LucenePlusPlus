@@ -24,26 +24,23 @@ using namespace Lucene;
 
 typedef LuceneTestFixture AtomicUpdateTest;
 
-class MockIndexWriter : public IndexWriter
-{
+class MockIndexWriter : public IndexWriter {
 public:
-    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl)
-    {
+    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl) {
         random = newLucene<Random>();
     }
 
-    virtual ~MockIndexWriter()
-    {
+    virtual ~MockIndexWriter() {
     }
 
 protected:
     RandomPtr random;
 
 public:
-    virtual bool testPoint(const String& name)
-    {
-        if (random->nextInt(4) == 2)
+    virtual bool testPoint(const String& name) {
+        if (random->nextInt(4) == 2) {
             LuceneThread::threadYield();
+        }
         return true;
     }
 };
@@ -52,16 +49,13 @@ DECLARE_SHARED_PTR(AtomicTimedThread)
 DECLARE_SHARED_PTR(AtomicIndexerThread)
 DECLARE_SHARED_PTR(AtomicSearcherThread)
 
-class AtomicTimedThread : public LuceneThread
-{
+class AtomicTimedThread : public LuceneThread {
 public:
-    AtomicTimedThread()
-    {
+    AtomicTimedThread() {
         this->failed = false;
     }
 
-    virtual ~AtomicTimedThread()
-    {
+    virtual ~AtomicTimedThread() {
     }
 
     LUCENE_CLASS(AtomicTimedThread);
@@ -75,17 +69,14 @@ protected:
 public:
     virtual void doWork() = 0;
 
-    virtual void run()
-    {
+    virtual void run() {
         int64_t stopTime = MiscUtils::currentTimeMillis() + 1000 * RUN_TIME_SEC;
 
-        try
-        {
-            while ((int64_t)MiscUtils::currentTimeMillis() < stopTime && !failed)
+        try {
+            while ((int64_t)MiscUtils::currentTimeMillis() < stopTime && !failed) {
                 doWork();
-        }
-        catch (LuceneException& e)
-        {
+            }
+        } catch (LuceneException& e) {
             failed = true;
             FAIL() << "Unexpected exception: " << e.getError();
         }
@@ -94,16 +85,13 @@ public:
 
 const int32_t AtomicTimedThread::RUN_TIME_SEC = 3;
 
-class AtomicIndexerThread : public AtomicTimedThread
-{
+class AtomicIndexerThread : public AtomicTimedThread {
 public:
-    AtomicIndexerThread(const IndexWriterPtr& writer)
-    {
+    AtomicIndexerThread(const IndexWriterPtr& writer) {
         this->writer = writer;
     }
 
-    virtual ~AtomicIndexerThread()
-    {
+    virtual ~AtomicIndexerThread() {
     }
 
     LUCENE_CLASS(AtomicIndexerThread);
@@ -112,11 +100,9 @@ public:
     IndexWriterPtr writer;
 
 public:
-    virtual void doWork()
-    {
+    virtual void doWork() {
         // Update all 100 docs
-        for (int32_t i = 0; i < 100; ++i)
-        {
+        for (int32_t i = 0; i < 100; ++i) {
             DocumentPtr d = newLucene<Document>();
             d->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             d->add(newLucene<Field>(L"contents", intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
@@ -125,16 +111,13 @@ public:
     }
 };
 
-class AtomicSearcherThread : public AtomicTimedThread
-{
+class AtomicSearcherThread : public AtomicTimedThread {
 public:
-    AtomicSearcherThread(const DirectoryPtr& directory)
-    {
+    AtomicSearcherThread(const DirectoryPtr& directory) {
         this->directory = directory;
     }
 
-    virtual ~AtomicSearcherThread()
-    {
+    virtual ~AtomicSearcherThread() {
     }
 
     LUCENE_CLASS(AtomicSearcherThread);
@@ -143,18 +126,17 @@ protected:
     DirectoryPtr directory;
 
 public:
-    virtual void doWork()
-    {
+    virtual void doWork() {
         IndexReaderPtr r = IndexReader::open(directory, true);
-        if (r->numDocs() != 100)
+        if (r->numDocs() != 100) {
             FAIL() << "num docs failure";
+        }
         r->close();
     }
 };
 
 // Run one indexer and 2 searchers against single index as stress test.
-static void runTest(const DirectoryPtr& directory)
-{
+static void runTest(const DirectoryPtr& directory) {
     Collection<AtomicTimedThreadPtr> threads(Collection<AtomicTimedThreadPtr>::newInstance(4));
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
 
@@ -164,13 +146,13 @@ static void runTest(const DirectoryPtr& directory)
     writer->setMergeFactor(3);
 
     // Establish a base index of 100 docs
-    for (int32_t i = 0; i < 100; ++i)
-    {
+    for (int32_t i = 0; i < 100; ++i) {
         DocumentPtr d = newLucene<Document>();
         d->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         d->add(newLucene<Field>(L"contents", intToEnglish(i), Field::STORE_NO, Field::INDEX_ANALYZED));
-        if ((i - 1) % 7 == 0)
+        if ((i - 1) % 7 == 0) {
             writer->commit();
+        }
         writer->addDocument(d);
     }
     writer->commit();
@@ -209,16 +191,14 @@ static void runTest(const DirectoryPtr& directory)
 }
 
 /// Run above stress test against RAMDirectory.
-TEST_F(AtomicUpdateTest, testAtomicUpdatesRAMDirectory)
-{
+TEST_F(AtomicUpdateTest, testAtomicUpdatesRAMDirectory) {
     DirectoryPtr directory = newLucene<MockRAMDirectory>();
     runTest(directory);
     directory->close();
 }
 
 /// Run above stress test against FSDirectory
-TEST_F(AtomicUpdateTest, testAtomicUpdatesFSDirectory)
-{
+TEST_F(AtomicUpdateTest, testAtomicUpdatesFSDirectory) {
     String dirPath(getTempDir(L"lucene.test.atomic"));
     DirectoryPtr directory = FSDirectory::open(dirPath);
     runTest(directory);

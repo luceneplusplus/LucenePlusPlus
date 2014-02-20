@@ -9,19 +9,19 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class InvertedDocEndConsumerPerField : public LuceneObject
-    {
-    public:
-        virtual ~InvertedDocEndConsumerPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(InvertedDocEndConsumerPerField);
+class InvertedDocEndConsumerPerField : public LuceneObject {
+public:
+    virtual ~InvertedDocEndConsumerPerField();
 
-    public:
-        virtual void finish() = 0;
-        virtual void abort() = 0;
-    };
+    LUCENE_CLASS(InvertedDocEndConsumerPerField);
+
+public:
+    virtual void finish() = 0;
+    virtual void abort() = 0;
+};
+
 }
 
 #endif

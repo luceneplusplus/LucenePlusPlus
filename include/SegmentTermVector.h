@@ -9,43 +9,43 @@
 
 #include "TermPositionVector.h"
 
-namespace Lucene
-{
-    class SegmentTermVector : public TermPositionVector, public LuceneObject
-    {
-    public:
-        SegmentTermVector(const String& field, Collection<String> terms, Collection<int32_t> termFreqs);
-        virtual ~SegmentTermVector();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentTermVector);
+class SegmentTermVector : public TermPositionVector, public LuceneObject {
+public:
+    SegmentTermVector(const String& field, Collection<String> terms, Collection<int32_t> termFreqs);
+    virtual ~SegmentTermVector();
 
-    protected:
-        String field;
-        Collection<String> terms;
-        Collection<int32_t> termFreqs;
+    LUCENE_CLASS(SegmentTermVector);
 
-    public:
-        /// @return The number of the field this vector is associated with
-        virtual String getField();
+protected:
+    String field;
+    Collection<String> terms;
+    Collection<int32_t> termFreqs;
 
-        virtual String toString();
+public:
+    /// @return The number of the field this vector is associated with
+    virtual String getField();
 
-        /// @return The number of terms in the term vector.
-        virtual int32_t size();
+    virtual String toString();
 
-        /// @return An Array of term texts in ascending order.
-        virtual Collection<String> getTerms();
+    /// @return The number of terms in the term vector.
+    virtual int32_t size();
 
-        /// @return Array of term frequencies.
-        virtual Collection<int32_t> getTermFrequencies();
+    /// @return An Array of term texts in ascending order.
+    virtual Collection<String> getTerms();
 
-        /// Return an index in the term numbers array returned from getTerms at which the term with the
-        /// specified term appears.
-        virtual int32_t indexOf(const String& term);
+    /// @return Array of term frequencies.
+    virtual Collection<int32_t> getTermFrequencies();
 
-        /// Just like indexOf(int) but searches for a number of terms at the same time.
-        virtual Collection<int32_t> indexesOf(Collection<String> termNumbers, int32_t start, int32_t length);
-    };
+    /// Return an index in the term numbers array returned from getTerms at which the term with the
+    /// specified term appears.
+    virtual int32_t indexOf(const String& term);
+
+    /// Just like indexOf(int) but searches for a number of terms at the same time.
+    virtual Collection<int32_t> indexesOf(Collection<String> termNumbers, int32_t start, int32_t length);
+};
+
 }
 
 #endif

@@ -9,33 +9,33 @@
 
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// Normalizes tokens extracted with {@link StandardTokenizer}.
-    class LPPAPI StandardFilter : public TokenFilter
-    {
-    public:
-        /// Construct filtering input.
-        StandardFilter(const TokenStreamPtr& input);
-        virtual ~StandardFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(StandardFilter);
+/// Normalizes tokens extracted with {@link StandardTokenizer}.
+class LPPAPI StandardFilter : public TokenFilter {
+public:
+    /// Construct filtering input.
+    StandardFilter(const TokenStreamPtr& input);
+    virtual ~StandardFilter();
 
-    protected:
-        TypeAttributePtr typeAtt;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(StandardFilter);
 
-    protected:
-        static const String& APOSTROPHE_TYPE();
-        static const String& ACRONYM_TYPE();
+protected:
+    TypeAttributePtr typeAtt;
+    TermAttributePtr termAtt;
 
-    public:
-        /// Returns the next token in the stream, or null at EOS.
-        ///
-        /// Removes <tt>'s</tt> from the end of words.
-        /// Removes dots from acronyms.
-        virtual bool incrementToken();
-    };
+protected:
+    static const String& APOSTROPHE_TYPE();
+    static const String& ACRONYM_TYPE();
+
+public:
+    /// Returns the next token in the stream, or null at EOS.
+    ///
+    /// Removes <tt>'s</tt> from the end of words.
+    /// Removes dots from acronyms.
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

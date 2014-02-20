@@ -9,33 +9,33 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class IntBlockPool : public LuceneObject
-    {
-    public:
-        IntBlockPool(const DocumentsWriterPtr& docWriter, bool trackAllocations);
-        virtual ~IntBlockPool();
+namespace Lucene {
 
-        LUCENE_CLASS(IntBlockPool);
+class IntBlockPool : public LuceneObject {
+public:
+    IntBlockPool(const DocumentsWriterPtr& docWriter, bool trackAllocations);
+    virtual ~IntBlockPool();
 
-    public:
-        Collection<IntArray> buffers;
+    LUCENE_CLASS(IntBlockPool);
 
-        int32_t bufferUpto; // Which buffer we are upto
-        int32_t intUpto; // Where we are in head buffer
+public:
+    Collection<IntArray> buffers;
 
-        IntArray buffer; // Current head buffer
-        int32_t intOffset; // Current head offset
-        bool trackAllocations;
+    int32_t bufferUpto; // Which buffer we are upto
+    int32_t intUpto; // Where we are in head buffer
 
-    protected:
-        DocumentsWriterWeakPtr _docWriter;
+    IntArray buffer; // Current head buffer
+    int32_t intOffset; // Current head offset
+    bool trackAllocations;
 
-    public:
-        void reset();
-        void nextBuffer();
-    };
+protected:
+    DocumentsWriterWeakPtr _docWriter;
+
+public:
+    void reset();
+    void nextBuffer();
+};
+
 }
 
 #endif

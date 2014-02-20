@@ -7,14 +7,13 @@
 #include "LuceneInc.h"
 #include "LoadFirstFieldSelector.h"
 
-namespace Lucene
-{
-    LoadFirstFieldSelector::~LoadFirstFieldSelector()
-    {
-    }
+namespace Lucene {
 
-    FieldSelector::FieldSelectorResult LoadFirstFieldSelector::accept(const String& fieldName)
-    {
-        return FieldSelector::SELECTOR_LOAD_AND_BREAK;
-    }
+LoadFirstFieldSelector::~LoadFirstFieldSelector() {
+}
+
+FieldSelector::FieldSelectorResult LoadFirstFieldSelector::accept(const String& fieldName) {
+    return FieldSelector::SELECTOR_LOAD_AND_BREAK;
+}
+
 }

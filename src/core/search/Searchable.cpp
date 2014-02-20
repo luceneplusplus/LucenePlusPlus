@@ -7,71 +7,61 @@
 #include "LuceneInc.h"
 #include "Searchable.h"
 
-namespace Lucene
-{
-    void Searchable::search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& collector)
-    {
-        BOOST_ASSERT(false);
-        // override
-    }
+namespace Lucene {
 
-    void Searchable::close()
-    {
-        BOOST_ASSERT(false);
-        // override
-    }
+void Searchable::search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& collector) {
+    BOOST_ASSERT(false);
+    // override
+}
 
-    int32_t Searchable::docFreq(const TermPtr& term)
-    {
-        BOOST_ASSERT(false);
-        return 0; // override
-    }
+void Searchable::close() {
+    BOOST_ASSERT(false);
+    // override
+}
 
-    Collection<int32_t> Searchable::docFreqs(Collection<TermPtr> terms)
-    {
-        BOOST_ASSERT(false);
-        return Collection<int32_t>(); // override
-    }
+int32_t Searchable::docFreq(const TermPtr& term) {
+    BOOST_ASSERT(false);
+    return 0; // override
+}
 
-    int32_t Searchable::maxDoc()
-    {
-        BOOST_ASSERT(false);
-        return 0; // override
-    }
+Collection<int32_t> Searchable::docFreqs(Collection<TermPtr> terms) {
+    BOOST_ASSERT(false);
+    return Collection<int32_t>(); // override
+}
 
-    TopDocsPtr Searchable::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n)
-    {
-        BOOST_ASSERT(false);
-        return TopDocsPtr(); // override
-    }
+int32_t Searchable::maxDoc() {
+    BOOST_ASSERT(false);
+    return 0; // override
+}
 
-    DocumentPtr Searchable::doc(int32_t n)
-    {
-        BOOST_ASSERT(false);
-        return DocumentPtr(); // override
-    }
+TopDocsPtr Searchable::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n) {
+    BOOST_ASSERT(false);
+    return TopDocsPtr(); // override
+}
 
-    DocumentPtr Searchable::doc(int32_t n, const FieldSelectorPtr& fieldSelector)
-    {
-        BOOST_ASSERT(false);
-        return DocumentPtr(); // override
-    }
+DocumentPtr Searchable::doc(int32_t n) {
+    BOOST_ASSERT(false);
+    return DocumentPtr(); // override
+}
 
-    QueryPtr Searchable::rewrite(const QueryPtr& query)
-    {
-        BOOST_ASSERT(false);
-        return QueryPtr(); // override
-    }
+DocumentPtr Searchable::doc(int32_t n, const FieldSelectorPtr& fieldSelector) {
+    BOOST_ASSERT(false);
+    return DocumentPtr(); // override
+}
 
-    ExplanationPtr Searchable::explain(const WeightPtr& weight, int32_t doc)
-    {
-        BOOST_ASSERT(false);
-        return ExplanationPtr(); // override
-    }
+QueryPtr Searchable::rewrite(const QueryPtr& query) {
+    BOOST_ASSERT(false);
+    return QueryPtr(); // override
+}
 
-    TopFieldDocsPtr Searchable::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort)
-    {
-        BOOST_ASSERT(false);
-        return TopFieldDocsPtr(); // override
-    }
+ExplanationPtr Searchable::explain(const WeightPtr& weight, int32_t doc) {
+    BOOST_ASSERT(false);
+    return ExplanationPtr(); // override
+}
+
+TopFieldDocsPtr Searchable::search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort) {
+    BOOST_ASSERT(false);
+    return TopFieldDocsPtr(); // override
+}
+
 }

@@ -9,52 +9,47 @@
 #include "GermanStemmer.h"
 #include "TermAttribute.h"
 
-namespace Lucene
-{
-    GermanStemFilter::GermanStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
-        stemmer = newLucene<GermanStemmer>();
-        termAtt = addAttribute<TermAttribute>();
-    }
+namespace Lucene {
 
-    GermanStemFilter::GermanStemFilter(const TokenStreamPtr& input, HashSet<String> exclusionSet) : TokenFilter(input)
-    {
-        stemmer = newLucene<GermanStemmer>();
-        termAtt = addAttribute<TermAttribute>();
-        this->exclusionSet = exclusionSet;
-    }
+GermanStemFilter::GermanStemFilter(const TokenStreamPtr& input) : TokenFilter(input) {
+    stemmer = newLucene<GermanStemmer>();
+    termAtt = addAttribute<TermAttribute>();
+}
 
-    GermanStemFilter::~GermanStemFilter()
-    {
-    }
+GermanStemFilter::GermanStemFilter(const TokenStreamPtr& input, HashSet<String> exclusionSet) : TokenFilter(input) {
+    stemmer = newLucene<GermanStemmer>();
+    termAtt = addAttribute<TermAttribute>();
+    this->exclusionSet = exclusionSet;
+}
 
-    bool GermanStemFilter::incrementToken()
-    {
-        if (input->incrementToken())
-        {
-            String term(termAtt->term());
-            // Check the exclusion table.
-            if (!exclusionSet || !exclusionSet.contains(term))
-            {
-                String s(stemmer->stem(term));
-                // If not stemmed, don't waste the time adjusting the token.
-                if (!s.empty() && s != term)
-                    termAtt->setTermBuffer(s);
+GermanStemFilter::~GermanStemFilter() {
+}
+
+bool GermanStemFilter::incrementToken() {
+    if (input->incrementToken()) {
+        String term(termAtt->term());
+        // Check the exclusion table.
+        if (!exclusionSet || !exclusionSet.contains(term)) {
+            String s(stemmer->stem(term));
+            // If not stemmed, don't waste the time adjusting the token.
+            if (!s.empty() && s != term) {
+                termAtt->setTermBuffer(s);
             }
-            return true;
         }
-        else
-            return false;
+        return true;
+    } else {
+        return false;
     }
+}
 
-    void GermanStemFilter::setStemmer(const GermanStemmerPtr& stemmer)
-    {
-        if (stemmer)
-            this->stemmer = stemmer;
+void GermanStemFilter::setStemmer(const GermanStemmerPtr& stemmer) {
+    if (stemmer) {
+        this->stemmer = stemmer;
     }
+}
 
-    void GermanStemFilter::setExclusionSet(HashSet<String> exclusionSet)
-    {
-        this->exclusionSet = exclusionSet;
-    }
+void GermanStemFilter::setExclusionSet(HashSet<String> exclusionSet) {
+    this->exclusionSet = exclusionSet;
+}
+
 }

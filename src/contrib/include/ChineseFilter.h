@@ -10,33 +10,33 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A {@link TokenFilter} with a stop word table.
-    /// <ul>
-    /// <li> Numeric tokens are removed.
-    /// <li> English tokens must be larger than 1 character.
-    /// <li> One Chinese character as one Chinese word.
-    /// </ul>
-    class LPPCONTRIBAPI ChineseFilter : public TokenFilter
-    {
-    public:
-        ChineseFilter(const TokenStreamPtr& input);
-        virtual ~ChineseFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(ChineseFilter);
+/// A {@link TokenFilter} with a stop word table.
+/// <ul>
+/// <li> Numeric tokens are removed.
+/// <li> English tokens must be larger than 1 character.
+/// <li> One Chinese character as one Chinese word.
+/// </ul>
+class LPPCONTRIBAPI ChineseFilter : public TokenFilter {
+public:
+    ChineseFilter(const TokenStreamPtr& input);
+    virtual ~ChineseFilter();
 
-    public:
-        /// Only English now, Chinese to be added later.
-        static const wchar_t* STOP_WORDS[];
+    LUCENE_CLASS(ChineseFilter);
 
-    protected:
-        HashSet<String> stopTable;
-        TermAttributePtr termAtt;
+public:
+    /// Only English now, Chinese to be added later.
+    static const wchar_t* STOP_WORDS[];
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    HashSet<String> stopTable;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

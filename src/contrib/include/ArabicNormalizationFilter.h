@@ -10,24 +10,24 @@
 #include "LuceneContrib.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// A {@link TokenFilter} that applies {@link ArabicNormalizer} to normalize the orthography.
-    class LPPCONTRIBAPI ArabicNormalizationFilter : public TokenFilter
-    {
-    public:
-        ArabicNormalizationFilter(const TokenStreamPtr& input);
-        virtual ~ArabicNormalizationFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(ArabicNormalizationFilter);
+/// A {@link TokenFilter} that applies {@link ArabicNormalizer} to normalize the orthography.
+class LPPCONTRIBAPI ArabicNormalizationFilter : public TokenFilter {
+public:
+    ArabicNormalizationFilter(const TokenStreamPtr& input);
+    virtual ~ArabicNormalizationFilter();
 
-    protected:
-        ArabicNormalizerPtr normalizer;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(ArabicNormalizationFilter);
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    ArabicNormalizerPtr normalizer;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

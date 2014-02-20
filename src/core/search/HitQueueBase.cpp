@@ -8,83 +8,68 @@
 #include "HitQueueBase.h"
 #include "ScoreDoc.h"
 
-namespace Lucene
-{
-    HitQueueBase::HitQueueBase(int32_t size)
-    {
-        queueSize = size;
-    }
+namespace Lucene {
 
-    HitQueueBase::~HitQueueBase()
-    {
-    }
+HitQueueBase::HitQueueBase(int32_t size) {
+    queueSize = size;
+}
 
-    void HitQueueBase::initialize()
-    {
-        queue = newLucene<PriorityQueueScoreDocs>(shared_from_this(), queueSize);
-    }
+HitQueueBase::~HitQueueBase() {
+}
 
-    ScoreDocPtr HitQueueBase::add(const ScoreDocPtr& scoreDoc)
-    {
-        return queue->add(scoreDoc);
-    }
+void HitQueueBase::initialize() {
+    queue = newLucene<PriorityQueueScoreDocs>(shared_from_this(), queueSize);
+}
 
-    ScoreDocPtr HitQueueBase::addOverflow(const ScoreDocPtr& scoreDoc)
-    {
-        return queue->addOverflow(scoreDoc);
-    }
+ScoreDocPtr HitQueueBase::add(const ScoreDocPtr& scoreDoc) {
+    return queue->add(scoreDoc);
+}
 
-    ScoreDocPtr HitQueueBase::top()
-    {
-        return queue->top();
-    }
+ScoreDocPtr HitQueueBase::addOverflow(const ScoreDocPtr& scoreDoc) {
+    return queue->addOverflow(scoreDoc);
+}
 
-    ScoreDocPtr HitQueueBase::pop()
-    {
-        return queue->pop();
-    }
+ScoreDocPtr HitQueueBase::top() {
+    return queue->top();
+}
 
-    ScoreDocPtr HitQueueBase::updateTop()
-    {
-        return queue->updateTop();
-    }
+ScoreDocPtr HitQueueBase::pop() {
+    return queue->pop();
+}
 
-    int32_t HitQueueBase::size()
-    {
-        return queue->size();
-    }
+ScoreDocPtr HitQueueBase::updateTop() {
+    return queue->updateTop();
+}
 
-    bool HitQueueBase::empty()
-    {
-        return queue->empty();
-    }
+int32_t HitQueueBase::size() {
+    return queue->size();
+}
 
-    void HitQueueBase::clear()
-    {
-        queue->clear();
-    }
+bool HitQueueBase::empty() {
+    return queue->empty();
+}
 
-    ScoreDocPtr HitQueueBase::getSentinelObject()
-    {
-        return ScoreDocPtr();
-    }
+void HitQueueBase::clear() {
+    queue->clear();
+}
 
-    PriorityQueueScoreDocs::PriorityQueueScoreDocs(const HitQueueBasePtr& hitQueue, int32_t size) : PriorityQueue<ScoreDocPtr>(size)
-    {
-        _hitQueue = hitQueue;
-    }
+ScoreDocPtr HitQueueBase::getSentinelObject() {
+    return ScoreDocPtr();
+}
 
-    PriorityQueueScoreDocs::~PriorityQueueScoreDocs()
-    {
-    }
+PriorityQueueScoreDocs::PriorityQueueScoreDocs(const HitQueueBasePtr& hitQueue, int32_t size) : PriorityQueue<ScoreDocPtr>(size) {
+    _hitQueue = hitQueue;
+}
 
-    bool PriorityQueueScoreDocs::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second)
-    {
-        return HitQueueBasePtr(_hitQueue)->lessThan(first, second);
-    }
+PriorityQueueScoreDocs::~PriorityQueueScoreDocs() {
+}
 
-    ScoreDocPtr PriorityQueueScoreDocs::getSentinelObject()
-    {
-        return HitQueueBasePtr(_hitQueue)->getSentinelObject();
-    }
+bool PriorityQueueScoreDocs::lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second) {
+    return HitQueueBasePtr(_hitQueue)->lessThan(first, second);
+}
+
+ScoreDocPtr PriorityQueueScoreDocs::getSentinelObject() {
+    return HitQueueBasePtr(_hitQueue)->getSentinelObject();
+}
+
 }

@@ -7,15 +7,14 @@
 #include "ContribInc.h"
 #include "Formatter.h"
 
-namespace Lucene
-{
-    Formatter::~Formatter()
-    {
-    }
+namespace Lucene {
 
-    String Formatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup)
-    {
-        BOOST_ASSERT(false);
-        return L""; // override
-    }
+Formatter::~Formatter() {
+}
+
+String Formatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup) {
+    BOOST_ASSERT(false);
+    return L""; // override
+}
+
 }

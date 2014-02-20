@@ -11,74 +11,67 @@
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    IntFieldSource::IntFieldSource(const String& field, const IntParserPtr& parser) : FieldCacheSource(field)
-    {
-        this->parser = parser;
-    }
+namespace Lucene {
 
-    IntFieldSource::~IntFieldSource()
-    {
-    }
+IntFieldSource::IntFieldSource(const String& field, const IntParserPtr& parser) : FieldCacheSource(field) {
+    this->parser = parser;
+}
 
-    String IntFieldSource::description()
-    {
-        return L"int(" + FieldCacheSource::description() + L")";
-    }
+IntFieldSource::~IntFieldSource() {
+}
 
-    DocValuesPtr IntFieldSource::getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader)
-    {
-        Collection<int32_t> arr(cache->getInts(reader, field, parser));
-        return newLucene<IntDocValues>(shared_from_this(), arr);
-    }
+String IntFieldSource::description() {
+    return L"int(" + FieldCacheSource::description() + L")";
+}
 
-    bool IntFieldSource::cachedFieldSourceEquals(const FieldCacheSourcePtr& other)
-    {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
-            return false;
-        IntFieldSourcePtr otherSource(boost::dynamic_pointer_cast<IntFieldSource>(other));
-        if (!otherSource)
-            return false;
-        return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;
-    }
+DocValuesPtr IntFieldSource::getCachedFieldValues(const FieldCachePtr& cache, const String& field, const IndexReaderPtr& reader) {
+    Collection<int32_t> arr(cache->getInts(reader, field, parser));
+    return newLucene<IntDocValues>(shared_from_this(), arr);
+}
 
-    int32_t IntFieldSource::cachedFieldSourceHashCode()
-    {
-        return StringUtils::hashCode(parser ? IntParser::_getClassName() : IntFieldSource::_getClassName());
+bool IntFieldSource::cachedFieldSourceEquals(const FieldCacheSourcePtr& other) {
+    if (!MiscUtils::equalTypes(shared_from_this(), other)) {
+        return false;
     }
+    IntFieldSourcePtr otherSource(boost::dynamic_pointer_cast<IntFieldSource>(other));
+    if (!otherSource) {
+        return false;
+    }
+    return parser ? MiscUtils::equalTypes(parser, otherSource->parser) : !otherSource->parser;
+}
 
-    IntDocValues::IntDocValues(const IntFieldSourcePtr& source, Collection<int32_t> arr)
-    {
-        this->_source = source;
-        this->arr = arr;
-    }
+int32_t IntFieldSource::cachedFieldSourceHashCode() {
+    return StringUtils::hashCode(parser ? IntParser::_getClassName() : IntFieldSource::_getClassName());
+}
 
-    IntDocValues::~IntDocValues()
-    {
-    }
+IntDocValues::IntDocValues(const IntFieldSourcePtr& source, Collection<int32_t> arr) {
+    this->_source = source;
+    this->arr = arr;
+}
 
-    double IntDocValues::doubleVal(int32_t doc)
-    {
-        if (doc < 0 || doc >= arr.size())
-            boost::throw_exception(IndexOutOfBoundsException());
-        return (double)arr[doc];
-    }
+IntDocValues::~IntDocValues() {
+}
 
-    int32_t IntDocValues::intVal(int32_t doc)
-    {
-        if (doc < 0 || doc >= arr.size())
-            boost::throw_exception(IndexOutOfBoundsException());
-        return arr[doc];
+double IntDocValues::doubleVal(int32_t doc) {
+    if (doc < 0 || doc >= arr.size()) {
+        boost::throw_exception(IndexOutOfBoundsException());
     }
+    return (double)arr[doc];
+}
 
-    String IntDocValues::toString(int32_t doc)
-    {
-        return IntFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(intVal(doc));
+int32_t IntDocValues::intVal(int32_t doc) {
+    if (doc < 0 || doc >= arr.size()) {
+        boost::throw_exception(IndexOutOfBoundsException());
     }
+    return arr[doc];
+}
 
-    CollectionValue IntDocValues::getInnerArray()
-    {
-        return arr;
-    }
+String IntDocValues::toString(int32_t doc) {
+    return IntFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(intVal(doc));
+}
+
+CollectionValue IntDocValues::getInnerArray() {
+    return arr;
+}
+
 }

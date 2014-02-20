@@ -21,25 +21,23 @@ using namespace Lucene;
 
 typedef LuceneTestFixture SearchTest;
 
-static void doTestSearch(StringStream& out, bool useCompoundFile)
-{
+static void doTestSearch(StringStream& out, bool useCompoundFile) {
     DirectoryPtr directory = newLucene<RAMDirectory>();
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
     IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
 
     writer->setUseCompoundFile(useCompoundFile);
     Collection<String> docs = newCollection<String>(
-        L"a b c d e",
-        L"a b c d e a b c d e",
-        L"a b c d e f g h i j",
-        L"a c e",
-        L"e c a",
-        L"a c e a c e",
-        L"a c e a b c"
-    );
+                                  L"a b c d e",
+                                  L"a b c d e a b c d e",
+                                  L"a b c d e f g h i j",
+                                  L"a c e",
+                                  L"e c a",
+                                  L"a c e a c e",
+                                  L"a c e a b c"
+                              );
 
-    for (int32_t j = 0; j < docs.size(); ++j)
-    {
+    for (int32_t j = 0; j < docs.size(); ++j) {
         DocumentPtr doc = newLucene<Document>();
         doc->add(newLucene<Field>(L"contents", docs[j], Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(doc);
@@ -49,26 +47,24 @@ static void doTestSearch(StringStream& out, bool useCompoundFile)
     SearcherPtr searcher = newLucene<IndexSearcher>(directory, true);
 
     Collection<String> queries = newCollection<String>(
-        L"a b",
-        L"\"a b\"",
-        L"\"a b c\"",
-        L"a c",
-        L"\"a c\"",
-        L"\"a c e\""
-    );
+                                     L"a b",
+                                     L"\"a b\"",
+                                     L"\"a b c\"",
+                                     L"a c",
+                                     L"\"a c\"",
+                                     L"\"a c e\""
+                                 );
 
     QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"contents", analyzer);
     parser->setPhraseSlop(4);
-    for (int32_t j = 0; j < queries.size(); ++j)
-    {
+    for (int32_t j = 0; j < queries.size(); ++j) {
         QueryPtr query = parser->parse(queries[j]);
         out << L"Query: " << query->toString(L"contents") << L"\n";
 
         Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
 
         out << hits.size() << L" total results\n";
-        for (int32_t i = 0; i < hits.size() && i < 10; ++i)
-        {
+        for (int32_t i = 0; i < hits.size() && i < 10; ++i) {
             DocumentPtr doc = searcher->doc(hits[i]->doc);
             out << i << L" " << hits[i]->score << L" " + doc->get(L"contents") << L"\n";
         }
@@ -76,8 +72,7 @@ static void doTestSearch(StringStream& out, bool useCompoundFile)
     searcher->close();
 }
 
-TEST_F(SearchTest, testSearch)
-{
+TEST_F(SearchTest, testSearch) {
     StringStream multiFileOutput;
     doTestSearch(multiFileOutput, false);
 

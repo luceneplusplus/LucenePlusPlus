@@ -8,53 +8,46 @@
 #include "MockRAMInputStream.h"
 #include "MockRAMDirectory.h"
 
-namespace Lucene
-{
-    MockRAMInputStream::MockRAMInputStream()
-    {
-        this->isClone = false;
-    }
+namespace Lucene {
 
-    MockRAMInputStream::MockRAMInputStream(const MockRAMDirectoryPtr& dir, const String& name, const RAMFilePtr& f) : RAMInputStream(f)
-    {
-        this->isClone = false;
-        this->name = name;
-        this->_dir = dir;
-    }
+MockRAMInputStream::MockRAMInputStream() {
+    this->isClone = false;
+}
 
-    MockRAMInputStream::~MockRAMInputStream()
-    {
-    }
+MockRAMInputStream::MockRAMInputStream(const MockRAMDirectoryPtr& dir, const String& name, const RAMFilePtr& f) : RAMInputStream(f) {
+    this->isClone = false;
+    this->name = name;
+    this->_dir = dir;
+}
 
-    void MockRAMInputStream::close()
-    {
-        RAMInputStream::close();
-        if (!isClone)
-        {
-            MockRAMDirectoryPtr dir(_dir);
-            SyncLock dirLock(dir);
-            MapStringInt::iterator openFile = dir->openFiles.find(name);
-            // Could be null when MockRAMDirectory.crash() was called
-            if (openFile != dir->openFiles.end())
-            {
-                if (openFile->second == 1)
-                {
-                    dir->openFiles.remove(name);
-                    dir->openFilesDeleted.remove(name);
-                }
-                else
-                    --openFile->second;
+MockRAMInputStream::~MockRAMInputStream() {
+}
+
+void MockRAMInputStream::close() {
+    RAMInputStream::close();
+    if (!isClone) {
+        MockRAMDirectoryPtr dir(_dir);
+        SyncLock dirLock(dir);
+        MapStringInt::iterator openFile = dir->openFiles.find(name);
+        // Could be null when MockRAMDirectory.crash() was called
+        if (openFile != dir->openFiles.end()) {
+            if (openFile->second == 1) {
+                dir->openFiles.remove(name);
+                dir->openFilesDeleted.remove(name);
+            } else {
+                --openFile->second;
             }
         }
     }
+}
 
-    LuceneObjectPtr MockRAMInputStream::clone(const LuceneObjectPtr& other)
-    {
-        LuceneObjectPtr clone = RAMInputStream::clone(other ? other : newLucene<MockRAMInputStream>());
-        MockRAMInputStreamPtr cloneInputStream(boost::dynamic_pointer_cast<MockRAMInputStream>(clone));
-        cloneInputStream->_dir = _dir;
-        cloneInputStream->name = name;
-        cloneInputStream->isClone = true;
-        return cloneInputStream;
-    }
+LuceneObjectPtr MockRAMInputStream::clone(const LuceneObjectPtr& other) {
+    LuceneObjectPtr clone = RAMInputStream::clone(other ? other : newLucene<MockRAMInputStream>());
+    MockRAMInputStreamPtr cloneInputStream(boost::dynamic_pointer_cast<MockRAMInputStream>(clone));
+    cloneInputStream->_dir = _dir;
+    cloneInputStream->name = name;
+    cloneInputStream->isClone = true;
+    return cloneInputStream;
+}
+
 }

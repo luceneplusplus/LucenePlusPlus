@@ -9,19 +9,19 @@
 
 #include "_SegmentInfos.h"
 
-namespace Lucene
-{
-    class FindSegmentsModified : public FindSegmentsFileT<uint64_t>
-    {
-    public:
-        FindSegmentsModified(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
-        virtual ~FindSegmentsModified();
+namespace Lucene {
 
-        LUCENE_CLASS(FindSegmentsModified);
+class FindSegmentsModified : public FindSegmentsFileT<uint64_t> {
+public:
+    FindSegmentsModified(const SegmentInfosPtr& infos, const DirectoryPtr& directory);
+    virtual ~FindSegmentsModified();
 
-    public:
-        virtual uint64_t doBody(const String& segmentFileName);
-    };
+    LUCENE_CLASS(FindSegmentsModified);
+
+public:
+    virtual uint64_t doBody(const String& segmentFileName);
+};
+
 }
 
 #endif

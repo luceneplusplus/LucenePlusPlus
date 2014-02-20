@@ -25,115 +25,98 @@ typedef LuceneTestFixture DocIdSetTest;
 
 static const int32_t maxdoc = 10;
 
-namespace TestFilteredDocIdSet
-{
-    class TestDocIdSetIterator : public DocIdSetIterator
-    {
-    public:
-        TestDocIdSetIterator()
-        {
-            docid = -1;
-        }
+namespace TestFilteredDocIdSet {
 
-        virtual ~TestDocIdSetIterator()
-        {
-        }
+class TestDocIdSetIterator : public DocIdSetIterator {
+public:
+    TestDocIdSetIterator() {
+        docid = -1;
+    }
 
-    public:
-        int32_t docid;
+    virtual ~TestDocIdSetIterator() {
+    }
 
-    public:
-        virtual int32_t docID()
-        {
-            return docid;
-        }
+public:
+    int32_t docid;
 
-        virtual int32_t nextDoc()
-        {
-            return ++docid < maxdoc ? docid : (docid = NO_MORE_DOCS);
-        }
+public:
+    virtual int32_t docID() {
+        return docid;
+    }
 
-        virtual int32_t advance(int32_t target)
-        {
-            while (nextDoc() < target)
-            {
-            }
-            return docid;
-        }
-    };
+    virtual int32_t nextDoc() {
+        return ++docid < maxdoc ? docid : (docid = NO_MORE_DOCS);
+    }
 
-    class TestDocIdSet : public DocIdSet
-    {
-    public:
-        virtual ~TestDocIdSet()
-        {
+    virtual int32_t advance(int32_t target) {
+        while (nextDoc() < target) {
         }
+        return docid;
+    }
+};
 
-    public:
-        virtual DocIdSetIteratorPtr iterator()
-        {
-            return newLucene<TestDocIdSetIterator>();
-        }
-    };
+class TestDocIdSet : public DocIdSet {
+public:
+    virtual ~TestDocIdSet() {
+    }
 
-    class TestFilteredDocIdSet : public FilteredDocIdSet
-    {
-    public:
-        TestFilteredDocIdSet(const DocIdSetPtr& innerSet) : FilteredDocIdSet(innerSet)
-        {
-        }
+public:
+    virtual DocIdSetIteratorPtr iterator() {
+        return newLucene<TestDocIdSetIterator>();
+    }
+};
 
-        virtual ~TestFilteredDocIdSet()
-        {
-        }
+class TestFilteredDocIdSet : public FilteredDocIdSet {
+public:
+    TestFilteredDocIdSet(const DocIdSetPtr& innerSet) : FilteredDocIdSet(innerSet) {
+    }
 
-    protected:
-        virtual bool match(int32_t docid)
-        {
-            return (docid % 2 == 0); // validate only even docids
-        }
-    };
+    virtual ~TestFilteredDocIdSet() {
+    }
+
+protected:
+    virtual bool match(int32_t docid) {
+        return (docid % 2 == 0); // validate only even docids
+    }
+};
+
 }
 
-TEST_F(DocIdSetTest, testFilteredDocIdSet)
-{
+TEST_F(DocIdSetTest, testFilteredDocIdSet) {
     DocIdSetPtr innerSet = newLucene<TestFilteredDocIdSet::TestDocIdSet>();
     DocIdSetPtr filteredSet = newLucene<TestFilteredDocIdSet::TestFilteredDocIdSet>(innerSet);
 
     DocIdSetIteratorPtr iter = filteredSet->iterator();
     Collection<int32_t> docs = Collection<int32_t>::newInstance();
     int32_t doc = iter->advance(3);
-    if (doc != DocIdSetIterator::NO_MORE_DOCS)
-    {
+    if (doc != DocIdSetIterator::NO_MORE_DOCS) {
         docs.add(doc);
-        while((doc = iter->nextDoc()) != DocIdSetIterator::NO_MORE_DOCS)
+        while ((doc = iter->nextDoc()) != DocIdSetIterator::NO_MORE_DOCS) {
             docs.add(doc);
+        }
     }
 
     Collection<int32_t> answer = newCollection<int32_t>(4, 6, 8);
     EXPECT_TRUE(docs.equals(answer));
 }
 
-namespace TestNullDocIdSet
-{
-    class TestFilter : public Filter
-    {
-    public:
-        virtual ~TestFilter()
-        {
-        }
+namespace TestNullDocIdSet {
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader)
-        {
-            return DocIdSetPtr();
-        }
-    };
+class TestFilter : public Filter {
+public:
+    virtual ~TestFilter() {
+    }
+
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader) {
+        return DocIdSetPtr();
+    }
+};
+
 }
 
 /// Tests that if a Filter produces a null DocIdSet, which is given to IndexSearcher, everything works fine
-TEST_F(DocIdSetTest, testNullDocIdSet)
-{
+TEST_F(DocIdSetTest, testNullDocIdSet) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     DocumentPtr doc = newLucene<Document>();

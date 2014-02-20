@@ -9,116 +9,101 @@
 #include "Reader.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    FastCharStream::FastCharStream(const ReaderPtr& reader)
-    {
-        input = reader;
-        bufferLength = 0;
-        bufferPosition = 0;
-        tokenStart = 0;
-        bufferStart = 0;
+namespace Lucene {
+
+FastCharStream::FastCharStream(const ReaderPtr& reader) {
+    input = reader;
+    bufferLength = 0;
+    bufferPosition = 0;
+    tokenStart = 0;
+    bufferStart = 0;
+}
+
+FastCharStream::~FastCharStream() {
+}
+
+wchar_t FastCharStream::readChar() {
+    if (bufferPosition >= bufferLength) {
+        refill();
     }
+    return buffer[bufferPosition++];
+}
 
-    FastCharStream::~FastCharStream()
-    {
-    }
+void FastCharStream::refill() {
+    int32_t newPosition = bufferLength - tokenStart;
 
-    wchar_t FastCharStream::readChar()
-    {
-        if (bufferPosition >= bufferLength)
-            refill();
-        return buffer[bufferPosition++];
-    }
-
-    void FastCharStream::refill()
-    {
-        int32_t newPosition = bufferLength - tokenStart;
-
-        if (tokenStart == 0) // token won't fit in buffer
-        {
-            if (!buffer)
-                buffer = CharArray::newInstance(2048);
-            else if (bufferLength == buffer.size()) // grow buffer
-                buffer.resize(buffer.size() * 2);
+    if (tokenStart == 0) { // token won't fit in buffer
+        if (!buffer) {
+            buffer = CharArray::newInstance(2048);
+        } else if (bufferLength == buffer.size()) { // grow buffer
+            buffer.resize(buffer.size() * 2);
         }
-        else // shift token to front
-            MiscUtils::arrayCopy(buffer.get(), tokenStart, buffer.get(), 0, newPosition);
-
-        bufferLength = newPosition; // update state
-        bufferPosition = newPosition;
-        bufferStart += tokenStart;
-        tokenStart = 0;
-
-        int32_t charsRead = input->read(buffer.get(), newPosition, buffer.size() - newPosition); // fill space in buffer
-        if (charsRead == -1)
-            boost::throw_exception(IOException(L"read past eof"));
-        else
-            bufferLength += charsRead;
+    } else { // shift token to front
+        MiscUtils::arrayCopy(buffer.get(), tokenStart, buffer.get(), 0, newPosition);
     }
 
-    wchar_t FastCharStream::BeginToken()
-    {
-        tokenStart = bufferPosition;
-        return readChar();
-    }
+    bufferLength = newPosition; // update state
+    bufferPosition = newPosition;
+    bufferStart += tokenStart;
+    tokenStart = 0;
 
-    void FastCharStream::backup(int32_t amount)
-    {
-        bufferPosition -= amount;
+    int32_t charsRead = input->read(buffer.get(), newPosition, buffer.size() - newPosition); // fill space in buffer
+    if (charsRead == -1) {
+        boost::throw_exception(IOException(L"read past eof"));
+    } else {
+        bufferLength += charsRead;
     }
+}
 
-    String FastCharStream::GetImage()
-    {
-        return String(buffer.get() + tokenStart, bufferPosition - tokenStart);
-    }
+wchar_t FastCharStream::BeginToken() {
+    tokenStart = bufferPosition;
+    return readChar();
+}
 
-    CharArray FastCharStream::GetSuffix(int32_t length)
-    {
-        CharArray value(CharArray::newInstance(length));
-        MiscUtils::arrayCopy(buffer.get(), bufferPosition - length, value.get(), 0, length);
-        return value;
-    }
+void FastCharStream::backup(int32_t amount) {
+    bufferPosition -= amount;
+}
 
-    void FastCharStream::Done()
-    {
-        try
-        {
-            input->close();
-        }
-        catch (IOException&)
-        {
-            // ignore IO exceptions
-        }
-    }
+String FastCharStream::GetImage() {
+    return String(buffer.get() + tokenStart, bufferPosition - tokenStart);
+}
 
-    int32_t FastCharStream::getColumn()
-    {
-        return bufferStart + bufferPosition;
-    }
+CharArray FastCharStream::GetSuffix(int32_t length) {
+    CharArray value(CharArray::newInstance(length));
+    MiscUtils::arrayCopy(buffer.get(), bufferPosition - length, value.get(), 0, length);
+    return value;
+}
 
-    int32_t FastCharStream::getLine()
-    {
-        return 1;
+void FastCharStream::Done() {
+    try {
+        input->close();
+    } catch (IOException&) {
+        // ignore IO exceptions
     }
+}
 
-    int32_t FastCharStream::getEndColumn()
-    {
-        return bufferStart + bufferPosition;
-    }
+int32_t FastCharStream::getColumn() {
+    return bufferStart + bufferPosition;
+}
 
-    int32_t FastCharStream::getEndLine()
-    {
-        return 1;
-    }
+int32_t FastCharStream::getLine() {
+    return 1;
+}
 
-    int32_t FastCharStream::getBeginColumn()
-    {
-        return bufferStart + tokenStart;
-    }
+int32_t FastCharStream::getEndColumn() {
+    return bufferStart + bufferPosition;
+}
 
-    int32_t FastCharStream::getBeginLine()
-    {
-        return 1;
-    }
+int32_t FastCharStream::getEndLine() {
+    return 1;
+}
+
+int32_t FastCharStream::getBeginColumn() {
+    return bufferStart + tokenStart;
+}
+
+int32_t FastCharStream::getBeginLine() {
+    return 1;
+}
+
 }

@@ -9,26 +9,22 @@
 #include "MiscUtils.h"
 #include "UnicodeUtils.h"
 
-namespace Lucene
-{
-    WhitespaceTokenizer::WhitespaceTokenizer(const ReaderPtr& input) : CharTokenizer(input)
-    {
-    }
+namespace Lucene {
 
-    WhitespaceTokenizer::WhitespaceTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input)
-    {
-    }
+WhitespaceTokenizer::WhitespaceTokenizer(const ReaderPtr& input) : CharTokenizer(input) {
+}
 
-    WhitespaceTokenizer::WhitespaceTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input)
-    {
-    }
+WhitespaceTokenizer::WhitespaceTokenizer(const AttributeSourcePtr& source, const ReaderPtr& input) : CharTokenizer(source, input) {
+}
 
-    WhitespaceTokenizer::~WhitespaceTokenizer()
-    {
-    }
+WhitespaceTokenizer::WhitespaceTokenizer(const AttributeFactoryPtr& factory, const ReaderPtr& input) : CharTokenizer(factory, input) {
+}
 
-    bool WhitespaceTokenizer::isTokenChar(wchar_t c)
-    {
-        return !UnicodeUtil::isSpace(c);
-    }
+WhitespaceTokenizer::~WhitespaceTokenizer() {
+}
+
+bool WhitespaceTokenizer::isTokenChar(wchar_t c) {
+    return !UnicodeUtil::isSpace(c);
+}
+
 }

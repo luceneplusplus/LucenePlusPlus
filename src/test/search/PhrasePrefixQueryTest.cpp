@@ -24,8 +24,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture PhrasePrefixQueryTest;
 
-TEST_F(PhrasePrefixQueryTest, testPhrasePrefix)
-{
+TEST_F(PhrasePrefixQueryTest, testPhrasePrefix) {
     RAMDirectoryPtr indexStore = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(indexStore, newLucene<SimpleAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc1 = newLucene<Document>();
@@ -59,12 +58,11 @@ TEST_F(PhrasePrefixQueryTest, testPhrasePrefix)
     // this TermEnum gives "piccadilly", "pie" and "pizza".
     String prefix = L"pi";
     TermEnumPtr te = ir->terms(newLucene<Term>(L"body", prefix + L"*"));
-    do
-    {
-        if (boost::starts_with(te->term()->text(), prefix))
+    do {
+        if (boost::starts_with(te->term()->text(), prefix)) {
             termsWithPrefix.add(te->term());
-    }
-    while (te->next());
+        }
+    } while (te->next());
 
     query1->add(termsWithPrefix);
     query2->add(termsWithPrefix);

@@ -10,42 +10,42 @@
 #include <boost/function.hpp>
 #include "TermVectorMapper.h"
 
-namespace Lucene
-{
-    /// For each Field, store a sorted collection of {@link TermVectorEntry}s
-    /// This is not thread-safe.
-    class LPPAPI FieldSortedTermVectorMapper : public TermVectorMapper
-    {
-    public:
-        /// @param comparator A Comparator for sorting {@link TermVectorEntry}s
-        FieldSortedTermVectorMapper(TermVectorEntryComparator comparator);
+namespace Lucene {
 
-        FieldSortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, TermVectorEntryComparator comparator);
+/// For each Field, store a sorted collection of {@link TermVectorEntry}s
+/// This is not thread-safe.
+class LPPAPI FieldSortedTermVectorMapper : public TermVectorMapper {
+public:
+    /// @param comparator A Comparator for sorting {@link TermVectorEntry}s
+    FieldSortedTermVectorMapper(TermVectorEntryComparator comparator);
 
-        virtual ~FieldSortedTermVectorMapper();
+    FieldSortedTermVectorMapper(bool ignoringPositions, bool ignoringOffsets, TermVectorEntryComparator comparator);
 
-        LUCENE_CLASS(FieldSortedTermVectorMapper);
+    virtual ~FieldSortedTermVectorMapper();
 
-    protected:
-        MapStringCollectionTermVectorEntry fieldToTerms;
-        Collection<TermVectorEntryPtr> currentSet;
-        String currentField;
-        TermVectorEntryComparator comparator;
+    LUCENE_CLASS(FieldSortedTermVectorMapper);
 
-    public:
-        /// Map the Term Vector information into your own structure
-        virtual void map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions);
+protected:
+    MapStringCollectionTermVectorEntry fieldToTerms;
+    Collection<TermVectorEntryPtr> currentSet;
+    String currentField;
+    TermVectorEntryComparator comparator;
 
-        /// Tell the mapper what to expect in regards to field, number of terms, offset and position storage.
-        virtual void setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions);
+public:
+    /// Map the Term Vector information into your own structure
+    virtual void map(const String& term, int32_t frequency, Collection<TermVectorOffsetInfoPtr> offsets, Collection<int32_t> positions);
 
-        /// Get the mapping between fields and terms, sorted by the comparator
-        /// @return A map between field names and {@link java.util.SortedSet}s per field.  SortedSet entries are
-        /// {@link TermVectorEntry}
-        MapStringCollectionTermVectorEntry getFieldToTerms();
+    /// Tell the mapper what to expect in regards to field, number of terms, offset and position storage.
+    virtual void setExpectations(const String& field, int32_t numTerms, bool storeOffsets, bool storePositions);
 
-        TermVectorEntryComparator getComparator();
-    };
+    /// Get the mapping between fields and terms, sorted by the comparator
+    /// @return A map between field names and {@link java.util.SortedSet}s per field.  SortedSet entries are
+    /// {@link TermVectorEntry}
+    MapStringCollectionTermVectorEntry getFieldToTerms();
+
+    TermVectorEntryComparator getComparator();
+};
+
 }
 
 #endif

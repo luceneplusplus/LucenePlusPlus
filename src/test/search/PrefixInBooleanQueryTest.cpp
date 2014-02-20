@@ -20,16 +20,13 @@
 
 using namespace Lucene;
 
-class PrefixInBooleanQueryTest : public LuceneTestFixture
-{
+class PrefixInBooleanQueryTest : public LuceneTestFixture {
 public:
-    PrefixInBooleanQueryTest()
-    {
+    PrefixInBooleanQueryTest() {
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
-        for (int32_t i = 0; i < 5137; ++i)
-        {
+        for (int32_t i = 0; i < 5137; ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(FIELD, L"meaninglessnames", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
@@ -40,8 +37,7 @@ public:
             writer->addDocument(doc);
         }
 
-        for (int32_t i = 5138; i < 11377; ++i)
-        {
+        for (int32_t i = 5138; i < 11377; ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(FIELD, L"meaninglessnames", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             writer->addDocument(doc);
@@ -55,8 +51,7 @@ public:
         writer->close();
     }
 
-    virtual ~PrefixInBooleanQueryTest()
-    {
+    virtual ~PrefixInBooleanQueryTest() {
     }
 
 protected:
@@ -68,22 +63,19 @@ public:
 
 const String PrefixInBooleanQueryTest::FIELD = L"name";
 
-TEST_F(PrefixInBooleanQueryTest, testPrefixQuery)
-{
+TEST_F(PrefixInBooleanQueryTest, testPrefixQuery) {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     QueryPtr query = newLucene<PrefixQuery>(newLucene<Term>(FIELD, L"tang"));
     EXPECT_EQ(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
 }
 
-TEST_F(PrefixInBooleanQueryTest, testTermQuery)
-{
+TEST_F(PrefixInBooleanQueryTest, testTermQuery) {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     QueryPtr query = newLucene<TermQuery>(newLucene<Term>(FIELD, L"tangfulin"));
     EXPECT_EQ(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
 }
 
-TEST_F(PrefixInBooleanQueryTest, testTermBooleanQuery)
-{
+TEST_F(PrefixInBooleanQueryTest, testTermBooleanQuery) {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     BooleanQueryPtr query = newLucene<BooleanQuery>();
     query->add(newLucene<TermQuery>(newLucene<Term>(FIELD, L"tangfulin")), BooleanClause::SHOULD);
@@ -91,8 +83,7 @@ TEST_F(PrefixInBooleanQueryTest, testTermBooleanQuery)
     EXPECT_EQ(2, indexSearcher->search(query, FilterPtr(), 1000)->totalHits);
 }
 
-TEST_F(PrefixInBooleanQueryTest, testPrefixBooleanQuery)
-{
+TEST_F(PrefixInBooleanQueryTest, testPrefixBooleanQuery) {
     IndexSearcherPtr indexSearcher = newLucene<IndexSearcher>(directory, true);
     BooleanQueryPtr query = newLucene<BooleanQuery>();
     query->add(newLucene<PrefixQuery>(newLucene<Term>(FIELD, L"tang")), BooleanClause::SHOULD);

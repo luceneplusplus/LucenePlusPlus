@@ -9,75 +9,75 @@
 
 #include "TermPositions.h"
 
-namespace Lucene
-{
-    class SegmentTermDocs : public TermPositions, public LuceneObject
-    {
-    public:
-        SegmentTermDocs(const SegmentReaderPtr& parent);
-        virtual ~SegmentTermDocs();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentTermDocs);
+class SegmentTermDocs : public TermPositions, public LuceneObject {
+public:
+    SegmentTermDocs(const SegmentReaderPtr& parent);
+    virtual ~SegmentTermDocs();
 
-    protected:
-        SegmentReaderWeakPtr _parent;
-        IndexInputPtr _freqStream;
-        int32_t count;
-        int32_t df;
-        BitVectorPtr deletedDocs;
-        int32_t _doc;
-        int32_t _freq;
+    LUCENE_CLASS(SegmentTermDocs);
 
-        int32_t skipInterval;
-        int32_t maxSkipLevels;
-        DefaultSkipListReaderPtr skipListReader;
+protected:
+    SegmentReaderWeakPtr _parent;
+    IndexInputPtr _freqStream;
+    int32_t count;
+    int32_t df;
+    BitVectorPtr deletedDocs;
+    int32_t _doc;
+    int32_t _freq;
 
-        int64_t freqBasePointer;
-        int64_t proxBasePointer;
+    int32_t skipInterval;
+    int32_t maxSkipLevels;
+    DefaultSkipListReaderPtr skipListReader;
 
-        int64_t skipPointer;
-        bool haveSkipped;
+    int64_t freqBasePointer;
+    int64_t proxBasePointer;
 
-        bool currentFieldStoresPayloads;
-        bool currentFieldOmitTermFreqAndPositions;
+    int64_t skipPointer;
+    bool haveSkipped;
 
-    public:
-        /// Sets this to the data for a term.
-        virtual void seek(const TermPtr& term);
+    bool currentFieldStoresPayloads;
+    bool currentFieldOmitTermFreqAndPositions;
 
-        /// Sets this to the data for the current term in a {@link TermEnum}.
-        virtual void seek(const TermEnumPtr& termEnum);
+public:
+    /// Sets this to the data for a term.
+    virtual void seek(const TermPtr& term);
 
-        virtual void seek(const TermInfoPtr& ti, const TermPtr& term);
+    /// Sets this to the data for the current term in a {@link TermEnum}.
+    virtual void seek(const TermEnumPtr& termEnum);
 
-        virtual void close();
+    virtual void seek(const TermInfoPtr& ti, const TermPtr& term);
 
-        /// Returns the current document number.
-        virtual int32_t doc();
+    virtual void close();
 
-        /// Returns the frequency of the term within the current document.
-        virtual int32_t freq();
+    /// Returns the current document number.
+    virtual int32_t doc();
 
-        /// Moves to the next pair in the enumeration.
-        virtual bool next();
+    /// Returns the frequency of the term within the current document.
+    virtual int32_t freq();
 
-        /// Optimized implementation.
-        virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    /// Moves to the next pair in the enumeration.
+    virtual bool next();
 
-        /// Optimized implementation.
-        virtual bool skipTo(int32_t target);
+    /// Optimized implementation.
+    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
 
-        /// Used for testing
-        virtual IndexInputPtr freqStream();
-        virtual void freqStream(const IndexInputPtr& freqStream);
+    /// Optimized implementation.
+    virtual bool skipTo(int32_t target);
 
-    protected:
-        virtual void skippingDoc();
-        virtual int32_t readNoTf(Collection<int32_t> docs, Collection<int32_t> freqs, int32_t length);
+    /// Used for testing
+    virtual IndexInputPtr freqStream();
+    virtual void freqStream(const IndexInputPtr& freqStream);
 
-        /// Overridden by SegmentTermPositions to skip in prox stream.
-        virtual void skipProx(int64_t proxPointer, int32_t payloadLength);
-    };
+protected:
+    virtual void skippingDoc();
+    virtual int32_t readNoTf(Collection<int32_t> docs, Collection<int32_t> freqs, int32_t length);
+
+    /// Overridden by SegmentTermPositions to skip in prox stream.
+    virtual void skipProx(int64_t proxPointer, int32_t payloadLength);
+};
+
 }
 
 #endif

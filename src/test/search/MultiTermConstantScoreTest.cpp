@@ -28,32 +28,30 @@
 
 using namespace Lucene;
 
-class MultiTermConstantScoreTest : public BaseTestRangeFilterFixture
-{
+class MultiTermConstantScoreTest : public BaseTestRangeFilterFixture {
 public:
-    MultiTermConstantScoreTest()
-    {
+    MultiTermConstantScoreTest() {
         Collection<String> data = newCollection<String>(
-            L"A 1 2 3 4 5 6",
-            L"Z       4 5 6",
-            L"",
-            L"B   2   4 5 6",
-            L"Y     3   5 6",
-            L"",
-            L"C     3     6",
-            L"X       4 5 6"
-        );
+                                      L"A 1 2 3 4 5 6",
+                                      L"Z       4 5 6",
+                                      L"",
+                                      L"B   2   4 5 6",
+                                      L"Y     3   5 6",
+                                      L"",
+                                      L"C     3     6",
+                                      L"X       4 5 6"
+                                  );
 
         small = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(small, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
 
-        for (int32_t i = 0; i < data.size(); ++i)
-        {
+        for (int32_t i = 0; i < data.size(); ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(L"id", StringUtils::toString(i), Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
             doc->add(newLucene<Field>(L"all", L"all", Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-            if (!data[i].empty())
+            if (!data[i].empty()) {
                 doc->add(newLucene<Field>(L"data", data[i], Field::STORE_YES, Field::INDEX_ANALYZED));
+            }
             writer->addDocument(doc);
         }
 
@@ -61,8 +59,7 @@ public:
         writer->close();
     }
 
-    virtual ~MultiTermConstantScoreTest()
-    {
+    virtual ~MultiTermConstantScoreTest() {
     }
 
 public:
@@ -71,36 +68,31 @@ public:
     DirectoryPtr small;
 
 public:
-    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih)
-    {
+    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih) {
         TermRangeQueryPtr query = newLucene<TermRangeQuery>(f, l, h, il, ih);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
 
-    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, const RewriteMethodPtr& method)
-    {
+    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, const RewriteMethodPtr& method) {
         TermRangeQueryPtr query = newLucene<TermRangeQuery>(f, l, h, il, ih);
         query->setRewriteMethod(method);
         return query;
     }
 
-    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, const CollatorPtr& c)
-    {
+    QueryPtr csrq(const String& f, const String& l, const String& h, bool il, bool ih, const CollatorPtr& c) {
         TermRangeQueryPtr query = newLucene<TermRangeQuery>(f, l, h, il, ih, c);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
 
-    QueryPtr cspq(const TermPtr& prefix)
-    {
+    QueryPtr cspq(const TermPtr& prefix) {
         PrefixQueryPtr query = newLucene<PrefixQuery>(prefix);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
     }
 
-    QueryPtr cswcq(const TermPtr& wild)
-    {
+    QueryPtr cswcq(const TermPtr& wild) {
         WildcardQueryPtr query = newLucene<WildcardQuery>(wild);
         query->setRewriteMethod(MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE());
         return query;
@@ -110,8 +102,7 @@ public:
 /// threshold for comparing doubles
 const double MultiTermConstantScoreTest::SCORE_COMP_THRESH = 1e-6f;
 
-TEST_F(MultiTermConstantScoreTest, testBasics)
-{
+TEST_F(MultiTermConstantScoreTest, testBasics) {
     QueryUtils::check(csrq(L"data", L"1", L"6", true, true));
     QueryUtils::check(csrq(L"data", L"A", L"Z", true, true));
     QueryUtils::checkUnequal(csrq(L"data", L"1", L"6", true, true), csrq(L"data", L"A", L"Z", true, true));
@@ -123,16 +114,14 @@ TEST_F(MultiTermConstantScoreTest, testBasics)
     QueryUtils::checkUnequal(cswcq(newLucene<Term>(L"data", L"pre*n?t")), cswcq(newLucene<Term>(L"data", L"pr*t?j")));
 }
 
-TEST_F(MultiTermConstantScoreTest, testBasicsRngCollating)
-{
+TEST_F(MultiTermConstantScoreTest, testBasicsRngCollating) {
     CollatorPtr c = newLucene<Collator>(std::locale());
     QueryUtils::check(csrq(L"data", L"1", L"6", true, true, c));
     QueryUtils::check(csrq(L"data", L"A", L"Z", true, true, c));
     QueryUtils::checkUnequal(csrq(L"data", L"1", L"6", true, true, c), csrq(L"data", L"A", L"Z", true, true, c));
 }
 
-TEST_F(MultiTermConstantScoreTest, testEqualScores)
-{
+TEST_F(MultiTermConstantScoreTest, testEqualScores) {
     IndexReaderPtr reader = IndexReader::open(small, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -141,59 +130,54 @@ TEST_F(MultiTermConstantScoreTest, testEqualScores)
     int32_t numHits = result.size();
     EXPECT_EQ(6, numHits);
     double score = result[0]->score;
-    for (int32_t i = 1; i < numHits; ++i)
+    for (int32_t i = 1; i < numHits; ++i) {
         EXPECT_EQ(score, result[i]->score);
+    }
 
     result = search->search(csrq(L"data", L"1", L"6", true, true, MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE()), FilterPtr(), 1000)->scoreDocs;
     numHits = result.size();
     EXPECT_EQ(6, numHits);
-    for (int32_t i = 0; i < numHits; ++i)
+    for (int32_t i = 0; i < numHits; ++i) {
         EXPECT_EQ(score, result[i]->score);
+    }
 }
 
-namespace TestBoost
-{
-    class TestCollector : public Collector
-    {
-    public:
-        TestCollector()
-        {
-            base = 0;
-        }
+namespace TestBoost {
 
-        virtual ~TestCollector()
-        {
-        }
+class TestCollector : public Collector {
+public:
+    TestCollector() {
+        base = 0;
+    }
 
-    protected:
-        int32_t base;
-        ScorerPtr scorer;
+    virtual ~TestCollector() {
+    }
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+protected:
+    int32_t base;
+    ScorerPtr scorer;
 
-        virtual void collect(int32_t doc)
-        {
-            EXPECT_EQ(1.0, scorer->score());
-        }
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-            base = docBase;
-        }
+    virtual void collect(int32_t doc) {
+        EXPECT_EQ(1.0, scorer->score());
+    }
 
-        virtual bool acceptsDocsOutOfOrder()
-        {
-            return true;
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+        base = docBase;
+    }
+
+    virtual bool acceptsDocsOutOfOrder() {
+        return true;
+    }
+};
+
 }
 
-TEST_F(MultiTermConstantScoreTest, testBoost)
-{
+TEST_F(MultiTermConstantScoreTest, testBoost) {
     IndexReaderPtr reader = IndexReader::open(small, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -242,8 +226,7 @@ TEST_F(MultiTermConstantScoreTest, testBoost)
     EXPECT_TRUE(hits[0]->score > hits[1]->score);
 }
 
-TEST_F(MultiTermConstantScoreTest, testBooleanOrderUnAffected)
-{
+TEST_F(MultiTermConstantScoreTest, testBooleanOrderUnAffected) {
     IndexReaderPtr reader = IndexReader::open(small, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -262,12 +245,12 @@ TEST_F(MultiTermConstantScoreTest, testBooleanOrderUnAffected)
     Collection<ScoreDocPtr> actual = search->search(q, FilterPtr(), 1000)->scoreDocs;
 
     EXPECT_EQ(numHits, actual.size());
-    for (int32_t i = 0; i < numHits; ++i)
+    for (int32_t i = 0; i < numHits; ++i) {
         EXPECT_EQ(expected[i]->doc, actual[i]->doc);
+    }
 }
 
-TEST_F(MultiTermConstantScoreTest, testRangeQueryId)
-{
+TEST_F(MultiTermConstantScoreTest, testRangeQueryId) {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -393,8 +376,7 @@ TEST_F(MultiTermConstantScoreTest, testRangeQueryId)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(MultiTermConstantScoreTest, testRangeQueryIdCollating)
-{
+TEST_F(MultiTermConstantScoreTest, testRangeQueryIdCollating) {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -476,8 +458,7 @@ TEST_F(MultiTermConstantScoreTest, testRangeQueryIdCollating)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(MultiTermConstantScoreTest, testRangeQueryRand)
-{
+TEST_F(MultiTermConstantScoreTest, testRangeQueryRand) {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -537,8 +518,7 @@ TEST_F(MultiTermConstantScoreTest, testRangeQueryRand)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(MultiTermConstantScoreTest, testRangeQueryRandCollating)
-{
+TEST_F(MultiTermConstantScoreTest, testRangeQueryRandCollating) {
     // using the unsigned index because collation seems to ignore hyphens
     IndexReaderPtr reader = IndexReader::open(unsignedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);

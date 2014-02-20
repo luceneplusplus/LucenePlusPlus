@@ -10,59 +10,56 @@
 #include "LuceneObject.h"
 #include <boost/filesystem/fstream.hpp>
 
-namespace Lucene
-{
-    /// Utility class to support streaming info messages.
-    class LPPAPI InfoStream : public LuceneObject
-    {
-    protected:
-        InfoStream();
+namespace Lucene {
 
-    public:
-        virtual ~InfoStream();
-        LUCENE_CLASS(InfoStream);
+/// Utility class to support streaming info messages.
+class LPPAPI InfoStream : public LuceneObject {
+protected:
+    InfoStream();
 
-    public:
-        virtual InfoStream& operator<< (const String& t) = 0;
-    };
+public:
+    virtual ~InfoStream();
+    LUCENE_CLASS(InfoStream);
 
-    /// Stream override to write messages to a file.
-    class LPPAPI InfoStreamFile : public InfoStream
-    {
-    public:
-        InfoStreamFile(const String& path);
-        virtual ~InfoStreamFile();
+public:
+    virtual InfoStream& operator<< (const String& t) = 0;
+};
 
-        LUCENE_CLASS(InfoStreamFile);
+/// Stream override to write messages to a file.
+class LPPAPI InfoStreamFile : public InfoStream {
+public:
+    InfoStreamFile(const String& path);
+    virtual ~InfoStreamFile();
 
-    protected:
-        boost::filesystem::wofstream file;
+    LUCENE_CLASS(InfoStreamFile);
 
-    public:
-        virtual InfoStreamFile& operator<< (const String& t);
-    };
+protected:
+    boost::filesystem::wofstream file;
 
-    /// Stream override to write messages to a std::cout.
-    class LPPAPI InfoStreamOut : public InfoStream
-    {
-    public:
-        virtual ~InfoStreamOut();
-        LUCENE_CLASS(InfoStreamOut);
+public:
+    virtual InfoStreamFile& operator<< (const String& t);
+};
 
-    public:
-        virtual InfoStreamOut& operator<< (const String& t);
-    };
+/// Stream override to write messages to a std::cout.
+class LPPAPI InfoStreamOut : public InfoStream {
+public:
+    virtual ~InfoStreamOut();
+    LUCENE_CLASS(InfoStreamOut);
 
-    /// Null stream override to eat messages.
-    class LPPAPI InfoStreamNull : public InfoStream
-    {
-    public:
-        virtual ~InfoStreamNull();
-        LUCENE_CLASS(InfoStreamNull);
+public:
+    virtual InfoStreamOut& operator<< (const String& t);
+};
 
-    public:
-        virtual InfoStreamNull& operator<< (const String& t);
-    };
+/// Null stream override to eat messages.
+class LPPAPI InfoStreamNull : public InfoStream {
+public:
+    virtual ~InfoStreamNull();
+    LUCENE_CLASS(InfoStreamNull);
+
+public:
+    virtual InfoStreamNull& operator<< (const String& t);
+};
+
 }
 
 #endif

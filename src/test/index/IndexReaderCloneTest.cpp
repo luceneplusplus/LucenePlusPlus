@@ -31,8 +31,7 @@ using namespace Lucene;
 /// of the deletedDocs and norms is implemented properly
 typedef LuceneTestFixture IndexReaderCloneTest;
 
-static DocumentPtr createDocument(int32_t n, int32_t numFields)
-{
+static DocumentPtr createDocument(int32_t n, int32_t numFields) {
     StringStream sb;
     DocumentPtr doc = newLucene<Document>();
     sb << L"a" << n;
@@ -40,53 +39,50 @@ static DocumentPtr createDocument(int32_t n, int32_t numFields)
     doc->add(newLucene<Field>(L"fielda", sb.str(), Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
     doc->add(newLucene<Field>(L"fieldb", sb.str(), Field::STORE_YES, Field::INDEX_NO));
     sb << L" b" << n;
-    for (int32_t i = 1; i < numFields; ++i)
+    for (int32_t i = 1; i < numFields; ++i) {
         doc->add(newLucene<Field>(L"field" + StringUtils::toString(i + 1), sb.str(), Field::STORE_YES, Field::INDEX_ANALYZED));
+    }
     return doc;
 }
 
-static void createIndex(const DirectoryPtr& dir, bool multiSegment)
-{
+static void createIndex(const DirectoryPtr& dir, bool multiSegment) {
     IndexWriter::unlock(dir);
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
 
     w->setMergePolicy(newLucene<LogDocMergePolicy>(w));
 
-    for (int32_t i = 0; i < 100; ++i)
-    {
+    for (int32_t i = 0; i < 100; ++i) {
         w->addDocument(createDocument(i, 4));
-        if (multiSegment && (i % 10) == 0)
+        if (multiSegment && (i % 10) == 0) {
             w->commit();
+        }
     }
 
-    if (!multiSegment)
+    if (!multiSegment) {
         w->optimize();
+    }
 
     w->close();
 
     IndexReaderPtr r = IndexReader::open(dir, false);
-    if (multiSegment)
+    if (multiSegment) {
         EXPECT_TRUE(r->getSequentialSubReaders().size() > 1);
-    else
+    } else {
         EXPECT_EQ(r->getSequentialSubReaders().size(), 1);
+    }
     r->close();
 }
 
-static bool isReadOnly(const IndexReaderPtr& r)
-{
+static bool isReadOnly(const IndexReaderPtr& r) {
     return (MiscUtils::typeOf<ReadOnlySegmentReader>(r) || MiscUtils::typeOf<ReadOnlyDirectoryReader>(r));
 }
 
-static bool deleteWorked(int32_t doc, const IndexReaderPtr& r)
-{
+static bool deleteWorked(int32_t doc, const IndexReaderPtr& r) {
     bool exception = false;
-    try
-    {
+    try {
         // trying to delete from the original reader should throw an exception
         r->deleteDocument(doc);
-    }
-    catch (...)
-    {
+    } catch (...) {
         exception = true;
     }
     return !exception;
@@ -98,8 +94,7 @@ static bool deleteWorked(int32_t doc, const IndexReaderPtr& r)
 /// 4. Verify the norms are not the same on each reader
 /// 5. Verify the doc deleted is only in the cloned reader
 /// 6. Try to delete a document in the original reader, an exception should be thrown
-static void performDefaultTests(const IndexReaderPtr& r1)
-{
+static void performDefaultTests(const IndexReaderPtr& r1) {
     double norm1 = Similarity::decodeNorm(r1->norms(L"field1")[4]);
 
     IndexReaderPtr pr1Clone = boost::dynamic_pointer_cast<IndexReader>(r1->clone());
@@ -112,85 +107,71 @@ static void performDefaultTests(const IndexReaderPtr& r1)
     EXPECT_TRUE(pr1Clone->isDeleted(10));
 
     // try to update the original reader, which should throw an exception
-    try
-    {
+    try {
         r1->deleteDocument(11);
-    }
-    catch (LuceneException& e)
-    {
+    } catch (LuceneException& e) {
         EXPECT_TRUE(check_exception(LuceneException::Null)(e));
     }
     pr1Clone->close();
 }
 
-static void modifyIndex(int32_t i, const DirectoryPtr& dir)
-{
-    switch (i)
-    {
-        case 0:
-        {
-            IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-            w->deleteDocuments(newLucene<Term>(L"field2", L"a11"));
-            w->deleteDocuments(newLucene<Term>(L"field2", L"b30"));
-            w->close();
-            break;
-        }
-        case 1:
-        {
-            IndexReaderPtr reader = IndexReader::open(dir, false);
-            reader->setNorm(4, L"field1", (uint8_t)123);
-            reader->setNorm(44, L"field2", (uint8_t)222);
-            reader->setNorm(44, L"field4", (uint8_t)22);
-            reader->close();
-            break;
-        }
-        case 2:
-        {
-            IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-            w->optimize();
-            w->close();
-            break;
-        }
-        case 3:
-        {
-            IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-            w->addDocument(createDocument(101, 4));
-            w->optimize();
-            w->addDocument(createDocument(102, 4));
-            w->addDocument(createDocument(103, 4));
-            w->close();
-            break;
-        }
-        case 4:
-        {
-            IndexReaderPtr reader = IndexReader::open(dir, false);
-            reader->setNorm(5, L"field1", (uint8_t)123);
-            reader->setNorm(55, L"field2", (uint8_t)222);
-            reader->close();
-            break;
-        }
-        case 5:
-        {
-            IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
-            w->addDocument(createDocument(101, 4));
-            w->close();
-            break;
-        }
+static void modifyIndex(int32_t i, const DirectoryPtr& dir) {
+    switch (i) {
+    case 0: {
+        IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
+        w->deleteDocuments(newLucene<Term>(L"field2", L"a11"));
+        w->deleteDocuments(newLucene<Term>(L"field2", L"b30"));
+        w->close();
+        break;
+    }
+    case 1: {
+        IndexReaderPtr reader = IndexReader::open(dir, false);
+        reader->setNorm(4, L"field1", (uint8_t)123);
+        reader->setNorm(44, L"field2", (uint8_t)222);
+        reader->setNorm(44, L"field4", (uint8_t)22);
+        reader->close();
+        break;
+    }
+    case 2: {
+        IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
+        w->optimize();
+        w->close();
+        break;
+    }
+    case 3: {
+        IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
+        w->addDocument(createDocument(101, 4));
+        w->optimize();
+        w->addDocument(createDocument(102, 4));
+        w->addDocument(createDocument(103, 4));
+        w->close();
+        break;
+    }
+    case 4: {
+        IndexReaderPtr reader = IndexReader::open(dir, false);
+        reader->setNorm(5, L"field1", (uint8_t)123);
+        reader->setNorm(55, L"field2", (uint8_t)222);
+        reader->close();
+        break;
+    }
+    case 5: {
+        IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthLIMITED);
+        w->addDocument(createDocument(101, 4));
+        w->close();
+        break;
+    }
     }
 }
 
-static void checkDelDocsRefCountEquals(int32_t refCount, const SegmentReaderPtr& reader)
-{
+static void checkDelDocsRefCountEquals(int32_t refCount, const SegmentReaderPtr& reader) {
     EXPECT_EQ(refCount, reader->deletedDocsRef->refCount());
 }
 
-static void checkDocDeleted(const SegmentReaderPtr& reader, const SegmentReaderPtr& reader2, int32_t doc)
-{
+static void checkDocDeleted(const SegmentReaderPtr& reader, const SegmentReaderPtr& reader2, int32_t doc) {
     EXPECT_EQ(reader->isDeleted(doc), reader2->isDeleted(doc));
 }
 
-TEST_F(IndexReaderCloneTest, testCloneReadOnlySegmentReader)
-{
+TEST_F(IndexReaderCloneTest, testCloneReadOnlySegmentReader) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
@@ -203,8 +184,7 @@ TEST_F(IndexReaderCloneTest, testCloneReadOnlySegmentReader)
 }
 
 /// Open non-readOnly reader1, clone to non-readOnly reader2, make sure we can change reader2
-TEST_F(IndexReaderCloneTest, testCloneNoChangesStillReadOnly)
-{
+TEST_F(IndexReaderCloneTest, testCloneNoChangesStillReadOnly) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
@@ -216,8 +196,7 @@ TEST_F(IndexReaderCloneTest, testCloneNoChangesStillReadOnly)
 }
 
 /// Open non-readOnly reader1, clone to non-readOnly reader2, make sure we can change reader1
-TEST_F(IndexReaderCloneTest, testCloneWriteToOrig)
-{
+TEST_F(IndexReaderCloneTest, testCloneWriteToOrig) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
@@ -229,8 +208,7 @@ TEST_F(IndexReaderCloneTest, testCloneWriteToOrig)
 }
 
 /// Open non-readOnly reader1, clone to non-readOnly reader2, make sure we can change reader2
-TEST_F(IndexReaderCloneTest, testCloneWriteToClone)
-{
+TEST_F(IndexReaderCloneTest, testCloneWriteToClone) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
@@ -247,8 +225,7 @@ TEST_F(IndexReaderCloneTest, testCloneWriteToClone)
 }
 
 /// Create single-segment index, open non-readOnly SegmentReader, add docs, reopen to multireader, then do delete
-TEST_F(IndexReaderCloneTest, testReopenSegmentReaderToMultiReader)
-{
+TEST_F(IndexReaderCloneTest, testReopenSegmentReaderToMultiReader) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr reader1 = IndexReader::open(dir1, false);
@@ -265,8 +242,7 @@ TEST_F(IndexReaderCloneTest, testReopenSegmentReaderToMultiReader)
 }
 
 /// Open non-readOnly reader1, clone to readOnly reader2
-TEST_F(IndexReaderCloneTest, testCloneWriteableToReadOnly)
-{
+TEST_F(IndexReaderCloneTest, testCloneWriteableToReadOnly) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
@@ -282,8 +258,7 @@ TEST_F(IndexReaderCloneTest, testCloneWriteableToReadOnly)
 }
 
 /// Open non-readOnly reader1, reopen to readOnly reader2
-TEST_F(IndexReaderCloneTest, testReopenWriteableToReadOnly)
-{
+TEST_F(IndexReaderCloneTest, testReopenWriteableToReadOnly) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
@@ -301,8 +276,7 @@ TEST_F(IndexReaderCloneTest, testReopenWriteableToReadOnly)
 }
 
 /// Open readOnly reader1, clone to non-readOnly reader2
-TEST_F(IndexReaderCloneTest, testCloneReadOnlyToWriteable)
-{
+TEST_F(IndexReaderCloneTest, testCloneReadOnlyToWriteable) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader1 = IndexReader::open(dir1, true);
@@ -319,8 +293,7 @@ TEST_F(IndexReaderCloneTest, testCloneReadOnlyToWriteable)
 }
 
 /// Open non-readOnly reader1 on multi-segment index, then optimize the index, then clone to readOnly reader2
-TEST_F(IndexReaderCloneTest, testReadOnlyCloneAfterOptimize)
-{
+TEST_F(IndexReaderCloneTest, testReadOnlyCloneAfterOptimize) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader1 = IndexReader::open(dir1, false);
@@ -334,8 +307,7 @@ TEST_F(IndexReaderCloneTest, testReadOnlyCloneAfterOptimize)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testCloneReadOnlyDirectoryReader)
-{
+TEST_F(IndexReaderCloneTest, testCloneReadOnlyDirectoryReader) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     IndexReaderPtr reader = IndexReader::open(dir1, false);
@@ -346,8 +318,7 @@ TEST_F(IndexReaderCloneTest, testCloneReadOnlyDirectoryReader)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testParallelReader)
-{
+TEST_F(IndexReaderCloneTest, testParallelReader) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
@@ -366,8 +337,7 @@ TEST_F(IndexReaderCloneTest, testParallelReader)
     dir2->close();
 }
 
-TEST_F(IndexReaderCloneTest, testMixedReaders)
-{
+TEST_F(IndexReaderCloneTest, testMixedReaders) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
     DirectoryPtr dir2 = newLucene<MockRAMDirectory>();
@@ -384,8 +354,7 @@ TEST_F(IndexReaderCloneTest, testMixedReaders)
     dir2->close();
 }
 
-TEST_F(IndexReaderCloneTest, testSegmentReaderUndeleteall)
-{
+TEST_F(IndexReaderCloneTest, testSegmentReaderUndeleteall) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     SegmentReaderPtr origSegmentReader = SegmentReader::getOnlySegmentReader(dir1);
@@ -398,8 +367,7 @@ TEST_F(IndexReaderCloneTest, testSegmentReaderUndeleteall)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testSegmentReaderCloseReferencing)
-{
+TEST_F(IndexReaderCloneTest, testSegmentReaderCloseReferencing) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     SegmentReaderPtr origSegmentReader = SegmentReader::getOnlySegmentReader(dir1);
@@ -417,8 +385,7 @@ TEST_F(IndexReaderCloneTest, testSegmentReaderCloseReferencing)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testSegmentReaderDelDocsReferenceCounting)
-{
+TEST_F(IndexReaderCloneTest, testSegmentReaderDelDocsReferenceCounting) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr origReader = IndexReader::open(dir1, false);
@@ -446,12 +413,9 @@ TEST_F(IndexReaderCloneTest, testSegmentReaderDelDocsReferenceCounting)
     EXPECT_TRUE(!origSegmentReader->isDeleted(2)); // doc 2 should not be deleted in original segmentreader
     EXPECT_TRUE(clonedSegmentReader->isDeleted(2)); // doc 2 should be deleted in cloned segmentreader
 
-    try
-    {
+    try {
         origReader->deleteDocument(4);
-    }
-    catch (LockObtainFailedException& e)
-    {
+    } catch (LockObtainFailedException& e) {
         EXPECT_TRUE(check_exception(LuceneException::LockObtainFailed)(e));
     }
 
@@ -473,8 +437,7 @@ TEST_F(IndexReaderCloneTest, testSegmentReaderDelDocsReferenceCounting)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testCloneWithDeletes)
-{
+TEST_F(IndexReaderCloneTest, testCloneWithDeletes) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr origReader = IndexReader::open(dir1, false);
@@ -490,8 +453,7 @@ TEST_F(IndexReaderCloneTest, testCloneWithDeletes)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testCloneWithSetNorm)
-{
+TEST_F(IndexReaderCloneTest, testCloneWithSetNorm) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr orig = IndexReader::open(dir1, false);
@@ -510,8 +472,7 @@ TEST_F(IndexReaderCloneTest, testCloneWithSetNorm)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testCloneSubreaders)
-{
+TEST_F(IndexReaderCloneTest, testCloneSubreaders) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, true);
 
@@ -521,16 +482,17 @@ TEST_F(IndexReaderCloneTest, testCloneSubreaders)
     EXPECT_TRUE(subs.size() > 1);
 
     Collection<IndexReaderPtr> clones = Collection<IndexReaderPtr>::newInstance(subs.size());
-    for (int32_t x = 0; x < subs.size(); ++x)
+    for (int32_t x = 0; x < subs.size(); ++x) {
         clones[x] = boost::dynamic_pointer_cast<IndexReader>(subs[x]->clone());
+    }
     reader->close();
-    for (int32_t x = 0; x < subs.size(); ++x)
+    for (int32_t x = 0; x < subs.size(); ++x) {
         clones[x]->close();
+    }
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testIncDecRef)
-{
+TEST_F(IndexReaderCloneTest, testIncDecRef) {
     DirectoryPtr dir1 = newLucene<MockRAMDirectory>();
     createIndex(dir1, false);
     IndexReaderPtr r1 = IndexReader::open(dir1, false);
@@ -547,8 +509,7 @@ TEST_F(IndexReaderCloneTest, testIncDecRef)
     dir1->close();
 }
 
-TEST_F(IndexReaderCloneTest, testCloseStoredFields)
-{
+TEST_F(IndexReaderCloneTest, testCloseStoredFields) {
     DirectoryPtr dir = newLucene<MockRAMDirectory>();
     IndexWriterPtr w = newLucene<IndexWriter>(dir, newLucene<SimpleAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
     w->setUseCompoundFile(false);

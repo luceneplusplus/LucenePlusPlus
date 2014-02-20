@@ -8,35 +8,31 @@
 #include "MockLockFactory.h"
 #include "MockLock.h"
 
-namespace Lucene
-{
-    MockLockFactory::MockLockFactory()
-    {
-        locksCreated = MapStringLock::newInstance();
-        lockPrefixSet = false;
-        makeLockCount = 0;
-    }
+namespace Lucene {
 
-    MockLockFactory::~MockLockFactory()
-    {
-    }
+MockLockFactory::MockLockFactory() {
+    locksCreated = MapStringLock::newInstance();
+    lockPrefixSet = false;
+    makeLockCount = 0;
+}
 
-    void MockLockFactory::setLockPrefix(const String& lockPrefix)
-    {
-        LockFactory::setLockPrefix(lockPrefix);
-        lockPrefixSet = true;
-    }
+MockLockFactory::~MockLockFactory() {
+}
 
-    LockPtr MockLockFactory::makeLock(const String& lockName)
-    {
-        LockPtr lock(newLucene<MockLock>());
-        SyncLock createdLock(&locksCreated);
-        locksCreated.put(lockName, lock);
-        ++makeLockCount;
-        return lock;
-    }
+void MockLockFactory::setLockPrefix(const String& lockPrefix) {
+    LockFactory::setLockPrefix(lockPrefix);
+    lockPrefixSet = true;
+}
 
-    void MockLockFactory::clearLock(const String& lockName)
-    {
-    }
+LockPtr MockLockFactory::makeLock(const String& lockName) {
+    LockPtr lock(newLucene<MockLock>());
+    SyncLock createdLock(&locksCreated);
+    locksCreated.put(lockName, lock);
+    ++makeLockCount;
+    return lock;
+}
+
+void MockLockFactory::clearLock(const String& lockName) {
+}
+
 }

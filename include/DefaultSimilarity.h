@@ -9,52 +9,52 @@
 
 #include "Similarity.h"
 
-namespace Lucene
-{
-    /// Default scoring implementation.
-    class LPPAPI DefaultSimilarity : public Similarity
-    {
-    public:
-        DefaultSimilarity();
-        virtual ~DefaultSimilarity();
+namespace Lucene {
 
-        LUCENE_CLASS(DefaultSimilarity);
+/// Default scoring implementation.
+class LPPAPI DefaultSimilarity : public Similarity {
+public:
+    DefaultSimilarity();
+    virtual ~DefaultSimilarity();
 
-    protected:
-        bool discountOverlaps; // Default false
+    LUCENE_CLASS(DefaultSimilarity);
 
-    public:
-        /// Implemented as state->getBoost() * lengthNorm(numTerms), where numTerms is {@link
-        /// FieldInvertState#getLength()} if {@link #setDiscountOverlaps} is false, else it's {@link
-        /// FieldInvertState#getLength()} - {@link FieldInvertState#getNumOverlap()}.
-        virtual double computeNorm(const String& fieldName, const FieldInvertStatePtr& state);
+protected:
+    bool discountOverlaps; // Default false
 
-        /// Implemented as 1 / sqrt(numTerms).
-        virtual double lengthNorm(const String& fieldName, int32_t numTokens);
+public:
+    /// Implemented as state->getBoost() * lengthNorm(numTerms), where numTerms is {@link
+    /// FieldInvertState#getLength()} if {@link #setDiscountOverlaps} is false, else it's {@link
+    /// FieldInvertState#getLength()} - {@link FieldInvertState#getNumOverlap()}.
+    virtual double computeNorm(const String& fieldName, const FieldInvertStatePtr& state);
 
-        /// Implemented as 1 / sqrt(sumOfSquaredWeights).
-        virtual double queryNorm(double sumOfSquaredWeights);
+    /// Implemented as 1 / sqrt(numTerms).
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens);
 
-        /// Implemented as sqrt(freq).
-        virtual double tf(double freq);
+    /// Implemented as 1 / sqrt(sumOfSquaredWeights).
+    virtual double queryNorm(double sumOfSquaredWeights);
 
-        /// Implemented as 1 / (distance + 1).
-        virtual double sloppyFreq(int32_t distance);
+    /// Implemented as sqrt(freq).
+    virtual double tf(double freq);
 
-        /// Implemented as log(numDocs / (docFreq + 1)) + 1.
-        virtual double idf(int32_t docFreq, int32_t numDocs);
+    /// Implemented as 1 / (distance + 1).
+    virtual double sloppyFreq(int32_t distance);
 
-        /// Implemented as overlap / maxOverlap.
-        virtual double coord(int32_t overlap, int32_t maxOverlap);
+    /// Implemented as log(numDocs / (docFreq + 1)) + 1.
+    virtual double idf(int32_t docFreq, int32_t numDocs);
 
-        /// Determines whether overlap tokens (Tokens with 0 position increment) are ignored when computing
-        /// norm.  By default this is false, meaning overlap tokens are counted just like non-overlap tokens.
-        /// @see #computeNorm
-        void setDiscountOverlaps(bool v);
+    /// Implemented as overlap / maxOverlap.
+    virtual double coord(int32_t overlap, int32_t maxOverlap);
 
-        /// @see #setDiscountOverlaps
-        bool getDiscountOverlaps();
-    };
+    /// Determines whether overlap tokens (Tokens with 0 position increment) are ignored when computing
+    /// norm.  By default this is false, meaning overlap tokens are counted just like non-overlap tokens.
+    /// @see #computeNorm
+    void setDiscountOverlaps(bool v);
+
+    /// @see #setDiscountOverlaps
+    bool getDiscountOverlaps();
+};
+
 }
 
 #endif

@@ -9,48 +9,45 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class ConstantScoreFilterRewrite : public RewriteMethod
-    {
-    public:
-        virtual ~ConstantScoreFilterRewrite();
-        LUCENE_CLASS(ConstantScoreFilterRewrite);
+namespace Lucene {
 
-    public:
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
-    };
+class ConstantScoreFilterRewrite : public RewriteMethod {
+public:
+    virtual ~ConstantScoreFilterRewrite();
+    LUCENE_CLASS(ConstantScoreFilterRewrite);
 
-    class ScoringBooleanQueryRewrite : public RewriteMethod
-    {
-    public:
-        virtual ~ScoringBooleanQueryRewrite();
-        LUCENE_CLASS(ScoringBooleanQueryRewrite);
+public:
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
+};
 
-    public:
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
-    };
+class ScoringBooleanQueryRewrite : public RewriteMethod {
+public:
+    virtual ~ScoringBooleanQueryRewrite();
+    LUCENE_CLASS(ScoringBooleanQueryRewrite);
 
-    class ConstantScoreBooleanQueryRewrite : public ScoringBooleanQueryRewrite
-    {
-    public:
-        virtual ~ConstantScoreBooleanQueryRewrite();
-        LUCENE_CLASS(ConstantScoreBooleanQueryRewrite);
+public:
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
+};
 
-    public:
-        virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
-    };
+class ConstantScoreBooleanQueryRewrite : public ScoringBooleanQueryRewrite {
+public:
+    virtual ~ConstantScoreBooleanQueryRewrite();
+    LUCENE_CLASS(ConstantScoreBooleanQueryRewrite);
 
-    class ConstantScoreAutoRewriteDefault : public ConstantScoreAutoRewrite
-    {
-    public:
-        virtual ~ConstantScoreAutoRewriteDefault();
-        LUCENE_CLASS(ConstantScoreAutoRewriteDefault);
+public:
+    virtual QueryPtr rewrite(const IndexReaderPtr& reader, const MultiTermQueryPtr& query);
+};
 
-    public:
-        virtual void setTermCountCutoff(int32_t count);
-        virtual void setDocCountPercent(double percent);
-    };
+class ConstantScoreAutoRewriteDefault : public ConstantScoreAutoRewrite {
+public:
+    virtual ~ConstantScoreAutoRewriteDefault();
+    LUCENE_CLASS(ConstantScoreAutoRewriteDefault);
+
+public:
+    virtual void setTermCountCutoff(int32_t count);
+    virtual void setDocCountPercent(double percent);
+};
+
 }
 
 #endif

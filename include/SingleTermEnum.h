@@ -9,31 +9,31 @@
 
 #include "FilteredTermEnum.h"
 
-namespace Lucene
-{
-    /// Subclass of FilteredTermEnum for enumerating a single term.
-    ///
-    /// This can be used by {@link MultiTermQuery}s that need only visit one term, but want to preserve
-    /// MultiTermQuery semantics such as {@link MultiTermQuery#rewriteMethod}.
-    class LPPAPI SingleTermEnum : public FilteredTermEnum
-    {
-    public:
-        SingleTermEnum(const IndexReaderPtr& reader, const TermPtr& singleTerm);
-        virtual ~SingleTermEnum();
+namespace Lucene {
 
-        LUCENE_CLASS(SingleTermEnum);
+/// Subclass of FilteredTermEnum for enumerating a single term.
+///
+/// This can be used by {@link MultiTermQuery}s that need only visit one term, but want to preserve
+/// MultiTermQuery semantics such as {@link MultiTermQuery#rewriteMethod}.
+class LPPAPI SingleTermEnum : public FilteredTermEnum {
+public:
+    SingleTermEnum(const IndexReaderPtr& reader, const TermPtr& singleTerm);
+    virtual ~SingleTermEnum();
 
-    protected:
-        TermPtr singleTerm;
-        bool _endEnum;
+    LUCENE_CLASS(SingleTermEnum);
 
-    public:
-        virtual double difference();
+protected:
+    TermPtr singleTerm;
+    bool _endEnum;
 
-    protected:
-        virtual bool endEnum();
-        virtual bool termCompare(const TermPtr& term);
-    };
+public:
+    virtual double difference();
+
+protected:
+    virtual bool endEnum();
+    virtual bool termCompare(const TermPtr& term);
+};
+
 }
 
 #endif

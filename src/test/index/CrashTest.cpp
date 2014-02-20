@@ -20,8 +20,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture CrashTest;
 
-static IndexWriterPtr initIndex(const MockRAMDirectoryPtr& dir)
-{
+static IndexWriterPtr initIndex(const MockRAMDirectoryPtr& dir) {
     dir->setLockFactory(NoLockFactory::getNoLockFactory());
 
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
@@ -32,19 +31,18 @@ static IndexWriterPtr initIndex(const MockRAMDirectoryPtr& dir)
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"content", L"aaa", Field::STORE_YES, Field::INDEX_ANALYZED));
     doc->add(newLucene<Field>(L"id", L"0", Field::STORE_YES, Field::INDEX_ANALYZED));
-    for (int32_t i = 0; i < 157; ++i)
+    for (int32_t i = 0; i < 157; ++i) {
         writer->addDocument(doc);
+    }
 
     return writer;
 }
 
-static IndexWriterPtr initIndex()
-{
+static IndexWriterPtr initIndex() {
     return initIndex(newLucene<MockRAMDirectory>());
 }
 
-static void crash(const IndexWriterPtr& writer)
-{
+static void crash(const IndexWriterPtr& writer) {
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     ConcurrentMergeSchedulerPtr cms = boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler());
     dir->crash();
@@ -52,8 +50,7 @@ static void crash(const IndexWriterPtr& writer)
     dir->clearCrash();
 }
 
-TEST_F(CrashTest, testCrashWhileIndexing)
-{
+TEST_F(CrashTest, testCrashWhileIndexing) {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     crash(writer);
@@ -61,8 +58,7 @@ TEST_F(CrashTest, testCrashWhileIndexing)
     EXPECT_TRUE(reader->numDocs() < 157);
 }
 
-TEST_F(CrashTest, testWriterAfterCrash)
-{
+TEST_F(CrashTest, testWriterAfterCrash) {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     dir->setPreventDoubleWrite(false);
@@ -74,8 +70,7 @@ TEST_F(CrashTest, testWriterAfterCrash)
     EXPECT_TRUE(reader->numDocs() < 314);
 }
 
-TEST_F(CrashTest, testCrashAfterReopen)
-{
+TEST_F(CrashTest, testCrashAfterReopen) {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close();
@@ -87,8 +82,7 @@ TEST_F(CrashTest, testCrashAfterReopen)
     EXPECT_TRUE(reader->numDocs() >= 157);
 }
 
-TEST_F(CrashTest, testCrashAfterClose)
-{
+TEST_F(CrashTest, testCrashAfterClose) {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close();
@@ -98,8 +92,7 @@ TEST_F(CrashTest, testCrashAfterClose)
     EXPECT_EQ(157, reader->numDocs());
 }
 
-TEST_F(CrashTest, testCrashAfterCloseNoWait)
-{
+TEST_F(CrashTest, testCrashAfterCloseNoWait) {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
@@ -109,8 +102,7 @@ TEST_F(CrashTest, testCrashAfterCloseNoWait)
     EXPECT_EQ(157, reader->numDocs());
 }
 
-TEST_F(CrashTest, testCrashReaderDeletes)
-{
+TEST_F(CrashTest, testCrashReaderDeletes) {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);
@@ -124,8 +116,7 @@ TEST_F(CrashTest, testCrashReaderDeletes)
     EXPECT_EQ(157, reader->numDocs());
 }
 
-TEST_F(CrashTest, testCrashReaderDeletesAfterClose)
-{
+TEST_F(CrashTest, testCrashReaderDeletesAfterClose) {
     IndexWriterPtr writer = initIndex();
     MockRAMDirectoryPtr dir = boost::dynamic_pointer_cast<MockRAMDirectory>(writer->getDirectory());
     writer->close(false);

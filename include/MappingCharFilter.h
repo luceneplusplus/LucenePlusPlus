@@ -9,40 +9,40 @@
 
 #include "BaseCharFilter.h"
 
-namespace Lucene
-{
-    /// Simplistic {@link CharFilter} that applies the mappings contained in a {@link NormalizeCharMap} to the character
-    /// stream, and correcting the resulting changes to the offsets.
-    class LPPAPI MappingCharFilter : public BaseCharFilter
-    {
-    public:
-        /// Default constructor that takes a {@link CharStream}.
-        MappingCharFilter(const NormalizeCharMapPtr& normMap, const CharStreamPtr& in);
+namespace Lucene {
 
-        /// Easy-use constructor that takes a {@link Reader}.
-        MappingCharFilter(const NormalizeCharMapPtr& normMap, const ReaderPtr& in);
+/// Simplistic {@link CharFilter} that applies the mappings contained in a {@link NormalizeCharMap} to the character
+/// stream, and correcting the resulting changes to the offsets.
+class LPPAPI MappingCharFilter : public BaseCharFilter {
+public:
+    /// Default constructor that takes a {@link CharStream}.
+    MappingCharFilter(const NormalizeCharMapPtr& normMap, const CharStreamPtr& in);
 
-        virtual ~MappingCharFilter();
+    /// Easy-use constructor that takes a {@link Reader}.
+    MappingCharFilter(const NormalizeCharMapPtr& normMap, const ReaderPtr& in);
 
-        LUCENE_CLASS(MappingCharFilter);
+    virtual ~MappingCharFilter();
 
-    protected:
-        NormalizeCharMapPtr normMap;
-        Collection<wchar_t> buffer;
-        String replacement;
-        int32_t charPointer;
-        int32_t nextCharCounter;
+    LUCENE_CLASS(MappingCharFilter);
 
-    public:
-        virtual int32_t read();
-        virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+protected:
+    NormalizeCharMapPtr normMap;
+    Collection<wchar_t> buffer;
+    String replacement;
+    int32_t charPointer;
+    int32_t nextCharCounter;
 
-    protected:
-        int32_t nextChar();
-        void pushChar(int32_t c);
-        void pushLastChar(int32_t c);
-        NormalizeCharMapPtr match(const NormalizeCharMapPtr& map);
-    };
+public:
+    virtual int32_t read();
+    virtual int32_t read(wchar_t* buffer, int32_t offset, int32_t length);
+
+protected:
+    int32_t nextChar();
+    void pushChar(int32_t c);
+    void pushLastChar(int32_t c);
+    NormalizeCharMapPtr match(const NormalizeCharMapPtr& map);
+};
+
 }
 
 #endif

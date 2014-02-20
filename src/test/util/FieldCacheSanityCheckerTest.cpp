@@ -19,11 +19,9 @@
 
 using namespace Lucene;
 
-class FieldCacheSanityCheckerTest : public LuceneTestFixture
-{
+class FieldCacheSanityCheckerTest : public LuceneTestFixture {
 public:
-    FieldCacheSanityCheckerTest()
-    {
+    FieldCacheSanityCheckerTest() {
         RAMDirectoryPtr dirA = newLucene<RAMDirectory>();
         RAMDirectoryPtr dirB = newLucene<RAMDirectory>();
 
@@ -34,17 +32,17 @@ public:
         double theDouble = DBL_MAX;
         uint8_t theByte = UCHAR_MAX;
         int32_t theInt = INT_MAX;
-        for (int32_t i = 0; i < NUM_DOCS; ++i)
-        {
+        for (int32_t i = 0; i < NUM_DOCS; ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(L"theLong", StringUtils::toString(theLong--), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
             doc->add(newLucene<Field>(L"theDouble", StringUtils::toString(theDouble--), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
             doc->add(newLucene<Field>(L"theByte", StringUtils::toString(theByte--), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
             doc->add(newLucene<Field>(L"theInt", StringUtils::toString(theInt--), Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
-            if (i % 3 == 0)
+            if (i % 3 == 0) {
                 wA->addDocument(doc);
-            else
+            } else {
                 wB->addDocument(doc);
+            }
         }
         wA->close();
         wB->close();
@@ -53,8 +51,7 @@ public:
         readerX = newLucene<MultiReader>(newCollection<IndexReaderPtr>(readerA, readerB));
     }
 
-    virtual ~FieldCacheSanityCheckerTest()
-    {
+    virtual ~FieldCacheSanityCheckerTest() {
         readerA->close();
         readerB->close();
         readerX->close();
@@ -70,8 +67,7 @@ protected:
 
 const int32_t FieldCacheSanityCheckerTest::NUM_DOCS = 1000;
 
-TEST_F(FieldCacheSanityCheckerTest, testSanity)
-{
+TEST_F(FieldCacheSanityCheckerTest, testSanity) {
     FieldCachePtr cache = FieldCache::DEFAULT();
     cache->purgeAllCaches();
 
@@ -88,8 +84,7 @@ TEST_F(FieldCacheSanityCheckerTest, testSanity)
     cache->purgeAllCaches();
 }
 
-TEST_F(FieldCacheSanityCheckerTest, testInsanity1)
-{
+TEST_F(FieldCacheSanityCheckerTest, testInsanity1) {
     FieldCachePtr cache = FieldCache::DEFAULT();
     cache->purgeAllCaches();
 
@@ -109,8 +104,7 @@ TEST_F(FieldCacheSanityCheckerTest, testInsanity1)
     cache->purgeAllCaches();
 }
 
-TEST_F(FieldCacheSanityCheckerTest, testInsanity2)
-{
+TEST_F(FieldCacheSanityCheckerTest, testInsanity2) {
     FieldCachePtr cache = FieldCache::DEFAULT();
     cache->purgeAllCaches();
 

@@ -9,38 +9,38 @@
 
 #include "Attribute.h"
 
-namespace Lucene
-{
-    /// A Token's lexical type. The Default value is "word".
-    class LPPAPI TypeAttribute : public Attribute
-    {
-    public:
-        TypeAttribute();
-        TypeAttribute(const String& type);
-        virtual ~TypeAttribute();
+namespace Lucene {
 
-        LUCENE_CLASS(TypeAttribute);
+/// A Token's lexical type. The Default value is "word".
+class LPPAPI TypeAttribute : public Attribute {
+public:
+    TypeAttribute();
+    TypeAttribute(const String& type);
+    virtual ~TypeAttribute();
 
-    protected:
-        String _type;
-        static const String& DEFAULT_TYPE();
+    LUCENE_CLASS(TypeAttribute);
 
-    public:
-        virtual String toString();
+protected:
+    String _type;
+    static const String& DEFAULT_TYPE();
 
-        /// Returns this Token's lexical type.  Defaults to "word".
-        String type();
+public:
+    virtual String toString();
 
-        /// Set the lexical type.
-        /// @see #type()
-        void setType(const String& type);
+    /// Returns this Token's lexical type.  Defaults to "word".
+    String type();
 
-        virtual void clear();
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual void copyTo(const AttributePtr& target);
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+    /// Set the lexical type.
+    /// @see #type()
+    void setType(const String& type);
+
+    virtual void clear();
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual void copyTo(const AttributePtr& target);
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

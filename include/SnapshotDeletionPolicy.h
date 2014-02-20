@@ -9,45 +9,45 @@
 
 #include "IndexDeletionPolicy.h"
 
-namespace Lucene
-{
-    class LPPAPI SnapshotDeletionPolicy : public IndexDeletionPolicy
-    {
-    public:
-        SnapshotDeletionPolicy(const IndexDeletionPolicyPtr& primary);
-        virtual ~SnapshotDeletionPolicy();
+namespace Lucene {
 
-        LUCENE_CLASS(SnapshotDeletionPolicy);
+class LPPAPI SnapshotDeletionPolicy : public IndexDeletionPolicy {
+public:
+    SnapshotDeletionPolicy(const IndexDeletionPolicyPtr& primary);
+    virtual ~SnapshotDeletionPolicy();
 
-    protected:
-        IndexCommitPtr lastCommit;
-        IndexDeletionPolicyPtr primary;
-        String _snapshot;
+    LUCENE_CLASS(SnapshotDeletionPolicy);
 
-    public:
-        /// This is called once when a writer is first instantiated to give the policy a chance to remove old
-        /// commit points.
-        virtual void onInit(Collection<IndexCommitPtr> commits);
+protected:
+    IndexCommitPtr lastCommit;
+    IndexDeletionPolicyPtr primary;
+    String _snapshot;
 
-        /// This is called each time the writer completed a commit.  This gives the policy a chance to remove
-        /// old commit points with each commit.
-        virtual void onCommit(Collection<IndexCommitPtr> commits);
+public:
+    /// This is called once when a writer is first instantiated to give the policy a chance to remove old
+    /// commit points.
+    virtual void onInit(Collection<IndexCommitPtr> commits);
 
-        /// Take a snapshot of the most recent commit to the index.  You must call release() to free this snapshot.
-        /// Note that while the snapshot is held, the files it references will not be deleted, which will consume
-        /// additional disk space in your index.  If you take a snapshot at a particularly bad time (say just before
-        /// you call optimize()) then in the worst case this could consume an extra 1X of your total index size,
-        /// until you release the snapshot.
-        virtual IndexCommitPtr snapshot();
+    /// This is called each time the writer completed a commit.  This gives the policy a chance to remove
+    /// old commit points with each commit.
+    virtual void onCommit(Collection<IndexCommitPtr> commits);
 
-        /// Release the currently held snapshot.
-        virtual void release();
+    /// Take a snapshot of the most recent commit to the index.  You must call release() to free this snapshot.
+    /// Note that while the snapshot is held, the files it references will not be deleted, which will consume
+    /// additional disk space in your index.  If you take a snapshot at a particularly bad time (say just before
+    /// you call optimize()) then in the worst case this could consume an extra 1X of your total index size,
+    /// until you release the snapshot.
+    virtual IndexCommitPtr snapshot();
 
-    protected:
-        Collection<IndexCommitPtr> wrapCommits(Collection<IndexCommitPtr> commits);
+    /// Release the currently held snapshot.
+    virtual void release();
 
-        friend class MyCommitPoint;
-    };
+protected:
+    Collection<IndexCommitPtr> wrapCommits(Collection<IndexCommitPtr> commits);
+
+    friend class MyCommitPoint;
+};
+
 }
 
 #endif

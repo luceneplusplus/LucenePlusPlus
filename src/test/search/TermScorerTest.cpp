@@ -24,17 +24,14 @@ using namespace Lucene;
 
 DECLARE_SHARED_PTR(TestHit)
 
-class TestHit : public LuceneObject
-{
+class TestHit : public LuceneObject {
 public:
-    TestHit(int32_t doc, double score)
-    {
+    TestHit(int32_t doc, double score) {
         this->doc = doc;
         this->score = score;
     }
 
-    virtual ~TestHit()
-    {
+    virtual ~TestHit() {
     }
 
 public:
@@ -42,22 +39,18 @@ public:
     double score;
 
 public:
-    virtual String toString()
-    {
+    virtual String toString() {
         return L"TestHit{doc=" + StringUtils::toString(doc) + L", score=" + StringUtils::toString(score) + L"}";
     }
 };
 
-class TermScorerTest : public LuceneTestFixture
-{
+class TermScorerTest : public LuceneTestFixture {
 public:
-    TermScorerTest()
-    {
+    TermScorerTest() {
         values = newCollection<String>(L"all", L"dogs dogs", L"like", L"playing", L"fetch", L"all");
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
-        for (int32_t i = 0; i < values.size(); ++i)
-        {
+        for (int32_t i = 0; i < values.size(); ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(FIELD, values[i], Field::STORE_YES, Field::INDEX_ANALYZED));
             writer->addDocument(doc);
@@ -67,8 +60,7 @@ public:
         indexReader = indexSearcher->getIndexReader();
     }
 
-    virtual ~TermScorerTest()
-    {
+    virtual ~TermScorerTest() {
     }
 
 protected:
@@ -82,55 +74,48 @@ protected:
 
 const String TermScorerTest::FIELD = L"field";
 
-namespace TestTermScorer
-{
-    class TestCollector : public Collector
-    {
-    public:
-        TestCollector(Collection<TestHitPtr> docs)
-        {
-            this->docs = docs;
-            this->base = 0;
-        }
+namespace TestTermScorer {
 
-        virtual ~TestCollector()
-        {
-        }
+class TestCollector : public Collector {
+public:
+    TestCollector(Collection<TestHitPtr> docs) {
+        this->docs = docs;
+        this->base = 0;
+    }
 
-    protected:
-        int32_t base;
-        ScorerPtr scorer;
-        Collection<TestHitPtr> docs;
+    virtual ~TestCollector() {
+    }
 
-    public:
-        virtual void setScorer(const ScorerPtr& scorer)
-        {
-            this->scorer = scorer;
-        }
+protected:
+    int32_t base;
+    ScorerPtr scorer;
+    Collection<TestHitPtr> docs;
 
-        virtual void collect(int32_t doc)
-        {
-            double score = scorer->score();
-            doc = doc + base;
-            docs.add(newLucene<TestHit>(doc, score));
-            EXPECT_TRUE(score > 0);
-            EXPECT_TRUE(doc == 0 || doc == 5);
-        }
+public:
+    virtual void setScorer(const ScorerPtr& scorer) {
+        this->scorer = scorer;
+    }
 
-        virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-        {
-            base = docBase;
-        }
+    virtual void collect(int32_t doc) {
+        double score = scorer->score();
+        doc = doc + base;
+        docs.add(newLucene<TestHit>(doc, score));
+        EXPECT_TRUE(score > 0);
+        EXPECT_TRUE(doc == 0 || doc == 5);
+    }
 
-        virtual bool acceptsDocsOutOfOrder()
-        {
-            return true;
-        }
-    };
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+        base = docBase;
+    }
+
+    virtual bool acceptsDocsOutOfOrder() {
+        return true;
+    }
+};
+
 }
 
-TEST_F(TermScorerTest, testTermScorer)
-{
+TEST_F(TermScorerTest, testTermScorer) {
     TermPtr allTerm = newLucene<Term>(FIELD, L"all");
     TermQueryPtr termQuery = newLucene<TermQuery>(allTerm);
 
@@ -148,8 +133,7 @@ TEST_F(TermScorerTest, testTermScorer)
     EXPECT_NEAR(docs[0]->score, 1.6931472, 0.000001);
 }
 
-TEST_F(TermScorerTest, testNext)
-{
+TEST_F(TermScorerTest, testNext) {
     TermPtr allTerm = newLucene<Term>(FIELD, L"all");
     TermQueryPtr termQuery = newLucene<TermQuery>(allTerm);
 
@@ -163,8 +147,7 @@ TEST_F(TermScorerTest, testNext)
     EXPECT_EQ(ts->nextDoc(), DocIdSetIterator::NO_MORE_DOCS);
 }
 
-TEST_F(TermScorerTest, testSkipTo)
-{
+TEST_F(TermScorerTest, testSkipTo) {
     TermPtr allTerm = newLucene<Term>(FIELD, L"all");
     TermQueryPtr termQuery = newLucene<TermQuery>(allTerm);
 

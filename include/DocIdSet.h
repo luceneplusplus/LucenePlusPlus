@@ -9,30 +9,30 @@
 
 #include "DocIdSetIterator.h"
 
-namespace Lucene
-{
-    /// A DocIdSet contains a set of doc ids. Implementing classes must only implement {@link #iterator} to
-    /// provide access to the set.
-    class LPPAPI DocIdSet : public LuceneObject
-    {
-    public:
-        virtual ~DocIdSet();
-        LUCENE_CLASS(DocIdSet);
+namespace Lucene {
 
-    public:
-        /// Provides a {@link DocIdSetIterator} to access the set.  This implementation can return null or
-        /// {@link #EmptyDocIdSet}.iterator() if there are no docs that match.
-        virtual DocIdSetIteratorPtr iterator() = 0;
+/// A DocIdSet contains a set of doc ids. Implementing classes must only implement {@link #iterator} to
+/// provide access to the set.
+class LPPAPI DocIdSet : public LuceneObject {
+public:
+    virtual ~DocIdSet();
+    LUCENE_CLASS(DocIdSet);
 
-        /// This method is a hint for {@link CachingWrapperFilter}, if this DocIdSet should be cached without
-        /// copying it into a BitSet.  The default is to return false.  If you have an own DocIdSet implementation
-        /// that does its iteration very effective and fast without doing disk I/O, override this method and
-        /// return true.
-        virtual bool isCacheable();
+public:
+    /// Provides a {@link DocIdSetIterator} to access the set.  This implementation can return null or
+    /// {@link #EmptyDocIdSet}.iterator() if there are no docs that match.
+    virtual DocIdSetIteratorPtr iterator() = 0;
 
-        /// An empty {@code DocIdSet} instance for easy use, eg. in Filters that hit no documents.
-        static DocIdSetPtr EMPTY_DOCIDSET();
-    };
+    /// This method is a hint for {@link CachingWrapperFilter}, if this DocIdSet should be cached without
+    /// copying it into a BitSet.  The default is to return false.  If you have an own DocIdSet implementation
+    /// that does its iteration very effective and fast without doing disk I/O, override this method and
+    /// return true.
+    virtual bool isCacheable();
+
+    /// An empty {@code DocIdSet} instance for easy use, eg. in Filters that hit no documents.
+    static DocIdSetPtr EMPTY_DOCIDSET();
+};
+
 }
 
 #endif

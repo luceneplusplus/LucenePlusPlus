@@ -7,29 +7,25 @@
 #include "LuceneInc.h"
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    TokenFilter::TokenFilter(const TokenStreamPtr& input) : TokenStream(input)
-    {
-        this->input = input;
-    }
+namespace Lucene {
 
-    TokenFilter::~TokenFilter()
-    {
-    }
+TokenFilter::TokenFilter(const TokenStreamPtr& input) : TokenStream(input) {
+    this->input = input;
+}
 
-    void TokenFilter::end()
-    {
-        input->end();
-    }
+TokenFilter::~TokenFilter() {
+}
 
-    void TokenFilter::close()
-    {
-        input->close();
-    }
+void TokenFilter::end() {
+    input->end();
+}
 
-    void TokenFilter::reset()
-    {
-        input->reset();
-    }
+void TokenFilter::close() {
+    input->close();
+}
+
+void TokenFilter::reset() {
+    input->reset();
+}
+
 }

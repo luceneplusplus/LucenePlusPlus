@@ -16,8 +16,7 @@ using namespace Lucene;
 
 typedef BaseTokenStreamFixture LengthFilterTest;
 
-TEST_F(LengthFilterTest, testFilter)
-{
+TEST_F(LengthFilterTest, testFilter) {
     TokenStreamPtr stream = newLucene<WhitespaceTokenizer>(newLucene<StringReader>(L"short toolong evenmuchlongertext a ab toolong foo"));
     LengthFilterPtr filter = newLucene<LengthFilter>(stream, 2, 6);
     TermAttributePtr termAtt = filter->getAttribute<TermAttribute>();

@@ -22,11 +22,9 @@
 
 using namespace Lucene;
 
-class SpansAdvancedTest : public LuceneTestFixture
-{
+class SpansAdvancedTest : public LuceneTestFixture {
 public:
-    SpansAdvancedTest()
-    {
+    SpansAdvancedTest() {
         // create test index
         directory = newLucene<RAMDirectory>();
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -38,8 +36,7 @@ public:
         searcher = newLucene<IndexSearcher>(directory, true);
     }
 
-    virtual ~SpansAdvancedTest()
-    {
+    virtual ~SpansAdvancedTest() {
         searcher->close();
         directory->close();
     }
@@ -52,16 +49,14 @@ protected:
     DirectoryPtr directory;
     IndexSearcherPtr searcher;
 
-    void addDocument(const IndexWriterPtr& writer, const String& id, const String& text)
-    {
+    void addDocument(const IndexWriterPtr& writer, const String& id, const String& text) {
         DocumentPtr document = newLucene<Document>();
         document->add(newLucene<Field>(FIELD_ID, id, Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
         document->add(newLucene<Field>(FIELD_TEXT, text, Field::STORE_YES, Field::INDEX_ANALYZED));
         writer->addDocument(document);
     }
 
-    void checkHits(const SearcherPtr& s, const QueryPtr& query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores)
-    {
+    void checkHits(const SearcherPtr& s, const QueryPtr& query, const String& description, Collection<String> expectedIds, Collection<double> expectedScores) {
         QueryUtils::check(query, s);
 
         double tolerance = 1e-5f;
@@ -72,15 +67,13 @@ protected:
         // did we get the hits we expected
         EXPECT_EQ(expectedIds.size(), topdocs->totalHits);
 
-        for (int32_t i = 0; i < topdocs->totalHits; ++i)
-        {
+        for (int32_t i = 0; i < topdocs->totalHits; ++i) {
             int32_t id = topdocs->scoreDocs[i]->doc;
             double score = topdocs->scoreDocs[i]->score;
             DocumentPtr doc = s->doc(id);
             EXPECT_EQ(expectedIds[i], doc->get(FIELD_ID));
             bool scoreEq = (std::abs(expectedScores[i] - score) < tolerance);
-            if (scoreEq)
-            {
+            if (scoreEq) {
                 EXPECT_NEAR(expectedScores[i], score, tolerance);
                 EXPECT_NEAR(s->explain(query, id)->getValue(), score, tolerance);
             }
@@ -91,8 +84,7 @@ protected:
 const String SpansAdvancedTest::FIELD_ID = L"ID";
 const String SpansAdvancedTest::FIELD_TEXT = L"TEXT";
 
-TEST_F(SpansAdvancedTest, testBooleanQueryWithSpanQueries)
-{
+TEST_F(SpansAdvancedTest, testBooleanQueryWithSpanQueries) {
     double expectedScore = 0.3884282;
     QueryPtr spanQuery = newLucene<SpanTermQuery>(newLucene<Term>(FIELD_TEXT, L"work"));
     BooleanQueryPtr query = newLucene<BooleanQuery>();

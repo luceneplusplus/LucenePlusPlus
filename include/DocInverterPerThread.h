@@ -10,53 +10,52 @@
 #include "DocFieldConsumerPerThread.h"
 #include "AttributeSource.h"
 
-namespace Lucene
-{
-    /// This is a DocFieldConsumer that inverts each field, separately, from a Document, and accepts a
-    /// InvertedTermsConsumer to process those terms.
-    class DocInverterPerThread : public DocFieldConsumerPerThread
-    {
-    public:
-        DocInverterPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocInverterPtr& docInverter);
-        virtual ~DocInverterPerThread();
+namespace Lucene {
 
-        LUCENE_CLASS(DocInverterPerThread);
+/// This is a DocFieldConsumer that inverts each field, separately, from a Document, and accepts a
+/// InvertedTermsConsumer to process those terms.
+class DocInverterPerThread : public DocFieldConsumerPerThread {
+public:
+    DocInverterPerThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread, const DocInverterPtr& docInverter);
+    virtual ~DocInverterPerThread();
 
-    public:
-        DocInverterWeakPtr _docInverter;
-        InvertedDocConsumerPerThreadPtr consumer;
-        InvertedDocEndConsumerPerThreadPtr endConsumer;
-        SingleTokenAttributeSourcePtr singleToken;
+    LUCENE_CLASS(DocInverterPerThread);
 
-        DocStatePtr docState;
-        FieldInvertStatePtr fieldState;
+public:
+    DocInverterWeakPtr _docInverter;
+    InvertedDocConsumerPerThreadPtr consumer;
+    InvertedDocEndConsumerPerThreadPtr endConsumer;
+    SingleTokenAttributeSourcePtr singleToken;
 
-        /// Used to read a string value for a field
-        ReusableStringReaderPtr stringReader;
+    DocStatePtr docState;
+    FieldInvertStatePtr fieldState;
 
-    public:
-        virtual void initialize();
-        virtual void startDocument();
-        virtual DocWriterPtr finishDocument();
-        virtual void abort();
-        virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi);
-    };
+    /// Used to read a string value for a field
+    ReusableStringReaderPtr stringReader;
 
-    class SingleTokenAttributeSource : public AttributeSource
-    {
-    public:
-        SingleTokenAttributeSource();
-        virtual ~SingleTokenAttributeSource();
+public:
+    virtual void initialize();
+    virtual void startDocument();
+    virtual DocWriterPtr finishDocument();
+    virtual void abort();
+    virtual DocFieldConsumerPerFieldPtr addField(const FieldInfoPtr& fi);
+};
 
-        LUCENE_CLASS(SingleTokenAttributeSource);
+class SingleTokenAttributeSource : public AttributeSource {
+public:
+    SingleTokenAttributeSource();
+    virtual ~SingleTokenAttributeSource();
 
-    public:
-        TermAttributePtr termAttribute;
-        OffsetAttributePtr offsetAttribute;
+    LUCENE_CLASS(SingleTokenAttributeSource);
 
-    public:
-        void reinit(const String& stringValue, int32_t startOffset, int32_t endOffset);
-    };
+public:
+    TermAttributePtr termAttribute;
+    OffsetAttributePtr offsetAttribute;
+
+public:
+    void reinit(const String& stringValue, int32_t startOffset, int32_t endOffset);
+};
+
 }
 
 #endif

@@ -25,62 +25,51 @@
 
 using namespace Lucene;
 
-class Qnorm1Similarity : public DefaultSimilarity
-{
+class Qnorm1Similarity : public DefaultSimilarity {
 public:
-    virtual ~Qnorm1Similarity()
-    {
+    virtual ~Qnorm1Similarity() {
     }
 
 public:
-    virtual double queryNorm(double sumOfSquaredWeights)
-    {
+    virtual double queryNorm(double sumOfSquaredWeights) {
         return 1.0;
     }
 };
 
-class ItemizedFilter : public FieldCacheTermsFilter
-{
+class ItemizedFilter : public FieldCacheTermsFilter {
 public:
-    ItemizedFilter(const String& field, Collection<int32_t> terms) : FieldCacheTermsFilter(field, int2str(terms))
-    {
+    ItemizedFilter(const String& field, Collection<int32_t> terms) : FieldCacheTermsFilter(field, int2str(terms)) {
     }
 
-    ItemizedFilter(Collection<int32_t> terms) : FieldCacheTermsFilter(L"KEY", int2str(terms))
-    {
+    ItemizedFilter(Collection<int32_t> terms) : FieldCacheTermsFilter(L"KEY", int2str(terms)) {
     }
 
-    virtual ~ItemizedFilter()
-    {
+    virtual ~ItemizedFilter() {
     }
 
 public:
-    Collection<String> int2str(Collection<int32_t> terms)
-    {
+    Collection<String> int2str(Collection<int32_t> terms) {
         Collection<String> out = Collection<String>::newInstance(terms.size());
-        for (int32_t i = 0; i < terms.size(); ++i)
+        for (int32_t i = 0; i < terms.size(); ++i) {
             out[i] = StringUtils::toString(terms[i]);
+        }
         return out;
     }
 };
 
 /// TestExplanations subclass that builds up super crazy complex queries on the assumption that
 /// if the explanations work out right for them, they should work for anything.
-class ComplexExplanationsOfNonMatchesTest : public ExplanationsFixture
-{
+class ComplexExplanationsOfNonMatchesTest : public ExplanationsFixture {
 public:
-    ComplexExplanationsOfNonMatchesTest()
-    {
+    ComplexExplanationsOfNonMatchesTest() {
         searcher->setSimilarity(createQnorm1Similarity());
     }
 
-    virtual ~ComplexExplanationsOfNonMatchesTest()
-    {
+    virtual ~ComplexExplanationsOfNonMatchesTest() {
     }
 
 protected:
-    DefaultSimilarityPtr createQnorm1Similarity()
-    {
+    DefaultSimilarityPtr createQnorm1Similarity() {
         return newLucene<Qnorm1Similarity>();
     }
 
@@ -88,14 +77,12 @@ public:
     using ExplanationsFixture::qtest;
 
     /// ignore matches and focus on non-matches
-    virtual void qtest(const QueryPtr& q, Collection<int32_t> expDocNrs)
-    {
+    virtual void qtest(const QueryPtr& q, Collection<int32_t> expDocNrs) {
         CheckHits::checkNoMatchExplanations(q, FIELD, searcher, expDocNrs);
     }
 };
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, test1)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, test1) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
 
     q->add(qp->parse(L"\"w1 w2\"~1"), BooleanClause::MUST);
@@ -135,8 +122,7 @@ TEST_F(ComplexExplanationsOfNonMatchesTest, test1)
     qtest(q, newCollection<int32_t>(0, 1, 2));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, test2)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, test2) {
     BooleanQueryPtr q = newLucene<BooleanQuery>();
 
     q->add(qp->parse(L"\"w1 w2\"~1"), BooleanClause::MUST);
@@ -177,32 +163,27 @@ TEST_F(ComplexExplanationsOfNonMatchesTest, test2)
     qtest(q, newCollection<int32_t>(0, 1, 2));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testT3)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testT3) {
     bqtest(L"w1^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testMA3)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testMA3) {
     QueryPtr q = newLucene<MatchAllDocsQuery>();
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testFQ5)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testFQ5) {
     bqtest(newLucene<FilteredQuery>(qp->parse(L"xx^0"), newLucene<ItemizedFilter>(newCollection<int32_t>(1, 3))), newCollection<int32_t>(3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testCSQ4)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testCSQ4) {
     QueryPtr q = newLucene<ConstantScoreQuery>(newLucene<ItemizedFilter>(newCollection<int32_t>(3)));
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testDMQ10)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testDMQ10) {
     DisjunctionMaxQueryPtr q = newLucene<DisjunctionMaxQuery>(0.5);
     q->add(qp->parse(L"yy w5^100"));
     q->add(qp->parse(L"xx^0"));
@@ -210,8 +191,7 @@ TEST_F(ComplexExplanationsOfNonMatchesTest, testDMQ10)
     bqtest(q, newCollection<int32_t>(0, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testMPQ7)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testMPQ7) {
     MultiPhraseQueryPtr q = newLucene<MultiPhraseQuery>();
     q->add(ta(newCollection<String>(L"w1")));
     q->add(ta(newCollection<String>(L"w2")));
@@ -220,83 +200,70 @@ TEST_F(ComplexExplanationsOfNonMatchesTest, testMPQ7)
     bqtest(q, newCollection<int32_t>(0, 1, 2));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ12)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ12) {
     qtest(L"w1 w2^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ13)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ13) {
     qtest(L"w1 -w5^0.0", newCollection<int32_t>(1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ18)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ18) {
     qtest(L"+w1^0.0 w2", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ21)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ21) {
     bqtest(L"(+w1 w2)^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ22)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testBQ22) {
     bqtest(L"(+w1^0.0 w2)^0.0", newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testST3)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testST3) {
     SpanQueryPtr q = st(L"w1");
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testST6)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testST6) {
     SpanQueryPtr q = st(L"xx");
     q->setBoost(0);
     qtest(q, newCollection<int32_t>(2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testSF3)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testSF3) {
     SpanQueryPtr q = sf(L"w1", 1);
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testSF7)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testSF7) {
     SpanQueryPtr q = sf(L"xx", 3);
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot3)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot3) {
     SpanQueryPtr q = snot(sf(L"w1", 10), st(L"QQ"));
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot6)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot6) {
     SpanQueryPtr q = snot(sf(L"w1", 10), st(L"xx"));
     q->setBoost(0);
     bqtest(q, newCollection<int32_t>(0, 1, 2, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot8)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot8) {
     SpanQueryPtr f = snear(L"w1", L"w3", 10, true);
     f->setBoost(0);
     SpanQueryPtr q = snot(f, st(L"xx"));
     qtest(q, newCollection<int32_t>(0, 1, 3));
 }
 
-TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot9)
-{
+TEST_F(ComplexExplanationsOfNonMatchesTest, testSNot9) {
     SpanQueryPtr t = st(L"xx");
     t->setBoost(0);
     SpanQueryPtr q = snot(snear(L"w1", L"w3", 10, true), t);

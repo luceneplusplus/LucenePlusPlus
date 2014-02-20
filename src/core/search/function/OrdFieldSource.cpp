@@ -11,75 +11,68 @@
 #include "MiscUtils.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    OrdFieldSource::OrdFieldSource(const String& field)
-    {
-        this->field = field;
-    }
+namespace Lucene {
 
-    OrdFieldSource::~OrdFieldSource()
-    {
-    }
+OrdFieldSource::OrdFieldSource(const String& field) {
+    this->field = field;
+}
 
-    String OrdFieldSource::description()
-    {
-        return L"ord(" + field + L")";
-    }
+OrdFieldSource::~OrdFieldSource() {
+}
 
-    DocValuesPtr OrdFieldSource::getValues(const IndexReaderPtr& reader)
-    {
-        Collection<int32_t> arr(FieldCache::DEFAULT()->getStringIndex(reader, field)->order);
-        return newLucene<OrdDocValues>(shared_from_this(), arr);
-    }
+String OrdFieldSource::description() {
+    return L"ord(" + field + L")";
+}
 
-    bool OrdFieldSource::equals(const LuceneObjectPtr& other)
-    {
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
-            return false;
-        OrdFieldSourcePtr otherSource(boost::dynamic_pointer_cast<OrdFieldSource>(other));
-        if (!otherSource)
-            return false;
-        return field == otherSource->field;
-    }
+DocValuesPtr OrdFieldSource::getValues(const IndexReaderPtr& reader) {
+    Collection<int32_t> arr(FieldCache::DEFAULT()->getStringIndex(reader, field)->order);
+    return newLucene<OrdDocValues>(shared_from_this(), arr);
+}
 
-    int32_t OrdFieldSource::hashCode()
-    {
-        return StringUtils::hashCode(OrdFieldSource::_getClassName()) + StringUtils::hashCode(field);
+bool OrdFieldSource::equals(const LuceneObjectPtr& other) {
+    if (!MiscUtils::equalTypes(shared_from_this(), other)) {
+        return false;
     }
+    OrdFieldSourcePtr otherSource(boost::dynamic_pointer_cast<OrdFieldSource>(other));
+    if (!otherSource) {
+        return false;
+    }
+    return field == otherSource->field;
+}
 
-    OrdDocValues::OrdDocValues(const OrdFieldSourcePtr& source, Collection<int32_t> arr)
-    {
-        this->_source = source;
-        this->arr = arr;
-    }
+int32_t OrdFieldSource::hashCode() {
+    return StringUtils::hashCode(OrdFieldSource::_getClassName()) + StringUtils::hashCode(field);
+}
 
-    OrdDocValues::~OrdDocValues()
-    {
-    }
+OrdDocValues::OrdDocValues(const OrdFieldSourcePtr& source, Collection<int32_t> arr) {
+    this->_source = source;
+    this->arr = arr;
+}
 
-    double OrdDocValues::doubleVal(int32_t doc)
-    {
-        if (doc < 0 || doc >= arr.size())
-            boost::throw_exception(IndexOutOfBoundsException());
-        return (double)arr[doc];
-    }
+OrdDocValues::~OrdDocValues() {
+}
 
-    String OrdDocValues::strVal(int32_t doc)
-    {
-        // the string value of the ordinal, not the string itself
-        if (doc < 0 || doc >= arr.size())
-            boost::throw_exception(IndexOutOfBoundsException());
-        return StringUtils::toString(arr[doc]);
+double OrdDocValues::doubleVal(int32_t doc) {
+    if (doc < 0 || doc >= arr.size()) {
+        boost::throw_exception(IndexOutOfBoundsException());
     }
+    return (double)arr[doc];
+}
 
-    String OrdDocValues::toString(int32_t doc)
-    {
-        return OrdFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(intVal(doc));
+String OrdDocValues::strVal(int32_t doc) {
+    // the string value of the ordinal, not the string itself
+    if (doc < 0 || doc >= arr.size()) {
+        boost::throw_exception(IndexOutOfBoundsException());
     }
+    return StringUtils::toString(arr[doc]);
+}
 
-    CollectionValue OrdDocValues::getInnerArray()
-    {
-        return arr;
-    }
+String OrdDocValues::toString(int32_t doc) {
+    return OrdFieldSourcePtr(_source)->description() + L"=" + StringUtils::toString(intVal(doc));
+}
+
+CollectionValue OrdDocValues::getInnerArray() {
+    return arr;
+}
+
 }

@@ -9,37 +9,37 @@
 
 #include "FormatPostingsPositionsConsumer.h"
 
-namespace Lucene
-{
-    class FormatPostingsPositionsWriter : public FormatPostingsPositionsConsumer
-    {
-    public:
-        FormatPostingsPositionsWriter(const SegmentWriteStatePtr& state, const FormatPostingsDocsWriterPtr& parent);
-        virtual ~FormatPostingsPositionsWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsPositionsWriter);
+class FormatPostingsPositionsWriter : public FormatPostingsPositionsConsumer {
+public:
+    FormatPostingsPositionsWriter(const SegmentWriteStatePtr& state, const FormatPostingsDocsWriterPtr& parent);
+    virtual ~FormatPostingsPositionsWriter();
 
-    public:
-        FormatPostingsDocsWriterWeakPtr _parent;
-        IndexOutputPtr out;
+    LUCENE_CLASS(FormatPostingsPositionsWriter);
 
-        bool omitTermFreqAndPositions;
-        bool storePayloads;
-        int32_t lastPayloadLength;
+public:
+    FormatPostingsDocsWriterWeakPtr _parent;
+    IndexOutputPtr out;
 
-        int32_t lastPosition;
+    bool omitTermFreqAndPositions;
+    bool storePayloads;
+    int32_t lastPayloadLength;
 
-    public:
-        /// Add a new position & payload
-        virtual void addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength);
+    int32_t lastPosition;
 
-        void setField(const FieldInfoPtr& fieldInfo);
+public:
+    /// Add a new position & payload
+    virtual void addPosition(int32_t position, ByteArray payload, int32_t payloadOffset, int32_t payloadLength);
 
-        /// Called when we are done adding positions & payloads
-        virtual void finish();
+    void setField(const FieldInfoPtr& fieldInfo);
 
-        void close();
-    };
+    /// Called when we are done adding positions & payloads
+    virtual void finish();
+
+    void close();
+};
+
 }
 
 #endif

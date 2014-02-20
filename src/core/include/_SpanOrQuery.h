@@ -10,47 +10,46 @@
 #include "PriorityQueue.h"
 #include "Spans.h"
 
-namespace Lucene
-{
-    class SpanQueue : public PriorityQueue<SpansPtr>
-    {
-    public:
-        SpanQueue(int32_t size);
-        virtual ~SpanQueue();
+namespace Lucene {
 
-        LUCENE_CLASS(SpanQueue);
+class SpanQueue : public PriorityQueue<SpansPtr> {
+public:
+    SpanQueue(int32_t size);
+    virtual ~SpanQueue();
 
-    protected:
-        virtual bool lessThan(const SpansPtr& first, const SpansPtr& second);
-    };
+    LUCENE_CLASS(SpanQueue);
 
-    class OrSpans : public Spans
-    {
-    public:
-        OrSpans(const SpanOrQueryPtr& query, const IndexReaderPtr& reader);
-        virtual ~OrSpans();
+protected:
+    virtual bool lessThan(const SpansPtr& first, const SpansPtr& second);
+};
 
-        LUCENE_CLASS(OrSpans);
+class OrSpans : public Spans {
+public:
+    OrSpans(const SpanOrQueryPtr& query, const IndexReaderPtr& reader);
+    virtual ~OrSpans();
 
-    protected:
-        SpanOrQueryPtr query;
-        IndexReaderPtr reader;
-        SpanQueuePtr queue;
+    LUCENE_CLASS(OrSpans);
 
-    public:
-        virtual bool next();
-        virtual bool skipTo(int32_t target);
-        virtual int32_t doc();
-        virtual int32_t start();
-        virtual int32_t end();
-        virtual Collection<ByteArray> getPayload();
-        virtual bool isPayloadAvailable();
-        virtual String toString();
+protected:
+    SpanOrQueryPtr query;
+    IndexReaderPtr reader;
+    SpanQueuePtr queue;
 
-    protected:
-        bool initSpanQueue(int32_t target);
-        SpansPtr top();
-    };
+public:
+    virtual bool next();
+    virtual bool skipTo(int32_t target);
+    virtual int32_t doc();
+    virtual int32_t start();
+    virtual int32_t end();
+    virtual Collection<ByteArray> getPayload();
+    virtual bool isPayloadAvailable();
+    virtual String toString();
+
+protected:
+    bool initSpanQueue(int32_t target);
+    SpansPtr top();
+};
+
 }
 
 #endif

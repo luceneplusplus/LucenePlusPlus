@@ -7,9 +7,9 @@
 #include "LuceneInc.h"
 #include "MergeScheduler.h"
 
-namespace Lucene
-{
-    MergeScheduler::~MergeScheduler()
-    {
-    }
+namespace Lucene {
+
+MergeScheduler::~MergeScheduler() {
+}
+
 }

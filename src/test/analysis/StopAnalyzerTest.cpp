@@ -14,19 +14,17 @@
 
 using namespace Lucene;
 
-class StopAnalyzerTest : public BaseTokenStreamFixture
-{
+class StopAnalyzerTest : public BaseTokenStreamFixture {
 public:
-    StopAnalyzerTest()
-    {
+    StopAnalyzerTest() {
         stop = newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
         inValidTokens = HashSet<String>::newInstance();
-        for (HashSet<String>::iterator word = StopAnalyzer::ENGLISH_STOP_WORDS_SET().begin(); word != StopAnalyzer::ENGLISH_STOP_WORDS_SET().end(); ++word)
+        for (HashSet<String>::iterator word = StopAnalyzer::ENGLISH_STOP_WORDS_SET().begin(); word != StopAnalyzer::ENGLISH_STOP_WORDS_SET().end(); ++word) {
             inValidTokens.add(*word);
+        }
     }
 
-    virtual ~StopAnalyzerTest()
-    {
+    virtual ~StopAnalyzerTest() {
     }
 
 protected:
@@ -34,20 +32,19 @@ protected:
     HashSet<String> inValidTokens;
 };
 
-TEST_F(StopAnalyzerTest, testDefaults)
-{
+TEST_F(StopAnalyzerTest, testDefaults) {
     EXPECT_TRUE(stop);
     StringReaderPtr reader = newLucene<StringReader>(L"This is a test of the english stop analyzer");
     TokenStreamPtr stream = stop->tokenStream(L"test", reader);
     EXPECT_TRUE(stream);
     TermAttributePtr termAtt = stream->getAttribute<TermAttribute>();
 
-    while (stream->incrementToken())
+    while (stream->incrementToken()) {
         EXPECT_TRUE(!inValidTokens.contains(termAtt->term()));
+    }
 }
 
-TEST_F(StopAnalyzerTest, testStopList)
-{
+TEST_F(StopAnalyzerTest, testStopList) {
     HashSet<String> stopWordsSet = HashSet<String>::newInstance();
     stopWordsSet.add(L"good");
     stopWordsSet.add(L"test");
@@ -59,16 +56,14 @@ TEST_F(StopAnalyzerTest, testStopList)
     TermAttributePtr termAtt = stream->getAttribute<TermAttribute>();
     PositionIncrementAttributePtr posIncrAtt = stream->addAttribute<PositionIncrementAttribute>();
 
-    while (stream->incrementToken())
-    {
+    while (stream->incrementToken()) {
         String text = termAtt->term();
         EXPECT_TRUE(!stopWordsSet.contains(text));
         EXPECT_EQ(1, posIncrAtt->getPositionIncrement()); // in 2.4 stop tokenizer does not apply increments.
     }
 }
 
-TEST_F(StopAnalyzerTest, testStopListPositions)
-{
+TEST_F(StopAnalyzerTest, testStopListPositions) {
     HashSet<String> stopWordsSet = HashSet<String>::newInstance();
     stopWordsSet.add(L"good");
     stopWordsSet.add(L"test");
@@ -82,8 +77,7 @@ TEST_F(StopAnalyzerTest, testStopListPositions)
     TermAttributePtr termAtt = stream->getAttribute<TermAttribute>();
     PositionIncrementAttributePtr posIncrAtt = stream->addAttribute<PositionIncrementAttribute>();
 
-    while (stream->incrementToken())
-    {
+    while (stream->incrementToken()) {
         String text = termAtt->term();
         EXPECT_TRUE(!stopWordsSet.contains(text));
         EXPECT_EQ(expectedIncr[i++], posIncrAtt->getPositionIncrement());

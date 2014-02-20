@@ -7,74 +7,63 @@
 #include "LuceneInc.h"
 #include "ChecksumIndexOutput.h"
 
-namespace Lucene
-{
-    ChecksumIndexOutput::ChecksumIndexOutput(const IndexOutputPtr& main)
-    {
-        this->main = main;
-    }
+namespace Lucene {
 
-    ChecksumIndexOutput::~ChecksumIndexOutput()
-    {
-    }
+ChecksumIndexOutput::ChecksumIndexOutput(const IndexOutputPtr& main) {
+    this->main = main;
+}
 
-    void ChecksumIndexOutput::writeByte(uint8_t b)
-    {
-        checksum.process_byte(b);
-        main->writeByte(b);
-    }
+ChecksumIndexOutput::~ChecksumIndexOutput() {
+}
 
-    void ChecksumIndexOutput::writeBytes(const uint8_t* b, int32_t offset, int32_t length)
-    {
-        checksum.process_bytes(b + offset, length);
-        main->writeBytes(b, offset, length);
-    }
+void ChecksumIndexOutput::writeByte(uint8_t b) {
+    checksum.process_byte(b);
+    main->writeByte(b);
+}
 
-    int64_t ChecksumIndexOutput::getChecksum()
-    {
-        return checksum.checksum();
-    }
+void ChecksumIndexOutput::writeBytes(const uint8_t* b, int32_t offset, int32_t length) {
+    checksum.process_bytes(b + offset, length);
+    main->writeBytes(b, offset, length);
+}
 
-    void ChecksumIndexOutput::flush()
-    {
-        main->flush();
-    }
+int64_t ChecksumIndexOutput::getChecksum() {
+    return checksum.checksum();
+}
 
-    void ChecksumIndexOutput::close()
-    {
-        main->close();
-    }
+void ChecksumIndexOutput::flush() {
+    main->flush();
+}
 
-    int64_t ChecksumIndexOutput::getFilePointer()
-    {
-        return main->getFilePointer();
-    }
+void ChecksumIndexOutput::close() {
+    main->close();
+}
 
-    void ChecksumIndexOutput::seek(int64_t pos)
-    {
-        boost::throw_exception(RuntimeException(L"Seek not allowed"));
-    }
+int64_t ChecksumIndexOutput::getFilePointer() {
+    return main->getFilePointer();
+}
 
-    void ChecksumIndexOutput::prepareCommit()
-    {
-        int64_t checksum = getChecksum();
+void ChecksumIndexOutput::seek(int64_t pos) {
+    boost::throw_exception(RuntimeException(L"Seek not allowed"));
+}
 
-        // Intentionally write a mismatched checksum.  This is because we want to 1) test, as best we can, that we
-        // are able to write a long to the file, but 2) not actually "commit" the file yet.  This (prepare commit)
-        // is phase 1 of a two-phase commit.
-        int64_t pos = main->getFilePointer();
-        main->writeLong(checksum - 1);
-        main->flush();
-        main->seek(pos);
-    }
+void ChecksumIndexOutput::prepareCommit() {
+    int64_t checksum = getChecksum();
 
-    void ChecksumIndexOutput::finishCommit()
-    {
-        main->writeLong(getChecksum());
-    }
+    // Intentionally write a mismatched checksum.  This is because we want to 1) test, as best we can, that we
+    // are able to write a long to the file, but 2) not actually "commit" the file yet.  This (prepare commit)
+    // is phase 1 of a two-phase commit.
+    int64_t pos = main->getFilePointer();
+    main->writeLong(checksum - 1);
+    main->flush();
+    main->seek(pos);
+}
 
-    int64_t ChecksumIndexOutput::length()
-    {
-        return main->length();
-    }
+void ChecksumIndexOutput::finishCommit() {
+    main->writeLong(getChecksum());
+}
+
+int64_t ChecksumIndexOutput::length() {
+    return main->length();
+}
+
 }

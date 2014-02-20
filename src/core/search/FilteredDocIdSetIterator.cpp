@@ -7,52 +7,47 @@
 #include "LuceneInc.h"
 #include "FilteredDocIdSetIterator.h"
 
-namespace Lucene
-{
-    FilteredDocIdSetIterator::FilteredDocIdSetIterator(const DocIdSetIteratorPtr& innerIter)
-    {
-        if (!innerIter)
-            boost::throw_exception(IllegalArgumentException(L"null iterator"));
-        this->innerIter = innerIter;
-        this->doc = -1;
-    }
+namespace Lucene {
 
-    FilteredDocIdSetIterator::~FilteredDocIdSetIterator()
-    {
+FilteredDocIdSetIterator::FilteredDocIdSetIterator(const DocIdSetIteratorPtr& innerIter) {
+    if (!innerIter) {
+        boost::throw_exception(IllegalArgumentException(L"null iterator"));
     }
+    this->innerIter = innerIter;
+    this->doc = -1;
+}
 
-    int32_t FilteredDocIdSetIterator::docID()
-    {
-        return doc;
-    }
+FilteredDocIdSetIterator::~FilteredDocIdSetIterator() {
+}
 
-    int32_t FilteredDocIdSetIterator::nextDoc()
-    {
-        while ((doc = innerIter->nextDoc()) != NO_MORE_DOCS)
-        {
-            if (match(doc))
-                return doc;
+int32_t FilteredDocIdSetIterator::docID() {
+    return doc;
+}
+
+int32_t FilteredDocIdSetIterator::nextDoc() {
+    while ((doc = innerIter->nextDoc()) != NO_MORE_DOCS) {
+        if (match(doc)) {
+            return doc;
         }
-        return doc;
     }
+    return doc;
+}
 
-    int32_t FilteredDocIdSetIterator::advance(int32_t target)
-    {
-        doc = innerIter->advance(target);
-        if (doc != NO_MORE_DOCS)
-        {
-            if (match(doc))
-                return doc;
-            else
-            {
-                while ((doc = innerIter->nextDoc()) != NO_MORE_DOCS)
-                {
-                    if (match(doc))
-                        return doc;
+int32_t FilteredDocIdSetIterator::advance(int32_t target) {
+    doc = innerIter->advance(target);
+    if (doc != NO_MORE_DOCS) {
+        if (match(doc)) {
+            return doc;
+        } else {
+            while ((doc = innerIter->nextDoc()) != NO_MORE_DOCS) {
+                if (match(doc)) {
+                    return doc;
                 }
-                return doc;
             }
+            return doc;
         }
-        return doc;
     }
+    return doc;
+}
+
 }

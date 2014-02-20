@@ -26,8 +26,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture QueryWrapperFilterTest;
 
-TEST_F(QueryWrapperFilterTest, testBasic)
-{
+TEST_F(QueryWrapperFilterTest, testBasic) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
     IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
     DocumentPtr doc = newLucene<Document>();

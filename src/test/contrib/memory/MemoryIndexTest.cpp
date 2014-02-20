@@ -29,11 +29,9 @@ using namespace Lucene;
 
 /// Verifies that Lucene MemoryIndex and RAMDirectory have the same behaviour,
 /// returning the same results for queries on some randomish indexes.
-class MemoryIndexTest : public BaseTokenStreamFixture
-{
+class MemoryIndexTest : public BaseTokenStreamFixture {
 public:
-    MemoryIndexTest()
-    {
+    MemoryIndexTest() {
         fileDir = FileUtils::joinPath(getTestDir(), L"memory");
         queries = HashSet<String>::newInstance();
         HashSet<String> test1 = readQueries(L"testqueries.txt");
@@ -70,8 +68,7 @@ public:
         TEST_TERMS.add(L"Copyright");
     }
 
-    virtual ~MemoryIndexTest()
-    {
+    virtual ~MemoryIndexTest() {
     }
 
 protected:
@@ -85,16 +82,15 @@ protected:
 
 public:
     /// read a set of queries from a resource file
-    HashSet<String> readQueries(const String& resource)
-    {
+    HashSet<String> readQueries(const String& resource) {
         HashSet<String> queries = HashSet<String>::newInstance();
         BufferedReaderPtr reader = newLucene<BufferedReader>(newLucene<FileReader>(FileUtils::joinPath(fileDir, resource)));
         String line;
-        while (reader->readLine(line))
-        {
+        while (reader->readLine(line)) {
             boost::trim(line);
-            if (!line.empty() && !boost::starts_with(line, L"#") && !boost::starts_with(line, L"//"))
+            if (!line.empty() && !boost::starts_with(line, L"#") && !boost::starts_with(line, L"//")) {
                 queries.add(line);
+            }
         }
         reader->close();
 
@@ -102,20 +98,21 @@ public:
     }
 
     /// Build a randomish document for both RAMDirectory and MemoryIndex, and run all the queries against it.
-    void checkAgainstRAMDirectory()
-    {
+    void checkAgainstRAMDirectory() {
         StringStream fooField;
         StringStream termField;
 
         // add up to 250 terms to field "foo"
         int32_t fieldCount = random->nextInt(250) + 1;
-        for (int32_t i = 0; i < fieldCount; ++i)
+        for (int32_t i = 0; i < fieldCount; ++i) {
             fooField << L" " << randomTerm();
+        }
 
         // add up to 250 terms to field "foo"
         int32_t termCount = random->nextInt(250) + 1;
-        for (int32_t i = 0; i < termCount; ++i)
+        for (int32_t i = 0; i < termCount; ++i) {
             termField << L" " << randomTerm();
+        }
 
         RAMDirectoryPtr ramdir = newLucene<RAMDirectory>();
         AnalyzerPtr analyzer = randomAnalyzer();
@@ -134,85 +131,74 @@ public:
         checkAllQueries(memory, ramdir, analyzer);
     }
 
-    void checkAllQueries(const MemoryIndexPtr& memory, const RAMDirectoryPtr& ramdir, const AnalyzerPtr& analyzer)
-    {
+    void checkAllQueries(const MemoryIndexPtr& memory, const RAMDirectoryPtr& ramdir, const AnalyzerPtr& analyzer) {
         IndexSearcherPtr ram = newLucene<IndexSearcher>(ramdir);
         IndexSearcherPtr mem = memory->createSearcher();
         QueryParserPtr qp = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, L"foo", analyzer);
-        for (HashSet<String>::iterator query = queries.begin(); query != queries.end(); ++query)
-        {
+        for (HashSet<String>::iterator query = queries.begin(); query != queries.end(); ++query) {
             TopDocsPtr ramDocs = ram->search(qp->parse(*query), 1);
             TopDocsPtr memDocs = mem->search(qp->parse(*query), 1);
             EXPECT_EQ(ramDocs->totalHits, memDocs->totalHits);
         }
     }
 
-    AnalyzerPtr randomAnalyzer()
-    {
-        switch (random->nextInt(3))
-        {
-            case 0:
-                return newLucene<SimpleAnalyzer>();
-            case 1:
-                return newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-            default:
-                return newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
+    AnalyzerPtr randomAnalyzer() {
+        switch (random->nextInt(3)) {
+        case 0:
+            return newLucene<SimpleAnalyzer>();
+        case 1:
+            return newLucene<StopAnalyzer>(LuceneVersion::LUCENE_CURRENT);
+        default:
+            return newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
         }
     }
 
     /// half of the time, returns a random term from TEST_TERMS.
     /// the other half of the time, returns a random unicode string.
-    String randomTerm()
-    {
-        if (random->nextInt() % 2 == 1)
-        {
+    String randomTerm() {
+        if (random->nextInt() % 2 == 1) {
             // return a random TEST_TERM
             return TEST_TERMS[random->nextInt(TEST_TERMS.size())];
-        }
-        else
-        {
+        } else {
             // return a random unicode term
             return randomString();
         }
     }
 
     /// Return a random unicode term, like StressIndexingTest.
-    String randomString()
-    {
+    String randomString() {
         int32_t end = random->nextInt(20);
-        if (buffer.size() < 1 + end)
+        if (buffer.size() < 1 + end) {
             buffer.resize((int32_t)((double)(1 + end) * 1.25));
+        }
 
-        for (int32_t i = 0; i < end; ++i)
-        {
+        for (int32_t i = 0; i < end; ++i) {
             int32_t t = random->nextInt(5);
-            if (t == 0 && i < end - 1)
-            {
-                #ifdef LPP_UNICODE_CHAR_SIZE_2
+            if (t == 0 && i < end - 1) {
+#ifdef LPP_UNICODE_CHAR_SIZE_2
                 // Make a surrogate pair
                 // High surrogate
                 buffer[i++] = (wchar_t)nextInt(0xd800, 0xdc00);
                 // Low surrogate
                 buffer[i] = (wchar_t)nextInt(0xdc00, 0xe000);
-                #else
+#else
                 buffer[i] = (wchar_t)nextInt(0xdc00, 0xe000);
-                #endif
-            }
-            else if (t <= 1)
+#endif
+            } else if (t <= 1) {
                 buffer[i] = (wchar_t)nextInt(0x01, 0x80);
-            else if (t == 2)
+            } else if (t == 2) {
                 buffer[i] = (wchar_t)nextInt(0x80, 0x800);
-            else if (t == 3)
+            } else if (t == 3) {
                 buffer[i] = (wchar_t)nextInt(0x800, 0xd800);
-            else if (t == 4)
+            } else if (t == 4) {
                 buffer[i] = (wchar_t)nextInt(0xe000, 0xfff0);
+            }
         }
         return String(buffer.get(), end);
     }
 
     /// start is inclusive and end is exclusive
-    int32_t nextInt(int32_t start, int32_t end)
-    {
+    int32_t nextInt(int32_t start, int32_t end) {
         return start + random->nextInt(end - start);
     }
 };
@@ -220,8 +206,8 @@ public:
 const int32_t MemoryIndexTest::ITERATIONS = 100;
 
 /// runs random tests, up to ITERATIONS times.
-TEST_F(MemoryIndexTest, testRandomQueries)
-{
-    for (int32_t i = 0; i < ITERATIONS; ++i)
+TEST_F(MemoryIndexTest, testRandomQueries) {
+    for (int32_t i = 0; i < ITERATIONS; ++i) {
         checkAgainstRAMDirectory();
+    }
 }

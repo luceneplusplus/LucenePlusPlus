@@ -19,16 +19,13 @@
 
 using namespace Lucene;
 
-class TermRangeFilterTest : public BaseTestRangeFilterFixture
-{
+class TermRangeFilterTest : public BaseTestRangeFilterFixture {
 public:
-    virtual ~TermRangeFilterTest()
-    {
+    virtual ~TermRangeFilterTest() {
     }
 };
 
-TEST_F(TermRangeFilterTest, testRangeFilterId)
-{
+TEST_F(TermRangeFilterTest, testRangeFilterId) {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -107,8 +104,7 @@ TEST_F(TermRangeFilterTest, testRangeFilterId)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(TermRangeFilterTest, testRangeFilterIdCollating)
-{
+TEST_F(TermRangeFilterTest, testRangeFilterIdCollating) {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -189,8 +185,7 @@ TEST_F(TermRangeFilterTest, testRangeFilterIdCollating)
     EXPECT_EQ(1, numHits);
 }
 
-TEST_F(TermRangeFilterTest, testRangeFilterRand)
-{
+TEST_F(TermRangeFilterTest, testRangeFilterRand) {
     IndexReaderPtr reader = IndexReader::open(signedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);
 
@@ -249,8 +244,7 @@ TEST_F(TermRangeFilterTest, testRangeFilterRand)
     EXPECT_EQ(1, result.size());
 }
 
-TEST_F(TermRangeFilterTest, testRangeFilterRandCollating)
-{
+TEST_F(TermRangeFilterTest, testRangeFilterRandCollating) {
     // using the unsigned index because collation seems to ignore hyphens
     IndexReaderPtr reader = IndexReader::open(unsignedIndex->index, true);
     IndexSearcherPtr search = newLucene<IndexSearcher>(reader);

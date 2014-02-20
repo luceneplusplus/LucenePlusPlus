@@ -12,25 +12,25 @@
 
 struct sb_stemmer;
 
-namespace Lucene
-{
-    /// A filter that stems words using a Snowball-generated stemmer.
-    class LPPCONTRIBAPI SnowballFilter : public TokenFilter
-    {
-    public:
-        SnowballFilter(const TokenStreamPtr& input, const String& name);
-        virtual ~SnowballFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(SnowballFilter);
+/// A filter that stems words using a Snowball-generated stemmer.
+class LPPCONTRIBAPI SnowballFilter : public TokenFilter {
+public:
+    SnowballFilter(const TokenStreamPtr& input, const String& name);
+    virtual ~SnowballFilter();
 
-    protected:
-        struct sb_stemmer* stemmer;
-        UTF8ResultPtr utf8Result;
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(SnowballFilter);
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    struct sb_stemmer* stemmer;
+    UTF8ResultPtr utf8Result;
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

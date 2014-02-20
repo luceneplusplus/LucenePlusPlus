@@ -9,34 +9,31 @@
 #include "IndexReader.h"
 #include "Term.h"
 
-namespace Lucene
-{
-    SingleTermEnum::SingleTermEnum(const IndexReaderPtr& reader, const TermPtr& singleTerm)
-    {
-        this->_endEnum = false;
-        this->singleTerm = singleTerm;
-        setEnum(reader->terms(singleTerm));
-    }
+namespace Lucene {
 
-    SingleTermEnum::~SingleTermEnum()
-    {
-    }
+SingleTermEnum::SingleTermEnum(const IndexReaderPtr& reader, const TermPtr& singleTerm) {
+    this->_endEnum = false;
+    this->singleTerm = singleTerm;
+    setEnum(reader->terms(singleTerm));
+}
 
-    double SingleTermEnum::difference()
-    {
-        return 1.0;
-    }
+SingleTermEnum::~SingleTermEnum() {
+}
 
-    bool SingleTermEnum::endEnum()
-    {
-        return _endEnum;
-    }
+double SingleTermEnum::difference() {
+    return 1.0;
+}
 
-    bool SingleTermEnum::termCompare(const TermPtr& term)
-    {
-        if (term->equals(singleTerm))
-            return true;
-        _endEnum = true;
-        return false;
+bool SingleTermEnum::endEnum() {
+    return _endEnum;
+}
+
+bool SingleTermEnum::termCompare(const TermPtr& term) {
+    if (term->equals(singleTerm)) {
+        return true;
     }
+    _endEnum = true;
+    return false;
+}
+
 }

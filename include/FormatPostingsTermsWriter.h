@@ -9,42 +9,42 @@
 
 #include "FormatPostingsTermsConsumer.h"
 
-namespace Lucene
-{
-    class FormatPostingsTermsWriter : public FormatPostingsTermsConsumer
-    {
-    public:
-        FormatPostingsTermsWriter(const SegmentWriteStatePtr& state, const FormatPostingsFieldsWriterPtr& parent);
-        virtual ~FormatPostingsTermsWriter();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsTermsWriter);
+class FormatPostingsTermsWriter : public FormatPostingsTermsConsumer {
+public:
+    FormatPostingsTermsWriter(const SegmentWriteStatePtr& state, const FormatPostingsFieldsWriterPtr& parent);
+    virtual ~FormatPostingsTermsWriter();
 
-    public:
-        FormatPostingsFieldsWriterWeakPtr _parent;
-        SegmentWriteStatePtr state;
-        FormatPostingsDocsWriterPtr docsWriter;
-        TermInfosWriterPtr termsOut;
-        FieldInfoPtr fieldInfo;
+    LUCENE_CLASS(FormatPostingsTermsWriter);
 
-        CharArray currentTerm;
-        int32_t currentTermStart;
+public:
+    FormatPostingsFieldsWriterWeakPtr _parent;
+    SegmentWriteStatePtr state;
+    FormatPostingsDocsWriterPtr docsWriter;
+    TermInfosWriterPtr termsOut;
+    FieldInfoPtr fieldInfo;
 
-        int64_t freqStart;
-        int64_t proxStart;
+    CharArray currentTerm;
+    int32_t currentTermStart;
 
-    public:
-        virtual void initialize();
+    int64_t freqStart;
+    int64_t proxStart;
 
-        void setField(const FieldInfoPtr& fieldInfo);
+public:
+    virtual void initialize();
 
-        /// Adds a new term in this field
-        virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start);
+    void setField(const FieldInfoPtr& fieldInfo);
 
-        /// Called when we are done adding terms to this field
-        virtual void finish();
+    /// Adds a new term in this field
+    virtual FormatPostingsDocsConsumerPtr addTerm(CharArray text, int32_t start);
 
-        void close();
-    };
+    /// Called when we are done adding terms to this field
+    virtual void finish();
+
+    void close();
+};
+
 }
 
 #endif

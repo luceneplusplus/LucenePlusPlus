@@ -9,41 +9,35 @@
 #include "BufferedReader.h"
 #include "UTF8Stream.h"
 
-namespace Lucene
-{
-    InputStreamReader::InputStreamReader(const ReaderPtr& reader)
-    {
-        this->reader = reader;
-        this->decoder = newLucene<UTF8DecoderStream>(newLucene<BufferedReader>(reader, 1024));
-    }
+namespace Lucene {
 
-    InputStreamReader::~InputStreamReader()
-    {
-    }
+InputStreamReader::InputStreamReader(const ReaderPtr& reader) {
+    this->reader = reader;
+    this->decoder = newLucene<UTF8DecoderStream>(newLucene<BufferedReader>(reader, 1024));
+}
 
-    int32_t InputStreamReader::read()
-    {
-        int32_t buffer;
-        return read((wchar_t*)&buffer, 0, 1) == READER_EOF ? READER_EOF : buffer;
-    }
+InputStreamReader::~InputStreamReader() {
+}
 
-    int32_t InputStreamReader::read(wchar_t* b, int32_t offset, int32_t length)
-    {
-        return decoder->decode(b + offset, length);
-    }
+int32_t InputStreamReader::read() {
+    int32_t buffer;
+    return read((wchar_t*)&buffer, 0, 1) == READER_EOF ? READER_EOF : buffer;
+}
 
-    void InputStreamReader::close()
-    {
-        reader->close();
-    }
+int32_t InputStreamReader::read(wchar_t* b, int32_t offset, int32_t length) {
+    return decoder->decode(b + offset, length);
+}
 
-    bool InputStreamReader::markSupported()
-    {
-        return false;
-    }
+void InputStreamReader::close() {
+    reader->close();
+}
 
-    void InputStreamReader::reset()
-    {
-        reader->reset();
-    }
+bool InputStreamReader::markSupported() {
+    return false;
+}
+
+void InputStreamReader::reset() {
+    reader->reset();
+}
+
 }

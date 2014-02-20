@@ -9,38 +9,38 @@
 
 #include "Reader.h"
 
-namespace Lucene
-{
-    /// An InputStreamReader is a bridge from byte streams to character streams.
-    class InputStreamReader : public Reader
-    {
-    public:
-        /// Create an InputStreamReader that uses the utf8 charset.
-        InputStreamReader(const ReaderPtr& reader);
-        virtual ~InputStreamReader();
+namespace Lucene {
 
-        LUCENE_CLASS(InputStreamReader);
+/// An InputStreamReader is a bridge from byte streams to character streams.
+class InputStreamReader : public Reader {
+public:
+    /// Create an InputStreamReader that uses the utf8 charset.
+    InputStreamReader(const ReaderPtr& reader);
+    virtual ~InputStreamReader();
 
-    protected:
-        ReaderPtr reader;
-        UTF8DecoderStreamPtr decoder;
+    LUCENE_CLASS(InputStreamReader);
 
-    public:
-        /// Read a single character.
-        virtual int32_t read();
+protected:
+    ReaderPtr reader;
+    UTF8DecoderStreamPtr decoder;
 
-        /// Read characters into a portion of an array.
-        virtual int32_t read(wchar_t* b, int32_t offset, int32_t length);
+public:
+    /// Read a single character.
+    virtual int32_t read();
 
-        /// Close the stream.
-        virtual void close();
+    /// Read characters into a portion of an array.
+    virtual int32_t read(wchar_t* b, int32_t offset, int32_t length);
 
-        /// Tell whether this stream supports the mark() operation
-        virtual bool markSupported();
+    /// Close the stream.
+    virtual void close();
 
-        /// Reset the stream.
-        virtual void reset();
-    };
+    /// Tell whether this stream supports the mark() operation
+    virtual bool markSupported();
+
+    /// Reset the stream.
+    virtual void reset();
+};
+
 }
 
 #endif

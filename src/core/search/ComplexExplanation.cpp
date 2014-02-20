@@ -8,34 +8,29 @@
 #include "ComplexExplanation.h"
 #include "StringUtils.h"
 
-namespace Lucene
-{
-    ComplexExplanation::ComplexExplanation(bool match, double value, const String& description) : Explanation(value, description)
-    {
-        this->match = match;
-    }
+namespace Lucene {
 
-    ComplexExplanation::~ComplexExplanation()
-    {
-    }
+ComplexExplanation::ComplexExplanation(bool match, double value, const String& description) : Explanation(value, description) {
+    this->match = match;
+}
 
-    bool ComplexExplanation::getMatch()
-    {
-        return match;
-    }
+ComplexExplanation::~ComplexExplanation() {
+}
 
-    void ComplexExplanation::setMatch(bool match)
-    {
-        this->match = match;
-    }
+bool ComplexExplanation::getMatch() {
+    return match;
+}
 
-    bool ComplexExplanation::isMatch()
-    {
-        return getMatch();
-    }
+void ComplexExplanation::setMatch(bool match) {
+    this->match = match;
+}
 
-    String ComplexExplanation::getSummary()
-    {
-        return StringUtils::toString(getValue()) + L" = " + (isMatch() ? L"(MATCH) " : L"(NON-MATCH) ") + getDescription();
-    }
+bool ComplexExplanation::isMatch() {
+    return getMatch();
+}
+
+String ComplexExplanation::getSummary() {
+    return StringUtils::toString(getValue()) + L" = " + (isMatch() ? L"(MATCH) " : L"(NON-MATCH) ") + getDescription();
+}
+
 }

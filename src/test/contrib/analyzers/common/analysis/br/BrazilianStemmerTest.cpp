@@ -10,21 +10,17 @@
 
 using namespace Lucene;
 
-class BrazilianStemmerTest : public BaseTokenStreamFixture
-{
+class BrazilianStemmerTest : public BaseTokenStreamFixture {
 public:
-    virtual ~BrazilianStemmerTest()
-    {
+    virtual ~BrazilianStemmerTest() {
     }
 
 public:
-    void check(const String& input, const String& expected)
-    {
+    void check(const String& input, const String& expected) {
         checkOneTerm(newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
 
-    void checkReuse(const AnalyzerPtr& a, const String& input, const String& expected)
-    {
+    void checkReuse(const AnalyzerPtr& a, const String& input, const String& expected) {
         checkOneTermReuse(a, input, expected);
     }
 };
@@ -32,8 +28,7 @@ public:
 /// Test the Brazilian Stem Filter, which only modifies the term text.
 /// It is very similar to the snowball Portuguese algorithm but not exactly the same.
 
-TEST_F(BrazilianStemmerTest, testWithSnowballExamples)
-{
+TEST_F(BrazilianStemmerTest, testWithSnowballExamples) {
     check(L"boa", L"boa");
     check(L"boainain", L"boainain");
     check(L"boas", L"boas");
@@ -132,8 +127,7 @@ TEST_F(BrazilianStemmerTest, testWithSnowballExamples)
     check(L"quiosque", L"quiosqu");
 }
 
-TEST_F(BrazilianStemmerTest, testNormalization)
-{
+TEST_F(BrazilianStemmerTest, testNormalization) {
     check(L"Brasil", L"brasil"); // lowercase by default
     const uint8_t brasil[] = {0x42, 0x72, 0x61, 0x73, 0xc3, 0xad, 0x6c, 0x69, 0x61};
     check(UTF8_TO_STRING(brasil), L"brasil"); // remove diacritics
@@ -145,8 +139,7 @@ TEST_F(BrazilianStemmerTest, testNormalization)
     check(UTF8_TO_STRING(aaa), L"aaa"); // normally, diacritics are removed
 }
 
-TEST_F(BrazilianStemmerTest, testReusableTokenStream)
-{
+TEST_F(BrazilianStemmerTest, testReusableTokenStream) {
     AnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"boa", L"boa");
     checkReuse(a, L"boainain", L"boainain");
@@ -155,8 +148,7 @@ TEST_F(BrazilianStemmerTest, testReusableTokenStream)
     checkReuse(a, UTF8_TO_STRING(boas), L"boas"); // removes diacritic: different from snowball Portuguese
 }
 
-TEST_F(BrazilianStemmerTest, testStemExclusionTable)
-{
+TEST_F(BrazilianStemmerTest, testStemExclusionTable) {
     BrazilianAnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     HashSet<String> exclusions = HashSet<String>::newInstance();
     const uint8_t quintessencia[] = {0x71, 0x75, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x73, 0xc3, 0xaa, 0x6e, 0x63, 0x69, 0x61};
@@ -166,8 +158,7 @@ TEST_F(BrazilianStemmerTest, testStemExclusionTable)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-TEST_F(BrazilianStemmerTest, testExclusionTableReuse)
-{
+TEST_F(BrazilianStemmerTest, testExclusionTableReuse) {
     BrazilianAnalyzerPtr a = newLucene<BrazilianAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     const uint8_t quintessencia[] = {0x71, 0x75, 0x69, 0x6e, 0x74, 0x65, 0x73, 0x73, 0xc3, 0xaa, 0x6e, 0x63, 0x69, 0x61};
     checkReuse(a, UTF8_TO_STRING(quintessencia), L"quintessente");

@@ -18,36 +18,30 @@
 
 using namespace Lucene;
 
-class SimilarityOne : public DefaultSimilarity
-{
+class SimilarityOne : public DefaultSimilarity {
 public:
-    virtual ~SimilarityOne()
-    {
+    virtual ~SimilarityOne() {
     }
 
     LUCENE_CLASS(SimilarityOne);
 
 public:
-    virtual double lengthNorm(const String& fieldName, int32_t numTokens)
-    {
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
         return 1.0;
     }
 };
 
 /// Test that norms info is preserved during index life - including separate norms, addDocument, addIndexesNoOptimize, optimize.
-class NormsTest : public LuceneTestFixture
-{
+class NormsTest : public LuceneTestFixture {
 public:
-    NormsTest()
-    {
+    NormsTest() {
         similarityOne = newLucene<SimilarityOne>();
         lastNorm = 0.0;
         normDelta = 0.001;
         numDocNorms = 0;
     }
 
-    virtual ~NormsTest()
-    {
+    virtual ~NormsTest() {
     }
 
 protected:
@@ -63,20 +57,16 @@ protected:
 
 public:
     /// return unique norm values that are unchanged by encoding/decoding
-    double nextNorm()
-    {
+    double nextNorm() {
         double norm = lastNorm + normDelta;
-        do
-        {
+        do {
             double norm1 = Similarity::decodeNorm(Similarity::encodeNorm(norm));
-            if (norm1 > lastNorm)
-            {
+            if (norm1 > lastNorm) {
                 norm = norm1;
                 break;
             }
             norm += normDelta;
-        }
-        while (true);
+        } while (true);
         norms.add(numDocNorms, norm);
         modifiedNorms.add(numDocNorms, norm);
         ++numDocNorms;
@@ -85,12 +75,10 @@ public:
     }
 
     /// create the next document
-    DocumentPtr newDoc()
-    {
+    DocumentPtr newDoc() {
         DocumentPtr d = newLucene<Document>();
         double boost = nextNorm();
-        for (int32_t i = 0; i < 10; ++i)
-        {
+        for (int32_t i = 0; i < 10; ++i) {
             FieldPtr f = newLucene<Field>(L"f" + StringUtils::toString(i), L"v" + StringUtils::toString(i), Field::STORE_NO, Field::INDEX_NOT_ANALYZED);
             f->setBoost(boost);
             d->add(f);
@@ -98,17 +86,14 @@ public:
         return d;
     }
 
-    void verifyIndex(const DirectoryPtr& dir)
-    {
+    void verifyIndex(const DirectoryPtr& dir) {
         IndexReaderPtr ir = IndexReader::open(dir, false);
-        for (int32_t i = 0; i < NUM_FIELDS; ++i)
-        {
+        for (int32_t i = 0; i < NUM_FIELDS; ++i) {
             String field = L"f" + StringUtils::toString(i);
             ByteArray b = ir->norms(field);
             EXPECT_EQ(numDocNorms, b.size());
             Collection<double> storedNorms = (i == 1 ? modifiedNorms : norms);
-            for (int32_t j = 0; j < b.size(); ++j)
-            {
+            for (int32_t j = 0; j < b.size(); ++j) {
                 double norm = Similarity::decodeNorm(b[j]);
                 double norm1 = storedNorms[j];
                 EXPECT_EQ(norm, norm1); // 0.000001
@@ -116,24 +101,22 @@ public:
         }
     }
 
-    void addDocs(const DirectoryPtr& dir, int32_t ndocs, bool compound)
-    {
+    void addDocs(const DirectoryPtr& dir, int32_t ndocs, bool compound) {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), false, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);
         iw->setMergeFactor(3);
         iw->setSimilarity(similarityOne);
         iw->setUseCompoundFile(compound);
-        for (int32_t i = 0; i < ndocs; ++i)
+        for (int32_t i = 0; i < ndocs; ++i) {
             iw->addDocument(newDoc());
+        }
         iw->close();
     }
 
-    void modifyNormsForF1(const DirectoryPtr& dir)
-    {
+    void modifyNormsForF1(const DirectoryPtr& dir) {
         IndexReaderPtr ir = IndexReader::open(dir, false);
         int32_t n = ir->maxDoc();
-        for (int32_t i = 0; i < n; i += 3) // modify for every third doc
-        {
+        for (int32_t i = 0; i < n; i += 3) { // modify for every third doc
             int32_t k = (i * 3) % modifiedNorms.size();
             double origNorm = modifiedNorms[i];
             double newNorm = modifiedNorms[k];
@@ -145,10 +128,8 @@ public:
         ir->close();
     }
 
-    void doTestNorms(const DirectoryPtr& dir)
-    {
-        for (int32_t i = 0; i < 5; ++i)
-        {
+    void doTestNorms(const DirectoryPtr& dir) {
+        for (int32_t i = 0; i < 5; ++i) {
             addDocs(dir, 12, true);
             verifyIndex(dir);
             modifyNormsForF1(dir);
@@ -160,8 +141,7 @@ public:
         }
     }
 
-    void createIndex(const DirectoryPtr& dir)
-    {
+    void createIndex(const DirectoryPtr& dir) {
         IndexWriterPtr iw = newLucene<IndexWriter>(dir, newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
         iw->setMaxBufferedDocs(5);
         iw->setMergeFactor(3);
@@ -177,8 +157,7 @@ const int32_t NormsTest::NUM_FIELDS = 10;
 /// Including separate norms.
 /// Including merging indexes with separate norms.
 /// Including optimize.
-TEST_F(NormsTest, testNorms)
-{
+TEST_F(NormsTest, testNorms) {
     // test with a single index: index1
     String indexDir1(FileUtils::joinPath(getTempDir(), L"lucenetestindex1"));
     DirectoryPtr dir1 = FSDirectory::open(indexDir1);

@@ -9,97 +9,97 @@
 
 #include "Searchable.h"
 
-namespace Lucene
-{
-    /// An abstract base class for search implementations. Implements the main search methods.
+namespace Lucene {
+
+/// An abstract base class for search implementations. Implements the main search methods.
+///
+/// Note that you can only access hits from a Searcher as long as it is not yet closed, otherwise an IO
+/// exception will be thrown.
+class LPPAPI Searcher : public Searchable, public LuceneObject {
+public:
+    Searcher();
+    virtual ~Searcher();
+
+    LUCENE_CLASS(Searcher);
+
+protected:
+    /// The Similarity implementation used by this searcher.
+    SimilarityPtr similarity;
+
+public:
+    /// Search implementation with arbitrary sorting.  Finds the top n hits for query, applying filter if
+    /// non-null, and sorting the hits by the criteria in sort.
     ///
-    /// Note that you can only access hits from a Searcher as long as it is not yet closed, otherwise an IO
-    /// exception will be thrown.
-    class LPPAPI Searcher : public Searchable, public LuceneObject
-    {
-    public:
-        Searcher();
-        virtual ~Searcher();
+    /// NOTE: this does not compute scores by default; use {@link IndexSearcher#setDefaultFieldSortScoring}
+    /// to enable scoring.
+    virtual TopFieldDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n, const SortPtr& sort);
 
-        LUCENE_CLASS(Searcher);
+    /// Lower-level search API.
+    ///
+    /// {@link Collector#collect(int32_t)} is called for every matching document.
+    ///
+    /// Applications should only use this if they need all of the matching documents.  The high-level
+    /// search API ({@link Searcher#search(QueryPtr, int32_t)}) is usually more efficient, as it skips
+    /// non-high-scoring hits.
+    ///
+    /// Note: The score passed to this method is a raw score.  In other words, the score will not necessarily
+    /// be a double whose value is between 0 and 1.
+    virtual void search(const QueryPtr& query, const CollectorPtr& results);
 
-    protected:
-        /// The Similarity implementation used by this searcher.
-        SimilarityPtr similarity;
+    /// Lower-level search API.
+    ///
+    /// {@link Collector#collect(int32_t)} is called for every matching document.  Collector-based access to
+    /// remote indexes is discouraged.
+    ///
+    /// Applications should only use this if they need all of the matching documents.  The high-level search
+    /// API ({@link Searcher#search(QueryPtr, FilterPtr, int32_t)}) is usually more efficient, as it skips
+    /// non-high-scoring hits.
+    ///
+    /// @param query To match documents
+    /// @param filter If non-null, used to permit documents to be collected.
+    /// @param results To receive hits
+    virtual void search(const QueryPtr& query, const FilterPtr& filter, const CollectorPtr& results);
 
-    public:
-        /// Search implementation with arbitrary sorting.  Finds the top n hits for query, applying filter if
-        /// non-null, and sorting the hits by the criteria in sort.
-        ///
-        /// NOTE: this does not compute scores by default; use {@link IndexSearcher#setDefaultFieldSortScoring}
-        /// to enable scoring.
-        virtual TopFieldDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n, const SortPtr& sort);
+    /// Finds the top n hits for query, applying filter if non-null.
+    virtual TopDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n);
 
-        /// Lower-level search API.
-        ///
-        /// {@link Collector#collect(int32_t)} is called for every matching document.
-        ///
-        /// Applications should only use this if they need all of the matching documents.  The high-level
-        /// search API ({@link Searcher#search(QueryPtr, int32_t)}) is usually more efficient, as it skips
-        /// non-high-scoring hits.
-        ///
-        /// Note: The score passed to this method is a raw score.  In other words, the score will not necessarily
-        /// be a double whose value is between 0 and 1.
-        virtual void search(const QueryPtr& query, const CollectorPtr& results);
+    /// Finds the top n hits for query.
+    virtual TopDocsPtr search(const QueryPtr& query, int32_t n);
 
-        /// Lower-level search API.
-        ///
-        /// {@link Collector#collect(int32_t)} is called for every matching document.  Collector-based access to
-        /// remote indexes is discouraged.
-        ///
-        /// Applications should only use this if they need all of the matching documents.  The high-level search
-        /// API ({@link Searcher#search(QueryPtr, FilterPtr, int32_t)}) is usually more efficient, as it skips
-        /// non-high-scoring hits.
-        ///
-        /// @param query To match documents
-        /// @param filter If non-null, used to permit documents to be collected.
-        /// @param results To receive hits
-        virtual void search(const QueryPtr& query, const FilterPtr& filter, const CollectorPtr& results);
+    /// Returns an Explanation that describes how doc scored against query.
+    ///
+    /// This is intended to be used in developing Similarity implementations, and for good performance,
+    /// should not be displayed with every hit.  Computing an explanation is as expensive as executing the
+    /// query over the entire index.
+    virtual ExplanationPtr explain(const QueryPtr& query, int32_t doc);
 
-        /// Finds the top n hits for query, applying filter if non-null.
-        virtual TopDocsPtr search(const QueryPtr& query, const FilterPtr& filter, int32_t n);
+    /// Set the Similarity implementation used by this Searcher.
+    virtual void setSimilarity(const SimilarityPtr& similarity);
 
-        /// Finds the top n hits for query.
-        virtual TopDocsPtr search(const QueryPtr& query, int32_t n);
+    /// Return the Similarity implementation used by this Searcher.
+    ///
+    /// This defaults to the current value of {@link Similarity#getDefault()}.
+    virtual SimilarityPtr getSimilarity();
 
-        /// Returns an Explanation that describes how doc scored against query.
-        ///
-        /// This is intended to be used in developing Similarity implementations, and for good performance,
-        /// should not be displayed with every hit.  Computing an explanation is as expensive as executing the
-        /// query over the entire index.
-        virtual ExplanationPtr explain(const QueryPtr& query, int32_t doc);
+    virtual Collection<int32_t> docFreqs(Collection<TermPtr> terms);
 
-        /// Set the Similarity implementation used by this Searcher.
-        virtual void setSimilarity(const SimilarityPtr& similarity);
+    virtual void search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results) = 0;
+    virtual void close() = 0;
+    virtual int32_t docFreq(const TermPtr& term) = 0;
+    virtual int32_t maxDoc() = 0;
+    virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n) = 0;
+    virtual DocumentPtr doc(int32_t n) = 0;
+    virtual DocumentPtr doc(int32_t n, const FieldSelectorPtr& fieldSelector) = 0;
+    virtual QueryPtr rewrite(const QueryPtr& query) = 0;
+    virtual ExplanationPtr explain(const WeightPtr& weight, int32_t doc) = 0;
+    virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort) = 0;
 
-        /// Return the Similarity implementation used by this Searcher.
-        ///
-        /// This defaults to the current value of {@link Similarity#getDefault()}.
-        virtual SimilarityPtr getSimilarity();
+protected:
+    /// Creates a weight for query.
+    /// @return New weight
+    virtual WeightPtr createWeight(const QueryPtr& query);
+};
 
-        virtual Collection<int32_t> docFreqs(Collection<TermPtr> terms);
-
-        virtual void search(const WeightPtr& weight, const FilterPtr& filter, const CollectorPtr& results) = 0;
-        virtual void close() = 0;
-        virtual int32_t docFreq(const TermPtr& term) = 0;
-        virtual int32_t maxDoc() = 0;
-        virtual TopDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n) = 0;
-        virtual DocumentPtr doc(int32_t n) = 0;
-        virtual DocumentPtr doc(int32_t n, const FieldSelectorPtr& fieldSelector) = 0;
-        virtual QueryPtr rewrite(const QueryPtr& query) = 0;
-        virtual ExplanationPtr explain(const WeightPtr& weight, int32_t doc) = 0;
-        virtual TopFieldDocsPtr search(const WeightPtr& weight, const FilterPtr& filter, int32_t n, const SortPtr& sort) = 0;
-
-    protected:
-        /// Creates a weight for query.
-        /// @return New weight
-        virtual WeightPtr createWeight(const QueryPtr& query);
-    };
 }
 
 #endif

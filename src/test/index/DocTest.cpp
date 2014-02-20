@@ -25,8 +25,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture DocTest;
 
-static SegmentInfoPtr indexDoc(const IndexWriterPtr& writer, const String& fileName)
-{
+static SegmentInfoPtr indexDoc(const IndexWriterPtr& writer, const String& fileName) {
     DocumentPtr doc = newLucene<Document>();
     doc->add(newLucene<Field>(L"contents", newLucene<FileReader>(FileUtils::joinPath(getTestDir(), fileName))));
     writer->addDocument(doc);
@@ -34,35 +33,31 @@ static SegmentInfoPtr indexDoc(const IndexWriterPtr& writer, const String& fileN
     return writer->newestSegment();
 }
 
-static void printSegment(StringStream& out, const SegmentInfoPtr& si)
-{
+static void printSegment(StringStream& out, const SegmentInfoPtr& si) {
     SegmentReaderPtr reader = SegmentReader::get(true, si, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
 
-    for (int32_t i = 0; i < reader->numDocs(); ++i)
+    for (int32_t i = 0; i < reader->numDocs(); ++i) {
         out << reader->document(i)->toString() << L"\n";
+    }
 
     TermEnumPtr tis = reader->terms();
-    while (tis->next())
-    {
+    while (tis->next()) {
         out << tis->term()->toString();
         out << L" DF=" << tis->docFreq() << L"\n";
 
         TermPositionsPtr positions = reader->termPositions(tis->term());
         LuceneException finally;
-        try
-        {
-            while (positions->next())
-            {
+        try {
+            while (positions->next()) {
                 out << L" doc=" << positions->doc();
                 out << L" TF=" << positions->freq();
                 out << L" pos=";
                 out << positions->nextPosition() << L"\n";
-                for (int32_t j = 1; j < positions->freq(); ++j)
+                for (int32_t j = 1; j < positions->freq(); ++j) {
                     out << L"," << positions->nextPosition();
+                }
             }
-        }
-        catch (LuceneException& e)
-        {
+        } catch (LuceneException& e) {
             finally = e;
         }
         positions->close();
@@ -72,8 +67,7 @@ static void printSegment(StringStream& out, const SegmentInfoPtr& si)
     reader->close();
 }
 
-static SegmentInfoPtr merge(const SegmentInfoPtr& si1, const SegmentInfoPtr& si2, const String& merged, bool useCompoundFile)
-{
+static SegmentInfoPtr merge(const SegmentInfoPtr& si1, const SegmentInfoPtr& si2, const String& merged, bool useCompoundFile) {
     SegmentReaderPtr r1 = SegmentReader::get(true, si1, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
     SegmentReaderPtr r2 = SegmentReader::get(true, si2, IndexReader::DEFAULT_TERMS_INDEX_DIVISOR);
 
@@ -84,18 +78,17 @@ static SegmentInfoPtr merge(const SegmentInfoPtr& si1, const SegmentInfoPtr& si2
     merger->merge();
     merger->closeReaders();
 
-    if (useCompoundFile)
-    {
+    if (useCompoundFile) {
         HashSet<String> filesToDelete = merger->createCompoundFile(merged + L".cfs");
-        for (HashSet<String>::iterator file = filesToDelete.begin(); file != filesToDelete.end(); ++file)
+        for (HashSet<String>::iterator file = filesToDelete.begin(); file != filesToDelete.end(); ++file) {
             si1->dir->deleteFile(*file);
+        }
     }
 
     return newLucene<SegmentInfo>(merged, si1->docCount + si2->docCount, si1->dir, useCompoundFile, true);
 }
 
-TEST_F(DocTest, testIndexAndMerge)
-{
+TEST_F(DocTest, testIndexAndMerge) {
     String indexDir(FileUtils::joinPath(getTempDir(), L"testDoc"));
 
     DirectoryPtr directory = FSDirectory::open(indexDir);

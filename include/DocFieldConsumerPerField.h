@@ -9,21 +9,21 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class DocFieldConsumerPerField : public LuceneObject
-    {
-    public:
-        virtual ~DocFieldConsumerPerField();
+namespace Lucene {
 
-        LUCENE_CLASS(DocFieldConsumerPerField);
+class DocFieldConsumerPerField : public LuceneObject {
+public:
+    virtual ~DocFieldConsumerPerField();
 
-    public:
-        /// Processes all occurrences of a single field
-        virtual void processFields(Collection<FieldablePtr> fields, int32_t count) = 0;
+    LUCENE_CLASS(DocFieldConsumerPerField);
 
-        virtual void abort() = 0;
-    };
+public:
+    /// Processes all occurrences of a single field
+    virtual void processFields(Collection<FieldablePtr> fields, int32_t count) = 0;
+
+    virtual void abort() = 0;
+};
+
 }
 
 #endif

@@ -9,55 +9,54 @@
 
 #include "PriorityQueue.h"
 
-namespace Lucene
-{
-    class LPPAPI HitQueueBase : public LuceneObject
-    {
-    public:
-        HitQueueBase(int32_t size);
-        virtual ~HitQueueBase();
+namespace Lucene {
 
-        LUCENE_CLASS(HitQueueBase);
+class LPPAPI HitQueueBase : public LuceneObject {
+public:
+    HitQueueBase(int32_t size);
+    virtual ~HitQueueBase();
 
-    public:
-        virtual ScoreDocPtr add(const ScoreDocPtr& scoreDoc);
-        virtual ScoreDocPtr addOverflow(const ScoreDocPtr& scoreDoc);
-        virtual ScoreDocPtr top();
-        virtual ScoreDocPtr pop();
-        virtual ScoreDocPtr updateTop();
-        virtual int32_t size();
-        virtual bool empty();
-        virtual void clear();
+    LUCENE_CLASS(HitQueueBase);
 
-    protected:
-        PriorityQueueScoreDocsPtr queue;
-        int32_t queueSize;
+public:
+    virtual ScoreDocPtr add(const ScoreDocPtr& scoreDoc);
+    virtual ScoreDocPtr addOverflow(const ScoreDocPtr& scoreDoc);
+    virtual ScoreDocPtr top();
+    virtual ScoreDocPtr pop();
+    virtual ScoreDocPtr updateTop();
+    virtual int32_t size();
+    virtual bool empty();
+    virtual void clear();
 
-    public:
-        virtual void initialize();
+protected:
+    PriorityQueueScoreDocsPtr queue;
+    int32_t queueSize;
 
-    protected:
-        virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second) = 0;
-        virtual ScoreDocPtr getSentinelObject();
+public:
+    virtual void initialize();
 
-        friend class PriorityQueueScoreDocs;
-    };
+protected:
+    virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second) = 0;
+    virtual ScoreDocPtr getSentinelObject();
 
-    class LPPAPI PriorityQueueScoreDocs : public PriorityQueue<ScoreDocPtr>
-    {
-    public:
-        PriorityQueueScoreDocs(const HitQueueBasePtr& hitQueue, int32_t size);
-        virtual ~PriorityQueueScoreDocs();
+    friend class PriorityQueueScoreDocs;
+};
 
-        LUCENE_CLASS(PriorityQueueScoreDocs);
+class LPPAPI PriorityQueueScoreDocs : public PriorityQueue<ScoreDocPtr> {
+public:
+    PriorityQueueScoreDocs(const HitQueueBasePtr& hitQueue, int32_t size);
+    virtual ~PriorityQueueScoreDocs();
 
-    protected:
-        HitQueueBaseWeakPtr _hitQueue;
+    LUCENE_CLASS(PriorityQueueScoreDocs);
 
-    protected:
-        virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
-        virtual ScoreDocPtr getSentinelObject();
-    };
+protected:
+    HitQueueBaseWeakPtr _hitQueue;
+
+protected:
+    virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
+    virtual ScoreDocPtr getSentinelObject();
+};
+
 }
 
 #endif

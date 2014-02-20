@@ -9,35 +9,35 @@
 
 #include "Lock.h"
 
-namespace Lucene
-{
-    class SimpleFSLock : public Lock
-    {
-    public:
-        SimpleFSLock(const String& lockDir, const String& lockFileName);
-        virtual ~SimpleFSLock();
+namespace Lucene {
 
-        LUCENE_CLASS(SimpleFSLock);
+class SimpleFSLock : public Lock {
+public:
+    SimpleFSLock(const String& lockDir, const String& lockFileName);
+    virtual ~SimpleFSLock();
 
-    public:
-        String lockDir;
-        String lockFile;
+    LUCENE_CLASS(SimpleFSLock);
 
-    public:
-        /// Attempts to obtain exclusive access and immediately return upon success or failure.
-        /// @return true if exclusive access is obtained.
-        virtual bool obtain();
+public:
+    String lockDir;
+    String lockFile;
 
-        /// Releases exclusive access.
-        virtual void release();
+public:
+    /// Attempts to obtain exclusive access and immediately return upon success or failure.
+    /// @return true if exclusive access is obtained.
+    virtual bool obtain();
 
-        /// Returns true if the resource is currently locked. Note that one must still call {@link #obtain()}
-        /// before using the resource.
-        virtual bool isLocked();
+    /// Releases exclusive access.
+    virtual void release();
 
-        /// Returns derived object name.
-        virtual String toString();
-    };
+    /// Returns true if the resource is currently locked. Note that one must still call {@link #obtain()}
+    /// before using the resource.
+    virtual bool isLocked();
+
+    /// Returns derived object name.
+    virtual String toString();
+};
+
 }
 
 #endif

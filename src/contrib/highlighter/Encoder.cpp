@@ -7,15 +7,14 @@
 #include "ContribInc.h"
 #include "Encoder.h"
 
-namespace Lucene
-{
-    Encoder::~Encoder()
-    {
-    }
+namespace Lucene {
 
-    String Encoder::encodeText(const String& originalText)
-    {
-        BOOST_ASSERT(false);
-        return L""; // override
-    }
+Encoder::~Encoder() {
+}
+
+String Encoder::encodeText(const String& originalText) {
+    BOOST_ASSERT(false);
+    return L""; // override
+}
+
 }

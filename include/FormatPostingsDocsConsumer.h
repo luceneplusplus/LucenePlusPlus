@@ -9,22 +9,22 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class FormatPostingsDocsConsumer : public LuceneObject
-    {
-    public:
-        virtual ~FormatPostingsDocsConsumer();
+namespace Lucene {
 
-        LUCENE_CLASS(FormatPostingsDocsConsumer);
+class FormatPostingsDocsConsumer : public LuceneObject {
+public:
+    virtual ~FormatPostingsDocsConsumer();
 
-    public:
-        /// Adds a new doc in this term.  If this returns null then we just skip consuming positions/payloads.
-        virtual FormatPostingsPositionsConsumerPtr addDoc(int32_t docID, int32_t termDocFreq) = 0;
+    LUCENE_CLASS(FormatPostingsDocsConsumer);
 
-        /// Called when we are done adding docs to this term
-        virtual void finish() = 0;
-    };
+public:
+    /// Adds a new doc in this term.  If this returns null then we just skip consuming positions/payloads.
+    virtual FormatPostingsPositionsConsumerPtr addDoc(int32_t docID, int32_t termDocFreq) = 0;
+
+    /// Called when we are done adding docs to this term
+    virtual void finish() = 0;
+};
+
 }
 
 #endif

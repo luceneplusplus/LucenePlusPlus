@@ -9,40 +9,40 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// Used by DocumentsWriter to merge the postings from multiple ThreadStates when creating a segment
-    class FreqProxFieldMergeState : public LuceneObject
-    {
-    public:
-        FreqProxFieldMergeState(const FreqProxTermsWriterPerFieldPtr& field);
-        virtual ~FreqProxFieldMergeState();
+namespace Lucene {
 
-        LUCENE_CLASS(FreqProxFieldMergeState);
+/// Used by DocumentsWriter to merge the postings from multiple ThreadStates when creating a segment
+class FreqProxFieldMergeState : public LuceneObject {
+public:
+    FreqProxFieldMergeState(const FreqProxTermsWriterPerFieldPtr& field);
+    virtual ~FreqProxFieldMergeState();
 
-    public:
-        FreqProxTermsWriterPerFieldPtr field;
-        int32_t numPostings;
-        CharBlockPoolPtr charPool;
-        Collection<RawPostingListPtr> postings;
+    LUCENE_CLASS(FreqProxFieldMergeState);
 
-        FreqProxTermsWriterPostingListPtr p;
-        CharArray text;
-        int32_t textOffset;
+public:
+    FreqProxTermsWriterPerFieldPtr field;
+    int32_t numPostings;
+    CharBlockPoolPtr charPool;
+    Collection<RawPostingListPtr> postings;
 
-        ByteSliceReaderPtr freq;
-        ByteSliceReaderPtr prox;
+    FreqProxTermsWriterPostingListPtr p;
+    CharArray text;
+    int32_t textOffset;
 
-        int32_t docID;
-        int32_t termFreq;
+    ByteSliceReaderPtr freq;
+    ByteSliceReaderPtr prox;
 
-    protected:
-        int32_t postingUpto;
+    int32_t docID;
+    int32_t termFreq;
 
-    public:
-        bool nextTerm();
-        bool nextDoc();
-    };
+protected:
+    int32_t postingUpto;
+
+public:
+    bool nextTerm();
+    bool nextDoc();
+};
+
 }
 
 #endif

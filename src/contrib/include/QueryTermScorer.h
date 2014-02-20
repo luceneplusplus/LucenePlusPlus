@@ -10,62 +10,62 @@
 #include "LuceneContrib.h"
 #include "HighlighterScorer.h"
 
-namespace Lucene
-{
-    /// {@link HighlighterScorer} implementation which scores text fragments by the number of unique query terms found.
-    /// This class uses the {@link QueryTermExtractor} class to process determine the query terms and their
-    /// boosts to be used.
-    class LPPCONTRIBAPI QueryTermScorer : public HighlighterScorer, public LuceneObject
-    {
-    public:
-        /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
-        /// and the searcher)
-        QueryTermScorer(const QueryPtr& query);
+namespace Lucene {
 
-        /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
-        /// and the searcher)
-        /// @param fieldName the Field name which is used to match Query terms
-        QueryTermScorer(const QueryPtr& query, const String& fieldName);
+/// {@link HighlighterScorer} implementation which scores text fragments by the number of unique query terms found.
+/// This class uses the {@link QueryTermExtractor} class to process determine the query terms and their
+/// boosts to be used.
+class LPPCONTRIBAPI QueryTermScorer : public HighlighterScorer, public LuceneObject {
+public:
+    /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
+    /// and the searcher)
+    QueryTermScorer(const QueryPtr& query);
 
-        /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
-        /// and the searcher)
-        /// @param reader used to compute IDF which can be used to
-        /// a) score selected fragments better
-        /// b) use graded highlights eg set font color intensity
-        /// @param fieldName the field on which Inverse Document Frequency (IDF) calculations are based
-        QueryTermScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& fieldName);
+    /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
+    /// and the searcher)
+    /// @param fieldName the Field name which is used to match Query terms
+    QueryTermScorer(const QueryPtr& query, const String& fieldName);
 
-        /// @param weightedTerms an array of pre-created {@link WeightedTerm}s
-        QueryTermScorer(Collection<WeightedTermPtr> weightedTerms);
+    /// @param query a Lucene query (ideally rewritten using query.rewrite before being passed to this class
+    /// and the searcher)
+    /// @param reader used to compute IDF which can be used to
+    /// a) score selected fragments better
+    /// b) use graded highlights eg set font color intensity
+    /// @param fieldName the field on which Inverse Document Frequency (IDF) calculations are based
+    QueryTermScorer(const QueryPtr& query, const IndexReaderPtr& reader, const String& fieldName);
 
-        virtual ~QueryTermScorer();
+    /// @param weightedTerms an array of pre-created {@link WeightedTerm}s
+    QueryTermScorer(Collection<WeightedTermPtr> weightedTerms);
 
-        LUCENE_CLASS(QueryTermScorer);
+    virtual ~QueryTermScorer();
 
-    public:
-        TextFragmentPtr currentTextFragment;
-        HashSet<String> uniqueTermsInFragment;
+    LUCENE_CLASS(QueryTermScorer);
 
-        double totalScore;
-        double maxTermWeight;
+public:
+    TextFragmentPtr currentTextFragment;
+    HashSet<String> uniqueTermsInFragment;
 
-    protected:
-        MapStringWeightedTerm termsToFind;
-        TermAttributePtr termAtt;
+    double totalScore;
+    double maxTermWeight;
 
-    protected:
-        void ConstructQueryTermScorer(Collection<WeightedTermPtr> weightedTerms);
+protected:
+    MapStringWeightedTerm termsToFind;
+    TermAttributePtr termAtt;
 
-    public:
-        virtual TokenStreamPtr init(const TokenStreamPtr& tokenStream);
-        virtual void startFragment(const TextFragmentPtr& newFragment);
-        virtual double getTokenScore();
-        virtual double getFragmentScore();
-        virtual void allFragmentsProcessed();
+protected:
+    void ConstructQueryTermScorer(Collection<WeightedTermPtr> weightedTerms);
 
-        /// @return The highest weighted term (useful for passing to GradientFormatter to set top end of coloring scale.
-        virtual double getMaxTermWeight();
-    };
+public:
+    virtual TokenStreamPtr init(const TokenStreamPtr& tokenStream);
+    virtual void startFragment(const TextFragmentPtr& newFragment);
+    virtual double getTokenScore();
+    virtual double getFragmentScore();
+    virtual void allFragmentsProcessed();
+
+    /// @return The highest weighted term (useful for passing to GradientFormatter to set top end of coloring scale.
+    virtual double getMaxTermWeight();
+};
+
 }
 
 #endif

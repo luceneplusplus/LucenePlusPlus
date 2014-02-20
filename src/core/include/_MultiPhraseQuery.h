@@ -9,32 +9,32 @@
 
 #include "Weight.h"
 
-namespace Lucene
-{
-    class MultiPhraseWeight : public Weight
-    {
-    public:
-        MultiPhraseWeight(const MultiPhraseQueryPtr& query, const SearcherPtr& searcher);
-        virtual ~MultiPhraseWeight();
+namespace Lucene {
 
-        LUCENE_CLASS(MultiPhraseWeight);
+class MultiPhraseWeight : public Weight {
+public:
+    MultiPhraseWeight(const MultiPhraseQueryPtr& query, const SearcherPtr& searcher);
+    virtual ~MultiPhraseWeight();
 
-    protected:
-        MultiPhraseQueryPtr query;
-        SimilarityPtr similarity;
-        double value;
-        double idf;
-        double queryNorm;
-        double queryWeight;
+    LUCENE_CLASS(MultiPhraseWeight);
 
-    public:
-        virtual QueryPtr getQuery();
-        virtual double getValue();
-        virtual double sumOfSquaredWeights();
-        virtual void normalize(double norm);
-        virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
-        virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
-    };
+protected:
+    MultiPhraseQueryPtr query;
+    SimilarityPtr similarity;
+    double value;
+    double idf;
+    double queryNorm;
+    double queryWeight;
+
+public:
+    virtual QueryPtr getQuery();
+    virtual double getValue();
+    virtual double sumOfSquaredWeights();
+    virtual void normalize(double norm);
+    virtual ScorerPtr scorer(const IndexReaderPtr& reader, bool scoreDocsInOrder, bool topScorer);
+    virtual ExplanationPtr explain(const IndexReaderPtr& reader, int32_t doc);
+};
+
 }
 
 #endif

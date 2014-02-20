@@ -7,37 +7,32 @@
 #include "LuceneInc.h"
 #include "TermPositions.h"
 
-namespace Lucene
-{
-    TermPositions::TermPositions()
-    {
-    }
+namespace Lucene {
 
-    TermPositions::~TermPositions()
-    {
-    }
+TermPositions::TermPositions() {
+}
 
-    int32_t TermPositions::nextPosition()
-    {
-        BOOST_ASSERT(false);
-        return 0; // override
-    }
+TermPositions::~TermPositions() {
+}
 
-    int32_t TermPositions::getPayloadLength()
-    {
-        BOOST_ASSERT(false);
-        return 0; // override
-    }
+int32_t TermPositions::nextPosition() {
+    BOOST_ASSERT(false);
+    return 0; // override
+}
 
-    ByteArray TermPositions::getPayload(ByteArray data, int32_t offset)
-    {
-        BOOST_ASSERT(false);
-        return ByteArray(); // override
-    }
+int32_t TermPositions::getPayloadLength() {
+    BOOST_ASSERT(false);
+    return 0; // override
+}
 
-    bool TermPositions::isPayloadAvailable()
-    {
-        BOOST_ASSERT(false);
-        return false; // override
-    }
+ByteArray TermPositions::getPayload(ByteArray data, int32_t offset) {
+    BOOST_ASSERT(false);
+    return ByteArray(); // override
+}
+
+bool TermPositions::isPayloadAvailable() {
+    BOOST_ASSERT(false);
+    return false; // override
+}
+
 }

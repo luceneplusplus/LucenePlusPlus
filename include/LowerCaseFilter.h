@@ -9,23 +9,23 @@
 
 #include "TokenFilter.h"
 
-namespace Lucene
-{
-    /// Normalizes token text to lower case.
-    class LPPAPI LowerCaseFilter : public TokenFilter
-    {
-    public:
-        LowerCaseFilter(const TokenStreamPtr& input);
-        virtual ~LowerCaseFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(LowerCaseFilter);
+/// Normalizes token text to lower case.
+class LPPAPI LowerCaseFilter : public TokenFilter {
+public:
+    LowerCaseFilter(const TokenStreamPtr& input);
+    virtual ~LowerCaseFilter();
 
-    protected:
-        TermAttributePtr termAtt;
+    LUCENE_CLASS(LowerCaseFilter);
 
-    public:
-        virtual bool incrementToken();
-    };
+protected:
+    TermAttributePtr termAtt;
+
+public:
+    virtual bool incrementToken();
+};
+
 }
 
 #endif

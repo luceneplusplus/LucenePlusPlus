@@ -9,40 +9,40 @@
 
 #include "DocFieldConsumer.h"
 
-namespace Lucene
-{
-    /// This is a DocFieldConsumer that inverts each field, separately, from a Document, and accepts a
-    /// InvertedTermsConsumer to process those terms.
-    class DocInverter : public DocFieldConsumer
-    {
-    public:
-        DocInverter(const InvertedDocConsumerPtr& consumer, const InvertedDocEndConsumerPtr& endConsumer);
-        virtual ~DocInverter();
+namespace Lucene {
 
-        LUCENE_CLASS(DocInverter);
+/// This is a DocFieldConsumer that inverts each field, separately, from a Document, and accepts a
+/// InvertedTermsConsumer to process those terms.
+class DocInverter : public DocFieldConsumer {
+public:
+    DocInverter(const InvertedDocConsumerPtr& consumer, const InvertedDocEndConsumerPtr& endConsumer);
+    virtual ~DocInverter();
 
-    public:
-        InvertedDocConsumerPtr consumer;
-        InvertedDocEndConsumerPtr endConsumer;
+    LUCENE_CLASS(DocInverter);
 
-    public:
-        virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
+public:
+    InvertedDocConsumerPtr consumer;
+    InvertedDocEndConsumerPtr endConsumer;
 
-        /// Called when DocumentsWriter decides to create a new segment
-        virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
+public:
+    virtual void setFieldInfos(const FieldInfosPtr& fieldInfos);
 
-        /// Called when DocumentsWriter decides to close the doc stores
-        virtual void closeDocStore(const SegmentWriteStatePtr& state);
+    /// Called when DocumentsWriter decides to create a new segment
+    virtual void flush(MapDocFieldConsumerPerThreadCollectionDocFieldConsumerPerField threadsAndFields, const SegmentWriteStatePtr& state);
 
-        /// Called when an aborting exception is hit
-        virtual void abort();
+    /// Called when DocumentsWriter decides to close the doc stores
+    virtual void closeDocStore(const SegmentWriteStatePtr& state);
 
-        /// Called when DocumentsWriter is using too much RAM.
-        virtual bool freeRAM();
+    /// Called when an aborting exception is hit
+    virtual void abort();
 
-        /// Add a new thread
-        virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread);
-    };
+    /// Called when DocumentsWriter is using too much RAM.
+    virtual bool freeRAM();
+
+    /// Add a new thread
+    virtual DocFieldConsumerPerThreadPtr addThread(const DocFieldProcessorPerThreadPtr& docFieldProcessorPerThread);
+};
+
 }
 
 #endif

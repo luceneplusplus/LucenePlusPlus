@@ -7,35 +7,30 @@
 #include "TestInc.h"
 #include "MockLock.h"
 
-namespace Lucene
-{
-    MockLock::MockLock()
-    {
-        lockAttempts = 0;
-    }
+namespace Lucene {
 
-    MockLock::~MockLock()
-    {
-    }
+MockLock::MockLock() {
+    lockAttempts = 0;
+}
 
-    bool MockLock::obtain()
-    {
-        ++lockAttempts;
-        return true;
-    }
+MockLock::~MockLock() {
+}
 
-    void MockLock::release()
-    {
-        // do nothing
-    }
+bool MockLock::obtain() {
+    ++lockAttempts;
+    return true;
+}
 
-    bool MockLock::isLocked()
-    {
-        return false;
-    }
+void MockLock::release() {
+    // do nothing
+}
 
-    String MockLock::toString()
-    {
-        return L"MockLock";
-    }
+bool MockLock::isLocked() {
+    return false;
+}
+
+String MockLock::toString() {
+    return L"MockLock";
+}
+
 }

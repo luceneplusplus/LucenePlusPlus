@@ -9,35 +9,35 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// A collection of SegmentInfo objects to be used as a base class for {@link SegmentInfos}
-    class LPPAPI SegmentInfoCollection : public LuceneObject
-    {
-    public:
-        SegmentInfoCollection();
-        virtual ~SegmentInfoCollection();
+namespace Lucene {
 
-        LUCENE_CLASS(SegmentInfoCollection);
+/// A collection of SegmentInfo objects to be used as a base class for {@link SegmentInfos}
+class LPPAPI SegmentInfoCollection : public LuceneObject {
+public:
+    SegmentInfoCollection();
+    virtual ~SegmentInfoCollection();
 
-    protected:
-        Collection<SegmentInfoPtr> segmentInfos;
+    LUCENE_CLASS(SegmentInfoCollection);
 
-    public:
-        int32_t size();
-        bool empty();
-        void clear();
-        void add(const SegmentInfoPtr& info);
-        void add(int32_t pos, const SegmentInfoPtr& info);
-        void addAll(const SegmentInfoCollectionPtr& segmentInfos);
-        bool equals(const SegmentInfoCollectionPtr& other);
-        int32_t find(const SegmentInfoPtr& info);
-        bool contains(const SegmentInfoPtr& info);
-        void remove(int32_t pos);
-        void remove(int32_t start, int32_t end);
+protected:
+    Collection<SegmentInfoPtr> segmentInfos;
 
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+public:
+    int32_t size();
+    bool empty();
+    void clear();
+    void add(const SegmentInfoPtr& info);
+    void add(int32_t pos, const SegmentInfoPtr& info);
+    void addAll(const SegmentInfoCollectionPtr& segmentInfos);
+    bool equals(const SegmentInfoCollectionPtr& other);
+    int32_t find(const SegmentInfoPtr& info);
+    bool contains(const SegmentInfoPtr& info);
+    void remove(int32_t pos);
+    void remove(int32_t start, int32_t end);
+
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

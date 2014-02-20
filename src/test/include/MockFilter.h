@@ -10,25 +10,25 @@
 #include "test_lucene.h"
 #include "Filter.h"
 
-namespace Lucene
-{
-    class MockFilter : public Filter
-    {
-    public:
-        MockFilter();
-        virtual ~MockFilter();
+namespace Lucene {
 
-        LUCENE_CLASS(MockFilter);
+class MockFilter : public Filter {
+public:
+    MockFilter();
+    virtual ~MockFilter();
 
-    protected:
-        bool _wasCalled;
+    LUCENE_CLASS(MockFilter);
 
-    public:
-        virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+protected:
+    bool _wasCalled;
 
-        void clear();
-        bool wasCalled();
-    };
+public:
+    virtual DocIdSetPtr getDocIdSet(const IndexReaderPtr& reader);
+
+    void clear();
+    bool wasCalled();
+};
+
 }
 
 #endif

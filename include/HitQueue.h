@@ -9,26 +9,26 @@
 
 #include "HitQueueBase.h"
 
-namespace Lucene
-{
-    class HitQueue : public HitQueueBase
-    {
-    public:
-        /// Creates a new instance with size elements.
-        HitQueue(int32_t size, bool prePopulate);
-        virtual ~HitQueue();
+namespace Lucene {
 
-        LUCENE_CLASS(HitQueue);
+class HitQueue : public HitQueueBase {
+public:
+    /// Creates a new instance with size elements.
+    HitQueue(int32_t size, bool prePopulate);
+    virtual ~HitQueue();
 
-    protected:
-        bool prePopulate;
+    LUCENE_CLASS(HitQueue);
 
-    protected:
-        virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
+protected:
+    bool prePopulate;
 
-        /// Returns null if prePopulate is false.
-        virtual ScoreDocPtr getSentinelObject();
-    };
+protected:
+    virtual bool lessThan(const ScoreDocPtr& first, const ScoreDocPtr& second);
+
+    /// Returns null if prePopulate is false.
+    virtual ScoreDocPtr getSentinelObject();
+};
+
 }
 
 #endif

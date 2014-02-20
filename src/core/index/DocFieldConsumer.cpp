@@ -7,14 +7,13 @@
 #include "LuceneInc.h"
 #include "DocFieldConsumer.h"
 
-namespace Lucene
-{
-    DocFieldConsumer::~DocFieldConsumer()
-    {
-    }
+namespace Lucene {
 
-    void DocFieldConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos)
-    {
-        this->fieldInfos = fieldInfos;
-    }
+DocFieldConsumer::~DocFieldConsumer() {
+}
+
+void DocFieldConsumer::setFieldInfos(const FieldInfosPtr& fieldInfos) {
+    this->fieldInfos = fieldInfos;
+}
+
 }

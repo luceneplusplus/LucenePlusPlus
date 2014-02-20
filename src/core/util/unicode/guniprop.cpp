@@ -16,7 +16,7 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
@@ -53,8 +53,8 @@
       : G_UNICODE_UNASSIGNED))
 
 
-#define IS(Type, Class)	(((guint)1 << (Type)) & (Class))
-#define OR(Type, Rest)	(((guint)1 << (Type)) | (Rest))
+#define IS(Type, Class) (((guint)1 << (Type)) & (Class))
+#define OR(Type, Rest)  (((guint)1 << (Type)) | (Rest))
 
 /* Count the number of elements in an array. The array must be defined
  * as such; using this with a dynamically allocated array will give
@@ -62,78 +62,78 @@
  */
 #define G_N_ELEMENTS(arr) (sizeof (arr) / sizeof ((arr)[0]))
 
-#define ISALPHA(Type)	IS ((Type),				\
-			    OR (G_UNICODE_LOWERCASE_LETTER,	\
-			    OR (G_UNICODE_UPPERCASE_LETTER,	\
-			    OR (G_UNICODE_TITLECASE_LETTER,	\
-			    OR (G_UNICODE_MODIFIER_LETTER,	\
-			    OR (G_UNICODE_OTHER_LETTER,		0))))))
+#define ISALPHA(Type)   IS ((Type),             \
+                OR (G_UNICODE_LOWERCASE_LETTER, \
+                OR (G_UNICODE_UPPERCASE_LETTER, \
+                OR (G_UNICODE_TITLECASE_LETTER, \
+                OR (G_UNICODE_MODIFIER_LETTER,  \
+                OR (G_UNICODE_OTHER_LETTER,     0))))))
 
-#define ISALDIGIT(Type)	IS ((Type),				\
-			    OR (G_UNICODE_DECIMAL_NUMBER,	\
-			    OR (G_UNICODE_LETTER_NUMBER,	\
-			    OR (G_UNICODE_OTHER_NUMBER,		\
-			    OR (G_UNICODE_LOWERCASE_LETTER,	\
-			    OR (G_UNICODE_UPPERCASE_LETTER,	\
-			    OR (G_UNICODE_TITLECASE_LETTER,	\
-			    OR (G_UNICODE_MODIFIER_LETTER,	\
-			    OR (G_UNICODE_OTHER_LETTER,		0)))))))))
+#define ISALDIGIT(Type) IS ((Type),             \
+                OR (G_UNICODE_DECIMAL_NUMBER,   \
+                OR (G_UNICODE_LETTER_NUMBER,    \
+                OR (G_UNICODE_OTHER_NUMBER,     \
+                OR (G_UNICODE_LOWERCASE_LETTER, \
+                OR (G_UNICODE_UPPERCASE_LETTER, \
+                OR (G_UNICODE_TITLECASE_LETTER, \
+                OR (G_UNICODE_MODIFIER_LETTER,  \
+                OR (G_UNICODE_OTHER_LETTER,     0)))))))))
 
-#define ISMARK(Type)	IS ((Type),				\
-			    OR (G_UNICODE_NON_SPACING_MARK,	\
-			    OR (G_UNICODE_COMBINING_MARK,	\
-			    OR (G_UNICODE_ENCLOSING_MARK,	0))))
+#define ISMARK(Type)    IS ((Type),             \
+                OR (G_UNICODE_NON_SPACING_MARK, \
+                OR (G_UNICODE_COMBINING_MARK,   \
+                OR (G_UNICODE_ENCLOSING_MARK,   0))))
 
-#define ISZEROWIDTHTYPE(Type)	IS ((Type),		\
-			    OR (G_UNICODE_NON_SPACING_MARK,	\
-			    OR (G_UNICODE_ENCLOSING_MARK,	\
-			    OR (G_UNICODE_FORMAT,		0))))
+#define ISZEROWIDTHTYPE(Type)   IS ((Type),     \
+                OR (G_UNICODE_NON_SPACING_MARK, \
+                OR (G_UNICODE_ENCLOSING_MARK,   \
+                OR (G_UNICODE_FORMAT,       0))))
 
-#define UTF8_COMPUTE(Char, Mask, Len)			\
-  if (Char < 128)							    \
-    {									        \
-      Len = 1;								    \
-      Mask = 0x7f;							    \
-    }									        \
-  else if ((Char & 0xe0) == 0xc0)				\
-    {									        \
-      Len = 2;								    \
-      Mask = 0x1f;							    \
-    }									        \
-  else if ((Char & 0xf0) == 0xe0)				\
-    {									        \
-      Len = 3;								    \
-      Mask = 0x0f;							    \
-    }									        \
-  else if ((Char & 0xf8) == 0xf0)				\
-    {									        \
-      Len = 4;								    \
-      Mask = 0x07;							    \
-    }									        \
-  else if ((Char & 0xfc) == 0xf8)				\
-    {									        \
-      Len = 5;								    \
-      Mask = 0x03;							    \
-    }									        \
-  else if ((Char & 0xfe) == 0xfc)				\
-    {									        \
-      Len = 6;								    \
-      Mask = 0x01;							    \
-    }									        \
-  else									        \
+#define UTF8_COMPUTE(Char, Mask, Len)           \
+  if (Char < 128)                               \
+    {                                           \
+      Len = 1;                                  \
+      Mask = 0x7f;                              \
+    }                                           \
+  else if ((Char & 0xe0) == 0xc0)               \
+    {                                           \
+      Len = 2;                                  \
+      Mask = 0x1f;                              \
+    }                                           \
+  else if ((Char & 0xf0) == 0xe0)               \
+    {                                           \
+      Len = 3;                                  \
+      Mask = 0x0f;                              \
+    }                                           \
+  else if ((Char & 0xf8) == 0xf0)               \
+    {                                           \
+      Len = 4;                                  \
+      Mask = 0x07;                              \
+    }                                           \
+  else if ((Char & 0xfc) == 0xf8)               \
+    {                                           \
+      Len = 5;                                  \
+      Mask = 0x03;                              \
+    }                                           \
+  else if ((Char & 0xfe) == 0xfc)               \
+    {                                           \
+      Len = 6;                                  \
+      Mask = 0x01;                              \
+    }                                           \
+  else                                          \
     Len = -1;
 
 #define UTF8_GET(Result, Chars, Count, Mask, Len) \
-  (Result) = (Chars)[0] & (Mask);				\
-  for ((Count) = 1; (Count) < (Len); ++(Count))	\
-    {									        \
-      if (((Chars)[(Count)] & 0xc0) != 0x80)	\
-	{								            \
-	  (Result) = -1;						    \
-	  break;							        \
-	}								            \
-      (Result) <<= 6;							\
-      (Result) |= ((Chars)[(Count)] & 0x3f);	\
+  (Result) = (Chars)[0] & (Mask);               \
+  for ((Count) = 1; (Count) < (Len); ++(Count)) \
+    {                                           \
+      if (((Chars)[(Count)] & 0xc0) != 0x80)    \
+    {                                           \
+      (Result) = -1;                            \
+      break;                                    \
+    }                                           \
+      (Result) <<= 6;                           \
+      (Result) |= ((Chars)[(Count)] & 0x3f);    \
     }
 
 /**
@@ -149,18 +149,18 @@
  * Return value: the resulting character
  **/
 gunichar
-g_utf8_get_char (const gchar *p)
-{
-  int i, mask = 0, len;
-  gunichar result;
-  unsigned char c = (unsigned char) *p;
+g_utf8_get_char (const gchar* p) {
+    int i, mask = 0, len;
+    gunichar result;
+    unsigned char c = (unsigned char) *p;
 
-  UTF8_COMPUTE (c, mask, len);
-  if (len == -1)
-    return (gunichar)-1;
-  UTF8_GET (result, p, i, mask, len);
+    UTF8_COMPUTE (c, mask, len);
+    if (len == -1) {
+        return (gunichar)-1;
+    }
+    UTF8_GET (result, p, i, mask, len);
 
-  return result;
+    return result;
 }
 
 /**
@@ -174,9 +174,8 @@ g_utf8_get_char (const gchar *p)
  * Return value: %TRUE if @c is an alphanumeric character
  **/
 gboolean
-g_unichar_isalnum (gunichar c)
-{
-  return ISALDIGIT (TYPE (c)) ? true : false;
+g_unichar_isalnum (gunichar c) {
+    return ISALDIGIT (TYPE (c)) ? true : false;
 }
 
 /**
@@ -190,9 +189,8 @@ g_unichar_isalnum (gunichar c)
  * Return value: %TRUE if @c is an alphabetic character
  **/
 gboolean
-g_unichar_isalpha (gunichar c)
-{
-  return ISALPHA (TYPE (c)) ? true : false;
+g_unichar_isalpha (gunichar c) {
+    return ISALPHA (TYPE (c)) ? true : false;
 }
 
 
@@ -207,9 +205,8 @@ g_unichar_isalpha (gunichar c)
  * Return value: %TRUE if @c is a control character
  **/
 gboolean
-g_unichar_iscntrl (gunichar c)
-{
-  return TYPE (c) == G_UNICODE_CONTROL;
+g_unichar_iscntrl (gunichar c) {
+    return TYPE (c) == G_UNICODE_CONTROL;
 }
 
 /**
@@ -223,9 +220,8 @@ g_unichar_iscntrl (gunichar c)
  * Return value: %TRUE if @c is a digit
  **/
 gboolean
-g_unichar_isdigit (gunichar c)
-{
-  return TYPE (c) == G_UNICODE_DECIMAL_NUMBER;
+g_unichar_isdigit (gunichar c) {
+    return TYPE (c) == G_UNICODE_DECIMAL_NUMBER;
 }
 
 
@@ -242,15 +238,14 @@ g_unichar_isdigit (gunichar c)
  * Return value: %TRUE if @c is printable unless it's a space
  **/
 gboolean
-g_unichar_isgraph (gunichar c)
-{
-  return !IS (TYPE(c),
-	      OR (G_UNICODE_CONTROL,
-	      OR (G_UNICODE_FORMAT,
-	      OR (G_UNICODE_UNASSIGNED,
-	      OR (G_UNICODE_SURROGATE,
-	      OR (G_UNICODE_SPACE_SEPARATOR,
-	     0))))));
+g_unichar_isgraph (gunichar c) {
+    return !IS (TYPE(c),
+                OR (G_UNICODE_CONTROL,
+                    OR (G_UNICODE_FORMAT,
+                        OR (G_UNICODE_UNASSIGNED,
+                            OR (G_UNICODE_SURROGATE,
+                                OR (G_UNICODE_SPACE_SEPARATOR,
+                                    0))))));
 }
 
 /**
@@ -264,9 +259,8 @@ g_unichar_isgraph (gunichar c)
  * Return value: %TRUE if @c is a lowercase letter
  **/
 gboolean
-g_unichar_islower (gunichar c)
-{
-  return TYPE (c) == G_UNICODE_LOWERCASE_LETTER;
+g_unichar_islower (gunichar c) {
+    return TYPE (c) == G_UNICODE_LOWERCASE_LETTER;
 }
 
 
@@ -282,14 +276,13 @@ g_unichar_islower (gunichar c)
  * Return value: %TRUE if @c is printable
  **/
 gboolean
-g_unichar_isprint (gunichar c)
-{
-  return !IS (TYPE(c),
-	      OR (G_UNICODE_CONTROL,
-	      OR (G_UNICODE_FORMAT,
-	      OR (G_UNICODE_UNASSIGNED,
-	      OR (G_UNICODE_SURROGATE,
-	     0)))));
+g_unichar_isprint (gunichar c) {
+    return !IS (TYPE(c),
+                OR (G_UNICODE_CONTROL,
+                    OR (G_UNICODE_FORMAT,
+                        OR (G_UNICODE_UNASSIGNED,
+                            OR (G_UNICODE_SURROGATE,
+                                0)))));
 }
 
 /**
@@ -303,21 +296,20 @@ g_unichar_isprint (gunichar c)
  * Return value: %TRUE if @c is a punctuation or symbol character
  **/
 gboolean
-g_unichar_ispunct (gunichar c)
-{
-  return IS (TYPE(c),
-	     OR (G_UNICODE_CONNECT_PUNCTUATION,
-	     OR (G_UNICODE_DASH_PUNCTUATION,
-	     OR (G_UNICODE_CLOSE_PUNCTUATION,
-	     OR (G_UNICODE_FINAL_PUNCTUATION,
-	     OR (G_UNICODE_INITIAL_PUNCTUATION,
-	     OR (G_UNICODE_OTHER_PUNCTUATION,
-	     OR (G_UNICODE_OPEN_PUNCTUATION,
-	     OR (G_UNICODE_CURRENCY_SYMBOL,
-	     OR (G_UNICODE_MODIFIER_SYMBOL,
-	     OR (G_UNICODE_MATH_SYMBOL,
-	     OR (G_UNICODE_OTHER_SYMBOL,
-	    0)))))))))))) ? true : false;
+g_unichar_ispunct (gunichar c) {
+    return IS (TYPE(c),
+               OR (G_UNICODE_CONNECT_PUNCTUATION,
+                   OR (G_UNICODE_DASH_PUNCTUATION,
+                       OR (G_UNICODE_CLOSE_PUNCTUATION,
+                           OR (G_UNICODE_FINAL_PUNCTUATION,
+                               OR (G_UNICODE_INITIAL_PUNCTUATION,
+                                   OR (G_UNICODE_OTHER_PUNCTUATION,
+                                       OR (G_UNICODE_OPEN_PUNCTUATION,
+                                           OR (G_UNICODE_CURRENCY_SYMBOL,
+                                                   OR (G_UNICODE_MODIFIER_SYMBOL,
+                                                           OR (G_UNICODE_MATH_SYMBOL,
+                                                                   OR (G_UNICODE_OTHER_SYMBOL,
+                                                                           0)))))))))))) ? true : false;
 }
 
 /**
@@ -335,27 +327,24 @@ g_unichar_ispunct (gunichar c)
  * Return value: %TRUE if @c is a space character
  **/
 gboolean
-g_unichar_isspace (gunichar c)
-{
-  switch (c)
-    {
-      /* special-case these since Unicode thinks they are not spaces */
+g_unichar_isspace (gunichar c) {
+    switch (c) {
+    /* special-case these since Unicode thinks they are not spaces */
     case '\t':
     case '\n':
     case '\r':
     case '\f':
-      return true;
-      break;
+        return true;
+        break;
 
-    default:
-      {
-	return IS (TYPE(c),
-	           OR (G_UNICODE_SPACE_SEPARATOR,
-	           OR (G_UNICODE_LINE_SEPARATOR,
-                   OR (G_UNICODE_PARAGRAPH_SEPARATOR,
-		  0)))) ? true : false;
-      }
-      break;
+    default: {
+        return IS (TYPE(c),
+                   OR (G_UNICODE_SPACE_SEPARATOR,
+                       OR (G_UNICODE_LINE_SEPARATOR,
+                           OR (G_UNICODE_PARAGRAPH_SEPARATOR,
+                               0)))) ? true : false;
+    }
+    break;
     }
 }
 
@@ -378,9 +367,8 @@ g_unichar_isspace (gunichar c)
  * Since: 2.14
  **/
 gboolean
-g_unichar_ismark (gunichar c)
-{
-  return ISMARK (TYPE (c)) ? true : false;
+g_unichar_ismark (gunichar c) {
+    return ISMARK (TYPE (c)) ? true : false;
 }
 
 /**
@@ -392,9 +380,8 @@ g_unichar_ismark (gunichar c)
  * Return value: %TRUE if @c is an uppercase character
  **/
 gboolean
-g_unichar_isupper (gunichar c)
-{
-  return TYPE (c) == G_UNICODE_UPPERCASE_LETTER;
+g_unichar_isupper (gunichar c) {
+    return TYPE (c) == G_UNICODE_UPPERCASE_LETTER;
 }
 
 /**
@@ -411,13 +398,13 @@ g_unichar_isupper (gunichar c)
  * Return value: %TRUE if the character is titlecase
  **/
 gboolean
-g_unichar_istitle (gunichar c)
-{
-  unsigned int i;
-  for (i = 0; i < G_N_ELEMENTS (title_table); ++i)
-    if (title_table[i][0] == c)
-      return true;
-  return false;
+g_unichar_istitle (gunichar c) {
+    unsigned int i;
+    for (i = 0; i < G_N_ELEMENTS (title_table); ++i)
+        if (title_table[i][0] == c) {
+            return true;
+        }
+    return false;
 }
 
 /**
@@ -429,11 +416,10 @@ g_unichar_istitle (gunichar c)
  * Return value: %TRUE if the character is a hexadecimal digit
  **/
 gboolean
-g_unichar_isxdigit (gunichar c)
-{
-  return ((c >= 'a' && c <= 'f')
-	  || (c >= 'A' && c <= 'F')
-	  || (TYPE (c) == G_UNICODE_DECIMAL_NUMBER));
+g_unichar_isxdigit (gunichar c) {
+    return ((c >= 'a' && c <= 'f')
+            || (c >= 'A' && c <= 'F')
+            || (TYPE (c) == G_UNICODE_DECIMAL_NUMBER));
 }
 
 /**
@@ -446,12 +432,11 @@ g_unichar_isxdigit (gunichar c)
  * Return value: %TRUE if the character has an assigned value
  **/
 gboolean
-g_unichar_isdefined (gunichar c)
-{
-  return !IS (TYPE(c),
-	      OR (G_UNICODE_UNASSIGNED,
-	      OR (G_UNICODE_SURROGATE,
-	     0)));
+g_unichar_isdefined (gunichar c) {
+    return !IS (TYPE(c),
+                OR (G_UNICODE_UNASSIGNED,
+                    OR (G_UNICODE_SURROGATE,
+                        0)));
 }
 
 /**
@@ -465,33 +450,28 @@ g_unichar_isdefined (gunichar c)
  *               or has no upper case equivalent @c is returned unchanged.
  **/
 gunichar
-g_unichar_toupper (gunichar c)
-{
-  int t = TYPE (c);
-  if (t == G_UNICODE_LOWERCASE_LETTER)
-    {
-      gunichar val = ATTTABLE (c >> 8, c & 0xff);
-      if (val >= 0x1000000)
-	{
-	  const gchar *p = special_case_table + val - 0x1000000;
-          val = g_utf8_get_char (p);
-	}
-      /* Some lowercase letters, e.g., U+000AA, FEMININE ORDINAL INDICATOR,
-       * do not have an uppercase equivalent, in which case val will be
-       * zero.
-       */
-      return val ? val : c;
+g_unichar_toupper (gunichar c) {
+    int t = TYPE (c);
+    if (t == G_UNICODE_LOWERCASE_LETTER) {
+        gunichar val = ATTTABLE (c >> 8, c & 0xff);
+        if (val >= 0x1000000) {
+            const gchar* p = special_case_table + val - 0x1000000;
+            val = g_utf8_get_char (p);
+        }
+        /* Some lowercase letters, e.g., U+000AA, FEMININE ORDINAL INDICATOR,
+         * do not have an uppercase equivalent, in which case val will be
+         * zero.
+         */
+        return val ? val : c;
+    } else if (t == G_UNICODE_TITLECASE_LETTER) {
+        unsigned int i;
+        for (i = 0; i < G_N_ELEMENTS (title_table); ++i) {
+            if (title_table[i][0] == c) {
+                return title_table[i][1];
+            }
+        }
     }
-  else if (t == G_UNICODE_TITLECASE_LETTER)
-    {
-      unsigned int i;
-      for (i = 0; i < G_N_ELEMENTS (title_table); ++i)
-	{
-	  if (title_table[i][0] == c)
-	    return title_table[i][1];
-	}
-    }
-  return c;
+    return c;
 }
 
 /**
@@ -505,34 +485,27 @@ g_unichar_toupper (gunichar c)
  *               or has no lowercase equivalent @c is returned unchanged.
  **/
 gunichar
-g_unichar_tolower (gunichar c)
-{
-  int t = TYPE (c);
-  if (t == G_UNICODE_UPPERCASE_LETTER)
-    {
-      gunichar val = ATTTABLE (c >> 8, c & 0xff);
-      if (val >= 0x1000000)
-	{
-	  const gchar *p = special_case_table + val - 0x1000000;
-	  return g_utf8_get_char (p);
-	}
-      else
-	{
-	  /* Not all uppercase letters are guaranteed to have a lowercase
-	   * equivalent.  If this is the case, val will be zero. */
-	  return val ? val : c;
-	}
+g_unichar_tolower (gunichar c) {
+    int t = TYPE (c);
+    if (t == G_UNICODE_UPPERCASE_LETTER) {
+        gunichar val = ATTTABLE (c >> 8, c & 0xff);
+        if (val >= 0x1000000) {
+            const gchar* p = special_case_table + val - 0x1000000;
+            return g_utf8_get_char (p);
+        } else {
+            /* Not all uppercase letters are guaranteed to have a lowercase
+             * equivalent.  If this is the case, val will be zero. */
+            return val ? val : c;
+        }
+    } else if (t == G_UNICODE_TITLECASE_LETTER) {
+        unsigned int i;
+        for (i = 0; i < G_N_ELEMENTS (title_table); ++i) {
+            if (title_table[i][0] == c) {
+                return title_table[i][2];
+            }
+        }
     }
-  else if (t == G_UNICODE_TITLECASE_LETTER)
-    {
-      unsigned int i;
-      for (i = 0; i < G_N_ELEMENTS (title_table); ++i)
-	{
-	  if (title_table[i][0] == c)
-	    return title_table[i][2];
-	}
-    }
-  return c;
+    return c;
 }
 
 /**
@@ -546,20 +519,20 @@ g_unichar_tolower (gunichar c)
  *               @c is returned unchanged.
  **/
 gunichar
-g_unichar_totitle (gunichar c)
-{
-  unsigned int i;
-  for (i = 0; i < G_N_ELEMENTS (title_table); ++i)
-    {
-      if (title_table[i][0] == c || title_table[i][1] == c
-	  || title_table[i][2] == c)
-	return title_table[i][0];
+g_unichar_totitle (gunichar c) {
+    unsigned int i;
+    for (i = 0; i < G_N_ELEMENTS (title_table); ++i) {
+        if (title_table[i][0] == c || title_table[i][1] == c
+                || title_table[i][2] == c) {
+            return title_table[i][0];
+        }
     }
 
-  if (TYPE (c) == G_UNICODE_LOWERCASE_LETTER)
-    return g_unichar_toupper (c);
+    if (TYPE (c) == G_UNICODE_LOWERCASE_LETTER) {
+        return g_unichar_toupper (c);
+    }
 
-  return c;
+    return c;
 }
 
 /**
@@ -573,11 +546,11 @@ g_unichar_totitle (gunichar c)
  * g_unichar_isdigit()), its numeric value. Otherwise, -1.
  **/
 int
-g_unichar_digit_value (gunichar c)
-{
-  if (TYPE (c) == G_UNICODE_DECIMAL_NUMBER)
-    return ATTTABLE (c >> 8, c & 0xff);
-  return -1;
+g_unichar_digit_value (gunichar c) {
+    if (TYPE (c) == G_UNICODE_DECIMAL_NUMBER) {
+        return ATTTABLE (c >> 8, c & 0xff);
+    }
+    return -1;
 }
 
 /**
@@ -591,15 +564,17 @@ g_unichar_digit_value (gunichar c)
  * g_unichar_isxdigit()), its numeric value. Otherwise, -1.
  **/
 int
-g_unichar_xdigit_value (gunichar c)
-{
-  if (c >= 'A' && c <= 'F')
-    return c - 'A' + 10;
-  if (c >= 'a' && c <= 'f')
-    return c - 'a' + 10;
-  if (TYPE (c) == G_UNICODE_DECIMAL_NUMBER)
-    return ATTTABLE (c >> 8, c & 0xff);
-  return -1;
+g_unichar_xdigit_value (gunichar c) {
+    if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    }
+    if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    }
+    if (TYPE (c) == G_UNICODE_DECIMAL_NUMBER) {
+        return ATTTABLE (c >> 8, c & 0xff);
+    }
+    return -1;
 }
 
 /**
@@ -611,7 +586,6 @@ g_unichar_xdigit_value (gunichar c)
  * Return value: the type of the character.
  **/
 GUnicodeType
-g_unichar_type (gunichar c)
-{
-  return (GUnicodeType)TYPE (c);
+g_unichar_type (gunichar c) {
+    return (GUnicodeType)TYPE (c);
 }

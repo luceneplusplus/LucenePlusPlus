@@ -9,40 +9,40 @@
 
 #include "Lucene.h"
 
-namespace Lucene
-{
-    /// Base class for all Lucene synchronised classes
-    class LPPAPI LuceneSync
-    {
-    public:
-        virtual ~LuceneSync();
+namespace Lucene {
 
-    protected:
-        SynchronizePtr objectLock;
-        LuceneSignalPtr objectSignal;
+/// Base class for all Lucene synchronised classes
+class LPPAPI LuceneSync {
+public:
+    virtual ~LuceneSync();
 
-    public:
-        /// Return this object synchronize lock.
-        virtual SynchronizePtr getSync();
+protected:
+    SynchronizePtr objectLock;
+    LuceneSignalPtr objectSignal;
 
-        /// Return this object signal.
-        virtual LuceneSignalPtr getSignal();
+public:
+    /// Return this object synchronize lock.
+    virtual SynchronizePtr getSync();
 
-        /// Lock this object using an optional timeout.
-        virtual void lock(int32_t timeout = 0);
+    /// Return this object signal.
+    virtual LuceneSignalPtr getSignal();
 
-        /// Unlock this object.
-        virtual void unlock();
+    /// Lock this object using an optional timeout.
+    virtual void lock(int32_t timeout = 0);
 
-        /// Returns true if this object is currently locked by current thread.
-        virtual bool holdsLock();
+    /// Unlock this object.
+    virtual void unlock();
 
-        /// Wait for signal using an optional timeout.
-        virtual void wait(int32_t timeout = 0);
+    /// Returns true if this object is currently locked by current thread.
+    virtual bool holdsLock();
 
-        /// Notify all threads waiting for signal.
-        virtual void notifyAll();
-    };
+    /// Wait for signal using an optional timeout.
+    virtual void wait(int32_t timeout = 0);
+
+    /// Notify all threads waiting for signal.
+    virtual void notifyAll();
+};
+
 }
 
 #endif

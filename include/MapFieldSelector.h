@@ -9,35 +9,35 @@
 
 #include "FieldSelector.h"
 
-namespace Lucene
-{
-    typedef HashMap<String, FieldSelector::FieldSelectorResult> MapStringFieldSelectorResult;
+namespace Lucene {
 
-    /// A {@link FieldSelector} based on a Map of field names to {@link FieldSelectorResult}s
-    class LPPAPI MapFieldSelector : public FieldSelector
-    {
-    public:
-        /// Create a MapFieldSelector
-        /// @param fieldSelections maps from field names (String) to {@link FieldSelectorResult}s
-        MapFieldSelector(MapStringFieldSelectorResult fieldSelections);
+typedef HashMap<String, FieldSelector::FieldSelectorResult> MapStringFieldSelectorResult;
 
-        /// Create a MapFieldSelector
-        /// @param fields fields to LOAD.  List of Strings.  All other fields are NO_LOAD.
-        MapFieldSelector(Collection<String> fields);
+/// A {@link FieldSelector} based on a Map of field names to {@link FieldSelectorResult}s
+class LPPAPI MapFieldSelector : public FieldSelector {
+public:
+    /// Create a MapFieldSelector
+    /// @param fieldSelections maps from field names (String) to {@link FieldSelectorResult}s
+    MapFieldSelector(MapStringFieldSelectorResult fieldSelections);
 
-        virtual ~MapFieldSelector();
+    /// Create a MapFieldSelector
+    /// @param fields fields to LOAD.  List of Strings.  All other fields are NO_LOAD.
+    MapFieldSelector(Collection<String> fields);
 
-        LUCENE_CLASS(MapFieldSelector);
+    virtual ~MapFieldSelector();
 
-    public:
-        MapStringFieldSelectorResult fieldSelections;
+    LUCENE_CLASS(MapFieldSelector);
 
-    public:
-        /// Load field according to its associated value in fieldSelections
-        /// @param field a field name
-        /// @return the fieldSelections value that field maps to or NO_LOAD if none.
-        virtual FieldSelectorResult accept(const String& fieldName);
-    };
+public:
+    MapStringFieldSelectorResult fieldSelections;
+
+public:
+    /// Load field according to its associated value in fieldSelections
+    /// @param field a field name
+    /// @return the fieldSelections value that field maps to or NO_LOAD if none.
+    virtual FieldSelectorResult accept(const String& fieldName);
+};
+
 }
 
 #endif

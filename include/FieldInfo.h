@@ -9,38 +9,38 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class FieldInfo : public LuceneObject
-    {
-    public:
-        FieldInfo(const String& na, bool tk, int32_t nu, bool storeTermVector, bool storePositionWithTermVector,
-                  bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions);
-        virtual ~FieldInfo();
+namespace Lucene {
 
-        LUCENE_CLASS(FieldInfo);
+class FieldInfo : public LuceneObject {
+public:
+    FieldInfo(const String& na, bool tk, int32_t nu, bool storeTermVector, bool storePositionWithTermVector,
+              bool storeOffsetWithTermVector, bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions);
+    virtual ~FieldInfo();
 
-    public:
-        String name;
-        bool isIndexed;
-        int32_t number;
+    LUCENE_CLASS(FieldInfo);
 
-        // true if term vector for this field should be stored
-        bool storeTermVector;
-        bool storeOffsetWithTermVector;
-        bool storePositionWithTermVector;
+public:
+    String name;
+    bool isIndexed;
+    int32_t number;
 
-        bool omitNorms; // omit norms associated with indexed fields
-        bool omitTermFreqAndPositions;
+    // true if term vector for this field should be stored
+    bool storeTermVector;
+    bool storeOffsetWithTermVector;
+    bool storePositionWithTermVector;
 
-        bool storePayloads; // whether this field stores payloads together with term positions
+    bool omitNorms; // omit norms associated with indexed fields
+    bool omitTermFreqAndPositions;
 
-    public:
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    bool storePayloads; // whether this field stores payloads together with term positions
 
-        void update(bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector,
-                    bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions);
-    };
+public:
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+    void update(bool isIndexed, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector,
+                bool omitNorms, bool storePayloads, bool omitTermFreqAndPositions);
+};
+
 }
 
 #endif

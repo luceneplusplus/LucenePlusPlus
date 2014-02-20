@@ -10,57 +10,57 @@
 #include <boost/dynamic_bitset.hpp>
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    class LPPAPI BitSet : public LuceneObject
-    {
-    public:
-        BitSet(uint32_t size = 0);
-        virtual ~BitSet();
+namespace Lucene {
 
-        LUCENE_CLASS(BitSet);
+class LPPAPI BitSet : public LuceneObject {
+public:
+    BitSet(uint32_t size = 0);
+    virtual ~BitSet();
 
-    protected:
-        typedef boost::dynamic_bitset<uint64_t> bitset_type;
-        bitset_type bitSet;
+    LUCENE_CLASS(BitSet);
 
-    public:
-        const uint64_t* getBits();
-        void clear();
-        void clear(uint32_t bitIndex);
-        void fastClear(uint32_t bitIndex);
-        void clear(uint32_t fromIndex, uint32_t toIndex);
-        void fastClear(uint32_t fromIndex, uint32_t toIndex);
-        void set(uint32_t bitIndex);
-        void fastSet(uint32_t bitIndex);
-        void set(uint32_t bitIndex, bool value);
-        void fastSet(uint32_t bitIndex, bool value);
-        void set(uint32_t fromIndex, uint32_t toIndex);
-        void fastSet(uint32_t fromIndex, uint32_t toIndex);
-        void set(uint32_t fromIndex, uint32_t toIndex, bool value);
-        void fastSet(uint32_t fromIndex, uint32_t toIndex, bool value);
-        void flip(uint32_t bitIndex);
-        void fastFlip(uint32_t bitIndex);
-        void flip(uint32_t fromIndex, uint32_t toIndex);
-        void fastFlip(uint32_t fromIndex, uint32_t toIndex);
-        uint32_t size() const;
-        uint32_t numBlocks() const;
-        bool isEmpty() const;
-        bool get(uint32_t bitIndex) const;
-        bool fastGet(uint32_t bitIndex) const;
-        int32_t nextSetBit(uint32_t fromIndex) const;
-        void _and(const BitSetPtr& set);
-        void _or(const BitSetPtr& set);
-        void _xor(const BitSetPtr& set);
-        void andNot(const BitSetPtr& set);
-        bool intersectsBitSet(const BitSetPtr& set) const;
-        uint32_t cardinality();
-        void resize(uint32_t size);
+protected:
+    typedef boost::dynamic_bitset<uint64_t> bitset_type;
+    bitset_type bitSet;
 
-        virtual bool equals(const LuceneObjectPtr& other);
-        virtual int32_t hashCode();
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
-    };
+public:
+    const uint64_t* getBits();
+    void clear();
+    void clear(uint32_t bitIndex);
+    void fastClear(uint32_t bitIndex);
+    void clear(uint32_t fromIndex, uint32_t toIndex);
+    void fastClear(uint32_t fromIndex, uint32_t toIndex);
+    void set(uint32_t bitIndex);
+    void fastSet(uint32_t bitIndex);
+    void set(uint32_t bitIndex, bool value);
+    void fastSet(uint32_t bitIndex, bool value);
+    void set(uint32_t fromIndex, uint32_t toIndex);
+    void fastSet(uint32_t fromIndex, uint32_t toIndex);
+    void set(uint32_t fromIndex, uint32_t toIndex, bool value);
+    void fastSet(uint32_t fromIndex, uint32_t toIndex, bool value);
+    void flip(uint32_t bitIndex);
+    void fastFlip(uint32_t bitIndex);
+    void flip(uint32_t fromIndex, uint32_t toIndex);
+    void fastFlip(uint32_t fromIndex, uint32_t toIndex);
+    uint32_t size() const;
+    uint32_t numBlocks() const;
+    bool isEmpty() const;
+    bool get(uint32_t bitIndex) const;
+    bool fastGet(uint32_t bitIndex) const;
+    int32_t nextSetBit(uint32_t fromIndex) const;
+    void _and(const BitSetPtr& set);
+    void _or(const BitSetPtr& set);
+    void _xor(const BitSetPtr& set);
+    void andNot(const BitSetPtr& set);
+    bool intersectsBitSet(const BitSetPtr& set) const;
+    uint32_t cardinality();
+    void resize(uint32_t size);
+
+    virtual bool equals(const LuceneObjectPtr& other);
+    virtual int32_t hashCode();
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+};
+
 }
 
 #endif

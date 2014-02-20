@@ -7,54 +7,45 @@
 #include "LuceneInc.h"
 #include "SimilarityDelegator.h"
 
-namespace Lucene
-{
-    SimilarityDelegator::SimilarityDelegator(const SimilarityPtr& delegee)
-    {
-        this->delegee = delegee;
-    }
+namespace Lucene {
 
-    SimilarityDelegator::~SimilarityDelegator()
-    {
-    }
+SimilarityDelegator::SimilarityDelegator(const SimilarityPtr& delegee) {
+    this->delegee = delegee;
+}
 
-    double SimilarityDelegator::computeNorm(const String& fieldName, const FieldInvertStatePtr& state)
-    {
-        return delegee->computeNorm(fieldName, state);
-    }
+SimilarityDelegator::~SimilarityDelegator() {
+}
 
-    double SimilarityDelegator::lengthNorm(const String& fieldName, int32_t numTokens)
-    {
-        return delegee->lengthNorm(fieldName, numTokens);
-    }
+double SimilarityDelegator::computeNorm(const String& fieldName, const FieldInvertStatePtr& state) {
+    return delegee->computeNorm(fieldName, state);
+}
 
-    double SimilarityDelegator::queryNorm(double sumOfSquaredWeights)
-    {
-        return delegee->queryNorm(sumOfSquaredWeights);
-    }
+double SimilarityDelegator::lengthNorm(const String& fieldName, int32_t numTokens) {
+    return delegee->lengthNorm(fieldName, numTokens);
+}
 
-    double SimilarityDelegator::tf(double freq)
-    {
-        return delegee->tf(freq);
-    }
+double SimilarityDelegator::queryNorm(double sumOfSquaredWeights) {
+    return delegee->queryNorm(sumOfSquaredWeights);
+}
 
-    double SimilarityDelegator::sloppyFreq(int32_t distance)
-    {
-        return delegee->sloppyFreq(distance);
-    }
+double SimilarityDelegator::tf(double freq) {
+    return delegee->tf(freq);
+}
 
-    double SimilarityDelegator::idf(int32_t docFreq, int32_t numDocs)
-    {
-        return delegee->idf(docFreq, numDocs);
-    }
+double SimilarityDelegator::sloppyFreq(int32_t distance) {
+    return delegee->sloppyFreq(distance);
+}
 
-    double SimilarityDelegator::coord(int32_t overlap, int32_t maxOverlap)
-    {
-        return delegee->coord(overlap, maxOverlap);
-    }
+double SimilarityDelegator::idf(int32_t docFreq, int32_t numDocs) {
+    return delegee->idf(docFreq, numDocs);
+}
 
-    double SimilarityDelegator::scorePayload(int32_t docId, const String& fieldName, int32_t start, int32_t end, ByteArray payload, int32_t offset, int32_t length)
-    {
-        return delegee->scorePayload(docId, fieldName, start, end, payload, offset, length);
-    }
+double SimilarityDelegator::coord(int32_t overlap, int32_t maxOverlap) {
+    return delegee->coord(overlap, maxOverlap);
+}
+
+double SimilarityDelegator::scorePayload(int32_t docId, const String& fieldName, int32_t start, int32_t end, ByteArray payload, int32_t offset, int32_t length) {
+    return delegee->scorePayload(docId, fieldName, start, end, payload, offset, length);
+}
+
 }

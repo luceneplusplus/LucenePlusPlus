@@ -8,33 +8,31 @@
 #include "SimpleHTMLFormatter.h"
 #include "TokenGroup.h"
 
-namespace Lucene
-{
-    const String SimpleHTMLFormatter::DEFAULT_PRE_TAG = L"<B>";
-    const String SimpleHTMLFormatter::DEFAULT_POST_TAG = L"</B>";
+namespace Lucene {
 
-    SimpleHTMLFormatter::SimpleHTMLFormatter()
-    {
-        this->preTag = DEFAULT_PRE_TAG;
-        this->postTag = DEFAULT_POST_TAG;
-    }
+const String SimpleHTMLFormatter::DEFAULT_PRE_TAG = L"<B>";
+const String SimpleHTMLFormatter::DEFAULT_POST_TAG = L"</B>";
 
-    SimpleHTMLFormatter::SimpleHTMLFormatter(const String& preTag, const String& postTag)
-    {
-        this->preTag = preTag;
-        this->postTag = postTag;
-    }
+SimpleHTMLFormatter::SimpleHTMLFormatter() {
+    this->preTag = DEFAULT_PRE_TAG;
+    this->postTag = DEFAULT_POST_TAG;
+}
 
-    SimpleHTMLFormatter::~SimpleHTMLFormatter()
-    {
-    }
+SimpleHTMLFormatter::SimpleHTMLFormatter(const String& preTag, const String& postTag) {
+    this->preTag = preTag;
+    this->postTag = postTag;
+}
 
-    String SimpleHTMLFormatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup)
-    {
-        if (tokenGroup->getTotalScore() == 0)
-            return originalText;
-        StringStream buffer;
-        buffer << preTag << originalText << postTag;
-        return buffer.str();
+SimpleHTMLFormatter::~SimpleHTMLFormatter() {
+}
+
+String SimpleHTMLFormatter::highlightTerm(const String& originalText, const TokenGroupPtr& tokenGroup) {
+    if (tokenGroup->getTotalScore() == 0) {
+        return originalText;
     }
+    StringStream buffer;
+    buffer << preTag << originalText << postTag;
+    return buffer.str();
+}
+
 }

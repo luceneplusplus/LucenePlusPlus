@@ -9,29 +9,29 @@
 
 #include "LuceneObject.h"
 
-namespace Lucene
-{
-    /// A TermInfo is the record of information stored for a term.
-    class TermInfo : public LuceneObject
-    {
-    public:
-        TermInfo(const TermInfoPtr& ti);
-        TermInfo(int32_t df = 0, int64_t fp = 0, int64_t pp = 0);
-        virtual ~TermInfo();
+namespace Lucene {
 
-        LUCENE_CLASS(TermInfo);
+/// A TermInfo is the record of information stored for a term.
+class TermInfo : public LuceneObject {
+public:
+    TermInfo(const TermInfoPtr& ti);
+    TermInfo(int32_t df = 0, int64_t fp = 0, int64_t pp = 0);
+    virtual ~TermInfo();
 
-    public:
-        /// The number of documents which contain the term.
-        int32_t docFreq;
-        int64_t freqPointer;
-        int64_t proxPointer;
-        int32_t skipOffset;
+    LUCENE_CLASS(TermInfo);
 
-    public:
-        void set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset);
-        void set(const TermInfoPtr& ti);
-    };
+public:
+    /// The number of documents which contain the term.
+    int32_t docFreq;
+    int64_t freqPointer;
+    int64_t proxPointer;
+    int32_t skipOffset;
+
+public:
+    void set(int32_t docFreq, int64_t freqPointer, int64_t proxPointer, int32_t skipOffset);
+    void set(const TermInfoPtr& ti);
+};
+
 }
 
 #endif

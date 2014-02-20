@@ -7,22 +7,20 @@
 #include "LuceneInc.h"
 #include "ScoreDoc.h"
 
-namespace Lucene
-{
-    ScoreDoc::ScoreDoc(int32_t doc, double score)
-    {
-        this->doc = doc;
-        this->score = score;
-    }
+namespace Lucene {
 
-    ScoreDoc::~ScoreDoc()
-    {
-    }
+ScoreDoc::ScoreDoc(int32_t doc, double score) {
+    this->doc = doc;
+    this->score = score;
+}
 
-    String ScoreDoc::toString()
-    {
-        StringStream buffer;
-        buffer << L"doc=" << doc << L" score=" << score;
-        return buffer.str();
-    }
+ScoreDoc::~ScoreDoc() {
+}
+
+String ScoreDoc::toString() {
+    StringStream buffer;
+    buffer << L"doc=" << doc << L" score=" << score;
+    return buffer.str();
+}
+
 }

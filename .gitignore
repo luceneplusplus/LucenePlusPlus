@@ -21,6 +21,7 @@
 *.manifest
 *.user
 *.bak
+*.orig
 *.lock*
 *.waf*
 .DS_Store

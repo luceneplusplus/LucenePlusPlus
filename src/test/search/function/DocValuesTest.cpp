@@ -16,37 +16,32 @@ typedef LuceneTestFixture DocValuesTest;
 
 DECLARE_SHARED_PTR(TestableDocValues)
 
-class TestableDocValues : public DocValues
-{
+class TestableDocValues : public DocValues {
 public:
-    TestableDocValues(Collection<double> innerArray)
-    {
+    TestableDocValues(Collection<double> innerArray) {
         this->innerArray = innerArray;
     }
 
-    virtual ~TestableDocValues()
-    {
+    virtual ~TestableDocValues() {
     }
 
 public:
     Collection<double> innerArray;
 
 public:
-    virtual double doubleVal(int32_t doc)
-    {
-        if (doc < 0 || doc >= innerArray.size())
+    virtual double doubleVal(int32_t doc) {
+        if (doc < 0 || doc >= innerArray.size()) {
             boost::throw_exception(IndexOutOfBoundsException());
+        }
         return innerArray[doc];
     }
 
-    virtual String toString(int32_t doc)
-    {
+    virtual String toString(int32_t doc) {
         return StringUtils::toString(doc);
     }
 };
 
-TEST_F(DocValuesTest, testGetMinValue)
-{
+TEST_F(DocValuesTest, testGetMinValue) {
     Collection<double> innerArray = newCollection<double>(1.0, 2.0, -1.0, 100.0);
     TestableDocValuesPtr docValues = newLucene<TestableDocValues>(innerArray);
     EXPECT_EQ(-1.0, docValues->getMinValue());
@@ -57,8 +52,7 @@ TEST_F(DocValuesTest, testGetMinValue)
     EXPECT_TRUE(MiscUtils::isNaN(docValues->getMinValue()));
 }
 
-TEST_F(DocValuesTest, testGetMaxValue)
-{
+TEST_F(DocValuesTest, testGetMaxValue) {
     Collection<double> innerArray = newCollection<double>(1.0, 2.0, -1.0, 10.0);
     TestableDocValuesPtr docValues = newLucene<TestableDocValues>(innerArray);
     EXPECT_EQ(10.0, docValues->getMaxValue());
@@ -77,8 +71,7 @@ TEST_F(DocValuesTest, testGetMaxValue)
     EXPECT_TRUE(MiscUtils::isNaN(docValues->getMaxValue()));
 }
 
-TEST_F(DocValuesTest, testGetAverageValue)
-{
+TEST_F(DocValuesTest, testGetAverageValue) {
     Collection<double> innerArray = newCollection<double>(1.0, 1.0, 1.0, 1.0);
     TestableDocValuesPtr docValues = newLucene<TestableDocValues>(innerArray);
     EXPECT_EQ(1.0, docValues->getAverageValue());

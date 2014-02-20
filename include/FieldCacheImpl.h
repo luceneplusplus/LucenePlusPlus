@@ -9,185 +9,176 @@
 
 #include "FieldCache.h"
 
-namespace Lucene
-{
-    /// The default cache implementation, storing all values in memory.  A WeakHashMap is used for storage.
-    class FieldCacheImpl : public FieldCache, public LuceneObject
-    {
-    public:
-        FieldCacheImpl();
-        virtual ~FieldCacheImpl();
+namespace Lucene {
 
-        LUCENE_CLASS(FieldCacheImpl);
+/// The default cache implementation, storing all values in memory.  A WeakHashMap is used for storage.
+class FieldCacheImpl : public FieldCache, public LuceneObject {
+public:
+    FieldCacheImpl();
+    virtual ~FieldCacheImpl();
 
-    protected:
-        MapStringCache caches;
-        InfoStreamPtr infoStream;
+    LUCENE_CLASS(FieldCacheImpl);
 
-    public:
-        virtual void initialize();
-        virtual void purgeAllCaches();
-        virtual void purge(const IndexReaderPtr& r);
-        virtual Collection<FieldCacheEntryPtr> getCacheEntries();
+protected:
+    MapStringCache caches;
+    InfoStreamPtr infoStream;
 
-        virtual Collection<uint8_t> getBytes(const IndexReaderPtr& reader, const String& field);
-        virtual Collection<uint8_t> getBytes(const IndexReaderPtr& reader, const String& field, const ByteParserPtr& parser);
+public:
+    virtual void initialize();
+    virtual void purgeAllCaches();
+    virtual void purge(const IndexReaderPtr& r);
+    virtual Collection<FieldCacheEntryPtr> getCacheEntries();
 
-        virtual Collection<int32_t> getInts(const IndexReaderPtr& reader, const String& field);
-        virtual Collection<int32_t> getInts(const IndexReaderPtr& reader, const String& field, const IntParserPtr& parser);
+    virtual Collection<uint8_t> getBytes(const IndexReaderPtr& reader, const String& field);
+    virtual Collection<uint8_t> getBytes(const IndexReaderPtr& reader, const String& field, const ByteParserPtr& parser);
 
-        virtual Collection<int64_t> getLongs(const IndexReaderPtr& reader, const String& field);
-        virtual Collection<int64_t> getLongs(const IndexReaderPtr& reader, const String& field, const LongParserPtr& parser);
+    virtual Collection<int32_t> getInts(const IndexReaderPtr& reader, const String& field);
+    virtual Collection<int32_t> getInts(const IndexReaderPtr& reader, const String& field, const IntParserPtr& parser);
 
-        virtual Collection<double> getDoubles(const IndexReaderPtr& reader, const String& field);
-        virtual Collection<double> getDoubles(const IndexReaderPtr& reader, const String& field, const DoubleParserPtr& parser);
+    virtual Collection<int64_t> getLongs(const IndexReaderPtr& reader, const String& field);
+    virtual Collection<int64_t> getLongs(const IndexReaderPtr& reader, const String& field, const LongParserPtr& parser);
 
-        virtual Collection<String> getStrings(const IndexReaderPtr& reader, const String& field);
-        virtual StringIndexPtr getStringIndex(const IndexReaderPtr& reader, const String& field);
+    virtual Collection<double> getDoubles(const IndexReaderPtr& reader, const String& field);
+    virtual Collection<double> getDoubles(const IndexReaderPtr& reader, const String& field, const DoubleParserPtr& parser);
 
-        virtual void setInfoStream(const InfoStreamPtr& stream);
-        virtual InfoStreamPtr getInfoStream();
-    };
+    virtual Collection<String> getStrings(const IndexReaderPtr& reader, const String& field);
+    virtual StringIndexPtr getStringIndex(const IndexReaderPtr& reader, const String& field);
 
-    class Entry : public LuceneObject
-    {
-    public:
-        /// Creates one of these objects for a custom comparator/parser.
-        Entry(const String& field, const boost::any& custom);
-        virtual ~Entry();
+    virtual void setInfoStream(const InfoStreamPtr& stream);
+    virtual InfoStreamPtr getInfoStream();
+};
 
-        LUCENE_CLASS(Entry);
+class Entry : public LuceneObject {
+public:
+    /// Creates one of these objects for a custom comparator/parser.
+    Entry(const String& field, const boost::any& custom);
+    virtual ~Entry();
 
-    public:
-        String field; // which Fieldable
-        boost::any custom; // which custom comparator or parser
+    LUCENE_CLASS(Entry);
 
-    public:
-        /// Two of these are equal if they reference the same field and type.
-        virtual bool equals(const LuceneObjectPtr& other);
+public:
+    String field; // which Fieldable
+    boost::any custom; // which custom comparator or parser
 
-        /// Composes a hashcode based on the field and type.
-        virtual int32_t hashCode();
-    };
+public:
+    /// Two of these are equal if they reference the same field and type.
+    virtual bool equals(const LuceneObjectPtr& other);
 
-    /// Internal cache.
-    class Cache : public LuceneObject
-    {
-    public:
-        Cache(const FieldCachePtr& wrapper = FieldCachePtr());
-        virtual ~Cache();
+    /// Composes a hashcode based on the field and type.
+    virtual int32_t hashCode();
+};
 
-        LUCENE_CLASS(Cache);
+/// Internal cache.
+class Cache : public LuceneObject {
+public:
+    Cache(const FieldCachePtr& wrapper = FieldCachePtr());
+    virtual ~Cache();
 
-    public:
-        FieldCacheWeakPtr _wrapper;
-        WeakMapLuceneObjectMapEntryAny readerCache;
+    LUCENE_CLASS(Cache);
 
-    protected:
-        virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key) = 0;
+public:
+    FieldCacheWeakPtr _wrapper;
+    WeakMapLuceneObjectMapEntryAny readerCache;
 
-    public:
-        /// Remove this reader from the cache, if present.
-        virtual void purge(const IndexReaderPtr& r);
+protected:
+    virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key) = 0;
 
-        virtual boost::any get(const IndexReaderPtr& reader, const EntryPtr& key);
-        virtual void printNewInsanity(const InfoStreamPtr& infoStream, const boost::any& value);
-    };
+public:
+    /// Remove this reader from the cache, if present.
+    virtual void purge(const IndexReaderPtr& r);
 
-    class ByteCache : public Cache
-    {
-    public:
-        ByteCache(const FieldCachePtr& wrapper = FieldCachePtr());
-        virtual ~ByteCache();
+    virtual boost::any get(const IndexReaderPtr& reader, const EntryPtr& key);
+    virtual void printNewInsanity(const InfoStreamPtr& infoStream, const boost::any& value);
+};
 
-        LUCENE_CLASS(ByteCache);
+class ByteCache : public Cache {
+public:
+    ByteCache(const FieldCachePtr& wrapper = FieldCachePtr());
+    virtual ~ByteCache();
 
-    protected:
-        virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
-    };
+    LUCENE_CLASS(ByteCache);
 
-    class IntCache : public Cache
-    {
-    public:
-        IntCache(const FieldCachePtr& wrapper = FieldCachePtr());
-        virtual ~IntCache();
+protected:
+    virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
+};
 
-        LUCENE_CLASS(IntCache);
+class IntCache : public Cache {
+public:
+    IntCache(const FieldCachePtr& wrapper = FieldCachePtr());
+    virtual ~IntCache();
 
-    protected:
-        virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
-    };
+    LUCENE_CLASS(IntCache);
 
-    class LongCache : public Cache
-    {
-    public:
-        LongCache(const FieldCachePtr& wrapper = FieldCachePtr());
-        virtual ~LongCache();
+protected:
+    virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
+};
 
-        LUCENE_CLASS(LongCache);
+class LongCache : public Cache {
+public:
+    LongCache(const FieldCachePtr& wrapper = FieldCachePtr());
+    virtual ~LongCache();
 
-    protected:
-        virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
-    };
+    LUCENE_CLASS(LongCache);
 
-    class DoubleCache : public Cache
-    {
-    public:
-        DoubleCache(const FieldCachePtr& wrapper = FieldCachePtr());
-        virtual ~DoubleCache();
+protected:
+    virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
+};
 
-        LUCENE_CLASS(DoubleCache);
+class DoubleCache : public Cache {
+public:
+    DoubleCache(const FieldCachePtr& wrapper = FieldCachePtr());
+    virtual ~DoubleCache();
 
-    protected:
-        virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
-    };
+    LUCENE_CLASS(DoubleCache);
 
-    class StringCache : public Cache
-    {
-    public:
-        StringCache(const FieldCachePtr& wrapper = FieldCachePtr());
-        virtual ~StringCache();
+protected:
+    virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
+};
 
-        LUCENE_CLASS(StringCache);
+class StringCache : public Cache {
+public:
+    StringCache(const FieldCachePtr& wrapper = FieldCachePtr());
+    virtual ~StringCache();
 
-    protected:
-        virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
-    };
+    LUCENE_CLASS(StringCache);
 
-    class StringIndexCache : public Cache
-    {
-    public:
-        StringIndexCache(const FieldCachePtr& wrapper = FieldCachePtr());
-        virtual ~StringIndexCache();
+protected:
+    virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
+};
 
-        LUCENE_CLASS(StringIndexCache);
+class StringIndexCache : public Cache {
+public:
+    StringIndexCache(const FieldCachePtr& wrapper = FieldCachePtr());
+    virtual ~StringIndexCache();
 
-    protected:
-        virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
-    };
+    LUCENE_CLASS(StringIndexCache);
 
-    class FieldCacheEntryImpl : public FieldCacheEntry
-    {
-    public:
-        FieldCacheEntryImpl(const LuceneObjectPtr& readerKey, const String& fieldName, int32_t cacheType, const boost::any& custom, const boost::any& value);
-        virtual ~FieldCacheEntryImpl();
+protected:
+    virtual boost::any createValue(const IndexReaderPtr& reader, const EntryPtr& key);
+};
 
-        LUCENE_CLASS(FieldCacheEntryImpl);
+class FieldCacheEntryImpl : public FieldCacheEntry {
+public:
+    FieldCacheEntryImpl(const LuceneObjectPtr& readerKey, const String& fieldName, int32_t cacheType, const boost::any& custom, const boost::any& value);
+    virtual ~FieldCacheEntryImpl();
 
-    protected:
-        LuceneObjectPtr readerKey;
-        String fieldName;
-        int32_t cacheType;
-        boost::any custom;
-        boost::any value;
+    LUCENE_CLASS(FieldCacheEntryImpl);
 
-    public:
-        virtual LuceneObjectPtr getReaderKey();
-        virtual String getFieldName();
-        virtual int32_t getCacheType();
-        virtual boost::any getCustom();
-        virtual boost::any getValue();
-    };
+protected:
+    LuceneObjectPtr readerKey;
+    String fieldName;
+    int32_t cacheType;
+    boost::any custom;
+    boost::any value;
+
+public:
+    virtual LuceneObjectPtr getReaderKey();
+    virtual String getFieldName();
+    virtual int32_t getCacheType();
+    virtual boost::any getCustom();
+    virtual boost::any getValue();
+};
+
 }
 
 #endif

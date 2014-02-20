@@ -11,21 +11,17 @@
 
 using namespace Lucene;
 
-class GermanStemFilterTest : public BaseTokenStreamFixture
-{
+class GermanStemFilterTest : public BaseTokenStreamFixture {
 public:
-    virtual ~GermanStemFilterTest()
-    {
+    virtual ~GermanStemFilterTest() {
     }
 
 public:
-    void check(const String& input, const String& expected)
-    {
+    void check(const String& input, const String& expected) {
         checkOneTerm(newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT), input, expected);
     }
 
-    void checkReuse(const AnalyzerPtr& a, const String& input, const String& expected)
-    {
+    void checkReuse(const AnalyzerPtr& a, const String& input, const String& expected) {
         checkOneTermReuse(a, input, expected);
     }
 };
@@ -33,8 +29,7 @@ public:
 /// Test the German stemmer. The stemming algorithm is known to work less than perfect, as it doesn't
 /// use any word lists with exceptions. We also check some of the cases where the algorithm is wrong.
 
-TEST_F(GermanStemFilterTest, testStemming)
-{
+TEST_F(GermanStemFilterTest, testStemming) {
     const uint8_t haufig[] = {0x68, 0xc3, 0xa4, 0x75, 0x66, 0x69, 0x67};
     check(UTF8_TO_STRING(haufig), L"haufig"); // German special characters are replaced
 
@@ -97,8 +92,7 @@ TEST_F(GermanStemFilterTest, testStemming)
     check(L"xxxnd", L"xxxnd");
 }
 
-TEST_F(GermanStemFilterTest, testReusableTokenStream)
-{
+TEST_F(GermanStemFilterTest, testReusableTokenStream) {
     AnalyzerPtr a = newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"Tisch", L"tisch");
     checkReuse(a, L"Tische", L"tisch");
@@ -106,8 +100,7 @@ TEST_F(GermanStemFilterTest, testReusableTokenStream)
 }
 
 /// Test that changes to the exclusion table are applied immediately when using reusable token streams.
-TEST_F(GermanStemFilterTest, testExclusionTableReuse)
-{
+TEST_F(GermanStemFilterTest, testExclusionTableReuse) {
     GermanAnalyzerPtr a = newLucene<GermanAnalyzer>(LuceneVersion::LUCENE_CURRENT);
     checkReuse(a, L"tischen", L"tisch");
     HashSet<String> exclusions = HashSet<String>::newInstance();

@@ -7,89 +7,78 @@
 #include "LuceneInc.h"
 #include "ReqExclScorer.h"
 
-namespace Lucene
-{
-    ReqExclScorer::ReqExclScorer(const ScorerPtr& reqScorer, const DocIdSetIteratorPtr& exclDisi) : Scorer(SimilarityPtr()) // No similarity used.
-    {
-        this->reqScorer = reqScorer;
-        this->exclDisi = exclDisi;
-        this->doc = -1;
-    }
+namespace Lucene {
 
-    ReqExclScorer::~ReqExclScorer()
-    {
-    }
+ReqExclScorer::ReqExclScorer(const ScorerPtr& reqScorer, const DocIdSetIteratorPtr& exclDisi) : Scorer(SimilarityPtr()) { // No similarity used.
+    this->reqScorer = reqScorer;
+    this->exclDisi = exclDisi;
+    this->doc = -1;
+}
 
-    int32_t ReqExclScorer::nextDoc()
-    {
-        if (!reqScorer)
-            return doc;
-        doc = reqScorer->nextDoc();
-        if (doc == NO_MORE_DOCS)
-        {
-            reqScorer.reset(); // exhausted, nothing left
-            return doc;
-        }
-        if (!exclDisi)
-            return doc;
-        doc = toNonExcluded();
+ReqExclScorer::~ReqExclScorer() {
+}
+
+int32_t ReqExclScorer::nextDoc() {
+    if (!reqScorer) {
         return doc;
     }
+    doc = reqScorer->nextDoc();
+    if (doc == NO_MORE_DOCS) {
+        reqScorer.reset(); // exhausted, nothing left
+        return doc;
+    }
+    if (!exclDisi) {
+        return doc;
+    }
+    doc = toNonExcluded();
+    return doc;
+}
 
-    int32_t ReqExclScorer::toNonExcluded()
-    {
-        int32_t exclDoc = exclDisi->docID();
-        int32_t reqDoc = reqScorer->docID(); // may be excluded
-        do
-        {
-            if (reqDoc < exclDoc)
-                return reqDoc; // reqScorer advanced to before exclScorer, ie. not excluded
-            else if (reqDoc > exclDoc)
-            {
-                exclDoc = exclDisi->advance(reqDoc);
-                if (exclDoc == NO_MORE_DOCS)
-                {
-                    exclDisi.reset(); // exhausted, no more exclusions
-                    return reqDoc;
-                }
-                if (exclDoc > reqDoc)
-                    return reqDoc; // not excluded
+int32_t ReqExclScorer::toNonExcluded() {
+    int32_t exclDoc = exclDisi->docID();
+    int32_t reqDoc = reqScorer->docID(); // may be excluded
+    do {
+        if (reqDoc < exclDoc) {
+            return reqDoc;    // reqScorer advanced to before exclScorer, ie. not excluded
+        } else if (reqDoc > exclDoc) {
+            exclDoc = exclDisi->advance(reqDoc);
+            if (exclDoc == NO_MORE_DOCS) {
+                exclDisi.reset(); // exhausted, no more exclusions
+                return reqDoc;
+            }
+            if (exclDoc > reqDoc) {
+                return reqDoc;    // not excluded
             }
         }
-        while ((reqDoc = reqScorer->nextDoc()) != NO_MORE_DOCS);
-        reqScorer.reset(); // exhausted, nothing left
-        return NO_MORE_DOCS;
-    }
+    } while ((reqDoc = reqScorer->nextDoc()) != NO_MORE_DOCS);
+    reqScorer.reset(); // exhausted, nothing left
+    return NO_MORE_DOCS;
+}
 
-    int32_t ReqExclScorer::docID()
-    {
+int32_t ReqExclScorer::docID() {
+    return doc;
+}
+
+double ReqExclScorer::score() {
+    return reqScorer->score(); // reqScorer may be null when next() or skipTo() already return false
+}
+
+int32_t ReqExclScorer::advance(int32_t target) {
+    if (!reqScorer) {
+        doc = NO_MORE_DOCS;
         return doc;
     }
-
-    double ReqExclScorer::score()
-    {
-        return reqScorer->score(); // reqScorer may be null when next() or skipTo() already return false
-    }
-
-    int32_t ReqExclScorer::advance(int32_t target)
-    {
-        if (!reqScorer)
-        {
-            doc = NO_MORE_DOCS;
-            return doc;
-        }
-        if (!exclDisi)
-        {
-            doc = reqScorer->advance(target);
-            return doc;
-        }
-        if (reqScorer->advance(target) == NO_MORE_DOCS)
-        {
-            reqScorer.reset();
-            doc = NO_MORE_DOCS;
-            return doc;
-        }
-        doc = toNonExcluded();
+    if (!exclDisi) {
+        doc = reqScorer->advance(target);
         return doc;
     }
+    if (reqScorer->advance(target) == NO_MORE_DOCS) {
+        reqScorer.reset();
+        doc = NO_MORE_DOCS;
+        return doc;
+    }
+    doc = toNonExcluded();
+    return doc;
+}
+
 }

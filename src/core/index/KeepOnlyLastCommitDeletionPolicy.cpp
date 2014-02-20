@@ -8,23 +8,22 @@
 #include "KeepOnlyLastCommitDeletionPolicy.h"
 #include "IndexCommit.h"
 
-namespace Lucene
-{
-    KeepOnlyLastCommitDeletionPolicy::~KeepOnlyLastCommitDeletionPolicy()
-    {
-    }
+namespace Lucene {
 
-    void KeepOnlyLastCommitDeletionPolicy::onInit(Collection<IndexCommitPtr> commits)
-    {
-        // Note that commits.size() should normally be 1
-        onCommit(commits);
-    }
+KeepOnlyLastCommitDeletionPolicy::~KeepOnlyLastCommitDeletionPolicy() {
+}
 
-    void KeepOnlyLastCommitDeletionPolicy::onCommit(Collection<IndexCommitPtr> commits)
-    {
-        // Note that commits.size() should normally be 2 (if not called by onInit above)
-        int32_t size = commits.size();
-        for (int32_t i = 0; i < size - 1; ++i)
-            commits[i]->deleteCommit();
+void KeepOnlyLastCommitDeletionPolicy::onInit(Collection<IndexCommitPtr> commits) {
+    // Note that commits.size() should normally be 1
+    onCommit(commits);
+}
+
+void KeepOnlyLastCommitDeletionPolicy::onCommit(Collection<IndexCommitPtr> commits) {
+    // Note that commits.size() should normally be 2 (if not called by onInit above)
+    int32_t size = commits.size();
+    for (int32_t i = 0; i < size - 1; ++i) {
+        commits[i]->deleteCommit();
     }
+}
+
 }

@@ -7,66 +7,63 @@
 #include "LuceneInc.h"
 #include "FilteredTermEnum.h"
 
-namespace Lucene
-{
-    FilteredTermEnum::~FilteredTermEnum()
-    {
-    }
+namespace Lucene {
 
-    void FilteredTermEnum::setEnum(const TermEnumPtr& actualEnum)
-    {
-        this->actualEnum = actualEnum;
-        // Find the first term that matches
-        TermPtr term(actualEnum->term());
-        if (term && termCompare(term))
-            currentTerm = term;
-        else
-            next();
-    }
+FilteredTermEnum::~FilteredTermEnum() {
+}
 
-    int32_t FilteredTermEnum::docFreq()
-    {
-        if (!currentTerm)
-            return -1;
-        BOOST_ASSERT(actualEnum);
-        return actualEnum->docFreq();
+void FilteredTermEnum::setEnum(const TermEnumPtr& actualEnum) {
+    this->actualEnum = actualEnum;
+    // Find the first term that matches
+    TermPtr term(actualEnum->term());
+    if (term && termCompare(term)) {
+        currentTerm = term;
+    } else {
+        next();
     }
+}
 
-    bool FilteredTermEnum::next()
-    {
-        if (!actualEnum)
-            return false; // the actual enumerator is not initialized
-        currentTerm.reset();
-        while (!currentTerm)
-        {
-            if (endEnum())
-                return false;
-            if (actualEnum->next())
-            {
-                TermPtr term(actualEnum->term());
-                if (termCompare(term))
-                {
-                    currentTerm = term;
-                    return true;
-                }
-            }
-            else
-                return false;
+int32_t FilteredTermEnum::docFreq() {
+    if (!currentTerm) {
+        return -1;
+    }
+    BOOST_ASSERT(actualEnum);
+    return actualEnum->docFreq();
+}
+
+bool FilteredTermEnum::next() {
+    if (!actualEnum) {
+        return false;    // the actual enumerator is not initialized
+    }
+    currentTerm.reset();
+    while (!currentTerm) {
+        if (endEnum()) {
+            return false;
         }
-        currentTerm.reset();
-        return false;
+        if (actualEnum->next()) {
+            TermPtr term(actualEnum->term());
+            if (termCompare(term)) {
+                currentTerm = term;
+                return true;
+            }
+        } else {
+            return false;
+        }
     }
+    currentTerm.reset();
+    return false;
+}
 
-    TermPtr FilteredTermEnum::term()
-    {
-        return currentTerm;
-    }
+TermPtr FilteredTermEnum::term() {
+    return currentTerm;
+}
 
-    void FilteredTermEnum::close()
-    {
-        if (actualEnum)
-            actualEnum->close();
-        currentTerm.reset();
-        actualEnum.reset();
+void FilteredTermEnum::close() {
+    if (actualEnum) {
+        actualEnum->close();
     }
+    currentTerm.reset();
+    actualEnum.reset();
+}
+
 }

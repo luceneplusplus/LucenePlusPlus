@@ -8,37 +8,33 @@
 #include "PositiveScoresOnlyCollector.h"
 #include "ScoreCachingWrappingScorer.h"
 
-namespace Lucene
-{
-    PositiveScoresOnlyCollector::PositiveScoresOnlyCollector(const CollectorPtr& collector)
-    {
-        this->collector = collector;
-    }
+namespace Lucene {
 
-    PositiveScoresOnlyCollector::~PositiveScoresOnlyCollector()
-    {
-    }
+PositiveScoresOnlyCollector::PositiveScoresOnlyCollector(const CollectorPtr& collector) {
+    this->collector = collector;
+}
 
-    void PositiveScoresOnlyCollector::collect(int32_t doc)
-    {
-        if (scorer->score() > 0)
-            collector->collect(doc);
-    }
+PositiveScoresOnlyCollector::~PositiveScoresOnlyCollector() {
+}
 
-    void PositiveScoresOnlyCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-    {
-        collector->setNextReader(reader, docBase);
+void PositiveScoresOnlyCollector::collect(int32_t doc) {
+    if (scorer->score() > 0) {
+        collector->collect(doc);
     }
+}
 
-    void PositiveScoresOnlyCollector::setScorer(const ScorerPtr& scorer)
-    {
-        // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call score() also.
-        this->scorer = newLucene<ScoreCachingWrappingScorer>(scorer);
-        collector->setScorer(this->scorer);
-    }
+void PositiveScoresOnlyCollector::setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
+    collector->setNextReader(reader, docBase);
+}
 
-    bool PositiveScoresOnlyCollector::acceptsDocsOutOfOrder()
-    {
-        return collector->acceptsDocsOutOfOrder();
-    }
+void PositiveScoresOnlyCollector::setScorer(const ScorerPtr& scorer) {
+    // Set a ScoreCachingWrappingScorer in case the wrapped Collector will call score() also.
+    this->scorer = newLucene<ScoreCachingWrappingScorer>(scorer);
+    collector->setScorer(this->scorer);
+}
+
+bool PositiveScoresOnlyCollector::acceptsDocsOutOfOrder() {
+    return collector->acceptsDocsOutOfOrder();
+}
+
 }

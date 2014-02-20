@@ -19,18 +19,15 @@
 
 using namespace Lucene;
 
-class MyTopsDocCollector : public TopDocsCollector
-{
+class MyTopsDocCollector : public TopDocsCollector {
 public:
-    MyTopsDocCollector(int32_t size, Collection<double> scores) : TopDocsCollector(newLucene<HitQueue>(size, false))
-    {
+    MyTopsDocCollector(int32_t size, Collection<double> scores) : TopDocsCollector(newLucene<HitQueue>(size, false)) {
         this->scores = scores;
         this->idx = 0;
         this->base = 0;
     }
 
-    virtual ~MyTopsDocCollector()
-    {
+    virtual ~MyTopsDocCollector() {
     }
 
 protected:
@@ -39,50 +36,44 @@ protected:
     Collection<double> scores;
 
 protected:
-    virtual TopDocsPtr newTopDocs(Collection<ScoreDocPtr> results, int32_t start)
-    {
-        if (!results)
+    virtual TopDocsPtr newTopDocs(Collection<ScoreDocPtr> results, int32_t start) {
+        if (!results) {
             return EMPTY_TOPDOCS();
+        }
 
         double maxScore = std::numeric_limits<double>::quiet_NaN();
-        if (start == 0)
+        if (start == 0) {
             maxScore = results[0]->score;
-        else
-        {
-            for (int32_t i = pq->size(); i > 1; --i)
+        } else {
+            for (int32_t i = pq->size(); i > 1; --i) {
                 pq->pop();
+            }
             maxScore = boost::dynamic_pointer_cast<ScoreDoc>(pq->pop())->score;
         }
         return newLucene<TopDocs>(totalHits, results, maxScore);
     }
 
-    virtual void collect(int32_t doc)
-    {
+    virtual void collect(int32_t doc) {
         ++totalHits;
         pq->addOverflow(newLucene<ScoreDoc>(doc + base, scores[idx++]));
     }
 
-    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase)
-    {
+    virtual void setNextReader(const IndexReaderPtr& reader, int32_t docBase) {
         base = docBase;
     }
 
-    virtual void setScorer(const ScorerPtr& scorer)
-    {
+    virtual void setScorer(const ScorerPtr& scorer) {
         // Don't do anything. Assign scores in random
     }
 
-    virtual bool acceptsDocsOutOfOrder()
-    {
+    virtual bool acceptsDocsOutOfOrder() {
         return true;
     }
 };
 
-class TopDocsCollectorTest : public LuceneTestFixture
-{
+class TopDocsCollectorTest : public LuceneTestFixture {
 public:
-    TopDocsCollectorTest()
-    {
+    TopDocsCollectorTest() {
         MAX_SCORE = 9.17561;
 
         // Scores array to be used by MyTopDocsCollector. If it is changed, MAX_SCORE must also change.
@@ -100,13 +91,13 @@ public:
         // populate an index with 30 documents, this should be enough for the test.
         // The documents have no content - the test uses MatchAllDocsQuery().
         IndexWriterPtr writer = newLucene<IndexWriter>(dir, newLucene<KeywordAnalyzer>(), IndexWriter::MaxFieldLengthUNLIMITED);
-        for (int32_t i = 0; i < 30; ++i)
+        for (int32_t i = 0; i < 30; ++i) {
             writer->addDocument(newLucene<Document>());
+        }
         writer->close();
     }
 
-    virtual ~TopDocsCollectorTest()
-    {
+    virtual ~TopDocsCollectorTest() {
         dir->close();
     }
 
@@ -116,8 +107,7 @@ protected:
     double MAX_SCORE;
 
 public:
-    TopDocsCollectorPtr doSearch(int32_t numResults)
-    {
+    TopDocsCollectorPtr doSearch(int32_t numResults) {
         QueryPtr q = newLucene<MatchAllDocsQuery>();
         IndexSearcherPtr searcher = newLucene<IndexSearcher>(dir, true);
         TopDocsCollectorPtr tdc = newLucene<MyTopsDocCollector>(numResults, scores);
@@ -127,8 +117,7 @@ public:
     }
 };
 
-TEST_F(TopDocsCollectorTest, testInvalidArguments)
-{
+TEST_F(TopDocsCollectorTest, testInvalidArguments) {
     int32_t numResults = 5;
     TopDocsCollectorPtr tdc = doSearch(numResults);
 
@@ -148,20 +137,17 @@ TEST_F(TopDocsCollectorTest, testInvalidArguments)
     EXPECT_EQ(0, tdc->topDocs(0, 0)->scoreDocs.size());
 }
 
-TEST_F(TopDocsCollectorTest, testZeroResults)
-{
+TEST_F(TopDocsCollectorTest, testZeroResults) {
     TopDocsCollectorPtr tdc = newLucene<MyTopsDocCollector>(5, scores);
     EXPECT_EQ(0, tdc->topDocs(0, 1)->scoreDocs.size());
 }
 
-TEST_F(TopDocsCollectorTest, testFirstResultsPage)
-{
+TEST_F(TopDocsCollectorTest, testFirstResultsPage) {
     TopDocsCollectorPtr tdc = doSearch(15);
     EXPECT_EQ(10, tdc->topDocs(0, 10)->scoreDocs.size());
 }
 
-TEST_F(TopDocsCollectorTest, testSecondResultsPages)
-{
+TEST_F(TopDocsCollectorTest, testSecondResultsPages) {
     TopDocsCollectorPtr tdc = doSearch(15);
 
     // ask for more results than are available
@@ -176,14 +162,12 @@ TEST_F(TopDocsCollectorTest, testSecondResultsPages)
     EXPECT_EQ(4, tdc->topDocs(10, 4)->scoreDocs.size());
 }
 
-TEST_F(TopDocsCollectorTest, testGetAllResults)
-{
+TEST_F(TopDocsCollectorTest, testGetAllResults) {
     TopDocsCollectorPtr tdc = doSearch(15);
     EXPECT_EQ(15, tdc->topDocs()->scoreDocs.size());
 }
 
-TEST_F(TopDocsCollectorTest, testGetResultsFromStart)
-{
+TEST_F(TopDocsCollectorTest, testGetResultsFromStart) {
     TopDocsCollectorPtr tdc = doSearch(15);
     // should bring all results
     EXPECT_EQ(15, tdc->topDocs(0)->scoreDocs.size());
@@ -193,8 +177,7 @@ TEST_F(TopDocsCollectorTest, testGetResultsFromStart)
     EXPECT_EQ(5, tdc->topDocs(10)->scoreDocs.size());
 }
 
-TEST_F(TopDocsCollectorTest, testMaxScore)
-{
+TEST_F(TopDocsCollectorTest, testMaxScore) {
     // ask for all results
     TopDocsCollectorPtr tdc = doSearch(15);
     TopDocsPtr td = tdc->topDocs();
@@ -208,12 +191,12 @@ TEST_F(TopDocsCollectorTest, testMaxScore)
 
 /// This does not test the PQ's correctness, but whether topDocs() implementations
 /// return the results in decreasing score order.
-TEST_F(TopDocsCollectorTest, testResultsOrder)
-{
+TEST_F(TopDocsCollectorTest, testResultsOrder) {
     TopDocsCollectorPtr tdc = doSearch(15);
     Collection<ScoreDocPtr> sd = tdc->topDocs()->scoreDocs;
 
     EXPECT_EQ(MAX_SCORE, sd[0]->score);
-    for (int32_t i = 1; i < sd.size(); ++i)
+    for (int32_t i = 1; i < sd.size(); ++i) {
         EXPECT_TRUE(sd[i - 1]->score >= sd[i]->score);
+    }
 }

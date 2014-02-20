@@ -7,51 +7,44 @@
 #include "LuceneInc.h"
 #include "CharReader.h"
 
-namespace Lucene
-{
-    CharReader::CharReader(const ReaderPtr& in)
-    {
-        input = in;
-    }
+namespace Lucene {
 
-    CharReader::~CharReader()
-    {
-    }
+CharReader::CharReader(const ReaderPtr& in) {
+    input = in;
+}
 
-    CharStreamPtr CharReader::get(const ReaderPtr& input)
-    {
-        CharStreamPtr charStream(boost::dynamic_pointer_cast<CharStream>(input));
-        return charStream ? charStream : newLucene<CharReader>(input);
-    }
+CharReader::~CharReader() {
+}
 
-    int32_t CharReader::correctOffset(int32_t currentOff)
-    {
-        return currentOff;
-    }
+CharStreamPtr CharReader::get(const ReaderPtr& input) {
+    CharStreamPtr charStream(boost::dynamic_pointer_cast<CharStream>(input));
+    return charStream ? charStream : newLucene<CharReader>(input);
+}
 
-    void CharReader::close()
-    {
-        if (input)
-            input->close();
-    }
+int32_t CharReader::correctOffset(int32_t currentOff) {
+    return currentOff;
+}
 
-    int32_t CharReader::read(wchar_t* buffer, int32_t offset, int32_t length)
-    {
-        return input->read(buffer, offset, length);
+void CharReader::close() {
+    if (input) {
+        input->close();
     }
+}
 
-    bool CharReader::markSupported()
-    {
-        return input->markSupported();
-    }
+int32_t CharReader::read(wchar_t* buffer, int32_t offset, int32_t length) {
+    return input->read(buffer, offset, length);
+}
 
-    void CharReader::mark(int32_t readAheadLimit)
-    {
-        input->mark(readAheadLimit);
-    }
+bool CharReader::markSupported() {
+    return input->markSupported();
+}
 
-    void CharReader::reset()
-    {
-        input->reset();
-    }
+void CharReader::mark(int32_t readAheadLimit) {
+    input->mark(readAheadLimit);
+}
+
+void CharReader::reset() {
+    input->reset();
+}
+
 }

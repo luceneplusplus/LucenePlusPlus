@@ -33,75 +33,60 @@ using namespace Lucene;
 DECLARE_SHARED_PTR(BoostingNearSimilarity)
 DECLARE_SHARED_PTR(PayloadNearAnalyzer)
 
-class BoostingNearIDFExplanation : public IDFExplanation
-{
+class BoostingNearIDFExplanation : public IDFExplanation {
 public:
-    virtual ~BoostingNearIDFExplanation()
-    {
+    virtual ~BoostingNearIDFExplanation() {
     }
 
 public:
-    virtual double getIdf()
-    {
+    virtual double getIdf() {
         return 1.0;
     }
 
-    virtual String explain()
-    {
+    virtual String explain() {
         return L"Inexplicable";
     }
 };
 
-class BoostingNearSimilarity : public DefaultSimilarity
-{
+class BoostingNearSimilarity : public DefaultSimilarity {
 public:
-    virtual ~BoostingNearSimilarity()
-    {
+    virtual ~BoostingNearSimilarity() {
     }
 
 public:
-    virtual double scorePayload(int32_t docId, const String& fieldName, int32_t start, int32_t end, ByteArray payload, int32_t offset, int32_t length)
-    {
+    virtual double scorePayload(int32_t docId, const String& fieldName, int32_t start, int32_t end, ByteArray payload, int32_t offset, int32_t length) {
         // we know it is size 4 here, so ignore the offset/length
         return (double)payload[0];
     }
 
-    virtual double lengthNorm(const String& fieldName, int32_t numTokens)
-    {
+    virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
         return 1.0;
     }
 
-    virtual double queryNorm(double sumOfSquaredWeights)
-    {
+    virtual double queryNorm(double sumOfSquaredWeights) {
         return 1.0;
     }
 
-    virtual double sloppyFreq(int32_t distance)
-    {
+    virtual double sloppyFreq(int32_t distance) {
         return 1.0;
     }
 
-    virtual double coord(int32_t overlap, int32_t maxOverlap)
-    {
+    virtual double coord(int32_t overlap, int32_t maxOverlap) {
         return 1.0;
     }
 
-    virtual double tf(double freq)
-    {
+    virtual double tf(double freq) {
         return 1.0;
     }
 
-    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher)
-    {
+    virtual IDFExplanationPtr idfExplain(Collection<TermPtr> terms, const SearcherPtr& searcher) {
         return newLucene<BoostingNearIDFExplanation>();
     }
 };
 
-class PayloadNearFilter : public TokenFilter
-{
+class PayloadNearFilter : public TokenFilter {
 public:
-    PayloadNearFilter(ByteArray payload2, ByteArray payload4, const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input)
-    {
+    PayloadNearFilter(ByteArray payload2, ByteArray payload4, const TokenStreamPtr& input, const String& fieldName) : TokenFilter(input) {
         this->payload2 = payload2;
         this->payload4 = payload4;
         this->numSeen = 0;
@@ -109,8 +94,7 @@ public:
         this->payAtt = addAttribute<PayloadAttribute>();
     }
 
-    virtual ~PayloadNearFilter()
-    {
+    virtual ~PayloadNearFilter() {
     }
 
     LUCENE_CLASS(PayloadNearFilter);
@@ -123,15 +107,14 @@ public:
     PayloadAttributePtr payAtt;
 
 public:
-    virtual bool incrementToken()
-    {
+    virtual bool incrementToken() {
         bool result = false;
-        if (input->incrementToken())
-        {
-            if (numSeen % 2 == 0)
+        if (input->incrementToken()) {
+            if (numSeen % 2 == 0) {
                 payAtt->setPayload(newLucene<Payload>(payload2));
-            else
+            } else {
                 payAtt->setPayload(newLucene<Payload>(payload4));
+            }
             ++numSeen;
             result = true;
         }
@@ -139,17 +122,14 @@ public:
     }
 };
 
-class PayloadNearAnalyzer : public Analyzer
-{
+class PayloadNearAnalyzer : public Analyzer {
 public:
-    PayloadNearAnalyzer(ByteArray payload2, ByteArray payload4)
-    {
+    PayloadNearAnalyzer(ByteArray payload2, ByteArray payload4) {
         this->payload2 = payload2;
         this->payload4 = payload4;
     }
 
-    virtual ~PayloadNearAnalyzer()
-    {
+    virtual ~PayloadNearAnalyzer() {
     }
 
     LUCENE_CLASS(PayloadNearAnalyzer);
@@ -159,19 +139,16 @@ protected:
     ByteArray payload4;
 
 public:
-    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader)
-    {
+    virtual TokenStreamPtr tokenStream(const String& fieldName, const ReaderPtr& reader) {
         TokenStreamPtr result = newLucene<LowerCaseTokenizer>(reader);
         result = newLucene<PayloadNearFilter>(payload2, payload4, result, fieldName);
         return result;
     }
 };
 
-class PayloadNearQueryTest : public LuceneTestFixture
-{
+class PayloadNearQueryTest : public LuceneTestFixture {
 public:
-    PayloadNearQueryTest()
-    {
+    PayloadNearQueryTest() {
         similarity = newLucene<BoostingNearSimilarity>();
         payload2 = ByteArray::newInstance(1);
         payload2[0] = 2;
@@ -182,8 +159,7 @@ public:
         PayloadNearAnalyzerPtr analyzer = newLucene<PayloadNearAnalyzer>(payload2, payload4);
         IndexWriterPtr writer = newLucene<IndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthLIMITED);
         writer->setSimilarity(similarity);
-        for (int32_t i = 0; i < 1000; ++i)
-        {
+        for (int32_t i = 0; i < 1000; ++i) {
             DocumentPtr doc = newLucene<Document>();
             doc->add(newLucene<Field>(L"field", intToEnglish(i), Field::STORE_YES, Field::INDEX_ANALYZED));
             String txt = intToEnglish(i) + L" " + intToEnglish(i + 1);
@@ -197,8 +173,7 @@ public:
         searcher->setSimilarity(similarity);
     }
 
-    virtual ~PayloadNearQueryTest()
-    {
+    virtual ~PayloadNearQueryTest() {
     }
 
 protected:
@@ -208,28 +183,24 @@ protected:
     ByteArray payload4;
 
 public:
-    PayloadNearQueryPtr newPhraseQuery(const String& fieldName, const String& phrase, bool inOrder)
-    {
+    PayloadNearQueryPtr newPhraseQuery(const String& fieldName, const String& phrase, bool inOrder) {
         std::wstring phraseClauses(phrase.c_str());
         Collection<SpanQueryPtr> clauses = Collection<SpanQueryPtr>::newInstance();
         boost::wsregex_token_iterator tokenIterator(phraseClauses.begin(), phraseClauses.end(), boost::wregex(L"[\\s]+"), -1);
         boost::wsregex_token_iterator endToken;
-        while (tokenIterator != endToken)
-        {
+        while (tokenIterator != endToken) {
             clauses.add(newLucene<PayloadTermQuery>(newLucene<Term>(fieldName, *tokenIterator), newLucene<AveragePayloadFunction>()));
             ++tokenIterator;
         }
         return newLucene<PayloadNearQuery>(clauses, 0, inOrder);
     }
 
-    SpanNearQueryPtr spanNearQuery(const String& fieldName, const String& words)
-    {
+    SpanNearQueryPtr spanNearQuery(const String& fieldName, const String& words) {
         std::wstring phraseClauses(words.c_str());
         Collection<SpanQueryPtr> clauses = Collection<SpanQueryPtr>::newInstance();
         boost::wsregex_token_iterator tokenIterator(phraseClauses.begin(), phraseClauses.end(), boost::wregex(L"[\\s]+"), -1);
         boost::wsregex_token_iterator endToken;
-        while (tokenIterator != endToken)
-        {
+        while (tokenIterator != endToken) {
             clauses.add(newLucene<PayloadTermQuery>(newLucene<Term>(fieldName, *tokenIterator), newLucene<AveragePayloadFunction>()));
             ++tokenIterator;
         }
@@ -237,8 +208,7 @@ public:
     }
 };
 
-TEST_F(PayloadNearQueryTest, testSetup)
-{
+TEST_F(PayloadNearQueryTest, testSetup) {
     PayloadNearQueryPtr query = newPhraseQuery(L"field", L"twenty two", true);
     QueryUtils::check(query);
 
@@ -246,28 +216,24 @@ TEST_F(PayloadNearQueryTest, testSetup)
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
     EXPECT_TRUE(hits);
     EXPECT_EQ(hits->totalHits, 10);
-    for (int32_t j = 0; j < hits->scoreDocs.size(); ++j)
-    {
+    for (int32_t j = 0; j < hits->scoreDocs.size(); ++j) {
         ScoreDocPtr doc = hits->scoreDocs[j];
         EXPECT_EQ(doc->score, 3);
     }
-    for (int32_t i = 1; i < 10; ++i)
-    {
+    for (int32_t i = 1; i < 10; ++i) {
         query = newPhraseQuery(L"field", intToEnglish(i) + L" hundred", true);
         // all should have score = 3 because adjacent terms have payloads of 2, 4 and all the similarity factors are set to 1
         hits = searcher->search(query, FilterPtr(), 100);
         EXPECT_TRUE(hits);
         EXPECT_EQ(hits->totalHits, 100);
-        for (int32_t j = 0; j < hits->scoreDocs.size(); ++j)
-        {
+        for (int32_t j = 0; j < hits->scoreDocs.size(); ++j) {
             ScoreDocPtr doc = hits->scoreDocs[j];
             EXPECT_EQ(doc->score, 3);
         }
     }
 }
 
-TEST_F(PayloadNearQueryTest, testPayloadNear)
-{
+TEST_F(PayloadNearQueryTest, testPayloadNear) {
     SpanNearQueryPtr q1 = spanNearQuery(L"field2", L"twenty two");
     SpanNearQueryPtr q2 = spanNearQuery(L"field2", L"twenty three");
     Collection<SpanQueryPtr> clauses = newCollection<SpanQueryPtr>(q1, q2);
@@ -275,8 +241,7 @@ TEST_F(PayloadNearQueryTest, testPayloadNear)
     EXPECT_EQ(12, searcher->search(query, FilterPtr(), 100)->totalHits);
 }
 
-TEST_F(PayloadNearQueryTest, testLongerSpan)
-{
+TEST_F(PayloadNearQueryTest, testLongerSpan) {
     SpanNearQueryPtr query = newPhraseQuery(L"field", L"nine hundred ninety nine", true);
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
     EXPECT_TRUE(hits);
@@ -286,17 +251,16 @@ TEST_F(PayloadNearQueryTest, testLongerSpan)
     EXPECT_EQ(doc->score, 3);
 }
 
-TEST_F(PayloadNearQueryTest, testComplexNested)
-{
+TEST_F(PayloadNearQueryTest, testComplexNested) {
     // combine ordered and unordered spans with some nesting to make sure all payloads are counted
     SpanQueryPtr q1 = newPhraseQuery(L"field", L"nine hundred", true);
     SpanQueryPtr q2 = newPhraseQuery(L"field", L"ninety nine", true);
     SpanQueryPtr q3 = newPhraseQuery(L"field", L"nine ninety", false);
     SpanQueryPtr q4 = newPhraseQuery(L"field", L"hundred nine", false);
     Collection<SpanQueryPtr> clauses = newCollection<SpanQueryPtr>(
-        newLucene<PayloadNearQuery>(newCollection<SpanQueryPtr>(q1, q2), 0, true),
-        newLucene<PayloadNearQuery>(newCollection<SpanQueryPtr>(q3, q4), 0, false)
-    );
+                                           newLucene<PayloadNearQuery>(newCollection<SpanQueryPtr>(q1, q2), 0, true),
+                                           newLucene<PayloadNearQuery>(newCollection<SpanQueryPtr>(q3, q4), 0, false)
+                                       );
     PayloadNearQueryPtr query = newLucene<PayloadNearQuery>(clauses, 0, false);
     TopDocsPtr hits = searcher->search(query, FilterPtr(), 100);
     EXPECT_TRUE(hits);

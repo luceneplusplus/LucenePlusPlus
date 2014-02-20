@@ -11,82 +11,78 @@
 #include "IndexReader.h"
 #include "MiscUtils.h"
 
-namespace Lucene
-{
-    SpanTermQuery::SpanTermQuery(const TermPtr& term)
-    {
-        this->term = term;
-    }
+namespace Lucene {
 
-    SpanTermQuery::~SpanTermQuery()
-    {
-    }
+SpanTermQuery::SpanTermQuery(const TermPtr& term) {
+    this->term = term;
+}
 
-    TermPtr SpanTermQuery::getTerm()
-    {
-        return term;
-    }
+SpanTermQuery::~SpanTermQuery() {
+}
 
-    String SpanTermQuery::getField()
-    {
-        return term->field();
-    }
+TermPtr SpanTermQuery::getTerm() {
+    return term;
+}
 
-    void SpanTermQuery::extractTerms(SetTerm terms)
-    {
-        terms.add(term);
-    }
+String SpanTermQuery::getField() {
+    return term->field();
+}
 
-    String SpanTermQuery::toString(const String& field)
-    {
-        StringStream buffer;
-        if (term->field() == field)
-            buffer << term->text();
-        else
-            buffer << term->toString();
-        buffer << boostString();
-        return buffer.str();
-    }
+void SpanTermQuery::extractTerms(SetTerm terms) {
+    terms.add(term);
+}
 
-    int32_t SpanTermQuery::hashCode()
-    {
-        int32_t prime = 31;
-        int32_t result = SpanQuery::hashCode();
-        result = prime * result + (term ? term->hashCode() : 0);
-        return result;
+String SpanTermQuery::toString(const String& field) {
+    StringStream buffer;
+    if (term->field() == field) {
+        buffer << term->text();
+    } else {
+        buffer << term->toString();
     }
+    buffer << boostString();
+    return buffer.str();
+}
 
-    bool SpanTermQuery::equals(const LuceneObjectPtr& other)
-    {
-        if (LuceneObject::equals(other))
-            return true;
-        if (!SpanQuery::equals(other))
-            return false;
-        if (!MiscUtils::equalTypes(shared_from_this(), other))
-            return false;
-        SpanTermQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanTermQuery>(other));
-        if (!otherQuery)
-            return false;
-        if (!term)
-        {
-            if (otherQuery->term)
-                return false;
-        }
-        else if (!term->equals(otherQuery->term))
-            return false;
+int32_t SpanTermQuery::hashCode() {
+    int32_t prime = 31;
+    int32_t result = SpanQuery::hashCode();
+    result = prime * result + (term ? term->hashCode() : 0);
+    return result;
+}
+
+bool SpanTermQuery::equals(const LuceneObjectPtr& other) {
+    if (LuceneObject::equals(other)) {
         return true;
     }
-
-    LuceneObjectPtr SpanTermQuery::clone(const LuceneObjectPtr& other)
-    {
-        LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanTermQuery>(term));
-        SpanTermQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanTermQuery>(clone));
-        spanFirstQuery->term = term;
-        return spanFirstQuery;
+    if (!SpanQuery::equals(other)) {
+        return false;
     }
-
-    SpansPtr SpanTermQuery::getSpans(const IndexReaderPtr& reader)
-    {
-        return newLucene<TermSpans>(reader->termPositions(term), term);
+    if (!MiscUtils::equalTypes(shared_from_this(), other)) {
+        return false;
     }
+    SpanTermQueryPtr otherQuery(boost::dynamic_pointer_cast<SpanTermQuery>(other));
+    if (!otherQuery) {
+        return false;
+    }
+    if (!term) {
+        if (otherQuery->term) {
+            return false;
+        }
+    } else if (!term->equals(otherQuery->term)) {
+        return false;
+    }
+    return true;
+}
+
+LuceneObjectPtr SpanTermQuery::clone(const LuceneObjectPtr& other) {
+    LuceneObjectPtr clone = SpanQuery::clone(other ? other : newLucene<SpanTermQuery>(term));
+    SpanTermQueryPtr spanFirstQuery(boost::dynamic_pointer_cast<SpanTermQuery>(clone));
+    spanFirstQuery->term = term;
+    return spanFirstQuery;
+}
+
+SpansPtr SpanTermQuery::getSpans(const IndexReaderPtr& reader) {
+    return newLucene<TermSpans>(reader->termPositions(term), term);
+}
+
 }

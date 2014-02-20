@@ -7,14 +7,13 @@
 #include "LuceneInc.h"
 #include "TopFieldDocs.h"
 
-namespace Lucene
-{
-    TopFieldDocs::TopFieldDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, Collection<SortFieldPtr> fields, double maxScore) : TopDocs(totalHits, scoreDocs, maxScore)
-    {
-        this->fields = fields;
-    }
+namespace Lucene {
 
-    TopFieldDocs::~TopFieldDocs()
-    {
-    }
+TopFieldDocs::TopFieldDocs(int32_t totalHits, Collection<ScoreDocPtr> scoreDocs, Collection<SortFieldPtr> fields, double maxScore) : TopDocs(totalHits, scoreDocs, maxScore) {
+    this->fields = fields;
+}
+
+TopFieldDocs::~TopFieldDocs() {
+}
+
 }

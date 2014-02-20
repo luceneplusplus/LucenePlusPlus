@@ -7,58 +7,49 @@
 #include "LuceneInc.h"
 #include "ScoreCachingWrappingScorer.h"
 
-namespace Lucene
-{
-    ScoreCachingWrappingScorer::ScoreCachingWrappingScorer(const ScorerPtr& scorer) : Scorer(scorer->getSimilarity())
-    {
-        this->curDoc = -1;
-        this->curScore = 0.0;
-        this->_scorer = scorer;
-    }
+namespace Lucene {
 
-    ScoreCachingWrappingScorer::~ScoreCachingWrappingScorer()
-    {
-    }
+ScoreCachingWrappingScorer::ScoreCachingWrappingScorer(const ScorerPtr& scorer) : Scorer(scorer->getSimilarity()) {
+    this->curDoc = -1;
+    this->curScore = 0.0;
+    this->_scorer = scorer;
+}
 
-    bool ScoreCachingWrappingScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID)
-    {
-        return ScorerPtr(_scorer)->score(collector, max, firstDocID);
-    }
+ScoreCachingWrappingScorer::~ScoreCachingWrappingScorer() {
+}
 
-    SimilarityPtr ScoreCachingWrappingScorer::getSimilarity()
-    {
-        return ScorerPtr(_scorer)->getSimilarity();
-    }
+bool ScoreCachingWrappingScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID) {
+    return ScorerPtr(_scorer)->score(collector, max, firstDocID);
+}
 
-    double ScoreCachingWrappingScorer::score()
-    {
-        ScorerPtr scorer(_scorer);
-        int32_t doc = scorer->docID();
-        if (doc != curDoc)
-        {
-            curScore = scorer->score();
-            curDoc = doc;
-        }
-        return curScore;
-    }
+SimilarityPtr ScoreCachingWrappingScorer::getSimilarity() {
+    return ScorerPtr(_scorer)->getSimilarity();
+}
 
-    int32_t ScoreCachingWrappingScorer::docID()
-    {
-        return ScorerPtr(_scorer)->docID();
+double ScoreCachingWrappingScorer::score() {
+    ScorerPtr scorer(_scorer);
+    int32_t doc = scorer->docID();
+    if (doc != curDoc) {
+        curScore = scorer->score();
+        curDoc = doc;
     }
+    return curScore;
+}
 
-    int32_t ScoreCachingWrappingScorer::nextDoc()
-    {
-        return ScorerPtr(_scorer)->nextDoc();
-    }
+int32_t ScoreCachingWrappingScorer::docID() {
+    return ScorerPtr(_scorer)->docID();
+}
 
-    void ScoreCachingWrappingScorer::score(const CollectorPtr& collector)
-    {
-        ScorerPtr(_scorer)->score(collector);
-    }
+int32_t ScoreCachingWrappingScorer::nextDoc() {
+    return ScorerPtr(_scorer)->nextDoc();
+}
 
-    int32_t ScoreCachingWrappingScorer::advance(int32_t target)
-    {
-        return ScorerPtr(_scorer)->advance(target);
-    }
+void ScoreCachingWrappingScorer::score(const CollectorPtr& collector) {
+    ScorerPtr(_scorer)->score(collector);
+}
+
+int32_t ScoreCachingWrappingScorer::advance(int32_t target) {
+    return ScorerPtr(_scorer)->advance(target);
+}
+
 }

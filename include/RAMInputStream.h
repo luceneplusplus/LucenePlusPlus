@@ -9,62 +9,62 @@
 
 #include "IndexInput.h"
 
-namespace Lucene
-{
-    /// A memory-resident {@link IndexInput} implementation.
-    class RAMInputStream : public IndexInput
-    {
-    public:
-        RAMInputStream();
-        RAMInputStream(const RAMFilePtr& f);
-        virtual ~RAMInputStream();
+namespace Lucene {
 
-        LUCENE_CLASS(RAMInputStream);
+/// A memory-resident {@link IndexInput} implementation.
+class RAMInputStream : public IndexInput {
+public:
+    RAMInputStream();
+    RAMInputStream(const RAMFilePtr& f);
+    virtual ~RAMInputStream();
 
-    public:
-        static const int32_t BUFFER_SIZE;
+    LUCENE_CLASS(RAMInputStream);
 
-    protected:
-        RAMFilePtr file;
-        int64_t _length;
-        ByteArray currentBuffer;
-        int32_t currentBufferIndex;
-        int32_t bufferPosition;
-        int64_t bufferStart;
-        int32_t bufferLength;
+public:
+    static const int32_t BUFFER_SIZE;
 
-    public:
-        /// Closes the stream to further operations.
-        virtual void close();
+protected:
+    RAMFilePtr file;
+    int64_t _length;
+    ByteArray currentBuffer;
+    int32_t currentBufferIndex;
+    int32_t bufferPosition;
+    int64_t bufferStart;
+    int32_t bufferLength;
 
-        /// The number of bytes in the file.
-        virtual int64_t length();
+public:
+    /// Closes the stream to further operations.
+    virtual void close();
 
-        /// Reads and returns a single byte.
-        /// @see IndexOutput#writeByte(uint8_t)
-        virtual uint8_t readByte();
+    /// The number of bytes in the file.
+    virtual int64_t length();
 
-        /// Reads a specified number of bytes into an array at the specified offset.
-        /// @param b the array to read bytes into.
-        /// @param offset the offset in the array to start storing bytes.
-        /// @param length the number of bytes to read.
-        /// @see IndexOutput#writeBytes(const uint8_t*,int)
-        virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
+    /// Reads and returns a single byte.
+    /// @see IndexOutput#writeByte(uint8_t)
+    virtual uint8_t readByte();
 
-        /// Returns the current position in this file, where the next read will occur.
-        /// @see #seek(int64_t)
-        virtual int64_t getFilePointer();
+    /// Reads a specified number of bytes into an array at the specified offset.
+    /// @param b the array to read bytes into.
+    /// @param offset the offset in the array to start storing bytes.
+    /// @param length the number of bytes to read.
+    /// @see IndexOutput#writeBytes(const uint8_t*,int)
+    virtual void readBytes(uint8_t* b, int32_t offset, int32_t length);
 
-        /// Sets current position in this file, where the next read will occur.
-        /// @see #getFilePointer()
-        virtual void seek(int64_t pos);
+    /// Returns the current position in this file, where the next read will occur.
+    /// @see #seek(int64_t)
+    virtual int64_t getFilePointer();
 
-        /// Returns a clone of this stream.
-        virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+    /// Sets current position in this file, where the next read will occur.
+    /// @see #getFilePointer()
+    virtual void seek(int64_t pos);
 
-    protected:
-        void switchCurrentBuffer(bool enforceEOF);
-    };
+    /// Returns a clone of this stream.
+    virtual LuceneObjectPtr clone(const LuceneObjectPtr& other = LuceneObjectPtr());
+
+protected:
+    void switchCurrentBuffer(bool enforceEOF);
+};
+
 }
 
 #endif

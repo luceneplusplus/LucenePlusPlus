@@ -9,41 +9,37 @@
 #include "BrazilianStemmer.h"
 #include "TermAttribute.h"
 
-namespace Lucene
-{
-    BrazilianStemFilter::BrazilianStemFilter(const TokenStreamPtr& input) : TokenFilter(input)
-    {
-        stemmer = newLucene<BrazilianStemmer>();
-        termAtt = addAttribute<TermAttribute>();
-    }
+namespace Lucene {
 
-    BrazilianStemFilter::BrazilianStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable) : TokenFilter(input)
-    {
-        stemmer = newLucene<BrazilianStemmer>();
-        termAtt = addAttribute<TermAttribute>();
-        exclusions = exclusiontable;
-    }
+BrazilianStemFilter::BrazilianStemFilter(const TokenStreamPtr& input) : TokenFilter(input) {
+    stemmer = newLucene<BrazilianStemmer>();
+    termAtt = addAttribute<TermAttribute>();
+}
 
-    BrazilianStemFilter::~BrazilianStemFilter()
-    {
-    }
+BrazilianStemFilter::BrazilianStemFilter(const TokenStreamPtr& input, HashSet<String> exclusiontable) : TokenFilter(input) {
+    stemmer = newLucene<BrazilianStemmer>();
+    termAtt = addAttribute<TermAttribute>();
+    exclusions = exclusiontable;
+}
 
-    bool BrazilianStemFilter::incrementToken()
-    {
-        if (input->incrementToken())
-        {
-            String term(termAtt->term());
-            // Check the exclusion table.
-            if (!exclusions || !exclusions.contains(term))
-            {
-                String s(stemmer->stem(term));
-                // If not stemmed, don't waste the time adjusting the token.
-                if (!s.empty() && s != term)
-                    termAtt->setTermBuffer(s);
+BrazilianStemFilter::~BrazilianStemFilter() {
+}
+
+bool BrazilianStemFilter::incrementToken() {
+    if (input->incrementToken()) {
+        String term(termAtt->term());
+        // Check the exclusion table.
+        if (!exclusions || !exclusions.contains(term)) {
+            String s(stemmer->stem(term));
+            // If not stemmed, don't waste the time adjusting the token.
+            if (!s.empty() && s != term) {
+                termAtt->setTermBuffer(s);
             }
-            return true;
         }
-        else
-            return false;
+        return true;
+    } else {
+        return false;
     }
+}
+
 }

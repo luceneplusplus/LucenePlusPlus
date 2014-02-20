@@ -9,26 +9,26 @@
 
 #include "DocValues.h"
 
-namespace Lucene
-{
-    class ByteDocValues : public DocValues
-    {
-    public:
-        ByteDocValues(const ByteFieldSourcePtr& source, Collection<uint8_t> arr);
-        virtual ~ByteDocValues();
+namespace Lucene {
 
-        LUCENE_CLASS(ByteDocValues);
+class ByteDocValues : public DocValues {
+public:
+    ByteDocValues(const ByteFieldSourcePtr& source, Collection<uint8_t> arr);
+    virtual ~ByteDocValues();
 
-    protected:
-        ByteFieldSourceWeakPtr _source;
-        Collection<uint8_t> arr;
+    LUCENE_CLASS(ByteDocValues);
 
-    public:
-        virtual double doubleVal(int32_t doc);
-        virtual int32_t intVal(int32_t doc);
-        virtual String toString(int32_t doc);
-        virtual CollectionValue getInnerArray();
-    };
+protected:
+    ByteFieldSourceWeakPtr _source;
+    Collection<uint8_t> arr;
+
+public:
+    virtual double doubleVal(int32_t doc);
+    virtual int32_t intVal(int32_t doc);
+    virtual String toString(int32_t doc);
+    virtual CollectionValue getInnerArray();
+};
+
 }
 
 #endif

@@ -7,35 +7,30 @@
 #include "ContribInc.h"
 #include "WeightedTerm.h"
 
-namespace Lucene
-{
-    WeightedTerm::WeightedTerm(double weight, const String& term)
-    {
-        this->weight = weight;
-        this->term = term;
-    }
+namespace Lucene {
 
-    WeightedTerm::~WeightedTerm()
-    {
-    }
+WeightedTerm::WeightedTerm(double weight, const String& term) {
+    this->weight = weight;
+    this->term = term;
+}
 
-    String WeightedTerm::getTerm()
-    {
-        return term;
-    }
+WeightedTerm::~WeightedTerm() {
+}
 
-    double WeightedTerm::getWeight()
-    {
-        return weight;
-    }
+String WeightedTerm::getTerm() {
+    return term;
+}
 
-    void WeightedTerm::setTerm(const String& term)
-    {
-        this->term = term;
-    }
+double WeightedTerm::getWeight() {
+    return weight;
+}
 
-    void WeightedTerm::setWeight(double weight)
-    {
-        this->weight = weight;
-    }
+void WeightedTerm::setTerm(const String& term) {
+    this->term = term;
+}
+
+void WeightedTerm::setWeight(double weight) {
+    this->weight = weight;
+}
+
 }

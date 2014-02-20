@@ -9,33 +9,33 @@
 
 #include "Spans.h"
 
-namespace Lucene
-{
-    class NotSpans : public Spans
-    {
-    public:
-        NotSpans(const SpanNotQueryPtr& query, const SpansPtr& includeSpans, const SpansPtr& excludeSpans);
-        virtual ~NotSpans();
+namespace Lucene {
 
-        LUCENE_CLASS(NotSpans);
+class NotSpans : public Spans {
+public:
+    NotSpans(const SpanNotQueryPtr& query, const SpansPtr& includeSpans, const SpansPtr& excludeSpans);
+    virtual ~NotSpans();
 
-    protected:
-        SpanNotQueryPtr query;
-        SpansPtr includeSpans;
-        bool moreInclude;
-        SpansPtr excludeSpans;
-        bool moreExclude;
+    LUCENE_CLASS(NotSpans);
 
-    public:
-        virtual bool next();
-        virtual bool skipTo(int32_t target);
-        virtual int32_t doc();
-        virtual int32_t start();
-        virtual int32_t end();
-        virtual Collection<ByteArray> getPayload();
-        virtual bool isPayloadAvailable();
-        virtual String toString();
-    };
+protected:
+    SpanNotQueryPtr query;
+    SpansPtr includeSpans;
+    bool moreInclude;
+    SpansPtr excludeSpans;
+    bool moreExclude;
+
+public:
+    virtual bool next();
+    virtual bool skipTo(int32_t target);
+    virtual int32_t doc();
+    virtual int32_t start();
+    virtual int32_t end();
+    virtual Collection<ByteArray> getPayload();
+    virtual bool isPayloadAvailable();
+    virtual String toString();
+};
+
 }
 
 #endif

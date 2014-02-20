@@ -13,95 +13,78 @@ using namespace Lucene;
 
 typedef LuceneTestFixture IndexCommitTest;
 
-namespace TestEqualsHashCode
-{
-    class TestIndexCommit1 : public IndexCommit
-    {
-    public:
-        TestIndexCommit1(const DirectoryPtr& dir)
-        {
-            this->dir = dir;
-        }
+namespace TestEqualsHashCode {
 
-        virtual ~TestIndexCommit1()
-        {
-        }
+class TestIndexCommit1 : public IndexCommit {
+public:
+    TestIndexCommit1(const DirectoryPtr& dir) {
+        this->dir = dir;
+    }
 
-    protected:
-        DirectoryPtr dir;
+    virtual ~TestIndexCommit1() {
+    }
 
-    public:
-        virtual String getSegmentsFileName()
-        {
-            return L"a";
-        }
+protected:
+    DirectoryPtr dir;
 
-        virtual int64_t getVersion()
-        {
-            return 12;
-        }
+public:
+    virtual String getSegmentsFileName() {
+        return L"a";
+    }
 
-        virtual DirectoryPtr getDirectory()
-        {
-            return dir;
-        }
+    virtual int64_t getVersion() {
+        return 12;
+    }
 
-        virtual HashSet<String> getFileNames()
-        {
-            return HashSet<String>();
-        }
+    virtual DirectoryPtr getDirectory() {
+        return dir;
+    }
 
-        virtual void deleteCommit()
-        {
-        }
+    virtual HashSet<String> getFileNames() {
+        return HashSet<String>();
+    }
 
-        virtual int64_t getGeneration()
-        {
-            return 0;
-        }
+    virtual void deleteCommit() {
+    }
 
-        virtual int64_t getTimestamp()
-        {
-            return -1;
-        }
+    virtual int64_t getGeneration() {
+        return 0;
+    }
 
-        virtual MapStringString getUserData()
-        {
-            return MapStringString();
-        }
+    virtual int64_t getTimestamp() {
+        return -1;
+    }
 
-        virtual bool isDeleted()
-        {
-            return false;
-        }
+    virtual MapStringString getUserData() {
+        return MapStringString();
+    }
 
-        virtual bool isOptimized()
-        {
-            return false;
-        }
-    };
+    virtual bool isDeleted() {
+        return false;
+    }
 
-    class TestIndexCommit2 : public TestIndexCommit1
-    {
-    public:
-        TestIndexCommit2(const DirectoryPtr& dir) : TestIndexCommit1(dir)
-        {
-        }
+    virtual bool isOptimized() {
+        return false;
+    }
+};
 
-        virtual ~TestIndexCommit2()
-        {
-        }
+class TestIndexCommit2 : public TestIndexCommit1 {
+public:
+    TestIndexCommit2(const DirectoryPtr& dir) : TestIndexCommit1(dir) {
+    }
 
-    public:
-        virtual String getSegmentsFileName()
-        {
-            return L"b";
-        }
-    };
+    virtual ~TestIndexCommit2() {
+    }
+
+public:
+    virtual String getSegmentsFileName() {
+        return L"b";
+    }
+};
+
 }
 
-TEST_F(IndexCommitTest, testEqualsHashCode)
-{
+TEST_F(IndexCommitTest, testEqualsHashCode) {
     DirectoryPtr dir = newLucene<RAMDirectory>();
 
     IndexCommitPtr ic1 = newLucene<TestEqualsHashCode::TestIndexCommit1>(dir);

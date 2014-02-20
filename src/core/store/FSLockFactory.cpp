@@ -7,25 +7,23 @@
 #include "LuceneInc.h"
 #include "FSLockFactory.h"
 
-namespace Lucene
-{
-    FSLockFactory::FSLockFactory()
-    {
-    }
+namespace Lucene {
 
-    FSLockFactory::~FSLockFactory()
-    {
-    }
+FSLockFactory::FSLockFactory() {
+}
 
-    void FSLockFactory::setLockDir(const String& lockDir)
-    {
-        if (!this->lockDir.empty())
-            boost::throw_exception(IllegalStateException(L"You can set the lock directory for this factory only once."));
-        this->lockDir = lockDir;
-    }
+FSLockFactory::~FSLockFactory() {
+}
 
-    String FSLockFactory::getLockDir()
-    {
-        return lockDir;
+void FSLockFactory::setLockDir(const String& lockDir) {
+    if (!this->lockDir.empty()) {
+        boost::throw_exception(IllegalStateException(L"You can set the lock directory for this factory only once."));
     }
+    this->lockDir = lockDir;
+}
+
+String FSLockFactory::getLockDir() {
+    return lockDir;
+}
+
 }
