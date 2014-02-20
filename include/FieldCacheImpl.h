@@ -53,7 +53,7 @@ namespace Lucene
     {
     public:
         /// Creates one of these objects for a custom comparator/parser.
-        Entry(const String& field, boost::any custom);
+        Entry(const String& field, const boost::any& custom);
         virtual ~Entry();
 
         LUCENE_CLASS(Entry);
@@ -91,7 +91,7 @@ namespace Lucene
         virtual void purge(const IndexReaderPtr& r);
 
         virtual boost::any get(const IndexReaderPtr& reader, const EntryPtr& key);
-        virtual void printNewInsanity(const InfoStreamPtr& infoStream, boost::any value);
+        virtual void printNewInsanity(const InfoStreamPtr& infoStream, const boost::any& value);
     };
 
     class ByteCache : public Cache
@@ -169,7 +169,7 @@ namespace Lucene
     class FieldCacheEntryImpl : public FieldCacheEntry
     {
     public:
-        FieldCacheEntryImpl(const LuceneObjectPtr& readerKey, const String& fieldName, int32_t cacheType, boost::any custom, boost::any value);
+        FieldCacheEntryImpl(const LuceneObjectPtr& readerKey, const String& fieldName, int32_t cacheType, const boost::any& custom, const boost::any& value);
         virtual ~FieldCacheEntryImpl();
 
         LUCENE_CLASS(FieldCacheEntryImpl);

@@ -127,7 +127,7 @@ namespace Lucene
         return infoStream;
     }
 
-    Entry::Entry(const String& field, boost::any custom)
+    Entry::Entry(const String& field, const boost::any& custom)
     {
         this->field = field;
         this->custom = custom;
@@ -222,7 +222,7 @@ namespace Lucene
         return value;
     }
 
-    void Cache::printNewInsanity(const InfoStreamPtr& infoStream, boost::any value)
+    void Cache::printNewInsanity(const InfoStreamPtr& infoStream, const boost::any& value)
     {
         Collection<InsanityPtr> insanities(FieldCacheSanityChecker::checkSanity(FieldCachePtr(_wrapper)));
         for (Collection<InsanityPtr>::iterator insanity = insanities.begin(); insanity != insanities.end(); ++insanity)
@@ -577,7 +577,7 @@ namespace Lucene
         return newLucene<StringIndex>(retArray, mterms);
     }
 
-    FieldCacheEntryImpl::FieldCacheEntryImpl(const LuceneObjectPtr& readerKey, const String& fieldName, int32_t cacheType, boost::any custom, boost::any value)
+    FieldCacheEntryImpl::FieldCacheEntryImpl(const LuceneObjectPtr& readerKey, const String& fieldName, int32_t cacheType, const boost::any& custom, const boost::any& value)
     {
         this->readerKey = readerKey;
         this->fieldName = fieldName;

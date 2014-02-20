@@ -17,7 +17,7 @@ namespace Lucene
     {
     public:
         template <typename TYPE>
-        static TYPE get(boost::any var)
+        static TYPE get(const boost::any& var)
         {
             return var.type() == typeid(TYPE) ? boost::any_cast<TYPE>(var) : TYPE();
         }
@@ -39,7 +39,7 @@ namespace Lucene
             return VariantNull();
         }
 
-        static bool isNull(boost::any var)
+        static bool isNull(const boost::any& var)
         {
             return var.empty();
         }
