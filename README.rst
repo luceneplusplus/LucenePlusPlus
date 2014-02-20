@@ -10,8 +10,8 @@ Components
 ----------------
 
 - liblucene++ library
-- liblucene_contrib library
-- lucene_tester (unit tester)
+- liblucene++-contrib library
+- lucene++-tester (unit tester)
 - deletefiles (demo)
 - indexfiles (demo)
 - searchfiles (demo)
@@ -44,10 +44,6 @@ To build the library the following commands should be issued::
     $ make
     $ make install
 
-To build the demo programs, execute the following after having first built the library::
-
-    $ make indexfiles searchfiles deletefiles
-
 
 Build Instructions for Windows systems
 --------------------------------------
@@ -68,14 +64,6 @@ You'll need Boost installed.
 - boost::iostreams
 
 
-Building Performance
---------------------
-
-Use of ccache will speed up build times a lot. I found it easiest to add the ``/usr/lib/ccache`` directory to the beginning of your paths. This works for most common compilers::
-
-    PATH=/usr/lib/ccache:$PATH
-
-
 To run unit test suite
 ----------------------
 
@@ -90,6 +78,6 @@ Acknowledgements
 ----------------
 
 - Ben van Klinken and contributors to the CLucene project for inspiring this project.
-
 - md5 Copyright (C) 1999, 2000, 2002 Aladdin Enterprises
 - `Unicode character properties (guniprop) <http://library.gnome.org/devel/glib/>`_ Copyright (C) 1999 Tom Tromey, Copyright (C) 2000 Red Hat, Inc.
+- `Cotire (compile time reducer) <https://github.com/sakra/cotire>`_ by Sascha Kratky.

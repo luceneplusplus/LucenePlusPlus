@@ -29,16 +29,13 @@ add_library(lucene++ SHARED
   ${lucene_sources}
 )
 
-set(PCH_ADDITIONAL_COMPILER_FLAGS_lucene++ -DLPP_HAVE_DLL)
-
-add_precompiled_header(lucene++
-  ${lucene++-lib_SOURCE_DIR}/include/LuceneInc.h
-)
-
 target_link_libraries(lucene++
   ${CMAKE_THREAD_LIBS_INIT}
   ${lucene_boost_libs}
 )
+
+set_target_properties(lucene++ PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/LuceneInc.h")
+cotire(lucene++)
 
 set_target_properties(lucene++ PROPERTIES
   VERSION ${lucene++_VERSION}

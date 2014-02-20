@@ -1,6 +1,6 @@
 project(lucene++)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.6)
 
 set(lucene++_VERSION_MAJOR 3)
 set(lucene++_VERSION_MINOR 0)
@@ -14,6 +14,11 @@ set(lucene++_VERSION
 
 # include specific modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+####################################
+# pre-compiled headers support
+####################################
+include(cotire)
 
 # if setup using the Toolchain-llvm.cmake file, then use llvm...
 if(ENABLE_LLVM)
@@ -95,11 +100,6 @@ endif()
 if(CYGWIN)
   add_definitions(-D__LARGE64_FILES)
 endif()
-
-####################################
-# pre-compiled headers
-####################################
-include(PCHSupport)
 
 #################################
 # generate Config.h

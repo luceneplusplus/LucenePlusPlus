@@ -34,8 +34,6 @@ install(FILES ${contrib_headers}
   COMPONENT development-contrib
 )
 
-set(PCH_ADDITIONAL_COMPILER_FLAGS_lucene++-contrib -DLPP_HAVE_DLL)
-
 add_library(lucene++-contrib SHARED
   ${contrib_sources}
   ${contrib_headers}
@@ -51,6 +49,8 @@ target_link_libraries(lucene++-contrib
   ${CMAKE_THREAD_LIBS_INIT}
   lucene++
 )
+
+cotire(lucene++-contrib)
 
 install(TARGETS lucene++-contrib
   DESTINATION ${LIB_DESTINATION}
