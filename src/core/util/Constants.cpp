@@ -21,8 +21,8 @@ String Constants::OS_NAME = L"Mac";
 String Constants::OS_NAME = L"BSD";
 #endif
 
-String Constants::LUCENE_MAIN_VERSION = L"3.0.5";
-String Constants::LUCENE_VERSION = L"3.0.5";
+String Constants::LUCENE_MAIN_VERSION = L"3.0.6";
+String Constants::LUCENE_VERSION = L"3.0.6";
 
 Constants::Constants() {
     // private
