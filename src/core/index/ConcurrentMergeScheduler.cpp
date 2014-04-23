@@ -53,9 +53,9 @@ int32_t ConcurrentMergeScheduler::getMergeThreadPriority() {
 
 void ConcurrentMergeScheduler::setMergeThreadPriority(int32_t pri) {
     SyncLock syncLock(this);
-    if (pri > LuceneThread::MAX_PRIORITY || pri < LuceneThread::MIN_PRIORITY) {
-        boost::throw_exception(IllegalArgumentException(L"priority must be in range " + StringUtils::toString(LuceneThread::MIN_PRIORITY) +
-                               L" .. " + StringUtils::toString(LuceneThread::MAX_PRIORITY) + L" inclusive"));
+    if (pri > LuceneThread::MAX_THREAD_PRIORITY || pri < LuceneThread::MIN_THREAD_PRIORITY) {
+        boost::throw_exception(IllegalArgumentException(L"priority must be in range " + StringUtils::toString(LuceneThread::MIN_THREAD_PRIORITY) +
+                               L" .. " + StringUtils::toString(LuceneThread::MAX_THREAD_PRIORITY) + L" inclusive"));
     }
     mergeThreadPriority = pri;
 
@@ -78,7 +78,7 @@ void ConcurrentMergeScheduler::initMergeThreadPriority() {
     SyncLock syncLock(this);
     if (mergeThreadPriority == -1) {
         // Default to slightly higher priority than our calling thread
-        mergeThreadPriority = std::min(LuceneThread::NORM_PRIORITY + 1, LuceneThread::MAX_PRIORITY);
+        mergeThreadPriority = std::min(LuceneThread::NORM_THREAD_PRIORITY + 1, LuceneThread::MAX_THREAD_PRIORITY);
     }
 }
 

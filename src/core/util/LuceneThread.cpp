@@ -11,13 +11,13 @@
 namespace Lucene {
 
 #if defined(_WIN32) || defined(_WIN64)
-const int32_t LuceneThread::MAX_PRIORITY = THREAD_PRIORITY_HIGHEST;
-const int32_t LuceneThread::NORM_PRIORITY = THREAD_PRIORITY_NORMAL;
-const int32_t LuceneThread::MIN_PRIORITY = THREAD_PRIORITY_LOWEST;
+const int32_t LuceneThread::MAX_THREAD_PRIORITY = THREAD_PRIORITY_HIGHEST;
+const int32_t LuceneThread::NORM_THREAD_PRIORITY = THREAD_PRIORITY_NORMAL;
+const int32_t LuceneThread::MIN_THREAD_PRIORITY = THREAD_PRIORITY_LOWEST;
 #else
-const int32_t LuceneThread::MAX_PRIORITY = 2;
-const int32_t LuceneThread::NORM_PRIORITY = 0;
-const int32_t LuceneThread::MIN_PRIORITY = -2;
+const int32_t LuceneThread::MAX_THREAD_PRIORITY = 2;
+const int32_t LuceneThread::NORM_THREAD_PRIORITY = 0;
+const int32_t LuceneThread::MIN_THREAD_PRIORITY = -2;
 #endif
 
 LuceneThread::LuceneThread() {
@@ -67,9 +67,9 @@ void LuceneThread::setPriority(int32_t priority) {
 
 int32_t LuceneThread::getPriority() {
 #if defined(_WIN32) || defined(_WIN64)
-    return thread ? GetThreadPriority(thread->native_handle()) : NORM_PRIORITY;
+    return thread ? GetThreadPriority(thread->native_handle()) : NORM_THREAD_PRIORITY;
 #else
-    return NORM_PRIORITY;
+    return NORM_THREAD_PRIORITY;
 #endif
 }
 

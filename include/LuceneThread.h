@@ -28,9 +28,9 @@ public:
     LUCENE_CLASS(LuceneThread);
 
 public:
-    static const int32_t MAX_PRIORITY;
-    static const int32_t NORM_PRIORITY;
-    static const int32_t MIN_PRIORITY;
+    static const int32_t MAX_THREAD_PRIORITY;
+    static const int32_t NORM_THREAD_PRIORITY;
+    static const int32_t MIN_THREAD_PRIORITY;
 
 protected:
     threadPtr thread;
