@@ -1,8 +1,8 @@
 project(lucene++-lib)
 
 include_directories(
-  ${lucene++_SOURCE_DIR}/include
-  ${lucene++-lib_SOURCE_DIR}/include
+  "${lucene++_SOURCE_DIR}/include"
+  "${lucene++-lib_SOURCE_DIR}/include"
   ${Boost_INCLUDE_DIRS}
 )
 
@@ -16,7 +16,7 @@ file(GLOB_RECURSE lucene_sources
   util/*.c*)
 
 file(GLOB_RECURSE lucene_internal_headers
-  ${lucene++-lib_SOURCE_DIR}/include/*.h
+  "${lucene++-lib_SOURCE_DIR}/include/*.h"
 )
 
 file(GLOB_RECURSE lucene_headers
@@ -49,6 +49,6 @@ install(FILES ${lucene_headers}
 )
 
 install(TARGETS lucene++
-  DESTINATION ${LIB_DESTINATION}
+  DESTINATION "${LIB_DESTINATION}"
   COMPONENT runtime
 )

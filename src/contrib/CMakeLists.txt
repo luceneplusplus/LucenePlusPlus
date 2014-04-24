@@ -11,16 +11,16 @@ file(GLOB_RECURSE contrib_sources
 )
 
 file(GLOB_RECURSE contrib_headers
-  ${lucene++-contrib_SOURCE_DIR}/include/*.h
+  "${lucene++-contrib_SOURCE_DIR}/include/*.h"
 )
 
 add_definitions(-DLPP_BUILDING_LIB)
 
 include_directories(
-  ${lucene++_SOURCE_DIR}/include
-  ${lucene++-lib_SOURCE_DIR}/include
-  ${lucene++-contrib_SOURCE_DIR}/include
-  ${lucene++-contrib_SOURCE_DIR}/snowball/libstemmer_c/include
+  "${lucene++_SOURCE_DIR}/include"
+  "${lucene++-lib_SOURCE_DIR}/include"
+  "${lucene++-contrib_SOURCE_DIR}/include"
+  "${lucene++-contrib_SOURCE_DIR}/snowball/libstemmer_c/include"
   ${Boost_INCLUDE_DIRS}
 )
 
@@ -53,6 +53,6 @@ target_link_libraries(lucene++-contrib
 cotire(lucene++-contrib)
 
 install(TARGETS lucene++-contrib
-  DESTINATION ${LIB_DESTINATION}
+  DESTINATION "${LIB_DESTINATION}"
   COMPONENT runtime
 )

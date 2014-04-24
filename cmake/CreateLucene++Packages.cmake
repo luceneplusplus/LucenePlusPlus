@@ -39,7 +39,7 @@ set(CPACK_RPM_PACKAGE_GROUP "libs")
 set(CPACK_RPM_PACKAGE_REQUIRES "libboost-date-time1.42.0, libboost-filesystem1.42.0, libboost-regex1.42.0, libboost-thread1.42.0, libboost-iostreams1.42.0")
 
 #don't include the current binary dir.
-get_filename_component(lucene++_BINARY_DIR_name ${lucene++_BINARY_DIR} NAME)
+get_filename_component(lucene++_BINARY_DIR_name "${lucene++_BINARY_DIR}" NAME)
 set(CPACK_SOURCE_IGNORE_FILES
   "/\\\\.svn/"
   "/\\\\.git/"
@@ -70,11 +70,11 @@ endif()
 
 
 add_custom_target(dist-package
-    COMMAND rsync -avP -e ssh ${CPACK_PACKAGE_FILE_NAME}.* ustramooner@frs.sourceforge.net:uploads/
+    COMMAND rsync -avP -e ssh "${CPACK_PACKAGE_FILE_NAME}.*" ustramooner@frs.sourceforge.net:uploads/
 #    DEPENDS package
 )
 add_custom_target(dist-package_source
-    COMMAND rsync -avP -e ssh ${CPACK_SOURCE_PACKAGE_FILE_NAME}.* ustramooner@frs.sourceforge.net:uploads/
+    COMMAND rsync -avP -e ssh "${CPACK_SOURCE_PACKAGE_FILE_NAME}.*" ustramooner@frs.sourceforge.net:uploads/
 #    DEPENDS package_source
 )
 

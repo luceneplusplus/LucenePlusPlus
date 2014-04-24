@@ -1,11 +1,11 @@
 project(lucene++-tester)
 
 include_directories(
-  ${GTEST_INCLUDE_DIR}
-  ${lucene++_SOURCE_DIR}/include
-  ${lucene++-lib_SOURCE_DIR}/include
-  ${lucene++-contrib_SOURCE_DIR}/include
-  ${lucene++-tester_SOURCE_DIR}/include
+  "${GTEST_INCLUDE_DIR}"
+  "${lucene++_SOURCE_DIR}/include"
+  "${lucene++-lib_SOURCE_DIR}/include"
+  "${lucene++-contrib_SOURCE_DIR}/include"
+  "${lucene++-tester_SOURCE_DIR}/include"
   ${Boost_INCLUDE_DIRS}
 )
 
@@ -22,14 +22,14 @@ file(GLOB_RECURSE tester_sources
 )
 
 file(GLOB_RECURSE test_headers
-  ${lucene++-tester_SOURCE_DIR}/../include/*.h
-  ${lucene++-tester_SOURCE_DIR}/include/*.h
+  "${lucene++-tester_SOURCE_DIR}/../include/*.h"
+  "${lucene++-tester_SOURCE_DIR}/include/*.h"
 )
 
 add_definitions(-DLPP_EXPOSE_INTERNAL)
 
 link_directories(
-  ${GTEST_LIB_DIR}
+  "${GTEST_LIB_DIR}"
 )
 
 add_executable(lucene++-tester
