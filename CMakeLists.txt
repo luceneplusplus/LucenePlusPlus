@@ -105,12 +105,12 @@ endif()
 # generate Config.h
 #################################
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/Config.h.cmake
-  ${CMAKE_CURRENT_BINARY_DIR}/include/Config.h @ONLY
+  "${CMAKE_CURRENT_SOURCE_DIR}/include/Config.h.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/include/Config.h" @ONLY
 )
 
 include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}/include
+  "${CMAKE_CURRENT_BINARY_DIR}/include"
 )
 
 include(CMakeExternal.txt)
@@ -126,16 +126,16 @@ add_subdirectory(src/test)
 #################################
 if(NOT WIN32)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/liblucene++.pc.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc @ONLY)
+    "${CMAKE_CURRENT_SOURCE_DIR}/liblucene++.pc.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc" @ONLY)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/liblucene++-contrib.pc.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc @ONLY)
+    "${CMAKE_CURRENT_SOURCE_DIR}/liblucene++-contrib.pc.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc" @ONLY)
   install(
     FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc
-    ${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc
-    DESTINATION ${LIB_DESTINATION}/pkgconfig)
+    "${CMAKE_CURRENT_BINARY_DIR}/liblucene++.pc"
+    "${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc"
+    DESTINATION "${LIB_DESTINATION}/pkgconfig")
 endif()
 
 ####################################
@@ -150,6 +150,7 @@ configure_file(
 add_custom_target(
   uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  VERBATIM
 )
 
 if(ENABLE_PACKAGING)

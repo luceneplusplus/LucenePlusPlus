@@ -62,7 +62,8 @@ IF (ENABLE_DOCS)
         # It runs the final generated Doxyfile against it.
         # The DOT_PATH is substituted into the Doxyfile.
         ADD_CUSTOM_TARGET(doc
-            ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/doc/doxyfile
+            "${DOXYGEN_EXECUTABLE}" "${PROJECT_BINARY_DIR}/doc/doxyfile"
+            VERBATIM
         )
 
         IF ( DOCS_HTML_HELP )
@@ -78,11 +79,11 @@ IF (ENABLE_DOCS)
             IF ( CYGWIN )
                 EXECUTE_PROCESS ( COMMAND cygpath "${HTML_HELP_COMPILER}"
                     OUTPUT_VARIABLE HTML_HELP_COMPILER_EX )
-                STRING ( REPLACE "\n" "" HTML_HELP_COMPILER_EX ${HTML_HELP_COMPILER_EX} )
-                STRING ( REPLACE "\r" "" HTML_HELP_COMPILER_EX ${HTML_HELP_COMPILER_EX} )
+                STRING ( REPLACE "\n" "" HTML_HELP_COMPILER_EX "${HTML_HELP_COMPILER_EX}" )
+                STRING ( REPLACE "\r" "" HTML_HELP_COMPILER_EX "${HTML_HELP_COMPILER_EX}" )
                 SET ( HTML_HELP_COMPILER_EX "\"${HTML_HELP_COMPILER_EX}\"" )
             ELSE ( CYGWIN )
-                SET ( HTML_HELP_COMPILER_EX ${HTML_HELP_COMPILER} )
+                SET ( HTML_HELP_COMPILER_EX "${HTML_HELP_COMPILER}" )
             ENDIF ( CYGWIN )
         ENDIF ( DOCS_HTML_HELP )
 
@@ -123,10 +124,10 @@ IF (ENABLE_DOCS)
         ENDIF ( DOCS_TAGFILE )
 
         # This processes our Doxyfile.cmake and substitutes paths to generate a final Doxyfile
-        CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/Doxyfile.cmake ${PROJECT_BINARY_DIR}/doc/doxyfile )
-        CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/helpheader.htm.cmake ${PROJECT_BINARY_DIR}/doc/helpheader.htm )
-        CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/helpfooter.htm.cmake ${PROJECT_BINARY_DIR}/doc/helpfooter.htm )
-        CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/doc/doxygen.css.cmake ${PROJECT_BINARY_DIR}/doc/html/doxygen.css )
+        CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/doc/Doxyfile.cmake" "${PROJECT_BINARY_DIR}/doc/doxyfile")
+        CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/doc/helpheader.htm.cmake" "${PROJECT_BINARY_DIR}/doc/helpheader.htm")
+        CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/doc/helpfooter.htm.cmake" "${PROJECT_BINARY_DIR}/doc/helpfooter.htm")
+        CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/doc/doxygen.css.cmake" "${PROJECT_BINARY_DIR}/doc/html/doxygen.css")
 
         #create a target for tar.gz html help
         FIND_PACKAGE(UnixCommands)
@@ -135,17 +136,18 @@ IF (ENABLE_DOCS)
                 COMMAND "${TAR}" "-czf" "${PROJECT_BINARY_DIR}/doc/lucene++-doc.tar.gz" ./
                 WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/doc/html/"
                 #DEPENDS doc
+                VERBATIM
             )
         ENDIF ( TAR AND GZIP )
 
 	#install HTML pages if they were built
 	IF ( DOCS_HTML AND NOT WIN32 )
-            INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/doc/html/ DESTINATION share/doc/lucene++-${lucene++_VERSION})
+            INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/doc/html/" DESTINATION share/doc/lucene++-${lucene++_VERSION})
         ENDIF ( DOCS_HTML AND NOT WIN32 )
 
         #install man pages if they were built
         IF ( DOCS_MAN )
-            INSTALL(DIRECTORY ${PROJECT_BINARY_DIR}/doc/man/ DESTINATION man)
+            INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/doc/man/" DESTINATION man)
         ENDIF ( DOCS_MAN )
 
     ELSE ( DOXYGEN_FOUND )
