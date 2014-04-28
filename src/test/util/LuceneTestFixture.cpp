@@ -21,7 +21,7 @@ LuceneTestFixture::~LuceneTestFixture() {
     if (ConcurrentMergeScheduler::anyUnhandledExceptions()) {
         // Clear the failure so that we don't just keep failing subsequent test cases
         ConcurrentMergeScheduler::clearUnhandledExceptions();
-        FAIL() << "ConcurrentMergeScheduler hit unhandled exceptions";
+        boost::throw_exception(RuntimeException(L"ConcurrentMergeScheduler hit unhandled exceptions"));
     }
 }
 
