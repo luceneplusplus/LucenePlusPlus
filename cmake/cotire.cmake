@@ -45,7 +45,7 @@ if (NOT CMAKE_SCRIPT_MODE_FILE)
 endif()
 
 set (COTIRE_CMAKE_MODULE_FILE "${CMAKE_CURRENT_LIST_FILE}")
-set (COTIRE_CMAKE_MODULE_VERSION "1.5.2")
+set (COTIRE_CMAKE_MODULE_VERSION "1.6.1")
 
 include(CMakeParseArguments)
 include(ProcessorCount)
@@ -856,7 +856,7 @@ function (cotire_parse_includes _language _scanOutput _ignoredIncudeDirs _honore
 	# remove duplicate lines to speed up parsing
 	list (REMOVE_DUPLICATES _scanOutput)
 	list (LENGTH _scanOutput _uniqueLen)
-	if (COTIRE_VERBOSE)
+	if (COTIRE_VERBOSE OR COTIRE_DEBUG)
 		message (STATUS "Scanning ${_uniqueLen} unique lines of ${_len} for includes")
 		if (_ignoredExtensions)
 			message (STATUS "Ignored extensions: ${_ignoredExtensions}")
@@ -1146,8 +1146,16 @@ function (cotire_generate_prefix_header _prefixFile)
 			return()
 		endif()
 	endif()
+	set (_prologue "")
 	set (_epilogue "")
-	if (_option_COMPILER_ID MATCHES "Intel")
+	if (_option_COMPILER_ID MATCHES "Clang")
+		set (_prologue "#pragma clang system_header")
+	elseif (_option_COMPILER_ID MATCHES "GNU")
+		set (_prologue "#pragma GCC system_header")
+	elseif (_option_COMPILER_ID MATCHES "MSVC")
+		set (_prologue "#pragma warning(push, 0)")
+		set (_epilogue "#pragma warning(pop)")
+	elseif (_option_COMPILER_ID MATCHES "Intel")
 		# Intel compiler requires hdrstop pragma to stop generating PCH file
 		set (_epilogue "#pragma hdrstop")
 	endif()
@@ -1164,7 +1172,8 @@ function (cotire_generate_prefix_header _prefixFile)
 		INCLUDE_PATH ${_option_INCLUDE_PATH}
 		IGNORE_EXTENSIONS ${_option_IGNORE_EXTENSIONS}
 		UNPARSED_LINES _unparsedLines)
-	cotire_generate_unity_source("${_prefixFile}" EPILOGUE ${_epilogue} LANGUAGE "${_option_LANGUAGE}" ${_selectedHeaders})
+	cotire_generate_unity_source("${_prefixFile}"
+		PROLOGUE ${_prologue} EPILOGUE ${_epilogue} LANGUAGE "${_option_LANGUAGE}" ${_selectedHeaders})
 	set (_unparsedLinesFile "${_prefixFile}.log")
 	if (_unparsedLines)
 		if (COTIRE_VERBOSE OR NOT _selectedHeaders)
@@ -1291,6 +1300,7 @@ function (cotire_add_pch_compilation_flags _language _compilerID _compilerVersio
 		endif()
 	elseif (_compilerID MATCHES "GNU|Clang")
 		# GCC / Clang options used
+		# -w disable all warnings
 		# -x specify the source language
 		# -c compile but do not link
 		# -o place output in file
@@ -1298,10 +1308,10 @@ function (cotire_add_pch_compilation_flags _language _compilerID _compilerVersio
 		set (_xLanguage_CXX "c++-header")
 		if (_flags)
 			# append to list
-			list (APPEND _flags "-x" "${_xLanguage_${_language}}" "-c" "${_prefixFile}" -o "${_pchFile}")
+			list (APPEND _flags "-w" "-x" "${_xLanguage_${_language}}" "-c" "${_prefixFile}" -o "${_pchFile}")
 		else()
 			# return as a flag string
-			set (_flags "-x ${_xLanguage_${_language}} -c \"${_prefixFile}\" -o \"${_pchFile}\"")
+			set (_flags "-w -x ${_xLanguage_${_language}} -c \"${_prefixFile}\" -o \"${_pchFile}\"")
 		endif()
 	elseif (_compilerID MATCHES "Intel")
 		if (WIN32)
@@ -1400,21 +1410,34 @@ function (cotire_add_prefix_pch_inclusion_flags _language _compilerID _compilerV
 		# -Winvalid-pch warns if precompiled header is found but cannot be used
 		if (_flags)
 			# append to list
-			list (APPEND _flags "-include" "${_prefixFile}" "-Winvalid-pch")
+			list (APPEND _flags "-Winvalid-pch" "-include" "${_prefixFile}")
 		else()
 			# return as a flag string
-			set (_flags "-include \"${_prefixFile}\" -Winvalid-pch")
+			set (_flags "-Winvalid-pch -include \"${_prefixFile}\"")
 		endif()
 	elseif (_compilerID MATCHES "Clang")
 		# Clang options used
 		# -include process include file as the first line of the primary source file
+		# -include-pch include precompiled header file
 		# -Qunused-arguments don't emit warning for unused driver arguments
-		if (_flags)
-			# append to list
-			list (APPEND _flags  "-Qunused-arguments" "-include" "${_prefixFile}")
+		if (_pchFile AND NOT CMAKE_${_language}_COMPILER MATCHES "ccache")
+			if (_flags)
+				# append to list
+					list (APPEND _flags "-Qunused-arguments" "-include-pch" "${_pchFile}")
+			else()
+				# return as a flag string
+				set (_flags "-Qunused-arguments -include-pch \"${_pchFile}\"")
+			endif()
 		else()
-			# return as a flag string
-			set (_flags "-Qunused-arguments -include \"${_prefixFile}\"")
+			# no precompiled header, force inclusion of prefix header
+			# ccache requires the -include flag to be used in order to process precompiled header correctly
+			if (_flags)
+				# append to list
+				list (APPEND _flags "-Qunused-arguments" "-include" "${_prefixFile}")
+			else()
+				# return as a flag string
+				set (_flags "-Qunused-arguments -include \"${_prefixFile}\"")
+			endif()
 		endif()
 	elseif (_compilerID MATCHES "Intel")
 		if (WIN32)
@@ -1553,6 +1576,13 @@ function (cotire_check_precompiled_header_support _language _targetSourceDir _ta
 		endif()
 	else()
 		set (${_msgVar} "${_unsupportedCompiler}." PARENT_SCOPE)
+	endif()
+	if (CMAKE_${_language}_COMPILER MATCHES "ccache")
+		if (NOT "$ENV{CCACHE_SLOPPINESS}" MATCHES "time_macros")
+			set (${_msgVar}
+				"ccache requires the environment variable CCACHE_SLOPPINESS to be set to time_macros."
+				PARENT_SCOPE)
+		endif()
 	endif()
 	if (APPLE)
 		# PCH compilation not supported by GCC / Clang for multi-architecture builds (e.g., i386, x86_64)
@@ -1705,8 +1735,11 @@ function (cotire_make_pch_file_path _language _targetSourceDir _target _pchFileV
 			if (CMAKE_${_language}_COMPILER_ID MATCHES "MSVC")
 				# MSVC uses the extension .pch added to the prefix header base name
 				set (${_pchFileVar} "${_baseDir}/${_prefixFileBaseName}.pch" PARENT_SCOPE)
-			elseif (CMAKE_${_language}_COMPILER_ID MATCHES "GNU|Clang")
-				# GCC / Clang look for a precompiled header corresponding to the prefix header with the extension .gch appended
+			elseif (CMAKE_${_language}_COMPILER_ID MATCHES "Clang")
+				# Clang looks for a precompiled header corresponding to the prefix header with the extension .pch appended
+				set (${_pchFileVar} "${_baseDir}/${_prefixFileName}.pch" PARENT_SCOPE)
+			elseif (CMAKE_${_language}_COMPILER_ID MATCHES "GNU")
+				# GCC looks for a precompiled header corresponding to the prefix header with the extension .gch appended
 				set (${_pchFileVar} "${_baseDir}/${_prefixFileName}.gch" PARENT_SCOPE)
 			elseif (CMAKE_${_language}_COMPILER_ID MATCHES "Intel")
 				# Intel uses the extension .pchi added to the prefix header base name
@@ -1768,6 +1801,14 @@ function (cotire_get_prefix_header_dependencies _language _target _dependencySou
 	# depend on target source files marked with custom COTIRE_DEPENDENCY property
 	set (_dependencySources "")
 	cotire_get_objects_with_property_on(_dependencySources COTIRE_DEPENDENCY SOURCE ${ARGN})
+	if (CMAKE_${_language}_COMPILER_ID MATCHES "Clang")
+		# Clang raises a fatal error if a file is not found during preprocessing
+		# thus we depend on target's generated source files for prefix header generation
+		cotire_get_objects_with_property_on(_generatedSources GENERATED SOURCE ${ARGN})
+		if (_generatedSources)
+			list (APPEND _dependencySources ${_generatedSources})
+		endif()
+	endif()
 	if (COTIRE_DEBUG AND _dependencySources)
 		message (STATUS "${_language} ${_target} prefix header DEPENDS ${_dependencySources}")
 	endif()
@@ -2214,7 +2255,7 @@ function (cotire_choose_target_languages _targetSourceDir _target _targetLanguag
 			set (${_targetLanguagesVar} "" PARENT_SCOPE)
 			return()
 		endif()
-		if (_targetUsePCH AND "${_language}" STREQUAL "C" OR "${_language}" STREQUAL "CXX")
+		if (_targetUsePCH AND "${_language}" MATCHES "^C|CXX$")
 			cotire_check_precompiled_header_support("${_language}" "${_targetSourceDir}" "${_target}" _disableMsg)
 			if (_disableMsg)
 				set (_targetUsePCH FALSE)

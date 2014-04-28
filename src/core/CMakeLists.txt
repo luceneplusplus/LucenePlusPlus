@@ -40,7 +40,6 @@ cotire(lucene++)
 set_target_properties(lucene++ PROPERTIES
   VERSION ${lucene++_VERSION}
   SOVERSION ${lucene++_SOVERSION}
-  COMPILE_FLAGS -DLPP_HAVE_DLL
 )
 
 install(FILES ${lucene_headers}

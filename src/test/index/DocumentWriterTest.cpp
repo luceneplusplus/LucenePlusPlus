@@ -231,11 +231,11 @@ TEST_F(DocumentWriterTest, testTokenReuse) {
     int32_t freq = termPositions->freq();
     EXPECT_EQ(3, freq);
     EXPECT_EQ(0, termPositions->nextPosition());
-    EXPECT_EQ(true, termPositions->isPayloadAvailable());
+    EXPECT_TRUE(termPositions->isPayloadAvailable());
     EXPECT_EQ(6, termPositions->nextPosition());
-    EXPECT_EQ(false, termPositions->isPayloadAvailable());
+    EXPECT_FALSE(termPositions->isPayloadAvailable());
     EXPECT_EQ(7, termPositions->nextPosition());
-    EXPECT_EQ(false, termPositions->isPayloadAvailable());
+    EXPECT_FALSE(termPositions->isPayloadAvailable());
 }
 
 namespace TestPreAnalyzedField {
