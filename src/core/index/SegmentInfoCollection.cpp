@@ -41,11 +41,17 @@ void SegmentInfoCollection::addAll(const SegmentInfoCollectionPtr& segmentInfos)
     this->segmentInfos.addAll(segmentInfos->segmentInfos.begin(), segmentInfos->segmentInfos.end());
 }
 
-bool SegmentInfoCollection::equals(const SegmentInfoCollectionPtr& other) {
+bool SegmentInfoCollection::equals(const LuceneObjectPtr& other) {
     if (LuceneObject::equals(other)) {
         return true;
     }
-    return segmentInfos.equals(other->segmentInfos, luceneEquals<SegmentInfoPtr>());
+
+    SegmentInfoCollectionPtr otherColl(boost::dynamic_pointer_cast<SegmentInfoCollection>(other));
+    if (!otherColl) {
+        return false;
+    }
+
+    return segmentInfos.equals(otherColl->segmentInfos, luceneEquals<SegmentInfoPtr>());
 }
 
 int32_t SegmentInfoCollection::find(const SegmentInfoPtr& info) {
