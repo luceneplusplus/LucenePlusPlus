@@ -138,6 +138,14 @@ if(NOT WIN32)
     DESTINATION "${LIB_DESTINATION}/pkgconfig")
 endif()
 
+#################################
+# install Config.h
+#################################
+install(
+  FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/include/Config.h"
+  DESTINATION include/lucene++)
+
 ####################################
 # custom targets
 ####################################

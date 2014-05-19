@@ -20,7 +20,7 @@ file(GLOB_RECURSE lucene_internal_headers
 )
 
 file(GLOB_RECURSE lucene_headers
-  include/*.h
+  "${lucene++_SOURCE_DIR}/include/*.h"
 )
 
 add_definitions(-DLPP_BUILDING_LIB)
