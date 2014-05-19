@@ -15,9 +15,9 @@ namespace Lucene {
 template <typename TYPE>
 class ArrayData {
 public:
-    ArrayData(int32_t size) {
+    ArrayData(int32_t size_) {
         data = NULL;
-        resize(size);
+        resize(size_);
     }
 
     ~ArrayData() {
@@ -29,16 +29,16 @@ public:
     int32_t size;
 
 public:
-    void resize(int32_t size) {
-        if (size == 0) {
+    void resize(int32_t size_) {
+        if (size_ == 0) {
             FreeMemory(data);
             data = NULL;
         } else if (data == NULL) {
-            data = (TYPE*)AllocMemory(size * sizeof(TYPE));
+            data = (TYPE*)AllocMemory(size_ * sizeof(TYPE));
         } else {
-            data = (TYPE*)ReallocMemory(data, size * sizeof(TYPE));
+            data = (TYPE*)ReallocMemory(data, size_ * sizeof(TYPE));
         }
-        this->size = size;
+        this->size = size_;
     }
 };
 

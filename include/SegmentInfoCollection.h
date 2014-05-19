@@ -29,7 +29,7 @@ public:
     void add(const SegmentInfoPtr& info);
     void add(int32_t pos, const SegmentInfoPtr& info);
     void addAll(const SegmentInfoCollectionPtr& segmentInfos);
-    bool equals(const SegmentInfoCollectionPtr& other);
+    bool equals(const LuceneObjectPtr& other);
     int32_t find(const SegmentInfoPtr& info);
     bool contains(const SegmentInfoPtr& info);
     void remove(int32_t pos);

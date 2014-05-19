@@ -24,6 +24,7 @@ namespace Lucene {
 class LPPAPI Searchable {
 public:
     LUCENE_INTERFACE(Searchable);
+    virtual ~Searchable() {}
 
 public:
     /// Lower-level search API.

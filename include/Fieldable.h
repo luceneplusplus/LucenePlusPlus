@@ -20,6 +20,7 @@ namespace Lucene {
 class LPPAPI Fieldable {
 public:
     LUCENE_INTERFACE(Fieldable);
+    virtual ~Fieldable() {}
 
 public:
     /// Sets the boost factor hits on this field.  This value will be multiplied into the score of all
