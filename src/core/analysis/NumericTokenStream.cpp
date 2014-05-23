@@ -87,7 +87,7 @@ NumericTokenStreamPtr NumericTokenStream::setIntValue(int32_t value) {
 }
 
 NumericTokenStreamPtr NumericTokenStream::setDoubleValue(double value) {
-    this->value = (int64_t)value;
+    this->value = NumericUtils::doubleToSortableLong(value);
     valSize = 64;
     shift = 0;
     return shared_from_this();
