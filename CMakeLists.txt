@@ -75,9 +75,10 @@ set(lucene_boost_libs
 
 include(Lucene++Docs)
 include(TestCXXAcceptsFlag)
+include(GNUInstallDirs)
 
 set(LIB_DESTINATION
-  "lib" CACHE STRING "Define lib output directory name"
+  "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE STRING "Define lib output directory name"
 )
 
 if(ENABLE_CYCLIC_CHECK)
