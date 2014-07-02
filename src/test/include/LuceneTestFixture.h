@@ -13,6 +13,7 @@ public:
     /// setup
     LuceneTestFixture();
 
+    void destructorBody();
     /// teardown
     virtual ~LuceneTestFixture();
 };
