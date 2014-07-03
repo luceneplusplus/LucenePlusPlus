@@ -32,6 +32,10 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+option(USE_SHARED_GTEST
+  "Use the shared gtest system framework"
+  OFF
+)
 option(ENABLE_PACKAGING
   "Create build scripts for creating lucene++ packages"
   OFF
@@ -113,7 +117,15 @@ include_directories(
   "${CMAKE_CURRENT_BINARY_DIR}/include"
 )
 
-include(CMakeExternal.txt)
+if(NOT USE_SHARED_GTEST)
+  include(CMakeExternal.txt)
+else(NOT USE_SHARED_GTEST)
+  set(GTEST_ROOT "/usr/")
+  find_package(GTest REQUIRED)
+  include_directories(SYSTEM ${GTEST_INCLUDE_DIR})
+#  set(LIBS ${LIBS} ${GTEST_LIBRARIES})
+#  add_library(gtest STATIC IMPORTED)
+endif(NOT USE_SHARED_GTEST)
 enable_testing()
 
 add_subdirectory(src/core)
