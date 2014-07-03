@@ -1,5 +1,6 @@
 # Enable ExternalProject CMake module
 include(ExternalProject)
+find_package(Subversion REQUIRED)
 
 # main directory for external projects
 set_directory_properties(PROPERTIES EP_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ThirdParty)
