@@ -49,7 +49,6 @@ option(ENABLE_CYCLIC_CHECK
 # bootstrap
 ####################################
 
-find_package(Subversion REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Boost COMPONENTS
   date_time
