@@ -1,7 +1,9 @@
 project(lucene++-tester)
 
+add_subdirectory(gtest)
+
 include_directories(
-  "${GTEST_INCLUDE_DIR}"
+  "${gtest_SOURCE_DIR}/include"
   "${lucene++_SOURCE_DIR}/include"
   "${lucene++-lib_SOURCE_DIR}/include"
   "${lucene++-contrib_SOURCE_DIR}/include"

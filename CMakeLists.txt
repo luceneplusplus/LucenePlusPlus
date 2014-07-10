@@ -113,7 +113,6 @@ include_directories(
   "${CMAKE_CURRENT_BINARY_DIR}/include"
 )
 
-include(CMakeExternal.txt)
 enable_testing()
 
 add_subdirectory(src/core)
