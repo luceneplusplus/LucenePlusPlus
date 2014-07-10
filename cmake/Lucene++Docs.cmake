@@ -142,7 +142,7 @@ IF (ENABLE_DOCS)
 
 	#install HTML pages if they were built
 	IF ( DOCS_HTML AND NOT WIN32 )
-            INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/doc/html/" DESTINATION share/doc/lucene++-${lucene++_VERSION})
+            INSTALL(DIRECTORY "${PROJECT_BINARY_DIR}/doc/html/" DESTINATION share/doc/lucene++/html)
         ENDIF ( DOCS_HTML AND NOT WIN32 )
 
         #install man pages if they were built
