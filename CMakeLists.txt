@@ -93,7 +93,7 @@ if(WIN32 OR WIN64)
   set(CMAKE_DEBUG_POSTFIX "d")
 endif()
 
-if(NOT MSVC AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
+if(NOT WIN32 AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
   add_definitions(-fPIC)
 endif()
 
