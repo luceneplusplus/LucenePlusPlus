@@ -44,6 +44,10 @@ option(ENABLE_CYCLIC_CHECK
   "Enable cyclic checking"
   OFF
 )
+option(ENABLE_TEST
+  "Enable the tests"
+  ON
+)
 
 ####################################
 # bootstrap
@@ -113,12 +117,15 @@ include_directories(
   "${CMAKE_CURRENT_BINARY_DIR}/include"
 )
 
-enable_testing()
 
 add_subdirectory(src/core)
 add_subdirectory(src/contrib)
 add_subdirectory(src/demo)
-add_subdirectory(src/test)
+
+if(ENABLE_TEST)
+  enable_testing()
+  add_subdirectory(src/test)
+endif()
 
 #################################
 # install pkg-config file
