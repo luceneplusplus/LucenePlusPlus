@@ -17,8 +17,12 @@ String Constants::OS_NAME = L"Sun";
 String Constants::OS_NAME = L"Windows";
 #elif defined(macintosh) || defined(__APPLE__) || defined(__APPLE_CC__)
 String Constants::OS_NAME = L"Mac";
-#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__FreeBSD_kernel__)
 String Constants::OS_NAME = L"BSD";
+#elif defined(__GNU__)
+String Constants::OS_NAME = L"HURD";
+#else
+String Constants::OS_NAME = L"UNKNOWN";
 #endif
 
 String Constants::LUCENE_MAIN_VERSION = L"3.0.6";
