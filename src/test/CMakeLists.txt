@@ -40,7 +40,7 @@ add_executable(lucene++-tester
 )
 
 add_dependencies(lucene++-tester
-  googletest
+  gtest
 )
 
 target_link_libraries(lucene++-tester
