@@ -24,14 +24,25 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
+#ifndef int8_t
 using boost::int8_t;
 using boost::uint8_t;
+#endif
+
+#ifndef int16_t
 using boost::int16_t;
 using boost::uint16_t;
+#endif
+
+#ifndef int32_t
 using boost::int32_t;
 using boost::uint32_t;
+#endif
+
+#ifndef int64_t
 using boost::int64_t;
 using boost::uint64_t;
+#endif
 
 #define SIZEOF_ARRAY(arr) (sizeof(arr) / sizeof((arr)[0]))
 
