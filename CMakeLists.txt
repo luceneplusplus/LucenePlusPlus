@@ -48,6 +48,10 @@ option(ENABLE_TEST
   "Enable the tests"
   ON
 )
+option(ENABLE_DEMO
+  "Enable building demo applications"
+  ON
+)
 
 ####################################
 # bootstrap
@@ -105,6 +109,18 @@ if(CYGWIN)
   add_definitions(-D__LARGE64_FILES)
 endif()
 
+if(APPLE)
+  set(CMAKE_MACOSX_RPATH ON)
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+  if("${isSystemDir}" STREQUAL "-1")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  endif()
+endif()
+
 #################################
 # generate Config.h
 #################################
@@ -120,7 +136,10 @@ include_directories(
 
 add_subdirectory(src/core)
 add_subdirectory(src/contrib)
-add_subdirectory(src/demo)
+
+if(ENABLE_DEMO)
+  add_subdirectory(src/demo)
+endif()
 
 if(ENABLE_TEST)
   enable_testing()
