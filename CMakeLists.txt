@@ -101,6 +101,11 @@ if(WIN32 OR WIN64)
   set(CMAKE_DEBUG_POSTFIX "d")
 endif()
 
+if(MSVC)
+  # enable exceptions, see http://msdn.microsoft.com/en-us/library/1deeycx5.aspx
+  add_definitions(-EHsc)
+endif()
+
 if(NOT WIN32 AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
   add_definitions(-fPIC)
 endif()
