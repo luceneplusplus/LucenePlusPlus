@@ -58,12 +58,6 @@ option(ENABLE_DEMO
 ####################################
 
 find_package(Threads REQUIRED)
-
-if(MSVC)
-    # Disable automatic boost linking on Windows as libraries are added to the linker explicitly
-    add_definitions("/DBOOST_ALL_NO_LIB")
-endif()
-
 find_package(Boost COMPONENTS
   date_time
   filesystem
@@ -105,6 +99,11 @@ endif()
 ####################################
 if(WIN32 OR WIN64)
   set(CMAKE_DEBUG_POSTFIX "d")
+endif()
+
+if(MSVC)
+  # Disable automatic boost linking on Windows as libraries are added to the linker explicitly
+  add_definitions(-DBOOST_ALL_NO_LIB)
 endif()
 
 if(NOT WIN32 AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
