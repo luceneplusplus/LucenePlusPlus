@@ -58,6 +58,12 @@ option(ENABLE_DEMO
 ####################################
 
 find_package(Threads REQUIRED)
+
+if(MSVC)
+    # Disable automatic boost linking on Windows as libraries are added to the linker explicitly
+    add_definitions("/DBOOST_ALL_NO_LIB")
+endif()
+
 find_package(Boost COMPONENTS
   date_time
   filesystem
