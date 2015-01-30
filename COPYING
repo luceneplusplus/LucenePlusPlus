@@ -14,3 +14,85 @@ Apache 2.0:
     you may not use this file except in compliance with the License.
 
     See the file APACHE.licence
+
+
+Notes regarding licensing glib code.
+====================================
+
+Files: src/core/util/unicode/*
+
+Some portions of glib code have been used in Lucene++, a project
+spawned from CLucene, with special permission from the author(s).
+This is the email exchange that took place in 2006 between
+Ben van Klinken, Owen Taylor and Tom Tromey:
+
+---------- Forwarded message ----------
+From: Owen Taylor <otaylor@redhat.com>
+Date: 11 February 2006 04:48
+Subject: Re: Fwd: glib licensing
+To: Ben van Klinken <bvanklinken@gmail.com>
+Cc: tromey@redhat.com
+
+
+On Fri, 2006-02-10 at 18:34 +0100, Ben van Klinken wrote:
+>
+> Hi Owen,
+>
+> I am the author and maintainer of CLucene (clucene.sourceforge.net). I
+> was forwarded to you by Matthias Classen. We have an enquiry about
+> licensing of glib:
+>
+> CLucene was licensed LGPL, but recently we changed our license to
+> allow licensing under apache or LGPL. During the audit of the change,
+> we made a mistake with some of the code (code in the
+> gunichartables.cpp - various utf8<>wchar conversion functions) to be
+> licensed apache, since some of the functions are from the glib
+> library. The file in question contains various functions from the
+> http://cvs.gnome.org/viewcvs/glib/glib/ directory.
+>
+> We are working on fixing this and are exploring several options. When
+> discussing the issue on our mailing list, one suggestion was to
+> enquire with you what the chances of re-licensing some of the glib
+> unicode functions under
+> the apache license would be? I believe you were the author of glib
+> unicode support?
+
+I'd have to know more specifically what particular portions of
+the GLib code are involved; can you be more specific about
+particular functions and code portions? while I did much of the work,
+there have been additions made later on by other people, and a good
+portion of the code derives originally from libunicode by
+Tom Tromey. (Cc'ed)
+
+For the portions that are actually my code I don't have any
+objection to them also being licensed under the Apache license ...
+it's pretty much straightforward implementations of algorithms from
+the Unicode standard, and other implementations are widely available in
+many forms.
+
+Regards,
+Owen
+
+---------- Forwarded message ----------
+From: Tom Tromey <tromey@redhat.com>
+Date: 25 April 2006 02:42
+Subject: Re: Fwd: glib licensing
+To: Ben van Klinken <bvanklinken@gmail.com>
+Cc: Owen Taylor <otaylor@redhat.com>
+
+Ben> All the code has Tom Tromey's name at the top. Please let me know if
+Ben> you need any other information.
+
+I was wondering ... if other people made substantial contributions
+after this code was written, wouldn't they also be copyright holders?
+You'd have to use the cvs history to see this.
+
+Ben> I don't think we need to do anything other for you to agree with this
+Ben> licensing in this email correspondence. So unless you can shed any
+Ben> more light on this process and if you agree to this licensing, i will
+Ben> append the apache license to the top of our files with a note that it
+Ben> has been licensed with your approval.
+
+It is fine by me.
+
+Tom

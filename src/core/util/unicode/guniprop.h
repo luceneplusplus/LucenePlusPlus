@@ -25,6 +25,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+// See COPYING file for licensing information.
+
 #include "Lucene.h"
 
 typedef uint32_t gunichar;
