@@ -420,6 +420,18 @@ int32_t StandardTokenizerImpl::getNextToken() {
     wchar_t* zzBufferL = zzBuffer.get();
     const wchar_t* zzCMapL = ZZ_CMAP();
 
+    // This code was originally written in Java, which uses UTF-16, and it can't
+    // correctly deal with 32bit wchar_t and characters outside of the Basic
+    // Multilingual Plane. As a workaround to prevent crashes, treat all
+    // characters above U+FFFF as letters in the tokenizer.
+    // See https://github.com/luceneplusplus/LucenePlusPlus/issues/57
+#ifdef LPP_UNICODE_CHAR_SIZE_4
+    const wchar_t zzCMapFallback = zzCMapL['A'];
+    #define zzCMap_at(n) ((n) > 0xFFFF ? zzCMapFallback : zzCMapL[n])
+#else
+    #define zzCMap_at(n) (zzCMapL[n])
+#endif
+
     const int32_t* zzTransL = ZZ_TRANS();
     const int32_t* zzRowMapL = ZZ_ROWMAP();
     const int32_t* zzAttrL = ZZ_ATTRIBUTE();
@@ -458,7 +470,7 @@ int32_t StandardTokenizerImpl::getNextToken() {
                 }
             }
 
-            int32_t zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
+            int32_t zzNext = zzTransL[zzRowMapL[zzState] + zzCMap_at(zzInput)];
             if (zzNext == -1) {
                 break;
             }
