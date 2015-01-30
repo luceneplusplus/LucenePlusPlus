@@ -20,6 +20,7 @@ LuceneTestFixture::~LuceneTestFixture() {
     // Moved out to a separate function since GTEST_FAIL cannot be used in destructors
     destructorBody();
 }
+
 void LuceneTestFixture::destructorBody() {
     DateTools::setDateOrder(DateTools::DATEORDER_LOCALE);
     if (ConcurrentMergeScheduler::anyUnhandledExceptions()) {
