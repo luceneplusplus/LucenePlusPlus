@@ -1,0 +1,848 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="header files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="store">
+      <UniqueIdentifier>{7333c43f-9e86-4988-a184-3b190d47dd66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{cc6d76f1-6754-4733-812d-89af8999002f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="index">
+      <UniqueIdentifier>{4cff3fec-b356-4da6-a4fc-0501aa700b72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="document">
+      <UniqueIdentifier>{4378e8be-af9c-4221-92c2-0133df9db27d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="analysis">
+      <UniqueIdentifier>{027420f1-bdf4-4121-89f4-702b31ab05d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="analysis\standard">
+      <UniqueIdentifier>{0e80767f-dbcf-4405-8282-f33c1c025380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="analysis\tokenattributes">
+      <UniqueIdentifier>{36c464b5-2a15-4060-ab8f-4b0549003407}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="query parser">
+      <UniqueIdentifier>{31ab326e-55c7-4cd3-914e-04ad6f443103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search">
+      <UniqueIdentifier>{a21c1a10-57e9-4ce8-bcfb-02228c404856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search\function">
+      <UniqueIdentifier>{0868ef7a-70c1-4273-b893-1ce8b92f5675}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search\payloads">
+      <UniqueIdentifier>{0c8fb69f-b236-4c42-b42d-d2b70d8648b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search\spans">
+      <UniqueIdentifier>{7f3b48dc-cc4a-4a89-8dfb-9e7c5c60d980}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib">
+      <UniqueIdentifier>{0d5e16aa-6874-4e57-a351-462a685c9c4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers">
+      <UniqueIdentifier>{987e5db6-a038-4d26-9917-47359346af48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common">
+      <UniqueIdentifier>{31fd1660-a627-4627-9e63-0498b157ef99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis">
+      <UniqueIdentifier>{68c9de7e-8c09-4e0a-a85b-534d2ebf6ea9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\reverse">
+      <UniqueIdentifier>{94f5ef13-7985-446f-afbb-a33542e2d1f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\ar">
+      <UniqueIdentifier>{8a5c6219-2c5b-4ac3-8728-1c4ba5e4a420}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\br">
+      <UniqueIdentifier>{f42aacf4-3011-4755-be9a-c610a55aeb62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\cjk">
+      <UniqueIdentifier>{b568d9f7-380c-4679-a0f6-e9ac915f08b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\cn">
+      <UniqueIdentifier>{80ccc2ee-c801-4e82-8bcd-2529abbfa0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\cz">
+      <UniqueIdentifier>{e81adcfc-0198-4fed-ad37-d53518e40ca6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\de">
+      <UniqueIdentifier>{d7464eec-abec-466a-abf4-0f1a81c9f3e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\el">
+      <UniqueIdentifier>{a11af51d-bb86-49e4-9aef-3d59bf7c57f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\fa">
+      <UniqueIdentifier>{1a3ffcb1-fd23-4a42-bfb1-20c6ed8ea634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\fr">
+      <UniqueIdentifier>{ca3743cd-f295-4139-b742-7535a91bed1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\nl">
+      <UniqueIdentifier>{c6435527-5f60-4991-962f-bfcd8c976728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\analyzers\common\analysis\ru">
+      <UniqueIdentifier>{0eb8d6c3-de36-484d-92d0-2a6683dfbbc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\snowball">
+      <UniqueIdentifier>{963470db-0af1-4c90-b732-4a347cb41b5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\highlighter">
+      <UniqueIdentifier>{6f1adb3c-338e-4ae8-81c1-eb04895401a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="contrib\memory">
+      <UniqueIdentifier>{311b1fb8-b020-4342-b1e2-060b708bc6da}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\Lucene.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\contrib\include\LuceneContrib.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\targetver.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\test_lucene.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TestInc.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockFSDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockLock.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockRAMDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockRAMInputStream.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockRAMOutputStream.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DocHelper.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockIndexInput.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BaseTokenStreamFixture.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LuceneGlobalFixture.h">
+      <Filter>source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LuceneTestFixture.h">
+      <Filter>source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TestUtils.h">
+      <Filter>source files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\BaseTestRangeFilterFixture.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\CheckHits.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ExplanationsFixture.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\MockFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\QueryUtils.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\FunctionFixture.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\PayloadHelper.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\store\BufferedIndexInputTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\BufferedIndexOutputTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\DirectoryTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\FileSwitchDirectoryTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\IndexOutputTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\LockFactoryTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MMapDirectoryTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MockFSDirectory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MockLock.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MockLockFactory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MockRAMDirectory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MockRAMInputStream.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MockRAMOutputStream.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\RAMDirectoryTest.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\AttributeSourceTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Base64Test.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\BitVectorTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\BufferedReaderTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\CloseableThreadLocalTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\CompressionToolsTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\FieldCacheSanityCheckerTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\FileReaderTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\FileUtilsTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\InputStreamReaderTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\NumericUtilsTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\OpenBitSetTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\PriorityQueueTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\SimpleLRUCacheTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\SortedVIntListTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\StringReaderTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\StringUtilsTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\VersionTest.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\AddIndexesNoOptimizeTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\AtomicUpdateTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\BackwardsCompatibilityTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ByteSlicesTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\CheckIndexTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\CompoundFileTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ConcurrentMergeSchedulerTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\CrashTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DeletionPolicyTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DirectoryReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocHelper.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocumentWriterTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldInfosTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldsReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FilterIndexReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexCommitTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexFileDeleterTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexInputTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexReaderCloneNormsTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexReaderCloneTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexReaderReopenTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriterDeleteTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriterExceptionsTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriterLockReleaseTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriterMergePolicyTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriterMergingTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriterReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriterTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\LazyBugTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\LazyProxSkippingTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MockIndexInput.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MultiLevelSkipListTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MultiReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\NormsTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\NRTReaderWithThreadsTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\OmitTfTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ParallelReaderEmptyIndexTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ParallelReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ParallelTermEnumTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\PayloadsTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\PositionBasedTermVectorMapperTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentMergerTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentTermDocsTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentTermEnumTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SnapshotDeletionPolicyTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\StressIndexingTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermDocsPerfTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorsReaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ThreadedOptimizeTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TransactionRollbackTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TransactionsTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\WordlistLoaderTest.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\BinaryDocumentTest.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\DateFieldTest.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\DateToolsTest.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\DocumentTest.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\NumberToolsTest.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\AnalyzersTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\BaseTokenStreamFixture.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CachingTokenFilterTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CharFilterTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\KeywordAnalyzerTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\LengthFilterTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\MappingCharFilterTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\NumericTokenStreamTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\PerFieldAnalzyerWrapperTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\StopAnalyzerTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\StopFilterTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\TeeSinkTokenFilterTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\TokenTest.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\standard\StandardAnalyzerTest.cpp">
+      <Filter>analysis\standard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\SimpleAttributeTest.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\TermAttributeTest.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneGlobalFixture.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneTestFixture.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\main\main.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInc.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\TestUtils.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\MultiAnalyzerTest.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\MultiFieldQueryParserTest.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\QueryParserTest.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BaseTestRangeFilterFixture.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BaseTestRangeFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Boolean2Test.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanMinShouldMatchTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanOrTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanPrefixQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanScorerTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\CachingSpanFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\CachingWrapperFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\CheckHits.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ComplexExplanationsOfNonMatchesTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ComplexExplanationsTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\CustomSearcherSortTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DateFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DateSortTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DisjunctionMaxQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DocBoostTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DocIdSetTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ElevationComparatorTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ExplanationsFixture.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldCacheRangeFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldCacheTermsFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldCacheTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FilteredQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FilteredSearchTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FuzzyQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MatchAllDocsQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MockFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiPhraseQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiSearcherRankingTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiSearcherTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiTermConstantScoreTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiThreadTermVectorsTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiValuedNumericRangeQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\NotTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\NumericRangeQuery32Test.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\NumericRangeQuery64Test.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ParallelMultiSearcherTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PhrasePrefixQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PhraseQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PositionIncrementTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PositiveScoresOnlyCollectorTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PrefixFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PrefixInBooleanQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PrefixQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\QueryTermVectorTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\QueryUtils.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\QueryWrapperFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ScoreCachingWrappingScorerTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ScorerPerfTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SearchForDuplicatesTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SearchTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SetNormTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SimilarityTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SimpleExplanationsOfNonMatchesTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SimpleExplanationsTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SloppyPhraseQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SortTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SpanQueryFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermRangeFilterTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermRangeQueryTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermScorerTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermVectorsTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ThreadSafeTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TimeLimitingCollectorTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TopDocsCollectorTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TopScoreDocCollectorTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\WildcardTest.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\CustomScoreQueryTest.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\DocValuesTest.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\FieldScoreQueryTest.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\FunctionFixture.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\OrdValuesTest.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\PayloadHelper.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\PayloadNearQueryTest.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\PayloadTermQueryTest.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\BasicSpansTest.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\FieldMaskingSpanQueryTest.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\NearSpansOrderedTest.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\PayloadSpansTest.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanExplanationsTest.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpansAdvanced2Test.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpansAdvancedTest.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpansTest.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\reverse\ReverseStringFilterTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\reverse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\ar\ArabicAnalyzerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\ar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\ar\ArabicNormalizationFilterTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\ar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\ar\ArabicStemFilterTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\ar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\br\BrazilianStemmerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\br</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\cjk\CJKTokenizerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\cjk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\cn\ChineseTokenizerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\cn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\cz\CzechAnalyzerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\cz</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\de\GermanStemFilterTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\de</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\el\GreekAnalyzerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\el</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\fa\PersianAnalyzerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\fa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\fa\PersianNormalizationFilterTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\fa</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\fr\ElisionTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\fr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\fr\FrenchAnalyzerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\fr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\nl\DutchStemmerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\nl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\ru\RussianAnalyzerTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\ru</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\analyzers\common\analysis\ru\RussianStemTest.cpp">
+      <Filter>contrib\analyzers\common\analysis\ru</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\snowball\SnowballTest.cpp">
+      <Filter>contrib\snowball</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\highlighter\HighlighterTest.cpp">
+      <Filter>contrib\highlighter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\contrib\memory\MemoryIndexTest.cpp">
+      <Filter>contrib\memory</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

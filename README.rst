@@ -48,20 +48,19 @@ To build the library the following commands should be issued::
 Build Instructions for Windows systems
 --------------------------------------
 
-Open solution lucene++.sln located in the *msvc* folder into Visual Studio and build.
+Open solution lucene++.sln located in the *msvc* folder into Visual Studio 2010+ and build.
 
-**Note: "BOOST_ROOT" environment variable must be defined to point to the Boost library directory (eg. c:\\boost_1_51_0)**
+**Note: you will need to edit the include\Config.h.cmake file. Make a copy, rename it to Config.h, and replace
+        @DEFINE_USE_CYCLIC_CHECK@ LPP_USE_CYCLIC_CHECK
+	with
+        #define LPP_USE_CYCLIC_CHECK
 
-You'll need Boost installed.
+**Note: "BOOST_ROOT" environment variable must be defined to point to the Boost library directory (eg. c:\\boost_1_57_0)**
+**      Boost libs must be located in a subdirectory lib32-msvc-10.0 
+**      This is the default name of the install directory from the sf.net `boost-binaries http://sourceforge.net/projects/boost/files/boost-binaries/` project:
+		    
+You'll need Boost installed from http://boost.org.
 
-`BoostPro <http://www.boostpro.com>`_ has some precompiled Windows packages. You'll need the following extras installed::
-
-- boost::system
-- boost::thread
-- boost::filesystem
-- boost::regex
-- boost::date_time
-- boost::iostreams
 
 
 To run unit test suite
@@ -73,6 +72,18 @@ lucene_tester is built using the `Google Testing Framework <https://code.google.
 
 Command options can be discovered by supplying `--help`.
 
+
+To run the demos
+----------------
+
+Start by indexing a directory of files - open a command prompt and run
+    indexfiles.exe <directory to index> <directory to store index>
+	
+Once the indexer has finished, you can query the index using searchfiles:
+    searchfiles.exe -index <directory you stored the index in>
+
+	This uses an interactive command for you to enter queries, type a query to search the index press enter and you'll see the results.
+	
 
 Acknowledgements
 ----------------
