@@ -5,7 +5,6 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "LuceneInc.h"
-#include <boost/filesystem/fstream.hpp>
 #include "FSDirectory.h"
 #include "NativeFSLockFactory.h"
 #include "SimpleFSDirectory.h"
@@ -13,6 +12,15 @@
 #include "LuceneThread.h"
 #include "FileUtils.h"
 #include "StringUtils.h"
+
+#if defined(_WIN32)
+    #include <windows.h>
+#elif defined(__APPLE__)
+    #include <fcntl.h>
+#else
+    #include <unistd.h>
+#endif
+#include <boost/iostreams/device/file_descriptor.hpp>
 
 extern "C"
 {
@@ -148,15 +156,24 @@ void FSDirectory::sync(const String& name) {
     bool success = false;
 
     for (int32_t retryCount = 0; retryCount < 5; ++retryCount) {
-        boost::filesystem::ofstream syncFile;
+        boost::iostreams::file_descriptor syncFile;
         try {
-            syncFile.open(path, std::ios::binary | std::ios::in | std::ios::out);
+            syncFile.open(boost::filesystem::path(path));
         } catch (...) {
         }
 
         if (syncFile.is_open()) {
+            boost::iostreams::file_descriptor::handle_type fd = syncFile.handle();
+#if defined(_WIN32)
+            bool ok = ::FlushFileBuffers(fd) != 0;
+#elif defined(__APPLE__)
+            bool ok = fcntl(fd, F_FULLFSYNC) == 0;
+#else
+            bool ok = fsync(fd) == 0;
+#endif
             syncFile.close();
-            success = true;
+            if (ok)
+                success = true;
             break;
         }
 
