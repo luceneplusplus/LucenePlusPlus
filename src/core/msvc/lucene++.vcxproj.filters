@@ -1,0 +1,2556 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="header files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="resource files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="index">
+      <UniqueIdentifier>{48502038-53e1-4765-991b-c97b4be11da4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="store">
+      <UniqueIdentifier>{a684d11c-6040-49c1-b5e5-0615984a8c2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="analysis">
+      <UniqueIdentifier>{b61dc7e6-fb87-4b3f-ba4c-226a4361b847}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="analysis\tokenattributes">
+      <UniqueIdentifier>{c2e416ff-52fb-4d36-9be1-e8610beefd4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="analysis\standard">
+      <UniqueIdentifier>{88cac9c3-83c6-42df-a5eb-a1f0d741b627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{3e5e8bae-b0a3-498d-89bb-c4d511c21f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search">
+      <UniqueIdentifier>{9a837aa2-bfff-4729-b020-bece9d615183}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search\spans">
+      <UniqueIdentifier>{174ad8b8-0c6c-4ff7-8a6f-84f5627420ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search\payloads">
+      <UniqueIdentifier>{f6b6a77f-cc4a-406e-9b54-cb4af439c1e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search\function">
+      <UniqueIdentifier>{d4777928-6836-4755-9087-b4025ec3fc78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="document">
+      <UniqueIdentifier>{88de8393-eac2-4c2b-b102-0aa83c3ff01b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="query parser">
+      <UniqueIdentifier>{eb586280-ac06-4447-a2f7-404725729407}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform">
+      <UniqueIdentifier>{cc88a9b9-9490-48e9-a2d2-c77a8e370f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\md5">
+      <UniqueIdentifier>{81e1de0d-e621-451a-94dd-97e69cff08e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="platform\unicode">
+      <UniqueIdentifier>{ce3c5a86-a7c4-4f59-9c67-92d38e9dc50a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="LuceneInc.cpp">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\AbstractAllTermDocs.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\AllTermDocs.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\BufferedDeletes.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ByteBlockPool.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ByteSliceReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ByteSliceWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\CharBlockPool.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\CheckIndex.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\CompoundFileReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\CompoundFileWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ConcurrentMergeScheduler.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DefaultSkipListReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DefaultSkipListWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DirectoryReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocConsumerPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldConsumerPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldConsumerPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldConsumers.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldConsumersPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldConsumersPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldProcessor.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldProcessorPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocFieldProcessorPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocInverter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocInverterPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocInverterPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocumentsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\DocumentsWriterThreadState.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldInfo.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldInfos.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldInvertState.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldSortedTermVectorMapper.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldsReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FieldsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FilterIndexReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsDocsConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsDocsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsFieldsConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsFieldsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsPositionsConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsPositionsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsTermsConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FormatPostingsTermsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FreqProxFieldMergeState.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FreqProxTermsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FreqProxTermsWriterPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\FreqProxTermsWriterPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexCommit.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexDeletionPolicy.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexFileDeleter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexFileNameFilter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexFileNames.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IndexWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\IntBlockPool.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\InvertedDocConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\InvertedDocConsumerPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\InvertedDocConsumerPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\InvertedDocEndConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\InvertedDocEndConsumerPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\InvertedDocEndConsumerPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\KeepOnlyLastCommitDeletionPolicy.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\LogByteSizeMergePolicy.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\LogDocMergePolicy.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\LogMergePolicy.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MergeDocIDRemapper.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MergePolicy.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MergeScheduler.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MultiLevelSkipListReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MultiLevelSkipListWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MultipleTermPositions.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\MultiReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\NormsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\NormsWriterPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\NormsWriterPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ParallelReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\Payload.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\PositionBasedTermVectorMapper.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\RawPostingList.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ReadOnlyDirectoryReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ReadOnlySegmentReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\ReusableStringReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentInfo.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentInfoCollection.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentInfos.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentMergeInfo.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentMergeQueue.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentMerger.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentTermDocs.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentTermEnum.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentTermPositions.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentTermPositionVector.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentTermVector.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SegmentWriteState.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SerialMergeScheduler.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SnapshotDeletionPolicy.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\SortedTermVectorMapper.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\StoredFieldsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\StoredFieldsWriterPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\Term.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermBuffer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermDocs.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermEnum.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermFreqVector.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermInfo.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermInfosReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermInfosWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermPositions.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermPositionVector.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermsHash.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermsHashConsumer.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermsHashConsumerPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermsHashConsumerPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermsHashPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermsHashPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorEntry.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorEntryFreqSortedComparator.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorMapper.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorOffsetInfo.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorsReader.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorsTermsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorsTermsWriterPerField.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorsTermsWriterPerThread.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\index\TermVectorsWriter.cpp">
+      <Filter>index</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\BufferedIndexInput.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\BufferedIndexOutput.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\ChecksumIndexInput.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\ChecksumIndexOutput.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\Directory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\FileSwitchDirectory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\FSDirectory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\FSLockFactory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\IndexInput.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\IndexOutput.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\Lock.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\LockFactory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\MMapDirectory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\NativeFSLockFactory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\NoLockFactory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\RAMDirectory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\RAMFile.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\RAMInputStream.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\RAMOutputStream.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\SimpleFSDirectory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\SimpleFSLockFactory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\store\SingleInstanceLockFactory.cpp">
+      <Filter>store</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\Analyzer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\ASCIIFoldingFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\BaseCharFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CachingTokenFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CharArraySet.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CharFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CharReader.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CharStream.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\CharTokenizer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\ISOLatin1AccentFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\KeywordAnalyzer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\KeywordTokenizer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\LengthFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\LetterTokenizer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\LowerCaseFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\LowerCaseTokenizer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\MappingCharFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\NormalizeCharMap.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\NumericTokenStream.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\PerFieldAnalyzerWrapper.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\PorterStemFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\PorterStemmer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\SimpleAnalyzer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\StopAnalyzer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\StopFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\TeeSinkTokenFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\Token.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\TokenFilter.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\Tokenizer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\TokenStream.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\WhitespaceAnalyzer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\WhitespaceTokenizer.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\WordlistLoader.cpp">
+      <Filter>analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\FlagsAttribute.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\OffsetAttribute.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\PayloadAttribute.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\PositionIncrementAttribute.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\TermAttribute.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\tokenattributes\TypeAttribute.cpp">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\standard\StandardAnalyzer.cpp">
+      <Filter>analysis\standard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\standard\StandardFilter.cpp">
+      <Filter>analysis\standard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\standard\StandardTokenizer.cpp">
+      <Filter>analysis\standard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\analysis\standard\StandardTokenizerImpl.cpp">
+      <Filter>analysis\standard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Attribute.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\AttributeSource.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\BitUtil.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\BitVector.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Constants.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\DocIdBitSet.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\FieldCacheSanityChecker.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\NumericUtils.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\OpenBitSet.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\OpenBitSetDISI.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\OpenBitSetIterator.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\ReaderUtil.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\ScorerDocQueue.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\SmallDouble.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\SortedVIntList.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanClause.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\BooleanScorer2.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\CachingSpanFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\CachingWrapperFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Collector.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ComplexExplanation.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ConjunctionScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ConstantScoreQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DefaultSimilarity.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DisjunctionMaxQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DisjunctionMaxScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DisjunctionSumScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DocIdSet.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\DocIdSetIterator.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ExactPhraseScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Explanation.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldCache.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldCacheImpl.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldCacheRangeFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldCacheTermsFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldComparator.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldComparatorSource.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldDoc.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldDocSortedHitQueue.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FieldValueHitQueue.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Filter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FilteredDocIdSet.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FilteredDocIdSetIterator.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FilteredQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FilteredTermEnum.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FilterManager.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FuzzyQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\FuzzyTermEnum.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\HitQueue.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\HitQueueBase.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\IndexSearcher.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MatchAllDocsQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiPhraseQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiSearcher.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiTermQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\MultiTermQueryWrapperFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\NumericRangeFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\NumericRangeQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ParallelMultiSearcher.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PhrasePositions.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PhraseQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PhraseQueue.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PhraseScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PositiveScoresOnlyCollector.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PrefixFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PrefixQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\PrefixTermEnum.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Query.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\QueryTermVector.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\QueryWrapperFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ReqExclScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ReqOptSumScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ScoreCachingWrappingScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\ScoreDoc.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Scorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Searchable.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Searcher.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Similarity.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SimilarityDelegator.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SingleTermEnum.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SloppyPhraseScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Sort.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SortField.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SpanFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SpanFilterResult.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\SpanQueryFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermRangeFilter.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermRangeQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermRangeTermEnum.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TermScorer.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TimeLimitingCollector.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TopDocs.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TopDocsCollector.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TopFieldCollector.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TopFieldDocs.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\TopScoreDocCollector.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\Weight.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\WildcardQuery.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\WildcardTermEnum.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\FieldMaskingSpanQuery.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\NearSpansOrdered.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\NearSpansUnordered.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanFirstQuery.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanNearQuery.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanNotQuery.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanOrQuery.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanQuery.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\Spans.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanScorer.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanTermQuery.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\SpanWeight.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\spans\TermSpans.cpp">
+      <Filter>search\spans</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\AveragePayloadFunction.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\MaxPayloadFunction.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\MinPayloadFunction.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\PayloadFunction.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\PayloadNearQuery.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\PayloadSpanUtil.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\payloads\PayloadTermQuery.cpp">
+      <Filter>search\payloads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\ByteFieldSource.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\CustomScoreProvider.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\CustomScoreQuery.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\DocValues.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\DoubleFieldSource.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\FieldCacheSource.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\FieldScoreQuery.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\IntFieldSource.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\OrdFieldSource.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\ReverseOrdFieldSource.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\ValueSource.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search\function\ValueSourceQuery.cpp">
+      <Filter>search\function</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\AbstractField.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\CompressionTools.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\DateField.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\DateTools.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\Document.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\Field.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\Fieldable.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\FieldSelector.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\LoadFirstFieldSelector.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\MapFieldSelector.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\NumberTools.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\NumericField.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\document\SetBasedFieldSelector.cpp">
+      <Filter>document</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\FastCharStream.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\MultiFieldQueryParser.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\QueryParseError.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\QueryParser.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\QueryParserCharStream.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\QueryParserConstants.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\QueryParserToken.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\queryparser\QueryParserTokenManager.cpp">
+      <Filter>query parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneAllocator.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Base64.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\BitSet.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\BufferedReader.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\CharFolder.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Collator.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\CycleCheck.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\FileReader.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\FileUtils.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\InfoStream.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\InputStreamReader.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneException.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneObject.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneSignal.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneSync.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\LuceneThread.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\MiscUtils.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Random.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Reader.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\StringReader.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\StringUtils.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\Synchronize.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\TestPoint.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\ThreadPool.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\UnicodeUtils.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\UTF8Stream.cpp">
+      <Filter>platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\md5\md5.c">
+      <Filter>platform\md5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\unicode\guniprop.cpp">
+      <Filter>platform\unicode</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\Config.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Lucene.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneHeaders.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\LuceneInc.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneTypes.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\targetver.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\AbstractAllTermDocs.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\AllTermDocs.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BufferedDeletes.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ByteBlockPool.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ByteSliceReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ByteSliceWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CharBlockPool.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CheckIndex.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CompoundFileReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CompoundFileWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ConcurrentMergeScheduler.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DefaultSkipListReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DefaultSkipListWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DirectoryReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocConsumerPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldConsumerPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldConsumerPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldConsumers.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldConsumersPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldConsumersPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldProcessor.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldProcessorPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocFieldProcessorPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocInverter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocInverterPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocInverterPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocumentsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocumentsWriterThreadState.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldInfo.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldInfos.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldInvertState.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldSortedTermVectorMapper.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldsReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FilterIndexReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsDocsConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsDocsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsFieldsConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsFieldsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsPositionsConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsPositionsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsTermsConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FormatPostingsTermsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FreqProxFieldMergeState.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FreqProxTermsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FreqProxTermsWriterPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FreqProxTermsWriterPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexCommit.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexDeletionPolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexFileDeleter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexFileNameFilter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexFileNames.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IntBlockPool.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InvertedDocConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InvertedDocConsumerPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InvertedDocConsumerPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InvertedDocEndConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InvertedDocEndConsumerPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InvertedDocEndConsumerPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\KeepOnlyLastCommitDeletionPolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LogByteSizeMergePolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LogDocMergePolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LogMergePolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MergeDocIDRemapper.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MergePolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MergeScheduler.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiLevelSkipListReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiLevelSkipListWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultipleTermPositions.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NormsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NormsWriterPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NormsWriterPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ParallelReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Payload.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PositionBasedTermVectorMapper.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\RawPostingList.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ReadOnlyDirectoryReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ReadOnlySegmentReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ReusableStringReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentInfo.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentInfoCollection.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentInfos.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentMergeInfo.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentMergeQueue.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentMerger.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentTermDocs.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentTermEnum.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentTermPositions.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentTermPositionVector.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentTermVector.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SegmentWriteState.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SerialMergeScheduler.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SnapshotDeletionPolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SortedTermVectorMapper.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StoredFieldsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StoredFieldsWriterPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Term.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermBuffer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermDocs.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermEnum.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermFreqVector.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermInfo.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermInfosReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermInfosWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermPositions.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermPositionVector.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermsHash.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermsHashConsumer.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermsHashConsumerPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermsHashConsumerPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermsHashPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermsHashPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorEntry.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorEntryFreqSortedComparator.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorMapper.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorOffsetInfo.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorsReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorsTermsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorsTermsWriterPerField.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorsTermsWriterPerThread.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermVectorsWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BufferedIndexInput.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BufferedIndexOutput.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ChecksumIndexInput.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ChecksumIndexOutput.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Directory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FileSwitchDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FSDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FSLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexInput.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexOutput.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Lock.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MMapDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NativeFSLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NoLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\RAMDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\RAMFile.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\RAMInputStream.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\RAMOutputStream.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SimpleFSDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SimpleFSLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SingleInstanceLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_StopAnalyzer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Analyzer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ASCIIFoldingFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BaseCharFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CachingTokenFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CharArraySet.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CharFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CharReader.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CharStream.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CharTokenizer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ISOLatin1AccentFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\KeywordAnalyzer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\KeywordTokenizer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LengthFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LetterTokenizer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LowerCaseFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LowerCaseTokenizer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MappingCharFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NormalizeCharMap.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NumericTokenStream.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PerFieldAnalyzerWrapper.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PorterStemFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PorterStemmer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SimpleAnalyzer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StopAnalyzer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StopFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TeeSinkTokenFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Token.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TokenFilter.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Tokenizer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TokenStream.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\WhitespaceAnalyzer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\WhitespaceTokenizer.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\WordlistLoader.h">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FlagsAttribute.h">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\OffsetAttribute.h">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PayloadAttribute.h">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PositionIncrementAttribute.h">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermAttribute.h">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TypeAttribute.h">
+      <Filter>analysis\tokenattributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_StandardAnalyzer.h">
+      <Filter>analysis\standard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StandardAnalyzer.h">
+      <Filter>analysis\standard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StandardFilter.h">
+      <Filter>analysis\standard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StandardTokenizer.h">
+      <Filter>analysis\standard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StandardTokenizerImpl.h">
+      <Filter>analysis\standard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_DocIdBitSet.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FieldCacheSanityChecker.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ScorerDocQueue.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SortedVIntList.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Attribute.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\AttributeSource.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BitUtil.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BitVector.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CloseableThreadLocal.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Constants.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocIdBitSet.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldCacheSanityChecker.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MapOfSets.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NumericUtils.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\OpenBitSet.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\OpenBitSetDISI.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\OpenBitSetIterator.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PriorityQueue.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ReaderUtil.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ScorerDocQueue.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SimpleLRUCache.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SmallDouble.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SortedVIntList.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_BooleanQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_CachingSpanFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_CachingWrapperFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ConstantScoreQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_DisjunctionMaxQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_DocIdSet.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FieldCache.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FieldCacheRangeFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FieldCacheTermsFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FieldValueHitQueue.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FilteredDocIdSet.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FilteredQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FilterManager.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_FuzzyQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_MatchAllDocsQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_MultiPhraseQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_MultiSearcher.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_MultiTermQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_NumericRangeQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_PhraseQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_QueryWrapperFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_Similarity.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_TermQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_TimeLimitingCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_TopFieldCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_TopScoreDocCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BooleanClause.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BooleanQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BooleanScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BooleanScorer2.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CachingSpanFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CachingWrapperFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Collector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ComplexExplanation.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ConjunctionScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ConstantScoreQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DefaultSimilarity.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DisjunctionMaxQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DisjunctionMaxScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DisjunctionSumScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocIdSet.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocIdSetIterator.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ExactPhraseScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Explanation.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldCache.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldCacheImpl.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldCacheRangeFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldCacheTermsFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldComparator.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldComparatorSource.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldDoc.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldDocSortedHitQueue.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldValueHitQueue.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Filter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FilteredDocIdSet.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FilteredDocIdSetIterator.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FilteredQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FilteredTermEnum.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FilterManager.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FuzzyQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FuzzyTermEnum.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\HitQueue.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\HitQueueBase.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IndexSearcher.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MatchAllDocsQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiPhraseQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiSearcher.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiTermQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiTermQueryWrapperFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NumericRangeFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NumericRangeQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ParallelMultiSearcher.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PhrasePositions.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PhraseQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PhraseQueue.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PhraseScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PositiveScoresOnlyCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PrefixFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PrefixQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PrefixTermEnum.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Query.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryTermVector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryWrapperFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ReqExclScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ReqOptSumScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ScoreCachingWrappingScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ScoreDoc.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Scorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Searchable.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Searcher.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Similarity.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SimilarityDelegator.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SingleTermEnum.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SloppyPhraseScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Sort.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SortField.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanFilterResult.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanQueryFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermRangeFilter.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermRangeQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermRangeTermEnum.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermScorer.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TimeLimitingCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TopDocs.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TopDocsCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TopFieldCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TopFieldDocs.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TopScoreDocCollector.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Weight.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\WildcardQuery.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\WildcardTermEnum.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_NearSpansUnordered.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SpanFirstQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SpanNotQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SpanOrQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldMaskingSpanQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NearSpansOrdered.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NearSpansUnordered.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanFirstQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanNearQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanNotQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanOrQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Spans.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanScorer.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanTermQuery.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SpanWeight.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TermSpans.h">
+      <Filter>search\spans</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_PayloadTermQuery.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\AveragePayloadFunction.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MaxPayloadFunction.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MinPayloadFunction.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PayloadFunction.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PayloadNearQuery.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PayloadSpanUtil.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\PayloadTermQuery.h">
+      <Filter>search\payloads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ByteFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_CustomScoreQuery.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_IntFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_OrdFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ReverseOrdFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ValueSourceQuery.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ByteFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CustomScoreProvider.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CustomScoreQuery.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DocValues.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DoubleFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldCacheSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldScoreQuery.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\IntFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\OrdFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ReverseOrdFieldSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ValueSource.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ValueSourceQuery.h">
+      <Filter>search\function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\AbstractField.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CompressionTools.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DateField.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\DateTools.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Document.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Field.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Fieldable.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FieldSelector.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LoadFirstFieldSelector.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MapFieldSelector.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NumberTools.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\NumericField.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\SetBasedFieldSelector.h">
+      <Filter>document</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FastCharStream.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MultiFieldQueryParser.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryParseError.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryParser.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryParserCharStream.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryParserConstants.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryParserToken.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\QueryParserTokenManager.h">
+      <Filter>query parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneAllocator.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Array.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Base64.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BitSet.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\BufferedReader.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CharFolder.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Collator.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Collection.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\CycleCheck.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FileReader.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\FileUtils.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\HashMap.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\HashSet.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InfoStream.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\InputStreamReader.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneException.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneFactory.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneObject.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneSignal.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneSync.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\LuceneThread.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Map.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\MiscUtils.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Random.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Reader.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Set.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StringReader.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\StringUtils.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\Synchronize.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\TestPoint.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\ThreadPool.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\UnicodeUtils.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\UTF8Stream.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\VariantUtils.h">
+      <Filter>platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\md5\md5.h">
+      <Filter>platform\md5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\unicode\gunichartables.h">
+      <Filter>platform\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\util\unicode\guniprop.h">
+      <Filter>platform\unicode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_CheckIndex.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ConcurrentMergeScheduler.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_DirectoryReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_IndexReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_IndexWriter.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_MultipleTermPositions.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_ParallelReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SegmentInfos.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SegmentReader.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SnapshotDeletionPolicy.h">
+      <Filter>index</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_MMapDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_NativeFSLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_NoLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SimpleFSDirectory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SimpleFSLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\_SingleInstanceLockFactory.h">
+      <Filter>store</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

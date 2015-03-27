@@ -265,7 +265,7 @@ int main(int argc, char* argv[]) {
                 }
             } else {
                 std::wcout << L"Enter query: ";
-                std::wcin >> line;
+				getline(std::wcin, line);
             }
             boost::trim(line);
 

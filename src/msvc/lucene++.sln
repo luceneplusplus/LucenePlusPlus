@@ -1,38 +1,19 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene_tester", "..\test\msvc\lucene_tester.vcproj", "{6D684870-1124-49E1-8F96-7DE7B6114BEA}"
-	ProjectSection(ProjectDependencies) = postProject
-		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
-		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
-	EndProjectSection
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demos", "demos", "{E9344A66-4CC8-4E5B-83BC-8061E8962B46}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "indexfiles", "..\demo\indexfiles\msvc\indexfiles.vcproj", "{688A6720-739F-4EA3-AC5B-AA67A0965103}"
-	ProjectSection(ProjectDependencies) = postProject
-		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
-		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene_tester", "..\test\msvc\lucene_tester.vcxproj", "{6D684870-1124-49E1-8F96-7DE7B6114BEA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deletefiles", "..\demo\deletefiles\msvc\deletefiles.vcproj", "{688A6720-739F-4EA3-AC5B-AA67A0965105}"
-	ProjectSection(ProjectDependencies) = postProject
-		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
-		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "indexfiles", "..\demo\indexfiles\msvc\indexfiles.vcxproj", "{688A6720-739F-4EA3-AC5B-AA67A0965103}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "searchfiles", "..\demo\searchfiles\msvc\searchfiles.vcproj", "{688A6720-739F-4EA3-AC5B-AA67A0965104}"
-	ProjectSection(ProjectDependencies) = postProject
-		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
-		{46A95AFD-95FD-4280-B22E-1B56F273144B} = {46A95AFD-95FD-4280-B22E-1B56F273144B}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deletefiles", "..\demo\deletefiles\msvc\deletefiles.vcxproj", "{688A6720-739F-4EA3-AC5B-AA67A0965105}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene_contrib", "..\contrib\msvc\lucene_contrib.vcproj", "{46A95AFD-95FD-4280-B22E-1B56F273144B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{46A95AFD-95FD-4280-B22E-1B56F273144A} = {46A95AFD-95FD-4280-B22E-1B56F273144A}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "searchfiles", "..\demo\searchfiles\msvc\searchfiles.vcxproj", "{688A6720-739F-4EA3-AC5B-AA67A0965104}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene++", "..\core\msvc\lucene++.vcproj", "{46A95AFD-95FD-4280-B22E-1B56F273144A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene_contrib", "..\contrib\msvc\lucene_contrib.vcxproj", "{46A95AFD-95FD-4280-B22E-1B56F273144B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lucene++", "..\core\msvc\lucene++.vcxproj", "{46A95AFD-95FD-4280-B22E-1B56F273144A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
