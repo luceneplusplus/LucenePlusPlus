@@ -83,7 +83,7 @@ QueryPtr FuzzyQuery::rewrite(const IndexReaderPtr& reader) {
     }
 
     int32_t maxSize = BooleanQuery::getMaxClauseCount();
-    ScoreTermQueuePtr stQueue(newLucene<ScoreTermQueue>(1024));
+    ScoreTermQueuePtr stQueue(newLucene<ScoreTermQueue>(maxSize + 1));
     FilteredTermEnumPtr enumerator(getEnum(reader));
     LuceneException finally;
     try {
