@@ -36,6 +36,7 @@ On Debian systems, the following packages are required:
 - libboost-regex-dev
 - libboost-thread-dev
 - libboost-iostreams-dev
+- libboost-test-dev
 
 To build the library the following commands should be issued::
 
