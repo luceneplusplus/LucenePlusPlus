@@ -12,13 +12,13 @@
 
 namespace Lucene {
 
-LuceneGlobalFixture::LuceneGlobalFixture() {
+void LuceneGlobalFixture::SetUp() {
     FileUtils::removeDirectory(getTempDir());
     FileUtils::createDirectory(getTempDir());
     TestPoint::enableTestPoints();
 }
 
-LuceneGlobalFixture::~LuceneGlobalFixture() {
+void LuceneGlobalFixture::TearDown() {
     FileUtils::removeDirectory(getTempDir());
     Lucene::CycleCheck::dumpRefs();
 }

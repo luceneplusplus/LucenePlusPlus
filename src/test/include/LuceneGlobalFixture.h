@@ -10,11 +10,8 @@ namespace Lucene {
 
 class LuceneGlobalFixture : public testing::Environment {
 public:
-    /// setup
-    LuceneGlobalFixture();
-
-    /// teardown
-    virtual ~LuceneGlobalFixture();
+    virtual void SetUp();
+    virtual void TearDown();
 };
 
 }
