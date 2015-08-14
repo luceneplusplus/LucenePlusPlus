@@ -40,6 +40,10 @@ option(LUCENE_USE_STATIC_BOOST_LIBS
   "Use static boost libraries"
   OFF
 )
+option(ENABLE_BOOST_INTEGER
+  "Enable boost integer types"
+  OFF
+)
 option(ENABLE_CYCLIC_CHECK
   "Enable cyclic checking"
   OFF
@@ -87,6 +91,12 @@ include(GNUInstallDirs)
 set(LIB_DESTINATION
   "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE STRING "Define lib output directory name"
 )
+
+if(ENABLE_BOOST_INTEGER)
+  set(DEFINE_USE_BOOST_INTEGER "define")
+else()
+  set(DEFINE_USE_BOOST_INTEGER "undef")
+endif()
 
 if(ENABLE_CYCLIC_CHECK)
   set(DEFINE_USE_CYCLIC_CHECK "define")

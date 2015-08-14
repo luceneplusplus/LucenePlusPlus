@@ -17,6 +17,9 @@
 #endif
 #endif
 
+// Define to enable boost integer types
+#@DEFINE_USE_BOOST_INTEGER@ LPP_USE_BOOST_INTEGER
+
 #if defined(_WIN32) || defined(_WIN64)
 #define LPP_IMPORT __declspec(dllimport)
 #define LPP_EXPORT __declspec(dllexport)
