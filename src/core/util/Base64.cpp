@@ -77,7 +77,7 @@ ByteArray Base64::decode(const String& str) {
         byteArray4[i++] = (uint8_t)str[charIndex++];
         if (i == 4) {
             for (i = 0; i < 4; ++i) {
-                byteArray4[i] = BASE64_CHARS.find(byteArray4[i]);
+                byteArray4[i] = static_cast<uint8_t>(BASE64_CHARS.find(byteArray4[i]));
             }
             byteArray3[0] = (byteArray4[0] << 2) + ((byteArray4[1] & 0x30) >> 4);
             byteArray3[1] = ((byteArray4[1] & 0xf) << 4) + ((byteArray4[2] & 0x3c) >> 2);
@@ -99,7 +99,7 @@ ByteArray Base64::decode(const String& str) {
             byteArray4[j] = 0;
         }
         for (int32_t j = 0; j < 4; ++j) {
-            byteArray4[j] = BASE64_CHARS.find(byteArray4[j]);
+            byteArray4[j] = static_cast<uint8_t>(BASE64_CHARS.find(byteArray4[j]));
         }
         byteArray3[0] = (byteArray4[0] << 2) + ((byteArray4[1] & 0x30) >> 4);
         byteArray3[1] = ((byteArray4[1] & 0xf) << 4) + ((byteArray4[2] & 0x3c) >> 2);
