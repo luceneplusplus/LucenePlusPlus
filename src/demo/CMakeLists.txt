@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.0)
 project(lucene++-demo)
 
 file(GLOB_RECURSE
@@ -6,6 +7,7 @@ file(GLOB_RECURSE
 )
 
 add_definitions(-DLPP_HAVE_DLL)
+find_package(Boost REQUIRED)
 
 include_directories(
   ${Boost_INCLUDE_DIRS}
@@ -19,7 +21,7 @@ add_executable(indexfiles
   ${demo_headers}
 )
 target_link_libraries(indexfiles
-  lucene++
+  lucene++ boost_system
 )
 
 add_executable(searchfiles
@@ -27,7 +29,7 @@ add_executable(searchfiles
   ${demo_headers}
 )
 target_link_libraries(searchfiles
-  lucene++
+  lucene++ boost_system
 )
 
 add_executable(deletefiles
@@ -35,5 +37,5 @@ add_executable(deletefiles
   ${demo_headers}
 )
 target_link_libraries(deletefiles
-  lucene++
+  lucene++ boost_system
 )
