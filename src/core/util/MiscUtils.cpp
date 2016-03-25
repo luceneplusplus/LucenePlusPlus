@@ -119,7 +119,9 @@ bool MiscUtils::isNaN(double value) {
 }
 
 bool MiscUtils::equalTypes(const LuceneObjectPtr& first, const LuceneObjectPtr& second) {
-    return (typeid(*first) == typeid(*second));
+    const LuceneObject& firstRef(*first);
+    const LuceneObject& secondRef(*second);
+    return (typeid(firstRef) == typeid(secondRef));
 }
 
 int64_t MiscUtils::unsignedShift(int64_t num, int64_t shift) {
