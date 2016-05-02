@@ -109,6 +109,8 @@ endif()
 ####################################
 if(WIN32 OR WIN64)
   set(CMAKE_DEBUG_POSTFIX "d")
+  # Don't define MIN() or MAX() macros as these clash with std::min and std::max
+  add_definitions(-DNOMINMAX)
 endif()
 
 if(MSVC)
