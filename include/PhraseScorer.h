@@ -46,7 +46,10 @@ public:
 
     /// Phrase frequency in current doc as computed by phraseFreq().
     double currentFreq();
-
+    float term_freq(){
+        return currentFreq();
+    }
+    
     virtual String toString();
 
 protected:
