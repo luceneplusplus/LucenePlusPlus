@@ -65,7 +65,7 @@ public:
     /// Returns a string representation of this TermScorer.
     virtual String toString();
     
-    virtual float term_freq(){
+    virtual float termFreq(){
         return freq;
     }
 

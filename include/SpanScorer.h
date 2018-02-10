@@ -33,7 +33,7 @@ public:
     virtual int32_t advance(int32_t target);
     virtual int32_t docID();
     virtual double score();
-    virtual float term_freq(){
+    virtual float termFreq(){
         return freq;
     }
 

@@ -46,7 +46,7 @@ public:
 
     /// Phrase frequency in current doc as computed by phraseFreq().
     double currentFreq();
-    float term_freq(){
+    float termFreq(){
         return currentFreq();
     }
     
