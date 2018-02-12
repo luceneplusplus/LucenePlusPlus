@@ -33,6 +33,7 @@ public:
     virtual ~BooleanScorer();
 
     LUCENE_CLASS(BooleanScorer);
+    
 
 protected:
     SubScorerPtr scorers;
@@ -58,6 +59,7 @@ public:
     virtual double score();
     virtual void score(const CollectorPtr& collector);
     virtual String toString();
+
 };
 
 class BooleanScorerCollector : public Collector {
@@ -87,7 +89,13 @@ public:
     BucketScorer();
     virtual ~BucketScorer();
 
+    
+    int32_t freq;
     LUCENE_CLASS(BucketScorer);
+    float termFreq(){
+        return freq;
+    }
+
 
 public:
     double _score;

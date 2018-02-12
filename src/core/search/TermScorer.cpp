@@ -60,6 +60,7 @@ bool TermScorer::score(const CollectorPtr& collector, int32_t max, int32_t first
             }
         }
         doc = docs[pointer];
+        freq = freqs[pointer];
     }
     return true;
 }
@@ -81,13 +82,14 @@ int32_t TermScorer::nextDoc() {
         }
     }
     doc = docs[pointer];
+    freq = freqs[pointer];
+
     return doc;
 }
 
 double TermScorer::score() {
     BOOST_ASSERT(doc != -1);
-    int32_t f = freqs[pointer];
-    double raw = f < SCORE_CACHE_SIZE ? scoreCache[f] : getSimilarity()->tf(f) * weightValue; // compute tf(f) * weight
+    double raw = freq < SCORE_CACHE_SIZE ? scoreCache[freq] : getSimilarity()->tf(freq) * weightValue; // compute tf(f) * weight
     return norms ? raw * SIM_NORM_DECODER()[norms[doc] & 0xff] : raw; // normalize for field
 }
 
@@ -96,6 +98,7 @@ int32_t TermScorer::advance(int32_t target) {
     for (++pointer; pointer < pointerMax; ++pointer) {
         if (docs[pointer] >= target) {
             doc = docs[pointer];
+            freq = freqs[pointer];
             return doc;
         }
     }
@@ -107,7 +110,7 @@ int32_t TermScorer::advance(int32_t target) {
         pointer = 0;
         doc = termDocs->doc();
         docs[pointer] = doc;
-        freqs[pointer] = termDocs->freq();
+        freqs[pointer] = freq = termDocs->freq();
     } else {
         doc = NO_MORE_DOCS;
     }
@@ -115,7 +118,7 @@ int32_t TermScorer::advance(int32_t target) {
 }
 
 String TermScorer::toString() {
-    return L"scorer(" + weight->toString() + L")";
+    return L"term scorer(" + weight->toString() + L")";
 }
 
 }

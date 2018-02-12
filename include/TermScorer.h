@@ -34,11 +34,15 @@ protected:
 
     Collection<int32_t> docs; // buffered doc numbers
     Collection<int32_t> freqs; // buffered term freqs
+    
+    int32_t freq;
     int32_t pointer;
     int32_t pointerMax;
 
     static const int32_t SCORE_CACHE_SIZE;
     Collection<double> scoreCache;
+    
+    
 
 public:
     virtual void score(const CollectorPtr& collector);
@@ -60,6 +64,10 @@ public:
 
     /// Returns a string representation of this TermScorer.
     virtual String toString();
+    
+    virtual float termFreq(){
+        return freq;
+    }
 
 protected:
     static const Collection<double> SIM_NORM_DECODER();

@@ -8,8 +8,19 @@
 #define SCORER_H
 
 #include "DocIdSetIterator.h"
+#include "BooleanClause.h"
+#include "Weight.h"
 
 namespace Lucene {
+    
+    
+    class LPPAPI ScorerVisitor{
+        public:
+        virtual void visitOptional(QueryPtr parent,QueryPtr child,ScorerPtr scorer)=0;
+        virtual void visitRequired(QueryPtr parent,QueryPtr child,ScorerPtr scorer)=0;
+        virtual void visitProhibited(QueryPtr parent,QueryPtr child,ScorerPtr scorer)=0;
+        
+    };
 
 /// Common scoring functionality for different types of queries.
 ///
@@ -24,9 +35,11 @@ public:
     /// Constructs a Scorer.
     /// @param similarity The Similarity implementation used by this scorer.
     Scorer(const SimilarityPtr& similarity);
+    Scorer(const WeightPtr& weight);
     virtual ~Scorer();
 
     LUCENE_CLASS(Scorer);
+    WeightPtr weight;
 
 protected:
     SimilarityPtr similarity;
@@ -43,6 +56,15 @@ public:
     /// #nextDoc()} or {@link #advance(int32_t)} is called the first time, or when called from within
     /// {@link Collector#collect}.
     virtual double score() = 0;
+    
+    void visitSubScorers(QueryPtr parent, BooleanClause::Occur relationship,
+                         ScorerVisitor *visitor);
+    
+    void visitScorers(ScorerVisitor *visitor);
+    
+    virtual float termFreq(){
+        boost::throw_exception(RuntimeException(L"Freq not implemented"));
+    }
 
 protected:
     /// Collects matching documents in a range.  Hook for optimization.
@@ -57,6 +79,7 @@ protected:
     friend class BooleanScorer;
     friend class ScoreCachingWrappingScorer;
 };
+    
 
 }
 

@@ -73,6 +73,7 @@ bool BooleanScorer::score(const CollectorPtr& collector, int32_t max, int32_t fi
                 if (current->coord >= minNrShouldMatch) {
                     bs->_score = current->score * coordFactors[current->coord];
                     bs->doc = current->doc;
+                    bs->freq = current->coord;
                     collector->collect(current->doc);
                 }
             }
