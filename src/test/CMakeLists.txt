@@ -50,5 +50,3 @@ target_link_libraries(lucene++-tester
   gtest
   ${lucene_boost_libs}
 )
-
-cotire(lucene++-tester)

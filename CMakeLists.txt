@@ -2,6 +2,8 @@ project(lucene++)
 
 cmake_minimum_required(VERSION 2.8.6)
 
+set (CMAKE_CXX_STANDARD 11)
+
 set(lucene++_VERSION_MAJOR 3)
 set(lucene++_VERSION_MINOR 0)
 set(lucene++_VERSION_PATCH 7)
@@ -14,11 +16,6 @@ set(lucene++_VERSION
 
 # include specific modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-####################################
-# pre-compiled headers support
-####################################
-include(cotire)
 
 # if setup using the Toolchain-llvm.cmake file, then use llvm...
 if(ENABLE_LLVM)
@@ -50,11 +47,11 @@ option(ENABLE_CYCLIC_CHECK
 )
 option(ENABLE_TEST
   "Enable the tests"
-  ON
+  OFF
 )
 option(ENABLE_DEMO
   "Enable building demo applications"
-  ON
+  OFF
 )
 
 ####################################
@@ -87,6 +84,10 @@ set(lucene_boost_libs
 include(Lucene++Docs)
 include(TestCXXAcceptsFlag)
 include(GNUInstallDirs)
+include(ExternalProject)
+
+set(PROTOBUF_HOME "/usr/local/Cellar/protobuf/3.6.0")
+find_package(Protobuf REQUIRED)
 
 set(LIB_DESTINATION
   "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE STRING "Define lib output directory name"
@@ -154,6 +155,7 @@ include_directories(
 
 add_subdirectory(src/core)
 add_subdirectory(src/contrib)
+add_subdirectory(src/lib)
 
 if(ENABLE_DEMO)
   add_subdirectory(src/demo)

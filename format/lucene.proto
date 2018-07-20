@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+message DocumentMessage {
+  string title = 1;
+  int64 date = 2;
+  string contents = 3;
+}
+
+message SearchResult {
+  string title = 1;
+  int64 date = 2;
+  double score = 3;
+  repeated string context = 4;
+  // The index of the document
+  int32 index = 5;
+}
+
+message QueryResult {
+  repeated SearchResult result = 1;
+}

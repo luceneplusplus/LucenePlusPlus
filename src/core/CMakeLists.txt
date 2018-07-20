@@ -31,15 +31,11 @@ add_library(lucene++ SHARED
 
 target_link_libraries(lucene++
   ${CMAKE_THREAD_LIBS_INIT}
-  ${lucene_boost_libs}
-)
+  ${lucene_boost_libs})
 
 if(WIN32)
     target_link_libraries(lucene++ ws2_32)
 endif()
-
-set_target_properties(lucene++ PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/LuceneInc.h")
-cotire(lucene++)
 
 set_target_properties(lucene++ PROPERTIES
   VERSION ${lucene++_VERSION}

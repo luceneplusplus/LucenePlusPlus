@@ -50,8 +50,6 @@ target_link_libraries(lucene++-contrib
   lucene++
 )
 
-cotire(lucene++-contrib)
-
 install(TARGETS lucene++-contrib
   DESTINATION "${LIB_DESTINATION}"
   COMPONENT runtime
