@@ -3,12 +3,14 @@ syntax = "proto3";
 message DocumentMessage {
   string title = 1;
   int64 date = 2;
+  string author = 4;
   string contents = 3;
 }
 
 message SearchResult {
   string title = 1;
   int64 date = 2;
+  string author = 6;
   double score = 3;
   repeated string context = 4;
   // The index of the document

@@ -91,6 +91,7 @@ extern "C" void LuceneIndexDoc(LuceneWriteContext* context, uint8_t* data, size_
   auto date = newLucene<NumericField>(L"date", Field::STORE_YES, true);
   date->setLongValue(doc_msg.date());
   doc->add(date);
+  doc->add(newLucene<Field>(L"author", StringUtils::toUnicode(doc_msg.author()), Field::STORE_YES, Field::INDEX_ANALYZED));
   context->writer->addDocument(doc);
 }
 
@@ -140,6 +141,7 @@ extern "C" size_t LuceneQuery(LuceneReadContext* context, const char* field, con
     output->set_title(StringUtils::toUTF8(doc->get(L"title")));
     output->set_score(hits[i]->score);
     output->set_date(StringUtils::toLong(doc->get(L"date")));
+    output->set_author(StringUtils::toUTF8(doc->get(L"author")));
     output->set_index(hits[i]->doc);
 
     String text = doc->get(L"contents");
@@ -163,6 +165,7 @@ extern "C" size_t LuceneLookup(LuceneReadContext* context, int32_t index) {
   SearchResult* output = context->result->add_result();
   output->set_title(StringUtils::toUTF8(doc->get(L"title")));
   output->set_date(StringUtils::toLong(doc->get(L"date")));
+  output->set_author(StringUtils::toUTF8(doc->get(L"author")));
   output->set_index(index);
   output->add_context(StringUtils::toUTF8(doc->get(L"contents")));
   return context->result->ByteSize();
