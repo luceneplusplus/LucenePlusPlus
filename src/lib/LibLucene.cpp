@@ -23,6 +23,11 @@ struct LuceneWriteContext {
   int64_t docNumber;
 };
 
+void handleException(const LuceneException& exception) {
+  std::cout << "Lucene threw an exception:" << std::endl;
+  std::cout << StringUtils::toUTF8(exception.getError()) << std::endl;
+}
+
 DocumentPtr fileDocument(const String& docFile) {
   DocumentPtr doc = newLucene<Document>();
 
@@ -117,44 +122,49 @@ extern "C" LuceneReadContext* LuceneCreateReadContext(const char* indexDirectory
   return context;
 }
 
-extern "C" size_t LuceneQuery(LuceneReadContext* context, const char* field, const char* search_query) {
-  String f = StringUtils::toUnicode(field);
-  String q = StringUtils::toUnicode(search_query);
-  SearcherPtr searcher = newLucene<IndexSearcher>(context->reader);
-  AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
-  QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, f, analyzer);
-  QueryPtr query = parser->parse(q);
-  std::wcout << L"Searching for: " << query->toString(f) << L"\n";
+extern "C" ssize_t LuceneQuery(LuceneReadContext* context, const char* field, const char* search_query) {
+  try {
+    String f = StringUtils::toUnicode(field);
+    String q = StringUtils::toUnicode(search_query);
+    SearcherPtr searcher = newLucene<IndexSearcher>(context->reader);
+    AnalyzerPtr analyzer = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
+    QueryParserPtr parser = newLucene<QueryParser>(LuceneVersion::LUCENE_CURRENT, f, analyzer);
+    QueryPtr query = parser->parse(q);
+    std::wcout << L"Searching for: " << query->toString(f) << L"\n";
 
-  TopScoreDocCollectorPtr collector = TopScoreDocCollector::create(20, false);
-  searcher->search(query, collector);
-  Collection<ScoreDocPtr> hits = collector->topDocs()->scoreDocs;
-  int32_t numTotalHits = collector->getTotalHits();
-  std::wcout << numTotalHits << L" total matching documents\n";
+    TopScoreDocCollectorPtr collector = TopScoreDocCollector::create(20, false);
+    searcher->search(query, collector);
+    Collection<ScoreDocPtr> hits = collector->topDocs()->scoreDocs;
+    int32_t numTotalHits = collector->getTotalHits();
+    std::wcout << numTotalHits << L" total matching documents\n";
 
-  context->result.reset(new QueryResult());
+    context->result.reset(new QueryResult());
 
-  for (int i = 0; i < hits.size(); ++i) {
-    Collection<String> results = Collection<String>::newInstance();
-    DocumentPtr doc = searcher->doc(hits[i]->doc);
-    SearchResult* output = context->result->add_result();
-    output->set_title(StringUtils::toUTF8(doc->get(L"title")));
-    output->set_score(hits[i]->score);
-    output->set_date(StringUtils::toLong(doc->get(L"date")));
-    output->set_author(StringUtils::toUTF8(doc->get(L"author")));
-    output->set_index(hits[i]->doc);
+    for (int i = 0; i < hits.size(); ++i) {
+      Collection<String> results = Collection<String>::newInstance();
+      DocumentPtr doc = searcher->doc(hits[i]->doc);
+      SearchResult* output = context->result->add_result();
+      output->set_title(StringUtils::toUTF8(doc->get(L"title")));
+      output->set_score(hits[i]->score);
+      output->set_date(StringUtils::toLong(doc->get(L"date")));
+      output->set_author(StringUtils::toUTF8(doc->get(L"author")));
+      output->set_index(hits[i]->doc);
 
-    String text = doc->get(L"contents");
-    TokenStreamPtr tokenStream = analyzer->tokenStream(L"contents", newLucene<StringReader>(text));
-    QueryScorerPtr scorer =  newLucene<QueryScorer>(query, L"contents");
-    HighlighterPtr highlighter = newLucene<Highlighter>(scorer);
-    highlighter->setTextFragmenter(newLucene<SimpleFragmenter>(200));
-    int32_t maxNumFragmentsRequired = 1;
-    results.add(highlighter->getBestFragments(tokenStream, text, maxNumFragmentsRequired, L"..."));
+      String text = doc->get(L"contents");
+      TokenStreamPtr tokenStream = analyzer->tokenStream(L"contents", newLucene<StringReader>(text));
+      QueryScorerPtr scorer =  newLucene<QueryScorer>(query, L"contents");
+      HighlighterPtr highlighter = newLucene<Highlighter>(scorer);
+      highlighter->setTextFragmenter(newLucene<SimpleFragmenter>(200));
+      int32_t maxNumFragmentsRequired = 1;
+      results.add(highlighter->getBestFragments(tokenStream, text, maxNumFragmentsRequired, L"..."));
 
-    for (auto& result : results) {
-      output->add_context(StringUtils::toUTF8(result));
+      for (auto& result : results) {
+        output->add_context(StringUtils::toUTF8(result));
+      }
     }
+  } catch (const LuceneException& exception) {
+    handleException(exception);
+    return -1;
   }
   return context->result->ByteSize();
 }
