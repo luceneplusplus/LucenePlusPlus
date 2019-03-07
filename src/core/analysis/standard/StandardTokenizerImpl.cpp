@@ -425,11 +425,13 @@ int32_t StandardTokenizerImpl::getNextToken() {
     // Multilingual Plane. As a workaround to prevent crashes, treat all
     // characters above U+FFFF as letters in the tokenizer.
     // See https://github.com/luceneplusplus/LucenePlusPlus/issues/57
-#ifdef LPP_UNICODE_CHAR_SIZE_4
     const wchar_t zzCMapFallback = zzCMapL['A'];
+#ifdef LPP_UNICODE_CHAR_SIZE_4
     #define zzCMap_at(n) ((n) > 0xFFFF ? zzCMapFallback : zzCMapL[n])
 #else
-    #define zzCMap_at(n) (zzCMapL[n])
+    // If the 16-bit value is in [0xD800, 0xDFFF], it is part of a multi-byte 
+    // UTF-16 character and its UTF code point is > U+FFFF, so handle as above.
+    #define zzCMap_at(n) (((n) & 0xF800) == 0xD800 ? zzCMapFallback : zzCMapL[n])
 #endif
 
     const int32_t* zzTransL = ZZ_TRANS();
