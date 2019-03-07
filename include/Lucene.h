@@ -9,8 +9,8 @@
 
 #include "Config.h"
 
-#include <wctype.h>
-#include <wchar.h>
+#include <cwctype>
+#include <cwchar>
 #include <sys/types.h>
 #include <sstream>
 #include <string>

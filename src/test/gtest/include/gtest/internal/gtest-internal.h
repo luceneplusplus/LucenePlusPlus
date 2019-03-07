@@ -50,9 +50,9 @@
 # include <stdexcept>
 #endif
 
-#include <ctype.h>
-#include <float.h>
-#include <string.h>
+#include <cctype>
+#include <cfloat>
+#include <cstring>
 #include <iomanip>
 #include <limits>
 #include <set>

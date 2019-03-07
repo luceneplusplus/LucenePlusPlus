@@ -21,7 +21,7 @@ add_executable(indexfiles
   ${demo_headers}
 )
 target_link_libraries(indexfiles
-  lucene++ boost_system
+  lucene++ ${lucene_boost_libs}
 )
 
 add_executable(searchfiles
@@ -29,7 +29,7 @@ add_executable(searchfiles
   ${demo_headers}
 )
 target_link_libraries(searchfiles
-  lucene++ boost_system
+  lucene++ ${lucene_boost_libs}
 )
 
 add_executable(deletefiles
@@ -37,5 +37,5 @@ add_executable(deletefiles
   ${demo_headers}
 )
 target_link_libraries(deletefiles
-  lucene++ boost_system
+  lucene++ ${lucene_boost_libs}
 )
