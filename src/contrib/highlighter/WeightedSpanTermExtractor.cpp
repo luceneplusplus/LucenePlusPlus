@@ -68,29 +68,19 @@ void WeightedSpanTermExtractor::extract(const QueryPtr& query, const MapWeighted
         for (int32_t i = 0; i < phraseQueryTerms.size(); ++i) {
             clauses[i] = newLucene<SpanTermQuery>(phraseQueryTerms[i]);
         }
-        int32_t slop = phraseQuery->getSlop();
+
+        // sum position increments beyond 1
+        int32_t positionGaps = 0;
         Collection<int32_t> positions(phraseQuery->getPositions());
-        // add largest position increment to slop
-        if (!positions.empty()) {
-            int32_t lastPos = positions[0];
-            int32_t largestInc = 0;
-            int32_t sz = positions.size();
-            for (int32_t i = 1; i < sz; ++i) {
-                int32_t pos = positions[i];
-                int32_t inc = pos - lastPos;
-                if (inc > largestInc) {
-                    largestInc = inc;
-                }
-                lastPos = pos;
-            }
-            if (largestInc > 1) {
-                slop += largestInc;
-            }
+        if (!positions.empty() && positions.size() > 1) {
+            // positions are in increasing order.   max(0,...) is just a safeguard.
+            positionGaps = (std::max)(0, positions[positions.size() - 1] - positions[0] - positions.size() + 1 );
         }
 
-        bool inorder = (slop == 0);
+        //if original slop is 0 then require inOrder
+        bool inorder = (phraseQuery->getSlop() == 0);
 
-        SpanNearQueryPtr sp(newLucene<SpanNearQuery>(clauses, slop, inorder));
+        SpanNearQueryPtr sp(newLucene<SpanNearQuery>(clauses, phraseQuery->getSlop() + positionGaps, inorder));
         sp->setBoost(_query->getBoost());
         extractWeightedSpanTerms(terms, sp);
     } else if (MiscUtils::typeOf<TermQuery>(_query)) {
