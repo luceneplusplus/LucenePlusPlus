@@ -37,7 +37,7 @@ protected:
 public:
     virtual bool incrementToken();
     virtual void end();
-    virtual void reset();
+    virtual void reset(const ReaderPtr &input);
 };
 
 }

@@ -70,7 +70,7 @@ void KeywordTokenizer::end() {
     offsetAtt->setOffset(finalOffset, finalOffset);
 }
 
-void KeywordTokenizer::reset() {
+void KeywordTokenizer::reset(const ReaderPtr &input) {
     Tokenizer::reset(input);
     done = false;
 }
