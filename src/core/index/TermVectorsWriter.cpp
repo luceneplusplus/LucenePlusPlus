@@ -65,7 +65,7 @@ void TermVectorsWriter::addAllDocVectors(Collection<TermFreqVectorPtr> vectors) 
 
             if (tpVector) {
                 // May have positions & offsets
-                storePositions = (tpVector->size() > 0 && !tpVector->getTermPositions(0));
+                storePositions = (tpVector->size() > 0 && tpVector->getTermPositions(0));
                 storeOffsets = (tpVector->size() > 0 && tpVector->getOffsets(0));
                 bits = (uint8_t)((storePositions ? TermVectorsReader::STORE_POSITIONS_WITH_TERMVECTOR : 0) +
                                  (storeOffsets ? TermVectorsReader::STORE_OFFSET_WITH_TERMVECTOR : 0));
