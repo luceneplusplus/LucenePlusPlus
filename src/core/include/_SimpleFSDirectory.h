@@ -24,7 +24,7 @@ public:
     static const int32_t FILE_ERROR;
 
 protected:
-    ifstreamPtr file;
+    String path;
     int64_t position;
     int64_t length;
 
