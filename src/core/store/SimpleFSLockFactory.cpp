@@ -38,7 +38,7 @@ void SimpleFSLockFactory::clearLock(const String& lockName) {
 
 SimpleFSLock::SimpleFSLock(const String& lockDir, const String& lockFileName) {
     this->lockDir = lockDir;
-    this->lockFile = lockFile;
+    this->lockFile = lockFileName;
 }
 
 SimpleFSLock::~SimpleFSLock() {
