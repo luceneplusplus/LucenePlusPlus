@@ -368,7 +368,7 @@ QueryPtr QueryParser::getFieldQuery(const String& field, const String& queryText
         return newTermQuery(newLucene<Term>(field, term));
     } else {
         if (severalTokensAtSamePosition) {
-            if (positionCount == 1) {
+            if (positionCount <= 1) {
                 // no phrase query
                 BooleanQueryPtr q(newBooleanQuery(true));
                 for (int32_t i = 0; i < numTokens; ++i) {
