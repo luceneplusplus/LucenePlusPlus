@@ -50,7 +50,7 @@ Build Instructions for Windows systems
 
 Open solution lucene++.sln located in the *msvc* folder into Visual Studio 2010+ and build.
 
-**Note: you will need to edit the include\Config.h.cmake file. Make a copy, rename it to Config.h, and replace**
+**Note: you will need to edit the include\\Config.h.cmake file. Make a copy, rename it to Config.h, and replace**
 
   #@DEFINE_USE_CYCLIC_CHECK@ LPP_USE_CYCLIC_CHECK
 
