@@ -129,6 +129,11 @@ void SimpleFSIndexInput::readInternal(uint8_t* b, int32_t offset, int32_t length
         if (i == InputFile::FILE_EOF) {
             boost::throw_exception(IOException(L"Read past EOF"));
         }
+        else if (i == InputFile::FILE_ERROR) {
+            std::wostringstream msg;
+            msg << L"Failed to read from file: " << path;
+            boost::throw_exception(IOException(msg.str()));
+        }
         total += i;
     }
 }
