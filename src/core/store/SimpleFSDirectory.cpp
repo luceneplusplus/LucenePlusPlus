@@ -39,8 +39,9 @@ const int32_t InputFile::FILE_EOF = FileReader::FILE_EOF;
 const int32_t InputFile::FILE_ERROR = FileReader::FILE_ERROR;
 
 InputFile::InputFile(const String& path) {
-    file = newInstance<boost::filesystem::ifstream>(path, std::ios::binary | std::ios::in);
-    if (!file->is_open()) {
+    this->path = path;
+    if (!FileUtils::fileExists(path))
+    {
         boost::throw_exception(FileNotFoundException(path));
     }
     position = 0;
@@ -52,8 +53,8 @@ InputFile::~InputFile() {
 
 void InputFile::setPosition(int64_t position) {
     this->position = position;
-    file->seekg((std::streamoff)position);
-    if (!file->good()) {
+    if (position < 0 || position > length)
+    {
         boost::throw_exception(IOException());
     }
 }
@@ -68,11 +69,17 @@ int64_t InputFile::getLength() {
 
 int32_t InputFile::read(uint8_t* b, int32_t offset, int32_t length) {
     try {
-        if (file->eof()) {
+        boost::filesystem::ifstream file(path, std::ios::binary | std::ios::in);
+        file.seekg((std::streamoff)position);
+        if (!file.is_open() || !file.good())
+        {
+            return FILE_ERROR;
+        }
+        if (file.eof()) {
             return FILE_EOF;
         }
-        file->read((char*)b + offset, length);
-        int32_t readCount = file->gcount();
+        file.read((char*)b + offset, length);
+        int32_t readCount = file.gcount();
         position += readCount;
         return readCount;
     } catch (...) {
@@ -81,13 +88,13 @@ int32_t InputFile::read(uint8_t* b, int32_t offset, int32_t length) {
 }
 
 void InputFile::close() {
-    if (file->is_open()) {
-        file->close();
-    }
+    // NOOP
 }
 
 bool InputFile::isValid() {
-    return (file && file->is_open() && file->good());
+    boost::filesystem::ifstream file(path, std::ios::binary | std::ios::in);
+    file.seekg((std::streamoff)position);
+    return (file.is_open() && file.good());
 }
 
 SimpleFSIndexInput::SimpleFSIndexInput() {
@@ -156,6 +163,12 @@ LuceneObjectPtr SimpleFSIndexInput::clone(const LuceneObjectPtr& other) {
 OutputFile::OutputFile(const String& path) {
     this->path = path;
     file = newInstance<boost::filesystem::ofstream>(path, std::ios::binary | std::ios::out);
+    if (!isValid())
+    {
+        std::wostringstream msg;
+        msg << L"failed to open file for write: " << path;
+        boost::throw_exception(IOException(msg.str()));
+    }
 }
 
 OutputFile::~OutputFile() {
@@ -163,14 +176,19 @@ OutputFile::~OutputFile() {
 
 bool OutputFile::write(const uint8_t* b, int32_t offset, int32_t length) {
     if (!file->is_open()) {
-        return false;
+        std::wostringstream msg;
+        msg << L"file is closed: " << path;
+        boost::throw_exception(IOException(msg.str()));
     }
-    try {
-        file->write((char*)b + offset, length);
-        return file->good();
-    } catch (...) {
-        return false;
+
+    file->write((char*)b + offset, length);
+    if( !file->good() )
+    {
+        std::wostringstream msg;
+        msg << L"error writing file: " << path << L" bad=" << file->bad() << L" fail=" << file->fail() << L" eof=" << file->eof();
+        boost::throw_exception(IOException(msg.str()));
     }
+    return true;
 }
 
 void OutputFile::close() {
