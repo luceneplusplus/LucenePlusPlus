@@ -13,7 +13,7 @@ set(lucene++_VERSION
 )
 
 # include specific modules
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 ####################################
 # pre-compiled headers support
