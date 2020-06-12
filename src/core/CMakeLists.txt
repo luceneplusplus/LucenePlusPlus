@@ -25,9 +25,15 @@ file(GLOB_RECURSE lucene_headers
 
 add_definitions(-DLPP_BUILDING_LIB)
 
-add_library(lucene++ SHARED
-  ${lucene_sources}
-)
+if (LUCENE_BUILD_STATIC)
+  add_library(lucene++ STATIC
+    ${lucene_sources}
+  )
+else()
+  add_library(lucene++ SHARED
+    ${lucene_sources}
+  )
+endif()
 
 target_link_libraries(lucene++
   ${CMAKE_THREAD_LIBS_INIT}

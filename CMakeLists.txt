@@ -32,6 +32,10 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+option(LUCENE_BUILD_STATIC
+  "Build a static library"
+  OFF
+)
 option(ENABLE_PACKAGING
   "Create build scripts for creating lucene++ packages"
   OFF
