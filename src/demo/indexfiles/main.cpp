@@ -4,7 +4,9 @@
 // or the GNU Lesser General Public License.
 /////////////////////////////////////////////////////////////////////////////
 
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 
 #include "targetver.h"
 #include <iostream>
