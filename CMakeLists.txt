@@ -121,6 +121,12 @@ if(MSVC)
 
   # enable exceptions, see http://msdn.microsoft.com/en-us/library/1deeycx5.aspx
   add_definitions(-EHsc)
+
+  # Disable including too many Windows headers
+  add_definitions(-DWIN32_LEAN_AND_MEAN)
+
+  # Disable the min/max macros that conflict with std::min/std::max
+  add_definitions(-DNOMINMAX)
 endif()
 
 if(NOT WIN32 AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
