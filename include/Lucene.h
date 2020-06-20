@@ -122,14 +122,14 @@ struct luceneWeakEquals {
 };
 
 template <class TYPE>
-struct luceneHash : std::unary_function<TYPE, std::size_t> {
+struct luceneHash {
     std::size_t operator()(const TYPE& type) const {
         return type ? type->hashCode() : 0;
     }
 };
 
 template <class TYPE>
-struct luceneWeakHash : std::unary_function<TYPE, std::size_t> {
+struct luceneWeakHash {
     std::size_t operator()(const TYPE& type) const {
         return type.expired() ? 0 : type.lock()->hashCode();
     }
