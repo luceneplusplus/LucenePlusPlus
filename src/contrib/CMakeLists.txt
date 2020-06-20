@@ -34,10 +34,17 @@ install(FILES ${contrib_headers}
   COMPONENT development-contrib
 )
 
-add_library(lucene++-contrib SHARED
-  ${contrib_sources}
-  ${contrib_headers}
-)
+if (LUCENE_BUILD_STATIC)
+  add_library(lucene++-contrib STATIC
+    ${contrib_sources}
+    ${contrib_headers}
+  )
+else()
+  add_library(lucene++-contrib SHARED
+    ${contrib_sources}
+    ${contrib_headers}
+  )
+endif()
 
 set_target_properties(lucene++-contrib PROPERTIES
   VERSION ${lucene++_VERSION}
