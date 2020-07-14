@@ -81,3 +81,8 @@
 #define BOOST_FILESYSTEM_VERSION 3
 
 #endif
+
+// Use windows definitions
+#if defined(_WIN32) || defined(_WIN64)
+#define BOOST_USE_WINDOWS_H
+#endif
