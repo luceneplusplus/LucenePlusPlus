@@ -12,7 +12,7 @@
 namespace Lucene {
 
 /// An InputStreamReader is a bridge from byte streams to character streams.
-class InputStreamReader : public Reader {
+class LPPAPI InputStreamReader : public Reader {
 public:
     /// Create an InputStreamReader that uses the utf8 charset.
     InputStreamReader(const ReaderPtr& reader);

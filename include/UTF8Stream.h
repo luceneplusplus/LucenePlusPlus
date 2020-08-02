@@ -11,7 +11,7 @@
 
 namespace Lucene {
 
-class UTF8Base : public LuceneObject {
+class LPPAPI UTF8Base : public LuceneObject {
 public:
     virtual ~UTF8Base();
     LUCENE_CLASS(UTF8Base);
