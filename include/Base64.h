@@ -11,7 +11,7 @@
 
 namespace Lucene {
 
-class Base64 : public LuceneObject {
+class LPPAPI Base64 : public LuceneObject {
 public:
     virtual ~Base64();
     LUCENE_CLASS(Base64);

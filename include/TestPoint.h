@@ -12,7 +12,7 @@
 namespace Lucene {
 
 /// Used for unit testing as a substitute for stack trace
-class TestPoint {
+class LPPAPI TestPoint {
 public:
     virtual ~TestPoint();
 
