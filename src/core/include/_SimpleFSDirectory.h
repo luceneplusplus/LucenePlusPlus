@@ -12,7 +12,7 @@
 
 namespace Lucene {
 
-class InputFile : public LuceneObject {
+class LPPAPI InputFile : public LuceneObject {
 public:
     InputFile(const String& path);
     virtual ~InputFile();
@@ -37,7 +37,7 @@ public:
     bool isValid();
 };
 
-class SimpleFSIndexInput : public BufferedIndexInput {
+class LPPAPI SimpleFSIndexInput : public BufferedIndexInput {
 public:
     SimpleFSIndexInput();
     SimpleFSIndexInput(const String& path, int32_t bufferSize, int32_t chunkSize);

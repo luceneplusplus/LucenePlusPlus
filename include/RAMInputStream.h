@@ -12,7 +12,7 @@
 namespace Lucene {
 
 /// A memory-resident {@link IndexInput} implementation.
-class RAMInputStream : public IndexInput {
+class LPPAPI RAMInputStream : public IndexInput {
 public:
     RAMInputStream();
     RAMInputStream(const RAMFilePtr& f);

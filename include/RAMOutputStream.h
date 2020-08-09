@@ -12,7 +12,7 @@
 namespace Lucene {
 
 /// A memory-resident {@link IndexOutput} implementation.
-class RAMOutputStream : public IndexOutput {
+class LPPAPI RAMOutputStream : public IndexOutput {
 public:
     /// Construct an empty output buffer.
     RAMOutputStream();

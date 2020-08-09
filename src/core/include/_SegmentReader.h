@@ -66,7 +66,7 @@ public:
 };
 
 /// Sets the initial value
-class FieldsReaderLocal : public CloseableThreadLocal<FieldsReader> {
+class LPPAPI FieldsReaderLocal : public CloseableThreadLocal<FieldsReader> {
 public:
     FieldsReaderLocal(const SegmentReaderPtr& reader);
 
@@ -77,7 +77,7 @@ protected:
     virtual FieldsReaderPtr initialValue();
 };
 
-class SegmentReaderRef : public LuceneObject {
+class LPPAPI SegmentReaderRef : public LuceneObject {
 public:
     SegmentReaderRef();
     virtual ~SegmentReaderRef();
@@ -100,7 +100,7 @@ public:
 /// array is all that is needed for sharing between cloned readers.  The current norm referencing is for
 /// sharing between readers whereas the byte[] referencing is for copy on write which is independent of
 /// reader references (i.e. incRef, decRef).
-class Norm : public LuceneObject {
+class LPPAPI Norm : public LuceneObject {
 public:
     Norm();
     Norm(const SegmentReaderPtr& reader, const IndexInputPtr& in, int32_t number, int64_t normSeek);

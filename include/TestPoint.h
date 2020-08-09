@@ -28,7 +28,7 @@ public:
     static bool getTestPoint(const String& method);
 };
 
-class TestScope {
+class LPPAPI TestScope {
 public:
     TestScope(const String& object, const String& method);
     virtual ~TestScope();

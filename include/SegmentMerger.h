@@ -17,7 +17,7 @@ namespace Lucene {
 /// If the compoundFile flag is set, then the segments will be merged into a compound file.
 /// @see #merge
 /// @see #add
-class SegmentMerger : public LuceneObject {
+class LPPAPI SegmentMerger : public LuceneObject {
 public:
     SegmentMerger(const DirectoryPtr& dir, const String& name);
     SegmentMerger(const IndexWriterPtr& writer, const String& name, const OneMergePtr& merge);

@@ -12,7 +12,7 @@
 namespace Lucene {
 
 /// A Scorer for documents matching a Term.
-class TermScorer : public Scorer {
+class LPPAPI TermScorer : public Scorer {
 public:
     /// Construct a TermScorer.
     /// @param weight The weight of the Term in the query.

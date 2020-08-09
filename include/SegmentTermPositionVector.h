@@ -11,7 +11,7 @@
 
 namespace Lucene {
 
-class SegmentTermPositionVector : public SegmentTermVector {
+class LPPAPI SegmentTermPositionVector : public SegmentTermVector {
 public:
     SegmentTermPositionVector(const String& field, Collection<String> terms, Collection<int32_t> termFreqs,
                               Collection< Collection<int32_t> > positions, Collection< Collection<TermVectorOffsetInfoPtr> > offsets);

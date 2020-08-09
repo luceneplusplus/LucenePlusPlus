@@ -31,7 +31,7 @@ namespace Lucene {
 ///
 /// Note that you must hold the write.lock before instantiating this class.  It opens segments_N file(s) directly
 /// with no retry logic.
-class IndexFileDeleter : public LuceneObject {
+class LPPAPI IndexFileDeleter : public LuceneObject {
 public:
     /// Initialize the deleter: find all previous commits in the Directory, incref the files they reference, call
     /// the policy to let it delete commits.  This will remove any files not referenced by any of the commits.
