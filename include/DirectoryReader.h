@@ -16,7 +16,7 @@
 namespace Lucene {
 
 /// An IndexReader which reads indexes with multiple segments.
-class DirectoryReader : public IndexReader {
+class LPPAPI DirectoryReader : public IndexReader {
 public:
     /// Construct reading the named set of readers.
     DirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis, const IndexDeletionPolicyPtr& deletionPolicy, bool readOnly, int32_t termInfosIndexDivisor);

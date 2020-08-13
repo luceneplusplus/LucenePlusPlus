@@ -11,7 +11,7 @@
 
 namespace Lucene {
 
-class ReadOnlySegmentReader : public SegmentReader {
+class LPPAPI ReadOnlySegmentReader : public SegmentReader {
 public:
     virtual ~ReadOnlySegmentReader();
 

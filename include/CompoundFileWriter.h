@@ -24,7 +24,7 @@ namespace Lucene {
 /// The fileCount integer indicates how many files are contained in this compound file. The {directory}
 /// that follows has that many entries. Each directory entry contains a long pointer to the start of
 /// this file's data section, and a string with that file's name.
-class CompoundFileWriter : public LuceneObject {
+class LPPAPI CompoundFileWriter : public LuceneObject {
 public:
     CompoundFileWriter(const DirectoryPtr& dir, const String& name, const CheckAbortPtr& checkAbort = CheckAbortPtr());
     virtual ~CompoundFileWriter();

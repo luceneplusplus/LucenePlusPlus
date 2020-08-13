@@ -11,7 +11,7 @@
 
 namespace Lucene {
 
-class SegmentTermPositions : public SegmentTermDocs {
+class LPPAPI SegmentTermPositions : public SegmentTermDocs {
 public:
     SegmentTermPositions(const SegmentReaderPtr& parent);
     virtual ~SegmentTermPositions();

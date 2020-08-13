@@ -15,7 +15,7 @@ namespace Lucene {
 /// Each segment has a separate Fieldable Info file. Objects of this class are thread-safe for multiple
 /// readers, but only one thread can be adding documents at a time, with no other reader or writer threads
 /// accessing this object.
-class FieldInfos : public LuceneObject {
+class LPPAPI FieldInfos : public LuceneObject {
 public:
     FieldInfos();
 

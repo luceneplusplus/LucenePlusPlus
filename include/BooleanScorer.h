@@ -27,7 +27,7 @@ namespace Lucene {
 /// the last, then there's a hit.  When some terms are required and some terms are optional, the conjunction can
 /// be evaluated first, then the optional terms can all skip to the match and be added to the score. Thus the
 /// conjunction can reduce the number of priority queue updates for the optional terms.
-class BooleanScorer : public Scorer {
+class LPPAPI BooleanScorer : public Scorer {
 public:
     BooleanScorer(const SimilarityPtr& similarity, int32_t minNrShouldMatch, Collection<ScorerPtr> optionalScorers, Collection<ScorerPtr> prohibitedScorers);
     virtual ~BooleanScorer();

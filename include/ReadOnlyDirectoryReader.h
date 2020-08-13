@@ -11,7 +11,7 @@
 
 namespace Lucene {
 
-class ReadOnlyDirectoryReader : public DirectoryReader {
+class LPPAPI ReadOnlyDirectoryReader : public DirectoryReader {
 public:
     ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& sis, const IndexDeletionPolicyPtr& deletionPolicy, int32_t termInfosIndexDivisor);
     ReadOnlyDirectoryReader(const DirectoryPtr& directory, const SegmentInfosPtr& infos, Collection<SegmentReaderPtr> oldReaders,

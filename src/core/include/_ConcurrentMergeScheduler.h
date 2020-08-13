@@ -11,7 +11,7 @@
 
 namespace Lucene {
 
-class MergeThread : public LuceneThread {
+class LPPAPI MergeThread : public LuceneThread {
 public:
     MergeThread(const ConcurrentMergeSchedulerPtr& merger, const IndexWriterPtr& writer, const OneMergePtr& startMerge);
     virtual ~MergeThread();

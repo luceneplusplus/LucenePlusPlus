@@ -13,7 +13,7 @@
 namespace Lucene {
 
 /// Class responsible for access to stored document fields.  It uses <segment>.fdt and <segment>.fdx; files.
-class FieldsReader : public LuceneObject {
+class LPPAPI FieldsReader : public LuceneObject {
 public:
     /// Used only by clone
     FieldsReader(const FieldInfosPtr& fieldInfos, int32_t numTotalDocs, int32_t size, int32_t format, int32_t formatSize,

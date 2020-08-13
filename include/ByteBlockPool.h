@@ -20,7 +20,7 @@ namespace Lucene {
 /// Each slice is filled with 0's initially, and we mark the end with a non-zero byte.  This way the methods
 /// that are writing into the slice don't need to record its length and instead allocate a new slice once
 /// they hit a non-zero byte.
-class ByteBlockPool : public LuceneObject {
+class LPPAPI ByteBlockPool : public LuceneObject {
 public:
     ByteBlockPool(const ByteBlockPoolAllocatorBasePtr& allocator, bool trackAllocations);
     virtual ~ByteBlockPool();
@@ -51,7 +51,7 @@ public:
     int32_t allocSlice(ByteArray slice, int32_t upto);
 };
 
-class ByteBlockPoolAllocatorBase : public LuceneObject {
+class LPPAPI ByteBlockPoolAllocatorBase : public LuceneObject {
 public:
     virtual ~ByteBlockPoolAllocatorBase();
 

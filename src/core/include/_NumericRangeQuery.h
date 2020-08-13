@@ -17,7 +17,7 @@ namespace Lucene {
 /// Warning: This term enumeration is not guaranteed to be always ordered by {@link Term#compareTo}.  The
 /// ordering depends on how {@link NumericUtils#splitLongRange} and {@link NumericUtils#splitIntRange}
 /// generates the sub-ranges.  For {@link MultiTermQuery} ordering is not relevant.
-class NumericRangeTermEnum : public FilteredTermEnum {
+class LPPAPI NumericRangeTermEnum : public FilteredTermEnum {
 public:
     NumericRangeTermEnum(const NumericRangeQueryPtr& query, const IndexReaderPtr& reader);
     virtual ~NumericRangeTermEnum();

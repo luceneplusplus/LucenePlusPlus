@@ -13,7 +13,7 @@ namespace Lucene {
 
 /// IndexInput that knows how to read the byte slices written by Posting and PostingVector.  We read the bytes in each slice
 /// until we hit the end of that slice at which point we read the forwarding address of the next slice and then jump to it.
-class ByteSliceReader : public IndexInput {
+class LPPAPI ByteSliceReader : public IndexInput {
 public:
     ByteSliceReader();
     virtual ~ByteSliceReader();
