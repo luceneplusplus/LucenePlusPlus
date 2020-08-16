@@ -108,6 +108,10 @@ else()
   set(DEFINE_USE_CYCLIC_CHECK "undef")
 endif()
 
+# Enable C++11
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 ####################################
 # platform specific options
 ####################################
