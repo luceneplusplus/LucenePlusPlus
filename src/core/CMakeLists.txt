@@ -3,10 +3,10 @@ project(core)
 ####################################
 # create library target
 ####################################
-if (LUCENE_BUILD_STATIC)
-  add_library(lucene++ STATIC)
-else()
+if (LUCENE_BUILD_SHARED)
   add_library(lucene++ SHARED)
+else()
+  add_library(lucene++ STATIC)
 endif()
 
 add_library(lucene++::lucene++ ALIAS lucene++)
@@ -69,17 +69,18 @@ endif()
 ####################################
 # link args
 ####################################
-target_compile_options(lucene++ PUBLIC -DLPP_BUILDING_LIB)
+target_compile_options(lucene++ PRIVATE -DLPP_BUILDING_LIB)
 
 set_target_properties(lucene++
   PROPERTIES
-    COTIRE_CXX_PREFIX_HEADER_INIT "include/LuceneInc.h")
+    COTIRE_CXX_PREFIX_HEADER_INIT "include/LuceneInc.h"
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN 1
+    VERSION ${lucene++_VERSION}
+    SOVERSION ${lucene++_SOVERSION})
 
 cotire(lucene++)
 
-set_target_properties(lucene++ PROPERTIES
-  VERSION ${lucene++_VERSION}
-  SOVERSION ${lucene++_SOVERSION})
 
 install(TARGETS lucene++
   DESTINATION "${LIB_DESTINATION}"
