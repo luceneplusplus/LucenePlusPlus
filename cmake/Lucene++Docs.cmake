@@ -2,7 +2,6 @@
 # This file provides support for building the Lucene++ Documentation.
 # To build the documention, you will have to enable it
 # and then do the equivalent of "make doc".
-OPTION(ENABLE_DOCS "Build the Lucene++ documentation." OFF)
 
 MACRO(SET_YESNO)
     FOREACH(param ${ARGV})

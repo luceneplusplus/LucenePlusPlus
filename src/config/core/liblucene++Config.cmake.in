@@ -1,0 +1,27 @@
+# Config module for Lucene++
+#
+# Provides the following variables
+# liblucene++_INCLUDE_DIRS - Directories to include
+# liblucene++_LIBRARIES    - Libraries to link
+# liblucene++_LIBRARY_DIRS - Library directories to search for link libraries
+
+
+@PACKAGE_INIT@
+
+
+# This should only be used for meson
+if (NOT DEFINED set_and_check)
+    macro(set_and_check _var _file)
+        set(${_var} "${_file}")
+        if(NOT EXISTS "${_file}")
+            message(FATAL_ERROR "File or directory ${_file} referenced by variable ${_var} does not exist !")
+        endif()
+    endmacro()
+endif()
+
+
+set_and_check(liblucene++_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@/@core_libname@")
+set_and_check(liblucene++_LIBRARY_DIRS "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
+set(liblucene++_LIBRARIES "@PACKAGE_CMAKE_INSTALL_LIBDIR@/@core_libname@")
+
+
