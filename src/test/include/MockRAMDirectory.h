@@ -13,7 +13,7 @@
 namespace Lucene {
 
 /// This is a subclass of RAMDirectory that adds methods intended to be used only by unit tests.
-class LPPAPI MockRAMDirectory : public RAMDirectory {
+class MockRAMDirectory : public RAMDirectory {
 public:
     MockRAMDirectory();
     MockRAMDirectory(const DirectoryPtr& dir);

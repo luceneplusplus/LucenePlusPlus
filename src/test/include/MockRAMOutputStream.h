@@ -14,7 +14,7 @@ namespace Lucene {
 
 /// Used by MockRAMDirectory to create an output stream that will throw an IOException on fake disk full, track max
 /// disk space actually used, and maybe throw random IOExceptions.
-class LPPAPI MockRAMOutputStream : public RAMOutputStream {
+class MockRAMOutputStream : public RAMOutputStream {
 public:
     /// Construct an empty output buffer.
     MockRAMOutputStream(const MockRAMDirectoryPtr& dir, const RAMFilePtr& f, const String& name);
