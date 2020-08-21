@@ -3,10 +3,10 @@ project(contrib)
 ####################################
 # create library target
 ####################################
-if (LUCENE_BUILD_STATIC)
-  add_library(lucene++-contrib STATIC)
-else()
+if (LUCENE_BUILD_SHARED)
   add_library(lucene++-contrib SHARED)
+else()
+  add_library(lucene++-contrib STATIC)
 endif()
 
 add_library(lucene++::lucene++-contrib ALIAS lucene++-contrib)
@@ -75,17 +75,17 @@ endif()
 ####################################
 # link args
 ####################################
-target_compile_options(lucene++-contrib PUBLIC -DLPP_BUILDING_LIB)
+target_compile_options(lucene++-contrib PRIVATE -DLPP_BUILDING_LIB)
 
 set_target_properties(lucene++
   PROPERTIES
-    COTIRE_CXX_PREFIX_HEADER_INIT "include/ContribInc.h")
-
+    COTIRE_CXX_PREFIX_HEADER_INIT "include/ContribInc.h"
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN 1
+    VERSION ${lucene++_VERSION}
+    SOVERSION ${lucene++_SOVERSION})
+    
 cotire(lucene++-contrib)
-
-set_target_properties(lucene++-contrib PROPERTIES
-  VERSION ${lucene++_VERSION}
-  SOVERSION ${lucene++_SOVERSION})
 
 install(TARGETS lucene++-contrib
   DESTINATION "${LIB_DESTINATION}"
