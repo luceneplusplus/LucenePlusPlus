@@ -31,7 +31,6 @@ OFF
 )
 
 
-
 # build options
 #========================================================================
 
@@ -54,36 +53,43 @@ OPTION(
 # documentation options
 #========================================================================
 
+mark_as_advanced(DOCS_HTML_HELP)
 OPTION(
     DOCS_HTML_HELP
     "Doxygen should compile HTML into a Help file (CHM)."
     NO )
 
+mark_as_advanced(DOCS_HTML)
 OPTION(
     DOCS_HTML
     "Doxygen should build HTML documentation."
     YES )
 
+mark_as_advanced(DOCS_XML)
 OPTION(
     DOCS_XML
     "Doxygen should build XML documentation."
     NO )
-
+    
+mark_as_advanced(DOCS_RTF)
 OPTION(
     DOCS_RTF
     "Doxygen should build RTF documentation."
     NO )
 
+mark_as_advanced(DOCS_MAN)
 OPTION(
     DOCS_MAN
     "Doxygen should build man documentation."
     NO )
-
+    
+mark_as_advanced(DOCS_TAGFILE)
 OPTION(
     DOCS_TAGFILE
     "Doxygen should build a tagfile."
     NO )
 
+mark_as_advanced(DOCS_LATEX)
 OPTION(
     DOCS_LATEX
     "Doxygen should build Latex documentation."
