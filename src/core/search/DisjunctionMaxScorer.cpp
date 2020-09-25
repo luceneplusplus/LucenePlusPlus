@@ -34,10 +34,6 @@ int32_t DisjunctionMaxScorer::nextDoc() {
             heapAdjust(0);
         } else {
             heapRemoveRoot();
-            if (numScorers == 0) {
-                doc = NO_MORE_DOCS;
-                return doc;
-            }
         }
     }
 
