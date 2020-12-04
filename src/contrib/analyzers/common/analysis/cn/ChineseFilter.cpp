@@ -38,7 +38,7 @@ bool ChineseFilter::incrementToken() {
                 if (text.length() > 1) {
                     return true;
                 }
-            } else if (UnicodeUtil::isOther(text[0])) {
+            } else if (UnicodeUtil::isOther(text[0]) || UnicodeUtil::isDigit(text[0])) {
                 // One Chinese character as one Chinese word.
                 // Chinese word extraction to be added later here.
                 return true;
