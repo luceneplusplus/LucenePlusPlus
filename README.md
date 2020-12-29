@@ -3,7 +3,7 @@ Lucene++
 
 Welcome to lucene++ version **3.0.7**.
 
-Lucene++ is an up to date C++ port of the popular Java [Lucene](http://lucene.apache.org/)
+Lucene++ is a C++ port of the popular Java [Lucene](http://lucene.apache.org/)
 library, a high-performance, full-featured text search engine.
 
 
