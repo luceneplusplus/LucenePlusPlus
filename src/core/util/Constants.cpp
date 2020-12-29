@@ -25,8 +25,8 @@ String Constants::OS_NAME = L"HURD";
 String Constants::OS_NAME = L"UNKNOWN";
 #endif
 
-String Constants::LUCENE_MAIN_VERSION = L"3.0.7";
-String Constants::LUCENE_VERSION = L"3.0.7";
+String Constants::LUCENE_MAIN_VERSION = L"3.0.8";
+String Constants::LUCENE_VERSION = L"3.0.8";
 
 Constants::Constants() {
     // private
