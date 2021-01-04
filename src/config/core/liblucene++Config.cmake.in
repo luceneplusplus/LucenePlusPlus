@@ -20,8 +20,8 @@ if (NOT DEFINED set_and_check)
 endif()
 
 
-set_and_check(liblucene++_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@/@core_libname@")
-set_and_check(liblucene++_LIBRARY_DIRS "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
-set(liblucene++_LIBRARIES "@PACKAGE_CMAKE_INSTALL_LIBDIR@/@core_libname@")
+set_and_check(liblucene++_INCLUDE_DIRS "${PACKAGE_PREFIX_DIR}/@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set_and_check(liblucene++_LIBRARY_DIRS "${PACKAGE_PREFIX_DIR}/@PACKAGE_CMAKE_INSTALL_LIBDIR@")
+set(liblucene++_LIBRARIES "@core_libname@")
 
 

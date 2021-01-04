@@ -21,7 +21,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(LIB_DESTINATION
-  "${CMAKE_INSTALL_FULL_LIBDIR}" CACHE STRING "Define lib output directory name")
+  "${CMAKE_INSTALL_LIBDIR}" CACHE STRING "Define lib output directory name")
 
 
 ####################################
