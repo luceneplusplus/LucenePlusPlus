@@ -77,7 +77,7 @@ endif()
 ####################################
 target_compile_options(lucene++-contrib PRIVATE -DLPP_BUILDING_LIB)
 
-set_target_properties(lucene++
+set_target_properties(lucene++-contrib
   PROPERTIES
     COTIRE_CXX_PREFIX_HEADER_INIT "include/ContribInc.h"
     CXX_VISIBILITY_PRESET hidden
