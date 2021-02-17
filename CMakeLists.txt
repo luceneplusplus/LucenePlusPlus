@@ -72,7 +72,7 @@ add_definitions(-DNOMINMAX)
 endif()
 
 if(NOT WIN32 AND NOT CMAKE_SYSTEM MATCHES "SunOS-5*.")
-  add_definitions(-fPIC)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 if(CYGWIN)
