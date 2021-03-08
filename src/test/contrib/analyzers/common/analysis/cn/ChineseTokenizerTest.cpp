@@ -115,9 +115,9 @@ TEST_F(ChineseTokenizerTest, testNumerics) {
 
     checkAnalyzesTo(justTokenizer, UTF8_TO_STRING(input), newCollection<String>(UTF8_TO_STRING(token1), L"1234"));
 
-    // in this case the ChineseAnalyzer (which applies ChineseFilter) will remove the numeric token.
+    // in this case the ChineseAnalyzer (which applies ChineseFilter) will not remove the numeric token.
     AnalyzerPtr a = newLucene<ChineseAnalyzer>();
-    checkAnalyzesTo(a, UTF8_TO_STRING(input), newCollection<String>(UTF8_TO_STRING(token1)));
+    checkAnalyzesTo(a, UTF8_TO_STRING(input), newCollection<String>(UTF8_TO_STRING(token1), L"1234"));
 }
 
 /// ChineseTokenizer tokenizes english similar to SimpleAnalyzer.
