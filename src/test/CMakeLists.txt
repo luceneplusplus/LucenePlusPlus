@@ -2,12 +2,6 @@ project(tester)
 
 
 ####################################
-# create test bin target
-####################################
-add_executable(lucene++-tester)
-
-
-####################################
 # configure GTest
 ####################################
 if(MSVC)
@@ -32,11 +26,13 @@ file(GLOB_RECURSE tester_sources
   "util/*.cpp")
 
 file(GLOB_RECURSE test_headers
-    "${lucene++-tester_SOURCE_DIR}/include/*.h")
+  "${lucene++-tester_SOURCE_DIR}/include/*.h")
 
-target_sources(lucene++-tester
-  PRIVATE
-    ${tester_sources})
+####################################
+# create test bin target
+####################################
+add_executable(lucene++-tester
+  ${tester_sources})
 
 
 ####################################
