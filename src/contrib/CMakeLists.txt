@@ -27,9 +27,8 @@ file(GLOB_RECURSE contrib_sources
   "snowball/libstemmer_c/runtime/*.c"
 )
 
-file(GLOB_RECURSE contrib_headers
-  "${lucene++-lib_SOURCE_DIR}/include/*.h"
-)
+file(GLOB_RECURSE contrib_headers 
+  "${lucene++-lib_SOURCE_DIR}/include/*.h")
 
 
 
@@ -64,8 +63,7 @@ target_link_libraries(lucene++-contrib
     Boost::system
     Boost::thread
     ZLIB::ZLIB
-    lucene++::lucene++
-)
+    lucene++::lucene++)
 
 if(WIN32)
     target_link_libraries(lucene++-contrib ws2_32)
@@ -88,10 +86,10 @@ set_target_properties(lucene++-contrib
 cotire(lucene++-contrib)
 
 install(TARGETS lucene++-contrib
-  DESTINATION "${LIB_DESTINATION}"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
   COMPONENT runtime)
 
 install(
   FILES ${contrib_headers}
-  DESTINATION "include/lucene++"
+  LIBRARY DESTINATION "include/lucene++"
   COMPONENT development-contrib)

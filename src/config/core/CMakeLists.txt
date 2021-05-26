@@ -31,4 +31,4 @@ install(
   FILES
     "${CMAKE_CURRENT_BINARY_DIR}/liblucene++Config.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/liblucene++ConfigVersion.cmake"
-  DESTINATION "${LIB_DESTINATION}/cmake/liblucene++")
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/liblucene++)

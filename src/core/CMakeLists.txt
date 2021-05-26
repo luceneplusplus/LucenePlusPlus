@@ -83,5 +83,5 @@ cotire(lucene++)
 
 
 install(TARGETS lucene++
-  DESTINATION "${LIB_DESTINATION}"
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   COMPONENT runtime)
