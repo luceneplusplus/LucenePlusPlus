@@ -3,6 +3,8 @@ project(contrib)
 ####################################
 # create library target
 ####################################
+add_subdirectory(include)
+
 if (LUCENE_BUILD_SHARED)
   add_library(lucene++-contrib SHARED)
 else()
@@ -92,4 +94,5 @@ install(TARGETS lucene++-contrib
 install(
   FILES ${contrib_headers}
   LIBRARY DESTINATION "include/lucene++"
+  LIBRARY DESTINATION "src/contrib/include"
   COMPONENT development-contrib)
