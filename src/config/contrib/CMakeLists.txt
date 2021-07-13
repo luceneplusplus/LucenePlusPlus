@@ -9,7 +9,7 @@ if(NOT WIN32)
   install(
     FILES
       "${CMAKE_CURRENT_BINARY_DIR}/liblucene++-contrib.pc"
-    DESTINATION {${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 
