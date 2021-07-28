@@ -94,5 +94,4 @@ install(TARGETS lucene++-contrib
 install(
   FILES ${contrib_headers}
   DESTINATION "include/lucene++"
-  DESTINATION "src/contrib/include"
   COMPONENT development-contrib)
