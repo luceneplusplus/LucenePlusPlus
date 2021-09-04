@@ -27,13 +27,16 @@ public:
 
 protected:
     WeightPtr weight;
-    TermDocsPtr termDocs;
+    TermDocsPtr termDocs; // for malloc and free
+    TermDocs* __termDocs; // for work,   
     ByteArray norms;
     double weightValue;
     int32_t doc;
 
     Collection<int32_t> docs; // buffered doc numbers
+    decltype(docs.get()) __docs; // 
     Collection<int32_t> freqs; // buffered term freqs
+    decltype(freqs.get()) __freqs; // 
     
     int32_t freq;
     int32_t pointer;
@@ -70,7 +73,7 @@ public:
     }
 
 protected:
-    static const Collection<double> SIM_NORM_DECODER();
+    static const Collection<double>& SIM_NORM_DECODER();
 
     virtual bool score(const CollectorPtr& collector, int32_t max, int32_t firstDocID);
 };

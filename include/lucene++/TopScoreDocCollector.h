@@ -29,6 +29,7 @@ INTERNAL:
     ScoreDocPtr pqTop;
     int32_t docBase;
     ScorerWeakPtr _scorer;
+    Scorer* __scorer;
 
 public:
     /// Creates a new {@link TopScoreDocCollector} given the number of hits to collect and whether documents

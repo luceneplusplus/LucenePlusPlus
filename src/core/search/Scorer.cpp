@@ -24,7 +24,7 @@ namespace Lucene {
     SimilarityPtr Scorer::getSimilarity() {
         return similarity;
     }
-    
+
     void Scorer::score(const CollectorPtr& collector) {
         collector->setScorer(shared_from_this());
         int32_t doc;

@@ -37,7 +37,7 @@ bool TermDocs::next() {
     return false; // override
 }
 
-int32_t TermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t TermDocs::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     BOOST_ASSERT(false);
     return 0; // override
 }

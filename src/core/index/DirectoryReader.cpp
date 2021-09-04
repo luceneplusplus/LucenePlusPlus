@@ -984,7 +984,7 @@ bool MultiTermDocs::next() {
     }
 }
 
-int32_t MultiTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t MultiTermDocs::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     while (true) {
         while (!current) {
             if (pointer < readers.size()) { // try next segment

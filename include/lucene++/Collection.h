@@ -193,6 +193,10 @@ public:
     bool operator!= (const this_type& other) {
         return (container != other.container);
     }
+
+    collection_type* get() {
+        return container.get();
+    }
 };
 
 template <typename TYPE>

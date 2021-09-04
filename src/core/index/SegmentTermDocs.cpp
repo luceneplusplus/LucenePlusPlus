@@ -38,16 +38,19 @@ SegmentTermDocs::SegmentTermDocs(const SegmentReaderPtr& parent) {
     {
         SyncLock parentLock(parent);
         this->deletedDocs = parent->deletedDocs;
+        this->__deletedDocs = this->deletedDocs.get();
     }
     this->skipInterval = parent->core->getTermsReader()->getSkipInterval();
     this->maxSkipLevels = parent->core->getTermsReader()->getMaxSkipLevels();
+    this->__parent = parent.get();
+    this->__freqStream = _freqStream.get();
 }
 
 SegmentTermDocs::~SegmentTermDocs() {
 }
 
 void SegmentTermDocs::seek(const TermPtr& term) {
-    TermInfoPtr ti(SegmentReaderPtr(_parent)->core->getTermsReader()->get(term));
+    TermInfoPtr ti(__parent->core->getTermsReader()->get(term));
     seek(ti, term);
 }
 
@@ -56,15 +59,14 @@ void SegmentTermDocs::seek(const TermEnumPtr& termEnum) {
     TermPtr term;
 
     SegmentTermEnumPtr segmentTermEnum(boost::dynamic_pointer_cast<SegmentTermEnum>(termEnum));
-    SegmentReaderPtr parent(_parent);
 
     // use comparison of fieldinfos to verify that termEnum belongs to the same segment as this SegmentTermDocs
-    if (segmentTermEnum && segmentTermEnum->fieldInfos == parent->core->fieldInfos) { // optimized case
+    if (segmentTermEnum && segmentTermEnum->fieldInfos == __parent->core->fieldInfos) { // optimized case
         term = segmentTermEnum->term();
         ti = segmentTermEnum->termInfo();
     } else { // punt case
         term = termEnum->term();
-        ti = parent->core->getTermsReader()->get(term);
+        ti = __parent->core->getTermsReader()->get(term);
     }
 
     seek(ti, term);
@@ -72,7 +74,7 @@ void SegmentTermDocs::seek(const TermEnumPtr& termEnum) {
 
 void SegmentTermDocs::seek(const TermInfoPtr& ti, const TermPtr& term) {
     count = 0;
-    FieldInfoPtr fi(SegmentReaderPtr(_parent)->core->fieldInfos->fieldInfo(term->_field));
+    FieldInfoPtr fi(__parent->core->fieldInfos->fieldInfo(term->_field));
     currentFieldOmitTermFreqAndPositions = fi ? fi->omitTermFreqAndPositions : false;
     currentFieldStoresPayloads = fi ? fi->storePayloads : false;
     if (!ti) {
@@ -83,13 +85,13 @@ void SegmentTermDocs::seek(const TermInfoPtr& ti, const TermPtr& term) {
         freqBasePointer = ti->freqPointer;
         proxBasePointer = ti->proxPointer;
         skipPointer = freqBasePointer + ti->skipOffset;
-        _freqStream->seek(freqBasePointer);
+        __freqStream->seek(freqBasePointer);
         haveSkipped = false;
     }
 }
 
 void SegmentTermDocs::close() {
-    _freqStream->close();
+    __freqStream->close();
     if (skipListReader) {
         skipListReader->close();
     }
@@ -111,7 +113,7 @@ bool SegmentTermDocs::next() {
         if (count == df) {
             return false;
         }
-        int32_t docCode = _freqStream->readVInt();
+        int32_t docCode = __freqStream->readVInt();
 
         if (currentFieldOmitTermFreqAndPositions) {
             _doc += docCode;
@@ -121,13 +123,13 @@ bool SegmentTermDocs::next() {
             if ((docCode & 1) != 0) { // if low bit is set
                 _freq = 1;    // freq is one
             } else {
-                _freq = _freqStream->readVInt();    // else read freq
+                _freq = __freqStream->readVInt();    // else read freq
             }
         }
 
         ++count;
 
-        if (!deletedDocs || !deletedDocs->get(_doc)) {
+        if (!__deletedDocs || !__deletedDocs->get(_doc)) {
             break;
         }
         skippingDoc();
@@ -135,26 +137,28 @@ bool SegmentTermDocs::next() {
     return true;
 }
 
-int32_t SegmentTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
-    int32_t length = docs.size();
+int32_t SegmentTermDocs::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
+    auto* __docs = docs.get();
+    auto* __freqs = freqs.get();
+    int32_t length = __docs->size();
     if (currentFieldOmitTermFreqAndPositions) {
         return readNoTf(docs, freqs, length);
     } else {
         int32_t i = 0;
         while (i < length && count < df) {
             // manually inlined call to next() for speed
-            int32_t docCode = _freqStream->readVInt();
+            int32_t docCode = __freqStream->readVInt();
             _doc += MiscUtils::unsignedShift(docCode, 1); // shift off low bit
             if ((docCode & 1) != 0) { // if low bit is set
                 _freq = 1;    // freq is one
             } else {
-                _freq = _freqStream->readVInt();    // else read freq
+                _freq = __freqStream->readVInt();    // else read freq
             }
             ++count;
 
-            if (!deletedDocs || !deletedDocs->get(_doc)) {
-                docs[i] = _doc;
-                freqs[i] = _freq;
+            if (!__deletedDocs || !__deletedDocs->get(_doc)) {
+                (*__docs)[i] = _doc;
+                (*__freqs)[i] = _freq;
                 ++i;
             }
         }
@@ -162,14 +166,14 @@ int32_t SegmentTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freq
     }
 }
 
-int32_t SegmentTermDocs::readNoTf(Collection<int32_t> docs, Collection<int32_t> freqs, int32_t length) {
+int32_t SegmentTermDocs::readNoTf(Collection<int32_t>& docs, Collection<int32_t>& freqs, int32_t length) {
     int32_t i = 0;
     while (i < length && count < df) {
         // manually inlined call to next() for speed
-        _doc += _freqStream->readVInt();
+        _doc += __freqStream->readVInt();
         ++count;
 
-        if (!deletedDocs || !deletedDocs->get(_doc)) {
+        if (!__deletedDocs || !__deletedDocs->get(_doc)) {
             docs[i] = _doc;
 
             // Hardware freq to 1 when term freqs were not stored in the index
@@ -186,7 +190,7 @@ void SegmentTermDocs::skipProx(int64_t proxPointer, int32_t payloadLength) {
 bool SegmentTermDocs::skipTo(int32_t target) {
     if (df >= skipInterval) { // optimized case
         if (!skipListReader) {
-            skipListReader = newLucene<DefaultSkipListReader>(boost::dynamic_pointer_cast<IndexInput>(_freqStream->clone()), maxSkipLevels, skipInterval);    // lazily clone
+            skipListReader = newLucene<DefaultSkipListReader>(boost::dynamic_pointer_cast<IndexInput>(__freqStream->clone()), maxSkipLevels, skipInterval);    // lazily clone
         }
 
         if (!haveSkipped) { // lazily initialize skip stream
@@ -196,7 +200,7 @@ bool SegmentTermDocs::skipTo(int32_t target) {
 
         int32_t newCount = skipListReader->skipTo(target);
         if (newCount > count) {
-            _freqStream->seek(skipListReader->getFreqPointer());
+            __freqStream->seek(skipListReader->getFreqPointer());
             skipProx(skipListReader->getProxPointer(), skipListReader->getPayloadLength());
 
             _doc = skipListReader->getDoc();
@@ -219,6 +223,7 @@ IndexInputPtr SegmentTermDocs::freqStream() {
 
 void SegmentTermDocs::freqStream(const IndexInputPtr& freqStream) {
     _freqStream = freqStream;
+    __freqStream = freqStream.get();
 }
 
 }

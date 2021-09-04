@@ -100,7 +100,7 @@ public:
     }
 
     TYPE& operator[] (int32_t i) const {
-        BOOST_ASSERT(i >= 0 && i < array->size);
+        // BOOST_ASSERT(i >= 0 && i < array->size);
         return array->data[i];
     }
 

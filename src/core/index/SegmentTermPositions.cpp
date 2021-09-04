@@ -88,7 +88,7 @@ bool SegmentTermPositions::next() {
     return false;
 }
 
-int32_t SegmentTermPositions::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t SegmentTermPositions::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     boost::throw_exception(UnsupportedOperationException(L"TermPositions does not support processing multiple documents in one call. Use TermDocs instead."));
     return 0;
 }

@@ -104,7 +104,11 @@ boost::shared_ptr<T> newInstance(A1 const& a1, A2 const& a2, A3 const& a3, A4 co
 
 template <class T>
 boost::shared_ptr<T> newLucene() {
-    boost::shared_ptr<T> instance(newInstance<T>());
+#if BOOST_VERSION <= 103800
+    boost::shared_ptr<T> instance = boost::shared_ptr<T>(new T);
+#else
+    boost::shared_ptr<T> instance = boost::make_shared<T>();
+#endif
     instance->initialize();
     return instance;
 }

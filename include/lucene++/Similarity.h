@@ -434,8 +434,8 @@ public:
 protected:
     static const int32_t NO_DOC_ID_PROVIDED;
 
-protected:
-    static const Collection<double> NORM_TABLE();
+public:
+    static const Collection<double> NORM_TABLE;
 
 public:
     /// Return the default Similarity implementation used by indexing and search code.
@@ -450,7 +450,7 @@ public:
 
     /// Returns a table for decoding normalization bytes.
     /// @see #encodeNorm(double)
-    static const Collection<double> getNormDecoder();
+    static const Collection<double>& getNormDecoder();
 
     /// Compute the normalization value for a field, given the accumulated state of term processing for this
     /// field (see {@link FieldInvertState}).

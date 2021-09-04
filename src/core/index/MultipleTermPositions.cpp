@@ -98,7 +98,7 @@ void MultipleTermPositions::seek(const TermEnumPtr& termEnum) {
     boost::throw_exception(UnsupportedOperationException());
 }
 
-int32_t MultipleTermPositions::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t MultipleTermPositions::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     boost::throw_exception(UnsupportedOperationException());
     return 0;
 }

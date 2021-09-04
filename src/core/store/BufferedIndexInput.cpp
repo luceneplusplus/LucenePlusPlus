@@ -12,7 +12,7 @@
 namespace Lucene {
 
 /// Default buffer size.
-const int32_t BufferedIndexInput::BUFFER_SIZE = 1024;
+const int32_t BufferedIndexInput::BUFFER_SIZE = 1024 * 2;
 
 BufferedIndexInput::BufferedIndexInput(int32_t bufferSize) {
     this->bufferSize = bufferSize;
@@ -25,10 +25,34 @@ BufferedIndexInput::~BufferedIndexInput() {
 }
 
 uint8_t BufferedIndexInput::readByte() {
-    if (bufferPosition >= bufferLength) {
-        refill();
+    if (bufferPosition < bufferLength) {
+       return __buffer[bufferPosition++];
     }
-    return buffer[bufferPosition++];
+    refill();
+    return __buffer[bufferPosition++];
+}
+
+static const int MAX_VARINT32_LENGHT = 5;
+
+int32_t BufferedIndexInput::readVInt() {
+    if (bufferPosition + MAX_VARINT32_LENGHT < bufferLength) {
+        uint8_t b = __buffer[bufferPosition++];
+        int32_t i = (b & 0x7f);
+        for (int32_t shift = 7; (b & 0x80) != 0; shift += 7) {
+            b = __buffer[bufferPosition++];
+            i |= (b & 0x7f) << shift;
+        }
+        return i;
+    }
+    else {
+        uint8_t b = readByte();
+        int32_t i = (b & 0x7f);
+        for (int32_t shift = 7; (b & 0x80) != 0; shift += 7) {
+            b = readByte();
+            i |= (b & 0x7f) << shift;
+        }
+        return i;
+    }
 }
 
 void BufferedIndexInput::setBufferSize(int32_t newSize) {
@@ -52,6 +76,7 @@ void BufferedIndexInput::setBufferSize(int32_t newSize) {
 void BufferedIndexInput::newBuffer(ByteArray newBuffer) {
     // Subclasses can do something here
     buffer = newBuffer;
+    __buffer = newBuffer.get();
 }
 
 int32_t BufferedIndexInput::getBufferSize() {
@@ -130,7 +155,7 @@ void BufferedIndexInput::refill() {
         newBuffer(ByteArray::newInstance(bufferSize)); // allocate buffer lazily
         seekInternal(bufferStart);
     }
-    readInternal(buffer.get(), 0, newLength);
+    readInternal(__buffer, 0, newLength);
     bufferLength = newLength;
     bufferStart = start;
     bufferPosition = 0;
