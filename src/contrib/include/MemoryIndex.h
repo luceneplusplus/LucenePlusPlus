@@ -323,7 +323,7 @@ public:
     virtual int32_t doc();
     virtual int32_t freq();
     virtual bool next();
-    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    virtual int32_t read(Collection<int32_t>& docs, Collection<int32_t>& freqs);
     virtual bool skipTo(int32_t target);
     virtual void close();
 

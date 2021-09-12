@@ -20,10 +20,13 @@ public:
 
 protected:
     SegmentReaderWeakPtr _parent;
+    SegmentReader* __parent;
     IndexInputPtr _freqStream;
+    IndexInput* __freqStream;
     int32_t count;
     int32_t df;
     BitVectorPtr deletedDocs;
+    BitVector* __deletedDocs;
     int32_t _doc;
     int32_t _freq;
 
@@ -61,7 +64,7 @@ public:
     virtual bool next();
 
     /// Optimized implementation.
-    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    virtual int32_t read(Collection<int32_t>& docs, Collection<int32_t>& freqs);
 
     /// Optimized implementation.
     virtual bool skipTo(int32_t target);
@@ -72,7 +75,7 @@ public:
 
 protected:
     virtual void skippingDoc();
-    virtual int32_t readNoTf(Collection<int32_t> docs, Collection<int32_t> freqs, int32_t length);
+    virtual int32_t readNoTf(Collection<int32_t>& docs, Collection<int32_t>& freqs, int32_t length);
 
     /// Overridden by SegmentTermPositions to skip in prox stream.
     virtual void skipProx(int64_t proxPointer, int32_t payloadLength);

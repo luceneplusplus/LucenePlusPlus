@@ -30,11 +30,17 @@ protected:
     int32_t bufferLength; // end of valid bytes
     int32_t bufferPosition; // next byte to read
     ByteArray buffer;
+    decltype(buffer.get()) __buffer;
 
 public:
     /// Reads and returns a single byte.
     /// @see IndexOutput#writeByte(uint8_t)
     virtual uint8_t readByte();
+
+    /// Reads an int stored in variable-length format.  Reads between one and five
+    /// bytes.  Smaller values take fewer bytes.  Negative numbers are not supported.
+    /// @see IndexOutput#writeVInt(int32_t)
+    virtual int32_t readVInt();
 
     /// Change the buffer size used by this IndexInput.
     void setBufferSize(int32_t newSize);

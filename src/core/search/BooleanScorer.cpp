@@ -52,38 +52,39 @@ BooleanScorer::~BooleanScorer() {
 
 bool BooleanScorer::score(const CollectorPtr& collector, int32_t max, int32_t firstDocID) {
     bool more = false;
-    BucketPtr tmp;
+    Bucket* __tmp;
     BucketScorerPtr bs(newLucene<BucketScorer>());
     // The internal loop will set the score and doc before calling collect.
     collector->setScorer(bs);
     do {
-        bucketTable->first.reset();
+        bucketTable->__first = nullptr;
 
-        while (current) { // more queued
+        while (__current) { // more queued
             // check prohibited & required
-            if ((current->bits & prohibitedMask) == 0 && (current->bits & requiredMask) == requiredMask) {
-                if (current->doc >= max) {
-                    tmp = current;
-                    current = current->_next.lock();
-                    tmp->_next = bucketTable->first;
-                    bucketTable->first = tmp;
+            if ((__current->bits & prohibitedMask) == 0 && (__current->bits & requiredMask) == requiredMask) {
+                if (__current->doc >= max) {
+                    __tmp = __current;
+                    __current = __current->__next;
+                    __tmp->__next = bucketTable->__first;
+                    bucketTable->__first = __tmp;
                     continue;
                 }
 
-                if (current->coord >= minNrShouldMatch) {
-                    bs->_score = current->score * coordFactors[current->coord];
-                    bs->doc = current->doc;
-                    bs->freq = current->coord;
-                    collector->collect(current->doc);
+                if (__current->coord >= minNrShouldMatch) {
+                    auto s = coordFactors.size();
+                    bs->_score = __current->score * coordFactors[__current->coord];
+                    bs->doc = __current->doc;
+                    bs->freq = __current->coord;
+                    collector->collect(__current->doc);
                 }
             }
 
-            current = current->_next.lock(); // pop the queue
+            __current = __current->__next; // pop the queue
         }
 
-        if (bucketTable->first) {
-            current = bucketTable->first;
-            bucketTable->first = current->_next.lock();
+        if (bucketTable->__first) {
+            __current = bucketTable->__first;
+            bucketTable->__first = __current->__next;
             return true;
         }
 
@@ -99,8 +100,8 @@ bool BooleanScorer::score(const CollectorPtr& collector, int32_t max, int32_t fi
                 }
             }
         }
-        current = bucketTable->first;
-    } while (current || more);
+        __current = bucketTable->__first;
+    } while (__current || more);
 
     return false;
 }
@@ -117,13 +118,13 @@ int32_t BooleanScorer::docID() {
 int32_t BooleanScorer::nextDoc() {
     bool more = false;
     do {
-        while (bucketTable->first) { // more queued
-            current = bucketTable->first;
-            bucketTable->first = current->_next.lock(); // pop the queue
+        while (bucketTable->__first) { // more queued
+            __current = bucketTable->__first;
+            bucketTable->__first = __current->__next; // pop the queue
 
             // check prohibited & required and minNrShouldMatch
-            if ((current->bits & prohibitedMask) == 0 && (current->bits & requiredMask) == requiredMask && current->coord >= minNrShouldMatch) {
-                doc = current->doc;
+            if ((__current->bits & prohibitedMask) == 0 && (__current->bits & requiredMask) == requiredMask && __current->coord >= minNrShouldMatch) {
+                doc = __current->doc;
                 return doc;
             }
         }
@@ -144,14 +145,14 @@ int32_t BooleanScorer::nextDoc() {
                 more = true;
             }
         }
-    } while (bucketTable->first || more);
+    } while (bucketTable->__first || more);
 
     doc = NO_MORE_DOCS;
     return doc;
 }
 
-double BooleanScorer::score() {
-    return current->score * coordFactors[current->coord];
+inline double BooleanScorer::score() {
+    return __current->score * coordFactors[__current->coord];
 }
 
 void BooleanScorer::score(const CollectorPtr& collector) {
@@ -171,32 +172,32 @@ String BooleanScorer::toString() {
 BooleanScorerCollector::BooleanScorerCollector(int32_t mask, const BucketTablePtr& bucketTable) {
     this->mask = mask;
     this->_bucketTable = bucketTable;
+    this->__bucketTable = bucketTable.get();
 }
 
 BooleanScorerCollector::~BooleanScorerCollector() {
 }
 
 void BooleanScorerCollector::collect(int32_t doc) {
-    BucketTablePtr table(_bucketTable);
+    auto* table = __bucketTable;
     int32_t i = doc & BucketTable::MASK;
-    BucketPtr bucket(table->buckets[i]);
+    auto& bucket = table->buckets[i];
     if (!bucket) {
         bucket = newLucene<Bucket>();
-        table->buckets[i] = bucket;
     }
+    auto* __bucket = bucket.get();
+    if (__bucket->doc != doc) { // invalid bucket
+        __bucket->doc = doc; // set doc
+        __bucket->score = __scorer->score(); // initialize score
+        __bucket->bits = mask; // initialize mask
+        __bucket->coord = 1; // initialize coord
 
-    if (bucket->doc != doc) { // invalid bucket
-        bucket->doc = doc; // set doc
-        bucket->score = ScorerPtr(_scorer)->score(); // initialize score
-        bucket->bits = mask; // initialize mask
-        bucket->coord = 1; // initialize coord
-
-        bucket->_next = table->first; // push onto valid list
-        table->first = bucket;
+        __bucket->__next = table->__first; // push onto valid list
+        table->__first = __bucket;
     } else {
-        bucket->score += ScorerPtr(_scorer)->score(); // increment score
-        bucket->bits |= mask; // add bits in mask
-        ++bucket->coord; // increment coord
+        __bucket->score += __scorer->score(); // increment score
+        __bucket->bits |= mask; // add bits in mask
+        ++__bucket->coord; // increment coord
     }
 }
 
@@ -206,6 +207,7 @@ void BooleanScorerCollector::setNextReader(const IndexReaderPtr& reader, int32_t
 
 void BooleanScorerCollector::setScorer(const ScorerPtr& scorer) {
     this->_scorer = scorer;
+    this->__scorer = scorer.get();
 }
 
 bool BooleanScorerCollector::acceptsDocsOutOfOrder() {

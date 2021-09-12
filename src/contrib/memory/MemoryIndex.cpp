@@ -569,7 +569,7 @@ bool MemoryIndexTermPositions::next() {
     return _next;
 }
 
-int32_t MemoryIndexTermPositions::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t MemoryIndexTermPositions::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     if (!hasNext) {
         return 0;
     }

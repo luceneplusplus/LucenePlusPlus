@@ -41,7 +41,7 @@ public:
     virtual void seek(const TermEnumPtr& termEnum);
 
     /// Not implemented.
-    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    virtual int32_t read(Collection<int32_t>& docs, Collection<int32_t>& freqs);
 
     /// Not implemented.
     virtual ByteArray getPayload(ByteArray data, int32_t offset);

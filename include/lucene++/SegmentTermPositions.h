@@ -46,7 +46,7 @@ public:
     virtual bool next();
 
     /// Not supported
-    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs);
+    virtual int32_t read(Collection<int32_t>& docs, Collection<int32_t>& freqs);
 
     /// Returns the length of the payload at the current term position.
     virtual int32_t getPayloadLength();

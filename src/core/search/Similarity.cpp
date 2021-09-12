@@ -33,7 +33,7 @@ SimilarityPtr Similarity::getDefault() {
     return defaultImpl;
 }
 
-const Collection<double> Similarity::NORM_TABLE() {
+static const Collection<double> GEN_NORM_TABLE() {
     static Collection<double> _NORM_TABLE;
     if (!_NORM_TABLE) {
         _NORM_TABLE = Collection<double>::newInstance(256);
@@ -44,12 +44,14 @@ const Collection<double> Similarity::NORM_TABLE() {
     return _NORM_TABLE;
 }
 
+const Collection<double> Similarity::NORM_TABLE = GEN_NORM_TABLE();
+
 double Similarity::decodeNorm(uint8_t b) {
-    return NORM_TABLE()[b & 0xff];  // & 0xff maps negative bytes to positive above 127
+    return NORM_TABLE[b & 0xff];  // & 0xff maps negative bytes to positive above 127
 }
 
-const Collection<double> Similarity::getNormDecoder() {
-    return NORM_TABLE();
+const Collection<double>& Similarity::getNormDecoder() {
+    return NORM_TABLE;
 }
 
 double Similarity::computeNorm(const String& fieldName, const FieldInvertStatePtr& state) {

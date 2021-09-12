@@ -46,6 +46,7 @@ protected:
     int32_t minNrShouldMatch;
     int32_t end;
     BucketPtr current;
+    Bucket* __current = nullptr;
     int32_t doc;
 
 protected:
@@ -71,8 +72,10 @@ public:
 
 protected:
     BucketTableWeakPtr _bucketTable;
+    BucketTable* __bucketTable = nullptr;
     int32_t mask;
     ScorerWeakPtr _scorer;
+    Scorer* __scorer = nullptr;
 
 public:
     virtual void collect(int32_t doc);
@@ -121,6 +124,7 @@ public:
     int32_t bits; // used for bool constraints
     int32_t coord; // count of terms in score
     BucketWeakPtr _next; // next valid bucket
+    Bucket* __next = nullptr; // next valid bucket
 };
 
 /// A simple hash table of document scores within a range.
@@ -137,6 +141,7 @@ public:
 
     Collection<BucketPtr> buckets;
     BucketPtr first; // head of valid list
+    Bucket* __first = nullptr; // head of valid list
 
 public:
     CollectorPtr newCollector(int32_t mask);

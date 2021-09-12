@@ -194,7 +194,7 @@ bool FilterTermDocs::next() {
     return in->next();
 }
 
-int32_t FilterTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t FilterTermDocs::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     return in->read(docs, freqs);
 }
 

@@ -20,9 +20,9 @@ ExactPhraseScorer::~ExactPhraseScorer() {
 double ExactPhraseScorer::phraseFreq() {
     // sort list with pq
     pq->clear();
-    for (PhrasePositionsPtr pp(first); more && pp; pp = pp->_next) {
-        pp->firstPosition();
-        pq->add(pp); // build pq from list
+    for (auto* __pp = __first; more && __pp; __pp = __pp->__next) {
+        __pp->firstPosition();
+        pq->add(__pp);
     }
     pqToList(); // rebuild list from pq
 
@@ -30,16 +30,16 @@ double ExactPhraseScorer::phraseFreq() {
     // times all PhrasePosition's have exactly the same position.
     int32_t freq = 0;
     do {
-        while (first->position < last->position) { // scan forward in first
+        while (__first->position < __last->position) { // scan forward in first
             do {
-                if (!first->nextPosition()) {
+                if (!__first->nextPosition()) {
                     return freq;
                 }
-            } while (first->position < last->position);
+            } while (__first->position < __last->position);
             firstToLast();
         }
         ++freq; // all equal: a match
-    } while (last->nextPosition());
+    } while (__last->nextPosition());
 
     return freq;
 }

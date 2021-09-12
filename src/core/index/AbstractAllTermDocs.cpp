@@ -41,7 +41,7 @@ bool AbstractAllTermDocs::next() {
     return skipTo(_doc + 1);
 }
 
-int32_t AbstractAllTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t AbstractAllTermDocs::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     int32_t length = docs.size();
     int32_t i = 0;
     while (i < length && _doc < maxDoc) {

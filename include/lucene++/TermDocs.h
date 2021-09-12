@@ -44,7 +44,7 @@ public:
     /// Attempts to read multiple entries from the enumeration, up to length of docs.  Document numbers are stored
     /// in docs, and term frequencies are stored in freqs.  Returns the number of entries read.  Zero is only
     /// returned when the stream has been exhausted.
-    virtual int32_t read(Collection<int32_t> docs, Collection<int32_t> freqs) = 0;
+    virtual int32_t read(Collection<int32_t>& docs, Collection<int32_t>& freqs) = 0;
 
     /// Skips entries to the first beyond the current whose document number is greater than or equal to target.
     /// Returns true if there is such an entry.

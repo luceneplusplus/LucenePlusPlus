@@ -25,7 +25,7 @@ public:
     int32_t count; // remaining pos in this doc
     int32_t offset; // position in phrase
     TermPositionsPtr tp; // stream of positions
-    PhrasePositionsPtr _next; // used to make lists
+    PhrasePositions* __next = nullptr; // used to make lists
     bool repeats; // there's other pp for same term (eg. query="1st word 2nd word"~1)
 
 public:

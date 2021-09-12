@@ -488,7 +488,7 @@ bool ParallelTermDocs::next() {
     return termDocs ? termDocs->next() : false;
 }
 
-int32_t ParallelTermDocs::read(Collection<int32_t> docs, Collection<int32_t> freqs) {
+int32_t ParallelTermDocs::read(Collection<int32_t>& docs, Collection<int32_t>& freqs) {
     return termDocs ? termDocs->read(docs, freqs) : 0;
 }
 

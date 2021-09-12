@@ -8,6 +8,7 @@
 #define PHRASESCORER_H
 
 #include "Scorer.h"
+#include <vector>
 
 namespace Lucene {
 
@@ -27,14 +28,16 @@ public:
 
 protected:
     WeightPtr weight;
+    Weight* __weight = nullptr;
     ByteArray norms;
     double value;
 
     bool firstTime;
     bool more;
     PhraseQueuePtr pq;
-    PhrasePositionsPtr first;
-    PhrasePositionsPtr last;
+    std::vector<PhrasePositionsPtr> _holds;
+    PhrasePositions* __first = nullptr;
+    PhrasePositions* __last = nullptr;
 
     double freq; // phrase frequency in current doc as computed by phraseFreq().
 
