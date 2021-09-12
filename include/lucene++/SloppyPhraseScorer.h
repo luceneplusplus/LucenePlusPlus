@@ -20,8 +20,6 @@ public:
 
 protected:
     int32_t slop;
-    // Collection<PhrasePositionsPtr> repeats;
-    // Collection<PhrasePositionsPtr> tmpPos; // for flipping repeating pps
     Collection<PhrasePositions*> repeats;
     Collection<PhrasePositions*> tmpPos; // for flipping repeating pps
     bool checkedRepeats;

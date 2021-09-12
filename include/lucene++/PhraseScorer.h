@@ -36,8 +36,6 @@ protected:
     bool more;
     PhraseQueuePtr pq;
     std::vector<PhrasePositionsPtr> _holds;
-    // PhrasePositionsPtr first;
-    // PhrasePositionsPtr last;
     PhrasePositions* __first = nullptr;
     PhrasePositions* __last = nullptr;
 
