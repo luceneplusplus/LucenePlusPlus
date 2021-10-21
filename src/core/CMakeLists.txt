@@ -23,6 +23,7 @@ file(GLOB_RECURSE lucene_sources
   "queryparser/*.cpp"
   "store/*.cpp"
   "util/*.c*"
+  "c/*.cc"
 )
 
 file(GLOB_RECURSE lucene_internal_headers
