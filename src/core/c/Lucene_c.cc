@@ -33,9 +33,10 @@ int index_put(index_t *index, const char **field, int32_t nField, const char **k
   return 1;
 }
 
-int index_search(index_t *index, const char **field, int32_t nField, const char **key, int32_t nKey, int type, int **result, int32_t *nResult) {
+int index_mulit_search(index_t *index, const char **field, int32_t nField, const char **key, int32_t nKey, int type, int **result, int32_t *nResult) {
   if(type == 0) {
-    PrefixFilterPtr filter = newLucene<PrefixFilter>(newLucene<Term>(StringUtils::toString((*field)[0]), StringUtils::toString((*key)[0])));    
+  } else if (type == 1) {
+    PrefixFilterPtr filter = newLucene<PrefixFilter>(newLucene<Term>(StringUtils::toString((*field)), StringUtils::toString((*key))));    
     QueryPtr query = newLucene<ConstantScoreQuery>(filter); 
     IndexReaderPtr reader = index->rep->getReader() ; 
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);  
@@ -47,8 +48,26 @@ int index_search(index_t *index, const char **field, int32_t nField, const char 
     for (int i = 0; i < hits.size(); i++) {
       (*result)[i] = StringUtils::toInt(searcher->doc(hits[i]->doc)->get(UID)); 
     }
-  } else if (type == 1) {
+  } else if (type == 2) {
 
+  } else if (type == 3);
+  return 1;
+}
+int index_search(index_t *index, const char *field, int32_t nField, const char *key, int32_t nKey, int type, int **result, int32_t *nResult) {
+  if(type == 0) {
+  } else if (type == 1) {
+    PrefixFilterPtr filter = newLucene<PrefixFilter>(newLucene<Term>(StringUtils::toString((field)), StringUtils::toString((key))));    
+    QueryPtr query = newLucene<ConstantScoreQuery>(filter); 
+    IndexReaderPtr reader = index->rep->getReader() ; 
+    IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);  
+    Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs; 
+    if (*nResult < hits.size()) {
+      *result = (int *)realloc(*result, hits.size() * sizeof(int));
+      *nResult = hits.size();
+    }
+    for (int i = 0; i < hits.size(); i++) {
+      (*result)[i] = StringUtils::toInt(searcher->doc(hits[i]->doc)->get(UID)); 
+    }
   } else if (type == 2) {
 
   } else if (type == 3);
