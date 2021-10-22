@@ -13,6 +13,9 @@ String UID = L"U$DID";
 extern "C" {
 
 struct index_t { IndexWriterPtr rep; };
+struct index_document_t { DocumentPtr rep;};
+
+
 
 index_t* index_open(const char *path) {
    IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(StringUtils::toString(path)), newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
@@ -23,13 +26,8 @@ index_t* index_open(const char *path) {
    return index; 
 }
 
-int index_put(index_t *index, const char **field, int32_t nField, const char **key, int32_t nKey, int32_t uid) {
-  DocumentPtr doc = newLucene<Document>();
-  for (int i = 0; i < nField; i++) {
-    doc->add(newLucene<Field>(StringUtils::toString((*field)[i]),  StringUtils::toString((*key)[i]), Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS)); 
-  }
-  doc->add(newLucene<Field>(UID, StringUtils::toString(uid), Field::STORE_YES, Field::INDEX_NO));
-  index->rep->addDocument(doc);  
+int index_put(index_t *index, index_document_t *idoc) {
+  index->rep->addDocument(idoc->rep);  
   return 1;
 }
 
@@ -82,10 +80,30 @@ void index_close(index_t *index) {
   delete index;
 }
 
+
+
 int index_optimize(index_t *index) {
   index->rep->optimize();
   return 1;
 }
+index_document_t* index_document_create() {
+  DocumentPtr doc = newLucene<Document>();
+  if (doc == NULL) { return NULL; }    
+  index_document_t *idoc = new index_document_t;
+  idoc->rep = doc;
+  return idoc;
+} 
 
 
+void index_document_destory(index_document_t *idoc) {
+  if (idoc == NULL) { return; }   
+  idoc->rep = NULL; 
+  delete idoc; 
+}
+void index_document_add(index_document_t *idoc, const char **field, int nFields, const char **val, int nVals, int32_t uid) {
+  for (int i = 0; i < nFields; i++) {
+    idoc->rep->add(newLucene<Field>(StringUtils::toString(field[i]),  StringUtils::toString(val[i]), Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS)); 
+  }
+  idoc->rep->add(newLucene<Field>(UID, StringUtils::toString(uid), Field::STORE_YES, Field::INDEX_NO));
+}
 }
