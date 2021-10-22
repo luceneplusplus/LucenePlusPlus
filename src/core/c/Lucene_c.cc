@@ -100,10 +100,11 @@ void index_document_destroy(index_document_t *idoc) {
   idoc->rep = NULL; 
   delete idoc; 
 }
-void index_document_add(index_document_t *idoc, const char **field, int nFields, const char **val, int nVals, int32_t uid) {
-  for (int i = 0; i < nFields; i++) {
-    idoc->rep->add(newLucene<Field>(StringUtils::toString(field[i]),  StringUtils::toString(val[i]), Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS)); 
+void index_document_add(index_document_t *idoc, const char *field, int nFields, const char *val, int nVals, int32_t index) {
+  if (index) {
+    idoc->rep->add(newLucene<Field>(StringUtils::toString(field),  StringUtils::toString(val), Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS)); 
+  } else {
+    idoc->rep->add(newLucene<Field>(UID, StringUtils::toString(val), Field::STORE_YES, Field::INDEX_NO));
   }
-  idoc->rep->add(newLucene<Field>(UID, StringUtils::toString(uid), Field::STORE_YES, Field::INDEX_NO));
 }
 }

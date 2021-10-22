@@ -29,7 +29,7 @@ __attribute__((visibility("default"))) int index_optimize(index_t *index);
 
 __attribute__((visibility("default"))) index_document_t* index_document_create();
 
-__attribute__((visibility("default"))) void index_document_add(index_document_t *idoc, const char **field, int nFields, const char **val, int nVals, int32_t uid); 
+__attribute__((visibility("default"))) void index_document_add(index_document_t *idoc, const char *field, int nFields, const char *val, int nVals, int index); 
 
 __attribute__((visibility("default"))) void index_document_destroy(index_document_t *doc);
 #ifdef __cplusplus

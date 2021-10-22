@@ -17,7 +17,7 @@
 #include "LuceneHeaders.h"
 #include "FileUtils.h"
 #include "MiscUtils.h"
-
+#include "ConstantScoreQuery.h"
 using namespace Lucene;
 
 int32_t docNumber = 0;
@@ -42,6 +42,14 @@ DocumentPtr fileDocument(const String& docFile) {
     return doc;
 }
 
+int addDoc(IndexWriterPtr& writer) {
+    DocumentPtr doc = newLucene<Document>();
+    doc->add(newLucene<Field>(L"tag1", L"cpu", Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
+    doc->add(newLucene<Field>(L"uid", StringUtils::toString(10), Field::STORE_YES, Field::INDEX_NO));
+    writer->addDocument(doc);
+    return 0;
+    
+} 
 void indexDocs(const IndexWriterPtr& writer, const String& sourceDir) {
     HashSet<String> dirList(HashSet<String>::newInstance());
     if (!FileUtils::listDirectory(sourceDir, false, dirList)) {
@@ -65,47 +73,58 @@ void indexDocs(const IndexWriterPtr& writer, const String& sourceDir) {
 
 /// Index all text files under a directory.
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
+    if (argc != 2) {
         std::wcout << L"Usage: indexfiles.exe <index source dir> <lucene index dir>\n";
         return 1;
     }
 
-    String sourceDir(StringUtils::toUnicode(argv[1]));
-    String indexDir(StringUtils::toUnicode(argv[2]));
+    //String sourceDir(StringUtils::toUnicode(argv[1]));
+    String indexDir(StringUtils::toUnicode(argv[1]));
 
-    if (!FileUtils::isDirectory(sourceDir)) {
-        std::wcout << L"Source directory doesn't exist: " << sourceDir << L"\n";
-        return 1;
-    }
+    //if (!FileUtils::isDirectory(sourceDir)) {
+    //    std::wcout << L"Source directory doesn't exist: " << sourceDir << L"\n";
+    //    return 1;
+    //}
 
-    if (!FileUtils::isDirectory(indexDir)) {
-        if (!FileUtils::createDirectory(indexDir)) {
-            std::wcout << L"Unable to create directory: " << indexDir << L"\n";
-            return 1;
-        }
-    }
+    //if (!FileUtils::isDirectory(indexDir)) {
+    //    if (!FileUtils::createDirectory(indexDir)) {
+    //        std::wcout << L"Unable to create directory: " << indexDir << L"\n";
+    //        return 1;
+    //    }
+    //}
 
     uint64_t beginIndex = MiscUtils::currentTimeMillis();
 
     try {
         IndexWriterPtr writer = newLucene<IndexWriter>(FSDirectory::open(indexDir), newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT), true, IndexWriter::MaxFieldLengthLIMITED);
         std::wcout << L"Indexing to directory: " << indexDir << L"...\n";
+        for (int i = 0; i < 10000; i++) {
+          addDoc(writer);
+        }
+        IndexReaderPtr reader = writer->getReader();
+    // PrefixFilter combined with ConstantScoreQuery
+        PrefixFilterPtr filter = newLucene<PrefixFilter>(newLucene<Term>(L"tag1", L"cp"));
+        QueryPtr query = newLucene<ConstantScoreQuery>(filter);
+        IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);
+        Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
+        std::wcout << "size: " << hits.size() << std::endl;
+        //EXPECT_EQ(4, hits.size());
 
-        indexDocs(writer, sourceDir);
+        ///indexDocs(writer, sourceDir);
 
-        uint64_t endIndex = MiscUtils::currentTimeMillis();
-        uint64_t indexDuration = endIndex - beginIndex;
-        std::wcout << L"Index time: " << indexDuration << L" milliseconds\n";
-        std::wcout << L"Optimizing...\n";
+        //uint64_t endIndex = MiscUtils::currentTimeMillis();
+        //uint64_t indexDuration = endIndex - beginIndex;
+        //std::wcout << L"Index time: " << indexDuration << L" milliseconds\n";
+        //std::wcout << L"Optimizing...\n";
 
-        writer->optimize();
+        //writer->optimize();
 
-        uint64_t optimizeDuration = MiscUtils::currentTimeMillis() - endIndex;
-        std::wcout << L"Optimize time: " << optimizeDuration << L" milliseconds\n";
-
+        //uint64_t optimizeDuration = MiscUtils::currentTimeMillis() - endIndex;
+        //std::wcout << L"Optimize time: " << optimizeDuration << L" milliseconds\n";
+        
         writer->close();
 
-        std::wcout << L"Total time: " << indexDuration + optimizeDuration << L" milliseconds\n";
+        //std::wcout << L"Total time: " << indexDuration + optimizeDuration << L" milliseconds\n";
     } catch (LuceneException& e) {
         std::wcout << L"Exception: " << e.getError() << L"\n";
         return 1;
