@@ -95,7 +95,7 @@ index_document_t* index_document_create() {
 } 
 
 
-void index_document_destory(index_document_t *idoc) {
+void index_document_destroy(index_document_t *idoc) {
   if (idoc == NULL) { return; }   
   idoc->rep = NULL; 
   delete idoc; 
