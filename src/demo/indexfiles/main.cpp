@@ -18,6 +18,7 @@
 #include "FileUtils.h"
 #include "MiscUtils.h"
 #include "ConstantScoreQuery.h"
+#include "BooleanQuery.h"
 using namespace Lucene;
 
 int32_t docNumber = 0;
@@ -44,7 +45,8 @@ DocumentPtr fileDocument(const String& docFile) {
 
 int addDoc(IndexWriterPtr& writer) {
     DocumentPtr doc = newLucene<Document>();
-    doc->add(newLucene<Field>(L"tag1", L"cpu", Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
+    doc->add(newLucene<Field>(L"tag1", L"cpu1", Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
+    doc->add(newLucene<Field>(L"tag2", L"cpu2", Field::STORE_YES, Field::INDEX_NOT_ANALYZED_NO_NORMS));
     doc->add(newLucene<Field>(L"uid", StringUtils::toString(10), Field::STORE_YES, Field::INDEX_NO));
     writer->addDocument(doc);
     return 0;
@@ -108,6 +110,31 @@ int main(int argc, char* argv[]) {
         IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);
         Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs;
         std::wcout << "size: " << hits.size() << std::endl;
+
+
+         BooleanQueryPtr q = newLucene<BooleanQuery>();
+         q->add(newLucene<TermQuery>(newLucene<Term>(L"tag1", L"cpu1")), BooleanClause::SHOULD); 
+         q->add(newLucene<TermQuery>(newLucene<Term>(L"tag2", L"cpu2")), BooleanClause::SHOULD);
+         hits =  searcher->search(q, FilterPtr(), 100000000)->scoreDocs; 
+         std::wcout << "size: " << hits.size() << std::endl;
+
+         q->add(newLucene<TermQuery>(newLucene<Term>(L"tag1", L"cpu1")), BooleanClause::SHOULD); 
+         q->add(newLucene<TermQuery>(newLucene<Term>(L"tag1", L"cpu1")), BooleanClause::MUST);
+         hits =  searcher->search(q, 100000000)->scoreDocs; 
+         std::wcout << "size: " << hits.size() << std::endl;
+
+         q->add(newLucene<TermQuery>(newLucene<Term>(L"tag1", L"cpu1")), BooleanClause::MUST); 
+         q->add(newLucene<TermQuery>(newLucene<Term>(L"tag2", L"cpu1")), BooleanClause::MUST);
+         hits =  searcher->search(q, 10000000)->scoreDocs; 
+
+
+
+         BooleanQueryPtr bquery = newLucene<BooleanQuery>();
+         bquery->add(newLucene<PrefixQuery>(newLucene<Term>(L"tag1", L"xxx")), BooleanClause::SHOULD);
+         bquery->add(newLucene<TermQuery>(newLucene<Term>(L"tag2", L"cpuxxx")), BooleanClause::SHOULD);
+         hits =  searcher->search(bquery, FilterPtr(), 10000000)->scoreDocs; 
+         std::wcout << "size: " << hits.size() << std::endl;
+         
         //EXPECT_EQ(4, hits.size());
 
         ///indexDocs(writer, sourceDir);

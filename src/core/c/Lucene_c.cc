@@ -10,6 +10,8 @@
 
 using namespace Lucene;
 String UID = L"U$DID";
+static const int MAX_NUM_OF_OUTPUT = 1000*10000;
+
 extern "C" {
 
 struct index_t { IndexWriterPtr rep; };
@@ -31,14 +33,47 @@ int index_put(index_t *index, index_document_t *idoc) {
   return 1;
 }
 
-int index_mulit_search(index_t *index, const char **field, int32_t nField, const char **key, int32_t nKey, int type, int **result, int32_t *nResult) {
+int index_mulit_search(index_t *index, const char **field, const char **key, int *qSet, int nQuery, int opera, int **result, int32_t *nResult) {
+  if (index->rep == NULL) { return -1; }
+  IndexReaderPtr reader = index->rep->getReader() ; 
+  IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);  
+  BooleanQueryPtr bQuery = newLucene<BooleanQuery>();
+  BooleanClause::Occur occur;
+
+  if (opera == 0) {
+    occur = BooleanClause::MUST; 
+  } else if (opera == 1) {
+    occur = BooleanClause::SHOULD;
+  } else if (opera == 2) {
+    occur = BooleanClause::MUST_NOT;
+  }
+  for (int i = 0; i < nQuery; i++) {
+    if (qSet[i] == 0) {
+      bQuery->add(newLucene<TermQuery>(newLucene<Term>(StringUtils::toString(field[i]),StringUtils::toString(key[i]))), occur); 
+    } else if (qSet[i] == 1) {
+      bQuery->add(newLucene<PrefixQuery>(newLucene<Term>(StringUtils::toString(field[i]),StringUtils::toString(key[i]))), occur); 
+    } else if (qSet[i] == 2) {
+      //other query type
+    } else if (qSet[i] == 3) {
+
+    }
+  }  
+  Collection<ScoreDocPtr> hits =  searcher->search(bQuery, FilterPtr(), MAX_NUM_OF_OUTPUT)->scoreDocs;
+  if (*nResult < hits.size()) {
+    *result = (int *)realloc(*result, hits.size() * sizeof(int)); 
+    *nResult = hits.size();
+  }
+  for (int i = 0; i < hits.size(); i++) {
+    (*result)[i] = StringUtils::toInt(searcher->doc(hits[i]->doc)->get(UID)); 
+  }
+  return 0;
+}
+int index_search(index_t *index, const char *field, int32_t nField, const char *key, int32_t nKey, int type, int **result, int32_t *nResult) {
   if(type == 0) {
-  } else if (type == 1) {
-    PrefixFilterPtr filter = newLucene<PrefixFilter>(newLucene<Term>(StringUtils::toString((*field)), StringUtils::toString((*key))));    
-    QueryPtr query = newLucene<ConstantScoreQuery>(filter); 
     IndexReaderPtr reader = index->rep->getReader() ; 
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);  
-    Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs; 
+    QueryPtr query = newLucene<TermQuery>(newLucene<Term>(StringUtils::toString(*field),StringUtils::toString(*key)));
+    Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), MAX_NUM_OF_OUTPUT)->scoreDocs; 
     if (*nResult < hits.size()) {
       *result = (int *)realloc(*result, hits.size() * sizeof(int));
       *nResult = hits.size();
@@ -46,19 +81,14 @@ int index_mulit_search(index_t *index, const char **field, int32_t nField, const
     for (int i = 0; i < hits.size(); i++) {
       (*result)[i] = StringUtils::toInt(searcher->doc(hits[i]->doc)->get(UID)); 
     }
-  } else if (type == 2) {
-
-  } else if (type == 3);
-  return 1;
-}
-int index_search(index_t *index, const char *field, int32_t nField, const char *key, int32_t nKey, int type, int **result, int32_t *nResult) {
-  if(type == 0) {
+    
   } else if (type == 1) {
-    PrefixFilterPtr filter = newLucene<PrefixFilter>(newLucene<Term>(StringUtils::toString((field)), StringUtils::toString((key))));    
-    QueryPtr query = newLucene<ConstantScoreQuery>(filter); 
+    //PrefixFilterPtr filter = newLucene<PrefixFilter>(newLucene<Term>(StringUtils::toString((*field)), StringUtils::toString((*key))));    
+    //QueryPtr query = newLucene<ConstantScoreQuery>(filter); 
+    PrefixQueryPtr query = newLucene<PrefixQuery>(newLucene<Term>(StringUtils::toString(*field), StringUtils::toString(*key)));
     IndexReaderPtr reader = index->rep->getReader() ; 
     IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);  
-    Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), 1000)->scoreDocs; 
+    Collection<ScoreDocPtr> hits = searcher->search(query, FilterPtr(), MAX_NUM_OF_OUTPUT)->scoreDocs; 
     if (*nResult < hits.size()) {
       *result = (int *)realloc(*result, hits.size() * sizeof(int));
       *nResult = hits.size();

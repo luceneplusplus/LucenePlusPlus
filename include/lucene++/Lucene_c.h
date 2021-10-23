@@ -20,7 +20,7 @@ __attribute__((visibility("default"))) int index_put(index_t *index, index_docum
 
 __attribute__((visibility("default"))) int index_search(index_t *index, const char *field, int32_t nField, const char *key, int32_t nKey, int type, int **result, int32_t *nResult);
 
-__attribute__((visibility("default"))) int index_multi_search(index_t *index, const char **field, int32_t nField, const char **key, int32_t nKey, int type, int **result, int32_t *nResult);
+__attribute__((visibility("default"))) int index_multi_search(index_t *index, const char **field, const char **key, int *qSet, int nQuery, int opera, int **result, int32_t *nResult);
 
 __attribute__((visibility("default"))) void index_close(index_t *index); 
 
