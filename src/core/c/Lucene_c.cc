@@ -33,7 +33,7 @@ int index_put(index_t *index, index_document_t *idoc) {
   return 1;
 }
 
-int index_mulit_search(index_t *index, const char **field, const char **key, int *qSet, int nQuery, int opera, int **result, int32_t *nResult) {
+int index_multi_search(index_t *index, const char **field, const char **key, int *qSet, int nQuery, int opera, int **result, int32_t *nResult) {
   if (index->rep == NULL) { return -1; }
   IndexReaderPtr reader = index->rep->getReader() ; 
   IndexSearcherPtr searcher = newLucene<IndexSearcher>(reader);  
