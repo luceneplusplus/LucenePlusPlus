@@ -52,10 +52,10 @@ bool IndexFileNameFilter::isCFSFile(const String& name) {
 
 IndexFileNameFilterPtr IndexFileNameFilter::getFilter() {
     static IndexFileNameFilterPtr singleton;
-    if (!singleton) {
+    LUCENE_RUN_ONCE(
         singleton = newLucene<IndexFileNameFilter>();
         CycleCheck::addStatic(singleton);
-    }
+    );
     return singleton;
 }
 

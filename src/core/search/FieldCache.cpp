@@ -21,73 +21,73 @@ FieldCache::~FieldCache() {
 
 FieldCachePtr FieldCache::DEFAULT() {
     static FieldCacheImplPtr _DEFAULT;
-    if (!_DEFAULT) {
+    LUCENE_RUN_ONCE(
         _DEFAULT = newLucene<FieldCacheImpl>();
         CycleCheck::addStatic(_DEFAULT);
-    }
+    );
     return _DEFAULT;
 }
 
 ByteParserPtr FieldCache::DEFAULT_BYTE_PARSER() {
     static DefaultByteParserPtr _DEFAULT_BYTE_PARSER;
-    if (!_DEFAULT_BYTE_PARSER) {
+    LUCENE_RUN_ONCE(
         _DEFAULT_BYTE_PARSER = newLucene<DefaultByteParser>();
         CycleCheck::addStatic(_DEFAULT_BYTE_PARSER);
-    }
+    );
     return _DEFAULT_BYTE_PARSER;
 }
 
 IntParserPtr FieldCache::DEFAULT_INT_PARSER() {
     static DefaultIntParserPtr _DEFAULT_INT_PARSER;
-    if (!_DEFAULT_INT_PARSER) {
+    LUCENE_RUN_ONCE(
         _DEFAULT_INT_PARSER = newLucene<DefaultIntParser>();
         CycleCheck::addStatic(_DEFAULT_INT_PARSER);
-    }
+    );
     return _DEFAULT_INT_PARSER;
 }
 
 LongParserPtr FieldCache::DEFAULT_LONG_PARSER() {
     static DefaultLongParserPtr _DEFAULT_LONG_PARSER;
-    if (!_DEFAULT_LONG_PARSER) {
+    LUCENE_RUN_ONCE(
         _DEFAULT_LONG_PARSER = newLucene<DefaultLongParser>();
         CycleCheck::addStatic(_DEFAULT_LONG_PARSER);
-    }
+    );
     return _DEFAULT_LONG_PARSER;
 }
 
 DoubleParserPtr FieldCache::DEFAULT_DOUBLE_PARSER() {
     static DefaultDoubleParserPtr _DEFAULT_DOUBLE_PARSER;
-    if (!_DEFAULT_DOUBLE_PARSER) {
+    LUCENE_RUN_ONCE(
         _DEFAULT_DOUBLE_PARSER = newLucene<DefaultDoubleParser>();
         CycleCheck::addStatic(_DEFAULT_DOUBLE_PARSER);
-    }
+    );
     return _DEFAULT_DOUBLE_PARSER;
 }
 
 IntParserPtr FieldCache::NUMERIC_UTILS_INT_PARSER() {
     static NumericUtilsIntParserPtr _NUMERIC_UTILS_INT_PARSER;
-    if (!_NUMERIC_UTILS_INT_PARSER) {
+    LUCENE_RUN_ONCE(
         _NUMERIC_UTILS_INT_PARSER = newLucene<NumericUtilsIntParser>();
         CycleCheck::addStatic(_NUMERIC_UTILS_INT_PARSER);
-    }
+    );
     return _NUMERIC_UTILS_INT_PARSER;
 }
 
 LongParserPtr FieldCache::NUMERIC_UTILS_LONG_PARSER() {
     static NumericUtilsLongParserPtr _NUMERIC_UTILS_LONG_PARSER;
-    if (!_NUMERIC_UTILS_LONG_PARSER) {
+    LUCENE_RUN_ONCE(
         _NUMERIC_UTILS_LONG_PARSER = newLucene<NumericUtilsLongParser>();
         CycleCheck::addStatic(_NUMERIC_UTILS_LONG_PARSER);
-    }
+    );
     return _NUMERIC_UTILS_LONG_PARSER;
 }
 
 DoubleParserPtr FieldCache::NUMERIC_UTILS_DOUBLE_PARSER() {
     static NumericUtilsDoubleParserPtr _NUMERIC_UTILS_DOUBLE_PARSER;
-    if (!_NUMERIC_UTILS_DOUBLE_PARSER) {
+    LUCENE_RUN_ONCE(
         _NUMERIC_UTILS_DOUBLE_PARSER = newLucene<NumericUtilsDoubleParser>();
         CycleCheck::addStatic(_NUMERIC_UTILS_DOUBLE_PARSER);
-    }
+    );
     return _NUMERIC_UTILS_DOUBLE_PARSER;
 }
 

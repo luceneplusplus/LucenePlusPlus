@@ -73,11 +73,11 @@ GreekAnalyzer::~GreekAnalyzer() {
 
 const HashSet<String> GreekAnalyzer::getDefaultStopSet() {
     static HashSet<String> stopSet;
-    if (!stopSet) {
+    LUCENE_RUN_ONCE(
         String stopWords(UTF8_TO_STRING(_GREEK_STOP_WORDS));
         Collection<String> words(StringUtils::split(stopWords, L"\n"));
         stopSet = HashSet<String>::newInstance(words.begin(), words.end());
-    }
+    );
     return stopSet;
 }
 

@@ -35,10 +35,10 @@ void FilterManager::initialize() {
 
 FilterManagerPtr FilterManager::getInstance() {
     static FilterManagerPtr manager;
-    if (!manager) {
+    LUCENE_RUN_ONCE(
         manager = newLucene<FilterManager>();
         CycleCheck::addStatic(manager);
-    }
+    );
     return manager;
 }
 

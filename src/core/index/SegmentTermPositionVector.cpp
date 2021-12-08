@@ -23,9 +23,9 @@ SegmentTermPositionVector::~SegmentTermPositionVector() {
 
 const Collection<int32_t> SegmentTermPositionVector::EMPTY_TERM_POS() {
     static Collection<int32_t> _EMPTY_TERM_POS;
-    if (!_EMPTY_TERM_POS) {
+    LUCENE_RUN_ONCE(
         _EMPTY_TERM_POS = Collection<int32_t>::newInstance();
-    }
+    );
     return _EMPTY_TERM_POS;
 }
 

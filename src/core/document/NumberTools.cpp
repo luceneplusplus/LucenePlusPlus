@@ -19,27 +19,27 @@ NumberTools::~NumberTools() {
 
 const String& NumberTools::MIN_STRING_VALUE() {
     static String _MIN_STRING_VALUE;
-    if (_MIN_STRING_VALUE.empty()) {
+    LUCENE_RUN_ONCE(
         _MIN_STRING_VALUE += NEGATIVE_PREFIX;
         _MIN_STRING_VALUE += L"0000000000000";
-    }
+    );
     return _MIN_STRING_VALUE;
 }
 
 const String& NumberTools::MAX_STRING_VALUE() {
     static String _MAX_STRING_VALUE;
-    if (_MAX_STRING_VALUE.empty()) {
+    LUCENE_RUN_ONCE(
         _MAX_STRING_VALUE += POSITIVE_PREFIX;
         _MAX_STRING_VALUE += L"1y2p0ij32e8e7";
-    }
+    );
     return _MAX_STRING_VALUE;
 }
 
 int32_t NumberTools::STR_SIZE() {
     static int32_t _STR_SIZE = 0;
-    if (_STR_SIZE == 0) {
+    LUCENE_RUN_ONCE(
         _STR_SIZE = (int32_t)MIN_STRING_VALUE().length();
-    }
+    );
     return _STR_SIZE;
 }
 

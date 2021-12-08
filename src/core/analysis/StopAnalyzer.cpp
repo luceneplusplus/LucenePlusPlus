@@ -46,9 +46,9 @@ StopAnalyzer::~StopAnalyzer() {
 
 const HashSet<String> StopAnalyzer::ENGLISH_STOP_WORDS_SET() {
     static HashSet<String> __ENGLISH_STOP_WORDS_SET;
-    if (!__ENGLISH_STOP_WORDS_SET) {
+    LUCENE_RUN_ONCE(
         __ENGLISH_STOP_WORDS_SET = HashSet<String>::newInstance(_ENGLISH_STOP_WORDS_SET, _ENGLISH_STOP_WORDS_SET + SIZEOF_ARRAY(_ENGLISH_STOP_WORDS_SET));
-    }
+    );
     return __ENGLISH_STOP_WORDS_SET;
 }
 

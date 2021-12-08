@@ -214,10 +214,10 @@ MemoryIndexReader::~MemoryIndexReader() {
 
 TermPtr MemoryIndexReader::MATCH_ALL_TERM() {
     static TermPtr _MATCH_ALL_TERM;
-    if (!_MATCH_ALL_TERM) {
+    LUCENE_RUN_ONCE(
         _MATCH_ALL_TERM = newLucene<Term>(L"");
         CycleCheck::addStatic(_MATCH_ALL_TERM);
-    }
+    );
     return _MATCH_ALL_TERM;
 }
 
@@ -416,9 +416,9 @@ void MemoryIndexReader::doClose() {
 
 HashSet<String> MemoryIndexReader::getFieldNames(FieldOption fieldOption) {
     static HashSet<String> emptySet;
-    if (!emptySet) {
+    LUCENE_RUN_ONCE(
         emptySet = HashSet<String>::newInstance();
-    }
+    );
     if (fieldOption == FIELD_OPTION_UNINDEXED) {
         return emptySet;
     }

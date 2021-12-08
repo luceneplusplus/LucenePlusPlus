@@ -30,10 +30,10 @@ TimeLimitingCollector::~TimeLimitingCollector() {
 
 TimerThreadPtr TimeLimitingCollector::TIMER_THREAD() {
     static TimerThreadPtr _TIMER_THREAD;
-    if (!_TIMER_THREAD) {
+    LUCENE_RUN_ONCE(
         _TIMER_THREAD = newLucene<TimerThread>();
         CycleCheck::addStatic(_TIMER_THREAD);
-    }
+    );
     if (!_TIMER_THREAD->isAlive()) {
         _TIMER_THREAD->start();    // start single thread instance
     }
