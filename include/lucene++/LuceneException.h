@@ -64,7 +64,7 @@ public:
 };
 
 template <class ParentException, LuceneException::ExceptionType Type>
-class ExceptionTemplate : public ParentException {
+class LPPAPI ExceptionTemplate : public ParentException {
 public:
     ExceptionTemplate(const String& error = EmptyString, LuceneException::ExceptionType type = Type) : ParentException(error, type) {
     }
