@@ -28,19 +28,19 @@ Sort::~Sort() {
 
 SortPtr Sort::RELEVANCE() {
     static SortPtr _RELEVANCE;
-    if (!_RELEVANCE) {
+    LUCENE_RUN_ONCE(
         _RELEVANCE = newLucene<Sort>();
         CycleCheck::addStatic(_RELEVANCE);
-    }
+    );
     return _RELEVANCE;
 }
 
 SortPtr Sort::INDEXORDER() {
     static SortPtr _INDEXORDER;
-    if (!_INDEXORDER) {
+    LUCENE_RUN_ONCE(
         _INDEXORDER = newLucene<Sort>(SortField::FIELD_DOC());
         CycleCheck::addStatic(_INDEXORDER);
-    }
+    );
     return _INDEXORDER;
 }
 

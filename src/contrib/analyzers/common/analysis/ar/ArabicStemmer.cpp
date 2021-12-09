@@ -27,7 +27,7 @@ ArabicStemmer::~ArabicStemmer() {
 
 const Collection<String> ArabicStemmer::prefixes() {
     static Collection<String> _prefixes;
-    if (!_prefixes) {
+    LUCENE_RUN_ONCE(
         _prefixes = Collection<String>::newInstance();
         _prefixes.add(String(L"") + ALEF + LAM);
         _prefixes.add(String(L"") + WAW + ALEF + LAM);
@@ -36,13 +36,13 @@ const Collection<String> ArabicStemmer::prefixes() {
         _prefixes.add(String(L"") + FEH + ALEF + LAM);
         _prefixes.add(String(L"") + LAM + LAM);
         _prefixes.add(String(L"") + WAW);
-    }
+    );
     return _prefixes;
 }
 
 const Collection<String> ArabicStemmer::suffixes() {
     static Collection<String> _suffixes;
-    if (!_suffixes) {
+    LUCENE_RUN_ONCE(
         _suffixes = Collection<String>::newInstance();
         _suffixes.add(String(L"") + HEH + ALEF);
         _suffixes.add(String(L"") + ALEF + NOON);
@@ -54,7 +54,7 @@ const Collection<String> ArabicStemmer::suffixes() {
         _suffixes.add(String(L"") + HEH);
         _suffixes.add(String(L"") + TEH_MARBUTA);
         _suffixes.add(String(L"") + YEH);
-    }
+    );
     return _suffixes;
 }
 

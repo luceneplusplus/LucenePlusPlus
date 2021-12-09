@@ -21,10 +21,10 @@ TopDocsCollector::~TopDocsCollector() {
 
 TopDocsPtr TopDocsCollector::EMPTY_TOPDOCS() {
     static TopDocsPtr _EMPTY_TOPDOCS;
-    if (!_EMPTY_TOPDOCS) {
+    LUCENE_RUN_ONCE(
         _EMPTY_TOPDOCS = newLucene<TopDocs>(0, Collection<ScoreDocPtr>::newInstance(), std::numeric_limits<double>::quiet_NaN());
         CycleCheck::addStatic(_EMPTY_TOPDOCS);
-    }
+    );
     return _EMPTY_TOPDOCS;
 }
 

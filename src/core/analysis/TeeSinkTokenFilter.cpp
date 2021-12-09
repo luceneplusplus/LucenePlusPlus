@@ -19,10 +19,10 @@ TeeSinkTokenFilter::~TeeSinkTokenFilter() {
 
 SinkTokenStreamPtr TeeSinkTokenFilter::newSinkTokenStream() {
     static SinkFilterPtr ACCEPT_ALL_FILTER;
-    if (!ACCEPT_ALL_FILTER) {
+    LUCENE_RUN_ONCE(
         ACCEPT_ALL_FILTER = newLucene<AcceptAllSinkFilter>();
         CycleCheck::addStatic(ACCEPT_ALL_FILTER);
-    }
+    );
     return newSinkTokenStream(ACCEPT_ALL_FILTER);
 }
 

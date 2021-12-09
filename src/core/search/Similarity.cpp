@@ -25,22 +25,23 @@ Similarity::~Similarity() {
 }
 
 SimilarityPtr Similarity::getDefault() {
+	// race condition?
     static SimilarityPtr defaultImpl;
-    if (!defaultImpl) {
+    LUCENE_RUN_ONCE(
         defaultImpl = newLucene<DefaultSimilarity>();
         CycleCheck::addStatic(defaultImpl);
-    }
+    );
     return defaultImpl;
 }
 
 static const Collection<double> GEN_NORM_TABLE() {
     static Collection<double> _NORM_TABLE;
-    if (!_NORM_TABLE) {
+    LUCENE_RUN_ONCE(
         _NORM_TABLE = Collection<double>::newInstance(256);
         for (int32_t i = 0; i < 256; ++i) {
             _NORM_TABLE[i] = SmallDouble::byteToDouble((uint8_t)i);
         }
-    }
+    );
     return _NORM_TABLE;
 }
 

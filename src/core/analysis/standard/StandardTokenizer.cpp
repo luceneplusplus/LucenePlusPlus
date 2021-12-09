@@ -47,7 +47,7 @@ StandardTokenizer::~StandardTokenizer() {
 
 const Collection<String> StandardTokenizer::TOKEN_TYPES() {
     static Collection<String> _TOKEN_TYPES;
-    if (!_TOKEN_TYPES) {
+    LUCENE_RUN_ONCE(
         _TOKEN_TYPES = newCollection<String>(
                            L"<ALPHANUM>",
                            L"<APOSTROPHE>",
@@ -59,7 +59,7 @@ const Collection<String> StandardTokenizer::TOKEN_TYPES() {
                            L"<CJ>",
                            L"<ACRONYM_DEP>"
                        );
-    }
+    );
     return _TOKEN_TYPES;
 }
 

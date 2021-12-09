@@ -57,9 +57,9 @@ void DutchAnalyzer::initialize() {
 
 const HashSet<String> DutchAnalyzer::getDefaultStopSet() {
     static HashSet<String> stoptable;
-    if (!stoptable) {
+    LUCENE_RUN_ONCE(
         stoptable = HashSet<String>::newInstance(_DUTCH_STOP_WORDS, _DUTCH_STOP_WORDS + SIZEOF_ARRAY(_DUTCH_STOP_WORDS));
-    }
+    );
     return stoptable;
 }
 

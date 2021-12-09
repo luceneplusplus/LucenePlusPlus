@@ -28,9 +28,9 @@ NormsWriter::~NormsWriter() {
 
 uint8_t NormsWriter::getDefaultNorm() {
     static uint8_t defaultNorm = 0;
-    if (defaultNorm == 0) {
+    LUCENE_RUN_ONCE(
         defaultNorm = Similarity::encodeNorm(1.0);
-    }
+    );
     return defaultNorm;
 }
 

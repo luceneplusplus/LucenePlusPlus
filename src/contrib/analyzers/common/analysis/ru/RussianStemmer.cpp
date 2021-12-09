@@ -46,28 +46,28 @@ RussianStemmer::~RussianStemmer() {
 
 Collection<String> RussianStemmer::perfectiveGerundEndings1() {
     static Collection<String> _perfectiveGerundEndings1;
-    if (!_perfectiveGerundEndings1) {
+    LUCENE_RUN_ONCE(
         _perfectiveGerundEndings1 = Collection<String>::newInstance();
         _perfectiveGerundEndings1.add(String(L"") + V);
         _perfectiveGerundEndings1.add(String(L"") + V + SH + I);
         _perfectiveGerundEndings1.add(String(L"") + V + SH + I + S + SOFT);
-    }
+    );
     return _perfectiveGerundEndings1;
 }
 
 Collection<String> RussianStemmer::perfectiveGerund1Predessors() {
     static Collection<String> _perfectiveGerund1Predessors;
-    if (!_perfectiveGerund1Predessors) {
+    LUCENE_RUN_ONCE(
         _perfectiveGerund1Predessors = Collection<String>::newInstance();
         _perfectiveGerund1Predessors.add(String(L"") + A);
         _perfectiveGerund1Predessors.add(String(L"") + IA);
-    }
+    );
     return _perfectiveGerund1Predessors;
 }
 
 Collection<String> RussianStemmer::perfectiveGerundEndings2() {
     static Collection<String> _perfectiveGerundEndings2;
-    if (!_perfectiveGerundEndings2) {
+    LUCENE_RUN_ONCE(
         _perfectiveGerundEndings2 = Collection<String>::newInstance();
         _perfectiveGerundEndings2.add(String(L"") + I + V);
         _perfectiveGerundEndings2.add(String(L"") + Y + V);
@@ -75,13 +75,13 @@ Collection<String> RussianStemmer::perfectiveGerundEndings2() {
         _perfectiveGerundEndings2.add(String(L"") + Y + V + SH + I);
         _perfectiveGerundEndings2.add(String(L"") + I + V + SH + I + S + SOFT);
         _perfectiveGerundEndings2.add(String(L"") + Y + V + SH + I + S + SOFT);
-    }
+    );
     return _perfectiveGerundEndings2;
 }
 
 Collection<String> RussianStemmer::adjectiveEndings() {
     static Collection<String> _adjectiveEndings;
-    if (!_adjectiveEndings) {
+    LUCENE_RUN_ONCE(
         _adjectiveEndings = Collection<String>::newInstance();
         _adjectiveEndings.add(String(L"") + E + E);
         _adjectiveEndings.add(String(L"") + I + E);
@@ -109,57 +109,57 @@ Collection<String> RussianStemmer::adjectiveEndings() {
         _adjectiveEndings.add(String(L"") + O + G + O);
         _adjectiveEndings.add(String(L"") + E + M + U);
         _adjectiveEndings.add(String(L"") + O + M + U);
-    }
+    );
     return _adjectiveEndings;
 }
 
 Collection<String> RussianStemmer::participleEndings1() {
     static Collection<String> _participleEndings1;
-    if (!_participleEndings1) {
+    LUCENE_RUN_ONCE(
         _participleEndings1 = Collection<String>::newInstance();
         _participleEndings1.add(String(L"") + SHCH);
         _participleEndings1.add(String(L"") + E + M);
         _participleEndings1.add(String(L"") + N + N);
         _participleEndings1.add(String(L"") + V + SH);
         _participleEndings1.add(String(L"") + IU + SHCH);
-    }
+    );
     return _participleEndings1;
 }
 
 Collection<String> RussianStemmer::participleEndings2() {
     static Collection<String> _participleEndings2;
-    if (!_participleEndings2) {
+    LUCENE_RUN_ONCE(
         _participleEndings2 = Collection<String>::newInstance();
         _participleEndings2.add(String(L"") + I + V + SH);
         _participleEndings2.add(String(L"") + Y + V + SH);
         _participleEndings2.add(String(L"") + U + IU + SHCH);
-    }
+    );
     return _participleEndings2;
 }
 
 Collection<String> RussianStemmer::participle1Predessors() {
     static Collection<String> _participle1Predessors;
-    if (!_participle1Predessors) {
+    LUCENE_RUN_ONCE(
         _participle1Predessors = Collection<String>::newInstance();
         _participle1Predessors.add(String(L"") + A);
         _participle1Predessors.add(String(L"") + IA);
-    }
+	    );
     return _participle1Predessors;
 }
 
 Collection<String> RussianStemmer::reflexiveEndings() {
     static Collection<String> _participle1Predessors;
-    if (!_participle1Predessors) {
+    LUCENE_RUN_ONCE(
         _participle1Predessors = Collection<String>::newInstance();
         _participle1Predessors.add(String(L"") + S + IA);
         _participle1Predessors.add(String(L"") + S + SOFT);
-    }
+    );
     return _participle1Predessors;
 }
 
 Collection<String> RussianStemmer::verbEndings1() {
     static Collection<String> _verbEndings1;
-    if (!_verbEndings1) {
+    LUCENE_RUN_ONCE(
         _verbEndings1 = Collection<String>::newInstance();
         _verbEndings1.add(String(L"") + I_);
         _verbEndings1.add(String(L"") + L);
@@ -178,13 +178,13 @@ Collection<String> RussianStemmer::verbEndings1() {
         _verbEndings1.add(String(L"") + T + SOFT);
         _verbEndings1.add(String(L"") + E + SH + SOFT);
         _verbEndings1.add(String(L"") + N + N + O);
-    }
+    );
     return _verbEndings1;
 }
 
 Collection<String> RussianStemmer::verbEndings2() {
     static Collection<String> _verbEndings2;
-    if (!_verbEndings2) {
+    LUCENE_RUN_ONCE(
         _verbEndings2 = Collection<String>::newInstance();
         _verbEndings2.add(String(L"") + IU);
         _verbEndings2.add(String(L"") + U + IU);
@@ -215,23 +215,23 @@ Collection<String> RussianStemmer::verbEndings2() {
         _verbEndings2.add(String(L"") + I + SH + SOFT);
         _verbEndings2.add(String(L"") + E + I_ + T + E);
         _verbEndings2.add(String(L"") + U + I_ + T + E);
-    }
+    );
     return _verbEndings2;
 }
 
 Collection<String> RussianStemmer::verb1Predessors() {
     static Collection<String> _verb1Predessors;
-    if (!_verb1Predessors) {
+    LUCENE_RUN_ONCE(
         _verb1Predessors = Collection<String>::newInstance();
         _verb1Predessors.add(String(L"") + A);
         _verb1Predessors.add(String(L"") + IA);
-    }
+    );
     return _verb1Predessors;
 }
 
 Collection<String> RussianStemmer::nounEndings() {
     static Collection<String> _nounEndings;
-    if (!_nounEndings) {
+    LUCENE_RUN_ONCE(
         _nounEndings = Collection<String>::newInstance();
         _nounEndings.add(String(L"") + A);
         _nounEndings.add(String(L"") + U);
@@ -269,36 +269,36 @@ Collection<String> RussianStemmer::nounEndings() {
         _nounEndings.add(String(L"") + I + E + M);
         _nounEndings.add(String(L"") + I + IA + X);
         _nounEndings.add(String(L"") + I + IA + M + I);
-    }
+    );
     return _nounEndings;
 }
 
 Collection<String> RussianStemmer::superlativeEndings() {
     static Collection<String> _superlativeEndings;
-    if (!_superlativeEndings) {
+    LUCENE_RUN_ONCE(
         _superlativeEndings = Collection<String>::newInstance();
         _superlativeEndings.add(String(L"") + E + I_ + SH);
         _superlativeEndings.add(String(L"") + E + I_ + SH + E);
-    }
+	    );
     return _superlativeEndings;
 }
 
 Collection<String> RussianStemmer::derivationalEndings() {
     static Collection<String> _derivationalEndings;
-    if (!_derivationalEndings) {
+    LUCENE_RUN_ONCE(
         _derivationalEndings = Collection<String>::newInstance();
         _derivationalEndings.add(String(L"") + O + S + T);
         _derivationalEndings.add(String(L"") + O + S + T + SOFT);
-    }
+    );
     return _derivationalEndings;
 }
 
 Collection<String> RussianStemmer::doubleN() {
     static Collection<String> _doubleN;
-    if (!_doubleN) {
+    LUCENE_RUN_ONCE(
         _doubleN = Collection<String>::newInstance();
         _doubleN.add(String(L"") + N + N);
-    }
+    );
     return _doubleN;
 }
 

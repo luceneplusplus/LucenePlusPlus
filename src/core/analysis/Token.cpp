@@ -449,10 +449,10 @@ void Token::copyTo(const AttributePtr& target) {
 
 AttributeFactoryPtr Token::TOKEN_ATTRIBUTE_FACTORY() {
     static AttributeFactoryPtr _TOKEN_ATTRIBUTE_FACTORY;
-    if (!_TOKEN_ATTRIBUTE_FACTORY) {
+    LUCENE_RUN_ONCE(
         _TOKEN_ATTRIBUTE_FACTORY = newLucene<TokenAttributeFactory>(AttributeFactory::DEFAULT_ATTRIBUTE_FACTORY());
         CycleCheck::addStatic(_TOKEN_ATTRIBUTE_FACTORY);
-    }
+    );
     return _TOKEN_ATTRIBUTE_FACTORY;
 }
 

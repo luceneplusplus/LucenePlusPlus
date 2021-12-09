@@ -36,9 +36,9 @@ CJKAnalyzer::~CJKAnalyzer() {
 
 const HashSet<String> CJKAnalyzer::getDefaultStopSet() {
     static HashSet<String> stopSet;
-    if (!stopSet) {
+    LUCENE_RUN_ONCE(
         stopSet = HashSet<String>::newInstance(_STOP_WORDS, _STOP_WORDS + SIZEOF_ARRAY(_STOP_WORDS));
-    }
+    );
     return stopSet;
 }
 

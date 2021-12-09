@@ -410,10 +410,10 @@ FakeReader::~FakeReader() {
 
 IndexReaderPtr FakeReader::EMPTY_MEMORY_INDEX_READER() {
     static IndexReaderPtr _EMPTY_MEMORY_INDEX_READER;
-    if (!_EMPTY_MEMORY_INDEX_READER) {
+    LUCENE_RUN_ONCE(
         _EMPTY_MEMORY_INDEX_READER = newLucene<MemoryIndex>()->createSearcher()->getIndexReader();
         CycleCheck::addStatic(_EMPTY_MEMORY_INDEX_READER);
-    }
+    );
     return _EMPTY_MEMORY_INDEX_READER;
 }
 

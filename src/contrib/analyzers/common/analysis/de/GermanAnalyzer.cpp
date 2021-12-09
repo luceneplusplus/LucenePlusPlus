@@ -45,9 +45,9 @@ GermanAnalyzer::~GermanAnalyzer() {
 
 const HashSet<String> GermanAnalyzer::getDefaultStopSet() {
     static HashSet<String> stopSet;
-    if (!stopSet) {
+    LUCENE_RUN_ONCE(
         stopSet = HashSet<String>::newInstance(_GERMAN_STOP_WORDS, _GERMAN_STOP_WORDS + SIZEOF_ARRAY(_GERMAN_STOP_WORDS));
-    }
+    );
     return stopSet;
 }
 

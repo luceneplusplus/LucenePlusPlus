@@ -86,19 +86,19 @@ SortField::~SortField() {
 
 SortFieldPtr SortField::FIELD_SCORE() {
     static SortFieldPtr _FIELD_SCORE;
-    if (!_FIELD_SCORE) {
+    LUCENE_RUN_ONCE(
         _FIELD_SCORE = newLucene<SortField>(L"", SCORE);
         CycleCheck::addStatic(_FIELD_SCORE);
-    }
+    );
     return _FIELD_SCORE;
 }
 
 SortFieldPtr SortField::FIELD_DOC() {
     static SortFieldPtr _FIELD_DOC;
-    if (!_FIELD_DOC) {
+    LUCENE_RUN_ONCE(
         _FIELD_DOC = newLucene<SortField>(L"", DOC);
         CycleCheck::addStatic(_FIELD_DOC);
-    }
+    );
     return _FIELD_DOC;
 }
 

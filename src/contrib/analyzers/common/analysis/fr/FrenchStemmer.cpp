@@ -124,40 +124,42 @@ void FrenchStemmer::step1() {
 
 bool FrenchStemmer::step2a() {
     static Collection<String> search;
-    if (!search) {
-        static const wchar_t* _search[] = {
+    static const wchar_t* _search[] = {
             L"\x00eemes", L"\x00eetes", L"iraIent", L"irait", L"irais", L"irai", L"iras", L"ira",
             L"irent", L"iriez", L"irez", L"irions", L"irons", L"iront", L"issaIent",
             L"issais", L"issantes", L"issante", L"issants", L"issant", L"issait",
             L"issais", L"issions", L"issons", L"issiez", L"issez", L"issent", L"isses",
             L"isse", L"ir", L"is", L"\x00eet", L"it", L"ies", L"ie", L"i"
-        };
+    };
+
+    LUCENE_RUN_ONCE(
         search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
-    }
+    );
+    
     return deleteFromIfTestVowelBeforeIn(RV, search, false, RV);
 }
 
 void FrenchStemmer::step2b() {
     static Collection<String> suffix;
-    if (!suffix) {
-        static const wchar_t* _suffix[] = {
+    static const wchar_t* _suffix[] = {
             L"eraIent", L"erais", L"erait", L"erai", L"eras", L"erions", L"eriez",
             L"erons", L"eront", L"erez", L"\x00e8rent", L"era", L"\x00e9es", L"iez", L"\x00e9e", L"\x00e9s",
             L"er", L"ez", L"\x00e9"
-        };
+    };
+    LUCENE_RUN_ONCE(
         suffix = Collection<String>::newInstance(_suffix, _suffix + SIZEOF_ARRAY(_suffix));
-    }
+    );
     deleteFrom(RV, suffix);
 
     static Collection<String> search;
-    if (!search) {
-        static const wchar_t* _search[] = {
+    static const wchar_t* _search[] = {
             L"assions", L"assiez", L"assent", L"asses", L"asse", L"aIent", L"antes",
             L"aIent", L"Aient", L"ante", L"\x00e2mes", L"\x00e2tes", L"ants", L"ant", L"ait",
             L"a\x00eet", L"ais", L"Ait", L"A\x00eet", L"Ais", L"\x00e2t", L"as", L"ai", L"Ai", L"a"
-        };
-        search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
-    }
+    };
+    LUCENE_RUN_ONCE(
+	    search = Collection<String>::newInstance(_search, _search + SIZEOF_ARRAY(_search));
+    );
     deleteButSuffixFrom(RV, search, L"e", true);
 
     deleteFrom(R2, newCollection<String>(L"ions"));

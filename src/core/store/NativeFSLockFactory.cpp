@@ -53,17 +53,17 @@ NativeFSLock::~NativeFSLock() {
 
 SynchronizePtr NativeFSLock::LOCK_HELD_LOCK() {
     static SynchronizePtr _LOCK_HELD_LOCK;
-    if (!_LOCK_HELD_LOCK) {
+    LUCENE_RUN_ONCE(
         _LOCK_HELD_LOCK = newInstance<Synchronize>();
-    }
+    );
     return _LOCK_HELD_LOCK;
 }
 
 HashSet<String> NativeFSLock::LOCK_HELD() {
     static HashSet<String> _LOCK_HELD;
-    if (!_LOCK_HELD) {
+    LUCENE_RUN_ONCE(
         _LOCK_HELD = HashSet<String>::newInstance();
-    }
+    );
     return _LOCK_HELD;
 }
 

@@ -29,9 +29,9 @@ TopFieldCollector::~TopFieldCollector() {
 
 const Collection<ScoreDocPtr> TopFieldCollector::EMPTY_SCOREDOCS() {
     static Collection<ScoreDocPtr> _EMPTY_SCOREDOCS;
-    if (!_EMPTY_SCOREDOCS) {
+    LUCENE_RUN_ONCE(
         _EMPTY_SCOREDOCS = Collection<ScoreDocPtr>::newInstance();
-    }
+    );
     return _EMPTY_SCOREDOCS;
 }
 

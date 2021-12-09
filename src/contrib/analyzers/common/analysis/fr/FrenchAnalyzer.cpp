@@ -61,9 +61,9 @@ FrenchAnalyzer::~FrenchAnalyzer() {
 
 const HashSet<String> FrenchAnalyzer::getDefaultStopSet() {
     static HashSet<String> stoptable;
-    if (!stoptable) {
+    LUCENE_RUN_ONCE(
         stoptable = HashSet<String>::newInstance(_FRENCH_STOP_WORDS, _FRENCH_STOP_WORDS + SIZEOF_ARRAY(_FRENCH_STOP_WORDS));
-    }
+    );
     return stoptable;
 }
 

@@ -7,7 +7,9 @@
 #ifndef SYNCHRONIZE_H
 #define SYNCHRONIZE_H
 
+#include <atomic>
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/mutex.hpp>
 #include "Lucene.h"
 
 namespace Lucene {
@@ -59,6 +61,21 @@ protected:
 protected:
     void lock(int32_t timeout);
 };
+
+
+#define LUCENE_RUN_ONCE(Command)					\
+    do {								\
+        static std::atomic<bool> RUN_ONCE_hasRun = {};		        \
+	if (!RUN_ONCE_hasRun) {					        \
+            static boost::mutex RUN_ONCE_mutex;			        \
+            boost::mutex::scoped_lock RUN_ONCE_lock(RUN_ONCE_mutex);	\
+            if (!RUN_ONCE_hasRun) {					\
+                Command;						\
+                RUN_ONCE_hasRun = true;					\
+            }								\
+        }								\
+    } while(0)
+
 
 }
 

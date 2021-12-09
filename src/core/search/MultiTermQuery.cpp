@@ -30,37 +30,37 @@ MultiTermQuery::~MultiTermQuery() {
 
 RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_FILTER_REWRITE() {
     static RewriteMethodPtr _CONSTANT_SCORE_FILTER_REWRITE;
-    if (!_CONSTANT_SCORE_FILTER_REWRITE) {
+    LUCENE_RUN_ONCE(
         _CONSTANT_SCORE_FILTER_REWRITE = newLucene<ConstantScoreFilterRewrite>();
         CycleCheck::addStatic(_CONSTANT_SCORE_FILTER_REWRITE);
-    }
+    );
     return _CONSTANT_SCORE_FILTER_REWRITE;
 }
 
 RewriteMethodPtr MultiTermQuery::SCORING_BOOLEAN_QUERY_REWRITE() {
     static RewriteMethodPtr _SCORING_BOOLEAN_QUERY_REWRITE;
-    if (!_SCORING_BOOLEAN_QUERY_REWRITE) {
+    LUCENE_RUN_ONCE(
         _SCORING_BOOLEAN_QUERY_REWRITE = newLucene<ScoringBooleanQueryRewrite>();
         CycleCheck::addStatic(_SCORING_BOOLEAN_QUERY_REWRITE);
-    }
+    );
     return _SCORING_BOOLEAN_QUERY_REWRITE;
 }
 
 RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE() {
     static RewriteMethodPtr _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
-    if (!_CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE) {
+    LUCENE_RUN_ONCE(
         _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = newLucene<ConstantScoreBooleanQueryRewrite>();
         CycleCheck::addStatic(_CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE);
-    }
+    );
     return _CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
 }
 
 RewriteMethodPtr MultiTermQuery::CONSTANT_SCORE_AUTO_REWRITE_DEFAULT() {
     static RewriteMethodPtr _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
-    if (!_CONSTANT_SCORE_AUTO_REWRITE_DEFAULT) {
+    LUCENE_RUN_ONCE(
         _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = newLucene<ConstantScoreAutoRewriteDefault>();
         CycleCheck::addStatic(_CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
-    }
+    );
     return _CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
 }
 

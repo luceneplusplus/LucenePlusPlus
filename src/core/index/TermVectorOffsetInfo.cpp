@@ -19,9 +19,9 @@ TermVectorOffsetInfo::~TermVectorOffsetInfo() {
 
 const Collection<TermVectorOffsetInfoPtr> TermVectorOffsetInfo::EMPTY_OFFSET_INFO() {
     static Collection<TermVectorOffsetInfoPtr> _EMPTY_OFFSET_INFO;
-    if (!_EMPTY_OFFSET_INFO) {
+    LUCENE_RUN_ONCE(
         _EMPTY_OFFSET_INFO = Collection<TermVectorOffsetInfoPtr>::newInstance();
-    }
+    );
     return _EMPTY_OFFSET_INFO;
 }
 

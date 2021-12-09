@@ -266,9 +266,9 @@ void IndexWriter::initialize() {
 
 int32_t IndexWriter::MAX_TERM_LENGTH() {
     static int32_t _MAX_TERM_LENGTH = 0;
-    if (_MAX_TERM_LENGTH == 0) {
+    LUCENE_RUN_ONCE(
         _MAX_TERM_LENGTH = DocumentsWriter::MAX_TERM_LENGTH;
-    }
+    );
     return _MAX_TERM_LENGTH;
 }
 
