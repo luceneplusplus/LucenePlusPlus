@@ -11,8 +11,8 @@
 
 #define DECLARE_SHARED_PTR(Type) \
     class Type; \
-    typedef boost::shared_ptr<Type> Type##Ptr; \
-    typedef boost::weak_ptr<Type> Type##WeakPtr;
+    typedef std::shared_ptr<Type> Type##Ptr; \
+    typedef std::weak_ptr<Type> Type##WeakPtr;
 
 namespace Lucene {
 

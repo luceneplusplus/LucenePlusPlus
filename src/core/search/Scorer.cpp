@@ -60,7 +60,7 @@ namespace Lucene {
     }
     
     void Scorer::visitScorers(ScorerVisitor *visitor) {
-        boost::shared_ptr<Query> s_obj;
+        std::shared_ptr<Query> s_obj;
         
         visitSubScorers(s_obj, BooleanClause::MUST/*must id default*/, visitor);
     }

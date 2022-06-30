@@ -28,7 +28,7 @@ public:
     }
 
 protected:
-    boost::shared_ptr<map_type> mapContainer;
+    std::shared_ptr<map_type> mapContainer;
 
 public:
     static this_type newInstance() {

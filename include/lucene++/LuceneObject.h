@@ -23,12 +23,12 @@
 
 #define LUCENE_CLASS(Name) \
     LUCENE_INTERFACE(Name); \
-    boost::shared_ptr<Name> shared_from_this() { return boost::static_pointer_cast<Name>(LuceneObject::shared_from_this()); } \
+    std::shared_ptr<Name> shared_from_this() { return std::static_pointer_cast<Name>(LuceneObject::shared_from_this()); } \
 
 namespace Lucene {
 
 /// Base class for all Lucene classes
-class LPPAPI LuceneObject : public LuceneSync, public boost::enable_shared_from_this<LuceneObject> {
+class LPPAPI LuceneObject : public LuceneSync, public std::enable_shared_from_this<LuceneObject> {
 public:
     virtual ~LuceneObject();
 
