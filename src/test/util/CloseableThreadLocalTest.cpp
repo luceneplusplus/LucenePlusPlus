@@ -21,7 +21,7 @@ TEST_F(CloseableThreadLocalTest, testInitValue) {
         }
 
     protected:
-        virtual boost::shared_ptr<String> initialValue() {
+        virtual std::shared_ptr<String> initialValue() {
             return newInstance<String>(TEST_VALUE);
         }
     };
@@ -34,7 +34,7 @@ TEST_F(CloseableThreadLocalTest, testInitValue) {
 /// Tests that null can be set as a valid value.
 TEST_F(CloseableThreadLocalTest, testNullValue) {
     CloseableThreadLocal<String> ctl;
-    ctl.set(boost::shared_ptr<String>());
+    ctl.set(std::shared_ptr<String>());
     EXPECT_TRUE(!ctl.get());
 }
 

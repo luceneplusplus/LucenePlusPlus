@@ -113,7 +113,7 @@ protected:
     static const int32_t jj_la1_1[];
 
     struct JJCalls;
-    typedef boost::shared_ptr<JJCalls> JJCallsPtr;
+    typedef std::shared_ptr<JJCalls> JJCallsPtr;
 
     struct JJCalls {
         JJCalls() {

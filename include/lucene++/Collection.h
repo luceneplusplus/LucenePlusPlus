@@ -17,7 +17,7 @@ template <class TYPE>
 class Collection : public LuceneSync {
 public:
     typedef Collection<TYPE> this_type;
-    typedef boost::shared_ptr<this_type> shared_ptr;
+    typedef std::shared_ptr<this_type> shared_ptr;
     typedef std::vector<TYPE> collection_type;
     typedef typename collection_type::iterator iterator;
     typedef typename collection_type::const_iterator const_iterator;
@@ -27,7 +27,7 @@ public:
     }
 
 protected:
-    boost::shared_ptr<collection_type> container;
+    std::shared_ptr<collection_type> container;
 
 public:
     static this_type newInstance(int32_t size = 0) {

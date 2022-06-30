@@ -90,7 +90,7 @@ public:
 const int32_t TestRAMDirectoryThread::numThreads = 10;
 const int32_t TestRAMDirectoryThread::docsPerThread = 40;
 
-typedef boost::shared_ptr<TestRAMDirectoryThread> TestRAMDirectoryThreadPtr;
+typedef std::shared_ptr<TestRAMDirectoryThread> TestRAMDirectoryThreadPtr;
 
 /// Fake a huge ram file by using the same byte buffer for all buffers under INT_MAX.
 class DenseRAMFile : public RAMFile {
@@ -127,7 +127,7 @@ protected:
 
 const int64_t DenseRAMFile::MAX_VALUE = 2 * (int64_t)INT_MAX;
 
-typedef boost::shared_ptr<DenseRAMFile> DenseRAMFilePtr;
+typedef std::shared_ptr<DenseRAMFile> DenseRAMFilePtr;
 
 TEST_F(RAMDirectoryTest, testRAMDirectory) {
     DirectoryPtr dir(FSDirectory::open(indexDir));

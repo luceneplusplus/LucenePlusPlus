@@ -76,7 +76,7 @@ public:
         MiscUtils::arrayCopy(other.result.get(), 0, result.get(), 0, other.length);
     }
 
-    void copyText(boost::shared_ptr< TranslationResult<TYPE> > other) {
+    void copyText(std::shared_ptr< TranslationResult<TYPE> > other) {
         copyText(*other);
     }
 };

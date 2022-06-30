@@ -26,7 +26,7 @@ public:
     }
 
 protected:
-    boost::shared_ptr<set_type> setContainer;
+    std::shared_ptr<set_type> setContainer;
 
 public:
     static this_type newInstance() {

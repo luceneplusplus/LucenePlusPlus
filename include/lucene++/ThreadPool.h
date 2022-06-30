@@ -7,6 +7,7 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
+#include <memory>
 #include <boost/asio.hpp>
 #include <boost/any.hpp>
 #include <boost/thread/thread.hpp>
@@ -14,7 +15,7 @@
 
 namespace Lucene {
 
-typedef boost::shared_ptr<boost::asio::io_service::work> workPtr;
+typedef std::shared_ptr<boost::asio::io_service::work> workPtr;
 
 /// A Future represents the result of an asynchronous computation. Methods are provided to check if the computation
 /// is complete, to wait for its completion, and to retrieve the result of the computation. The result can only be

@@ -8,6 +8,7 @@
 #define ARRAY_H
 
 #include <cstring>
+#include <memory>
 #include "Lucene.h"
 
 namespace Lucene {
@@ -54,7 +55,7 @@ public:
     }
 
 protected:
-    boost::shared_ptr<array_type> container;
+    std::shared_ptr<array_type> container;
     array_type* array;
 
 public:

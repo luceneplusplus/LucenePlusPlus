@@ -15,7 +15,7 @@ namespace Lucene {
 template <typename TYPE>
 class CloseableThreadLocal : public LuceneObject {
 public:
-    typedef boost::shared_ptr<TYPE> localDataPtr;
+    typedef std::shared_ptr<TYPE> localDataPtr;
     typedef Map<int64_t, localDataPtr> MapLocalData;
 
     CloseableThreadLocal() {
