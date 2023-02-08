@@ -49,6 +49,10 @@ OPTION(
     "Build the Lucene++ documentation."
     OFF)
 
+OPTION(
+    ENABLE_CONTRIB
+    "Enable building contrib library"
+    ON)
 
 # documentation options
 #========================================================================
