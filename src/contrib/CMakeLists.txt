@@ -11,6 +11,11 @@ else()
   add_library(lucene++-contrib STATIC)
 endif()
 
+set(lucene++-contrib_SOVERSION "0")
+
+set(lucene++-contrib_VERSION
+  "${lucene++_VERSION_MAJOR}.${lucene++_VERSION_MINOR}.${lucene++_VERSION_PATCH}")
+
 add_library(lucene++::lucene++-contrib ALIAS lucene++-contrib)
 
 
