@@ -8,7 +8,7 @@ project(lucene++)
 
 set(lucene++_VERSION_MAJOR 3)
 set(lucene++_VERSION_MINOR 0)
-set(lucene++_VERSION_PATCH 8)
+set(lucene++_VERSION_PATCH 9)
 set(lucene++_SOVERSION "0")
 
 set(lucene++_VERSION
