@@ -36,7 +36,7 @@ MMapIndexInput::MMapIndexInput(const String& path) {
     bufferPosition = 0;
     if (!path.empty()) {
         try {
-            file.open(boost::filesystem::wpath(path), _length);
+            file.open(boost::filesystem::path(path), _length);
         } catch (...) {
             boost::throw_exception(FileNotFoundException(path));
         }
