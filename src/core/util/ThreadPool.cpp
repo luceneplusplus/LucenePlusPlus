@@ -14,15 +14,16 @@ Future::~Future() {
 
 const int32_t ThreadPool::THREADPOOL_SIZE = 5;
 
-ThreadPool::ThreadPool() {
-    work.reset(new boost::asio::io_service::work(io_service));
+ThreadPool::ThreadPool()
+    :
+        work(boost::asio::make_work_guard(io_context))
+{
     for (int32_t i = 0; i < THREADPOOL_SIZE; ++i) {
-        threadGroup.create_thread(boost::bind(&boost::asio::io_service::run, &io_service));
+        threadGroup.create_thread(boost::bind(&boost::asio::io_context::run, &io_context));
     }
 }
 
 ThreadPool::~ThreadPool() {
-    work.reset(); // stop all threads
     threadGroup.join_all(); // wait for all competition
 }
 
