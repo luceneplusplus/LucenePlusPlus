@@ -167,7 +167,7 @@ public:
     }
 
     void swap(this_type& other) {
-        container.swap(other->container);
+        container.swap(other.container);
     }
 
     TYPE& operator[] (int32_t pos) {

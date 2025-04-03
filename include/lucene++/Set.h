@@ -108,7 +108,7 @@ public:
     }
 
     void swap(this_type& other) {
-        setContainer.swap(other->setContainer);
+        setContainer.swap(other.setContainer);
     }
 
     operator bool() const {
