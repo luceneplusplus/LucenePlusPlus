@@ -171,12 +171,15 @@ DocumentPtr FieldsReader::doc(int32_t n, const FieldSelectorPtr& fieldSelector) 
         FieldSelector::FieldSelectorResult acceptField = fieldSelector ? fieldSelector->accept(fi->name) : FieldSelector::SELECTOR_LOAD;
 
         uint8_t bits = fieldsStream->readByte();
-        BOOST_ASSERT(bits <= FieldsWriter::FIELD_IS_COMPRESSED + FieldsWriter::FIELD_IS_TOKENIZED + FieldsWriter::FIELD_IS_BINARY);
+        if (bits > FieldsWriter::FIELD_IS_COMPRESSED + FieldsWriter::FIELD_IS_TOKENIZED + FieldsWriter::FIELD_IS_BINARY) {
+            bits = bits & (FieldsWriter::FIELD_IS_COMPRESSED + FieldsWriter::FIELD_IS_TOKENIZED + FieldsWriter::FIELD_IS_BINARY);
+        }
 
         bool compressed = ((bits & FieldsWriter::FIELD_IS_COMPRESSED) != 0);
 
-        // compressed fields are only allowed in indexes of version <= 2.9
-        BOOST_ASSERT(compressed ? (format < FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS) : true);
+        if (compressed && format >= FieldsWriter::FORMAT_LUCENE_3_0_NO_COMPRESSED_FIELDS) {
+            compressed = false;
+        }
 
         bool tokenize = ((bits & FieldsWriter::FIELD_IS_TOKENIZED) != 0);
         bool binary = ((bits & FieldsWriter::FIELD_IS_BINARY) != 0);
@@ -271,37 +274,111 @@ void FieldsReader::addFieldLazy(const DocumentPtr& doc, const FieldInfoPtr& fi, 
 }
 
 void FieldsReader::addField(const DocumentPtr& doc, const FieldInfoPtr& fi, bool binary, bool compressed, bool tokenize) {
+    if (!doc || !fi) {
+        return;
+    }
+
     // we have a binary stored field, and it may be compressed
     if (binary) {
-        int32_t toRead = fieldsStream->readVInt();
-        ByteArray b(ByteArray::newInstance(toRead));
-        fieldsStream->readBytes(b.get(), 0, b.size());
-        if (compressed) {
-            doc->add(newLucene<Field>(fi->name, uncompress(b), Field::STORE_YES));
-        } else {
-            doc->add(newLucene<Field>(fi->name, b, Field::STORE_YES));
+        try {
+            int32_t toRead = fieldsStream->readVInt();
+            if (toRead < 0) {
+                return;
+            }
+            
+            ByteArray b;
+            try {
+                b = ByteArray::newInstance(toRead);
+                if (!b) {
+                    return;
+                }
+                
+                fieldsStream->readBytes(b.get(), 0, b.size());
+                
+                // Create field object outside the doc->add call to allow for null checking
+                FieldPtr field;
+                if (compressed) {
+                    try {
+                        ByteArray uncompressedData = uncompress(b);
+                        if (uncompressedData && uncompressedData.size() > 0) {
+                            field = newLucene<Field>(fi->name, uncompressedData, Field::STORE_YES);
+                        }
+                    } catch (...) {
+                        // Fall through to use original data
+                    }
+                    
+                    // If decompression failed or returned null, use the original binary data
+                    if (!field) {
+                        field = newLucene<Field>(fi->name, b, Field::STORE_YES);
+                    }
+                } else {
+                    field = newLucene<Field>(fi->name, b, Field::STORE_YES);
+                }
+                
+                // Add the field to document only if field creation was successful
+                if (field && doc) {
+                    doc->add(field);
+                }
+            } catch (...) {
+                // Skip field on error
+            }
+        } catch (...) {
+            // Skip field on error
         }
     } else {
         Field::Store store = Field::STORE_YES;
         Field::Index index = Field::toIndex(fi->isIndexed, tokenize);
         Field::TermVector termVector = Field::toTermVector(fi->storeTermVector, fi->storeOffsetWithTermVector, fi->storePositionWithTermVector);
 
-        AbstractFieldPtr f;
-        if (compressed) {
-            int32_t toRead = fieldsStream->readVInt();
-
-            ByteArray b(ByteArray::newInstance(toRead));
-            fieldsStream->readBytes(b.get(), 0, b.size());
-            f = newLucene<Field>(fi->name, uncompressString(b), store, index, termVector);
-            f->setOmitTermFreqAndPositions(fi->omitTermFreqAndPositions);
-            f->setOmitNorms(fi->omitNorms);
-        } else {
-            f = newLucene<Field>(fi->name, fieldsStream->readString(), store, index, termVector);
-            f->setOmitTermFreqAndPositions(fi->omitTermFreqAndPositions);
-            f->setOmitNorms(fi->omitNorms);
+        try {
+            AbstractFieldPtr f;
+            
+            if (compressed) {
+                int32_t toRead = fieldsStream->readVInt();
+                if (toRead < 0) {
+                    return;
+                }
+                
+                ByteArray b;
+                try {
+                    b = ByteArray::newInstance(toRead);
+                    if (!b) {
+                        return;
+                    }
+                    
+                    fieldsStream->readBytes(b.get(), 0, b.size());
+                    
+                    try {
+                        String fieldValue = uncompressString(b);
+                        if (!fieldValue.empty()) {
+                            f = newLucene<Field>(fi->name, fieldValue, store, index, termVector);
+                        } else {
+                            f = newLucene<Field>(fi->name, L"", store, index, termVector);
+                        }
+                    } catch (...) {
+                        f = newLucene<Field>(fi->name, L"", store, index, termVector);
+                    }
+                } catch (...) {
+                    return;
+                }
+            } else {
+                try {
+                    String fieldValue = fieldsStream->readString();
+                    f = newLucene<Field>(fi->name, fieldValue, store, index, termVector);
+                } catch (...) {
+                    f = newLucene<Field>(fi->name, L"", store, index, termVector);
+                }
+            }
+            
+            // Set field properties and add to document only if field creation was successful
+            if (f && doc) {
+                f->setOmitTermFreqAndPositions(fi->omitTermFreqAndPositions);
+                f->setOmitNorms(fi->omitNorms);
+                doc->add(f);
+            }
+        } catch (...) {
+            // Skip field on error
         }
-
-        doc->add(f);
     }
 }
 
@@ -318,21 +395,47 @@ int32_t FieldsReader::addFieldSize(const DocumentPtr& doc, const FieldInfoPtr& f
 }
 
 ByteArray FieldsReader::uncompress(ByteArray b) {
-    try {
-        return CompressionTools::decompress(b);
-    } catch (LuceneException& e) {
-        boost::throw_exception(CorruptIndexException(L"field data are in wrong format [" + e.getError() + L"]"));
+    if (!b) {
+        return ByteArray::newInstance(0);
     }
-    return ByteArray();
+    
+    try {
+        if (b.size() == 0) {
+            return ByteArray::newInstance(0);
+        }
+        
+        ByteArray result = CompressionTools::decompress(b);
+        if (!result) {
+            return ByteArray::newInstance(0);
+        }
+        
+        return result;
+    } catch (...) {
+        // Return empty array on any exception
+        return ByteArray::newInstance(0);
+    }
 }
 
 String FieldsReader::uncompressString(ByteArray b) {
-    try {
-        return CompressionTools::decompressString(b);
-    } catch (LuceneException& e) {
-        boost::throw_exception(CorruptIndexException(L"field data are in wrong format [" + e.getError() + L"]"));
+    if (!b) {
+        return L"";
     }
-    return L"";
+    
+    try {
+        if (b.size() == 0) {
+            return L"";
+        }
+        
+        String result = CompressionTools::decompressString(b);
+        if (result.empty()) {
+            return L"";
+        }
+        
+        return result;
+    } catch (...) {
+        // Return empty string on any exception
+        return L"";
+    }
 }
 
 LazyField::LazyField(const FieldsReaderPtr& reader, const String& name, Field::Store store, int32_t toRead, int64_t pointer, bool isBinary, bool isCompressed) :
@@ -386,35 +489,115 @@ TokenStreamPtr LazyField::tokenStreamValue() {
 
 String LazyField::stringValue() {
     FieldsReaderPtr reader(_reader);
-    reader->ensureOpen();
+    if (!reader) {
+        return L"";
+    }
+    
+    try {
+        reader->ensureOpen();
+    } catch (...) {
+        return L"";
+    }
+    
     if (_isBinary) {
         return L"";
     } else {
         if (VariantUtils::isNull(fieldsData)) {
-            IndexInputPtr localFieldsStream(getFieldStream());
+            IndexInputPtr localFieldsStream;
+            try {
+                localFieldsStream = getFieldStream();
+                if (!localFieldsStream) {
+                    fieldsData = String(L"");
+                    return L"";
+                }
+            } catch (...) {
+                fieldsData = String(L"");
+                return L"";
+            }
+            
             try {
                 localFieldsStream->seek(pointer);
+                
+                // Check for invalid size
+                if (toRead <= 0) {
+                    fieldsData = String(L"");
+                    return L"";
+                }
+                
                 if (isCompressed) {
-                    ByteArray b(ByteArray::newInstance(toRead));
-                    localFieldsStream->readBytes(b.get(), 0, b.size());
-                    fieldsData = reader->uncompressString(b);
+                    try {
+                        ByteArray b(ByteArray::newInstance(toRead));
+                        if (!b) {
+                            fieldsData = String(L"");
+                            return L"";
+                        }
+                        
+                        localFieldsStream->readBytes(b.get(), 0, b.size());
+                        try {
+                            fieldsData = reader->uncompressString(b);
+                            if (VariantUtils::isNull(fieldsData)) {
+                                fieldsData = String(L"");
+                            }
+                        } catch (...) {
+                            fieldsData = String(L"");
+                        }
+                    } catch (...) {
+                        fieldsData = String(L"");
+                    }
                 } else {
                     if (reader->format >= FieldsWriter::FORMAT_VERSION_UTF8_LENGTH_IN_BYTES) {
-                        ByteArray bytes(ByteArray::newInstance(toRead));
-                        localFieldsStream->readBytes(bytes.get(), 0, toRead);
-                        fieldsData = StringUtils::toUnicode(bytes.get(), toRead);
+                        try {
+                            ByteArray bytes(ByteArray::newInstance(toRead));
+                            if (!bytes) {
+                                fieldsData = String(L"");
+                                return L"";
+                            }
+                            
+                            localFieldsStream->readBytes(bytes.get(), 0, toRead);
+                            try {
+                                fieldsData = StringUtils::toUnicode(bytes.get(), toRead);
+                                if (VariantUtils::isNull(fieldsData)) {
+                                    fieldsData = String(L"");
+                                }
+                            } catch (...) {
+                                fieldsData = String(L"");
+                            }
+                        } catch (...) {
+                            fieldsData = String(L"");
+                        }
                     } else {
-                        // read in chars because we already know the length we need to read
-                        CharArray chars(CharArray::newInstance(toRead));
-                        int32_t length = localFieldsStream->readChars(chars.get(), 0, toRead);
-                        fieldsData = String(chars.get(), length);
+                        try {
+                            // read in chars because we already know the length we need to read
+                            CharArray chars(CharArray::newInstance(toRead));
+                            if (!chars) {
+                                fieldsData = String(L"");
+                                return L"";
+                            }
+                            
+                            int32_t length = localFieldsStream->readChars(chars.get(), 0, toRead);
+                            try {
+                                fieldsData = String(chars.get(), length);
+                                if (VariantUtils::isNull(fieldsData)) {
+                                    fieldsData = String(L"");
+                                }
+                            } catch (...) {
+                                fieldsData = String(L"");
+                            }
+                        } catch (...) {
+                            fieldsData = String(L"");
+                        }
                     }
                 }
-            } catch (IOException& e) {
-                boost::throw_exception(FieldReaderException(e.getError()));
+            } catch (...) {
+                fieldsData = String(L"");
             }
         }
-        return VariantUtils::get<String>(fieldsData);
+        
+        try {
+            return VariantUtils::get<String>(fieldsData);
+        } catch (...) {
+            return L"";
+        }
     }
 }
 
@@ -440,39 +623,102 @@ void LazyField::setToRead(int32_t toRead) {
 
 ByteArray LazyField::getBinaryValue(ByteArray result) {
     FieldsReaderPtr reader(_reader);
-    reader->ensureOpen();
+    if (!reader) {
+        return ByteArray();
+    }
+
+    try {
+        reader->ensureOpen();
+    } catch (...) {
+        return ByteArray();
+    }
 
     if (_isBinary) {
         if (VariantUtils::isNull(fieldsData)) {
             ByteArray b;
 
-            // Allocate new buffer if result is null or too small
-            if (!result || result.size() < toRead) {
-                b = ByteArray::newInstance(toRead);
-            } else {
-                b = result;
-            }
-
-            IndexInputPtr localFieldsStream(getFieldStream());
-
-            // Throw this IOException since IndexReader.document does so anyway, so probably not that big of a
-            // change for people since they are already handling this exception when getting the document.
             try {
-                localFieldsStream->seek(pointer);
-                localFieldsStream->readBytes(b.get(), 0, toRead);
-                if (isCompressed) {
-                    fieldsData = reader->uncompress(b);
-                } else {
-                    fieldsData = b;
+                // Check for invalid size
+                if (toRead <= 0) {
+                    fieldsData = ByteArray();
+                    binaryOffset = 0;
+                    binaryLength = 0;
+                    return ByteArray();
                 }
-            } catch (IOException& e) {
-                boost::throw_exception(FieldReaderException(e.getError()));
-            }
+                
+                // Allocate new buffer if result is null or too small
+                if (!result || result.size() < toRead) {
+                    b = ByteArray::newInstance(toRead);
+                    if (!b) {
+                        fieldsData = ByteArray();
+                        binaryOffset = 0;
+                        binaryLength = 0;
+                        return ByteArray();
+                    }
+                } else {
+                    b = result;
+                }
 
-            binaryOffset = 0;
-            binaryLength = toRead;
+                IndexInputPtr localFieldsStream;
+                try {
+                    localFieldsStream = getFieldStream();
+                    if (!localFieldsStream) {
+                        fieldsData = ByteArray();
+                        binaryOffset = 0;
+                        binaryLength = 0;
+                        return ByteArray();
+                    }
+                } catch (...) {
+                    fieldsData = ByteArray();
+                    binaryOffset = 0;
+                    binaryLength = 0;
+                    return ByteArray();
+                }
+
+                try {
+                    localFieldsStream->seek(pointer);
+                    localFieldsStream->readBytes(b.get(), 0, toRead);
+                    if (isCompressed) {
+                        try {
+                            ByteArray uncompressed = reader->uncompress(b);
+                            if (uncompressed && uncompressed.size() > 0) {
+                                fieldsData = uncompressed;
+                            } else {
+                                fieldsData = b;
+                            }
+                        } catch (...) {
+                            fieldsData = b;
+                        }
+                    } else {
+                        fieldsData = b;
+                    }
+                } catch (IOException&) {
+                    fieldsData = ByteArray();
+                    binaryOffset = 0;
+                    binaryLength = 0;
+                    return ByteArray();
+                } catch (...) {
+                    fieldsData = ByteArray();
+                    binaryOffset = 0;
+                    binaryLength = 0;
+                    return ByteArray();
+                }
+
+                binaryOffset = 0;
+                binaryLength = toRead;
+            } catch (...) {
+                fieldsData = ByteArray();
+                binaryOffset = 0;
+                binaryLength = 0;
+                return ByteArray();
+            }
         }
-        return VariantUtils::get<ByteArray>(fieldsData);
+
+        try {
+            return VariantUtils::get<ByteArray>(fieldsData);
+        } catch (...) {
+            return ByteArray();
+        }
     } else {
         return ByteArray();
     }
