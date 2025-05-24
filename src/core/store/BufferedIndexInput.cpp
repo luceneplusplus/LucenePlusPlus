@@ -32,10 +32,10 @@ uint8_t BufferedIndexInput::readByte() {
     return __buffer[bufferPosition++];
 }
 
-static const int MAX_VARINT32_LENGHT = 5;
+static const int MAX_VARINT32_LENGTH = 5;
 
 int32_t BufferedIndexInput::readVInt() {
-    if (bufferPosition + MAX_VARINT32_LENGHT < bufferLength) {
+    if (bufferPosition + MAX_VARINT32_LENGTH < bufferLength) {
         uint8_t b = __buffer[bufferPosition++];
         int32_t i = (b & 0x7f);
         for (int32_t shift = 7; (b & 0x80) != 0; shift += 7) {
