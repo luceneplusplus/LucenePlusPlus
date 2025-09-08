@@ -8,8 +8,10 @@ if(MSVC)
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 endif()
 
-add_subdirectory(gtest)
-
+find_package(GTest)
+if(NOT GTEST_FOUND)
+  add_subdirectory(gtest)
+endif()
 
 ####################################
 # src
