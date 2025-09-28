@@ -7,7 +7,6 @@ find_package(Boost COMPONENTS
   filesystem
   iostreams
   regex
-  system
   thread
   REQUIRED
 )
