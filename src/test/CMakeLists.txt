@@ -59,7 +59,6 @@ target_link_libraries(lucene++-tester
     Boost::filesystem
     Boost::iostreams
     Boost::regex
-    Boost::system
     Boost::thread
     ZLIB::ZLIB
     gtest_main
