@@ -38,7 +38,6 @@ target_link_libraries(deletefiles
     Boost::filesystem
     Boost::iostreams
     Boost::regex
-    Boost::system
     Boost::thread
     ZLIB::ZLIB
     lucene++::lucene++
