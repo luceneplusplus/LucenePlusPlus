@@ -57,7 +57,6 @@ target_link_libraries(lucene++
     Boost::filesystem
     Boost::iostreams
     Boost::regex
-    Boost::system
     Boost::thread
     ZLIB::ZLIB
 )

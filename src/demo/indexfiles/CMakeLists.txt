@@ -39,7 +39,6 @@ target_link_libraries(indexfiles
     Boost::filesystem
     Boost::iostreams
     Boost::regex
-    Boost::system
     Boost::thread
     ZLIB::ZLIB
     lucene++::lucene++
