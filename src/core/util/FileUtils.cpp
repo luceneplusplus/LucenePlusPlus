@@ -93,17 +93,29 @@ bool isDirectory(const String& path) {
 
 bool listDirectory(const String& path, bool filesOnly, HashSet<String> dirList) {
     boost::system::error_code ec;
-    boost::filesystem::directory_iterator dir(path.c_str(), ec);
-    if (ec) {
-        return false;
-    }
 
-    for (; dir != boost::filesystem::directory_iterator(); ++dir) {
-        if (!filesOnly || !boost::filesystem::is_directory(dir->status())) {
+    do {
+        ec.clear();
+        boost::filesystem::directory_iterator dir(path.c_str(), ec);
+        if (ec) {
+            break;
+        }
+
+        for (; dir != boost::filesystem::directory_iterator(); ++dir) {
+            if (filesOnly) {
+                bool is_dir = boost::filesystem::is_directory(dir->status(ec));
+                if (ec) {
+                    dirList.clear();
+                    break;
+                } else if (is_dir) {
+                    continue;
+                }
+            }
             dirList.add(dir->path().filename().wstring().c_str());
         }
-    }
-    return true;
+    } while (ec == boost::system::error_code(ENOENT, boost::system::system_category()));
+
+    return !ec;
 }
 
 bool copyDirectory(const String& source, const String& dest) {
