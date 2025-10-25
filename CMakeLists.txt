@@ -46,7 +46,7 @@ include(dependencies)
 # build docs
 include(Lucene++Docs)
 
-# Enable C++11
+# Enable C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
