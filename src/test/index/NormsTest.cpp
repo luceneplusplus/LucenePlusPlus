@@ -18,12 +18,12 @@
 
 using namespace Lucene;
 
-class SimilarityOne : public DefaultSimilarity {
+class NTSimilarityOne : public DefaultSimilarity {
 public:
-    virtual ~SimilarityOne() {
+    virtual ~NTSimilarityOne() {
     }
 
-    LUCENE_CLASS(SimilarityOne);
+    LUCENE_CLASS(NTSimilarityOne);
 
 public:
     virtual double lengthNorm(const String& fieldName, int32_t numTokens) {
@@ -35,7 +35,7 @@ public:
 class NormsTest : public LuceneTestFixture {
 public:
     NormsTest() {
-        similarityOne = newLucene<SimilarityOne>();
+        similarityOne = newLucene<NTSimilarityOne>();
         lastNorm = 0.0;
         normDelta = 0.001;
         numDocNorms = 0;

@@ -115,9 +115,9 @@ TEST_F(IndexOutputTest, testWriteChars) {
 
 namespace TestCopyBytes {
 
-class SourceIndexInput : public IndexInput {
+class IOTSourceIndexInput : public IndexInput {
 public:
-    SourceIndexInput(const uint8_t* b, int32_t length) : inputBytes(b), inputLength(length), nextByte(0) {
+    IOTSourceIndexInput(const uint8_t* b, int32_t length) : inputBytes(b), inputLength(length), nextByte(0) {
     }
 
     virtual uint8_t readByte() {
@@ -158,7 +158,7 @@ protected:
 TEST_F(IndexOutputTest, testCopyBytes) {
     ByteArray sourceBytes(ByteArray::newInstance(32768));
     std::generate(sourceBytes.get(), sourceBytes.get() + 32768, rand);
-    IndexInputPtr indexSource(newLucene<TestCopyBytes::SourceIndexInput>(sourceBytes.get(), 32768));
+    IndexInputPtr indexSource(newLucene<TestCopyBytes::IOTSourceIndexInput>(sourceBytes.get(), 32768));
 
     ByteArray outputBytes(ByteArray::newInstance(32768));
     TestableIndexOutput indexOutput(outputBytes.get(), 32768);

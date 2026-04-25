@@ -97,9 +97,9 @@ TEST_F(BufferedIndexOutputTest, testWriteChars) {
 
 namespace TestCopyBytes {
 
-class SourceIndexInput : public BufferedIndexInput {
+class BIOTSourceIndexInput : public BufferedIndexInput {
 public:
-    SourceIndexInput(const uint8_t* b, int32_t length) : inputBytes(b), inputLength(length), nextByte(0) {
+    BIOTSourceIndexInput(const uint8_t* b, int32_t length) : inputBytes(b), inputLength(length), nextByte(0) {
     }
 
     virtual void readInternal(uint8_t* b, int32_t offset, int32_t length) {
@@ -129,7 +129,7 @@ protected:
 TEST_F(BufferedIndexOutputTest, testCopyBytes) {
     ByteArray sourceBytes(ByteArray::newInstance(32768));
     std::generate(sourceBytes.get(), sourceBytes.get() + 32768, rand);
-    BufferedIndexInputPtr indexSource(newLucene<TestCopyBytes::SourceIndexInput>(sourceBytes.get(), 32768));
+    BufferedIndexInputPtr indexSource(newLucene<TestCopyBytes::BIOTSourceIndexInput>(sourceBytes.get(), 32768));
 
     ByteArray outputBytes(ByteArray::newInstance(32768));
     TestableBufferedIndexOutput indexOutput(outputBytes.get(), 32768);

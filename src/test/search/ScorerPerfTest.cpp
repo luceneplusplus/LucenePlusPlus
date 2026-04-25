@@ -21,18 +21,18 @@
 
 using namespace Lucene;
 
-DECLARE_SHARED_PTR(CountingHitCollector)
+DECLARE_SHARED_PTR(SPTCountingHitCollector)
 DECLARE_SHARED_PTR(MatchingHitCollector)
 
-class CountingHitCollector : public Collector {
+class SPTCountingHitCollector : public Collector {
 public:
-    CountingHitCollector() {
+    SPTCountingHitCollector() {
         count = 0;
         sum = 0;
         docBase = 0;
     }
 
-    virtual ~CountingHitCollector() {
+    virtual ~SPTCountingHitCollector() {
     }
 
 public:
@@ -66,7 +66,7 @@ public:
     }
 };
 
-class MatchingHitCollector : public CountingHitCollector {
+class MatchingHitCollector : public SPTCountingHitCollector {
 public:
     MatchingHitCollector(const BitSetPtr& answer) {
         this->answer = answer;
@@ -86,7 +86,7 @@ public:
         if (pos != doc + docBase) {
             boost::throw_exception(RuntimeException(L"Expected doc " + StringUtils::toString(pos) + L" but got " + StringUtils::toString(doc + docBase)));
         }
-        CountingHitCollector::collect(doc);
+        SPTCountingHitCollector::collect(doc);
     }
 };
 
@@ -160,7 +160,7 @@ public:
                 result = addClause(bq, result);
             }
 
-            CountingHitCollectorPtr hc = newLucene<MatchingHitCollector>(result);
+            SPTCountingHitCollectorPtr hc = newLucene<MatchingHitCollector>(result);
             s->search(bq, hc);
 
             EXPECT_EQ(result->cardinality(), hc->getCount());
@@ -182,7 +182,7 @@ public:
                 oq->add(bq, BooleanClause::MUST);
             }
 
-            CountingHitCollectorPtr hc = newLucene<MatchingHitCollector>(result);
+            SPTCountingHitCollectorPtr hc = newLucene<MatchingHitCollector>(result);
             s->search(oq, hc);
 
             EXPECT_EQ(result->cardinality(), hc->getCount());

@@ -119,13 +119,13 @@ public:
     }
 };
 
-class MockIndexWriter : public IndexWriter {
+class IWETMockIndexWriter : public IndexWriter {
 public:
-    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl) {
+    IWETMockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl) {
         this->r = newLucene<Random>(17);
     }
 
-    virtual ~MockIndexWriter() {
+    virtual ~IWETMockIndexWriter() {
     }
 
 protected:
@@ -142,7 +142,7 @@ public:
 
 TEST_F(IndexWriterExceptionsTest, testRandomExceptions) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
-    IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
+    IndexWriterPtr writer  = newLucene<IWETMockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
 
     writer->setRAMBufferSizeMB(0.1);
@@ -174,7 +174,7 @@ TEST_F(IndexWriterExceptionsTest, testRandomExceptions) {
 
 TEST_F(IndexWriterExceptionsTest, testRandomExceptionsThreads) {
     MockRAMDirectoryPtr dir = newLucene<MockRAMDirectory>();
-    IndexWriterPtr writer  = newLucene<MockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
+    IndexWriterPtr writer  = newLucene<IWETMockIndexWriter>(dir, newLucene<WhitespaceAnalyzer>(), true, IndexWriter::MaxFieldLengthLIMITED);
     boost::dynamic_pointer_cast<ConcurrentMergeScheduler>(writer->getMergeScheduler())->setSuppressExceptions();
 
     writer->setRAMBufferSizeMB(0.2);

@@ -22,9 +22,9 @@
 
 using namespace Lucene;
 
-class SimilarityOne : public DefaultSimilarity {
+class IRCNTSimilarityOne : public DefaultSimilarity {
 public:
-    virtual ~SimilarityOne() {
+    virtual ~IRCNTSimilarityOne() {
     }
 
 public:
@@ -36,7 +36,7 @@ public:
 class IndexReaderCloneNormsTest : public LuceneTestFixture {
 public:
     IndexReaderCloneNormsTest() {
-        similarityOne = newLucene<SimilarityOne>();
+        similarityOne = newLucene<IRCNTSimilarityOne>();
         anlzr = newLucene<StandardAnalyzer>(LuceneVersion::LUCENE_CURRENT);
         numDocNorms = 0;
         lastNorm = 0.0;
