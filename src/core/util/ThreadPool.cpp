@@ -30,6 +30,7 @@ ThreadPool::ThreadPool()
 }
 
 ThreadPool::~ThreadPool() {
+    io_context.stop();
     threadGroup.join_all(); // wait for all competition
 }
 
