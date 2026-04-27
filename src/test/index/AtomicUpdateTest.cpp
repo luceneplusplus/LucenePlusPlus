@@ -24,13 +24,13 @@ using namespace Lucene;
 
 typedef LuceneTestFixture AtomicUpdateTest;
 
-class MockIndexWriter : public IndexWriter {
+class AUTMockIndexWriter : public IndexWriter {
 public:
-    MockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl) {
+    AUTMockIndexWriter(const DirectoryPtr& dir, const AnalyzerPtr& a, bool create, int32_t mfl) : IndexWriter(dir, a, create, mfl) {
         random = newLucene<Random>();
     }
 
-    virtual ~MockIndexWriter() {
+    virtual ~AUTMockIndexWriter() {
     }
 
 protected:
@@ -140,7 +140,7 @@ static void runTest(const DirectoryPtr& directory) {
     Collection<AtomicTimedThreadPtr> threads(Collection<AtomicTimedThreadPtr>::newInstance(4));
     AnalyzerPtr analyzer = newLucene<SimpleAnalyzer>();
 
-    IndexWriterPtr writer = newLucene<MockIndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
+    IndexWriterPtr writer = newLucene<AUTMockIndexWriter>(directory, analyzer, true, IndexWriter::MaxFieldLengthUNLIMITED);
 
     writer->setMaxBufferedDocs(7);
     writer->setMergeFactor(3);

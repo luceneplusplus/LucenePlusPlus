@@ -29,7 +29,7 @@ using namespace Lucene;
 
 typedef LuceneTestFixture OmitTfTest;
 
-DECLARE_SHARED_PTR(CountingHitCollector)
+DECLARE_SHARED_PTR(OITCountingHitCollector)
 
 class SimpleIDFExplanation : public IDFExplanation {
 public:
@@ -85,18 +85,18 @@ public:
     }
 };
 
-class CountingHitCollector : public Collector {
+class OITCountingHitCollector : public Collector {
 public:
-    CountingHitCollector() {
+    OITCountingHitCollector() {
         count = 0;
         sum = 0;
         docBase = -1;
     }
 
-    virtual ~CountingHitCollector() {
+    virtual ~OITCountingHitCollector() {
     }
 
-    LUCENE_CLASS(CountingHitCollector);
+    LUCENE_CLASS(OITCountingHitCollector);
 
 public:
     int32_t count;
@@ -306,7 +306,7 @@ TEST_F(OmitTfTest, testNoPrxFile) {
 
 namespace TestBasic {
 
-class CountingHitCollectorQ1 : public CountingHitCollector {
+class CountingHitCollectorQ1 : public OITCountingHitCollector {
 protected:
     ScorerPtr scorer;
 
@@ -317,11 +317,11 @@ public:
 
     virtual void collect(int32_t doc) {
         EXPECT_EQ(scorer->score(), 1.0);
-        CountingHitCollector::collect(doc);
+        OITCountingHitCollector::collect(doc);
     }
 };
 
-class CountingHitCollectorQ2 : public CountingHitCollector {
+class CountingHitCollectorQ2 : public OITCountingHitCollector {
 protected:
     ScorerPtr scorer;
 
@@ -332,11 +332,11 @@ public:
 
     virtual void collect(int32_t doc) {
         EXPECT_EQ(scorer->score(), 1.0 + (double)doc);
-        CountingHitCollector::collect(doc);
+        OITCountingHitCollector::collect(doc);
     }
 };
 
-class CountingHitCollectorQ3 : public CountingHitCollector {
+class CountingHitCollectorQ3 : public OITCountingHitCollector {
 protected:
     ScorerPtr scorer;
 
@@ -348,11 +348,11 @@ public:
     virtual void collect(int32_t doc) {
         EXPECT_EQ(scorer->score(), 1.0);
         EXPECT_NE(doc % 2, 0);
-        CountingHitCollector::collect(doc);
+        OITCountingHitCollector::collect(doc);
     }
 };
 
-class CountingHitCollectorQ4 : public CountingHitCollector {
+class CountingHitCollectorQ4 : public OITCountingHitCollector {
 protected:
     ScorerPtr scorer;
 
@@ -364,7 +364,7 @@ public:
     virtual void collect(int32_t doc) {
         EXPECT_EQ(scorer->score(), 1.0);
         EXPECT_EQ(doc % 2, 0);
-        CountingHitCollector::collect(doc);
+        OITCountingHitCollector::collect(doc);
     }
 };
 
@@ -424,7 +424,7 @@ TEST_F(OmitTfTest, testBasic) {
     bq->add(q1, BooleanClause::MUST);
     bq->add(q4, BooleanClause::MUST);
 
-    CountingHitCollectorPtr collector = newLucene<CountingHitCollector>();
+    OITCountingHitCollectorPtr collector = newLucene<OITCountingHitCollector>();
 
     searcher->search(bq, collector);
     EXPECT_EQ(15, collector->count);
