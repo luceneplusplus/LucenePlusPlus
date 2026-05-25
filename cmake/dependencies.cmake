@@ -19,7 +19,6 @@ set(lucene_boost_libs
   ${Boost_FILESYSTEM_LIBRARIES}
   ${Boost_IOSTREAMS_LIBRARIES}
   ${Boost_REGEX_LIBRARIES}
-  ${Boost_SYSTEM_LIBRARIES}
   ${Boost_THREAD_LIBRARIES}
 )
 
