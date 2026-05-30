@@ -34,6 +34,16 @@ TEST_F(EdgeNGramTokenizerTest, testMinMaxGrams) {
                              5);
 }
 
+TEST_F(EdgeNGramTokenizerTest, testFrontUnigram) {
+    TokenStreamPtr stream = newLucene<EdgeNGramTokenizer>(newLucene<StringReader>(L"abcde"), 1, 1);
+    checkTokenStreamContents(stream,
+                             newCollection<String>(L"a"),
+                             newCollection<int32_t>(0),
+                             newCollection<int32_t>(1),
+                             newCollection<int32_t>(1),
+                             5);
+}
+
 TEST_F(EdgeNGramTokenizerTest, testOversizedNgrams) {
     TokenStreamPtr stream = newLucene<EdgeNGramTokenizer>(newLucene<StringReader>(L"abcde"), 6, 6);
     checkTokenStreamContents(stream, Collection<String>::newInstance(), Collection<int32_t>::newInstance(), Collection<int32_t>::newInstance(),
@@ -45,6 +55,24 @@ TEST_F(EdgeNGramTokenizerTest, testPreservesCase) {
     checkTokenStreamContents(stream, newCollection<String>(L"Ab"));
 }
 
+TEST_F(EdgeNGramTokenizerTest, testReset) {
+    TokenizerPtr tokenizer = newLucene<EdgeNGramTokenizer>(newLucene<StringReader>(L"abcde"), 1, 3);
+    checkTokenStreamContents(tokenizer,
+                             newCollection<String>(L"a", L"ab", L"abc"),
+                             newCollection<int32_t>(0, 0, 0),
+                             newCollection<int32_t>(1, 2, 3),
+                             newCollection<int32_t>(1, 1, 1),
+                             5);
+
+    tokenizer->reset(newLucene<StringReader>(L"abcde"));
+    checkTokenStreamContents(tokenizer,
+                             newCollection<String>(L"a", L"ab", L"abc"),
+                             newCollection<int32_t>(0, 0, 0),
+                             newCollection<int32_t>(1, 2, 3),
+                             newCollection<int32_t>(1, 1, 1),
+                             5);
+}
+
 TEST_F(EdgeNGramTokenizerTest, testAnalyzerReuse) {
     AnalyzerPtr analyzer = newLucene<EdgeNGramAnalyzer>(1, 3);
     checkAnalyzesToReuse(analyzer, L"abcde", newCollection<String>(L"a", L"ab", L"abc"),
@@ -53,6 +81,16 @@ TEST_F(EdgeNGramTokenizerTest, testAnalyzerReuse) {
     checkAnalyzesToReuse(analyzer, L"xy", newCollection<String>(L"x", L"xy"),
                          newCollection<int32_t>(0, 0), newCollection<int32_t>(1, 2),
                          newCollection<int32_t>(1, 1));
+}
+
+TEST_F(EdgeNGramTokenizerTest, testTokenizerPositions) {
+    TokenStreamPtr stream = newLucene<EdgeNGramTokenizer>(newLucene<StringReader>(L"abcde"), 1, 3);
+    checkTokenStreamContents(stream,
+                             newCollection<String>(L"a", L"ab", L"abc"),
+                             newCollection<int32_t>(0, 0, 0),
+                             newCollection<int32_t>(1, 2, 3),
+                             newCollection<int32_t>(1, 1, 1),
+                             5);
 }
 
 TEST_F(EdgeNGramTokenizerTest, testInvalidArguments) {
