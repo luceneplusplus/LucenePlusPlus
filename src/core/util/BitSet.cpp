@@ -233,12 +233,11 @@ int32_t BitSet::hashCode() {
     // Start with a zero hash and use a mix that results in zero if the input is zero.
     // This effectively truncates trailing zeros without an explicit check.
     int64_t hash = 0;
-    to_block_range(bitSet, boost::make_function_output_iterator(
-        [&hash](bitset_type::block_type block) {
-            hash ^= block;
-            hash = (hash << 1) | (hash >> 63); // rotate left
-        }
-    ));
+    auto computeHash = [&hash](bitset_type::block_type block) {
+        hash ^= block;
+        hash = (hash << 1) | (hash >> 63); // rotate left
+    };
+    to_block_range(bitSet, boost::make_function_output_iterator(std::ref(computeHash)));
     // Fold leftmost bits into right and add a constant to prevent empty sets from
     // returning 0, which is too common.
     return (int32_t)((hash >> 32) ^ hash) + 0x98761234;
